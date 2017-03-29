@@ -45,7 +45,7 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
 end
 
 function StatisticsLogger:getGroupLogs(groupType, groupId)
-    local days = 3
+    local days = 7
 	local since = getRealTime().timestamp-days*24*60*60
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
     return result
