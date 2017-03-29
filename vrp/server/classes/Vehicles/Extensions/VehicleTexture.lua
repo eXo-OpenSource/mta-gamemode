@@ -8,12 +8,13 @@
 VehicleTexture = inherit(Object)
 VehicleTexture.Map = {}
 
-function VehicleTexture:constructor(vehicle, path, texture, force, bFetchRemote)
+function VehicleTexture:constructor(vehicle, path, texture, force, bFetchRemote, url)
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
 		self.m_Vehicle = vehicle
 		self.m_Path = path
 		self.m_FetchRemote = bFetchRemote
+		self.m_URL = url
 		if texture then
 			self.m_Texture = texture
 		elseif VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] then
@@ -25,7 +26,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force, bFetchRemote)
 		VehicleTexture.Map[self.m_Id] = self
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
-				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, isFetchRemote = self.m_FetchRemote }})
+				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, isFetchRemote = self.m_FetchRemote, sUrl = self.m_URL }})
 			end
 		end
 
@@ -60,7 +61,7 @@ addEventHandler("requestVehicleTextures", root, function()
 	local vehicleTab = {}
 	for index, instance in pairs(VehicleTexture.Map) do
 		if instance.m_Vehicle and isElement(instance.m_Vehicle) then
-			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, isFetchRemote = instance.m_FetchRemote}
+			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, isFetchRemote = instance.m_FetchRemote, sUrl = instance.m_URL}
 		end
 	end
 	VehicleTexture.sendToClient(client, vehicleTab)
