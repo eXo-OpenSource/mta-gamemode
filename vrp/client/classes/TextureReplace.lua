@@ -50,7 +50,7 @@ function TextureReplace:destructor()
 		if self.m_IsRenderTarget then
 			destroyElement(self.m_Texture)
 		else
-			TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
+			TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath,  self.m_Element)
 		end
 	end
 	if self.m_Shader and isElement(self.m_Shader) then
@@ -155,16 +155,16 @@ function TextureReplace:unloadShader()
 		end
 	end
 	--local a = destroyElement(self.m_Texture)
-	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
+	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath, self.m_Element)
 	local b = destroyElement(self.m_Shader)
 	
 	return a and b and c
 end
 
-function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
+function TextureReplace.getCachedTexture(path, bIsRawPixels, url, elem)
 	local index = md5(path):sub(1, 8)
 	if bIsRawPixels then 
-		index = url
+		index = md5(url..""..tostring(elem)):sub(1,8)
 	end
 	if not TextureReplace.Cache[index] then
 		--outputConsole("creating texture "..path)
@@ -189,10 +189,10 @@ function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 	return TextureReplace.Cache[index].texture
 end
 
-function TextureReplace.unloadCache(path, isRawPixels, url)
+function TextureReplace.unloadCache(path, isRawPixels, url, elem)
 	local index = md5(path):sub(1, 8)
 	if isRawPixels then 
-		index = url
+		index = md5(url..""..elem):sub(1, 8)
 	end
 	if not TextureReplace.Cache[index] then return false end
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter - 1
