@@ -24,12 +24,7 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_Width = width
 	self.m_Height = height
 	self.m_Element = targetElement
-	if self.m_IsRawPixels then 
-		self.m_PixelsTexture = dxCreateTexture(path)
-		if isElement(self.m_PixelsTexture) then
-			self.m_Width, self.m_Height = dxGetMaterialSize(self.m_PixelsTexture)
-		end
-	end
+
 	if not self.m_Element then
 		self:loadShader()
 	else
@@ -55,11 +50,14 @@ function TextureReplace:destructor()
 		if self.m_IsRenderTarget then
 			destroyElement(self.m_Texture)
 		else
-			TextureReplace.unloadCache(self.m_TexturePath, self.m_PixelsTexture, self.m_URLPath)
+			TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
 		end
 	end
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
+	end
+	if isElement(self.m_PixelsTexture) then 
+		destroyElement(self.m_PixelsTexture)
 	end
 end
 
@@ -89,7 +87,13 @@ function TextureReplace:loadShader()
 	if self.m_Shader and isElement(self.m_Shader) then return false end
 	if self.m_Texture and isElement(self.m_Shader) then return false end
 	if self.m_IsRawPixels then
-		if not isElement(self.m_PixelsTexture) then return false end
+		if isElement(self.m_PixelsTexture) then return false end
+	end
+	if self.m_IsRawPixels then 
+		self.m_PixelsTexture = dxCreateTexture(self.m_TexturePath)
+		if isElement(self.m_PixelsTexture) then
+			self.m_Width, self.m_Height = dxGetMaterialSize(self.m_PixelsTexture)
+		end
 	end
 	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
@@ -138,18 +142,21 @@ function TextureReplace:loadShader()
 end
 
 function TextureReplace:unloadShader()
+	local c = true
 	if not self.m_Shader or not isElement(self.m_Shader) then return false end
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
-	if self.m_PixelsTexture then 
-		if isElement(self.m_PixelsTexture) then 
-			destroyElement(self.m_PixelsTexture)
+	if self.m_IsRawPixels then 
+		if not isElement(self.m_PixelsTexture) then 
+			return false
+		else 
+			c = destroyElement(self.m_PixelsTexture)
 		end
 	end
 	--local a = destroyElement(self.m_Texture)
-	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_PixelsTexture, self.m_URLPath)
+	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
 	local b = destroyElement(self.m_Shader)
 	
-	return a and b
+	return a and b and c
 end
 
 function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
@@ -171,11 +178,7 @@ function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		if not bIsRawPixels then 
-			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
-		else 
-			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = bIsRawPixels}
-		end
+		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
 	
