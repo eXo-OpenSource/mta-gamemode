@@ -51,7 +51,9 @@ function VehicleTuning:applyTuning()
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
 	if #self.m_Tuning["Texture"] > 3 then
-		self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
+		if not self.m_Vehicle.m_IsURLTexture then
+			self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
+		end
 	end
 end
 

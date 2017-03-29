@@ -24,7 +24,7 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_Width = width
 	self.m_Height = height
 	self.m_Element = targetElement
-
+	targetElement.m_IsURLTexture = iUrl
 	if not self.m_Element then
 		self:loadShader()
 	else
@@ -180,7 +180,7 @@ function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
+		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
 	
