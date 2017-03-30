@@ -14,8 +14,7 @@
 
 	<!--<map src="fun/boxarena.map" />/-->
 
-	<map src="fraktionen/army_base.map" />
-	<map src="fraktionen/army_area.map" />
+	<map src="fraktionen/army.map" />
 	<map src="fraktionen/army_lsbase.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />

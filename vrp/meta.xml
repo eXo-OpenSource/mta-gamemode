@@ -1567,7 +1567,11 @@
 	<vrpfile src="files/models/donut.col"/>
 	<vrpfile src="files/models/topfun.txd"/>
 	<vrpfile src="files/models/topfun.dff"/>
-
+	<vrpfile src="files/models/a51fencing.col"/>
+	<vrpfile src="files/models/a51fencing.dff"/>
+	<vrpfile src="files/models/a51fencing.txd"/>
+	<vrpfile src="files/models/a51fensin.col"/>
+	<vrpfile src="files/models/a51fensin.dff"/>
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
