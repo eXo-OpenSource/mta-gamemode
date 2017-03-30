@@ -28,17 +28,11 @@ function VehicleTuningShop:constructor()
     self.m_GarageInfo = {
         -- Entrance - Exit (pos, rot) - Interior
         {
-            Vector3(1851, -1856.4, 12.4), -- LS El Corona
-            {Vector3(1839.3, -1856.7, 13.2), 90},
-            Vector3(1010.9, -982.59998, 2436.1001)
-        },
-        {
             Vector3(1041.4, -1017.5, 31.3), -- LS Temple
             {Vector3(1041.9, -1031.5, 31.8), 180},
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
         }
     }
-    self.m_DimensionSlots = {}
 
     for garageId, info in pairs(self.m_GarageInfo) do
         local position = info[1]
@@ -69,12 +63,6 @@ function VehicleTuningShop:openFor(player, vehicle, garageId)
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
-
-    -- Get a dimension slot and move both player and vehicle to it
-    --[[local dimension = #self.m_DimensionSlots + 1
-    self.m_DimensionSlots[dimension] = player
-    player:setDimension(dimension)
-    vehicle:setDimension(dimension)]]
 end
 
 function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
@@ -90,14 +78,6 @@ function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
             vehicle:setPosition(position)
             vehicle:setRotation(0, 0, rotation)
         end
-
-        --[[local dimension = table.find(self.m_DimensionSlots, player)
-        if dimension then
-            if vehicle then
-                vehicle:setDimension(0)
-            end
-            player:setDimension(0)
-        end]]
 
         player:setPosition(position) -- Set player position also as it will not be updated automatically before quit
         player:setFrozen(false)
@@ -170,22 +150,22 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             -- Search for part price if not available
            	if not price then
 				price = getVehicleUpgradePrice(slot)
-				if not price then 
+				if not price then
 					price = 0
-				else 
-					if not tonumber(price) then 
+				else
+					if not tonumber(price) then
 						price = 0
 					end
 				end
-			else 
+			else
 				if not tonumber(price) then
 					price = getVehicleUpgradePrice(slot)
-					if not price then 
+					if not price then
 						price = 0
-					else 
-						if not tonumber(price) then 
+					else
+						if not tonumber(price) then
 							price = 0
-						end	
+						end
 					end
 				end
 			end

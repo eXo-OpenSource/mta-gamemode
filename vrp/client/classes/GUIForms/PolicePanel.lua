@@ -376,7 +376,7 @@ function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
 	if item then
 		local player = item.player
-		GiveWantedSTVOBox:new(player, "Wanteds geben", 1, 6, function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
+		GiveWantedSTVOBox:new(player, 1, 6, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end

@@ -76,8 +76,6 @@ function Inventory:constructor()
 	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
 	addEventHandler("onClientRender", root, self.m_KeyInputCheck)
 	self:hide()
-	self.Show = false
-
 end
 
 function Inventory:Event_OnRender() 
@@ -113,10 +111,8 @@ end
 function Inventory:toggle()
 	if self.Show == true then
 		self:hide()
-		self.Show = false
 	else
 		self:show()
-		self.Show = true
 	end
 end
 
@@ -322,10 +318,12 @@ function Inventory:onShow()
 	self:setAbsolutePosition(screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	triggerServerEvent("refreshInventory", localPlayer)
 	self:loadItems()
+	self.Show = true
 end
 
 function Inventory:onHide()
 	showCursor(false)
+	self.Show = false
 end
 
 function Inventory:getItemAmount(item)
