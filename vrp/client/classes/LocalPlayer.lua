@@ -53,7 +53,6 @@ function LocalPlayer:constructor()
 
 
 	self.m_CancelEvent = function()	cancelEvent() end
-
 end
 
 function LocalPlayer:destructor()
