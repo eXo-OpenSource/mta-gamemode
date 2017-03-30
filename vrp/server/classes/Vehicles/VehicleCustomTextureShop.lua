@@ -143,11 +143,11 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(url)
 end
 
 function VehicleCustomTextureShop:setTexture(vehicle, url)
-	source.m_IsURLTexture = false
-	setElementData(source, "URL_PAINTJOB", false)
+	vehicle.m_IsURLTexture = false
+	setElementData(vehicle, "URL_PAINTJOB", false)
 
-	source.m_Tunings:saveTuning("Texture", url)
-	source.m_Tunings:applyTuning()
+	vehicle.m_Tunings:saveTuning("Texture", url)
+	vehicle.m_Tunings:applyTuning()
 end
 
 
