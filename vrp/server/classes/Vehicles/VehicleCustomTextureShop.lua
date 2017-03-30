@@ -125,9 +125,9 @@ function VehicleCustomTextureShop:getTextures(player, vehicle)
 end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
-   	self:setTexture(client:getOccupiedVehicle(), vehicle.OldTexture)
-
-	self:closeFor(client, client:getOccupiedVehicle())
+   	local veh = client:getOccupiedVehicle()
+	self:setTexture(veh, veh.OldTexture)
+	self:closeFor(client, veh)
 end
 
 function VehicleCustomTextureShop:Event_texturePreview(url)
