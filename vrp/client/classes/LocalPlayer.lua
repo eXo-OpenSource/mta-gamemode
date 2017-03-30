@@ -42,6 +42,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
+	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
@@ -73,6 +74,13 @@ end
 
 function LocalPlayer:getRank()
 	return self.m_Rank
+end
+
+function LocalPlayer:Event_PreRender() 
+    local tx, ty, tz = getWorldFromScreenPosition(screenWidth / 2, screenHeight / 2, 10)
+	if tx and ty and tz then
+		setPedLookAt(localPlayer, tx, ty, tz, -1, 0) 
+	end
 end
 
 function LocalPlayer:Event_onGetTime( realtime )
