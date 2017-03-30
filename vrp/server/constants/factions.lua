@@ -221,6 +221,24 @@ factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=
 evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 16.3)
 factionWTDestination[9] = Vector3(659.80,-463.10,15.30)
 
+
+-- ID 10 = Vatos
+factionRankNames[10] = {
+[0] = "Novivo",
+[1] = "Miembro",
+[2] = "Trepador",
+[3] = "Veterano",
+[4] = "Derecha",
+[5] = "Guerriero",
+[6] = "Jeffe Boss"
+}
+factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
+factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
+factionSkins[10] = {[108]=true, [109]=true, [110]=true, [114]=true, [115]=true, [116]=true, [173]=true,[174]=true,[175]=true,[292]=true}
+factionWeapons[10] = {[5]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true,[32] = true}
+evilFactionInteriorEnter[10] = Vector3(687.20, -445.40, 16.3)
+factionWTDestination[10] = Vector3(659.80,-463.10,15.30)
+
 -- General:
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles
