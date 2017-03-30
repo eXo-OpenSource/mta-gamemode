@@ -849,6 +849,14 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
 
+	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/iOS_10.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Nexus.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Xperia_Z3.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Xperia_X.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/OnePlus_3T.png"/>
+
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
