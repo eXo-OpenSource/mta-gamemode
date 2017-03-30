@@ -87,14 +87,14 @@ function HUDRadar:hide()
 	self.m_Visible = false
 
 	-- Recalc shortmessage positions
-	MessageBoxManager.recalculatePositions()
+	MessageBoxManager.onRadarToggle(false)
 end
 
 function HUDRadar:show()
 	self.m_Visible = true
 
 	-- Recalc shortmessage positions
-	MessageBoxManager.recalculatePositions()
+	MessageBoxManager.onRadarToggle(true)
 end
 
 function HUDRadar:updateMapTexture()
