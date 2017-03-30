@@ -20,10 +20,8 @@ function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, m
 end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
-
-	local radar = HUDRadar:getSingleton()
-	if radar.m_Visible and not radar.m_InInterior then
-		local x, y, w
+	local x, y, w
+	if MessageBoxManager.Mode then
 		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
 		if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
 			y = screenHeight - screenHeight*0.365

@@ -4,8 +4,7 @@ inherit(GUIFontContainer, ToastMessage)
 function ToastMessage:constructor(text, timeout)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(23))
 	local x, y, w, h
-	local radar = HUDRadar:getSingleton()
-	if radar.m_Visible and not radar.m_InInterior then
+	if MessageBoxManager.Mode then
 		x, y, w, h = 20, (screenHeight - screenHeight*0.265) - 20, 340*screenWidth/1600+6, 41
 	else
 		x, y, w, h = 20, screenHeight - 5, 340*screenWidth/1600+6, 41

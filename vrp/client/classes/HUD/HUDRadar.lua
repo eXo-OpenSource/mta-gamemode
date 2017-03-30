@@ -213,10 +213,14 @@ function HUDRadar:draw()
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
-		self.m_InInterior = true
+		if MessageBoxManager.Mode == true then -- Todo: find better way to do this
+			MessageBoxManager.onRadarToggle(false)
+		end
 		return
 	else
-		self.m_InInterior = false
+		if MessageBoxManager.Mode == false then -- Todo: find better way to do this
+			MessageBoxManager.onRadarToggle(true)
+		end
 	end
 
 	-- Draw the rectangle (the border)

@@ -1,5 +1,6 @@
 MessageBoxManager = {}
 MessageBoxManager.Map = {}
+MessageBoxManager.Mode = true
 
 function MessageBoxManager.resortPositions ()
 	for i = #MessageBoxManager.Map, 1, -1 do
@@ -25,8 +26,7 @@ function MessageBoxManager.resortPositions ()
 			end
 			obj.m_AlphaFaded = true
 		else
-			local radar = HUDRadar:getSingleton()
-			if radar.m_Visible and not radar.m_InInterior then
+			if MessageBoxManager.Mode then
 				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
 			else
 				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 5 - obj.m_Height)
@@ -47,14 +47,18 @@ function MessageBoxManager.recalculatePositions()
 		if prevObj then
 			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, prevObj.m_Animation.m_TY - obj.m_Height - 5)
 		else
-			local radar = HUDRadar:getSingleton()
-			if radar.m_Visible and not radar.m_InInterior then
+			if MessageBoxManager.Mode then
 				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
 			else
 				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 5 - obj.m_Height)
 			end
 		end
 	end
+end
+
+function MessageBoxManager.onRadarToggle(bool)
+	MessageBoxManager.Mode = bool
+	MessageBoxManager.recalculatePositions()
 end
 
 function testMessages()
