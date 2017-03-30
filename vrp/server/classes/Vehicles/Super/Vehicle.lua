@@ -455,6 +455,7 @@ end
 function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
 	if errNo == 0 then
 		self.m_IsURLTexture = true
+		setElementData(self,"URL_PAINTJOB", true)
 		self.m_Texture = VehicleTexture:new(self, rData , textureName, force, true, tUrl)
 	end
 end
