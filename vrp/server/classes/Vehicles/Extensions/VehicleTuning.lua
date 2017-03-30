@@ -78,6 +78,10 @@ function VehicleTuning:saveTuning(type, data)
 	--end
 end
 
+function VehicleTuning:getTuning(type)
+	return self.m_Tuning[type] or false
+end
+
 function VehicleTuning:saveGTATuning()
 	self.m_Tuning["GTATuning"] = getVehicleUpgrades(self.m_Vehicle) or {}
 end

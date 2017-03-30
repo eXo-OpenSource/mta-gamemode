@@ -86,6 +86,9 @@ function VehicleCustomTextureGUI:initTextures(textures)
         local item = self.m_TextureList:addItem(row["Name"])
         item.Url = self.m_Path..row["Image"]
         item.onLeftClick = bind(self.Texture_Click, self)
+		item.onLeftDoubleClick = function()
+			triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Url)
+		end
     end
 end
 
