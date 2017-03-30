@@ -83,7 +83,7 @@ function Core:constructor()
 		SkinShops:new()
 		--Deathmatch:new() Not finished
 		VehicleTuningShop:new()
-		--VehicleCustomTextureShop:new()
+		VehicleCustomTextureShop:new()
 		DimensionManager:new()
 		ActorManager:new()
 		InteriorManager:new()

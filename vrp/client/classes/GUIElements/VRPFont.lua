@@ -65,5 +65,6 @@ FontAwesomeSymbols = {
 
 Fonts = {
 	EkMukta = "files/fonts/EkMukta.ttf",
-	Digital = "files/fonts/digital-7.ttf"
+	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
+	Digital = "files/fonts/digital-7.ttf",
 }
