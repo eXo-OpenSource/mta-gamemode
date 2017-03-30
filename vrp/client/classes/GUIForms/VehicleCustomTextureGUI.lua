@@ -39,8 +39,10 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 	self.m_Path = path
     self:initTextures(textures)
 
-	local pos = self.m_Vehicle:getPosition()
-	setCameraMatrix(pos.x+4.2, pos.y+2.1, pos.z+2.1, pos)
+	setTimer(function()
+		local pos = self.m_Vehicle:getPosition()
+		setCameraMatrix(pos.x-5, pos.y-7, pos.z+1, pos)
+	end, 100, 1)
 
     showChat(false)
 
@@ -48,13 +50,17 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 	self.m_CarRadioVolume = RadioGUI:getSingleton():getVolume() or 0
 	RadioGUI:getSingleton():setVolume(0)
     self.m_Vehicle:setOverrideLights(2)
+
+	self.m_RotateBind = bind(self.rotateVehicle, self)
+	addEventHandler("onClientPreRender", root, self.m_RotateBind)
 end
 
 function VehicleCustomTextureGUI:destructor(closedByServer)
     if not closedByServer then
-        self:resetTexture()
         triggerServerEvent("vehicleCustomTextureAbbort", localPlayer)
     end
+
+	removeEventHandler("onClientPreRender", root, self.m_RotateBind)
 
     setCameraTarget(localPlayer)
     if self.m_Music then
@@ -67,6 +73,13 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
     GUIForm.destructor(self)
 end
 
+function VehicleCustomTextureGUI:rotateVehicle()
+	local rot = self.m_Vehicle:getRotation()
+	rot.z = rot.z+1
+	rot.z = rot.z > 360 and rot.z-360 or rot.z
+	self.m_Vehicle:setRotation(rot)
+end
+
 function VehicleCustomTextureGUI:initTextures(textures)
     -- Add 'special properties' (e.g. color)
     for _, row in ipairs(textures) do
@@ -76,17 +89,10 @@ function VehicleCustomTextureGUI:initTextures(textures)
     end
 end
 
-function VehicleCustomTextureGUI:resetTexture()
-    if self.m_PreviewShader then delete(self.m_PreviewShader) end
-end
-
 function VehicleCustomTextureGUI:Texture_Click(item)
-    self:resetTexture()
-
     if item.Url then
-		if self.m_PreviewShader then delete(self.m_PreviewShader) end
-		TextureReplace.deleteFromElement(self.m_Vehicle)
-		self:resetTexture()
+		--TextureReplace.deleteFromElement(self.m_Vehicle)
+		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url)
 	end
 end
 

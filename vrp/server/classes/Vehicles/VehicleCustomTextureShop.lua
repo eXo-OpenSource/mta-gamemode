@@ -6,8 +6,6 @@
 -- *
 -- ****************************************************************************
 VehicleCustomTextureShop = inherit(Singleton)
-addEvent("vehicleCustomTextureBuy", true)
-addEvent("vehicleCustomTextureAbbort", true)
 
 function VehicleCustomTextureShop:constructor()
 	self.m_Path = "http://picupload.pewx.de/textures/"
@@ -28,6 +26,10 @@ function VehicleCustomTextureShop:constructor()
 
         Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
+
+	addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview"}
+
+    addEventHandler("vehicleCustomTextureLoadPreview", root, bind(self.Event_texturePreview, self))
 
 	--addEventHandler("vehicleCustomTextureBuy", root, bind(self.Event_vehicleTextureBuy, self))
     addEventHandler("vehicleCustomTextureAbbort", root, bind(self.Event_vehicleUpgradesAbort, self))
@@ -124,4 +126,9 @@ end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
     self:closeFor(client, client:getOccupiedVehicle())
+end
+
+function VehicleCustomTextureShop:Event_texturePreview(url)
+	source.m_Tunings:saveTuning("Texture", url)
+	source.m_Tunings:applyTuning()
 end
