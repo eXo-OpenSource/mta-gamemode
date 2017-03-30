@@ -8,7 +8,6 @@
 ShortMessage = inherit(GUIElement)
 inherit(GUIFontContainer, ShortMessage)
 
-ShortMessage.MessageBoxes = {}
 local MAX_BOX_LIMIT = 20
 local TEXTURE_SIZE_X = (340*screenWidth/1600+6)
 local TEXTURE_SIZE_Y = 250
@@ -22,14 +21,16 @@ end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
 
-	local x, y, w
-	x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
-	if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
-		y = screenHeight - screenHeight*0.365
+	local radar = HUDRadar:getSingleton()
+	if radar.m_Visible and not radar.m_InInterior then
+		local x, y, w
+		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
+		if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
+			y = screenHeight - screenHeight*0.365
+		end
+	else
+		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	end
-	--else
-	--	x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
-	--end
 
 	-- Title Bar
 	local hasTitleBar = title ~= nil
@@ -97,8 +98,8 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	self:setAlpha(0)
 	self.m_AlphaFaded = false
 
-	table.insert(ShortMessage.MessageBoxes, self)
-	ShortMessage.resortPositions()
+	table.insert(MessageBoxManager.Map, self)
+	MessageBoxManager.resortPositions()
 end
 
 function ShortMessage:destructor(force)
@@ -112,8 +113,8 @@ function ShortMessage:destructor(force)
 				delete(self.m_Texture)
 			end
 
-			table.removevalue(ShortMessage.MessageBoxes, self)
-			ShortMessage.resortPositions()
+			table.removevalue(MessageBoxManager.Map, self)
+			MessageBoxManager.resortPositions()
 		end
 		if self.m_Texture then
 			Animation.FadeAlpha:new(self.m_Texture, 200, 200, 0)
@@ -124,8 +125,8 @@ function ShortMessage:destructor(force)
 			delete(self.m_Texture)
 		end
 
-		table.removevalue(ShortMessage.MessageBoxes, self)
-		ShortMessage.resortPositions()
+		table.removevalue(MessageBoxManager.Map, self)
+		MessageBoxManager.resortPositions()
 	end
 end
 
@@ -151,6 +152,7 @@ function ShortMessage:drawThis()
 	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
+--[[
 function ShortMessage.resortPositions ()
 	for i = #ShortMessage.MessageBoxes, 1, -1 do
 		local obj = ShortMessage.MessageBoxes[i]
@@ -204,6 +206,7 @@ function ShortMessage.recalculatePositions ()
 		end
 	end
 end
+--]]
 
 addEvent("shortMessageBox", true)
 addEventHandler("shortMessageBox", root,

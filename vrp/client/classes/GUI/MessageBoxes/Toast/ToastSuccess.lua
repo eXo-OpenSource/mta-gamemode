@@ -16,7 +16,7 @@ function ToastSuccess:getSoundPath()
 end
 
 function ToastSuccess:getColor()
-	return rgba(60, 118, 61, 0.5)
+	return {60, 118, 61, 0.8}
 end
 
 function ToastSuccess:getDefaultTitle()

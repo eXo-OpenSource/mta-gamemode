@@ -16,7 +16,7 @@ function ToastError:getSoundPath()
 end
 
 function ToastError:getColor()
-	return rgba(169, 68, 66, 0.8)
+	return {169, 68, 66, 0.8}
 end
 
 function ToastError:getDefaultTitle()

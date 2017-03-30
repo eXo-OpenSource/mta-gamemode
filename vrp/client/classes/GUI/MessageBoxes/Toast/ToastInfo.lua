@@ -16,7 +16,7 @@ function ToastInfo:getSoundPath()
 end
 
 function ToastInfo:getColor()
-	return rgba(49, 112, 143, 0.8)
+	return {49, 112, 143, 0.8}
 end
 
 function ToastInfo:getDefaultTitle()

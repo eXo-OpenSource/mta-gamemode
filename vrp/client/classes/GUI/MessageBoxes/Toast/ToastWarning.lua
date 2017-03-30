@@ -16,7 +16,7 @@ function ToastWarning:getSoundPath()
 end
 
 function ToastWarning:getColor()
-	return rgba(138, 109, 59, 0.8)
+	return {138, 109, 59, 0.8}
 end
 
 function ToastWarning:getDefaultTitle()

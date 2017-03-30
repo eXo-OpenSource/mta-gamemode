@@ -27,6 +27,7 @@ function HUDRadar:constructor()
 	self.m_Blips = Blip.Blips
 	self.m_Areas = {}
 	self.m_Visible = false
+	self.m_InInterior = false
 	self.m_Enabled = core:get("HUD", "showRadar", true)
 	if self.m_DesignSet == RadarDesign.Default then
 		setPlayerHudComponentVisible("radar", self.m_Enabled)
@@ -84,10 +85,16 @@ end
 
 function HUDRadar:hide()
 	self.m_Visible = false
+
+	-- Recalc shortmessage positions
+	MessageBoxManager.recalculatePositions()
 end
 
 function HUDRadar:show()
 	self.m_Visible = true
+
+	-- Recalc shortmessage positions
+	MessageBoxManager.recalculatePositions()
 end
 
 function HUDRadar:updateMapTexture()
@@ -206,7 +213,10 @@ function HUDRadar:draw()
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
+		self.m_InInterior = true
 		return
+	else
+		self.m_InInterior = false
 	end
 
 	-- Draw the rectangle (the border)

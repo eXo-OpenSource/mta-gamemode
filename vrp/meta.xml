@@ -450,9 +450,10 @@
 	<script src="client/classes/GUI/MessageBoxes/WarningBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
 
-	<!-- Toast Notifications -->
+	<!-- Notifications -->
+	<script src="client/classes/GUI/MessageBoxes/MessageBoxManager.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastMessage.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastInfo.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/Toast/ToastWarning.lua" type="client"/>
