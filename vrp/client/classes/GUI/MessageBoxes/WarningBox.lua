@@ -7,6 +7,11 @@
 -- ****************************************************************************
 WarningBox = inherit(MessageBox)
 
+function WarningBox:new(...) -- Todo: remove later!
+	return ToastWarning:new(...)
+end
+
+
 function WarningBox:getImagePath()
 	return "files/images/MessageBoxes/Warning.png"
 end

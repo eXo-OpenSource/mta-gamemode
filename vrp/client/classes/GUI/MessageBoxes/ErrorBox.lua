@@ -7,6 +7,10 @@
 -- ****************************************************************************
 ErrorBox = inherit(MessageBox)
 
+function ErrorBox:new(...) -- Todo: remove later!
+	return ToastError:new(...)
+end
+
 function ErrorBox:getImagePath()
 	return "files/images/MessageBoxes/Error.png"
 end
