@@ -78,6 +78,7 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+	
 end
 
 function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz) 

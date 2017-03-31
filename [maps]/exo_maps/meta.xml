@@ -14,8 +14,7 @@
 
 	<!--<map src="fun/boxarena.map" />/-->
 
-	<map src="fraktionen/army_base.map" />
-	<map src="fraktionen/army_area.map" />
+	<map src="fraktionen/army.map" />
 	<map src="fraktionen/army_lsbase.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
@@ -27,7 +26,8 @@
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
-
+	<map src="fraktionen/vatos.map" />
+	<map src="fraktionen/yaku-neu.map" dimension="0" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/rescue.map" />
