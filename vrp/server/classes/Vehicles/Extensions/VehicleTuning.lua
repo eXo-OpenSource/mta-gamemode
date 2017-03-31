@@ -17,6 +17,8 @@ function VehicleTuning:constructor(vehicle, tuningJSON)
 		self:createNew()
 	end
 	VehicleTuning.Map[self.m_Vehicle] = self
+
+	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end)
 end
 
 function VehicleTuning:getJSON()
@@ -50,9 +52,17 @@ function VehicleTuning:applyTuning()
 
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
-	if #self.m_Tuning["Texture"] > 3 then
-		if not self.m_Vehicle.m_IsURLTexture then
-			self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
+	--{"vehiclegrunge256" = "files/images/...", "..." = "files/images/..."}
+	if not self.m_Vehicle.m_IsURLTexture then
+		if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
+			local texture = self.m_Tuning["Texture"]
+			self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
+		end
+
+		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
+			if #texturePath > 3 then
+				self.m_Vehicle:setTexture(texturePath, textureName, true)
+			end
 		end
 	end
 end
@@ -67,7 +77,7 @@ function VehicleTuning:createNew()
 	self.m_Tuning["NeonColor"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
-	self.m_Tuning["Texture"] = ""
+	self.m_Tuning["Texture"] = {}
 end
 
 function VehicleTuning:saveTuning(type, data)
@@ -100,7 +110,9 @@ function VehicleTuning:loadTuningFromVehicle()
 	self:saveGTATuning()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
-	self.m_Tuning["Texture"] = self.m_Vehicle.m_Texture and self.m_Vehicle.m_Texture:getPath() or ""
+	if self.m_Vehicle.m_Texture then
+		self.m_Tuning["Texture"][self.m_Vehicle.m_Texture:getTextureName() or "vehiclegrunge256"] = self.m_Vehicle.m_Texture:getPath() or ""
+	end
 end
 
 function VehicleTuning:updateNeon()
@@ -158,4 +170,8 @@ function VehicleTuning:setSpecial(special)
 			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker)
 		end
 	end
+end
+
+function VehicleTuning:addTexture(texturePath, textureName)
+	self.m_Tuning["Texture"][textureName or "vehiclegrunge256"] = texturePath
 end

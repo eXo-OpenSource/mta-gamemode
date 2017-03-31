@@ -20,7 +20,7 @@ function ToastInfo:getColor()
 end
 
 function ToastInfo:getDefaultTitle()
-	return "Information"
+	return _"Information"
 end
 
 addEvent("toast:infoBox", true)
