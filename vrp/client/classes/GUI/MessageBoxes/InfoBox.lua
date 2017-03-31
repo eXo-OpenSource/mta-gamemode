@@ -7,6 +7,10 @@
 -- ****************************************************************************
 InfoBox = inherit(MessageBox)
 
+function InfoBox:new(...) -- Todo: remove later!
+	return ToastInfo:new(...)
+end
+
 function InfoBox:getImagePath()
 	return "files/images/MessageBoxes/Info.png"
 end
