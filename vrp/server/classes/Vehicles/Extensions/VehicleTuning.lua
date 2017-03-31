@@ -17,6 +17,8 @@ function VehicleTuning:constructor(vehicle, tuningJSON)
 		self:createNew()
 	end
 	VehicleTuning.Map[self.m_Vehicle] = self
+
+	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end)
 end
 
 function VehicleTuning:getJSON()

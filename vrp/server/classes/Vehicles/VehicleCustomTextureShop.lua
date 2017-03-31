@@ -146,8 +146,16 @@ function VehicleCustomTextureShop:setTexture(vehicle, url)
 	vehicle.m_IsURLTexture = false
 	setElementData(vehicle, "URL_PAINTJOB", false)
 
+	if not vehicle.m_Tunings then
+		vehicle.m_Tunings = VehicleTuning:new(self)
+	end
+
 	vehicle.m_Tunings:addTexture(url, "vehiclegrunge256")
 	vehicle.m_Tunings:applyTuning()
 end
 
-
+addEventHandler("texturePreviewRequestTextures", root, function(admin)
+	--Todo Change Query add admin query
+	local result = sql:queryFetch("SELECT * FROM ??_textureshop", sql:getPrefix()) --DEVELOP
+	client:triggerEvent("texturePreviewLoadTextures", result)
+end)
