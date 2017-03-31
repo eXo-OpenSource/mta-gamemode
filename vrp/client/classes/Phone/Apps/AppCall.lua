@@ -114,12 +114,17 @@ function MainActivity:constructor(app)
 	self:addNumpadButton("#", 3, 3)
 
 	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Player)
-	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-145, self.m_Tabs["Players"])
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.7)
 	self.m_PlayerListGrid:addColumn(_"Num.", 0.3)
+	GUILabel:new(10, 330, 50, 25, "Suche:", self.m_Tabs["Players"])
+	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
+	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
+
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+
 	self.m_TabPanel.onTabChanged = function(tabId)
 		if tabId == self.m_Tabs["Players"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
@@ -214,13 +219,25 @@ function MainActivity:ButtonCallPlayer_Click()
 
 end
 
+function MainActivity:searchPlayer()
+	self.m_PlayerListGrid:clear()
+
+	for number, numData in pairs(self.m_PhoneNumbers) do
+		if numData["OwnerType"] == "player" then
+			if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(numData["OwnerName"]), string.lower(self.m_PlayerSearch:getText())) then
+				local item = self.m_PlayerListGrid:addItem(numData["OwnerName"], tostring(number))
+				item.Owner = numData["OwnerName"]
+				item.Number = number
+			end
+		end
+	end
+end
+
 function MainActivity:Event_receivePhoneNumbers(list)
 	self.m_PhoneNumbers = list
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
-	local item
-	for index, key in pairs(grid) do
-		key:clear()
-	end
+
+	for index, key in pairs(grid) do key:clear() end
 	for number, numData in pairs(list) do
 		local item = grid[numData["OwnerType"]]:addItem(numData["OwnerName"], tostring(number))
 		item.Owner = numData["OwnerName"]
