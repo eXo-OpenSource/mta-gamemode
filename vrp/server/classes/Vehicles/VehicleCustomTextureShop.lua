@@ -6,8 +6,6 @@
 -- *
 -- ****************************************************************************
 VehicleCustomTextureShop = inherit(Singleton)
-addEvent("vehicleCustomTextureBuy", true)
-addEvent("vehicleCustomTextureAbbort", true)
 
 function VehicleCustomTextureShop:constructor()
 	self.m_Path = "http://picupload.pewx.de/textures/"
@@ -29,7 +27,11 @@ function VehicleCustomTextureShop:constructor()
         Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
 
-	--addEventHandler("vehicleCustomTextureBuy", root, bind(self.Event_vehicleTextureBuy, self))
+	addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview"}
+
+    addEventHandler("vehicleCustomTextureLoadPreview", root, bind(self.Event_texturePreview, self))
+
+	addEventHandler("vehicleCustomTextureBuy", root, bind(self.Event_vehicleTextureBuy, self))
     addEventHandler("vehicleCustomTextureAbbort", root, bind(self.Event_vehicleUpgradesAbort, self))
 end
 
@@ -80,13 +82,13 @@ end
 
 function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
     player:triggerEvent("vehicleCustomTextureShopEnter", vehicle or player:getPedOccupiedVehicle(), self.m_Path, self:getTextures(player, vehicle))
-
     vehicle:setFrozen(true)
     player:setFrozen(true)
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
+	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
 end
 
 function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
@@ -123,5 +125,29 @@ function VehicleCustomTextureShop:getTextures(player, vehicle)
 end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
-    self:closeFor(client, client:getOccupiedVehicle())
+   	local veh = client:getOccupiedVehicle()
+	self:setTexture(veh, veh.OldTexture)
+	self:closeFor(client, veh)
 end
+
+function VehicleCustomTextureShop:Event_texturePreview(url)
+	self:setTexture(source, url)
+end
+
+function VehicleCustomTextureShop:Event_vehicleTextureBuy(url)
+	--Todo Add Money Funcs/Checks
+	source.OldTexture = url
+
+	self:setTexture(source, url)
+	client:sendInfo("Textur gekauft!")
+end
+
+function VehicleCustomTextureShop:setTexture(vehicle, url)
+	vehicle.m_IsURLTexture = false
+	setElementData(vehicle, "URL_PAINTJOB", false)
+
+	vehicle.m_Tunings:saveTuning("Texture", url)
+	vehicle.m_Tunings:applyTuning()
+end
+
+

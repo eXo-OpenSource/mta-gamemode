@@ -107,12 +107,15 @@ function FactionState:constructor()
 			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 25};
 			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 25};
 			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 25};
-			{Vector3(97.468, 1942.034, 34.378), Vector3(0, 0, 19.822), 287, 34, 80};
-			{Vector3(161.950, 1935.313, 33.898), Vector3(0, 0, 0.349), 287, 34, 80};
+			{Vector3(104.15, 1900.93, 33.90), Vector3(0, 0, 19.822), 287, 34, 80};
+			{Vector3(162.32, 1932.98, 33.90), Vector3(0, 0, 0.349), 287, 34, 80};
 			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 80};
 			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 80};
-			{Vector3(384.456, 1961.135, 33.278), Vector3(0, 0, 266.788), 287, 34, 80};
-			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 80};
+			{Vector3(386.08, 1893.12, 33.48), Vector3(0, 0, 266.788), 287, 34, 80};
+			{Vector3(386.04, 2078.10, 33.68), Vector3(0, 0, 0), 287, 34, 80};
+			{Vector3(191.48, 2031.94, 33.68), Vector3(0, 0, 0), 287, 34, 80};
+
+
 		}
 	)
 
@@ -218,14 +221,19 @@ function FactionState:loadArmy(factionId)
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
-	local areaGate = Gate:new(971, Vector3(130.3, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(130.3, 1934.8, 13.7))
-	areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
-	areaGate:addCustomShapes(Vector3(134.93, 1927.58, 19.20), Vector3(135.27, 1941.85, 19.32))
+	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
+	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
+	areaGate.m_Gates[1]:setDoubleSided(true)
+	areaGate:addCustomShapes(Vector3(135.37, 1948.77, 19.38), Vector3(135.25, 1934.15, 19.25))
 	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
 
-	local areaGarage = Gate:new(7657, Vector3(208, 1875.90, 13.86), Vector3(0, 0, 180), Vector3(200, 1875.90, 13.86))
+
+	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
 	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
+
 
 end
 
