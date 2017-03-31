@@ -20,7 +20,7 @@ function ToastWarning:getColor()
 end
 
 function ToastWarning:getDefaultTitle()
-	return "Warning"
+	return _"Warnung"
 end
 
 addEvent("toast:warningBox", true)
