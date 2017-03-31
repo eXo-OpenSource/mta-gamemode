@@ -150,62 +150,6 @@ function ShortMessage:drawThis()
 	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
---[[
-function ShortMessage.resortPositions ()
-	for i = #ShortMessage.MessageBoxes, 1, -1 do
-		local obj = ShortMessage.MessageBoxes[i]
-		local prevObj = ShortMessage.MessageBoxes[i + 1]
-
-		if obj.m_Animation then
-			delete(obj.m_Animation)
-		end
-
-		if prevObj then
-			local y
-			if not prevObj.m_Animation then
-				y = prevObj.m_AbsoluteY
-			else
-				y = prevObj.m_Animation.m_TY
-			end
-			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
-		elseif not obj.m_AlphaFaded then
-			Animation.FadeAlpha:new(obj, 500, 0, 200)
-			if obj.m_Texture then
-				Animation.FadeAlpha:new(obj.m_Texture, 500, 0, 200)
-			end
-			obj.m_AlphaFaded = true
-		else
-			--if HUDRadar:getSingleton().m_Visible then
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-			--else
-				--obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 25 - obj.m_Height)
-			--end
-		end
-	end
-end
-
-function ShortMessage.recalculatePositions ()
-	for i = #ShortMessage.MessageBoxes, 1, -1 do
-		local obj = ShortMessage.MessageBoxes[i]
-		local prevObj = ShortMessage.MessageBoxes[i + 1]
-
-		if obj.m_Amination then
-			delete(obj.m_Amination)
-		end
-
-		if prevObj then
-			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, prevObj.m_Animation.m_TY - obj.m_Height - 5)
-		else
-			--if HUDRadar:getSingleton().m_Visible then
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-			--else
-			--	obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 5 - obj.m_Height)
-			--end
-		end
-	end
-end
---]]
-
 addEvent("shortMessageBox", true)
 addEventHandler("shortMessageBox", root,
 	function(text, title, tcolor, timeout, callback, onTimeout, ...)

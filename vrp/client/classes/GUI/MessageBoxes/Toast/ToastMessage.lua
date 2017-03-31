@@ -56,26 +56,6 @@ function ToastMessage:drawThis()
 	dxDrawText(self.m_Text, self.m_AbsoluteX + 60, self.m_AbsoluteY + 30, self.m_AbsoluteX + self.m_Width - 20, self.m_AbsoluteY + self.m_Height - 30 - 10, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
---[[
-function ToastMessage.resortPositions()
-	local radar = HUDRadar:getSingleton()
-	for i = #ToastMessage.Map, 1, -1 do
-		local toast = ToastMessage.Map[i]
-		local prevToast = ToastMessage.Map[i + 1]
-
-		if toast.m_Animation then
-			delete(toast.m_Animation)
-		end
-
-		if prevToast then
-			toast.m_Animation = Animation.Move:new(toast, 1000, toast.m_AbsoluteX, prevToast.m_Animation.m_TY - toast.m_Height - 5)
-		else
-			toast.m_Animation = Animation.Move:new(toast, 1000, toast.m_AbsoluteX, radar.m_PosY + radar.m_Height + 18 - toast.m_Height)
-		end
-	end
-end
---]]
-
 ToastMessage.getImagePath    = pure_virtual
 ToastMessage.getSoundPath    = pure_virtual
 ToastMessage.getColor        = pure_virtual
