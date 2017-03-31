@@ -121,6 +121,9 @@ function MainActivity:constructor(app)
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, FontAwesomeSymbols.Plus, self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
+
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
@@ -130,7 +133,6 @@ function MainActivity:constructor(app)
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
 		end
 	end
-
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
@@ -217,6 +219,23 @@ function MainActivity:ButtonCallPlayer_Click()
 	--triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
 	triggerServerEvent("callStart", root, player, false)
 
+end
+
+function MainActivity:ButtonAddContact_Click()
+	local item = self.m_PlayerListGrid:getSelectedItem()
+	local playerContacts = fromJSON(core:get("ContactList", "Players", "[ [ ] ]"))
+
+	for _, contact in pairs(playerContacts) do
+		if contact[1] == item.Owner then
+			ErrorBox:new("Kontakt ist bereits in der Kontaktliste!")
+			return
+		end
+	end
+
+	if item.Owner and item.Number then
+		table.insert(playerContacts, {tostring(item.Owner), item.Number})
+		core:set("ContactList", "Players", toJSON(playerContacts))
+	end
 end
 
 function MainActivity:searchPlayer()

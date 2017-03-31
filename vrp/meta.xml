@@ -640,6 +640,7 @@
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
 	<script src="client/classes/Phone/AppActivity.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppContacts.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
@@ -837,6 +838,7 @@
 	<vrpfile src="files/images/Phone/iPhone.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>

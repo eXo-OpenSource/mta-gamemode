@@ -19,16 +19,15 @@ function Phone:constructor()
 	self.m_CurrentApp = false
 
 	-- Register apps
-	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(AppCall)
 	self:registerApp(AppSettings)
+	self:registerApp(AppContacts)
+	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	--self:registerApp(AppNametag)
-
-	-- Register web apps
+	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
 	--self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
-	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppAmmunation)
 	self:registerApp(AppBank)
 	self:registerApp(PhoneApp.makeWebApp("Snake",  "IconSnake.png", ("https://exo-reallife.de/ingame/vRPphone/webApps/snake/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
