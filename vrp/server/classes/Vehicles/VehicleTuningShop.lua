@@ -190,7 +190,11 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             end
         else
 			--outputChatBox(slot..": "..tostring(upgradeId))
-			vehicle.m_Tunings:saveTuning(slot, upgradeId)
+			if slot ~= "Texture" then
+				vehicle.m_Tunings:saveTuning(slot, upgradeId)
+			else
+				vehicle.m_Tunings:addTexture(upgradeId, "vehiclegrunge256")
+			end
         end
     end
 	vehicle.m_Tunings:saveGTATuning()

@@ -146,7 +146,7 @@ function VehicleCustomTextureShop:setTexture(vehicle, url)
 	vehicle.m_IsURLTexture = false
 	setElementData(vehicle, "URL_PAINTJOB", false)
 
-	vehicle.m_Tunings:saveTuning("Texture", url)
+	vehicle.m_Tunings:addTexture(url, "vehiclegrunge256")
 	vehicle.m_Tunings:applyTuning()
 end
 
