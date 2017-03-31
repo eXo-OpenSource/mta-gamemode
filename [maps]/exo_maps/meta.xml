@@ -27,7 +27,7 @@
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
 	<map src="fraktionen/vatos.map" />
-
+	<map src="fraktionen/yaku-neu.map" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/rescue.map" />
@@ -62,7 +62,7 @@
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
 	<map src="gangwar.map" />
-	<map src="yaku-neu.map" />
+
 	<map src="tankstellen_removals.map" />
 
 	<map src="stadthalle.map" />
