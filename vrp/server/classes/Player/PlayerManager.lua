@@ -53,6 +53,7 @@ function PlayerManager:constructor()
 	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
 	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
+	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -77,6 +78,26 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+	
+end
+
+function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz) 
+	if getElementDimension(source) > 0 or getElementInterior(source) > 0 then return end
+	local slot = getSlotFromWeapon(weapon)
+	if slot > 2 and slot <= 6 and weapon ~= 23 then 
+		local area = getZoneName(sx,sy,sz)
+		if area then 
+			if not self.m_AreaDistrictShoots then 
+				self.m_AreaDistrictShoots = {}
+			end
+			local lastoutput = self.m_AreaDistrictShoots[area] or 0 
+			local tick = getTickCount() 
+			if lastoutput+50000 <=  tick then 
+				self.m_AreaDistrictShoots[area] = tick
+				source:districtChat("Schüsse ertönen durch die Gegend! (("..area.."))")
+			end
+		end
+	end
 end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
@@ -155,6 +176,13 @@ function PlayerManager:Event_OnWasted()
 		setElementHealth(source.ped_deadDouble, 20)
 		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
 		setElementAlpha(source,0)
+	end
+	local inv = source:getInventory()
+	if inv then
+		if inv:getItemAmount("Diebesgut") > 0 then
+			inv:removeAllItem("Diebesgut")
+			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+		end
 	end
 end
 
@@ -324,8 +352,11 @@ function PlayerManager:playerQuit()
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
 	if source.ped_deadDouble then
-		destroyElement(source.ped_deadDouble)
+		if isElement(source.ped_deadDouble) then
+			destroyElement(source.ped_deadDouble)
+		end
 	end
+	VehicleManager:getSingleton():destroyUnusedVehicles( source )
 end
 
 function PlayerManager:Event_playerReady()
@@ -768,7 +799,7 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getRegistrationDate(), target:getPaNote(),
+		target:getRegistrationDate(), target:getPaNote(), target:getSTVO(),
 		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
 	)
 end

@@ -57,6 +57,8 @@ function GroupHouseRob:constructor()
 		setElementCollisionsEnabled ( sellvehicle, false)
 		setVehicleColor(sellvehicle, 100,100, 100,100,100,100)
 		setElementFrozen(sellvehicle,true)
+		setVehicleLocked(sellvehicle, true)
+		setVehicleDamageProof(sellvehicle,true)
 		ped:setData("Ped:Name", pedName)
 		ped:setData("Ped:greetText", greetText)
 		setElementData(ped, "Ped:fakeNameTag", pedName)
@@ -83,7 +85,7 @@ function GroupHouseRob:Event_OnSellAccept()
 				inv:removeAllItem("Diebesgut")
 				client:giveMoney(pay, "Verkauf von Diebeswaren",false)
 				client:meChat(true, "streckt seine Hand aus und nimmt einen Umschlag mit Scheinen entgegen!")
-				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäfft komm wieder wenn du mehr hast!")
+				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäft. Komm wieder wenn du mehr hast!")
 			end
 		end
 	end
@@ -113,11 +115,11 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 				if thiefItems > 0 then 
 					player:meChat(true, "nickt mit dem Kopf.")
 					player.m_ClickPed = source
-					player:sendPedChatMessage( source:getData("Ped:Name"), "lass mich sehen!")
+					player:sendPedChatMessage( source:getData("Ped:Name"), "Lass mich mal sehen!")
 					player:triggerEvent("showHouseRobSellGUI")
 				else 
 					player:meChat(true, "schüttelt den Kopf.")
-					player:sendPedChatMessage( source:getData("Ped:Name"), "hmm... Komm wieder wenn du etwas hast!")
+					player:sendPedChatMessage( source:getData("Ped:Name"), "Hmm... Komm wieder wenn du etwas hast!")
 				end
 			end
 		end
@@ -127,29 +129,31 @@ end
 function GroupHouseRob:startNewRob( house, player ) 
 	if player then 
 		local group = player:getGroup() 
-		if group:getType() == "Gang" then 
-			if not self.m_GroupsRobbed[group] then 
-				self.m_GroupsRobbed[group] = 0
-			end
-			if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then 
-				if not self.m_HousesRobbed[house] then
-					local tick = getTickCount()
-					if not self.m_GroupsRobCooldown[group] then 
-						self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
-					end
-					if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
-						self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
-						self.m_GroupsRobCooldown[group]  = tick
-						self.m_HousesRobbed[house] = true
-						return true
+		if group then
+			if group:getType() == "Gang" then 
+				if not self.m_GroupsRobbed[group] then 
+					self.m_GroupsRobbed[group] = 0
+				end
+				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then 
+					if not self.m_HousesRobbed[house] then
+						local tick = getTickCount()
+						if not self.m_GroupsRobCooldown[group] then 
+							self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
+						end
+						if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
+							self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
+							self.m_GroupsRobCooldown[group]  = tick
+							self.m_HousesRobbed[house] = true
+							return true
+						else 
+							outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						end
 					else 
-						outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
 					end
 				else 
-					outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
+					outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
 				end
-			else 
-				outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
 			end
 		end
 	end 

@@ -54,6 +54,17 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 			end
 		end
 	)
+
+	--Liberty City Mapfix
+	if self.m_Interior == 1 then
+		local door1 = createObject ( 3089, -792.09998, 497.20001, 1367.9 )
+		local door2 = createObject ( 3089, -790.59998, 497.20001, 1365.3, 0, 180, 0 )
+		door1:setInterior(self.m_Interior)
+		door1:setDimension(self.m_Dimension)
+		door2:setInterior(self.m_Interior)
+		door2:setDimension(self.m_Dimension)
+	end
+
 end
 
 function GroupProperty:destructor()

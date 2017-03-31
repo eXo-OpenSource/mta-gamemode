@@ -21,7 +21,7 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
-
+	self.m_DownloadCallBack = bind(self.Event_OnFinishDownloadImage, self)
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -122,6 +122,11 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 		player.m_InVehicle = self
 	end
+	if self.m_HasBeenUsed then
+		if self.m_HasBeenUsed == 0 then
+			self.m_HasBeenUsed = 1
+		end
+	end
 end
 
 function Vehicle:onPlayerExit(player, seat)
@@ -141,12 +146,13 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
-		player.m_SeatBelt = false 
+		player.m_SeatBelt = false
 		setElementData(player,"isBuckeled", false)
 		if self.m_HandBrake then
 			local ground = isVehicleOnGround( self )
 			if ground then
-				setElementFrozen( self, true)
+				setElementFrozen(self, true)
+				setVehicleDoorOpenRatio(self, 2, 0, 350)
 			else
 				self.m_HandBrake = false
 				self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -434,7 +440,23 @@ end
 
 function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
-		self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+
+		local isPng = string.find(texturePath,".png")
+		local isJpg = string.find(texturePath,".jpg")
+		local isHttp = string.find(texturePath,"http://")
+		if isHttp == nil then
+			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+		elseif isHttp then
+			fetchRemote ( texturePath, self.m_DownloadCallBack,  "", false, force, texturePath, textureName )
+		end
+	end
+end
+
+function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
+	if errNo == 0 then
+		self.m_IsURLTexture = true
+		setElementData(self,"URL_PAINTJOB", true)
+		self.m_Texture = VehicleTexture:new(self, rData , textureName, force, true, tUrl)
 	end
 end
 

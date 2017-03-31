@@ -184,9 +184,27 @@ function VehicleTuningGUI:updatePrices()
             -- Get price from price table
             local price = getVehicleUpgradePrice(upgradeId)
             -- If no price is available, search for the part price instead
-            if not price then
-                price = getVehicleUpgradePrice(slot)
-            end
+			if not price then
+				price = getVehicleUpgradePrice(slot)
+				if not price then 
+					price = 0
+				else 
+					if not tonumber(price) then 
+						price = 0
+					end
+				end
+			else 
+				if not tonumber(price) then
+					price = getVehicleUpgradePrice(slot)
+					if not price then 
+						price = 0
+					else 
+						if not tonumber(price) then 
+							price = 0
+						end	
+					end
+				end
+			end
             if slot == VehicleSpecialProperty.Neon and upgradeId == 1 then price = 0 end
 
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
@@ -219,16 +237,35 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
     end
 
     -- Get price from price table
-    local price = getVehicleUpgradePrice(info)
+    local price =  getVehicleUpgradePrice(info)
     -- If no price is available, search for the part price instead
     if not price then
-        price = getVehicleUpgradePrice(partId)
+		price = getVehicleUpgradePrice(partId)
+		if not price then 
+			price = 0
+		else 
+			if not tonumber(price) then 
+				price = 0
+			end
+		end
+	else 
+		if not tonumber(price) then
+			price = getVehicleUpgradePrice(partId)
+			if not price then 
+				price = 0
+			else 
+				if not tonumber(price) then 
+					price = 0
+				end
+			end
+		end
     end
+	--[[
     -- Standard parts are free
     if info == 0 then
         price = 0
     end
-
+	]]
     if partId == VehicleSpecialProperty.Neon and info == 1 then
         price = 0
         partName = "Neon-Ausbau"
@@ -379,7 +416,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
                 "Select Texture",
-                {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
+                {"None", _"Line", _"DiagonalRally", _"RallyStripes", _"ZebraStripes"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
 					TextureReplace.deleteFromElement(self.m_Vehicle)

@@ -116,8 +116,8 @@ function InventoryManager:Event_c_setItemPlace(bag, oldPlace, newPlace)
 end
 
 
-function InventoryManager:Event_throwItem(item, bag, id, place)
-	self:getPlayerInventory(client):throwItem(item, bag, id, place)
+function InventoryManager:Event_throwItem(item, bag, id, place, name)
+	self:getPlayerInventory(client):throwItem(item, bag, id, place, name)
 end
 
 function InventoryManager:Event_refreshInventory()

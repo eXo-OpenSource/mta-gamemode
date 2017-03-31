@@ -285,16 +285,16 @@ function Player:initialiseBinds()
 	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then  if not DONT_BUCKLE[getElementModel(vehicle)] then player:buckleSeatBelt(vehicle) end  end end)
 end
 
-function Player:buckleSeatBelt(vehicle) 
-	if self.m_SeatBelt then 
-		self.m_SeatBelt = false 
+function Player:buckleSeatBelt(vehicle)
+	if self.m_SeatBelt then
+		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
 		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
-	elseif vehicle == getPedOccupiedVehicle(self) then 
+	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
 		outputChatBox("Du schnallst dich an.", self, 200,200,0)
-	else 
+	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
 		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
@@ -421,7 +421,7 @@ function Player:spawn( )
 
 	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
-		if not self:getData("isInDeathMatch") then 
+		if not self:getData("isInDeathMatch") then
 			self:setReviveWeapons()
 		end
 		killPed(self)
@@ -473,7 +473,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	FactionState:getSingleton():uncuffPlayer( self )
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
-	if isElement(self.ped_deadDouble) then 
+	if isElement(self.ped_deadDouble) then
 		destroyElement(self.ped_deadDouble)
 	end
 end
@@ -482,13 +482,13 @@ function Player:clearReviveWeapons()
 	self.m_ReviveWeapons = false
 end
 
-function Player:dropReviveWeapons() 
+function Player:dropReviveWeapons()
 	self:destroyDropWeapons()
-	if self.m_ReviveWeapons then 
+	if self.m_ReviveWeapons then
 		self.m_WorldObjectWeapons =  {}
 		local obj, weapon, ammo, model, x, y, z, dim, int
 		for i = 1, 12 do
-			if self.m_ReviveWeapons[i] then	
+			if self.m_ReviveWeapons[i] then
 				x,y,z = getElementPosition(self)
 				int = getElementInterior(self)
 				dim = getElementDimension(self)
@@ -499,7 +499,7 @@ function Player:dropReviveWeapons()
 				if model then
 					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
 						obj = createPickup(x,y,z-0.5, 3, model, 1 )
-						if obj then 
+						if obj then
 							setElementDoubleSided(obj,true)
 							setElementDimension(obj, dim)
 							setElementInterior(obj, int)
@@ -516,10 +516,10 @@ function Player:dropReviveWeapons()
 	end
 end
 
-function Player:destroyDropWeapons() 
-	if self.m_WorldObjectWeapons then 
+function Player:destroyDropWeapons()
+	if self.m_WorldObjectWeapons then
 		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] then 
+			if self.m_WorldObjectWeapons[i] then
 				destroyElement(self.m_WorldObjectWeapons[i])
 			end
 		end
@@ -527,10 +527,10 @@ function Player:destroyDropWeapons()
 end
 
 function Player:Event_onPlayerReviveWeaponHit( player )
-	if player then 
+	if player then
 		local weapon = source:getData("weaponId")
 		local ammo = source:getData("ammoInWeapon")
-		if weapon and ammo then 
+		if weapon and ammo then
 			player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
 			player:triggerEvent("onTryPickupWeapon", source)
 		end
@@ -540,14 +540,14 @@ end
 function Player:setReviveWeapons()
 	self.m_ReviveWeapons = {}
 	local weaponInSlot, ammoInSlot
-	for i = 1, 12 do 
+	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
 		ammoInSlot = getPedTotalAmmo(self, i )
 		self.m_ReviveWeapons[i] = {weaponInSlot, ammoInSlot}
 	end
 end
 
-function Player:giveReviveWeapons() 
+function Player:giveReviveWeapons()
 	if self.m_ReviveWeapons then
 		for i = 1, 12 do
 			if self.m_ReviveWeapons[i] then
@@ -555,7 +555,7 @@ function Player:giveReviveWeapons()
 			end
 		end
 		return true
-	else 
+	else
 		return false
 	end
 end
@@ -766,12 +766,14 @@ end
 
 function Player:startAFK()
 	self.m_AFKStartTime = getTickCount()
+	self.m_isAFK = true
 end
 
 function Player:endAFK()
 	self:setAFKTime() -- Set CurrentAFKTime
 	self.m_AFKStartTime = 0
 	self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
+	self.m_isAFK = false
 end
 
 function Player:getPlayTime()
@@ -936,6 +938,8 @@ function Player:getPlayersInChatRange( irange)
 		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
+	elseif irange == 3 then 
+		range = CHAT_DISTRICT_RANGE 
 	end
 	local pos = self:getPosition()
 	local playersInRange = {}
@@ -1113,12 +1117,12 @@ function Player:districtChat(...)
 	end
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = self:getPlayersInChatRange( 2 )
+	local playersToSend = self:getPlayersInChatRange( 3 )
 	local receivedPlayers = {}
 	local message = ("%s"):format(text)
-	local systemText = "✪" 
+	local systemText = "✪"
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 205,146,10)
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index],192, 196, 194)
 		if playersToSend[index] ~= self then
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end

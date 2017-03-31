@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Inventory/Inventory.lua
--- *  PURPOSE:     Inventory Class
+-- *  PURPOSE:     Inventory - Class
 -- *
 -- ****************************************************************************
 Inventory = inherit(Object)
@@ -64,7 +64,7 @@ function Inventory:destructor()
 	self.m_Bag = nil
 	InventoryManager:getSingleton():deleteInventory(self.m_Owner)
 end
-
+ 
 function Inventory:syncClient()
 	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
 end
@@ -163,13 +163,17 @@ function Inventory:saveItemPlace(id, place)
 	self:syncClient()
 end
 
+function Inventory:saveItemValue(id, value)
+	sql:queryExec("UPDATE ??_inventory_slots SET Value =? WHERE id = ?", sql:getPrefix(), value, id )
+	self:syncClient()
+end
 function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id= ?", sql:getPrefix(), id )
 	self:syncClient()
 end
 
-function Inventory:insertItem(amount, item, place, bag)
-	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag ) -- ToDo add Prefix
+function Inventory:insertItem(amount, item, place, bag, value)
+	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, self:getItemValueByBag(bag,place) or "" ) -- ToDo add Prefix
 	return sql:lastInsertId()
 end
 
@@ -263,9 +267,33 @@ end
 function Inventory:setItemValueByBag( bag, place, value )
 	if bag then 
 		if place then 
-			self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+			local id = self:getItemID(bag, place)
+			if id then 
+				self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+				self:saveItemValue(id, value)
+			end
 		end
 	end
+end
+
+function Inventory:getItemPlacesByName(item) 
+	local placeTable = {}
+	if self.m_ItemData[item] then
+		local bag = self.m_ItemData[item]["Tasche"]
+		local amount = 0
+		local places = self:getPlaces(bag)
+		for place = 0, places, 1 do
+			local id = self.m_Bag[bag][place]
+			if id then
+				if self.m_Items[id]["Objekt"] == item then
+					placeTable[#placeTable+1] = {place, bag}
+				end
+			end
+		end
+	else
+		outputDebugString("[INV] Unglültiges Item: "..item)
+	end
+	return placeTable
 end
 
 function Inventory:removeItemFromPlace(bag, place, amount)
@@ -294,6 +322,7 @@ function Inventory:removeItemFromPlace(bag, place, amount)
 		self.m_Items[id] = nil
 		self.m_Bag[bag][place] = nil
 	end
+	self:syncClient()
 end
 
 function Inventory:getMaxItemAmount(item)
@@ -485,8 +514,9 @@ function Inventory:getItemIdFromName(item)
 	end
 end
 
-function Inventory:throwItem(item, bag, id, place)
-	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,item))
+function Inventory:throwItem(item, bag, id, place, name)
+	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
+	self.m_Owner:meChat(true, "zerstört "..name.."!")
 	self:removeItemFromPlace(bag, place)
 end
 
@@ -511,7 +541,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function Inventory:giveItem(item, amount)
+function Inventory:giveItem(item, amount, value)
 	checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
@@ -544,8 +574,9 @@ function Inventory:giveItem(item, amount)
 			elseif placeType == "new" then
 				if amount > 0 then
 				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(amount, item, place, bag)
+					local lastId = self:insertItem(amount, item, place, bag, value or "")
 					self:loadItem(lastId)
+					self:setItemValueByBag(bag,place, value or "")
 					return true
 				end
 			end

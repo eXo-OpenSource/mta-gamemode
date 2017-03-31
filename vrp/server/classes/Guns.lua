@@ -18,16 +18,25 @@ function Guns:constructor()
 		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage","Guns:toggleWeapon"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-
+	addEventHandler("Guns:toggleWeapon", root, bind(self.Event_ToggleWeapon, self))
+	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
 
+
 function Guns:destructor()
 
+end
+
+function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
+	local slot = getSlotFromWeapon(cw)
+	if slot >= 2 and slot <= 6 then
+		giveWeapon(source, cw, 0)
+	end
 end
 
 function Guns:Event_onTaser(target)
@@ -76,6 +85,62 @@ function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
 
 end
 
+function Guns:Event_ToggleWeapon( oldweapon )
+	if oldweapon then 
+		if client then 
+			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end 
+			local slot = getSlotFromWeapon(oldweapon) 
+			if client.m_WeaponStorage[slot] then
+				local weaponInStorage, ammoInStorage = unpack(client.m_WeaponStorage[slot])
+				if getSlotFromWeapon(weaponInStorage) == slot then
+					if weaponInStorage and ammoInStorage then
+						client.m_WeaponStorage[slot] = {oldweapon, getPedTotalAmmo(client,slot)}
+						giveWeapon(client, weaponInStorage, ammoInStorage, true)
+						if weaponInStorage == 23 then 
+							client:meChat(true, "zieht seinen Taser.")
+							setTimer(setPedAnimation, 1000, 1, client, false)
+						end
+						setPedAnimation(client, "shop", "shp_gun_threat", 500, false, false, false)
+					end
+				end
+			end
+		end
+	end
+end
+
+function Guns:setWeaponInStorage(player, weapon, ammo)
+	if weapon and player then 
+		if not player.m_WeaponStorage then 
+			player.m_WeaponStorage = {}
+		end
+		player.m_WeaponStorage[getSlotFromWeapon(weapon)] = {weapon, ammo}
+		setElementData(player, "hasSecondWeapon", true)
+	else 
+		for i = 1,10 do 
+			player.m_WeaponStorage[i] = {false, false}
+			setElementData(player, "hasSecondWeapon", false)
+		end
+	end
+end
+
+function Guns:getWeaponInStorage( player, slot)
+	if player and slot then 
+		if not player.m_WeaponStorage then 
+			player.m_WeaponStorage = {}
+			return false, false
+		end
+		if player.m_WeaponStorage then 
+			if not player.m_WeaponStorage[slot] then 
+				return false, false
+			end
+			local weaponInStorage, ammoInStorage = unpack(player.m_WeaponStorage[slot])
+			if weaponInStorage and ammoInStorage then 
+				return weaponInStorage, ammoInStorage
+			end
+		end
+	end
+	return false, false
+end
 
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	local armor = getPedArmor ( player )

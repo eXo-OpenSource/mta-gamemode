@@ -518,9 +518,16 @@ function getVehicleUpgradeNameFromID(upgradeId)
 end
 
 function getVehicleUpgradePrice(upgradeId)
-	local price = VEHICLE_UPGRADE_PRICES[upgradeId] or 0
-	price = price/4 -- Special Price
-	return math.floor(price)
+	local price = VEHICLE_UPGRADE_PRICES[upgradeId]
+	if price then
+		if tonumber(price) then
+			return math.floor(price)
+		else
+			return price
+		end
+	else
+		return price
+	end
 end
 
 function countLineBreaks(text)
@@ -734,3 +741,20 @@ end
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
+
+-- GTA SA workaround, isVehicleOnGround return always false for some vehicles
+local vehicles = {
+	[573] = true, -- Dune
+	[444] = true, -- Monster
+	[556] = true, -- Monster 2
+	[557] = true, -- Monster 3
+}
+local _isVehicleOnGround = isVehicleOnGround
+function isVehicleOnGround(vehicle)
+	if isElement(vehicle) and vehicles[vehicle:getModel()] then
+		return vehicle.velocity.length == 0
+	else
+		return _isVehicleOnGround(vehicle)
+	end
+end
+function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end

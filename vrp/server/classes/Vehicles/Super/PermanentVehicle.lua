@@ -97,6 +97,15 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self:setMileage(mileage)
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+
+	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
+		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
+		if row and row.Special > 0 then
+			self.m_Tunings:saveTuning("Special", row.Special)
+			self.m_Tunings:applyTuning()
+		end
+	end
+	self.m_HasBeenUsed = 0
 end
 
 function PermanentVehicle:destructor()
@@ -128,52 +137,7 @@ function PermanentVehicle:isPremiumVehicle()
 	return self.m_Premium
 end
 
-function PermanentVehicle:setSpecial(special)
-  self.m_Special = special
-  self:setData("Special", special, true)
-  if special == VehicleSpecial.Soundvan then
-    if self:getModel() == 535 then
-      self.speakers = {}
-      self.speakers["Left"] = createObject(2229, 0, 0, 0)
-      self.speakers["Right"] = createObject(2229, 0, 0, 0)
-      self.speakers["Middle"] = createObject(1841, 0, 0, 0)
-      self.speakers["Middle"]:setScale(1.5)
 
-      self.speakers["Left"]:attach(self, -0.3, -1.5, 0, -55, 0, 0)
-      self.speakers["Right"]:attach(self, 1, -1.5, 0, -55, 0, 0)
-      self.speakers["Middle"]:attach(self, 0, -0.8, 0.4, 0, 0, 90)
-
-      for index, element in pairs(self.speakers) do
-        element:setCollisionsEnabled(false)
-      end
-
-      local refreshSpeaker = function()
-        for index, element in pairs(self.speakers) do
-          if isElement(self) then
-            element:setDimension(self:getDimension())
-            element:setInterior(self:getInterior())
-            if self.m_SoundURL then
-              triggerClientEvent("soundvanChangeURLClient", source, self.m_SoundURL)
-            end
-          else
-            element:destroy()
-            if self.m_SoundURL then
-              triggerClientEvent("soundvanStopSoundClient", self, url)
-            end
-          end
-        end
-      end
-
-      refreshSpeaker()
-
-      addEventHandler("onElementDimensionChange", self, refreshSpeaker)
-      addEventHandler("onElementInteriorChange", self, refreshSpeaker)
-      addEventHandler("onVehicleExplode", self, refreshSpeaker)
-      addEventHandler("onVehicleRespawn", self, refreshSpeaker)
-      addEventHandler("onElementDestroy", self, refreshSpeaker)
-    end
-  end
-end
 
 function PermanentVehicle:isPermanent()
   return true

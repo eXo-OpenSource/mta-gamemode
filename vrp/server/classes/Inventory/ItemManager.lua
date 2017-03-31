@@ -42,7 +42,7 @@ function ItemManager:constructor()
 		["Monster"] = ItemAlcohol,
 		["Shot"] = ItemAlcohol,
 		["Cuba-Libre"] = ItemAlcohol,
-		
+
 		--//Wearables
 		["Helm"] = WearableHelmet,
 		["Motorcross-Helm"] = WearableHelmet,
@@ -51,6 +51,7 @@ function ItemManager:constructor()
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
+		["Kleidung"] = WearableClothes,
 	}
 
 	self.m_Properties = {
@@ -58,7 +59,8 @@ function ItemManager:constructor()
 }
 	self.m_SpecialItems = {
 		["Mautpass"] = true,
-		["Kanne"] = true
+		["Kanne"] = true,
+		["Donutbox"] = true
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

@@ -7,6 +7,10 @@
 -- ****************************************************************************
 SuccessBox = inherit(MessageBox)
 
+function SuccessBox:new(...) -- Todo: remove later!
+	return ToastSuccess:new(...)
+end
+
 function SuccessBox:getImagePath()
 	return "files/images/MessageBoxes/Success.png"
 end

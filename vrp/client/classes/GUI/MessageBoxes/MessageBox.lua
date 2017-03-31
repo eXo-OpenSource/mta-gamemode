@@ -21,7 +21,7 @@ function MessageBox:constructor(text, timeout)
 		end
 	else
 		timeout = 5000
-	end	
+	end
 	setTimer(function() delete(self) end, timeout, 1)
 	playSound(self:getSoundPath())
 

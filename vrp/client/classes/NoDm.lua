@@ -78,6 +78,7 @@ function NoDm:setPlayerNoDm(state)
 		setElementData(localPlayer, "no_driveby", false)
 		setElementData(localPlayer,"schutzzone",false)
 		self:toggleNoDmImage(false)
+		localPlayer.m_FireToggleOff = false
 	end
 end
 
