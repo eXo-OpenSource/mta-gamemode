@@ -121,7 +121,7 @@ function MainActivity:constructor(app)
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, FontAwesomeSymbols.Plus, self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
 	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
 
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
