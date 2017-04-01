@@ -155,17 +155,17 @@ factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,18.6)
 
 -- ID 6 = Yakuza
 factionRankNames[6] = {
-[0] = "Oyabun",
-[1] = "Saiko-Kamon",
-[2] = "Wakagashira",
-[3] = "Shateigashira",
-[4] = "Shingiin",
-[5] = "Kyodai",
-[6] = "Shatei"
+[0] = "Aonisai",
+[1] = "Menba",
+[2] = "Kaikei",
+[3] = "Shingiin",
+[4] = "Shateigashira",
+[5] = "Kobun",
+[6] = "Oyabun"
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
-factionSkins[6] = {[49]=true, [57]=true, [59]=true, [120]=true, [122]=true, [123]=true, [141]=true,[60]=true,[58]=true}
+factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true}
 factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3( 2628.33, -2089.01, 14.06)
 factionWTDestination[6] = Vector3( 2414.66, -2087.64, 13.43)
