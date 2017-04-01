@@ -17,7 +17,7 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
-		self:loadLCNGates(5)
+		self:loadYakGates(6)
 	end)
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
@@ -142,7 +142,7 @@ function FactionEvil:onDepotClicked(button, state, player)
 	end
 end
 
-function FactionEvil:loadLCNGates(factionId)
+function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(980, Vector3(2423.81640625,-2089.4482421875,14.677430152893), Vector3(0, 0, 270), Vector3(2423.81640625,-2089.4482421875,8.928430557251))
 	for index, gate in pairs(lcnGates) do
