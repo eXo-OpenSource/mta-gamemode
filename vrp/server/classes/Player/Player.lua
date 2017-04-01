@@ -289,15 +289,12 @@ function Player:buckleSeatBelt(vehicle)
 	if self.m_SeatBelt then
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
 	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
-		outputChatBox("Du schnallst dich an.", self, 200,200,0)
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
 	end
 end
 
@@ -938,8 +935,8 @@ function Player:getPlayersInChatRange( irange)
 		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
-	elseif irange == 3 then 
-		range = CHAT_DISTRICT_RANGE 
+	elseif irange == 3 then
+		range = CHAT_DISTRICT_RANGE
 	end
 	local pos = self:getPosition()
 	local playersInRange = {}

@@ -898,6 +898,7 @@
 	<vrpfile src="files/images/Speedo/main.png"/>
 	<vrpfile src="files/images/Speedo/main_aviation.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
+	<vrpfile src="files/images/Speedo/seatbelt.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
