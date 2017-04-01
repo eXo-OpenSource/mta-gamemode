@@ -50,7 +50,12 @@ function ConfigXML:_open()
 			self.m_Root = xmlCreateFile(self.m_File, "config")
 		else
 			self.m_Root = xmlLoadFile(self.m_File)
-			assert(self.m_Root, "ConfigXML - Cannot load config file")
+			--assert(self.m_Root, "ConfigXML - Cannot load config file")
+
+			if not self.m_Root then
+				outputDebugString(("Config '%s' is corrupted. Recreate."):format(self.m_File))
+				self.m_Root = xmlCreateFile(self.m_File, "config")
+			end
 		end
 	end
 end
