@@ -131,7 +131,7 @@ factionRankNames[4] = {
 	[6] = "Commissioner"
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
-factionCarColors[4] = {["r"] = 255, ["g"] = 0, ["b"] = 0, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
+factionCarColors[4] = {["r"] = 255, ["g"] = 255, ["b"] = 255, ["r1"] = 178, ["g1"] = 35, ["b1"] = 33}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
 
