@@ -80,6 +80,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
 	["eventMenu"] = RANK.Moderator,
+	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
