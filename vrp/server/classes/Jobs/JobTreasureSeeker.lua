@@ -157,7 +157,6 @@ end
 
 function JobTreasureSeeker:loadTreasure(player)
 	local x, y = math.random(JobTreasureSeeker.Positions[1][1], JobTreasureSeeker.Positions[2][1]), math.random(JobTreasureSeeker.Positions[1][2], JobTreasureSeeker.Positions[2][2])
-	--Blip:new("Waypoint.png", x, y) --dev
 
 	local colShape = createColCircle(x, y, 25)
 	colShape.DummyObject = createObject(1337, x, y, -20)
@@ -194,35 +193,7 @@ function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 	end
 end
 
-
 JobTreasureSeeker.Positions = {
 	{450, -2552},
 	{877, -2111},
 }
-
---[[JobTreasureSeeker.Positions = {
-{704.25, -2086.15},
-{755.26, -2154.51},
-{749.63, -2241.94},
-{744.62, -2387.58},
-{774.53, -2578.14},
-{591.42, -2620.96},
-{452.14, -2563.62},
-{459.06, -2429.85},
-{779.61, -2429.75},
-{828.55, -2652.89},
-{817.14, -2764.52},
-{839.84, -2874.39},
-{924.68, -2970.34},
-{480.00, -2176.58},
-{381.62, -2208.21},
-{271.31, -2292.53},
-{316.23, -2436.88},
-{440.58, -2503.98},
-{631.95, -2421.31},
-{753.67, -2532.05},
-{785.35, -2634.72},
-{788.39, -2758.76},
-{836.83, -2857.83}
-}
-]]
