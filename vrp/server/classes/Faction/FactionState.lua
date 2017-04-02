@@ -707,7 +707,7 @@ function FactionState:Command_stvo(player,cmd,target,amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
 		if amount and amount >= 1 and amount <= 6 then
-			local reason = table.concat({...})
+			local reason = table.concat({...}, " ")
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if string.len(reason) > 2 and string.len(reason) < 50 then

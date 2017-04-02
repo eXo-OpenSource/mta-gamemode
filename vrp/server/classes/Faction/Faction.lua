@@ -175,10 +175,14 @@ function Faction:addPlayer(playerId, rank)
 	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
-		player:giveAchievement(68)
 		player:setFaction(self)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
+		end
+
+		player:giveAchievement(68) -- Parteiisch
+		if self.m_Name_Short == "SAPD" then
+			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")

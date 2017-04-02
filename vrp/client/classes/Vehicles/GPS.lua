@@ -63,6 +63,15 @@ function GPS:Event_retrieveRoute(nodes)
 		return
 	end
 
+	-- Remove colshapes (Probably a workaround)
+	for k, colshape in pairs(self.m_WaypointCols) do
+		destroyElement(colshape)
+	end
+	self.m_WaypointCols = {}
+
+	-- Kill recalculation timer (Probably a workaround)
+	if isTimer(self.m_TimerRecalculate) then killTimer(self.m_TimerRecalculate) end
+
 	 -- Unserialise vectors
 	self.m_Nodes = table.map(nodes, normaliseVector)
 

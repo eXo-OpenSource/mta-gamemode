@@ -28,7 +28,7 @@ function PolicePanel:constructor()
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
+	self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
 
 	self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
 
@@ -68,7 +68,7 @@ function PolicePanel:constructor()
 	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
+	self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
 
 	self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
 
@@ -137,10 +137,18 @@ function PolicePanel:constructor()
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
-	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
+end
+
+function PolicePanel:virtual_destructor()
+	delete(self.m_Skin)
+	delete(self.m_FactionLogo)
+	delete(self.m_FactionLogo2)
+	delete(self.m_JailSkin)
+	delete(self.m_WantedRules)
 end
 
 function PolicePanel:TabPanel_TabChanged(tabId)
