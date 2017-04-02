@@ -28,7 +28,10 @@ function ItemManager:constructor()
 		["Donutbox"] = ItemDonutBox,
 
 		["Wuerfel"] = ItemDice,
-		["Angelrute"] = ItemFishingrod,
+		["Angelrute"] = ItemFishing,
+		["Kleine Kühltasche"] = ItemFishing,
+		["Kühltasche"] = ItemFishing,
+		["Kühlbox"] = ItemFishing,
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,

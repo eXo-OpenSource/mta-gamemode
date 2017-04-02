@@ -129,8 +129,33 @@ end
 function Fishing:FishCaught()
 	if not self.m_Players[client] then return end
 	local tbl = self.m_Players[client]
+	local size = math.random(tbl.lastFish.size[1], tbl.lastFish.size[2])
 
-	outputChatBox(("Caught: %s [%s]"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit))
+	--outputChatBox(("Caught: %s [%s] // Size: %s"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit, size))
+
+	-- todo....
+	local playerInventory = client:getInventory()
+	if playerInventory:getItemAmount("Kleine Kühltasche") > 0 then
+
+	elseif playerInventory:getItemAmount("Kühltasche") > 0 then
+
+	elseif playerInventory:getItemAmount("Kühlbox") > 0 then
+		local place = playerInventory:getItemPlacesByName("Kühlbox")[1][1]
+		local fishName = tbl.lastFish.name
+
+		local currentValue = playerInventory:getItemValueByBag("Items", place)
+
+		if fromJSON(currentValue) then
+			currentValue = fromJSON(currentValue)
+		else
+			currentValue = {}
+		end
+
+		table.insert(currentValue, {fishName, size})
+		playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
+	else
+		client:sendError("Du besitzt keine Kühltasche/box, in der du deine Fische lagern kannst!")
+	end
 end
 
 function Fishing:onPedClick()
