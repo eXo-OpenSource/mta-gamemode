@@ -53,16 +53,16 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	end
 end
 
-function DxElement:destructor()
+function DxElement:destructor(keepParent)
 	if self.onHide then self:onHide() end
 
 	-- Delete the children (--> call their destructor)
 	for k, v in ipairs(self.m_Children) do
-		delete(v)
+		delete(v, true)
 	end
 
 	-- Unlink from parent
-	if self.m_Parent then
+	if not keepParent and self.m_Parent then
 		for k, v in ipairs(self.m_Parent.m_Children) do
 			if v == self then
 				table.remove(self.m_Parent.m_Children, k)
