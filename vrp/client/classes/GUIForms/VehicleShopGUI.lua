@@ -105,7 +105,7 @@ function VehicleShopGUI:Event_VehicleBought()
 		setElementCollidableWith(self.m_BuyVehicle,vehicle,false)
 	end
 	setTimer(bind(VehicleShopGUI.setColBack,self),15000,1,self.m_BuyVehicle)
-	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
+	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!")
 end
 
 function VehicleShopGUI:setColBack()
