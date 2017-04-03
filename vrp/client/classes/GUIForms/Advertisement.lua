@@ -9,7 +9,7 @@
 AdvertisementBox = inherit(GUIForm)
 inherit(Singleton, AdvertisementBox)
 
-addRemoteEvents{"showAd", "closeAd"}
+addRemoteEvents{"showAd", "closeAd", "closeAdvertisementBox"}
 
 function AdvertisementBox:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.24/2, screenWidth*0.4, screenHeight*0.24)
@@ -46,7 +46,7 @@ function AdvertisementBox:constructor()
 
 	self.m_SubmitButton = VRPButton:new(self.m_Width*0.64, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.15, _"Werbung schalten", true, self.m_Window):setBarColor(Color.Green)
 
-	self.m_SubmitButton.onLeftClick = function() delete(self) triggerServerEvent("sanNewsAdvertisement", localPlayer, self.m_SenderNameChanger:getIndex(), self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex()) end
+	self.m_SubmitButton.onLeftClick = function() triggerServerEvent("sanNewsAdvertisement", localPlayer, self.m_SenderNameChanger:getIndex(), self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex()) end
 	self:calcCosts()
 end
 
@@ -101,6 +101,12 @@ addEventHandler("closeAd", root, function()
 		delete(currentAd)
 	end
 end)
+
+addEventHandler("closeAdvertisementBox", root,
+	function()
+		delete(AdvertisementBox:getSingleton())
+	end
+)
 --[[
 Advertisement = inherit(GUIForm)
 inherit(Singleton, Advertisement)
