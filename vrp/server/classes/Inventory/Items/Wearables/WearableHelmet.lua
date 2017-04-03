@@ -33,7 +33,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 	if not player.m_IsWearingHelmet and not player.m_Helmet then --// if the player clicks onto the helmet without currently wearing one
 		if isElement(player.m_Helmet) then 
 			destroyElement(player.m_Helmet)
-		end
+		end 
 		local x,y,z = getElementPosition(player)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
