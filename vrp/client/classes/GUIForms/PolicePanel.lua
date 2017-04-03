@@ -28,7 +28,7 @@ function PolicePanel:constructor()
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
+	self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
 
 	self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
 
@@ -37,25 +37,30 @@ function PolicePanel:constructor()
 	self.m_PlayerCompanyLabel = GUILabel:new(320, 200, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
 	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
 	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
+	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
 
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
 
-	self.m_StopLocateBtn = GUIButton:new(320, 275, 250, 30, "Orten beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange)
-	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
-
-	self.m_LocatePlayerBtn = GUIButton:new(320, 310, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
+	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 125, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green):setFontSize(1)
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
 
-	self.m_AddWantedsBtn = GUIButton:new(320, 345, 250, 30, "Wanteds geben", self.m_TabSpieler)
+	self.m_StopLocateBtn = GUIButton:new(450, 305, 125, 30, "Ortung beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
+
+	self.m_AddWantedsBtn = GUIButton:new(320, 340, 125, 30, "Wanteds geben", self.m_TabSpieler):setFontSize(1)
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
 
-
-	self.m_DeleteWantedsBtn = GUIButton:new(320, 380, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
+	self.m_DeleteWantedsBtn = GUIButton:new(450, 340, 125, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
 	end
+
+	self.m_AddSTVOBtn = GUIButton:new(320, 375, 125, 30, "STVO-Punkte geben", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_AddSTVOBtn.onLeftClick = function() self:giveSTVO("give") end
+	self.m_SetSTVOBtn = GUIButton:new(450, 375, 125, 30, "STVO-Punkte setzen", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_SetSTVOBtn.onLeftClick = function() self:giveSTVO("set") end
 
 	self.m_TabJail = self.m_TabPanel:addTab(_"Knast")
 
@@ -63,7 +68,7 @@ function PolicePanel:constructor()
 	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
+	self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
 
 	self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
 
@@ -132,7 +137,7 @@ function PolicePanel:constructor()
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
-	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
@@ -285,6 +290,7 @@ function PolicePanel:onSelectPlayer(player)
 	local phone = "Ausgeschaltet"
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
+	self.m_STVO:setText(_("STVO-Punkte: %d", player:getSTVO()))
 
 	self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
@@ -370,21 +376,36 @@ function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
 	if item then
 		local player = item.player
-		GiveWantedBox:new(player)
+		GiveWantedSTVOBox:new(player, 1, 6, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end
 end
 
-GiveWantedBox = inherit(GUIForm)
+function PolicePanel:giveSTVO(action)
+	local item = self.m_PlayersGrid:getSelectedItem()
+	if item then
+		local player = item.player
+		if action == "give" then
+			GiveWantedSTVOBox:new(player, 1, 6, "STVO-Punkte geben", function(player, amount, reason) triggerServerEvent("factionStateGiveSTVO", localPlayer, player, amount, reason) end)
+		elseif action == "set" then
+			GiveWantedSTVOBox:new(player, 0, 20, "STVO-Punkte setzen", function(player, amount, reason) triggerServerEvent("factionStateSetSTVO", localPlayer, player, amount, reason) end)
+		end
+	else
+		ErrorBox:new(_"Kein Spieler ausgewählt!")
+	end
+end
 
-function GiveWantedBox:constructor(player)
+
+GiveWantedSTVOBox = inherit(GUIForm)
+
+function GiveWantedSTVOBox:constructor(player, min, max, title, callback)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s Wanteds geben", player:getName()), true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, "Anzahl:", self.m_Window)
 	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
-	for i = 1, 6 do
+	for i = min, max do
 		self.m_Changer:addItem(tostring(i))
 	end
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
@@ -392,7 +413,7 @@ function GiveWantedBox:constructor(player)
 	self.m_SubmitButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
 	self.m_SubmitButton.onLeftClick =
 	function()
-		triggerServerEvent("factionStateGiveWanteds", localPlayer, player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
+		callback(player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
 		delete(self)
 	end
 end

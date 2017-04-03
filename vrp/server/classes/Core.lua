@@ -83,6 +83,7 @@ function Core:constructor()
 		SkinShops:new()
 		--Deathmatch:new() Not finished
 		VehicleTuningShop:new()
+		--VehicleCustomTextureShop:new()
 		DimensionManager:new()
 		ActorManager:new()
 		InteriorManager:new()
@@ -138,7 +139,7 @@ function Core:constructor()
 		GangwarStatistics:new()
 		--SprayWallManager:new()
 		GroupHouseRob:new()
-		
+
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

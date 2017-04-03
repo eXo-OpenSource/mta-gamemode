@@ -27,7 +27,7 @@ local QUESTIONS =
 	{"Was ist in der STVO verboten?","rechts abbiegen","gemütlich fahren","hupen","Burn-outs (Räder durchdrehen)",4,4},
 	{"Was machen Sie bei einem Unfall?", "Ich bleibe stehen und kläre den Sachverhalt", "Ich fahre einfach weiter", "Ich beschimpfe den Unfallgegner",nil,4,1},
 	{"Was machen Sie wenn ein Streifenwagen Sie auffordert anzuhalten?","langsam weiter fahren","schneller Fahren","rechts anhalten","ignorieren",4,3},
-	{"Wie verhalten Sie sich bei einer Verkehrkontrolle?","höflich gegenüber dem Beamten","mit wüsten Beschimpfungen","Waffengebrauch","Ich laufe weg",4,1},
+	{"Wie verhalten Sie sich bei einer Verkehrskontrolle?","höflich gegenüber dem Beamten","mit wüsten Beschimpfungen","Waffengebrauch","Ich laufe weg",4,1},
 	{"Was machen Sie wenn ein Beamter Sie auffordert Ihren Führerschein zu zeigen?","Ich lehne ab","Ich zeige ihm den Führerschein",nil,nil,4,2},
 }
 

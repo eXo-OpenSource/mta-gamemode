@@ -98,13 +98,13 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 		if cWeapon ~= 34 then 
 			toggleControl("fire",true)
 			if localPlayer.m_FireToggleOff then 
-				if localPlayer.m_LastSniperShot+3000 <= getTickCount() then
+				if localPlayer.m_LastSniperShot+6000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
 				end
 			end
 		else 
 			if localPlayer.m_FireToggleOff then 
-				if localPlayer.m_LastSniperShot+3000 >= getTickCount() then
+				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
 					toggleControl("fire",false)
 				else 
 					localPlayer.m_FireToggleOff = false
@@ -157,7 +157,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				setTimer(function()  
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
-				end, 3000,1)
+				end, 6000,1)
 			end
 		end
 	end
@@ -287,16 +287,18 @@ function Guns:toggleFastShot(bool)
 end
 
 function Guns:checkSwitchWeapon(b, p) 
-	if b == "v" and  not p and getKeyState("mouse2") then 
+	if b == "x" and  not p and getKeyState("mouse2") then 
 		local weapon = getPedWeapon(localPlayer)
 		local now = getTickCount()
-		if self.m_LastWeaponToggle + 4000 <= now then
-			if TOGGLE_WEAPONS[weapon] then 
-				self.m_LastWeaponToggle = getTickCount()
-				triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
+		if getElementData(localPlayer, "hasSecondWeapon") then
+			if self.m_LastWeaponToggle + 4000 <= now then
+				if TOGGLE_WEAPONS[weapon] then 
+					self.m_LastWeaponToggle = getTickCount()
+					triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
+				end
+			else 
+				outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
 			end
-		else 
-			outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
 		end
 	end
 end

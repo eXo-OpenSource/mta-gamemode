@@ -51,6 +51,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", 10, 270, 250, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", 10, 310, 250, 30, Color.Blue, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
@@ -68,6 +69,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
+
+
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -517,6 +520,9 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "eventMenu" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
+	elseif func == "vehicleTexture" then
+		--self:close()
+		--TexturePreviewGUI:getSingleton():open()
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then

@@ -27,7 +27,7 @@ build_app_job:
     - rm -rf vrp_assets
   artifacts:
     name: "$CI_BUILD_NAME"
-    expire_in: 3 days
+    expire_in: 2 days
     paths:
       - artifacts.tar.gz
       - assets.tar.gz

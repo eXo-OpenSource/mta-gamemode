@@ -60,10 +60,13 @@ FontAwesomeSymbols = {
 	SoundOn = "",
 	Mail = "",
 	Gamepad = "",
-	Suitcase = ""
+	Suitcase = "",
+	Minus = "",
+	Plus = "",
 }
 
 Fonts = {
 	EkMukta = "files/fonts/EkMukta.ttf",
-	Digital = "files/fonts/digital-7.ttf"
+	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
+	Digital = "files/fonts/digital-7.ttf",
 }

@@ -141,6 +141,15 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/Wearables/riot_shield.dff",1631)
 	self:loadImportCOL("filEs/models/Wearables/riot_shield.col",1631)
 
+	-- Army Fence 1
+	self:loadImportTXD("files/models/a51fencing.txd", 16094)
+	self:loadImportDFF("files/models/a51fencing.dff", 16094)
+	self:loadImportCOL("filEs/models/a51fencing.col", 16094)
+
+	-- Army Fence 2
+	self:loadImportTXD("files/models/a51fencing.txd", 974)
+	self:loadImportDFF("files/models/a51fensin.dff", 974)
+	self:loadImportCOL("filEs/models/a51fensin.col", 974)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
@@ -172,3 +181,4 @@ function CustomModelManager:loadShader(filePath, textureName)
 	dxSetShaderValue(shader, "gTexture", texture)
 	engineApplyShaderToWorldTexture(shader, textureName)
 end
+

@@ -42,6 +42,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
+	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
@@ -52,7 +53,6 @@ function LocalPlayer:constructor()
 
 
 	self.m_CancelEvent = function()	cancelEvent() end
-
 end
 
 function LocalPlayer:destructor()
@@ -75,38 +75,20 @@ function LocalPlayer:getRank()
 	return self.m_Rank
 end
 
+function LocalPlayer:Event_PreRender() 
+    local tx, ty, tz = getWorldFromScreenPosition(screenWidth / 2, screenHeight / 2, 10)
+	if tx and ty and tz then
+		setPedLookAt(localPlayer, tx, ty, tz, -1, 0) 
+	end
+end
+
 function LocalPlayer:Event_onGetTime( realtime )
 	setTime(realtime.hour, realtime.minute)
 	setMinuteDuration(60000)
 end
 
 function LocalPlayer:checkWeaponAim() 
-	local bSniper = getPedWeapon(localPlayer) == 34 
-	if bSniper then 
-		if isPedAiming(localPlayer) then
-			if not localPlayer.m_HasScopedIn then 
-				localPlayer.m_HasScopedIn = true 
-				localPlayer.m_IsFading = true 
-				fadeCamera(false,0.5,0,0,0)
-				setTimer(self.m_FadeOut, 500,1)
-			end
-		else 
-			localPlayer.m_HasScopedIn = false
-			if localPlayer.m_IsFading then 
-				fadeCamera(true,0.5)
-				localPlayer.m_IsFading = false
-			end
-		end
-	else 
-		localPlayer.m_HasScopedIn = false
-		if localPlayer.m_IsFading then 
-			fadeCamera(true,0.5)
-			localPlayer.m_IsFading = false
-		end
-	end
-	if localPlayer.m_IsFading then 
-		dxDrawRectangle(0,0,screenWidth, screenHeight,tocolor(0,0,0,255))
-	end
+
 end
 
 function LocalPlayer:fadeOutScope() 

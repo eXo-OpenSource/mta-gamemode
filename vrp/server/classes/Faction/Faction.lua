@@ -35,7 +35,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
-	self.m_Depot = Depot.load(depotId, self)
+	self.m_Depot = Depot.load(depotId, self, "faction")
 
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
@@ -63,6 +63,10 @@ function Faction:isStateFaction()
 		return true
 	end
 	return false
+end
+
+function Faction:setDepotId(Id)
+	self.m_Depot = Depot.load(Id, self, "faction")
 end
 
 function Faction:isRescueFaction()
@@ -171,10 +175,14 @@ function Faction:addPlayer(playerId, rank)
 	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
-		player:giveAchievement(68)
 		player:setFaction(self)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
+		end
+
+		player:giveAchievement(68) -- Parteiisch
+		if self.m_Name_Short == "SAPD" then
+			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")

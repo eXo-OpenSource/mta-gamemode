@@ -289,15 +289,16 @@ function Player:buckleSeatBelt(vehicle)
 	if self.m_SeatBelt then
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
 	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
-		outputChatBox("Du schnallst dich an.", self, 200,200,0)
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	end
+
+	if self.vehicle then
+		self:sendShortMessage(_("Du hast dich %sgeschnallt!", self, self.m_SeatBelt and "an" or "ab"))
 	end
 end
 
@@ -938,6 +939,8 @@ function Player:getPlayersInChatRange( irange)
 		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
+	elseif irange == 3 then
+		range = CHAT_DISTRICT_RANGE
 	end
 	local pos = self:getPosition()
 	local playersInRange = {}
@@ -1115,12 +1118,12 @@ function Player:districtChat(...)
 	end
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = self:getPlayersInChatRange( 2 )
+	local playersToSend = self:getPlayersInChatRange( 3 )
 	local receivedPlayers = {}
 	local message = ("%s"):format(text)
 	local systemText = "✪"
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 205,146,10)
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index],192, 196, 194)
 		if playersToSend[index] ~= self then
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end

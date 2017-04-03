@@ -42,6 +42,9 @@ BeggarHelpPhrases = {
 	{ -- Type: Transport
 		"Du da! Ich hab kein Geld für ein Taxi! Kannst du mich fahren?"
 	};
+	{ -- Type: Weed
+		"Hast du Weed? Ich zahle einen guten Preis!"
+	};
     { -- Type: Ecstasy
 		"Hey! Bock auf nen Ecstasy Trip?"
 	};

@@ -262,6 +262,7 @@
 	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleHarbor.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleTuningShop.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleCustomTextureShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
@@ -451,7 +452,15 @@
 	<script src="client/classes/GUI/MessageBoxes/WarningBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
+
+	<!-- Notifications -->
+	<script src="client/classes/GUI/MessageBoxes/MessageBoxManager.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/Toast/ToastMessage.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/Toast/ToastInfo.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/Toast/ToastWarning.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
@@ -544,6 +553,7 @@
 	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleCustomTextureGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
@@ -596,7 +606,8 @@
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
-
+	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -632,6 +643,7 @@
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
 	<script src="client/classes/Phone/AppActivity.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppContacts.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
@@ -823,10 +835,15 @@
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Error.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Success.png" onDemand="false"/>
+	<vrpfile src="files/images/MessageBoxes/Toast/info.png"/>
+	<vrpfile src="files/images/MessageBoxes/Toast/warning.png"/>
+	<vrpfile src="files/images/MessageBoxes/Toast/error.png" />
+	<vrpfile src="files/images/MessageBoxes/Toast/success.png"/>
 	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
 	<vrpfile src="files/images/Phone/iPhone.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
@@ -840,6 +857,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconYouTube.png"/>
@@ -851,6 +869,14 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconBank.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
+
+	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/iOS_10.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Nexus.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Xperia_Z3.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/Xperia_X.png"/>
+	<vrpfile src="files/images/Phone/Backgrounds/OnePlus_3T.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
@@ -877,6 +903,7 @@
 	<vrpfile src="files/images/Speedo/main.png"/>
 	<vrpfile src="files/images/Speedo/main_aviation.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
+	<vrpfile src="files/images/Speedo/seatbelt.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
@@ -1133,6 +1160,8 @@
 	<vrpfile src="files/images/Nametag/premium.png"/>
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
+	<vrpfile src="files/images/Nametag/MBT.png"/>
+
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
@@ -1281,6 +1310,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/helm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/crosshelmet.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/bikerhelmet.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/einsatzhelm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
@@ -1393,6 +1423,17 @@
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton2.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton3.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton4.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton5.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton6.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton7.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton8.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton9.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton10.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton11.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton12.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton13.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton14.mp3"/>
 
 	<!-- GoJump -->
 	<vrpfile src="files/audio/GoJump/jump.wav" />
@@ -1587,6 +1628,11 @@
 	<vrpfile src="files/models/FishingRod.col"/>
 	<vrpfile src="files/models/topfun.txd"/>
 	<vrpfile src="files/models/topfun.dff"/>
+	<vrpfile src="files/models/a51fencing.col"/>
+	<vrpfile src="files/models/a51fencing.dff"/>
+	<vrpfile src="files/models/a51fencing.txd"/>
+	<vrpfile src="files/models/a51fensin.col"/>
+	<vrpfile src="files/models/a51fensin.dff"/>
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
@@ -1628,6 +1674,7 @@
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
