@@ -20,9 +20,10 @@ function InventoryManager:constructor()
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptItemTrade", "acceptWeaponTrade", "declineTrade","syncAfterChange"}
+	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "onPlayerSecondaryItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptItemTrade", "acceptWeaponTrade", "declineTrade","syncAfterChange"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
+	addEventHandler("onPlayerSecondaryItemUseServer", root, bind(self.Event_onItemSecondaryUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))
 	addEventHandler("throwItem", root, bind(self.Event_throwItem, self))
 	addEventHandler("c_setItemPlace", root, bind(self.Event_c_setItemPlace, self))
@@ -33,7 +34,7 @@ function InventoryManager:constructor()
 	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
 	--/workaround/
 	addEventHandler("syncAfterChange", root, bind(self.Event_syncAfterChange, self))
-	
+
 	WearableManager:new()
 end
 
@@ -103,7 +104,10 @@ end
 
 function InventoryManager:Event_onItemUse(itemid, bag, itemName, place, delete)
 	self:getPlayerInventory(client):useItem(itemid, bag, itemName, place, delete)
+end
 
+function InventoryManager:Event_onItemSecondaryUse(itemid, bag, itemName, place)
+	self:getPlayerInventory(client):useItemSecondary(itemid, bag, itemName, place)
 end
 
 function InventoryManager:Event_c_stackItems(newId, oldId, oldPlace)

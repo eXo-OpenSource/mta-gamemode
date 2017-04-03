@@ -258,9 +258,11 @@ function Inventory:addItemEvents(item)
 			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)
 		end
 	end
+
 	item.onUnhover = function()
 		item:setColor(Inventory.Color.ItemBackground)
 	end
+
 	item.onLeftClick = function()
 		if item.Item then
 			local itemName = item.ItemName
@@ -280,6 +282,13 @@ function Inventory:addItemEvents(item)
 					outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
 				end
 			end
+		end
+	end
+
+	item.onRightClick = function()
+		if item.Item then
+			local itemName = item.ItemName
+			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
 		end
 	end
 end
