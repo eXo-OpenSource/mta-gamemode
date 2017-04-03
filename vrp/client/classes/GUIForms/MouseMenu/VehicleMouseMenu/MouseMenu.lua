@@ -204,6 +204,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
+	if #element.occupants > 0 then
+		self:addItem(_"Insassen >>>",
+			function()
+				if self:getElement() then
+					delete(self)
+					ClickHandler:getSingleton():addMouseMenu(PassengerMouseMenu:new(posX, posY, element), element)
+				end
+			end
+		)
+	end
 
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
