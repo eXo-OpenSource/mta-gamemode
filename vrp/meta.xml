@@ -1301,6 +1301,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/helm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/crosshelmet.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/bikerhelmet.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/einsatzhelm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />

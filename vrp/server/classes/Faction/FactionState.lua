@@ -229,7 +229,7 @@ function FactionState:loadArmy(factionId)
 
 
 	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
-	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
+	areaGarage:addCustomShapes(Vector3(277.25, 1821.42, 17.67), Vector3( 290.66, 1821.49, 17.64))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 
 	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
@@ -959,6 +959,11 @@ function FactionState:Event_FactionRearm()
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
 		client:setHealth(100)
 		client:setArmor(100)
+		local inv = client:getInventory()
+		if inv then 
+			inv:removeAllItem("Einsatzhelm")
+			inv:giveItem("Einsatzhelm",1)
+		end
 	end
 end
 
@@ -980,6 +985,7 @@ function FactionState:Event_toggleDuty(wasted)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():removeAllItem("Nagel-Band")
 			client:getInventory():removeAllItem("Blitzer")
+			client:getInventory():removeAllItem("Einsatzhelm")
 			faction:updateStateFactionDutyGUI(client)
 			Guns:getSingleton():setWeaponInStorage(client, false, false)
 		else
@@ -993,10 +999,12 @@ function FactionState:Event_toggleDuty(wasted)
 			client:setHealth(100)
 			client:setArmor(100)
 			takeAllWeapons(client)
+			Guns:getSingleton():setWeaponInStorage(client, false, false)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():giveItem("Barrikade", 10)
+			client:getInventory():giveItem("Einsatzhelm", 1)
 			client:triggerEvent("showFactionWeaponShopGUI")
 			faction:updateStateFactionDutyGUI(client)
 		end

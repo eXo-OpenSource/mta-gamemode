@@ -143,14 +143,6 @@ function PolicePanel:constructor()
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
 end
 
-function PolicePanel:virtual_destructor()
-	delete(self.m_Skin)
-	delete(self.m_FactionLogo)
-	delete(self.m_FactionLogo2)
-	delete(self.m_JailSkin)
-	delete(self.m_WantedRules)
-end
-
 function PolicePanel:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabJail.TabIndex then
 		triggerServerEvent("factionStateLoadJailPlayers", root)
