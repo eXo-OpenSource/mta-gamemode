@@ -21,7 +21,20 @@ function ItemFishing:use(player, itemId, bag, place, itemName)
 		return
 	end
 
-	local value = fromJSON(client:getInventory():getItemValueByBag("Items", place))
+	if itemName == "Köder" then
+		player:sendError("Du kannst den Köder so nicht benutzen.") --todo?!
+		return
+	end
+
+	local value = fromJSON(player:getInventory():getItemValueByBag("Items", place))
 	player:triggerEvent("closeInventory")
 	player:triggerEvent("showCoolingBag", itemName, value)
+end
+
+function ItemFishing:useSecondary(player, itemId, bag, place, itemName)
+	if itemName == "Angelrute" then
+		player:triggerEvent("closeInventory")
+		player:triggerEvent("showFishingRodGUI")
+		return
+	end
 end

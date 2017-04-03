@@ -32,6 +32,7 @@ function ItemManager:constructor()
 		["Kleine Kühltasche"] = ItemFishing,
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
+		["Köder"] = ItemFishing,
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,

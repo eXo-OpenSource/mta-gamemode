@@ -190,6 +190,7 @@ SHOP_ITEMS = {
 		["Kleine Kühltasche"] = 50,
 		["Kühltasche"] = 100,
 		["Kühlbox"] = 250,
+		["Köder"] = 2,
 	};
 }
 
