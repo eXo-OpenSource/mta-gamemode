@@ -10,20 +10,21 @@ addCommandHandler("fw", function(player)
 	warpPedIntoVehicle(player, truck)
 	
 	main = createObject(1932, truck:getPosition())
-	main:setCollisionsEnabled(false)
+	
+	--main:setCollisionsEnabled(false)
 	main:attach(truck, 0, 0.5, 1.1)
 
 	ladder1 = createObject(1931, truck:getPosition())
-	ladder1:setCollisionsEnabled(false)
+	--ladder1:setCollisionsEnabled(false)
 	ladder1:attach(main, 0, 0, 0)
 	
 	ladder2 = createObject(1931, truck:getPosition())
-	ladder2:setCollisionsEnabled(false)
+	--ladder2:setCollisionsEnabled(false)
 	ladder2:attach(ladder1, 0, -1.4, 0.2)
 	ladder2:setScale(0.8)
 	
 	ladder3 = createObject(1931, truck:getPosition())
-	ladder3:setCollisionsEnabled(false)
+	--ladder3:setCollisionsEnabled(false)
 	ladder3:attach(ladder2, 0, -1, 0.2)
 	ladder3:setScale(0.6)
 	

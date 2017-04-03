@@ -101,6 +101,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		end
 	end
 
+	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
+		FactionRescue:getSingleton():onLadderTruckSpawn(self)
+	end
+
 end
 
 function FactionVehicle:destructor()

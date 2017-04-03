@@ -106,6 +106,13 @@ function CustomModelManager:constructor()
 	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
 
+	self:loadImportTXD("files/models/fire_ledder.txd", 1931)
+	self:loadImportDFF("files/models/fire_ledder.dff", 1931)
+	self:loadImportCOL("files/models/fire_ledder.col", 1931)
+
+	self:loadImportTXD("files/models/fire_main.txd", 1932)
+	self:loadImportDFF("files/models/fire_main.dff", 1932)
+	self:loadImportCOL("files/models/fire_main.col", 1932)
 
 	-- Helmet FullFace
 	self:loadImportTXD("files/models/Wearables/helmet.txd", 2052)
