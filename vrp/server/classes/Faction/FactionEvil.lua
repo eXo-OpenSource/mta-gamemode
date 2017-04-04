@@ -161,7 +161,7 @@ function FactionEvil:onBarrierGateHit(player, gate)
 end
 
 function FactionEvil:Event_StartRaid(target)
-	if client:getFaction() and client:getFaction():isEvilFaction() then
+	if client:getFaction() and client:getFaction():isEvilFaction() and target and target:isLoggedIn() then
 		if not target:isFactionDuty() and not target:isCompanyDuty() then
 			if client.vehicle then
 				client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
