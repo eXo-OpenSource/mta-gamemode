@@ -66,12 +66,35 @@ function TaskMove:isSyncer(player)
 	return self.m_Syncer == player
 end
 
+function TaskMove:getSyncPackage()
 
-addEvent("someEVENT", true)
-addEventHandler("someEVENT", root,
-    function()
+end
+
+function TaskMove:getPlayers() -- Todo: Improve
+	return getElementsByType("player")
+end
+
+function TaskMove:updateSync(package)
+
+end
+
+function TaskMove:sendToPlayers(action)
+	return triggerClientEvent(instance:getPlayers(), "Actor:TaskMove->UpdateActor", action)
+end
+
+
+addEvent("Actor:TastMove->Sync", true)
+addEventHandler("Actor:TastMove->Sync", root,
+    function(package)
         if not instanceof(source, Actor) then
             return
         end
+
+		if source:getPrimaryTaskClass() == TaskMove then
+			local instance = source:getPrimaryTask()
+			if instance:isSyncer(client) then -- is he the syncer?
+				instance:updateSync(package)
+			end
+		end
     end
 )
