@@ -31,7 +31,7 @@ BeggarPositions = {
 
 }
 
-BeggarPhraseTypes = {Help = 1, Thanks = 2, NoHelp = 3, Rob = 4}
+BeggarPhraseTypes = {Help = 1, Thanks = 2, NoHelp = 3, Rob = 4, Decline = 5}
 BeggarHelpPhrases = {
 	{ -- Type: Money
 		"Ey du! Haste mal nen Euro?";
@@ -41,6 +41,9 @@ BeggarHelpPhrases = {
 	};
 	{ -- Type: Transport
 		"Du da! Ich hab kein Geld für ein Taxi! Kannst du mich fahren?"
+	};
+	{ -- Type: Weed
+		"Hast du Weed? Ich zahle einen guten Preis!"
 	};
     { -- Type: Ecstasy
 		"Hey! Bock auf nen Ecstasy Trip?"
@@ -73,6 +76,13 @@ BeggarRobPhrases = {
 	"Ich habe eh schon nichts. Und da willst du mir noch mehr nehmen?"
 }
 
+BeggarDeclinePhrases = {
+	"Ne, da will ich nicht mit!",
+	"Das kostet bestimmt Geld. Zieh ab!",
+	"Abgelehnt.",
+	"Ich habs mir anders überlegt.",
+}
+
 BeggarTransportPositions = {
 	Vector3(1481.20, -1763.65, 12.5) -- Noobspawn
 }
@@ -90,7 +100,7 @@ BeggarSkins = {
     137
 }
 
-BeggarNames = {
+BeggarNames = { -- Wer namen zwischendrin einfügt wird erschossen!
     "Uwe",
     "Karsten Stahl",
     "Donetasty S.",
@@ -121,7 +131,8 @@ BeggarNames = {
     "Rosa Loch",
     "Wilma Lutschen",
     "Marie Juhana",
-    "Ernst Scherz"
+    "Ernst Scherz",
+	"Stummy Stumpf"
 }
 
 BeggarAnimations = {

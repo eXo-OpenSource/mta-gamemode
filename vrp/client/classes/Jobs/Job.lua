@@ -14,7 +14,7 @@ function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, headerImage, na
 	self.m_HeaderImage = headerImage
 	self.m_Description = description
 	self.m_Tutorial = tutorial
-
+	self.m_Level = 0
 	-- Create a job marker
 	self.m_Ped = createPed(skin, posX, posY, posZ, rotZ)
 	setElementData(self.m_Ped, "clickable", true)
@@ -44,6 +44,10 @@ end
 
 function Job:declineHandler()
 	triggerServerEvent("jobDecline", root, self:getId())
+end
+
+function Job:setJobLevel(level)
+	self.m_Level = level
 end
 
 function Job:getId()

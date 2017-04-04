@@ -23,6 +23,7 @@ SPAWN_LOCATION_GARAGE = 2
 CHAT_WHISPER_RANGE = 2.5
 CHAT_TALK_RANGE = 10
 CHAT_SCREAM_RANGE = 30
+CHAT_DISTRICT_RANGE = 50
 
 CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
@@ -142,3 +143,49 @@ RESOURCES_TO_STOP = {
     "helpmanager";
 }
 
+DONT_BUCKLE = 
+{
+[581] = true,
+[509] = true,
+[481] = true,
+[462] = true,
+[521] = true,
+[463] = true,
+[510] = true,
+[522] = true,
+[461] = true, 
+[448] = true, 
+[586] = true,
+}
+
+setWeaponProperty(24,"pro","target_range",45)
+setWeaponProperty(24,"poor","target_range",45)
+setWeaponProperty(24,"std","target_range",45)
+
+setWeaponProperty(24,"pro","weapon_range",45)
+setWeaponProperty(24,"poor","weapon_range",45)
+setWeaponProperty(24,"std","weapon_range",45)
+
+setWeaponProperty(24,"pro","accuracy",0.9)
+setWeaponProperty(24,"poor","accuracy",0.9)
+setWeaponProperty(24,"std","accuracy",0.9)
+
+setWeaponProperty(29,"pro","accuracy",0.9)
+setWeaponProperty(29,"poor","accuracy",0.9)
+setWeaponProperty(29,"std","accuracy",0.9)
+
+setWeaponProperty(31,"pro","accuracy",0.8)
+setWeaponProperty(31,"poor","accuracy",0.8)
+setWeaponProperty(31,"std","accuracy",0.8)
+
+setWeaponProperty(31,"pro","weapon_range",105)
+setWeaponProperty(31,"poor","weapon_range",105)
+setWeaponProperty(31,"std", "weapon_range",105)
+
+setWeaponProperty(33,"pro","weapon_range",160)
+setWeaponProperty(33,"poor","weapon_range",160)
+setWeaponProperty(33,"std","weapon_range",160)
+
+setWeaponProperty(33,"pro","target_range",160)
+setWeaponProperty(33,"poor","target_range",160)
+setWeaponProperty(33,"std","target_range",160)

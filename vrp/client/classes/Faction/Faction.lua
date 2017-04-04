@@ -14,11 +14,12 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp","stateFactionShowRob", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
 	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
+	addEventHandler("stateFactionShowRob", root, bind(self.stateFactionShowRob, self))
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
@@ -52,7 +53,7 @@ function FactionManager:factionEvilStartRaid(target)
 			end
 		end
 		localPlayer.m_evilRaidTarget = target
-		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 10000, 1)
+		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 15000, 1)
 	end
 end
 
@@ -119,6 +120,19 @@ function FactionManager:stateFactionNeedHelp(player)
 	end, 20000, 1, player)
 end
 
+function FactionManager:stateFactionShowRob(pickup)
+	if self.m_NeedHelpBlip[pickup] then delete(self.m_NeedHelpBlip[pickup]) end
+	if not localPlayer:getPublicSync("Faction:Duty") then return end
+	local pos = pickup:getPosition()
+	self.m_NeedHelpBlip[pickup] = Blip:new("NeedHelp.png", pos.x, pos.y, 9999)
+	self.m_NeedHelpBlip[pickup]:attachTo(pickup)
+	self.m_NeedHelpBlip[pickup]:setStreamDistance(2000)
+
+	setTimer(function(pickup)
+		if self.m_NeedHelpBlip[pickup] then delete(self.m_NeedHelpBlip[pickup]) end
+	end, 270000, 1, pickup)
+end
+
 function FactionManager:getFromId(id)
 	return FactionManager.Map[id]
 end
@@ -152,6 +166,10 @@ end
 
 function Faction:isEvilFaction()
 	return self.m_Type == "Evil"
+end
+
+function Faction:isRescueFaction()
+	return self.m_Type == "Rescue"
 end
 
 function Faction:getName()

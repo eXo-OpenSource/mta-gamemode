@@ -14,12 +14,11 @@
 
 	<!--<map src="fun/boxarena.map" />/-->
 
-	<map src="fraktionen/army_base.map" />
-	<map src="fraktionen/army_area.map" />
+	<map src="fraktionen/army.map" />
 	<map src="fraktionen/army_lsbase.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
-	<!--<map src="fraktionen/biker.map" />/-->
+	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
 	<map src="fraktionen/sfpd_int.map" />
@@ -27,13 +26,13 @@
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
-
+	<map src="fraktionen/vatos.map" />
+	<map src="fraktionen/Exo-yaku.map" dimension="0" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/rescue.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
-
 	<map src="banken/bankPalomino.map" />
 
 	<!--<map src="autohaus/9_bike.map" />/-->
@@ -48,8 +47,7 @@
 	<map src="jobs/busjob.map" />
 	<map src="jobs/logistican.map" />
 	<map src="jobs/helitransport.map" />
-
-	<map src="else/atm.map" />
+	<map src="jobs/dumper.map" />
 
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
@@ -69,5 +67,9 @@
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 
+	<map src="tankstelle-marcel.map"/>
+	
+	<map src="stuntfix.map"/>
+		
 	<map src="minigamescafe.map" dimension="2" />
 </meta>

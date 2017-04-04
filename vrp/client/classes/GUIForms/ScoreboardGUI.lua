@@ -12,9 +12,9 @@ function ScoreboardGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.65/2) / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.65, screenHeight*0.6, false, true)
 
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
-	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
+	self.m_Logo = GUIImage:new(self.m_Width-self.m_Width*0.18, self.m_Height*0.83, self.m_Width*0.180, self.m_Width*0.078, "files/images/LogoNoFont.png", self)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.45, self.m_Rect)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.62, self.m_Rect)
 	self.m_Grid:setFont(VRPFont(24))
 	self.m_Grid:setItemHeight(24)
 	self.m_Grid:setColor(Color.Clear)
@@ -52,6 +52,7 @@ function ScoreboardGUI:onShow()
 	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
 
+	RadioGUI:getSingleton():setControlEnabled(false)
 end
 
 function ScoreboardGUI:onHide()
@@ -66,6 +67,8 @@ function ScoreboardGUI:onHide()
 
 	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
+
+	RadioGUI:getSingleton():setControlEnabled(true)
 end
 
 function ScoreboardGUI:onScoreBoardScroll(key)
@@ -77,6 +80,10 @@ function ScoreboardGUI:onScoreBoardScroll(key)
 end
 
 function ScoreboardGUI:refresh()
+	local scrollPosX, scrollPosY = self.m_Grid.m_ScrollArea:getScrollPosition()
+	local scrollAreaDocumentSize_old = self.m_Grid.m_ScrollArea.m_DocumentHeight
+	local scrollAreaHeight = self.m_Grid.m_ScrollArea.m_Height
+
 	self.m_Grid:clear()
 	self.m_Players = {}
 	self.m_CompanyCount = {}
@@ -99,8 +106,18 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players, function (a, b) return (a[2] > b[2]) end)
+	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
+
+	local scrollAreaDocumentSize_new = self.m_Grid.m_ScrollArea.m_DocumentHeight
+	if scrollPosY ~= 0 and scrollAreaDocumentSize_old > scrollAreaDocumentSize_new and math.abs(scrollPosY) > scrollAreaDocumentSize_new - scrollAreaHeight then
+		scrollPosY = (scrollPosY / (scrollAreaDocumentSize_old - scrollAreaHeight) * scrollAreaDocumentSize_new) + scrollAreaHeight
+		if math.abs(scrollPosY) < scrollAreaHeight or scrollPosY > 0 then
+			scrollPosY = 0
+		end
+	end
+
+	self.m_Grid.m_ScrollArea:setScrollPosition(scrollPosX, scrollPosY)
 
 	if not self.m_PlayerCountLabels then
 		self.m_PlayerCountLabels = {}
@@ -127,7 +144,7 @@ function ScoreboardGUI:addPlayerCount(name, value, color)
 	if self.m_PlayerCountLabels[name] then
 		self.m_PlayerCountLabels[name]:setText(("%s: %d"):format(name, value))
 	else
-		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/4*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
+		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/6*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
 		if color then
 			self.m_PlayerCountLabels[name]:setColor(color)
 		end
@@ -160,7 +177,7 @@ function ScoreboardGUI:insertPlayers()
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
-			gname,
+			string.short(gname, 16),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
 			ping or " - "

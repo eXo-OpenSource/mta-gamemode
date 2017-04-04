@@ -18,7 +18,7 @@ function GunBoxGUI:constructor()
     }
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Waffenbox", true, true, self)
-	self.m_Window:setCloseOnClose(true)
+	self.m_Window:deleteOnClose(true)
     GUILabel:new(10, 35, 340, 35, _"Deine Waffen:", self.m_Window)
     self.m_LoadingLabel = GUILabel:new(10, 70, 250, 250, _"wird geladen...", self.m_Window):setAlignX("center"):setAlignY("center"):setFontSize(1):setFont(VRPFont(20))
     self.m_MyWeaponsGrid = GUIGridList:new(10, 70, 250, 250, self.m_Window)

@@ -14,7 +14,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_Position = self:getPosition()
 	self.m_Rotation = self:getRotation()
 	self.m_HandlingFactor = handlingFaktor
-	self.m_Decal = tostring(decal)
+	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
 	if #faction:getName() <= 29 then
 		setElementData(self, "OwnerName", faction:getName())
 	else
@@ -34,6 +34,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 				setVehicleColor(self, 255, 255, 0)
 			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
 				setVehicleColor(self, 255, 255, 255)
+			elseif getElementModel(self) == 407 or getElementModel(self) == 544 and faction.m_Id == 4 then -- Rescue Fire Trucks
+				setVehicleColor(self, 255, 0, 0, 255, 255, 255)
 			else
 				local color = factionCarColors[self.m_Faction:getId()]
 				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
@@ -61,8 +63,14 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	end
 
 	self:setMileage(mileage)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
+
 	if faction:isStateFaction() then
+		if self:getVehicleType() == VehicleType.Automobile then
 			self.m_VehELSObj = ELSSystem:new(self)
+		end
 	end
 	if handlingFaktor and handlingFaktor ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
@@ -78,6 +86,23 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 				end
 			end
 		end
+	end
+
+	if self.m_Faction.m_VehicleTexture then
+		if self.m_Faction.m_VehicleTexture[self:getModel()] and self.m_Faction.m_VehicleTexture[self:getModel()] then
+			local textureData = self.m_Faction.m_VehicleTexture[self:getModel()]
+			if textureData.shaderEnabled then
+				local texturePath, textureName = textureData.texturePath, textureData.textureName
+				if self.m_Decal then texturePath = self.m_Decal end
+				if texturePath and #texturePath > 3 then
+					self:setTexture(texturePath, textureName)
+				end
+			end
+		end
+	end
+
+	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
+		FactionRescue:getSingleton():onLadderTruckSpawn(self)
 	end
 
 end
@@ -101,28 +126,30 @@ function FactionVehicle:isStateVehicle()
 end
 
 function FactionVehicle:onStartEnter(player, seat)
+
+end
+
+function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
 			if player:isFactionDuty() then
 				return true
 			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
-				cancelEvent()
+				removePedFromVehicle(player)
+				local x,y,z = getElementPosition(player)
+				setElementPosition(player,x,y,z)
 				return false
 			end
-
 		elseif player:getFaction() == self.m_Faction then
 			return true
+		else
+			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+			removePedFromVehicle(player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(player,x,y,z)
+			return false
 		end
-		player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
-		cancelEvent()
-		return false
-	end
-end
-
-function FactionVehicle:onEnter(player)
-	if player.getFaction and player:getFaction() and player:getFaction() == source.m_Faction then
-
 	end
 end
 
@@ -249,11 +276,15 @@ function FactionVehicle:respawn(force)
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setSirensOn(false)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	if self.m_VehELSObj then
 		self.m_VehELSObj:setBlink("off")
 	end
+	self:resetIndicator()
 	self:fix()
 
 	if self.m_HandlingFactor ~= "" and self.m_HandlingFactor then

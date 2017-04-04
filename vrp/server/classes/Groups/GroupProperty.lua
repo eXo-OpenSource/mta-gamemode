@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupProperty = inherit(Object)
 
-function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId)
+function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
 
 	self.m_Id = Id
 	self.m_Name = Name
@@ -30,6 +30,16 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
+	if elevatorData then
+		local elevatorData = fromJSON(elevatorData)
+		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
+			local elevator = Elevator:new()
+			for i, station in ipairs(elevatorData.stations) do
+				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
+			end
+		end
+	end
+
 	self:getKeysFromSQL()
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
@@ -45,6 +55,15 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 		end
 	)
 
+	--Liberty City Mapfix
+	if self.m_Interior == 1 then
+		local door1 = createObject ( 3089, -792.09998, 497.20001, 1367.9 )
+		local door2 = createObject ( 3089, -790.59998, 497.20001, 1365.3, 0, 180, 0 )
+		door1:setInterior(self.m_Interior)
+		door1:setDimension(self.m_Dimension)
+		door2:setInterior(self.m_Interior)
+		door2:setDimension(self.m_Dimension)
+	end
 
 end
 
@@ -196,8 +215,8 @@ end
 
 function GroupProperty:setInside( player )
 	if isElement(player) then
-		player:setInterior(self.m_Interior, self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z)
-		player:setDimension(self.m_Dimension)
+		setElementInterior(player,self.m_Interior, self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z)
+		setElementDimension(player,self.m_Dimension)
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
@@ -209,8 +228,8 @@ end
 
 function GroupProperty:setOutside( player )
 	if isElement(player) then
-		player:setInterior(0, self.m_Position.x, self.m_Position.y, self.m_Position.z)
-		player:setDimension(0)
+		setElementInterior(player,0, self.m_Position.x, self.m_Position.y, self.m_Position.z)
+		setElementDimension(player,0)
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
@@ -319,5 +338,3 @@ function GroupProperty:getName() return self.m_Name end
 function GroupProperty:getPrice() return self.m_Price end
 function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
-
-

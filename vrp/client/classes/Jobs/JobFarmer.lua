@@ -10,11 +10,16 @@ addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarme
 
 function JobFarmer:constructor()
 	Job.constructor(self, 1, -62.62, 76.34, 3.12, 250, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
-
+	self:setJobLevel(JOB_LEVEL_FARMER)
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer))
 end
 function JobFarmer:onInfo()
+	if localPlayer.vehicle then
+		ErrorBox:new(_"Bitte erst aus dem Fahrzeug aussteigen!")
+		return
+	end
+
 	setCameraMatrix(-1.8428000211716, 135.26879882813, 35.644901275635, -2.3047368526459, 134.49794006348, 35.206272125244, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Es gibt verschiedene Aufgaben auf der Farm.",255,255,255,true)
 	-- ### 1

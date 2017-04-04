@@ -7,10 +7,10 @@
 -- ****************************************************************************
 FadeOutShader = inherit(Object)
 
-function FadeOutShader:constructor()
+function FadeOutShader:constructor(time)
 	self.m_FadeOutShader = dxCreateShader("files/shader/fadeOut.fx")
 	self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
-	self.m_Animation = AnimateOutInBack:new(5000)
+	self.m_Animation = AnimateOutInBack:new(time or 5000)
 
 	self.m_Update = bind(self.update, self)
 	addEventHandler("onClientPreRender", root, self.m_Update)

@@ -27,15 +27,15 @@ local QUESTIONS =
 	{"Was ist in der STVO verboten?","rechts abbiegen","gemütlich fahren","hupen","Burn-outs (Räder durchdrehen)",4,4},
 	{"Was machen Sie bei einem Unfall?", "Ich bleibe stehen und kläre den Sachverhalt", "Ich fahre einfach weiter", "Ich beschimpfe den Unfallgegner",nil,4,1},
 	{"Was machen Sie wenn ein Streifenwagen Sie auffordert anzuhalten?","langsam weiter fahren","schneller Fahren","rechts anhalten","ignorieren",4,3},
-	{"Wie verhalten Sie sich bei einer Verkehrkontrolle?","höflich gegenüber dem Beamten","mit wüsten Beschimpfungen","Waffengebrauch","Ich laufe weg",4,1},
+	{"Wie verhalten Sie sich bei einer Verkehrskontrolle?","höflich gegenüber dem Beamten","mit wüsten Beschimpfungen","Waffengebrauch","Ich laufe weg",4,1},
 	{"Was machen Sie wenn ein Beamter Sie auffordert Ihren Führerschein zu zeigen?","Ich lehne ab","Ich zeige ihm den Führerschein",nil,nil,4,2},
 }
 
 function DrivingSchoolTheoryGUI:constructor(type )
 	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Theoretische Prüfung"), true, true, self)
-	self.m_Window:disableMoving()
-	self.m_Window:setCloseOnClose(true)
+	self.m_Window:toggleMoving(false)
+	self.m_Window:deleteOnClose(true)
 	self.m_Text = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, TEXT_INFO, self):setFont(VRPFont(24))
 	self.m_Text:setAlignX( "left" )
 	self.m_Text:setAlignY( "top" )

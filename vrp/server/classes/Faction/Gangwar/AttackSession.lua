@@ -17,9 +17,9 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_Participants = {	}
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_BreakFunc = bind(  AttackSession.onBreakCMD , self)
+	self.m_BreakFunc = bind(  self.onBreakCMD , self)
 	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
-	self.m_DamageFunc = bind(  AttackSession.onGangwarDamage , self)
+	self.m_DamageFunc = bind(  self.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
@@ -42,9 +42,11 @@ end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
+		v.kills = 0
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
+		v.kills = 0
 	end
 	self:synchronizeAllParticipants( )
 end
@@ -52,7 +54,6 @@ end
 function AttackSession:synchronizeAllParticipants( )
 	for k,v in ipairs( self.m_Participants ) do
 		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID )
-		v.m_RefAttackSession = self
 		v:triggerEvent("GangwarQuestion:new")
 	end
 
@@ -85,6 +86,7 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 				player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
 			end
 		end
+		self:synchronizeLists( )
 		player:triggerEvent("GangwarQuestion:new")
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
@@ -106,6 +108,7 @@ function AttackSession:removeParticipant( player )
 			table.remove( self.m_Participants, index )
 		end
 	end
+	self:synchronizeLists( )
 	self:sessionCheck()
 end
 
@@ -128,7 +131,6 @@ function AttackSession:disqualifyPlayer( player )
 end
 
 function AttackSession:joinPlayer( player )
-	player.m_RefAttackSession = self
 	if not self:isPlayerDisqualified( player ) then
 		self:addParticipantToList( player , true)
 	else 
@@ -144,8 +146,14 @@ function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
 end
 
-function AttackSession:onPurposlyDisqualify( player )
+function AttackSession:onPurposlyDisqualify( player, bAfk )
+	local reason = ""
+	if bAfk then 
+		reason = "(AFK)"
+	end
 	self:disqualifyPlayer( player )
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
+	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
 end
 
 function AttackSession:onPlayerLeaveCenter( player )
@@ -154,7 +162,6 @@ function AttackSession:onPlayerLeaveCenter( player )
 		local isAnyoneInside = self:checkPlayersInCenter( )
 		if not isAnyoneInside then
 			self:setCenterCountdown()
-			--// Notify team 1
 		end
 	end
 end
@@ -190,13 +197,20 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 		if killer then
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
+				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 				self:disqualifyPlayer( player )
-				triggerClientEvent("onGangwarKill", player, killer, weapon, bpart)
+				triggerClientEvent("onGangwarKill", killer, player, weapon, bpart)
+			end
+			if killer.kills then 
+				killer.kills = killer.kills + 1
+			else 
+				killer.kills = 1 
 			end
 		else
+			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 			self:disqualifyPlayer( player )
 		end
-		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 	end
 end
 
@@ -220,7 +234,7 @@ function AttackSession:setCenterCountdown()
 	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
 	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
 end
-
+	
 function AttackSession:notifyFactions()
 	if self.endReason == 1 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
@@ -236,6 +250,7 @@ function AttackSession:notifyFactions()
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFAlle Gegner wurden eleminiert!",200,0,0,true)
 	elseif self.endReason == 3 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			v:sendInfo(_("Die Flagge wurde nicht gehalten!",v))
@@ -250,12 +265,10 @@ function AttackSession:stopClients()
 	local receiveTimeout = 0
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		v.m_RefAttackSession = nil
 		receiveTimeout = receiveTimeout +1
 	end
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		v.m_RefAttackSession = nil
 		receiveTimeout = receiveTimeout + 1
 	end
 	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )
@@ -333,7 +346,7 @@ end
 
 function AttackSession:onVehicleEnter( pEnter )
 	if pEnter.m_Faction == self.m_Faction1 then
-
+	
 	else
 		pEnter:sendError(_("Sie sind kein Angreifer!", pEnter))
 		cancelEvent()
@@ -380,14 +393,17 @@ end
 
 function AttackSession:generateWeapons( )
 	self.m_BoxWeapons ={	}
-	for i = 1, 3 do
+	for i = 1, 2 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {31,200}
 	end
 	for i = 1, 3 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {24,200}
 	end
 	for i = 1, 3 do
-		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {30,200}
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {29,200}
+	end
+	for i = 1, 1 do
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {33,200}
 	end
 end
 

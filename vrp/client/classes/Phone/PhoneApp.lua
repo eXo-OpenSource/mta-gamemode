@@ -41,7 +41,7 @@ function PhoneApp:open()
 	end
 	self.m_IsOpen = true
 
-	self.m_Form = GUIRectangle:new(17, 71, 260, 460, tocolor(255, 255, 255, 150), Phone:getSingleton():getSurface())
+	self.m_Form = GUIRectangle:new(0, 0, 260, 460, tocolor(255, 255, 255, 150), Phone:getSingleton():getSurface())
 	self:onOpen(self.m_Form)
 end
 
@@ -56,13 +56,15 @@ function PhoneApp:close()
 end
 
 function PhoneApp:addActivity(activity)
+	self:closeActivities()
 	table.insert(self.m_Activities, activity)
 end
 
 function PhoneApp:closeActivities()
-	for k, activity in ipairs(self.m_Activities) do
+	for k, activity in pairs(self.m_Activities) do
 		delete(activity)
 	end
+	self.m_Activities = {}
 end
 
 function PhoneApp:getActivities()

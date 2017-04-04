@@ -24,12 +24,12 @@ function JobTreasureSeeker:constructor()
 	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 50, ["Max"] = 100},
-		[2912] = {["Name"] = " Holzkiste", ["Min"] = 200, ["Max"] = 400},
-		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 100, ["Max"] = 200},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600, ["Scale"] = 5.5},
-		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 200, ["Max"] = 400},
-		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 200, ["Max"] = 400, ["Scale"] = 2}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] =1200, ["Max"] = 2000, ["Scale"] = 5.5},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
 	}
 end
 
@@ -40,16 +40,25 @@ function JobTreasureSeeker:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
 
+function JobTreasureSeeker:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_TREASURESEEKER) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobTreasureSeeker:stop(player)
 	self:destroyJobVehicle(player)
 	self:removeTreasures(player)
 	unbindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
-
 end
 
 function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
+	setVehicleHandling(vehicle, "steeringLock", 70)
+
 	vehicle.Engine = createObject(3013, 0, 0, 0)
 	vehicle.Engine:setScale(1.5)
 	vehicle.Engine:attach(vehicle, 0, -6.2, 3.5)
@@ -73,10 +82,12 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local model = veh.Magnet.Object:getModel()
 						if not self.m_TreasureTypes[model] then return end
 						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
-						hitElement:giveMoney(loan, "Schatzsucher-Job")
+						hitElement:giveMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
 						hitElement:givePoints(5)
+
+						self:loadTreasure(hitElement)
 					else
 						hitElement:sendError(_("Du hast kein Objekt dabei!", hitElement))
 					end
@@ -91,19 +102,12 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 end
 
 function JobTreasureSeeker:generateRandomTreasures(player)
-	if self.m_Treasures[player] then
-		self:removeTreasures(player)
-	else
+	if not self.m_Treasures[player] then
 		self.m_Treasures[player] = {}
 	end
+
 	for i = 1, 5 do
-		Thread:new(
-			bind(self.loadTreasure, self, player),
-			THREAD_PRIORITY_HIGHEST
-		).done(
-			function() end,
-			function() end
-		)
+		self:loadTreasure(player)
 	end
 end
 
@@ -139,8 +143,11 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 					veh.Magnet:attach(veh, 0, -6.2, 2)
 					player:sendShortMessage(_("Glückwunsch du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
 					veh:setFrozen(false)
-					self:generateRandomTreasures(player)
 				end, 30000, 1)
+
+				if col.DummyObject and isElement(col.DummyObject) then col.DummyObject:destroy() end
+				if isElement(col) then col:destroy() end
+				table.remove(self.m_Treasures[player], index)
 				return
 			end
 		end
@@ -149,23 +156,15 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 end
 
 function JobTreasureSeeker:loadTreasure(player)
-	local runs = 0
-	local rnd
-	repeat
-		rnd = math.random(1, #JobTreasureSeeker.Positions)
-		runs = runs + 1
-		if runs%100 == 0 then
-			Thread.pause()
-		end
-	until not self.m_Treasures[player][rnd]
+	local x, y = math.random(JobTreasureSeeker.Positions[1][1], JobTreasureSeeker.Positions[2][1]), math.random(JobTreasureSeeker.Positions[1][2], JobTreasureSeeker.Positions[2][2])
 
-	local x, y = unpack(JobTreasureSeeker.Positions[rnd])
-	--Blip:new("Waypoint.png", x, y) -- Dev
-	self.m_Treasures[player][rnd] = createColCircle(x, y, 25)
-	self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -20)
-	self.m_Treasures[player][rnd].Player = player
-	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
-	addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
+	local colShape = createColCircle(x, y, 25)
+	colShape.DummyObject = createObject(1337, x, y, -20)
+	colShape.Player = player
+
+	table.insert(self.m_Treasures[player], colShape)
+	setElementData(colShape.DummyObject, "Treasure", player)
+	addEventHandler("onColShapeHit", colShape, bind(self.onTreasureHit, self))
 end
 
 function JobTreasureSeeker:getRandomTreasureModel()
@@ -178,11 +177,12 @@ end
 
 function JobTreasureSeeker:removeTreasures(player)
 	if not self.m_Treasures[player] then return end
-	for index, col in pairs(self.m_Treasures[player]) do
+	for i, col in ipairs(self.m_Treasures[player]) do
 		if col.DummyObject and isElement(col.DummyObject) then col.DummyObject:destroy() end
 		if isElement(col) then col:destroy() end
-		table.remove(self.m_Treasures, index)
 	end
+
+	self.m_Treasures[player] = nil
 end
 
 function JobTreasureSeeker:onTreasureHit(hitElement, dim)
@@ -194,27 +194,6 @@ function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 end
 
 JobTreasureSeeker.Positions = {
-{704.25, -2086.15},
-{755.26, -2154.51},
-{749.63, -2241.94},
-{744.62, -2387.58},
-{774.53, -2578.14},
-{591.42, -2620.96},
-{452.14, -2563.62},
-{459.06, -2429.85},
-{779.61, -2429.75},
-{828.55, -2652.89},
-{817.14, -2764.52},
-{839.84, -2874.39},
-{924.68, -2970.34},
-{480.00, -2176.58},
-{381.62, -2208.21},
-{271.31, -2292.53},
-{316.23, -2436.88},
-{440.58, -2503.98},
-{631.95, -2421.31},
-{753.67, -2532.05},
-{785.35, -2634.72},
-{788.39, -2758.76},
-{836.83, -2857.83}
+	{450, -2552},
+	{877, -2111},
 }

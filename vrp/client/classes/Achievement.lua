@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Achievement.lua
--- *  PURPOSE:     Class for Achievments
+-- *  PURPOSE:     Class for Achievements
 -- *
 -- ****************************************************************************
 
@@ -24,10 +24,15 @@ function Achievement:giveAchievement (player, id)
 	end
 end
 
+function Achievement:getAchievements()
+	return self.ms_Achievements
+end
+
 function Achievement:Event_onReceiveAchievements (arg)
 	self.ms_Achievements = arg
 end
 
 function Achievement:Event_onPlayerReceiveAchievement (id)
 	local instance = AchievementBox:new(utf8.escape(_(self.ms_Achievements[id]["name"])), self.ms_Achievements[id]["exp"])
+	playSound("files/audio/achievement.mp3")
 end

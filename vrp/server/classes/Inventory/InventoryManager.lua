@@ -20,9 +20,10 @@ function InventoryManager:constructor()
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptItemTrade", "acceptWeaponTrade", "declineTrade","syncAfterChange"}
+	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "onPlayerSecondaryItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptItemTrade", "acceptWeaponTrade", "declineTrade","syncAfterChange"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
+	addEventHandler("onPlayerSecondaryItemUseServer", root, bind(self.Event_onItemSecondaryUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))
 	addEventHandler("throwItem", root, bind(self.Event_throwItem, self))
 	addEventHandler("c_setItemPlace", root, bind(self.Event_c_setItemPlace, self))
@@ -34,6 +35,7 @@ function InventoryManager:constructor()
 	--/workaround/
 	addEventHandler("syncAfterChange", root, bind(self.Event_syncAfterChange, self))
 
+	WearableManager:new()
 end
 
 function InventoryManager:destructor()
@@ -102,7 +104,10 @@ end
 
 function InventoryManager:Event_onItemUse(itemid, bag, itemName, place, delete)
 	self:getPlayerInventory(client):useItem(itemid, bag, itemName, place, delete)
+end
 
+function InventoryManager:Event_onItemSecondaryUse(itemid, bag, itemName, place)
+	self:getPlayerInventory(client):useItemSecondary(itemid, bag, itemName, place)
 end
 
 function InventoryManager:Event_c_stackItems(newId, oldId, oldPlace)
@@ -115,8 +120,8 @@ function InventoryManager:Event_c_setItemPlace(bag, oldPlace, newPlace)
 end
 
 
-function InventoryManager:Event_throwItem(item, bag, id, place)
-	self:getPlayerInventory(client):throwItem(item, bag, id, place)
+function InventoryManager:Event_throwItem(item, bag, id, place, name)
+	self:getPlayerInventory(client):throwItem(item, bag, id, place, name)
 end
 
 function InventoryManager:Event_refreshInventory()
@@ -124,6 +129,11 @@ function InventoryManager:Event_refreshInventory()
 end
 
 function InventoryManager:Event_requestTrade(type, target, item, amount, money)
+	if (client:getPosition() - target:getPosition()).length > 10 then
+		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
+		return false
+	end
+
 	if type == "Item" then
 		if self:getPlayerInventory(client):getItemAmount(item) >= amount then
 			local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
@@ -135,6 +145,10 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
 	elseif type == "Weapon" then
+		if client.disableWeaponStorage then
+			client:sendError(_("Du darfst diese Waffe nicht handeln!", client))
+			return
+		end
 		if client:getFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
 			return
@@ -160,6 +174,12 @@ function InventoryManager:Event_declineTrade(player, target, item, amount, money
 end
 
 function InventoryManager:Event_acceptItemTrade(player, target, item, amount, money)
+	if (player:getPosition() - target:getPosition()).length > 10 then
+		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		return false
+	end
+
 	if self:getPlayerInventory(player):getItemAmount(item) >= amount then
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
@@ -168,6 +188,7 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 			self:getPlayerInventory(target):giveItem(item, amount)
 			target:takeMoney(money, "Handel")
 			player:giveMoney(money, "Handel")
+			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money)
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 			target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
@@ -179,8 +200,19 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 end
 
 function InventoryManager:Event_acceptWeaponTrade(player, target, weaponId, amount, money)
+	if (player:getPosition() - target:getPosition()).length > 10 then
+		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
+		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
+		return false
+	end
+
 	if player:getFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
+		return
+	end
+
+	if player.disableWeaponStorage then
+		player:sendError(_("Du darfst diese Waffe nicht handeln!", player))
 		return
 	end
 

@@ -1,0 +1,11 @@
+<meta>
+<info author="ZenoS ft. A.Noniem" version="2.0.1" type="script" name="Camera tool for mtasa." />
+<script src="client.lua" type="client"/>
+<script src="c_advanced.lua" type="client"/>
+<script src="c_cirkular.lua" type="client"/>
+<script src="c_linear.lua" type="client"/>
+<script src="server.lua" type="server"/>
+<file src="cameratool.png" />
+	<script src="freecam.lua" type="client" />
+	<script src="freecam_server.lua" type="server" />	
+</meta>

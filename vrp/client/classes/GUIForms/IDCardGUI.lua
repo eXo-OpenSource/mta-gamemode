@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 IDCardGUI = inherit(GUIForm)
+inherit(Singleton, IDCardGUI)
 
 addRemoteEvents{"showIDCard"}
 
@@ -26,6 +27,7 @@ function IDCardGUI:constructor(player)
 	GUILabel:new(200, 140, 140, 20, _"LKW-Schein:", self)
 	GUILabel:new(200, 160, 140, 20, _"Flugschein:", self)
 	GUILabel:new(200, 190, 140, 20, _"PA-Note:", self)
+	GUILabel:new(200, 210, 140, 20, _"STVO-Punkte:", self)
 
 
 
@@ -37,6 +39,7 @@ function IDCardGUI:constructor(player)
 	self.m_LicenseLabels["pilot"] = GUILabel:new(370, 160, 40, 25, FontAwesomeSymbols.Square, self)
 
 	self.m_PaNote = GUILabel:new(340, 190, 40, 20, "-keine-", self):setAlignX("right")
+	self.m_STVO = GUILabel:new(320, 210, 60, 20, "-keine-", self):setAlignX("right")
 
 	GUILabel:new(10, 160, 140, 20, _"Job-Level:", self)
 	GUILabel:new(10, 180, 140, 20, _"Waffen-Level:", self)
@@ -49,7 +52,7 @@ function IDCardGUI:constructor(player)
 	self.m_LevelLabels["vehicle"] = GUILabel:new(140, 200, 40, 20, "0", self)
 	self.m_LevelLabels["skin"] = GUILabel:new(140, 220, 40, 20, "0", self)
 
-	self.m_RegistrationLabel = GUILabel:new(200, 220, 190, 18, _"Registriert seit: -", self)
+	--self.m_RegistrationLabel = GUILabel:new(200, 220, 190, 18, _"Registriert seit: -", self)
 
 
 	for index, label in pairs(self.m_LicenseLabels) do
@@ -63,7 +66,7 @@ function IDCardGUI:constructor(player)
 	addEventHandler("Event_receiveIDCardData", root, bind(self.Event_receiveIDCardData, self))
 end
 
-function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate, paNote, jobLevel, weaponLevel, vehicleLevel, skinLevel)
+function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate, paNote, stvo, jobLevel, weaponLevel, vehicleLevel, skinLevel)
 	local carSymbol, carColor = self:getSymbol(car)
 	self.m_LicenseLabels["car"]:setText(carSymbol)
 	self.m_LicenseLabels["car"]:setColor(carColor)
@@ -83,8 +86,9 @@ function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registration
 	self.m_LevelLabels["skin"]:setText(tostring(skinLevel))
 
 	self.m_PaNote:setText(paNote == 0 and "-keine-" or paNote.."%")
+	self.m_STVO:setText(stvo == 0 and "-keine-" or stvo.." Punkt/e")
 
-	self.m_RegistrationLabel:setText(_("Registriert seit: %s", registrationDate))
+	--self.m_RegistrationLabel:setText(_("Registriert seit: %s", registrationDate))
 end
 
 function IDCardGUI:getSymbol(bool)

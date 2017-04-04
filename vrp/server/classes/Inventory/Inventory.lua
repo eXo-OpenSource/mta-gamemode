@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Inventory/Inventory.lua
--- *  PURPOSE:     Inventory Class
+-- *  PURPOSE:     Inventory - Class
 -- *
 -- ****************************************************************************
 Inventory = inherit(Object)
@@ -15,7 +15,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self.m_Items = {}
 	self.m_ClassItems = classItems
 
-	self.m_Debug = true
+	self.m_Debug = false
 
 	for k, v in pairs(inventorySlots) do
 		self.m_Bag[k] = {}
@@ -32,6 +32,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			self.m_Items[id]["Objekt"] = row["Objekt"]
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
+			self.m_Items[id]["Value"] = row["Value"] or ""
 			self.m_Bag[row["Tasche"]][place] = id
 			if self:isSpecialItem(row["Objekt"]) then
 				local row_special = sql:queryFetchSingle("SELECT * FROM ??_inventory_items_special WHERE Item = ? AND PlayerId = ?", sql:getPrefix(), row["Objekt"], self.m_Owner:getId())
@@ -103,6 +104,7 @@ function Inventory:loadItem(id)
 			self.m_Items[id]["Objekt"] = row["Objekt"]
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
+			self.m_Items[id]["Value"] = row["Value"]
 			self.m_Bag[row["Tasche"]][place] = id
 		else
 			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
@@ -124,7 +126,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	if self.m_ClassItems[itemName] then
 		local instance = ItemManager.Map[itemName]
 		if instance.use then
-			if instance:use(client, itemId, bag, place, itemName) == false then
+			if instance:use(client, itemId, bag, place, itemName ) == false then
 				return false
 			end
 		end
@@ -146,6 +148,20 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	self:syncClient()
 end
 
+function Inventory:useItemSecondary(itemId, bag, itemName, place)
+	if self:getItemAmount(itemName) <= 0 then
+		client:sendError(_("Inventar Fehler: Kein Item", client))
+		return
+	end
+
+	if self.m_ClassItems[itemName] then
+		local instance = ItemManager.Map[itemName]
+		if instance.useSecondary then
+			return instance:useSecondary(client, itemId, bag, place, itemName)
+		end
+	end
+end
+
 function Inventory:saveSpecialItem(id, amount)
 	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ?", sql:getPrefix(), amount, id )
 	self:syncClient()
@@ -161,13 +177,17 @@ function Inventory:saveItemPlace(id, place)
 	self:syncClient()
 end
 
+function Inventory:saveItemValue(id, value)
+	sql:queryExec("UPDATE ??_inventory_slots SET Value =? WHERE id = ?", sql:getPrefix(), value, id )
+	self:syncClient()
+end
 function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id= ?", sql:getPrefix(), id )
 	self:syncClient()
 end
 
-function Inventory:insertItem(amount, item, place, bag)
-	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag ) -- ToDo add Prefix
+function Inventory:insertItem(amount, item, place, bag, value)
+	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, self:getItemValueByBag(bag,place) or "" ) -- ToDo add Prefix
 	return sql:lastInsertId()
 end
 
@@ -247,6 +267,49 @@ function Inventory:setItemPlace(bag, placeOld, placeNew)
 	return true
 end
 
+function Inventory:getItemValueByBag( bag, place)
+	if bag then
+		if place then
+			local id = self:getItemID(bag, place)
+			if id then
+				return self.m_Items[id]["Value"]
+			end
+		end
+	end
+end
+
+function Inventory:setItemValueByBag( bag, place, value )
+	if bag then
+		if place then
+			local id = self:getItemID(bag, place)
+			if id then
+				self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+				self:saveItemValue(id, value)
+			end
+		end
+	end
+end
+
+function Inventory:getItemPlacesByName(item)
+	local placeTable = {}
+	if self.m_ItemData[item] then
+		local bag = self.m_ItemData[item]["Tasche"]
+		local amount = 0
+		local places = self:getPlaces(bag)
+		for place = 0, places, 1 do
+			local id = self.m_Bag[bag][place]
+			if id then
+				if self.m_Items[id]["Objekt"] == item then
+					placeTable[#placeTable+1] = {place, bag}
+				end
+			end
+		end
+	else
+		outputDebugString("[INV] Unglültiges Item: "..item)
+	end
+	return placeTable
+end
+
 function Inventory:removeItemFromPlace(bag, place, amount)
 
 	local id = self.m_Bag[bag][place]
@@ -273,6 +336,7 @@ function Inventory:removeItemFromPlace(bag, place, amount)
 		self.m_Items[id] = nil
 		self.m_Bag[bag][place] = nil
 	end
+	self:syncClient()
 end
 
 function Inventory:getMaxItemAmount(item)
@@ -464,8 +528,9 @@ function Inventory:getItemIdFromName(item)
 	end
 end
 
-function Inventory:throwItem(item, bag, id, place)
-	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,item))
+function Inventory:throwItem(item, bag, id, place, name)
+	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
+	self.m_Owner:meChat(true, "zerstört "..name.."!")
 	self:removeItemFromPlace(bag, place)
 end
 
@@ -490,7 +555,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function Inventory:giveItem(item, amount)
+function Inventory:giveItem(item, amount, value)
 	checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
@@ -523,8 +588,9 @@ function Inventory:giveItem(item, amount)
 			elseif placeType == "new" then
 				if amount > 0 then
 				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(amount, item, place, bag)
+					local lastId = self:insertItem(amount, item, place, bag, value or "")
 					self:loadItem(lastId)
+					self:setItemValueByBag(bag,place, value or "")
 					return true
 				end
 			end

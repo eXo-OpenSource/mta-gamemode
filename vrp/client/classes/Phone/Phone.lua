@@ -12,37 +12,37 @@ function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-310, screenHeight-620, 295, 600)
 
 	self.m_Phone = core:get("Phone", "Phone", "iPhone")
+	self.m_Background = core:get("Phone", "Background", "iOS_7")
 	self.m_PhoneOn = core:get("Phone", "On", true)
 
 	self.m_Apps = {}
 	self.m_CurrentApp = false
 
 	-- Register apps
-	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(AppCall)
 	self:registerApp(AppSettings)
+	self:registerApp(AppContacts)
+	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	--self:registerApp(AppNametag)
-
-	-- Register web apps
+	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
 	--self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
-	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppAmmunation)
 	self:registerApp(AppBank)
 	self:registerApp(PhoneApp.makeWebApp("Snake",  "IconSnake.png", ("https://exo-reallife.de/ingame/vRPphone/webApps/snake/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
-
-
+	self:registerApp(AppNavigator)
 
 	-- Add GUI elements
-	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)
+	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)
+	self.m_BackgroundImage = GUIImage:new(17, 71, 260, 460, ("files/images/Phone/Backgrounds/%s.png"):format(self.m_Background), self)
 
 	-- Create app icons
-	self.m_IconSurface = GUIElement:new(17, 71, 260, 460, self.m_Background)
+	self.m_IconSurface = GUIElement:new(0, 0, 260, 460, self.m_BackgroundImage)
 	self:loadHomeScreen()
 
 	-- Create elements at the bottom
-	self.m_HomeButton = GUIRectangle:new(117, 530, 60, 60, Color.Clear, self.m_Background)
+	self.m_HomeButton = GUIRectangle:new(117, 530, 60, 60, Color.Clear, self.m_PhoneImage)
 	self.m_HomeButton.onLeftClick =
 	function()
 		if self.m_PhoneOn then
@@ -104,9 +104,15 @@ function Phone:refreshAppIcons()
 end
 
 function Phone:setPhone(phone)
-	self.m_Background:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
+	self.m_PhoneImage:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
 	self.m_Phone = phone
 	self:refreshAppIcons()
+end
+
+function Phone:setBackground(background)
+	self.m_BackgroundImage:setImage(("files/images/Phone/Backgrounds/%s.png"):format(background))
+	--self.m_Background = background
+	--self:refreshAppIcons()
 end
 
 function Phone:registerApp(appClasst)
@@ -186,7 +192,7 @@ function Phone:openAppByClass(appClass)
 end
 
 function Phone:getSurface()
-	return self.m_Background
+	return self.m_BackgroundImage
 end
 
 function Phone:getDashboard()

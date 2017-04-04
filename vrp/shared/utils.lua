@@ -67,6 +67,16 @@ function table.findAll(tab, value)
 	return result
 end
 
+function table.map(tab, func)
+	local result = {}
+
+	for k, v in pairs(tab) do
+		result[k] = func(v)
+	end
+
+	return result
+end
+
 function table.compare(tab1, tab2) -- This method is for debugging purposes only
 	-- Check if tab2 is subset of tab1
 	for k, v in pairs(tab1) do
@@ -281,6 +291,22 @@ function string.duration(seconds)
 	end
 end
 
+function string.short(str, i)
+	return #str > i and str:sub(0, i).."..." or str
+end
+
+function table.setIndexToInteger(tab)
+	local newTab = {}
+	for index, value in pairs(tab) do
+		if tonumber(index) then
+			newTab[tonumber(index)] = value
+		else
+			newTab[index] = value
+		end
+	end
+	return newTab
+end
+
 -- Override with UTF-8 versions (but keep a backup for binary operations)
 string.binary_sub = string.sub
 string.binary_len = string.len
@@ -492,7 +518,16 @@ function getVehicleUpgradeNameFromID(upgradeId)
 end
 
 function getVehicleUpgradePrice(upgradeId)
-	return VEHICLE_UPGRADE_PRICES[upgradeId]
+	local price = VEHICLE_UPGRADE_PRICES[upgradeId]
+	if price then
+		if tonumber(price) then
+			return math.floor(price)
+		else
+			return price
+		end
+	else
+		return price
+	end
 end
 
 function countLineBreaks(text)
@@ -636,10 +671,9 @@ function traceback()
         local info = debug.getinfo(level, "Sl")
         if not info then break end
         if info.what == "C" then   -- is a C function?
-          outputConsole(level, "C function")
+          outputConsole("C function")
         else   -- a Lua function
-          outputConsole(string.format("[%s]:%d",
-                              info.short_src, info.currentline))
+          outputConsole(info.short_src.."-"..info.currentline)
         end
         level = level + 1
       end
@@ -693,15 +727,34 @@ function isNan(num)
 end
 
 function normaliseVector(serialisedVector)
-	if serialisedVector.w ~= nil then
+	if serialisedVector.w then
 		return Vector4(serialisedVector.x, serialisedVector.y, serialisedVector.z, serialisedVector.w)
-	elseif serialisedVector.z ~= nil then
+	elseif serialisedVector.z then
 		return Vector3(serialisedVector.x, serialisedVector.y, serialisedVector.z)
-	else
+	elseif serialisedVector.y then
 		return Vector2(serialisedVector.x, serialisedVector.y)
+	elseif serialisedVector[3] then
+		return Vector3(unpack(serialisedVector))
 	end
 end
 
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
+
+-- GTA SA workaround, isVehicleOnGround return always false for some vehicles
+local vehicles = {
+	[573] = true, -- Dune
+	[444] = true, -- Monster
+	[556] = true, -- Monster 2
+	[557] = true, -- Monster 3
+}
+local _isVehicleOnGround = isVehicleOnGround
+function isVehicleOnGround(vehicle)
+	if isElement(vehicle) and vehicles[vehicle:getModel()] then
+		return vehicle.velocity.length == 0
+	else
+		return _isVehicleOnGround(vehicle)
+	end
+end
+function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end

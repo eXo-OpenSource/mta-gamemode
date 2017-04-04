@@ -52,6 +52,7 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
+	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
@@ -134,8 +135,10 @@ end
 function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
-    player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
-    --if DEBUG then
+	if DEBUG then
+    	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
+	end
+    if DEBUG or rank >= RANK.Servermanager then
 		if getAccount(player:getName().."-eXo") then removeAccount(getAccount(player:getName().."-eXo")) end
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
@@ -144,18 +147,8 @@ function Admin:addAdmin(player,rank)
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
 			player:triggerEvent("setClientAdmin", player, rank)
-
-			if DEBUG then
-				bindKey(player, "j", "down", function(player)
-					if not doesPedHaveJetPack(player) then
-						givePedJetPack(player)
-					else
-						removePedJetPack ( player )
-					end
-				end)
-			end
 		end
-    --end
+    end
 end
 
 function Admin:removeAdmin(player)
@@ -214,9 +207,7 @@ function Admin:Event_getPlayerInfo(Id, name)
 						Karma = player:getKarma();
                     }
 
-                    if isOffline then
-                        delete(player)
-                    end
+                    if isOffline then delete(player) end
                     client:triggerEvent("adminReceiveSeachedPlayerInfo", data)
                 end
             end
@@ -227,7 +218,7 @@ end
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
     if faction then
-        faction:respawnVehicles()
+        faction:respawnVehicles( client )
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
     end
 end
@@ -405,8 +396,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			col:destroy()
 			local count = 0
 			for index, vehicle in pairs(vehicles) do
-				vehicle:respawn(true)
-				count = count + 1
+				if vehicle:isRespawnAllowed() then
+					vehicle:respawn(true)
+					count = count + 1
+				end
 			end
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
@@ -491,7 +484,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
@@ -573,7 +566,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			end
         end
     else
-        admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
+        admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
     end
 end
 
@@ -591,6 +584,16 @@ function Admin:chat(player,cmd,...)
 	end
 end
 
+function Admin:toggleJetPack(player)
+	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+		givePedJetPack(player)
+	else
+		if doesPedHaveJetPack(player) then
+			removePedJetPack(player)
+		end
+	end
+end
+
 function Admin:toggleSupportMode(player)
     if not player:getPublicSync("supportMode") then
         player:setPublicSync("supportMode", true)
@@ -602,6 +605,7 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = true
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
+		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
@@ -611,7 +615,8 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = false
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
-
+		self:toggleJetPack(player)
+		unbindKey(player, "j", "down", self.m_ToggleJetPackBind)
     end
 end
 
@@ -685,8 +690,8 @@ function Admin:goToPlayer(player,cmd,target)
 				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
-				player:setDimension(dim)
-				player:setInterior(int)
+				setElementDimension(player, dim)
+				setElementInterior(player,int)
 				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
 			end
 		else
@@ -709,8 +714,8 @@ function Admin:getHerePlayer(player, cmd, target)
 				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
-				target:setDimension(dim)
-				target:setInterior(int)
+				setElementDimension(target,dim)
+				setElementInterior(target,int)
 				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
 			end
 		else
@@ -752,7 +757,8 @@ local tpTable = {
         ["farmer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
 		["schatzsucher"] =  {["pos"] = Vector3(706.22, -1699.38, 3.12),  	["typ"] = "Jobs"},
-        ["gabelstabler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
+        ["gabelstapler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
+        ["kiesgrube"] = 	{["pos"] = Vector3(590.71, 868.91, -42.50),  	["typ"] = "Jobs"},
         ["bikeshop"] =      {["pos"] = Vector3(2857.96, -1536.69, 10.73),  	["typ"] = "Shops"},
         ["bootshop"] =      {["pos"] = Vector3(1628.25, 597.11, 1.76),  	["typ"] = "Shops"},
         ["sultanshop"] =    {["pos"] = Vector3(2127.09, -1135.96, 25.20),  	["typ"] = "Shops"},
@@ -765,6 +771,7 @@ local tpTable = {
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
+        ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
@@ -778,6 +785,7 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
@@ -975,7 +983,7 @@ function Admin:getVehFromId(player, cmd, vehId)
 end
 
 function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Supporter then
+    if client:getRank() >= RANK.Clanmember then
         if isElement(source) then
 
 			VehicleManager:getSingleton():checkVehicle(source)
@@ -999,10 +1007,10 @@ function Admin:Command_MarkPos(player, add)
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
-				player:setInterior(markPos[2])
-				player:setDimension(markPos[3])
+				setElementInterior(player,markPos[2])
+				setElementDimension(player,markPos[3])
 				player:setPosition(markPos[1])
-				player:setCameraTarget(player)
+				setCameraTarget(player)
 			else
 				player:sendError("Du hast keine Makierung /mark")
 			end
@@ -1017,7 +1025,7 @@ function Admin:Command_MarkPos(player, add)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Developer then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))

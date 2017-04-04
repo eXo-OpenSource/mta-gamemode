@@ -66,7 +66,12 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
     addEventHandler("onPickupHit", self.m_DrivingSchoolPickup,
         function(hitElement)
             if getElementType(hitElement) == "player" then
-                hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers())
+                local instructorTable = {}
+				for k, player in pairs(self:getOnlinePlayers()) do
+					instructorTable[player.name] = player:getPublicSync("Company:Duty") and "Ja" or "Nein"
+				end
+
+				hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers(), instructorTable)
             end
             cancelEvent()
         end
@@ -194,12 +199,14 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs/5))
+                        self:giveMoney(math.floor(costs*0.35), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
+						instructor:giveMoney(math.floor(costs*0.15), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
                         target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, instructor.name, DrivingSchool.TypeNames[type]))
                         target:triggerEvent("showDrivingSchoolStudentGUI", DrivingSchool.TypeNames[type])
                         instructor:triggerEvent("showDrivingSchoolInstructorGUI", DrivingSchool.TypeNames[type], target)
+						self:addLog(instructor, "Fahrschule", ("hat eine %s Prüfung mit %s gestartet!"):format(DrivingSchool.TypeNames[type], target:getName()))
                         addEventHandler("onPlayerQuit", instructor, self.m_OnQuit)
                         addEventHandler("onPlayerQuit", target, self.m_OnQuit)
                     else

@@ -20,6 +20,7 @@ function JobManager:constructor()
 		JobLogistician:new();
 		JobForkLift:new();
 		JobTreasureSeeker:new();
+		JobGravel:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
@@ -61,6 +62,7 @@ function JobManager:startJobForPlayer(job, player)
 	end
 
 	-- We're ready to start the job :)
+	player:giveAchievement(75)
 	job:start(player)
 
 	-- Tell the client that we started the job

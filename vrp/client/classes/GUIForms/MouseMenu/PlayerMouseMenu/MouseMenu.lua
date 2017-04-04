@@ -50,7 +50,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 					end
 				end
 			)
-		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() then
+		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() and element:getFaction() ~= localPlayer:getFaction() then
 			self:addItem(_"Fraktion: Spieler überfallen",
 				function()
 					if self:getElement() then

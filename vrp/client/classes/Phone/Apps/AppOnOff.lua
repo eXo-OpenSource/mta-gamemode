@@ -13,9 +13,9 @@ end
 
 function AppOnOff:onOpen(form)
 	if Phone:getSingleton():isOn() then
-		GUILabel:new(10, 10, 200, 35, _"Handy ausschalten", form):setColor(Color.Black)
+		GUILabel:new(10, 10, form.m_Width-20, 35, _"Handy ausschalten", form):setColor(Color.Black):setAlignX("center")
 
-		GUILabel:new(10, 60, 200, 20, _"Möchtest du das Handy ausschalten?", form):setColor(Color.Black)
+		GUILabel:new(10, 60, form.m_Width-20, 20, _"Möchtest du dein Handy ausschalten?", form):setColor(Color.Black):setAlignX("center")
 
 		self.m_switchOffImage = GUIImage:new(form.m_Width/2-64/2, 120, 64, 64, "files/images/Phone/Apps_iPhone/IconOff.png", form)
 		self.m_switchOffImage.onLeftClick = function() self:switchOff() end

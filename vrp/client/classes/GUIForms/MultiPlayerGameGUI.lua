@@ -10,18 +10,18 @@ inherit(Singleton, MultiPlayerGameGUI)
 
 MultiPlayerGameGUI.Names = {["chess"] = "Schach"}
 
-function MultiPlayerGameGUI:constructor(game, col)
+function MultiPlayerGameGUI:constructor(title, col, callback)
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(370/2), 300, 370)
 
 	self.m_Col = col
-	self.m_Game = game
+	self.m_Callback = callback
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Multiplayer %s", MultiPlayerGameGUI.Names[game]) ,true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s", title) ,true, true, self)
 
 	self.m_List = GUIGridList:new(30, 80, self.m_Width-60, 170, self.m_Window)
 	self.m_List:addColumn(_"Spieler", 1)
 
-	self.m_PlayButton = GUIButton:new(30, 310, self.m_Width-60, 35,_"Spieler einladen", self.m_Window)
+	self.m_PlayButton = GUIButton:new(30, 310, self.m_Width-60, 35,_"Spieler herausfordern", self.m_Window)
 	self.m_PlayButton:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1)
 	self.m_PlayButton.onLeftClick = bind(self.startPlaying,self)
 
@@ -61,7 +61,7 @@ end
 
 function MultiPlayerGameGUI:startPlaying()
 	if self.m_SelectedPlayer and isElement(self.m_SelectedPlayer) then
-		triggerServerEvent("casinoStartMultiplayerGame", localPlayer, self.m_Game, self.m_SelectedPlayer)
+		self.m_Callback(self.m_SelectedPlayer)
 		self.m_PlayButton:setEnabled(false)
 		self.m_SelectedPlayer = nil
 		delete(self)
@@ -69,3 +69,20 @@ function MultiPlayerGameGUI:startPlaying()
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end
 end
+
+addEvent("openBoxingGUI", true)
+addEventHandler("openBoxingGUI", root, function(col)
+	MultiPlayerGameGUI:new("Boxkampf", col,
+		function(player)
+			if player and isElement(player) and player:isWithinColShape(col) then
+				ChangerBox:new(_"Einsatz setzen",
+				_"Um wie viel Geld (in $) wollt ihr kämpfen?", BOXING_MONEY,
+				function (moneyId)
+					triggerServerEvent("boxingRequestFight", localPlayer, player, moneyId)
+				end)
+			else
+				ErrorBox:new(_"Der Spieler ist nicht mehr in der Halle!")
+			end
+		end
+	)
+end)

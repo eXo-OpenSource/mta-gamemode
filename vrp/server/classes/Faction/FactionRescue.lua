@@ -9,7 +9,7 @@ FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
 	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
-	"factionRescueReviveAbort"
+	"factionRescueReviveAbort", "factionRescueToggleLadder"
 }
 
 function FactionRescue:constructor()
@@ -45,15 +45,16 @@ function FactionRescue:constructor()
 
 	self.m_Faction = FactionManager.Map[4]
 
+	self.m_LadderBind = bind(self.ladderFunction, self)
+	self.m_MoveLadderBind = bind(self.moveLadder, self)
+
+
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1187.70, -1396.50, 6.4, 0, 0, 180)
+			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
-
-
-	self:createNoCollissionSpawn()
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -65,6 +66,8 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
 	addEventHandler("factionRescueReviveAbort", root, bind(self.destroyDeathBlip, self))
+	addEventHandler("factionRescueToggleLadder", root, bind(self.Event_toggleLadder, self))
+
 
 
 	PlayerManager:getSingleton():getQuitHook():register(
@@ -128,15 +131,6 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 			cancelEvent()
 		end
 	)
-end
-
-function FactionRescue:createNoCollissionSpawn()
-	local col = createColSphere(HOSPITAL_POSITION, 3)
-	addEventHandler("onColShapeLeave", col, function(hitElement, dim)
-		if dim and hitElement:getType() == "player" then
-			hitElement:setCollisionsEnabled(true)
-		end
-	end)
 end
 
 function FactionRescue:Event_changeSkin(player)
@@ -210,6 +204,10 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 					self:removeStretcher(client, vehicle)
 				else
 					self:getStretcher(client, vehicle)
+					setElementAlpha(client,255)
+					if client.ped_deadDouble then
+						destroyElement(client.ped_deadDouble)
+					end
 				end
 			else
 				client:sendError(_("Du kannst die Trage nicht so oft hintereinander aus/einladen!", client))
@@ -234,7 +232,10 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher:setCollisionsEnabled(false)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
-
+	setElementAlpha(player,255)
+	if player.ped_deadDouble then
+		destroyElement(player.ped_deadDouble)
+	end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
 	player:setFrozen(true)
@@ -242,8 +243,16 @@ function FactionRescue:getStretcher(player, vehicle)
 	setTimer(
 		function (player)
 			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			if isElement(player.ped_deadDouble) then
+				player.m_RescueStretcher:attach(player.ped_deadDouble, Vector3(0, 1.4, -0.5))
+			end
 			player:toggleControlsWhileObjectAttached(false)
+			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
+			setElementAlpha(player,255)
+			if player.ped_deadDouble then
+				destroyElement(player.ped_deadDouble)
+			end
 		end, 3000, 1, player
 	)
 end
@@ -255,7 +264,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 	player.m_RescueStretcher:setRotation(player:getRotation())
 	player.m_RescueStretcher:setPosition(player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5))
 	moveObject(player.m_RescueStretcher, 3000, vehicle:getPosition() + vehicle.matrix.forward*-2, Vector3(0, 0, vehicle:getRotation().z - player:getRotation().z), "InOutQuad")
-
+	setElementAlpha(player,255)
 	-- Enable Controls
 	player:toggleControlsWhileObjectAttached(true)
 
@@ -275,6 +284,11 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
+					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
+					player:giveMoney(50, "Rescue Team Wiederbelebung")
+					if deadPlayer:giveReviveWeapons() then
+						outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
+					end
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end
@@ -301,7 +315,7 @@ function FactionRescue:createDeathPickup(player, ...)
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
 
-	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
+	nextframe(function () if player.m_DeathPickup then player:setPosition(player.m_DeathPickup:getPosition()) end end)
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
@@ -309,20 +323,26 @@ function FactionRescue:createDeathPickup(player, ...)
 				if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
 					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
-							player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
-							hitPlayer.m_RescueStretcher.player = player
+							if not hitPlayer.m_RescueStretcher.player then
+								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								setElementAlpha(player,255)
+								if isElement(player.ped_deadDouble) then
+									destroyElement(player.ped_deadDouble)
+								end
+								hitPlayer.m_RescueStretcher.player = player
+								if source.money and source.money > 0 then
+									hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
+									source.money = 0
+								end
 
-							if source.money and source.money > 0 then
-								hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
-								source.money = 0
+								source:destroy()
+								player.m_DeathPickup = nil
+								for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+									rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+								end
+							else
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
 							end
-
-							source:destroy()
-							player.m_DeathPickup = nil
-							for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-								rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
-							end
-
 						else
 							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
 						end
@@ -366,9 +386,8 @@ function FactionRescue:createDeathTimeout(player, callback)
 end
 
 function FactionRescue:Event_OnPlayerWastedFinish()
-	source:setCameraTarget(player)
+	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
-	source:setCollisionsEnabled(false)
 	source:respawn()
 end
 
@@ -432,6 +451,140 @@ function FactionRescue:Event_healPlayerHospital()
 			end
 		else
 			client:sendError(_("Du hast bereits volles Leben.", client))
+		end
+	end
+end
+
+function FactionRescue:onLadderTruckEnter(player, seat)
+	if seat > 0 then return end
+	if not source.LadderEnabled then
+		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu bedienen!", player))
+	else
+		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu deaktivieren!", player))
+		self:toggleLadder(source, player, true)
+	end
+end
+
+function FactionRescue:onLadderTruckExit(player, seat)
+	if seat > 0 then return end
+	if source.LadderEnabled then
+		self:toggleLadder(source, player)
+	end
+end
+
+function FactionRescue:onLadderTruckSpawn(veh)
+	if veh.Ladder then
+		for index, obj in pairs(veh.Ladder) do
+			obj:destroy()
+		end
+	end
+
+	if veh.LadderTimer and isTimer(veh.LadderTimer) then
+		killTimer(veh.LadderTimer)
+	end
+
+	veh.LadderEnabled = false
+	veh.LadderMove = {}
+
+	veh.Ladder = {}
+	veh.Ladder["main"] = createObject(1932, veh:getPosition())
+	veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
+
+	veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+
+	veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder2"]:setScale(0.8)
+	veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
+
+	veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder3"]:setScale(0.6)
+	veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+
+	for index, obj in pairs(veh.Ladder) do
+		obj:setCollisionsEnabled(false)
+	end
+
+	addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
+	addEventHandler("onVehicleExit", veh, bind(self.onLadderTruckExit, self))
+
+end
+
+function FactionRescue:toggleLadder(veh, player, force)
+	if veh.LadderEnabled and not force then
+		player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeuge wieder fahren!", player))
+		veh.LadderEnabled = false
+		unbindKey(player, "w", "both", self.m_LadderBind)
+		unbindKey(player, "a", "both", self.m_LadderBind)
+		unbindKey(player, "s", "both", self.m_LadderBind)
+		unbindKey(player, "d", "both", self.m_LadderBind)
+		unbindKey(player, "lctrl", "both", self.m_LadderBind)
+		unbindKey(player, "lshift", "both", self.m_LadderBind)
+		self:onLadderTruckSpawn(veh)
+		veh:setFrozen(false)
+		veh.m_DisableToggleHandbrake = false
+	else
+		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit WASD, STRG und SHIFT!", player))
+		veh.LadderEnabled = true
+		bindKey(player, "w", "both", self.m_LadderBind)
+		bindKey(player, "a", "both", self.m_LadderBind)
+		bindKey(player, "s", "both", self.m_LadderBind)
+		bindKey(player, "d", "both", self.m_LadderBind)
+		bindKey(player, "lctrl", "both", self.m_LadderBind)
+		bindKey(player, "lshift", "both", self.m_LadderBind)
+		setTimer(self.m_MoveLadderBind, 50, 0, veh)
+		veh:setFrozen(true)
+		veh.m_DisableToggleHandbrake = true
+		veh:detach(veh.Ladder["main"])
+	end
+end
+
+
+function FactionRescue:Event_toggleLadder()
+	self:toggleLadder(source, client)
+end
+
+function FactionRescue:ladderFunction(player, key, state)
+	local veh = player.vehicle
+	if veh:getModel() ~= 544 then return end
+
+	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
+	if key == "d" then	veh.LadderMove["right"] = state == "down" and true or false end
+	if key == "w" then	veh.LadderMove["up"] = state == "down" and true or false end
+	if key == "s" then	veh.LadderMove["down"] = state == "down" and true or false end
+	if key == "lctrl" then	veh.LadderMove["in"] = state == "down" and true or false end
+	if key == "lshift" then	veh.LadderMove["out"] = state == "down" and true or false end
+end
+
+function FactionRescue:moveLadder(veh)
+	local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"])
+	local x1, y1, z1, rx1, ry1, rz1 = getElementAttachedOffsets(veh.Ladder["ladder1"])
+	local x2, y2, z2, rx2, ry2, rz2 = getElementAttachedOffsets(veh.Ladder["ladder2"])
+	local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder3"])
+
+	if veh.LadderMove["right"] then
+		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1, rx, ry, rz+0.7)
+	elseif veh.LadderMove["left"] then
+		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1, rx, ry, rz-0.7)
+	elseif veh.LadderMove["up"] then
+		if rx1 > -50 then
+			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
+		end
+	elseif veh.LadderMove["down"] then
+		if rx1 < 0 then
+			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1+0.5, ry1, rz1)
+		end
+	elseif veh.LadderMove["in"] then
+		if y3 < -1.4 then
+			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3+0.1, z3, rx3, ry3, rz3)
+		elseif y2 < -1.4 then
+			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2+0.1, z2, rx2, ry2, rz2)
+		end
+	elseif veh.LadderMove["out"] then
+		if y2 > -5.5 then
+			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2-0.05, z2, rx2, ry2, rz2)
+		elseif y3 > -4.5 then
+			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3-0.05, z3, rx3, ry3, rz3)
 		end
 	end
 end

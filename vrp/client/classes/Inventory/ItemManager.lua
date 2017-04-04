@@ -12,6 +12,7 @@ local w,h = guiGetScreenSize()
 addRemoteEvents{ "onClientItemUse", "onClientItemExpire"}
 function ItemManager:constructor( )
     self:loadEffectItems( )
+	self:initWearables()
     addEventHandler( "onClientItemUse", localPlayer, bind( ItemManager.onItemUse, self))
     addEventHandler( "onClientItemExpire", localPlayer, bind( ItemManager.onItemExpire, self))
 end
@@ -63,6 +64,10 @@ function ItemManager:loadEffectItems( )
   self.m_Items["Weed-Samen"] = PlantWeed:new();
   
   ItemDestructable:new();
+end
+
+function ItemManager:initWearables()
+	  WearableHelmet:new() 
 end
 
 

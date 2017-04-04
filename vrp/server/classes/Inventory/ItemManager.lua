@@ -24,6 +24,9 @@ function ItemManager:constructor()
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
 		["Zigarette"] = ItemFood,
+		["Donut"] = ItemFood,
+		["Donutbox"] = ItemDonutBox,
+
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,
@@ -38,8 +41,18 @@ function ItemManager:constructor()
 		["Pina Colada"] = ItemAlcohol,
 		["Monster"] = ItemAlcohol,
 		["Shot"] = ItemAlcohol,
-		["Cuba-Libre"] = ItemAlcohol
+		["Cuba-Libre"] = ItemAlcohol,
 
+		--//Wearables
+		["Helm"] = WearableHelmet,
+		["Motorcross-Helm"] = WearableHelmet,
+		["Pot-Helm"] = WearableHelmet,
+		["Gasmaske"] = WearableHelmet,
+		["Einsatzhelm"] = WearableHelmet,
+		["Kevlar"] = WearableShirt,
+		["Tragetasche"] = WearableShirt,
+		["Swatschild"] = WearablePortables,
+		["Kleidung"] = WearableClothes,
 	}
 
 	self.m_Properties = {
@@ -47,7 +60,8 @@ function ItemManager:constructor()
 }
 	self.m_SpecialItems = {
 		["Mautpass"] = true,
-		["Kanne"] = true
+		["Kanne"] = true,
+		["Donutbox"] = true
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

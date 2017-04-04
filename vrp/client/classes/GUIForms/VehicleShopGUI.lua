@@ -32,12 +32,13 @@ function VehicleShopGUI:destructor()
 	removeEventHandler("vehicleBought", root, self.m_VehicleBought)
 
 	showChat(true)
-	setCameraTarget(localPlayer, localPlayer)
-	setTimer(function()
-		setCameraTarget(localPlayer, localPlayer)
-	end, 2000, 1)
 	if self.m_InfoInstance then delete(self.m_InfoInstance) end
 	GUIForm.destructor(self)
+
+	if self.m_CameraInstance then
+		delete(self.m_CameraInstance)
+	end
+	setCameraTarget(localPlayer, localPlayer)
 end
 
 function VehicleShopGUI:buyVehicle(item)
@@ -78,6 +79,7 @@ end
 
 
 function VehicleShopGUI:updateMatrix()
+	if not isElement(self.m_CurrentVehicle) then return false end
 	self.m_CurrentMatrix = {getCameraMatrix(localPlayer)}
 	local pos = self.m_CurrentVehicle:getPosition()
 	local offsetX, offsetY, offsetZ = getPositionFromElementOffset(self.m_CurrentVehicle, 5, 5, 5)
@@ -103,10 +105,10 @@ function VehicleShopGUI:Event_VehicleBought()
 		setElementCollidableWith(self.m_BuyVehicle,vehicle,false)
 	end
 	setTimer(bind(VehicleShopGUI.setColBack,self),15000,1,self.m_BuyVehicle)
-	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
+	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!")
 end
 
-function VehicleShopGUI:setColBack() 
+function VehicleShopGUI:setColBack()
 	setElementAlpha(self.m_BuyVehicle,255)
 	for key, vehicle in ipairs(getElementsByType("vehicle")) do
 		setElementCollidableWith(self.m_BuyVehicle,vehicle,true)

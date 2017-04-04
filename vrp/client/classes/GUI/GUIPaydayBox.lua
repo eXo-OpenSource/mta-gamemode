@@ -24,6 +24,10 @@ function GUIPaydayBox:constructor(texts)
 	end,1500,1)
 
 	self.m_Animation = Animation.Move:new(self, 1500, self.m_AbsoluteX, 10)
+
+	if PublicTransportTaxoMeterGUI:isInstantiated() then
+		PublicTransportTaxoMeterGUI:getSingleton():hide()
+	end
 end
 
 function GUIPaydayBox:endPayday()
@@ -31,6 +35,10 @@ function GUIPaydayBox:endPayday()
 	localPlayer.m_PaydayShowing = false
 	self.m_Animation = Animation.Move:new(self, 1500, self.m_AbsoluteX, -200)
 	setTimer(function() delete(self) end, 2000, 1)
+
+	if PublicTransportTaxoMeterGUI:isInstantiated() then
+		PublicTransportTaxoMeterGUI:getSingleton():show()
+	end
 end
 
 function GUIPaydayBox:drawThis()

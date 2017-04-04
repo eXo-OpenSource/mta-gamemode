@@ -27,8 +27,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	self.m_Alpha = 255
 
 	-- Caching in Rendertargets
-	self:anyChange()
-	self.m_CurrentRenderTarget = false
+	--self:anyChange()
 
 	-- Find cache area if exists
 	if self.m_Parent and instanceof(self.m_Parent, CacheArea) and self.m_Parent.m_CachingEnabled then
@@ -46,32 +45,24 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 		self.m_AbsoluteY = self.m_AbsoluteY + lastElement.m_PosY
 		lastElement = lastElement.m_Parent
 	end
+
 	-- Ignore cache areas as rendertargets have their own offset position
 	if self.m_CacheArea then
 		self.m_AbsoluteX = self.m_AbsoluteX - self.m_CacheArea.m_AbsoluteX
 		self.m_AbsoluteY = self.m_AbsoluteY - self.m_CacheArea.m_AbsoluteY
 	end
-	self.m_RestoreFunc = bind( DxElement.onRestore, self)
-	removeEventHandler("onClientRestore",root, self.m_RestoreFunc)
-	addEventHandler("onClientRestore",root, self.m_RestoreFunc)
 end
 
-function DxElement:onRestore( bClear )
-	if bClear then
-		self:anyChange()
-	end
-end
-
-function DxElement:destructor()
+function DxElement:destructor(keepParent)
 	if self.onHide then self:onHide() end
 
 	-- Delete the children (--> call their destructor)
 	for k, v in ipairs(self.m_Children) do
-		delete(v)
+		delete(v, true)
 	end
 
 	-- Unlink from parent
-	if self.m_Parent then
+	if not keepParent and self.m_Parent then
 		for k, v in ipairs(self.m_Parent.m_Children) do
 			if v == self then
 				table.remove(self.m_Parent.m_Children, k)
@@ -81,7 +72,6 @@ function DxElement:destructor()
 	end
 
 	self:anyChange()
-	removeEventHandler("onClientRestore",root, self.m_RestoreFunc)
 end
 
 function DxElement:anyChange()
@@ -174,6 +164,8 @@ function DxElement:clearChildren()
 		delete(v)
 	end
 	self.m_Children = {}
+
+	self:anyChange()
 end
 
 function DxElement:getParent()

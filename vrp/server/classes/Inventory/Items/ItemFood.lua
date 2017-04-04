@@ -15,7 +15,8 @@ ItemFood.Settings = {
 		["ModelScale"] = 2,
 		["Attach"] = {11, 0, -0.02, 0.15, 0, -90, 90},
 		["CustomEvent"] = "smokeEffect"
-	}
+	},
+	["Donut"] = {["Health"] = 25, ["Model"] = 1915, ["Text"] = "isst einen Donut", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}, ["Attach"] = {12, 0, -0.02, 0.15, 0, -90, 90}}
 }
 
 function ItemFood:constructor()
@@ -40,7 +41,7 @@ function ItemFood:use(player)
 		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
 	end
 
-	player:meChat(true, " "..ItemSettings["Text"].."!")
+	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
 	if ItemSettings["CustomEvent"] then

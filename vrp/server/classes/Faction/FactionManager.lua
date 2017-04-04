@@ -294,22 +294,23 @@ function FactionManager:Event_factionRankUp(playerId)
 			if faction:isEvilFaction() then
 				if player:getKarma() > ( -FACTION_MIN_RANK_KARMA[playerRank + 1] or -100000) then
 					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[playerRank + 1]))
+					if isOffline then delete(player) end
 					return
 				end
 			else
 				if player:getKarma() < (FACTION_MIN_RANK_KARMA[playerRank + 1] or 10000) then
 					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[playerRank + 1]))
+					if isOffline then delete(player) end
 					return
 				end
 			end
-			if isOffline then
-				player:save()
-			end
 
-			if playerRank < FactionRank.Manager then
+			if playerRank < FactionRank.Leader then
 				faction:setPlayerRank(playerId, playerRank + 1)
 				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
-				if not isOffline then
+				if isOffline then
+					delete(player)
+				else
 					if isElement(player) then
 						player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 					end
@@ -317,40 +318,50 @@ function FactionManager:Event_factionRankUp(playerId)
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
+				if isOffline then delete(player) end
 			end
 		end
 	)(client)
 end
 
 function FactionManager:Event_factionRankDown(playerId)
-	if not playerId then return end
-	local faction = client:getFaction()
-	if not faction then return end
+	Async.create(
+		function(client)
+			if not playerId then return end
+			local faction = client:getFaction()
+			if not faction then return end
 
-	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
-		client:sendError(_("Du oder das Ziel sind nicht mehr in der Fraktion!", client))
-		return
-	end
+			if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+				client:sendError(_("Du oder das Ziel sind nicht mehr in der Fraktion!", client))
+				return
+			end
 
-	if faction:getPlayerRank(client) < FactionRank.Manager then
-		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
-		-- Todo: Report possible cheat attempt
-		return
-	end
-
-	if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
-		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
-		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
-		if not isOffline then
-			if isElement(player) then
-				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+			if faction:getPlayerRank(client) < FactionRank.Manager then
+				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
+				-- Todo: Report possible cheat attempt
+				return
+			end
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then
+				player:load()
+			end
+			if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
+				faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
+				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
+				if isOffline then
+					delete(player)
+				else
+					if isElement(player) then
+						player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+					end
+				end
+				self:sendInfosToClient(client)
+			else
+				client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
+				if isOffline then delete(player) end
 			end
 		end
-		self:sendInfosToClient(client)
-	else
-		client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
-	end
+	)(client)
 end
 
 function FactionManager:Event_receiveFactionWeaponShopInfos()
@@ -370,7 +381,7 @@ end
 function FactionManager:Event_factionRespawnVehicles()
 	if client:getFaction() then
 		local faction = client:getFaction()
-		if faction:getPlayerRank(client) >= FactionRank.Manager then
+		if faction:getPlayerRank(client) >= FactionRank.Rank4 then
 			faction:respawnVehicles()
 		else
 			client:sendError(_("Die Fahrzeuge können erst ab Rang %d respawnt werden!", client, FactionRank.Manager))
@@ -379,13 +390,14 @@ function FactionManager:Event_factionRespawnVehicles()
 end
 
 function FactionManager:sendAllToClient(client)
+	--[[
 	local vehicleTab = {}
 	for i, faction in pairs(self:getAllFactions()) do
 		if faction:isStateFaction() or faction:isRescueFaction() then
 			for i, v in pairs(faction.m_Vehicles) do
 				if factionVehicleShaders[faction:getId()] and factionVehicleShaders[faction:getId()][v:getModel()] then
 					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
-					if v.m_Decal == "" then
+					if v.m_Decal == "" or v.m_Decal == false then
 						if shaderInfo.shaderEnabled then
 							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
 						end
@@ -398,6 +410,7 @@ function FactionManager:sendAllToClient(client)
 	end
 
 	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
+	]]
 end
 
 function FactionManager:Event_getFactions()

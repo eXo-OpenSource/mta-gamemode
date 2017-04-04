@@ -6,11 +6,14 @@
 -- *
 -- ****************************************************************************
 local w,h = guiGetScreenSize()
+
+local REPORT_LAST_KILL = false
 AttackClient = inherit(Object)
 local pseudoSingleton
 addRemoteEvents{"onGangwarDamage", "onGangwarKill"}
 
 function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush) 
+	REPORT_LAST_KILL = false
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
@@ -53,7 +56,6 @@ function AttackClient:addDamage( target, weapon, bodypart, loss )
 							localPlayer.m_GangwarDamage = 0 
 						end
 						self.m_GangwarDamage = math.floor( self.m_GangwarDamage + loss )
-						playSound("files/audio/hitsound.wav")
 					end
 				end
 			end
@@ -83,7 +85,7 @@ function AttackClient:destructor()
 		setTimer( func, 5000, 1)
 	end
 	destroyQuestionBox() 
-	GangwarStatistics:getSingleton():sendData( self.m_GangwarDamage, self.m_AreaID )
+	GangwarStatistics:getSingleton():sendData( self.m_GangwarDamage, self.m_AreaID)
 end 
 
 function AttackClient:synchronizeLists( pParticipants, pDisqualified )

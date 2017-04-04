@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
+local TREE_MONEY = 50
 
 function JobLumberjack:constructor()
 	Job.constructor(self)
@@ -23,7 +24,7 @@ function JobLumberjack:constructor()
 	self.m_VehicleSpawner:disable()
 
 	self.m_Col = createColSphere(1022.550, -339.239, 73.992, 300)
-		addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
+	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if hitElement.type == "player" and dim then
 			if hitElement:getJob() == self then
 				giveWeapon(hitElement, 9, 1, true)
@@ -37,7 +38,6 @@ function JobLumberjack:constructor()
 			end
 		end
 	end)
-
 
 	self.m_ResetDataBind = bind(self.onResetData, self)
 
@@ -55,6 +55,8 @@ end
 
 function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
+	self:destroyJobVehicle(player)
+	player:setData("lumberjack:Trees", 0)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	setElementVisibleTo(self.m_LoadUpMarker, player, false)
 	setElementVisibleTo(self.m_DumpMarker, player, false)
@@ -62,13 +64,13 @@ end
 
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle:setVariant(255, 255)
-	vehicle:addCountdownDestroy(10)
 	vehicle.LumberjackOwner = player
+	self:registerJobVehicle(player, vehicle, true, false)
 end
 
 function JobLumberjack:checkRequirements(player)
-	if not (player:getJobLevel() >= 3) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 3", player), 255, 0, 0)
+	if not (player:getJobLevel() >= JOB_LEVEL_LUMBERJACK) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK), 255, 0, 0)
 		return false
 	end
 	return true
@@ -77,13 +79,17 @@ end
 function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		if hitElement:getJob() ~= self then
-			hitElement:sendMessage(_("Du musst Holzfäller sein, um Bäume aufladen zu können", hitElement), 255, 0, 0)
 			return
 		end
 
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
 			hitElement:sendMessage(_("Bitte benutze einen Flatbed", hitElement), 255, 0, 0)
+			return
+		end
+
+		if hitElement.vehicleSeat ~= 0 then
+			hitElement:sendMessage(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement), 255, 0, 0)
 			return
 		end
 
@@ -97,6 +103,8 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			return
 		end
 
+		removeEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		removeEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 		addEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
 		addEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 
@@ -116,7 +124,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			end
 		end
 
-		hitElement:triggerEvent("lumberjackTreesLoadUp", root)
+		hitElement:triggerEvent("lumberjackTreesLoadUp")
 	end
 end
 
@@ -129,12 +137,17 @@ end
 
 function JobLumberjack:dumpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
+		if hitElement:getJob() ~= self then
+			return
+		end
+
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
 			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
-		if hitElement:getJob() ~= self then
+
+		if hitElement.vehicleSeat ~= 0 then
 			return
 		end
 
@@ -150,7 +163,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:setData("lumberjack:Trees", 0)
 
 		-- Give money and experience points
-		hitElement:giveMoney(numTrees * 20, "Holzfäller-Job")
+		hitElement:giveMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do

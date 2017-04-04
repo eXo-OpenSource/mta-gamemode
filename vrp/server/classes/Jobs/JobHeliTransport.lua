@@ -10,7 +10,7 @@ JobHeliTransport = inherit(Job)
 function JobHeliTransport:constructor()
 	Job.constructor(self)
 
-	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.6, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.65, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
@@ -24,6 +24,14 @@ end
 
 function JobHeliTransport:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
+end
+
+function JobHeliTransport:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_HELITRANSPORT) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT), 255, 0, 0)
+		return false
+	end
+	return true
 end
 
 function JobHeliTransport:stop(player)
@@ -44,7 +52,7 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle.player = player
 	player.heliJobVehicle = vehicle
 	player:triggerEvent("jobHeliTransportCreateMarker", "pickup")
-	client:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", client))
+	player:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", player))
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
@@ -98,7 +106,7 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		local distance = getDistanceBetweenPoints3D(self.m_PickupPos, vehicle:getPosition())
-		client:setData("JobHeliTransport:Money", math.floor(distance/8))
+		client:setData("JobHeliTransport:Money", math.floor(distance/3)) --// Default distance/8
 		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else

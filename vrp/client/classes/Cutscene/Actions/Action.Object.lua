@@ -21,5 +21,5 @@ Action.Object.create.trigger = function (self)
 		 false
 	)
 
-	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
+	setElementDimension(self.cutscene.m_Elements[self.id], self.cutscene.m_Dimension)
 end

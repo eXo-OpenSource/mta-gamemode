@@ -44,15 +44,12 @@ function ShootingRanch:constructor()
 	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if dim then
-			hitElement:triggerEvent("disableDamage", true)
 			hitElement:triggerEvent("toggleRadar", false)
-
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
 		if dim then
-			hitElement:triggerEvent("disableDamage", false)
 			hitElement:triggerEvent("toggleRadar", true)
 		end
 	end)
@@ -70,15 +67,15 @@ end
 function ShootingRanch:warpPlayerWaffenbox(player)
 	local freesphere = self:getFreeSphere()
 	if isElement(freesphere) then
-		player:setDimension(0)
-		player:setInterior(0)
+		setElementDimension(player,0)
+		setElementInterior(player,0)
 		player:setPosition(freesphere:getPosition())
 		player:setRotation(0, 0, 270, "default", true)
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
-		player:setDimension(0)
-		player:setInterior(6)
+		setElementDimension(player,0)
+		setElementInterior(player,6)
 		player:setPosition(244.16,69.11,1003.64)
 		return false
 	end

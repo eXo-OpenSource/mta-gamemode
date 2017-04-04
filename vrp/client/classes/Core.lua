@@ -25,17 +25,23 @@ function Core:constructor()
 				if provider:start() then -- did the download succeed
 					delete(dgi)
 					self:onDownloadComplete()
+				else
+					outputConsole("retrying download from different mirror")
+					delete(dgi)
+					local dgi = HTTPDownloadGUI:getSingleton()
+					local provider = HTTPProvider:new(FILE_HTTP_FALLBACK_URL, dgi)
+					if provider:start(true) then -- did the download succeed
+						delete(dgi)
+						self:onDownloadComplete()
+					end
 				end
 			end
 		)()
 	else
-		--[[
-			DownloadGUI:new()
-			local dgi = DownloadGUI:getSingleton()
-			Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
-			setAmbientSoundEnabled( "gunfire", false )
-			showChat(true)
-		--]]
+		local dgi = DownloadGUI:getSingleton()
+		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		setAmbientSoundEnabled( "gunfire", false )
+		showChat(true)
 	end
 end
 
@@ -75,7 +81,6 @@ function Core:ready()
 	--GangAreaManager:new()
 	HelpBar:new()
 	JobManager:new()
-	Achievement:new()
 	TippManager:new()
 	--JailBreak:new()
 	DimensionManager:new()
@@ -104,13 +109,16 @@ function Core:ready()
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	PremiumArea:new()
 
 	PlantWeed.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
+	EasterEgg:new()
 	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
+
 
 	Shaders.load()
 
@@ -121,11 +129,10 @@ function Core:ready()
 	GasStation:new()
 
 	ChessSession:new()
+	
+	GroupRob:new() 
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
-
-
-
 
 end
 
@@ -141,41 +148,23 @@ function Core:afterLogin()
 	HUDUI:getSingleton():show()
 	Collectables:new()
 	KeyBinds:new()
+	Indicator:new()
+	Tour:new()
+	Achievement:new()
 
 	if DEBUG then
 		Debugging:new()
 		DebugGUI.initalize()
 	end
 
+	-- Pre-Instantiate important GUIS
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
-	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-
-	FactionGUI:new()
-	FactionGUI:getSingleton():close()
-	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
-
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
 
 	Phone:new()
 	Phone:getSingleton():close()
-
-	-- Pre-Instantiate important GUIS
-	-- TODO: I think we have to improve this block, currently i don't have an idea. (In my tests this takes ~32ms, relevant?)
-	GroupGUI:new()
-	GroupGUI:getSingleton():close()
-	TicketGUI:new()
-	TicketGUI:getSingleton():close()
-	CompanyGUI:new()
-	CompanyGUI:getSingleton():close()
-	FactionGUI:new()
-	FactionGUI:getSingleton():close()
-	MigratorPanel:new()
-	MigratorPanel:getSingleton():close()
-	KeyBindings:new()
-	KeyBindings:getSingleton():close()
-	Tour:new()
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
@@ -189,6 +178,7 @@ function Core:afterLogin()
 	PlantGUI.load()
 	Fishing.load()
 	GUIForm3D.load()
+	NonCollidingSphere.load()
 
 	-- Miami Spawn deactivated:
 	HUDRadar:getSingleton():setEnabled(true)
@@ -197,6 +187,21 @@ function Core:afterLogin()
 	setElementFrozen(localPlayer,false)
 	triggerServerEvent("remoteClientSpawn", localPlayer)
 	-- //Miami Spawn deactivated:
+
+	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
+	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
+	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
+	triggerServerEvent("requestVehicleTextures", localPlayer)
+
+	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
+		if object:getModel() == 2942 then
+			object:setBreakable(false)
+		end
+	end
 end
 
 function Core:destructor()
@@ -219,3 +224,20 @@ end
 function Core:throwInternalError(message)
 	triggerServerEvent("Core.onClientInternalError", root, message)
 end
+
+
+-- AntiCheat for blips // Workaround
+setTimer(
+	function()
+		local attachedBlips = {}
+		for _, v in pairs(getElementsByType("blip")) do
+			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" then
+				table.insert(attachedBlips, v)
+			end
+		end
+
+		if #attachedBlips > 1 then
+			triggerServerEvent("AntiCheat:ReportBlip", localPlayer, #attachedBlips)
+		end
+	end, 600000, 0
+)

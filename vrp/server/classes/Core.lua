@@ -45,10 +45,17 @@ function Core:constructor()
 	aclGroup:addObject("user.exo_web")
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
+	if GIT_BRANCH == "release/production" then
+		setServerPassword()
+	end
+
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		AntiCheat:new()
+		ModdingCheck:new()
 		TranslationManager:new()
 		GlobalTimer:new()
+		MTAFixes:new()
 		VehicleManager:new()
 		Admin:new()
 		StatisticsLogger:new()
@@ -66,6 +73,7 @@ function Core:constructor()
 		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
+		AdminEventManager:new()
 		--GangAreaManager:new()
 		Weather:new()
 		--JailBreak:new()
@@ -74,7 +82,8 @@ function Core:constructor()
 		Achievement:new()
 		SkinShops:new()
 		--Deathmatch:new() Not finished
-		VehicleTuning:new()
+		VehicleTuningShop:new()
+		--VehicleCustomTextureShop:new()
 		DimensionManager:new()
 		ActorManager:new()
 		InteriorManager:new()
@@ -99,10 +108,12 @@ function Core:constructor()
 		Fishing:new()
 		ShootingRanch:new()
 		DeathmatchManager:new()
-
 		SkydivingManager:new()
 		Kart:new()
 		HorseRace:new()
+		BoxManager:new()
+		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
+		GPS:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -126,6 +137,7 @@ function Core:constructor()
 		Gangwar:new()
 		GangwarStatistics:new()
 		--SprayWallManager:new()
+		GroupHouseRob:new()
 
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
@@ -163,6 +175,20 @@ function Core:constructor()
 		if DEBUG then
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
+
+		Blip:new("North.png", 0, 6000, root, 12000)
+
+		GlobalTimer:getSingleton():registerEvent(function()
+			outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
+		end, "Server Restart Message 1", nil, 04, 50)
+		GlobalTimer:getSingleton():registerEvent(function()
+			outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
+		end, "Server Restart Message 2", nil, 04, 55)
+
+		GlobalTimer:getSingleton():registerEvent(function()
+			getThisResource():restart()
+		end, "Server Restart", nil, 05, 00)
+
 	end
 end
 
@@ -181,7 +207,9 @@ function Core:destructor()
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
 		delete(GroupManager:getSingleton())
-		delete(HouseManager:getSingleton())
+		if HouseManager:isInstantiated() then
+			delete(HouseManager:getSingleton())
+		end
 		delete(FactionManager:getSingleton())
 		delete(CompanyManager:getSingleton())
 		delete(InventoryManager:getSingleton())
@@ -190,6 +218,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end

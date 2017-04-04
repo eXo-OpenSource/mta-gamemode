@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
+
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -21,7 +22,6 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-
 end
 
 function AppCall:onOpen(form)
@@ -30,7 +30,7 @@ function AppCall:onOpen(form)
 end
 
 function AppCall:onClose()
-	for k, activity in ipairs(self.m_Activities) do
+	for k, activity in pairs(self.m_Activities) do
 		if instanceof(activity, IncomingCallActivity, true) then
 			if activity:getCaller() then
 				activity:busy()
@@ -114,18 +114,25 @@ function MainActivity:constructor(app)
 	self:addNumpadButton("#", 3, 3)
 
 	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Player)
-	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-145, self.m_Tabs["Players"])
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.7)
 	self.m_PlayerListGrid:addColumn(_"Num.", 0.3)
+	GUILabel:new(10, 330, 50, 25, "Suche:", self.m_Tabs["Players"])
+	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
+	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
+
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
+
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+
 	self.m_TabPanel.onTabChanged = function(tabId)
 		if tabId == self.m_Tabs["Players"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
 		end
 	end
-
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
@@ -214,13 +221,42 @@ function MainActivity:ButtonCallPlayer_Click()
 
 end
 
+function MainActivity:ButtonAddContact_Click()
+	local item = self.m_PlayerListGrid:getSelectedItem()
+	local playerContacts = fromJSON(core:get("ContactList", "Players", "[ [ ] ]"))
+
+	for _, contact in pairs(playerContacts) do
+		if contact[1] == item.Owner then
+			ErrorBox:new("Kontakt ist bereits in der Kontaktliste!")
+			return
+		end
+	end
+
+	if item.Owner and item.Number then
+		table.insert(playerContacts, {tostring(item.Owner), item.Number})
+		core:set("ContactList", "Players", toJSON(playerContacts))
+	end
+end
+
+function MainActivity:searchPlayer()
+	self.m_PlayerListGrid:clear()
+
+	for number, numData in pairs(self.m_PhoneNumbers) do
+		if numData["OwnerType"] == "player" then
+			if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(numData["OwnerName"]), string.lower(self.m_PlayerSearch:getText())) then
+				local item = self.m_PlayerListGrid:addItem(numData["OwnerName"], tostring(number))
+				item.Owner = numData["OwnerName"]
+				item.Number = number
+			end
+		end
+	end
+end
+
 function MainActivity:Event_receivePhoneNumbers(list)
 	self.m_PhoneNumbers = list
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
-	local item
-	for index, key in pairs(grid) do
-		key:clear()
-	end
+
+	for index, key in pairs(grid) do key:clear() end
 	for number, numData in pairs(list) do
 		local item = grid[numData["OwnerType"]]:addItem(numData["OwnerName"], tostring(number))
 		item.Owner = numData["OwnerName"]
@@ -302,6 +338,17 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", self):setColor(Color.Black):setAlignX("center")
 		end
 		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, self)
+		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", self)
+		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
+		self.m_ButtonSendLocation.onLeftClick = function()
+			if self.m_LastClick and getTickCount() - self.m_LastClick < 10000 then
+				ErrorBox:new(_"Bitte warte ein paar Sekunden bevor du deine Position aktualisierst")
+				return
+			end
+
+			self.m_LastClick = getTickCount()
+			triggerServerEvent("callSendLocation", root, self.m_Callee)
+		end
 		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)

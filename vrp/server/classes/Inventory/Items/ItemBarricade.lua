@@ -26,6 +26,7 @@ function ItemBarricade:use(player)
 				end
 				
 				local worldItem = self:place(player, position, rotation)
+				--StatisticsLogger:getSingleton():itemPlaceLogs( player, "Barrikade", position.x..","..position.y..","..position.z ) --// disabled to prevent possible spam 
 				worldItem.m_Breakable = self.m_Breakable
 				player:getInventory():removeItem(self:getName(), 1)
 			end

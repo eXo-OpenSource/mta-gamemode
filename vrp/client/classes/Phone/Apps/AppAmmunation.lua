@@ -20,6 +20,12 @@ function AppAmmunation:onOpen(form)
 	self.m_Tabs = {}
 	self.m_Tabs["Info"] = self.m_TabPanel:addTab(_"Information", FontAwesomeSymbols.Info)
 	GUILabel:new(10, 10, 200, 50, _"Ammunation", self.m_Tabs["Info"])
+	GUILabel:new(10, 65, form.m_Width-20, 22, _[[
+		Hier kannst du den Lieferservice von Ammunation nutzen.
+		Wähle einfach die gewünschten Produkte aus und klicke auf bestellen.
+
+		Das Geld wird bequem vom Konto abgebucht!
+	]], self.m_Tabs["Info"]):setMultiline(true)
 	self.m_Tabs["Order"] = self.m_TabPanel:addTab(_"Bestellen", FontAwesomeSymbols.CartPlus)
 	GUILabel:new(10, 10, 200, 50, _"Bestellen:", self.m_Tabs["Order"])
 	self.m_WeaponChanger = GUIChanger:new(10, 65, 240, 30, self.m_Tabs["Order"])

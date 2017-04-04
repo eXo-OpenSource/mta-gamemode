@@ -69,6 +69,10 @@ function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
 end
 
+function Player:getSTVO()
+	return self:getPublicSync("STVO") or 0
+end
+
 function Player:getGroupType()
 	return self:getPublicSync("GroupType") or false
 end
@@ -128,10 +132,6 @@ function Player:giveAchievement (...)
 	else
 		outputDebug("Achievement hasn't been instantiated yet!")
 	end
-end
-
-function Player:getAchievements ()
-	return self:getPrivateSync("Achievements") or {[0] = false}
 end
 
 function Player:setTempMatchID (id)

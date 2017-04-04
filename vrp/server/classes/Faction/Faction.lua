@@ -35,11 +35,12 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
-	self.m_Depot = Depot.load(depotId, self)
+	self.m_Depot = Depot.load(depotId, self, "faction")
 
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
+	self.m_VehicleTexture = factionVehicleShaders[Id] or false
 end
 
 function Faction:destructor()
@@ -62,6 +63,10 @@ function Faction:isStateFaction()
 		return true
 	end
 	return false
+end
+
+function Faction:setDepotId(Id)
+	self.m_Depot = Depot.load(Id, self, "faction")
 end
 
 function Faction:isRescueFaction()
@@ -131,7 +136,9 @@ end
 
 function Faction:changeSkin(player)
 	local rank = self:getPlayerRank(player)
-	player:setModel(self.m_RankSkins[tostring(rank)])
+	if player:isActive() then
+		player:setModel(self.m_RankSkins[tostring(rank)])
+	end
 end
 
 function Faction:changeSkin_old(player)
@@ -172,6 +179,11 @@ function Faction:addPlayer(playerId, rank)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
 		end
+
+		player:giveAchievement(68) -- Parteiisch
+		if self.m_Name_Short == "SAPD" then
+			player:giveAchievement(9) -- Gutes blaues Männchen
+		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
@@ -186,6 +198,7 @@ function Faction:removePlayer(playerId)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
+		player:giveAchievement(67)
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:setDefaultSkin()
@@ -235,13 +248,20 @@ function Faction:setPlayerRank(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end
+	local player = Player.getFromId(playerId)
+	if rank == 6 then
+		player:giveAchievement(66)
+	end
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if Player.getFromId(playerId) then
-			self:changeSkin(Player.getFromId(playerId))
+		if player then
+			self:changeSkin(player)
 		end
 	end
+	--if isOffline then
+	--	delete(player)
+	--end
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
@@ -300,12 +320,14 @@ function Faction:getPlayers(getIDsOnly)
 	return temp
 end
 
-function Faction:getOnlinePlayers()
+function Faction:getOnlinePlayers(afkCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			players[#players + 1] = player
+			if not afkCheck or not player.m_isAFK then
+				players[#players + 1] = player
+			end
 		end
 	end
 	return players
@@ -343,16 +365,27 @@ function Faction:sendChatMessage(sourcePlayer, message)
 	--end
 end
 
-function Faction:respawnVehicles()
+function Faction:respawnVehicles( isAdmin )
+	local time = getRealTime().timestamp
+	if self.m_LastRespawn and not isAdmin then
+		if time - self.m_LastRespawn <= 900 then --// 15min
+			return self:sendShortMessage("Fahrzeug können nur alle 15 Minuten respawned werden!")
+		end
+	end
+	if isAdmin then
+		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
+		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+	end
 	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
 	local fails = 0
 	local vehicles = 0
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn() then
+			if not vehicle:respawn(true) then
 				fails = fails + 1
 			end
+			self.m_LastRespawn = getRealTime().timestamp
 		end
 	end
 
@@ -405,7 +438,7 @@ function Faction:setSafe(obj)
 	self.m_Safe:setData("clickable",true,true)
 	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
 		if button == "left" and state == "down" then
-			if player:getFaction() and player:getFaction() == self or (player:getFaction():isStateFaction() and self:isStateFaction()) then
+			if player:getFaction() and player:getFaction() == self or (player:getFaction() and player:getFaction():isStateFaction() and self:isStateFaction()) then
 				player:triggerEvent("bankAccountGUIShow", self:getName(), "factionDeposit", "factionWithdraw")
 				self:refreshBankAccountGUI(player)
 			else

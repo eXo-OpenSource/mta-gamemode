@@ -15,6 +15,7 @@ Inventory.Color = {
 	ItemsBackground = rgb(50, 50, 50);
 	ItemBackground  = rgb(97, 129, 140);
 	ItemBackgroundHover = rgb(50, 200, 255);
+	ItemBackgroundHoverDelete = rgb(200, 0, 0);
 }
 
 Inventory.Tabs = {
@@ -28,7 +29,7 @@ Inventory.Tabs = {
 function Inventory:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
-	self.m_Window:disableMoving()
+	self.m_Window:toggleMoving(false)
 	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 
@@ -72,10 +73,21 @@ function Inventory:constructor()
 	addEventHandler("syncInventoryFromServer",  root,  self.m_func2)
 	addEventHandler("forceInventoryRefresh",  root, self.m_func3 )
 	addEventHandler("closeInventory",  root,  self.m_func4)
-
+	self.m_KeyInputCheck = bind(self.Event_OnRender, self)
+	addEventHandler("onClientRender", root, self.m_KeyInputCheck)
 	self:hide()
-	self.Show = false
+end
 
+function Inventory:Event_OnRender()
+	self.m_IsDeleteKeyDown = getKeyState("lctrl")
+
+	if self.getSize then
+		if self.Show then
+			local sw,sh = self:getSize()
+			dxDrawText("Zum Löschen von Items Control und Linksklick!", screenWidth/2 - sw/2, screenHeight/2 - sh/2, screenWidth/2  +sw/2, (((screenHeight/2*0.95) +sh/2)+1), tocolor(0, 0, 0,255),1,"default-bold","center","bottom")
+			dxDrawText("Zum Löschen von Items Control und Linksklick!",  screenWidth/2 - sw/2, screenHeight/2 - sh/2, screenWidth/2  +sw/2, ((screenHeight/2*0.95) +sh/2), tocolor(200,200,200,255),1,"default-bold","center","bottom")
+		end
+	end
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
@@ -99,10 +111,8 @@ end
 function Inventory:toggle()
 	if self.Show == true then
 		self:hide()
-		self.Show = false
 	else
 		self:show()
-		self.Show = true
 	end
 end
 
@@ -132,7 +142,7 @@ function Inventory:addItem(place, item)
 		slot.Place = place
 		slot.ItemName = item["Objekt"]
 		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"] > 1 and item["Menge"] or "", slot):setAlignX("right"):setAlignY("bottom")
 	end
 end
 
@@ -242,18 +252,65 @@ end
 
 function Inventory:addItemEvents(item)
 	item.onHover = function()
-		item:setColor(Inventory.Color.ItemBackgroundHover)
+		if not Inventory:getSingleton().m_IsDeleteKeyDown then
+			item:setColor(Inventory.Color.ItemBackgroundHover)
+		else
+			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)
+		end
 	end
+
 	item.onUnhover = function()
 		item:setColor(Inventory.Color.ItemBackground)
 	end
+
 	item.onLeftClick = function()
 		if item.Item then
 			local itemName = item.ItemName
 			local itemDelete = false
 			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
+			if not self.m_IsDeleteKeyDown then
+				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
+			else
+				if self.m_InventoryActionPrompt then
+					self.m_InventoryActionPrompt:close()
+				end
+				local bThrowAway = self.m_ItemData[item.ItemName]["Wegwerf"] == 1
+				if bThrowAway then
+					self.m_ItemPromptReference = item
+					self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
+				else
+					outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+				end
+			end
+		end
+	end
 
-			triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
+	item.onRightClick = function()
+		if item.Item then
+			local itemName = item.ItemName
+			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
+		end
+	end
+end
+
+function Inventory:acceptPrompt( bObj )
+	if self.m_InventoryActionPrompt then
+		if self.m_InventoryActionPrompt == bObj then
+			if self.m_ItemPromptReference then
+				local item = self.m_ItemPromptReference
+				if item then
+					local name, id, place, bag = item.ItemName, item.Id, item.Place, Inventory.Tabs[self.m_CurrentTab]
+					local bThrowAway = self.m_ItemData[name]["Wegwerf"] == 1
+					if bObj then
+						bObj:close()
+					end
+					if bThrowAway then
+						triggerServerEvent("throwItem", localPlayer, item, bag, id, place, name)
+					else
+						outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+					end
+				end
+			end
 		end
 	end
 end
@@ -270,10 +327,12 @@ function Inventory:onShow()
 	self:setAbsolutePosition(screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	triggerServerEvent("refreshInventory", localPlayer)
 	self:loadItems()
+	self.Show = true
 end
 
 function Inventory:onHide()
 	showCursor(false)
+	self.Show = false
 end
 
 function Inventory:getItemAmount(item)

@@ -29,6 +29,7 @@ function PlantWeed:getClientCheck( bool, z_pos )
 		if client:isOnGround() then
 			if not client.vehicle then
 				local pos = client:getPosition()
+				client:giveAchievement(61)
 				client:getInventory():removeItem("Weed-Samen", 1)
 				GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client)
 			else

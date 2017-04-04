@@ -9,7 +9,8 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel"}
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -22,6 +23,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
+	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -47,8 +49,16 @@ function PlayerManager:constructor()
 	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
+	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
+	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
+	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
+	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
+	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
+	addEventHandler("onPlayerPrivateMessage", root, function()
+		cancelEvent()
+	end)
 
-
+	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -68,6 +78,112 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+	
+end
+
+function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz) 
+	if getElementDimension(source) > 0 or getElementInterior(source) > 0 then return end
+	local slot = getSlotFromWeapon(weapon)
+	if slot > 2 and slot <= 6 and weapon ~= 23 then 
+		local area = getZoneName(sx,sy,sz)
+		if area then 
+			if not self.m_AreaDistrictShoots then 
+				self.m_AreaDistrictShoots = {}
+			end
+			local lastoutput = self.m_AreaDistrictShoots[area] or 0 
+			local tick = getTickCount() 
+			if lastoutput+50000 <=  tick then 
+				self.m_AreaDistrictShoots[area] = tick
+				source:districtChat("Schüsse ertönen durch die Gegend! (("..area.."))")
+			end
+		end
+	end
+end
+
+function PlayerManager:Event_OnDeadDoubleDestroy()
+	if source.ped_deadDouble then
+		destroyElement(source.ped_deadDouble)
+		setElementAlpha(source, 255)
+		source:clearReviveWeapons()
+	end
+end
+
+function PlayerManager:Event_OnDeathPedWasted( pPed )
+	if client then
+		if pPed then
+			local owner = pPed:getData("NPC:DeathPedOwner")
+			if owner then
+				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
+				setElementData(pPed, "NPC:isDyingPed", false)
+				owner:dropReviveWeapons()
+				owner:clearReviveWeapons()
+			end
+		end
+	end
+end
+
+function PlayerManager:Event_onAttemptPickupWeapon( pickup )
+	if client then
+		local weapon = pickup:getData("weaponId")
+		local ammo = pickup:getData("ammoInWeapon")
+		local owner = pickup:getData("weaponOwner")
+		local px,py,pz = getElementPosition(pickup)
+		local x,y,z = getElementPosition(client)
+		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
+		local owner = source:getData("weaponOwner")
+		if weapon and ammo then
+			if dist <= 5 then
+				if (client:getPlayTime() / 60) >=  3 then
+					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
+						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
+						setTimer(setPedAnimation,1000,1,client,nil)
+						destroyElement(pickup)
+						giveWeapon(client,weapon,ammo,true)
+						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
+						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
+					else
+						client:sendError("Du darfst diese Waffe nicht aufheben!")
+					end
+				else
+					client:sendError("Du hast zu wenig Spielstunden!")
+				end
+			end
+		end
+	end
+end
+
+function PlayerManager:Event_OnWasted()
+	if source.ped_deadDouble then
+		if isElement(source.ped_deadDouble) then
+			destroyElement(source.ped_deadDouble)
+		end
+	end
+	if not source:getData("isInDeathMatch") then
+		local x,y,z = getElementPosition(source)
+		local dim = getElementDimension(source)
+		local int = getElementInterior(source)
+		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
+		setElementDimension(source.ped_deadDouble,dim)
+		setElementInterior(source.ped_deadDouble, int)
+		local randAnim = math.random(1,5)
+		if randAnim == 5 then
+			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
+		else
+			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
+		end
+		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
+		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
+		setElementHealth(source.ped_deadDouble, 20)
+		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
+		setElementAlpha(source,0)
+	end
+	local inv = source:getInventory()
+	if inv then
+		if inv:getItemAmount("Diebesgut") > 0 then
+			inv:removeAllItem("Diebesgut")
+			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+		end
+	end
 end
 
 function PlayerManager:Event_ClientRequestTime()
@@ -77,6 +193,15 @@ end
 function PlayerManager:Event_DecreaseAlcoholLevel()
 	client:decreaseAlcoholLevel(ALCOHOL_LOSS)
 end
+
+function PlayerManager:Event_PremiumOpenVehiclesList()
+	client.m_Premium:openVehicleList()
+end
+
+function PlayerManager:Event_PremiumTakeVehicle(model)
+	client.m_Premium:takeVehicle(model)
+end
+
 
 function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
@@ -90,7 +215,9 @@ end
 
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
-		v:updateSync()
+		if v and isElement(v) and v.updateSync then
+			v:updateSync()
+		end
 	end
 end
 
@@ -218,13 +345,18 @@ function PlayerManager:playerQuit()
 	if source:getWantedLevel() > 0 then
 		FactionState:getSingleton():checkLogout(source)
 	end
-	if source.curEl then
-		source.curEl:driveToStation(source,1)
+	if source.elevator then
+		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
-
+	if source.ped_deadDouble then
+		if isElement(source.ped_deadDouble) then
+			destroyElement(source.ped_deadDouble)
+		end
+	end
+	VehicleManager:getSingleton():destroyUnusedVehicles( source )
 end
 
 function PlayerManager:Event_playerReady()
@@ -238,7 +370,6 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
-
 	source.m_AlcoholLevel = 0
 	source:increaseStatistics("Deaths", 1)
 	-- give a achievement
@@ -257,6 +388,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 				if killer:isFactionDuty() and not source:isFactionDuty() then
 					local wantedLevel = source:getWantedLevel()
 					if wantedLevel > 0 then
+						killer:giveAchievement(64)
 						source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
 						FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
 						return
@@ -279,15 +411,22 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 
+
 	return false
 	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	--source:triggerEvent("playerSendToHospital")
 	--setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
+
 end
 
 
 function PlayerManager:playerChat(message, messageType)
 	if source:isDead() then
+		cancelEvent()
+		return
+	end
+
+	if source.isTasered then
 		cancelEvent()
 		return
 	end
@@ -492,8 +631,8 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		self.m_AFKHook:call(client)
 		client:startAFK()
 		if client:isInVehicle() then client:removeFromVehicle() end
-		client:setInterior(4)
-		client:setDimension(0)
+		setElementInterior(client, 4)
+		setElementDimension(client,0)
 		local afkPos = AFK_POSITIONS[math.random(1, #AFK_POSITIONS)]
 		if teleport then
 			client:setPosition(afkPos.x, afkPos.y, 999.5546875)
@@ -508,7 +647,7 @@ function PlayerManager:Event_startAnimation(animation)
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
-		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], false, ani["interruptable"], ani["freezeLastFrame"])
 		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
 		if ani.object then
 			client.animationObject = createObject(ani.object, 0, 0, 0)
@@ -566,6 +705,10 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
+		return
+	end
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -579,7 +722,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		end
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
-			if not slot["VIP"] then
+			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
 					if client:getTotalAmmo(weaponSlot) >= muni then
@@ -612,7 +755,10 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
@@ -653,7 +799,7 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getRegistrationDate(), target:getPaNote(),
+		target:getRegistrationDate(), target:getPaNote(), target:getSTVO(),
 		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
 	)
 end

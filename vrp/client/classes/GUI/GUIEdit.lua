@@ -19,6 +19,8 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 	GUIColorable.constructor(self, Color.DarkBlue)
 
+	self.m_MaxLength = math.huge
+	self.m_MaxValue =  math.huge
 	self.m_Caret = 0
 	self.m_DrawCursor = false
 end
@@ -30,10 +32,16 @@ function GUIEdit:drawThis()
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
 	local text = self:getDrawnText()
+	local aliginX = "left"
+	local textBeforeCursor = utfSub(text, 0, self.m_Caret)
+
+	if dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()) >= self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN - 2 then
+		aliginX = "right"
+	end
 
 	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
 				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
-				self:getColor(), self:getFontSize(), self:getFont(), "left", "center", true, false, false, false)
+				self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 
 	if self.m_DrawCursor then
 		local textBeforeCursor = utfSub(text, 0, self.m_Caret)
@@ -46,7 +54,7 @@ function GUIEdit:drawThis()
 end
 
 function GUIEdit:getDrawnText()
-	local text = #self.m_Text > 0 and self.m_Text or self.m_Caption or ""
+	local text = #self.m_Text > 0 and self:getText() or self.m_Caption or ""
 	if text ~= self.m_Caption and self.m_MaskChar then
 		text = self.m_MaskChar:rep(#text)
 	end
@@ -54,17 +62,11 @@ function GUIEdit:getDrawnText()
 end
 
 function GUIEdit:onInternalEditInput(caret)
-	-- Todo: Remove the following condition as soon as guiGetCaretIndex is backported
-	if not caret then
-		self.m_Caret = utfLen(self.m_Text)
-		return
-	end
 	self.m_Caret = caret
 
 	if self.onChange then
 		self.onChange(self:getDrawnText())
 	end
-
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
@@ -131,14 +133,24 @@ function GUIEdit:getIndexFromPixel(posX, posY)
 	return utfLen(text)
 end
 
-function GUIEdit:isNumeric()
-	return self.m_Numeric
-end
-
 function GUIEdit:setNumeric(numeric, integerOnly)
 	self.m_Numeric = numeric
 	self.m_IntegerOnly = integerOnly or false
 	return self
+end
+
+function GUIEdit:setMaxLength(length)
+	self.m_MaxLength = length
+	return self
+end
+
+function GUIEdit:setMaxValue(value)
+	self.m_MaxValue = value
+	return self
+end
+
+function GUIEdit:isNumeric()
+	return self.m_Numeric
 end
 
 function GUIEdit:isIntegerOnly()

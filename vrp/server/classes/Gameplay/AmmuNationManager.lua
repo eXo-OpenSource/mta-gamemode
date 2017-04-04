@@ -79,16 +79,16 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 		end
 	end
 	if canBuyWeapons then
-		if client:getMoney() >= totalAmount then
+		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				client:takeMoney(totalAmount, "AmmuNation Bestellung")
+				client:takeBankMoney(totalAmount, "AmmuNation Bestellung")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
 			else
 				client:sendError(_("Du hast keine Artikel im Warenkorb!",client))
 			end
 		else
-			client:sendError(_("Du hast nicht ausreichend Geld dabei! (%d$)",client, totalAmount))
+			client:sendError(_("Du hast nicht ausreichend Geld auf deinem Bankkonto! (%d$)",client, totalAmount))
 		end
 	else
 		-- Possible Cheat attempt?

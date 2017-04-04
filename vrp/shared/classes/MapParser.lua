@@ -3,7 +3,8 @@ MapParser = inherit(Object)
 local readFuncs = {
 	object = function(attributes)
 		return {type = "object", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided),
+			alpha = tonumber(attributes.alpha), scale = tonumber(attributes.scale), collisions = attributes.collisions}
 	end;
 	marker = function(attributes)
 		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
@@ -36,6 +37,9 @@ local createFuncs = {
 	object = function(info)
 		local o = createObject(info.model, info.x, info.y, info.z, info.rx, info.ry, info.rz)
 		setElementDoubleSided(o, info.doublesided or false)
+		setElementAlpha(o, info.alpha or 255)
+		setObjectScale(o, info.scale or 1)
+		setElementCollisionsEnabled(o, info.collisions ~= "false")
 		return o
 	end;
 	marker = function(info)

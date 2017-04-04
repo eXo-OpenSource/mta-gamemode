@@ -5,9 +5,20 @@ function MechanicTow:constructor()
 	setElementData(self.m_Ped, "clickable", true)
 	self.m_Ped:setData("NPC:Immortal", true)
 	self.m_Ped:setFrozen(true)
-	self.m_Ped:setData("onClickEvent", function ()
-		triggerServerEvent("mechanicOpenTakeGUI", localPlayer)
-	 end)
+	self.m_Ped:setData("onClickEvent",
+		function()
+			local questionBox = QuestionBox:new("Welches Fahrzeug möchtest du freikaufen?",
+				function()
+					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "permanentVehicle")
+				end,
+				function()
+					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "groupVehicle")
+				end
+			)
+
+			questionBox:setButtonText("Privat", "Firma/Gruppe")
+		end
+	)
 
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
 

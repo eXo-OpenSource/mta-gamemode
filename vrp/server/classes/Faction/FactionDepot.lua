@@ -23,7 +23,7 @@ function Depot.initalize()
 		end
 	end)
 end
-
+--//
 function Depot.load(Id, Owner, type)
 	if Depot.Map[Id] then return Depot.Map[Id] end
 	if Id == 0 then
@@ -31,9 +31,13 @@ function Depot.load(Id, Owner, type)
 		Id = sql:lastInsertId()
 		Owner:setDepotId(Id)
 	end
+
 	local row = sql:queryFetchSingle("SELECT Weapons, Items FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
-	local weapons = row.Weapons
-	local items = row.Items
+	if not row then
+		return
+	end
+	local weapons = row.Weapons or ""
+	local items = row.Items or ""
 	local DepotSave = false
 	if string.len(weapons) < 5 then
 		weapons = {}
@@ -126,12 +130,32 @@ end
 function Depot:takeWeaponsFromDepot(player,weaponTable)
 	local playerWeapons = self:getPlayerWeapons(player)
 	outputChatBox("Du hast folgende Waffen und Magazine aus dem Lager genommen:",player,255,255,255)
+	local ammoStorage = {}
+	local weaponStorage = {}
+	local bIsStorageWeapon = false
+	local isInVariable = false
+	local weaponInStorage, ammoInStorage = Guns:getWeaponInStorage( player, 2)
+	local weaponBeforeEquip = getPedWeapon(player, 2)
+	local ammoBeforeEquip = getPedTotalAmmo(player, 2)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				local clipAmmo = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
+						slot = getSlotFromWeapon(weaponID)
+						if slot == 2 then
+							isInVariable = false
+							for i = 1, #weaponStorage do
+								if weaponStorage[i] == weaponID then
+									isInVariable = true
+								end
+							end
+							if not isInVariable then
+								weaponStorage[#weaponStorage+1] = weaponID
+								ammoStorage[weaponID] = clipAmmo
+							end
+						end
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
 						giveWeapon(player,weaponID, clipAmmo)
 						self:takeWeaponD(weaponID,amount)
@@ -143,6 +167,15 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 					if playerWeapons[weaponID] then
 						if self.m_Weapons[weaponID]["Munition"] >= amount then
 							self:takeMagazineD(weaponID,amount)
+							bIsStorageWeapon = false
+							for i = 1, #weaponStorage do
+								if weaponStorage[i] == weaponID then
+									bIsStorageWeapon = true
+								end
+							end
+							if bIsStorageWeapon then
+								ammoStorage[weaponID] = ammoStorage[weaponID]+amount*clipAmmo
+							end
 							if weaponID == 25 then amount = amount * 6 end
 							if weaponID == 33 then amount = amount * 5 end
 							if weaponID == 34 then amount = amount * 4 end
@@ -156,6 +189,27 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 					end
 				end
 			end
+		end
+	end
+	if weaponStorage and ammoInStorage and weaponBeforeEquip and ammoBeforeEquip then
+		if #weaponStorage >= 2 then
+			if weaponInStorage == weaponStorage[1] then
+				local weapon, ammo = getPedWeapon(player, 2)
+				if weapon == weaponStorage[1] and weapon ~= weaponBeforeEquip then
+					Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
+					giveWeapon(player, weaponBeforeEquip, ammoBeforeEquip, true)
+					outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
+				else
+					Guns:getSingleton():setWeaponInStorage(player, weaponBeforeEquip, ammoBeforeEquip)
+					giveWeapon(player, weaponStorage[1], ammoStorage[weaponStorage[1]], true)
+					outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Recktsklick (Gedrückt) +X", player, 200, 200, 0)
+				end
+			end
+		end
+	elseif weaponStorage then
+		if #weaponStorage >= 2 then
+			outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
+			Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
 		end
 	end
 	self:save()

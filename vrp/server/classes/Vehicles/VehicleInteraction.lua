@@ -41,7 +41,7 @@ function VehicleInteraction:doLock()
 		else
 			lookAtVehicle:playLockEffect()
 			lookAtVehicle:setLocked(true)
-			for i = 1,6 do 
+			for i = 1,6 do
 				setVehicleDoorState ( lookAtVehicle, i-1, 0)
 			end
 		end
@@ -83,7 +83,7 @@ end
 function VehicleInteraction:doAction(door)
 	local lookAtVehicle = getPedTarget(client)
 
-    if lookAtVehicle and (getElementType(lookAtVehicle) == "vehicle" ) then
+    if lookAtVehicle and isElement(lookAtVehicle) and getElementType(lookAtVehicle) == "vehicle" then
 		local veh = lookAtVehicle
         local doorRatio = getVehicleDoorOpenRatio(lookAtVehicle, door)
         local checkDoor = getVehicleDoorState(lookAtVehicle, door)
@@ -96,8 +96,10 @@ function VehicleInteraction:doAction(door)
 
 		if doorRatio > 0 or checkDoor == 4 or doorState == "open" then
 			if door == 1 then
-				if lookAtVehicle:getTrunk() then
-					lookAtVehicle:getTrunk():open(client)
+				if instanceof(veh, GroupVehicle) or instanceof(veh, PermanentVehicle, true) then
+					if veh.getTrunk and veh:getTrunk() and veh:getTrunk().open then
+						veh:getTrunk():open(client)
+					end
 				end
 			elseif door == 0 then
 				self:repairVehicle(client, veh)

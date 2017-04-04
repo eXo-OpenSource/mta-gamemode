@@ -44,18 +44,33 @@ function phpSDKSendOnlinePlayers()
 	local i = 1
 
 	for index, player in pairs(getElementsByType("player")) do
-		if player:isActive() then
+		if player.isActive and player:isActive() then
 			players[i]= {
 				["Name"] = player:getName(),
 				["Id"] = player:getId() or 0,
 				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
 				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
 				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
-				["GroupName"] = player:getGroup() and player:getGroup():getName() or "-keine-",
 			}
 			i = i+1
 		end
 	end
 	outputDebugString("PHP-Request Playerlist")
 	return players
+end
+
+function phpSDKGiveQRAchievement(playerId)
+	Async.create(
+		function()
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then
+				player:load()
+				delete(player)
+				return false
+			else
+				player:giveAchievement(78)
+				return true
+			end
+		end
+	)()
 end

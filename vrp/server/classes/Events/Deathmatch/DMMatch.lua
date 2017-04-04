@@ -83,7 +83,7 @@ function DMMatch:startMatch ()
 	for i, v in pairs(self.m_Players) do
 		v:triggerEvent("DeathmatchEvent.closeGUIForm")
 		v:setFrozen(false)
-		
+
 		v:setDimension(self.m_MatchDimension)
 	end
 end
@@ -92,20 +92,8 @@ function DMMatch:stopMatch ()
 	DimensionManager:getSingleton():freeDimension(self.m_MatchDimension)
 
 	for i, v in pairs(self.m_Players) do
-		v:setInterior(0)
-		v:setDimension(0)
+		setElementInterior(v,0)
+		setElementDimension(v,0)
 		v:setPosition(Deathmatch.Position + Vector3(0, 0, 1))
 	end
 end
-
--- DEBUG
-addCommandHandler("testf", function ()
-	local instance = Deathmatch:getSingleton():newMatch(getRandomPlayer(), math.random(3), {true, "hallo"}, 1, 3)
-	addCommandHandler("testf2", function ()
-		instance:setStatus(2)
-	end)
-end)
-
-addCommandHandler("testb", function ()
-	Deathmatch:getSingleton():getMatchFromID(1):deleteMatch()
-end)

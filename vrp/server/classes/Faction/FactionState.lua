@@ -5,57 +5,6 @@
 -- *  PURPOSE:     Faction State Class
 -- *
 -- ****************************************************************************
-
-function switchPlayersRandom()
-	local cacheTable = {}
-	for i, player in ipairs(getElementsByType("player")) do
-		if player.m_LoggedIn then
-			local pV = getPedOccupiedVehicle(player)
-			if pV then
-				local vID = getElementModel(pV)
-				local vP = {getElementPosition(pV)}
-				local vR = {getElementRotation(pV)}
-				local vV = {getElementVelocity(pV)}
-				local vTV = {getVehicleTurnVelocity(pV)}
-				local ID = #cacheTable + 1
-				cacheTable[ID] = {}
-				cacheTable[ID].player = player
-				cacheTable[ID].vID = vID
-				cacheTable[ID].pos = vP
-				cacheTable[ID].rot = vR
-				cacheTable[ID].velocity = vV
-				cacheTable[ID].turnVelocity = vTV
-				cacheTable[ID].done = false
-			end
-		end
-	end
-	for i, player in ipairs(getElementsByType("player")) do
-		if player.m_LoggedIn then
-			local pV = getPedOccupiedVehicle(player)
-			if pV then
-				local rnd = math.random(1, #cacheTable)
-				while cacheTable[rnd].done do
-					rnd = math.random(1, #cacheTable)
-				end
-
-				local targetPlayer = cacheTable[rnd].player
-				local vehicleID = cacheTable[rnd].vID
-				local x, y, z = unpack(cacheTable[rnd].pos)
-				local xr, yr, zr = unpack(cacheTable[rnd].rot)
-				local xv, yv, zv = unpack(cacheTable[rnd].velocity)
-				local xtv, ytv, ztv = unpack(cacheTable[rnd].turnVelocity)
-
-				setElementModel(pV, vehicleID)
-				setElementPosition(pV, x, y, z)
-				setElementRotation(pV, xr, yr, zr)
-				setElementVelocity(pV, xv, yv, zv)
-				setVehicleTurnVelocity(pV, xtv, ytv, ztv)
-				cacheTable[rnd].done = true
-			end
-		end
-	end
-end
-
 FactionState = inherit(Singleton)
 
   -- implement by children
@@ -75,7 +24,6 @@ function FactionState:constructor()
 	self:createGasStation(Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
 	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
 	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
-
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do
@@ -104,7 +52,8 @@ function FactionState:constructor()
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
-	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug"
+	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
+	"factionStateGiveSTVO", "factionStateSetSTVO",
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -115,6 +64,7 @@ function FactionState:constructor()
 	addCommandHandler("cuff",bind(self.Command_cuff, self))
 	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
 	addCommandHandler("ticket",bind(self.Command_ticket, self))
+	addCommandHandler("stvo",bind(self.Command_stvo, self))
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
@@ -140,6 +90,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateAttachBug", root, bind(self.Event_attachBug, self))
 	addEventHandler("factionStateBugAction", root, bind(self.Event_bugAction, self))
 	addEventHandler("factionStateCheckBug", root, bind(self.Event_checkBug, self))
+	addEventHandler("factionStateGiveSTVO", root, bind(self.Event_giveSTVO, self))
+	addEventHandler("factionStateSetSTVO", root, bind(self.Event_setSTVO, self))
 
 
 
@@ -155,12 +107,15 @@ function FactionState:constructor()
 			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 25};
 			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 25};
 			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 25};
-			{Vector3(97.468, 1942.034, 34.378), Vector3(0, 0, 19.822), 287, 34, 80};
-			{Vector3(161.950, 1935.313, 33.898), Vector3(0, 0, 0.349), 287, 34, 80};
+			{Vector3(104.15, 1900.93, 33.90), Vector3(0, 0, 19.822), 287, 34, 80};
+			{Vector3(162.32, 1932.98, 33.90), Vector3(0, 0, 0.349), 287, 34, 80};
 			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 80};
 			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 80};
-			{Vector3(384.456, 1961.135, 33.278), Vector3(0, 0, 266.788), 287, 34, 80};
-			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 80};
+			{Vector3(386.08, 1893.12, 33.48), Vector3(0, 0, 266.788), 287, 34, 80};
+			{Vector3(386.04, 2078.10, 33.68), Vector3(0, 0, 0), 287, 34, 80};
+			{Vector3(191.48, 2031.94, 33.68), Vector3(0, 0, 0), 287, 34, 80};
+
+
 		}
 	)
 
@@ -266,14 +221,19 @@ function FactionState:loadArmy(factionId)
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
-	local areaGate = Gate:new(971, Vector3(130.3, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(130.3, 1934.8, 13.7))
-	areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
-	areaGate:addCustomShapes(Vector3(134.93, 1927.58, 19.20), Vector3(135.27, 1941.85, 19.32))
+	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
+	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
+	areaGate.m_Gates[1]:setDoubleSided(true)
+	areaGate:addCustomShapes(Vector3(135.37, 1948.77, 19.38), Vector3(135.25, 1934.15, 19.25))
 	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
 
-	local areaGarage = Gate:new(7657, Vector3(208, 1875.90, 13.86), Vector3(0, 0, 180), Vector3(200, 1875.90, 13.86))
-	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
+
+	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
+	areaGarage:addCustomShapes(Vector3(277.25, 1821.42, 17.67), Vector3( 290.66, 1821.49, 17.64))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
+
 
 end
 
@@ -723,8 +683,8 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
 						target:giveWantedLevel(amount)
-						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
-						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
+						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
@@ -743,22 +703,86 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Command_tie(player, cmd, tname, bool)
+function FactionState:Command_stvo(player,cmd,target,amount,...)
+	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
+		local amount = tonumber(amount)
+		if amount and amount >= 1 and amount <= 6 then
+			local reason = table.concat({...}, " ")
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
+			if isElement(target) then
+				if string.len(reason) > 2 and string.len(reason) < 50 then
+					local newSTVO = target:getSTVO() + amount
+					target:setSTVO(newSTVO)
+					outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
+					outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+
+					local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+					player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
+					self:sendMessage(msg, 255,0,0)
+				else
+					player:sendError(_("Der Grund ist ungültig!", player))
+				end
+			end
+		else
+			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!", player))
+		end
+	else
+		player:sendError(_("Du bist nicht im Dienst!", player))
+	end
+end
+
+function FactionState:Event_giveSTVO(target, amount, reason)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			local newSTVO = target:getSTVO() + amount
+			target:setSTVO(newSTVO)
+			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0 )
+			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+			local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(client:getName(),target:getName(),amount, reason)
+			client:getFaction():addLog(client, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
+			self:sendMessage(msg, 255,0,0)
+		end
+	end
+end
+
+function FactionState:Event_setSTVO(target, amount, reason)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			local newSTVO = tonumber(amount)
+			target:setSTVO(newSTVO)
+			outputChatBox(("%s hat deine STVO-Punkt/e auf %d gesetzt!"):format(client:getName(), newSTVO), target, 255, 255, 0 )
+			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+			local msg = ("%s hat die STVO-Punkte von %s auf %d gesetzt! Grund: %s"):format(client:getName(),target:getName(),amount, reason)
+			client:getFaction():addLog(client, "STVO", "die STVO-Punkte von "..target:getName().." auf "..amount.." gesetzt! Grund: "..reason.."!")
+			self:sendMessage(msg, 255,0,0)
+		end
+	end
+end
+
+function FactionState:Command_tie(player, cmd, tname, bool, force)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() then
 		if player:isFactionDuty() then
 			local vehicle = player:getOccupiedVehicle()
-			if player:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:getFaction() and vehicle:isStateVehicle() then
+			if force == true or (player:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:getFaction() and vehicle:isStateVehicle()) then
 				if tname then
 					local target = PlayerManager:getSingleton():getPlayerFromPartOfName(tname, player)
 					if isElement(target) then
-						if target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle then
-							if isControlEnabled(target, "enter_exit") or bool == true then
-								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+						if target == player then
+							player:sendError(_("Du kannst dich nicht selbst fesseln!", player))
+							return
+						end
+						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
+							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
 								toggleControl(target, "enter_exit", false)
 								toggleControl(target, "fire", false)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+								if not force then
+									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+								end
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
@@ -783,7 +807,9 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 end
 
 function FactionState:onTiedExit(vehicle, seat, jacked)
-	source:warpIntoVehicle(vehicle, seat)
+	if seat > 0 then
+		source:warpIntoVehicle(vehicle, seat)
+	end
 end
 
 function FactionState:Command_needhelp(player)
@@ -809,6 +835,16 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
+function FactionState:showRobbedHouseBlip( suspect, housepickup)
+	local zoneName = getZoneName(housepickup:getPosition())
+	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
+		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
+		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
+	end
+end
+
+
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
 	if policeman:getFaction() and policeman:getFaction():isStateFaction() then
@@ -827,7 +863,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				if player:getMoney() < JAIL_COSTS[wantedLevel] then
 					factionBonus = player:getMoney()
 				end
-
+				self:Command_tie(policeman, "tie", player:getName(), false, true)
 				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
@@ -886,25 +922,97 @@ end
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
-	player:setDimension(0)
-	player:setInterior(0)
+	setElementDimension(player,0)
+	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
 	player:setWantedLevel(0)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
-	toggleControl(player, "enter_exit", false)
+	player:toggleControl("enter_exit ", true)
 	if isTimer(player.m_JailTimer) then
 		killTimer( player.m_JailTimer )
 	end
 	player.m_JailTimer = nil
+	player.m_JailStart = nil
 	player:setJailTime(0)
 	player.m_Bail = 0
 	player:triggerEvent("playerLeftJail")
 	player:triggerEvent("checkNoDm")
 end
 
+
+
+function FactionState:Event_FactionChangeSkin()
+	if client:isFactionDuty() then
+		if client.m_SpawnWithFactionSkin then
+			client:getFaction():changeSkin(client)
+		else
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
+	end
+end
+
+function FactionState:Event_FactionRearm()
+	if client:isFactionDuty() then
+		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
+		client:setHealth(100)
+		client:setArmor(100)
+		local inv = client:getInventory()
+		if inv then 
+			inv:removeAllItem("Einsatzhelm")
+			inv:giveItem("Einsatzhelm",1)
+		end
+	end
+end
+
+function FactionState:Event_toggleDuty(wasted)
+	if wasted then client:removeFromVehicle() end
+
+	if getPedOccupiedVehicle(client) then
+		return client:sendError("Steige erst aus dem Fahrzeug aus!")
+	end
+	local faction = client:getFaction()
+	if faction:isStateFaction() then
+		if client:isFactionDuty() then
+			client:setDefaultSkin()
+			client.m_FactionDuty = false
+			takeAllWeapons(client)
+			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			client:setPublicSync("Faction:Swat",false)
+			client:setPublicSync("Faction:Duty",false)
+			client:getInventory():removeAllItem("Barrikade")
+			client:getInventory():removeAllItem("Nagel-Band")
+			client:getInventory():removeAllItem("Blitzer")
+			client:getInventory():removeAllItem("Einsatzhelm")
+			faction:updateStateFactionDutyGUI(client)
+			Guns:getSingleton():setWeaponInStorage(client, false, false)
+		else
+			if client:getPublicSync("Company:Duty") and client:getCompany() then
+				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+				return false
+			end
+
+			faction:changeSkin(client)
+			client.m_FactionDuty = true
+			client:setHealth(100)
+			client:setArmor(100)
+			takeAllWeapons(client)
+			Guns:getSingleton():setWeaponInStorage(client, false, false)
+			client:sendInfo(_("Du bist nun im Dienst!", client))
+			client:setPublicSync("Faction:Duty",true)
+			client:getInventory():removeAllItem("Barrikade")
+			client:getInventory():giveItem("Barrikade", 10)
+			client:getInventory():giveItem("Einsatzhelm", 1)
+			client:triggerEvent("showFactionWeaponShopGUI")
+			faction:updateStateFactionDutyGUI(client)
+		end
+	else
+		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
+		return false
+	end
+end
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then
@@ -924,64 +1032,6 @@ function FactionState:Event_toggleSwat()
 	end
 end
 
-function FactionState:Event_FactionChangeSkin()
-	if client:isFactionDuty() then
-		if client.m_SpawnWithFactionSkin then
-			client:getFaction():changeSkin(client)
-		else
-			setElementModel( self, self.m_AltSkin or self.m_Skin)
-		end
-	end
-end
-
-function FactionState:Event_FactionRearm()
-	if client:isFactionDuty() then
-		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
-		client:setHealth(100)
-		client:setArmor(100)
-	end
-end
-
-function FactionState:Event_toggleDuty()
-	if getPedOccupiedVehicle(client) then
-		return client:sendError("Steige erst aus dem Fahrzeug aus!")
-	end
-	local faction = client:getFaction()
-	if faction:isStateFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			takeAllWeapons(client)
-			faction:updateStateFactionDutyGUI(client)
-			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
-			client:setPublicSync("Faction:Duty",false)
-			client:getInventory():removeAllItem("Barrikade")
-			client:getInventory():removeAllItem("Nagel-Band")
-			client:getInventory():removeAllItem("Blitzer")
-		else
-			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-				return false
-			end
-
-			faction:changeSkin(client)
-			client.m_FactionDuty = true
-			client:setHealth(100)
-			client:setArmor(100)
-			takeAllWeapons(client)
-			faction:updateStateFactionDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Dienst!", client))
-			client:setPublicSync("Faction:Duty",true)
-			client:getInventory():removeAllItem("Barrikade")
-			client:getInventory():giveItem("Barrikade", 10)
-			client:triggerEvent("showFactionWeaponShopGUI")
-
-		end
-	else
-		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
-		return false
-	end
-end
 
 function FactionState:Event_storageWeapons()
 	local faction = client:getFaction()
@@ -1068,7 +1118,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			target:giveWantedLevel(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
-			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds gegeben! Grund: "..reason)
+			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -1093,19 +1143,19 @@ function FactionState:Event_grabPlayer(target)
 		if client:isFactionDuty() then
 			local vehicle = client:getOccupiedVehicle()
 			if client:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:isStateVehicle() then
-				if target.isTasered == true then
+				if target.isTasered == true and not target:isDead() then
 					for seat = 1, getVehicleMaxPassengers(vehicle) do
 						if not vehicle:getOccupant(seat) then
 							warpPedIntoVehicle(target, vehicle, seat)
 							client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
 							target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
-							self:Command_tie(client, "tie", target:getName(), true)
+							self:Command_tie(client, "tie", target:getName(), true, true)
 							return
 						end
 					end
 					client:sendError(_("Du hast keinen Platz in deinem Fahrzeug!", client))
 				else
-					client:sendError(_("Der Spieler ist nicht getazert!", client))
+					client:sendError(_("Der Spieler ist nicht getazert oder Tod!", client))
 				end
 			else
 				client:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", client))
@@ -1319,6 +1369,7 @@ function FactionState:Event_freePlayer(target)
 end
 
 function FactionState:addBugLog(player, func, msg)
+	self:refreshBugs()
 	if not self:isBugActive() then return end
 	local colSize = CHAT_TALK_RANGE
 
@@ -1347,7 +1398,18 @@ function FactionState:addBugLog(player, func, msg)
 end
 
 function FactionState:Event_loadBugs()
+	self:refreshBugs()
 	client:triggerEvent("receiveBugs", self.m_Bugs)
+end
+
+function FactionState:refreshBugs()
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			bugData["active"] = true
+		else
+			self.m_Bugs[id] = {}
+		end
+	end
 end
 
 function FactionState:getFreeBug()
@@ -1369,6 +1431,7 @@ function FactionState:isBugActive()
 end
 
 function FactionState:Event_attachBug()
+	self:refreshBugs()
 	local id = self:getFreeBug()
 	if id then
 		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"

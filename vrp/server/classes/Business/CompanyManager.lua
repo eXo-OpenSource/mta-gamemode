@@ -255,7 +255,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 	if company:getPlayerRank(playerId) < CompanyRank.Leader then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
 		end
@@ -284,7 +284,7 @@ function CompanyManager:Event_companyRankDown(playerId)
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
 		end
@@ -391,11 +391,12 @@ function CompanyManager:Event_getCompanies()
 end
 
 function CompanyManager:sendAllToClient(client)
+	--[[
 	local vehicleTab = {}
 	for i, company in pairs(CompanyManager.Map) do
 		if companyVehicleShaders[company:getId()] then
 			for i, v in pairs(company.m_Vehicles) do
-				if companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
+				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
 					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
 					if shaderInfo.shaderEnabled then
 						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
@@ -406,4 +407,5 @@ function CompanyManager:sendAllToClient(client)
 	end
 
 	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
+	]]
 end

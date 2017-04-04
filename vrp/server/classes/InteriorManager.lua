@@ -31,8 +31,8 @@ end
 function InteriorManager:teleportPlayerToInterior(player, Id)
     local interiorId, position = self:getInteriorInfo(Id)
     if interiorId then
-        player:setInterior(interiorId, position)
-        player:setDimension(Id)
+        setElementInterior(player,interiorId, position)
+        setElementDimension(player,Id)
         player:setUniqueInterior(Id)
     end
 end

@@ -31,7 +31,12 @@ function ShortMessageLogGUI:clear()
 	outputChatBox("[ShortMessage] Log wurde geleert!", 200,200,0);
 end
 
+function ShortMessageLogGUI:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
+end
+
 function ShortMessageLogGUI:onShow()
+	SelfGUI:getSingleton():addWindow(self)
 	if self.m_LogGrid then
 		self.m_LogGrid:clear()
 		local item, string
@@ -57,7 +62,7 @@ function ShortMessageLogGUI.insertLog(title, text, color)
 	local id = #ShortMessageLogGUI.m_Log+1
 	ShortMessageLogGUI.m_Log[id] ={
 		["title"] = title or "",
-		["text"] = text or "",
+		["text"] = text:gsub("\n", "") or "",
 		["color"] = type(color) == "table" and color or Color.White,
 		["timestamp"] = getRealTime().timestamp
 	}

@@ -41,6 +41,8 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
   self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
   self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
+  self.m_VehicleTexture = companyVehicleShaders[Id] or false
+
 end
 
 function Company:destructor()

@@ -8,6 +8,12 @@
 
 Guns = inherit(Singleton)
 
+local TOGGLE_WEAPONS = 
+{
+	[24] = true, -- [FROM] = TO
+	[23] = true,
+	[22] = true,
+}
 function Guns:constructor()
 
 	self.m_Blood = false
@@ -20,15 +26,19 @@ function Guns:constructor()
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
 
 	self.m_ClientDamageBind = bind(self.Event_onClientPlayerDamage, self)
-
+	localPlayer.m_LastSniperShot = getTickCount()
 	self.m_TaserImage = dxCreateTexture("files/images/Other/thunder.png")
 	self.m_TaserRender = bind(self.Event_onTaserRender, self)
 	addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
-	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage))
+	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
+	addEventHandler("onClientPedWasted", root, bind(self.Event_onClientPedWasted, self))
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
-
+	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
+	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
+	self:initalizeAntiCBug()
+	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
@@ -38,13 +48,21 @@ function Guns:destructor()
 
 end
 
+function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
+	if killer == localPlayer then 
+		triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
+	end
+end
+
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
+	local bPlaySound = false
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
 	elseif weapon == 23 then -- Taser
 		local dist = getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition())
 		if not attacker.vehicle and dist < 10 and dist > 1.5 then
 			if attacker == localPlayer then
+				bPlaySound = true
 				triggerServerEvent("onTaser",attacker,source)
 			end
 		end
@@ -53,11 +71,14 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
+					bPlaySound = true
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
+				else
+					bPlaySound = true
+					triggerServerEvent("gunsLogMeleeDamage",attacker, source, weapon, bodypart, loss)
 				end
 			end
 		elseif localPlayer == source then
-			self:bloodScreen()
 			if attacker and weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					cancelEvent()
@@ -65,7 +86,39 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 	end
+	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
+		playSound("files/audio/hitsound.wav")
+	end
 end
+
+function Guns:Event_onWeaponSwitch(pw, cw)
+	if source == localPlayer then 
+		local prevWeapon = getPedWeapon(localPlayer,pw)
+		local cWeapon = getPedWeapon(localPlayer, cw)
+		if cWeapon ~= 34 then 
+			toggleControl("fire",true)
+			if localPlayer.m_FireToggleOff then 
+				if localPlayer.m_LastSniperShot+6000 <= getTickCount() then
+					localPlayer.m_FireToggleOff = false
+				end
+			end
+		else 
+			if localPlayer.m_FireToggleOff then 
+				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
+					toggleControl("fire",false)
+				else 
+					localPlayer.m_FireToggleOff = false
+					toggleControl("fire",true)
+				end
+			else
+				if not NoDm:getSingleton().m_NoDm then 
+					toggleControl("fire",true)
+					localPlayer.m_FireToggleOff = false
+				end
+			end
+		end
+	end
+end	
 
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
@@ -93,6 +146,19 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			if isTimer(self.m_ResetTimerNoTarget) then killTimer(self.m_ResetTimerNoTarget) end
 			if isTimer(self.m_ResetTimer) then killTimer(self.m_ResetTimer) end
 			self.m_ResetTimer = setTimer(function() removeEventHandler("onClientRender", root, self.m_TaserRender) end, 15000, 1)
+		end
+	end
+	if source == localPlayer then
+		if weapon == 34 then 
+			if not localPlayer.m_FireToggleOff then
+				localPlayer.m_LastSniperShot = getTickCount()
+				localPlayer.m_FireToggleOff = true
+				toggleControl("fire",false)
+				setTimer(function()  
+					localPlayer.m_FireToggleOff = false
+					toggleControl("fire",true)
+				end, 6000,1)
+			end
 		end
 	end
 end
@@ -125,6 +191,7 @@ end
 function Guns:bloodScreen()
 	self.m_BloodAlpha = 255
 	if self.m_Blood == false then
+		removeEventHandler("onClientRender", root, self.m_BloodRender)
 		addEventHandler("onClientRender", root, self.m_BloodRender)
 	end
 end
@@ -141,9 +208,15 @@ function Guns:drawBloodScreen()
 	end
 end
 
-function Guns:Event_onClientPedDamage()
-	if source:getData("NPC:Immortal") == true then
+function Guns:Event_onClientPedDamage(attacker)
+	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then 
 		cancelEvent()
+	else 
+		if attacker == localPlayer then
+			if core:get("Other", "HitSoundBell", true) then
+				playSound("files/audio/hitsound.wav")
+			end
+		end
 	end
 end
 
@@ -152,5 +225,80 @@ function Guns:disableDamage(state)
 		removeEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	else
 		addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
+	end
+end
+
+function Guns:initalizeAntiCBug()
+	self.m_AntiFastShotEnabled = true
+	self.m_LastShot = 0
+	self.m_LastCrouchTimers = {}
+
+	self.m_StopFastDeagleBind = bind(self.stopFastDeagle, self)
+	self.m_CrounchBind = bind(self.crounch, self)
+
+	addEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind, true, "high")
+	bindKey("crouch", "both", self.m_CrounchBind)
+end
+
+function Guns:crounch(btn, state)
+	if state == "down" then
+		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
+			setControlState ( "crouch", true )
+			toggleControl ( "crouch", false )
+			if isTimer ( self.m_LastCrouchTimers[1] ) then
+				killTimer ( self.m_LastCrouchTimers[1] )
+			end
+			self.m_LastCrouchTimers[1] = setTimer ( setControlState, 100, 1, "crouch", false )
+		end
+	else
+		if getTickCount() - self.m_LastShot <= 700 then
+			setControlState ( "crouch", false )
+			toggleControl ( "crouch", false )
+			if isTimer ( self.m_LastCrouchTimers[1] ) then
+				killTimer ( self.m_LastCrouchTimers[1] )
+			end
+			if isTimer ( self.m_LastCrouchTimers[2] ) then
+				killTimer ( self.m_LastCrouchTimers[2] )
+			end
+			self.m_LastCrouchTimers[2] = setTimer ( toggleControl, 100, 1, "crouch", true )
+		else
+			toggleControl ( "crouch", true )
+		end
+	end
+end
+
+function Guns:stopFastDeagle(weapon)
+	if weapon == 24 then
+		self.m_LastShot = getTickCount()
+		setControlState ( "crouch", false )
+		if isPedDucked ( localPlayer ) then
+			toggleControl ( "crouch", false )
+			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
+		end
+	end
+end
+
+function Guns:toggleFastShot(bool)
+	self.m_AntiFastShotEnabled = not bool
+	if not self.m_AntiFastShotEnabled then
+		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
+		unbindKey ( "crouch", "both", crouch )
+	end
+end
+
+function Guns:checkSwitchWeapon(b, p) 
+	if b == "x" and  not p and getKeyState("mouse2") then 
+		local weapon = getPedWeapon(localPlayer)
+		local now = getTickCount()
+		if getElementData(localPlayer, "hasSecondWeapon") then
+			if self.m_LastWeaponToggle + 4000 <= now then
+				if TOGGLE_WEAPONS[weapon] then 
+					self.m_LastWeaponToggle = getTickCount()
+					triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
+				end
+			else 
+				outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
+			end
+		end
 	end
 end

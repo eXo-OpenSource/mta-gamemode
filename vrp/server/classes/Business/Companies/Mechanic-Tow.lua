@@ -8,6 +8,15 @@ function MechanicTow:constructor()
 	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
 	self:setSafe(safe)
 
+	local x, y, z, rot
+
+	self.m_NonCollissionCols = {}
+	for index, pos in pairs(MechanicTow.SpawnPositions) do
+		x, y, z, rot = unpack(pos)
+		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
+		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
+	end
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
@@ -21,25 +30,36 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
-	vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Mechanic)
+	vehicle:setPositionType(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()
 end
 
-function MechanicTow:VehicleTakeGUI()
+function MechanicTow:VehicleTakeGUI(vehicleType)
+	local vehicleTable = {}
+
+	if vehicleType == "permanentVehicle" then
+		vehicleTable = VehicleManager:getSingleton():getPlayerVehicles(client)
+	elseif vehicleType == "groupVehicle" then
+		local group = client:getGroup()
+		if not group then client:sendError(_("Du bist in keiner Gruppe!", client)) return end
+		vehicleTable = VehicleManager:getSingleton():getGroupVehicles(group:getId())
+	end
+
 	-- Get a list of vehicles that need manual repairing
 	local vehicles = {}
-	for k, vehicle in pairs(VehicleManager:getSingleton():getPlayerVehicles(client)) do
+	for _, vehicle in pairs(vehicleTable) do
 		if vehicle:getPositionType() == VehiclePositionType.Mechanic then
-			vehicles[#vehicles + 1] = vehicle
+			table.insert(vehicles, vehicle)
 		end
 	end
 
 	if #vehicles > 0 then
 		-- Open "vehicle take GUI"
+		-- Todo: Probably better: Trigger a vehicle table with different vehicle types and add specific tabs to VehicleTakeGUI
 		client:triggerEvent("vehicleTakeMarkerGUI", vehicles, "mechanicTakeVehicle")
 	else
-		client:sendWarning(_("Keine abholbaren Fahrzeuge vorhanden!", client))
+		client:sendInfo(_("Keine abholbaren Fahrzeuge vorhanden!", client))
 	end
 end
 
@@ -97,7 +117,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
 
-				self.m_BankAccount:addMoney(math.floor(price*0.7))
+				self:giveMoney(math.floor(price*0.7), "Reparatur")
 			else
 				client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
 			end
@@ -166,7 +186,7 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant( towTruck )
 	if driver then
 		if towTruck.getCompany and towTruck:getCompany() == self then
-			if source.getOwner and type(source:getOwner()) == "number" then
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
 				source:toggleRespawn(false)
 			else
 				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
@@ -179,23 +199,15 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 	source:toggleRespawn(true)
 
 	local driver = getVehicleOccupant( towTruck )
-	if driver then
-		if driver.m_InTowLot then
-			if towTruck.getCompany then
-				local comp = towTruck:getCompany()
-				if comp == self then
-					if source.getOwner then
-						local owner = source:getOwner()
-						if type(owner) == "number" then
-							if not source.getCompany and not source.getFaction then
-								self:respawnVehicle( source )
-								driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
-							end
-						else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
-						end
-					else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
-					end
-				end
+	if driver and driver.m_InTowLot then
+		if towTruck.getCompany and towTruck:getCompany() == self then
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
+				self:respawnVehicle(source)
+				driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+				StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
+				self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+			else
+				driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
 		end
 	end

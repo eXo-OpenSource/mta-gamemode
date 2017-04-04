@@ -51,7 +51,7 @@ end)
 
 local deathScreen = {}
 
-function deathScreen.onDeath(killer)
+function deathScreen.onDeath(killer, gui)
 	if not deathScreen.state then
 		deathScreen.state = true
 		setGameSpeed(0.3)
@@ -67,7 +67,9 @@ function deathScreen.onDeath(killer)
 
 		-- Hide HUD, Chat, ...
 		HUDUI:getSingleton():hide()
-		DeathmatchGUI:getSingleton():hide()
+		if gui then
+			DeathmatchGUI:getSingleton():hide()
+		end
 		showChat(false)
 
 		setTimer(function()
@@ -76,7 +78,9 @@ function deathScreen.onDeath(killer)
 			deathScreen.state = false
 
 			HUDUI:getSingleton():show()
-			DeathmatchGUI:getSingleton():show()
+			if gui then
+				DeathmatchGUI:getSingleton():show()
+			end
 			showChat(true)
 		end,9000,1)
 	else

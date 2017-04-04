@@ -110,6 +110,8 @@ function CacheArea:performChecks()
 end
 
 function CacheArea:setCachingEnabled(state)
+	self.m_CachingEnabled = state
+
 	if not self.m_CachingEnabled and state then
 		-- We have to adjust the position as the rendertarget is relative itself
 		for k, v in ipairs(self.m_Children) do
@@ -146,7 +148,6 @@ function CacheArea:setCachingEnabled(state)
 			children = children.m_Children
 		end
 	end
-	self.m_CachingEnabled = state
 	self:anyChange()
 	return self
 end

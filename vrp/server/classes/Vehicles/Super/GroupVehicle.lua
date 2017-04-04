@@ -16,22 +16,19 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
-			local r, g, b = getVehicleColor(vehicle, true)
-			local tunings = false
-			if Group:canVehiclesBeModified() then
-				tunings = getVehicleUpgrades(vehicle) or {}
-			end
+			local fuel = vehicle:getFuel()
+			local tuningJSON = vehicle.m_Tunings:getJSON()
+			local premium = vehicle:isPremiumVehicle() and vehicle:getOwner() or 0
+
+			-- get Vehicle Trunk
+			local trunk = vehicle:getTrunk()
+			trunk:save()
+			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
 				vehicle:setHealth(health)
-				vehicle:setColor(r, g, b)
-				vehicle:setMileage(milage)
-				if Group:canVehiclesBeModified() then
-					for k, v in pairs(tunings or {}) do
-						addVehicleUpgrade(vehicle, v)
-					end
-				end
+
 				return vehicle:save(), vehicle
 			end
 		end
@@ -39,40 +36,58 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 
 	return false
 end
-function GroupVehicle:constructor(Id, Group, color, color2, health, positionType, tunings, mileage, fuel, lightColor, texture, horn, neon, special)
-  self.m_Id = Id
-  self.m_Group = Group
-  self.m_PositionType = VehiclePositionType.World
-  self:setCurrentPositionAsSpawn(self.m_PositionType)
 
-  self.m_Position = self:getPosition()
-  self.m_Rotation = self:getRotation()
-  setElementData(self, "OwnerName", self.m_Group:getName())
-  setElementData(self, "OwnerType", "group")
-  if health and health <= 300 then
-	health = 300
-  end
+function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium)
+	self.m_Id = Id
+	self.m_Group = Group
+	self.m_PositionType = positionType or VehiclePositionType.World
+	self.m_Premium = premium
+	self:setCurrentPositionAsSpawn(self.m_PositionType)
 
-  for k, v in pairs(tunings or {}) do
-    addVehicleUpgrade(self, v)
-  end
+	self.m_Position = self:getPosition()
+	self.m_Rotation = self:getRotation()
+	setElementData(self, "OwnerName", self.m_Group:getName())
+	setElementData(self, "OwnerType", "group")
+	if health and health <= 300 then
+		health = 300
+	end
 
-  if self.m_PositionType ~= VehiclePositionType.World then
-    -- Move to unused dimension | Todo: That's probably a bad solution
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-  end
+	for k, v in pairs(tunings or {}) do
+		addVehicleUpgrade(self, v)
+	end
 
-  if self.m_Group.m_Vehicles then
-	table.insert(self.m_Group.m_Vehicles, self)
-  end
+	if self.m_PositionType ~= VehiclePositionType.World then
+		-- Move to unused dimension | Todo: That's probably a bad solution
+		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	end
 
-	addEventHandler("onVehicleExplode", self, function() source:respawn(true) end)
+	if self.m_Group.m_Vehicles then
+		table.insert(self.m_Group.m_Vehicles, self)
+	end
 
+	addEventHandler("onVehicleExplode",self, function()
+		setTimer(function(veh)
+			veh:setHealth(1000)
+			veh:respawn(true)
+		end, 10000, 1, source)
+	end)
+
+	-- load trunk
+	self.m_Trunk = Trunk.load(trunkId)
+
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
-	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+	if self.m_Group:canVehiclesBeModified() then
+		self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	else
+		self.m_Tunings = VehicleTuning:new(self)
+	end
+	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
 function GroupVehicle:destructor()
@@ -87,13 +102,12 @@ function GroupVehicle:getGroup()
   return self.m_Group
 end
 
-
-function GroupVehicle.create(Group, model, posX, posY, posZ, rotation)
+function GroupVehicle.create(Group, model, posX, posY, posZ, rotation, milage, fuel, trunkId, tuningJSON, premium)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation) then
+	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation, trunkId, tuningJSON, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, nil, 1000)
-    VehicleManager:getSingleton():addRef(vehicle)
+		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, 1000, VehiclePositionType.World, milage, fuel, trunkId, tuningJSON, premium)
+    	VehicleManager:getSingleton():addRef(vehicle)
 		return vehicle
 	end
 	return false
@@ -110,15 +124,14 @@ end
 
 function GroupVehicle:save()
 	local health = getElementHealth(self)
-	local r, g, b, r2, g2, b2 = getVehicleColor(self, true)
-	local color = setBytesInInt32(255, r, g, b) -- Format: argb
-	local color2 = setBytesInInt32(255, r2, g2, b2) -- Format: argb
-	local rLight, gLight, bLight = getVehicleHeadLightColor(self)
-	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
-	local tunings = getVehicleUpgrades(self) or {}
+	if self.m_Trunk then self.m_Trunk:save() end
 
-	 return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, Tunings = ?, Mileage = ?, Fuel = ?, LightColor = ?, TexturePath = ?, Horn = ?, Neon = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Id)
+	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
+end
+
+function GroupVehicle:isGroupPremiumVehicle()
+	return self.m_Premium ~= 0
 end
 
 function GroupVehicle:hasKey(player)
@@ -164,6 +177,10 @@ function GroupVehicle:respawn(force)
 	self:setRotation(0, 0, self.m_SpawnRot)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
+	self:resetIndicator()
 	self:fix()
 
 	return true

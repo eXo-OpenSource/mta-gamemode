@@ -21,7 +21,7 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
-
+	self.m_DownloadCallBack = bind(self.Event_OnFinishDownloadImage, self)
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -122,6 +122,11 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 		player.m_InVehicle = self
 	end
+	if self.m_HasBeenUsed then
+		if self.m_HasBeenUsed == 0 then
+			self.m_HasBeenUsed = 1
+		end
+	end
 end
 
 function Vehicle:onPlayerExit(player, seat)
@@ -141,10 +146,13 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
+		player.m_SeatBelt = false
+		setElementData(player,"isBuckeled", false)
 		if self.m_HandBrake then
 			local ground = isVehicleOnGround( self )
 			if ground then
-				setElementFrozen( self, true)
+				setElementFrozen(self, true)
+				setVehicleDoorOpenRatio(self, 2, 0, 350)
 			else
 				self.m_HandBrake = false
 				self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -205,6 +213,20 @@ function Vehicle:toggleLight()
 	end
 end
 
+function Vehicle:setCustomHorn(id)
+	self.m_CustomHorn = id
+	if self:getOccupant() then
+		local player = self:getOccupant()
+		if id > 0 then
+			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		else
+			if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			end
+		end
+	end
+end
+
 function Vehicle:toggleEngine(player)
 	if self.m_DisableToggleEngine then return end
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
@@ -230,16 +252,21 @@ function Vehicle:toggleEngine(player)
 				if VEHICLE_BIKES[self:getModel()] then -- Bikes
 					player:meChat(true, "öffnet sein Fahrradschloss!")
 					self:setEngineState(state)
+					setElementData(self, "syncEngine", state)
 					return true
 				else
 					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
-						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
+						local colshape = createColSphere(self:getPosition(), CHAT_SCREAM_RANGE)
+						local rangeElements = getElementsWithinColShape(colshape)
+						colshape:destroy()
+						for key, other in ipairs(rangeElements) do
 							if getElementType(other) == "player" then
 								other:triggerEvent("vehicleEngineStart", self)
 							end
 						end
 						setTimer(bind(self.setEngineState, self), 2000, 1, true)
+						setTimer(setElementData, 2000, 1 , self, "syncEngine", true)
 						return true
 					end
 				end
@@ -250,6 +277,7 @@ function Vehicle:toggleEngine(player)
 				player:meChat(true, "verschließt sein Fahrradschloss!")
 			end
 			self:setEngineState(state)
+			setElementData(self, "syncEngine", state)
 			return true
 		end
 	end
@@ -281,11 +309,11 @@ function Vehicle:toggleHandBrake( player )
 end
 
 function Vehicle:setEngineState(state)
-	local player = getVehicleOccupant(self, 0)
-	if player then
+	--local player = getVehicleOccupant(self, 0)
+	--if player then
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
-	end
+	--end
 	self.m_StartingEnginePhase = false
 end
 
@@ -406,87 +434,34 @@ function Vehicle:isRespawnAllowed()
 	return self.m_RespawnAllowed
 end
 
-function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
-	if color then
-		local a, r, g, b = getBytesInInt32(color)
-		if color2 then
-			local a2, r2, g2, b2 = getBytesInInt32(color2)
-			setVehicleColor(self, r, g, b, r2, g2, b2)
-		else
-			setVehicleColor(self, r, g, b)
+function Vehicle:getTexture()
+	return self.m_Texture
+end
+
+function Vehicle:setTexture(texturePath, textureName, force)
+	if texturePath and #texturePath > 3 then
+
+		local isPng = string.find(texturePath,".png")
+		local isJpg = string.find(texturePath,".jpg")
+		local isHttp = string.find(texturePath,"http://")
+		if isHttp == nil then
+			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+		elseif isHttp then
+			fetchRemote ( texturePath, self.m_DownloadCallBack,  "", false, force, texturePath, textureName )
 		end
 	end
-
-	if lightColor then
-		local a, r, g, b = getBytesInInt32(lightColor)
-		setVehicleHeadLightColor(self, r, g, b)
-	end
-
-	if not type(tunings) == "table" then tunings = {} end
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
-	self:setTexture(texture or "")
-
-	if neon and fromJSON(neon) then
-		self:setNeon(1)
-		self:setNeonColor(fromJSON(neon))
-	else
-		self:setNeon(0)
-	end
-
-	if special and special > 0 then
-		self:setSpecial(special)
-	end
-	self:setCustomHorn(horn or 0)
 end
 
-function Vehicle:setTexture(texturePath)
-  self.m_Texture = ""
-  if fileExists(texturePath) then
-    self.m_Texture = texturePath
-
-    for i, v in pairs(getElementsByType("player")) do
-      if v:isLoggedIn() then
-        triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
-      end
-    end
-  end
-end
-
-function Vehicle:setCustomHorn(id)
-  self.m_CustomHorn = id
-  if self:getOccupant() then
-    if id > 0 then
-      bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-    else
-      if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
-        unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-      end
-    end
-  end
-end
-
-function Vehicle:setNeon(state)
-  self:setData("Neon", state, true)
-
-  if state == 1 then
-    self.m_Neon = {255, 0, 0}
-  else
-    self.m_Neon = false
-  end
-end
-
-function Vehicle:setNeonColor(colorTable)
-  if self.m_Neon then
-    self.m_Neon = colorTable
-    self:setData("NeonColor", colorTable, true)
-  end
+function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
+	if errNo == 0 then
+		self.m_IsURLTexture = true
+		setElementData(self,"URL_PAINTJOB", true)
+		self.m_Texture = VehicleTexture:new(self, rData , textureName, force, true, tUrl)
+	end
 end
 
 function Vehicle:removeTexture()
-  self.m_Texture = nil
-  triggerClientEvent(root, "removeElementTexture", root, self)
+	delete(self.m_Texture)
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)
@@ -501,15 +476,29 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
-		setVehicleEngineState(self, false)
-		self.m_EngineState = false
+		self:setEngineState(false)
+		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
+		self:setFrozen(true)
+		self.m_HandBrake = true
+		self:setData( "Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
+		self:resetIndicator()
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
 		end
 	end
+end
+
+function Vehicle:getTrunk()
+  return self.m_Trunk or false
+end
+
+function Vehicle:resetIndicator()
+	setElementData(self, "i:left", false)
+	setElementData(self, "i:right", false)
+	setElementData(self, "i:warn", false)
 end
 
 -- Override it

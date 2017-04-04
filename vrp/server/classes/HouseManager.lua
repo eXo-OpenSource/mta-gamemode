@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant","tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted"}
 
 local ROB_DELAY = 1000*60*15
 
@@ -34,11 +34,10 @@ function HouseManager:constructor()
 	addEventHandler("houseDeposit",root,bind(self.deposit,self))
 	addEventHandler("houseWithdraw",root,bind(self.withdraw,self))
 	addEventHandler("houseRemoveTenant",root,bind(self.removeTenant,self))
-
-
-
+	addEventHandler("tryRobHouse",root,bind(self.tryRob,self))
+	addEventHandler("playerFindRobableItem",root,bind(self.onFindRobItem,self))
+	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
-
 end
 
 function HouseManager:createNewHouse(player,cmd,...)
@@ -109,6 +108,26 @@ function HouseManager:leaveHouse()
 	if not client then return end
 	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:leaveHouse(client)
+end
+
+function HouseManager:tryRob() 
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:tryRob(client)
+end
+
+function HouseManager:onFindRobItem()
+	if not client then return end
+	if client.vehicle then return end
+	if not client.m_CurrentHouse then return end
+	client.m_CurrentHouse:giveRobItem(client)
+end
+
+function HouseManager:onTryToGiveWanted()
+	if not client then return end
+	if client.vehicle then return end
+	if not client.m_CurrentHouse then return end
+	client.m_CurrentHouse:tryToCatchRobbers(client)
 end
 
 function HouseManager:buyHouse()

@@ -18,7 +18,9 @@ function GasStation:constructor(id, name, position, rotation, typeData, dimensio
 	end
 
 	if SHOP_FUEL[self.m_Name] then
-		self.m_FillMarker = createMarker(SHOP_FUEL[self.m_Name]["Marker"], "cylinder", 5, 255, 255, 0, 100)
+		local pos = SHOP_FUEL[self.m_Name]["Marker"]
+		self.m_GasBlip = Blip:new("Fuelstation.png", pos.x, pos.y, root, 100)
+		self.m_FillMarker = createMarker(pos, "cylinder", 5, 255, 255, 0, 100)
 		addEventHandler("onMarkerHit", self.m_FillMarker, bind(self.onFillMarkerHit, self))
 		addEventHandler("onMarkerLeave", self.m_FillMarker, bind(self.onFillMarkerLeave, self))
 

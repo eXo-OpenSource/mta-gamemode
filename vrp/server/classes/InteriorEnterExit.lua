@@ -49,10 +49,10 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 	setElementFrozen(player, true)
 	setTimer(
 		function()
-			player:setInterior(interior, pos)
+			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)
-			player:setDimension(dimension)
+			setElementDimension(player,dimension)
 			player:setCameraTarget(player)
 
 			fadeCamera(player, true)

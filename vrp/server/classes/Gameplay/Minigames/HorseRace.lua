@@ -70,8 +70,8 @@ function HorseRace:showShortMessage()
 end
 
 function HorseRace:message()
-	outputChatBox ( "[Pferde-Wetten] Um 19:30 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro", rootElement, 255, 150, 255 )
-	outputChatBox ( "auf ein Pferd setzen und um 19:30 die Live-Übertragung anschauen! Viel Glück!", rootElement, 255, 150, 255 )
+	outputChatBox ( "[Pferde-Wetten] Um 20:00 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro", rootElement, 255, 150, 255 )
+	outputChatBox ( "auf ein Pferd setzen und um 20:00 die Live-Übertragung anschauen! Viel Glück!", rootElement, 255, 150, 255 )
 end
 
 function HorseRace:addPlayer()
@@ -202,7 +202,7 @@ function HorseRace:checkWinner(winningHorse)
 				local win = tonumber(row["Bet"])*3
 				outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
 				player:giveMoney(win, "Pferde-Wetten")
-				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + gewinn
+				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 			else
 				outputChatBox(_("[Pferde-Wetten] Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!", player, row["Horse"]) ,player, 255, 150, 255)
 			end

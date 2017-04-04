@@ -18,7 +18,7 @@ Action.Ped.create.trigger = function(self)
 		self.model,
 		self.x, self.y, self.z,
 		self.rotation)
-	
+
 	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
 end
 
@@ -35,6 +35,20 @@ Action.Ped.warpIntoVehicle.trigger = function(self)
 	local ped = self.cutscene.m_Elements[self.id]
 	local vehicle = self.cutscene.m_Elements[self.vehicle]
 	warpPedIntoVehicle(ped, vehicle)
+end
+
+-- giveWeapon
+Action.Ped.giveWeapon = inherit(Object)
+Action.Ped.giveWeapon.duration = false;
+Action.Ped.giveWeapon.constructor = function(self, data, scene)
+	self.id = data.id
+	self.weapon = data.weapon
+	self.cutscene = scene:getCutscene()
+end
+
+Action.Ped.giveWeapon.trigger = function(self)
+	local ped = self.cutscene.m_Elements[self.id]
+	givePedWeapon(ped, self.weapon, 30, true)
 end
 
 -- setControlState

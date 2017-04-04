@@ -16,6 +16,18 @@ ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
 PROJECT_NAME = "eXo Reallife"
 
+JOB_LEVEL_PIZZA = 0
+JOB_LEVEL_SWEEPER = 0
+JOB_LEVEL_LOGISTICAN = 1
+JOB_LEVEL_TRASHMAN = 2
+JOB_LEVEL_TREASURESEEKER = 2
+JOB_LEVEL_FORKLIFT = 3
+JOB_LEVEL_LUMBERJACK = 3
+JOB_LEVEL_HELITRANSPORT = 4
+JOB_LEVEL_FARMER = 5
+JOB_LEVEL_GRAVEL = 6
+
+
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -41,8 +53,8 @@ ADMIN_RANK_PERMISSION = {
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
 	["eventMoneyDeposit"] = RANK.Supporter,
-	["gethere"] = RANK.Supporter,
-	["goto"] = RANK.Supporter,
+	["gethere"] = RANK.Clanmember,
+	["goto"] = RANK.Clanmember,
 	["showVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
@@ -52,14 +64,14 @@ ADMIN_RANK_PERMISSION = {
 	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
-	["smode"] = RANK.Supporter,
+	["smode"] = RANK.Clanmember,
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
 	["respawnRadius"] = RANK.Supporter,
 	["clearChat"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
-	["tp"] = RANK.Supporter,
+	["tp"] = RANK.Clanmember,
 	["timeban"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["gotocords"] = RANK.Supporter,
@@ -67,6 +79,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
+	["eventMenu"] = RANK.Moderator,
+	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -87,6 +101,7 @@ GroupRank = {
 FactionRank = {
 	Normal = 0,
 	Rank3 = 3,
+	Rank4 = 4,
 	Manager = 5,
 	Leader = 6
 }
@@ -260,13 +275,17 @@ TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 GROUP_RENAME_COSTS = 10000
 
+GROUP_NAME_MIN = 5
+GROUP_NAME_MAX = 24
+GROUP_NAME_MATCH = "^[a-zA-Z0-9 _.-]*$"
+
 GARAGE_UPGRADES_COSTS = {[1] = 200000, [2] = 250000, [3] = 500000}
 HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 10000
-WEAPONTRUCK_MAX_LOAD_STATE = 20000
+WEAPONTRUCK_MAX_LOAD = 20000
+WEAPONTRUCK_MAX_LOAD_STATE = 40000
 
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.3, 0.3), ["rot"] = Vector3(0, 0, 180)},
@@ -283,7 +302,7 @@ VEHICLE_SPECIAL_TEXTURE = {
 	[565] = "#emapflash92body256",
 	[536] = "#emapblade92body128",
 	[483] = "#emapcamperbody256",
-	[415] = "#vehiclegrunge256",
+	[415] = "vehiclegrunge256",
 	[411] = "vehiclegrunge256",
 	[562] = "#emapelegybody128",
 	[562] = "#emapelegybody128",
@@ -449,6 +468,8 @@ VRP_RADIO = {
 	{"Lounge FM Austria", "http://digital.lounge.fm"},
 	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
 	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
+	{"FFS (nicht 24/7 online)", "http://ffs-gaming.com:8008/ffs.ogg"},
+
 
 	-- GTA channels
 	{"Playback FM", 1},
@@ -469,7 +490,8 @@ BeggarTypes = {
 	Money = 1;
 	Food = 2;
 	Transport = 3;
-    Ecstasy = 4;
+    Weed = 4;
+	Ecstasy = 5;
 }
 for i, v in pairs(BeggarTypes) do
 	BeggarTypes[v] = i
@@ -490,3 +512,5 @@ WEAPON_LEVEL = {
 	[9] = {["costs"] = 4750, ["hours"] = 22},
 	[10] = {["costs"] = 5500, ["hours"] = 30}
 }
+
+BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}

@@ -185,7 +185,11 @@ end
 
 function TrainManager:updateTrains()
 	for i, Train in pairs(self.Map) do
-		Train:update()
+		if Train and Train.update then
+			Train:update()
+		else
+			self.Map[i] = nil
+		end
 	end
 end
 

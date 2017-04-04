@@ -1,0 +1,13 @@
+<meta>
+	<oop>true</oop>
+	<file src="files/models/fire_ledder.txd" />
+	<file src="files/models/fire_ledder.dff" />
+	<file src="files/models/fire_ledder.col" />
+	
+	<file src="files/models/fire_main.txd" />
+	<file src="files/models/fire_main.dff" />
+	<file src="files/models/fire_main.col" />
+	
+	<script src="client.lua" type="client" />
+	<script src="server.lua" type="server" />
+</meta>

@@ -19,11 +19,11 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 	self.m_Mode = mode
 	self.m_MaxPlayer = maxPlayer
 	self.m_Password = password or ""
-
 	self.m_Players = {}
-	self:loadMap()
 
-	self.m_LeaveBind = bind(self.removePlayer, self)
+	self.m_ColShapeLeaveBind = bind(self.onColshapeLeave, self)
+
+	self:loadMap()
 
 	if self.m_Type == DeathmatchLobby.Types[1] then
 		self.m_Owner = "Server"
@@ -36,6 +36,7 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 end
 
 function DeathmatchLobby:destructor()
+	self.m_Colshape:destroy()
 	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
 end
 
@@ -51,6 +52,10 @@ function DeathmatchLobby:loadMap()
 	self.m_MapData["dim"] = 2000+self.m_Id
 	self.m_MapData["int"] = map.Interior
 	self.m_MapData["spawns"] = map.Spawns
+	self.m_Colshape = createColSphere(self.m_MapData["spawns"][1], 100)
+	self.m_Colshape:setDimension(self.m_MapData["dim"])
+	self.m_Colshape:setInterior(self.m_MapData["int"])
+	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
 end
 
 function DeathmatchLobby:getPlayers()
@@ -130,6 +135,7 @@ function DeathmatchLobby:addPlayer(player)
 	takeAllWeapons(player)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	player.m_RemoveWeaponsOnLogout = true
+	player.disableWeaponStorage = true
 	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
@@ -139,7 +145,7 @@ end
 function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 	local pos = Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
-		player:triggerEvent("deathmatchStartDeathScreen", killer or player)
+		player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
 		if killer then
 
 			self:increaseKill(killer, weapon)
@@ -159,8 +165,8 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 		end,10000,1)
 	else
-		player:setDimension(self.m_MapData["dim"])
-		player:setInterior(self.m_MapData["int"])
+		setElementDimension(player,self.m_MapData["dim"])
+		setElementInterior(player, self.m_MapData["int"])
 		player:setPosition(pos)
 		player:setHealth(100)
 		player:setHeadless(false)
@@ -174,6 +180,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 	if isElement(player) then
 		takeAllWeapons(player)
 		player.m_RemoveWeaponsOnLogout = nil
+		player.disableWeaponStorage = nil
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(1325.21, -1559.48, 13.54)
@@ -197,10 +204,16 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 	end
 end
 
+function DeathmatchLobby:onColshapeLeave(player, dim)
+	if dim and player.deathmatchLobby then
+		self:removePlayer(player)
+	end
+end
+
 function DeathmatchLobby:onPlayerChat(player, text, type)
 	if type == 0 then
 		for playeritem, data in pairs(self.m_Players) do
-			playeritem:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
+			playeritem:outputChat(("[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text), 125, 255, 0, true)
 		end
 
 		return true

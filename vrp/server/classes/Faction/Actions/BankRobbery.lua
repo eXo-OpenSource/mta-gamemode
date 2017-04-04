@@ -34,11 +34,12 @@ BankRobbery.BagSpawns = {
 	Vector3(2309.27, 19.14, 26),
 }
 
-local BOMB_TIME = 15*1000
-local MONEY_PER_SAFE_MIN = 300
-local MONEY_PER_SAFE_MAX = 500
-local MAX_MONEY_PER_BAG = 2500
+local BOMB_TIME = 20*1000
+local MONEY_PER_SAFE_MIN = 500
+local MONEY_PER_SAFE_MAX = 750
+local MAX_MONEY_PER_BAG = 3000
 local BANKROB_TIME = 60*1000*12
+--Info 68 Tresors
 
 function BankRobbery:constructor()
 	self:build()
@@ -114,9 +115,11 @@ function BankRobbery:destroyRob()
 	end
 	if self.m_CircuitBreakerPlayers then
 		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-			player:triggerEvent("forceCircuitBreakerClose")
-			self.m_CircuitBreakerPlayers[player] = nil
-			player.m_InCircuitBreak = false
+			if isElement(player) then
+				player:triggerEvent("forceCircuitBreakerClose")
+				self.m_CircuitBreakerPlayers[player] = nil
+				player.m_InCircuitBreak = false
+			end
 		end
 	end
 
@@ -231,6 +234,8 @@ function BankRobbery:startRob(player)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
+	self.m_Truck:toggleRespawn(false)
+
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 
@@ -260,6 +265,10 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 	local faction = attacker:getFaction()
 	if faction and faction:isEvilFaction() then
 		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
+			return false
+		end
+		if FactionState:getSingleton():countPlayers() < BANKROB_MIN_MEMBERS then
+			attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, BANKROB_MIN_MEMBERS))
 			return false
 		end
 		self:startRob(attacker)

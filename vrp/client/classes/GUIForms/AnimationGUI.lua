@@ -39,6 +39,7 @@ end
 
 function AnimationGUI:startAnimation()
 	if localPlayer:getData("isTasered") then return end
+	if localPlayer.vehicle then return end
 
 	if ANIMATIONS[self.m_AnimationList:getSelectedItem().Name] then
 		if not self.m_InfoMessage then
@@ -48,7 +49,7 @@ function AnimationGUI:startAnimation()
 		triggerServerEvent("startAnimation", localPlayer, animation)
 		for i, v in ipairs(Element.getAllByType("object", root, true)) do -- to short the loop use only streamedin objects
 			if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then
-				if animation == "Tanz 3" then
+				if animation == "Tanz Chill" then
 					localPlayer:giveAchievement(43)
 					return
 				end

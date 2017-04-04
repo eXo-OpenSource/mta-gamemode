@@ -108,14 +108,16 @@ end
 addCommandHandler("ego", ego.toggle)
 
 
-function ego.enterVehicle()
+function ego.enterVehicle(player)
+	if player ~= localPlayer then return end
 	if ego.Active then
 		delete(ego:getSingleton())
 	end
 end
 addEventHandler("onClientVehicleStartEnter", root, ego.enterVehicle)
 
-function ego.exitVehicle()
+function ego.exitVehicle(player)
+	if player ~= localPlayer then return end
 	if ego.Active then
 		ego:new()
 	end

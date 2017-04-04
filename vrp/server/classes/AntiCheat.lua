@@ -6,9 +6,16 @@
 -- *
 -- ****************************************************************************
 AntiCheat = inherit(Singleton)
+addRemoteEvents{"AntiCheat:ReportBlip"}
+
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
-	["writing"] = true
+	["writing"] = true,
+	["i:left"] = true,
+	["i:right"] = true,
+	["i:warn"] = true,
+	["Neon"] = true,
+	["NeonColor"] = true
 }
 
 function AntiCheat:constructor()
@@ -28,8 +35,18 @@ function AntiCheat:constructor()
 end
 
 function AntiCheat:report(player, name, severity)
-	assert(type(player) == "userdata" and type(name) == "string" and type(severity) == "number", "Bad argument @ AntiCheat.report")
+	if type(player) ~= "userdata" or type(name) ~= "string" or type(severity) ~= "number" then
+		outputServerLog("Bad argument @ Anticheat.report")
+		outputServerLog(debug.traceback())
+		return
+	end
 	outputServerLog(("AntiCheat:report(%s, %s, %i)"):format(player:getName(), name, severity))
 
 	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity) VALUES(?, ?, ?)", sql:getPrefix(), player:getId(), name, severity)
 end
+
+addEventHandler("AntiCheat:ReportBlip", root,
+	function(blipCount)
+		AntiCheat:getSingleton():report(client, ("Invalid Blip Count: %s"):format(tostring(blipCount)), CheatSeverity.High)
+	end
+)

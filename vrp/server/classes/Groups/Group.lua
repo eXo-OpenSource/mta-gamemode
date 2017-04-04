@@ -104,22 +104,24 @@ function Group:canVehiclesBeModified()
 end
 
 function Group:setName(name)
-  local timestamp = getRealTime().timestamp
-  if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ?, RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
-    return false
-  end
-  triggerClientEvent("gangAreaOnGroupNameChange", root, self.m_Name, name)
+	local timestamp = getRealTime().timestamp
+	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ?, RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
+		return false
+	end
 
-  self.m_Name = name
-  self.m_LastNameChange = timestamp
+	self.m_Name = name
+	self.m_LastNameChange = timestamp
 
-  for i, player in pairs(self:getOnlinePlayers()) do
-    player:setPublicSync("GroupName", self:getName())
-	player:setPublicSync("GroupType", self:getType())
+	for i, player in pairs(self:getOnlinePlayers()) do
+		player:setPublicSync("GroupName", self:getName())
+		player:setPublicSync("GroupType", self:getType())
+	end
 
-  end
+	for k, vehicle in pairs(self:getVehicles() or {}) do
+		setElementData(vehicle, "OwnerName", name)
+	end
 
-  return true
+	return true
 end
 
 function Group:saveRankSettings()
@@ -147,17 +149,17 @@ function Group:setRankName(rank,name)
   self.m_RankNames[tostring(rank)] = name
 end
 
-function Group:setRankLoan(rank,amount)
-  self.m_RankLoans[tostring(rank)] = amount
+function Group:setRankLoan(rank, amount)
+  self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
 end
 
 function Group:paydayPlayer(player)
-  local rank = self.m_Players[player:getId()]
-  local loan = tonumber(self.m_RankLoans[tostring(rank)])
-  if self:getMoney() < loan then loan = self:getMoney() end
-  if loan < 0 then loan = 0 end
-  self:takeMoney(loan, "Payday-Auszahlung")
-  return loan
+	local rank = self.m_Players[player:getId()]
+	local loan = tonumber(self.m_RankLoans[tostring(rank)]) or 0
+	if self:getMoney() < loan then loan = self:getMoney() end
+	if loan < 0 then loan = 0 end
+	self:takeMoney(loan, "Payday-Auszahlung")
+	return loan
 end
 
 function Group:giveKarma(karma)
@@ -182,6 +184,11 @@ function Group:addPlayer(playerId, rank)
   local player = Player.getFromId(playerId)
   if player then
     player:setGroup(self)
+	if self.m_Type == "Gang" then
+		player:giveAchievement(8)
+	elseif self.m_Type == "Firma" then
+		player:giveAchievement(28)
+  	end
   end
 
   sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)

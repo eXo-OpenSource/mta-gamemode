@@ -39,39 +39,41 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 end
 
 function CompanyVehicle:constructor(Id, company, color, health, posionType, tunings, mileage)
-  self.m_Id = Id
-  self.m_Company = company
-  self.m_PositionType = positionType or VehiclePositionType.World
-  self.m_Position = self:getPosition()
-  self.m_Rotation = self:getRotation()
-  self:setFrozen(true)
-  setElementData(self, "OwnerName", self.m_Company:getName())
-  setElementData(self, "OwnerType", "company")
-  if health then
-	if health <= 300 then
-		self:setHealth(health)
+	self.m_Id = Id
+	self.m_Company = company
+	self.m_PositionType = positionType or VehiclePositionType.World
+	self.m_Position = self:getPosition()
+	self.m_Rotation = self:getRotation()
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
+	setElementData(self, "OwnerName", self.m_Company:getName())
+	setElementData(self, "OwnerType", "company")
+	if health then
+		if health <= 300 then
+			self:setHealth(health)
+		end
 	end
-  end
-  self:setLocked(false)
+	self:setLocked(false)
 
-  local a, r, g, b
-  if color and color > 0 then
-  	a, r, g, b = getBytesInInt32(color)
-  else
-  	local companyId = self.m_Company:getId()
-	r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
-  end
-  setVehicleColor(self, r, g, b, r, g, b)
+	local a, r, g, b
+	if color and color > 0 then
+		a, r, g, b = getBytesInInt32(color)
+	else
+		local companyId = self.m_Company:getId()
+		r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+	end
+	setVehicleColor(self, r, g, b, r, g, b)
 
-  for k, v in pairs(tunings or {}) do
-    addVehicleUpgrade(self, v)
-  end
+	for k, v in pairs(tunings or {}) do
+		addVehicleUpgrade(self, v)
+	end
 
-  if self.m_PositionType ~= VehiclePositionType.World then
-    -- Move to unused dimension | Todo: That's probably a bad solution
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-  end
-  self:setMileage(mileage)
+	if self.m_PositionType ~= VehiclePositionType.World then
+		-- Move to unused dimension | Todo: That's probably a bad solution
+		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	end
+	self:setMileage(mileage)
 
 	if self.m_Company.m_Vehicles then
 		table.insert(self.m_Company.m_Vehicles, self)
@@ -90,6 +92,17 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 		3000, 1, source)
 	end)
 
+	if self.m_Company.m_VehicleTexture then
+		if self.m_Company.m_VehicleTexture[self:getModel()] and self.m_Company.m_VehicleTexture[self:getModel()] then
+			local textureData = self.m_Company.m_VehicleTexture[self:getModel()]
+			if textureData.shaderEnabled then
+				local texturePath, textureName = textureData.texturePath, textureData.textureName
+				if texturePath and #texturePath > 3 then
+					self:setTexture(texturePath, textureName)
+				end
+			end
+		end
+	end
 end
 
 function CompanyVehicle:destructor()
@@ -210,11 +223,15 @@ function CompanyVehicle:respawn(force)
 		end
 	end
 
+	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	self:fix()
 	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
+	self:resetIndicator()
 
 	return true
 end

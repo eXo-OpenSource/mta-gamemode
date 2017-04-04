@@ -2,7 +2,7 @@ LoginGUI = inherit(GUIForm)
 inherit(Singleton, LoginGUI)
 
 function LoginGUI:constructor()
-	triggerEvent("startLoginCameraDrive", localPlayer)
+	LoginGUI.startCameraDrive()
 	showChat(false)
 	setPlayerHudComponentVisible("radar",false)
 	local sw, sh = guiGetScreenSize()
@@ -18,8 +18,8 @@ function LoginGUI:constructor()
 							  GUILabel:new(sw*0.01, sh*0.01, self.m_Width/0.02, self.m_Height*0.2, "News:", self.m_NewsTab):setFont(VRPFont(sh*0.06)):setColor(Color.LightBlue)
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
-		[[eXo-Reallife
-		Closed Beta!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
+		[[
+		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_LoginTab)
@@ -140,7 +140,9 @@ function LoginGUI:constructor()
 	self:bind("enter",
 		function(self)
 			if self.m_LoginTab:isVisible() then
-				self.m_LoginLoginButton:onLeftClick()
+				if self.m_LoginLoginButton:isEnabled() then
+					self.m_LoginLoginButton:onLeftClick()
+				end
 			elseif self.m_RegisterTab:isVisible() then
 				if self.m_RegisterRegisterButton:isVisible() then
 					self.m_RegisterRegisterButton:onLeftClick()
@@ -173,6 +175,7 @@ function LoginGUI:destructor()
 
 	Cursor:hide(true)
 	GUIForm.destructor(self)
+	LoginGUI.stopCameraDrive()
 end
 
 function LoginGUI:showLogin()
@@ -226,7 +229,11 @@ function LoginGUI:showRegisterMultiaccountError(name)
 	]]
 	)
 
-	local text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!", name)
+	local text = _("Für deine Serial existiert bereits ein Account.\nJeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!")
+	if name then
+		text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!", name)
+	end
+
 	self.m_RegisterMultiaccountBox = GUIRectangle:new(screenWidth*0.6*0.75*0.15, (screenHeight*0.6-screenHeight*0.6*0.01)*0.5, width, height, tocolor(255, 0, 0, 128), self.m_RegisterTab)
 	self.m_RegisterMultiaccountText = GUILabel:new(0, 0, width, height, text, self.m_RegisterMultiaccountBox):setAlign("center", "center"):setMultiline(true):setFont(VRPFont(25))
 
@@ -335,22 +342,21 @@ addEventHandler("loginsuccess", root,
 	end
 )
 
-addEvent("startLoginCameraDrive", true)
-addEventHandler("startLoginCameraDrive", localPlayer, function()
+
+function LoginGUI.startCameraDrive()
 	setTime(0,0)
 	local rand = math.random(1,2)
 	if rand == 1 then
 		localPlayer.m_LoginDriveObject = cameraDrive:new(1773.43, -1139.05, 185.85, 1545.51, -1346.14, 180.48, 1621.89, -1516.79, 175.44, 1545.51, -1346.14, 180.48, 200*1000, "Linear" )
 	else
 		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 200*1000, "Linear" )
-	--else -- currently disabled
+		--else -- currently disabled
 		--localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
 	end
 	localPlayer.m_LoginShader =  LoginShader:new()
-end)
+end
 
-addEvent("stopLoginCameraDrive",true)
-addEventHandler("stopLoginCameraDrive", localPlayer, function()
+function LoginGUI.stopCameraDrive()
 	if localPlayer.m_LoginDriveObject then
 		delete(localPlayer.m_LoginDriveObject)
 		showChat(true)
@@ -360,4 +366,4 @@ addEventHandler("stopLoginCameraDrive", localPlayer, function()
 		localPlayer.m_LoginShader = nil
 	end
 	triggerServerEvent("onClientRequestTime", localPlayer)
-end)
+end

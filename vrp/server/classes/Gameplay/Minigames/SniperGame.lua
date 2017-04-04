@@ -19,10 +19,11 @@ SniperGame.Positions = {
 }
 
 function SniperGame.initalize()
-	local sniperPed = createPed(162 ,-531.40, 1972.36, 60.56, 333.32)
-	sniperPed:setFrozen(true)
-	local sniperMarker = createMarker(-530.19, 1974.61, 59.5, "cylinder", 1, 255, 0, 0, 125)
-	Blip:new("SniperGame.png", -530.19, 1974.61) -- Todo: Change Blip
+	--[[
+	--local sniperPed = createPed(162 ,-531.40, 1972.36, 60.56, 333.32)
+	--sniperPed:setFrozen(true)
+	--local sniperMarker = createMarker(-530.19, 1974.61, 59.5, "cylinder", 1, 255, 0, 0, 125)
+	--Blip:new("SniperGame.png", -530.19, 1974.61) -- Todo: Change Blip
 
 	addEventHandler("onMarkerHit", sniperMarker, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim and not hitElement.vehicle then
@@ -48,6 +49,7 @@ function SniperGame.initalize()
 			ped:setAnimation("ped", "WOMAN_walknorm")
 		end
 	end)
+	]]
 end
 
 function SniperGame:constructor()

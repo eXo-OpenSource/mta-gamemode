@@ -28,7 +28,25 @@ function SkinShops:Event_skinBuy(skinId)
 		client:triggerEvent("skinBought", skinId)
 		client:giveAchievement(23)
 		client.m_AltSkin = skinId
+		self:giveClothItem(client, skinId)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end
+end
+
+function SkinShops:giveClothItem( player, skinID )
+	local inv = player:getInventory()
+	local pAllSkins = inv:getItemPlacesByName("Kleidung") 
+	local place, bag, value
+	for i = 1, #pAllSkins do 
+		place = pAllSkins[i][1]
+		bag = pAllSkins[i][2]
+		value = inv:getItemValueByBag( bag, place)
+		if value then 
+			if value == skinID then 
+				return false
+			end
+		end
+	end
+	inv:giveItem("Kleidung",1,skinID)
 end

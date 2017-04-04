@@ -26,7 +26,9 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	self:save()
+	if self.m_DoNotSave then
+		self:save()
+	end
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -82,13 +84,13 @@ function DatabasePlayer:load()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, STVO, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
 
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
-		self:updateAchievements(fromJSON(row.Achievements))
+		self:updateAchievements(table.setIndexToInteger(fromJSON(row.Achievements)))
 	else
 		self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
 	end
@@ -107,6 +109,8 @@ function DatabasePlayer:load()
 	self:setKarma(row.Karma)
 	self:setPoints(row.Points)
 	self:setMoney(row.Money, true)
+	self:setSTVO(row.STVO)
+
 	if tonumber(row.SpawnWithFacSkin) == 1 then
 		self.m_SpawnWithFactionSkin = true
 	else
@@ -148,6 +152,7 @@ function DatabasePlayer:load()
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
 	self.m_PaNote = row.PaNote
+
 	self.m_PrisonTime = row.PrisonTime
 
 	self.m_Skills["Driving"] 	= row.DrivingSkill
@@ -200,9 +205,8 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self:getId())
 	end
 	return false
 end
@@ -254,6 +258,7 @@ function DatabasePlayer:hasDrivingLicense() return self.m_HasDrivingLicense end
 function DatabasePlayer:hasBikeLicense() return self.m_HasBikeLicense end
 function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getPaNote() return self.m_PaNote end
+function DatabasePlayer:getSTVO() return self.m_STVO end
 function DatabasePlayer:getBail() return self.m_Bail end
 
 -- Short setters
@@ -339,10 +344,10 @@ function DatabasePlayer:getWarns()
 	return self.m_Warns
 end
 
-function DatabasePlayer:setWantedLevel(level, disableAchievment)
+function DatabasePlayer:setWantedLevel(level, disableAchievement)
 	if level > 6 then level = 6 end
 	if level < 0 then level = 0 end
-	if not disableAchievment then
+	if not disableAchievement then
 		-- give Achievement
 		if level == 6 then
 			self:giveAchievement(46)
@@ -581,12 +586,13 @@ function DatabasePlayer:setHangarType(hangarType)
 	sql:queryExec("UPDATE ??_character SET hangarType = ? WHERE Id = ?", sql:getPrefix(), hangarType, self.m_Id)
 end
 
-function DatabasePlayer:updateAchievements (tbl)
+function DatabasePlayer:updateAchievements(tbl)
 	if tbl ~= nil then
 		self.m_Achievements = tbl
 	end
-	if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
-	-- Todo: In my tests, the table must be copied, otherwise the client didn't received it. --> Find out why (Jusonex can't reproduce it)
+	if self:isActive() then
+		self:setPrivateSync("Achievements", toJSON(self.m_Achievements))
+	end
 end
 
 function DatabasePlayer:getAchievements ()
@@ -602,7 +608,6 @@ function DatabasePlayer:giveAchievement (...)
 end
 
 function DatabasePlayer:getAchievementStatus (id)
-	local id = tostring(id)
 	if Achievement:isInstantiated() then
 		if self.m_Achievements[id] ~= nil then
 			return self.m_Achievements[id]
@@ -616,7 +621,6 @@ function DatabasePlayer:getAchievementStatus (id)
 end
 
 function DatabasePlayer:setAchievementStatus (id, status)
-	local id = tostring(id)
 	if Achievement:isInstantiated() then
 		self.m_Achievements[id] = status
 		self:updateAchievements()
@@ -671,12 +675,13 @@ function DatabasePlayer:loadMigratorData()
 	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
-	Premium.constructor(self)
+	self.m_Premium = PremiumPlayer:new(self)
 end
 
 
-function DatabasePlayer:setPrison(duration)
-	self.m_PrisonTime = self.m_PrisonTime + duration
+function DatabasePlayer:setPrison(duration, forceTime)
+	self.m_PrisonTime = forceTime and duration or self.m_PrisonTime + duration
+
 	if self:isActive() then
 		if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
 		if self.m_PrisonTime > 0 then
@@ -686,8 +691,8 @@ function DatabasePlayer:setPrison(duration)
 			toggleControl(self, "jump", false)
 			toggleControl(self, "aim_weapon", false)
 			takeAllWeapons(self)
-			self:setDimension(0)
-			self:setInterior(0)
+			setElementDimension(self, 0)
+			setElementInterior(self, 0)
 			self:setPosition(Vector3(-224,2371.29,5688.73))
 			self:triggerEvent("playerPrisoned", self.m_PrisonTime/60)
 			self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
@@ -754,7 +759,9 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		return false
 	end
 
-	if not newNick:match("[a-zA-Z]") or #newNick < 3 then
+
+
+	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 then
 		admin:sendError(_("Ungültiger Nickname!", admin))
 		return false
 	end
@@ -799,5 +806,23 @@ function DatabasePlayer:getOfflineMessages( text, typ)
 				sql:queryExec("DELETE FROM ??_offlineMessage WHERE Id = ?", sql:getPrefix(), d["Id"])
 			end
 		end
+	end
+end
+
+function DatabasePlayer:setSTVO(stvo)
+	self.m_STVO = stvo or 0
+
+	if self.m_STVO >= 20 then
+		self.m_HasDrivingLicense = false
+		self.m_STVO = 0
+		if self:isActive() then
+			self:sendMessage(_("Du hast 20 STVO Punkte! Dein Auto-Führerschein wurde abgenommen!", self), 255, 0, 0)
+		else
+			self:addOfflineMessage( "Du hattest 20 STVO Punkte dein Führerschein wurde abgenommen!", 1)
+		end
+	end
+
+	if self:isActive() then
+		self:setPublicSync("STVO", self.m_STVO)
 	end
 end

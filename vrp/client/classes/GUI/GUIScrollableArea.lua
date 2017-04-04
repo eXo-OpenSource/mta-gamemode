@@ -11,8 +11,7 @@ local SCROLL_DISTANCE = 30
 function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
-	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
-	dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
+	self.m_PageTarget = dxCreateRenderTarget(width, height, true)
 
 	self.m_ScrollX = 0
 	self.m_ScrollY = 0
@@ -41,8 +40,9 @@ function GUIScrollableArea:draw(incache)
 	if self.m_Visible == false then
 		return
 	end
+
 	-- Absolute X = Real X for drawing on the render target
-	local refreshAbsolutePosition;
+	local refreshAbsolutePosition
 	refreshAbsolutePosition = function(element)
 		for k, v in ipairs(element.m_Children) do
 			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
@@ -51,7 +51,7 @@ function GUIScrollableArea:draw(incache)
 		end
 	end
 	local absx, absy = self.m_AbsoluteX, self.m_AbsoluteY
-	self.m_AbsoluteX, self.m_AbsoluteY = 0, 0---self.m_ScrollX*2, self.m_ScrollY*2
+	self.m_AbsoluteX, self.m_AbsoluteY = 0, 0
 	refreshAbsolutePosition(self)
 
 	-- Draw Children to render Target
@@ -64,7 +64,7 @@ function GUIScrollableArea:draw(incache)
 	for k, v in ipairs(self.m_Children) do
 		if v.draw then v:draw(incache) end
 	end
-	dxSetRenderTarget(self.m_CacheArea.m_RenderTarget or nil)
+	dxSetRenderTarget(self.m_CacheArea and self.m_CacheArea.m_RenderTarget or nil)
 
 	-- Recreate AbsoluteX for the update() method to allow mouse actions
 	self.m_AbsoluteX, self.m_AbsoluteY = absx, absy
@@ -74,8 +74,14 @@ function GUIScrollableArea:draw(incache)
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
 
-	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
-	dxDrawImageSection(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, 0, 0, self.m_Width, self.m_Height, self.m_PageTarget)
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_PageTarget)
+end
+
+function GUIScrollableArea:clear()
+	self:clearChildren()
+
+	self.m_ScrollX = 0
+	self.m_ScrollY = 0
 end
 
 function GUIScrollableArea:setScrollPosition(x, y)
@@ -115,10 +121,6 @@ function GUIScrollableArea:getScrollPosition()
 end
 
 function GUIScrollableArea:resize(documentWidth, documentHeight)
-	destroyElement(self.m_PageTarget)
-	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
-	dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
-
 	self.m_DocumentWidth, self.m_DocumentHeight = documentWidth, documentHeight
 
 	if self.m_VerticalScrollbar and self.m_DocumentHeight > self.m_Height then

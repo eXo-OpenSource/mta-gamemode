@@ -8,12 +8,18 @@
 Elevator = inherit(Object)
 Elevator.Map = {}
 
-addRemoteEvents{"elevatorDrive"}
+addRemoteEvents{"elevatorStartDrive", "elevatorDrive"}
 
 function Elevator.drive(elevatorId, stationId)
 	Elevator.Map[elevatorId]:driveToStation(client, stationId)
 end
 addEventHandler("elevatorDrive", root, Elevator.drive)
+
+function Elevator.startDrive(elevatorId, stationId)
+	client.elevator = Elevator.Map[elevatorId]
+	client.elevatorStationId = stationId
+end
+addEventHandler("elevatorStartDrive", root, Elevator.startDrive)
 
 function Elevator:constructor()
 	self.m_Stations = {}
@@ -46,6 +52,10 @@ function Elevator:onStationMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if not hitElement.vehicle then
 			if not hitElement.elevatorUsed then
+				if self.m_Stations[source.id].check then
+					self.m_Stations[source.id].check(hitElement)
+				end
+
 				hitElement.curEl = self
 				local pVec = self.m_Stations[source.id].position
 				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
@@ -64,9 +74,26 @@ end
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
 	player.curEl = false
-	player:setPosition(self.m_Stations[stationID].position)
-	player:setRotation(0, 0, self.m_Stations[stationID].rotation, "default", true)
-	player:setInterior(self.m_Stations[stationID].interior)
-	player:setDimension(self.m_Stations[stationID].dimension)
+	player.elevator = false
+	player.elevatorStationId = false
+
+	-- Workaround TODO
+	nextframe(
+		function()
+			setElementInterior(player, self.m_Stations[stationID].interior)
+			player:setPosition(self.m_Stations[stationID].position)
+		end
+	)
+	player:setInterior(0)
+	--
+
+	player:setRotation(Vector3(0, 0, self.m_Stations[stationID].rotation))
+	setElementDimension(player, self.m_Stations[stationID].dimension)
 	setElementFrozen(player, false)
+end
+
+function Elevator:forceStationPosition(player, stationID)
+	setElementInterior(player, self.m_Stations[stationID].interior)
+	player:setPosition(self.m_Stations[stationID].position)
+	setElementDimension(player,self.m_Stations[stationID].dimension)
 end
