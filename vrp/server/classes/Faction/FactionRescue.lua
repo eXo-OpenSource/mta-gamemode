@@ -535,9 +535,11 @@ function FactionRescue:toggleLadder(veh, player, force)
 		setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-		veh:detach(veh.Ladder["main"])
+		veh.Ladder["main"]:detach(veh)
 		for index, obj in pairs(veh.Ladder) do
-			obj:setCollisionsEnabled(true)
+			if not index == "main" then
+				obj:setCollisionsEnabled(true)
+			end
 		end
 	end
 end
