@@ -549,6 +549,7 @@ end
 
 function FactionRescue:ladderFunction(player, key, state)
 	local veh = player.vehicle
+	if not veh then return end
 	if veh:getModel() ~= 544 then return end
 
 	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
