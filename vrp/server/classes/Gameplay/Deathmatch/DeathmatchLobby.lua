@@ -154,15 +154,17 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		fadeCamera(player, false, 2)
 		player:triggerEvent("Countdown", 10, "Respawn in")
 		setTimer(function()
-			local skin = player:getModel()
-			spawnPlayer(player, pos, 0, skin, self.m_MapData["int"], self.m_MapData["dim"])
-			player:setHealth(100)
-			player:setArmor(0)
-			player:setHeadless(false)
-			player:setCameraTarget(player)
-			player:fadeCamera(true, 1)
-			player:triggerEvent("CountdownStop", "Respawn in")
-			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+			if player and isElement(player) then
+				local skin = player:getModel()
+				spawnPlayer(player, pos, 0, skin, self.m_MapData["int"], self.m_MapData["dim"])
+				player:setHealth(100)
+				player:setArmor(0)
+				player:setHeadless(false)
+				player:setCameraTarget(player)
+				player:fadeCamera(true, 1)
+				player:triggerEvent("CountdownStop", "Respawn in")
+				giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+			end
 		end,10000,1)
 	else
 		setElementDimension(player,self.m_MapData["dim"])
