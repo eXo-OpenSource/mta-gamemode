@@ -12,7 +12,7 @@ function BeggarPed:constructor(Id)
 	self.m_Id = Id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = createColSphere(self:getPosition(), 10)
-	self.m_Type = math.random(1, 3)
+	self.m_Type = math.random(1, 4)
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -64,13 +64,13 @@ function BeggarPed:rob(player)
 	end
 
 	-- Give wage
-	client:giveMoney(math.random(1, 5), "Bettler-Raub")
-	client:giveKarma(-1/math.random(1, 5))
-	client:sendShortMessage(_("Well done. Du hast einen Bettler ausgeraubt!", player))
-    self:sendMessage(client, BeggarPhraseTypes.Rob)
+	player:giveMoney(math.random(1, 5), "Bettler-Raub")
+	player:giveKarma(-1/math.random(1, 5))
+	player:sendShortMessage(_("Well done. Du hast einen Bettler ausgeraubt!", player))
+    self:sendMessage(player, BeggarPhraseTypes.Rob)
 
 	-- give Achievement
-	client:giveAchievement(50)
+	player:giveAchievement(50)
 
 	-- Update rob time
 	self.m_LastRobTime = getTickCount()
@@ -104,6 +104,25 @@ function BeggarPed:giveMoney(player, money)
 		player:sendError(_("Du hast nicht soviel Geld dabei!", player))
 	end
 end
+
+function BeggarPed:sellWeed(player, amount)
+	if player:getInventory():getItemAmount("Weed") >= amount then
+		player:getInventory():removeItem("Weed", amount)
+		player:giveKarma(-1/math.random(1, amount))
+		player:giveMoney(amount*15, "Bettler Weed Verkauf")
+		player:givePoints(2)
+
+		-- Despawn the Beggar
+		setTimer(
+			function ()
+				self:despawn()
+			end, 50, 1
+		)
+	else
+		player:sendError(_("Du hast nicht soviel Weed dabei!", player))
+	end
+end
+
 
 function BeggarPed:giveItem(player, item)
 	if player:getInventory():getItemAmount(item) >= 1 then

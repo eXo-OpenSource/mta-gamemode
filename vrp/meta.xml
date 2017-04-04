@@ -496,6 +496,8 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
+
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -1157,7 +1159,7 @@
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	<vrpfile src="files/images/Nametag/MBT.png"/>
 
-	
+
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
@@ -1600,6 +1602,12 @@
 	<vrpfile src="files/models/a51fencing.txd"/>
 	<vrpfile src="files/models/a51fensin.col"/>
 	<vrpfile src="files/models/a51fensin.dff"/>
+	<vrpfile src="files/models/fire_ledder.txd" />
+	<vrpfile src="files/models/fire_ledder.dff" />
+	<vrpfile src="files/models/fire_ledder.col" />
+	<vrpfile src="files/models/fire_main.txd" />
+	<vrpfile src="files/models/fire_main.dff" />
+	<vrpfile src="files/models/fire_main.col" />
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />

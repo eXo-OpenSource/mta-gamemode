@@ -168,6 +168,10 @@ function Faction:isEvilFaction()
 	return self.m_Type == "Evil"
 end
 
+function Faction:isRescueFaction()
+	return self.m_Type == "Rescue"
+end
+
 function Faction:getName()
 	return self.m_Name
 end

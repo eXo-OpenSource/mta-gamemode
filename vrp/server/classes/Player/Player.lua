@@ -297,7 +297,7 @@ function Player:buckleSeatBelt(vehicle)
 		setElementData(self,"isBuckeled", false)
 	end
 
-	if self.vehicle and self.vehicle.controller ~= self then
+	if self.vehicle then
 		self:sendShortMessage(_("Du hast dich %sgeschnallt!", self, self.m_SeatBelt and "an" or "ab"))
 	end
 end

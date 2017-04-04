@@ -489,7 +489,8 @@ BeggarTypes = {
 	Money = 1;
 	Food = 2;
 	Transport = 3;
-    Ecstasy = 4;
+    Weed = 4;
+	Ecstasy = 5;
 }
 for i, v in pairs(BeggarTypes) do
 	BeggarTypes[v] = i

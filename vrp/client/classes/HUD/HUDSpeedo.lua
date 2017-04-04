@@ -102,14 +102,12 @@ function HUDSpeedo:draw()
 		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+70, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
 
-	if not self:allOccupantsBuckeled() then
+	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 		if getTickCount()%1000 > 500 then
-			dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0,0 ,0, Color.Red)
+			dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
 		end
-	elseif getVehicleEngineState(vehicle) and getElementData(localPlayer,"isBuckeled") then
-		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 	elseif getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0,0 ,0, Color.Red)
+		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 	end
 
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
@@ -133,10 +131,8 @@ function HUDSpeedo:allOccupantsBuckeled()
 	if not localPlayer.vehicle or localPlayer.vehicleSeat > 0 then return end
 
 	for _, player in pairs(localPlayer.vehicle.occupants) do
-		if player ~= localPlayer then
-			if not getElementData(player, "isBuckeled") then
-				return false
-			end
+		if not getElementData(player, "isBuckeled") then
+			return false
 		end
 	end
 
