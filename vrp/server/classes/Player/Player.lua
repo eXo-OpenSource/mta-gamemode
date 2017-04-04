@@ -520,7 +520,7 @@ end
 function Player:destroyDropWeapons()
 	if self.m_WorldObjectWeapons then
 		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] then
+			if self.m_WorldObjectWeapons[i] and isElement(self.m_WorldObjectWeapons[i]) then
 				destroyElement(self.m_WorldObjectWeapons[i])
 			end
 		end
