@@ -18,20 +18,29 @@ function GPS:constructor()
 	addEventHandler("GPS.retrieveRoute", root, bind(self.Event_retrieveRoute, self))
 end
 
-function GPS:startNavigationTo(position, isRecalculate)
+function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 	-- Stop old navigation if existing
 	if self.m_Active then
 		self:stopNavigation()
+	end
+
+	if localPlayer.interior ~= 0 then
+		self:stopNavigation()
+		return
 	end
 
 	self.m_Destination = position
 	self.m_Active = true
 
 	-- Show message if it's not a recalculation
-	if not isRecalculate then
-		ShortMessage:new(_"Route wird berechnet...", _"Navigation")
-	else
-		ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
+	if not soundDisabled then
+		if not isRecalculate then
+			ShortMessage:new(_"Route wird berechnet...", _"Navigation")
+			playSound("https://exo-reallife.de/ingame/sounds/RouteWirdBerechnet.mp3")
+		else
+			ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
+			playSound("https://exo-reallife.de/ingame/sounds/RouteWirdNeuBerechnet.mp3")
+		end
 	end
 
 	-- Ask the server to calculate a route for us
@@ -72,6 +81,11 @@ function GPS:Event_retrieveRoute(nodes)
 	-- Kill recalculation timer (Probably a workaround)
 	if isTimer(self.m_TimerRecalculate) then killTimer(self.m_TimerRecalculate) end
 
+	if #nodes == 0 then
+		ShortMessage:new(_"Es wurde keine Route gefunden!", _"Navigation")
+		return
+	end
+
 	 -- Unserialise vectors
 	self.m_Nodes = table.map(nodes, normaliseVector)
 
@@ -95,6 +109,7 @@ function GPS:Event_retrieveRoute(nodes)
 					if #self.m_Nodes == 1 then
 						self:stopNavigation()
 						ShortMessage:new(_"Du hast dein Ziel erreicht!", "Navigation")
+						playSound("https://exo-reallife.de/ingame/sounds/SieHabenIhrZielErreicht.mp3")
 						return
 					end
 
@@ -115,6 +130,9 @@ function GPS:Event_retrieveRoute(nodes)
 
 					-- Store next checkpoint
 					self.m_NextNode = self.m_Nodes[1]
+
+					-- Process waypoint (e.g. sounds)
+					self:processWaypoint(3)
 				end
 			end
 		)
@@ -130,5 +148,32 @@ function GPS:Timer_Recalculate()
 	-- Restart navigation if our distance to the next checkpoint is greater than 300
 	if (localPlayer:getPosition() - self.m_NextNode):getLength() > 150 then
 		self:startNavigationTo(self.m_Destination, true)
+	end
+end
+
+function GPS:processWaypoint(nodeIndex)
+	local previous = self.m_Nodes[nodeIndex - 1]
+	local current = self.m_Nodes[nodeIndex]
+	local next = self.m_Nodes[nodeIndex + 1]
+
+	if not previous or not current or not next then
+		return
+	end
+
+	-- Make two vectors
+	local vecA = current - previous
+	local vecB = next - current
+
+	-- Calculate angle between both vectors
+	local angle = math.deg(math.getAngle(vecA, vecB))
+	local cross = vecA:cross(vecB)
+
+	if angle > 45 and angle < 135 then
+		-- The up-component is either down or up
+		if cross.z < 0 then
+			playSound("https://exo-reallife.de/ingame/sounds/BitteBiegenSieRechtsAb.mp3")
+		else
+			playSound("https://exo-reallife.de/ingame/sounds/BitteBiegenSieLinksAb.mp3")
+		end
 	end
 end

@@ -162,39 +162,43 @@ end
 
 function FactionEvil:Event_StartRaid(target)
 	if client:getFaction() and client:getFaction():isEvilFaction() then
-		if not target:isFactionDuty() and not target:isCompanyDuty() then
-			if client.vehicle then
-				client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
-				return
-			end
-			if target:getPublicSync("supportMode") then
-				client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
-				return
-			end
-			if target:getInterior() > 0 then
-				client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
-				return
-			end
-			if math.floor(target:getPlayTime()/60) < 10 then
-				client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
-				return
-			end
-			if target:getMoney() > 0 then
-
-				local targetName = target:getName()
-				if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
-					client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
+		if target and isElement(target) and target:isLoggedIn() then
+			if not target:isFactionDuty() and not target:isCompanyDuty() then
+				if client.vehicle then
+					client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
 					return
 				end
-				target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
-				target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
-				target:triggerEvent("CountdownStop",  15, "Überfallen in")
-				target:triggerEvent("Countdown", 15, "Überfallen in")
-				client:triggerEvent("Countdown", 15, "Überfallen in")
-				client:triggerEvent("factionEvilStartRaid", target)
-				self.m_Raids[targetName] = getRealTime().timestamp
+				if target:getPublicSync("supportMode") then
+					client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
+					return
+				end
+				if target:getInterior() > 0 then
+					client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
+					return
+				end
+				if math.floor(target:getPlayTime()/60) < 10 then
+					client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
+					return
+				end
+				if target:getMoney() > 0 then
+
+					local targetName = target:getName()
+					if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
+						client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
+						return
+					end
+					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
+					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
+					target:triggerEvent("CountdownStop",  15, "Überfallen in")
+					target:triggerEvent("Countdown", 15, "Überfallen in")
+					client:triggerEvent("Countdown", 15, "Überfallen in")
+					client:triggerEvent("factionEvilStartRaid", target)
+					self.m_Raids[targetName] = getRealTime().timestamp
+				else
+					client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+				end
 			else
-				client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+				client:sendError(_("Der Spieler ist nicht mehr online!", client))
 			end
 		else
 			client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))

@@ -9,7 +9,8 @@
 PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
-local ElementLocateBlip, ElementLocateTimer
+local ElementLocateBlip, ElementLocateTimer, GPSEnabled
+local GPSUpdateStep = 0
 
 addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
@@ -38,6 +39,10 @@ function PolicePanel:constructor()
 	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
 	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
 	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
+
+	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
+	self.m_GPS:setChecked(GPSEnabled)
+	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
 
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
@@ -333,7 +338,7 @@ function PolicePanel:locateElement(element, locationOf)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
-
+		GPSUpdateStep = 10
 		ElementLocateTimer = setTimer(function(locationOf)
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				if not localPlayer:getPublicSync("Faction:Duty") then
@@ -357,6 +362,8 @@ function PolicePanel:locateElement(element, locationOf)
 						self:stopLocating()
 					end
 				end
+
+				self:updateGPS()
 			else
 				self:stopLocating()
 			end
@@ -366,10 +373,24 @@ function PolicePanel:locateElement(element, locationOf)
 	end
 end
 
+function PolicePanel:updateGPS()
+	if GPSEnabled then
+		GPSUpdateStep = GPSUpdateStep + 1
+		if GPSUpdateStep == 10 then
+			if ElementLocateBlip and ElementLocateBlip.getPosition then
+				local x, y, z = ElementLocateBlip:getPosition()
+				GPS:getSingleton():startNavigationTo(Vector3(x, y, z), false, true)
+			end
+			GPSUpdateStep = 0
+		end
+	end
+end
+
 function PolicePanel:stopLocating()
 	if ElementLocateBlip then delete(ElementLocateBlip) end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
+	GPS:getSingleton():stopNavigation()
 end
 
 function PolicePanel:giveWanteds()

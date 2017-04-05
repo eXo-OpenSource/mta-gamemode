@@ -38,6 +38,7 @@ function Provider:refreshProgress()
 				triggerClientEvent(player, "onDownloadProgressUpdate", resourceRoot, k, status.percentComplete)
 			else
 				self.m_ActiveDL[k] = nil
+				triggerClientEvent(player, "onDownloadStop", resourceRoot, v.filename, true)
 			end
 		end
 	end
@@ -72,6 +73,6 @@ function Provider:onClientRequestFile(filename, hash)
 	local id = #self.m_ActiveDL+1
 	triggerLatentClientEvent(client, "onDownloadStop", DOWNLOAD_SPEED, resourceRoot, id, self.m_Files[filename].data)
 	local evhandles = getLatentEventHandles(client)
-	self.m_ActiveDL[id] = { player = client, handle = evhandles[#evhandles] }
+	self.m_ActiveDL[id] = { player = client, handle = evhandles[#evhandles], filename = filename}
 	triggerClientEvent(client, "onDownloadStart", resourceRoot, id, filename, self.m_Files[filename].md5, self.m_Files[filename].size)
 end

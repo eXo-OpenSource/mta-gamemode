@@ -535,7 +535,12 @@ function FactionRescue:toggleLadder(veh, player, force)
 		setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-		veh:detach(veh.Ladder["main"])
+		veh.Ladder["main"]:detach(veh)
+		for index, obj in pairs(veh.Ladder) do
+			if not index == "main" then
+				obj:setCollisionsEnabled(true)
+			end
+		end
 	end
 end
 
@@ -546,6 +551,7 @@ end
 
 function FactionRescue:ladderFunction(player, key, state)
 	local veh = player.vehicle
+	if not veh then return end
 	if veh:getModel() ~= 544 then return end
 
 	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
@@ -557,15 +563,16 @@ function FactionRescue:ladderFunction(player, key, state)
 end
 
 function FactionRescue:moveLadder(veh)
-	local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"])
+
+	local rx, ry, rz = getElementRotation(veh.Ladder["main"])
 	local x1, y1, z1, rx1, ry1, rz1 = getElementAttachedOffsets(veh.Ladder["ladder1"])
 	local x2, y2, z2, rx2, ry2, rz2 = getElementAttachedOffsets(veh.Ladder["ladder2"])
 	local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder3"])
 
 	if veh.LadderMove["right"] then
-		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1, rx, ry, rz+0.7)
+		veh.Ladder["main"]:setRotation(rx, ry, rz+0.7)
 	elseif veh.LadderMove["left"] then
-		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1, rx, ry, rz-0.7)
+		veh.Ladder["main"]:setRotation(rx, ry, rz-0.7)
 	elseif veh.LadderMove["up"] then
 		if rx1 > -50 then
 			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
