@@ -10,6 +10,7 @@ PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
 local ElementLocateBlip, ElementLocateTimer, GPSEnabled
+local GPSUpdateStep = 0
 
 addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
@@ -337,7 +338,7 @@ function PolicePanel:locateElement(element, locationOf)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
-
+		GPSUpdateStep = 0
 		ElementLocateTimer = setTimer(function(locationOf)
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				if not localPlayer:getPublicSync("Faction:Duty") then
@@ -361,6 +362,7 @@ function PolicePanel:locateElement(element, locationOf)
 						self:stopLocating()
 					end
 				end
+
 				self:updateGPS()
 			else
 				self:stopLocating()
@@ -372,9 +374,15 @@ function PolicePanel:locateElement(element, locationOf)
 end
 
 function PolicePanel:updateGPS()
-	if GPSEnabled and ElementLocateBlip and ElementLocateBlip.getPosition then
-		local x, y, z = ElementLocateBlip:getPosition()
-		GPS:getSingleton():startNavigationTo(Vector3(x, y, z), false, true)
+	if GPSEnabled then
+		GPSUpdateStep = GPSUpdateStep + 1
+		if GPSUpdateStep == 10 then
+			if ElementLocateBlip and ElementLocateBlip.getPosition then
+				local x, y, z = ElementLocateBlip:getPosition()
+				GPS:getSingleton():startNavigationTo(Vector3(x, y, z), false, true)
+			end
+			GPSUpdateStep = 0
+		end
 	end
 end
 
