@@ -13,6 +13,7 @@ function TaskMove:constructor(actor, actorSyncer, targetPosition)
 	self.m_Syncer = actorSyncer
 	self.m_TargetPosition = normaliseVector(targetPosition)
 	self.m_Actor:setControlState("forwards", true)
+	self.m_State = "moving"
 
 	outputDebug(("MoveActor:constructor - target: %s - syncer: %s (%s) (isSyncer: %s)"):format(tostring(self.m_TargetPosition), tostring(self.m_Syncer), self.m_Syncer:getName(), tostring(self:isSyncer())))
 end
@@ -30,65 +31,76 @@ function TaskMove:isSyncer()
 end
 
 function TaskMove:update()
-	if self:isSyncer() then
-		local actorPosition = self.m_Actor:getPosition()
-		local hit, hitX, hitY, hitZ = self:testLine()
-		local hitPosition = Vector3(hitX, hitY, hitZ)
+	if isElementStreamedIn(self.m_Actor) then
+		if self:isSyncer() then
+			local actorPosition = self.m_Actor:getPosition()
+			local hit, hitX, hitY, hitZ = self:testLine()
+			local hit2 = self:testLine(self.m_Actor:getPosition() + self.m_Actor.matrix.up*-0.7, self.m_Actor:getPosition() + self.m_Actor.matrix.up*-0.7 + self.m_Actor.matrix.forward*CHECK_FACTOR)
+			local hit3 = self:testLine(self.m_Actor:getPosition() + self.m_Actor.matrix.up*1,  self.m_Actor:getPosition() + self.m_Actor.matrix.up*1  + self.m_Actor.matrix.forward*CHECK_FACTOR)
+			local hitPosition = Vector3(hitX, hitY, hitZ)
 
-		if hitX then
-			if self.m_Actor:getControlState("forwards") then
-				self.m_Actor:setControlState("forwards", false)
-				self.m_Actor:setControlState("jump", true)
+			if hit or hit2 or hit3 then
+				local isJumpAble = self:isJumpAble()
+				if isJumpAble == true and self.m_State == "moving" then
+					self.m_Actor:setControlState("forwards", false)
+					self.m_Actor:setControlState("jump", true)
+					self.m_State = "jumping"
 
-				self.m_LastJump = getTickCount()
-			elseif getTickCount() - self.m_LastJump > 2500 then -- if we tried to jump but didn work
-				self.m_Actor:setControlState("jump", false)
+					self.m_LastJump = getTickCount()
+				elseif (isJumpAble == false and self.m_State == "moving") or (self.m_State == "jumping" and getTickCount() - self.m_LastJump > 2500) then -- if we tried to jump but didn work
+					self.m_Actor:setControlState("jump", false)
 
-				local startLeft = actorPosition + self.m_Actor.matrix.right*-CHECK_FACTOR
-				local startRight = actorPosition + self.m_Actor.matrix.right*CHECK_FACTOR
-				local bestLine = self:getBestLine(startLeft, startRight)
-				if bestLine then
-					outputDebug(bestLine)
-					self:setTemporaryTarget(bestLine)
-				else
-					return
-				end
-
-				if DEBUG then
+					local startLeft = actorPosition + self.m_Actor.matrix.right*-CHECK_FACTOR
+					local startRight = actorPosition + self.m_Actor.matrix.right*CHECK_FACTOR
+					local bestLine = self:getBestLine(startLeft, startRight)
 					if bestLine then
-						dxDrawLine3D(bestLine, self.m_TargetPosition, Color.Yellow, 2)
+						outputDebug(bestLine)
+						self:setTemporaryTarget(bestLine)
+					else
+						return
 					end
 
-					dxDrawLine3D(startLeft, startLeft + self.m_Actor.matrix.forward*(CHECK_FACTOR/2), leftLine and Color.Green or Color.Red)
-					dxDrawLine3D(startRight, startRight + self.m_Actor.matrix.forward*(CHECK_FACTOR/2), rightLine and Color.Green or Color.Red)
+					if DEBUG then
+						if bestLine then
+							dxDrawLine3D(bestLine, self.m_TargetPosition, Color.Yellow, 2)
+						end
+
+						dxDrawLine3D(startLeft, startLeft + self.m_Actor.matrix.forward*(CHECK_FACTOR/2), leftLine and Color.Green or Color.Red)
+						dxDrawLine3D(startRight, startRight + self.m_Actor.matrix.forward*(CHECK_FACTOR/2), rightLine and Color.Green or Color.Red)
+					end
+				end
+			else
+				if (self.m_Actor:getPosition() - self.m_TargetPosition).length > TARGET_MIN_DIST then
+					if self.m_State == "jumping" then
+						self.m_Actor:setControlState("jump", false)
+					end
+					self.m_Actor:setControlState("forwards", true)
+					self.m_State = "moving"
+
+					self.m_Actor:setRotation(Vector3(0, 0, findRotation(actorPosition.x, actorPosition.y, self.m_TargetPosition.x, self.m_TargetPosition.y)))
+				else
+					-- Target reached
+					self.m_Actor:setControlState("forwards", false)
+					--self.m_State = "idle"
+
+					if self.m_IsTemporaryTarget then
+						self:resetTarget()
+					end
 				end
 			end
-		else
-			if (self.m_Actor:getPosition() - self.m_TargetPosition).length > TARGET_MIN_DIST then
-				self.m_Actor:setControlState("forwards", true)
-				self.m_Actor:setControlState("jump", false)
 
-				self.m_Actor:setRotation(Vector3(0, 0, findRotation(actorPosition.x, actorPosition.y, self.m_TargetPosition.x, self.m_TargetPosition.y)))
-			else
-				-- Target reached
-				self.m_Actor:setControlState("forwards", false)
+			if DEBUG then
+				dxDrawLine3D(self.m_Actor:getPosition() + self.m_Actor.matrix.up*1, self.m_Actor:getPosition() + self.m_Actor.matrix.up*1.2, self.m_State == "moving" and Color.Green or self.m_State == "jumping" and Color.LightBlue or self.m_State == "idle" and Color.Red)
 
-				if self.m_IsTemporaryTarget then
-					self:resetTarget()
-				end
+				dxDrawLine3D(self.m_Actor:getPosition(), self.m_Actor:getPosition() + self.m_Actor.matrix.forward*CHECK_FACTOR, hit and Color.Red or Color.Green, 1)
+				dxDrawLine3D(self.m_Actor:getPosition() + self.m_Actor.matrix.up*-0.7, self.m_Actor:getPosition() + self.m_Actor.matrix.up*-0.7 + self.m_Actor.matrix.forward*CHECK_FACTOR, hit2 and Color.Red or Color.Green, 1)
+				dxDrawLine3D(self.m_Actor:getPosition() + self.m_Actor.matrix.up*0.7,  self.m_Actor:getPosition() + self.m_Actor.matrix.up*0.7  + self.m_Actor.matrix.forward*CHECK_FACTOR, hit3 and Color.Red or Color.Green, 1)
 			end
 		end
 
 		if DEBUG then
-			if hitX then
-				dxDrawLine3D(self.m_Actor:getPosition(), Vector3(hitX, hitY, hitZ), Color.Red, 3)
-			end
-			dxDrawLine3D(self.m_Actor:getPosition(), self.m_Actor:getPosition() + self.m_Actor.matrix.forward*CHECK_FACTOR, hit and Color.Red or Color.Green, 1)
+			dxDrawLine3D(Vector3(self.m_TargetPosition.x, self.m_TargetPosition.y, self.m_TargetPosition.z - 10), Vector3(self.m_TargetPosition.x, self.m_TargetPosition.y, self.m_TargetPosition.z + 10), Color.Blue, 3)
 		end
-	end
-
-	if DEBUG then
-		dxDrawLine3D(Vector3(self.m_TargetPosition.x, self.m_TargetPosition.y, self.m_TargetPosition.z - 10), Vector3(self.m_TargetPosition.x, self.m_TargetPosition.y, self.m_TargetPosition.z + 10), Color.Blue, 3)
 	end
 end
 
@@ -121,8 +133,13 @@ function TaskMove:getLineScore(pos)
 	return (self.m_TargetPosition - pos).length
 end
 
-function TaskMove:testHit(pos)
-	return false
+function TaskMove:isJumpAble()
+	local matrix = self.m_Actor.matrix
+	local topHit = self:testLine(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*CHECK_FACTOR + matrix.up*2)
+	if DEBUG then
+		dxDrawLine3D(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*CHECK_FACTOR + matrix.up*2, topHit and Color.Red or Color.Green)
+	end
+	return not topHit
 end
 
 function TaskMove:getBestLine(posA, posB) -- lightweight heuristic
@@ -131,7 +148,7 @@ function TaskMove:getBestLine(posA, posB) -- lightweight heuristic
 	local scoreLeft = self:getLineScore(posA)
 	local scoreRight = self:getLineScore(posB)
 
-	if (leftHit and self:testHit(leftHit) == false) and (rightHit and self:testHit(rightHit) == false) then
+	if (leftHit and self:isJumpAble(posA) == false) and (rightHit and self:isJumpAble(posA) == false) then
 		return self:getBestLine(posA + self.m_Actor.matrix.right*-(CHECK_FACTOR/2), posB + self.m_Actor.matrix.right*(CHECK_FACTOR/2))
 	elseif leftHit == true and scoreRight < scoreLeft then
 		outputDebug("using right path")
