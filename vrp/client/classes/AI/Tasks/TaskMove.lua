@@ -7,12 +7,13 @@
 -- ****************************************************************************
 TaskMove = inherit(Task)
 local CHECK_FACTOR = 1.2
-local TARGET_MIN_DIST = 0.2
+local TARGET_MIN_DIST = 0.5
 
 function TaskMove:constructor(actor, actorSyncer, targetPosition)
 	self.m_Syncer = actorSyncer
 	self.m_TargetPosition = normaliseVector(targetPosition)
 	self.m_Actor:setControlState("forwards", true)
+	self.m_Actor:setControlState("sprint", true)
 	self.m_State = "moving"
 
 	outputDebug(("MoveActor:constructor - target: %s - syncer: %s (%s) (isSyncer: %s)"):format(tostring(self.m_TargetPosition), tostring(self.m_Syncer), self.m_Syncer:getName(), tostring(self:isSyncer())))
@@ -47,18 +48,13 @@ function TaskMove:update()
 					self.m_State = "jumping"
 
 					self.m_LastJump = getTickCount()
-				elseif (isJumpAble == false and self.m_State == "moving") or (self.m_State == "jumping" and getTickCount() - self.m_LastJump > 2500) then -- if we tried to jump but didn work
+				elseif (isJumpAble == false and self.m_State == "moving") or (self.m_State == "jumping" and getTickCount() - self.m_LastJump > 3000) then -- if we tried to jump but didn work
 					self.m_Actor:setControlState("jump", false)
 
 					local startLeft = actorPosition + self.m_Actor.matrix.right*-CHECK_FACTOR
 					local startRight = actorPosition + self.m_Actor.matrix.right*CHECK_FACTOR
 					local bestLine = self:getBestLine(startLeft, startRight)
-					if bestLine then
-						outputDebug(bestLine)
-						self:setTemporaryTarget(bestLine)
-					else
-						return
-					end
+					self:setTemporaryTarget(bestLine)
 
 					if DEBUG then
 						if bestLine then
@@ -135,9 +131,9 @@ end
 
 function TaskMove:isJumpAble()
 	local matrix = self.m_Actor.matrix
-	local topHit = self:testLine(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*CHECK_FACTOR + matrix.up*2)
+	local topHit = self:testLine(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*(CHECK_FACTOR+0.2) + matrix.up*2)
 	if DEBUG then
-		dxDrawLine3D(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*CHECK_FACTOR + matrix.up*2, topHit and Color.Red or Color.Green)
+		dxDrawLine3D(self.m_Actor:getPosition() + matrix.up*2, self.m_Actor:getPosition() + matrix.forward*(CHECK_FACTOR+0.2) + matrix.up*2, topHit and Color.Red or Color.Green)
 	end
 	return not topHit
 end
@@ -148,23 +144,29 @@ function TaskMove:getBestLine(posA, posB) -- lightweight heuristic
 	local scoreLeft = self:getLineScore(posA)
 	local scoreRight = self:getLineScore(posB)
 
-	if (leftHit and self:isJumpAble(posA) == false) and (rightHit and self:isJumpAble(posA) == false) then
+	if (leftHit and self:isJumpAble(posA) == false) and (rightHit and self:isJumpAble(posB) == false) then
 		return self:getBestLine(posA + self.m_Actor.matrix.right*-(CHECK_FACTOR/2), posB + self.m_Actor.matrix.right*(CHECK_FACTOR/2))
-	elseif leftHit == true and scoreRight < scoreLeft then
+	elseif (leftHit and self:isJumpAble(posA) == true) and scoreLeft < scoreRight then
+		outputDebug("using left path")
+		return posA
+	elseif (rightHit and self:isJumpAble(posB) == true) and scoreRight < scoreLeft then
 		outputDebug("using right path")
 		return posB
-	elseif rightHit == true and scoreLeft < scoreRight then
+	elseif (leftHit and self:isJumpAble(posA) == false) and scoreRight < scoreLeft then
+		outputDebug("using right path")
+		return posB
+	elseif (rightHit and self:isJumpAble(posB) == false) and scoreLeft < scoreRight then
 		outputDebug("using left path")
 		return posA
 	end
 
-	if leftHit == true and (scoreRight - scoreLeft) <= 5 then
+	if leftHit == true and (scoreRight - scoreLeft) <= 2.5 then
 		outputDebug("using right path")
 		return posB
 	else
 		return posA
 	end
-	if rightHit == true and (scoreRight - scoreLeft) <= 5 then
+	if rightHit == true and (scoreRight - scoreLeft) <= 2.5 then
 		outputDebug("using right path")
 		return posB
 	else
