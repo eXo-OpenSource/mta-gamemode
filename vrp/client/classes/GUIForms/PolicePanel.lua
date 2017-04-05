@@ -375,7 +375,6 @@ end
 
 function PolicePanel:updateGPS()
 	if GPSEnabled then
-		GPSUpdateStep = GPSUpdateStep + 1
 		if GPSUpdateStep == 10 then
 			if ElementLocateBlip and ElementLocateBlip.getPosition then
 				local x, y, z = ElementLocateBlip:getPosition()
@@ -383,6 +382,7 @@ function PolicePanel:updateGPS()
 			end
 			GPSUpdateStep = 0
 		end
+		GPSUpdateStep = GPSUpdateStep + 1
 	end
 end
 
