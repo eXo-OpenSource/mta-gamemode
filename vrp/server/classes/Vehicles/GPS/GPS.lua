@@ -52,9 +52,6 @@ function GPS:Event_calcRoute(event, from, to)
 	local c = client
 	local nodes = GPS:getSingleton():asyncGetRoute(normaliseVector(from), normaliseVector(to), true)
 	if nodes then
-		local vehicle = c:getOccupiedVehicle()
-		for k, player in pairs(vehicle and vehicle:getOccupants() or { c }) do
-			player:triggerEvent(event, nodes)
-		end
+		c:triggerEvent(event, nodes)
 	end
 end
