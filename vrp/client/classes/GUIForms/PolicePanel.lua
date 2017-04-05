@@ -374,7 +374,7 @@ end
 function PolicePanel:updateGPS()
 	if GPSEnabled and ElementLocateBlip and ElementLocateBlip.getPosition then
 		local x, y, z = ElementLocateBlip:getPosition()
-		GPS:getSingleton():startNavigationTo(x, y, z, false, true)
+		GPS:getSingleton():startNavigationTo(Vector3(x, y, z), false, true)
 	end
 end
 
