@@ -32,6 +32,7 @@ function GPS:startNavigationTo(position, isRecalculate)
 		ShortMessage:new(_"Route wird berechnet...", _"Navigation")
 	else
 		ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
+		playSound("http://pewx.de/res/dl/RouteWirdNeuBerechnet.mp3")
 	end
 
 	-- Ask the server to calculate a route for us
@@ -95,6 +96,7 @@ function GPS:Event_retrieveRoute(nodes)
 					if #self.m_Nodes == 1 then
 						self:stopNavigation()
 						ShortMessage:new(_"Du hast dein Ziel erreicht!", "Navigation")
+						playSound("http://pewx.de/res/dl/SieHabenIhrZielErreicht.mp3")
 						return
 					end
 
@@ -115,6 +117,9 @@ function GPS:Event_retrieveRoute(nodes)
 
 					-- Store next checkpoint
 					self.m_NextNode = self.m_Nodes[1]
+
+					-- Process waypoint (e.g. sounds)
+					self:processWaypoint(2)
 				end
 			end
 		)
@@ -130,5 +135,32 @@ function GPS:Timer_Recalculate()
 	-- Restart navigation if our distance to the next checkpoint is greater than 300
 	if (localPlayer:getPosition() - self.m_NextNode):getLength() > 150 then
 		self:startNavigationTo(self.m_Destination, true)
+	end
+end
+
+function GPS:processWaypoint(nodeIndex)
+	local previous = self.m_Nodes[nodeIndex - 1]
+	local current = self.m_Nodes[nodeIndex]
+	local next = self.m_Nodes[nodeIndex + 1]
+
+	if not previous or not current or not next then
+		return
+	end
+
+	-- Make two vectors
+	local vecA = current - previous
+	local vecB = next - current
+
+	-- Calculate angle between both vectors
+	local angle = math.deg(math.getAngle(vecA, vecB))
+	local cross = vecA:cross(vecB)
+
+	if angle > 45 and angle < 135 then
+		-- The up-component is either down or up
+		if cross.z < 0 then
+			playSound("https://exo-reallife.de/ingame/sounds/rechts_abbiegen.ogg")
+		else
+			playSound("https://exo-reallife.de/ingame/sounds/links_abbiegen.ogg")
+		end
 	end
 end
