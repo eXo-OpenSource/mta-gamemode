@@ -159,9 +159,9 @@ function GPS:processWaypoint(nodeIndex)
 	if angle > 45 and angle < 135 then
 		-- The up-component is either down or up
 		if cross.z < 0 then
-			playSound("https://exo-reallife.de/ingame/sounds/rechts_abbiegen.ogg")
+			playSound("https://exo-reallife.de/ingame/sounds/BitteBiegenSieRechtsAb.mp3")
 		else
-			playSound("https://exo-reallife.de/ingame/sounds/links_abbiegen.ogg")
+			playSound("https://exo-reallife.de/ingame/sounds/BitteBiegenSieLinksAb.mp3")
 		end
 	end
 end
