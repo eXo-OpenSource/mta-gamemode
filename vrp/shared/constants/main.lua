@@ -513,3 +513,9 @@ WEAPON_LEVEL = {
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
+
+FISHING_BAGS = {
+	["Kühlbox"] = 65,
+	["Kühltasche"] = 25,
+	["Kleine Kühltasche"] = 15,
+}

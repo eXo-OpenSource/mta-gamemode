@@ -129,33 +129,34 @@ end
 function Fishing:FishCaught()
 	if not self.m_Players[client] then return end
 	local tbl = self.m_Players[client]
-	local size = math.random(tbl.lastFish.size[1], tbl.lastFish.size[2])
-
+	local size = math.random(tbl.lastFish.size[1], tbl.lastFish.size[2]) -- todo (calc size by rod power // fisher level // time to caught)
 	--outputChatBox(("Caught: %s [%s] // Size: %s"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit, size))
-
-	-- todo....
 	local playerInventory = client:getInventory()
-	if playerInventory:getItemAmount("Kleine Kühltasche") > 0 then
+	local allBagsFull = false
 
-	elseif playerInventory:getItemAmount("Kühltasche") > 0 then
+	for storage, maxAmount in pairs(FISHING_BAGS) do
+		if playerInventory:getItemAmount(storage) > 0 then
+			local place = playerInventory:getItemPlacesByName("Kühlbox")[1][1]
+			local fishName = tbl.lastFish.name
+			local currentValue = playerInventory:getItemValueByBag("Items", place)
+			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
 
-	elseif playerInventory:getItemAmount("Kühlbox") > 0 then
-		local place = playerInventory:getItemPlacesByName("Kühlbox")[1][1]
-		local fishName = tbl.lastFish.name
+			if #currentValue < maxAmount then
+				table.insert(currentValue, {fishName, size})
+				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
+				return
+			end
 
-		local currentValue = playerInventory:getItemValueByBag("Items", place)
-
-		if fromJSON(currentValue) then
-			currentValue = fromJSON(currentValue)
-		else
-			currentValue = {}
+			allBagsFull = true
 		end
-
-		table.insert(currentValue, {fishName, size})
-		playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
-	else
-		client:sendError("Du besitzt keine Kühltasche/box, in der du deine Fische lagern kannst!")
 	end
+
+	if allBagsFull then
+		client:sendError("Deine Kühltaschen sind voll!")
+		return
+	end
+
+	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
 end
 
 function Fishing:onPedClick()
