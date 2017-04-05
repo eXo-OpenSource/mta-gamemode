@@ -30,9 +30,10 @@ function GPS:startNavigationTo(position, isRecalculate)
 	-- Show message if it's not a recalculation
 	if not isRecalculate then
 		ShortMessage:new(_"Route wird berechnet...", _"Navigation")
+		playSound("https://exo-reallife.de/ingame/sounds/RouteWirdBerechnet.mp3")
 	else
 		ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
-		playSound("http://pewx.de/res/dl/RouteWirdNeuBerechnet.mp3")
+		playSound("https://exo-reallife.de/ingame/sounds/RouteWirdNeuBerechnet.mp3")
 	end
 
 	-- Ask the server to calculate a route for us
@@ -96,7 +97,7 @@ function GPS:Event_retrieveRoute(nodes)
 					if #self.m_Nodes == 1 then
 						self:stopNavigation()
 						ShortMessage:new(_"Du hast dein Ziel erreicht!", "Navigation")
-						playSound("http://pewx.de/res/dl/SieHabenIhrZielErreicht.mp3")
+						playSound("https://exo-reallife.de/ingame/sounds/SieHabenIhrZielErreicht.mp3")
 						return
 					end
 
@@ -119,7 +120,7 @@ function GPS:Event_retrieveRoute(nodes)
 					self.m_NextNode = self.m_Nodes[1]
 
 					-- Process waypoint (e.g. sounds)
-					self:processWaypoint(2)
+					self:processWaypoint(3)
 				end
 			end
 		)
