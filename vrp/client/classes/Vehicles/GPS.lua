@@ -24,8 +24,9 @@ function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 		self:stopNavigation()
 	end
 
-	if localPlayer:getInterior() ~= 0 then
+	if localPlayer.interior ~= 0 then
 		self:stopNavigation()
+		return
 	end
 
 	self.m_Destination = position
