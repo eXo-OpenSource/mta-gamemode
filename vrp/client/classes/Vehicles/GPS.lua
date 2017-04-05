@@ -81,6 +81,11 @@ function GPS:Event_retrieveRoute(nodes)
 	-- Kill recalculation timer (Probably a workaround)
 	if isTimer(self.m_TimerRecalculate) then killTimer(self.m_TimerRecalculate) end
 
+	if #nodes == 0 then
+		ShortMessage:new(_"Es wurde keine Route gefunden!", _"Navigation")
+		return
+	end
+
 	 -- Unserialise vectors
 	self.m_Nodes = table.map(nodes, normaliseVector)
 
