@@ -18,7 +18,7 @@ function GPS:constructor()
 	addEventHandler("GPS.retrieveRoute", root, bind(self.Event_retrieveRoute, self))
 end
 
-function GPS:startNavigationTo(position, isRecalculate)
+function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 	-- Stop old navigation if existing
 	if self.m_Active then
 		self:stopNavigation()
@@ -28,12 +28,14 @@ function GPS:startNavigationTo(position, isRecalculate)
 	self.m_Active = true
 
 	-- Show message if it's not a recalculation
-	if not isRecalculate then
-		ShortMessage:new(_"Route wird berechnet...", _"Navigation")
-		playSound("https://exo-reallife.de/ingame/sounds/RouteWirdBerechnet.mp3")
-	else
-		ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
-		playSound("https://exo-reallife.de/ingame/sounds/RouteWirdNeuBerechnet.mp3")
+	if not soundDisabled then
+		if not isRecalculate then
+			ShortMessage:new(_"Route wird berechnet...", _"Navigation")
+			playSound("https://exo-reallife.de/ingame/sounds/RouteWirdBerechnet.mp3")
+		else
+			ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
+			playSound("https://exo-reallife.de/ingame/sounds/RouteWirdNeuBerechnet.mp3")
+		end
 	end
 
 	-- Ask the server to calculate a route for us

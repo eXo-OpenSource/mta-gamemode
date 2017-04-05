@@ -9,7 +9,7 @@
 PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
-local ElementLocateBlip, ElementLocateTimer
+local ElementLocateBlip, ElementLocateTimer, GPSEnabled
 
 addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
@@ -38,6 +38,9 @@ function PolicePanel:constructor()
 	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
 	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
 	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
+
+	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
+	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
 
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
@@ -357,6 +360,7 @@ function PolicePanel:locateElement(element, locationOf)
 						self:stopLocating()
 					end
 				end
+				self:updateGPS()
 			else
 				self:stopLocating()
 			end
@@ -366,10 +370,17 @@ function PolicePanel:locateElement(element, locationOf)
 	end
 end
 
+function PolicePanel:updateGPS()
+	if GPSEnabled and ElementLocateBlip and ElementLocateBlip.getPosition then
+		GPS:getSingleton():startNavigationTo(ElementLocateBlip:getPosition(), false, false)
+	end
+end
+
 function PolicePanel:stopLocating()
 	if ElementLocateBlip then delete(ElementLocateBlip) end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
+	GPS:getSingleton():stopNavigation()
 end
 
 function PolicePanel:giveWanteds()
