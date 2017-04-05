@@ -338,7 +338,7 @@ function PolicePanel:locateElement(element, locationOf)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
-		GPSUpdateStep = 0
+		GPSUpdateStep = 10
 		ElementLocateTimer = setTimer(function(locationOf)
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				if not localPlayer:getPublicSync("Faction:Duty") then
