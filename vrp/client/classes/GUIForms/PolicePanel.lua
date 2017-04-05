@@ -40,6 +40,7 @@ function PolicePanel:constructor()
 	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
 
 	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
+	self.m_GPS:setChecked(GPSEnabled)
 	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
 
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
@@ -372,7 +373,8 @@ end
 
 function PolicePanel:updateGPS()
 	if GPSEnabled and ElementLocateBlip and ElementLocateBlip.getPosition then
-		GPS:getSingleton():startNavigationTo(ElementLocateBlip:getPosition(), false, false)
+		local x, y, z = ElementLocateBlip:getPosition()
+		GPS:getSingleton():startNavigationTo(x, y, z, false, true)
 	end
 end
 
