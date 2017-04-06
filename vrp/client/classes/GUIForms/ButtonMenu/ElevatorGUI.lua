@@ -72,11 +72,11 @@ function ElevatorGUI:itemCallback(stationId, station)
 	end
 end
 
-function ElevatorGUI:toggleKeys(state)
+--[[function ElevatorGUI:toggleKeys(state)
 	for id, control in pairs(GUIForm.Controls) do
 		toggleControl(control, state)
 	end
-end
+end]]
 
 function ElevatorGUI:renderCam()
 	local posPlayer = localPlayer.position
