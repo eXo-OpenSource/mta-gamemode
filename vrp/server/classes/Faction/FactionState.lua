@@ -1239,29 +1239,29 @@ end
 
 function FactionState:Event_givePANote(target, note)
 	local faction = client:getFaction()
-	if faction and faction:getId() == 1 then
+	if faction and faction:getId() == 3 then
 		if client:isFactionDuty() then
 			if faction:getPlayerRank(client) < FactionRank.Manager then
-				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
+				client:sendError(_("Du bist nicht berechtig GWD-Noten auszuteilen!", client))
 				return
 			end
 			if client == target then
-				client:sendError(_("Du darfst dir nicht selber eine PA-Noten setzen!", client))
+				client:sendError(_("Du darfst dir nicht selber eine GWD-Noten setzen!", client))
 				return
 			end
 			if note > 0 and note <= 100 then
-				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
-				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
+				target:sendInfo(_("%s hat dir eine GWD-Note von %d gegeben!", target, client:getName(), note))
+				client:sendInfo(_("Du hast %s eine GWD-Note von %d gegeben!", client, target:getName(), note))
 				target:setPaNote(note)
-				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
+				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
-				client:sendError(_("Ungültige PA-Note!", client))
+				client:sendError(_("Ungültige GWD-Note!", client))
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	else
-		client:sendError(_("Du bist nicht im SAPD!", client))
+		client:sendError(_("Du bist nicht im MBT!", client))
 	end
 end
 
