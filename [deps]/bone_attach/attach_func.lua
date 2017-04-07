@@ -115,5 +115,10 @@ function forgetNonExistingPeds()
 		coroutine.yield()
 	end
 end
+
 clearing_nonexisting_peds = coroutine.create(forgetNonExistingPeds)
-setTimer(function()	coroutine.resume(clearing_nonexisting_peds) end,1000,0)
+setTimer(function()	
+	if coroutine.status(clearing_nonexisting_peds) == "suspended" then 
+		coroutine.resume(clearing_nonexisting_peds) 
+	end
+end,1000,0)
