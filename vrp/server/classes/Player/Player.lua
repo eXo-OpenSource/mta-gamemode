@@ -41,7 +41,6 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
-
 end
 
 function Player:destructor()
@@ -193,6 +192,7 @@ function Player:loadCharacter()
 
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
+	self:triggerEvent("TrainingEnv:generate", self.m_Id or math.random(1,69000), false, "files/images/Textures/white.png")
 end
 
 function Player:createCharacter()
