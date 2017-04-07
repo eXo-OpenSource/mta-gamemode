@@ -370,7 +370,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
-	source.m_AlcoholLevel = 0
+	source:setAlcoholLevel(0)
 	source:increaseStatistics("Deaths", 1)
 	-- give a achievement
 	source:giveAchievement(37)
