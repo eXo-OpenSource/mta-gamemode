@@ -50,8 +50,8 @@ function LocalPlayer:constructor()
 	--Alcoholsystem
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
-
-
+	
+	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
 end
 
@@ -100,9 +100,9 @@ end
 
 function LocalPlayer:onAlcoholLevelChange()
 	if self:getPrivateSync("AlcoholLevel") > 0 then
-
 		if not isTimer(self.m_AlcoholDecreaseTimer) then
 			self.m_AlcoholDecreaseTimer = setTimer(self.m_AlcoholDecreaseBind, ALCOHOL_LOSS_INTERVAL*1000, 0)
+			addEventHandler("onClientRender",root,self.m_RenderAlcoholBind)
 		end
 		self:setAlcoholEffect()
 	end
@@ -115,6 +115,10 @@ function LocalPlayer:alcoholDecrease()
 
 		if newAlcoholLevel == 0 then
 			if isTimer(self.m_AlcoholDecreaseTimer) then killTimer(self.m_AlcoholDecreaseTimer) end
+			if self.m_AlcoholShader then 
+				delete(self.m_AlcoholShader)
+				removeEventHandler("onClientRender",root,self.m_RenderAlcoholBind)
+			end
 		end
 
 		triggerServerEvent("playerDecreaseAlcoholLevel", localPlayer)
@@ -124,7 +128,23 @@ function LocalPlayer:alcoholDecrease()
 end
 
 function LocalPlayer:setAlcoholEffect()
-	--TODO
+	if not self.m_AlcoholShader then
+		self.m_AlcoholShader = ZoomBlurShader:new()
+	end
+	local alcLevel = self:getPrivateSync("AlcoholLevel")
+	if self.m_AlcoholShader then 
+		self.m_AlcoholShader:setValue((alcLevel/10)*0.5)
+	end
+end
+
+function LocalPlayer:Event_RenderAlcohol() 
+	local alc = self:getPrivateSync("AlcoholLevel") 
+	if alc then
+		if alc >= 2 then 
+			toggleControl("sprint",false)
+			setControlState("walk",true)
+		end
+	end
 end
 
 function LocalPlayer:setAFKTime()

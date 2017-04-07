@@ -725,7 +725,8 @@
 	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
-
+	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
+	
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -1647,6 +1648,7 @@
 	<vrpfile src="files/shader/loginShader.fx"/>
 
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
