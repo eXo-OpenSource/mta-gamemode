@@ -860,9 +860,10 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					player:setJailBail(bailcosts)
 				end
 
-				if player:getMoney() < JAIL_COSTS[wantedLevel] then
-					factionBonus = player:getMoney()
+				if player:getBankMoney() < JAIL_COSTS[wantedLevel] then
+					factionBonus = player:getBankMoney()
 				end
+
 				self:Command_tie(policeman, "tie", player:getName(), false, true)
 				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
@@ -960,7 +961,7 @@ function FactionState:Event_FactionRearm()
 		client:setHealth(100)
 		client:setArmor(100)
 		local inv = client:getInventory()
-		if inv then 
+		if inv then
 			inv:removeAllItem("Einsatzhelm")
 			inv:giveItem("Einsatzhelm",1)
 		end
