@@ -10,7 +10,7 @@ AppCall = inherit(PhoneApp)
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
-local CALL_RESULT_CALLING = 3
+CALL_RESULT_CALLING = 3 -- used in AppContacts
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
