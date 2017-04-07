@@ -497,6 +497,9 @@ function DatabasePlayer:setAlcoholLevel(level, oldLevel)
 	elseif level <= 2 then 
 		toggleControl(self,"sprint",true)
 		setControlState(self,"walk",false)
+	elseif level == 0 then 
+		toggleControl(self,"sprint",true)
+		setPedWalkingStyle(self,0)
 	end
 
 	if self:isActive() then
