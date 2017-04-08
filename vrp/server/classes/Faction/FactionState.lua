@@ -831,7 +831,6 @@ end
 
 function FactionState:onTiedExit(exitingPlayer, seat, jacked, door)
 	if exitingPlayer.isGrabbedInVehicle then
-		outputChatBox("CANCEL")
 		cancelEvent()
 	end
 end
