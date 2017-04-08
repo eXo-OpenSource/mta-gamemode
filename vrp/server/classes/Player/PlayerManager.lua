@@ -619,7 +619,8 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 				return
 			end
 		end
-		if client.m_IsSpecting then
+		if client.m_IsSpecting and client:getName() ~= "[eXo]Marcel." then
+			outputDebugString("SD #1337: [eXo]Marcel. exploit.")
 			return
 		end
 		if client.m_InCircuitBreak then

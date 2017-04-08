@@ -130,12 +130,12 @@ BAIL_PRICES =
 
 JAIL_COSTS =
 {
-	[1] = 200,
-	[2] = 400,
-	[3] = 800,
-	[4] = 1600,
-	[5] = 3200,
-	[6] = 6400,
+	[1] = 500,
+	[2] = 1000,
+	[3] = 1500,
+	[4] = 2500,
+	[5] = 3500,
+	[6] = 4500,
 }
 
 RESOURCES_TO_STOP = {
@@ -143,7 +143,7 @@ RESOURCES_TO_STOP = {
     "helpmanager";
 }
 
-DONT_BUCKLE = 
+DONT_BUCKLE =
 {
 [581] = true,
 [509] = true,
@@ -153,8 +153,8 @@ DONT_BUCKLE =
 [463] = true,
 [510] = true,
 [522] = true,
-[461] = true, 
-[448] = true, 
+[461] = true,
+[448] = true,
 [586] = true,
 }
 

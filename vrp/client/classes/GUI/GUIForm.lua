@@ -155,6 +155,6 @@ end
 GUIForm.keysEnabled = true
 GUIForm.onClientKey =
 	function(button)
-		if button:match("^[F0-9]*$") then return end
+		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") then return end
 		cancelEvent()
 	end
