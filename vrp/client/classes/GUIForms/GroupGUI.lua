@@ -434,18 +434,17 @@ function GroupGUI:refreshRankGrid()
 	end
 	for rank, name in ipairs(tab) do
 		local rank = rank - 1
-		if rank > 0 then -- Cause rank 0 is currently not available
-			local item = self.m_FactionRangGrid:addItem(rank, name)
-			item.Id = rank
-			item.onLeftClick = function()
-				self.m_SelectedRank = rank
-				self:onSelectRank(name,rank)
-			end
+	--
+		local item = self.m_FactionRangGrid:addItem(rank, name)
+		item.Id = rank
+		item.onLeftClick = function()
+			self.m_SelectedRank = rank
+			self:onSelectRank(name,rank)
+		end
 
-			if rank == self.m_SelectedRank then
-				self.m_FactionRangGrid:onInternalSelectItem(item)
-				item.onLeftClick()
-			end
+		if rank == self.m_SelectedRank then
+			self.m_FactionRangGrid:onInternalSelectItem(item)
+			item.onLeftClick()
 		end
 	end
 end
