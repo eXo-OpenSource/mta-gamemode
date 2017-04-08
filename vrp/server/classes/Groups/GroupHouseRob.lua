@@ -152,13 +152,13 @@ function GroupHouseRob:startNewRob( house, player )
 							self.m_HousesRobbed[house] = true
 							return true
 						else
-							outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+							player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
 						end
 					else
-						outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
+						player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
 					end
 				else
-					outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
+					player:sendError(_("Ihr habt schon zu viele Häuser heute ausgeraubt!", player))
 				end
 			end
 		end
