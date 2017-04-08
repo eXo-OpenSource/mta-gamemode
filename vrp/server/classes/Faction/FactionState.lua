@@ -878,6 +878,10 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				local jailTime = wantedLevel * 5
 				local factionBonus = JAIL_COSTS[wantedLevel]
 
+				if player:getFaction() and player:getFaction():isEvilFaction() then
+					factionBonus = JAIL_COSTS[wantedLevel]/2
+				end
+
 				if bail then
 					bailcosts = BAIL_PRICES[wantedLevel]
 					player:setJailBail(bailcosts)
