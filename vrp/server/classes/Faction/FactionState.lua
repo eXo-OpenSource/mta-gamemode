@@ -896,9 +896,9 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					local remainMoney = factionBonus - mon
 					player:takeMoney(mon, "Knast Strafe (Bar)")
 					if remainMoney > bankM then 
-						player:takeMoney(bankM, "Knast Strafe (Bank)")
+						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
 					else 
-						player:takeMoney(remainMoney, "Knast Strafe (Bank)")
+						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
 					end
 				else 
 					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
