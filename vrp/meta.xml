@@ -206,6 +206,7 @@
 	
 	
 	<script src="server/classes/Gameplay/Training/TrainingManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Training/TrainingMapParser.lua" type="server"/>
 	<script src="server/classes/Gameplay/Training/Training.lua" type="server"/>
 	
 	<script src="server/constants/shops.lua" type="server"/>
@@ -727,6 +728,7 @@
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
 	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
+	<script src="client/classes/Effects/CylinderShader.lua" type="client"/>
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 
@@ -1655,8 +1657,9 @@
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<vrpfile src="files/shader/loginShader.fx"/>
-
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<file src="files/shader/cylinder.fx"/>
+	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
