@@ -891,7 +891,10 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					factionBonus = player:getBankMoney()
 				end
 
-				self:Command_tie(policeman, "tie", player:getName(), false, true)
+				if policeman.vehicle and player.vehicle then
+					self:Command_tie(policeman, "tie", player:getName(), false, true)
+				end
+
 				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
