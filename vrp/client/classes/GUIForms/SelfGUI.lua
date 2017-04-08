@@ -555,7 +555,7 @@ end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 	local x, y = self.m_GroupNameLabel:getPosition()
-	if rank and rank > 0 then
+	if rank and rank >= 0 then
 		self.m_GroupNameLabel:setText(name)
 		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMenuButton:setVisible(true)
