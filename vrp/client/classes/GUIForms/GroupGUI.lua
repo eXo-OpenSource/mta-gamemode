@@ -214,9 +214,9 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		end
 
 		-- Enabled for private companies the business tab
-		--if type == "Firma" then
-		--	self.m_TabBusiness:setEnabled(true)
-		--end
+		if type == "Firma" then
+			self.m_TabBusiness:setEnabled(true)
+		end
 	else
 		self.m_GroupCreateLabel:setVisible(true)
 	end
@@ -530,12 +530,6 @@ function GroupGUI:VehicleLocateButton_Click()
 end
 
 function GroupGUI:Event_retriveBusinessInfo(info)
-	if #info > 0 then
-		self.m_TabBusiness:setEnabled(true)
-	else
-		self.m_TabBusiness:setEnabled(false)
-	end
-
 	self.m_ShopsGrid:clear()
 	self.m_ShopsNameLabel:setText("-")
 	self.m_ShopsPositionLabel:setText("-")
