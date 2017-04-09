@@ -41,6 +41,7 @@ end
 FontAwesomeSymbols = {
 	Close = "",
 	Left = "",
+	Right = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
