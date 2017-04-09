@@ -52,7 +52,6 @@ end
 function NoDm:setPlayerNoDm(state)
 	if state == true then
 		if not localPlayer:getPublicSync("Faction:Duty") then
-			outputChatBox("Enable")
 			toggleControl ("fire", false)
 			toggleControl ("next_weapon", false)
 			toggleControl ("previous_weapon", false)
