@@ -204,7 +204,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if element.occupants and #element.occupants > 0 then
+	if element.occupants and table.size(element.occupants) > 0 then
 		self:addItem(_"Insassen >>>",
 			function()
 				if self:getElement() then
