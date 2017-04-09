@@ -16,7 +16,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	self:addItem(_("Fahrzeug: %s", element:getName())):setTextColor(Color.LightBlue)
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
-			self:addItem(_"Auf-/Zuschließen",
+			self:addItem(_("Auf-/Zuschließen (%s)", element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock),
 				function()
 					if self:getElement() then
 						triggerServerEvent("vehicleLock", self:getElement())

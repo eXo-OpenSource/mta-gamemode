@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIElements/VRPFont.lua
@@ -63,6 +63,8 @@ FontAwesomeSymbols = {
 	Suitcase = "",
 	Minus = "",
 	Plus = "",
+	Lock = "",
+	Unlock = "",
 }
 
 Fonts = {
