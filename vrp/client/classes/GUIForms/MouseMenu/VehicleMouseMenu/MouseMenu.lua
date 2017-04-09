@@ -76,7 +76,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					)
 				end
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name then
+		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
 			self:addItem(_"Schlüssel",
 				function()
 					if self:getElement() then
