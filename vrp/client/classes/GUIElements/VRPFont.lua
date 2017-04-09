@@ -39,6 +39,8 @@ function FontAwesome(height)
 end
 
 FontAwesomeSymbols = {
+	Close = "",
+	Left = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
