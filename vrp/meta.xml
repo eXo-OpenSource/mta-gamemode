@@ -726,7 +726,7 @@
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
-	
+
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -1611,6 +1611,12 @@
 	<vrpfile src="files/models/fire_main.dff" />
 	<vrpfile src="files/models/fire_main.col" />
 
+	<!-- Easter Event Start-->
+	<file src="files/models/easter_egg.txd" />
+	<file src="files/models/easter_egg.dff" />
+	<file src="files/models/easter_egg.col" />
+	<!-- Easter Event End-->
+
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
 
@@ -1663,7 +1669,6 @@
 	<vrpfile src="files/fonts/bit_font.ttf"/>
 	<vrpfile src="files/fonts/rage.ttf"/>
 	<vrpfile src="files/fonts/fuelstation.ttf"/>
-	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 	<vrpfile src="files/fonts/gobold-light.ttf"/>
 	<vrpfile src="files/fonts/vanadine-bold.ttf"/>
 
