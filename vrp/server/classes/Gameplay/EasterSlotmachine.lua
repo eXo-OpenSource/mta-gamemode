@@ -17,30 +17,7 @@ function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 		dim = 0
 	end
 
-	-- Instances
-	self.m_Prices = {}
-
-	-- PRICES --
-	-- Here you can change the winning things --
-	self.m_Prices.bet 					= 5;			-- Bet amount
-
-	self.m_Prices.normalPrice 			= 5; 		-- Minimum Win Ammount (2 Right icons)			-- Info: This ammount will be there in ANY case
-	self.m_Prices.maxNormalRandomPrice 	= 700;			-- Maximum Random Win-add Ammount (2 Right icons)
-								-- Maximum Win Ammount: normalPrice + maxNormalRandomPrice
-
-	self.m_Prices.normalPrice2 			= 5;			-- Minimum Win Ammount 2 (2 Right Rare Icons)	-- This too
-	self.m_Prices.maxNormalRandomPrice2 	= 700;			-- Maximum Random Win-add Ammount 2 (2 Right Rare Icons)
-								-- Maximum Win Ammount: normalPrice + maxNormalRandomPrice
-
-	self.m_Prices.jackpot 				= 5000;		-- Jackpot Price
-	self.m_Prices.rareJackpot 			= 13370;		-- Rare Jackpot Price
-
-	--  {5, 1, false}
-	-- Definition:
-	-- {iWeaponID, iWeaponAmmo}
-
 	self.ms_Settings = {}
-
 
 	-- Methods
 	self.m_ResultFunc = bind(self.doResult, self)
@@ -260,9 +237,24 @@ end
 function EasterSlotmachine:giveWin(player, name, x, y, z)
 	outputChatBox("Won: " .. name)
 	triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff")
-	--StatisticsLogger:addCasino( player, name, self.m_Prices.rareJackpot)
+	--StatisticsLogger:addCasino( player, name, ...)
 
-	-- todo
+	if name == "Money" then
+		local rnd = math.random(250, 15000)
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
+		player:giveMoney(rnd, "EasterSlotmaschine")
+		--todo StatisticsLogger
+	elseif name == "Ostereier" then
+		player:sendInfo("Du hast 20 Ostereier gewonnen!")
+		player:getInventory():giveItem("Osterei", 20)
+		-- todo StatisticsLogger
+	elseif name == "Premium" then
+		-- @Stumpy: PREMIUM. DO IT!
+	elseif name == "HasenOhren" then
+		-- give wearable: HasenOhren
+	elseif name == "MrWhoopee" then
+		-- premium vehicle MrWhoopee
+	end
 end
 
 function EasterSlotmachine:doResult(ergebnis, player)
@@ -304,23 +296,22 @@ function EasterSlotmachine:doResult(ergebnis, player)
 	outputChatBox("Rare" .. rare)
 
 	if glocken == 2 or weintrauben == 2 or gold1 == 2 or kirschen == 2 then
-		self:giveWin(player, "RandomMoney", x, y, z)
+		self:giveWin(player, "Money", x, y, z)
 	elseif glocken == 3 then
 		self:giveWin(player, " - 3x Glocken -", x, y, z)
-	elseif kirschen == 3 and gold2 == 1 then
-		self:giveWin(player, " - 3x kirschen / 1x gold2 -", x, y, z)
+	elseif kirschen == 3 then
+		self:giveWin(player, " - 3x kirschen -", x, y, z)
 	elseif gold2 == 3 then
-		self:giveWin(player, " - 3x gold2 -", x, y, z)
+		self:giveWin(player, "Ostereier", x, y, z)
 	elseif weintrauben == 3 then
 		self:giveWin(player, "HasenOhren", x, y, z)
 	elseif rare == 3 then
-		self:giveWin(player, "premium", x, y, z)
+		self:giveWin(player, "Premium", x, y, z)
 	elseif rare == 2 then
-		self:giveWin(player, "Penismobil", x, y, z)
+		self:giveWin(player, "MrWhoopee", x, y, z)
 	else
-		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		player:sendInfo(_("Du hast leider nichts gewonnen!", player))
-		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_nothing", int, dim)
+		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_nothing")
 	end
 
 	setTimer(self.m_ResetFunc, 1500, 1)
@@ -333,6 +324,6 @@ function EasterSlotmachine:startPlayer(player)
 		player:getInventory():removeItem("Osterei", 5)
 		self:start(player)
 	else
-		player:sendWarning(_("Du brauchst mind. %s Ostereier, um spielen zu können", player, self.m_Prices.bet))
+		player:sendWarning(_("Du brauchst mind. 5 Ostereier, um spielen zu können", player))
 	end
 end
