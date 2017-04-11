@@ -42,7 +42,7 @@ function Casino:constructor()
 	Slotmachine:new(2223.2060546875, 1571.296875, 1008.959375, 0, 0, 120,1)
 	Slotmachine:new(2229.0947265625, 1563.3232421875, 1008.959375, 0, 0, 120,1)
 
-	EasterSlotmachine:new(1484.71, -1779.22, 13.55, 0, 0, 180, 0, 0)
+	EasterSlotmachine:new(1484.71, -1779.22, 13.55, 0, 0, 0, 0, 0)
 end
 
 function Casino:onChessMarkerHit(hitElement, dim)
