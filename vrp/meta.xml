@@ -813,7 +813,18 @@
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
 
-	<!-- Tests -->
+	<!-- Events -->
+	<vrpfile src="files/images/Events/Easter/slotmachine.jpg" />
+	<vrpfile src="files/images/Events/Easter/slot_1.png" />
+	<vrpfile src="files/images/Events/Easter/slot_2.png" />
+	<vrpfile src="files/images/Events/Easter/slot_3.png" />
+	<vrpfile src="files/images/Events/Easter/slot_4.png" />
+	<vrpfile src="files/images/Events/Easter/slot_5.png" />
+	<vrpfile src="files/images/Events/Easter/slot_6.png" />
+	<vrpfile src="files/images/Events/Easter/slot_7.png" />
+	<vrpfile src="files/images/Events/Easter/slot_8.png" />
+	<vrpfile src="files/images/Events/Easter/slot_9.png" />
+
 	<!-- Todo -->
 
 	<script src="client/Main.lua" type="client"/>

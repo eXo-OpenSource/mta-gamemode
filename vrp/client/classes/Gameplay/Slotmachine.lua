@@ -25,3 +25,14 @@ addEventHandler("onSlotmachineJackpot", localPlayer, function(x, y, z)
 		end
 	end, 300, 10)
 end)
+
+for index, object in pairs(getElementsByType("object")) do
+	if object:getModel() == 2326 then
+		object.texture = {}
+		for i = 1, 9, 1 do
+			object.texture[i] = TextureReplace:new("slot_fr_"..i, "files/images/Events/Easter/slot_"..i..".png", false, 64, 64, object)
+		end
+	elseif object:getModel() == 2325 and object:getData("Easter") then
+		object.texture = TextureReplace:new("slot5_ind", "files/images/Events/Easter/slotmachine.jpg", false, 200, 200, object)
+	end
+end

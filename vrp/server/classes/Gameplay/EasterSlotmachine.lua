@@ -85,6 +85,8 @@ function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 
 
 	self.m_Objects.slotmachine = createObject(2325, x, y, z, rx, ry, rz)
+	self.m_Objects.slotmachine:setData("Easter", true, true)
+
 	setObjectScale(self.m_Objects.slotmachine, 2)
 
 	slot_machines[self.m_Objects.slotmachine] = self.m_Objects.slotmachine;
