@@ -166,9 +166,9 @@ setWeaponProperty(24,"pro","weapon_range",45)
 setWeaponProperty(24,"poor","weapon_range",45)
 setWeaponProperty(24,"std","weapon_range",45)
 
-setWeaponProperty(24,"pro","accuracy",0.9)
-setWeaponProperty(24,"poor","accuracy",0.9)
-setWeaponProperty(24,"std","accuracy",0.9)
+setWeaponProperty(24,"pro","accuracy",1.5)
+setWeaponProperty(24,"poor","accuracy",1.5)
+setWeaponProperty(24,"std","accuracy",1.5)
 
 setWeaponProperty(29,"pro","accuracy",0.9)
 setWeaponProperty(29,"poor","accuracy",0.9)

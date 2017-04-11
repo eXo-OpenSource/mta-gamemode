@@ -33,7 +33,7 @@ function PassengerMouseMenu:constructor(posX, posY, element)
 			function()
 				if self:getElement() then
 					delete(self)
-					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenu:new(posX, posY, occupant), element)
+					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenu:new(posX, posY, occupant), occupant)
 				end
 			end
 			)
