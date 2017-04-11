@@ -814,7 +814,8 @@
 	<file src="files/data/indicators.dat" />
 
 	<!-- Events -->
-	<vrpfile src="files/images/Events/Easter/slotmachine.jpg" />
+	<file src="files/images/Events/Easter/slotmachine1.jpg" />
+	<file src="files/images/Events/Easter/slotmachine2.jpg" />
 	<vrpfile src="files/images/Events/Easter/slot_1.png" />
 	<vrpfile src="files/images/Events/Easter/slot_2.png" />
 	<vrpfile src="files/images/Events/Easter/slot_3.png" />

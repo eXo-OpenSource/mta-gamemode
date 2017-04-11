@@ -46,6 +46,6 @@ for index, object in pairs(getElementsByType("object")) do
 			Easter.updateTexture("slot_fr_"..i, "files/images/Events/Easter/slot_"..i..".png", object)
 		end
 	elseif object:getModel() == 2325 and object:getData("Easter") then
-		Easter.updateTexture("slot5_ind", "files/images/Events/Easter/slotmachine.jpg", object)
+		Easter.updateTexture("slot5_ind", "files/images/Events/Easter/slotmachine"..math.random(1,2)..".jpg", object)
 	end
 end
