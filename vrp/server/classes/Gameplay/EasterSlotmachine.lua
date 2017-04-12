@@ -235,7 +235,7 @@ function EasterSlotmachine:start(player)
 end
 
 function EasterSlotmachine:giveWin(player, name, x, y, z)
-	outputChatBox("Won: " .. name)
+	--outputChatBox("Won: " .. name)
 	triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff")
 	--StatisticsLogger:addCasino( player, name, ...)
 
@@ -296,12 +296,12 @@ function EasterSlotmachine:doResult(ergebnis, player)
 		end
 	end
 
-	outputChatBox("Kirschen: " .. kirschen)
-	outputChatBox("Glocken: " .. glocken)
-	outputChatBox("Weintrauben: " .. weintrauben)
-	outputChatBox("Gold1: " .. gold1)
-	outputChatBox("Gold2: " .. gold2)
-	outputChatBox("Rare" .. rare)
+	--outputChatBox("Kirschen: " .. kirschen)
+	--outputChatBox("Glocken: " .. glocken)
+	--outputChatBox("Weintrauben: " .. weintrauben)
+	--outputChatBox("Gold1: " .. gold1)
+	--outputChatBox("Gold2: " .. gold2)
+	--outputChatBox("Rare" .. rare)
 
 	if glocken == 2 or weintrauben == 2 or gold1 == 2 or kirschen == 2 then
 		self:giveWin(player, "Money", x, y, z)
