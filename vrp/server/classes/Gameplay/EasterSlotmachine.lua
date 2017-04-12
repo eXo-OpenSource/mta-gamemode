@@ -6,7 +6,14 @@
 -- *
 -- ****************************************************************************
 EasterSlotmachine = inherit(Object)
-
+EasterSlotmachine.Slots = {
+	[1] = "VIP",
+	[2] = "Easter_Egg",
+	[3] = "Mr. Whoopee",
+	[4] = "Money",
+	[5] = "Easter_Eggs",
+	[6] = "Bunny_Ears",
+}
 slot_machines = {}
 
 function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
@@ -42,19 +49,19 @@ function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	self.canSpin = true
 
 	self.ms_Settings.iconNames = {
-		[900] = "69",
-		[1100] = "69",
-		[1300] = "Gold 1",
-		[1400] = "Glocke",
-		[1500] = "Glocke",
-		[1600] = "Glocke",
-		[1700] = "Weintraube",
-		[1800] = "Gold 2",
-		[1900] = "Weintraube",
-		[2000] = "Glocke",
-		[2100] = "Weintraube",
-		[2300] = "Weintraube",
-		[2140] = "Kirsche",
+		[900] = EasterSlotmachine.Slots[1],
+		[1100] = EasterSlotmachine.Slots[1],
+		[1300] = EasterSlotmachine.Slots[2],
+		[1400] = EasterSlotmachine.Slots[4],
+		[1500] = EasterSlotmachine.Slots[4],
+		[1600] = EasterSlotmachine.Slots[4],
+		[1700] = EasterSlotmachine.Slots[6],
+		[1800] = EasterSlotmachine.Slots[3],
+		[1900] = EasterSlotmachine.Slots[6],
+		[2000] = EasterSlotmachine.Slots[4],
+		[2100] = EasterSlotmachine.Slots[6],
+		[2300] = EasterSlotmachine.Slots[6],
+		[2140] = EasterSlotmachine.Slots[5],
 	}
 
 	-- Objects
@@ -126,33 +133,34 @@ end
 
 function EasterSlotmachine:calculateSpin()
 	local rnd = tonumber(math.random(1, 9))
+	local rnd2
 	local grad = 0
 	if rnd == 1 then
-		if math.random(0, 5) == 5 then
-			grad = 1100					-- 69 SLOT1 - Premium
+		rnd2 = math.random(0, 5)
+		if rnd2 == 1 then
+			grad = 1100				-- SLOT1 - Premium
+		elseif rnd2 == 2 then
+			grad = 1800				-- SLOT3 - Wopee
 		else
-			grad = 1300					-- Gold 1 - SLOT2 - Wopee
+			grad = 2140				-- SLOT5 - OSTERHASE ?
 		end
 	elseif rnd == 2 then
-		if math.random(0, 5) == 5 then
-			grad = 1100					-- 69 SLOT1 - Premium
+		rnd2 = math.random(0, 5)
+		if rnd2 == 1 then
+			grad = 1100				-- SLOT1 - Premium
+		elseif rnd2 == 2 then
+			grad = 1800				-- SLOT3 - Wopee
 		else
-			grad = 2300					-- Weintraube - SLOT6 - Hasenohren
+			grad = 2140				-- SLOT5 - OSTERHASE ?
 		end
 	elseif rnd == 3 then
-		grad = 1600						-- Glocke - SLOT4 - Geld
-	elseif rnd == 4 then
-		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
-	elseif rnd == 5 then
-		grad = 1800						-- Gold 2 - SLOT3 - Wopee
-	elseif rnd == 6 then
-		grad = 1900						-- Weintraube - SLOT6 - Hasenohren
-	elseif rnd == 7 then
-		grad = 1800						-- Glocke - SLOT4 - Geld
-	elseif rnd == 8 then
-		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
-	elseif rnd == 9 then
-		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
+		grad = 1600					-- SLOT4 - Geld
+	elseif rnd == 4 or rnd == 5 then
+		grad = 1900					-- SLOT5 - OSTERHASE ?
+	elseif rnd == 6 or rnd == 7 then
+		grad = 1300					-- SLOT2 - Osterei
+	elseif rnd == 8 or rnd == 9 then
+		grad = 1700					-- SLOT6 - Hasenohren
 	end
 
 	return grad, self.ms_Settings.iconNames[grad];
@@ -244,7 +252,11 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
 		player:giveMoney(rnd, "EasterSlotmaschine")
 		--todo StatisticsLogger
-	elseif name == "Ostereier" then
+	elseif name == "Ostereier5" then
+		player:sendInfo("Du hast 5 Ostereier gewonnen!")
+		player:getInventory():giveItem("Osterei", 5)
+		-- todo StatisticsLogger
+	elseif name == "Ostereier20" then
 		player:sendInfo("Du hast 20 Ostereier gewonnen!")
 		player:getInventory():giveItem("Osterei", 20)
 		-- todo StatisticsLogger
@@ -262,61 +274,35 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
+	else
+		player:sendError(_("Unknown Win! %s", player, name))
 	end
 end
 
 function EasterSlotmachine:doResult(ergebnis, player)
 	local x, y, z = getElementPosition(self.m_Objects.slotmachine)
-	local kirschen = 0
-	local glocken = 0
-	local weintrauben = 0
-	local gold1 = 0
-	local gold2 = 0
-	local rare = 0
 
-	for _, data in pairs(ergebnis) do
-		if data == "69" then
-			rare = rare+1
-		end
-		if data == "Glocke" then
-			glocken = glocken+1
-		end
-		if data == "Gold 1" then
-			gold1 = gold1+1
-
-		end
-		if data == "Gold 2" then
-			gold2 = gold2+1
-		end
-		if data == "Weintraube" then
-			weintrauben = weintrauben+1
-		end
-		if data == "Kirsche" then
-			kirschen = kirschen+1
-		end
+	local result = {}
+	for index, name in pairs(EasterSlotmachine.Slots) do
+		result[name] = 0
 	end
 
-	--outputChatBox("Kirschen: " .. kirschen)
-	--outputChatBox("Glocken: " .. glocken)
-	--outputChatBox("Weintrauben: " .. weintrauben)
-	--outputChatBox("Gold1: " .. gold1)
-	--outputChatBox("Gold2: " .. gold2)
-	--outputChatBox("Rare" .. rare)
+	for _, data in pairs(ergebnis) do
+		result[data] = result[data]+1
+	end
 
-	if glocken == 2 or weintrauben == 2 or gold1 == 2 or kirschen == 2 then
-		self:giveWin(player, "Money", x, y, z)
-	elseif glocken == 3 then
-		self:giveWin(player, "Ostereier", x, y, z)
-	elseif kirschen == 3 then
-		self:giveWin(player, "Ostereier", x, y, z)
-	elseif gold2 == 3 then
-		self:giveWin(player, "Money", x, y, z)
-	elseif weintrauben == 3 then
-		self:giveWin(player, "HasenOhren", x, y, z)
-	elseif rare == 3 then
+	if result["VIP"] == 3 then
 		self:giveWin(player, "Premium", x, y, z)
-	elseif rare == 2 then
+	elseif result["Easter_Egg"] == 3 then
+		self:giveWin(player, "Ostereier5", x, y, z)
+	elseif result["Mr. Whoopee"] == 3 then
 		self:giveWin(player, "MrWhoopee", x, y, z)
+	elseif result["Money"] == 3 then
+		self:giveWin(player, "Money", x, y, z)
+	elseif result["Easter_Eggs"] == 3 then
+		self:giveWin(player, "Ostereier20", x, y, z)
+	elseif result["Bunny_Ears"] == 3 then
+		self:giveWin(player, "HasenOhren", x, y, z)
 	else
 		player:sendInfo(_("Du hast leider nichts gewonnen!", player))
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_nothing")
