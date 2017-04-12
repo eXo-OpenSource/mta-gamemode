@@ -7,13 +7,13 @@
 -- ****************************************************************************
 TaskMove = inherit(Task)
 local CHECK_FACTOR = 1.2
-local TARGET_MIN_DIST = 0.5
+local TARGET_MIN_DIST = 0.8
 
 function TaskMove:constructor(actor, actorSyncer, targetPosition)
 	self.m_Syncer = actorSyncer
 	self.m_TargetPosition = normaliseVector(targetPosition)
 	self.m_Actor:setControlState("forwards", true)
-	self.m_Actor:setControlState("sprint", true)
+	--self.m_Actor:setControlState("sprint", true)
 	self.m_State = "moving"
 
 	outputDebug(("MoveActor:constructor - target: %s - syncer: %s (%s) (isSyncer: %s)"):format(tostring(self.m_TargetPosition), tostring(self.m_Syncer), self.m_Syncer:getName(), tostring(self:isSyncer())))
@@ -172,20 +172,6 @@ function TaskMove:getBestLine(posA, posB) -- lightweight heuristic
 	else
 		return posA
 	end
-
-	--[[
-	if scoreA == scoreB then -- should never happen => RANDOM! :>
-		if chance(50) then
-			return posA
-		else
-			return posB
-		end
-	elseif scoreA < scoreB then -- lineA is better
-		return posA
-	elseif scoreA > scoreB then -- lineB is better
-		return posB
-	end
-	--]]
 end
 
 function TaskMove:updateByRemote(package)
