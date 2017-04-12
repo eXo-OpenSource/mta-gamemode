@@ -891,19 +891,19 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					self:Command_tie(policeman, "tie", player:getName(), false, true)
 				end
 				local mon = player:getMoney()
-				if mon < factionBonus then 
+				if mon < factionBonus then
 					local bankM = player:getBankMoney()
 					local remainMoney = factionBonus - mon
 					player:takeMoney(mon, "Knast Strafe (Bar)")
-					if remainMoney > bankM then 
+					if remainMoney > bankM then
 						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
-					else 
+					else
 						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
 					end
-				else 
+				else
 					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
 				end
-				
+
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
@@ -1209,6 +1209,11 @@ function FactionState:Event_friskPlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
+			if target.vehicle and client.vehicle ~= target.vehicle then
+				client:sendErrpr(_("So kannst du den Spieler nicht durchsuchen!", target))
+				return
+			end
+
 			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()

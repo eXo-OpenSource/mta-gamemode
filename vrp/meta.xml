@@ -207,6 +207,10 @@
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 
+
+	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
+
 	<script src="server/constants/shops.lua" type="server"/>
 
 	<!-- Groups -->
@@ -728,6 +732,7 @@
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
 	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
+	<script src="client/classes/Effects/CylinderShader.lua" type="client"/>
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
@@ -774,6 +779,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
+
+	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
@@ -1247,6 +1254,7 @@
 	<vrpfile src="files/images/Textures/Company/Academi/cooperation_logo.png"/>
 	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
+	<file src="files/images/Textures/waretex.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1626,12 +1634,14 @@
 	<vrpfile src="files/models/fire_main.txd" />
 	<vrpfile src="files/models/fire_main.dff" />
 	<vrpfile src="files/models/fire_main.col" />
-
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />
 	<file src="files/models/easter_egg.dff" />
 	<file src="files/models/easter_egg.col" />
 	<!-- Easter Event End-->
+
+	<vrpfile src="files/models/fbi.txd" />
+	<vrpfile src="files/models/fbi.dff" />
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
@@ -1671,8 +1681,10 @@
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<vrpfile src="files/shader/loginShader.fx"/>
-
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<file src="files/shader/cylinder.fx"/>
+
+
 	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
