@@ -129,30 +129,30 @@ function EasterSlotmachine:calculateSpin()
 	local grad = 0
 	if rnd == 1 then
 		if math.random(0, 5) == 5 then
-			grad = 1100					-- 69
+			grad = 1100					-- 69 SLOT1 - Premium
 		else
-			grad = 1300					-- Gold 1
+			grad = 1300					-- Gold 1 - SLOT2 - Wopee
 		end
 	elseif rnd == 2 then
 		if math.random(0, 5) == 5 then
-			grad = 1100					-- 69
+			grad = 1100					-- 69 SLOT1 - Premium
 		else
-			grad = 2300					-- Weintraube
+			grad = 2300					-- Weintraube - SLOT6 - Hasenohren
 		end
 	elseif rnd == 3 then
-		grad = 1600						-- Glocke
+		grad = 1600						-- Glocke - SLOT4 - Geld
 	elseif rnd == 4 then
-		grad = 2140						-- Kirsche
+		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
 	elseif rnd == 5 then
-		grad = 1800						-- Gold 2
+		grad = 1800						-- Gold 2 - SLOT3 - Wopee
 	elseif rnd == 6 then
-		grad = 1900						-- Weintraube
+		grad = 1900						-- Weintraube - SLOT6 - Hasenohren
 	elseif rnd == 7 then
-		grad = 1800						-- Glocke
+		grad = 1800						-- Glocke - SLOT4 - Geld
 	elseif rnd == 8 then
-		grad = 2140						--  -- Kische
+		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
 	elseif rnd == 9 then
-		grad = 2140						-- Kirsche
+		grad = 2140						-- Kirsche - SLOT5 - OSTERHASE ?
 	end
 
 	return grad, self.ms_Settings.iconNames[grad];
