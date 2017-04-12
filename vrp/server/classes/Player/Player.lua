@@ -192,7 +192,7 @@ function Player:loadCharacter()
 
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
-	self:triggerEvent("TrainingEnv:generate", self.m_Id or math.random(1,69000), false, "files/images/Textures/white.png")
+	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
 
 function Player:createCharacter()
