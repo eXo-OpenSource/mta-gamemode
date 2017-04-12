@@ -263,7 +263,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 	elseif name == "Premium" then
 		player:sendInfo("Du hast einen Monat Premium gewonnen! Gratulation!")
 		player.m_Premium:giveEasterMonth()
-	elseif name == "Hasenohren" then
+	elseif name == "HasenOhren" then
 		player:getInventory():giveItem("Hasenohren", 1)
 	elseif name == "MrWhoopee" then
 		player:sendInfo("Du hast einen Mr. Whoopee gewonnen! Gückwunsch!")
