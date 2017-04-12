@@ -41,11 +41,13 @@ if EVENT_EASTER then
 	end
 
 	for index, object in pairs(getElementsByType("object")) do
-		if object:getModel() == 2326 then
-			object.texture = {}
-			for i = 1, 9, 1 do
-				Easter.updateTexture("slot_fr_"..i, "files/images/Events/Easter/slot_"..i..".png", object)
-			end
+		if object:getModel() == 2348 then
+			Easter.updateTexture("cj_wheel_69256", "files/images/Events/Easter/slot_1.png", object) -- 69
+			Easter.updateTexture("cj_wheel_B1256", "files/images/Events/Easter/slot_2.png", object) -- Gold 1
+			Easter.updateTexture("cj_wheel_B2256", "files/images/Events/Easter/slot_3.png", object) -- Gold 2
+			Easter.updateTexture("cj_wheel_Bell256", "files/images/Events/Easter/slot_4.png", object) -- Glocke
+			Easter.updateTexture("cj_wheel_Cherry256", "files/images/Events/Easter/slot_5.png", object) -- Kirsche
+			Easter.updateTexture("cj_wheel_Grape256", "files/images/Events/Easter/slot_6.png", object) -- Traube
 		elseif object:getModel() == 2325 and object:getData("Easter") then
 			Easter.updateTexture("slot5_ind", "files/images/Events/Easter/slotmachine"..math.random(1,2)..".jpg", object)
 		end

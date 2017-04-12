@@ -70,7 +70,7 @@ function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- Rolls
 
 	for i = 1, 3, 1 do
-		self.m_Objects.rolls[i] = createObject(2326, x, y, z)
+		self.m_Objects.rolls[i] = createObject(2348, x, y, z)
 		setObjectScale(self.m_Objects.rolls[i], 2)
 		attachElements(self.m_Objects.rolls[i], self.m_Objects.slotmachine, -0.45+i/4, 0, 0)
 	end
@@ -249,11 +249,19 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		player:getInventory():giveItem("Osterei", 20)
 		-- todo StatisticsLogger
 	elseif name == "Premium" then
-		-- @Stumpy: PREMIUM. DO IT!
-	elseif name == "HasenOhren" then
-		-- give wearable: HasenOhren
+		player:sendInfo("Du hast einen Monat Premium gewonnen! Gratulation!")
+		player.m_Premium:giveEasterMonth()
+	elseif name == "Hasenohren" then
+		player:getInventory():giveItem("Hasenohren", 1)
 	elseif name == "MrWhoopee" then
-		-- premium vehicle MrWhoopee
+		player:sendInfo("Du hast einen Mr. Whoopee gewonnen! Gückwunsch!")
+		local vehicle = PermanentVehicle.create(player, 423, 1513.77, -1771.50, 13.57, 0, nil, true)
+		if vehicle then
+			warpPedIntoVehicle(player, vehicle)
+			player:triggerEvent("vehicleBought")
+		else
+			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
+		end
 	end
 end
 
@@ -298,11 +306,11 @@ function EasterSlotmachine:doResult(ergebnis, player)
 	if glocken == 2 or weintrauben == 2 or gold1 == 2 or kirschen == 2 then
 		self:giveWin(player, "Money", x, y, z)
 	elseif glocken == 3 then
-		self:giveWin(player, " - 3x Glocken -", x, y, z)
-	elseif kirschen == 3 then
-		self:giveWin(player, " - 3x kirschen -", x, y, z)
-	elseif gold2 == 3 then
 		self:giveWin(player, "Ostereier", x, y, z)
+	elseif kirschen == 3 then
+		self:giveWin(player, "Ostereier", x, y, z)
+	elseif gold2 == 3 then
+		self:giveWin(player, "Money", x, y, z)
 	elseif weintrauben == 3 then
 		self:giveWin(player, "HasenOhren", x, y, z)
 	elseif rare == 3 then
