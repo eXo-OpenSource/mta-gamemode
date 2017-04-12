@@ -1330,6 +1330,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/Hasenohren.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
 
@@ -1657,6 +1658,9 @@
 	<vrpfile src="files/models/Wearables/riot_shield.txd" />
 	<vrpfile src="files/models/Wearables/riot_shield.dff" />
 	<vrpfile src="files/models/Wearables/riot_shield.col" />
+
+	<vrpfile src="files/models/Wearables/BunnyEars.txd" />
+	<vrpfile src="files/models/Wearables/BunnyEars.dff" />
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>

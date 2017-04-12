@@ -159,9 +159,8 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/easter_egg.dff", 1933)
 	self:loadImportCOL("filEs/models/easter_egg.col", 1933)
 
-	--self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
-	--self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
-	--self:loadImportCOL("filEs/models/Wearables/BunnyEars.col", 1934)
+	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
+	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
