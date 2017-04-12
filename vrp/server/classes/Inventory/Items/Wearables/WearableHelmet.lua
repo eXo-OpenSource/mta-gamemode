@@ -7,13 +7,14 @@
 -- ****************************************************************************
 WearableHelmet = inherit( Item )
 
-WearableHelmet.objectTable = 
+WearableHelmet.objectTable =
 {
 	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm",true},
 	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm",true},
 	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm",false},
 	["Einsatzhelm"] = {3911,0.1, 0.05, 0.95, 10, 180, "Einsatzhelm",false},
 	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske",true},
+	["Hasenohren"] = {1934, 0, 0, 1, 0, 180, "Hasenohren", true},
 }
 
 function WearableHelmet:constructor()
@@ -28,12 +29,12 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 	local inventory = InventoryManager:getSingleton():getPlayerInventory(player)
 	local value = inventory:getItemValueByBag( bag, place)
 	if value then --// for texture usage later
-		
+
 	end
 	if not player.m_IsWearingHelmet and not player.m_Helmet then --// if the player clicks onto the helmet without currently wearing one
-		if isElement(player.m_Helmet) then 
+		if isElement(player.m_Helmet) then
 			destroyElement(player.m_Helmet)
-		end 
+		end
 		local x,y,z = getElementPosition(player)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
@@ -50,7 +51,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
 		player:setData("isFaceConcealed", isFaceConcealed)
-		if itemName == "Einsatzhelm" then 
+		if itemName == "Einsatzhelm" then
 			obj:setData("isProtectingHeadshot", true)
 		end
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
@@ -61,7 +62,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player:setData("isFaceConcealed", false)
 		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
-		if isElement(player.m_Helmet) then 
+		if isElement(player.m_Helmet) then
 			destroyElement(player.m_Helmet)
 		end
 		local x,y,z = getElementPosition(player)
@@ -80,7 +81,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
 		player:setData("isFaceConcealed", isFaceConcealed)
-		if itemName == "Einsatzhelm" then 
+		if itemName == "Einsatzhelm" then
 			obj:setData("isProtectingHeadshot", true)
 		end
 	end

@@ -26,6 +26,7 @@ function ItemManager:constructor()
 		["Zigarette"] = ItemFood,
 		["Donut"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
+		["Osterei"] = ItemEasteregg;
 
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = PlantWeed,
@@ -49,6 +50,7 @@ function ItemManager:constructor()
 		["Pot-Helm"] = WearableHelmet,
 		["Gasmaske"] = WearableHelmet,
 		["Einsatzhelm"] = WearableHelmet,
+		["Hasenohren"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
@@ -75,6 +77,7 @@ function ItemManager:constructor()
 		instance.m_Breakable = breakable
 		ItemManager.Map[name] = instance
 	end
+
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
 end
 
