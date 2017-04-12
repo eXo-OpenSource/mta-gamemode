@@ -26,6 +26,7 @@ function ItemEasteregg:addObject(Id, pos)
 	self.m_Eastereggs[Id].Type = "Easteregg"
     self.m_Eastereggs[Id]:setData("clickable", true, true)
     addEventHandler("onElementClicked",self.m_Eastereggs[Id], bind(self.onEastereggClick, self))
+	return self.m_Eastereggs[Id]
 end
 
 function ItemEasteregg:onEastereggClick(button, state, player)
