@@ -158,7 +158,7 @@ function PlayerManager:Event_OnWasted()
 			destroyElement(source.ped_deadDouble)
 		end
 	end
-	if not source:getData("isInDeathMatch") then
+	if not source:getData("isInDeathMatch") and not source.bInWare then
 		local x,y,z = getElementPosition(source)
 		local dim = getElementDimension(source)
 		local int = getElementInterior(source)

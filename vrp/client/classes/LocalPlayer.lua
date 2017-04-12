@@ -42,6 +42,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
+	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
@@ -98,6 +99,14 @@ function LocalPlayer:fadeOutScope()
 	end
 end
 
+function LocalPlayer:Event_OnObjectBrake( attacker ) 
+	if attacker == localPlayer then
+		if getElementModel(source) == 1224 then 
+			triggerServerEvent("onCrateDestroyed",localPlayer,source)
+		end
+	end
+end
+
 function LocalPlayer:onAlcoholLevelChange()
 	if self:getPrivateSync("AlcoholLevel") > 0 then
 		if not isTimer(self.m_AlcoholDecreaseTimer) then
@@ -148,6 +157,7 @@ function LocalPlayer:Event_RenderAlcohol()
 		end
 	end
 end
+
 
 function LocalPlayer:setAFKTime()
 	if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then

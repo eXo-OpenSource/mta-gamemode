@@ -203,10 +203,18 @@
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
-	
-	
-	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareSurvive.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCrateBreak.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDuck.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareJump.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareClimb.lua" type="server"/>
 	
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -552,6 +560,7 @@
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
@@ -776,6 +785,11 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/minigames/WareJump.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDuck.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="client"/>
 	
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
@@ -1241,6 +1255,7 @@
 	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 	<file src="files/images/Textures/waretex.png"/>
+	<file src="files/images/Textures/sky.png"/>
 	
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1543,6 +1558,10 @@
 	<vrpfile src="files/audio/headlight_down.mp3" />
 	<vrpfile src="files/audio/headlight_up.mp3" />
 
+	<vrpfile src="files/audio/Ware/kahoot.ogg" />
+	<vrpfile src="files/audio/Ware/done.mp3" />
+	<vrpfile src="files/audio/Ware/fail.mp3" />
+	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>
@@ -1679,6 +1698,7 @@
 	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 	<vrpfile src="files/fonts/gobold-light.ttf"/>
 	<vrpfile src="files/fonts/vanadine-bold.ttf"/>
+	<vrpfile src="files/fonts/SuperMario256.ttf" />
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

@@ -30,7 +30,7 @@ function updateBounds( object )
 	y_max = 50
 end
 
-function PlatformEnvironment:constructor( width, height, dim, bIsAlpha, bGroundTexture, bReplaceName, iObject)
+function PlatformEnvironment:constructor( x, y, z, width, height, dim, bIsAlpha, bGroundTexture, bReplaceName, iObject)
 	outputDebugString("Trying to generate enviroment at "..dim.."!", 3, 50, 200, 200)
 	if iObject then
 		updateBounds(iObject)
@@ -38,6 +38,7 @@ function PlatformEnvironment:constructor( width, height, dim, bIsAlpha, bGroundT
 	if bGroundTexture and bReplaceName then 
 		self.m_TexReplace = TextureReplace:new(bReplaceName, bGroundTexture)
 	end
+	self.m_OriginVector = {x,y,z}
 	self.m_Env = {}
 	self.m_EnvWalls = {}
 	self.m_bIsAlpha = bIsAlpha
@@ -51,7 +52,7 @@ function PlatformEnvironment:constructor( width, height, dim, bIsAlpha, bGroundT
 end
 
 function PlatformEnvironment:createGround() 
-	local x,y,z = unpack(ORIGIN_VECTOR)
+	local x,y,z = unpack(self.m_OriginVector)
 	local minx, miny,minz,maxx,maxy,maxz = CONST_GROUND_BOX[1],CONST_GROUND_BOX[2],CONST_GROUND_BOX[3],CONST_GROUND_BOX[4],CONST_GROUND_BOX[5],CONST_GROUND_BOX[6]
 	local bound_x = math.floor(math.abs(minx) + math.abs( maxx) )-0.5
 	local bound_y = math.floor(math.abs(miny) + math.abs( maxy) )-0.5
@@ -272,11 +273,11 @@ function PlatformEnvironment:destructor()
 end
 
 addEvent("PlatformEnv:generate", true)
-addEventHandler("PlatformEnv:generate", root, function( width, height, dim, isAlpha, texPath, texReplace, iObject) 
+addEventHandler("PlatformEnv:generate", root, function( x, y, z, width, height, dim, isAlpha, texPath, texReplace, iObject) 
 	if currentActiveEnviroment then 
 		delete(currentActiveEnviroment)
 	end
-	currentActiveEnviroment = PlatformEnvironment:new(width, height, dim, isAlpha, texPath, texReplace, iObject)
+	currentActiveEnviroment = PlatformEnvironment:new(x, y, z, width, height, dim, isAlpha, texPath, texReplace, iObject)
 end)
 
 addEvent("PlatformEnv:parseMap", true)

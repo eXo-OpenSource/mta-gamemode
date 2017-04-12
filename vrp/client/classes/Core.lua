@@ -132,6 +132,7 @@ function Core:ready()
 	
 	GroupRob:new() 
 	
+	WareClient:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end
