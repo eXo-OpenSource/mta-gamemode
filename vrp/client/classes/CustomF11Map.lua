@@ -62,6 +62,8 @@ function CustomF11Map:disable()
 
 	self.m_Enabled = false
 	self.m_Visible = false
+	self.m_ClickOverlay:setVisible(false)
+
 	removeEventHandler("onClientRender", root, self.m_RenderFunc)
 end
 

@@ -124,7 +124,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 				end
 			end
 		end
-		hitElement:startNavigationTo(DUMP_POSITION.x, DUMP_POSITION.y, DUMP_POSITION.z)
+		hitElement:startNavigationTo(DUMP_POSITION)
 		hitElement:triggerEvent("lumberjackTreesLoadUp")
 	end
 end

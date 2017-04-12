@@ -11,7 +11,7 @@ inherit(Singleton, StateFactionNoteGUI)
 function StateFactionNoteGUI:constructor(target)
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 200)
 	self.m_Target = target
-	self.m_Window = GUIWindow:new(0,0,300,300,_"PA-Note vergeben",true,true,self)
+	self.m_Window = GUIWindow:new(0,0,300,300,_"GWD-Note vergeben",true,true,self)
 	GUILabel:new(30, 45, self.m_Width-60, 30, _("Spieler: %s", target:getName()), self):setColor(Color.LightBlue)
 	GUILabel:new(30, 85, 100, 30, _"Note:", self)
 	self.m_Note = GUIEdit:new(125, 85, 100, 30, self)
@@ -27,11 +27,11 @@ function StateFactionNoteGUI:setNote()
 	if tonumber(self.m_Note:getText()) and tonumber(self.m_Note:getText()) <= 100 and tonumber(self.m_Note:getText()) > 0 then
 		local note = tonumber(self.m_Note:getText())
 		QuestionBox:new(
-				_("Möchtest du dem Spieler %s eine PA-Note von %d vergeben?", self.m_Target:getName(), note),
+				_("Möchtest du dem Spieler %s eine GWD-Note von %d vergeben?", self.m_Target:getName(), note),
 				function ()
 					triggerServerEvent("factionStateGivePANote", root, self.m_Target, note)
 				end)
 	else
-		ErrorBox:new(_"Ungültige PA-Note!")
+		ErrorBox:new(_"Ungültige GWD-Note!")
 	end
 end

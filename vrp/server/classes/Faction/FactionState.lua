@@ -761,6 +761,16 @@ function FactionState:Event_setSTVO(target, amount, reason)
 	end
 end
 
+function FactionState:getGrabbedPlayersInVehicle(vehicle)
+	local temp = {}
+	for k, player in pairs(vehicle:getOccupants()) do
+		if player.isGrabbedInVehicle then
+			table.insert(temp, player)
+		end
+	end
+	return temp
+end
+
 function FactionState:Command_tie(player, cmd, tname, bool, force)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() then
@@ -775,20 +785,33 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 							return
 						end
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
-							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
-								toggleControl(target, "enter_exit", false)
-								toggleControl(target, "fire", false)
-								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+							if not target.isGrabbedInVehicle or (force and bool) then
+								target.isGrabbedInVehicle = true
+								toggleControl(target, "fire", false) -- this is not working sometimes >_>
+
+								if not vehicle.eventStartExit then
+									vehicle.eventStartExit = true
+									addEventHandler("onVehicleStartExit", vehicle, self.onTiedExitBind)
+								end
+
 								if not force then
 									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
 									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								end
 							else
-								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
-								toggleControl(target, "enter_exit", true)
+								target.isGrabbedInVehicle = false
 								toggleControl(target, "fire", true)
-								removeEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+
+								-- only remove, when no grabbed players are in the vehicle
+								if #self:getGrabbedPlayersInVehicle(vehicle) == 0 then
+									removeEventHandler("onVehicleStartExit", vehicle, self.onTiedExitBind)
+									vehicle.eventStartExit = false
+								end
+
+								if not force then
+									player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
+								end
 							end
 						else
 							player:sendError(_("Der Spieler ist nicht in deinem Fahrzeug!", player))
@@ -806,9 +829,9 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 	end
 end
 
-function FactionState:onTiedExit(vehicle, seat, jacked)
-	if seat > 0 then
-		source:warpIntoVehicle(vehicle, seat)
+function FactionState:onTiedExit(exitingPlayer, seat, jacked, door)
+	if exitingPlayer.isGrabbedInVehicle then
+		cancelEvent()
 	end
 end
 
@@ -855,16 +878,32 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				local jailTime = wantedLevel * 5
 				local factionBonus = JAIL_COSTS[wantedLevel]
 
+				if player:getFaction() and player:getFaction():isEvilFaction() then
+					factionBonus = JAIL_COSTS[wantedLevel]/2
+				end
+
 				if bail then
 					bailcosts = BAIL_PRICES[wantedLevel]
 					player:setJailBail(bailcosts)
 				end
 
-				if player:getMoney() < JAIL_COSTS[wantedLevel] then
-					factionBonus = player:getMoney()
+				if policeman.vehicle and player.vehicle then
+					self:Command_tie(policeman, "tie", player:getName(), false, true)
 				end
-				self:Command_tie(policeman, "tie", player:getName(), false, true)
-				player:takeMoney(factionBonus, "Knast Strafe")
+				local mon = player:getMoney()
+				if mon < factionBonus then
+					local bankM = player:getBankMoney()
+					local remainMoney = factionBonus - mon
+					player:takeMoney(mon, "Knast Strafe (Bar)")
+					if remainMoney > bankM then
+						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+					else
+						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+					end
+				else
+					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+				end
+
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
@@ -960,7 +999,7 @@ function FactionState:Event_FactionRearm()
 		client:setHealth(100)
 		client:setArmor(100)
 		local inv = client:getInventory()
-		if inv then 
+		if inv then
 			inv:removeAllItem("Einsatzhelm")
 			inv:giveItem("Einsatzhelm",1)
 		end
@@ -1170,6 +1209,11 @@ function FactionState:Event_friskPlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
+			if target.vehicle and client.vehicle ~= target.vehicle then
+				client:sendErrpr(_("So kannst du den Spieler nicht durchsuchen!", target))
+				return
+			end
+
 			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()
@@ -1239,29 +1283,29 @@ end
 
 function FactionState:Event_givePANote(target, note)
 	local faction = client:getFaction()
-	if faction and faction:getId() == 1 then
+	if faction and faction:getId() == 3 then
 		if client:isFactionDuty() then
 			if faction:getPlayerRank(client) < FactionRank.Manager then
-				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
+				client:sendError(_("Du bist nicht berechtig GWD-Noten auszuteilen!", client))
 				return
 			end
 			if client == target then
-				client:sendError(_("Du darfst dir nicht selber eine PA-Noten setzen!", client))
+				client:sendError(_("Du darfst dir nicht selber eine GWD-Noten setzen!", client))
 				return
 			end
 			if note > 0 and note <= 100 then
-				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
-				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
+				target:sendInfo(_("%s hat dir eine GWD-Note von %d gegeben!", target, client:getName(), note))
+				client:sendInfo(_("Du hast %s eine GWD-Note von %d gegeben!", client, target:getName(), note))
 				target:setPaNote(note)
-				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
+				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
-				client:sendError(_("Ungültige PA-Note!", client))
+				client:sendError(_("Ungültige GWD-Note!", client))
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	else
-		client:sendError(_("Du bist nicht im SAPD!", client))
+		client:sendError(_("Du bist nicht im MBT!", client))
 	end
 end
 

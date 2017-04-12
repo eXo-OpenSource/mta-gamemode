@@ -51,7 +51,7 @@ end
 
 function NoDm:setPlayerNoDm(state)
 	if state == true then
-		if localPlayer:getPublicSync("Faction:Duty") == false then
+		if not localPlayer:getPublicSync("Faction:Duty") then
 			toggleControl ("fire", false)
 			toggleControl ("next_weapon", false)
 			toggleControl ("previous_weapon", false)
@@ -104,7 +104,7 @@ function NoDm:renderNoDmImage()
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
 	end
-	if localPlayer:getFactionId() ~= 1 and localPlayer:getFactionId() ~= 2 and getPedWeapon ( localPlayer, 9 ) ~= 43 then
+	if localPlayer:getFactionId() ~= 1 and localPlayer:getFactionId() ~= 2 and localPlayer:getFactionId() ~= 3 and getPedWeapon ( localPlayer, 9 ) ~= 43 then
 		setPedWeaponSlot(localPlayer,0)
 	end
 end

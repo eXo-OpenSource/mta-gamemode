@@ -60,7 +60,8 @@ function PremiumPlayer:takeVehicle(model)
 				warpPedIntoVehicle(self.m_Player, vehicle)
 				self.m_Player:triggerEvent("vehicleBought")
 				if row.Soundvan == 1 then
-					vehicle:setSpecial(VehicleSpecial.Soundvan)
+					vehicle.m_Tunings:saveTuning("Special", VehicleSpecial.Soundvan)
+					vehicle.m_Tunings:applyTuning()
 				end
 			else
 				self.m_Player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", self.m_Player), 255, 0, 0)

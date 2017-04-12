@@ -7,8 +7,8 @@
 -- ****************************************************************************
 FireManager = inherit(Singleton)
 
-local FIRE_TIME_MIN = 10 -- in minutes
-local FIRE_TIME_MAX = 20 -- in minutes
+local FIRE_TIME_MIN = 45 -- in minutes
+local FIRE_TIME_MAX = 90 -- in minutes
 
 local FIRE_MESSAGES = {
 	[1] = "Der Los Santos Airport steht in Flammen! Position: %s",

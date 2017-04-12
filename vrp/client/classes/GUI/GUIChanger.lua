@@ -15,7 +15,8 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_Items = {}
 	self.m_CurrentItem = 1
 
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, "<", self):setBackgroundColor(Color.Grey)
+	--self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
 	self.m_LeftButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem - 1
 		if self.m_CurrentItem <= 0 then
@@ -23,7 +24,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 		end
 		self:setIndex(self.m_CurrentItem)
 	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, ">", self):setBackgroundColor(Color.Grey)
+	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
 	self.m_RightButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem + 1
 		if self.m_CurrentItem > #self.m_Items then
