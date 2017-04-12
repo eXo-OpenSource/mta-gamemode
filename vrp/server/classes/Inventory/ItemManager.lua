@@ -50,6 +50,7 @@ function ItemManager:constructor()
 		["Pot-Helm"] = WearableHelmet,
 		["Gasmaske"] = WearableHelmet,
 		["Einsatzhelm"] = WearableHelmet,
+		["Hasenohren"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
