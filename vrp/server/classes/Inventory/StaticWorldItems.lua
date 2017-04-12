@@ -110,6 +110,6 @@ function StaticWorldItems:reload()
 		end
 	end
 	outputDebugString(count.." StaticWorldItems von "..countPositions.." Positionen geladen!")
-	outputChatBox(count.." StaticWorldItems von "..countPositions.." Positionen geladen!")
+	--outputChatBox(count.." StaticWorldItems von "..countPositions.." Positionen geladen!")
 
 end
