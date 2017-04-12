@@ -289,15 +289,16 @@ function Player:buckleSeatBelt(vehicle)
 	if self.m_SeatBelt then
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
 	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
-		outputChatBox("Du schnallst dich an.", self, 200,200,0)
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	end
+
+	if self.vehicle then
+		self:sendShortMessage(_("Du hast dich %sgeschnallt!", self, self.m_SeatBelt and "an" or "ab"))
 	end
 end
 
@@ -519,7 +520,7 @@ end
 function Player:destroyDropWeapons()
 	if self.m_WorldObjectWeapons then
 		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] then
+			if self.m_WorldObjectWeapons[i] and isElement(self.m_WorldObjectWeapons[i]) then
 				destroyElement(self.m_WorldObjectWeapons[i])
 			end
 		end
@@ -938,8 +939,8 @@ function Player:getPlayersInChatRange( irange)
 		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
-	elseif irange == 3 then 
-		range = CHAT_DISTRICT_RANGE 
+	elseif irange == 3 then
+		range = CHAT_DISTRICT_RANGE
 	end
 	local pos = self:getPosition()
 	local playersInRange = {}

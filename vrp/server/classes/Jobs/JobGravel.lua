@@ -175,6 +175,9 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		if rockDestroyed then
 			client:giveMoney(times*LOAN_MINING, "Kiesgruben-Job")
 		end
+		if chance(6) then
+			client:givePoints(1)
+		end
 
 		self:updateGravelAmount("mined", true)
 		table.insert(self.m_Gravel, gravel)
@@ -209,6 +212,9 @@ function JobGravel:Event_onCollectingContainerHit(track)
 				if source.vehicle:getOccupant() then
 					source.vehicle:getOccupant():giveMoney(LOAN_DOZER, "Kiesgruben-Job")
 				end
+			end
+			if chance(6) then
+				client:givePoints(1)
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 				self:updateGravelAmount("stock", true)
@@ -315,6 +321,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil
 	self.m_DumperDeliverStones[player] =  nil
+	player:givePoints(math.floor(amount/2))
 end
 
 JobGravel.Tracks = {

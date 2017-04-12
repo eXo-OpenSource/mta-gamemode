@@ -43,6 +43,8 @@ function Tour:show(id, title, description, success, x, y, z)
   self.m_CurrentId = id
   self.m_TargetBlip = Blip:new("Waypoint.png", x, y, 9999)
   self.m_TargetMarker = createMarker(self.m_TargetPos, "cylinder", 2, 50, 200, 255)
+  GPS:getSingleton():startNavigationTo(self.m_TargetPos)
+
   addEventHandler("onClientMarkerHit", self.m_TargetMarker, function(hitElement, dim)
       if localPlayer == hitElement and dim then
 	  	delete(self.m_TargetBlip)

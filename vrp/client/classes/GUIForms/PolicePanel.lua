@@ -9,7 +9,8 @@
 PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
-local ElementLocateBlip, ElementLocateTimer
+local ElementLocateBlip, ElementLocateTimer, GPSEnabled
+local GPSUpdateStep = 0
 
 addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
@@ -19,7 +20,7 @@ function PolicePanel:constructor()
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
-	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
 	self.m_TabSpieler = self.m_TabPanel:addTab(_"Spieler")
@@ -28,9 +29,9 @@ function PolicePanel:constructor()
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
+	--self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
 
-	self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
+	--self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
 
 	self.m_PlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabSpieler)
 	self.m_PlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabSpieler)
@@ -38,6 +39,10 @@ function PolicePanel:constructor()
 	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
 	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
 	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
+
+	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
+	self.m_GPS:setChecked(GPSEnabled)
+	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
 
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
@@ -68,9 +73,9 @@ function PolicePanel:constructor()
 	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
 
-	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
+	--self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
 
-	self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
+	--self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
 
 	self.m_JailPlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabJail)
 	self.m_JailPlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabJail)
@@ -137,7 +142,7 @@ function PolicePanel:constructor()
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
-	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
@@ -292,7 +297,7 @@ function PolicePanel:onSelectPlayer(player)
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
 	self.m_STVO:setText(_("STVO-Punkte: %d", player:getSTVO()))
 
-	self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+	--self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:onSelectJailPlayer(player)
@@ -305,7 +310,7 @@ function PolicePanel:onSelectJailPlayer(player)
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_JailPhoneStatus:setText(_("Handy: %s", phone))
 
-	self.m_JailSkin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+	--self.m_JailSkin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:locatePlayer()
@@ -333,7 +338,7 @@ function PolicePanel:locateElement(element, locationOf)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
-
+		GPSUpdateStep = 10
 		ElementLocateTimer = setTimer(function(locationOf)
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				if not localPlayer:getPublicSync("Faction:Duty") then
@@ -357,6 +362,8 @@ function PolicePanel:locateElement(element, locationOf)
 						self:stopLocating()
 					end
 				end
+
+				self:updateGPS()
 			else
 				self:stopLocating()
 			end
@@ -366,10 +373,24 @@ function PolicePanel:locateElement(element, locationOf)
 	end
 end
 
+function PolicePanel:updateGPS()
+	if GPSEnabled then
+		if GPSUpdateStep == 10 then
+			if ElementLocateBlip and ElementLocateBlip.getPosition then
+				local x, y, z = ElementLocateBlip:getPosition()
+				GPS:getSingleton():startNavigationTo(Vector3(x, y, z), false, true)
+			end
+			GPSUpdateStep = 0
+		end
+		GPSUpdateStep = GPSUpdateStep + 1
+	end
+end
+
 function PolicePanel:stopLocating()
 	if ElementLocateBlip then delete(ElementLocateBlip) end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
+	GPS:getSingleton():stopNavigation()
 end
 
 function PolicePanel:giveWanteds()

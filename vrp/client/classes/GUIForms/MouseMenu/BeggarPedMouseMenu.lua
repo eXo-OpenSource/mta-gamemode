@@ -28,6 +28,20 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("giveBeggarItem", self:getElement(), "Burger")
 			end
 		)
+	elseif element:getData("BeggarType") == BeggarTypes.Weed then
+
+		self:addItem("Weed verkaufen",
+			function ()
+				InputBox:new("Weed verkaufen", "Wieviel Weed möchtest du verkaufen?",
+					function (amount)
+						if tonumber(amount) > 0 and tonumber(amount) <= 200 then
+							triggerServerEvent("sellBeggarWeed", self:getElement(), tonumber(amount))
+						else
+							outputChatBox(_("%s (Obdachloser): Mehr als 200g Weed kann ich mir nicht leisten!", element:getData("BeggarName")))
+						end
+					end, true)
+			end
+		)
 	elseif element:getData("BeggarType") == BeggarTypes.Transport then
 		self:addItem("Obdachlosen transportieren",
 			function ()

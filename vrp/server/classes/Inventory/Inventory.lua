@@ -64,7 +64,7 @@ function Inventory:destructor()
 	self.m_Bag = nil
 	InventoryManager:getSingleton():deleteInventory(self.m_Owner)
 end
- 
+
 function Inventory:syncClient()
 	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
 end
@@ -146,6 +146,20 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 
 	--outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
 	self:syncClient()
+end
+
+function Inventory:useItemSecondary(itemId, bag, itemName, place)
+	if self:getItemAmount(itemName) <= 0 then
+		client:sendError(_("Inventar Fehler: Kein Item", client))
+		return
+	end
+
+	if self.m_ClassItems[itemName] then
+		local instance = ItemManager.Map[itemName]
+		if instance.useSecondary then
+			return instance:useSecondary(client, itemId, bag, place, itemName)
+		end
+	end
 end
 
 function Inventory:saveSpecialItem(id, amount)
@@ -254,8 +268,8 @@ function Inventory:setItemPlace(bag, placeOld, placeNew)
 end
 
 function Inventory:getItemValueByBag( bag, place)
-	if bag then 
-		if place then 
+	if bag then
+		if place then
 			local id = self:getItemID(bag, place)
 			if id then
 				return self.m_Items[id]["Value"]
@@ -265,10 +279,10 @@ function Inventory:getItemValueByBag( bag, place)
 end
 
 function Inventory:setItemValueByBag( bag, place, value )
-	if bag then 
-		if place then 
+	if bag then
+		if place then
 			local id = self:getItemID(bag, place)
-			if id then 
+			if id then
 				self.m_Items[self.m_Bag[bag][place]]["Value"] = value
 				self:saveItemValue(id, value)
 			end
@@ -276,7 +290,7 @@ function Inventory:setItemValueByBag( bag, place, value )
 	end
 end
 
-function Inventory:getItemPlacesByName(item) 
+function Inventory:getItemPlacesByName(item)
 	local placeTable = {}
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]

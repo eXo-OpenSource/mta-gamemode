@@ -78,9 +78,9 @@ function Inventory:constructor()
 	self:hide()
 end
 
-function Inventory:Event_OnRender() 
+function Inventory:Event_OnRender()
 	self.m_IsDeleteKeyDown = getKeyState("lctrl")
-	
+
 	if self.getSize then
 		if self.Show then
 			local sw,sh = self:getSize()
@@ -142,7 +142,7 @@ function Inventory:addItem(place, item)
 		slot.Place = place
 		slot.ItemName = item["Objekt"]
 		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"] > 1 and item["Menge"] or "", slot):setAlignX("right"):setAlignY("bottom")
 	end
 end
 
@@ -252,15 +252,17 @@ end
 
 function Inventory:addItemEvents(item)
 	item.onHover = function()
-		if not Inventory:getSingleton().m_IsDeleteKeyDown then 
+		if not Inventory:getSingleton().m_IsDeleteKeyDown then
 			item:setColor(Inventory.Color.ItemBackgroundHover)
-		else 
+		else
 			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)
 		end
 	end
+
 	item.onUnhover = function()
 		item:setColor(Inventory.Color.ItemBackground)
 	end
+
 	item.onLeftClick = function()
 		if item.Item then
 			local itemName = item.ItemName
@@ -268,36 +270,43 @@ function Inventory:addItemEvents(item)
 			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
 			if not self.m_IsDeleteKeyDown then
 				triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
-			else 
-				if self.m_InventoryActionPrompt then 
+			else
+				if self.m_InventoryActionPrompt then
 					self.m_InventoryActionPrompt:close()
 				end
 				local bThrowAway = self.m_ItemData[item.ItemName]["Wegwerf"] == 1
 				if bThrowAway then
 					self.m_ItemPromptReference = item
 					self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
-				else 
+				else
 					outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
 				end
 			end
 		end
 	end
+
+	item.onRightClick = function()
+		if item.Item then
+			local itemName = item.ItemName
+			triggerServerEvent("onPlayerSecondaryItemUseServer", localPlayer, item.Id, Inventory.Tabs[self.m_CurrentTab], itemName, item.Place)
+		end
+	end
 end
 
-function Inventory:acceptPrompt( bObj ) 
-	if self.m_InventoryActionPrompt then 
+function Inventory:acceptPrompt( bObj )
+	if self.m_InventoryActionPrompt then
 		if self.m_InventoryActionPrompt == bObj then
 			if self.m_ItemPromptReference then
 				local item = self.m_ItemPromptReference
-				if item then 
+				if item then
 					local name, id, place, bag = item.ItemName, item.Id, item.Place, Inventory.Tabs[self.m_CurrentTab]
-					local bThrowAway = self.m_ItemData[name]["Wegwerf"] == 1 
-					if bObj then 
+					local bThrowAway = self.m_ItemData[name]["Wegwerf"] == 1
+					if bObj then
 						bObj:close()
 					end
-					if bThrowAway then 
+					if bThrowAway then
 						triggerServerEvent("throwItem", localPlayer, item, bag, id, place, name)
-					else 
+					else
 						outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
 					end
 				end

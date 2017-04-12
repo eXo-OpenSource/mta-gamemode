@@ -79,8 +79,12 @@ function putAttachedElementsOnBones()
 			local tzz = rzx*xz+rzy*yz+rzz*zz
 			offrx,offry,offrz = getEulerAnglesFromMatrix(txx,txy,txz,tyx,tyy,tyz,tzx,tzy,tzz)
 			
-			setElementPosition(element,objx,objy,objz)
-			setElementRotation(element,offrx,offry,offrz,"ZXY")
+			if objx == objx and objy == objy and objz == objz then -- NaN Check
+				setElementPosition(element,objx,objy,objz)
+			end
+			if offrx == offrx and offry == offry and offrz == offrz then -- NaN Check
+				setElementRotation(element, offrx, offry, offrz, "ZXY")
+			end
 		else
 			setElementPosition(element,getElementPosition(ped))
 		end

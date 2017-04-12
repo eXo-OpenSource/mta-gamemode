@@ -80,6 +80,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
 	["eventMenu"] = RANK.Moderator,
+	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -89,7 +90,8 @@ ADMIN_RANK_PERMISSION = {
 }
 
 GroupRank = {
-	Normal = 1,
+	Normal = 0,
+	Rank1 = 1,
 	Rank2 = 2,
 	Rank3 = 3,
 	Rank4 = 4,
@@ -488,7 +490,8 @@ BeggarTypes = {
 	Money = 1;
 	Food = 2;
 	Transport = 3;
-    Ecstasy = 4;
+    Weed = 4;
+	Ecstasy = 5;
 }
 for i, v in pairs(BeggarTypes) do
 	BeggarTypes[v] = i

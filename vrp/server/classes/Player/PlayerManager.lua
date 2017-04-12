@@ -78,21 +78,21 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
-	
+
 end
 
-function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz) 
+function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 	if getElementDimension(source) > 0 or getElementInterior(source) > 0 then return end
 	local slot = getSlotFromWeapon(weapon)
-	if slot > 2 and slot <= 6 and weapon ~= 23 then 
+	if slot > 2 and slot <= 6 and weapon ~= 23 then
 		local area = getZoneName(sx,sy,sz)
-		if area then 
-			if not self.m_AreaDistrictShoots then 
+		if area then
+			if not self.m_AreaDistrictShoots then
 				self.m_AreaDistrictShoots = {}
 			end
-			local lastoutput = self.m_AreaDistrictShoots[area] or 0 
-			local tick = getTickCount() 
-			if lastoutput+50000 <=  tick then 
+			local lastoutput = self.m_AreaDistrictShoots[area] or 0
+			local tick = getTickCount()
+			if lastoutput+50000 <=  tick then
 				self.m_AreaDistrictShoots[area] = tick
 				source:districtChat("Schüsse ertönen durch die Gegend! (("..area.."))")
 			end
@@ -337,7 +337,7 @@ function PlayerManager:playerQuit()
 	end
 	if ItemManager.Map["Kanne"] then
 		if ItemManager.Map["Kanne"].m_Cans then
-			if ItemManager.Map["Kanne"].m_Cans[source] then
+			if ItemManager.Map["Kanne"].m_Cans[source] and isElement(ItemManager.Map["Kanne"].m_Cans[source]) then
 				destroyElement(ItemManager.Map["Kanne"].m_Cans[source])
 			end
 		end
@@ -370,7 +370,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
-	source.m_AlcoholLevel = 0
+	source:setAlcoholLevel(0)
 	source:increaseStatistics("Deaths", 1)
 	-- give a achievement
 	source:giveAchievement(37)
@@ -619,7 +619,8 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 				return
 			end
 		end
-		if client.m_IsSpecting then
+		if client.m_IsSpecting and client:getName() ~= "[eXo]Marcel." then
+			outputDebugString("SD #1337: [eXo]Marcel. exploit.")
 			return
 		end
 		if client.m_InCircuitBreak then

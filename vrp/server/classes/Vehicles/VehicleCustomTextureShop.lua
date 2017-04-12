@@ -7,6 +7,9 @@
 -- ****************************************************************************
 VehicleCustomTextureShop = inherit(Singleton)
 
+addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview", "texturePreviewRequestTextures", "texturePreviewStartPreview", "texturePreviewUpdateStatus"}
+
+
 function VehicleCustomTextureShop:constructor()
 	self.m_Path = "http://picupload.pewx.de/textures/"
 
@@ -27,12 +30,15 @@ function VehicleCustomTextureShop:constructor()
         Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
 
-	addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview"}
 
     addEventHandler("vehicleCustomTextureLoadPreview", root, bind(self.Event_texturePreview, self))
 
 	addEventHandler("vehicleCustomTextureBuy", root, bind(self.Event_vehicleTextureBuy, self))
     addEventHandler("vehicleCustomTextureAbbort", root, bind(self.Event_vehicleUpgradesAbort, self))
+	addEventHandler("texturePreviewStartPreview", root, bind(self.Event_texPreviewStartPreview, self))
+	addEventHandler("texturePreviewUpdateStatus", root, bind(self.Event_texPreviewUpdateStatus, self))
+
+
 end
 
 function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchingDimension)
@@ -146,8 +152,37 @@ function VehicleCustomTextureShop:setTexture(vehicle, url)
 	vehicle.m_IsURLTexture = false
 	setElementData(vehicle, "URL_PAINTJOB", false)
 
-	vehicle.m_Tunings:saveTuning("Texture", url)
+	vehicle.m_Tunings:addTexture(url, "vehiclegrunge256")
 	vehicle.m_Tunings:applyTuning()
 end
 
+addEventHandler("texturePreviewRequestTextures", root, function(admin)
+	--Todo Change Query add admin query
+	local result = sql:queryFetch("SELECT * FROM ??_textureshop", sql:getPrefix()) --DEVELOP
+	for id, row in ipairs(result) do
+		result[id]["UserName"] = Account.getNameFromId(row["UserId"])
+	end
+	client:triggerEvent("texturePreviewLoadTextures", result)
+end)
 
+function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
+	if client:getData("TexturePreviewCar") then client:getData("TexturePreviewCar"):destroy() end
+	local veh = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
+	veh.m_Tunings = VehicleTuning:new(veh)
+	veh.m_Tunings:saveTuning("Color1", {255, 255, 255})
+	veh.m_Tunings:saveTuning("Color2", {255, 255, 255})
+
+	client:setData("TexturePreviewCar", veh, true)
+	self:setTexture(veh, url)
+
+end
+
+function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
+	  --TODO ADD ADMIN CHECK
+	sql:queryExec("UPDATE ??_textureshop SET Status = ? WHERE Id = ?;", sql:getPrefix(), status, id)
+	if status == 1 then
+	  	client:sendInfo(_("Du hast die Textur bestätigt!", client))
+	else
+		client:sendInfo(_("Du hast die Textur abgelehnt!", client))
+	end
+end

@@ -84,10 +84,8 @@ function HUDSpeedo:draw()
 	-- draw the main speedo
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 	else
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_aviation.png", 0, 0, 0, tocolor(255, 255, 255, 150))
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 	end
 
 	-- draw the engine icon
@@ -104,6 +102,14 @@ function HUDSpeedo:draw()
 		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+70, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
 
+	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
+		if getTickCount()%1000 > 500 then
+			dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+		end
+	elseif getVehicleEngineState(vehicle) then
+		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
+	end
+
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 	end
@@ -112,10 +118,25 @@ function HUDSpeedo:draw()
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_right.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["right"]))
 	end
 
+	-- Draw needle
+	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
+
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 	--dxSetBlendMode("blend")
+end
+
+function HUDSpeedo:allOccupantsBuckeled()
+	if not localPlayer.vehicle or localPlayer.vehicleSeat > 0 then return end
+
+	for _, player in pairs(localPlayer.vehicle.occupants) do
+		if not getElementData(player, "isBuckeled") then
+			return false
+		end
+	end
+
+	return true
 end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)

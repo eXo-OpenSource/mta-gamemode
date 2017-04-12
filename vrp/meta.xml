@@ -496,6 +496,8 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
+
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -604,6 +606,7 @@
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -639,6 +642,7 @@
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
 	<script src="client/classes/Phone/AppActivity.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppContacts.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
@@ -721,7 +725,8 @@
 	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
-
+	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
+	
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -836,6 +841,7 @@
 	<vrpfile src="files/images/Phone/iPhone.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconContacts.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
@@ -849,6 +855,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconYouTube.png"/>
@@ -894,6 +901,7 @@
 	<vrpfile src="files/images/Speedo/main.png"/>
 	<vrpfile src="files/images/Speedo/main_aviation.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
+	<vrpfile src="files/images/Speedo/seatbelt.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
@@ -1134,6 +1142,7 @@
 	<vrpfile src="files/images/Nametag/ARMY.png"/>
 	<vrpfile src="files/images/Nametag/LCN.png"/>
 	<vrpfile src="files/images/Nametag/Yakuza.png"/>
+	<vrpfile src="files/images/Nametag/Vatos.png"/>
 	<vrpfile src="files/images/Nametag/Grove.png"/>
 	<vrpfile src="files/images/Nametag/Ballas.png"/>
 	<vrpfile src="files/images/Nametag/Outlaws.png"/>
@@ -1150,6 +1159,8 @@
 	<vrpfile src="files/images/Nametag/premium.png"/>
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
+	<vrpfile src="files/images/Nametag/MBT.png"/>
+
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
@@ -1295,6 +1306,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/helm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/crosshelmet.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/bikerhelmet.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/einsatzhelm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
@@ -1592,6 +1604,12 @@
 	<vrpfile src="files/models/a51fencing.txd"/>
 	<vrpfile src="files/models/a51fensin.col"/>
 	<vrpfile src="files/models/a51fensin.dff"/>
+	<vrpfile src="files/models/fire_ledder.txd" />
+	<vrpfile src="files/models/fire_ledder.dff" />
+	<vrpfile src="files/models/fire_ledder.col" />
+	<vrpfile src="files/models/fire_main.txd" />
+	<vrpfile src="files/models/fire_main.dff" />
+	<vrpfile src="files/models/fire_main.col" />
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
@@ -1630,6 +1648,7 @@
 	<vrpfile src="files/shader/loginShader.fx"/>
 
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->

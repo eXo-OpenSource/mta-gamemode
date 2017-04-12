@@ -34,6 +34,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 				setVehicleColor(self, 255, 255, 0)
 			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
 				setVehicleColor(self, 255, 255, 255)
+			elseif getElementModel(self) == 407 or getElementModel(self) == 544 and faction.m_Id == 4 then -- Rescue Fire Trucks
+				setVehicleColor(self, 255, 0, 0, 255, 255, 255)
 			else
 				local color = factionCarColors[self.m_Faction:getId()]
 				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
@@ -99,6 +101,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		end
 	end
 
+	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
+		FactionRescue:getSingleton():onLadderTruckSpawn(self)
+	end
+
 end
 
 function FactionVehicle:destructor()
@@ -133,10 +139,10 @@ function FactionVehicle:onEnter(player, seat)
 				removePedFromVehicle(player)
 				local x,y,z = getElementPosition(player)
 				setElementPosition(player,x,y,z)
-				return false	
+				return false
 			end
 		elseif player:getFaction() == self.m_Faction then
-			return true 
+			return true
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
 			removePedFromVehicle(player)

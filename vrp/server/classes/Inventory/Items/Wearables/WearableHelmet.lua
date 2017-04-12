@@ -12,6 +12,7 @@ WearableHelmet.objectTable =
 	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm",true},
 	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm",true},
 	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm",false},
+	["Einsatzhelm"] = {3911,0.1, 0.05, 0.95, 10, 180, "Einsatzhelm",false},
 	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske",true},
 }
 
@@ -32,7 +33,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 	if not player.m_IsWearingHelmet and not player.m_Helmet then --// if the player clicks onto the helmet without currently wearing one
 		if isElement(player.m_Helmet) then 
 			destroyElement(player.m_Helmet)
-		end
+		end 
 		local x,y,z = getElementPosition(player)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
@@ -49,6 +50,9 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
 		player:setData("isFaceConcealed", isFaceConcealed)
+		if itemName == "Einsatzhelm" then 
+			obj:setData("isProtectingHeadshot", true)
+		end
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
 		destroyElement(player.m_Helmet)
 		self.m_Helmets[player] = nil
@@ -76,5 +80,8 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
 		player:setData("isFaceConcealed", isFaceConcealed)
+		if itemName == "Einsatzhelm" then 
+			obj:setData("isProtectingHeadshot", true)
+		end
 	end
 end

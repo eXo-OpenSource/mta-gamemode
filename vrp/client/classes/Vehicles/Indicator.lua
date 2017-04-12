@@ -382,32 +382,30 @@ function Indicator:switchIndicatorState ( indicator )
             if getVehicleOccupant(v, 0) == localPlayer then
                 -- Switch the indicator state
                 if self.m_Enabled == true then
-
-					local dataName = 'i:' .. indicator
-					local currentValue = getElementData(v, dataName) or false
+					if indicator ~= "warn" and getElementData(v, "i:warn") then return end
 					if indicator == "warn" then
-						if not getElementData(v, "i:warn") == true then
-							setElementData(v, "i:left",true)
-							setElementData(v, "i:right",true)
-							setElementData(v, "i:warn",true)
+						if not getElementData(v, "i:warn") then
+							setElementData(v, "i:left", true)
+							setElementData(v, "i:right", true)
+							setElementData(v, "i:warn", true)
 						else
-							setElementData(v, "i:left",false)
-							setElementData(v, "i:right",false)
-							setElementData(v, "i:warn",false)
+							setElementData(v, "i:left", false)
+							setElementData(v, "i:right", false)
+							setElementData(v, "i:warn", false)
 						end
 					elseif indicator == "left" then
-						if getElementData(v, "i:left") == true then
-							setElementData(v, "i:left",false)
+						if getElementData(v, "i:left") then
+							setElementData(v, "i:left", false)
 						else
-							setElementData(v, "i:left",true)
-							setElementData(v, "i:right",false)
+							setElementData(v, "i:left", true)
+							setElementData(v, "i:right", false)
 						end
 					elseif indicator == "right" then
-						if getElementData(v, "i:right") == true then
-							setElementData(v, "i:right",false)
+						if getElementData(v, "i:right") then
+							setElementData(v, "i:right", false)
 						else
-							setElementData(v, "i:right",true)
-							setElementData(v, "i:left",false)
+							setElementData(v, "i:right", true)
+							setElementData(v, "i:left", false)
 						end
 					end
 				else

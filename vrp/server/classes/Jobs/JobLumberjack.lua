@@ -7,6 +7,7 @@
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
 local TREE_MONEY = 50
+local DUMP_POSITION = Vector3(-1969.8, -2432.6, 29.5)
 
 function JobLumberjack:constructor()
 	Job.constructor(self)
@@ -15,7 +16,7 @@ function JobLumberjack:constructor()
 	setElementVisibleTo(self.m_LoadUpMarker, root, false)
 	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
 
-	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
+	self.m_DumpMarker = createMarker(DUMP_POSITION, "corona", 4)
 	setElementVisibleTo(self.m_DumpMarker, root, false)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
@@ -123,7 +124,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 				end
 			end
 		end
-
+		hitElement:startNavigationTo(DUMP_POSITION)
 		hitElement:triggerEvent("lumberjackTreesLoadUp")
 	end
 end

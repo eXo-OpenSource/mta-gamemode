@@ -24,7 +24,7 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
 end
 
 function GUIWebView:destructor()
-    removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
+	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
     self.m_Browser:destroy()
 

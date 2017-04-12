@@ -58,7 +58,7 @@ function SkinShopGUI:Event_SkinBought(skinId)
 	localPlayer.m_OldSkin = skinId
 	delete(self)
 
-	SuccessBox:new(_"Skin erfolgreich übernommen!", 0, 255, 0)
+	SuccessBox:new(_"Skin erfolgreich übernommen!")
 end
 
 function SkinShopGUI:rotatePlayer()

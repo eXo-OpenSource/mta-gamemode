@@ -63,8 +63,8 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 				end
 			end
 		)
-		if localPlayer:getFaction():getId() == 1 then
-			self:addItem(_"Fraktion: PA-Note vergeben",
+		if localPlayer:getFaction():getId() == 3 then
+			self:addItem(_"Fraktion: GWD-Note vergeben",
 				function()
 					if self:getElement() then
 						StateFactionNoteGUI:new(self:getElement())

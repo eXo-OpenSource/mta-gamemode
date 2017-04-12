@@ -41,9 +41,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	end
 
 	if self.m_HasCloseButton then
-		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
-		--self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
-		--self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
+		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
 	end
 end
@@ -106,9 +104,7 @@ function GUIWindow:deleteOnClose(close) -- Todo: Find a better name
 end
 
 function GUIWindow:addBackButton(callback)
-	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[<]", self):setFont(VRPFont(35))
-	--self.m_BackButton.onHover = function () self.m_BackButton:setColor(Color.LightBlue) end
-	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function()
 		self:close()
 		if type(callback) == "function" then

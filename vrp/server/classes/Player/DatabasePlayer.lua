@@ -486,17 +486,28 @@ end
 function DatabasePlayer:setAlcoholLevel(level, oldLevel)
 	self.m_AlcoholLevel = math.round(level, 2)
 
-	if level > MAX_ALCOHOL_LEVEL then
-		self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
-	elseif level < 0 then
-		self.m_AlcoholLevel = 0
-	end
-
 	if self:isActive() then
-		if level == MAX_ALCOHOL_LEVEL then
+		if level > MAX_ALCOHOL_LEVEL then
+			self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
+		elseif level < 0 then
+			self.m_AlcoholLevel = 0
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		elseif level  >= 2 then
+			setPedWalkingStyle(self,126)
+		elseif level <= 2 then
+			toggleControl(self,"sprint",true)
+			setControlState(self,"walk",false)
+		elseif level == 0 then
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		end
+	
+		if level >= MAX_ALCOHOL_LEVEL then
 			self:sendShortMessage(_("Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!", self))
+			self:setAlcoholLevel(0)
 			self:kill()
-			self:setAlcoholLevel(MAX_ALCOHOL_LEVEL-1)
+			return
 		end
 		if oldLevel then
 			local diff = self.m_AlcoholLevel - oldLevel

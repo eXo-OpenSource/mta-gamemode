@@ -77,8 +77,10 @@ AppNavigator.Positions = {
 		["Public Transport"] =	 Vector3(1791.10, -1901.46, 13.08),
 	},
 	["Fraktionen"] = {
-		["Grove Street"] =   Vector3(2492.43, -1664.58, 13.34),
-		["Cosa Nostra"] =     Vector3(722.84, -1196.875, 19.123),
+		--["Grove Street"] =   Vector3(2492.43, -1664.58, 13.34),
+		--["Cosa Nostra"] =     Vector3(722.84, -1196.875, 19.123),
+		["Yakuza"] =     Vector3(2414.449, -2090.311, 13.426),
+		["Vatos Locos"] =     Vector3(2828.332, -2111.481, 12.206),
 		["Rescue Team"] =  Vector3(1727.42, -1738.01, 13.14),
 		["FBI"] =     Vector3(1534.83, -1440.72, 13.16),
 		["Police Department"] =      Vector3(1536.06, -1675.63, 13.11),

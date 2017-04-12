@@ -20,7 +20,7 @@ function ToastSuccess:getColor()
 end
 
 function ToastSuccess:getDefaultTitle()
-	return "Success"
+	return _"Erfolgreich"
 end
 
 addEvent("toast:successBox", true)

@@ -19,7 +19,7 @@ function GPS:constructor()
 	loadPathGraph("files/paths/sa_nodes.json")
 
 	-- Add events
-	--addEventHandler("GPS.calcRoute", root, bindAsync(self.Event_calcRoute, self))
+	addEventHandler("GPS.calcRoute", root, bindAsync(self.Event_calcRoute, self))
 end
 
 function GPS:destructor()

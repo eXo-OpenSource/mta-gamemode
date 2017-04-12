@@ -36,9 +36,7 @@ function SelfGUI:constructor()
 	self.m_OpenWindows = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
-	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
-	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
 	-- Tab: Allgemein
@@ -114,9 +112,6 @@ function SelfGUI:constructor()
 
 	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral):setBarColor(Color.Green)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
-
-	self.m_MigrationButton = VRPButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
-	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
 
 	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
@@ -461,11 +456,6 @@ function SelfGUI:AchievementButton_Click()
 	AchievementGUI:getSingleton():open()
 end
 
-function SelfGUI:MigratorButton_Click()
-	self:close()
-	MigratorPanel:getSingleton():open()
-end
-
 function SelfGUI:AdButton_Click()
 	self:close()
 	AdvertisementBox:getSingleton():open()
@@ -563,7 +553,7 @@ end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 	local x, y = self.m_GroupNameLabel:getPosition()
-	if rank and rank > 0 then
+	if rank and rank >= 0 then
 		self.m_GroupNameLabel:setText(name)
 		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMenuButton:setVisible(true)
@@ -963,7 +953,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HallelujaSound.onChange = function (state)
 			core:set("Other", "HallelujaSound", state)
 		end
-		
+
 		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
 		self.m_HitSound:setFont(VRPFont(25))
 		self.m_HitSound:setFontSize(1)

@@ -24,14 +24,10 @@ function AdminGUI:constructor(money)
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
-	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
-	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
-	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:delete() end
 
-	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[<]", self):setFont(VRPFont(35))
-	--self.m_BackButton.onHover = function () self.m_BackButton:setColor(Color.LightBlue) end
-	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
@@ -51,6 +47,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", 10, 270, 250, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", 10, 310, 250, 30, Color.Blue, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
@@ -68,6 +65,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
+
+
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -517,6 +516,9 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "eventMenu" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
+	elseif func == "vehicleTexture" then
+		--self:close()
+		--TexturePreviewGUI:getSingleton():open()
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then

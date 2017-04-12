@@ -10,7 +10,7 @@ AppCall = inherit(PhoneApp)
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
-local CALL_RESULT_CALLING = 3
+CALL_RESULT_CALLING = 3 -- used in AppContacts
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
@@ -90,10 +90,7 @@ function MainActivity:constructor(app)
 	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
-	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, FontAwesomeSymbols.Back, self.m_Tabs["Keyboard"])
-		:setFont(FontAwesome(30))
-		:setFontSize(1)
-		:setBackgroundColor(Color.Red)
+	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, "⌫", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Red)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
 	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
@@ -114,18 +111,25 @@ function MainActivity:constructor(app)
 	self:addNumpadButton("#", 3, 3)
 
 	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Player)
-	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-145, self.m_Tabs["Players"])
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.7)
 	self.m_PlayerListGrid:addColumn(_"Num.", 0.3)
+	GUILabel:new(10, 330, 50, 25, "Suche:", self.m_Tabs["Players"])
+	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
+	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
+
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
+
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+
 	self.m_TabPanel.onTabChanged = function(tabId)
 		if tabId == self.m_Tabs["Players"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
 		end
 	end
-
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
@@ -214,13 +218,42 @@ function MainActivity:ButtonCallPlayer_Click()
 
 end
 
+function MainActivity:ButtonAddContact_Click()
+	local item = self.m_PlayerListGrid:getSelectedItem()
+	local playerContacts = fromJSON(core:get("ContactList", "Players", "[ [ ] ]"))
+
+	for _, contact in pairs(playerContacts) do
+		if contact[1] == item.Owner then
+			ErrorBox:new("Kontakt ist bereits in der Kontaktliste!")
+			return
+		end
+	end
+
+	if item.Owner and item.Number then
+		table.insert(playerContacts, {tostring(item.Owner), item.Number})
+		core:set("ContactList", "Players", toJSON(playerContacts))
+	end
+end
+
+function MainActivity:searchPlayer()
+	self.m_PlayerListGrid:clear()
+
+	for number, numData in pairs(self.m_PhoneNumbers) do
+		if numData["OwnerType"] == "player" then
+			if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(numData["OwnerName"]), string.lower(self.m_PlayerSearch:getText())) then
+				local item = self.m_PlayerListGrid:addItem(numData["OwnerName"], tostring(number))
+				item.Owner = numData["OwnerName"]
+				item.Number = number
+			end
+		end
+	end
+end
+
 function MainActivity:Event_receivePhoneNumbers(list)
 	self.m_PhoneNumbers = list
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
-	local item
-	for index, key in pairs(grid) do
-		key:clear()
-	end
+
+	for index, key in pairs(grid) do key:clear() end
 	for number, numData in pairs(list) do
 		local item = grid[numData["OwnerType"]]:addItem(numData["OwnerName"], tostring(number))
 		item.Owner = numData["OwnerName"]

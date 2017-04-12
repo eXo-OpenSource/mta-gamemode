@@ -1,6 +1,6 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
-addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport"}
+addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -13,6 +13,7 @@ function BeggarPedManager:constructor()
 	addEventHandler("giveBeggarPedMoney", root, bind(self.Event_giveBeggarMoney, self))
 	addEventHandler("giveBeggarItem", root, bind(self.Event_giveBeggarItem, self))
 	addEventHandler("acceptTransport", root, bind(self.Event_acceptTransport, self))
+	addEventHandler("sellBeggarWeed", root, bind(self.Event_sellWeed, self))
 end
 
 function BeggarPedManager:destructor()
@@ -78,4 +79,9 @@ end
 function BeggarPedManager:Event_acceptTransport()
 	if not instanceof(source, BeggarPed) then return end
 	source:acceptTransport(client)
+end
+
+function BeggarPedManager:Event_sellWeed(amount)
+	if not instanceof(source, BeggarPed) then return end
+	source:sellWeed(client, amount)
 end

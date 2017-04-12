@@ -13,6 +13,8 @@ function RadioGUI:constructor()
 
 	self.m_CurrentStation = 0
 	self.m_ControlEnabled = true
+	self.m_Volume = 1
+
 	setPlayerHudComponentVisible("radio", false)
 	setRadioChannel(0)
 	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)

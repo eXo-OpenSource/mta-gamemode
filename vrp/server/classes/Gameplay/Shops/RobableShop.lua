@@ -10,9 +10,12 @@ RobableShop = inherit(Object)
 addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
+local ROBSHOP_PAUSE = 30*60 --in Sec
+
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
   -- Create NPC(s)
   self.m_Shop = shop
+  self.m_LastRob = 0
   self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 
   -- Respawn ped after a while (if necessary)
@@ -41,13 +44,19 @@ function RobableShop:Ped_Targetted(ped, attacker)
   if attacker:getGroup() then
     if attacker:getGroup():getType() == "Gang" then
 		if not attacker:isFactionDuty() then
-			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
+			if not ActionsCheck:getSingleton():isActionAllowed(player) then
 				return false
 			end
+			if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE) then
+				attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(self.m_LastRob+ROBSHOP_PAUSE)))
+				return false
+			end
+
 			if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
 				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
 				return false
 			end
+			self.m_LastRob = getRealTime().timestamp
 			local shop = ped.Shop
 			self.m_Shop = shop
 			if shop:getMoney() >= 250 then

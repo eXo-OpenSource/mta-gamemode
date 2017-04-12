@@ -115,9 +115,11 @@ function BankRobbery:destroyRob()
 	end
 	if self.m_CircuitBreakerPlayers then
 		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-			player:triggerEvent("forceCircuitBreakerClose")
-			self.m_CircuitBreakerPlayers[player] = nil
-			player.m_InCircuitBreak = false
+			if isElement(player) then
+				player:triggerEvent("forceCircuitBreakerClose")
+				self.m_CircuitBreakerPlayers[player] = nil
+				player.m_InCircuitBreak = false
+			end
 		end
 	end
 

@@ -61,6 +61,27 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
+			local hasHelmet = target.m_Helmet
+			if hasHelmet then 
+				local isProtectingHeadShot = hasHelmet:getData("isProtectingHeadshot")
+				if isProtectingHeadShot then 
+					local inventory = target:getInventory()
+					if inventory then
+						local itemCount = inventory:getItemAmount("Einsatzhelm")
+						if itemCount > 0 then 
+							inventory:removeItem("Einsatzhelm", 1)
+							destroyElement(hasHelmet)
+							target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
+							target.m_IsWearingHelmet = false
+							target.m_Helmet = false
+							target:setData("isFaceConcealed", false)
+							outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
+							target:triggerEvent("clientBloodScreen")
+							return
+						end
+					end
+				end
+			end
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
 			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
@@ -116,6 +137,9 @@ function Guns:setWeaponInStorage(player, weapon, ammo)
 		player.m_WeaponStorage[getSlotFromWeapon(weapon)] = {weapon, ammo}
 		setElementData(player, "hasSecondWeapon", true)
 	else 
+		if not player.m_WeaponStorage then 
+			player.m_WeaponStorage = {}
+		end
 		for i = 1,10 do 
 			player.m_WeaponStorage[i] = {false, false}
 			setElementData(player, "hasSecondWeapon", false)

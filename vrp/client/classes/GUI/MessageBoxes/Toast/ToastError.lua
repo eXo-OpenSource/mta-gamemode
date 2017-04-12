@@ -20,7 +20,7 @@ function ToastError:getColor()
 end
 
 function ToastError:getDefaultTitle()
-	return "Note"
+	return _"Fehler"
 end
 
 addEvent("toast:errorBox", true)

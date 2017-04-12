@@ -20,6 +20,7 @@ Achievement.Client = {
 	[84] = true, -- Mausrad Overheating
 	[85] = true, -- Mausrad Destroyer
 	[86] = true, -- Tardis
+	--[87] = true, -- April Fools 2k17
 }
 
 function Achievement:constructor ()
