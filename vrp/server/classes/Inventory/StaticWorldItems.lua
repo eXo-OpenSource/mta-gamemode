@@ -13,11 +13,15 @@ function StaticWorldItems:constructor()
 	self.m_Items = {
 		["Mushroom"]= {
 							["class"] = ItemManager:getSingleton():getInstance("Shrooms"),
-							["offsetZ"] = -1
+							["offsetZ"] = -1,
+							["chance"] = 33,
+							["enabled"] = true
 					  },
 		["Osterei"] = {
 							["class"] = ItemManager:getSingleton():getInstance("Osterei"),
-							["offsetZ"] = -0.85
+							["offsetZ"] = -0.85,
+							["chance"] = 33,
+							["enabled"] = EVENT_EASTER
 					  },
 	}
 
@@ -95,21 +99,24 @@ function StaticWorldItems:reload()
 	end
 	self.m_Objects = {}
 
-   	local count, countPositions = 0, 0
-	local result = sql:queryFetch("SELECT * FROM ??_word_objects;", sql:getPrefix())
+   	local result, count, countPositions
 
-	for i, row in pairs(result) do
-		if row.Typ and self.m_Items[row.Typ] then
-			if chance(33) then
-				self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
-				count = count+1
+	for typ, data in pairs(self.m_Items) do
+		if data["enabled"] == true then
+			count, countPositions = 0, 0
+			result = sql:queryFetch("SELECT * FROM ??_word_objects WHERE Typ = ?;", sql:getPrefix(), typ)
+			for i, row in pairs(result) do
+				if row.Typ and self.m_Items[row.Typ] then
+					if chance(data["chance"]) then
+						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
+						count = count+1
+					end
+					countPositions = countPositions+1
+				else
+					outputDebugString("Unknown Type ("..row.Typ..") for Static World Item ID: "..row.Id)
+				end
 			end
-			countPositions = countPositions+1
-		else
-			outputDebugString("Unknown Type ("..row.Typ..") for Static World Item ID: "..row.Id)
+			outputDebugString(count.." "..typ.."-StaticWorldItems von "..countPositions.." Positionen geladen!")
 		end
 	end
-	outputDebugString(count.." StaticWorldItems von "..countPositions.." Positionen geladen!")
-	--outputChatBox(count.." StaticWorldItems von "..countPositions.." Positionen geladen!")
-
 end

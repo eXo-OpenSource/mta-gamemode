@@ -48,6 +48,7 @@ function DrugsShroom:addObject(Id, pos)
 	self.m_Mushrooms[Id].Type = "Mushroom"
     self.m_Mushrooms[Id]:setData("clickable", true, true)
     addEventHandler("onElementClicked",self.m_Mushrooms[Id], bind(self.onMushroomClick, self))
+	return self.m_Mushrooms[Id]
 end
 
 function DrugsShroom:onMushroomClick(button, state, player)
