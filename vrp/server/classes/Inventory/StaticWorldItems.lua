@@ -107,7 +107,7 @@ function StaticWorldItems:reload()
 			result = sql:queryFetch("SELECT * FROM ??_word_objects WHERE Typ = ?;", sql:getPrefix(), typ)
 			for i, row in pairs(result) do
 				if row.Typ and self.m_Items[row.Typ] then
-					if chance(data["chance"]) then
+					if DEBUG or chance(data["chance"]) then
 						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
 						count = count+1
 					end
