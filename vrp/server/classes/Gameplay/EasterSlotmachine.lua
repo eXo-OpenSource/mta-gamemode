@@ -77,7 +77,8 @@ function EasterSlotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- Rolls
 
 	for i = 1, 3, 1 do
-		self.m_Objects.rolls[i] = createObject(2348, x, y, z)
+		self.m_Objects.rolls[i] = createObject(2347, x, y, z)
+		setElementData(self.m_Objects.rolls[i], "EasterSlotmachine", true)
 		setObjectScale(self.m_Objects.rolls[i], 2)
 		attachElements(self.m_Objects.rolls[i], self.m_Objects.slotmachine, -0.45+i/4, 0, 0)
 	end
@@ -136,27 +137,27 @@ function EasterSlotmachine:calculateSpin()
 	local rnd2
 	local grad = 0
 	if rnd == 1 then
-		rnd2 = math.random(0, 5)
+		rnd2 = math.random(0, 6)
 		if rnd2 == 1 then
 			grad = 1100				-- SLOT1 - Premium
 		elseif rnd2 == 2 then
 			grad = 1800				-- SLOT3 - Wopee
 		else
-			grad = 2140				-- SLOT5 - OSTERHASE ?
+			grad = 2140				-- SLOT5 - OSTERHASE
 		end
 	elseif rnd == 2 then
-		rnd2 = math.random(0, 5)
+		rnd2 = math.random(0, 6)
 		if rnd2 == 1 then
 			grad = 1100				-- SLOT1 - Premium
 		elseif rnd2 == 2 then
 			grad = 1800				-- SLOT3 - Wopee
 		else
-			grad = 2140				-- SLOT5 - OSTERHASE ?
+			grad = 1600				-- SLOT4 - Geld
 		end
 	elseif rnd == 3 then
 		grad = 1600					-- SLOT4 - Geld
 	elseif rnd == 4 or rnd == 5 then
-		grad = 1900					-- SLOT5 - OSTERHASE ?
+		grad = 1900					-- SLOT5 - OSTERHASE
 	elseif rnd == 6 or rnd == 7 then
 		grad = 1300					-- SLOT2 - Osterei
 	elseif rnd == 8 or rnd == 9 then
@@ -184,7 +185,7 @@ function EasterSlotmachine:moveLever(player)
 	)
 
 	local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
-	setTimer(triggerClientEvent, 150, 1, getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "start_machine", int, dim)
+	setTimer(triggerClientEvent, 150, 1, root, "onSlotmachineSoundPlay", root, x, y, z, "start_machine", int, dim)
 
 
 	setTimer(function() self:spin(player) end, 500, 1, player)
@@ -196,13 +197,11 @@ function EasterSlotmachine:spin(player)
 	local ergebnis = {}
 	for i = 1, 3, 1 do
 		local grad, icon = self:calculateSpin()
-		--	grad, icon = 900, "69"
 		local x, y, z = getElementPosition(self.m_Objects.rolls[i])
 		local _, _, _, rx, ry, rz = getElementAttachedOffsets(self.m_Objects.rolls[i])
-		--if rx == 0 then
 		rx, _, _ = getElementRotation(self.m_Objects.rolls[i])
-		--end
-		local _, _, rz = getElementRotation(self.m_Objects.slotmachine)
+		_, _, rz = getElementRotation(self.m_Objects.slotmachine)
+
 		if isElementAttached(self.m_Objects.rolls[i]) then
 			detachElements(self.m_Objects.rolls[i])
 
@@ -210,13 +209,12 @@ function EasterSlotmachine:spin(player)
 			setElementRotation(self.m_Objects.rolls[i], rx, ry, rz)
 
 		end
-		--	outputChatBox(grad-rx)
 
-		--	outputChatBox(rx-grad)
-		local s = moveObject(self.m_Objects.rolls[i], 2500+(i*600), x, y, z, grad, 0, 0, "InQuad")
+		moveObject(self.m_Objects.rolls[i], 2500+(i*600), x, y, z, grad, 0, 0, "InQuad")
 
 		ergebnis[i] = icon
 	end
+
 	setTimer(self.m_ResultFunc, 4100, 1, ergebnis, player)
 	return true;
 end
@@ -243,28 +241,42 @@ function EasterSlotmachine:start(player)
 end
 
 function EasterSlotmachine:giveWin(player, name, x, y, z)
-	--outputChatBox("Won: " .. name)
-	triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff")
-	--StatisticsLogger:addCasino( player, name, ...)
-
-	if name == "Money" then
-		local rnd = math.random(250, 15000)
+	if name == "Trostpreis" then
+		local rnd = math.random(500, 5000)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
 		player:giveMoney(rnd, "EasterSlotmaschine")
-		--todo StatisticsLogger
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
+		StatisticsLogger:addCasino(player, name, rnd)
+	elseif name == "Money" then
+		local rnd = math.random(10000, 20000)
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
+		player:giveMoney(rnd, "EasterSlotmaschine")
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
+		StatisticsLogger:addCasino(player, name, rnd)
 	elseif name == "Ostereier5" then
 		player:sendInfo("Du hast 5 Ostereier gewonnen!")
 		player:getInventory():giveItem("Osterei", 5)
-		-- todo StatisticsLogger
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 	elseif name == "Ostereier20" then
 		player:sendInfo("Du hast 20 Ostereier gewonnen!")
 		player:getInventory():giveItem("Osterei", 20)
-		-- todo StatisticsLogger
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
+		StatisticsLogger:addCasino(player, name, 20)
 	elseif name == "Premium" then
 		player:sendInfo("Du hast einen Monat Premium gewonnen! Gratulation!")
 		player.m_Premium:giveEasterMonth()
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_jackpot")
+		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "HasenOhren" then
 		player:getInventory():giveItem("Hasenohren", 1)
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
+		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "MrWhoopee" then
 		player:sendInfo("Du hast einen Mr. Whoopee gewonnen! Gückwunsch!")
 		local vehicle = PermanentVehicle.create(player, 423, 1513.77, -1771.50, 13.57, 0, nil, true)
@@ -274,6 +286,9 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
+
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_jackpot")
+		StatisticsLogger:addCasino(player, name, 1)
 	else
 		player:sendError(_("Unknown Win! %s", player, name))
 	end
@@ -303,9 +318,11 @@ function EasterSlotmachine:doResult(ergebnis, player)
 		self:giveWin(player, "Ostereier20", x, y, z)
 	elseif result["Bunny_Ears"] == 3 then
 		self:giveWin(player, "HasenOhren", x, y, z)
+	elseif result["VIP"] == 2 or result["Easter_Egg"] == 2 or result["Mr. Whoopee"] == 2 or result["Money"] == 2 or result["Easter_Eggs"] == 2 or result["Bunny_Ears"] == 2 then
+		self:giveWin(player, "Trostpreis", x, y, z)
 	else
 		player:sendInfo(_("Du hast leider nichts gewonnen!", player))
-		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_nothing")
+		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_nothing")
 	end
 
 	setTimer(self.m_ResetFunc, 1500, 1)

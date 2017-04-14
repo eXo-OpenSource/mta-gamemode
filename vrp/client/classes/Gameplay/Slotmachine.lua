@@ -41,7 +41,7 @@ if EVENT_EASTER then
 	end
 
 	for index, object in pairs(getElementsByType("object")) do
-		if object:getModel() == 2348 then
+		if object:getModel() == 2347 and getElementData(object, "EasterSlotmachine") then
 			Easter.updateTexture("cj_wheel_69256", "files/images/Events/Easter/slot_1.png", object) -- 69
 			Easter.updateTexture("cj_wheel_B1256", "files/images/Events/Easter/slot_2.png", object) -- Gold 1
 			Easter.updateTexture("cj_wheel_B2256", "files/images/Events/Easter/slot_3.png", object) -- Gold 2
