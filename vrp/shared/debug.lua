@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Debug stuff
 -- *
 -- ****************************************************************************
-DEBUG = GIT_BRANCH == "release/production" and false or true
+DEBUG = GIT_BRANCH ~= "release/production"
 
 if triggerClientEvent then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
