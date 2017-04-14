@@ -846,6 +846,11 @@ function Player:payDay()
 
 	self:addBankMoney(total, "Payday")
 
+	if EVENT_EASTER then
+		self:sendInfo("Du hast 5 Ostereier bekommen!")
+		self:getInventory():giveItem("Osterei", 5)
+	end
+
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
 	self:setNextPayday()
