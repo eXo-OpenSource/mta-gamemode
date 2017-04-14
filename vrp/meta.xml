@@ -821,14 +821,14 @@
 	<file src="files/data/indicators.dat" />
 
 	<!-- Events -->
-	<file src="files/images/Events/Easter/slotmachine1.jpg" />
-	<file src="files/images/Events/Easter/slotmachine2.jpg" />
-	<file src="files/images/Events/Easter/slot_1.png" />
-	<file src="files/images/Events/Easter/slot_2.png" />
-	<file src="files/images/Events/Easter/slot_3.png" />
-	<file src="files/images/Events/Easter/slot_4.png" />
-	<file src="files/images/Events/Easter/slot_5.png" />
-	<file src="files/images/Events/Easter/slot_6.png" />
+	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
+	<vrpfile src="files/images/Events/Easter/slotmachine2.jpg" />
+	<vrpfile src="files/images/Events/Easter/slot_1.png" />
+	<vrpfile src="files/images/Events/Easter/slot_2.png" />
+	<vrpfile src="files/images/Events/Easter/slot_3.png" />
+	<vrpfile src="files/images/Events/Easter/slot_4.png" />
+	<vrpfile src="files/images/Events/Easter/slot_5.png" />
+	<vrpfile src="files/images/Events/Easter/slot_6.png" />
 
 	<!-- Todo -->
 
