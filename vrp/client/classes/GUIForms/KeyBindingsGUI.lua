@@ -14,7 +14,7 @@ function KeyBindings:constructor()
   GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
   self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Tastenzuordnungen ändern", true, true, self)
-  self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[<]", self):setFont(VRPFont(35))
+  self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
   self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
   self.m_KeyGridList = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.07, self.m_Width*0.39, self.m_Height*0.8, self)
   self.m_KeyGridList:addColumn(_"Name", 0.6)

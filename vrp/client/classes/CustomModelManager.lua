@@ -142,17 +142,25 @@ function CustomModelManager:constructor()
 	-- Swatshield
 	self:loadImportTXD("files/models/Wearables/riot_shield.txd",1631)
 	self:loadImportDFF("files/models/Wearables/riot_shield.dff",1631)
-	self:loadImportCOL("filEs/models/Wearables/riot_shield.col",1631)
+	self:loadImportCOL("files/models/Wearables/riot_shield.col",1631)
 
 	-- Army Fence 1
 	self:loadImportTXD("files/models/a51fencing.txd", 16094)
 	self:loadImportDFF("files/models/a51fencing.dff", 16094)
-	self:loadImportCOL("filEs/models/a51fencing.col", 16094)
+	self:loadImportCOL("files/models/a51fencing.col", 16094)
 
 	-- Army Fence 2
 	self:loadImportTXD("files/models/a51fencing.txd", 974)
 	self:loadImportDFF("files/models/a51fensin.dff", 974)
-	self:loadImportCOL("filEs/models/a51fensin.col", 974)
+	self:loadImportCOL("files/models/a51fensin.col", 974)
+
+	--Easter Event:
+	self:loadImportTXD("files/models/easter_egg.txd", 1933)
+	self:loadImportDFF("files/models/easter_egg.dff", 1933)
+	self:loadImportCOL("filEs/models/easter_egg.col", 1933)
+
+	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
+	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

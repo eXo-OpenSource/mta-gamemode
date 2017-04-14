@@ -16,7 +16,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	self:addItem(_("Fahrzeug: %s", element:getName())):setTextColor(Color.LightBlue)
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
-			self:addItem(_"Auf-/Zuschließen",
+			self:addItem(_("%sschließen", element:isLocked() and "Auf" or "Zu"),
 				function()
 					if self:getElement() then
 						triggerServerEvent("vehicleLock", self:getElement())
@@ -76,7 +76,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					)
 				end
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name then
+		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
 			self:addItem(_"Schlüssel",
 				function()
 					if self:getElement() then
@@ -204,7 +204,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if element.occupants and #element.occupants > 0 then
+	if element.occupants and table.size(element.occupants) > 0 then
 		self:addItem(_"Insassen >>>",
 			function()
 				if self:getElement() then

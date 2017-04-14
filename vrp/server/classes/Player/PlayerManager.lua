@@ -727,14 +727,12 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
 					if client:getTotalAmmo(weaponSlot) >= muni then
-						if client:getTotalAmmo( weaponSlot) >= 1 then
-							client:takeWeapon(weaponId)
-							slot["WeaponId"] = weaponId
-							slot["Amount"] = muni
-							client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
-							client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-							return
-						end
+						client:takeWeapon(weaponId)
+						slot["WeaponId"] = weaponId
+						slot["Amount"] = muni
+						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
+						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+						return
 					else
 						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponId]))
 						client:triggerEvent("receiveGunBoxData", client.m_GunBox)

@@ -41,7 +41,6 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
-
 end
 
 function Player:destructor()
@@ -193,6 +192,7 @@ function Player:loadCharacter()
 
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
+	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
 
 function Player:createCharacter()
@@ -845,6 +845,11 @@ function Player:payDay()
 	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
 
 	self:addBankMoney(total, "Payday")
+
+	if EVENT_EASTER then
+		self:sendInfo("Du hast 5 Ostereier bekommen!")
+		self:getInventory():giveItem("Osterei", 5)
+	end
 
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again

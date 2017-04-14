@@ -10,6 +10,7 @@
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 
+	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
@@ -17,7 +18,6 @@
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
-	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
 	<script src="shared/math.lua" type="shared"/>
 	<script src="shared/crc32lua.lua" type="shared"/>
@@ -106,6 +106,7 @@
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
+	<script src="server/classes/Inventory/StaticWorldItems.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
 	<script src="server/classes/Inventory/GrowableManager.lua" type="server"/>
@@ -127,6 +128,7 @@
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemRepairKit.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
 
 	<!-- Wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -170,6 +172,7 @@
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<script src="server/classes/Gameplay/Jail.lua" type="server"/>
 	<script src="server/classes/Gameplay/Slotmachine.lua" type="server"/>
+	<script src="server/classes/Gameplay/EasterSlotmachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Townhall.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanchTraining.lua" type="server"/>
@@ -203,6 +206,10 @@
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
+
+
+	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
 
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -431,6 +438,8 @@
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
+
+
 
 	<script src="client/classes/Inventory/Wearable/WearableHelmet.lua" type="client"/>
 
@@ -723,10 +732,11 @@
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
 	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
+	<script src="client/classes/Effects/CylinderShader.lua" type="client"/>
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
-	
+
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -770,6 +780,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 
+	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
 	<file src="files/images/Chess/Bishop.png" />
@@ -808,7 +820,16 @@
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
 
-	<!-- Tests -->
+	<!-- Events -->
+	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
+	<vrpfile src="files/images/Events/Easter/slotmachine2.jpg" />
+	<vrpfile src="files/images/Events/Easter/slot_1.png" />
+	<vrpfile src="files/images/Events/Easter/slot_2.png" />
+	<vrpfile src="files/images/Events/Easter/slot_3.png" />
+	<vrpfile src="files/images/Events/Easter/slot_4.png" />
+	<vrpfile src="files/images/Events/Easter/slot_5.png" />
+	<vrpfile src="files/images/Events/Easter/slot_6.png" />
+
 	<!-- Todo -->
 
 	<script src="client/Main.lua" type="client"/>
@@ -1233,6 +1254,7 @@
 	<vrpfile src="files/images/Textures/Company/Academi/cooperation_logo.png"/>
 	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
+	<file src="files/images/Textures/waretex.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1281,6 +1303,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/NagelBand.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -1312,6 +1335,7 @@
 
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/Hasenohren.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
 
@@ -1610,6 +1634,14 @@
 	<vrpfile src="files/models/fire_main.txd" />
 	<vrpfile src="files/models/fire_main.dff" />
 	<vrpfile src="files/models/fire_main.col" />
+	<!-- Easter Event Start-->
+	<file src="files/models/easter_egg.txd" />
+	<file src="files/models/easter_egg.dff" />
+	<file src="files/models/easter_egg.col" />
+	<!-- Easter Event End-->
+
+	<vrpfile src="files/models/fbi.txd" />
+	<vrpfile src="files/models/fbi.dff" />
 
 	<vrpfile src="files/models/Wearables/helmet.txd" />
 	<vrpfile src="files/models/Wearables/helmet.dff" />
@@ -1634,6 +1666,9 @@
 	<vrpfile src="files/models/Wearables/riot_shield.dff" />
 	<vrpfile src="files/models/Wearables/riot_shield.col" />
 
+	<vrpfile src="files/models/Wearables/BunnyEars.txd" />
+	<vrpfile src="files/models/Wearables/BunnyEars.dff" />
+
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
@@ -1646,8 +1681,10 @@
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<vrpfile src="files/shader/loginShader.fx"/>
-
 	<vrpfile src="files/shader/radialFog.fx"/>
+	<file src="files/shader/cylinder.fx"/>
+
+
 	<vrpfile src="files/shader/zoomBlur.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
@@ -1663,7 +1700,6 @@
 	<vrpfile src="files/fonts/bit_font.ttf"/>
 	<vrpfile src="files/fonts/rage.ttf"/>
 	<vrpfile src="files/fonts/fuelstation.ttf"/>
-	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 	<vrpfile src="files/fonts/gobold-light.ttf"/>
 	<vrpfile src="files/fonts/vanadine-bold.ttf"/>
 

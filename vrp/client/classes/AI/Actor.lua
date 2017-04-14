@@ -94,7 +94,7 @@ addEventHandler("actorInitialSync", root,
         local loadSyncInfo = function(actor, info)
                 local taskId, parameters = unpack(info)
                 local taskClass = Task.getById(taskId)
-                outputDebug("Loading taskId: "..tostring(taskId).."; taskClass: "..tostring(taskClass))
+                --outputDebug("Loading taskId: "..tostring(taskId).."; taskClass: "..tostring(taskClass))
                 if taskClass then
                     actor:setPrimaryTask(taskClass:new(actor, unpack(parameters)))
                 end
