@@ -53,6 +53,8 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player:setData("isFaceConcealed", isFaceConcealed)
 		if itemName == "Einsatzhelm" then
 			obj:setData("isProtectingHeadshot", true)
+		elseif itemName == "Hasenohren" then
+			player:giveAchievement(90) -- Trage die tollen Hasenohren
 		end
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
 		destroyElement(player.m_Helmet)

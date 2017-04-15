@@ -37,6 +37,12 @@ function ItemEasteregg:onEastereggClick(button, state, player)
                 source:destroy()
                 player:getInventory():giveItem("Osterei", 1)
                 player:sendInfo(_("Du hast ein Osterei gesammelt!", player))
+
+				player:giveAchievement(88) -- Finde dein erstes Osterei
+
+				if player:getInventory():getItemAmount("Osterei") >= 50 then
+					player:giveAchievement(89) -- Ostereisammler
+				end
             else
                 player:sendError(_("Du kannst nicht soviele Ostereier tragen! Maximal %d Stk.!", player, player:getInventory():getMaxItemAmount("Osterei")))
             end
