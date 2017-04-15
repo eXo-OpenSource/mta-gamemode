@@ -289,7 +289,7 @@ end
 function PolicePanel:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
-	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
+	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keins -"))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_SelectedPlayer = player
 	local phone = "Ausgeschaltet"
@@ -303,7 +303,7 @@ end
 function PolicePanel:onSelectJailPlayer(player)
 	self.m_JailPlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	self.m_JailPlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
-	self.m_JailPlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
+	self.m_JailPlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keins -"))
 	self.m_JailPlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_JailSelectedPlayer = player
 	local phone = "Ausgeschaltet"
