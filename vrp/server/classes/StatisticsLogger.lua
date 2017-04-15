@@ -288,15 +288,15 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 	end
 end
 
-function StatisticsLogger:itemTradeLogs( player, player2, item, price)
+function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
     local userId = 0
 	local userId2 = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
 	if item and price then
 		if tonumber(price) then
-			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Date) VALUES(?, ?, ?, ?,  NOW())",
-				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price))
+			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Amount, Date) VALUES(?, ?, ?, ?, ?,  NOW())",
+				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price), amount or 0)
 		end
 	end
 end
