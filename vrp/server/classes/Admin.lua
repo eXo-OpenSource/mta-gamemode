@@ -408,7 +408,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
-			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
 
 			local preTarget = admin:getPrivateSync("isSpecting")
 			if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then
