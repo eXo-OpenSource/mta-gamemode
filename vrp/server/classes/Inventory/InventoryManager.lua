@@ -191,7 +191,7 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
 			if item == "Osterei" and money == 0 then
-				player:giveAchievement(91) -- Verschenke ein Osterei
+				target:giveAchievement(91) -- Verschenke ein Osterei
 			end
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
