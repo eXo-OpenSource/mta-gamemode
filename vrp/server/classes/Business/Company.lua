@@ -374,6 +374,7 @@ end
 
 function Company:phoneTakeOff(player, key, state, caller)
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	self:addLog(player, ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
 	player:triggerEvent("callAnswer", caller, voiceCall)
 	caller:setPhonePartner(player)
