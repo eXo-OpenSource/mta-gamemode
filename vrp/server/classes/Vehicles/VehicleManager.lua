@@ -46,11 +46,11 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleOnRadioChange",root,bind(self.Event_OnRadioChange, self))
-	addEventHandler("checkPaintJobPreviewCar", root, function() 
-		if client then 
+	addEventHandler("checkPaintJobPreviewCar", root, function()
+		if client then
 			local occVeh = getPedOccupiedVehicle(client)
-			if occVeh then 
-				if occVeh.m_Owner == client:getId() then 
+			if occVeh then
+				if occVeh.m_Owner == client:getId() then
 					triggerClientEvent("onClientPreviewVehicleChecked", client, occVeh)
 				end
 			end
@@ -122,12 +122,12 @@ function VehicleManager:destructor()
 	outputServerLog("Saved faction vehicles")
 end
 
-function VehicleManager:Event_OnElementDestroy() 
-	if getElementType(source) == "vehicle" then 
+function VehicleManager:Event_OnElementDestroy()
+	if getElementType(source) == "vehicle" then
 		local occs = getVehicleOccupants( source )
-		if occs then 
+		if occs then
 			for seat, player in pairs(occs) do
-				if player then 
+				if player then
 					player.m_SeatBelt = false
 					setElementData(player,"isBuckeled", false)
 				end
@@ -137,8 +137,8 @@ function VehicleManager:Event_OnElementDestroy()
 end
 
 function VehicleManager:Event_OnRadioChange( vehicle, radio)
-	if vehicle and radio then 
-		
+	if vehicle and radio then
+
 	end
 end
 
@@ -185,14 +185,14 @@ function VehicleManager:createVehiclesForPlayer(player)
 end
 
 function VehicleManager:destroyUnusedVehicles( player )
-	if player then 
+	if player then
 		local vehTable = self:getPlayerVehicles(player)
-		if vehTable then  
+		if vehTable then
 			local counter = 0
-			for k , vehicle in pairs(vehTable) do 
-				if vehicle then 
-					if vehicle.m_HasBeenUsed then 
-						if vehicle.m_HasBeenUsed == 0 then 
+			for k , vehicle in pairs(vehTable) do
+				if vehicle then
+					if vehicle.m_HasBeenUsed then
+						if vehicle.m_HasBeenUsed == 0 then
 							destroyElement(vehicle)
 							counter = counter + 1
 						end
@@ -506,6 +506,7 @@ function VehicleManager:Event_toggleHandBrake()
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
+			client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
 		else
 			client:sendError(_("Die Handbremse ist nicht angezogen!", client))
 		end
@@ -559,7 +560,7 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 						removePedFromVehicle(player)
 						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
 						setTimer(setPedAnimation, 5000,1, player, nil)
-					elseif player.m_SeatBelt == veh then 
+					elseif player.m_SeatBelt == veh then
 						if not player.m_lastInjuryMe then
 							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 							player.m_lastInjuryMe = tickCount
@@ -568,7 +569,7 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 							player.m_lastInjuryMe = tickCount
 						end
-					else 
+					else
 						player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 						removePedFromVehicle(player)
 						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
