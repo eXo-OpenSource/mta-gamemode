@@ -37,7 +37,7 @@ function StaticWorldItems:destructor()
 
 end
 
-function StaticWorldItems:addPosition(player, cmd, type)
+function StaticWorldItems:addPosition(player, cmd, type, dontSave)
 	if player:getRank() < RANK.Moderator then
 		player:sendError(_("Du bist nicht berechtigt!", player))
 		return
@@ -54,9 +54,11 @@ function StaticWorldItems:addPosition(player, cmd, type)
 	if not player:getOccupiedVehicle() then
         local pos = player:getPosition()
         pos.z = pos.z + self.m_Items[type]["offsetZ"]
+		self.m_Items[type]["class"]:addObject(sql:lastInsertId(), pos)
+		player:sendInfo(_("%s hinzugefügt!", player, type))
+
+		if dontSave then return end
 		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), type, pos.x, pos.y, pos.z, getZoneName(pos).."/"..getZoneName(pos, true), player:getId())
-        self.m_Items[type]["class"]:addObject(sql:lastInsertId(), pos)
-        player:sendInfo(_("%s hinzugefügt!", player, type))
     else
         player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
     end
@@ -76,9 +78,8 @@ function StaticWorldItems:removePosition(player)
 			if element.Id then
 				player:sendInfo(_("%s entfernt!", player, element.Type))
 				sql:queryExec("DELETE FROM ??_word_objects WHERE Id = ?;", sql:getPrefix(), element.Id)
-				self.m_Objects[Id] = nil
 				element:destroy()
-
+				self.m_Objects[element.Id] = nil
 			else
 				player:sendError(_("Osterei nicht gefunden!", player))
 			end
