@@ -476,6 +476,14 @@ function PlayerManager:playerChat(message, messageType)
 		source:meChat(false, message)
 		cancelEvent()
 	end
+
+	if source.spectBy then
+		for i, v in pairs(source.spectBy) do
+			if isElement(v) then
+				outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), v, 150, 150, 150)
+			end
+		end
+	end
 end
 
 function PlayerManager:Command_playerScream(source , cmd, ...)
@@ -495,6 +503,14 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	end
 	FactionState:getSingleton():addBugLog(source, "schreit", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
+
+	if source.spectBy then
+		for i, v in pairs(source.spectBy) do
+			if isElement(v) then
+				outputChatBox(("[2] %s: %s"):format(getPlayerName(source), text), v, 150, 150, 150)
+			end
+		end
+	end
 end
 
 function PlayerManager:Command_playerWhisper(source , cmd, ...)
@@ -514,6 +530,14 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	end
 	FactionState:getSingleton():addBugLog(source, "flüstert", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
+
+	if source.spectBy then
+		for i, v in pairs(source.spectBy) do
+			if isElement(v) then
+				outputChatBox(("[3] %s: %s"):format(getPlayerName(source), text), v, 150, 150, 150)
+			end
+		end
+	end
 end
 
 function PlayerManager:Event_playerSendMoney(amount)

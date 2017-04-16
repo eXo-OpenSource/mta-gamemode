@@ -192,13 +192,27 @@ addEventHandler("onClientVehicleDamage", root,
 				source:setHealth(301)
 			end
 		end
-		if getVehicleOccupant(source,0) == localPlayer then 
+		if getVehicleOccupant(source,0) == localPlayer then
 			if not weapon then
 				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
 			end
 		end
 	end
 )
+
+if EVENT_EASTER then
+	addEventHandler("onClientVehicleCollision", root,
+		function(hitElement, force)
+			if not localPlayer.vehicle then return end
+			if localPlayer.vehicle ~= source then return end
+			if localPlayer.vehicleSeat ~= 0 then return end
+
+			if hitElement and hitElement:getModel() == 1933 and force > 500 then
+				localPlayer:giveAchievement(92)
+			end
+		end
+	)
+end
 
 addEventHandler("soundvanChangeURLClient", root,
 	function(url)

@@ -176,7 +176,7 @@ function ScoreboardGUI:insertPlayers()
 			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
+			player:getCompany() and player:getCompany():getShortName()  or "- Keins -",
 			string.short(gname, 16),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
