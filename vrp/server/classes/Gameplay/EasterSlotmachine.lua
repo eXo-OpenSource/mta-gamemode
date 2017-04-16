@@ -344,10 +344,10 @@ end
 function EasterSlotmachine:startPlayer(player)
 	if not self.canSpin then return end
 
-	if player:getInventory():getItemAmount("Osterei") >= 5 then
-		player:getInventory():removeItem("Osterei", 5)
+	if player:getInventory():getItemAmount("Osterei") >= 2 then
+		player:getInventory():removeItem("Osterei", 2)
 		self:start(player)
 	else
-		player:sendWarning(_("Du brauchst mind. 5 Ostereier, um spielen zu können", player))
+		player:sendWarning(_("Du brauchst mind. 2 Ostereier, um spielen zu können", player))
 	end
 end
