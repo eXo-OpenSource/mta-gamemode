@@ -132,39 +132,52 @@ function EasterSlotmachine:reset()
 	end
 end
 
-function EasterSlotmachine:calculateSpin()
-	local rnd = tonumber(math.random(1, 9))
-	local rnd2
-	local grad = 0
-	if rnd == 1 then
-		rnd2 = math.random(0, 6)
-		if rnd2 == 1 then
-			grad = 1100				-- SLOT1 - Premium
-		elseif rnd2 == 2 then
-			grad = 1800				-- SLOT3 - Wopee
-		else
-			grad = 2140				-- SLOT5 - OSTERHASE
-		end
-	elseif rnd == 2 then
-		rnd2 = math.random(0, 6)
-		if rnd2 == 1 then
-			grad = 1100				-- SLOT1 - Premium
-		elseif rnd2 == 2 then
-			grad = 1800				-- SLOT3 - Wopee
-		else
-			grad = 1600				-- SLOT4 - Geld
-		end
-	elseif rnd == 3 then
-		grad = 1600					-- SLOT4 - Geld
-	elseif rnd == 4 or rnd == 5 then
-		grad = 1900					-- SLOT5 - OSTERHASE
-	elseif rnd == 6 or rnd == 7 then
-		grad = 1300					-- SLOT2 - Osterei
-	elseif rnd == 8 or rnd == 9 then
-		grad = 1700					-- SLOT6 - Hasenohren
-	end
+-- Premium
+-- Mr.Whoopee
+-- 20 Ostereier
+-- Geld (20k)
+-- 5 Ostereier
+-- Hasenohren
 
-	return grad, self.ms_Settings.iconNames[grad];
+function EasterSlotmachine:calculateSpin()
+	local spinTable = {
+		1100, -- Premium
+		1800, -- Mr.Whoopee
+		1800, -- Mr.Whoopee
+		2140, -- 20 Ostereier
+		2140, -- 20 Ostereier
+		2140, -- 20 Ostereier
+		2140, -- 20 Ostereier
+		2140, -- 20 Ostereier
+		1400, -- Geld (20k)
+		1500, -- Geld (20k)
+		1600, -- Geld (20k)
+		2000, -- Geld (20k)
+		1600, -- Geld (20k)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1300, -- Ostereier (x5)
+		1700, -- Hasenohren
+		1900, -- Hasenohren
+		2100, -- Hasenohren
+		2300, -- Hasenohren
+		1700, -- Hasenohren
+	}
+
+	local rotation = spinTable[math.random(1, #spinTable)]
+	return rotation, self.ms_Settings.iconNames[rotation]
 end
 
 function EasterSlotmachine:moveLever(player)
