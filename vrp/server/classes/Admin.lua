@@ -408,29 +408,32 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
-			if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
 
-			local preTarget = admin:getPrivateSync("isSpecting")
-			if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then
-				removeEventHandler("onElementDimensionChange", preTarget, admin.m_SpectDimensionFunc)
-				removeEventHandler("onElementInteriorChange", preTarget, admin.m_SpectInteriorFunc)
-			end
-
-			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-			admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
-
-			admin.m_PreSpectInt = getElementInterior(admin)
 			admin.m_IsSpecting = true
 			admin:setPrivateSync("isSpecting", target)
+			admin.m_PreSpectInt = getElementInterior(admin)
 			admin.m_PreSpectDim = getElementDimension(admin)
-			admin.m_SpectInteriorFunc = function(int) setElementInterior(admin, int) setCameraInterior(admin, int) end
-			admin.m_SpectDimensionFunc = function(dim) setElementDimension(admin, dim) end
+			admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
+			admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
 
 			if not target.spectBy then target.spectBy = {} end
 			table.insert(target.spectBy, admin)
 
+			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
+
+			admin:setInterior(target.interior)
+			admin:setCameraInterior(target.interior)
+			admin:setDimension(target.dimension)
+
+			-- this will probably fix the camera issue
+			local position = target.position
+			setCameraMatrix(admin, position)
 			setCameraTarget(admin, target)
+
 			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 
@@ -452,10 +455,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					admin:setFrozen(false)
 					if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
 
-					setElementInterior(admin, admin.m_PreSpectInt)
-					setElementDimension(admin, admin.m_PreSpectDim)
 					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					admin:setInterior(admin.m_PreSpectInt)
+					admin:setDimension(admin.m_PreSpectDim)
+
 					admin.m_IsSpecting = false
 					admin:setPrivateSync("isSpecting", false)
 				end
