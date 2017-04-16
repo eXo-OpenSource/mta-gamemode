@@ -408,7 +408,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
-			if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
 			if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
 
 			admin.m_IsSpecting = true
@@ -587,6 +587,31 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
     end
 end
 
+function Admin:outputSpectatingChat(source, messageType, message, phonePartner, playerToSend)
+	if source.spectBy then
+		for i, v in pairs(source.spectBy) do
+			if isElement(v) then
+				outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), v, 150, 150, 150)
+			end
+		end
+	end
+
+	if playerToSend then
+		for k, v in pairs(playerToSend) do
+			if v.spectBy and v ~= source then
+				for i, v in pairs(source.spectBy) do
+					if isElement(v) then
+						outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), v, 150, 150, 150)
+					end
+				end
+			end
+		end
+	end
+
+	--[[if phonePartner and phonePartner.spectBy then
+
+	end]]
+end
 
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Ticketsupporter then
