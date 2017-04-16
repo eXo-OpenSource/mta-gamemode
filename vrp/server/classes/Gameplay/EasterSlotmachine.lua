@@ -149,18 +149,15 @@ function EasterSlotmachine:calculateSpin()
 		2140, -- 20 Ostereier
 		2140, -- 20 Ostereier
 		2140, -- 20 Ostereier
-		1400, -- Geld (20k)
+		2140, -- 20 Ostereier
+		2140, -- 20 Ostereier
 		1500, -- Geld (20k)
 		1600, -- Geld (20k)
 		2000, -- Geld (20k)
 		1600, -- Geld (20k)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
-		1300, -- Ostereier (x5)
+		1400, -- Geld (20k)
+		1500, -- Geld (20k)
+		1500, -- Geld (20k)
 		1300, -- Ostereier (x5)
 		1300, -- Ostereier (x5)
 		1300, -- Ostereier (x5)
@@ -174,6 +171,9 @@ function EasterSlotmachine:calculateSpin()
 		2100, -- Hasenohren
 		2300, -- Hasenohren
 		1700, -- Hasenohren
+		1700, -- Hasenohren
+		1900, -- Hasenohren
+		2100, -- Hasenohren
 	}
 
 	local rotation = spinTable[math.random(1, #spinTable)]
@@ -262,7 +262,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, rnd)
 	elseif name == "Money" then
-		local rnd = math.random(10000, 20000)
+		local rnd = math.random(15000, 25000)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
 		player:giveMoney(rnd, "EasterSlotmaschine")
 
