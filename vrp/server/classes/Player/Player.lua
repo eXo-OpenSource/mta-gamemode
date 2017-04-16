@@ -886,8 +886,9 @@ function Player:addCrime(crimeType)
 	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end
 
-function Player:giveMoney(money, reason, bNoSound) -- Overriden
+function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 	DatabasePlayer.giveMoney(self, money, reason)
+	if silent then return end
 
 	if money ~= 0 then
 		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Cash)", {0, 94, 255}, 3000)

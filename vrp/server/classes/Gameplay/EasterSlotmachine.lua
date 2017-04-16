@@ -257,14 +257,14 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 	if name == "Trostpreis" then
 		local rnd = math.random(500, 5000)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
-		player:giveMoney(rnd, "EasterSlotmaschine")
+		player:giveMoney(rnd, "EasterSlotmaschine", true, true)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, rnd)
 	elseif name == "Money" then
 		local rnd = math.random(15000, 25000)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, rnd))
-		player:giveMoney(rnd, "EasterSlotmaschine")
+		player:giveMoney(rnd, "EasterSlotmaschine", true, true)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, rnd)
