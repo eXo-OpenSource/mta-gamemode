@@ -594,11 +594,13 @@ function Admin:outputSpectatingChat(source, messageType, message, phonePartner, 
 				outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), v, 150, 150, 150)
 			end
 		end
+
+		return
 	end
 
 	if playerToSend then
 		for k, v in pairs(playerToSend) do
-			if v.spectBy and v ~= source then
+			if v.spectBy then
 				for i, v in pairs(source.spectBy) do
 					if isElement(v) then
 						outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), v, 150, 150, 150)
