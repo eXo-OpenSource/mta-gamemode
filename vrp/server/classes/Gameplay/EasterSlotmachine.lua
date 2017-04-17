@@ -141,7 +141,7 @@ end
 
 function EasterSlotmachine:calculateSpin()
 	local spinTable = {
-		1100, -- Premium
+		1100, -- Premium -- "increased"
 		1800, -- Mr.Whoopee
 		1800, -- Mr.Whoopee
 		2140, -- 20 Ostereier
