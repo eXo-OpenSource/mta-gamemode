@@ -12,8 +12,8 @@ function Tour:constructor()
   self.m_Active = false
   if core:get("Tour", "done", false) == false then
     QuestionBox:new(
-      _("Möchtest du eine Server-Tour starten? Die Server-Tour bringt dir Erfahrung und eine kleine Anzahl an Belohnungen!"),
-      function() triggerServerEvent("tourStart", localPlayer) end, function() core:set("Tour", "done", true) end)
+      _("Möchtest du eine Server-Tour starten?\nNach Abschluss erhälst du Erfahrung und eine kleine Belohnung!"),
+      function() triggerServerEvent("tourStart", localPlayer) end, function() InfoBox:new("Du kannst die Tour jederzeit unter F2 -> Einstellungen erneut starten!") core:set("Tour", "done", true) end)
   end
   addRemoteEvents{"tourShow", "tourStop"}
   addEventHandler("tourShow", root, bind(self.show, self))

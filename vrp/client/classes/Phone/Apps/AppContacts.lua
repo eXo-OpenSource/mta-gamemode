@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/Phone/AppCall.lua
+-- *  PURPOSE:     Contacts app class
 -- *
 -- ****************************************************************************
 AppContacts = inherit(PhoneApp)

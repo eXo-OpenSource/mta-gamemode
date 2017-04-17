@@ -253,7 +253,7 @@ function SelfGUI:constructor()
 	self.m_ServerTour.onLeftClick = function()
 		if not Tour:getSingleton():isActive() then
 		QuestionBox:new(
-			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
+			_("Möchtest du eine Server-Tour starten?\nNach Abschluss erhälst du Erfahrung und eine kleine Belohnung!"),
 			function() triggerServerEvent("tourStart", localPlayer, true) end)
 			self:close()
 		else
