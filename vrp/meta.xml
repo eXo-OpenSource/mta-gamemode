@@ -654,6 +654,7 @@
 	<script src="client/classes/Phone/Apps/AppContacts.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppEPT.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCEF.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppOnOff.lua" type="client"/>
@@ -874,6 +875,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconBank.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -888,6 +890,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconBank.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconEPT.png"/>
 
 	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>
