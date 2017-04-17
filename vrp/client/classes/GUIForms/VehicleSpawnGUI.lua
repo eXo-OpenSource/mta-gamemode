@@ -52,7 +52,7 @@ function VehicleSpawnGUI:CallEPT_Click()
 		Phone:getSingleton():openAppByClass(AppCall)
 
 		CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "company", "EPT", CALL_RESULT_CALLING, false)
-		triggerServerEvent("callStartSpecial", root, 404)
+		triggerServerEvent("callStartSpecial", root, 389)
 	else
 		WarningBox:new("Dein Handy ist ausgeschaltet!")
 	end

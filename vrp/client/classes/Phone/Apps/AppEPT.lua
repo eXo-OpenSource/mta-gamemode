@@ -28,7 +28,7 @@ end
 function AppEPT:CallEPT()
 	Phone:getSingleton():openAppByClass(AppCall)
 	CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "company", "EPT", CALL_RESULT_CALLING, false)
-	triggerServerEvent("callStartSpecial", root, 404)
+	triggerServerEvent("callStartSpecial", root, 389)
 
 	self:close()
 end
