@@ -480,7 +480,3 @@ end
 function Group:getShops()
 	return self.m_Shops
 end
-
-function Group:getPhoneNumber()
-	self.m_PhoneNumber:getNumber()
-end

@@ -134,7 +134,7 @@ function SanNews:Event_onPlayerChat(player, text, type)
 	end
 end
 
-function SanNews:Event_advertisement(senderIndex, text, color, duration)
+function SanNews:Event_advertisement(sendername, text, color, duration)
 	local length = text:len()
 	if length <= 50 and length >= 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
@@ -152,14 +152,7 @@ function SanNews:Event_advertisement(senderIndex, text, color, duration)
 				client:triggerEvent("closeAdvertisementBox")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				StatisticsLogger:getSingleton():addAdvert(client, text)
-
-				local sender = {referenz = "player", name = client:getName()}
-				if senderIndex == 2 and client:getGroup() and client:getGroup():getName() then
-					outputChatBox(tostring(client:getGroup():getPhoneNumber()))
-					sender = {referenz = "group", name = client:getGroup():getName(), number = client:getGroup():getPhoneNumber()}
-				end
-
-				triggerClientEvent("showAd", client, sender, text, color, duration)
+				triggerClientEvent("showAd", client, sendername, text, color, duration)
 			else
 				local next = self.m_NextAd - getRealTime().timestamp
 				client:sendError(_("Die nächste Werbung kann erst in %d Sekunden gesendet werden!", client, next))
