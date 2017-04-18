@@ -22,7 +22,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("vehicleLock", self:getElement())
 					end
 				end
-			)
+			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
@@ -33,7 +33,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuRespawn:new(posX, posY, element), element)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Home)
 			else
 				self:addItem(_"Respawn",
 					function()
@@ -41,7 +41,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							triggerServerEvent("vehicleRespawn", self:getElement())
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Home)
 			end
 		end
 
@@ -83,7 +83,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						VehicleKeyGUI:new(self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Key)
 
 			if getVehicleInteractType(element) == "Special" then
 				self:addItem(_"Repairkit: reparieren",
@@ -127,7 +127,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("vehicleEmpty", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.SignOut)
 		end
 		--[[if localPlayer:isInVehicle() then
 			self:addItem(_"Kurzschließen",
@@ -202,7 +202,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuAdmin:new(posX, posY, element), element)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Star)
 	end
 	if element.occupants and table.size(element.occupants) > 0 then
 		self:addItem(_"Insassen >>>",
@@ -212,7 +212,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(PassengerMouseMenu:new(posX, posY, element), element)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Group)
 	end
 
 	if VehicleSellGUI then

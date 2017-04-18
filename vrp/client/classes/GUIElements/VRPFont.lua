@@ -42,6 +42,7 @@ FontAwesomeSymbols = {
 	Close = "",
 	Left = "",
 	Right = "",
+	LongRight = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
@@ -68,6 +69,10 @@ FontAwesomeSymbols = {
 	Plus = "",
 	Lock = "",
 	Unlock = "",
+	Key = "",
+	Home = "",
+	SignOut = "",
+	Star = "",
 }
 
 Fonts = {
