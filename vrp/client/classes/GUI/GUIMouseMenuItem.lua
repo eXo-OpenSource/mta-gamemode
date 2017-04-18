@@ -16,7 +16,7 @@ function GUIMouseMenuItem:constructor(posX, posY, width, height, text, parent)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height))
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 220))
 
-	self.m_IconFont = FontAwesome(self.m_Height*0.8)
+	self.m_IconFont = FontAwesome(self.m_Height*0.75)
 	self.onInternalHover = function() self:setColor(Color.White) self:setTextColor(Color.Black) end
 	self.onInternalUnhover = function() self:setColor(tocolor(0, 0, 0, 220)) self:setTextColor(Color.White) end
 end
