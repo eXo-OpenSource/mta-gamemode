@@ -145,17 +145,19 @@ RESOURCES_TO_STOP = {
 
 DONT_BUCKLE =
 {
-[581] = true,
-[509] = true,
-[481] = true,
-[462] = true,
-[521] = true,
-[463] = true,
-[510] = true,
-[522] = true,
-[461] = true,
-[448] = true,
-[586] = true,
+[581] = true, --BF-400
+[509] = true, --Bike
+[481] = true, --BMX
+[462] = true, --Faggio
+[521] = true, --FCR-900
+[463] = true, --Freeway
+[510] = true, --MTB
+[522] = true, --NRG-500
+[461] = true, --PCJ-600
+[448] = true, --Pizzaboy
+[586] = true, --Wayfarer
+[468] = true, --Sanchez
+[471] = true, --Quad
 }
 
 setWeaponProperty(24,"pro","target_range",45)
