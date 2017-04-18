@@ -620,7 +620,9 @@ end
 
 function FactionState:sendShortMessage(text, ...)
 	for k, player in pairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_(text, player), "Staat", {11, 102, 8}, ...)
+		if player:isFactionDuty() then
+			player:sendShortMessage(_(text, player), "Staat", {11, 102, 8}, ...)
+		end
 	end
 end
 
@@ -1432,10 +1434,12 @@ function FactionState:addBugLog(player, func, msg)
 			local id = elements[i].BugId
 
 			if self.m_Bugs[id] then
-				local logId = #self.m_Bugs[id]["log"]+1
-				self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
-				self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
-
+				if getTickCount() - self.m_Bugs[id]["lastMessage"] >= 300000 then
+					local logId = #self.m_Bugs[id]["log"]+1
+					self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
+					self.m_Bugs[id]["lastMessage"] = getTickCount()
+					self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
+				end
 			end
 		end
 	end
@@ -1483,7 +1487,8 @@ function FactionState:Event_attachBug()
 		self.m_Bugs[id] = {
 			["element"] = source,
 			["log"] = {},
-			["active"] = true
+			["active"] = true,
+			["lastMessage"] = 0,
 		}
 		source.BugId = id
 		source:setData("Wanze", true, true)
