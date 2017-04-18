@@ -192,7 +192,7 @@ function Company:sendChatMessage(sourcePlayer,message)
     local receivedPlayers = {}
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, 95, 30, 250)
+		player:sendMessage(text, 100, 150, 250)
         if player ~= sourcePlayer then
             receivedPlayers[#receivedPlayers+1] = player:getName()
         end
