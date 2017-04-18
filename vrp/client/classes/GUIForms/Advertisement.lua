@@ -46,7 +46,12 @@ function AdvertisementBox:constructor()
 
 	self.m_SubmitButton = VRPButton:new(self.m_Width*0.64, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.15, _"Werbung schalten", true, self.m_Window):setBarColor(Color.Green)
 
-	self.m_SubmitButton.onLeftClick = function() triggerServerEvent("sanNewsAdvertisement", localPlayer, self.m_SenderNameChanger:getIndex(), self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex()) end
+
+	self.m_SubmitButton.onLeftClick =
+		function()
+			local senderName, senderIndex = self.m_SenderNameChanger:getIndex()
+			triggerServerEvent("sanNewsAdvertisement", localPlayer, senderIndex, self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex())
+		end
 	self:calcCosts()
 end
 
@@ -92,8 +97,39 @@ local ColorTable = {
 
 local currentAd
 
-addEventHandler("showAd", root, function(senderString, text, color, duration)
-	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(senderString), ColorTable[color], AD_DURATIONS[duration]*1000)
+addEventHandler("showAd", root, function(sender, text, color, duration)
+	local callSender =
+	function()
+		if Phone:getSingleton():isOn()then
+			Phone:getSingleton():onShow()
+			Phone:getSingleton():closeAllApps()
+			Phone:getSingleton():openAppByClass(AppCall)
+
+			if sender.referenz == "player" then
+				local player = getPlayerFromName(sender.name)
+
+				if not player then
+					ErrorBox:new(_"Dieser Spieler ist nicht mehr online!")
+					return
+				end
+
+				if player == localPlayer then
+					ErrorBox:new(_"Du kannst dich nicht selbst anrufen!")
+					return
+				end
+
+				CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "player", player, CALL_RESULT_CALLING, false)
+				triggerServerEvent("callStart", root, player)
+			elseif sender.referenz == "group" then
+				CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "group", sender.name, CALL_RESULT_CALLING, false)
+				triggerServerEvent("callStart", root, sender.number)
+			end
+		else
+			WarningBox:new("Dein Handy ist ausgeschaltet!")
+		end
+	end
+
+	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(sender.name), ColorTable[color], AD_DURATIONS[duration]*1000, callSender)
 end)
 
 addEventHandler("closeAd", root, function()
