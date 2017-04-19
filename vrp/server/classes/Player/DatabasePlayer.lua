@@ -26,9 +26,7 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	if self.m_DoNotSave then
-		self:save()
-	end
+	self:save()
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -80,10 +78,6 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	if self.m_DoNotSave then
-		return
-	end
-
 	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, STVO, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
@@ -187,9 +181,6 @@ end
 
 function DatabasePlayer:save()
 	if self:isGuest() then
-		return false
-	end
-	if self.m_DoNotSave then
 		return false
 	end
 	if self.m_LoggedIn then
@@ -316,7 +307,6 @@ function DatabasePlayer:increaseStatistics(stat, value)
 	else
 		outputDebug("Error increasing Stat. "..stat.." for Player Id: "..self.m_Id.."! DB-Column missing!")
 	end
-
 end
 
 function DatabasePlayer:setGroup(group)
@@ -502,7 +492,7 @@ function DatabasePlayer:setAlcoholLevel(level, oldLevel)
 			toggleControl(self,"sprint",true)
 			setPedWalkingStyle(self,0)
 		end
-	
+
 		if level >= MAX_ALCOHOL_LEVEL then
 			self:sendShortMessage(_("Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!", self))
 			self:setAlcoholLevel(0)
