@@ -27,6 +27,7 @@ end
 
 function DatabasePlayer:destructor()
 	outputChatBox("DatabasePlayer:Destructor")
+	outputConsole(debug.traceback())
 	self:save()
 end
 
