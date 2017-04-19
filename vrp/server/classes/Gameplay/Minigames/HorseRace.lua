@@ -196,17 +196,17 @@ end
 function HorseRace:checkWinner(winningHorse)
 	local result = sql:queryFetch("SELECT * FROM ??_horse_bets", sql:getPrefix())
  	for i, row in pairs(result) do
-		local player, isOffline = DatabasePlayer.get(Id)
-		
+		local player, isOffline = DatabasePlayer.get(row.UserId)
+
 		if row["Horse"] == winningHorse then
 			if player then
 				if isOffline then player:load() end
-			
+
 				local win = tonumber(row["Bet"])*3
 				player:giveMoney(win, "Pferde-Wetten")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
-				
-				if isOffline then 
+
+				if isOffline then
 					delete(player)
 				else
 					outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
