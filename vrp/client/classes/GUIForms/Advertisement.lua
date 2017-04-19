@@ -122,7 +122,7 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 				triggerServerEvent("callStart", root, player)
 			elseif sender.referenz == "group" then
 				CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "group", sender.name, CALL_RESULT_CALLING, false)
-				triggerServerEvent("callStart", root, sender.number)
+				triggerServerEvent("callStartSpecial", root, sender.number)
 			end
 		else
 			WarningBox:new("Dein Handy ist ausgeschaltet!")

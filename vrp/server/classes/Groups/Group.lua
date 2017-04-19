@@ -482,5 +482,5 @@ function Group:getShops()
 end
 
 function Group:getPhoneNumber()
-	self.m_PhoneNumber:getNumber()
+	return self.m_PhoneNumber:getNumber()
 end
