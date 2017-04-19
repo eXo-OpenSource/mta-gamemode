@@ -185,7 +185,12 @@ function HorseRace:setWinner(horseId)
 				playeritem:triggerEvent("stopPferdeRennenClient")
 			end
 		end
-		self:checkWinner(horseId)
+
+		Async.create(
+			function()
+				self:checkWinner(horseId)
+			end
+		)
 	end
 end
 
