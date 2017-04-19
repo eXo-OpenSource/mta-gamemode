@@ -26,6 +26,7 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
+	outputChatBox("DatabasePlayer:Destructor")
 	self:save()
 end
 
@@ -72,6 +73,8 @@ function DatabasePlayer:virtual_constructor()
 end
 
 function DatabasePlayer:virtual_destructor()
+	outputChatBox("DatabasePlayer:virtual_destructor")
+
 	if self.m_Id > 0 then
 		DatabasePlayer.Map[self.m_Id] = nil
 	end
