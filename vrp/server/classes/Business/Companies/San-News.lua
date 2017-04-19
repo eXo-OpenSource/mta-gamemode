@@ -155,7 +155,6 @@ function SanNews:Event_advertisement(senderIndex, text, color, duration)
 
 				local sender = {referenz = "player", name = client:getName()}
 				if senderIndex == 2 and client:getGroup() and client:getGroup():getName() then
-					outputChatBox(tostring(client:getGroup():getPhoneNumber()))
 					sender = {referenz = "group", name = client:getGroup():getName(), number = client:getGroup():getPhoneNumber()}
 				end
 
