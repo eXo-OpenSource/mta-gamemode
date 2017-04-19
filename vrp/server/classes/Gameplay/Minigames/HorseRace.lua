@@ -190,7 +190,7 @@ function HorseRace:setWinner(horseId)
 			function()
 				self:checkWinner(horseId)
 			end
-		)
+		)()
 	end
 end
 
