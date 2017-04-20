@@ -1,49 +1,29 @@
 <meta>
-	<info name="Helicopter Grabbing" author="Remp" type="misc" version="1.3.0"/>
+	<info name="Helicopter Grabbing" author="Remp" type="misc" version="1.2.0"/>
 
 	<script src="heli_c.lua" type="client"/>
-	<script src="heli_s.lua" type="server"/>
-	
-	<script src="debug_s.lua" type="server"/>
-	<script src="debug_c.lua" type="client"/>
-	
-	<script src="util.lua" type="client"/>
-	<script src="util.lua" type="server"/>
-	
-	<config src="help.xml" type="client"/>
+	<script src="heli_s.lua"/>
 
 	<!-- 
-	toggleHangingWeightLimit(true/false) - returns nothing
-	setPlayerGrabState(player, true/false, [ heli , side = 0 or 1 (left or right), linePercent = 0.5 (0 - 1)]) - returns true if the state was set successfully, false if not
-	isPlayerGrabbingHeli(player) - returns true if they are, false if they arent. nil if player is invalid
-	getPlayerGrabData(player) - returns heli, side, linePercent, legsUp if they are hanging, nil if they arent or an invalid player is passed
-	getPlayersGrabbingHeli(heli, [side, line]) - returns a table of all players hanging on the heli, nil if there are no players or the heli is invalid
+	ToggleHangingWeightLimit(true/false) - returns nothing
+	SetPlayerGrabbedHeli(player, true/false, [ heli , side = "right", line_percent = 0.5]) - returns nothing
+	IsPlayerHangingFromHeli(player) - returns true if they are, false if they arent. nil if player is invalid
+	GetPlayerHangingData(player) - returns heli,side,line_percent,legs_up if they are hanging, nil if they arent or an invalid player is passed
+	GetPlayersHangingFromHeli(heli, [side, line]) - returns a table of all players hanging on the heli, nil if there are no players or the heli is invalid
 	-->
-	<export function="toggleHangingWeightLimit" type="server" />
-	<export function="setPlayerGrabState" type="server"/>
-	<export function="isPlayerGrabbingHeli" type="server"/>
-	<export function="getPlayerGrabData" type="server"/>
-	<export function="getPlayersGrabbingHeli" type="server"/>	
-	
-	
-	<settings>	
-		<setting name="showChatMessages" value="[false]"/>
-	
-		<!-- these are no longer needed in current mta versions, they exist only for backwards compatibility -->
-		<!-- can be either control names or key names -->
-		<setting name="hang_binds" value="[[ ]]"/>
-		<!-- command names -->
-		<setting name="hang_commands" value="[[ ]]"/>		
-		<setting name="drop_binds" value="[[ ]]"/>
-		<setting name="drop_commands" value="[[ ]]"/>
-	</settings>	
-	
-	<!--
-	these are depreciated and replaced by the ones above, please do not use these exports
-	they continue to exist only for backwards compatibility -->
 	<export function="ToggleHangingWeightLimit" type="server" />
 	<export function="SetPlayerGrabbedHeli" type="server"/>
 	<export function="IsPlayerHangingFromHeli" type="server"/>
 	<export function="GetPlayerHangingData" type="server"/>
 	<export function="GetPlayersHangingFromHeli" type="server"/>
+	
+	<settings>
+		<!-- these can be either control names or key names -->
+		<setting name="hang_binds" value="[[ 'jump' ]]"/>
+		<!-- command names -->
+		<setting name="hang_commands" value="[[ 'grab','heligrab' ]]"/>
+		
+		<setting name="drop_binds" value="[[ 'backspace' ]]"/>
+		<setting name="drop_commands" value="[[ 'drop','helidrop' ]]"/>
+	</settings>
 </meta>

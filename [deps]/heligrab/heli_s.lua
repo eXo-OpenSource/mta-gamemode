@@ -1,69 +1,61 @@
---[[ Heligrab - Server ]]--
+﻿--[[ Heligrab - Server ]]--
 
-local hangingWeightLimit = true
-local showChatMessages = get(getResourceName(getThisResource()) .. ".showChatMessages")
-local chatColour = {255, 50, 0}
+local root = getRootElement()
+local hanging_weight_limit = true
 
--- no longer needed in newer mta versions
--- kept for backwards compatibility
-local inputPresets = {
-	hangBinds = get(getResourceName(getThisResource()) .. ".hang_binds"),
-	hangCommands = get(getResourceName(getThisResource()) .. ".hang_commands"),
-	dropBinds = get(getResourceName(getThisResource()) .. ".drop_binds"),
-	dropCommands = get(getResourceName(getThisResource()) .. ".drop_binds"),
-}
+local hang_binds = get(getResourceName(getThisResource()) .. ".hang_binds")
+local hang_commands = get(getResourceName(getThisResource()) .. ".hang_commands")
+local drop_binds = get(getResourceName(getThisResource()) .. ".drop_binds")
+local drop_commands = get(getResourceName(getThisResource()) .. ".drop_commands")
 
-
-
-addEvent("requestServerData", true)
-addEventHandler("requestServerData", resourceRoot,
-	function()
-		triggerClientEvent(client, "receiveServerData", resourceRoot, hangingWeightLimit, inputPresets, showChatMessages, chatColour)
-	end
-)
-
-
-function toggleHangingWeightLimit(state) 
-	if state == true or state == false then
-		hangingWeightLimit = state
-		triggerClientEvent(root, "toggleHangingWeightLimit", root, state)
+function ToggleHangingWeightLimit(state)
+	if state then
+		if state == true or state == false then
+			hanging_weight_limit = state
+			triggerClientEvent(root,"ToggleHangingWeightLimit",root,state)
+		end
 	end
 end
 
+--[[
+addEvent("RequestHangingWeightLimit",true)
+addEventHandler("RequestHangingWeightLimit",root,function()
+]]
+addEvent("RequestServerData",true)
+addEventHandler("RequestServerData",root,function()
+	-- piggy back the binds and commands here as well
+	triggerClientEvent(source,"ReceiveServerData",root,hanging_weight_limit,hang_binds,hang_commands,drop_binds,drop_commands)
+end)
 
 
-function setPlayerGrabState(player, state, vehicle, side, linePercent)
-	debugOutput("setPlayerGrabState("..tostring(player)..", "..tostring(state)..", "..tostring(vehicle)..", "..tostring(side)..", "..tostring(linePercent)..")")
-	
-	if player and isElement(player) then
+function SetPlayerGrabbedHeli(player,state,heli,side_,line_percent_)
+	if player then
 		if state == true or state == "true" then
-			-- if we have been given a vehicle
-			if vehicle and isElement(vehicle) and getElementType(vehicle) == "vehicle" and getVehicleType(vehicle) == "Helicopter" then
-				side = side or 1
-				linePercent = linePercent or 0.5
+			-- if we have been given a heli
+			if heli and isElement(heli) and getElementType(heli) == "vehicle" and getVehicleType(heli) == "Helicopter" then
+				-- dont want to grab while also in a vehicle
+				-- actually, there are too many possible situations to account for so leave it up to the caller to make sure the player is in a suitable state to be attached
+				--if not isPedInVehicle(player) then
+					
+				-- default values
+				local side = side_ or "right"
+				local line_percent = line_percent_ or 0.5
 	
-				triggerClientEvent(player, "makePlayerGrabVehicle", player, vehicle, side, linePercent)
-				
-				return true
+				triggerClientEvent(player,"MakePlayerGrabHeli",player,heli,side,line_percent)
 			end
 		elseif state == false or state == "false" then
-			local hangVehicle = getElementData(player, "heligrab.vehicle")
-			
-			if hangVehicle then
-				triggerEvent("playerDropFromHeli", player, hangVehicle, "requested by script", true)
-				
-				return true
+			local player_hanging = getElementData(player,"hanging")
+			if player_hanging then
+				triggerEvent("PlayerDropFromHeli",player,player_hanging.heli,"requested",true)
 			end		
 		end
 	end
-	
-	return false
 end
 
 
-function isPlayerGrabbingHeli(player)
-	if player and isElement(player) then
-		if getElementData(player, "heligrab.vehicle") then
+function IsPlayerHangingFromHeli(player)
+	if player then
+		if getElementData(player,"hanging") then
 			return true
 		else
 			return false
@@ -73,35 +65,36 @@ function isPlayerGrabbingHeli(player)
 end
 
 
-function getPlayerGrabData(player)
-	if player and isElement(player) then
-		local hangVehicle = getElementData(player, "heligrab.vehicle")
-		
-		if hangVehicle then
-			return hangVehicle, getElementData(player, "heligrab.side"), getElementData(player, "heligrab.linePercent"), getElementData(player, "heligrab.legsUp")
+function GetPlayerHangingData(player)
+	if player then
+		local data = getElementData(player,"hanging")
+		if data then
+			return data.heli, data.side, data.line_percent, data.legs_up
 		end
 	end	
 	return nil
 end
 
 
-function getPlayersGrabbingHeli(vehicle, side, linePercent)
-	if vehicle then
-		linePercent = linePercent or false
-		side = side or false
-		local hangers = {}
+function GetPlayersHangingFromHeli(heli,side_,line_percent_)
+	if heli then
+		local line = line_percent_ or false
+		local side = side_ or false
+		local hanging_players = {}
 		
 		for _,player in ipairs(getElementsByType("player")) do
-			local hangVehicle = getElementData(player, "heligrab.vehicle")
-			if hangVehicle then
-				if (vehicle == hangVehicle and ((not side) or (side == getElementData(player, "heligrab.side"))) and ((not linePercent) or (linePercent == getElementData(player, "heligrab.linePercent")))) then
-					table.insert(hangers, player)
+			local data = getElementData(player,"hanging")
+			if data then
+				if ((side and side == data.side) or (not side)) and ((line and line == data.line) or (not line)) then
+					table.insert(hanging_players,player)
 				end
 			end
 		end
 		
-		if #hangers > 0 then
-			return hangers
+		if #hanging_players > 0 then
+			return hanging_players
+		else
+			return nil
 		end
 	end
 	
@@ -109,144 +102,113 @@ function getPlayersGrabbingHeli(vehicle, side, linePercent)
 end
 
 
+--------------------------------------------------------
+--[[
+addCommandHandler("hanginfo",function(player)
+	local hanging = IsPlayerHangingFromHeli(player)
+	local heli,side,line,legs = GetPlayerHangingData(player)
+	
+	local hangers
+	if heli then
+		hangers = GetPlayersHangingFromHeli(heli)
+	end
+	
+	outputChatBox("Hanging: "..tostring(hanging),player)
+	outputChatBox("Data: "..tostring(heli)..", "..tostring(side)..", "..tostring(line)..", "..tostring(legs),player)
+	outputChatBox("Hangers: ("..tostring(hangers)..")",player)
+	
+	if hangers then
+		for _,p in ipairs(hangers) do
+			outputChatBox(getPlayerName(p))
+		end
+	end	
+end)
+]]
+--------------------------------------------------------
 
 
--- is this still needed?
+addEventHandler("onElementDestroy",root,function()
+	if getElementType(source)=="vehicle" then
+		if getVehicleType(source)=="Helicopter" then
+			triggerClientEvent(root,"onClientVehicleDestroy",root,source)
+		end
+	end
+end)
+
+
 -- setting the camera target clientside frequently doesnt work (possible problem with getVehicleOccupant clientside), so do it serverside instead
-function playerGrabVehicle(vehicle)
-	setCameraToVehicleDriver(client, vehicle)
+function PlayerGrabVehicle(vehicle)
+	SetCameraToHeliPilot(source,vehicle)
+--	outputChatBox("Grabbed vehicle: "..getPlayerName(source))
 end
-addEvent("playerGrabVehicle", true)
-addEventHandler("playerGrabVehicle", resourceRoot, playerGrabVehicle)
+addEvent("PlayerGrabVehicle",true)
+addEventHandler("PlayerGrabVehicle",root,PlayerGrabVehicle)
 
 
 
-function playerDropFromHeli(vehicle, reason, forceDrop, inVehicle)
-	if not client then
-		client = source
-	end
-	
-	if client and isElement(client) then
-		setCameraTarget(client, client)
-	
-		for _,player in ipairs(getElementsByType("player")) do
-			if (forceDrop) or (player ~= client) then
-				triggerClientEvent(player, "stopPlayerGrab", client, vehicle, nil, reason, false)
-			end
-		end
-		
-		if inVehicle then
-			triggerEvent("removeHangingPedFromVehicle", client)
+function PlayerDropFromHeli(vehicle,reason,force)
+	setCameraTarget(source,source)
+--	outputChatBox("Dropped from heli: "..getPlayerName(source).." ["..reason.."]")
+	for _,player in ipairs(getElementsByType("player")) do
+		if (player ~= source) or (force) then
+			triggerClientEvent(player,"PlayerDrop",source,reason,vehicle)
 		end
 	end
 end
-addEvent("playerDropFromHeli", true)
-addEventHandler("playerDropFromHeli", root, playerDropFromHeli)
+addEvent("PlayerDropFromHeli",true)
+addEventHandler("PlayerDropFromHeli",root,PlayerDropFromHeli)
 
 
 
-function setCameraToVehicleDriver(player, vehicle)
-	local driver = getVehicleOccupant(vehicle, 0)
-	
-	if driver and getElementType(driver) == "player" then
-		setCameraTarget(player, driver)
+function SetCameraToHeliPilot(player,heli)
+	local heli_driver = getVehicleOccupant(heli,0)
+	if heli_driver then
+		setCameraTarget(player,heli_driver)
+--		outputChatBox("Set camera to heli")
 	else
-		debugOutput("setCameraToVehicleDriver() - vehicle driver did not exist or was not a player")
+--		outputChatBox("could not set camera to pilot ("..tostring(heli_driver)..")")
 	end	
 end
 
 
 -- reset the camera back to the player when the pilot exits the helicopter they are hanging from
-addEventHandler("onPlayerVehicleExit", root,
-	function(vehicle, seat)
-		if getVehicleType(vehicle) == "Helicopter" and seat == 0 then
-			for _,player in ipairs(getElementsByType("player")) do
-				local hangVehicle = getElementData(player, "heligrab.vehicle")
-				
-				if hangVehicle and hangVehicle == vehicle then
-					setCameraTarget(player, player)
-				end
+addEventHandler("onPlayerVehicleExit",root,function(vehicle,seat)
+	if getVehicleType(vehicle)=="Helicopter" and seat == 0 then
+		for _,v in ipairs(getElementsByType("player")) do
+			local player_hanging = getElementData(v,"hanging")
+			if player_hanging and player_hanging.heli == vehicle then
+				setCameraTarget(v,v)
 			end
 		end
 	end
-)
+end)
 
 
 -- set the camera on anyone hanging on the helicopter to the new pilot
-addEventHandler("onPlayerVehicleEnter", root,
-	function(vehicle, seat)
-		if getVehicleType(vehicle) == "Helicopter" and seat == 0 then
-			for _,player in ipairs(getElementsByType("player")) do
-				local hangVehicle = getElementData(player,"heligrab.vehicle")
-				
-				if hangVehicle and hangVehicle == vehicle then
-					setCameraTarget(player, source)
-				end
+addEventHandler("onPlayerVehicleEnter",root,function(vehicle,seat)
+	if getVehicleType(vehicle)=="Helicopter" and seat == 0 then
+		for _,v in ipairs(getElementsByType("player")) do
+			local player_hanging = getElementData(v,"hanging")
+			if player_hanging and player_hanging.heli == vehicle then
+				setCameraTarget(v,source)
 			end
 		end
 	end
-)
+end)
 
 
-addEvent("removeHangingPedFromVehicle", true)
-addEventHandler("removeHangingPedFromVehicle", resourceRoot,
-	function()
-		removePedFromVehicle(client)
-	end
-)
+addEvent("RemoveHangingPedFromVehicle",true)
+addEventHandler("RemoveHangingPedFromVehicle",root,function()
+	removePedFromVehicle(source)
+end)
 
 
 
-addEventHandler("onResourceStop", resourceRoot,
-	function()
-		for _,player in ipairs(getElementsByType("player")) do
-			local hangVehicle = getElementData(player, "heligrab.vehicle")
-			
-			if hangVehicle then
-				triggerEvent("playerDropFromHeli", player, hangVehicle, "stopped resource")
-				
-				setElementData(player, "heligrab.vehicle", nil)
-				setElementData(player, "heligrab.side", nil)
-				setElementData(player, "heligrab.linePercent", nil)
-				setElementData(player, "heligrab.legsUp", nil)
-			end
-		end	
-	end
-)
-
-
-addEventHandler("onElementModelChange", root,
-	function(old, new)
-		if getElementType(source) == "vehicle" and old ~= new then
-			local players = getPlayersGrabbingHeli(source)
-			
-			if players then
-				for _,p in ipairs(players) do
-					setPlayerGrabState(p, false)
-				end
-			end
+addEventHandler("onResourceStop",getResourceRootElement(getThisResource()),function()
+	for _,v in ipairs(getElementsByType("player")) do
+		local player_hanging = getElementData(v,"hanging")
+		if player_hanging then
+			triggerEvent("PlayerDropFromHeli",v,player_hanging.heli,"stopped resource")
 		end
-	end
-)
-
-
--- backwards compatibility
-function ToggleHangingWeightLimit(state)
-	return toggleHangingWeightLimit(state)
-end
-
-function SetPlayerGrabbedHeli(player, state, vehicle, side, linePercent)
-	return setPlayerGrabState(player, state, vehicle, side, linePercent)
-end
-
-function IsPlayerHangingFromHeli(player)
-	return isPlayerGrabbingHeli(player)
-end
-
-function GetPlayerHangingData(player)
-	return getPlayerGrabData(player)
-end
-
-function GetPlayersHangingFromHeli(vehicle, side, linePercent)
-	return getPlayersGrabbingHeli(vehicle, side, linePercent)
-end
+	end	
+end)
