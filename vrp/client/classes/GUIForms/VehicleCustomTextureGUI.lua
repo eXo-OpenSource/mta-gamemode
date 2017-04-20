@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 VehicleCustomTextureGUI = inherit(GUIForm)
-addRemoteEvents{"vehicleCustomTextureShopEnter", "vehicleCustomTextureShopExit"}
+addRemoteEvents{"vehicleCustomTextureShopEnter", "vehicleCustomTextureShopExit", "vehicleCustomTextureShopInfo"}
+
 
 
 function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
@@ -16,7 +17,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
     do
         self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Custom-Textures", false, true, self)
         self.m_TextureList = GUIGridList:new(0, self.m_Height*0.21, self.m_Width, self.m_Height*0.72, self.m_Window)
-        self.m_TextureList:addColumn(_"Name", 1)
+        self.m_TextureList:addColumn(_"Name (Doppelklick zum Kauf)", 1)
         self.m_MuteSound = GUILabel:new(self.m_Width-55, 5, 28, 28, FontAwesomeSymbols.SoundOn, self):setFont(FontAwesome(22))
 		self.m_MuteSound.onLeftClick = function()
 			if self.m_Music then
@@ -30,7 +31,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 
 		end
 
-		GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
+		GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/CustomTexture.jpg", self.m_Window)
         GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
         GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
     end
@@ -53,6 +54,8 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 
 	self.m_RotateBind = bind(self.rotateVehicle, self)
 	addEventHandler("onClientPreRender", root, self.m_RotateBind)
+
+
 end
 
 function VehicleCustomTextureGUI:destructor(closedByServer)
@@ -85,9 +88,14 @@ function VehicleCustomTextureGUI:initTextures(textures)
     for _, row in ipairs(textures) do
         local item = self.m_TextureList:addItem(row["Name"])
         item.Url = self.m_Path..row["Image"]
+		item.Id = row["Id"]
         item.onLeftClick = bind(self.Texture_Click, self)
 		item.onLeftDoubleClick = function()
-			triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Url)
+			QuestionBox:new(_("Möchtest du die Textur wirklich für 15.000$ kaufen?"),
+				function()
+					triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Id, item.Url)
+				end
+			)
 		end
     end
 end
@@ -126,3 +134,27 @@ function VehicleCustomTextureGUI.Exit(closedByServer)
 	end
 end
 addEventHandler("vehicleCustomTextureShopExit", root, function() VehicleCustomTextureGUI.Exit(true) end)
+
+addEventHandler("vehicleCustomTextureShopInfo", root, function()
+	CustomTextureInfoGUI:new()
+end)
+
+CustomTextureInfoGUI = inherit(GUIButtonMenu)
+inherit(Singleton, CustomTextureInfoGUI)
+
+function CustomTextureInfoGUI:constructor()
+	GUIButtonMenu.constructor(self, "Fahrzeug Textur Info")
+
+	self:addItem(_"Hilfe/Info anzeigen",Color.Green ,
+		function()
+			HelpGUI:getSingleton():select(HelpTextTitles.Vehicles.CustomTextures)
+			delete(self)
+		end
+	)
+	self:addItem(_"Textur testen",Color.Green ,
+		function()
+			TexturePreviewGUI:getSingleton():open()
+			delete(self)
+		end
+	)
+end

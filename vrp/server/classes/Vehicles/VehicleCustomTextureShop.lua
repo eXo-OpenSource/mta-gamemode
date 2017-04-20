@@ -22,6 +22,10 @@ function VehicleCustomTextureShop:constructor()
         }
     }
 
+	self.m_Info = createPickup(1844.30, -1861.05, 13.38, 3, 1239, 0)
+	addEventHandler("onPickupHit", self.m_Info, bind(self.onInfoPickupHit, self))
+
+
     for garageId, info in pairs(self.m_GarageInfo) do
         local position = info[1]
         local colshape = createColSphere(position, 3)
@@ -70,6 +74,10 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
             hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
         end
 
+		if not vehicle.m_Tunings then
+              hitElement:sendError(_("Dieses Fahrzeug kann nicht getuned werden!", hitElement))
+		end
+
         -- Remove occupants
         for seat, player in pairs(vehicle:getOccupants() or {}) do
             if seat ~= 0 then
@@ -84,6 +92,12 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
             hitElement:sendError(_("Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!", hitElement))
         end
     end
+end
+
+function VehicleCustomTextureShop:onInfoPickupHit(hitElement)
+	if hitElement:getType() == "player" and not hitElement.vehicle then
+		hitElement:triggerEvent("vehicleCustomTextureShopInfo")
+	end
 end
 
 function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
@@ -125,9 +139,9 @@ function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
 end
 
 function VehicleCustomTextureShop:getTextures(player, vehicle)
-	local result = sql:queryFetch("SELECT * FROM ??_textureshop", sql:getPrefix()) --DEVELOP
---	local result = sql:queryFetch("SELECT * FROM ??_textureshop WHERE Status = 1 AND Model = ? AND (UserId = ? OR Public = 1) ORDER BY Date DESC", sql:getPrefix(), vehicle:getModel(), player:getId())
-    return result
+	--local result = sql:queryFetch("SELECT * FROM ??_textureshop", sql:getPrefix()) --DEVELOP
+	local result = sql:queryFetch("SELECT * FROM ??_textureshop WHERE Status = ? AND (Model = ? or Model = 0) AND (UserId = ? OR Public = 1) ORDER BY Date DESC", sql:getPrefix(), TEXTURE_STATUS.Active, vehicle:getModel(), player:getId())
+	return result
 end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
@@ -140,25 +154,36 @@ function VehicleCustomTextureShop:Event_texturePreview(url)
 	self:setTexture(source, url)
 end
 
-function VehicleCustomTextureShop:Event_vehicleTextureBuy(url)
-	--Todo Add Money Funcs/Checks
-	source.OldTexture = url
+function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url)
+	if client:getMoney() >= 15000 then
+		--Todo Add Money Funcs/Checks
+		client:takeMoney(15000, "Custom-Texture")
+		source.OldTexture = url
 
-	self:setTexture(source, url)
-	client:sendInfo("Textur gekauft!")
+		self:setTexture(source, url)
+		client:sendInfo("Textur gekauft!")
+	else
+		client:sendError(_("Du hast nicht genug Geld dabei!", hitElement))
+	end
 end
 
 function VehicleCustomTextureShop:setTexture(vehicle, url)
 	vehicle.m_IsURLTexture = false
 	setElementData(vehicle, "URL_PAINTJOB", false)
-
-	vehicle.m_Tunings:addTexture(url, "vehiclegrunge256")
+	local textureName = VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] or "vehiclegrunge256"
+	vehicle.m_Tunings:addTexture(url, textureName)
 	vehicle.m_Tunings:applyTuning()
 end
 
 addEventHandler("texturePreviewRequestTextures", root, function(admin)
-	--Todo Change Query add admin query
-	local result = sql:queryFetch("SELECT * FROM ??_textureshop", sql:getPrefix()) --DEVELOP
+	local result
+
+	if admin then
+		result = sql:queryFetch("SELECT * FROM ??_textureshop WHERE Status = ?", sql:getPrefix(), TEXTURE_STATUS.Pending)
+	else
+		result = sql:queryFetch("SELECT * FROM ??_textureshop WHERE UserId = ? AND Status = ?", sql:getPrefix(), client:getId(), TEXTURE_STATUS.Testing)
+	end
+
 	for id, row in ipairs(result) do
 		result[id]["UserName"] = Account.getNameFromId(row["UserId"])
 	end
@@ -178,11 +203,30 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
-	  --TODO ADD ADMIN CHECK
-	sql:queryExec("UPDATE ??_textureshop SET Status = ? WHERE Id = ?;", sql:getPrefix(), status, id)
-	if status == 1 then
-	  	client:sendInfo(_("Du hast die Textur bestätigt!", client))
-	else
+	if status == TEXTURE_STATUS.Active then
+		if client:getRank() < ADMIN_RANK_PERMISSION["vehicleTexture"] then
+			client:sendError(_("Du bist kein Moderator oder höher!", client))
+			return
+		end
+		client:sendInfo(_("Du hast die Textur bestätigt!", client))
+	elseif status == TEXTURE_STATUS.Declined then
+		if client:getRank() < ADMIN_RANK_PERMISSION["vehicleTexture"] then
+			client:sendError(_("Du bist kein Moderator oder höher!", client))
+			return
+		end
 		client:sendInfo(_("Du hast die Textur abgelehnt!", client))
+	elseif status == TEXTURE_STATUS.Pending then
+		local result = sql:queryFetchSingle("SELECT UserId FROM ??_textureshop WHERE Id = ?;", sql:getPrefix(), id)
+		if result and result.UserId and result.UserId == client:getId() then
+			client:sendInfo(_("Du hast die Textur zur Überprüfung freigegeben!", client))
+		else
+			client:sendError(_("Du kannst nur eigene Texturen zur Überprüfung freigeben!", client))
+			return
+		end
+	else
+		client:sendError(_("Ungültiger Status!", client))
+		return
 	end
+
+	sql:queryExec("UPDATE ??_textureshop SET Status = ? WHERE Id = ?;", sql:getPrefix(), status, id)
 end

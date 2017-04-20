@@ -517,8 +517,9 @@ function AdminGUI:onButtonClick(func)
 		self:close()
 		AdminEventGUI:getSingleton():open()
 	elseif func == "vehicleTexture" then
-		--self:close()
-		--TexturePreviewGUI:getSingleton():open()
+		self:close()
+		TexturePreviewGUI:getSingleton():openAdmin()
+
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then

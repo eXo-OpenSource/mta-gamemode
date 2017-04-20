@@ -239,7 +239,6 @@ HelpTextTitles = {
 		Gravel = "Job: Kiesgruben Arbeiter";
 	};
 	Gameplay = {
-		Cars = "Fahrzeuge";
 		Beggar = "Gameplay: Bettler";
 	};
 	Minigames = {
@@ -267,6 +266,10 @@ HelpTextTitles = {
 	};
 	Settings = {
 		ShortMessageCTC = "Information - ShortMessage-CTC";
+	};
+	Vehicles = {
+		Info = "Info zu Fahrzeugen";
+		CustomTextures = "Fahrzeug-Texturen";
 	};
 }
 
@@ -475,33 +478,6 @@ HelpTexts = {
 		]];
 	};
 	Gameplay = {
-		Cars = [[
-			Fahrzeuge können in folgende Kategorien unterteilt werden.
-
-			Leihfahrzeuge:
-			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
-			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
-			auszuleihende Fahrzeug auswählen.
-
-			Private Fahrzeuge:
-			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
-			sind auf der Karte mit einem Auto-Blip markiert.
-			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
-			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
-			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
-			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
-			sendet.
-
-			Fraktionsfahrzeuge:
-			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
-			vom Fraktionsanführer verwaltet.
-
-			Firmen-/Gangfahrzeuge:
-			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
-			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen
-			Button, welcher dir erlaubt deine privaten Fahrzeuge zur Gang/Firma hinzuzufügen.
-			]];
 		Beggar = [[
 			Wenn du einen Bettler antriffst, kann es passieren, dass dieser dich nach Geld fragt. Es liegt
 			an dir ob du ihn ignorierst, bezahlst oder ausraubst. Bedenke jedoch, dass solche Aktionen einen
@@ -599,6 +575,44 @@ HelpTexts = {
 	};
 	Settings = {
 		ShortMessageCTC = "ShortMessage-CTC (Click-to-Close) ist eine Option mit der eingestellt werden kann, ob eine ShortMessage-Box (wie diese) durch ein einfaches klicken geschlossen werden kann oder nur durch den Timeout.\n\nNote: Callback-clicks are always working!";
+	};
+	Vehicles = {
+		 Info = [[
+			Fahrzeuge können in folgende Kategorien unterteilt werden.
+
+			Leihfahrzeuge:
+			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
+			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
+			auszuleihende Fahrzeug auswählen.
+
+			Private Fahrzeuge:
+			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
+			sind auf der Karte mit einem Auto-Blip markiert.
+			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
+			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
+			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
+			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
+			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
+			sendet.
+
+			Fraktionsfahrzeuge:
+			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
+			vom Fraktionsanführer verwaltet.
+
+			Firmen-/Gangfahrzeuge:
+			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
+			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen
+			Button, welcher dir erlaubt deine privaten Fahrzeuge zur Gang/Firma hinzuzufügen.
+			]];
+		 CustomTextures = [[
+			Auf eXo-Reallife kannst du selbst Texturen für dein Fahrzeug erstellen. Lade diese im cPanel
+			unter exo-reallife.de hoch und teste sie hier.
+			Du kannst Texturen auch für andere Spieler freigeben, dafür erhälst du 10 Prozent der Kosten
+			bei jedem Kauf der Textur als Bonus.
+
+			Bitte beachte das jede Textur erst durch einen Admin akzeptiert werden muss.
+			Also teste die Textur hier erst	sorgfältig bevor du Sie zur Überprüfung freigibst, bereits akzeptierte Texturen können nicht mehr verändert werden.
+			]];
 	};
 };
 
