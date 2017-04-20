@@ -23,7 +23,7 @@ addEventHandler("requestServerData", resourceRoot,
 )
 
 
-function toggleHangingWeightLimit(state)
+function toggleHangingWeightLimit(state) 
 	if state == true or state == false then
 		hangingWeightLimit = state
 		triggerClientEvent(root, "toggleHangingWeightLimit", root, state)
