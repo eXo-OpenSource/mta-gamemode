@@ -85,7 +85,7 @@ end
 
 function VehicleCustomTextureGUI:initTextures(textures)
     -- Add 'special properties' (e.g. color)
-    for _, row in ipairs(textures) do
+    for index, row in ipairs(textures) do
         local item = self.m_TextureList:addItem(row["Name"])
         item.Url = self.m_Path..row["Image"]
 		item.Id = row["Id"]

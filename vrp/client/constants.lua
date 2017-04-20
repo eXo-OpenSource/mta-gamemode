@@ -612,6 +612,20 @@ HelpTexts = {
 
 			Bitte beachte das jede Textur erst durch einen Admin akzeptiert werden muss.
 			Also teste die Textur hier erst	sorgfältig bevor du Sie zur Überprüfung freigibst, bereits akzeptierte Texturen können nicht mehr verändert werden.
+
+			Hier nun der ganze Prozess in einer Schritt für Schritt Anleitung:
+			1.) Hochladen: Textur im 'Control-Panel -> Fahrzeug Texturen' unter eXo-Reallife.de hochladen
+			2.) Testen: Direkt neben dem Custom Texture Shop ist ein gelbes Info-Pickup, dort kannst du deine hochgeladenen Texturen testen
+			3.) Im Textur-Test Fenster kannst du Texturen zur Überprüfung einsenden wenn Sie dir gefällt.
+			(Wichtig: Erst zur Überprüfung einsenden wenn dir die Textur auf dem Fahrzeug gefällt)
+			4.) Die Textur wird nun von einem Admin überprüft. Wenn diese ordentlich gemacht ist wird Sie freigeschaltet.
+			5.) Nachdem die Textur überprüft und freigeschaltet wurde kannst du Sie im Custom-Textur Shop auf dein Fahrzeug speichern.
+
+			Regeln:
+			+ Beleidigungen oder Serverwerbung ist verboten!
+			+ Admins behalten Sich jederzeit das Recht vor Texturen abzulehnen, oder nachträglich zu löschen
+			+ Texturen dürfen eine Größe von 600x600px sowie 200kb Dateigröße nicht überschreiten
+			+ Texturen müssen einen gewissen Qualitätsstandard erfüllen, dieser liegt im Ermessen des Admin-Teams
 			]];
 	};
 };
