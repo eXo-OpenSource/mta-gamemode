@@ -1,26 +1,28 @@
 function abseilStart()
-	if getElementData(source,"abseiling") == "" then
-		local veh = getPedOccupiedVehicle(source)
-		if veh then
-			if getVehicleType(veh) == "Helicopter" then
-				local seat = getPedOccupiedVehicleSeat(source)
-				setElementData(source,"abseiling",tostring(seat))
-				setElementData(source,"abseilspeed",-0.25)
+	if client then
+		if getElementData(client,"abseiling") == "" then
+			local veh = getPedOccupiedVehicle(client)
+			if veh then
+				if getVehicleType(veh) == "Helicopter" then
+					local seat = getPedOccupiedVehicleSeat(client)
+					setElementData(client,"abseiling",tostring(seat))
+					setElementData(client,"abseilspeed",-0.25)
 				
-				removePedFromVehicle(source)
+					removePedFromVehicle(client)
 				
-				--setVehicleDoorState(veh,seat+2,4)
-				setVehicleDoorOpenRatio(veh,seat+2,1,500)
+					--setVehicleDoorState(veh,seat+2,4)
+					setVehicleDoorOpenRatio(veh,seat+2,1,500)
 				
-				local ped = createPed(0,0,0,0)
-				warpPedIntoVehicle(ped,veh,seat)
+					local ped = createPed(0,0,0,0)
+					warpPedIntoVehicle(ped,veh,seat)
 				
-				setElementData(source,"abseilped",ped)
-				setElementData(ped,"isabseilped",true)
+					setElementData(source,"abseilped",ped)
+					setElementData(ped,"isabseilped",true)
 				
-				triggerClientEvent("doStartAbseil",source,veh,seat,ped)
+					triggerClientEvent("doStartAbseil",client,veh,seat,ped)
 				
-				setTimer(abseil,3400,1,source,veh,seat,ped)
+					setTimer(abseil,3400,1,client,veh,seat,ped)
+				end
 			end
 		end
 	end
@@ -29,14 +31,16 @@ addEvent("doStartPlayerAbseil",true)
 addEventHandler("doStartPlayerAbseil",getRootElement(),abseilStart)
 
 function abseilCancel()
-	if getElementData(source,"abseiling") == "true" then
-		local ped = getElementData(source,"abseilped")
-		triggerClientEvent("doCancelAbseil",source)
-		if getPedOccupiedVehicleSeat(ped) == 0 then
-			triggerClientEvent("doAddVehicleToWatch",getPedOccupiedVehicle(ped))
-		else
-			if getElementData(ped,"isabseilped") == true then
-				destroyElement(ped)
+	if client then
+		if getElementData(client,"abseiling") == "true" then
+			local ped = getElementData(client,"abseilped")
+			triggerClientEvent("doCancelAbseil",client)
+			if getPedOccupiedVehicleSeat(ped) == 0 then
+				triggerClientEvent("doAddVehicleToWatch",getPedOccupiedVehicle(ped))
+			else
+				if getElementData(ped,"isabseilped") == true then
+					destroyElement(ped)
+				end
 			end
 		end
 	end
