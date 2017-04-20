@@ -24,6 +24,9 @@ AntiCheat.AllowedDataChange = {
 	["abseiling"] = true,
 	["abseilped"] = true,
 	["abseilspeed"] = true,
+	["parachuting"] = true,
+	["animation_state"] = true,
+	["skydiving"] = true,
 }
 
 function AntiCheat:constructor()
