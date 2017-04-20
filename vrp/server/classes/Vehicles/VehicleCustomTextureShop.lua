@@ -163,7 +163,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url)
 		self:setTexture(source, url)
 		client:sendInfo("Textur gekauft!")
 	else
-		client:sendError(_("Du hast nicht genug Geld dabei!", hitElement))
+		client:sendError(_("Du hast nicht genug Geld dabei!", client))
 	end
 end
 
