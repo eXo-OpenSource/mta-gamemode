@@ -50,10 +50,12 @@ function abseil(player,veh,seat,ped)
 end
 
 function possetting(x,y,z)
-	setElementPosition(source,x,y,z)
-	setPedAnimation(source,"ped","abseil",-1,false,false,false)
-	local x,y,z = getElementVelocity(source)
-	setElementVelocity(source,x,y,-0.25)
+	if client then
+		setElementPosition(client,x,y,z)
+		setPedAnimation(client,"ped","abseil",-1,false,false,false)
+		local x,y,z = getElementVelocity(client)
+		setElementVelocity(client,x,y,-0.25)
+	end
 end
 addEvent("doSetPos",true)
 addEventHandler("doSetPos",getRootElement(),possetting)
