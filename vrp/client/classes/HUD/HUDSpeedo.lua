@@ -68,6 +68,7 @@ function HUDSpeedo:draw()
 	local vx, vy, vz = getElementVelocity(vehicle)
 	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
+	local mileage = localPlayer:getPrivateSync("vehicleMileage")
 
 	-- Set maximum
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
@@ -90,24 +91,26 @@ function HUDSpeedo:draw()
 
 	-- draw the engine icon
 	if getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png", 0, 0, 0, Color.Green)
+		dxDrawImage(drawX, drawY + 15, self.m_Size, self.m_Size, "files/images/Speedo/engine.png", 0, 0, 0, Color.Green)
 	elseif vehicle.EngineStart then
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
+		dxDrawImage(drawX, drawY + 15, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
 
 	if handbrake or getControlState("handbrake") or vehicle:isFrozen() then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 	else
 		local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
-		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+70, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
+		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+60, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
+
+	dxDrawText(("%s km"):format(vehicle:getMileage() and math.floor(vehicle:getMileage()) or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
 
 	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 		if getTickCount()%1000 > 500 then
-			dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
 		end
 	elseif getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
+		dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 	end
 
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then

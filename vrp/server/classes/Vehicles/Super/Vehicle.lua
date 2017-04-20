@@ -341,6 +341,7 @@ end
 
 function Vehicle:setMileage(mileage)
 	self.m_Mileage = mileage
+	setElementData(self, "mileage", self:getMileage())
 end
 
 function Vehicle:getMileage()
