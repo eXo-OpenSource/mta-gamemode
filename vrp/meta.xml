@@ -1724,8 +1724,8 @@
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
 	<include resource="reload"/>
-	<!--include resource="helicopterrope" /-->
-	
+	<include resource="helicopterrope" />
+	<include resource="heligrab" />
 	<!-- Shaders -->
 	<include resource="Bloom" />
 	<include resource="Contrast" />
@@ -1737,6 +1737,7 @@
 	<include resource="Water" />
 	<include resource="WetRoads" />
 
+	
 	<!-- ACL Request -->
 	<aclrequest>
 		<right name="function.startResource" access="true" />
