@@ -1725,7 +1725,6 @@
 	<include resource="bone_attach" />
 	<include resource="reload"/>
 	<!--include resource="helicopterrope" /-->
-	<include resource="heligrab"/>
 	
 	<!-- Shaders -->
 	<include resource="Bloom" />
