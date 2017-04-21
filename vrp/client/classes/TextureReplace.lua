@@ -133,20 +133,27 @@ function TextureReplace.getCachedTexture(path, instance)
 	end
 	if not TextureReplace.Cache[index] then
 		if not fileExists(path) then
-			outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
-			--							 remove .texture extension
-			TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
-				function(success)
-					if success then
-						local membefore = dxGetStatus().VideoMemoryUsedByTextures
-						TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
+			if (path:find("files/images/Textures/Custom/") and #path:sub(30, #path-8) or #path) > 5 then
+				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
+				--							 remove .texture extension
+				TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
+					function(success)
+						if success then
+							local membefore = dxGetStatus().VideoMemoryUsedByTextures
+							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 
-						instance:loadShader() -- should not cause a endless loop
+							instance:loadShader() -- should not cause a endless loop
+						end
 					end
-				end
-			)
+				)
 
-			return false
+				return false
+			else
+				if DEBUG then
+					outputConsole("Texturepath is blow 6 chars traceback in Console")
+					traceback()
+				end
+			end
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
