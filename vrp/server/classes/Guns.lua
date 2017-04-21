@@ -40,7 +40,10 @@ function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
 end
 
 function Guns:Event_onTaser(target)
+	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
+	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle or target.vehicle then return end
+	
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
