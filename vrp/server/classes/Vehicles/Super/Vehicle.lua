@@ -21,7 +21,6 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
-	self.m_DownloadCallBack = bind(self.Event_OnFinishDownloadImage, self)
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false

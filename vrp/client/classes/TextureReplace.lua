@@ -132,26 +132,20 @@ function TextureReplace.getCachedTexture(path, instance)
 		index = url
 	end
 	if not TextureReplace.Cache[index] then
-		outputConsole("creating texture "..path)
-		if not bIsRawPixels then
-			if not fileExists(path) then
-				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
-				--							 remove .texture extension
-				TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
-					function(success)
-						if success then
-							local membefore = dxGetStatus().VideoMemoryUsedByTextures
-							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
+		if not fileExists(path) then
+			outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
+			--							 remove .texture extension
+			TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
+				function(success)
+					if success then
+						local membefore = dxGetStatus().VideoMemoryUsedByTextures
+						TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 
-							instance:loadShader() -- should not cause a endless loop
-						end
+						instance:loadShader() -- should not cause a endless loop
 					end
-				)
+				end
+			)
 
-				return false
-			end
-
-		elseif not url then
 			return false
 		end
 
