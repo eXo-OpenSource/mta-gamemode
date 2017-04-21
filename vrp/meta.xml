@@ -1640,6 +1640,14 @@
 	<vrpfile src="files/models/fire_main.col" />
 	<vrpfile src="files/models/academi.dff" />
 	<vrpfile src="files/models/academi.col" />
+
+	<vrpfile src="files/models/PD_garage.col" />
+	<vrpfile src="files/models/PD_garage.dff" />
+	<vrpfile src="files/models/PD_int.col" />
+	<vrpfile src="files/models/PD_int.dff" />
+	<vrpfile src="files/models/PD_main.col" />
+	<vrpfile src="files/models/PD_main.dff" />
+
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />
 	<file src="files/models/easter_egg.dff" />
@@ -1738,7 +1746,7 @@
 	<include resource="Water" />
 	<include resource="WetRoads" />
 
-	
+
 	<!-- ACL Request -->
 	<aclrequest>
 		<right name="function.startResource" access="true" />

@@ -11,7 +11,7 @@ FactionState = inherit(Singleton)
 
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
+	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD Zellen
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
@@ -163,7 +163,7 @@ function FactionState:Event_OnConfirmSelfArrest()
 end
 
 function FactionState:loadLSPD(factionId)
-	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
+	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
@@ -186,12 +186,11 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6)
+	elevator:addStation("Erdgeschoss", Vector3(1567.70, -1687.90, 16.20), 84)
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
 
 
-	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
-	safe:setInterior(6)
+	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 end

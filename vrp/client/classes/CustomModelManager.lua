@@ -165,6 +165,15 @@ function CustomModelManager:constructor()
 
 	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
+
+	self:loadImportDFF("files/models/PD_garage.dff", 4232)
+	self:loadImportCOL("filEs/models/PD_garage.col", 4232)
+
+	self:loadImportDFF("files/models/PD_int.dff", 14846)
+	self:loadImportCOL("filEs/models/PD_int.col", 14846)
+
+	self:loadImportDFF("files/models/PD_main.dff", 3976)
+	self:loadImportCOL("filEs/models/PD_main.col", 3976)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
