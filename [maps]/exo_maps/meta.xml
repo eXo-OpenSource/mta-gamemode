@@ -69,8 +69,8 @@
 	<map src="Kartbahn.map" />
 
 	<map src="tankstelle-marcel.map"/>
-	
-	<map src="stuntfix.map"/>
-		
+
+	<!--<map src="stuntfix.map"/>-->
+
 	<map src="minigamescafe.map" dimension="2" />
 </meta>
