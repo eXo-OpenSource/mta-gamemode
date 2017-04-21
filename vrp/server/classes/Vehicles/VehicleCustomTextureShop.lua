@@ -183,7 +183,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 	end
 end
 
-function VehicleCustomTextureShop:setTexture(vehicle, url)
+function VehicleCustomTextureShop:setTexture(vehicle, url, color1, color2)
 	vehicle.m_IsURLTexture = false
 	setElementData(vehicle, "URL_PAINTJOB", false)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] or "vehiclegrunge256"
