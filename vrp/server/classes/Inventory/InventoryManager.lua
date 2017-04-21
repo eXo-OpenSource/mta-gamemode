@@ -134,7 +134,13 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 		return false
 	end
 
+	local amount = math.abs(amount)
+	local money = math.abs(money)
+
 	if type == "Item" then
+		client.sendRequest = {target = target, item = item, amount = amount, money = money}
+		target.receiveRequest = {target = client, item = item, amount = amount, money = money}
+
 		if self:getPlayerInventory(client):getItemAmount(item) >= amount then
 			local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
 			if money and money > 0 then
@@ -149,6 +155,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			client:sendError(_("Du darfst diese Waffe nicht handeln!", client))
 			return
 		end
+
 		if client:getFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
 			return
@@ -160,6 +167,9 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			return
 		end
 
+		client.sendRequest = {target = target, item = item, amount = amount, money = money}
+		target.receiveRequest = {target = client, item = item, amount = amount, money = money}
+
 		local text = _("%s möchte dir eine/n %s mit %d Schuss schenken! Geschenk annehmen?", target, client.name, WEAPON_NAMES[item], amount)
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
@@ -168,12 +178,31 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 	end
 end
 
-function InventoryManager:Event_declineTrade(player, target, item, amount, money)
-	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
-	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+function InventoryManager:validateTrading(player, target)
+	if client ~= target then return false end
+	if not player.sendRequest or not target.receiveRequest then return false end
+	if player.sendRequest.target ~= target or target.receiveRequest.target ~= player then return false end
+
+	return true
 end
 
-function InventoryManager:Event_acceptItemTrade(player, target, item, amount, money)
+function InventoryManager:Event_declineTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
+	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+
+	player.sendRequest = nil
+	target.receiveRequest = nil
+end
+
+function InventoryManager:Event_acceptItemTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	local item = player.sendRequest.item
+	local amount = player.sendRequest.amount
+	local money = player.sendRequest.money
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
@@ -203,7 +232,13 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 	end
 end
 
-function InventoryManager:Event_acceptWeaponTrade(player, target, weaponId, amount, money)
+function InventoryManager:Event_acceptWeaponTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	local weaponId = player.sendRequest.item
+	local amount = player.sendRequest.amount
+	local money = player.sendRequest.money
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
