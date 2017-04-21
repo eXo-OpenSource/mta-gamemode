@@ -110,8 +110,8 @@ factionRankNames[3] = {
 [0] = "Private",
 [1] = "Corporal",
 [2] = "Staff Sergeant",
-[3] = "Major",
-[4] = "Warrant Officer",
+[3] = "Warrant Officer",
+[4] = "Major",
 [5] = "Colonel",
 [6] = "General"
 }
