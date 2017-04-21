@@ -1641,8 +1641,8 @@
 	<vrpfile src="files/models/academi.dff" />
 	<vrpfile src="files/models/academi.col" />
 
-	<vrpfile src="files/models/PD_garage.col" />
-	<vrpfile src="files/models/PD_garage.dff" />
+	<vrpfile src="files/models/PD_Garage.col" />
+	<vrpfile src="files/models/PD_Garage.dff" />
 	<vrpfile src="files/models/PD_int.col" />
 	<vrpfile src="files/models/PD_int.dff" />
 	<vrpfile src="files/models/PD_main.col" />
