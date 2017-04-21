@@ -32,10 +32,11 @@ function TexturePreviewGUI:constructor()
 	addEventHandler("onClientPreRender", root, self.m_RotateBind)
 end
 
-function TexturePreviewGUI:destructor(closedByServer)
+function TexturePreviewGUI:destructor()
 	setCameraTarget(localPlayer)
 	removeEventHandler("onClientPreRender", root, self.m_RotateBind)
 	showChat(true)
+	triggerServerEvent("texturePreviewClose", localPlayer)
 	GUIForm.destructor(self)
 end
 

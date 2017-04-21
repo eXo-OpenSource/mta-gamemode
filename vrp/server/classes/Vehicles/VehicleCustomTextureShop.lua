@@ -7,7 +7,8 @@
 -- ****************************************************************************
 VehicleCustomTextureShop = inherit(Singleton)
 
-addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview", "texturePreviewRequestTextures", "texturePreviewStartPreview", "texturePreviewUpdateStatus"}
+addRemoteEvents{"vehicleCustomTextureBuy", "vehicleCustomTextureAbbort", "vehicleCustomTextureLoadPreview",
+"texturePreviewRequestTextures", "texturePreviewStartPreview", "texturePreviewUpdateStatus", "texturePreviewClose"}
 
 
 function VehicleCustomTextureShop:constructor()
@@ -34,14 +35,20 @@ function VehicleCustomTextureShop:constructor()
         Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
 
+	Player.getQuitHook():register(
+        function(player)
+            if player.TempTexVehicle then delete(player.TempTexVehicle) end
+        end
+    )
 
     addEventHandler("vehicleCustomTextureLoadPreview", root, bind(self.Event_texturePreview, self))
 
 	addEventHandler("vehicleCustomTextureBuy", root, bind(self.Event_vehicleTextureBuy, self))
     addEventHandler("vehicleCustomTextureAbbort", root, bind(self.Event_vehicleUpgradesAbort, self))
+
 	addEventHandler("texturePreviewStartPreview", root, bind(self.Event_texPreviewStartPreview, self))
 	addEventHandler("texturePreviewUpdateStatus", root, bind(self.Event_texPreviewUpdateStatus, self))
-
+	addEventHandler("texturePreviewClose", root, bind(self.Event_texPreviewClose, self))
 
 end
 
@@ -184,6 +191,8 @@ function VehicleCustomTextureShop:setTexture(vehicle, url)
 	vehicle.m_Tunings:applyTuning()
 end
 
+--Texture Preview
+
 addEventHandler("texturePreviewRequestTextures", root, function(admin)
 	local result
 
@@ -200,15 +209,24 @@ addEventHandler("texturePreviewRequestTextures", root, function(admin)
 end)
 
 function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
-	if client:getData("TexturePreviewCar") then client:getData("TexturePreviewCar"):destroy() end
-	local veh = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
+
+	if client.TempTexVehicle then client.TempTexVehicle:destroy() end
+	local player = client
+	model = model > 0 and model or math.random(400, 600)
+
+	client.TempTexVehicle = TemporaryVehicle.create(model, 1944.97, -2307.69, 14.54)
+	local veh = client.TempTexVehicle
+	veh:setDimension(client:getId()+1000)
+	client:setDimension(client:getId()+1000)
+
 	veh.m_Tunings = VehicleTuning:new(veh)
 	veh.m_Tunings:saveTuning("Color1", {255, 255, 255})
 	veh.m_Tunings:saveTuning("Color2", {255, 255, 255})
 
+	client:setDimension(client:getId()+1000)
+
 	client:setData("TexturePreviewCar", veh, true)
 	self:setTexture(veh, url)
-
 end
 
 function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
@@ -239,3 +257,8 @@ function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
 
 	sql:queryExec("UPDATE ??_textureshop SET Status = ? WHERE Id = ?;", sql:getPrefix(), status, id)
 end
+
+function VehicleCustomTextureShop:Event_texPreviewClose()
+	if client.TempTexVehicle then delete(client.TempTexVehicle) end
+end
+
