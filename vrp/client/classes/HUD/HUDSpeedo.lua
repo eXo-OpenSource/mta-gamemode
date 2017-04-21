@@ -103,7 +103,7 @@ function HUDSpeedo:draw()
 		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+60, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
 
-	dxDrawText(("%s km"):format(vehicle:getMileage() and math.floor(vehicle:getMileage()) or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
+	dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
 
 	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 		if getTickCount()%1000 > 500 then

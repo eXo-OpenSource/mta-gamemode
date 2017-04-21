@@ -17,7 +17,7 @@ SelfGUI.Stats = {
 	--		},
 	["Driven"] = {
 			["text"] = "gefahrene Kilometer",
-			["value"] = function(value) return math.floor(value/100).." km" end
+			["value"] = function(value) return math.floor(value/1000).." km" end
 			},
 	["Deaths"] = {
 			["text"] = "Tode",
