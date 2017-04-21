@@ -1638,6 +1638,8 @@
 	<vrpfile src="files/models/fire_main.col" />
 	<vrpfile src="files/models/academi.dff" />
 	<vrpfile src="files/models/academi.col" />
+	<vrpfile src="files/models/hedge01_law.col" />
+	<vrpfile src="files/models/hedge01_law.dff" />
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />

@@ -154,6 +154,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/a51fensin.dff", 974)
 	self:loadImportCOL("files/models/a51fensin.col", 974)
 
+	-- Ammunation Street hedge
+	self:loadImportDFF("files/models/hedge01_law.dff", 6046)
+	self:loadImportCOL("files/models/hedge01_law.col", 6046)
+
 	--Easter Event:
 	self:loadImportTXD("files/models/easter_egg.txd", 1933)
 	self:loadImportDFF("files/models/easter_egg.dff", 1933)
