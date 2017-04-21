@@ -109,6 +109,8 @@ function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
 	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
+	vehicle.OldColor1 = vehicle.m_Tunings:getTuning("Color1")
+	vehicle.OldColor2 = vehicle.m_Tunings:getTuning("Color2")
 end
 
 function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
@@ -146,20 +148,27 @@ end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
    	local veh = client:getOccupiedVehicle()
+	veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
+	veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
 	self:setTexture(veh, veh.OldTexture)
 	self:closeFor(client, veh)
 end
 
-function VehicleCustomTextureShop:Event_texturePreview(url)
+function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
+	source.m_Tunings:saveTuning("Color1", color1)
+	source.m_Tunings:saveTuning("Color2", color2)
 	self:setTexture(source, url)
 end
 
-function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url)
+function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
 	if client:getMoney() >= 15000 then
 		--Todo Add Money Funcs/Checks
 		client:takeMoney(15000, "Custom-Texture")
 		source.OldTexture = url
-
+		source.OldColor1 = color1
+		source.OldColor2 = color2
+		source.m_Tunings:saveTuning("Color1", color1)
+		source.m_Tunings:saveTuning("Color2", color2)
 		self:setTexture(source, url)
 		client:sendInfo("Textur gekauft!")
 	else
