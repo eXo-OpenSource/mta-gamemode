@@ -711,10 +711,12 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+
 	if client.disableWeaponStorage then
 		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
 		return
 	end
+
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -726,16 +728,17 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 				client.m_GunBox[tostring(i)]["VIP"] = false
 			end
 		end
+
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
 			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
-					if client:getTotalAmmo(weaponSlot) >= muni then
+					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
 						client:takeWeapon(weaponId)
 						slot["WeaponId"] = weaponId
-						slot["Amount"] = muni
-						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
+						slot["Amount"] = math.abs(muni)
+						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], math.abs(muni), i))
 						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 						return
 					else
@@ -751,6 +754,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 			end
 		end
 	end
+	
 	client:sendError(_("Du hast keinen freien Waffen-Slot in deiner Waffenbox!", client))
 end
 
