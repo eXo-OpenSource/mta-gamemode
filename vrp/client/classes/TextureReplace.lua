@@ -2,8 +2,9 @@ TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
 TextureReplace.Map = {}
+TextureReplace.TextureEncryptionKey = hash("sha256", "TextureReplace:TEXTURE_KEY:exoIsBest")
 
-function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, bFetch, iUrl)
+function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
 		traceback()
@@ -14,22 +15,6 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	end
 	self.m_Width = width
 	self.m_Height = height
-	if bFetch then
-		if iUrl then
-			self.m_IsRawPixels = true
-			self.m_URLPath = iUrl
-			local dummy = dxCreateTexture(path)
-			if dummy then 
-				local tW, tH = dxGetMaterialSize(dummy)
-				if tW and tH then
-					if tW > 512 then tW = 512 end 
-					if tH > 512 then tH = 512 end 
-					self.m_Width = tW 
-					self.m_Height = tH
-				end
-			end
-		end
-	end
 	self.m_TextureName = textureName
 	self.m_TexturePath = path
 	self.m_IsRenderTarget = isRenderTarget
@@ -66,11 +51,6 @@ function TextureReplace:destructor()
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
 	end
-	if self.m_IsRawPixels then 
-		if isElement(self.m_PixelsTexture) then
-			destroyElement(self.m_PixelsTexture)
-		end
-	end
 end
 
 function TextureReplace:onElementStreamIn()
@@ -100,21 +80,12 @@ function TextureReplace:loadShader()
 	if self.m_Texture and isElement(self.m_Shader) then return false end
 	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
-		--self.m_Texture = dxCreateTexture(self.m_TexturePath)
-		if self.m_IsRawPixels then
-			self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
-		else 
-			self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, false, false)
-		end
+		self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, self)
 	else
 		self.m_Texture = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
 		if self.m_TexturePath then
 			dxSetRenderTarget(self.m_Texture)
-				if self.m_IsRawPixels then
-					dxDrawImage(0, 0, width, height,  self.m_PixelsTexture )
-				else 
-					dxDrawImage(0, 0, width, height,  path )
-				end
+				dxDrawImage(0, 0, width, height, path)
 			dxSetRenderTarget(nil)
 		end
 	end
@@ -147,26 +118,39 @@ end
 function TextureReplace:unloadShader()
 	if not self.m_Shader or not isElement(self.m_Shader) then return false end
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
-	--local a = destroyElement(self.m_Texture)
-	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
+	local a = TextureReplace.unloadCache(self.m_TexturePath)
 	local b = destroyElement(self.m_Shader)
 	return a and b
 end
 
-function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
+function TextureReplace.getCachedTexture(path, instance)
+	if path:find("files/images/Textures/Custom/") then
+		path = path..".texture"
+	end
 	local index = md5(path):sub(1, 8)
-	if bIsRawPixels then 
+	if bIsRawPixels then
 		index = url
 	end
 	if not TextureReplace.Cache[index] then
-		--outputConsole("creating texture "..path)
+		outputConsole("creating texture "..path)
 		if not bIsRawPixels then
 			if not fileExists(path) then
 				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
-				--TextureReplace.downloadTexture(path)
+				--							 remove .texture extension
+				TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
+					function(success)
+						if success then
+							local membefore = dxGetStatus().VideoMemoryUsedByTextures
+							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
+
+							instance:loadShader() -- should not cause a endless loop
+						end
+					end
+				)
+
 				return false
 			end
-		
+
 		elseif not url then
 			return false
 		end
@@ -175,17 +159,17 @@ function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
-	
+
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter + 1
 	--outputConsole("incremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
 	return TextureReplace.Cache[index].texture
 end
 
-function TextureReplace.unloadCache(path, bIsRawPixels, url)
-	local index = md5(path):sub(1, 8)
-	if bIsRawPixels then 
-		index = url
+function TextureReplace.unloadCache(path)
+	if path:find("files/images/Textures/Custom/") then
+		path = path..".texture"
 	end
+	local index = md5(path):sub(1, 8)
 	if not TextureReplace.Cache[index] then return false end
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter - 1
 	--outputConsole("decremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
@@ -203,9 +187,9 @@ end
 function TextureReplace.downloadTexture(path, callback)
 	Async.create(
 		function()
-			local dgi = HTTPMinimalDownloadGUI:getSingleton()
-			local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, dgi)
-			if provider:start() then -- did the download succeed
+			local dgi = HTTPDownloadGUI:getSingleton()
+			local provider = HTTPProvider:new(TEXTURE_HTTP_URL, dgi)
+			if provider:startCustom(path, "files/images/Textures/Custom/"--[[, TextureReplace.TextureEncryptionKey]]) then -- did the download succeed
 				delete(dgi)
 				if callback then callback(true) end
 			else
@@ -213,6 +197,18 @@ function TextureReplace.downloadTexture(path, callback)
 			end
 		end
 	)()
+end
+
+function TextureReplace.getTexture(path)
+	if path:sub(-8, #path) ~= ".texture" then -- is not encrypted
+		return path
+	else -- is encrypted
+		local file = fileOpen(path)
+		local data = file:read(file:getSize())
+		file:close()
+
+		return teaDecode(data, TextureReplace.TextureEncryptionKey)
+	end
 end
 
 -- Events

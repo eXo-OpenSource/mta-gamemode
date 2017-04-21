@@ -12,6 +12,7 @@ ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 HTTP_DOWNLOAD = not DEBUG
 FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/master/vrp_assets/" -- Todo: move to config
 FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/master/vrp_assets/" -- Todo: see above
+TEXTURE_HTTP_URL = "http://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {

@@ -131,6 +131,46 @@ function HTTPProvider:start(force)
 	end
 end
 
+function HTTPProvider:startCustom(fileName, targetPath, encryptKey)
+	-- request url access for download
+	if self:requestAccessAsync() then
+		self.ms_GUIInstance:setStatus("file count", 1)
+		self.ms_GUIInstance:setStatus("current file", fileName)
+		outputDebug(fileName)
+		local responseData, errno = self:fetchAsync(fileName)
+		if errno ~= 0 then
+			outputDebug(errno)
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+			return false
+		end
+
+		if responseData ~= "" then
+			local filePath = ("%s/%s.texture"):format(targetPath, fileName)
+			if fileExists(filePath) then
+				fileDelete(filePath)
+			end
+			local file = fileCreate(filePath)
+			if file then
+				if encryptKey then
+					file:write(teaEncode(responseData, encryptKey))
+				else
+					file:write(responseData)
+				end
+				file:setPos(file:getSize())
+				file:close()
+			end
+
+			-- success
+			return true
+		else
+			self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(fileName))
+		end
+	else
+		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		return false
+	end
+end
+
 function HTTPProvider:fetch(callback, file)
     return fetchRemote(("%s/%s"):format(self.ms_URL, file), HTTP_CONNECT_ATTEMPTS,
         function(responseData, errno)

@@ -448,16 +448,8 @@ function Vehicle:setTexture(texturePath, textureName, force)
 		if isHttp == nil then
 			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
 		elseif isHttp then
-			fetchRemote ( texturePath, self.m_DownloadCallBack,  "", false, force, texturePath, textureName )
+			self.m_Texture = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
 		end
-	end
-end
-
-function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
-	if errNo == 0 then
-		self.m_IsURLTexture = true
-		setElementData(self,"URL_PAINTJOB", true)
-		self.m_Texture = VehicleTexture:new(self, rData , textureName, force, true, tUrl)
 	end
 end
 
