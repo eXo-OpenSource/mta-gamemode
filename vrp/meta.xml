@@ -1648,6 +1648,16 @@
 	<vrpfile src="files/models/PD_main.col" />
 	<vrpfile src="files/models/PD_main.dff" />
 
+	<file src="files/models/bank.txd" />
+	<file src="files/models/bank.col" />
+	<file src="files/models/bank.dff" />
+	<file src="files/models/bankServer.txd" />
+	<file src="files/models/bankServer.col" />
+	<file src="files/models/bankServer.dff" />
+	<file src="files/models/bankDoor.txd" />
+	<file src="files/models/bankDoor.col" />
+	<file src="files/models/bankDoor.dff" />
+
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />
 	<file src="files/models/easter_egg.dff" />
