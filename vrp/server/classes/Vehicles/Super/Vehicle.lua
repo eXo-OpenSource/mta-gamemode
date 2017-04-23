@@ -459,14 +459,13 @@ end
 function Vehicle:setCurrentPositionAsSpawn(type)
   self.m_PositionType = type
   self.m_SpawnPos = self:getPosition()
-  local rot = self:getRotation()
-  self.m_SpawnRot = rot.z
+  self.m_SpawnRot = self:getRotation()
 end
 
 function Vehicle:respawnOnSpawnPosition()
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
-		self:setRotation(0, 0, self.m_SpawnRot)
+		self:setRotation(self.m_SpawnRot)
 		fixVehicle(self)
 		self:setEngineState(false)
 		self:setLocked(true)

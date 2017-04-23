@@ -68,7 +68,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 	end
 	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
-		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, rotation, nil, false)
+		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, nil, false)
 		if vehicle then
 			player:takeMoney(price, "Fahrzeug-Kauf")
 			self:giveMoney(price, "Fahrzeug-Verkauf")

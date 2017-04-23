@@ -26,7 +26,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
 				vehicle:setHealth(health)
 
 				return vehicle:save(), vehicle
@@ -102,9 +102,9 @@ function GroupVehicle:getGroup()
   return self.m_Group
 end
 
-function GroupVehicle.create(Group, model, posX, posY, posZ, rotation, milage, fuel, trunkId, tuningJSON, premium)
+function GroupVehicle.create(Group, model, posX, posY, posZ, rotX, rotY, rotation, milage, fuel, trunkId, tuningJSON, premium)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation, trunkId, tuningJSON, premium) then
+	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotX, rotY, rotation, trunkId, tuningJSON, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, 1000, VehiclePositionType.World, milage, fuel, trunkId, tuningJSON, premium)
     	VehicleManager:getSingleton():addRef(vehicle)
@@ -126,8 +126,8 @@ function GroupVehicle:save()
 	local health = getElementHealth(self)
 	if self.m_Trunk then self.m_Trunk:save() end
 
-	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
-   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
+	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
 end
 
 function GroupVehicle:isGroupPremiumVehicle()
@@ -174,7 +174,7 @@ function GroupVehicle:respawn(force)
 
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
-	self:setRotation(0, 0, self.m_SpawnRot)
+	self:setRotation(self.m_SpawnRot)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
 	self:setFrozen(true)

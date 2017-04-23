@@ -292,7 +292,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, 1)
 	elseif name == "MrWhoopee" then
 		player:sendInfo("Du hast einen Mr. Whoopee gewonnen! Gückwunsch!")
-		local vehicle = PermanentVehicle.create(player, 423, 1513.77, -1771.50, 13.57, 0, nil, true)
+		local vehicle = PermanentVehicle.create(player, 423, 1513.77, -1771.50, 13.57, 0, 0, 0, nil, true)
 		if vehicle then
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")
