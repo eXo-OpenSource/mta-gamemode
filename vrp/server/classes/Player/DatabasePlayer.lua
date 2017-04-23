@@ -523,9 +523,10 @@ end
 function DatabasePlayer:addBankMoney(amount, reason)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():addMoney(amount)
-		if self.m_BankMoney >= 10000000 then
+
+		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)
-		elseif self.m_BankMoney >= 1000000 then
+		elseif self:getBankAccount():getMoney() >= 1000000 then
 			self:giveAchievement(21)
 		end
 		return true
