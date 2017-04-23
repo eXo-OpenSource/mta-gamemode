@@ -1241,7 +1241,7 @@ function FactionState:Event_friskPlayer(target)
 				target:sendMessage(_("Du hast keine Drogen dabei!", target), 0, 255, 0)
 			end
 
-			for i=1, 12 do
+			for i = 0, 12 do
 				if getPedWeapon(target,i) > 0 then
 					if not targetWeapons then targetWeapons = {} end
 					targetWeapons[getPedWeapon(target,i)] = true
