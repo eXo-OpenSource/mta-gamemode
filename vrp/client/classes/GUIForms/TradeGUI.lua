@@ -14,7 +14,7 @@ function TradeGUI:constructor(target)
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Handel mit %s", target:getName()), true, true, self)
 
-	self.m_TabPanel = GUITabPanel:new(10, 35, 330, 315, self)
+	self.m_TabPanel = GUITabPanel:new(10, 35, 320, 350, self.m_Window)
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
 	self.m_TabItems = self.m_TabPanel:addTab(_"Items")
