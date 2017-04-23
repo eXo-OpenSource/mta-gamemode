@@ -874,7 +874,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 			end
 		end
 		-- Todo Add Log
-		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel())
+		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel(), reason)
 		source:purge()
 	else
 		destroyElement(source)
