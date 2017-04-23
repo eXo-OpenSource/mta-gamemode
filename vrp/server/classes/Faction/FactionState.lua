@@ -665,6 +665,9 @@ function FactionState:Command_megaphone(player, cmd, ...)
 				for index = 1,#playersToSend do
 					playersToSend[index]:sendMessage(text, 255, 255, 0)
 				end
+
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(playersToSend))
+				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
 			else
 				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
 			end
