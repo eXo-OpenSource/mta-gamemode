@@ -259,6 +259,9 @@ function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewClose()
-	if client.TempTexVehicle then delete(client.TempTexVehicle) end
+	if client.TempTexVehicle then
+		client.TempTexVehicle:setDimension(0)
+		delete(client.TempTexVehicle)
+	end
+	client:setDimension(0)
 end
-
