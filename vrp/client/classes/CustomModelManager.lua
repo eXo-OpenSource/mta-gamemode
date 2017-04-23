@@ -179,6 +179,7 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/PD_main.dff", 3976)
 	self:loadImportCOL("filEs/models/PD_main.col", 3976)
 
+--[[
 	self:loadImportTXD("files/models/bank.txd", 4600)
 	self:loadImportDFF("files/models/bank.dff", 4600)
 	self:loadImportCOL("filEs/models/bank.col", 4600)
@@ -188,6 +189,7 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/bankDoor.txd", 1930)
 	self:loadImportDFF("files/models/bankDoor.dff", 1930)
 	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
+]]
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

@@ -7,13 +7,42 @@
 -- ****************************************************************************
 BankRobbery = inherit(Singleton)
 BankRobbery.Map = {}
+BankRobbery.FinishMarker = {
+	Vector3(2766.84, 84.98, 18.39),
+	Vector3(2561.50, -949.89, 81.77),
+	Vector3(1935.24, 169.98, 36.28)}
 
 addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
+BankRobbery.BagSpawns = {
+	Vector3(2307.25, 17.90, 26),
+	Vector3(2306.88, 19.09, 26),
+	Vector3(2306.97, 20.38, 26),
+	Vector3(2308.34, 20.20, 26),
+	Vector3(2308.46, 19.16, 26),
+	Vector3(2308.46, 17.92, 26),
+	Vector3(2309.82, 17.77, 26),
+	Vector3(2310.09, 18.91, 26),
+	Vector3(2310.11, 20.13, 26),
+	Vector3(2311.48, 20.26, 26),
+	Vector3(2311.57, 18.95, 26),
+	Vector3(2311.55, 17.89, 26),
+	Vector3(2312.69, 17.80, 26),
+	Vector3(2312.73, 19.90, 26),
+	Vector3(2313.57, 20.89, 26),
+	Vector3(2313.59, 17.27, 26),
+	Vector3(2312.19, 18.31, 26),
+	Vector3(2309.27, 19.14, 26),
+}
+
+local BOMB_TIME = 20*1000
+local MONEY_PER_SAFE_MIN = 500
+local MONEY_PER_SAFE_MAX = 750
+local MAX_MONEY_PER_BAG = 3000
+local BANKROB_TIME = 60*1000*12
+--Info 68 Tresors
 
 function BankRobbery:constructor()
-	for bank, data in pairs(BANK_DATA) do
-		self:build(data)
-	end
+	self:build()
 end
 
 function BankRobbery:spawnPed()
@@ -32,86 +61,6 @@ end
 
 function BankRobbery:destructor()
 
-end
-
-function BankRobbery:build(type)
-	self.m_IsBankrobRunning = false
-	self.m_RobPlayer = nil
-	self.m_RobFaction = nil
-
-	self.m_Blip = {}
-	self.m_DestinationMarker = {}
-	self.m_MoneyBags = {}
-	self.m_Timer = false
-
-	local model, pos, rot, alpha
-
-	pos, rot, alpha = unpack(BANK_DATA[type].Computer)
-
-	self.m_HackableComputer = createObject(2181, pos, 0, 0, rot)
-	self.m_HackableComputer:setAlpha(alpha)
-	self.m_HackableComputer:setData("clickable", true, true)
-	self.m_HackableComputer:setData("bankPC", true, true)
-
-	model, pos, rot = unpack(BANK_DATA[type].Computer)
-	self.m_SafeDoor = createObject(model, pos, 0, 0, rot)
-	self.m_SafeDoor.m_Open = false
-
-
-	self:loadSpecial(type)
-
-	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
-
-	self.m_ColShape = createColSphere(self.m_HackableComputer:getPosition(), 60)
-	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
-	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
-
-	self.m_CircuitBreakerPlayers = {}
-
-	self:spawnPed()
-	self:spawnGuards()
-	self:createSafes()
-	self:createBombableBricks()
-
-	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
-	self.m_ColFunc = bind(self.onHelpColHit, self)
-	self.m_HelpCol = bind(self.onHelpColHit, self)
-	self.m_OnStartHack = bind(self.Event_onStartHacking, self)
-	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
-	self.m_OnSuccess = bind(self.Event_onHackSuccessful, self)
-	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
-	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
-	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
-
-	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			hitElement:triggerEvent("clickSpamSetEnabled", false)
-		end
-	end)
-
-	addEventHandler("onColShapeLeave", self.m_SecurityRoomShape, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			hitElement:triggerEvent("clickSpamSetEnabled", true)
-		end
-	end)
-end
-
-function BankRobbery:loadSpecial(type)
-	if type == "Palomino" then
-		self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
-		self.m_BankDoor:setScale(0.88)
-
-		self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
-		self.m_BackDoor:setFrozen(true)
-		self.m_BombAreaPosition = Vector3(2318.43, 11.37, 26.48)
-		self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
-		self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
-		self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
-	elseif type == "LosSantos" then
-
-	end
 end
 
 function BankRobbery:destroyRob()
@@ -184,6 +133,71 @@ function BankRobbery:destroyRob()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 	BankRobbery:getSingleton():build()
 end
+
+function BankRobbery:build()
+	self.m_IsBankrobRunning = false
+	self.m_RobPlayer = nil
+	self.m_RobFaction = nil
+
+	self.m_HackableComputer = createObject(2181, 2313.3999, 11.9, 25.5, 0, 0, 270)
+	self.m_HackableComputer:setData("clickable", true, true)
+	self.m_HackableComputer:setData("bankPC", true, true)
+
+	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
+	self.m_SafeDoor.m_Open = false
+	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
+	self.m_BankDoor:setScale(0.88)
+
+	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
+	self.m_BackDoor:setFrozen(true)
+
+
+	self.m_Blip = {}
+	self.m_DestinationMarker = {}
+	self.m_MoneyBags = {}
+
+	self.m_BombAreaPosition = Vector3(2318.43, 11.37, 26.48)
+	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
+	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
+	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
+	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
+	self.m_Timer = false
+	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 60)
+	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
+	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
+
+	self.m_CircuitBreakerPlayers = {}
+
+	self:spawnPed()
+	self:spawnGuards()
+	self:createSafes()
+	self:createBombableBricks()
+
+	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
+	self.m_ColFunc = bind(self.onHelpColHit, self)
+	self.m_HelpCol = bind(self.onHelpColHit, self)
+	self.m_OnStartHack = bind(self.Event_onStartHacking, self)
+	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
+	self.m_OnSuccess = bind(self.Event_onHackSuccessful, self)
+	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
+	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
+	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
+	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
+
+	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			hitElement:triggerEvent("clickSpamSetEnabled", false)
+		end
+	end)
+
+	addEventHandler("onColShapeLeave", self.m_SecurityRoomShape, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			hitElement:triggerEvent("clickSpamSetEnabled", true)
+		end
+	end)
+end
+
 
 function BankRobbery:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
@@ -325,75 +339,72 @@ end
 
 function BankRobbery:createSafes()
 	self.m_Safes = {
-		createObject(2332, 2305.5, 19.12012, 26.85, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 26.85, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45898, 26.85, 0, 0, 90),
-		createObject(2332, 2312.83984, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2310.3525, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2309.5215, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2308.6904, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2307.8604, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2307.0313, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2306.2002, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78027, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 19.94922, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 19.12012, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45898, 27.7085, 0, 0, 90),
-		createObject(2332, 2310.3711, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2310.3525, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2310.3525, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2310.3525, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2312.8398, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78027, 26.85, 0, 0, 90),
-		createObject(2332, 2306.2002, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.94922, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.12, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45897, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.95, 26.85, 0, 0, 90),
-		createObject(2332, 2307.0313, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2307.8601, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2308.6899, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2309.521, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2310.3525, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2312.8398, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2306.2002, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2307.0313, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2307.8604, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2308.6904, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2309.52, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 1437.3, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1437.3, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1437.3, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1437.3, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1437.3, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1437.3, -1006, 14.5, 0, 0, 180),
 	}
 	for index, safe in pairs(self.m_Safes) do
 		safe:setData("clickable", true, true)
