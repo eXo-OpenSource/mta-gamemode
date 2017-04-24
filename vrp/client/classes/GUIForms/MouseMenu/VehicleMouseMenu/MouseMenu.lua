@@ -52,7 +52,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("factionRescueToggleLadder", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Arrows)
 		end
 
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
@@ -64,7 +64,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuFactionItems:new(posX, posY, element), element)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.List)
 			end
 			if localPlayer:getFaction():getId() == 2 then
 				self:addItem(_"Wanze anbringen",
@@ -73,7 +73,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								triggerServerEvent("factionStateAttachBug", self:getElement())
 							end
 						end
-					)
+					):setIcon(FontAwesomeSymbols.Bug)
 				end
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
@@ -102,22 +102,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Music)
 			end
-			--[[self:addItem(_"An Server verkaufen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("vehicleSell", self:getElement())
-					end
-				end
-			)
-			self:addItem(_"An Spieler verkaufen",
-				function()
-					if self:getElement() then
-						outputChatBox("[I] Begib dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200, 200, 0, true)
-					end
-				end
-			)]]
 		end
 
 		if element:getVehicleType() ~= VehicleType.Trailer then
@@ -136,7 +122,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("vehicleHotwire", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Random)
 		end
 		]]
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
@@ -145,14 +131,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					function()
 						triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(2912, localPlayer) > 0 then
 				self:addItem(_"Kiste aufladen",
 					function()
 						triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Up)
 			end
 		end
 
@@ -162,14 +148,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					function()
 						triggerServerEvent("bankRobberyDeloadBag", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(1550, localPlayer) > 0 then
 				self:addItem(_"Geldsack aufladen",
 					function()
 						triggerServerEvent("bankRobberyLoadBag", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Up)
 			end
 		end
 
@@ -217,7 +203,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
-			delete( self )
+			delete(self)
 		end
 	end
 

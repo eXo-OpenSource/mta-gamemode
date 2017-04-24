@@ -75,6 +75,13 @@ FontAwesomeSymbols = {
 	Star = "",
 	Wrench = "",
 	Cogs = "",
+	List = "",
+	Bug = "",
+	Arrows = "",
+	Double_Up = "",
+	Double_Down = "",
+	Music = "",
+	Random = "",
 }
 
 Fonts = {
