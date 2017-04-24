@@ -17,7 +17,7 @@ ModdingCheck.OTHER_MAX_DIFFER_Z = 0.2
 
 ModdingCheck.SKIN_MAX_DIF = 0.2 --// 20% Difference
 ModdingCheck.VEHICLE_MAX_DIF = 0.2 
-ModdingCheck.OTHER_MAX_DIF = 0.2 
+ModdingCheck.OTHER_MAX_DIF = 0.2
 function ModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
 	for _,plr in ipairs( getElementsByType("player") ) do
@@ -34,12 +34,12 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	local difCondition --// bool that will state if the modded skin is differing too much from the original one
     for idx,item in ipairs(modList) do
 		if item.sizeX then
-			sumOriginal = item.originalSizeX + item.originalSizeY + item.originalSizeY
+			sumOriginal = item.originalSizeX + item.originalSizeY + item.originalSizeZ
 			sumMod = item.sizeX + item.sizeY + item.sizeZ
 			divResult = sumOriginal / sumMod
 			if divResult then
 				if item.id >= 0 and item.id <= 310 then -- Skins
-					difCondition = ( divResult < 1 and divResult > (1-ModdingCheck.SKIN_MAX_DIF) )  or divResult < (1+ModdingCheck.SKIN_MAX_DIF)
+					difCondition = divResult <= 1 and divResult < (1-ModdingCheck.SKIN_MAX_DIF)  or divResult > (1+ModdingCheck.SKIN_MAX_DIF)
 					if difCondition then
 						tNames[#tNames+1] = item.id.." - "..item.name
 					end
