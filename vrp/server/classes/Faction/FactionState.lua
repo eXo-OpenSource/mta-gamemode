@@ -1213,8 +1213,8 @@ function FactionState:Event_friskPlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			if target.vehicle and client.vehicle ~= target.vehicle then
-				client:sendErrpr(_("So kannst du den Spieler nicht durchsuchen!", target))
+			if (target.vehicle or client.vehicle) and client.vehicle ~= target.vehicle then
+				client:sendError(_("So kannst du den Spieler nicht durchsuchen!", target))
 				return
 			end
 
