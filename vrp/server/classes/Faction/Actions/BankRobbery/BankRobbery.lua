@@ -17,9 +17,7 @@ function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
 	self.m_RobPlayer = nil
 	self.m_RobFaction = nil
-	self.m_Blip = {}
-	self.m_DestinationMarker = {}
-	self.m_MoneyBags = {}
+
 end
 
 function BankRobbery:spawnPed(skin, pos, rot)
@@ -41,6 +39,8 @@ function BankRobbery:destructor()
 end
 
 function BankRobbery:destroyRob()
+	BankManager:getSingleton():stopRob()
+
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape, "player")
 	if tooLatePlayers then
 		for key, player in pairs( tooLatePlayers) do
@@ -339,38 +339,6 @@ function BankRobbery:countStatePeople()
 	return amount
 end
 
-function BankRobbery:BombArea_Place(bombArea, player)
-	if not player:getFaction() then
-		player:sendError(_("Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist", player))
-		return false
-	end
-
-	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
-
-	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können müssen mindestens 5 Staats-Fraktionisten online sein!", player))
-		return false
-	end
-
-	for k, player in pairs(getElementsWithinColShape(self.m_BombColShape, "player")) do
-		player:triggerEvent("Countdown", BOMB_TIME/1000, "Bombe zündet")
-
-		local faction = player:getFaction()
-		if faction and faction:isEvilFaction() then
-			player:reportCrime(Crime.BankRobbery)
-
-		end
-	end
-	return true
-end
-
-function BankRobbery:BombArea_Explode(bombArea, player)
-	self:startRob(player)
-	for index, brick in pairs(self.m_BombableBricks) do
-		brick:destroy()
-	end
-end
-
 function BankRobbery:Event_onSafeClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -433,7 +401,7 @@ function BankRobbery:addMoneyToBag(player, money)
 			return
 		end
 	end
-	local pos = BankRobbery.BagSpawns[#self.m_MoneyBags+1]
+	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
 	table.insert(self.m_MoneyBags, newBag)
 	newBag:setData("Money", money, true)
@@ -452,36 +420,6 @@ function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	end
 end
 
-function BankRobbery:Event_LoadBag(veh)
-	if client:getFaction() then
-		if VEHICLE_BAG_LOAD[veh.model] then
-			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					local bag = client:getPlayerAttachedObject()
-					if #getAttachedElements(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
-						if bag then
-							local count = #getAttachedElements(veh)
-							client:detachPlayerObject(bag)
-							bag:attach(veh, VEHICLE_BAG_LOAD[veh.model][count+1])
-						else
-							client:sendError(_("Du hast keinen Geldsack dabei!", client))
-						end
-					else
-						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
-					end
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
-				end
-			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
-			end
-		else
-			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
-		end
-	else
-		client:sendError(_("Nur Fraktionisten können Geldäcke abladen!", client))
-	end
-end
 
 function BankRobbery:getRemainingBagAmount()
 	local count = 0

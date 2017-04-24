@@ -1,15 +1,10 @@
 function BankManager:constructor()
-	self.m_Banks = {
-		["Palomino"] = BankPalomio,
-		["LosSantos"] = BankLosSantos
-	}
-
+	self.m_Banks = {}
 	self.m_CurrentBank = false
 	self.m_IsBankrobRunning = false
 
-	for name, class in pairs(self.m_Banks) do
-		class:new()
-	end
+	self.m_Banks["Palomino"] = BankPalomino:new()
+	self.m_Banks["LosSantos"] = BankLosSantos:new()
 
 	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess", "bankRobberyLoadBag", "bankRobberyDeloadBag"}
 
@@ -23,6 +18,16 @@ function BankManager:constructor()
 	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 
+end
+
+function BankManager:startRob(bank)
+	self.m_IsBankrobRunning = true
+	self.m_CurrentBank = bank
+end
+
+function BankManager:stopRob()
+	self.m_IsBankrobRunning = false
+	self.m_CurrentBank = false
 end
 
 function BankManager:Event_onStartHacking()
@@ -58,6 +63,38 @@ function BankManager:Event_onHackSuccessful()
 	client:giveKarma(-5)
 
 	self.m_CurrentBank:openSafeDoor()
+end
+
+
+function BankManager:Event_LoadBag(veh)
+	if client:getFaction() then
+		if VEHICLE_BAG_LOAD[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					local bag = client:getPlayerAttachedObject()
+					if #getAttachedElements(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
+						if bag then
+							local count = #getAttachedElements(veh)
+							client:detachPlayerObject(bag)
+							bag:attach(veh, VEHICLE_BAG_LOAD[veh.model][count+1])
+						else
+							client:sendError(_("Du hast keinen Geldsack dabei!", client))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
+					end
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können Geldäcke abladen!", client))
+	end
 end
 
 function BankManager:Event_DeloadBag(veh)

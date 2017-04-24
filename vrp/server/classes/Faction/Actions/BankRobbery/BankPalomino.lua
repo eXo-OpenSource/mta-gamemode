@@ -5,40 +5,43 @@
 -- *  PURPOSE:     Bank robbery class
 -- *
 -- ****************************************************************************
+
+--Info 68 Tresors
+
 BankPalomino = inherit(BankRobbery)
 BankPalomino.Map = {}
-BankPalomino.FinishMarker = {
-	Vector3(2766.84, 84.98, 18.39),
-	Vector3(2561.50, -949.89, 81.77),
-	Vector3(1935.24, 169.98, 36.28)}
-
-addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
-BankPalomino.BagSpawns = {
-	Vector3(2307.25, 17.90, 26),
-	Vector3(2306.88, 19.09, 26),
-	Vector3(2306.97, 20.38, 26),
-	Vector3(2308.34, 20.20, 26),
-	Vector3(2308.46, 19.16, 26),
-	Vector3(2308.46, 17.92, 26),
-	Vector3(2309.82, 17.77, 26),
-	Vector3(2310.09, 18.91, 26),
-	Vector3(2310.11, 20.13, 26),
-	Vector3(2311.48, 20.26, 26),
-	Vector3(2311.57, 18.95, 26),
-	Vector3(2311.55, 17.89, 26),
-	Vector3(2312.69, 17.80, 26),
-	Vector3(2312.73, 19.90, 26),
-	Vector3(2313.57, 20.89, 26),
-	Vector3(2313.59, 17.27, 26),
-	Vector3(2312.19, 18.31, 26),
-	Vector3(2309.27, 19.14, 26),
-}
 
 local BOMB_TIME = 20*1000
---Info 68 Tresors
 
 function BankPalomino:constructor()
 	self.m_PedPosition = {Vector3(2310.28, -10.87, 26.74), 180}
+
+	self.ms_FinishMarker = {
+		Vector3(2766.84, 84.98, 18.39),
+		Vector3(2561.50, -949.89, 81.77),
+		Vector3(1935.24, 169.98, 36.28)
+	}
+
+	self.ms_BagSpawns = {
+		Vector3(2307.25, 17.90, 26),
+		Vector3(2306.88, 19.09, 26),
+		Vector3(2306.97, 20.38, 26),
+		Vector3(2308.34, 20.20, 26),
+		Vector3(2308.46, 19.16, 26),
+		Vector3(2308.46, 17.92, 26),
+		Vector3(2309.82, 17.77, 26),
+		Vector3(2310.09, 18.91, 26),
+		Vector3(2310.11, 20.13, 26),
+		Vector3(2311.48, 20.26, 26),
+		Vector3(2311.57, 18.95, 26),
+		Vector3(2311.55, 17.89, 26),
+		Vector3(2312.69, 17.80, 26),
+		Vector3(2312.73, 19.90, 26),
+		Vector3(2313.57, 20.89, 26),
+		Vector3(2313.59, 17.27, 26),
+		Vector3(2312.19, 18.31, 26),
+		Vector3(2309.27, 19.14, 26),
+	}
 
 	self:build()
 end
@@ -105,9 +108,6 @@ function BankPalomino:destroyRob()
 
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
 	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
-	removeEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
-	removeEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	removeEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
@@ -115,6 +115,10 @@ function BankPalomino:destroyRob()
 end
 
 function BankPalomino:build()
+	self.m_Blip = {}
+	self.m_DestinationMarker = {}
+	self.m_MoneyBags = {}
+
 	self.m_HackableComputer = createObject(2181, 2313.3999, 11.9, 25.5, 0, 0, 270)
 	self.m_HackableComputer:setData("clickable", true, true)
 	self.m_HackableComputer:setData("bankPC", true, true)
@@ -150,9 +154,6 @@ function BankPalomino:build()
 
 	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
 	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
-	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
-	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 
 	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then
@@ -168,6 +169,8 @@ function BankPalomino:build()
 end
 
 function BankPalomino:startRob(player)
+	BankManager:getSingleton():startRob("Palomino")
+
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
 
@@ -192,7 +195,7 @@ function BankPalomino:startRob(player)
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 
-	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
+	for markerIndex, destination in pairs(self.ms_FinishMarker) do
 		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
 		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
