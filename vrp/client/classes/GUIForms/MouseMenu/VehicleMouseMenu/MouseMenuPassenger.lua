@@ -27,7 +27,7 @@ function PassengerMouseMenu:constructor(posX, posY, element)
 	)
 	for seat, occupant in pairs(element.occupants) do
 		if occupant == localPlayer then
-			self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName())):setTextColor(Color.LightBlue):setIcon(FontAwesomeSymbols.Player)
+			self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName())):setTextColor(Color.LightBlue)
 		else
 			self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName()),
 			function()
@@ -36,7 +36,7 @@ function PassengerMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenu:new(posX, posY, occupant), occupant)
 				end
 			end
-			):setIcon(FontAwesomeSymbols.Player)
+			)
 		end
 	end
 
