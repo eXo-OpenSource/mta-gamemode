@@ -28,7 +28,7 @@ function CatchGame:constructor(hostPlayer, targetPlayer)
 	addEventHandler("onPlayerDamage", root, self.m_OnPlayerDamage)
 
 	setTimer(function() self:startup() end, 5000, 1)
-	setTimer(function() self:timesup() end, 15000, 1)
+	setTimer(function() self:timesup() end, 65000, 1)
 end
 
 function CatchGame:destructor()
@@ -37,8 +37,6 @@ function CatchGame:destructor()
 
 	self.m_CatchMarker:destroy()
 	removeEventHandler("onPlayerDamage", root, self.m_OnPlayerDamage)
-
-	outputChatBox("destructor")
 end
 
 function CatchGame:startup()
@@ -47,8 +45,8 @@ function CatchGame:startup()
 	self.m_CatchingPlayer:sendInfo(("Du bist an der Reihe und musst %s fangen!"):format(self.m_PlayerEnemy[self.m_CatchingPlayer].name))
 	self.m_PlayerEnemy[self.m_CatchingPlayer]:sendInfo(("%s ist an der Reihe und muss dich fangen!"):format(self.m_CatchingPlayer.name))
 
-	self.m_CatchingPlayer:triggerEvent("Countdown", 10, "Fangen")
-	self.m_PlayerEnemy[self.m_CatchingPlayer]:triggerEvent("Countdown", 10, "Fangen")
+	self.m_CatchingPlayer:triggerEvent("Countdown", 60, "Fangen")
+	self.m_PlayerEnemy[self.m_CatchingPlayer]:triggerEvent("Countdown", 60, "Fangen")
 
 	self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
 end
