@@ -54,4 +54,6 @@ function VehicleMouseMenuRespawn:constructor(posX, posY, element)
 			end
 		end
 	)
+
+	self:adjustWidth()
 end

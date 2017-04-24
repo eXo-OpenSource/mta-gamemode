@@ -36,6 +36,20 @@ function GUIMouseMenu:addItem(text, callback)
 	return item
 end
 
+function GUIMouseMenu:adjustWidth()
+	local maxWidth = 0
+
+	for _, v in pairs(self.m_Items) do
+		if v:getTextWidth() > maxWidth then
+			maxWidth = v:getTextWidth()
+		end
+	end
+
+	for _, v in pairs(self.m_Items) do
+		v:setSize(maxWidth)
+	end
+end
+
 function GUIMouseMenu:setElement(element)
 	self.m_Element = element
 end

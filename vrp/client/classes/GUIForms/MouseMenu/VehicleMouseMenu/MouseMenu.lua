@@ -92,7 +92,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							triggerServerEvent("onMouseMenuRepairkit", self:getElement())
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Wrench)
 			end
 
 			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
@@ -181,7 +181,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("mechanicRepair", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Wrench)
 			if getElementData(element, "Handbrake") == true then
 				self:addItem(_"Mechaniker: Handbremse lösen",
 					function()
@@ -190,7 +190,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							delete(self)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Cogs)
 			end
 		end
 	end
@@ -220,6 +220,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			delete( self )
 		end
 	end
+
+	self:adjustWidth()
 end
 
 function VehicleMouseMenu:getAttachedElement(model, element)

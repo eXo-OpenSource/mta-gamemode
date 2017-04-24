@@ -73,6 +73,8 @@ FontAwesomeSymbols = {
 	Home = "",
 	SignOut = "",
 	Star = "",
+	Wrench = "",
+	Cogs = "",
 }
 
 Fonts = {

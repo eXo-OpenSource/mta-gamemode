@@ -37,6 +37,10 @@ function GUIMouseMenuItem:drawThis()
 	end
 end
 
+function GUIMouseMenuItem:getTextWidth()
+	return dxGetTextWidth(self.m_Text, self.m_FontSize, self.m_Font) + 10 + (self.m_Icon and self.m_Height or 0)
+end
+
 function GUIMouseMenuItem:getTextColor()
 	return self.m_TextColor
 end
