@@ -14,8 +14,6 @@ BankPalomino.Map = {}
 local BOMB_TIME = 20*1000
 
 function BankPalomino:constructor()
-	self.m_PedPosition = {Vector3(2310.28, -10.87, 26.74), 180}
-
 	self.ms_FinishMarker = {
 		Vector3(2766.84, 84.98, 18.39),
 		Vector3(2561.50, -949.89, 81.77),
@@ -105,10 +103,6 @@ function BankPalomino:destroyRob()
 end
 
 function BankPalomino:build()
-	self.m_Blip = {}
-	self.m_DestinationMarker = {}
-	self.m_MoneyBags = {}
-
 	self.m_HackableComputer = createObject(2181, 2313.3999, 11.9, 25.5, 0, 0, 270)
 	self.m_HackableComputer:setData("clickable", true, true)
 	self.m_HackableComputer:setData("bankPC", true, true)
@@ -128,8 +122,7 @@ function BankPalomino:build()
 	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
 	self.m_Timer = false
 	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 60)
-	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
-	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
+
 
 	self:spawnPed(295, Vector3(2310.28, -10.87, 26.74), 180)
 	self:spawnGuards()
@@ -155,7 +148,7 @@ function BankPalomino:build()
 end
 
 function BankPalomino:startRob(player)
-	BankManager:getSingleton():startRob("Palomino")
+	BankManager:getSingleton():startRob(self)
 
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")

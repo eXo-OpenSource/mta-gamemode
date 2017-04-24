@@ -17,6 +17,11 @@ function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
 	self.m_RobPlayer = nil
 	self.m_RobFaction = nil
+	self.m_Blip = {}
+	self.m_DestinationMarker = {}
+
+	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
+	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 end
 
 function BankRobbery:virtual_constructor(...)
@@ -27,7 +32,7 @@ function BankRobbery:spawnPed(skin, pos, rot)
 	if isElement(self.m_Ped) then
 		destroyElement(self.m_Ped)
 	end
-	self.m_Ped = ShopNPC:new(skin, pos, rot)
+	self.m_Ped = ShopNPC:new(skin, pos.x, pos.y, pos.z, rot)
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
 
 	addEventHandler("onPedWasted", self.m_Ped,
