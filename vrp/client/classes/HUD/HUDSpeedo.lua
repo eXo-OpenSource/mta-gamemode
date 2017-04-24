@@ -105,14 +105,16 @@ function HUDSpeedo:draw()
 
 	dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
 
-	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
-		if getTickCount()%1000 > 500 then
-			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+	if vehicle:getVehicleType() == VehicleType.Automobile then
+		if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
+			if getTickCount()%1000 > 500 then
+				dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+			end
+		elseif getVehicleEngineState(vehicle) then
+			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 		end
-	elseif getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 	end
-
+		
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 	end
