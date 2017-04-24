@@ -12,9 +12,9 @@ BankLosSantos = inherit(BankRobbery)
 
 function BankLosSantos:constructor()
 	self.ms_FinishMarker = {
-		Vector3(2766.84, 84.98, 18.39),
-		Vector3(2561.50, -949.89, 81.77),
-		Vector3(1935.24, 169.98, 36.28)
+		Vector3(2001.74, -1093.44, 23.2),
+		Vector3(942.09, -1817.83, 11.2),
+		Vector3(821.55, -1003.00, 26.2)
 	}
 
 	self.ms_BagSpawns = {
