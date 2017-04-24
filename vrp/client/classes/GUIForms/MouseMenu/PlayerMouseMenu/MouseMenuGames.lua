@@ -28,12 +28,13 @@ function PlayerMouseMenuGames:constructor(posX, posY, element)
 	)
 
 	self:addItem(_"Schere-Stein-Papier spielen",
-    function()
-        if self:getElement() then
-            triggerServerEvent("rockPaperScissorsQuestion", localPlayer, self:getElement())
-        end
-    end
+		function()
+			if self:getElement() then
+				triggerServerEvent("rockPaperScissorsQuestion", localPlayer, self:getElement())
+			end
+		end
 	)
+
 	self:addItem(_"Pong spielen",
 		function()
 			if self:getElement() then
@@ -41,11 +42,18 @@ function PlayerMouseMenuGames:constructor(posX, posY, element)
 			end
 		end
 	)
+
 	self:addItem(_"Schach spielen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("chessQuestion", localPlayer, self:getElement())
 			end
+		end
+	)
+
+	self:addItem(_"Fangen spielen",
+		function()
+			triggerServerEvent("catchQuestion", localPlayer, self:getElement())
 		end
 	)
 

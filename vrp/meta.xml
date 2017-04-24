@@ -166,6 +166,7 @@
 	<script src="server/classes/Gameplay/Minigames/SniperGame.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
