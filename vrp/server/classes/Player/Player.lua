@@ -427,6 +427,7 @@ function Player:spawn( )
 		end
 		killPed(self)
 	end
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -477,7 +478,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if isElement(self.ped_deadDouble) then
 		destroyElement(self.ped_deadDouble)
 	end
-	WearableManager:getSingleton():removeAllWearables()
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:clearReviveWeapons()
