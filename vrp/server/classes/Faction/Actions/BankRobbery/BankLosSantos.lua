@@ -1,19 +1,19 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/BankRobbery.lua
+-- *  FILE:        server/classes/BankRobbery/BankLosSantos.lua
 -- *  PURPOSE:     Bank robbery class
 -- *
 -- ****************************************************************************
-BankRobbery = inherit(Singleton)
-BankRobbery.Map = {}
-BankRobbery.FinishMarker = {
+BankLosSantos = inherit(BankRobbery)
+BankLosSantos.Map = {}
+BankLosSantos.FinishMarker = {
 	Vector3(2766.84, 84.98, 18.39),
 	Vector3(2561.50, -949.89, 81.77),
 	Vector3(1935.24, 169.98, 36.28)}
 
 addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
-BankRobbery.BagSpawns = {
+BankLosSantos.BagSpawns = {
 	Vector3(2307.25, 17.90, 26),
 	Vector3(2306.88, 19.09, 26),
 	Vector3(2306.97, 20.38, 26),
@@ -41,11 +41,11 @@ local MAX_MONEY_PER_BAG = 3000
 local BANKROB_TIME = 60*1000*12
 --Info 68 Tresors
 
-function BankRobbery:constructor()
+function BankLosSantos:constructor()
 	self:build()
 end
 
-function BankRobbery:spawnPed()
+function BankLosSantos:spawnPed()
 	if isElement(self.m_Ped) then
 		destroyElement(self.m_Ped)
 	end
@@ -59,11 +59,11 @@ function BankRobbery:spawnPed()
 	)
 end
 
-function BankRobbery:destructor()
+function BankLosSantos:destructor()
 
 end
 
-function BankRobbery:destroyRob()
+function BankLosSantos:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape, "player")
 	if tooLatePlayers then
 		for key, player in pairs( tooLatePlayers) do
@@ -131,13 +131,11 @@ function BankRobbery:destroyRob()
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
-	BankRobbery:getSingleton():build()
+	self:build()
 end
 
-function BankRobbery:build()
-	self.m_IsBankrobRunning = false
-	self.m_RobPlayer = nil
-	self.m_RobFaction = nil
+function BankLosSantos:build()
+	self.m_PedPosition = {Vector3(2310.28, -10.87, 26.74), 180}
 
 	self.m_HackableComputer = createObject(2181, 2313.3999, 11.9, 25.5, 0, 0, 270)
 	self.m_HackableComputer:setData("clickable", true, true)
@@ -199,7 +197,7 @@ function BankRobbery:build()
 end
 
 
-function BankRobbery:onHelpColHit(hitElement, matchingDimension)
+function BankLosSantos:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if hitElement:getFaction() then
 			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.Bankrob", "HelpTexts.Actions.Bankrob", true)
@@ -207,13 +205,13 @@ function BankRobbery:onHelpColHit(hitElement, matchingDimension)
 	end
 end
 
-function BankRobbery:onHelpColLeave(hitElement, matchingDimension)
+function BankLosSantos:onHelpColLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		hitElement:triggerEvent("resetManualHelpBarText")
 	end
 end
 
-function BankRobbery:startRob(player)
+function BankLosSantos:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
@@ -261,7 +259,7 @@ function BankRobbery:startRob(player)
 	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 end
 
-function BankRobbery:Ped_Targetted(ped, attacker)
+function BankLosSantos:Ped_Targetted(ped, attacker)
 	local faction = attacker:getFaction()
 	if faction and faction:isEvilFaction() then
 		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
@@ -279,13 +277,13 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 	end
 end
 
-function BankRobbery:timeUp()
+function BankLosSantos:timeUp()
 	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert!")
 	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!")
 	self:destroyRob()
 end
 
-function BankRobbery:updateBreakingNews()
+function BankLosSantos:updateBreakingNews()
 	local msg = ""
 	local rnd = math.random(1,4)
 	if rnd == 1 then
@@ -322,7 +320,7 @@ function BankRobbery:updateBreakingNews()
 	PlayerManager:getSingleton():breakingNews(msg)
 end
 
-function BankRobbery:spawnGuards()
+function BankLosSantos:spawnGuards()
 	self.m_GuardPed1 = GuardActor:new(Vector3(2315.25, 20.34, 26.53))
 	self.m_GuardPed1:setRotation(270, 0, 270, "default", true)
 	self.m_GuardPed1:setFrozen(true)
@@ -337,74 +335,77 @@ function BankRobbery:spawnGuards()
 	end)
 end
 
-function BankRobbery:createSafes()
+function BankLosSantos:createSafes()
 	self.m_Safes = {
-		createObject(2332, 1437.3, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1437.3, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1437.3, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1436.4, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1435.5, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1434.6, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1433.7, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1432.8, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1431.9, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1431.0, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1430.1, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1429.2, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1428.3, -996.20, 12.7, 0, 0, 0),
-		createObject(2332, 1436.4, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1436.4, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1435.5, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1434.6, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1433.7, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1432.8, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1431.9, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1431.0, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1430.1, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1429.2, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1428.3, -996.20, 13.6, 0, 0, 0),
-		createObject(2332, 1435.5, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1434.6, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1433.7, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1432.8, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1431.9, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1431.0, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1430.1, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1429.2, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1428.3, -996.20, 14.5, 0, 0, 0),
-		createObject(2332, 1437.3, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1436.4, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1435.5, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1434.6, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1433.7, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1432.8, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1431.9, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1431.0, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1430.1, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1429.2, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1428.3, -1006, 12.7, 0, 0, 180),
-		createObject(2332, 1437.3, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1436.4, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1435.5, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1434.6, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1433.7, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1432.8, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1431.9, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1431.0, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1430.1, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1429.2, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1428.3, -1006, 13.6, 0, 0, 180),
-		createObject(2332, 1428.3, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1429.2, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1430.1, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1431.0, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1431.9, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1432.8, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1433.7, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1434.6, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1435.5, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1436.4, -1006, 14.5, 0, 0, 180),
-		createObject(2332, 1437.3, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 2305.5, 19.12012, 26.85, 0, 0, 90),
+		createObject(2332, 2305.5, 18.29004, 26.85, 0, 0, 90),
+		createObject(2332, 2305.5, 17.45898, 26.85, 0, 0, 90),
+		createObject(2332, 2312.83984, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2312.0127, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2311.1836, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2310.3525, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2309.5215, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2308.6904, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2307.8604, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2307.0313, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2306.2002, 21.5, 27.7085, 0, 0, 0),
+		createObject(2332, 2305.5, 20.78027, 27.7085, 0, 0, 90),
+		createObject(2332, 2305.5, 19.94922, 27.7085, 0, 0, 90),
+		createObject(2332, 2305.5, 19.12012, 27.7085, 0, 0, 90),
+		createObject(2332, 2305.5, 18.29004, 27.7085, 0, 0, 90),
+		createObject(2332, 2305.5, 17.45898, 27.7085, 0, 0, 90),
+		createObject(2332, 2310.3711, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2306.2002, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2309.5215, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2308.6904, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2307.8604, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2307.0313, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2306.2002, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2312.8398, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2312.0127, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2311.1836, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2307.0313, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2307.8604, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2308.6904, 16.73047, 26, 0, 0, 180),
+		createObject(2332, 2309.5215, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2310.3525, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2311.1836, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2312.0127, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2312.8398, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2306.2002, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2307.0313, 16.73047, 26.85, 0, 0, 180),
+		createObject(2332, 2307.8604, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2308.6904, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2309.5215, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2310.3525, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2311.1836, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2312.0127, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2312.8398, 16.73047, 27.7085, 0, 0, 180),
+		createObject(2332, 2310.3525, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2311.1836, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2312.0127, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2312.8398, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2305.5, 20.78027, 26.85, 0, 0, 90),
+		createObject(2332, 2306.2002, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2305.5, 20.78, 26, 0, 0, 90),
+		createObject(2332, 2305.5, 19.94922, 26, 0, 0, 90),
+		createObject(2332, 2305.5, 19.12, 26, 0, 0, 90),
+		createObject(2332, 2305.5, 18.29004, 26, 0, 0, 90),
+		createObject(2332, 2305.5, 17.45897, 26, 0, 0, 90),
+		createObject(2332, 2305.5, 19.95, 26.85, 0, 0, 90),
+		createObject(2332, 2307.0313, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2307.8601, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2308.6899, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2309.521, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2310.3525, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2311.1836, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2312.0127, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2312.8398, 21.5, 26, 0, 0, 0),
+		createObject(2332, 2306.2002, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2307.0313, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2307.8604, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2308.6904, 21.5, 26.85, 0, 0, 0),
+		createObject(2332, 2309.52, 21.5, 26.85, 0, 0, 0),
 	}
 	for index, safe in pairs(self.m_Safes) do
 		safe:setData("clickable", true, true)
@@ -412,7 +413,7 @@ function BankRobbery:createSafes()
 	end
 end
 
-function BankRobbery:createBombableBricks()
+function BankLosSantos:createBombableBricks()
 	self.m_BombableBricks = {
 		createObject(9131, 2317.334, 10.25, 28.87, 0, 0, 270),
 		createObject(9131, 2317.334, 10.25, 26.6, 0, 0, 270),
@@ -429,7 +430,7 @@ function BankRobbery:createBombableBricks()
 	}
 end
 
-function BankRobbery:countEvilPeople()
+function BankLosSantos:countEvilPeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 		if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -439,7 +440,7 @@ function BankRobbery:countEvilPeople()
 	return amount
 end
 
-function BankRobbery:countStatePeople()
+function BankLosSantos:countStatePeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 		if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
@@ -449,7 +450,7 @@ function BankRobbery:countStatePeople()
 	return amount
 end
 
-function BankRobbery:BombArea_Place(bombArea, player)
+function BankLosSantos:BombArea_Place(bombArea, player)
 	if not player:getFaction() then
 		player:sendError(_("Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist", player))
 		return false
@@ -474,14 +475,14 @@ function BankRobbery:BombArea_Place(bombArea, player)
 	return true
 end
 
-function BankRobbery:BombArea_Explode(bombArea, player)
+function BankLosSantos:BombArea_Explode(bombArea, player)
 	self:startRob(player)
 	for index, brick in pairs(self.m_BombableBricks) do
 		brick:destroy()
 	end
 end
 
-function BankRobbery:Event_onHackSuccessful()
+function BankLosSantos:Event_onHackSuccessful()
 	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
 		player:triggerEvent("forceCircuitBreakerClose")
 		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
@@ -496,7 +497,7 @@ function BankRobbery:Event_onHackSuccessful()
 	self.m_SafeDoor.m_Open = true
 end
 
-function BankRobbery:Event_onStartHacking()
+function BankLosSantos:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
 			self.m_CircuitBreakerPlayers[client] = true
@@ -508,7 +509,7 @@ function BankRobbery:Event_onStartHacking()
 	end
 end
 
-function BankRobbery:Event_onDisarmAlarm()
+function BankLosSantos:Event_onDisarmAlarm()
 	if client:getFaction() and client:getFaction() then
 		if self.m_IsBankrobRunning then
 			triggerClientEvent("bankAlarmStop", root)
@@ -518,7 +519,7 @@ function BankRobbery:Event_onDisarmAlarm()
 	end
 end
 
-function BankRobbery:Event_onSafeClicked(button, state, player)
+function BankLosSantos:Event_onSafeClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			if self.m_IsBankrobRunning then
@@ -544,7 +545,7 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 	end
 end
 
-function BankRobbery:Event_onBagClick(button, state, player)
+function BankLosSantos:Event_onBagClick(button, state, player)
 	if button == "left" and state == "down" then
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 			if player:getFaction() then
@@ -562,7 +563,7 @@ function BankRobbery:Event_onBagClick(button, state, player)
 	end
 end
 
-function BankRobbery:statePeopleClickBag(player, bag)
+function BankLosSantos:statePeopleClickBag(player, bag)
 	local amount = math.floor(bag:getData("Money")/2)
 	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
@@ -572,7 +573,7 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	bag:destroy()
 end
 
-function BankRobbery:addMoneyToBag(player, money)
+function BankLosSantos:addMoneyToBag(player, money)
 	for i, bag in pairs(self.m_MoneyBags) do
 		if bag:getData("Money") + money < MAX_MONEY_PER_BAG then
 			bag:setData("Money", bag:getData("Money") + money, true)
@@ -590,7 +591,7 @@ function BankRobbery:addMoneyToBag(player, money)
 	self.m_MoneyBagCount = #self.m_MoneyBags
 end
 
-function BankRobbery:Event_DeloadBag(veh)
+function BankLosSantos:Event_DeloadBag(veh)
 	if client:getFaction() then
 		if VEHICLE_BAG_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -623,14 +624,14 @@ function BankRobbery:Event_DeloadBag(veh)
 	end
 end
 
-function BankRobbery:Event_OnTruckStartEnter(player, seat)
+function BankLosSantos:Event_OnTruckStartEnter(player, seat)
 	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
 	end
 end
 
-function BankRobbery:Event_LoadBag(veh)
+function BankLosSantos:Event_LoadBag(veh)
 	if client:getFaction() then
 		if VEHICLE_BAG_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -661,7 +662,7 @@ function BankRobbery:Event_LoadBag(veh)
 	end
 end
 
-function BankRobbery:getRemainingBagAmount()
+function BankLosSantos:getRemainingBagAmount()
 	local count = 0
 	for i, k in pairs(self.m_MoneyBags) do
 		if isElement(k) then
@@ -671,7 +672,7 @@ function BankRobbery:getRemainingBagAmount()
 	return count
 end
 
-function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
+function BankLosSantos:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 	if isElement(hitElement) and matchingDimension then
 		if hitElement.type == "player" then
 			local faction = hitElement:getFaction()

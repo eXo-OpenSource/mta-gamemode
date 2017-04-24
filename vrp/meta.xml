@@ -240,7 +240,6 @@
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/BankRobberyLS.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
@@ -719,7 +718,6 @@
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
-	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
@@ -727,6 +725,10 @@
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery/BankManager.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>

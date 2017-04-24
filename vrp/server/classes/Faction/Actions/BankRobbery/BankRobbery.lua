@@ -5,22 +5,28 @@
 -- *  PURPOSE:     Bank robbery class
 -- *
 -- ****************************************************************************
-BankRobbery = inherit(Singleton)
-BankRobbery.Map = {}
+BankRobbery = inherit(Object)
+--Info 68 Tresors
+local MONEY_PER_SAFE_MIN = 500
+local MONEY_PER_SAFE_MAX = 750
+local MAX_MONEY_PER_BAG = 3000
+local BANKROB_TIME = 60*1000*12
 
-addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 
 function BankRobbery:constructor()
-	for bank, data in pairs(BANK_DATA) do
-		self:build(data)
-	end
+	self.m_IsBankrobRunning = false
+	self.m_RobPlayer = nil
+	self.m_RobFaction = nil
+	self.m_Blip = {}
+	self.m_DestinationMarker = {}
+	self.m_MoneyBags = {}
 end
 
-function BankRobbery:spawnPed()
+function BankRobbery:spawnPed(skin, pos, rot)
 	if isElement(self.m_Ped) then
 		destroyElement(self.m_Ped)
 	end
-	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
+	self.m_Ped = ShopNPC:new(skin, pos, rot)
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
 
 	addEventHandler("onPedWasted", self.m_Ped,
@@ -32,86 +38,6 @@ end
 
 function BankRobbery:destructor()
 
-end
-
-function BankRobbery:build(type)
-	self.m_IsBankrobRunning = false
-	self.m_RobPlayer = nil
-	self.m_RobFaction = nil
-
-	self.m_Blip = {}
-	self.m_DestinationMarker = {}
-	self.m_MoneyBags = {}
-	self.m_Timer = false
-
-	local model, pos, rot, alpha
-
-	pos, rot, alpha = unpack(BANK_DATA[type].Computer)
-
-	self.m_HackableComputer = createObject(2181, pos, 0, 0, rot)
-	self.m_HackableComputer:setAlpha(alpha)
-	self.m_HackableComputer:setData("clickable", true, true)
-	self.m_HackableComputer:setData("bankPC", true, true)
-
-	model, pos, rot = unpack(BANK_DATA[type].Computer)
-	self.m_SafeDoor = createObject(model, pos, 0, 0, rot)
-	self.m_SafeDoor.m_Open = false
-
-
-	self:loadSpecial(type)
-
-	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
-
-	self.m_ColShape = createColSphere(self.m_HackableComputer:getPosition(), 60)
-	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
-	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
-
-	self.m_CircuitBreakerPlayers = {}
-
-	self:spawnPed()
-	self:spawnGuards()
-	self:createSafes()
-	self:createBombableBricks()
-
-	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
-	self.m_ColFunc = bind(self.onHelpColHit, self)
-	self.m_HelpCol = bind(self.onHelpColHit, self)
-	self.m_OnStartHack = bind(self.Event_onStartHacking, self)
-	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
-	self.m_OnSuccess = bind(self.Event_onHackSuccessful, self)
-	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
-	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
-	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
-
-	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			hitElement:triggerEvent("clickSpamSetEnabled", false)
-		end
-	end)
-
-	addEventHandler("onColShapeLeave", self.m_SecurityRoomShape, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			hitElement:triggerEvent("clickSpamSetEnabled", true)
-		end
-	end)
-end
-
-function BankRobbery:loadSpecial(type)
-	if type == "Palomino" then
-		self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
-		self.m_BankDoor:setScale(0.88)
-
-		self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
-		self.m_BackDoor:setFrozen(true)
-		self.m_BombAreaPosition = Vector3(2318.43, 11.37, 26.48)
-		self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
-		self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
-		self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
-	elseif type == "LosSantos" then
-
-	end
 end
 
 function BankRobbery:destroyRob()
@@ -176,13 +102,10 @@ function BankRobbery:destroyRob()
 
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
 	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
-	removeEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
-	removeEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	removeEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
-	BankRobbery:getSingleton():build()
+	self:build()
 end
 
 function BankRobbery:onHelpColHit(hitElement, matchingDimension)
@@ -202,46 +125,24 @@ end
 function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
-	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
 	local pos = self.m_BankDoor:getPosition()
-	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
-	self.m_BackDoor:setFrozen(false)
 	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
 
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name), 0, 255, 0)
-	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
-	self.m_Truck = TemporaryVehicle.create(428, 2337.54, 16.67, 26.61, 0)
-	self.m_Truck:setData("BankRobberyTruck", true, true)
-    self.m_Truck:setColor(0, 0, 0)
-    self.m_Truck:setLocked(false)
-	self.m_Truck:setEngineState(true)
-	self.m_Truck:toggleRespawn(false)
-
-
-	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 
 	self.m_Timer = setTimer(bind(self.timeUp, self), BANKROB_TIME, 1)
 	self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
-
-	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
-		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
-		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
-		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-	end
 
 	for index, playeritem in pairs(faction:getOnlinePlayers()) do
 		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
 	end
 
 	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"} --// TODO CONTINUE FIXING THIS PART
-
-	addEventHandler("bankRobberyLoadBag", root, bind(self.Event_LoadBag, self))
-	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
 
 
 	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
@@ -470,43 +371,6 @@ function BankRobbery:BombArea_Explode(bombArea, player)
 	end
 end
 
-function BankRobbery:Event_onHackSuccessful()
-	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-		player:triggerEvent("forceCircuitBreakerClose")
-		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
-		player.m_InCircuitBreak = false
-		self.m_CircuitBreakerPlayers[player] = nil
-	end
-	self.m_CircuitBreakerPlayers = {	}
-	client:giveKarma(-5)
-
-	local pos = self.m_SafeDoor:getPosition()
-	self.m_SafeDoor:move(3000, pos.x, pos.y+1.5, pos.z, 0, 0, 0)
-	self.m_SafeDoor.m_Open = true
-end
-
-function BankRobbery:Event_onStartHacking()
-	if client:getFaction() and client:getFaction():isEvilFaction() then
-		if self.m_IsBankrobRunning then
-			self.m_CircuitBreakerPlayers[client] = true
-			client.m_InCircuitBreak = true
-			triggerClientEvent(client, "startCircuitBreaker", client, "bankRobberyPcHackSuccess")
-		else
-			client:sendError(_("Derzeit läuft kein Bankraub!", client))
-		end
-	end
-end
-
-function BankRobbery:Event_onDisarmAlarm()
-	if client:getFaction() and client:getFaction() then
-		if self.m_IsBankrobRunning then
-			triggerClientEvent("bankAlarmStop", root)
-		else
-			client:sendError(_("Derzeit läuft kein Bankraub!", client))
-		end
-	end
-end
-
 function BankRobbery:Event_onSafeClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -579,38 +443,7 @@ function BankRobbery:addMoneyToBag(player, money)
 	self.m_MoneyBagCount = #self.m_MoneyBags
 end
 
-function BankRobbery:Event_DeloadBag(veh)
-	if client:getFaction() then
-		if VEHICLE_BAG_LOAD[veh.model] then
-			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					for key, bag in pairs (getAttachedElements(veh)) do
-						if bag.model == 1550 then
-							bag:detach(self.m_Truck)
-							if client:getFaction():isStateFaction() and client:isFactionDuty() then
-								self:statePeopleClickBag(client, bag)
-								return
-							else
-								client:attachPlayerObject(bag)
-								return
-							end
-						end
-					end
-					client:sendError(_("Es befindet sich kein Geldsack im Truck!", client))
-					return
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
-				end
-			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
-			end
-		else
-			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))
-		end
-	else
-		client:sendError(_("Nur Fraktionisten können Geldsäcke abladen!", client))
-	end
-end
+
 
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
