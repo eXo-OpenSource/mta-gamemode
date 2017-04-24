@@ -16,7 +16,7 @@ ModdingCheck.OTHER_MAX_DIFFER_Z = 0.2
 --]]
 
 ModdingCheck.SKIN_MAX_DIF = 0.2 --// 20% Difference
-ModdingCheck.VEHICLE_MAX_DIF = 0.3
+ModdingCheck.VEHICLE_MAX_DIF = 0.5
 ModdingCheck.OTHER_MAX_DIF = 0.2
 function ModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
@@ -45,7 +45,8 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 					end
 				elseif item.id >= 400 and item.id <= 611 then -- Vehicles
 					difCondition = divResult <= 1 and divResult < (1-ModdingCheck.VEHICLE_MAX_DIF)  or divResult > (1+ModdingCheck.VEHICLE_MAX_DIF)
-					if ModdingCheck.VEHICLE_MAX_DIF then
+					outputChatBox(divResult.."-vehicle")
+					if difCondition then
 						tNames[#tNames+1] = item.id.." - "..item.name
 					end
 				elseif item.id >= 321 and item.id <= 372 then -- Weapons
