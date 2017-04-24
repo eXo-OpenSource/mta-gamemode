@@ -98,3 +98,22 @@ function WearableManager:Event_onPlayerQuit(  )
 		destroyElement(source.m_Portables)
 	end
 end
+
+function WearableManager:removeAllWearables( player )
+	if player.m_Helmet then 
+		destroyElement(player.m_Helmet)
+		player.m_IsWearingHelmet = false
+		player.m_Helmet = false
+		player:setData("isFaceConcealed", false)
+	end
+	if player.m_Shirt then 
+		destroyElement(player.m_Shirt)
+		player.m_IsWearingShirt = false
+		player.m_Shirt = false
+	end
+	if player.m_Portables then 
+		destroyElement(player.m_Portables)
+		player.m_Portables = false
+		player.m_IsWearingPortables = false
+	end
+end
