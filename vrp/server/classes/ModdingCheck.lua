@@ -16,7 +16,7 @@ ModdingCheck.OTHER_MAX_DIFFER_Z = 0.2
 --]]
 
 ModdingCheck.SKIN_MAX_DIF = 0.2 --// 20% Difference
-ModdingCheck.VEHICLE_MAX_DIF = 0.5
+ModdingCheck.VEHICLE_MAX_DIF = 0.2
 ModdingCheck.OTHER_MAX_DIF = 0.2
 function ModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
