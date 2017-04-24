@@ -29,7 +29,7 @@ end
 
 function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 	local tNames = {}
-	local sumOriginal, sumMod --// will store the product of all axis multiplied
+	local sumOriginal, sumMod --// will store the product of all axis SUMMED
 	local divResult --// sumOriginal / sumMod
 	local difCondition --// bool that will state if the modded skin is differing too much from the original one
     for idx,item in ipairs(modList) do
