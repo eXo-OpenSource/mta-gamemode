@@ -96,21 +96,11 @@ function BankPalomino:destroyRob()
 			playeritem:triggerEvent("forceCircuitBreakerClose")
 		end
 	end
-	if self.m_CircuitBreakerPlayers then
-		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-			if isElement(player) then
-				player:triggerEvent("forceCircuitBreakerClose")
-				self.m_CircuitBreakerPlayers[player] = nil
-				player.m_InCircuitBreak = false
-			end
-		end
-	end
 
-	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
+	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
+	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
 
-	ActionsCheck:getSingleton():endAction()
-	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
+
 	self:build()
 end
 
@@ -141,19 +131,15 @@ function BankPalomino:build()
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 
-	self.m_CircuitBreakerPlayers = {}
-
 	self:spawnPed(295, Vector3(2310.28, -10.87, 26.74), 180)
 	self:spawnGuards()
 	self:createSafes()
 	self:createBombableBricks()
 
 	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
-	self.m_ColFunc = bind(self.onHelpColHit, self)
-	self.m_HelpCol = bind(self.onHelpColHit, self)
-
-	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
+	self.m_HelpColFunc = bind(self.onHelpColHit, self)
+	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
 
 	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then
@@ -300,6 +286,8 @@ function BankPalomino:createSafes()
 		addEventHandler( "onElementClicked", safe, self.m_OnSafeClickFunction)
 	end
 end
+
+--BombArea
 
 function BankPalomino:createBombableBricks()
 	self.m_BombableBricks = {

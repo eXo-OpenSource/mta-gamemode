@@ -48,11 +48,83 @@ function BankLosSantos:destroyRob()
 end
 
 function BankLosSantos:build()
-
+end
+function BankLosSantos:createSafes()
+	self.m_Safes = {
+		createObject(2332, 1437.3, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1437.3, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1437.3, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 12.7, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1436.4, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 13.6, 0, 0, 0),
+		createObject(2332, 1435.5, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1434.6, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1433.7, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1432.8, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1431.9, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1431.0, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1430.1, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1429.2, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1428.3, -996.20, 14.5, 0, 0, 0),
+		createObject(2332, 1437.3, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 12.7, 0, 0, 180),
+		createObject(2332, 1437.3, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 13.6, 0, 0, 180),
+		createObject(2332, 1428.3, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1429.2, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1430.1, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1431.0, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1431.9, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1432.8, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1433.7, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1434.6, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1435.5, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1436.4, -1006, 14.5, 0, 0, 180),
+		createObject(2332, 1437.3, -1006, 14.5, 0, 0, 180)
+	}
+	for index, safe in pairs(self.m_Safes) do
+		safe:setData("clickable", true, true)
+		addEventHandler("onElementClicked", safe, self.m_OnSafeClickFunction)
+	end
 end
 
 function BankLosSantos:startRob()
 	BankManager:getSingleton():startRob("LosSantos")
+	BankManager:stopRob()
 end
-
-

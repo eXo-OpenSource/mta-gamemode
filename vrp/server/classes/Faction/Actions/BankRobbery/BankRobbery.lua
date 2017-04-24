@@ -17,7 +17,10 @@ function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
 	self.m_RobPlayer = nil
 	self.m_RobFaction = nil
+end
 
+function BankRobbery:virtual_constructor(...)
+    BankRobbery.constructor(self, ...)
 end
 
 function BankRobbery:spawnPed(skin, pos, rot)
@@ -130,6 +133,7 @@ function BankRobbery:startRob(player)
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
+	self.m_CircuitBreakerPlayers = {}
 
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
@@ -207,116 +211,6 @@ function BankRobbery:updateBreakingNews()
 		msg = _("Neuesten Informationen zur Folge handelt es sich bei den Tätern um Mitglieder der %s!", self.m_RobPlayer, self.m_RobFaction:getName())
 	end
 	PlayerManager:getSingleton():breakingNews(msg)
-end
-
-function BankRobbery:spawnGuards()
-	self.m_GuardPed1 = GuardActor:new(Vector3(2315.25, 20.34, 26.53))
-	self.m_GuardPed1:setRotation(270, 0, 270, "default", true)
-	self.m_GuardPed1:setFrozen(true)
-	self.m_GuardPed1.Colshape = createColCuboid(2314.4 ,1.15 ,25 ,2.5 ,21.45 , 4)
-	addEventHandler("onColShapeHit", self.m_GuardPed1.Colshape, function(hitElement, dim)
-		if dim and hitElement.type == "player" then
-			if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
-				self.m_GuardPed1:startShooting(hitElement)
-			end
-		end
-
-	end)
-end
-
-function BankRobbery:createSafes()
-	self.m_Safes = {
-		createObject(2332, 2305.5, 19.12012, 26.85, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 26.85, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45898, 26.85, 0, 0, 90),
-		createObject(2332, 2312.83984, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2310.3525, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2309.5215, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2308.6904, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2307.8604, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2307.0313, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2306.2002, 21.5, 27.7085, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78027, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 19.94922, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 19.12012, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 27.7085, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45898, 27.7085, 0, 0, 90),
-		createObject(2332, 2310.3711, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 26, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2310.3525, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2306.2002, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.0313, 16.73047, 26.85, 0, 0, 180),
-		createObject(2332, 2307.8604, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2308.6904, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2309.5215, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2310.3525, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2311.1836, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2312.0127, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2312.8398, 16.73047, 27.7085, 0, 0, 180),
-		createObject(2332, 2310.3525, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2312.8398, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78027, 26.85, 0, 0, 90),
-		createObject(2332, 2306.2002, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2305.5, 20.78, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.94922, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.12, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 18.29004, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 17.45897, 26, 0, 0, 90),
-		createObject(2332, 2305.5, 19.95, 26.85, 0, 0, 90),
-		createObject(2332, 2307.0313, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2307.8601, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2308.6899, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2309.521, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2310.3525, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2311.1836, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2312.0127, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2312.8398, 21.5, 26, 0, 0, 0),
-		createObject(2332, 2306.2002, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2307.0313, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2307.8604, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2308.6904, 21.5, 26.85, 0, 0, 0),
-		createObject(2332, 2309.52, 21.5, 26.85, 0, 0, 0),
-	}
-	for index, safe in pairs(self.m_Safes) do
-		safe:setData("clickable", true, true)
-		addEventHandler( "onElementClicked", safe, self.m_OnSafeClickFunction)
-	end
-end
-
-function BankRobbery:createBombableBricks()
-	self.m_BombableBricks = {
-		createObject(9131, 2317.334, 10.25, 28.87, 0, 0, 270),
-		createObject(9131, 2317.334, 10.25, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 11, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 11, 28.87, 0, 0, 270),
-		createObject(9131, 2317.334, 11.75, 28.87, 0, 0, 270),
-		createObject(9131, 2317.334, 11.75, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 12.5, 28.87, 0, 0, 270),
-		createObject(9131, 2317.334, 12.5, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 13.25, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 13.25, 28.87, 0, 0, 270),
-		createObject(9131, 2317.334, 14, 26.6, 0, 0, 270),
-		createObject(9131, 2317.334, 9.5, 26.6, 0, 0, 270),
-	}
 end
 
 function BankRobbery:countEvilPeople()

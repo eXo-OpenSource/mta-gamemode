@@ -2,6 +2,7 @@ function BankManager:constructor()
 	self.m_Banks = {}
 	self.m_CurrentBank = false
 	self.m_IsBankrobRunning = false
+	self.m_CircuitBreakerPlayers = {}
 
 	self.m_Banks["Palomino"] = BankPalomino:new()
 	self.m_Banks["LosSantos"] = BankLosSantos:new()
@@ -28,6 +29,19 @@ end
 function BankManager:stopRob()
 	self.m_IsBankrobRunning = false
 	self.m_CurrentBank = false
+
+	if self.m_CircuitBreakerPlayers then
+		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+			if isElement(player) then
+				player:triggerEvent("forceCircuitBreakerClose")
+				self.m_CircuitBreakerPlayers[player] = nil
+				player.m_InCircuitBreak = false
+			end
+		end
+	end
+
+	ActionsCheck:getSingleton():endAction()
+	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 end
 
 function BankManager:Event_onStartHacking()
