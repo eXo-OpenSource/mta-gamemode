@@ -52,7 +52,8 @@ FontAwesomeSymbols = {
 	Group = "",
 	Money = "",
 	Info = "",
-	Check = "",
+	CheckSquare = "",
+	Check = "",
 	Square = "",
 	Search = "",
 	Refresh = "",
@@ -82,6 +83,12 @@ FontAwesomeSymbols = {
 	Double_Down = "",
 	Music = "",
 	Random = "",
+	Handshake = "",
+	Building = "",
+	Medikit = "",
+	IDCard = "",
+	Document = "",
+	Bolt = "",
 }
 
 Fonts = {
