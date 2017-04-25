@@ -31,7 +31,7 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
+	self:createSelfArrestMarker(Vector3(1561.51, -1678.40, 16.20))
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -126,13 +126,18 @@ function FactionState:destructor()
 end
 
 
-function FactionState:createSelfArrestMarker( x,y,z, int, dim )
-	local ped = createPed(280, Vector3(251.257, 69.094, 1003.641))
-	ped:setRotation(0, 0, 90)
-	ped:setInterior(int)
-	local marker = createPickup(x,y,z,3,1247,10)
-	setElementInterior(marker, int)
-	setElementDimension(marker, dim)
+function FactionState:createSelfArrestMarker(pos, int, dim)
+	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
+	self.m_Ped:setImmortal(true)
+	local marker = createPickup(pos, 3, 1247, 10)
+	if int then
+		ped:setInterior(int)
+		marker:setInterior(int)
+	end
+	if dim then
+		ped:setDimension(dim)
+		marker:setDimension(dim)
+	end
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
