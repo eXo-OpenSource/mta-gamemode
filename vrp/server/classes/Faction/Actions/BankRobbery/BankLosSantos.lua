@@ -60,6 +60,9 @@ function BankLosSantos:build()
 		createObject(9093, 1430.70, -964.70, 37.10, 0, 0, 261.25),
 		createObject(9093, 1423.10, -963.30, 37.10, 0, 0, 257.74)
 	}
+	for index, object in pairs(self.m_SafeGate) do
+		object:setScale(1.2)
+	end
 
 	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
 	self.m_Timer = false
