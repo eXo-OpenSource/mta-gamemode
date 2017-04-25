@@ -61,14 +61,14 @@ function TextureReplace:destructor()
 end
 
 function TextureReplace:onElementStreamIn()
-	outputConsole(("Element %s streamed in, creating texture... (%s)"):format(tostring(self.m_Element), self.m_Element == localPlayer.vehicle and "true" or "false"))
+	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
 	if not self:loadShader() then
 		outputConsole(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
 end
 
 function TextureReplace:onElementStreamOut()
-	outputConsole(("Element %s streamed out, destroying texture... (%s)"):format(tostring(self.m_Element), self.m_Element == localPlayer.vehicle and "true" or "false"))
+	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
 	if not self:unloadShader() then
 		outputConsole(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
