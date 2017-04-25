@@ -37,7 +37,6 @@ function BankLosSantos:constructor()
 		Vector3(1430.40, -998.86, 12.6),
 		Vector3(1434.37, -1000.35, 12.6),
 	}
-
 	self:build()
 end
 
@@ -126,10 +125,10 @@ function BankLosSantos:openSafeDoor()
 end
 
 function BankLosSantos:spawnGuards()
-	self.m_GuardPed1 = GuardActor:new(Vector3(2315.25, 20.34, 26.53))
+	self.m_GuardPed1 = GuardActor:new(Vector3(1438.70, -1003.96, 13.20))
 	self.m_GuardPed1:setRotation(270, 0, 270, "default", true)
 	self.m_GuardPed1:setFrozen(true)
-	self.m_GuardPed1.Colshape = createColCuboid(2314.4 ,1.15 ,25 ,2.5 ,21.45 , 4)
+	self.m_GuardPed1.Colshape = createColCuboid(1438.2 ,-1004.3 ,12 ,20 ,13 , 4)
 	addEventHandler("onColShapeHit", self.m_GuardPed1.Colshape, function(hitElement, dim)
 		if dim and hitElement.type == "player" then
 			if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then

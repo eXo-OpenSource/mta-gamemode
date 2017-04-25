@@ -19,6 +19,7 @@ function BankRobbery:constructor()
 	self.m_RobFaction = nil
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
+	self.m_MoneyBags = {}
 
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
