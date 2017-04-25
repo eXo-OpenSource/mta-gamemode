@@ -133,16 +133,16 @@ function TextureReplace.getCachedTexture(path, instance)
 	end
 	if not TextureReplace.Cache[index] then
 		if not fileExists(path) then
-			if (path:find("files/images/Textures/Custom/") and #path:sub(30, #path-8) or #path) > 5 then
+			if #path:sub(30, #path-8) > 5 then
 				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
 				--							 remove .texture extension
-				TextureReplace.downloadTexture(path:find("files/images/Textures/Custom/") and path:sub(30, #path-8) or path,
+				TextureReplace.downloadTexture(path:sub(30, #path-8),
 					function(success)
 						if success then
 							local membefore = dxGetStatus().VideoMemoryUsedByTextures
 							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 
-							instance:loadShader() -- should not cause a endless loop
+							instance:loadShader()
 						end
 					end
 				)
@@ -217,16 +217,14 @@ addEvent("changeElementTexture", true)
 addEventHandler("changeElementTexture", root,
 	function(vehicles)
 		for i, vehData in pairs(vehicles) do
-			local textureTab = TextureReplace.ServerElements
-			if not textureTab[vehData.vehicle] then
-				textureTab[vehData.vehicle] = {}
+			if not TextureReplace.ServerElements[vehData.vehicle] then
+				TextureReplace.ServerElements[vehData.vehicle] = {}
 			end
 
-			local vehicleTab = textureTab[vehData.vehicle]
-			if vehicleTab[vehData.textureName] then
-				delete(vehicleTab[vehData.textureName])
+			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
+				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
-			vehicleTab[vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.isFetchRemote, vehData.sUrl)
+			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.isFetchRemote, vehData.sUrl)
 		end
 	end
 )
@@ -248,7 +246,8 @@ addEventHandler("removeElementTexture", root,
 function TextureReplace.deleteFromElement(element)
 	for index, texture in pairs(TextureReplace.Map) do
 		if texture and texture.m_Element == element then
-			delete(texture)
+			delete(TextureReplace.Map[index])
+			TextureReplace.Map[index] = nil
 		end
 	end
 end

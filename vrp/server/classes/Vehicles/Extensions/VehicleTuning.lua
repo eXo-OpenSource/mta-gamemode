@@ -8,11 +8,11 @@
 VehicleTuning = inherit(Object)
 VehicleTuning.Map = {}
 
-function VehicleTuning:constructor(vehicle, tuningJSON)
+function VehicleTuning:constructor(vehicle, tuningJSON, disableTextureForce)
 	self.m_Vehicle = vehicle
 	if tuningJSON then
 		self.m_Tuning = fromJSON(tuningJSON)
-		self:applyTuning()
+		self:applyTuning(disableTextureForce or false)
 	else
 		self:createNew()
 	end
@@ -29,7 +29,7 @@ function VehicleTuning:getTunings()
 	return self.m_Tuning
 end
 
-function VehicleTuning:applyTuning()
+function VehicleTuning:applyTuning(disableTextureForce)
 	local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
 	local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
 	self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
@@ -60,7 +60,7 @@ function VehicleTuning:applyTuning()
 
 	for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
 		if #texturePath > 3 then
-			self.m_Vehicle:setTexture(texturePath, textureName, true)
+			self.m_Vehicle:setTexture(texturePath, textureName, not disableTextureForce)
 		end
 	end
 end

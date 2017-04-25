@@ -95,7 +95,7 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
-	self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
 	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
