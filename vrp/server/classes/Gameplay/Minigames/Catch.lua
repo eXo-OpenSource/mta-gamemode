@@ -23,20 +23,23 @@ function CatchGame:constructor(hostPlayer, targetPlayer)
 	targetPlayer:sendInfo("Das Fangen beginnt in 5 Sekunden!")
 
 	self.m_CatchMarker = createMarker(0, 0, 0, "arrow", .4, 255, 80, 0, 125)
+	self.m_CatchSphere = createColSphere(0, 0, 0, 1)
 
-	self.m_OnPlayerDamage = bind(CatchGame.onPlayerDamage, self)
-	addEventHandler("onPlayerDamage", root, self.m_OnPlayerDamage)
+	self.m_OnColShapeHit = bind(CatchGame.onColShapeHit, self)
+	addEventHandler("onColShapeHit", self.m_CatchSphere, self.m_OnColShapeHit)
 
 	setTimer(function() self:startup() end, 5000, 1)
-	setTimer(function() self:timesup() end, 65000, 1)
+	setTimer(function() self:timesup() end, 95000, 1)
 end
 
 function CatchGame:destructor()
 	CatchGame.Map[self.m_Players[1]] = nil
 	CatchGame.Map[self.m_Players[2]] = nil
 
+	removeEventHandler("onColShapeHit", self.m_CatchSphere, self.m_OnColShapeHit)
+
 	self.m_CatchMarker:destroy()
-	removeEventHandler("onPlayerDamage", root, self.m_OnPlayerDamage)
+	self.m_CatchSphere:destroy()
 end
 
 function CatchGame:startup()
@@ -45,10 +48,11 @@ function CatchGame:startup()
 	self.m_CatchingPlayer:sendInfo(("Du bist an der Reihe und musst %s fangen!"):format(self.m_PlayerEnemy[self.m_CatchingPlayer].name))
 	self.m_PlayerEnemy[self.m_CatchingPlayer]:sendInfo(("%s ist an der Reihe und muss dich fangen!"):format(self.m_CatchingPlayer.name))
 
-	self.m_CatchingPlayer:triggerEvent("Countdown", 60, "Fangen")
-	self.m_PlayerEnemy[self.m_CatchingPlayer]:triggerEvent("Countdown", 60, "Fangen")
+	self.m_CatchingPlayer:triggerEvent("Countdown", 90, "Fangen")
+	self.m_PlayerEnemy[self.m_CatchingPlayer]:triggerEvent("Countdown", 90, "Fangen")
 
 	self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
+	self.m_CatchSphere:attach(self.m_PlayerEnemy[self.m_CatchingPlayer])
 end
 
 function CatchGame:timesup()
@@ -58,19 +62,18 @@ function CatchGame:timesup()
 	delete(self)
 end
 
-function CatchGame:onPlayerDamage(attacker, attackerweapon, bodypart, loss)
-	if attackerweapon == 0 and (attacker == self.m_CatchingPlayer and source == self.m_PlayerEnemy[attacker]) then
-		if source:getArmor() > 0 then
-			source:setArmor(source:getArmor() + loss)
-		else
-			source:setHealth(source:getHealth() + loss)
-		end
+function CatchGame:onColShapeHit(hitElement, matchDimension)
+	if self.m_LastHit and getTickCount() - self.m_LastHit < 1000 then return end
 
-		attacker:sendInfo(("Du hast %s gefangen!"):format(source.name))
-		source:sendInfo(("Du wurdest von %s gefangen!"):format(attacker.name))
+	if hitElement == self.m_CatchingPlayer then
+		self.m_LastHit = getTickCount()
 
-		self.m_CatchingPlayer = source
+		hitElement:sendInfo(("Du hast %s gefangen!"):format(self.m_PlayerEnemy[hitElement].name))
+		self.m_PlayerEnemy[hitElement]:sendInfo(("Du wurdest von %s gefangen!"):format(hitElement.name))
+
+		self.m_CatchingPlayer = self.m_PlayerEnemy[self.m_CatchingPlayer]
 		self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
+		self.m_CatchSphere:attach(self.m_PlayerEnemy[self.m_CatchingPlayer])
 	end
 end
 
