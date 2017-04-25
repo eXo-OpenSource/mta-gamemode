@@ -1,4 +1,6 @@
-function BankManager:constructor()
+BankRobberyManager = inherit(Singleton)
+
+function BankRobberyManager:constructor()
 	self.m_Banks = {}
 	self.m_CurrentBank = false
 	self.m_IsBankrobRunning = false
@@ -21,12 +23,12 @@ function BankManager:constructor()
 
 end
 
-function BankManager:startRob(bank)
+function BankRobberyManager:startRob(bank)
 	self.m_IsBankrobRunning = true
 	self.m_CurrentBank = bank
 end
 
-function BankManager:stopRob()
+function BankRobberyManager:stopRob()
 	self.m_IsBankrobRunning = false
 	self.m_CurrentBank = false
 
@@ -44,7 +46,7 @@ function BankManager:stopRob()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 end
 
-function BankManager:Event_onStartHacking()
+function BankRobberyManager:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
 			self.m_CircuitBreakerPlayers[client] = true
@@ -56,7 +58,7 @@ function BankManager:Event_onStartHacking()
 	end
 end
 
-function BankManager:Event_onDisarmAlarm()
+function BankRobberyManager:Event_onDisarmAlarm()
 	if client:getFaction() and client:getFaction() then
 		if self.m_IsBankrobRunning then
 			triggerClientEvent("bankAlarmStop", root)
@@ -66,7 +68,7 @@ function BankManager:Event_onDisarmAlarm()
 	end
 end
 
-function BankManager:Event_onHackSuccessful()
+function BankRobberyManager:Event_onHackSuccessful()
 	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
 		player:triggerEvent("forceCircuitBreakerClose")
 		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
@@ -80,7 +82,7 @@ function BankManager:Event_onHackSuccessful()
 end
 
 
-function BankManager:Event_LoadBag(veh)
+function BankRobberyManager:Event_LoadBag(veh)
 	if client:getFaction() then
 		if VEHICLE_BAG_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -111,7 +113,7 @@ function BankManager:Event_LoadBag(veh)
 	end
 end
 
-function BankManager:Event_DeloadBag(veh)
+function BankRobberyManager:Event_DeloadBag(veh)
 	if client:getFaction() then
 		if VEHICLE_BAG_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then

@@ -64,7 +64,7 @@ function BankLosSantos:build()
 		object:setScale(1.2)
 	end
 
-	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
+	self.m_SecurityRoomShape = createColCuboid(1428, -1006, 12, 9.5, 11, 4)
 	self.m_Timer = false
 	self.m_ColShape = createColSphere(self.m_BankDoor:getPosition(), 60)
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
@@ -74,7 +74,7 @@ function BankLosSantos:build()
 	self:spawnGuards()
 	self:createSafes()
 
-	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
+	self.m_HelpColShape = createColSphere(1465.25, -993.04, 26.83, 5)
 	self.m_HelpColFunc = bind(self.onHelpColHit, self)
 	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
 	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
@@ -93,20 +93,11 @@ function BankLosSantos:build()
 end
 
 function BankLosSantos:startRob(player)
-	BankManager:getSingleton():startRob(self)
-
-	ActionsCheck:getSingleton():setAction("Banküberfall")
+	self:startRobGeneral(player)
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Los Santos Bank!")
 
-	local faction = player:getFaction()
 	local pos = self.m_BankDoor:getPosition()
 	self.m_BankDoor:move(3000, pos.x-5, pos.y, pos.z)
-	self.m_RobPlayer = player
-	self.m_RobFaction = faction
-	self.m_IsBankrobRunning = true
-	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
-
-	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
 	triggerClientEvent("bankAlarm", root, 1457.67, -996.27, 26.83)
 	self.m_Truck = TemporaryVehicle.create(428, 1413.79, -994.04, 31.62, 0, 0, 180)
@@ -115,14 +106,9 @@ function BankLosSantos:startRob(player)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
 	self.m_Truck:toggleRespawn(false)
+	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 
 	self.m_HackMarker = createMarker( 1486.43, -979.75, 15, "arrow", 0.8, 255, 255, 0)
-
-	for markerIndex, destination in pairs(self.ms_FinishMarker) do
-		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", self.m_RobFaction}, 1000)
-		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
-		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-	end
 end
 
 function BankLosSantos:openSafeDoor()

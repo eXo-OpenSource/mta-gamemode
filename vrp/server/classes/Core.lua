@@ -64,6 +64,7 @@ function Core:constructor()
 		PlayerManager:new()
 		JobManager:new()
 		BankManager:new()
+		BankRobberyManager:new()
 		Async.create(function() Forum:new() end)()
 		--WantedSystem:new()
 		Provider:new()
@@ -124,7 +125,6 @@ function Core:constructor()
 		TollStation.initializeAll()
 		Depot.initalize()
 
-		BankManager:new()
 
 		ChessSessionManager:new()
 		-- Generate Missions

@@ -148,21 +148,13 @@ function BankPalomino:build()
 end
 
 function BankPalomino:startRob(player)
-	BankManager:getSingleton():startRob(self)
+	self:startRobGeneral(player)
 
-	ActionsCheck:getSingleton():setAction("Banküberfall")
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
 
-	local faction = player:getFaction()
 	local pos = self.m_BankDoor:getPosition()
 	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
-	self.m_RobPlayer = player
-	self.m_RobFaction = faction
-	self.m_IsBankrobRunning = true
 	self.m_BackDoor:setFrozen(false)
-	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
-
-	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
 	self.m_Truck = TemporaryVehicle.create(428, 2337.54, 16.67, 26.61, 0)
@@ -171,14 +163,9 @@ function BankPalomino:startRob(player)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
 	self.m_Truck:toggleRespawn(false)
+	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
-
-	for markerIndex, destination in pairs(self.ms_FinishMarker) do
-		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
-		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
-		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-	end
 end
 
 function BankPalomino:spawnGuards()

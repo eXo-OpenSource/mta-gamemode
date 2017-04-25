@@ -48,7 +48,7 @@ function BankRobbery:destructor()
 end
 
 function BankRobbery:destroyRob()
-	BankManager:getSingleton():stopRob()
+	BankRobberyManager:getSingleton():stopRob()
 
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape, "player")
 	if tooLatePlayers then
@@ -137,8 +137,10 @@ function BankRobbery:onHelpColLeave(hitElement, matchingDimension)
 	end
 end
 
-function BankRobbery:startRob(player)
+function BankRobbery:startRobGeneral(player)
+	BankRobberyManager:getSingleton():startRob(self)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
+
 	local faction = player:getFaction()
 	local pos = self.m_BankDoor:getPosition()
 	self.m_RobPlayer = player
@@ -158,10 +160,19 @@ function BankRobbery:startRob(player)
 		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
 	end
 
+	for markerIndex, destination in pairs(self.ms_FinishMarker) do
+		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", self.m_RobFaction}, 1000)
+		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(1)}, 1000)
+		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(2)}, 1000)
+		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(3)}, 1000)
+
+		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
+		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
+	end
+
 	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"} --// TODO CONTINUE FIXING THIS PART
 
 
-	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 end
 
 function BankRobbery:Ped_Targetted(ped, attacker)
@@ -317,15 +328,12 @@ function BankRobbery:addMoneyToBag(player, money)
 	self.m_MoneyBagCount = #self.m_MoneyBags
 end
 
-
-
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
 	end
 end
-
 
 function BankRobbery:getRemainingBagAmount()
 	local count = 0
