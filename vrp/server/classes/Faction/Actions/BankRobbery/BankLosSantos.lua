@@ -56,6 +56,10 @@ function BankLosSantos:build()
 	self.m_SafeDoor = createObject(1930, 1438.4004, -999, 12.2, 0, 0, 0)
 	self.m_SafeDoor.m_Open = false
 	self.m_BankDoor = createObject(5020, 1455.10, -967.40, 13.80, 0, 0, 90)
+	self.m_SafeGate = {
+		createObject(9093, 1430.70, -964.70, 37.10, 0, 0, 261.25),
+		createObject(9093, 1423.10, -963.30, 37.10, 0, 0, 257.74)
+	}
 
 	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
 	self.m_Timer = false
@@ -122,6 +126,13 @@ function BankLosSantos:openSafeDoor()
 	local pos = self.m_SafeDoor:getPosition()
 	self.m_SafeDoor:move(3000, pos, 0, 0, 140)
 	self.m_SafeDoor.m_Open = true
+
+	if self.m_SafeGate then
+		for index, object in pairs(self.m_SafeGate) do
+			pos = object:getPosition()
+			object:move(3000, pos.x, pos.y, pos.z+4.1)
+		end
+	end
 end
 
 function BankLosSantos:spawnGuards()

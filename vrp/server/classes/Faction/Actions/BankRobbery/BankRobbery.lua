@@ -89,6 +89,12 @@ function BankRobbery:destroyRob()
 	if isElement(self.m_HackableComputer) then destroyElement(self.m_HackableComputer) end
 	if self.m_GuardPed1 then destroyElement( self.m_GuardPed1 ) end
 
+	if self.m_SafeGate then
+		for index, object in pairs(self.m_SafeGate) do
+			object:destroy()
+		end
+	end
+
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
 
