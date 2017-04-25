@@ -89,11 +89,11 @@ function Blip.sendAllToClient(player)
 		if v.m_VisibleTo == root then
 			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 		elseif v.m_VisibleType then
-			if v.m_VisibleType == "faction" and player:getFaction() == self.m_VisibleObject then
+			if v.m_VisibleType == "faction" and player:getFaction() == v.m_VisibleObject then
 				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
-			elseif v.m_VisibleType == "company" and player:getCompany() == self.m_VisibleObject then
+			elseif v.m_VisibleType == "company" and player:getCompany() == v.m_VisibleObject then
 				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
-			elseif v.m_VisibleType == "group" and player:getGroup() == self.m_VisibleObject then
+			elseif v.m_VisibleType == "group" and player:getGroup() == v.m_VisibleObject then
 				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 			end
 		end
