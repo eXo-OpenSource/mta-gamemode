@@ -15,7 +15,7 @@ WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 WEAPONTRUCK_NAME_SHORT = {["evil"] = "Waffentruck", ["state"] = "Staats-WT"}
 
 WEAPONTRUCK_MIN_MEMBERS = {["evil"] = 3, ["state"] = 3}
-BANKROB_MIN_MEMBERS = 5
+BANKROB_MIN_MEMBERS = DEBUG and 0 or 5
 WEEDTRUCK_MIN_MEMBERS = 3
 SHOPROB_MIN_MEMBERS = 3
 HOUSEROB_MIN_MEMBERS = 2

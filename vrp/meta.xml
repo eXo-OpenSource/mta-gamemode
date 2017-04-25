@@ -240,10 +240,13 @@
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
@@ -720,7 +723,6 @@
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
-	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
@@ -728,6 +730,7 @@
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
@@ -1649,6 +1652,16 @@
 	<vrpfile src="files/models/PD_int.dff" />
 	<vrpfile src="files/models/PD_main.col" />
 	<vrpfile src="files/models/PD_main.dff" />
+
+	<file src="files/models/bank.txd" />
+	<file src="files/models/bank.col" />
+	<file src="files/models/bank.dff" />
+	<file src="files/models/bankServer.txd" />
+	<file src="files/models/bankServer.col" />
+	<file src="files/models/bankServer.dff" />
+	<file src="files/models/bankDoor.txd" />
+	<file src="files/models/bankDoor.col" />
+	<file src="files/models/bankDoor.dff" />
 
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />

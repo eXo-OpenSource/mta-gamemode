@@ -124,7 +124,7 @@ function Core:constructor()
 		TollStation.initializeAll()
 		Depot.initalize()
 
-		BankRobbery:new()
+		BankManager:new()
 
 		ChessSessionManager:new()
 		-- Generate Missions
