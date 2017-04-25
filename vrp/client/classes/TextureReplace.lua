@@ -51,17 +51,24 @@ function TextureReplace:destructor()
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
 	end
+
+	-- Remove events
+	if self.m_Element and isElement(self.m_Element) then -- does the element still exist?
+		removeEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory)
+		removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+		removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	end
 end
 
 function TextureReplace:onElementStreamIn()
-	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
+	outputConsole(("Element %s streamed in, creating texture... (%s)"):format(tostring(self.m_Element), self.m_Element == localPlayer.vehicle and "true" or "false"))
 	if not self:loadShader() then
 		outputConsole(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
 end
 
 function TextureReplace:onElementStreamOut()
---	outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
+	outputConsole(("Element %s streamed out, destroying texture... (%s)"):format(tostring(self.m_Element), self.m_Element == localPlayer.vehicle and "true" or "false"))
 	if not self:unloadShader() then
 		outputConsole(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
