@@ -2,7 +2,6 @@ TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
 TextureReplace.Map = {}
-TextureReplace.TextureEncryptionKey = hash("sha256", "TextureReplace:TEXTURE_KEY:exoIsBest")
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
@@ -147,7 +146,7 @@ function TextureReplace.getCachedTexture(path, instance)
 					function(success)
 						if success then
 							local membefore = dxGetStatus().VideoMemoryUsedByTextures
-							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
+							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(TextureReplace.getRawTexture(path)); bRemoteUrl = url}
 
 							instance:loadShader()
 						end
@@ -164,7 +163,7 @@ function TextureReplace.getCachedTexture(path, instance)
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
+		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(TextureReplace.getRawTexture(path)); bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
 
@@ -197,7 +196,7 @@ function TextureReplace.downloadTexture(path, callback)
 		function()
 			local dgi = HTTPDownloadGUI:getSingleton()
 			local provider = HTTPProvider:new(TEXTURE_HTTP_URL, dgi)
-			if provider:startCustom(path, "files/images/Textures/Custom/"--[[, TextureReplace.TextureEncryptionKey]]) then -- did the download succeed
+			if provider:startCustom(path, "files/images/Textures/Custom/", true) then -- did the download succeed
 				delete(dgi)
 				if callback then callback(true) end
 			else
@@ -207,7 +206,7 @@ function TextureReplace.downloadTexture(path, callback)
 	)()
 end
 
-function TextureReplace.getTexture(path)
+function TextureReplace.getRawTexture(path)
 	if path:sub(-8, #path) ~= ".texture" then -- is not encrypted
 		return path
 	else -- is encrypted
@@ -215,7 +214,7 @@ function TextureReplace.getTexture(path)
 		local data = file:read(file:getSize())
 		file:close()
 
-		return teaDecode(data, TextureReplace.TextureEncryptionKey)
+		return base64Decode(data)
 	end
 end
 

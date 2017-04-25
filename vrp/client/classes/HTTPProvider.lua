@@ -131,7 +131,7 @@ function HTTPProvider:start(force)
 	end
 end
 
-function HTTPProvider:startCustom(fileName, targetPath, encryptKey)
+function HTTPProvider:startCustom(fileName, targetPath, encrypt)
 	-- request url access for download
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("file count", 1)
@@ -151,8 +151,8 @@ function HTTPProvider:startCustom(fileName, targetPath, encryptKey)
 			end
 			local file = fileCreate(filePath)
 			if file then
-				if encryptKey then
-					file:write(teaEncode(responseData, encryptKey))
+				if encrypt then
+					file:write(base64Encode(responseData))
 				else
 					file:write(responseData)
 				end
