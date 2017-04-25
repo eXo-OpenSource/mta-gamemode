@@ -9,9 +9,7 @@ BankRobbery = inherit(Object)
 --Info 68 Tresors
 local MONEY_PER_SAFE_MIN = 500
 local MONEY_PER_SAFE_MAX = 750
-local MAX_MONEY_PER_BAG = 3000
 local BANKROB_TIME = 60*1000*12
-
 
 function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
@@ -312,7 +310,7 @@ end
 
 function BankRobbery:addMoneyToBag(player, money)
 	for i, bag in pairs(self.m_MoneyBags) do
-		if bag:getData("Money") + money < MAX_MONEY_PER_BAG then
+		if bag:getData("Money") + money < self.ms_MoneyPerBag then
 			bag:setData("Money", bag:getData("Money") + money, true)
 			player:sendShortMessage(_("%d$ in den Geldsack %d gepackt!", player, money, i))
 			return

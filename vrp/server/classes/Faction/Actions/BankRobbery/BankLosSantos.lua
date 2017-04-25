@@ -37,14 +37,14 @@ function BankLosSantos:constructor()
 		Vector3(1430.40, -998.86, 12.6),
 		Vector3(1434.37, -1000.35, 12.6),
 	}
+
+	self.ms_MoneyPerBag = 9000
+
 	self:build()
 end
 
 function BankLosSantos:destructor()
 
-end
-
-function BankLosSantos:destroyRob()
 end
 
 function BankLosSantos:build()

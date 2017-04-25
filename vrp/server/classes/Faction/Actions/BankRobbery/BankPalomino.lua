@@ -41,63 +41,7 @@ function BankPalomino:constructor()
 		Vector3(2309.27, 19.14, 26),
 	}
 
-	self:build()
-end
-
-function BankPalomino:destroyRob()
-	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape, "player")
-	if tooLatePlayers then
-		for key, player in pairs( tooLatePlayers) do
-			killPed(player)
-			player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
-		end
-	end
-	triggerClientEvent("bankAlarmStop", root)
-	if self.m_DestinationMarker then
-		for index, marker in pairs(self.m_DestinationMarker) do
-			if isElement(marker) then destroyElement(marker) end
-		end
-	end
-	if self.m_Safes then
-		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
-	end
-	if self.m_BombableBricks then
-		for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then destroyElement(brick) end end
-	end
-	if self.m_MoneyBags then
-		for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then destroyElement(bag) end end
-	end
-
-	if self.m_Blip then
-		for index, blip in pairs(self.m_Blip) do delete(blip) end
-	end
-	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
-	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
-	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
-	if isElement(self.m_Ped) then destroyElement(self.m_Ped) end
-	if isElement(self.m_Truck) then destroyElement(self.m_Truck) end
-	if isElement(self.m_BackDoor) then destroyElement(self.m_BackDoor) end
-	if isElement(self.m_HackMarker) then destroyElement(self.m_HackMarker) end
-	if isElement(self.m_SecurityRoomShape) then destroyElement( self.m_SecurityRoomShape) end
-	self.m_HackableComputer:setData("clickable", false, true)
-	self.m_HackableComputer:setData("bankPC", false, true)
-	if isElement(self.m_HackableComputer) then destroyElement(self.m_HackableComputer) end
-	if self.m_GuardPed1 then destroyElement( self.m_GuardPed1 ) end
-
-	killTimer(self.m_Timer)
-	killTimer(self.m_UpdateBreakingNewsTimer)
-
-	local onlinePlayers = self.m_RobFaction:getOnlinePlayers()
-	if onlinePlayers then
-		for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
-			playeritem:triggerEvent("CountdownStop", "Bank-Überfall")
-			playeritem:triggerEvent("forceCircuitBreakerClose")
-		end
-	end
-
-	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
-	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
-
+	self.ms_MoneyPerBag = 3000
 
 	self:build()
 end
