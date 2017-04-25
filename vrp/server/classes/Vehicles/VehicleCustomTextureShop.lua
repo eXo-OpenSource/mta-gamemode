@@ -157,7 +157,9 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
    	local veh = client:getOccupiedVehicle()
 	veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
 	veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
-	self:setTexture(veh, veh.OldTexture)
+	for textureName, texturePath in pairs(veh.OldTexture) do
+		self:setTexture(veh, texturePath, textureName)
+	end
 	self:closeFor(client, veh)
 end
 
@@ -171,7 +173,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 	if client:getMoney() >= 15000 then
 		--Todo Add Money Funcs/Checks
 		client:takeMoney(15000, "Custom-Texture")
-		source.OldTexture = url
+		source.OldTexture = {["vehiclegrunge256"] = url}
 		source.OldColor1 = color1
 		source.OldColor2 = color2
 		source.m_Tunings:saveTuning("Color1", color1)
@@ -183,10 +185,8 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 	end
 end
 
-function VehicleCustomTextureShop:setTexture(vehicle, url, color1, color2)
-	vehicle.m_IsURLTexture = false
-	setElementData(vehicle, "URL_PAINTJOB", false)
-	local textureName = VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] or "vehiclegrunge256"
+function VehicleCustomTextureShop:setTexture(vehicle, url, textureName)
+	local textureName = VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	vehicle.m_Tunings:addTexture(url, textureName)
 	vehicle.m_Tunings:applyTuning()
 end

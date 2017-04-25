@@ -34,6 +34,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 			end
 
 		end
+
         GUIRectangle:new(0, 30+self.m_Height*0.895, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
         GUILabel:new(0, 30+self.m_Height*0.89, self.m_Width, self.m_Height*0.075, "↕", self.m_Window):setAlignX("center")
     end

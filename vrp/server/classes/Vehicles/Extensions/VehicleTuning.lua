@@ -53,16 +53,14 @@ function VehicleTuning:applyTuning()
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
 	--{"vehiclegrunge256" = "files/images/...", "..." = "files/images/..."}
-	if not self.m_Vehicle.m_IsURLTexture then
-		if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
-			local texture = self.m_Tuning["Texture"]
-			self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
-		end
+	if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
+		local texture = self.m_Tuning["Texture"]
+		self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
+	end
 
-		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
-			if #texturePath > 3 then
-				self.m_Vehicle:setTexture(texturePath, textureName, true)
-			end
+	for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
+		if #texturePath > 3 then
+			self.m_Vehicle:setTexture(texturePath, textureName, true)
 		end
 	end
 end

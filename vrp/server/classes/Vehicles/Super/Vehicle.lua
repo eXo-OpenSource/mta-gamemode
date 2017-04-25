@@ -434,26 +434,38 @@ function Vehicle:isRespawnAllowed()
 	return self.m_RespawnAllowed
 end
 
-function Vehicle:getTexture()
-	return self.m_Texture
+function Vehicle:getTexture(textureName)
+	return textureName and self.m_Texture[textureName] or self.m_Texture
 end
 
 function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
+		if not self.m_Texture then
+			self.m_Texture = {}
+		end
+		if self.m_Texture[textureName] then
+			delete(self.m_Texture[textureName])
+			self.m_Texture[textureName] = nil
+		end
 
-		local isPng = string.find(texturePath,".png")
-		local isJpg = string.find(texturePath,".jpg")
 		local isHttp = string.find(texturePath,"http://")
 		if isHttp == nil then
-			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
-		elseif isHttp then
-			self.m_Texture = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
+			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, force)
+		else
+			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
 		end
 	end
 end
 
-function Vehicle:removeTexture()
-	delete(self.m_Texture)
+function Vehicle:removeTexture(textureName)
+	if textureName then
+		delete(self.m_Texture[textureName])
+		return
+	end
+
+	for i, v in pairs(self.m_Texture) do
+		delete(v)
+	end
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)
