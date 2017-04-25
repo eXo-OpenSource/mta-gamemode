@@ -21,6 +21,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Skins = factionSkins[Id]
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
+	self.m_Blips = {}
 
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 
@@ -450,4 +451,8 @@ end
 
 function Faction:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
+end
+
+function Faction:createBlip(img, posX, posY, streamDistance)
+	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
 end

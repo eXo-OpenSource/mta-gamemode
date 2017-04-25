@@ -18,13 +18,21 @@ function Blip:constructor(imagePath, x, y, visibleTo, streamDistance)
 	self.m_Id = #Blip.Map + 1
 	Blip.Map[self.m_Id] = self
 
+	if type(self.m_VisibleTo) == "table" then
+		local type, object = unpack(self.m_VisibleTo)
+		self.m_VisibleType = type
+		self.m_VisibleObject = object
+		self.m_VisibleTo = object:getOnlinePlayers()
+	end
+
 	self:sendToClient()
 end
 
 function Blip:sendToClient()
+	local visible = self.m_VisibleTo == root and getElementsByType("player") or self.m_VisibleTo
 
-	if self.m_VisibleTo == root then
-		for k, player in pairs(getElementsByType("player")) do
+	if type(visible) == "table" then
+		for k, player in pairs(visible) do
 			if player:isLoggedIn() then
 				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
 				if self.m_AttachedTo then
@@ -80,6 +88,14 @@ function Blip.sendAllToClient(player)
 	for k, v in pairs(Blip.Map) do
 		if v.m_VisibleTo == root then
 			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+		elseif v.m_VisibleType then
+			if v.m_VisibleType == "faction" and player:getFaction() == self.m_VisibleObject then
+				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+			elseif v.m_VisibleType == "company" and player:getCompany() == self.m_VisibleObject then
+				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+			elseif v.m_VisibleType == "group" and player:getGroup() == self.m_VisibleObject then
+				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+			end
 		end
 	end
 	player:triggerEvent("blipsRetrieve", data)

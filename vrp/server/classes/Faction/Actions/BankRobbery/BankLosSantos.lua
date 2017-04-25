@@ -113,7 +113,7 @@ function BankLosSantos:startRob(player)
 	self.m_HackMarker = createMarker( 1486.43, -979.75, 15, "arrow", 0.8, 255, 255, 0)
 
 	for markerIndex, destination in pairs(self.ms_FinishMarker) do
-		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
+		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", self.m_RobFaction}, 1000)
 		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end
