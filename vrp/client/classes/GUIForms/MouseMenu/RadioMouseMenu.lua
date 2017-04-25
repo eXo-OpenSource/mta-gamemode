@@ -16,14 +16,16 @@ function RadioMouseMenu:constructor(posX, posY, element)
 				StreamGUI:new("Radio Musik ändern", function(url) triggerServerEvent("itemRadioChangeURL", self:getElement(), url) end, function() triggerServerEvent("itemRadioStopSound", self:getElement()) end)
 			end
 		end
-	)
+	):setIcon(FontAwesomeSymbols.Music)
+
 	self:addItem(_"Aufnehmen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("worldItemCollect", self:getElement())
 			end
 		end
-	)
+	):setIcon(FontAwesomeSymbols.Double_Down)
+
 	if localPlayer:getRank() >= RANK.Supporter then
 		self:addItem(_"Admin: löschen",
 			function()
@@ -31,7 +33,7 @@ function RadioMouseMenu:constructor(posX, posY, element)
 					triggerServerEvent("worldItemDelete", self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Trash)
 	end
 
 
