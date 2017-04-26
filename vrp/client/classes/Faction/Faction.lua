@@ -104,11 +104,12 @@ function FactionManager:Event_OnSpeederCatch( speed, vehicle)
 	addEventHandler("onClientRender", root, self.m_DrawSpeed)
 end
 
-function FactionManager:OnRenderSpeed() 
-	local now = getTickCount() 
+function FactionManager:OnRenderSpeed()
+	local now = getTickCount()
 	if now <= self.m_RemoveDraw then
 		if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
-			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,1, w, h*0.8, tocolor(0,0,0,255),2,"default-bold","center","bottom")
+			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
+			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
 			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
 		end
 	else 
