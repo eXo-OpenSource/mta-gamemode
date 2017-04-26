@@ -837,11 +837,12 @@ function Player:payDay()
 	outgoing = outgoing + outgoing_vehicles + outgoing_house
 	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
 	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
+	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeug Steuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
 	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
-	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
+	self:addPaydayText("payday",("Der Payday über %d$ wurde auf dein Konto %s!"):format(total, total > 0 and "überwiesen" or "abgebucht"),255,150,0)
 
 	self:addBankMoney(total, "Payday")
 

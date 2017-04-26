@@ -270,18 +270,14 @@ function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function Faction:giveMoney(amount, reason)
+function Faction:giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:addMoney(amount, reason)
+	return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Faction:takeMoney(amount, reason)
+function Faction:takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
-	return self.m_BankAccount:takeMoney(amount, reason)
-end
-
-function Faction:setMoney(amount)
-	return self.m_BankAccount:setMoney(amount, reason)
+	return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
 
 function Faction:setRankLoan(rank,amount)
