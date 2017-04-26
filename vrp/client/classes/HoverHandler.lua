@@ -34,11 +34,13 @@ function HoverHandler:onClientCursorMove(cursorX, cursorY, absX, absY, worldX, w
 			if self.m_CurrentHoverElement == false or self.m_CurrentHoverElement ~= element then
 				self.m_CurrentHoverElement = element
 				FactionWTBoxHoverGUI:getSingleton(element)
+				return
 			end
 		elseif getElementData(element,"MoneyBag")  then
 			if self.m_CurrentHoverElement == false or self.m_CurrentHoverElement ~= element then
 				self.m_CurrentHoverElement = element
 				FactionMoneyBagHoverGUI:getSingleton(element)
+				return
 			end
 		end
 	end
