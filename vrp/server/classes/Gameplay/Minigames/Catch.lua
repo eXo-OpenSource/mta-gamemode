@@ -36,8 +36,6 @@ function CatchGame:destructor()
 	CatchGame.Map[self.m_Players[1]] = nil
 	CatchGame.Map[self.m_Players[2]] = nil
 
-	removeEventHandler("onColShapeHit", self.m_CatchSphere, self.m_OnColShapeHit)
-
 	self.m_CatchMarker:destroy()
 	self.m_CatchSphere:destroy()
 end
@@ -51,8 +49,8 @@ function CatchGame:startup()
 	self.m_CatchingPlayer:triggerEvent("Countdown", 90, "Fangen")
 	self.m_PlayerEnemy[self.m_CatchingPlayer]:triggerEvent("Countdown", 90, "Fangen")
 
-	self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
 	self.m_CatchSphere:attach(self.m_PlayerEnemy[self.m_CatchingPlayer])
+	self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
 end
 
 function CatchGame:timesup()
@@ -72,8 +70,14 @@ function CatchGame:onColShapeHit(hitElement, matchDimension)
 		self.m_PlayerEnemy[hitElement]:sendInfo(("Du wurdest von %s gefangen!"):format(hitElement.name))
 
 		self.m_CatchingPlayer = self.m_PlayerEnemy[self.m_CatchingPlayer]
-		self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
+
+		self.m_CatchSphere:destroy() -- duno why.. otherwise server will crash or freeze (NT)
+		self.m_CatchSphere = createColSphere(0, 0, 0, 1)
+
 		self.m_CatchSphere:attach(self.m_PlayerEnemy[self.m_CatchingPlayer])
+		self.m_CatchMarker:attach(self.m_CatchingPlayer, 0, 0, 1.5)
+
+		addEventHandler("onColShapeHit", self.m_CatchSphere, self.m_OnColShapeHit)
 	end
 end
 
