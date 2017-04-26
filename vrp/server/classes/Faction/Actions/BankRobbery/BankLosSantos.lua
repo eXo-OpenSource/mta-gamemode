@@ -119,7 +119,7 @@ function BankLosSantos:openSafeDoor()
 	if self.m_SafeGate then
 		for index, object in pairs(self.m_SafeGate) do
 			pos = object:getPosition()
-			object:move(3000, pos.x, pos.y, pos.z+4.1)
+			object:move(8000, pos.x, pos.y, pos.z+4.1)
 		end
 	end
 end

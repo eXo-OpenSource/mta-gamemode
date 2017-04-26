@@ -40,8 +40,7 @@ function HoverHandler:onClientCursorMove(cursorX, cursorY, absX, absY, worldX, w
 				self.m_CurrentHoverElement = element
 				FactionMoneyBagHoverGUI:getSingleton(element)
 			end
-		else
-			self:closeAll()
 		end
 	end
+	self:closeAll()
 end
