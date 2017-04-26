@@ -451,8 +451,10 @@ function Vehicle:setTexture(texturePath, textureName, force)
 		local isHttp = string.find(texturePath,"http://")
 		if isHttp == nil then
 			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, force)
+			outputChatBox("force")
 		else
 			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
+			outputChatBox("force")
 		end
 	end
 end

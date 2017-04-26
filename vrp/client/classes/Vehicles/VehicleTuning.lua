@@ -42,8 +42,6 @@ function VehicleTuning:applyTuning()
 	end
 
 	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
-
-	self:setTexture(self.m_Tuning["Texture"])
 end
 
 function VehicleTuning:setTexture(texture)
