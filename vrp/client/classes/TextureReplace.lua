@@ -140,7 +140,7 @@ function TextureReplace.getCachedTexture(path, instance)
 	if not TextureReplace.Cache[index] then
 		if not fileExists(path) then
 			if #path:sub(30, #path-8) > 5 then
-				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
+				--outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
 				--							 remove .texture extension
 				TextureReplace.downloadTexture(path:sub(30, #path-8),
 					function(success)
