@@ -206,6 +206,7 @@ function BankPalomino:createSafes()
 		createObject(2332, 2309.52, 21.5, 26.85, 0, 0, 0),
 	}
 	for index, safe in pairs(self.m_Safes) do
+		safe:setCollisionsEnabled(true)
 		safe:setData("clickable", true, true)
 		addEventHandler( "onElementClicked", safe, self.m_OnSafeClickFunction)
 	end

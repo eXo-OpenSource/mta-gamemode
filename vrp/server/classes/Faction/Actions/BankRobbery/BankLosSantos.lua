@@ -209,6 +209,7 @@ function BankLosSantos:createSafes()
 		createObject(2332, 1437.3, -1006, 14.5, 0, 0, 180)
 	}
 	for index, safe in pairs(self.m_Safes) do
+		safe:setCollisionsEnabled(true)
 		safe:setData("clickable", true, true)
 		addEventHandler("onElementClicked", safe, self.m_OnSafeClickFunction)
 	end
