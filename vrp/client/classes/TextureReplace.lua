@@ -230,7 +230,7 @@ addEventHandler("changeElementTexture", root,
 			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
-			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.isFetchRemote, vehData.sUrl)
+			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle)
 		end
 	end
 )
