@@ -98,19 +98,56 @@ end
 
 function FactionManager:Event_OnSpeederCatch( speed, vehicle)
 	removeEventHandler("onClientRender", root, self.m_DrawSpeed)
+	local now = getTickCount()
 	self.m_SpeedCamSpeed = speed
 	self.m_SpeedCamVehicle = vehicle
-	self.m_RemoveDraw = getTickCount() + 5000
+	self.m_DrawStart = now + 2000
+	self.m_RemoveDraw = self.m_DrawStart + 5000
+	self.m_bLineChecked = false
+	self.m_PlaySoundOnce = false
 	addEventHandler("onClientRender", root, self.m_DrawSpeed)
 end
 
 function FactionManager:OnRenderSpeed()
 	local now = getTickCount()
 	if now <= self.m_RemoveDraw then
-		if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
-			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
+		if now >= self.m_DrawStart then
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+				if self.m_bLineChecked == self.m_SpeedCamVehicle then
+					local speed = math.floor(self.m_SpeedCamSpeed)
+					local plate = getVehicleName(self.m_SpeedCamVehicle)
+					local text = "Radar: "..speed.." KM/H".." bei "..plate.." !"
+					dxDrawText(text,0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
+					dxDrawText(text,1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
+					dxDrawText(text,0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
+					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
+					if speeder then
+						local px,py,pz = getPedBonePosition(speeder,8)
+						local dx,dy = getScreenFromWorldPosition(px,py,pz)
+						if dx and dy then
+							dxDrawText(speed.." KM/H", dx,dy+1,dx,dy+1,tocolor(0,0,0,255),1,"default-bold")
+							dxDrawText(speed.." KM/H", dx,dy,dx,dy,tocolor(230,0,0,255),1,"default-bold")
+						end
+					end
+				else 
+					local localVeh = getPedOccupiedVehicle(localPlayer)
+					if localVeh then
+						local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
+						if speeder then
+							local x,y,z = getElementPosition(localVeh)
+							local px,py,pz = getPedBonePosition(speeder,8)
+							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, false)
+							self.m_bLineChecked = self.m_SpeedCamVehicle
+							self.m_DrawStart = now + 2000
+							self.m_RemoveDraw = self.m_DrawStart + 10000	
+							if not self.m_PlaySoundOnce then
+								playSoundFrontEnd(cop,5)
+								self.m_PlaySoundOnce = true
+							end
+						end
+					end
+				end
+			end
 		end
 	else 
 		removeEventHandler("onClientRender", root, self.m_DrawSpeed)

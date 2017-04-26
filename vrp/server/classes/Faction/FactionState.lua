@@ -1001,7 +1001,6 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 161
 								local maxSpeed = source.m_SpeedLimit or 80
 								if actualspeed > maxSpeed then 
-									playSoundFrontEnd(cop,5)
 									cop:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
 									cop.m_LastVehicle = hE
 								end
@@ -1037,6 +1036,7 @@ function FactionState:Command_speedRadar(player)
 					player:sendInfo("Radarfalle ist angeschaltet!")
 				else 
 					playSoundFrontEnd(player, 101)
+					delete(player.m_SpeedCol)
 					player:sendInfo("Radarfalle ist ausgeschaltet!")
 				end
 			else 
