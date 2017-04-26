@@ -14,7 +14,7 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp","stateFactionShowRob", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp","stateFactionShowRob", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
@@ -23,6 +23,9 @@ function FactionManager:constructor()
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
+	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
+	
+	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
 
@@ -90,6 +93,25 @@ function FactionManager:Event_selfArrestMarker( client )
 			function ()
 				localPlayer.m_selfArrest = false
 			end)
+	end
+end
+
+function FactionManager:Event_OnSpeederCatch( speed, vehicle)
+	removeEventHandler("onClientRender", root, self.m_DrawSpeed)
+	self.m_SpeedCamSpeed = speed
+	self.m_SpeedCamVehicle = vehicle
+	self.m_RemoveDraw = getTickCount() + 5000
+	addEventHandler("onClientRender", root, self.m_DrawSpeed)
+end
+
+function FactionManager:OnRenderSpeed() 
+	local now = getTickCount() 
+	if now >= self.m_RemoveDraw then
+		if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+			dxDrawText("Radar: "..math.floor(self.m_SpeedCamSpeed).." KM/H".." bei "..getVehicleName(self.m_SpeedCamVehicle).." !",0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
+		end
+	else 
+		removeEventHandler("onClientRender", root, self.m_DrawSpeed)
 	end
 end
 

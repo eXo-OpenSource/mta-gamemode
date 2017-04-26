@@ -358,6 +358,9 @@ function PlayerManager:playerQuit()
 			destroyElement(source.ped_deadDouble)
 		end
 	end
+	if source.m_SpeedCol then 
+		destroyElement(source.m_SpeedCol)
+	end
 	VehicleManager:getSingleton():destroyUnusedVehicles( source )
 end
 

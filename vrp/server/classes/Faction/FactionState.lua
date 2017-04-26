@@ -7,6 +7,8 @@
 -- ****************************************************************************
 FactionState = inherit(Singleton)
 
+
+local radarRange = 15
   -- implement by children
 
 function FactionState:constructor()
@@ -31,7 +33,7 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker(Vector3(1561.51, -1678.40, 16.20))
+	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -65,6 +67,7 @@ function FactionState:constructor()
 	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
 	addCommandHandler("ticket",bind(self.Command_ticket, self))
 	addCommandHandler("stvo",bind(self.Command_stvo, self))
+	addCommandHandler("speed", bind(self.Command_speedRadar,self))
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
@@ -92,8 +95,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateCheckBug", root, bind(self.Event_checkBug, self))
 	addEventHandler("factionStateGiveSTVO", root, bind(self.Event_giveSTVO, self))
 	addEventHandler("factionStateSetSTVO", root, bind(self.Event_setSTVO, self))
-
-
+	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
 
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
@@ -120,24 +122,21 @@ function FactionState:constructor()
 	)
 
 	self.onTiedExitBind = bind(self.onTiedExit, self)
+	
+	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
 end
 
 function FactionState:destructor()
 end
 
 
-function FactionState:createSelfArrestMarker(pos, int, dim)
-	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
-	self.m_Ped:setImmortal(true)
-	local marker = createPickup(pos, 3, 1247, 10)
-	if int then
-		ped:setInterior(int)
-		marker:setInterior(int)
-	end
-	if dim then
-		ped:setDimension(dim)
-		marker:setDimension(dim)
-	end
+function FactionState:createSelfArrestMarker( x,y,z, int, dim )
+	local ped = createPed(280, Vector3(251.257, 69.094, 1003.641))
+	ped:setRotation(0, 0, 90)
+	ped:setInterior(int)
+	local marker = createPickup(x,y,z,3,1247,10)
+	setElementInterior(marker, int)
+	setElementDimension(marker, dim)
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
@@ -967,6 +966,78 @@ function FactionState:Command_bail(player)
 		end
 	end
 end
+
+function FactionState:Event_onPlayerExitVehicle(vehicle, seat)
+	if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
+		if player.m_SpeedCol then 
+			destroyElement(player.m_SpeedCol)
+		end
+	end
+end
+
+function FactionState:Event_OnSpeedColShapeHit(hE, bDim) 
+	if bDim then 
+		local bType = getElementType(hE) == "vehicle"
+		if bType then 
+			local bOcc = getVehicleOccupant(hE)
+			if bOcc then 
+				local cop = source.m_Owner
+				if cop then
+					local copVehicle = getPedOccupiedVehicle(cop)
+					if copVehicle then 
+						if copVehicle ~= hE then
+							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
+								local speedx, speedy, speedz = getElementVelocity(hE)
+								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 161
+								local maxSpeed = source.m_SpeedLimit or 80
+								if actualspeed > maxSpeed then 
+									playSoundFrontEnd(cop,5)
+									cop:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
+								end
+							else 
+								destroyElement(source)
+							end
+						else 
+							destroyElement(source)
+						end
+					end
+				else 
+					destroyElement(source)
+				end
+			end
+		end
+	end
+end
+
+function FactionState:Command_speedRadar(player) 
+	if (player.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) then 
+		local stateVehicle = player.vehicle 
+		if stateVehicle then 
+			if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
+				if not player.m_SpeedCol then
+					local x, y, z = getElementPosition(stateVehicle)
+					local col = createColSphere(x, y, z, radarRange)
+					attachElements(col, stateVehicle,0,17)
+					col.m_Owner = player
+					player.m_SpeedCol = col
+					addEventHandler("onColShapeHit",col, self.m_onSpeedColHit)
+					playSoundFrontEnd(player, 101)
+					player:sendInfo("Radarfalle ist angeschaltet!")
+				else 
+					playSoundFrontEnd(player, 101)
+					player:sendInfo("Radarfalle ist ausgeschaltet!")
+				end
+			else 
+				player:sendError("Dies ist keine Staatsfahrzeug!")
+			end
+		else 
+			player:sendError("Benutze diesen Befehl nur im Fahrzeug!")
+		end
+	else
+		player:sendError("Nicht berechtigt!")
+	end
+end
+
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
