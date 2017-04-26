@@ -33,6 +33,7 @@
 	<script src="shared/classes/TranslationManager.lua"  type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
+	<script src="shared/classes/Stack.lua" type="shared"/>
 	<script src="shared/classes/Package.lua" type="shared"/>
 	<script src="shared/classes/MapParser.lua" type="shared"/>
 	<script src="shared/classes/Randomizer.lua" type="shared"/>
@@ -42,7 +43,6 @@
 	<script src="shared/classes/Thread.lua" type="shared"/>
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
-
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>

@@ -1,63 +1,74 @@
-HTTPMinimalDownloadGUI = inherit(GUIForm)
-inherit(Singleton, HTTPMinimalDownloadGUI)
+HTTPMinimalDownloadGUI = inherit(GUIElement)
+inherit(GUIFontContainer, HTTPMinimalDownloadGUI)
+inherit(GUIColorable, HTTPMinimalDownloadGUI)
 
 function HTTPMinimalDownloadGUI:constructor()
 	self.m_Failed = false
-	self.m_FileCount = 0
-	self.m_CurrentFile = 0
 
-	GUIForm.constructor(self, 20, screenHeight-30*screenHeight/900, 340*screenWidth/1600+6, 25*screenHeight/900)
-	self.m_DownloadBar = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150), self)
-	self.m_CurrentState = GUILabel:new(self.m_Width*0.1, 0, self.m_Width*0.9, self.m_Height*0.7, "Textur wird geladen ()", self)
-	self.m_RefreshCircle = GUILabel:new(0, 0, self.m_Width*0.1, self.m_Height, FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15))
-	self.m_RefreshCircle:setAlignX("center")
-	self.m_RefreshCircle:setAlignY("center")
-	self.m_CurrentState:setFont(FontAwesome(20))
+	local x, y, w
+	if MessageBoxManager.Mode then
+		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
+		if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
+			y = screenHeight - screenHeight*0.365
+		end
+	else
+		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
+	end
+	GUIFontContainer.constructor(self, "Custom Textur wird geladen...\nTextur: -", 1, VRPFont(24))
+	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
+	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + 4
+	GUIElement.constructor(self, x, y - 20 - h, w, h)
 
-	self.m_Rotate = bind(self.rotateCircle, self)
-	addEventHandler("onClientPreRender", root, self.m_Rotate)
+	table.insert(MessageBoxManager.Map, self)
+	MessageBoxManager.resortPositions()
 end
 
 function HTTPMinimalDownloadGUI:destructor()
-	GUIForm.destructor(self)
-	removeEventHandler("onClientPreRender", root, self.m_Rotate)
+	table.removevalue(MessageBoxManager.Map, self)
+	MessageBoxManager.resortPositions()
+
+	GUIElement.destructor(self)
 end
 
-function HTTPMinimalDownloadGUI:rotateCircle()
-	self.m_RefreshCircle:setRotation(self.m_RefreshCircle:getRotation()+1)
+function HTTPMinimalDownloadGUI:drawThis()
+	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
+	dxDrawRectangle(x, y, w, h, self.m_Color)
+
+	-- Center the text
+	x = x + 4
+	w = w - 8
+	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
-function HTTPMinimalDownloadGUI:setStateText(text)
-	self.m_CurrentState:setText(text)
+function HTTPMinimalDownloadGUI:updateText(...)
+	self:setText(...)
+
+	local w, h = self:getSize()
+	self:setSize(w, textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + 4)
+	MessageBoxManager.resortPositions()
 end
 
 function HTTPMinimalDownloadGUI:setCurrentFile(file)
 	if file:sub(-9, #file) == "index.xml" then
-		self:setStateText("downloading file-index")
+		return
 	else
-		self:setStateText(("Textur wird geladen (%s)"):format(file))
-		self.m_CurrentFile = self.m_CurrentFile + 1
+		self:updateText(("Custom Textur wird geladen...\nTextur: %s"):format(file))
 	end
 end
 
 function HTTPMinimalDownloadGUI:markAsFailed(reason)
 	self.m_Failed = true
-	self:setStateText(("Error: %s"):format(reason))
-	self.m_DownloadBar:setColor(tocolor(125, 0, 0, 255))
+	self:updateText(("Download-Error: %s"):format(reason))
+	self:setColorRGB(125, 0, 0, 200)
 end
 
 function HTTPMinimalDownloadGUI:setStatus(status, arg)
 	if status == "failed" then
 		self:markAsFailed(arg)
-	elseif status == "file count" then
-		self.m_FileCount = arg
 	elseif status == "current file" then
 		self:setCurrentFile(arg)
-	elseif status == "unpacking" then
-		self:setStateText(arg)
-		self.m_DownloadBar:setColor(tocolor(0, 125, 0, 255))
 	elseif status == "waiting" then
-		self.m_DownloadBar:setColor(tocolor(0, 125, 0, 255))
-		self:setStateText(arg)
+		self:setColorRGB(0, 125, 0, 200)
+		self:updateText(arg)
 	end
 end
