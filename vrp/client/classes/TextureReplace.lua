@@ -194,7 +194,7 @@ end
 function TextureReplace.downloadTexture(path, callback)
 	Async.create(
 		function()
-			local dgi = HTTPDownloadGUI:getSingleton()
+			local dgi = HTTPMinimalDownloadGUI:getSingleton()
 			local provider = HTTPProvider:new(TEXTURE_HTTP_URL, dgi)
 			if provider:startCustom(path, "files/images/Textures/Custom/", true) then -- did the download succeed
 				delete(dgi)

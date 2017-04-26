@@ -612,6 +612,7 @@
 	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
 	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HTTPMinimalDownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyMessageGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MultiPlayerGameGUI.lua" type="client"/>
