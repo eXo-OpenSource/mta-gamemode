@@ -129,6 +129,10 @@ function FactionManager:OnRenderSpeed()
 							dxDrawText(speed.." KM/H", dx,dy,dx,dy,tocolor(230,0,0,255),1,"default-bold")
 						end
 					end
+					if not self.m_PlaySoundOnce then
+						playSoundFrontEnd(5)
+						self.m_PlaySoundOnce = true
+					end
 				else 
 					local localVeh = getPedOccupiedVehicle(localPlayer)
 					if localVeh then
@@ -136,13 +140,30 @@ function FactionManager:OnRenderSpeed()
 						if speeder then
 							local x,y,z = getElementPosition(localVeh)
 							local px,py,pz = getPedBonePosition(speeder,8)
-							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, false)
+							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
+							if bLineCheck then
+								self.m_bLineChecked = self.m_SpeedCamVehicle
+								self.m_RemoveDraw = self.m_DrawStart + 10000	
+							end
+						end
+					end
+				end
+			end
+		else 
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+				local localVeh = getPedOccupiedVehicle(localPlayer)
+				if localVeh then
+					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
+					if speeder then
+						local x,y,z = getElementPosition(localVeh)
+						local px,py,pz = getPedBonePosition(speeder,8)
+						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
+						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
-							self.m_DrawStart = now + 2000
 							self.m_RemoveDraw = self.m_DrawStart + 10000	
-							if not self.m_PlaySoundOnce then
-								playSoundFrontEnd(cop,5)
-								self.m_PlaySoundOnce = true
+							if not self.m_PlaySoundSnap then
+								playSound("files/audio/speedcam.ogg")
+								self.m_PlaySoundSnap = true
 							end
 						end
 					end

@@ -1566,7 +1566,9 @@
 	<!-- Vehicle Headlight -->
 	<vrpfile src="files/audio/headlight_down.mp3" />
 	<vrpfile src="files/audio/headlight_up.mp3" />
-
+	
+	<vrpfile src="files/audio/speedcam.ogg" />
+	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>

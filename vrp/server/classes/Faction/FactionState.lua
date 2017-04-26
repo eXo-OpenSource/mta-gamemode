@@ -992,17 +992,16 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 					if copVehicle then 
 						if copVehicle ~= hE then
 							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
-								if cop.m_LastVehicle then 
-									if cop.m_LastVehicle == hE then 
-										return
-									end
-								end
 								local speedx, speedy, speedz = getElementVelocity(hE)
 								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 161
 								local maxSpeed = source.m_SpeedLimit or 80
 								if actualspeed > maxSpeed then 
+									local secondOccupant = getVehicleOccupant(cop.m_LastVehicle,1)
 									cop:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
-									cop.m_LastVehicle = hE
+									if secondOccupant then 
+										secondOccupant:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
+										secondOccupant.m_LastVehicle = hE
+									end
 								end
 							else 
 								destroyElement(source)
@@ -1026,17 +1025,21 @@ function FactionState:Command_speedRadar(player)
 			if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
 				if not player.m_SpeedCol then
 					local x, y, z = getElementPosition(stateVehicle)
-					local col = createColSphere(x, y, z, radarRange)
-					attachElements(col, stateVehicle,0,22)
-					col.m_Owner = player
-					player.m_SpeedCol = col
-					addEventHandler("onColShapeHit",col, self.m_onSpeedColHit)
-					addEventHandler("onColShapeLeave",col, self.m_onSpeedColHit)
+					player.m_SpeedCol = createColSphere(x, y, z, radarRange)
+					attachElements(player.m_SpeedCol, stateVehicle,0,22)
+					player.m_SpeedCol.m_Owner = player
+					addEventHandler("onColShapeHit",player.m_SpeedCol, self.m_onSpeedColHit)
 					playSoundFrontEnd(player, 101)
 					player:sendInfo("Radarfalle ist angeschaltet!")
 				else 
 					playSoundFrontEnd(player, 101)
-					delete(player.m_SpeedCol)
+					if isElement(player.m_SpeedCol) then
+						delete(player.m_SpeedCol)
+					end
+					if isElement(player.m_SpeedCol) then 
+						destroyElement(player.m_SpeedCol)
+					end
+					player.m_SpeedCol = false
 					player:sendInfo("Radarfalle ist ausgeschaltet!")
 				end
 			else 
