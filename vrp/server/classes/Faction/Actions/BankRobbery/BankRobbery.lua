@@ -213,7 +213,7 @@ function BankRobbery:updateBreakingNews()
 			msg = ("Das SAPD geht nun von %d beteiligten Räubern aus!"):format(nowEvilPeople)
 			self.m_BrNe_EvilPeople = nowEvilPeople
 		elseif self.m_BrNe_EvilPeople == nowEvilPeople then
-			msg = ("Die Lage an der Palomino Creek-Bank ist unverändert. %d Räuber befinden sich am Gelände!"):format(nowEvilPeople)
+			msg = ("Die Lage an der Bank ist unverändert. %d Räuber befinden sich am Gelände!"):format(nowEvilPeople)
 			self.m_BrNe_EvilPeople = nowEvilPeople
 		end
 	elseif rnd == 3 then
