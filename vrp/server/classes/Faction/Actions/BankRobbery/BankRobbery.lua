@@ -201,7 +201,7 @@ function BankRobbery:updateBreakingNews()
 	local msg = ""
 	local rnd = math.random(1,4)
 	if rnd == 1 then
-		msg =  _("Der Banküberfall ist immer noch im Gange!", self.m_RobPlayer)
+		msg =  "Der Banküberfall ist immer noch im Gange!"
 	elseif rnd == 2 then
 		if not self.m_BrNe_EvilPeople then self.m_BrNe_EvilPeople = 0 end
 		local nowEvilPeople = self:countEvilPeople()
@@ -229,7 +229,7 @@ function BankRobbery:updateBreakingNews()
 			self.m_BrNe_StatePeople = nowStatePeople
 		end
 	elseif rnd == 4 then
-		msg = _("Neuesten Informationen zur Folge handelt es sich bei den Tätern um Mitglieder der %s!"):format(self.m_RobFaction:getName())
+		msg = ("Neuesten Informationen zur Folge handelt es sich bei den Tätern um Mitglieder der %s!"):format(self.m_RobFaction:getName())
 	end
 	PlayerManager:getSingleton():breakingNews(msg)
 end
