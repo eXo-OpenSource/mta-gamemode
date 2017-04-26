@@ -988,7 +988,7 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 						if copVehicle ~= hE then
 							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
 								if cop.m_LastVehicle then 
-									if cop.m_LastVehicle ~= hE then 
+									if cop.m_LastVehicle == hE then 
 										return
 									end
 								end
