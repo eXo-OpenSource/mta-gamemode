@@ -417,30 +417,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin.m_PreSpectDim = getElementDimension(admin)
 			admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
 			admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
-
-			if not target.spectBy then target.spectBy = {} end
-			table.insert(target.spectBy, admin)
-
-			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
-
-			admin:setInterior(target.interior)
-			admin:setCameraInterior(target.interior)
-			admin:setDimension(target.dimension)
-
-			-- this will probably fix the camera issue
-			local position = target.position
-			setCameraMatrix(admin, position)
-			setCameraTarget(admin, target)
-
-			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-
-			admin:setFrozen(true)
-			if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(true) end
-
-			bindKey(admin, "space", "down",
+			admin.m_SpectStop =
 				function()
 					for i, v in pairs(target.spectBy) do
 						if v == admin then
@@ -463,7 +440,30 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					admin.m_IsSpecting = false
 					admin:setPrivateSync("isSpecting", false)
 				end
-			)
+
+			if not target.spectBy then target.spectBy = {} end
+			table.insert(target.spectBy, admin)
+
+			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
+
+			admin:setInterior(target.interior)
+			admin:setCameraInterior(target.interior)
+			admin:setDimension(target.dimension)
+
+			-- this will probably fix the camera issue
+			local position = target.position
+			setCameraMatrix(admin, position)
+			setCameraTarget(admin, target)
+
+			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+			addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+			bindKey(admin, "space", "down", admin.m_SpectStop)
+
+			admin:setFrozen(true)
+			if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
         elseif func == "offlinePermaban" then
 			if not target then return end
 			if not reason or #reason == 0 then return end
