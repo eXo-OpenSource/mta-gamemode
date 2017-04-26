@@ -51,8 +51,14 @@ end
 function Blip:destructor()
 	Blip.Map[self.m_Id] = nil
 
-	if self.m_VisibleTo == root then
-		triggerClientEvent("blipDestroy", root, self.m_Id)
+	local visible = self.m_VisibleTo == root and getElementsByType("player") or self.m_VisibleTo
+
+	if type(visible) == "table" then
+		for k, player in pairs(visible) do
+			if player:isLoggedIn() then
+				player:triggerEvent("blipDestroy", self.m_Id)
+			end
+		end
 	else
 		self.m_VisibleTo:triggerEvent("blipDestroy", self.m_Id)
 	end

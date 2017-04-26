@@ -71,9 +71,6 @@ function BankRobbery:destroyRob()
 		for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then destroyElement(bag) end end
 	end
 
-	if self.m_Blip then
-		for index, blip in pairs(self.m_Blip) do delete(blip) end
-	end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
 	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
 	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
@@ -111,6 +108,10 @@ function BankRobbery:destroyRob()
 				player.m_InCircuitBreak = false
 			end
 		end
+	end
+
+	if self.m_Blip then
+		for index, blip in pairs(self.m_Blip) do delete(blip) end
 	end
 
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
