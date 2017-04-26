@@ -105,6 +105,7 @@ function FactionManager:Event_OnSpeederCatch( speed, vehicle)
 	self.m_RemoveDraw = self.m_DrawStart + 5000
 	self.m_bLineChecked = false
 	self.m_PlaySoundOnce = false
+	self.m_PlaySoundSnap = false
 	addEventHandler("onClientRender", root, self.m_DrawSpeed)
 end
 
@@ -115,8 +116,15 @@ function FactionManager:OnRenderSpeed()
 			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
 				if self.m_bLineChecked == self.m_SpeedCamVehicle then
 					local speed = math.floor(self.m_SpeedCamSpeed)
-					local plate = getVehicleName(self.m_SpeedCamVehicle)
-					local text = "Radar: "..speed.." KM/H".." bei "..plate.." !"
+					local vName = getVehicleName(self.m_SpeedCamVehicle)
+					local occ = getVehicleOccupant(self.m_SpeedCamVehicle)
+					local name = "Unbekannt"
+					if occ then 
+						name = getPlayerName(occ)
+					end
+					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
+					local colName = getColorNameFromVehicle(c1, c2)
+					local text = "Radar: "..speed.." KM/H".." bei "..colName.."em "..vName.." (("..name..")) !"
 					dxDrawText(text,0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
 					dxDrawText(text,1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
 					dxDrawText(text,0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
