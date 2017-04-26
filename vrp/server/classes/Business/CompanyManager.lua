@@ -389,23 +389,3 @@ function CompanyManager:Event_getCompanies()
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
 	end
 end
-
-function CompanyManager:sendAllToClient(client)
-	--[[
-	local vehicleTab = {}
-	for i, company in pairs(CompanyManager.Map) do
-		if companyVehicleShaders[company:getId()] then
-			for i, v in pairs(company.m_Vehicles) do
-				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
-					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
-					if shaderInfo.shaderEnabled then
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
-					end
-				end
-			end
-		end
-	end
-
-	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
-	]]
-end

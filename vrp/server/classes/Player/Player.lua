@@ -235,9 +235,6 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
-	FactionManager:getSingleton():sendAllToClient(self)
-	CompanyManager:getSingleton():sendAllToClient(self)
-	VehicleManager:getSingleton():sendTexturesToClient(self)
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
@@ -282,7 +279,7 @@ function Player:initialiseBinds()
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then vehicle:toggleHandBrake( player ) end end)
-	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)	
+	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
 end
 
 function Player:buckleSeatBelt(vehicle)

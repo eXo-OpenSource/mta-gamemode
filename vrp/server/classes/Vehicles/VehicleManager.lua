@@ -351,26 +351,6 @@ function VehicleManager:removeRef(vehicle, isTemp)
 	end
 end
 
-function VehicleManager:sendTexturesToClient(client)
-	--[[
-	for ownerid, vehicles in pairs(self.m_Vehicles) do
-		for i, v in pairs(vehicles) do
-			if v.m_Texture and #v.m_Texture > 3 then
-				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
-			end
-		end
-	end
-
-	for groupid, vehicles in pairs(self.m_GroupVehicles) do
-		for i, v in pairs(vehicles) do
-			if v.m_Texture and #v.m_Texture > 3 then
-				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
-			end
-		end
-	end
-	--]]
-end
-
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
 	for ownerid, data in pairs(self.m_Vehicles) do

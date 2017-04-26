@@ -389,30 +389,6 @@ function FactionManager:Event_factionRespawnVehicles()
 	end
 end
 
-function FactionManager:sendAllToClient(client)
-	--[[
-	local vehicleTab = {}
-	for i, faction in pairs(self:getAllFactions()) do
-		if faction:isStateFaction() or faction:isRescueFaction() then
-			for i, v in pairs(faction.m_Vehicles) do
-				if factionVehicleShaders[faction:getId()] and factionVehicleShaders[faction:getId()][v:getModel()] then
-					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
-					if v.m_Decal == "" or v.m_Decal == false then
-						if shaderInfo.shaderEnabled then
-							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
-						end
-					else
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = v.m_Decal}
-					end
-				end
-			end
-		end
-	end
-
-	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
-	]]
-end
-
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do
 		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
