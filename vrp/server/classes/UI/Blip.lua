@@ -33,7 +33,7 @@ function Blip:sendToClient()
 
 	if type(visible) == "table" then
 		for k, player in pairs(visible) do
-			if player:isLoggedIn() then
+			if player and isElement(player) and player:isLoggedIn() then
 				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
 				if self.m_AttachedTo then
 					player:triggerEvent("blipAttach", self.m_Id, self.m_AttachedTo)
@@ -55,7 +55,7 @@ function Blip:destructor()
 
 	if type(visible) == "table" then
 		for k, player in pairs(visible) do
-			if player:isLoggedIn() then
+			if player and isElement(player) and player:isLoggedIn() then
 				player:triggerEvent("blipDestroy", self.m_Id)
 			end
 		end
