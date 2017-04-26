@@ -225,7 +225,7 @@ function BankRobbery:updateBreakingNews()
 			msg = _("Das SAPD hat zusätzliche Einheiten hinzugezogen. Es befinden sich %d Beamten vor Ort!", self.m_RobPlayer, nowStatePeople)
 			self.m_BrNe_StatePeople = nowStatePeople
 		elseif self.m_BrNe_StatePeople == nowStatePeople then
-			msg = _("Die Lage an der Palomino-Creek Bank ist unverändert. %d Beamte befinden sich am Gelände!", self.m_RobPlayer, nowStatePeople)
+			msg = _("Die Lage an der Bank ist unverändert. %d Beamte befinden sich am Gelände!", self.m_RobPlayer, nowStatePeople)
 			self.m_BrNe_StatePeople = nowStatePeople
 		end
 	elseif rnd == 4 then
