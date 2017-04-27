@@ -608,8 +608,7 @@ HelpTexts = {
 		 CustomTextures = [[
 			Auf eXo-Reallife kannst du selbst Texturen für dein Fahrzeug erstellen. Lade diese im cPanel
 			unter exo-reallife.de hoch und teste sie hier.
-			Du kannst Texturen auch für andere Spieler freigeben, dafür erhälst du 10 Prozent der Kosten
-			bei jedem Kauf der Textur als Bonus.
+			Du kannst Texturen auch für andere Spieler freigeben.
 
 			Bitte beachte das jede Textur erst durch einen Admin akzeptiert werden muss.
 			Also teste die Textur hier erst	sorgfältig bevor du Sie zur Überprüfung freigibst, bereits akzeptierte Texturen können nicht mehr verändert werden.
