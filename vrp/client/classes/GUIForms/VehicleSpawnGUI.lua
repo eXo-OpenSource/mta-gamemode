@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 VehicleSpawnGUI = inherit(GUIForm)
+inherit(Singleton, VehicleSpawnGUI)
 
 function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisement)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth/4/2, screenHeight/2 - screenHeight/2.5/2, screenWidth/4, screenHeight/2.5)
@@ -39,20 +40,19 @@ function VehicleSpawnGUI:SpawnButton_Click()
 		local vehicleId = getVehicleModelFromName(self.m_VehicleGrid:getSelectedItem():getColumnText(1))
 		triggerServerEvent("vehicleSpawn", root, self.m_SpawnerId, vehicleId)
 
-		self:close()
+		delete(self)
 	end
 end
 
 function VehicleSpawnGUI:CallEPT_Click()
 	if Phone:getSingleton():isOn()then
-		self:close()
-
 		Phone:getSingleton():onShow()
 		Phone:getSingleton():closeAllApps()
 		Phone:getSingleton():openAppByClass(AppCall)
 
 		CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "company", "EPT", CALL_RESULT_CALLING, false)
 		triggerServerEvent("callStartSpecial", root, 389)
+		delete(self)
 	else
 		WarningBox:new("Dein Handy ist ausgeschaltet!")
 	end
