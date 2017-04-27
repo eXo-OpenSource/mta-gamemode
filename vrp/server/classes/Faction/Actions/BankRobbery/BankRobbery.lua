@@ -114,8 +114,8 @@ function BankRobbery:destroyRob()
 		for index, blip in pairs(self.m_Blip) do delete(blip) end
 	end
 
-	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
+	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
+	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpColFunc)
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
