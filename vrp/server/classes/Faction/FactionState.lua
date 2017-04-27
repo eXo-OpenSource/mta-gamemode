@@ -668,7 +668,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 		if player:isFactionDuty() then
 			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():isStateVehicle() then
 				local playerId = player:getId()
-				local playersToSend = player:getPlayersInChatRange(2)
+				local playersToSend = player:getPlayersInChatRange(3)
 				local receivedPlayers = {}
 				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
 				for index = 1,#playersToSend do
