@@ -16,7 +16,7 @@ function HorseBetGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Pferdewetten", true, true, self)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.96, self.m_Height*0.05, _"Das Pferderennen findet täglich um 20:00 Uhr statt, du kannst es dir Live ansehen. \nNatürlich bekommst du auch ohne Ansehen der Live-Übertragung deinen Gewinn, du musst nur zu dieser Zeit online sein!", self.m_Window):setMultiline(true)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.96, self.m_Height*0.05, _"Das Pferderennen findet täglich um 20:00 Uhr statt, du kannst es dir Live ansehen. \nNatürlich bekommst du auch ohne Ansehen der Live-Übertragung deinen Gewinn, und ebenso wenn du offline bist!", self.m_Window):setMultiline(true)
 
 	local imgX, imgY = self.m_Width*0.18, self.m_Width*0.146
 

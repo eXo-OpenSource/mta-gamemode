@@ -174,7 +174,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 					end
 				end
 				if not skip then
-					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
+					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation or 0)
 					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.Premium, row.TuningsNew)
 					VehicleManager:getSingleton():addRef(vehicle, false)
 				end
@@ -235,7 +235,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
@@ -349,26 +349,6 @@ function VehicleManager:removeRef(vehicle, isTemp)
 			table.remove(self.m_Vehicles[ownerId], idx)
 		end
 	end
-end
-
-function VehicleManager:sendTexturesToClient(client)
-	--[[
-	for ownerid, vehicles in pairs(self.m_Vehicles) do
-		for i, v in pairs(vehicles) do
-			if v.m_Texture and #v.m_Texture > 3 then
-				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
-			end
-		end
-	end
-
-	for groupid, vehicles in pairs(self.m_GroupVehicles) do
-		for i, v in pairs(vehicles) do
-			if v.m_Texture and #v.m_Texture > 3 then
-				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
-			end
-		end
-	end
-	--]]
 end
 
 function VehicleManager:removeUnusedVehicles()
@@ -844,7 +824,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	self:checkVehicle(source)
 
 	if not source:isRespawnAllowed() then
-		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		client:sendError(_("Dieses Fahrzeug kann nicht gelöscht werden!", client))
 		return
 	end
 
@@ -852,6 +832,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 		-- Todo: Report cheat attempt
 		return
 	end
+
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 
@@ -873,8 +854,9 @@ function VehicleManager:Event_vehicleDelete(reason)
 				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
+
 		-- Todo Add Log
-		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel())
+		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel(), reason)
 		source:purge()
 	else
 		destroyElement(source)

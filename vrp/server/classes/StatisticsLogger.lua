@@ -117,12 +117,12 @@ function StatisticsLogger:addAmmunationLog(player, type, weapons, costs)
         sqlLogs:getPrefix(), userId, type, weapons, costs, self:getZone(player))
 end
 
-function StatisticsLogger:addVehicleDeleteLog(userId, admin, model)
+function StatisticsLogger:addVehicleDeleteLog(userId, admin, model, reason)
 	local adminId = 0
 	if isElement(admin) then adminId = admin:getId() else adminId = admin or 0 end
 
-	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Date) VALUES(?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin))
+	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Reason, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin), reason)
 end
 
 function StatisticsLogger:addTextLog(logname, text)

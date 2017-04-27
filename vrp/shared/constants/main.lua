@@ -1,24 +1,38 @@
-
+PROJECT_NAME = "eXo Reallife"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
--- TODO: Change before release
+-- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
 
 -- EVENTS:
-EVENT_EASTER = true--DEBUG
+EVENT_EASTER = false
 
+--TEXTURES:
+TEXTURE_STATUS = {
+	["Testing"] = 0,
+	["Pending"] = 1,
+	["Active"] = 2,
+	["Declined"] = 3
+}
+local status = {}
+for k, v in pairs(TEXTURE_STATUS) do
+	status[k] = v
+	status[v] = k
+end
+TEXTURE_STATUS = status
+
+--ALCOHOL:
 MAX_ALCOHOL_LEVEL = 6
 ALCOHOL_LOSS_INTERVAL =  5*60 -- IN SECONDS
 ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
-PROJECT_NAME = "eXo Reallife"
-
+--JOB_LEVELS:
 JOB_LEVEL_PIZZA = 0
 JOB_LEVEL_SWEEPER = 0
 JOB_LEVEL_LOGISTICAN = 1
@@ -30,7 +44,7 @@ JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 
-
+--USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -52,6 +66,7 @@ for k, v in pairs(RANK) do
 end
 RANK = r2
 
+--ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
@@ -517,3 +532,24 @@ WEAPON_LEVEL = {
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
+
+CAR_COLORS_FROM_ID =
+{
+	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
+	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
+	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
+	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
+	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
+	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
+	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
+	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
+	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
+	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
+	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
+	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
+	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
+	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
+	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
+	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
+	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
+}

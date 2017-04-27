@@ -192,7 +192,7 @@ function Company:sendChatMessage(sourcePlayer,message)
     local receivedPlayers = {}
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, 95, 30, 250)
+		player:sendMessage(text, 100, 150, 250)
         if player ~= sourcePlayer then
             receivedPlayers[#receivedPlayers+1] = player:getName()
         end
@@ -374,7 +374,7 @@ end
 
 function Company:phoneTakeOff(player, key, state, caller)
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	self:addLog(player, ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
+	self:addLog(player, "Telefonate", ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
 	player:triggerEvent("callAnswer", caller, voiceCall)
 	caller:setPhonePartner(player)

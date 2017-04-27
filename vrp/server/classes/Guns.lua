@@ -40,7 +40,10 @@ function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
 end
 
 function Guns:Event_onTaser(target)
+	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
+	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle or target.vehicle then return end
+	
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
@@ -58,6 +61,9 @@ function Guns:Event_onTaser(target)
 end
 
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
+	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
+	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
+	
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then

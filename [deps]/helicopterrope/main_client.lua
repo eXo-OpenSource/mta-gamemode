@@ -19,8 +19,7 @@ function abseilBind()
 		triggerServerEvent("doCancelPlayerAbseil",localplayer)
 	end
 end
-addCommandHandler("abseil",abseilBind)
-bindKey("5","down","abseil")
+addCommandHandler("rope",abseilBind)
 
 function startAbseil(veh,seat,ped)
 	setElementCollidableWith(source,veh,false)

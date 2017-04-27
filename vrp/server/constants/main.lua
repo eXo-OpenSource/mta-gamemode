@@ -143,21 +143,6 @@ RESOURCES_TO_STOP = {
     "helpmanager";
 }
 
-DONT_BUCKLE =
-{
-[581] = true,
-[509] = true,
-[481] = true,
-[462] = true,
-[521] = true,
-[463] = true,
-[510] = true,
-[522] = true,
-[461] = true,
-[448] = true,
-[586] = true,
-}
-
 setWeaponProperty(24,"pro","target_range",45)
 setWeaponProperty(24,"poor","target_range",45)
 setWeaponProperty(24,"std","target_range",45)

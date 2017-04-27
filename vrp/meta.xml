@@ -33,6 +33,7 @@
 	<script src="shared/classes/TranslationManager.lua"  type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
+	<script src="shared/classes/Stack.lua" type="shared"/>
 	<script src="shared/classes/Package.lua" type="shared"/>
 	<script src="shared/classes/MapParser.lua" type="shared"/>
 	<script src="shared/classes/Randomizer.lua" type="shared"/>
@@ -42,7 +43,6 @@
 	<script src="shared/classes/Thread.lua" type="shared"/>
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
-
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
@@ -166,6 +166,7 @@
 	<script src="server/classes/Gameplay/Minigames/SniperGame.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -239,10 +240,13 @@
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/BankRobberyManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
@@ -608,6 +612,7 @@
 	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
 	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HTTPMinimalDownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyMessageGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MultiPlayerGameGUI.lua" type="client"/>
@@ -616,6 +621,7 @@
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -718,7 +724,6 @@
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
-	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
@@ -726,6 +731,7 @@
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
@@ -1026,6 +1032,7 @@
 	<vrpfile src="files/images/Shops/SportCars.jpg"/>
 	<vrpfile src="files/images/Shops/Autobahn.jpg"/>
 	<vrpfile src="files/images/Shops/CouttAndSchutz.jpg"/>
+	<vrpfile src="files/images/Shops/CustomTexture.jpg"/>
 
 	<vrpfile src="files/images/Shops/BankHeader.png"/>
 
@@ -1254,8 +1261,6 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
-	<vrpfile src="files/images/Textures/Company/Academi/cooperation_logo.png"/>
-	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 	<file src="files/images/Textures/waretex.png"/>
 
@@ -1561,7 +1566,9 @@
 	<!-- Vehicle Headlight -->
 	<vrpfile src="files/audio/headlight_down.mp3" />
 	<vrpfile src="files/audio/headlight_up.mp3" />
-
+	
+	<vrpfile src="files/audio/speedcam.ogg" />
+	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>
@@ -1637,6 +1644,28 @@
 	<vrpfile src="files/models/fire_main.txd" />
 	<vrpfile src="files/models/fire_main.dff" />
 	<vrpfile src="files/models/fire_main.col" />
+	<vrpfile src="files/models/academi.dff" />
+	<vrpfile src="files/models/academi.col" />
+	<vrpfile src="files/models/hedge01_law.col" />
+	<vrpfile src="files/models/hedge01_law.dff" />
+
+	<vrpfile src="files/models/PD_Garage.col" />
+	<vrpfile src="files/models/PD_Garage.dff" />
+	<vrpfile src="files/models/PD_int.col" />
+	<vrpfile src="files/models/PD_int.dff" />
+	<vrpfile src="files/models/PD_main.col" />
+	<vrpfile src="files/models/PD_main.dff" />
+
+	<file src="files/models/bank.txd" />
+	<file src="files/models/bank.col" />
+	<file src="files/models/bank.dff" />
+	<file src="files/models/bankServer.txd" />
+	<file src="files/models/bankServer.col" />
+	<file src="files/models/bankServer.dff" />
+	<file src="files/models/bankDoor.txd" />
+	<file src="files/models/bankDoor.col" />
+	<file src="files/models/bankDoor.dff" />
+
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />
 	<file src="files/models/easter_egg.dff" />
@@ -1713,7 +1742,7 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	<map src="files/maps/Academi-Interrior.map"/>
+	<map src="files/maps/Academi.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
@@ -1722,8 +1751,8 @@
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
 	<include resource="reload"/>
-	<!--include resource="helicopterrope" /-->
-
+	<include resource="helicopterrope" />
+	<include resource="heligrab" />
 	<!-- Shaders -->
 	<include resource="Bloom" />
 	<include resource="Contrast" />
@@ -1734,6 +1763,7 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
+
 
 	<!-- ACL Request -->
 	<aclrequest>

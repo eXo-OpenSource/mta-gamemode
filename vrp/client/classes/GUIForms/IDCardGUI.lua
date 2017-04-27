@@ -93,7 +93,7 @@ end
 
 function IDCardGUI:getSymbol(bool)
 	if bool == true then
-		return FontAwesomeSymbols.Check, Color.Green
+		return FontAwesomeSymbols.CheckSquare, Color.Green
 	else
 		return FontAwesomeSymbols.Square, Color.Red
 	end

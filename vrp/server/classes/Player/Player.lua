@@ -235,9 +235,6 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
-	FactionManager:getSingleton():sendAllToClient(self)
-	CompanyManager:getSingleton():sendAllToClient(self)
-	VehicleManager:getSingleton():sendTexturesToClient(self)
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
@@ -282,7 +279,7 @@ function Player:initialiseBinds()
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then vehicle:toggleHandBrake( player ) end end)
-	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then  if not DONT_BUCKLE[getElementModel(vehicle)] then player:buckleSeatBelt(vehicle) end  end end)
+	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -427,6 +424,7 @@ function Player:spawn( )
 		end
 		killPed(self)
 	end
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -477,6 +475,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if isElement(self.ped_deadDouble) then
 		destroyElement(self.ped_deadDouble)
 	end
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:clearReviveWeapons()
@@ -838,11 +837,12 @@ function Player:payDay()
 	outgoing = outgoing + outgoing_vehicles + outgoing_house
 	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
 	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
+	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeug Steuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
 	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
-	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
+	self:addPaydayText("payday",("Der Payday über %d$ wurde auf dein Konto %s!"):format(total, total > 0 and "überwiesen" or "abgebucht"),255,150,0)
 
 	self:addBankMoney(total, "Payday")
 

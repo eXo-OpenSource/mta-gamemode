@@ -52,7 +52,13 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 		self:addItem(_"Fahrzeug despawnen",
 			function()
 				if not self:getElement() then return end
-					triggerServerEvent("adminVehicleDespawn", self:getElement())
+				InputBox:new(_"Fahrzeug despawnen", _"Aus welchem Grund möchtest du das Fahrzeug despawnen?",
+					function(reason)
+						if self:getElement() then
+							triggerServerEvent("adminVehicleDespawn", self:getElement(), reason)
+						end
+					end
+				)
 			end
 		)
 
@@ -77,4 +83,6 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 	end
+
+	self:adjustWidth()
 end

@@ -50,6 +50,10 @@ function Vehicle:getSpeed()
 	return speed
 end
 
+function Vehicle:getMileage()
+	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)

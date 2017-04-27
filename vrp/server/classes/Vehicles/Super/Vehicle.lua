@@ -21,7 +21,6 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
-	self.m_DownloadCallBack = bind(self.Event_OnFinishDownloadImage, self)
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -341,6 +340,7 @@ end
 
 function Vehicle:setMileage(mileage)
 	self.m_Mileage = mileage
+	setElementData(self, "mileage", self:getMileage())
 end
 
 function Vehicle:getMileage()
@@ -434,56 +434,65 @@ function Vehicle:isRespawnAllowed()
 	return self.m_RespawnAllowed
 end
 
-function Vehicle:getTexture()
-	return self.m_Texture
+function Vehicle:getTexture(textureName)
+	return textureName and self.m_Texture[textureName] or self.m_Texture
 end
 
 function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
+		if not self.m_Texture then
+			self.m_Texture = {}
+		end
+		if self.m_Texture[textureName] then
+			delete(self.m_Texture[textureName])
+			self.m_Texture[textureName] = nil
+		end
 
-		local isPng = string.find(texturePath,".png")
-		local isJpg = string.find(texturePath,".jpg")
 		local isHttp = string.find(texturePath,"http://")
 		if isHttp == nil then
-			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
-		elseif isHttp then
-			fetchRemote ( texturePath, self.m_DownloadCallBack,  "", false, force, texturePath, textureName )
+			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, force)
+		else
+			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
 		end
 	end
 end
 
-function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
-	if errNo == 0 then
-		self.m_IsURLTexture = true
-		setElementData(self,"URL_PAINTJOB", true)
-		self.m_Texture = VehicleTexture:new(self, rData , textureName, force, true, tUrl)
+function Vehicle:removeTexture(textureName)
+	if textureName then
+		delete(self.m_Texture[textureName])
+		return
 	end
-end
 
-function Vehicle:removeTexture()
-	delete(self.m_Texture)
+	for i, v in pairs(self.m_Texture) do
+		delete(v)
+	end
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)
   self.m_PositionType = type
   self.m_SpawnPos = self:getPosition()
-  local rot = self:getRotation()
-  self.m_SpawnRot = rot.z
+  self.m_SpawnRot = self:getRotation()
 end
 
 function Vehicle:respawnOnSpawnPosition()
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
-		self:setRotation(0, 0, self.m_SpawnRot)
+		self:setRotation(self.m_SpawnRot)
 		fixVehicle(self)
 		self:setEngineState(false)
 		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
 		self:setFrozen(true)
 		self.m_HandBrake = true
-		self:setData( "Handbrake",  self.m_HandBrake , true )
+		self:setData("Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
 		self:resetIndicator()
+
+		if self.despawned then
+			self.despawned = false
+			self:setDimension(0)
+		end
+
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))

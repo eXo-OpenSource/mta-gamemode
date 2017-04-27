@@ -145,9 +145,16 @@ function MechanicTow:Event_mechanicTakeVehicle()
 		source:setPositionType(VehiclePositionType.World)
 		source:setDimension(0)
 		local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+
+
+		if source:getVehicleType() == VehicleType.Plane then
+			x, y, z, rotation = 871.285, -1264.624, 15.5, 0
+		elseif source:getVehicleType() == VehicleType.Helicopter then
+			x, y, z, rotation =  912.602, -1252.053, 16, 0
+		end
+
 		source:setPosition(x, y, z)
 		source:setRotation(0, 0, rotation)
-		client:warpIntoVehicle(source)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end

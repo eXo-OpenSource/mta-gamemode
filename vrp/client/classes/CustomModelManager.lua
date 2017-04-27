@@ -154,13 +154,43 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/a51fensin.dff", 974)
 	self:loadImportCOL("files/models/a51fensin.col", 974)
 
+	-- Ammunation Street hedge
+	self:loadImportDFF("files/models/hedge01_law.dff", 6046)
+	self:loadImportCOL("files/models/hedge01_law.col", 6046)
+
 	--Easter Event:
 	self:loadImportTXD("files/models/easter_egg.txd", 1933)
 	self:loadImportDFF("files/models/easter_egg.dff", 1933)
 	self:loadImportCOL("filEs/models/easter_egg.col", 1933)
 
+	-- Building fixes
+	self:loadImportDFF("files/models/academi.dff", 6389)
+	self:loadImportCOL("filEs/models/academi.col", 6389)
+
 	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
+
+	self:loadImportDFF("files/models/PD_Garage.dff", 4232)
+	self:loadImportCOL("filEs/models/PD_Garage.col", 4232)
+
+	self:loadImportDFF("files/models/PD_int.dff", 14846)
+	self:loadImportCOL("filEs/models/PD_int.col", 14846)
+
+	self:loadImportDFF("files/models/PD_main.dff", 3976)
+	self:loadImportCOL("filEs/models/PD_main.col", 3976)
+
+
+	self:loadImportTXD("files/models/bank.txd", 4600)
+	self:loadImportDFF("files/models/bank.dff", 4600)
+	self:loadImportCOL("filEs/models/bank.col", 4600)
+	self:loadImportTXD("files/models/bankServer.txd", 1880)
+	self:loadImportDFF("files/models/bankServer.dff", 1880)
+	self:loadImportCOL("filEs/models/bankServer.col", 1880)
+	self:loadImportTXD("files/models/bankDoor.txd", 1930)
+	self:loadImportDFF("files/models/bankDoor.dff", 1930)
+	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
+
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

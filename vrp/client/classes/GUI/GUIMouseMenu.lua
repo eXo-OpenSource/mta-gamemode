@@ -11,7 +11,7 @@ function GUIMouseMenu:constructor(posX, posY, width, height, parent)
 	checkArgs("GUIMouseMenu:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	
+
 	self.m_Items   = {}
 	self.m_Element = nil
 end
@@ -30,10 +30,24 @@ function GUIMouseMenu:addItem(text, callback)
 	else
 		item = GUIMouseMenuNoClickItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
 	end
-	
+
 	table.insert(self.m_Items, item)
-	
+
 	return item
+end
+
+function GUIMouseMenu:adjustWidth()
+	local maxWidth = 0
+
+	for _, v in pairs(self.m_Items) do
+		if v:getTextWidth() > maxWidth then
+			maxWidth = v:getTextWidth()
+		end
+	end
+
+	for _, v in pairs(self.m_Items) do
+		v:setSize(maxWidth)
+	end
 end
 
 function GUIMouseMenu:setElement(element)

@@ -16,12 +16,14 @@ function HelpGUI:constructor()
 	self.m_Grid:addColumn("", 0.95)
 	self.m_ContentLabel = GUIScrollableText:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "", self.m_Height*0.04, self.m_Window)
 
+	self.m_Items = {}
+
 	for category, texts in pairs(HelpTextManager:getSingleton():getTexts()) do
 		self.m_Grid:addItemNoClick(category)
 
 		for title, text in pairs(texts) do
-			local item = self.m_Grid:addItem("  "..title)
-			item.onLeftClick = function()
+			self.m_Items[title] = self.m_Grid:addItem("  "..title)
+			self.m_Items[title].onLeftClick = function()
 					if HUDUI:getSingleton().m_Visible then
 						HUDUI:getSingleton():refreshHandler()
 						HUDUI:setEnabled(false)
@@ -35,6 +37,13 @@ function HelpGUI:constructor()
 	local item = self.m_Grid:getItems()[2]
 	self.m_Grid:onInternalSelectItem(item)
 	item.onLeftClick()
+end
+
+function HelpGUI:select(title)
+	if self.m_Items[title] then
+		self.m_Grid:onInternalSelectItem(self.m_Items[title])
+		self.m_Items[title].onLeftClick()
+	end
 end
 
 function HelpGUI:isBackgroundBlurred()

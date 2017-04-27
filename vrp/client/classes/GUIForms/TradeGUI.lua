@@ -14,7 +14,7 @@ function TradeGUI:constructor(target)
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Handel mit %s", target:getName()), true, true, self)
 
-	self.m_TabPanel = GUITabPanel:new(10, 35, 330, 315, self)
+	self.m_TabPanel = GUITabPanel:new(10, 35, 320, 350, self.m_Window)
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
 	self.m_TabItems = self.m_TabPanel:addTab(_"Items")
@@ -98,18 +98,19 @@ end
 
 function TradeGUI:loadWeapons()
    self.m_MyWeaponsGrid:clear()
-    for i=2, 12 do
+    for i = 0, 12 do
 		local weaponId = getPedWeapon(localPlayer, i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
-            item.onLeftClick = function()
-                self.m_SelectedType = "Weapon"
-				self.m_SelectedItem = weaponId
-                self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
-				self.m_ButtonTrade:setEnabled(true)
-				self.m_Preview:setImage(WeaponIcons[weaponId])
-				self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
-            end
+            local item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
+			item.onLeftClick =
+				function()
+					self.m_SelectedType = "Weapon"
+					self.m_SelectedItem = weaponId
+					self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
+					self.m_ButtonTrade:setEnabled(true)
+					self.m_Preview:setImage(WeaponIcons[weaponId])
+					self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
+				end
 		end
 	end
 end
