@@ -9,7 +9,7 @@ CircuitBreaker = inherit(Singleton)
 
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
-
+	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
@@ -54,6 +54,10 @@ function CircuitBreaker:destructor()
 	toggleControl("forwards",true)
 	toggleControl("backwards",true)
 	showChat(true)
+
+	for _, texture in pairs(self.m_Textures) do
+		texture:destroy()
+	end
 end
 
 function CircuitBreaker:setCallBackEvent(callbackEvent)
@@ -74,7 +78,7 @@ function CircuitBreaker:loadImages()
 	}
 
 	for _, img in pairs(self.m_Images) do
-		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
+		self.m_Textures[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
 end
 
@@ -528,7 +532,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 							if rnd_structur[1] == "smdresistor" then
 								self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
 							else
-								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self.m_Textures[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
 							end
 							table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 						end
