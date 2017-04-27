@@ -170,9 +170,9 @@ function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
-	if client:getMoney() >= 15000 then
+	if client:getMoney() >= 75000 then
 		--Todo Add Money Funcs/Checks
-		client:takeMoney(15000, "Custom-Texture")
+		client:takeMoney(75000, "Custom-Texture")
 		source.OldTexture = {["vehiclegrunge256"] = url}
 		source.OldColor1 = color1
 		source.OldColor2 = color2
