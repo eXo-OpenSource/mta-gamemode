@@ -364,9 +364,9 @@ function CircuitBreaker:updateRenderTarget()
 	---
 
 	self.m_RT_PCB:setAsTarget()
-	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.pcb)
-	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
-	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.output)
+	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.m_Textures.pcb)
+	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.m_Textures.input)
+	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.m_Textures.output)
 
 	for _, v in pairs(self.m_Levels[self.m_Level]) do
 		dxDrawImage(unpack(v))
@@ -564,7 +564,7 @@ function CircuitBreaker:createRandomResistor(posX, posY, width, height, labelTyp
 		value = ("%s%s"):format(value:gsub("[.]", ""), e)
 	end
 
-	dxDrawImage(posX, posY, width, height, self.smdresistor)
+	dxDrawImage(posX, posY, width, height, self.m_Textures.smdresistor)
 	dxDrawText(value, posX, posY, posX + width, posY + height, tocolor(255, 255, 255), .5/14*height, "clear", "center", "center")
 end
 
