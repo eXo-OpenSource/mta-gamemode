@@ -124,7 +124,7 @@ function FactionManager:OnRenderSpeed()
 					end
 					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
 					local colName = getColorNameFromVehicle(c1, c2)
-					local text = "Radar: "..speed.." KM/H".." bei "..colName.."em "..vName.." (("..name..")) !"
+					local text = "Radar: "..name.." fährt "..speed.." KM/H".." in "..colName.."em "..vName.." !"
 					dxDrawText(text,0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
 					dxDrawText(text,1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
 					dxDrawText(text,0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")

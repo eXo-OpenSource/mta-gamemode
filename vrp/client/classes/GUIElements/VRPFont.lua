@@ -89,6 +89,7 @@ FontAwesomeSymbols = {
 	IDCard = "",
 	Document = "",
 	Bolt = "",
+	Speedo = "",
 }
 
 Fonts = {

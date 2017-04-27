@@ -54,7 +54,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(FontAwesomeSymbols.Arrows)
 		end
-
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
 				self:addItem(_("Items >>>", item),
@@ -75,6 +74,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					):setIcon(FontAwesomeSymbols.Bug)
 				end
+			if getElementData(element, "StateVehicle") then
+				self:addItem(_("Radar starten", item),
+					function()
+						if self:getElement() then
+							triggerServerEvent("SpeedCam:onStartClick",localPlayer, localPlayer)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Speedo)
+			end
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
 			self:addItem(_"Schlüssel",

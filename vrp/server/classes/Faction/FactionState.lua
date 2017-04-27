@@ -55,7 +55,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO",
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -67,7 +67,6 @@ function FactionState:constructor()
 	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
 	addCommandHandler("ticket",bind(self.Command_ticket, self))
 	addCommandHandler("stvo",bind(self.Command_stvo, self))
-	addCommandHandler("speed", bind(self.Command_speedRadar,self))
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
@@ -101,7 +100,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
-
+	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -973,9 +972,15 @@ function FactionState:Command_bail(player)
 end
 
 function FactionState:Event_onPlayerExitVehicle(vehicle, seat)
-	if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
-		if player.m_SpeedCol then 
-			destroyElement(player.m_SpeedCol)
+	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction():isStateFaction() then
+		if source.m_SpeedCol then 
+			if isElement(source.m_SpeedCol) then
+				delete(source.m_SpeedCol)
+			end
+			if isElement(source.m_SpeedCol) then 
+				destroyElement(source.m_SpeedCol)
+			end
+			source.m_SpeedCol = false
 		end
 	end
 end
@@ -1018,32 +1023,36 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 	end
 end
 
-function FactionState:Command_speedRadar(player) 
+function FactionState:Event_speedRadar(player) 
 	if (player.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) then 
 		local stateVehicle = player.vehicle 
 		if stateVehicle then 
 			if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
-				if not player.m_SpeedCol then
-					local x, y, z = getElementPosition(stateVehicle)
-					player.m_SpeedCol = createColSphere(x, y, z, radarRange)
-					attachElements(player.m_SpeedCol, stateVehicle,0,22)
-					player.m_SpeedCol.m_Owner = player
-					addEventHandler("onColShapeHit",player.m_SpeedCol, self.m_onSpeedColHit)
-					playSoundFrontEnd(player, 101)
-					player:sendInfo("Radarfalle ist angeschaltet!")
+				if getVehicleOccupant(stateVehicle) == player then
+					if not player.m_SpeedCol then
+						local x, y, z = getElementPosition(stateVehicle)
+						player.m_SpeedCol = createColSphere(x, y, z, radarRange)
+						attachElements(player.m_SpeedCol, stateVehicle,0,22)
+						player.m_SpeedCol.m_Owner = player
+						addEventHandler("onColShapeHit",player.m_SpeedCol, self.m_onSpeedColHit)
+						playSoundFrontEnd(player, 101)
+						player:sendInfo("Radarfalle ist angeschaltet!")
+					else 
+						playSoundFrontEnd(player, 101)
+						if isElement(player.m_SpeedCol) then
+							delete(player.m_SpeedCol)
+						end
+						if isElement(player.m_SpeedCol) then 
+							destroyElement(player.m_SpeedCol)
+						end
+						player.m_SpeedCol = false
+						player:sendInfo("Radarfalle ist ausgeschaltet!")
+					end
 				else 
-					playSoundFrontEnd(player, 101)
-					if isElement(player.m_SpeedCol) then
-						delete(player.m_SpeedCol)
-					end
-					if isElement(player.m_SpeedCol) then 
-						destroyElement(player.m_SpeedCol)
-					end
-					player.m_SpeedCol = false
-					player:sendInfo("Radarfalle ist ausgeschaltet!")
+					player:sendError("Dies ist keine Staatsfahrzeug!")
 				end
 			else 
-				player:sendError("Dies ist keine Staatsfahrzeug!")
+				player:sendError("Nur der Fahrer kann diesen Befehl ausführen!")
 			end
 		else 
 			player:sendError("Benutze diesen Befehl nur im Fahrzeug!")
