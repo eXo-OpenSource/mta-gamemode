@@ -175,6 +175,7 @@ function BankRobbery:startRobGeneral(player)
 end
 
 function BankRobbery:Ped_Targetted(ped, attacker)
+	if not attacker then return end
 	local faction = attacker:getFaction()
 	if faction and faction:isEvilFaction() then
 		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
