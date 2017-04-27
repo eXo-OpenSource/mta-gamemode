@@ -209,6 +209,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Group)
 	end
 
+	if element:getVehicleType() == VehicleType.Helicopter and element == localPlayer.vehicle then
+		self:addItem(_"Abseilen",
+			function()
+				if self:getElement() then
+					delete(self)
+					exports.helicopterrope:abseilBind()
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Long_Down)
+	end
+
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
 			delete(self)

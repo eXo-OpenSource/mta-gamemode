@@ -90,6 +90,7 @@ FontAwesomeSymbols = {
 	Document = "",
 	Bolt = "",
 	Speedo = "",
+	Long_Down = "",
 }
 
 Fonts = {
