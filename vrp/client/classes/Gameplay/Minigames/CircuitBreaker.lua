@@ -58,6 +58,20 @@ function CircuitBreaker:destructor()
 	for _, texture in pairs(self.m_Textures) do
 		texture:destroy()
 	end
+
+	for level, groups in pairs(self.m_Levels) do
+		for group, v in pairs(groups) do
+			self.m_Levels[level][group][5]:destroy()
+		end
+	end
+
+	for _, line in pairs(self.m_Lines) do
+		for _, renderTarget in pairs(line) do
+			renderTarget:destroy()
+		end
+	end
+
+	if self.m_RT_endscreen then self.m_RT_endscreen:destroy() end
 end
 
 function CircuitBreaker:setCallBackEvent(callbackEvent)
