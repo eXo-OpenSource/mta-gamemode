@@ -533,7 +533,7 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
-CAR_COLORS_FROM_ID = 
+CAR_COLORS_FROM_ID =
 {
 	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
 	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
@@ -541,7 +541,7 @@ CAR_COLORS_FROM_ID =
 	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
 	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
 	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
-	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau", 
+	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
 	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
 	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
 	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",

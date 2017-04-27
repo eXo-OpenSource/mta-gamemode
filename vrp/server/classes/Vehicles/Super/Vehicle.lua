@@ -484,9 +484,15 @@ function Vehicle:respawnOnSpawnPosition()
 		setVehicleOverrideLights(self, 1)
 		self:setFrozen(true)
 		self.m_HandBrake = true
-		self:setData( "Handbrake",  self.m_HandBrake , true )
+		self:setData("Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
 		self:resetIndicator()
+
+		if self.despawned then
+			self.despawned = false
+			self:setDimension(0)
+		end
+
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))

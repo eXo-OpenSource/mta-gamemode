@@ -1030,20 +1030,47 @@ function Admin:getVehFromId(player, cmd, vehId)
     end
 end
 
-function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Clanmember then
-        if isElement(source) then
+function Admin:Event_vehicleDespawn(reason)
+    if client:getRank() < RANK.Clanmember then
+		-- Todo: Report cheat attempt
+		return
+	end
 
-			VehicleManager:getSingleton():checkVehicle(source)
-			if not source:isRespawnAllowed() then
-				client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
-				return
+	if not isElement(source) or getElementType(source) ~= "vehicle" then
+		return
+	end
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht despawnt werden!", client))
+		return
+	end
+
+	VehicleManager:getSingleton():checkVehicle(source)
+
+	if source:isPermanent() then
+		client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+
+		if getElementData(source, "OwnerName") then
+			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
+			if targetId and targetId > 0 then
+				local delTarget, isOffline = DatabasePlayer.get(targetId)
+				if delTarget then
+					if isOffline then
+						delTarget:addOfflineMessage(("Dein Fahrzeug (%s) wurde von %s despawnt (%s)!"):format(source:getName(), client:getName(), reason))
+						delete(delTarget)
+					else
+						delTarget:sendInfo(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason))
+					end
+				end
 			end
+		end
 
-			client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
-            source:setDimension(PRIVATE_DIMENSION_SERVER)
-        end
-    end
+		source:setDimension(PRIVATE_DIMENSION_SERVER)
+		source.despawned = true
+	elseif instanceof(source, TemporaryVehicle) then
+		client:sendInfo(_("Du hast das Fahrzeug %s gelöscht!", client, source:getName()))
+		source:destroy()
+	end
 end
 
 function Admin:Command_MarkPos(player, add)

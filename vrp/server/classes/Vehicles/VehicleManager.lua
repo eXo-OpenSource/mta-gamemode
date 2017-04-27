@@ -824,7 +824,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	self:checkVehicle(source)
 
 	if not source:isRespawnAllowed() then
-		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		client:sendError(_("Dieses Fahrzeug kann nicht gelöscht werden!", client))
 		return
 	end
 
@@ -832,6 +832,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 		-- Todo: Report cheat attempt
 		return
 	end
+
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 
@@ -853,6 +854,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
+
 		-- Todo Add Log
 		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel(), reason)
 		source:purge()
