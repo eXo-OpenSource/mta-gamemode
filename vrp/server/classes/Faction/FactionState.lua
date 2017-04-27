@@ -999,6 +999,11 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 					if copVehicle then
 						if copVehicle ~= hE then
 							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
+								if hE.m_LastSpeedTrap then 
+									if hE.m_LastSpeedTrap + 7000 > getTickCount() then 
+										return
+									end
+								end
 								local speedx, speedy, speedz = getElementVelocity(hE)
 								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 161
 								local maxSpeed = source.m_SpeedLimit or 80
@@ -1010,6 +1015,7 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 										secondOccupant.m_LastVehicle = hE
 									end
 								end
+								hE.m_LastSpeedTrap = getTickCount()
 							else
 								destroyElement(source)
 							end
