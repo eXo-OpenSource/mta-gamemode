@@ -147,6 +147,7 @@ function BankRobbery:startRobGeneral(player)
 	self.m_IsBankrobRunning = true
 	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
 	self.m_CircuitBreakerPlayers = {}
+	self.m_MoneyBags = {}
 
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
