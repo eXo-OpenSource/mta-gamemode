@@ -10,7 +10,7 @@ function TexturePreviewGUI:constructor()
 	self.m_Admin = false
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Textur Vorschau", false, true, self)
-	self.m_Window:deleteOnClose( true )
+	self.m_Window:deleteOnClose(true)
 	self.m_TextureList = GUIGridList:new(0, 40, self.m_Width, self.m_Height*0.6, self.m_Window)
 	self.m_TextureList:addColumn(_"Name", 1)
 

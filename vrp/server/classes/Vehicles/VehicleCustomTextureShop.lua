@@ -173,7 +173,8 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 	if client:getMoney() >= 75000 then
 		--Todo Add Money Funcs/Checks
 		client:takeMoney(75000, "Custom-Texture")
-		source.OldTexture = {["vehiclegrunge256"] = url}
+		local textureName = VEHICLE_SPECIAL_TEXTURE[source:getModel()] or "vehiclegrunge256"
+		source.OldTexture = {[textureName] = url}
 		source.OldColor1 = color1
 		source.OldColor2 = color2
 		source.m_Tunings:saveTuning("Color1", color1)
