@@ -85,6 +85,7 @@ function TradeGUI:loadItems()
 						self.m_SelectedType = "Item"
 						self.m_SelectedItem = itemInv["Objekt"]
 						self.m_SelectedItemAmount = itemInv["Menge"]
+						self.m_SelectedItemValue = itemInv["Value"]
 						self.m_ButtonTrade:setEnabled(true)
 						self.m_Preview:setImage("files/images/Inventory/items/"..self.m_ItemData[itemInv["Objekt"]]["Icon"])
 						self.m_LabelDescription:setText(self.m_ItemData[itemInv["Objekt"]]["Info"])
@@ -145,7 +146,7 @@ function TradeGUI:requestTrade()
 	if self.m_SelectedType == "Item" then
 		if tonumber(self.m_Amount:getText()) > 0 then
 			if tonumber(self.m_Amount:getText()) <= self.m_SelectedItemAmount then
-				triggerServerEvent("requestTrade", localPlayer, "Item", self.m_TargetPlayer, self.m_SelectedItem, tonumber(self.m_Amount:getText()), tonumber(self.m_Money:getText()))
+				triggerServerEvent("requestTrade", localPlayer, "Item", self.m_TargetPlayer, self.m_SelectedItem, tonumber(self.m_Amount:getText()), tonumber(self.m_Money:getText()), self.m_SelectedItemValue)
 				delete(self)
 			else
 				ErrorBox:new(_("Du nicht ausreichend %s!", self.m_SelectedItem))

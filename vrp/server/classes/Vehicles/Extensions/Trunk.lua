@@ -47,9 +47,9 @@ function Trunk.getFromId(id)
 	return Trunk.Map[id]
 end
 
-addEventHandler("trunkAddItem", root, function(trunkId, item, amount)
+addEventHandler("trunkAddItem", root, function(trunkId, item, amount, value)
 	if Trunk.getFromId(trunkId) then
-		Trunk.getFromId(trunkId):addItem(client, item, amount)
+		Trunk.getFromId(trunkId):addItem(client, item, amount, value)
 	else
 		client:sendError("Internal Error - Trunk not found")
 	end
@@ -97,13 +97,14 @@ function Trunk:save()
 	return sql:queryExec("UPDATE ??_vehicle_trunks SET ItemSlot1 = ?, ItemSlot2 = ?, ItemSlot3 = ?, ItemSlot4 = ?, WeaponSlot1 = ?, WeaponSlot2 = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_ItemSlot[1]), toJSON(self.m_ItemSlot[2]), toJSON(self.m_ItemSlot[3]), toJSON(self.m_ItemSlot[4]), toJSON(self.m_WeaponSlot[1]), toJSON(self.m_WeaponSlot[2]), self.m_Id)
 end
 
-function Trunk:addItem(player, item, amount)
+function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
 			if player:getInventory():getItemAmount(item) >= amount then
-				player:getInventory():removeItem(item, amount)
+				player:getInventory():removeItem(item, amount, value)
 				slot["Item"] = item
 				slot["Amount"] = amount
+				slot["Value"] = value
 				player:sendInfo(_("Du hast %d %s in den Kofferraum (Slot %d) gelegt!", player, amount, item, index))
 				self:refreshClient(player)
 				return
@@ -124,7 +125,8 @@ function Trunk:takeItem(player, slot)
 				if player:getInventory():getFreePlacesForItem(item) >= amount then
 					self.m_ItemSlot[slot]["Item"] = "none"
 					self.m_ItemSlot[slot]["Amount"] = 0
-					player:getInventory():giveItem(item, amount)
+					player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
+					self.m_ItemSlot[slot]["Value"] = ""
 					player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
 					self:refreshClient(player)
 					return

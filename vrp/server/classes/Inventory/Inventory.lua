@@ -310,8 +310,7 @@ function Inventory:getItemPlacesByName(item)
 	return placeTable
 end
 
-function Inventory:removeItemFromPlace(bag, place, amount)
-
+function Inventory:removeItemFromPlace(bag, place, amount, value)
 	local id = self.m_Bag[bag][place]
 	if not id then return false end
 
@@ -323,8 +322,9 @@ function Inventory:removeItemFromPlace(bag, place, amount)
 		error("removeItem > You cant remove less then 0 items!", 2)
 		return false
 	end
-
-	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount.."!",0,200,0,200)
+	local itemValue = value or ""
+	
+	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.." !",0,200,0,200)
 
 	if(ItemAmount - amount < 0) then
 		return false
@@ -388,7 +388,7 @@ function Inventory:getFreePlacesForItem(item)
 	return 0
 end
 
-function Inventory:removeItem(item, amount)
+function Inventory:removeItem(item, amount, value)
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item.." | Anzahl: "..amount)
 	end
@@ -396,13 +396,21 @@ function Inventory:removeItem(item, amount)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local places = self:getPlaces(bag)
+		local itemValue
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
 			if self.m_Items[id] then
 				if self.m_Items[id]["Objekt"] then
 					if self.m_Items[id]["Objekt"] == item then
 						if self.m_Items[id]["Menge"] >= amount then
-							self:removeItemFromPlace(bag, place, amount)
+							if not value then
+								self:removeItemFromPlace(bag, place, amount)
+							else 
+								itemValue = self:getItemValueByBag(bag, place)
+								if itemValue == value then
+									self:removeItemFromPlace(bag, place, amount, value)
+								end
+							end
 							return
 						end
 					end
@@ -410,29 +418,37 @@ function Inventory:removeItem(item, amount)
 			end
 		end
 		for i=1, amount, 1 do
-			self:removeOneItem(item)
+			self:removeOneItem(item, value)
 		end
 	end
 end
 
-function Inventory:removeAllItem(item)
+function Inventory:removeAllItem(item, value)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local places = self:getPlaces(bag)
 		local id,itemName
+		local itemValue
 		for place = 0, places, 1 do
 			id = self.m_Bag[bag][place]
 			if id then
 				itemName = self.m_Items[id]["Objekt"]
 				if itemName == item then
-					self:removeItemFromPlace(bag, place)
+					if not value then
+						self:removeItemFromPlace(bag, place)
+					else 
+						itemValue = self:getItemValueByBag(bag, place)
+						if itemValue == value then 
+							self:removeItemFromPlace(bag, place)
+						end
+					end
 				end
 			end
 		end
 	end
 end
 
-function Inventory:removeOneItem(item)
+function Inventory:removeOneItem(item, value)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local places = self:getPlaces(bag)
@@ -442,15 +458,31 @@ function Inventory:removeOneItem(item)
 			local id = self.m_Bag[bag][place]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
+			local itemValue = self:getItemValueByBag(bag, place)
 			if itemname == item then
 				amount = self.m_Items[id]["Menge"]
 				if amount > 1 then
-					self.m_Items[id]["Menge"] = amount-1
-					self:saveItemAmount(id, self.m_Items[id]["Menge"])
-					return true
+					if not value then
+						self.m_Items[id]["Menge"] = amount-1
+						self:saveItemAmount(id, self.m_Items[id]["Menge"])
+						return true
+					else 
+						if itemValue == value then 
+							self.m_Items[id]["Menge"] = amount-1
+							self:saveItemAmount(id, self.m_Items[id]["Menge"])
+							return true
+						end
+					end
 				elseif amount == 1 then
-					self:removeItemFromPlace(bag, place, 1)
-					return true
+					if not value then
+						self:removeItemFromPlace(bag, place, 1)
+						return true
+					else 
+						if itemValue == value then
+							self:removeItemFromPlace(bag, place, 1)
+							return true
+						end
+					end
 				end
 			end
 		end
@@ -464,8 +496,9 @@ end
 function Inventory:getPlaceForItem(item, itemAmount)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
+		local id
 		for place = 0, self:getPlaces(bag), 1 do
-			local id = self.m_Bag[bag][place]
+			id = self.m_Bag[bag][place]
 			if id then
 				if self.m_Items[id]["Objekt"] == item then
 					if self.m_Items[id]["Menge"]+itemAmount <= self.m_ItemData[item]["Stack_max"] then
@@ -493,7 +526,7 @@ function Inventory:getItemAmount(item)
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
 			if id then
-				if self.m_Items[id]["Objekt"] == item then
+				if self.m_Items[id]["Objekt"] == item then 
 					amount = amount+self.m_Items[id]["Menge"]
 				end
 			end
@@ -531,6 +564,8 @@ end
 function Inventory:throwItem(item, bag, id, place, name)
 	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
 	self.m_Owner:meChat(true, "zerstört "..name.."!")
+	local value = self:getItemValueByBag(bag,place)
+	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
 	self:removeItemFromPlace(bag, place)
 end
 

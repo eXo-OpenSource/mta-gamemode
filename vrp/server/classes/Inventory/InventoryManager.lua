@@ -128,7 +128,7 @@ function InventoryManager:Event_refreshInventory()
 	self:getPlayerInventory(client):syncClient()
 end
 
-function InventoryManager:Event_requestTrade(type, target, item, amount, money)
+function InventoryManager:Event_requestTrade(type, target, item, amount, money, value)
 	if (client:getPosition() - target:getPosition()).length > 10 then
 		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
 		return false
@@ -138,8 +138,8 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 	local money = math.abs(money)
 
 	if type == "Item" then
-		client.sendRequest = {target = target, item = item, amount = amount, money = money}
-		target.receiveRequest = {target = client, item = item, amount = amount, money = money}
+		client.sendRequest = {target = target, item = item, amount = amount, money = money, itemValue = value}
+		target.receiveRequest = {target = client, item = item, amount = amount, money = money, itemValue = value}
 
 		if self:getPlayerInventory(client):getItemAmount(item) >= amount then
 			local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
@@ -202,7 +202,8 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	local item = player.sendRequest.item
 	local amount = player.sendRequest.amount
 	local money = player.sendRequest.money
-
+	local value = player.sendRequest.itemValue
+	
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
@@ -213,8 +214,9 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
-			self:getPlayerInventory(player):removeItem(item, amount)
-			self:getPlayerInventory(target):giveItem(item, amount)
+			self:getPlayerInventory(player):removeItem(item, amount, value)
+			WearableManager:getSingleton():removeWearable( player, item, value ) 
+			self:getPlayerInventory(target):giveItem(item, amount, value)
 			target:takeMoney(money, "Handel")
 			player:giveMoney(money, "Handel")
 			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
@@ -238,7 +240,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	local weaponId = player.sendRequest.item
 	local amount = player.sendRequest.amount
 	local money = player.sendRequest.money
-
+	
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
