@@ -43,13 +43,13 @@ function ShootingRanch:constructor()
 
 	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
-		if dim then
+		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", false)
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
-		if dim then
+		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", true)
 		end
 	end)

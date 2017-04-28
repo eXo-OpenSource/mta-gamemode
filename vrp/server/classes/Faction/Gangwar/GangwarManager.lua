@@ -74,7 +74,7 @@ function Gangwar:onAreaPayday()
 		facObj = FactionManager:getSingleton():getFromId(faction)
 		if facObj then
 			playersOnline = facObj:getOnlinePlayers()
-			if playersOnline > 5 then
+			if #playersOnline > 5 then
 				amount = count * (GANGWAR_PAYOUT_PER_PLAYER * playersOnline)
 				facObj:giveMoney(amount, "Gangwar-Payday")
 				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER..")" , 0, 200, 0, true)	
