@@ -16,6 +16,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
     -- Part selection form
     do
         self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Custom-Textures", false, true, self)
+		self.m_Window:deleteOnClose(true)
      	GUIImage:new(0, 30, self.m_Width, self.m_Height*0.13, "files/images/Shops/CustomTexture.jpg", self.m_Window)
 		self.m_Color1 = VRPButton:new(self.m_Width*0.05, 30+self.m_Height*0.15, self.m_Width*0.42, self.m_Height*0.05, _"Farbe 1", true, self.m_Window):setBarColor(Color.Green)
 		self.m_Color2 = VRPButton:new(self.m_Width*0.53, 30+self.m_Height*0.15, self.m_Width*0.42, self.m_Height*0.05, _"Farbe 2", true, self.m_Window):setBarColor(Color.Green)
@@ -131,7 +132,7 @@ function VehicleCustomTextureGUI:initTextures(textures)
 		item.Id = row["Id"]
         item.onLeftClick = bind(self.Texture_Click, self)
 		item.onLeftDoubleClick = function()
-			QuestionBox:new(_("Möchtest du die Textur wirklich für 15.000$ kaufen?"),
+			QuestionBox:new(_("Möchtest du die Textur wirklich für 75.000$ kaufen?"),
 				function()
 					triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Id, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"))
 				end

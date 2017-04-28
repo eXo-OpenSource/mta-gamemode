@@ -61,6 +61,8 @@ function VehicleTuning:applyTuning(disableTextureForce)
 	for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
 		if #texturePath > 3 then
 			self.m_Vehicle:setTexture(texturePath, textureName, not disableTextureForce)
+		else
+			self.m_Tuning["Texture"][textureName] = nil
 		end
 	end
 end
@@ -171,5 +173,6 @@ function VehicleTuning:setSpecial(special)
 end
 
 function VehicleTuning:addTexture(texturePath, textureName)
-	self.m_Tuning["Texture"][textureName or "vehiclegrunge256"] = texturePath
+	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	self.m_Tuning["Texture"][textureName] = texturePath
 end

@@ -1478,6 +1478,7 @@ addEventHandler ( "aAdminChat", _root, function ( chat )
 	outputServerLog ("(ADMIN CHAT) "..tostring(getPlayerName(source))..": "..chat)
 end )
 
+--[[
 addEventHandler('onElementDataChange', root,
 	function(dataName, oldValue )
 		if getElementType(source)=='player' and checkClient( false, source, 'onElementDataChange', dataName ) then
@@ -1486,6 +1487,7 @@ addEventHandler('onElementDataChange', root,
 		end
 	end
 )
+--]]
 
 -- returns true if there is trouble
 function checkClient(checkAccess,player,...)

@@ -62,14 +62,14 @@ end
 function TextureReplace:onElementStreamIn()
 	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
 	if not self:loadShader() then
-		outputConsole(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
+		outputDebugString(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
 end
 
 function TextureReplace:onElementStreamOut()
 	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
 	if not self:unloadShader() then
-		outputConsole(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
+		outputDebugString(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
 end
 
