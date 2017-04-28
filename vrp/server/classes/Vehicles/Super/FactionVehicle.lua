@@ -184,16 +184,16 @@ function FactionVehicle:save()
 end
 
 function FactionVehicle:hasKey(player)
-  if self:isPermanent() then
-    if self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then
+  if self:isPermanent() and self.m_Faction then
+    if player:getFaction() and self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then
 		if player:isFactionDuty() then
 			return true
 		end
-	elseif self.m_Faction:isRescueFaction() and player:getFaction():isRescueFaction() then
+	elseif player:getFaction() and self.m_Faction:isRescueFaction() and player:getFaction():isRescueFaction() then
 		if player:isFactionDuty() then
 			return true
 		end
-	elseif player:getFaction() == self.m_Faction then
+	elseif player:getFaction() and player:getFaction() == self.m_Faction then
       	return true
     end
   end
