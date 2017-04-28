@@ -211,7 +211,7 @@ end)
 
 function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 
-	if client.TempTexVehicle then client.TempTexVehicle:destroy() end
+	if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	local player = client
 	model = model > 0 and model or math.random(400, 600)
 
@@ -261,8 +261,7 @@ end
 
 function VehicleCustomTextureShop:Event_texPreviewClose()
 	if client.TempTexVehicle then
-		client.TempTexVehicle:setDimension(0)
-		delete(client.TempTexVehicle)
+		if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	end
 	client:setDimension(0)
 end
