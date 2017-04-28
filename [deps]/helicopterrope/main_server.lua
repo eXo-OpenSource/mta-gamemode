@@ -74,11 +74,11 @@ addEvent("doForceStopAbseiling", true)
 addEventHandler("doForceStopAbseiling", getRootElement(), stopAbseilAnimation)
 
 function deletePiltoDummy()
-	local ped = getVehicleOccupant(client, 0)
+	local ped = getVehicleOccupant(source, 0)
 	if ped then
 		if getElementData(ped,"isabseilped") == true then
-			destroyElement(getVehicleOccupant(client, 0))
-			triggerClientEvent("doRemoveVehicleToWatch", client)
+			destroyElement(getVehicleOccupant(source, 0))
+			triggerClientEvent("doRemoveVehicleToWatch", source)
 		end
 	end
 end
@@ -86,7 +86,7 @@ addEvent("doRemovePilotDummy", true)
 addEventHandler("doRemovePilotDummy", getRootElement(), deletePiltoDummy)
 
 function checkForDummiesToDelete()
-	local ped = getVehicleOccupant(client, 0)
+	local ped = getVehicleOccupant(source, 0)
 	if ped then
 		if getElementType(ped) == "ped" then
 			if getElementData(ped, "isabseilped") == true then
