@@ -35,9 +35,9 @@ function VehicleCustomTextureShop:constructor()
         Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
 
-	Player.getQuitHook():register(
+	PlayerManager:getSingleton():register(
         function(player)
-            if player.TempTexVehicle then delete(player.TempTexVehicle) end
+            if player.TempTexVehicle and isElement(player.TempTexVehicle) then player.TempTexVehicle:destroy() end
         end
     )
 
