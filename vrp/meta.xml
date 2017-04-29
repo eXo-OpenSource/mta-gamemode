@@ -742,7 +742,8 @@
 	<script src="client/classes/Effects/RadialShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
-
+	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
+	
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -1410,7 +1411,7 @@
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
-
+	
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/Success.mp3"/>
