@@ -30,7 +30,7 @@ function SniperShader:update()
 		local dur = self.m_EndTick - self.m_StartTick
 		local prog = elap/dur
 		local blur, center, sizefactor = interpolateBetween(0.5,self.m_RandomStart,0.95,0,0.5,1.3,prog,"OutBack")
-		local rot = interpolateBetween(-9,0,0,0,9,0,prog*1.1,"CosineCurve")
+		local rot = interpolateBetween(-8,0,0,0,8,0,prog*1.1,"CosineCurve")
 		self.m_ScreenSource:update()
 
 		self.m_SniperShader:setValue("ScreenTexture", self.m_ScreenSource)
