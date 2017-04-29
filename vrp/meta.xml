@@ -1568,7 +1568,9 @@
 	<vrpfile src="files/audio/headlight_up.mp3" />
 
 	<vrpfile src="files/audio/speedcam.ogg" />
-
+	
+	<vrpfile src="files/audio/sniper.ogg" />
+	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>

@@ -173,6 +173,7 @@ function Guns:Event_checkFadeIn()
 		if bAiming then 
 			if not self.m_SniperShader then
 				self.m_SniperShader = SniperShader:new(3000)
+				playSound("files/audio/sniper.ogg")
 				self.m_SniperTimer = setTimer(function() 
 					self:removeSniperShader()
 				end, 3200,1)
