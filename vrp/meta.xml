@@ -63,7 +63,6 @@
 	<script src="server/classes/Player/Ban.lua" type="server"/>
 	<script src="server/classes/Player/Warn.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
-	<script src="server/classes/API.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
@@ -1566,9 +1565,9 @@
 	<!-- Vehicle Headlight -->
 	<vrpfile src="files/audio/headlight_down.mp3" />
 	<vrpfile src="files/audio/headlight_up.mp3" />
-	
+
 	<vrpfile src="files/audio/speedcam.ogg" />
-	
+
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>

@@ -211,9 +211,7 @@ function HorseRace:checkWinner(winningHorse)
 				player:giveMoney(win, "Pferde-Wetten")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
-				if isOffline then
-					delete(player)
-				else
+				if not isOffline then
 					outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
 				end
 			end
@@ -221,6 +219,10 @@ function HorseRace:checkWinner(winningHorse)
 			if not isOffline then
 				outputChatBox(_("[Pferde-Wetten] Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!", player, row["Horse"]) ,player, 255, 150, 255)
 			end
+		end
+
+		if isOffline then
+			delete(player)
 		end
 	end
 

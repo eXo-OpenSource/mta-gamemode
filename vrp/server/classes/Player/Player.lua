@@ -85,7 +85,6 @@ function Player:destructor()
 
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
-	DatabasePlayer.Map[self.m_Id] = nil
 end
 
 function Player:connect()
