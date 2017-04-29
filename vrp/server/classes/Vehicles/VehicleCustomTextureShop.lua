@@ -37,7 +37,7 @@ function VehicleCustomTextureShop:constructor()
 
 	Player.getQuitHook():register(
         function(player)
-            if player.TempTexVehicle then delete(player.TempTexVehicle) end
+            if player.TempTexVehicle and isElement(player.TempTexVehicle) then player.TempTexVehicle:destroy() end
         end
     )
 
