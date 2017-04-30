@@ -7,7 +7,7 @@ function abseilBind()
 	local data = getElementData(localplayer,"abseiling")
 	if data == "" then
 		local veh = getPedOccupiedVehicle(localplayer)
-		if veh then
+		if veh and getPedOccupiedVehicleSeat(localPlayer) ~= 0 then
 			if getVehicleType(veh) == "Helicopter" then
 				local vx,vy,vz = getElementPosition(veh)
 				if not processLineOfSight(vx,vy,vz,vx,vy,vz-10,true,true,false,true,false,true,true,false,veh) then
