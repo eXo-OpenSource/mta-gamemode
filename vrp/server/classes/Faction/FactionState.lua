@@ -999,8 +999,8 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 					if copVehicle then
 						if copVehicle ~= hE then
 							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
-								if hE.m_LastSpeedTrap then 
-									if hE.m_LastSpeedTrap + 7000 > getTickCount() then 
+								if hE.m_LastSpeedTrap then
+									if hE.m_LastSpeedTrap + 7000 > getTickCount() then
 										return
 									end
 								end
@@ -1523,11 +1523,12 @@ function FactionState:addBugLog(player, func, msg)
 
 			if self.m_Bugs[id] then
 				if getTickCount() - self.m_Bugs[id]["lastMessage"] >= 300000 then
-					local logId = #self.m_Bugs[id]["log"]+1
-					self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
-					self.m_Bugs[id]["lastMessage"] = getTickCount()
 					self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
 				end
+
+				local logId = #self.m_Bugs[id]["log"]+1
+				self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
+				self.m_Bugs[id]["lastMessage"] = getTickCount()
 			end
 		end
 	end
