@@ -358,7 +358,7 @@ function PlayerManager:playerQuit()
 			destroyElement(source.ped_deadDouble)
 		end
 	end
-	if source.m_SpeedCol then 
+	if source.m_SpeedCol then
 		destroyElement(source.m_SpeedCol)
 	end
 	VehicleManager:getSingleton():destroyUnusedVehicles( source )
@@ -627,12 +627,13 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 				return
 			end
 		end
-		if client.m_IsSpecting and client:getName() ~= "[eXo]Marcel." then
-			outputDebugString("SD #1337: [eXo]Marcel. exploit.")
-			return
-		end
+
 		if client.m_InCircuitBreak then
 			return
+		end
+
+		if client.texturePreviewActive then
+			client:triggerEvent("texturePreviewForceClose")
 		end
 	end
 	client:setPublicSync("AFK", state)
@@ -757,7 +758,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 			end
 		end
 	end
-	
+
 	client:sendError(_("Du hast keinen freien Waffen-Slot in deiner Waffenbox!", client))
 end
 
