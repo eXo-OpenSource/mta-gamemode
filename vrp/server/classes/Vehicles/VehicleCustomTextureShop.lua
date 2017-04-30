@@ -49,7 +49,6 @@ function VehicleCustomTextureShop:constructor()
 	addEventHandler("texturePreviewStartPreview", root, bind(self.Event_texPreviewStartPreview, self))
 	addEventHandler("texturePreviewUpdateStatus", root, bind(self.Event_texPreviewUpdateStatus, self))
 	addEventHandler("texturePreviewClose", root, bind(self.Event_texPreviewClose, self))
-
 end
 
 function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchingDimension)
@@ -195,6 +194,8 @@ end
 --Texture Preview
 
 addEventHandler("texturePreviewRequestTextures", root, function(admin)
+	client.texturePreviewActive = true
+
 	local result
 
 	if admin then
@@ -264,4 +265,5 @@ function VehicleCustomTextureShop:Event_texPreviewClose()
 		if client.TempTexVehicle and isElement(client.TempTexVehicle) then client.TempTexVehicle:destroy() end
 	end
 	client:setDimension(0)
+	client.texturePreviewActive = false
 end

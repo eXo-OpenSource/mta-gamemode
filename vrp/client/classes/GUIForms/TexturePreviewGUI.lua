@@ -1,7 +1,7 @@
 
 TexturePreviewGUI = inherit(GUIForm)
 inherit(Singleton, TexturePreviewGUI)
-addRemoteEvents{"texturePreviewLoadTextures"}
+addRemoteEvents{"texturePreviewLoadTextures", "texturePreviewForceClose"}
 
 function TexturePreviewGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight/1.5)
@@ -110,3 +110,12 @@ function TexturePreviewGUI:Texture_Click(item)
 		triggerServerEvent("texturePreviewStartPreview", localPlayer, item.Url, item.Model)
 	end
 end
+
+
+addEventHandler("texturePreviewForceClose", root,
+	function()
+		if TexturePreviewGUI:isInstantiated() then
+			delete(TexturePreviewGUI:getSingleton())
+		end
+	end
+)
