@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 Guns = inherit(Singleton)
-
+local w,h = guiGetScreenSize()
 local TOGGLE_WEAPONS = 
 {
 	[24] = true, -- [FROM] = TO
@@ -37,6 +37,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
 	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
+	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
@@ -102,6 +103,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
+			self.m_HasSniper = false
 		else 
 			if localPlayer.m_FireToggleOff then 
 				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
@@ -116,6 +118,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
+			self.m_HasSniper = true
 		end
 	end
 end	
@@ -160,6 +163,48 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				end, 6000,1)
 			end
 		end
+	end
+end
+
+function Guns:Event_checkFadeIn()
+	local hasSniper = getPedWeapon(localPlayer) == 34
+	if hasSniper then 
+		local bAiming = isPedAiming(localPlayer)
+		if bAiming then 
+			if not self.m_SniperShader then
+				self.m_SniperShader = SniperShader:new(3000)
+				playSound("files/audio/sniper.ogg")
+				self.m_SniperTimer = setTimer(function() 
+					self:removeSniperShader()
+				end, 3200,1)
+			end
+		else 
+			if self.m_SniperShader then 
+				delete(self.m_SniperShader)
+			end
+			self.m_SniperShader = false
+			if self.m_SniperTimer then 
+				if isTimer(self.m_SniperTimer) then
+					killTimer(self.m_SniperTimer)
+				end
+			end
+		end
+	else 
+		if self.m_SniperShader then 
+			delete(self.m_SniperShader)
+		end
+		self.m_SniperShader = false
+		if self.m_SniperTimer then 
+			if isTimer(self.m_SniperTimer) then
+				killTimer(self.m_SniperTimer)
+			end
+		end
+	end
+end
+
+function Guns:removeSniperShader() 
+	if self.m_SniperShader then 
+		delete(self.m_SniperShader)
 	end
 end
 

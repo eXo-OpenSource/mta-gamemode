@@ -170,9 +170,9 @@ function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
-	if client:getMoney() >= 75000 then
+	if client:getMoney() >= 120000 then
 		--Todo Add Money Funcs/Checks
-		client:takeMoney(75000, "Custom-Texture")
+		client:takeMoney(120000, "Custom-Texture")
 		local textureName = VEHICLE_SPECIAL_TEXTURE[source:getModel()] or "vehiclegrunge256"
 		source.OldTexture = {[textureName] = url}
 		source.OldColor1 = color1
@@ -182,7 +182,7 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 		self:setTexture(source, url)
 		client:sendInfo("Textur gekauft!")
 	else
-		client:sendError(_("Du hast nicht genug Geld dabei!", client))
+		client:sendError(_("Du hast nicht genug Geld dabei! ($120000)", client))
 	end
 end
 

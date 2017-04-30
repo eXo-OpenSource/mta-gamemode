@@ -74,9 +74,9 @@ function ShootingRanch:warpPlayerWaffenbox(player)
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
-		setElementDimension(player,0)
-		setElementInterior(player,6)
-		player:setPosition(244.16,69.11,1003.64)
+		--setElementDimension(player,0)
+		--setElementInterior(player,6)
+		--player:setPosition(244.16,69.11,1003.64)
 		return false
 	end
 end

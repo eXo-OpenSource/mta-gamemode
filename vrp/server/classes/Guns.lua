@@ -75,15 +75,18 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 					if inventory then
 						local itemCount = inventory:getItemAmount("Einsatzhelm")
 						if itemCount > 0 then 
-							inventory:removeItem("Einsatzhelm", 1)
-							destroyElement(hasHelmet)
-							target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
-							target.m_IsWearingHelmet = false
-							target.m_Helmet = false
-							target:setData("isFaceConcealed", false)
-							outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
-							target:triggerEvent("clientBloodScreen")
-							return
+							local isProtect = math.random(1,8)
+							if isProtect == 1 then
+								inventory:removeItem("Einsatzhelm", 1)
+								destroyElement(hasHelmet)
+								target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
+								target.m_IsWearingHelmet = false
+								target.m_Helmet = false
+								target:setData("isFaceConcealed", false)
+								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
+								target:triggerEvent("clientBloodScreen")
+								return
+							end
 						end
 					end
 				end

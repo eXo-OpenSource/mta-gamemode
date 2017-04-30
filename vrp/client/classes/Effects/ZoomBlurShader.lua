@@ -21,7 +21,17 @@ function ZoomBlurShader:update()
 
 		self.m_ZoomBlurShader:setValue("ScreenTexture", self.m_ScreenSource)
 		
+		self.m_Ready = true
 		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_ZoomBlurShader)
+	end
+end
+
+function ZoomBlurShader:setBlurOption( c, b) 
+	if self.m_ZoomBlurShader and self.m_ScreenSource then
+		if self.m_Ready then
+			self.m_ZoomBlurShader:setValue("Center", c)
+			self.m_ZoomBlurShader:setValue("BlurAmount", b)
+		end
 	end
 end
 
