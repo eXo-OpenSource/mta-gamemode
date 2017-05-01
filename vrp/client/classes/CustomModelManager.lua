@@ -157,6 +157,7 @@ function CustomModelManager:constructor()
 	-- Ammunation Street hedge
 	self:loadImportDFF("files/models/hedge01_law.dff", 6046)
 	self:loadImportCOL("files/models/hedge01_law.col", 6046)
+	self:setLODDistance(6046, 500)
 
 	--Easter Event:
 	self:loadImportTXD("files/models/easter_egg.txd", 1933)
