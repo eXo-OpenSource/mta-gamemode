@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.3" client="1.5.3-9.11011.0"/>
+	<min_mta_version server="1.5.4" client="1.5.4"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
