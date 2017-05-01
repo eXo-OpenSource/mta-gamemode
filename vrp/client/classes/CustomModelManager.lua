@@ -191,7 +191,7 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/bankDoor.dff", 1930)
 	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
 
-
+	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
