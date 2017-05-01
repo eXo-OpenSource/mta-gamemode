@@ -272,7 +272,7 @@ factionWeaponDepotInfo = {
 	[31] = {["Waffe"] = 15, ["Magazine"] = 40, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4
 	[32] = {["Waffe"] = 20, ["Magazine"] = 60, ["WaffenPreis"] = 200, ["MagazinPreis"] = 70}, -- Tec9
 	[33] = {["Waffe"] = 10, ["Magazine"] = 60, ["WaffenPreis"] = 400, ["MagazinPreis"] = 5}, -- County Rifle
-	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 690, ["MagazinPreis"] = 8}, -- Sniper
+	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 5000, ["MagazinPreis"] = 100}, -- Sniper
 	[35] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 2000, ["MagazinPreis"] = 500}, -- Rocket Launcher
 	[36] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 3000, ["MagazinPreis"] = 700}, -- Heat-Seeking RPG
 	[37] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Flamethrower
