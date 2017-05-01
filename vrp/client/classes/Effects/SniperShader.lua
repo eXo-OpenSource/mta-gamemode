@@ -16,9 +16,9 @@ function SniperShader:constructor( dur)
 	self.m_EndTick = self.m_StartTick + dur
 	local ran = math.random(1,2)
 	if ran == 1 then
-		self.m_RandomStart = 0.2
+		self.m_RandomStart = -0.5
 	else 
-		self.m_RandomStart = 0.8
+		self.m_RandomStart = 1.5
 	end
 	addEventHandler("onClientHUDRender", root, self.m_Update)
 end
@@ -29,8 +29,8 @@ function SniperShader:update()
 		local elap = now - self.m_StartTick
 		local dur = self.m_EndTick - self.m_StartTick
 		local prog = elap/dur
-		local blur, center, sizefactor = interpolateBetween(0.5,self.m_RandomStart,0.95,0,0.5,1.3,prog,"OutBack")
-		local rot = interpolateBetween(-8,0,0,0,8,0,prog*1.1,"CosineCurve")
+		local blur, center, sizefactor = interpolateBetween(0.4,self.m_RandomStart,0.95,0,0.5,1.3,prog,"OutBack")
+		local rot = interpolateBetween(-10,0,0,0,10,0,prog*1.1,"CosineCurve")
 		self.m_ScreenSource:update()
 
 		self.m_SniperShader:setValue("ScreenTexture", self.m_ScreenSource)
