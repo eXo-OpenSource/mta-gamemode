@@ -40,10 +40,10 @@ end
 --// Loan-Formula = BASE_LOAN * ( distance / time )
 function JobPizza:onPizzaDeliver(distance, time)
 	if client.vehicle and client.jobVehicle == client.vehicle then
-		if getTickCount() - (client.pizzaJobDelivered or 0) < 30000 then return end
+		if getTickCount() - (client.pizzaJobDelivered or 0) < 10000 then return end
 		client.pizzaJobDelivered = getTickCount()
 
-		local workFactor = math.min(distance, 1899) / math.max(time, 30) -- Note: 1899 is the longest distance from start point
+		local workFactor = math.min(distance, 1899) / math.max(time, 10) -- Note: 1899 is the longest distance from start point
 		local pay = math.floor( BASE_LOAN * workFactor*2 )
 		client:giveMoney(pay, "Pizza-Job")
 		client:givePoints(2)
