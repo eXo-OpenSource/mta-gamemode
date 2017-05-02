@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Provider.lua
--- *  PURPOSE:     Custom resource files provider class
+-- *  FILE:        server/classes/QuestionBox.lua
+-- *  PURPOSE:     Serverside QuestionBox class
 -- *
 -- ****************************************************************************
 QuestionBox = inherit(Object)
