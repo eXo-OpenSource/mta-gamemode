@@ -237,7 +237,7 @@ function DrivingSchool:getLessionFromStudent(player)
 end
 
 function DrivingSchool:Event_onQuit()
-    if self.m_CurrentLessions[source]["type"] then
+    if self.m_CurrentLessions[source] then
         self:Event_endLession(self.m_CurrentLessions[source]["target"], false, source)
         lession["target"]:sendError(_("Der Fahrlehrer %s ist offline gegangen!",lession["target"], source.name))
     elseif self:getLessionFromStudent(source) then
