@@ -434,6 +434,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 
 					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
 					admin:setInterior(admin.m_PreSpectInt)
 					admin:setDimension(admin.m_PreSpectDim)
 
