@@ -9,14 +9,12 @@ function DownloadGUI:constructor()
 	if screenWidth < 1024 then
 		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
 	end
-	self.m_CurrentState = GUILabel:new(0, screenHeight/2 - 150/2 + 150, screenWidth, 50, "", self):setAlignX("center"):setFont(VRPFont(30))
 	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
+	self.m_CurrentState = GUILabel:new(0, screenHeight/2 - 150/2 + 110, screenWidth, 30, "", self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(30)):setColor(Color.Red)
 
-	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
-	self:setStateText("Lade Datenarchiv: exo.data...")
+	fadeCamera(false)
 end
-
 
 function DownloadGUI:destructor()
 	GUIForm.destructor(self)
@@ -24,13 +22,9 @@ end
 
 function DownloadGUI:onProgress(p, fullSize)
 	self.m_ProgressBar:setProgress(tonumber(p) or 0)
-	outputConsole("Progress: "..tostring(p))
-	outputConsole("FullSize: "..tostring(fullSize))
 
 	local downloadedSize = (tonumber(p) or 0)*(fullSize/100)
-	self:setStateText(("Lade Datenarchiv: exo.data... (%.2fMB/%.2fMB)"):format(downloadedSize/1024/1024, fullSize/1024/1024))
-
-	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
+	self:setStateText(("%.2fMB / %.2fMB"):format(downloadedSize/1024/1024, fullSize/1024/1024))
 end
 
 function DownloadGUI:setStateText(text)
@@ -38,7 +32,6 @@ function DownloadGUI:setStateText(text)
 end
 
 function DownloadGUI:onComplete()
-	Package.load("vrp.data")
 	core:ready()
 	fadeCamera(true)
 	self:fadeOut(750)

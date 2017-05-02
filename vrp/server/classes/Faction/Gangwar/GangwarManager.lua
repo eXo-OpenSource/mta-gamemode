@@ -22,7 +22,7 @@ GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
 --GANGWAR_PAYOUT_PER_AREA = 1250 || not used anymore due to the money beeing paid out depending on the amount of members inside the faction rather than the constant payout per area
-GANGWAR_PAYOUT_PER_PLAYER = 70
+GANGWAR_PAYOUT_PER_PLAYER = 90
 UNIX_TIMESTAMP_24HRS = 86400 --//86400
 GANGWAR_PAY_PER_DAMAGE = 5
 GANGWAR_PAY_PER_KILL = 1000
@@ -74,8 +74,8 @@ function Gangwar:onAreaPayday()
 		facObj = FactionManager:getSingleton():getFromId(faction)
 		if facObj then
 			playersOnline = facObj:getOnlinePlayers()
-			if #playersOnline > 5 then
-				amount = count * (GANGWAR_PAYOUT_PER_PLAYER * playersOnline)
+			if #playersOnline > 2 then
+				amount = count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)
 				facObj:giveMoney(amount, "Gangwar-Payday")
 				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER..")" , 0, 200, 0, true)	
 			else 

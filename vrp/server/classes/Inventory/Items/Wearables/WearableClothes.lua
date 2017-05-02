@@ -21,7 +21,7 @@ function WearableClothes:use(player, itemId, bag, place, itemName)
 	if value then 
 		local skinID = tonumber(value)
 		if skinID then
-			setElementModel(player, skinID)
+			player:setSkin(skinID)
 		end
 		player:meChat(true, "wechselt seine Kleidung.")
 	end

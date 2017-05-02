@@ -149,10 +149,11 @@ function Core:constructor()
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(v) == "vrpfile" then
 					files[#files+1] = xmlNodeGetAttribute(v, "src")
+					Provider:getSingleton():offerFile(xmlNodeGetAttribute(v, "src"))
 				end
 			end
-			Package.save("vrp.data", files)
-			Provider:getSingleton():offerFile("vrp.data")
+			Package.save("vrp.list", files, true)
+			Provider:getSingleton():offerFile("vrp.list")
 		end
 
 		-- Refresh all players

@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.3" client="1.5.3-9.11011.0"/>
+	<min_mta_version server="1.5.4" client="1.5.4"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -743,7 +743,7 @@
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 	<script src="client/classes/Effects/ZoomBlurShader.lua" type="client"/>
 	<script src="client/classes/Effects/SniperShader.lua" type="client"/>
-	
+
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
@@ -1263,6 +1263,7 @@
 	<vrpfile src="files/images/Textures/Special/15.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 	<file src="files/images/Textures/waretex.png"/>
+	<file src="files/images/Textures/tracer.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1411,7 +1412,7 @@
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
-	
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/Success.mp3"/>
@@ -1568,9 +1569,9 @@
 	<vrpfile src="files/audio/headlight_up.mp3" />
 
 	<vrpfile src="files/audio/speedcam.ogg" />
-	
+
 	<vrpfile src="files/audio/sniper.ogg" />
-	
+
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>
@@ -1658,15 +1659,17 @@
 	<vrpfile src="files/models/PD_main.col" />
 	<vrpfile src="files/models/PD_main.dff" />
 
-	<file src="files/models/bank.txd" />
-	<file src="files/models/bank.col" />
-	<file src="files/models/bank.dff" />
-	<file src="files/models/bankServer.txd" />
-	<file src="files/models/bankServer.col" />
-	<file src="files/models/bankServer.dff" />
-	<file src="files/models/bankDoor.txd" />
-	<file src="files/models/bankDoor.col" />
-	<file src="files/models/bankDoor.dff" />
+	<vrpfile src="files/models/bank.txd" />
+	<vrpfile src="files/models/bank.col" />
+	<vrpfile src="files/models/bank.dff" />
+	<vrpfile src="files/models/bankServer.txd" />
+	<vrpfile src="files/models/bankServer.col" />
+	<vrpfile src="files/models/bankServer.dff" />
+	<vrpfile src="files/models/bankDoor.txd" />
+	<vrpfile src="files/models/bankDoor.col" />
+	<vrpfile src="files/models/bankDoor.dff" />
+
+	<!-- <vrpfile src="files/models/vehicles/infernus.dff"/> -->
 
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />
