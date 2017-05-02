@@ -146,7 +146,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			target:triggerEvent("questionBox", text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			QuestionBox:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -174,7 +174,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		target:triggerEvent("questionBox", text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		QuestionBox:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
 	end
 end
 
@@ -203,7 +203,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 	local amount = player.sendRequest.amount
 	local money = player.sendRequest.money
 	local value = player.sendRequest.itemValue
-	
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
@@ -215,7 +215,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
 			self:getPlayerInventory(player):removeItem(item, amount, value)
-			WearableManager:getSingleton():removeWearable( player, item, value ) 
+			WearableManager:getSingleton():removeWearable( player, item, value )
 			self:getPlayerInventory(target):giveItem(item, amount, value)
 			target:takeMoney(money, "Handel")
 			player:giveMoney(money, "Handel")
@@ -240,7 +240,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 	local weaponId = player.sendRequest.item
 	local amount = player.sendRequest.amount
 	local money = player.sendRequest.money
-	
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))

@@ -69,7 +69,7 @@ function JobTrashman:checkRequirements(player)
 end
 
 function JobTrashman:Event_stop()
-	self:stop(client)
+	self:stop(source)
 end
 
 
@@ -111,7 +111,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")
-				hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
+				QuestionBox:new(hitElement, hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
 
 			else
 				hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)

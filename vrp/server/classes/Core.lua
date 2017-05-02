@@ -123,7 +123,7 @@ function Core:constructor()
 		PayNSpray.initializeAll()
 		TollStation.initializeAll()
 		Depot.initalize()
-
+		QuestionBox.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions

@@ -93,7 +93,7 @@ function DrivingSchool:createSchoolPed( pos )
 				if source == self.m_DrivingSchoolPed then
 					if not player.m_HasTheory then
                         if not player.isInTheory then
-                            player:triggerEvent("questionBox", _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", player), "drivingSchoolStartTheory",self.m_DrivingSchoolPed)
+                            QuestionBox:new(player, player, _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", player), "drivingSchoolStartTheory")
                         end
                     else
                         player:sendInfo("Du hast bereits die Theorieprüfung bestanden!")
@@ -105,12 +105,12 @@ function DrivingSchool:createSchoolPed( pos )
 end
 
 function DrivingSchool:Event_startTheory()
-    if client:getMoney() >= 300 then
-        client:triggerEvent("showDrivingSchoolTest", self.m_DrivingSchoolPed)
-        client:takeMoney(300, "Fahrschule")
-        client.isInTheory = true
+    if source:getMoney() >= 300 then
+        source:triggerEvent("showDrivingSchoolTest", self.m_DrivingSchoolPed)
+        source:takeMoney(300, "Fahrschule")
+        source.isInTheory = true
     else
-        client:sendError(_("Du hast nicht genug Geld ( Kosten: 300)!", client))
+        source:sendError(_("Du hast nicht genug Geld ( Kosten: 300)!", client))
     end
 end
 
@@ -162,7 +162,7 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
 				if target:getMoney() >= costs then
 					if not target:getPublicSync("inDrivingLession") == true then
 						if not self.m_CurrentLessions[client] then
-							target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
+							QuestionBox:new(client, target, _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
 						else
 							client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
 						end

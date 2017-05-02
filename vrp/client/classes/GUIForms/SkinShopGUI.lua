@@ -28,7 +28,7 @@ function SkinShopGUI:constructor()
 		local item = self.m_SkinList:addItem(name, tostring(price).."$")
 
 		-- Add doubleclick event
-		item.onLeftDoubleClick = function()	triggerServerEvent("skinBuy", resourceRoot, skinId) end
+		item.onLeftDoubleClick = function()	triggerServerEvent("skinBuy", localPlayer, skinId) end
 		item.onLeftClick = function () localPlayer:setModel(skinId) end
 	end
 	localPlayer.m_OldSkin = localPlayer:getModel()

@@ -882,18 +882,18 @@ function VehicleManager:Event_vehicleSell()
 
 	local price = getPrice(source:getModel()) or 0
 	if price > 0 then
-		client:triggerEvent("questionBox", _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
+		QuestionBox:new(client, client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	else
 		client:sendError("Das Fahrzeug ist in keinem Shop erhätlich und kann nicht an den Server verkauft werden!")
-		client:triggerEvent("questionBox", _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
+		QuestionBox:new(client, client, _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	end
 end
 
 function VehicleManager:Event_acceptVehicleSell(veh)
 	if not instanceof(veh, PermanentVehicle, true) then return end
-	if veh:getOwner() ~= client:getId() then return end
+	if veh:getOwner() ~= source:getId() then return end
 	if veh.m_Premium then
-		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		source:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 		return
 	end
 	-- Search for price in vehicle shops table
@@ -909,12 +909,12 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	local price = getPrice(veh:getModel()) or 0
 	if price then
 		veh:purge()
-		client:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
+		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
 
 		self:Event_vehicleRequestInfo()
 
 	else
-		client:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
+		source:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
 	end
 end
 
