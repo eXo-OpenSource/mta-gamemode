@@ -1263,6 +1263,7 @@
 	<vrpfile src="files/images/Textures/Special/15.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 	<file src="files/images/Textures/waretex.png"/>
+	<file src="files/images/Textures/tracer.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
