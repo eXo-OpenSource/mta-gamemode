@@ -1031,42 +1031,34 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 	end
 end
 
-function FactionState:Event_speedRadar(player)
-	if (player.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) then
-		local stateVehicle = player.vehicle
+function FactionState:Event_speedRadar()
+	if (client.m_Faction:isStateFaction() == true and client:getFaction() and client:getFaction():isStateFaction() == true) then
+		local stateVehicle = client.vehicle
 		if stateVehicle then
 			if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
-				if getVehicleOccupant(stateVehicle) == player then
-					if not player.m_SpeedCol then
+				if client.vehicleSeat == 0 then
+					if not client.m_SpeedCol then
 						local x, y, z = getElementPosition(stateVehicle)
-						player.m_SpeedCol = createColSphere(x, y, z, radarRange)
-						attachElements(player.m_SpeedCol, stateVehicle,0,22)
-						player.m_SpeedCol.m_Owner = player
-						addEventHandler("onColShapeHit",player.m_SpeedCol, self.m_onSpeedColHit)
-						playSoundFrontEnd(player, 101)
-						player:sendInfo("Radarfalle ist angeschaltet!")
+						client.m_SpeedCol = createColSphere(x, y, z, radarRange)
+						attachElements(client.m_SpeedCol, stateVehicle,0,22)
+						client.m_SpeedCol.m_Owner = client
+						addEventHandler("onColShapeHit",client.m_SpeedCol, self.m_onSpeedColHit)
+						playSoundFrontEnd(client, 101)
+						client:sendInfo("Radarfalle ist angeschaltet!")
 					else
-						playSoundFrontEnd(player, 101)
-						if isElement(player.m_SpeedCol) then
-							delete(player.m_SpeedCol)
+						playSoundFrontEnd(client, 101)
+						if isElement(client.m_SpeedCol) then
+							delete(client.m_SpeedCol)
 						end
-						if isElement(player.m_SpeedCol) then
-							destroyElement(player.m_SpeedCol)
+						if isElement(client.m_SpeedCol) then
+							destroyElement(client.m_SpeedCol)
 						end
-						player.m_SpeedCol = false
-						player:sendInfo("Radarfalle ist ausgeschaltet!")
+						client.m_SpeedCol = false
+						client:sendInfo("Radarfalle ist ausgeschaltet!")
 					end
-				else
-					player:sendError("Dies ist keine Staatsfahrzeug!")
 				end
-			else
-				player:sendError("Nur der Fahrer kann diesen Befehl ausführen!")
 			end
-		else
-			player:sendError("Benutze diesen Befehl nur im Fahrzeug!")
 		end
-	else
-		player:sendError("Nicht berechtigt!")
 	end
 end
 
