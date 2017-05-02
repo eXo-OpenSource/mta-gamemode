@@ -32,23 +32,16 @@ function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
 end
 
 function QuestionBox.Accept(id)
-outputChatBox("yesTry")
 	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["yesEvent"] then
 		triggerEvent(QuestionBox.Map[id]["yesEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
 		delete(QuestionBox.Map[id]["object"])
-		outputChatBox("yes")
-
 	end
 end
 
 function QuestionBox.Discard(id)
-	outputChatBox("noTry")
-
 	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["noEvent"] then
 		triggerEvent(QuestionBox.Map[id]["noEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
 		delete(QuestionBox.Map[id]["object"])
-				outputChatBox("no")
-
 	end
 end
 
