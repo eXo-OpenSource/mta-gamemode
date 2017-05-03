@@ -257,4 +257,4 @@ setTimer(
 			triggerServerEvent("AntiCheat:ReportBlip", localPlayer, #attachedBlips)
 		end
 	end, 600000, 0
-) 
+)
