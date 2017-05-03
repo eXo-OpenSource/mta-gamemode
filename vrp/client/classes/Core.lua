@@ -243,7 +243,7 @@ function Core:throwInternalError(message)
 end
 
 
--- AntiCheat for blips // Workaround
+-- AntiCheat for blips // Workaround // this wont detect cheated blips
 setTimer(
 	function()
 		local attachedBlips = {}
@@ -257,4 +257,4 @@ setTimer(
 			triggerServerEvent("AntiCheat:ReportBlip", localPlayer, #attachedBlips)
 		end
 	end, 600000, 0
-)
+) 
