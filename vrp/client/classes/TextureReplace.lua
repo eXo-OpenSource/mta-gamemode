@@ -3,6 +3,9 @@ TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
 TextureReplace.Map = {}
 
+TextureReplace.Working = false
+TextureReplace.Pending = {}
+
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
@@ -61,13 +64,15 @@ end
 
 function TextureReplace:onElementStreamIn()
 	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
-	if not self:loadShader() then
-		outputDebugString(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
+	TextureReplace.Pending[source] = self
+	if not TextureReplace.Working then
+		TextureReplace.loadingQueue()
 	end
 end
 
 function TextureReplace:onElementStreamOut()
 	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
+	TextureReplace.Pending[source] = nil
 	if not self:unloadShader() then
 		outputDebugString(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
@@ -257,4 +262,17 @@ function TextureReplace.deleteFromElement(element)
 			TextureReplace.Map[index] = nil
 		end
 	end
+end
+
+function TextureReplace.loadingQueue()
+	TextureReplace.Working = true
+	for veh, obj in pairs(TextureReplace.Pending) do
+		if not obj:loadShader() then
+			outputDebugString(("Loading the texture of element %s failed!"):format(tostring(obj.m_Element)))
+		end
+		TextureReplace.Pending[source] = nil
+		setTimer(TextureReplace.loadingQueue, 2000, 1)
+		return
+	end
+	TextureReplace.Working = false
 end
