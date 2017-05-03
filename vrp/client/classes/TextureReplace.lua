@@ -270,7 +270,7 @@ function TextureReplace.loadingQueue()
 		if not obj:loadShader() then
 			outputDebugString(("Loading the texture of element %s failed!"):format(tostring(obj.m_Element)))
 		end
-		TextureReplace.Pending[source] = nil
+		TextureReplace.Pending[veh] = nil
 		setTimer(TextureReplace.loadingQueue, 2000, 1)
 		return
 	end
