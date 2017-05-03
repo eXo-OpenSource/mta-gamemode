@@ -13,7 +13,6 @@ function QuestionBox.initalize()
 	addRemoteEvents{"questionBoxAccept", "questionBoxDiscard"}
 	addEventHandler("questionBoxAccept", root, QuestionBox.Accept)
 	addEventHandler("questionBoxDiscard", root, QuestionBox.Discard)
-	outputChatBox("initalize")
 end
 
 function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
