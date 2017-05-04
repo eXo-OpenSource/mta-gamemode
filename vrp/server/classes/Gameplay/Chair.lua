@@ -10,14 +10,13 @@ addRemoteEvents{"onPlayerChairSitDown"}
 
 Chair.Map = {
 	[2290] = {seats = 3, offsetPosition = Vector3(.3, -.7), seatMultiplier = Vector3(.8)},
-	[1768] = {seats = 2},
-	[1766] = {seats = 2},
-	[1764] = {seats = 2},
-	[1763] = {seats = 2},
-	[1761] = {seats = 2},
-	[1760] = {seats = 2},
-	[1757] = {seats = 2},
-	[1757] = {seats = 2},
+	[1768] = {seats = 3, offsetPosition = Vector3(.3, -.6), seatMultiplier = Vector3(.7)},
+	[1766] = {seats = 3, offsetPosition = Vector3(.3, -.6), seatMultiplier = Vector3(.7)},
+	[1764] = {seats = 2, offsetPosition = Vector3(.6, -.6), seatMultiplier = Vector3(.9)},
+	[1763] = {seats = 2, offsetPosition = Vector3(.2, -.5), seatMultiplier = Vector3(.9)},
+	[1761] = {seats = 2, offsetPosition = Vector3(.3, -.7), seatMultiplier = Vector3(.7)},
+	[1760] = {seats = 3, offsetPosition = Vector3(.2, -.6), seatMultiplier = Vector3(.8)},
+	[1757] = {seats = 3, offsetPosition = Vector3(.4, -.6), seatMultiplier = Vector3(.7)},
 	[1756] = {seats = 2, offsetPosition = Vector3(.4, -.6), seatMultiplier = Vector3(1.1)},
 	[1753] = {seats = 3, offsetPosition = Vector3(.3, -.7), seatMultiplier = Vector3(.8)},
 	[1713] = {seats = 2, offsetPosition = Vector3(.3, -.7)},
@@ -26,13 +25,16 @@ Chair.Map = {
 	[1706] = {seats = 2, offsetPosition = Vector3(0, -.6)},
 	[1703] = {seats = 2, offsetPosition = Vector3(.6, -.6), seatMultiplier = Vector3(.8)},
 	[1702] = {seats = 2, offsetPosition = Vector3(.6, -.6), seatMultiplier = Vector3(.8)},
+	[1811] = {seats = 1, offsetPosition = Vector3(-.5), rotationOffset = 90},
+	[2310] = {seats = 1, offsetPosition = Vector3(-.5), rotationOffset = 90},
+	[2636] = {seats = 1, offsetPosition = Vector3(-.5), rotationOffset = 90}
 }
 
 function Chair:constructor()
 	addEventHandler("onPlayerChairSitDown", root, bind(Chair.trySitDown, self))
 
 	if DEBUG then
-		createObject(1702, 1517.51, -1660.52, 12.53)
+		pew = createObject(1811, 1517.51, -1660.52, 13.16)
 	end
 
 	self.m_Chairs = {}
@@ -97,7 +99,7 @@ end
 function Chair:sitDown(player, object, position, rotation, seat)
 	player:setFrozen(true)
 	player:setPosition(self:getPosition(object, position, rotation, seat))
-	player:setRotation(0, 0, rotation.z + 180)
+	player:setRotation(0, 0, rotation.z + Chair.Map[object].rotationOffset or 180)
 	player:setAnimation("PED", "SEAT_down", -1, false, false, false, true)
 end
 
