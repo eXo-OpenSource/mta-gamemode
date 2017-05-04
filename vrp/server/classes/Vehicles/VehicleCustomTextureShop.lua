@@ -165,7 +165,7 @@ end
 function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
-	self:setTexture(source, url)
+	self:setTexture(source, url, nil, true)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
@@ -178,17 +178,24 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 		source.OldColor2 = color2
 		source.m_Tunings:saveTuning("Color1", color1)
 		source.m_Tunings:saveTuning("Color2", color2)
-		self:setTexture(source, url)
+		self:setTexture(source, url, nil, true)
 		client:sendInfo("Textur gekauft!")
 	else
 		client:sendError(_("Du hast nicht genug Geld dabei! ($120000)", client))
 	end
 end
 
-function VehicleCustomTextureShop:setTexture(vehicle, url, textureName)
-	local textureName = VEHICLE_SPECIAL_TEXTURE[vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
-	vehicle.m_Tunings:addTexture(url, textureName)
-	vehicle.m_Tunings:applyTuning()
+function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp)
+	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	veh.m_Tunings:addTexture(url, textureName)
+	veh.m_Tunings:applyTuning()
+	if temp then
+		veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
+		veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
+		for textureName, texturePath in pairs(veh.OldTexture) do
+			veh.m_Tunings:addTexture(texturePath, textureName)
+		end
+	end
 end
 
 --Texture Preview
@@ -228,7 +235,7 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 	client:setDimension(client:getId()+1000)
 
 	client:setData("TexturePreviewCar", veh, true)
-	self:setTexture(veh, url)
+	self:setTexture(veh, url, nil, true)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
