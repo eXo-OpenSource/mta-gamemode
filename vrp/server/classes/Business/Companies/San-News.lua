@@ -67,10 +67,10 @@ function SanNews:Event_startInterview(target)
 				self:addInterviewPlayer(client)
 				self:addInterviewPlayer(target)
 			else
-				client:sendError(_("Es findet bereits ein Interview statt!", player))
+				client:sendError(_("Es findet bereits ein Interview statt!", client))
 			end
 		else
-			client:sendError(_("Du bist nicht im Dienst!", player))
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
