@@ -74,4 +74,6 @@
 	<map src="stuntfix.map"/>
 
 	<map src="minigamescafe.map" dimension="2" />
+	
+	<map src="ChinaMall.map" dimension="0" />
 </meta>
