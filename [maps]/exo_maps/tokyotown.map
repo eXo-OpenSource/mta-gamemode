@@ -158,8 +158,6 @@
     <object id="object (propbeerglass1) (3)" breakable="true" interior="0" alpha="255" model="1666" doublesided="false" scale="1" dimension="0" posX="1413.2002" posY="-1378.0996" posZ="8.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (propashtray1) (1)" breakable="true" interior="0" alpha="255" model="1665" doublesided="false" scale="1" dimension="0" posX="1412.8" posY="-1377.5" posZ="8.14" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (gb_kitchtakeway04) (1)" breakable="true" interior="0" alpha="255" model="2859" doublesided="false" scale="1" dimension="0" posX="1412.98047" posY="-1378.10547" posZ="7.90191" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (GB_takeaway01) (1)" breakable="true" interior="0" alpha="255" model="2814" doublesided="false" scale="1" dimension="0" posX="1412.7" posY="-1376.8999" posZ="7.76" rotX="0" rotY="0" rotZ="100"></object>
-    <object id="object (GB_takeaway04) (2)" breakable="true" interior="0" alpha="255" model="2839" doublesided="false" scale="1" dimension="0" posX="1412.9" posY="-1377.1" posZ="8.1" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (imy_bbox) (1)" breakable="true" interior="0" alpha="255" model="2991" doublesided="false" scale="1" dimension="0" posX="1407.9" posY="-1442" posZ="8.3" rotX="0" rotY="0" rotZ="82"></object>
     <object id="object (chinaTgarageDoor) (2)" breakable="true" interior="0" alpha="255" model="2957" doublesided="false" scale="1" dimension="0" posX="1423.4" posY="-1357.7" posZ="14.2" rotX="0" rotY="0" rotZ="0"></object>
 </map>
