@@ -603,6 +603,21 @@ function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
 end
 
+function LocalPlayer:getWorldObject()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		elseif result[12] then
+			return result[12], {result[13], result[14], result[15]}, {result[16], result[17], result[18]}
+		end
+	end
+
+	return false
+end
+
 function LocalPlayer:Event_onClientPlayerSpawn()
 	NoDm:getSingleton():checkNoDm()
 
