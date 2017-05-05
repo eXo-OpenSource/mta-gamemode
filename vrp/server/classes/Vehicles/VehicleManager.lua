@@ -206,6 +206,7 @@ function VehicleManager:destroyUnusedVehicles( player )
 end
 
 function VehicleManager.loadVehicles()
+	local st, count = getTickCount(), 0
 	--[[
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
@@ -221,6 +222,7 @@ function VehicleManager.loadVehicles()
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
+		count = count + 1
 	end
 	outputServerLog("Loading faction vehicles")
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
@@ -229,6 +231,7 @@ function VehicleManager.loadVehicles()
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, row.decal)
 			VehicleManager:getSingleton():addRef(vehicle, false)
+			count = count + 1
 		end
 	end
 	outputServerLog("Loading group vehicles")
@@ -238,10 +241,13 @@ function VehicleManager.loadVehicles()
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
 			VehicleManager:getSingleton():addRef(vehicle, false)
+			count = count + 1
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
+
+	outputServerLog(("Created %s vehicles in %sms"):format(count, getTickCount()-st))
 end
 
 function VehicleManager:addRef(vehicle, isTemp)

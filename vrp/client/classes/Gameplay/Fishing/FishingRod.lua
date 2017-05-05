@@ -81,6 +81,9 @@ end
 
 function FishingRod:handleClick(_, state)
 	if GUIElement.getHoveredElement() then return end
+	if isCursorShowing() then return end
+	setControlState("fire", false)
+	toggleControl("fire", false)
 
 	self.m_MouseDown = state == "down"
 

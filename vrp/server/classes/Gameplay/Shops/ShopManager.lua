@@ -155,6 +155,14 @@ function ShopManager:buyItem(shopId, item, amount)
 	if not amount then amount = 1 end
 	local shop = self:getFromId(shopId)
 	if shop.m_Items[item] then
+		if ItemManager:getSingleton():getInstance(item) and ItemManager:getSingleton():getInstance(item).canBuy then
+			local state, reason = ItemManager:getSingleton():getInstance(item):canBuy(client, item)
+			if not state then
+				client:sendError(tostring(reason))
+				return false
+			end
+		end
+
 		if client:getMoney() >= shop.m_Items[item]*amount then
 			if client:getInventory():getFreePlacesForItem(item) >= amount then
 				client:getInventory():giveItem(item, amount)

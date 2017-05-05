@@ -15,6 +15,16 @@ function ItemFishing:destructor()
 
 end
 
+function ItemFishing:canBuy(player, itemName)
+	if not FISHING_BAGS[itemName] then return true end
+
+	if player:getPrivateSync("FishingLevel") >= FISHING_BAGS[itemName].level then
+		return true
+	end
+
+	return false, _("Du brauchst mind. Angel Level %s um dieses Item zu kaufen!", player, FISHING_BAGS[itemName].level)
+end
+
 function ItemFishing:use(player, itemId, bag, place, itemName)
 	if itemName == "Angelrute" then
 		Fishing:getSingleton():inventoryUse(player)

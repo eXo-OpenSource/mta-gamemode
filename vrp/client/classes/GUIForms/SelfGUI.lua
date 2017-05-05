@@ -206,13 +206,6 @@ function SelfGUI:constructor()
 		end
 	end)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
-	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
-	GUILabel:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
-	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
-		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
-	end)
-
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
 	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -223,6 +216,25 @@ function SelfGUI:constructor()
 			self.m_JobLevelButton:setText("Max. Level"):setEnabled(false)
 		else
 			self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+		end
+	end)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
+	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
+	GUILabel:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
+	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
+		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
+	end)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Angel level:", tabPoints)
+	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
+	self.m_FishingLevelProgress = GUIProgressBar:new(self.m_Width*.45, self.m_Height*.5, self.m_Width*.3, self.m_Height*.06, tabPoints)
+	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
+		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
+			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
+			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
+		else
+			self.m_FishingLevelProgress:hide()
 		end
 	end)
 

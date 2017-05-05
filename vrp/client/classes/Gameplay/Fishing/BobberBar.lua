@@ -9,9 +9,9 @@ BobberBar = inherit(Singleton)
 addRemoteEvents{"fishingBobberBar"}
 
 local screenWidth, screenHeight = guiGetScreenSize()
-local playerFishingLevel = 1
 
 function BobberBar:constructor(difficulty, behavior)
+	local fisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
 	self.m_Size = Vector2(58, screenHeight/2)
 	self.m_RenderTarget = DxRenderTarget(self.m_Size, true)
 	self.m_AnimationMultiplicator = 0
@@ -19,7 +19,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = 64 + playerFishingLevel*8
+	self.m_BobberBarHeight = 64 + fisherLevel*4
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 

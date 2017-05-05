@@ -123,6 +123,7 @@ function Fishing:FishHit(location)
 	client:triggerEvent("fishingBobberBar", fish)
 
 	self.m_Players[client].lastFish = fish
+	self.m_Players[client].location = location
 	self.m_Players[client].lastFishHit = getTickCount()
 end
 
@@ -134,16 +135,20 @@ function Fishing:FishCaught()
 	local playerInventory = client:getInventory()
 	local allBagsFull = false
 
-	for storage, maxAmount in pairs(FISHING_BAGS) do
-		if playerInventory:getItemAmount(storage) > 0 then
-			local place = playerInventory:getItemPlacesByName("Kühlbox")[1][1]
+	for bagName, bagProperties in pairs(FISHING_BAGS) do
+		if playerInventory:getItemAmount(bagName) > 0 then
+			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local fishName = tbl.lastFish.name
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
 			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
 
-			if #currentValue < maxAmount then
+			if #currentValue < bagProperties.max then
+				sql:queryExec("INSERT INTO ??_caught_fishes (PlayerId, Fish, Size, Location, Time) VALUES (?, ?, ?, ?, NOW())", sql:getPrefix(), client:getId(), fishName, size, ("%s - %s"):format(tbl.location, getZoneName(client.position)))
+
 				table.insert(currentValue, {fishName, size})
 				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
+
+				self:updatePlayerSkill(client, size)
 				return
 			end
 
@@ -157,6 +162,18 @@ function Fishing:FishCaught()
 	end
 
 	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
+end
+
+function Fishing:updatePlayerSkill(player, skill)
+	player:giveFishingSkill(skill)
+
+	if player:getFishingLevel() < MAX_FISHING_LEVEL then
+		if player:getFishingSkill() >= FISHING_LEVELS[player:getFishingLevel() + 1] then
+			player:sendInfo("Angel Level erhöht!")
+			player:setFishingLevel(player:getFishingLevel() + 1)
+			player:setFishingSkill(player:getFishingSkill() - FISHING_LEVELS[player:getFishingLevel()])
+		end
+	end
 end
 
 function Fishing:onPedClick()
