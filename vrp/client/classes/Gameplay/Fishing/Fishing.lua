@@ -9,7 +9,7 @@ Fishing = {}
 addRemoteEvents{"onFishingStart", "onFishingStop"}
 
 function Fishing.load()
-	--[[local ped = Ped.create(161, Vector3(368.27, -2072.03, 8.02), 180)
+	local ped = Ped.create(161, Vector3(368.27, -2072.03, 8.02), 180)
 	Blip:new("Fishing.png", 368.27, -2072.03, 600)
 
 	ped:setData("NPC:Immortal", true)
@@ -21,7 +21,7 @@ function Fishing.load()
 		function()
 			triggerServerEvent("fishingPedClick", localPlayer)
 		end
-	)]]
+	)
 end
 
 function Fishing.start(...)

@@ -177,7 +177,7 @@ function Fishing:updatePlayerSkill(player, skill)
 end
 
 function Fishing:onPedClick()
-	outputChatBox("chick click")
+	--client:triggerEvent("onFishingTrading")
 end
 
 function Fishing:inventoryUse(player)
