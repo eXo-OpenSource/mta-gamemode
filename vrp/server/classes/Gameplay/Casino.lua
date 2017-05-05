@@ -63,7 +63,7 @@ end
 
 function Casino:startMultiplayerGame(game, target)
 	if target and isElement(target) then
-		target:triggerEvent("questionBox", _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
+		QuestionBox:new(client, target, _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
 		client:sendShortMessage(_("Du hast eine %s-Anfrage an %s gesendet!", client, Casino.MultiPlayerGameNames[game], target:getName()))
 	else
 		client:sendInfo(_("Spieler nicht gefunden!", client))

@@ -115,6 +115,7 @@ function Core:constructor()
 		BoxManager:new()
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
+		Chair:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -123,7 +124,7 @@ function Core:constructor()
 		PayNSpray.initializeAll()
 		TollStation.initializeAll()
 		Depot.initalize()
-
+		QuestionBox.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions
@@ -179,17 +180,18 @@ function Core:constructor()
 
 		Blip:new("North.png", 0, 6000, root, 12000)
 
-		GlobalTimer:getSingleton():registerEvent(function()
-			outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
-		end, "Server Restart Message 1", nil, 04, 50)
-		GlobalTimer:getSingleton():registerEvent(function()
-			outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
-		end, "Server Restart Message 2", nil, 04, 55)
+		if GIT_BRANCH == "release/production" then
+			GlobalTimer:getSingleton():registerEvent(function()
+				outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
+			end, "Server Restart Message 1", nil, 04, 50)
+			GlobalTimer:getSingleton():registerEvent(function()
+				outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
+			end, "Server Restart Message 2", nil, 04, 55)
 
-		GlobalTimer:getSingleton():registerEvent(function()
-			getThisResource():restart()
-		end, "Server Restart", nil, 05, 00)
-
+			GlobalTimer:getSingleton():registerEvent(function()
+				getThisResource():restart()
+			end, "Server Restart", nil, 05, 00)
+		end
 	end
 end
 

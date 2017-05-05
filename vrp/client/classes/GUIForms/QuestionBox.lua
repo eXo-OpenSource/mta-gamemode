@@ -31,18 +31,13 @@ end
 
 addEvent("questionBox", true)
 addEventHandler("questionBox", root,
-	function(text, yesEvent, noEvent, ...)
-		local additionalParameters = {...}
+	function(id, text)
 		QuestionBox:new(text,
 			function()
-				if yesEvent then
-					triggerServerEvent(yesEvent, root, unpack(additionalParameters))
-				end
+				triggerServerEvent("questionBoxAccept", root, id)
 			end,
 			function()
-				if noEvent then
-					triggerServerEvent(noEvent, root, unpack(additionalParameters))
-				end
+				triggerServerEvent("questionBoxDiscard", root, id)
 			end
 		)
 	end

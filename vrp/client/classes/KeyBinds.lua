@@ -32,6 +32,7 @@ function KeyBinds:constructor()
 	  ["KeyIndicatorWarn"]       = {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
 	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
 	  ["KeyCruiseControl"]       = {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
+	  ["KeyChairSitDown"]        = {["defaultKey"] = "l", ["name"] = "Hinsetzen", ["func"] = function() if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
 
 	  --Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};

@@ -74,11 +74,11 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					):setIcon(FontAwesomeSymbols.Bug)
 				end
-			if getElementData(element, "StateVehicle") then
+			if localPlayer.vehicleSeat == 0 and getElementData(element, "StateVehicle") then
 				self:addItem(_("Radar starten", item),
 					function()
 						if self:getElement() then
-							triggerServerEvent("SpeedCam:onStartClick",localPlayer, localPlayer)
+							triggerServerEvent("SpeedCam:onStartClick", self:getElement())
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Speedo)

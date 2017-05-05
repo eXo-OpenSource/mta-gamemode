@@ -54,7 +54,7 @@ function Fishing:onMarkerHit(hitElement, dim)
 		if not source.player then
 			if not hitElement.win and not self.m_Players[hitElement] then
 				source.player = hitElement
-				hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
+				QuestionBox:new(hitElement, hitElement, _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
 			else
 				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
 			end
@@ -98,21 +98,21 @@ function Fishing:onMarkerLeave(hitElement, dim)
 end
 
 function Fishing:start(marker)
-	if client:getMoney() > 10 then
-		if not client.win then
-			client:takeMoney(10, "Angeln")
-			setPedAnimation(client, "Gun_stand", "ped", 0, true, true, true)
+	if source:getMoney() > 10 then
+		if not source.win then
+			source:takeMoney(10, "Angeln")
+			setPedAnimation(source, "Gun_stand", "ped", 0, true, true, true)
 			local pos = marker:getPosition()
-			client:setPosition(pos)
-			client:setRotation(0, 0, 90, "default", true)
-			client:setFrozen(true)
-			client:triggerEvent("startFishingClient", 1, marker.id)
-			self.m_Players[client] = {}
+			source:setPosition(pos)
+			source:setRotation(0, 0, 90, "default", true)
+			source:setFrozen(true)
+			source:triggerEvent("startFishingClient", 1, marker.id)
+			self.m_Players[source] = {}
 		else
-			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
+			source:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", source))
 		end
 	else
-		client:sendError(_("Du hast keine 10$ dabei!", client))
+		source:sendError(_("Du hast keine 10$ dabei!", source))
 	end
 end
 

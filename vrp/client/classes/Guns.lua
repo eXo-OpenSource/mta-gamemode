@@ -68,7 +68,7 @@ function Guns:onRenderGunTraces()
 			prog = (now - time) / ( (time+flyTime)-time )
 			startP = {interpolateBetween(startP[1],startP[2], startP[3], endP[1], endP[2], endP[3], prog, "Linear")}
 			if startP and endP and time then 
-				if time + 500 >= now then
+				if time + flyTime >= now then
 					dxDrawMaterialLine3D(startP[1], startP[2], startP[3], endP[1] ,endP[2], endP[3], tracer, 0.02, tocolor(200,200,200,220))
 				else 
 					table.remove(self.m_GunTraces, i)

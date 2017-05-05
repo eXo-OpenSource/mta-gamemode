@@ -84,6 +84,7 @@
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
+	<script src="server/classes/QuestionBox.lua" type="server"/>
 
 
 	<!-- Super -->
@@ -181,17 +182,19 @@
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
 
-	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuNation.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuNationManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
-	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Chair.lua" type="server" />
+
+	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
@@ -207,7 +210,6 @@
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 
-
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
 
@@ -216,14 +218,11 @@
 	<!-- Groups -->
 	<script src="server/classes/Groups/Group.lua" type="server"/>
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
-	<!--<script src="server/classes/Groups/GangArea.lua" type="server"/>-->
-	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
 	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
 	<script src="server/classes/Groups/SprayWall.lua" type="server" />
 	<script src="server/classes/Groups/SprayWallManager.lua" type="server" />
 	<script src="server/classes/Groups/GroupHouseRob.lua" type="server" />
-
 
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
@@ -370,6 +369,7 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
+
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -441,8 +441,6 @@
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
-
-
 
 	<script src="client/classes/Inventory/Wearable/WearableHelmet.lua" type="client"/>
 
@@ -1262,8 +1260,8 @@
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
 	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
-	<file src="files/images/Textures/waretex.png"/>
-	<file src="files/images/Textures/tracer.png"/>
+	<vrpfile src="files/images/Textures/waretex.png"/>
+	<vrpfile src="files/images/Textures/tracer.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1433,6 +1431,7 @@
 	<vrpfile src="files/audio/carlock.mp3"/>
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
+	<vrpfile src="files/audio/gate_open.mp3"/>
 	<vrpfile src="files/audio/announcment.mp3"/>
 	<vrpfile src="files/audio/wasted.mp3"/>
 	<vrpfile src="files/audio/scary.mp3"/>

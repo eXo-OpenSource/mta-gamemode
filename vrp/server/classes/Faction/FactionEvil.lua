@@ -143,12 +143,17 @@ function FactionEvil:onDepotClicked(button, state, player)
 end
 
 function FactionEvil:loadYakGates(factionId)
+	
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(980, Vector3(2423.81640625,-2089.4482421875,14.677430152893), Vector3(0, 0, 270), Vector3(2423.81640625,-2089.4482421875,8.928430557251))
+	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.6))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
+	local elevator = Elevator:new()
+	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
+	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
+	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
