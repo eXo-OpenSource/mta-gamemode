@@ -12,6 +12,8 @@ function LogGUI:constructor(parent, log, players)
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
 	self.m_Categories = {}
 	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1, parent.m_Width*0.96, parent.m_Height*0.87, parent)
+	self.m_LogGrid:setFont(VRPFont(20))
+	self.m_LogGrid:setItemHeight(20)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self:refresh()
@@ -25,7 +27,7 @@ end
 
 function LogGUI:refresh()
 	self.m_LogGrid:clear()
-
+	local item
 	for _, row in ipairs(self.m_Log) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
 
@@ -37,7 +39,8 @@ function LogGUI:refresh()
 
 		if self:checkCatFilter(row.Category) then
 			if self:checkSeachFilter(playerName, row) and #self.m_LogGrid:getItems() < 150 then -- Todo: add user limit or pages?
-				self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
+				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
+				item:setFont(VRPFont(20))
 			end
 		end
 	end

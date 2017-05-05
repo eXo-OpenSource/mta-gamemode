@@ -26,9 +26,7 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	if self.m_DoNotSave then
-		self:save()
-	end
+	self:save()
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -80,10 +78,6 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	if self.m_DoNotSave then
-		return
-	end
-
 	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, STVO, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
@@ -187,9 +181,6 @@ end
 
 function DatabasePlayer:save()
 	if self:isGuest() then
-		return false
-	end
-	if self.m_DoNotSave then
 		return false
 	end
 	if self.m_LoggedIn then
@@ -316,7 +307,6 @@ function DatabasePlayer:increaseStatistics(stat, value)
 	else
 		outputDebug("Error increasing Stat. "..stat.." for Player Id: "..self.m_Id.."! DB-Column missing!")
 	end
-
 end
 
 function DatabasePlayer:setGroup(group)
@@ -486,17 +476,28 @@ end
 function DatabasePlayer:setAlcoholLevel(level, oldLevel)
 	self.m_AlcoholLevel = math.round(level, 2)
 
-	if level > MAX_ALCOHOL_LEVEL then
-		self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
-	elseif level < 0 then
-		self.m_AlcoholLevel = 0
-	end
-
 	if self:isActive() then
-		if level == MAX_ALCOHOL_LEVEL then
+		if level > MAX_ALCOHOL_LEVEL then
+			self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
+		elseif level < 0 then
+			self.m_AlcoholLevel = 0
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		elseif level  >= 2 then
+			setPedWalkingStyle(self,126)
+		elseif level <= 2 then
+			toggleControl(self,"sprint",true)
+			setControlState(self,"walk",false)
+		elseif level == 0 then
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		end
+
+		if level >= MAX_ALCOHOL_LEVEL then
 			self:sendShortMessage(_("Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!", self))
+			self:setAlcoholLevel(0)
 			self:kill()
-			self:setAlcoholLevel(MAX_ALCOHOL_LEVEL-1)
+			return
 		end
 		if oldLevel then
 			local diff = self.m_AlcoholLevel - oldLevel
@@ -522,9 +523,10 @@ end
 function DatabasePlayer:addBankMoney(amount, reason)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():addMoney(amount)
-		if self.m_BankMoney >= 10000000 then
+
+		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)
-		elseif self.m_BankMoney >= 1000000 then
+		elseif self:getBankAccount():getMoney() >= 1000000 then
 			self:giveAchievement(21)
 		end
 		return true

@@ -265,8 +265,6 @@ local DeliverPositions = {
  {198.51921081543,-1744.7786865234,4.0798602104187},
 }
 
-
-
 function JobPizza:nextDeliver( )
 	local randPosition = math.random(1, PosCount)
 	local x,y,z = DeliverPositions[randPosition][1], DeliverPositions[randPosition][2], DeliverPositions[randPosition][3]
@@ -306,9 +304,8 @@ end
 function JobPizza:onNextDeliver( elem, dim )
 	--// pay
 	if elem == localPlayer or elem == getPedOccupiedVehicle( localPlayer ) then
-		local now = getTickCount()
-		local duration = (now - self.m_PizzaTick) / 1000 -- in seconds
-		triggerServerEvent("onPizzaDelivered", localPlayer, localPlayer, self.m_DeliverDistance, duration )
+		local duration = (getTickCount() - self.m_PizzaTick) / 1000 -- in seconds
+		triggerServerEvent("onPizzaDelivered", localPlayer, self.m_DeliverDistance, duration)
 		destroyElement( self.m_PizzaPickupMarker )
 		self.m_PizzaJobBlip:delete()
 		self:nextDeliver( )

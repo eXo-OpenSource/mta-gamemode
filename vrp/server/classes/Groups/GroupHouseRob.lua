@@ -5,10 +5,10 @@
 -- *  PURPOSE:     Group HouseRob class
 -- *
 -- ****************************************************************************
-local findItems = 
+local findItems =
 {
 	"TV-Reciever",
-	"Handy", 
+	"Handy",
 	"Armbanduhr",
 	"Bargeld",
 	"Kreditkarte",
@@ -16,13 +16,13 @@ local findItems =
 	"Schmuckkette",
 	"Goldring",
 	"Tablet",
-	"Laptop",	
+	"Laptop",
 	"MP3-Player",
 	"Digitalkamera",
 	"Elektrokabel",
 }
 
-local sellerPeds = 
+local sellerPeds =
 {
 	{{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
 	{{ 2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
@@ -34,7 +34,7 @@ GroupHouseRob = inherit( Singleton )
 GroupHouseRob.MAX_ROBS_PER_GROUP = 5
 GroupHouseRob.COOLDOWN_TIME = 1000*60*15
 addRemoteEvents{"GroupRob:SellRobItems"}
-function GroupHouseRob:constructor() 
+function GroupHouseRob:constructor()
 	self.m_GroupsRobbed = {}
 	self.m_GroupsRobCooldown = {}
 	self.m_HousesRobbed = {}
@@ -43,7 +43,7 @@ function GroupHouseRob:constructor()
 	self.m_OnColShapeHit = bind(self.Event_onColHit, self)
 	addEventHandler("GroupRob:SellRobItems", root, bind(self.Event_OnSellAccept, self))
 	local pedPos, pedName, vehPos, skin, ped, sellvehicle, greetText
-	for i = 1,#sellerPeds do 
+	for i = 1,#sellerPeds do
 		pedPos = sellerPeds[i][1]
 		pedName = sellerPeds[i][2]
 		vehPos = sellerPeds[i][3]
@@ -75,10 +75,10 @@ function GroupHouseRob:constructor()
 end
 
 function GroupHouseRob:Event_OnSellAccept()
-	if client then 
-		if client.m_ClickPed then 
-			local inv = client:getInventory() 
-			if inv then 
+	if client then
+		if client.m_ClickPed then
+			local inv = client:getInventory()
+			if inv then
 				local amount = inv:getItemAmount("Diebesgut")
 				local randomPrice = math.random( 50,100)
 				local pay = amount * randomPrice
@@ -91,12 +91,12 @@ function GroupHouseRob:Event_OnSellAccept()
 	end
 end
 
-function GroupHouseRob:Event_onColHit( hE, matchDim ) 
-	if getElementType(hE) == "player" then 
-		if matchDim then 
+function GroupHouseRob:Event_onColHit( hE, matchDim )
+	if getElementType(hE) == "player" then
+		if matchDim then
 			local ped = getElementData(source, "colPed")
-			if ped then 
-				if ped.m_LastOutPut + 10000 <= getTickCount() then 
+			if ped then
+				if ped.m_LastOutPut + 10000 <= getTickCount() then
 					ped.m_LastOutPut = getTickCount()
 					hE:sendPedChatMessage( ped:getData("Ped:Name"),ped:getData("Ped:greetText", greetText))
 				end
@@ -107,17 +107,17 @@ end
 
 
 function GroupHouseRob:Event_onClickPed(  m, s, player)
-	if m == "left" then 
-		if s == "up" then 
+	if m == "left" then
+		if s == "up" then
 			local inv = player:getInventory()
-			if inv then 
+			if inv then
 				local thiefItems = inv:getItemAmount("Diebesgut")
-				if thiefItems > 0 then 
+				if thiefItems > 0 then
 					player:meChat(true, "nickt mit dem Kopf.")
 					player.m_ClickPed = source
 					player:sendPedChatMessage( source:getData("Ped:Name"), "Lass mich mal sehen!")
 					player:triggerEvent("showHouseRobSellGUI")
-				else 
+				else
 					player:meChat(true, "schüttelt den Kopf.")
 					player:sendPedChatMessage( source:getData("Ped:Name"), "Hmm... Komm wieder wenn du etwas hast!")
 				end
@@ -126,18 +126,24 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 	end
 end
 
-function GroupHouseRob:startNewRob( house, player ) 
-	if player then 
-		local group = player:getGroup() 
+function GroupHouseRob:startNewRob( house, player )
+	if player then
+		local group = player:getGroup()
 		if group then
-			if group:getType() == "Gang" then 
-				if not self.m_GroupsRobbed[group] then 
+			if group:getType() == "Gang" then
+				if not self.m_GroupsRobbed[group] then
 					self.m_GroupsRobbed[group] = 0
 				end
-				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then 
+
+				if FactionState:getSingleton():countPlayers() < HOUSEROB_MIN_MEMBERS then
+					player:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
+					return false
+				end
+
+				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then
 					if not self.m_HousesRobbed[house] then
 						local tick = getTickCount()
-						if not self.m_GroupsRobCooldown[group] then 
+						if not self.m_GroupsRobCooldown[group] then
 							self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
 						end
 						if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
@@ -145,28 +151,28 @@ function GroupHouseRob:startNewRob( house, player )
 							self.m_GroupsRobCooldown[group]  = tick
 							self.m_HousesRobbed[house] = true
 							return true
-						else 
-							outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						else
+							player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
 						end
-					else 
-						outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
+					else
+						player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
 					end
-				else 
-					outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
+				else
+					player:sendError(_("Ihr habt schon zu viele Häuser heute ausgeraubt!", player))
 				end
 			end
 		end
-	end 
+	end
 	return false
 end
 
 
 
-function GroupHouseRob:getRandomItem() 
+function GroupHouseRob:getRandomItem()
 	return findItems[math.random(1,#findItems)]
 end
 
-function GroupHouseRob:destructor() 
+function GroupHouseRob:destructor()
 
 end
 

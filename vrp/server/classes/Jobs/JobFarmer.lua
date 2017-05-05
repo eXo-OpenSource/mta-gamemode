@@ -118,6 +118,8 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
 			self.m_CurrentPlants[player] = PLANTSONWALTON
 			self:updatePrivateData(player)
+			local x,y,z = unpack (PLANT_DELIVERY)
+			player:startNavigationTo(Vector3(x, y, z))
 
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
 			self:updateClientData()

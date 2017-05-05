@@ -47,7 +47,7 @@ end
 
 function Skydiving:onMarkerHit(hitElement, dim)
 	if hitElement.type == "player" and dim and not hitElement.vehicle then
-		hitElement:triggerEvent("questionBox", _("Möchtest du die Fallschirm springen? Kosten: %d$", hitElement, Skydiving.Costs), "skydivingStart", nil, self.m_Id)
+		QuestionBox:new(hitElement, hitElement, _("Möchtest du die Fallschirm springen? Kosten: %d$", hitElement, Skydiving.Costs), "skydivingStart", nil, self.m_Id)
 	end
 end
 

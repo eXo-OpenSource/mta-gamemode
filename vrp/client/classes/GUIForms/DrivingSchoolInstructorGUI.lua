@@ -32,6 +32,10 @@ function DrivingSchoolInstructorGUI:constructor(type, student)
 	self.m_SpeedUpdateTimer = setTimer(bind(self.updateSpeed, self), 50, 0)
 end
 
+function DrivingSchoolInstructorGUI:virtual_destructor()
+	if isTimer(self.m_SpeedUpdateTimer) then killTimer(self.m_SpeedUpdateTimer) end
+end
+
 function DrivingSchoolInstructorGUI:turnLeft() 				triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "left") 			end
 function DrivingSchoolInstructorGUI:turnStraight() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "straight") 		end
 function DrivingSchoolInstructorGUI:turnRight() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "right") 		end

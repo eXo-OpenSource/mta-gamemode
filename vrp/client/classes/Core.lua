@@ -39,7 +39,25 @@ function Core:constructor()
 		)()
 	else
 		local dgi = DownloadGUI:getSingleton()
-		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		Provider:getSingleton():addFileToRequest("vrp.list")
+		Provider:getSingleton():requestFiles(
+			function()
+				local fh = fileOpen("vrp.list")
+				local json = fileRead(fh, fileGetSize(fh))
+				fileClose(fh)
+				local tbl = fromJSON(json)
+
+				for _, v in pairs(tbl) do
+					Provider:getSingleton():addFileToRequest(v)
+				end
+
+				Provider:getSingleton():requestFiles(
+					bind(DownloadGUI.onComplete, dgi),
+					bind(DownloadGUI.onProgress, dgi)
+				)
+			end
+		)
+
 		setAmbientSoundEnabled( "gunfire", false )
 		showChat(true)
 	end
@@ -129,9 +147,8 @@ function Core:ready()
 	GasStation:new()
 
 	ChessSession:new()
-	
-	GroupRob:new() 
 
+	GroupRob:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end
@@ -226,7 +243,7 @@ function Core:throwInternalError(message)
 end
 
 
--- AntiCheat for blips // Workaround
+-- AntiCheat for blips // Workaround // this wont detect cheated blips
 setTimer(
 	function()
 		local attachedBlips = {}

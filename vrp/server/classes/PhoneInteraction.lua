@@ -8,7 +8,7 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation", "requestEPTList"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
@@ -17,6 +17,7 @@ function PhoneInteraction:constructor()
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
 	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
 	addEventHandler("callSendLocation", root, bind(self.callSendLocation, self))
+	addEventHandler("requestEPTList", root, bind(self.requestEPTList, self))
 
 
 	self.m_LastSpecialCallNumber = {}
@@ -170,4 +171,15 @@ function PhoneInteraction:callSendLocation()
 		local pos = client:getPosition()
 		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000)
 	end
+end
+
+function PhoneInteraction:requestEPTList()
+	local eptList = {}
+	for _, player in pairs(CompanyManager:getSingleton():getFromId(4):getOnlinePlayers()) do
+		if player:isCompanyDuty() and player.vehicle and player.vehicleSeat == 0 then
+			table.insert(eptList, player)
+		end
+	end
+
+	client:triggerEvent("receivingEPTList", eptList)
 end

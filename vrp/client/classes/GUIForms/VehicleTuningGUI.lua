@@ -104,6 +104,7 @@ function VehicleTuningGUI:closeAllWindows()
     if self.m_TexturePicker then delete(self.m_TexturePicker) end
     if self.m_VehicleShader then delete(self.m_VehicleShader) end
     if self.m_HornPicker then delete(self.m_HornPicker) end
+	if self.m_NeonPicker then delete(self.m_NeonPicker) end
 end
 
 function VehicleTuningGUI:initPartsList()
@@ -186,22 +187,22 @@ function VehicleTuningGUI:updatePrices()
             -- If no price is available, search for the part price instead
 			if not price then
 				price = getVehicleUpgradePrice(slot)
-				if not price then 
+				if not price then
 					price = 0
-				else 
-					if not tonumber(price) then 
+				else
+					if not tonumber(price) then
 						price = 0
 					end
 				end
-			else 
+			else
 				if not tonumber(price) then
 					price = getVehicleUpgradePrice(slot)
-					if not price then 
+					if not price then
 						price = 0
-					else 
-						if not tonumber(price) then 
+					else
+						if not tonumber(price) then
 							price = 0
-						end	
+						end
 					end
 				end
 			end
@@ -241,20 +242,20 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
     -- If no price is available, search for the part price instead
     if not price then
 		price = getVehicleUpgradePrice(partId)
-		if not price then 
+		if not price then
 			price = 0
-		else 
-			if not tonumber(price) then 
+		else
+			if not tonumber(price) then
 				price = 0
 			end
 		end
-	else 
+	else
 		if not tonumber(price) then
 			price = getVehicleUpgradePrice(partId)
-			if not price then 
+			if not price then
 				price = 0
-			else 
-				if not tonumber(price) then 
+			else
+				if not tonumber(price) then
 					price = 0
 				end
 			end
@@ -345,7 +346,7 @@ function VehicleTuningGUI:PartItem_Click(item)
         elseif item.PartSlot == "Neon" then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_TexturePicker = VehicleTuningItemGrid:new(
+            self.m_NeonPicker = VehicleTuningItemGrid:new(
                 "Neonröhren ein/ausbauen",
                 {[1] = _"Keine Neonröhre", [2] = _"Neonröhre einbauen"},
                 function(neon)
@@ -412,6 +413,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "Texture" then
+			--Disabled
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
@@ -544,7 +546,7 @@ VehicleTuningGUI.CameraPositions = {
     ["Color1"] = Vector3(4.2, 2.1, 2.1),
     ["Color2"] = Vector3(4.2, 2.1, 2.1),
     ["ColorLight"] = Vector3(0, 5.6, 1),
-    ["Texture"] = Vector3(4.2, 2.1, 2.1),
+    --["Texture"] = Vector3(4.2, 2.1, 2.1),
     ["CustomHorn"] = Vector3(4.2, 2.1, 2.1),
     ["Neon"] = Vector3(4.2, 2.1, 2.1),
     ["NeonColor"] = Vector3(4.2, 2.1, 2.1),
@@ -558,7 +560,7 @@ VehicleTuningGUI.SpecialTunings = {
 	{"Neonröhren", "Neon"},
 	{"Neonröhren-Farbe", "NeonColor"},
 	{"Spezial-Hupe", "CustomHorn"},
-	{"Spezial-Lackierung", "Texture"},
+	--{"Spezial-Lackierung", "Texture"},
 }
 
 VehicleTuningGUI.SpecialTuningsNames = {}

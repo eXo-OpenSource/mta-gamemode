@@ -1,6 +1,7 @@
 vrp_build
 vrp_assets
 /vrp/vrp.data
+/vrp/vrp.list
 /tools/ml_gps/*.sdf
 /tools/ml_gps/*.suo
 /vrp/server/config/config.json

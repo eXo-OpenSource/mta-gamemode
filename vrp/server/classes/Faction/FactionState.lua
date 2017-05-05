@@ -7,11 +7,13 @@
 -- ****************************************************************************
 FactionState = inherit(Singleton)
 
+
+local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
+	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD Zellen
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
@@ -31,7 +33,7 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
+	self:createSelfArrestMarker( Vector3(1561.51, -1678.40, 16.20) )
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -53,7 +55,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO",
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -92,14 +94,13 @@ function FactionState:constructor()
 	addEventHandler("factionStateCheckBug", root, bind(self.Event_checkBug, self))
 	addEventHandler("factionStateGiveSTVO", root, bind(self.Event_giveSTVO, self))
 	addEventHandler("factionStateSetSTVO", root, bind(self.Event_setSTVO, self))
-
-
+	addEventHandler("onPlayerVehicleExit",root, bind(self.Event_onPlayerExitVehicle, self))
 
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
-
+	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -120,19 +121,26 @@ function FactionState:constructor()
 	)
 
 	self.onTiedExitBind = bind(self.onTiedExit, self)
+
+	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
 end
 
 function FactionState:destructor()
 end
 
 
-function FactionState:createSelfArrestMarker( x,y,z, int, dim )
-	local ped = createPed(280, Vector3(251.257, 69.094, 1003.641))
-	ped:setRotation(0, 0, 90)
-	ped:setInterior(int)
-	local marker = createPickup(x,y,z,3,1247,10)
-	setElementInterior(marker, int)
-	setElementDimension(marker, dim)
+function FactionState:createSelfArrestMarker( pos, int, dim )
+	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
+	self.m_Ped:setImmortal(true)
+	local marker = createPickup(pos, 3, 1247, 10)
+	if int then
+		ped:setInterior(int)
+		marker:setInterior(int)
+	end
+	if dim then
+		ped:setDimension(dim)
+		marker:setDimension(dim)
+	end
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
@@ -163,7 +171,7 @@ function FactionState:Event_OnConfirmSelfArrest()
 end
 
 function FactionState:loadLSPD(factionId)
-	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
+	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
@@ -186,12 +194,11 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6)
+	elevator:addStation("Erdgeschoss", Vector3(1567.70, -1687.90, 16.20), 84)
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
 
 
-	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
-	safe:setInterior(6)
+	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 end
@@ -620,7 +627,9 @@ end
 
 function FactionState:sendShortMessage(text, ...)
 	for k, player in pairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_(text, player), "Staat", {11, 102, 8}, ...)
+		if player:isFactionDuty() then
+			player:sendShortMessage(_(text, player), "Staat", {11, 102, 8}, ...)
+		end
 	end
 end
 
@@ -659,11 +668,16 @@ function FactionState:Command_megaphone(player, cmd, ...)
 		if player:isFactionDuty() then
 			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():isStateVehicle() then
 				local playerId = player:getId()
-				local playersToSend = player:getPlayersInChatRange(2)
+				local playersToSend = player:getPlayersInChatRange(3)
+				local receivedPlayers = {}
 				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
 				for index = 1,#playersToSend do
 					playersToSend[index]:sendMessage(text, 255, 255, 0)
+					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 				end
+
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(receivedPlayers))
+				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
 			else
 				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
 			end
@@ -761,6 +775,16 @@ function FactionState:Event_setSTVO(target, amount, reason)
 	end
 end
 
+function FactionState:getGrabbedPlayersInVehicle(vehicle)
+	local temp = {}
+	for k, player in pairs(vehicle:getOccupants()) do
+		if player.isGrabbedInVehicle then
+			table.insert(temp, player)
+		end
+	end
+	return temp
+end
+
 function FactionState:Command_tie(player, cmd, tname, bool, force)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() then
@@ -775,20 +799,33 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 							return
 						end
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
-							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
-								toggleControl(target, "enter_exit", false)
-								toggleControl(target, "fire", false)
-								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+							if not target.isGrabbedInVehicle or (force and bool) then
+								target.isGrabbedInVehicle = true
+								toggleControl(target, "fire", false) -- this is not working sometimes >_>
+
+								if not vehicle.eventStartExit then
+									vehicle.eventStartExit = true
+									addEventHandler("onVehicleStartExit", vehicle, self.onTiedExitBind)
+								end
+
 								if not force then
 									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
 									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								end
 							else
-								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
-								toggleControl(target, "enter_exit", true)
+								target.isGrabbedInVehicle = false
 								toggleControl(target, "fire", true)
-								removeEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+
+								-- only remove, when no grabbed players are in the vehicle
+								if #self:getGrabbedPlayersInVehicle(vehicle) == 0 then
+									removeEventHandler("onVehicleStartExit", vehicle, self.onTiedExitBind)
+									vehicle.eventStartExit = false
+								end
+
+								if not force then
+									player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
+								end
 							end
 						else
 							player:sendError(_("Der Spieler ist nicht in deinem Fahrzeug!", player))
@@ -806,9 +843,9 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 	end
 end
 
-function FactionState:onTiedExit(vehicle, seat, jacked)
-	if seat > 0 then
-		source:warpIntoVehicle(vehicle, seat)
+function FactionState:onTiedExit(exitingPlayer, seat, jacked, door)
+	if exitingPlayer.isGrabbedInVehicle then
+		cancelEvent()
 	end
 end
 
@@ -855,16 +892,32 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				local jailTime = wantedLevel * 5
 				local factionBonus = JAIL_COSTS[wantedLevel]
 
+				if player:getFaction() and player:getFaction():isEvilFaction() then
+					factionBonus = JAIL_COSTS[wantedLevel]/2
+				end
+
 				if bail then
 					bailcosts = BAIL_PRICES[wantedLevel]
 					player:setJailBail(bailcosts)
 				end
 
-				if player:getMoney() < JAIL_COSTS[wantedLevel] then
-					factionBonus = player:getMoney()
+				if policeman.vehicle and player.vehicle then
+					self:Command_tie(policeman, "tie", player:getName(), false, true)
 				end
-				self:Command_tie(policeman, "tie", player:getName(), false, true)
-				player:takeMoney(factionBonus, "Knast Strafe")
+				local mon = player:getMoney()
+				if mon < factionBonus then
+					local bankM = player:getBankMoney()
+					local remainMoney = factionBonus - mon
+					player:takeMoney(mon, "Knast Strafe (Bar)")
+					if remainMoney > bankM then
+						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+					else
+						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+					end
+				else
+					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+				end
+
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
@@ -920,6 +973,96 @@ function FactionState:Command_bail(player)
 	end
 end
 
+function FactionState:Event_onPlayerExitVehicle(vehicle, seat)
+	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction():isStateFaction() then
+		if source.m_SpeedCol then
+			if isElement(source.m_SpeedCol) then
+				delete(source.m_SpeedCol)
+			end
+			if isElement(source.m_SpeedCol) then
+				destroyElement(source.m_SpeedCol)
+			end
+			source.m_SpeedCol = false
+		end
+	end
+end
+
+function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
+	if bDim then
+		local bType = getElementType(hE) == "vehicle"
+		if bType then
+			local bOcc = getVehicleOccupant(hE)
+			if bOcc then
+				local cop = source.m_Owner
+				if cop then
+					local copVehicle = getPedOccupiedVehicle(cop)
+					if copVehicle then
+						if copVehicle ~= hE then
+							if instanceof(copVehicle, FactionVehicle) and copVehicle:getFaction():isStateFaction() then
+								if hE.m_LastSpeedTrap then
+									if hE.m_LastSpeedTrap + 7000 > getTickCount() then
+										return
+									end
+								end
+								local speedx, speedy, speedz = getElementVelocity(hE)
+								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 161
+								local maxSpeed = source.m_SpeedLimit or 80
+								if actualspeed > maxSpeed then
+									local secondOccupant = getVehicleOccupant(copVehicle,1)
+									cop:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
+									if secondOccupant then
+										secondOccupant:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
+										secondOccupant.m_LastVehicle = hE
+									end
+								end
+								hE.m_LastSpeedTrap = getTickCount()
+							else
+								destroyElement(source)
+							end
+						end
+					else
+						destroyElement(source)
+					end
+				else
+					destroyElement(source)
+				end
+			end
+		end
+	end
+end
+
+function FactionState:Event_speedRadar()
+	if (client.m_Faction:isStateFaction() == true and client:getFaction() and client:getFaction():isStateFaction() == true) then
+		local stateVehicle = client.vehicle
+		if stateVehicle then
+			if instanceof(stateVehicle, FactionVehicle) and stateVehicle:getFaction():isStateFaction() then
+				if client.vehicleSeat == 0 then
+					if not client.m_SpeedCol then
+						local x, y, z = getElementPosition(stateVehicle)
+						client.m_SpeedCol = createColSphere(x, y, z, radarRange)
+						attachElements(client.m_SpeedCol, stateVehicle,0,22)
+						client.m_SpeedCol.m_Owner = client
+						addEventHandler("onColShapeHit",client.m_SpeedCol, self.m_onSpeedColHit)
+						playSoundFrontEnd(client, 101)
+						client:sendInfo("Radarfalle ist angeschaltet!")
+					else
+						playSoundFrontEnd(client, 101)
+						if isElement(client.m_SpeedCol) then
+							delete(client.m_SpeedCol)
+						end
+						if isElement(client.m_SpeedCol) then
+							destroyElement(client.m_SpeedCol)
+						end
+						client.m_SpeedCol = false
+						client:sendInfo("Radarfalle ist ausgeschaltet!")
+					end
+				end
+			end
+		end
+	end
+end
+
+
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
 	setElementDimension(player,0)
@@ -960,7 +1103,7 @@ function FactionState:Event_FactionRearm()
 		client:setHealth(100)
 		client:setArmor(100)
 		local inv = client:getInventory()
-		if inv then 
+		if inv then
 			inv:removeAllItem("Einsatzhelm")
 			inv:giveItem("Einsatzhelm",1)
 		end
@@ -1170,47 +1313,30 @@ function FactionState:Event_friskPlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
+			if (target.vehicle or client.vehicle) and client.vehicle ~= target.vehicle then
+				client:sendError(_("So kannst du den Spieler nicht durchsuchen!", target))
+				return
+			end
+
+			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
+
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()
-			local targetDrugs, targetWeapons = false, false
+			local targetDrugs = {}
 			for index, item in pairs(DrugItems) do
 				if inv:getItemAmount(item) > 0 then
-					if not targetDrugs then targetDrugs = {} end
-					if not targetDrugs[item] then targetDrugs[item] = 0 end
-					targetDrugs[item] = targetDrugs[item] + inv:getItemAmount(item)
-				end
-			end
-			if targetDrugs then
-				client:sendMessage(_("%s hat folgende Drogen dabei:", client, target:getName()), 255, 255, 0)
-				target:sendMessage(_("Du hast folgende Drogen dabei:", target), 255, 255, 0)
-				for drug, amount in pairs(targetDrugs) do
-					client:sendMessage(_("%dg %s", client, amount, drug), 255, 125, 0)
-					target:sendMessage(_("%dg %s", target, amount, drug), 255, 125, 0)
-				end
-			else
-				client:sendMessage(_("%s hat keine Drogen dabei!", client, target:getName()), 0, 255, 0)
-				target:sendMessage(_("Du hast keine Drogen dabei!", target), 0, 255, 0)
-			end
-
-			for i=1, 12 do
-				if getPedWeapon(target,i) > 0 then
-					if not targetWeapons then targetWeapons = {} end
-					targetWeapons[getPedWeapon(target,i)] = true
+					targetDrugs[item] = inv:getItemAmount(item)
 				end
 			end
 
-			if targetWeapons then
-				client:sendMessage(_("%s hat folgende Waffen dabei:", client, target:getName()), 255, 255, 0)
-				target:sendMessage(_("Du hast folgende Waffen dabei:", target), 255, 255, 0)
-				for weaponID, bool in pairs(targetWeapons) do
-					client:sendMessage(_("%s", client, WEAPON_NAMES[weaponID]), 255, 125, 0)
-					target:sendMessage(_("%s", target, WEAPON_NAMES[weaponID]), 255, 125, 0)
+			local targetWeapons = {}
+			for i = 0, 12 do
+				if getPedWeapon(target, i) > 0 then
+					targetWeapons[getPedWeapon(target, i)] = getPedTotalAmmo(target, i)
 				end
-			else
-				client:sendMessage(_("%s hat keine Waffen dabei!", client, target:getName()), 0, 255, 0)
-				target:sendMessage(_("Du hast keine Waffen dabei!", target), 0, 255, 0)
 			end
+
+			client:triggerEvent("showFriskGUI", target, targetWeapons, targetDrugs)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
@@ -1221,7 +1347,7 @@ function FactionState:Event_showLicenses(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:triggerEvent("questionBox", _("Staatsbeamter %s fordert dich auf deinen Führerschein zu zeigen! Zeigst du ihm deinen Führerschein?", client, getPlayerName(client)), "factionStateAcceptShowLicense", "factionStateDeclineShowLicense", client, target)
+			QuestionBox:new(client, target, _("Staatsbeamter %s fordert dich auf deinen Führerschein zu zeigen! Zeigst du ihm deinen Führerschein?", client, getPlayerName(client)), "factionStateAcceptShowLicense", "factionStateDeclineShowLicense", client, target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
@@ -1239,29 +1365,29 @@ end
 
 function FactionState:Event_givePANote(target, note)
 	local faction = client:getFaction()
-	if faction and faction:getId() == 1 then
+	if faction and faction:getId() == 3 then
 		if client:isFactionDuty() then
 			if faction:getPlayerRank(client) < FactionRank.Manager then
-				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
+				client:sendError(_("Du bist nicht berechtig GWD-Noten auszuteilen!", client))
 				return
 			end
 			if client == target then
-				client:sendError(_("Du darfst dir nicht selber eine PA-Noten setzen!", client))
+				client:sendError(_("Du darfst dir nicht selber eine GWD-Noten setzen!", client))
 				return
 			end
 			if note > 0 and note <= 100 then
-				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
-				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
+				target:sendInfo(_("%s hat dir eine GWD-Note von %d gegeben!", target, client:getName(), note))
+				client:sendInfo(_("Du hast %s eine GWD-Note von %d gegeben!", client, target:getName(), note))
 				target:setPaNote(note)
-				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
+				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine GWD-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
-				client:sendError(_("Ungültige PA-Note!", client))
+				client:sendError(_("Ungültige GWD-Note!", client))
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	else
-		client:sendError(_("Du bist nicht im SAPD!", client))
+		client:sendError(_("Du bist nicht im MBT!", client))
 	end
 end
 
@@ -1388,10 +1514,13 @@ function FactionState:addBugLog(player, func, msg)
 			local id = elements[i].BugId
 
 			if self.m_Bugs[id] then
+				if getTickCount() - self.m_Bugs[id]["lastMessage"] >= 300000 then
+					self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
+				end
+
 				local logId = #self.m_Bugs[id]["log"]+1
 				self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
-				self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
-
+				self.m_Bugs[id]["lastMessage"] = getTickCount()
 			end
 		end
 	end
@@ -1439,7 +1568,8 @@ function FactionState:Event_attachBug()
 		self.m_Bugs[id] = {
 			["element"] = source,
 			["log"] = {},
-			["active"] = true
+			["active"] = true,
+			["lastMessage"] = 0,
 		}
 		source.BugId = id
 		source:setData("Wanze", true, true)

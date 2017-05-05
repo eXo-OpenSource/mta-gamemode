@@ -9,7 +9,7 @@ ShopNPC = inherit(NPC)
 
 function ShopNPC:constructor(skinId, x, y, z, rotation)
 	NPC.constructor(self, skinId, x, y, z, rotation)
-
+	self:setFrozen(true)
 	self.m_InTarget = false
 
 	addEventHandler("onPlayerTarget", root,

@@ -1,6 +1,6 @@
 ChessClock = inherit(Object)
 local w, h = guiGetScreenSize()
-
+-- test2
 function ChessClock:constructor( super ) 
 	self.m_Super = super
 	self.m_X = CHESS_CONSTANT.CLOCK_X

@@ -15,7 +15,18 @@ AntiCheat.AllowedDataChange = {
 	["i:right"] = true,
 	["i:warn"] = true,
 	["Neon"] = true,
-	["NeonColor"] = true
+	["NeonColor"] = true,
+	["heligrab.vehicle"] = true,
+	["heligrab.legsUp"] = true,
+	["heligrab.side"] = true,
+	["heligrab.linePercent"] = true,
+	["heligrab.offsets"] = true,
+	["abseiling"] = true,
+	["abseilped"] = true,
+	["abseilspeed"] = true,
+	["parachuting"] = true,
+	["animation_state"] = true,
+	["skydiving"] = true,
 }
 
 function AntiCheat:constructor()

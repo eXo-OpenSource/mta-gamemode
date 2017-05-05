@@ -110,6 +110,13 @@ function CustomModelManager:constructor()
 	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
 
+	self:loadImportTXD("files/models/fire_ledder.txd", 1931)
+	self:loadImportDFF("files/models/fire_ledder.dff", 1931)
+	self:loadImportCOL("files/models/fire_ledder.col", 1931)
+
+	self:loadImportTXD("files/models/fire_main.txd", 1932)
+	self:loadImportDFF("files/models/fire_main.dff", 1932)
+	self:loadImportCOL("files/models/fire_main.col", 1932)
 
 	-- Helmet FullFace
 	self:loadImportTXD("files/models/Wearables/helmet.txd", 2052)
@@ -139,17 +146,56 @@ function CustomModelManager:constructor()
 	-- Swatshield
 	self:loadImportTXD("files/models/Wearables/riot_shield.txd",1631)
 	self:loadImportDFF("files/models/Wearables/riot_shield.dff",1631)
-	self:loadImportCOL("filEs/models/Wearables/riot_shield.col",1631)
+	self:loadImportCOL("files/models/Wearables/riot_shield.col",1631)
 
 	-- Army Fence 1
 	self:loadImportTXD("files/models/a51fencing.txd", 16094)
 	self:loadImportDFF("files/models/a51fencing.dff", 16094)
-	self:loadImportCOL("filEs/models/a51fencing.col", 16094)
+	self:loadImportCOL("files/models/a51fencing.col", 16094)
 
 	-- Army Fence 2
 	self:loadImportTXD("files/models/a51fencing.txd", 974)
 	self:loadImportDFF("files/models/a51fensin.dff", 974)
-	self:loadImportCOL("filEs/models/a51fensin.col", 974)
+	self:loadImportCOL("files/models/a51fensin.col", 974)
+
+	-- Ammunation Street hedge
+	self:loadImportDFF("files/models/hedge01_law.dff", 6046)
+	self:loadImportCOL("files/models/hedge01_law.col", 6046)
+	self:setLODDistance(6046, 500)
+
+	--Easter Event:
+	self:loadImportTXD("files/models/easter_egg.txd", 1933)
+	self:loadImportDFF("files/models/easter_egg.dff", 1933)
+	self:loadImportCOL("filEs/models/easter_egg.col", 1933)
+
+	-- Building fixes
+	self:loadImportDFF("files/models/academi.dff", 6389)
+	self:loadImportCOL("filEs/models/academi.col", 6389)
+
+	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
+	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
+
+	self:loadImportDFF("files/models/PD_Garage.dff", 4232)
+	self:loadImportCOL("filEs/models/PD_Garage.col", 4232)
+
+	self:loadImportDFF("files/models/PD_int.dff", 14846)
+	self:loadImportCOL("filEs/models/PD_int.col", 14846)
+
+	self:loadImportDFF("files/models/PD_main.dff", 3976)
+	self:loadImportCOL("filEs/models/PD_main.col", 3976)
+
+
+	self:loadImportTXD("files/models/bank.txd", 4600)
+	self:loadImportDFF("files/models/bank.dff", 4600)
+	self:loadImportCOL("filEs/models/bank.col", 4600)
+	self:loadImportTXD("files/models/bankServer.txd", 1880)
+	self:loadImportDFF("files/models/bankServer.dff", 1880)
+	self:loadImportCOL("filEs/models/bankServer.col", 1880)
+	self:loadImportTXD("files/models/bankDoor.txd", 1930)
+	self:loadImportDFF("files/models/bankDoor.dff", 1930)
+	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
+
+	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

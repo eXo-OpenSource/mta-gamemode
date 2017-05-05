@@ -15,9 +15,10 @@ WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 WEAPONTRUCK_NAME_SHORT = {["evil"] = "Waffentruck", ["state"] = "Staats-WT"}
 
 WEAPONTRUCK_MIN_MEMBERS = {["evil"] = 3, ["state"] = 3}
-BANKROB_MIN_MEMBERS = 5
+BANKROB_MIN_MEMBERS = DEBUG and 0 or 5
 WEEDTRUCK_MIN_MEMBERS = 3
 SHOPROB_MIN_MEMBERS = 3
+HOUSEROB_MIN_MEMBERS = 2
 
 FACTION_MAX_RANK_LOANS ={
 	[0] = 750,
@@ -109,15 +110,15 @@ factionRankNames[3] = {
 [0] = "Private",
 [1] = "Corporal",
 [2] = "Staff Sergeant",
-[3] = "Major",
-[4] = "Warrant Officer",
+[3] = "Warrant Officer",
+[4] = "Major",
 [5] = "Colonel",
 [6] = "General"
 }
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true}
-factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, }
+factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(1524.96, -1440.70, 12.3)
 
 -- ID 4 = Rescue Team:
@@ -164,11 +165,11 @@ factionRankNames[6] = {
 [6] = "Oyabun"
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
-factionCarColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
-factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true}
+factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
+factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
 factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[6] = Vector3( 2628.33, -2089.01, 14.06)
-factionWTDestination[6] = Vector3( 2414.66, -2087.64, 13.43)
+evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)
+factionWTDestination[6] = Vector3( 1418.18, -1240.70, 13.38)
 
 -- ID 7 = Grove
 factionRankNames[7] = {
@@ -271,7 +272,7 @@ factionWeaponDepotInfo = {
 	[31] = {["Waffe"] = 15, ["Magazine"] = 40, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4
 	[32] = {["Waffe"] = 20, ["Magazine"] = 60, ["WaffenPreis"] = 200, ["MagazinPreis"] = 70}, -- Tec9
 	[33] = {["Waffe"] = 10, ["Magazine"] = 60, ["WaffenPreis"] = 400, ["MagazinPreis"] = 5}, -- County Rifle
-	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 690, ["MagazinPreis"] = 8}, -- Sniper
+	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 5000, ["MagazinPreis"] = 100}, -- Sniper
 	[35] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 2000, ["MagazinPreis"] = 500}, -- Rocket Launcher
 	[36] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 3000, ["MagazinPreis"] = 700}, -- Heat-Seeking RPG
 	[37] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Flamethrower

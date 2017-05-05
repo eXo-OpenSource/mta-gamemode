@@ -51,7 +51,7 @@ function LocalPlayer:constructor()
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
 
-
+	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
 end
 
@@ -75,10 +75,10 @@ function LocalPlayer:getRank()
 	return self.m_Rank
 end
 
-function LocalPlayer:Event_PreRender() 
+function LocalPlayer:Event_PreRender()
     local tx, ty, tz = getWorldFromScreenPosition(screenWidth / 2, screenHeight / 2, 10)
 	if tx and ty and tz then
-		setPedLookAt(localPlayer, tx, ty, tz, -1, 0) 
+		setPedLookAt(localPlayer, tx, ty, tz, -1, 0)
 	end
 end
 
@@ -87,12 +87,12 @@ function LocalPlayer:Event_onGetTime( realtime )
 	setMinuteDuration(60000)
 end
 
-function LocalPlayer:checkWeaponAim() 
+function LocalPlayer:checkWeaponAim()
 
 end
 
-function LocalPlayer:fadeOutScope() 
-	if localPlayer.m_IsFading then 
+function LocalPlayer:fadeOutScope()
+	if localPlayer.m_IsFading then
 		fadeCamera(true,1)
 		localPlayer.m_IsFading = false
 	end
@@ -100,11 +100,13 @@ end
 
 function LocalPlayer:onAlcoholLevelChange()
 	if self:getPrivateSync("AlcoholLevel") > 0 then
-
 		if not isTimer(self.m_AlcoholDecreaseTimer) then
 			self.m_AlcoholDecreaseTimer = setTimer(self.m_AlcoholDecreaseBind, ALCOHOL_LOSS_INTERVAL*1000, 0)
+			addEventHandler("onClientRender",root,self.m_RenderAlcoholBind)
 		end
 		self:setAlcoholEffect()
+	else
+		if self.m_AlcoholShader then delete(self.m_AlcoholShader) end
 	end
 end
 
@@ -115,6 +117,10 @@ function LocalPlayer:alcoholDecrease()
 
 		if newAlcoholLevel == 0 then
 			if isTimer(self.m_AlcoholDecreaseTimer) then killTimer(self.m_AlcoholDecreaseTimer) end
+			if self.m_AlcoholShader then
+				delete(self.m_AlcoholShader)
+				removeEventHandler("onClientRender",root,self.m_RenderAlcoholBind)
+			end
 		end
 
 		triggerServerEvent("playerDecreaseAlcoholLevel", localPlayer)
@@ -124,7 +130,23 @@ function LocalPlayer:alcoholDecrease()
 end
 
 function LocalPlayer:setAlcoholEffect()
-	--TODO
+	if not self.m_AlcoholShader then
+		self.m_AlcoholShader = ZoomBlurShader:new()
+	end
+	local alcLevel = self:getPrivateSync("AlcoholLevel")
+	if self.m_AlcoholShader then
+		self.m_AlcoholShader:setValue((alcLevel/10)*0.5)
+	end
+end
+
+function LocalPlayer:Event_RenderAlcohol()
+	local alc = self:getPrivateSync("AlcoholLevel")
+	if alc then
+		if alc >= 2 then
+			toggleControl("sprint",false)
+			setControlState("walk",true)
+		end
+	end
 end
 
 function LocalPlayer:setAFKTime()
@@ -419,14 +441,14 @@ function LocalPlayer:renderPostMortemInfo()
 	local isMortem,x,y,z, name
 	local px, py, pz, tx, ty, tz, dist
 	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do 
-		isMortem = getElementData(ped, "NPC:isDyingPed") 
-		if isMortem then 
+	for k, ped in ipairs( peds) do
+		isMortem = getElementData(ped, "NPC:isDyingPed")
+		if isMortem then
 			x,y,z = getPedBonePosition(ped, 8)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
 			if dist then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-					if x and y and z then 
+					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z)
 						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
 						if x and y then
@@ -438,8 +460,8 @@ function LocalPlayer:renderPostMortemInfo()
 			end
 		end
 	end
-	if self.m_MortemWeaponPickup then 
-		if getKeyState("lalt") and getKeyState("m") then 
+	if self.m_MortemWeaponPickup then
+		if getKeyState("lalt") and getKeyState("m") then
 			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
 			self.m_MortemWeaponPickup = false
 		end
@@ -452,15 +474,15 @@ function LocalPlayer:renderPedNameTags()
 	local nameTag,x,y,z, textWidth
 	local px, py, pz, tx, ty, tz, dist
 	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do 
-		nameTag = getElementData(ped, "Ped:fakeNameTag") 
-		if nameTag then 
+	for k, ped in ipairs( peds) do
+		nameTag = getElementData(ped, "Ped:fakeNameTag")
+		if nameTag then
 			textWidth = dxGetTextWidth(nameTag, 1,"default-bold")
 			x,y,z = getPedBonePosition(ped, 3)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
 			if dist then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-					if x and y and z then 
+					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z+1)
 						if x and y then
 							dxDrawText(nameTag, x-textWidth/2,y+1,x+textWidth/2,y+1,tocolor(0,0,0,255),1,"default-bold")
@@ -474,7 +496,7 @@ function LocalPlayer:renderPedNameTags()
 end
 
 function LocalPlayer:Event_OnTryPickup( pickup )
-	if pickup then 
+	if pickup then
 		self.m_MortemWeaponPickup = pickup
 	end
 end
@@ -579,6 +601,21 @@ end
 
 function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
+end
+
+function LocalPlayer:getWorldObject()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		elseif result[12] then
+			return result[12], {result[13], result[14], result[15]}, {result[16], result[17], result[18]}
+		end
+	end
+
+	return false
 end
 
 function LocalPlayer:Event_onClientPlayerSpawn()

@@ -9,7 +9,7 @@ CircuitBreaker = inherit(Singleton)
 
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
-
+	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
@@ -54,6 +54,24 @@ function CircuitBreaker:destructor()
 	toggleControl("forwards",true)
 	toggleControl("backwards",true)
 	showChat(true)
+
+	for _, texture in pairs(self.m_Textures) do
+		texture:destroy()
+	end
+
+	for level, groups in pairs(self.m_Levels) do
+		for group, v in pairs(groups) do
+			self.m_Levels[level][group][5]:destroy()
+		end
+	end
+
+	for _, line in pairs(self.m_Lines) do
+		for _, renderTarget in pairs(line) do
+			renderTarget:destroy()
+		end
+	end
+
+	if self.m_RT_endscreen then self.m_RT_endscreen:destroy() end
 end
 
 function CircuitBreaker:setCallBackEvent(callbackEvent)
@@ -74,7 +92,7 @@ function CircuitBreaker:loadImages()
 	}
 
 	for _, img in pairs(self.m_Images) do
-		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
+		self.m_Textures[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
 end
 
@@ -360,9 +378,9 @@ function CircuitBreaker:updateRenderTarget()
 	---
 
 	self.m_RT_PCB:setAsTarget()
-	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.pcb)
-	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
-	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.output)
+	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.m_Textures.pcb)
+	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.m_Textures.input)
+	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.m_Textures.output)
 
 	for _, v in pairs(self.m_Levels[self.m_Level]) do
 		dxDrawImage(unpack(v))
@@ -528,7 +546,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 							if rnd_structur[1] == "smdresistor" then
 								self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
 							else
-								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self.m_Textures[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
 							end
 							table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 						end
@@ -560,7 +578,7 @@ function CircuitBreaker:createRandomResistor(posX, posY, width, height, labelTyp
 		value = ("%s%s"):format(value:gsub("[.]", ""), e)
 	end
 
-	dxDrawImage(posX, posY, width, height, self.smdresistor)
+	dxDrawImage(posX, posY, width, height, self.m_Textures.smdresistor)
 	dxDrawText(value, posX, posY, posX + width, posY + height, tocolor(255, 255, 255), .5/14*height, "clear", "center", "center")
 end
 

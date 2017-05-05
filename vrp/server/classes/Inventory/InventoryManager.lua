@@ -128,19 +128,25 @@ function InventoryManager:Event_refreshInventory()
 	self:getPlayerInventory(client):syncClient()
 end
 
-function InventoryManager:Event_requestTrade(type, target, item, amount, money)
+function InventoryManager:Event_requestTrade(type, target, item, amount, money, value)
 	if (client:getPosition() - target:getPosition()).length > 10 then
 		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
 		return false
 	end
 
+	local amount = math.abs(amount)
+	local money = math.abs(money)
+
 	if type == "Item" then
+		client.sendRequest = {target = target, item = item, amount = amount, money = money, itemValue = value}
+		target.receiveRequest = {target = client, item = item, amount = amount, money = money, itemValue = value}
+
 		if self:getPlayerInventory(client):getItemAmount(item) >= amount then
 			local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
 			if money and money > 0 then
 				text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 			end
-			target:triggerEvent("questionBox", text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
+			QuestionBox:new(client, target, text, "acceptItemTrade", "declineTrade", client, target, item, amount, money)
 		else
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
@@ -149,6 +155,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			client:sendError(_("Du darfst diese Waffe nicht handeln!", client))
 			return
 		end
+
 		if client:getFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
 			return
@@ -160,20 +167,43 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			return
 		end
 
+		client.sendRequest = {target = target, item = item, amount = amount, money = money}
+		target.receiveRequest = {target = client, item = item, amount = amount, money = money}
+
 		local text = _("%s möchte dir eine/n %s mit %d Schuss schenken! Geschenk annehmen?", target, client.name, WEAPON_NAMES[item], amount)
 		if money and money > 0 then
 			text = _("%s möchte dir eine/n %s mit %d Schuss für %d$ verkaufen! Handel annehmen?", target, client.name, WEAPON_NAMES[item], amount, money)
 		end
-		target:triggerEvent("questionBox", text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
+		QuestionBox:new(client, target, text, "acceptWeaponTrade", "declineTrade", client, target, item, amount, money)
 	end
 end
 
-function InventoryManager:Event_declineTrade(player, target, item, amount, money)
-	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
-	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+function InventoryManager:validateTrading(player, target)
+	if client ~= target then return false end
+	if not player.sendRequest or not target.receiveRequest then return false end
+	if player.sendRequest.target ~= target or target.receiveRequest.target ~= player then return false end
+
+	return true
 end
 
-function InventoryManager:Event_acceptItemTrade(player, target, item, amount, money)
+function InventoryManager:Event_declineTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
+	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+
+	player.sendRequest = nil
+	target.receiveRequest = nil
+end
+
+function InventoryManager:Event_acceptItemTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	local item = player.sendRequest.item
+	local amount = player.sendRequest.amount
+	local money = player.sendRequest.money
+	local value = player.sendRequest.itemValue
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))
@@ -184,11 +214,16 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
-			self:getPlayerInventory(player):removeItem(item, amount)
-			self:getPlayerInventory(target):giveItem(item, amount)
+			self:getPlayerInventory(player):removeItem(item, amount, value)
+			WearableManager:getSingleton():removeWearable( player, item, value )
+			self:getPlayerInventory(target):giveItem(item, amount, value)
 			target:takeMoney(money, "Handel")
 			player:giveMoney(money, "Handel")
-			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money)
+			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
+
+			if item == "Osterei" and money == 0 then
+				target:giveAchievement(91) -- Verschenke ein Osterei
+			end
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 			target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
@@ -199,7 +234,13 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 	end
 end
 
-function InventoryManager:Event_acceptWeaponTrade(player, target, weaponId, amount, money)
+function InventoryManager:Event_acceptWeaponTrade(player, target)
+	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+
+	local weaponId = player.sendRequest.item
+	local amount = player.sendRequest.amount
+	local money = player.sendRequest.money
+
 	if (player:getPosition() - target:getPosition()).length > 10 then
 		player:sendError(_("Du bist zuweit von %s entfernt!", player, target.name))
 		target:sendError(_("Du bist zuweit von %s entfernt!", target, player.name))

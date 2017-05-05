@@ -36,6 +36,7 @@ function ItemSpeedCam:use(player)
 
 					local object = worldItem:getObject()
 					setElementData(object, "earning", 0)
+					setElementData(object, "owner", player:getName())
 					ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
 					object.col = createColSphere(position, 10)

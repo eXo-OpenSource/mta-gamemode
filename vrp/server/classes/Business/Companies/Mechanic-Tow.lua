@@ -100,31 +100,30 @@ function MechanicTow:Event_mechanicRepair()
 	end
 
 	self.m_PendingQuestions[client] = getRealTime().timestamp
-	driver:triggerEvent("questionBox", _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", client, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
-
+	QuestionBox:new(client, driver,  _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", driver, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
 end
 
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
-	if client:getMoney() >= price then
+	if source:getMoney() >= price then
 		fixVehicle(vehicle)
-		client:takeMoney(price, "Mech&Tow")
+		source:takeMoney(price, "Mech&Tow")
 
 		if vehicle.PendingMechanic then
-			if client ~= vehicle.PendingMechanic then
+			if source ~= vehicle.PendingMechanic then
 				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech & Tow Reparatur")
 				vehicle.PendingMechanic:givePoints(5)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
-				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
+				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
 				self:giveMoney(math.floor(price*0.7), "Reparatur")
 			else
-				client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
+				source:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", source))
 			end
 			vehicle.PendingMechanic = nil
 		end
 	else
-		client:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", client, price))
+		source:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", source, price))
 	end
 end
 
@@ -145,9 +144,16 @@ function MechanicTow:Event_mechanicTakeVehicle()
 		source:setPositionType(VehiclePositionType.World)
 		source:setDimension(0)
 		local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+
+
+		if source:getVehicleType() == VehicleType.Plane then
+			x, y, z, rotation = 871.285, -1264.624, 15.5, 0
+		elseif source:getVehicleType() == VehicleType.Helicopter then
+			x, y, z, rotation =  912.602, -1252.053, 16, 0
+		end
+
 		source:setPosition(x, y, z)
 		source:setRotation(0, 0, rotation)
-		client:warpIntoVehicle(source)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end

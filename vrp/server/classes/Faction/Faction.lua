@@ -21,6 +21,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Skins = factionSkins[Id]
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
+	self.m_Blips = {}
 
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 
@@ -269,18 +270,14 @@ function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function Faction:giveMoney(amount, reason)
+function Faction:giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:addMoney(amount, reason)
+	return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Faction:takeMoney(amount, reason)
+function Faction:takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
-	return self.m_BankAccount:takeMoney(amount, reason)
-end
-
-function Faction:setMoney(amount)
-	return self.m_BankAccount:setMoney(amount, reason)
+	return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
 
 function Faction:setRankLoan(rank,amount)
@@ -450,4 +447,8 @@ end
 
 function Faction:refreshBankAccountGUI(player)
 	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
+end
+
+function Faction:createBlip(img, posX, posY, streamDistance)
+	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
 end

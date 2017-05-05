@@ -75,6 +75,7 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 	if player:getData("Logistician:Blip") then
 		delete(player:getData("Logistician:Blip"))
 	end
+	player:startNavigationTo(pos)
 
 	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player,9999)
 	blip:setStreamDistance(10000)
@@ -82,6 +83,7 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
 	player:setData("Logistician:LastCrane", crane)
+
 end
 
 function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)

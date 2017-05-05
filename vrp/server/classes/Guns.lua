@@ -40,7 +40,10 @@ function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
 end
 
 function Guns:Event_onTaser(target)
+	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
+	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle or target.vehicle then return end
+	
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
@@ -58,6 +61,9 @@ function Guns:Event_onTaser(target)
 end
 
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
+	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
+	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
+	
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -69,15 +75,18 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 					if inventory then
 						local itemCount = inventory:getItemAmount("Einsatzhelm")
 						if itemCount > 0 then 
-							inventory:removeItem("Einsatzhelm", 1)
-							destroyElement(hasHelmet)
-							target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
-							target.m_IsWearingHelmet = false
-							target.m_Helmet = false
-							target:setData("isFaceConcealed", false)
-							outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
-							target:triggerEvent("clientBloodScreen")
-							return
+							local isProtect = math.random(1,8)
+							if isProtect == 1 then
+								inventory:removeItem("Einsatzhelm", 1)
+								destroyElement(hasHelmet)
+								target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
+								target.m_IsWearingHelmet = false
+								target.m_Helmet = false
+								target:setData("isFaceConcealed", false)
+								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
+								target:triggerEvent("clientBloodScreen")
+								return
+							end
 						end
 					end
 				end

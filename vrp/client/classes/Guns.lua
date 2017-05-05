@@ -7,6 +7,14 @@
 -- ****************************************************************************
 
 Guns = inherit(Singleton)
+local w,h = guiGetScreenSize()
+local tracer = dxCreateTexture("files/images/Textures/tracer.png")
+local flyTime = 200
+local NO_TRACERS = {
+	[25] = true,
+	[26] = true,
+	[27] = true,
+}
 
 local TOGGLE_WEAPONS = 
 {
@@ -21,7 +29,7 @@ function Guns:constructor()
 	self.m_BloodAlpha = 0
 	self.m_BloodRender = bind(self.drawBloodScreen, self)
 
-
+	self.m_GunTraces = {}
 	engineImportTXD (engineLoadTXD ( "files/models/taser.txd" ), 347 )
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
 
@@ -37,6 +45,8 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
 	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
+	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
+	addEventHandler("onClientRender", root, bind(self.onRenderGunTraces, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
@@ -46,6 +56,28 @@ end
 
 function Guns:destructor()
 
+end
+
+function Guns:onRenderGunTraces()
+	local startP, endP, time, line
+	local now = getTickCount()
+	for i = 1,#self.m_GunTraces do 
+		line = self.m_GunTraces[i]
+		if line then
+			startP, endP, time = line[1], line[2], line[3]
+			prog = (now - time) / ( (time+flyTime)-time )
+			startP = {interpolateBetween(startP[1],startP[2], startP[3], endP[1], endP[2], endP[3], prog, "Linear")}
+			if startP and endP and time then 
+				if time + flyTime >= now then
+					dxDrawMaterialLine3D(startP[1], startP[2], startP[3], endP[1] ,endP[2], endP[3], tracer, 0.02, tocolor(200,200,200,220))
+				else 
+					table.remove(self.m_GunTraces, i)
+				end
+			else 
+				table.remove(self.m_GunTraces, i)
+			end
+		end
+	end
 end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
@@ -102,6 +134,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
+			self.m_HasSniper = false
 		else 
 			if localPlayer.m_FireToggleOff then 
 				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
@@ -116,6 +149,7 @@ function Guns:Event_onWeaponSwitch(pw, cw)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
+			self.m_HasSniper = true
 		end
 	end
 end	
@@ -160,6 +194,53 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				end, 6000,1)
 			end
 		end
+		if getSlotFromWeapon(weapon) > 2 and getSlotFromWeapon(weapon) <= 5 then
+			if not NO_TRACERS[weapon] then
+				self.m_GunTraces[#self.m_GunTraces+1] = {{getPedWeaponMuzzlePosition ( source)}, {hitX, hitY, hitZ}, getTickCount()}
+			end
+		end
+	end
+end
+
+function Guns:Event_checkFadeIn()
+	local hasSniper = getPedWeapon(localPlayer) == 34
+	if hasSniper then 
+		local bAiming = isPedAiming(localPlayer)
+		if bAiming then 
+			if not self.m_SniperShader then
+				self.m_SniperShader = SniperShader:new(3000)
+				playSound("files/audio/sniper.ogg")
+				self.m_SniperTimer = setTimer(function() 
+					self:removeSniperShader()
+				end, 3100,1)
+			end
+		else 
+			if self.m_SniperShader then 
+				delete(self.m_SniperShader)
+			end
+			self.m_SniperShader = false
+			if self.m_SniperTimer then 
+				if isTimer(self.m_SniperTimer) then
+					killTimer(self.m_SniperTimer)
+				end
+			end
+		end
+	else 
+		if self.m_SniperShader then 
+			delete(self.m_SniperShader)
+		end
+		self.m_SniperShader = false
+		if self.m_SniperTimer then 
+			if isTimer(self.m_SniperTimer) then
+				killTimer(self.m_SniperTimer)
+			end
+		end
+	end
+end
+
+function Guns:removeSniperShader() 
+	if self.m_SniperShader then 
+		delete(self.m_SniperShader)
 	end
 end
 

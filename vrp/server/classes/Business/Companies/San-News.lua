@@ -63,14 +63,14 @@ function SanNews:Event_startInterview(target)
 
 				client:sendInfo(_("Du hast ein Interview mit %s gestartet!", client, target.name))
 				target:sendInfo(_("Reporter %s hat ein Interview mit dir gestartet!", target, client.name))
-				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l [text])", client))
+				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l [text])", target))
 				self:addInterviewPlayer(client)
 				self:addInterviewPlayer(target)
 			else
-				client:sendError(_("Es findet bereits ein Interview statt!", player))
+				client:sendError(_("Es findet bereits ein Interview statt!", client))
 			end
 		else
-			client:sendError(_("Du bist nicht im Dienst!", player))
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
@@ -87,7 +87,7 @@ function SanNews:Event_stopInterview(target)
 			target:sendInfo(_("Reporter %s hat das Interview mit dir beendet!", target, client.name))
 			self:stopInterview()
 		else
-			client:sendError(_("Du bist nicht im Dienst!", player))
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
@@ -95,7 +95,7 @@ end
 function SanNews:Event_onPlayerQuit()
 	if table.find(self.m_InterviewPlayer, source) then
 		for index, player in pairs(self.m_InterviewPlayer) do
-			player:sendInfo(_("Interview beendet! Ein Spieler ist offline gegangen!", client))
+			player:sendInfo(_("Interview beendet! Ein Spieler ist offline gegangen!", player))
 		end
 		self:stopInterview()
 	end
@@ -104,7 +104,7 @@ end
 function SanNews:onInterviewColshapeLeave(leaveElement)
 	if table.find(self.m_InterviewPlayer, leaveElement) then
 		for index, player in pairs(self.m_InterviewPlayer) do
-			player:sendInfo(_("Interview beendet! Ihr habt euch zuweit entfernt!", client))
+			player:sendInfo(_("Interview beendet! Ihr habt euch zuweit entfernt!", player))
 		end
 		self:stopInterview()
 	end
@@ -134,7 +134,7 @@ function SanNews:Event_onPlayerChat(player, text, type)
 	end
 end
 
-function SanNews:Event_advertisement(sendername, text, color, duration)
+function SanNews:Event_advertisement(senderIndex, text, color, duration)
 	local length = text:len()
 	if length <= 50 and length >= 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
@@ -152,7 +152,13 @@ function SanNews:Event_advertisement(sendername, text, color, duration)
 				client:triggerEvent("closeAdvertisementBox")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				StatisticsLogger:getSingleton():addAdvert(client, text)
-				triggerClientEvent("showAd", client, sendername, text, color, duration)
+
+				local sender = {referenz = "player", name = client:getName()}
+				if senderIndex == 2 and client:getGroup() and client:getGroup():getName() then
+					sender = {referenz = "group", name = client:getGroup():getName(), number = client:getGroup():getPhoneNumber()}
+				end
+
+				triggerClientEvent("showAd", client, sender, text, color, duration)
 			else
 				local next = self.m_NextAd - getRealTime().timestamp
 				client:sendError(_("Die nächste Werbung kann erst in %d Sekunden gesendet werden!", client, next))

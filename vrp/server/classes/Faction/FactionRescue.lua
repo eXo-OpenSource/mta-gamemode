@@ -9,7 +9,7 @@ FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
 	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
-	"factionRescueReviveAbort"
+	"factionRescueReviveAbort", "factionRescueToggleLadder"
 }
 
 function FactionRescue:constructor()
@@ -45,6 +45,10 @@ function FactionRescue:constructor()
 
 	self.m_Faction = FactionManager.Map[4]
 
+	self.m_LadderBind = bind(self.ladderFunction, self)
+	self.m_MoveLadderBind = bind(self.moveLadder, self)
+
+
 	nextframe( -- Todo workaround
 		function ()
 			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
@@ -62,6 +66,8 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
 	addEventHandler("factionRescueReviveAbort", root, bind(self.destroyDeathBlip, self))
+	addEventHandler("factionRescueToggleLadder", root, bind(self.Event_toggleLadder, self))
+
 
 
 	PlayerManager:getSingleton():getQuitHook():register(
@@ -199,7 +205,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 				else
 					self:getStretcher(client, vehicle)
 					setElementAlpha(client,255)
-					if client.ped_deadDouble then 
+					if client.ped_deadDouble then
 						destroyElement(client.ped_deadDouble)
 					end
 				end
@@ -227,7 +233,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
 	setElementAlpha(player,255)
-	if player.ped_deadDouble then 
+	if player.ped_deadDouble then
 		destroyElement(player.ped_deadDouble)
 	end
 	-- Move the Stretcher to the Player
@@ -244,7 +250,7 @@ function FactionRescue:getStretcher(player, vehicle)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
 			setElementAlpha(player,255)
-			if player.ped_deadDouble then 
+			if player.ped_deadDouble then
 				destroyElement(player.ped_deadDouble)
 			end
 		end, 3000, 1, player
@@ -280,7 +286,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:fadeCamera(true, 1)
 					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
 					player:giveMoney(50, "Rescue Team Wiederbelebung")
-					if deadPlayer:giveReviveWeapons() then 
+					if deadPlayer:giveReviveWeapons() then
 						outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
 					end
 				else
@@ -389,7 +395,7 @@ function FactionRescue:Event_healPlayerQuestion(target)
 	if isElement(target) then
 		if target:getHealth() < 100 then
 			local costs = math.floor(100-target:getHealth())
-			target:triggerEvent("questionBox", _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
+			QuestionBox:new(client, target, _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
 		else
 			client:sendError(_("Der Spieler hat volles Leben!", client))
 		end
@@ -445,6 +451,147 @@ function FactionRescue:Event_healPlayerHospital()
 			end
 		else
 			client:sendError(_("Du hast bereits volles Leben.", client))
+		end
+	end
+end
+
+function FactionRescue:onLadderTruckEnter(player, seat)
+	if seat > 0 then return end
+	if not source.LadderEnabled then
+		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu bedienen!", player))
+	else
+		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu deaktivieren!", player))
+		self:toggleLadder(source, player, true)
+	end
+end
+
+function FactionRescue:onLadderTruckExit(player, seat)
+	if seat > 0 then return end
+	if source.LadderEnabled then
+		self:toggleLadder(source, player)
+	end
+end
+
+function FactionRescue:onLadderTruckSpawn(veh)
+	if veh.Ladder then
+		for index, obj in pairs(veh.Ladder) do
+			obj:destroy()
+		end
+	end
+
+	if veh.LadderTimer and isTimer(veh.LadderTimer) then
+		killTimer(veh.LadderTimer)
+	end
+
+	veh.LadderEnabled = false
+	veh.LadderMove = {}
+
+	veh.Ladder = {}
+	veh.Ladder["main"] = createObject(1932, veh:getPosition())
+	veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
+
+	veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+
+	veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder2"]:setScale(0.8)
+	veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
+
+	veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
+	veh.Ladder["ladder3"]:setScale(0.6)
+	veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+
+	for index, obj in pairs(veh.Ladder) do
+		obj:setCollisionsEnabled(false)
+	end
+
+	addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
+	addEventHandler("onVehicleExit", veh, bind(self.onLadderTruckExit, self))
+
+end
+
+function FactionRescue:toggleLadder(veh, player, force)
+	if veh.LadderEnabled and not force then
+		player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeuge wieder fahren!", player))
+		veh.LadderEnabled = false
+		unbindKey(player, "w", "both", self.m_LadderBind)
+		unbindKey(player, "a", "both", self.m_LadderBind)
+		unbindKey(player, "s", "both", self.m_LadderBind)
+		unbindKey(player, "d", "both", self.m_LadderBind)
+		unbindKey(player, "lctrl", "both", self.m_LadderBind)
+		unbindKey(player, "lshift", "both", self.m_LadderBind)
+		self:onLadderTruckSpawn(veh)
+		veh:setFrozen(false)
+		veh.m_DisableToggleHandbrake = false
+	else
+		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit WASD, STRG und SHIFT!", player))
+		veh.LadderEnabled = true
+		bindKey(player, "w", "both", self.m_LadderBind)
+		bindKey(player, "a", "both", self.m_LadderBind)
+		bindKey(player, "s", "both", self.m_LadderBind)
+		bindKey(player, "d", "both", self.m_LadderBind)
+		bindKey(player, "lctrl", "both", self.m_LadderBind)
+		bindKey(player, "lshift", "both", self.m_LadderBind)
+		setTimer(self.m_MoveLadderBind, 50, 0, veh)
+		veh:setFrozen(true)
+		veh.m_DisableToggleHandbrake = true
+		veh.Ladder["main"]:detach(veh)
+		for index, obj in pairs(veh.Ladder) do
+			if not index == "main" then
+				obj:setCollisionsEnabled(true)
+			end
+		end
+	end
+end
+
+
+function FactionRescue:Event_toggleLadder()
+	self:toggleLadder(source, client)
+end
+
+function FactionRescue:ladderFunction(player, key, state)
+	local veh = player.vehicle
+	if not veh then return end
+	if veh:getModel() ~= 544 then return end
+
+	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
+	if key == "d" then	veh.LadderMove["right"] = state == "down" and true or false end
+	if key == "w" then	veh.LadderMove["up"] = state == "down" and true or false end
+	if key == "s" then	veh.LadderMove["down"] = state == "down" and true or false end
+	if key == "lctrl" then	veh.LadderMove["in"] = state == "down" and true or false end
+	if key == "lshift" then	veh.LadderMove["out"] = state == "down" and true or false end
+end
+
+function FactionRescue:moveLadder(veh)
+
+	local rx, ry, rz = getElementRotation(veh.Ladder["main"])
+	local x1, y1, z1, rx1, ry1, rz1 = getElementAttachedOffsets(veh.Ladder["ladder1"])
+	local x2, y2, z2, rx2, ry2, rz2 = getElementAttachedOffsets(veh.Ladder["ladder2"])
+	local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder3"])
+
+	if veh.LadderMove["right"] then
+		veh.Ladder["main"]:setRotation(rx, ry, rz+0.7)
+	elseif veh.LadderMove["left"] then
+		veh.Ladder["main"]:setRotation(rx, ry, rz-0.7)
+	elseif veh.LadderMove["up"] then
+		if rx1 > -50 then
+			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
+		end
+	elseif veh.LadderMove["down"] then
+		if rx1 < 0 then
+			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1+0.5, ry1, rz1)
+		end
+	elseif veh.LadderMove["in"] then
+		if y3 < -1.4 then
+			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3+0.1, z3, rx3, ry3, rz3)
+		elseif y2 < -1.4 then
+			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2+0.1, z2, rx2, ry2, rz2)
+		end
+	elseif veh.LadderMove["out"] then
+		if y2 > -5.5 then
+			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2-0.05, z2, rx2, ry2, rz2)
+		elseif y3 > -4.5 then
+			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3-0.05, z3, rx3, ry3, rz3)
 		end
 	end
 end

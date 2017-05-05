@@ -117,12 +117,12 @@ function StatisticsLogger:addAmmunationLog(player, type, weapons, costs)
         sqlLogs:getPrefix(), userId, type, weapons, costs, self:getZone(player))
 end
 
-function StatisticsLogger:addVehicleDeleteLog(userId, admin, model)
+function StatisticsLogger:addVehicleDeleteLog(userId, admin, model, reason)
 	local adminId = 0
 	if isElement(admin) then adminId = admin:getId() else adminId = admin or 0 end
 
-	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Date) VALUES(?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin))
+	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Reason, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin), reason)
 end
 
 function StatisticsLogger:addTextLog(logname, text)
@@ -288,15 +288,15 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 	end
 end
 
-function StatisticsLogger:itemTradeLogs( player, player2, item, price)
+function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
     local userId = 0
 	local userId2 = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
 	if item and price then
 		if tonumber(price) then
-			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Date) VALUES(?, ?, ?, ?,  NOW())",
-				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price))
+			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Amount, Date) VALUES(?, ?, ?, ?, ?,  NOW())",
+				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price), amount or 0)
 		end
 	end
 end

@@ -78,21 +78,21 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
-	
+
 end
 
-function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz) 
+function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 	if getElementDimension(source) > 0 or getElementInterior(source) > 0 then return end
 	local slot = getSlotFromWeapon(weapon)
-	if slot > 2 and slot <= 6 and weapon ~= 23 then 
+	if slot > 2 and slot <= 6 and weapon ~= 23 then
 		local area = getZoneName(sx,sy,sz)
-		if area then 
-			if not self.m_AreaDistrictShoots then 
+		if area then
+			if not self.m_AreaDistrictShoots then
 				self.m_AreaDistrictShoots = {}
 			end
-			local lastoutput = self.m_AreaDistrictShoots[area] or 0 
-			local tick = getTickCount() 
-			if lastoutput+50000 <=  tick then 
+			local lastoutput = self.m_AreaDistrictShoots[area] or 0
+			local tick = getTickCount()
+			if lastoutput+50000 <=  tick then
 				self.m_AreaDistrictShoots[area] = tick
 				source:districtChat("Schüsse ertönen durch die Gegend! (("..area.."))")
 			end
@@ -290,7 +290,9 @@ end
 
 function PlayerManager:sendShortMessage(text, ...)
 	for k, player in pairs(getElementsByType("player")) do
-		player:sendShortMessage(_(text, player), ...)
+		if player:isLoggedIn() then
+			player:sendShortMessage(_(text, player), ...)
+		end
 	end
 end
 
@@ -337,7 +339,7 @@ function PlayerManager:playerQuit()
 	end
 	if ItemManager.Map["Kanne"] then
 		if ItemManager.Map["Kanne"].m_Cans then
-			if ItemManager.Map["Kanne"].m_Cans[source] then
+			if ItemManager.Map["Kanne"].m_Cans[source] and isElement(ItemManager.Map["Kanne"].m_Cans[source]) then
 				destroyElement(ItemManager.Map["Kanne"].m_Cans[source])
 			end
 		end
@@ -356,6 +358,9 @@ function PlayerManager:playerQuit()
 			destroyElement(source.ped_deadDouble)
 		end
 	end
+	if source.m_SpeedCol then
+		destroyElement(source.m_SpeedCol)
+	end
 	VehicleManager:getSingleton():destroyUnusedVehicles( source )
 end
 
@@ -367,13 +372,13 @@ end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	-- Call wasted hook
-	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
+	if self.m_WastedHook:call(client, killer, killerWeapon, bodypart) then
 		return
 	end
-	source.m_AlcoholLevel = 0
-	source:increaseStatistics("Deaths", 1)
+	client:setAlcoholLevel(0)
+	client:increaseStatistics("Deaths", 1)
 	-- give a achievement
-	source:giveAchievement(37)
+	client:giveAchievement(37)
 	for key, obj in ipairs( getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
@@ -382,15 +387,15 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 	if killer and killer:getType() == "player" then
-		if killer ~= source then
+		if killer ~= client then
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
-				if killer:isFactionDuty() and not source:isFactionDuty() then
-					local wantedLevel = source:getWantedLevel()
+				if killer:isFactionDuty() and not client:isFactionDuty() then
+					local wantedLevel = client:getWantedLevel()
 					if wantedLevel > 0 then
 						killer:giveAchievement(64)
-						source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
-						FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
+						client:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", client))
+						FactionState:getSingleton():Event_JailPlayer(client, false, true, killer)
 						return
 					end
 				end
@@ -399,24 +404,21 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 	-- Start death
-	source:triggerEvent("playerWasted")
+	client:triggerEvent("playerWasted")
 
 	if FactionRescue:getSingleton():countPlayers() > 0 then
-		if not source.m_DeathPickup and not isElement(source.m_DeathPickup) then
-			FactionRescue:getSingleton():createDeathPickup(source)
+		if not client.m_DeathPickup and not isElement(client.m_DeathPickup) then
+			FactionRescue:getSingleton():createDeathPickup(client)
 			--return true
 		else -- This should never never happen!
 			outputDebugString("Internal Error! Player died while he is Dead. Dafuq?")
 		end
 	end
 
-
-
 	return false
-	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
-	--source:triggerEvent("playerSendToHospital")
-	--setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
-
+	--client:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", client))
+	--client:triggerEvent("playerSendToHospital")
+	--setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, client)
 end
 
 
@@ -471,9 +473,13 @@ function PlayerManager:playerChat(message, messageType)
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
 			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
 		end
+
+		Admin:getSingleton():outputSpectatingChat(source, "C", message, phonePartner, playersToSend)
 		cancelEvent()
 	elseif messageType == 1 then
 		source:meChat(false, message)
+
+		Admin:getSingleton():outputSpectatingChat(source, "M", message)
 		cancelEvent()
 	end
 end
@@ -495,6 +501,7 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	end
 	FactionState:getSingleton():addBugLog(source, "schreit", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
+	Admin:getSingleton():outputSpectatingChat(source, "S", text, nil, playersToSend)
 end
 
 function PlayerManager:Command_playerWhisper(source , cmd, ...)
@@ -514,6 +521,7 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	end
 	FactionState:getSingleton():addBugLog(source, "flüstert", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
+	Admin:getSingleton():outputSpectatingChat(source, "W", text, nil, playersToSend)
 end
 
 function PlayerManager:Event_playerSendMoney(amount)
@@ -619,11 +627,13 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 				return
 			end
 		end
-		if client.m_IsSpecting then
-			return
-		end
+
 		if client.m_InCircuitBreak then
 			return
+		end
+
+		if client.texturePreviewActive then
+			client:triggerEvent("texturePreviewForceClose")
 		end
 	end
 	client:setPublicSync("AFK", state)
@@ -705,10 +715,12 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+
 	if client.disableWeaponStorage then
 		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
 		return
 	end
+
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -720,20 +732,19 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 				client.m_GunBox[tostring(i)]["VIP"] = false
 			end
 		end
+
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
 			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
-					if client:getTotalAmmo(weaponSlot) >= muni then
-						if client:getTotalAmmo( weaponSlot) >= 1 then
-							client:takeWeapon(weaponId)
-							slot["WeaponId"] = weaponId
-							slot["Amount"] = muni
-							client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
-							client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-							return
-						end
+					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
+						client:takeWeapon(weaponId)
+						slot["WeaponId"] = weaponId
+						slot["Amount"] = math.abs(muni)
+						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], math.abs(muni), i))
+						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+						return
 					else
 						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponId]))
 						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
@@ -747,6 +758,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 			end
 		end
 	end
+
 	client:sendError(_("Du hast keinen freien Waffen-Slot in deiner Waffenbox!", client))
 end
 

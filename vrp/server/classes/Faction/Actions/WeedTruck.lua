@@ -51,7 +51,6 @@ function WeedTruck:constructor(driver)
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeedTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnWeedTruckExit,self))
 	addEventHandler("onVehicleExplode", self.m_Truck, self.m_DestroyFunc)
-	addEventHandler("onElementDestroy", self.m_Truck, self.m_DestroyFunc)
 end
 
 function WeedTruck:destructor()

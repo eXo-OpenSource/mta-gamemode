@@ -32,6 +32,7 @@ function Phone:constructor()
 	self:registerApp(AppBank)
 	self:registerApp(PhoneApp.makeWebApp("Snake",  "IconSnake.png", ("https://exo-reallife.de/ingame/vRPphone/webApps/snake/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppNavigator)
+	self:registerApp(AppEPT)
 
 	-- Add GUI elements
 	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)

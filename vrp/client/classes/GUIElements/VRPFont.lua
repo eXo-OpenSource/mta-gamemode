@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIElements/VRPFont.lua
@@ -39,6 +39,10 @@ function FontAwesome(height)
 end
 
 FontAwesomeSymbols = {
+	Close = "",
+	Left = "",
+	Right = "",
+	LongRight = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
@@ -48,7 +52,8 @@ FontAwesomeSymbols = {
 	Group = "",
 	Money = "",
 	Info = "",
-	Check = "",
+	CheckSquare = "",
+	Check = "",
 	Square = "",
 	Search = "",
 	Refresh = "",
@@ -63,6 +68,29 @@ FontAwesomeSymbols = {
 	Suitcase = "",
 	Minus = "",
 	Plus = "",
+	Lock = "",
+	Unlock = "",
+	Key = "",
+	Home = "",
+	SignOut = "",
+	Star = "",
+	Wrench = "",
+	Cogs = "",
+	List = "",
+	Bug = "",
+	Arrows = "",
+	Double_Up = "",
+	Double_Down = "",
+	Music = "",
+	Random = "",
+	Handshake = "",
+	Building = "",
+	Medikit = "",
+	IDCard = "",
+	Document = "",
+	Bolt = "",
+	Speedo = "",
+	Long_Down = "",
 }
 
 Fonts = {

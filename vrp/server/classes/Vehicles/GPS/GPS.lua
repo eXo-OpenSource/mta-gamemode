@@ -16,7 +16,7 @@ function GPS:constructor()
 	end
 
 	-- Load path graph
-	loadPathGraph("files/paths/sa_nodes.json")
+	self.m_GraphId = loadPathGraph("files/paths/sa_nodes.json")
 
 	-- Add events
 	addEventHandler("GPS.calcRoute", root, bindAsync(self.Event_calcRoute, self))
@@ -32,7 +32,7 @@ function GPS:getRoute(callback, from, to)
 	if not findShortestPathBetween then
 		return false
 	end
-	return findShortestPathBetween(from.x, from.y, from.z, to.x, to.y, to.z, callback)
+	return findShortestPathBetween(self.m_GraphId, from.x, from.y, from.z, to.x, to.y, to.z, callback)
 end
 
 function GPS:asyncGetRoute(from, to, dontUnserialise)

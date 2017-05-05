@@ -41,7 +41,6 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
-
 end
 
 function Player:destructor()
@@ -193,6 +192,7 @@ function Player:loadCharacter()
 
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
+	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
 
 function Player:createCharacter()
@@ -235,9 +235,6 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
-	FactionManager:getSingleton():sendAllToClient(self)
-	CompanyManager:getSingleton():sendAllToClient(self)
-	VehicleManager:getSingleton():sendTexturesToClient(self)
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
@@ -282,7 +279,7 @@ function Player:initialiseBinds()
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then vehicle:toggleHandBrake( player ) end end)
-	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then  if not DONT_BUCKLE[getElementModel(vehicle)] then player:buckleSeatBelt(vehicle) end  end end)
+	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -427,6 +424,7 @@ function Player:spawn( )
 		end
 		killPed(self)
 	end
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -477,6 +475,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if isElement(self.ped_deadDouble) then
 		destroyElement(self.ped_deadDouble)
 	end
+	WearableManager:getSingleton():removeAllWearables(self)
 end
 
 function Player:clearReviveWeapons()
@@ -520,7 +519,7 @@ end
 function Player:destroyDropWeapons()
 	if self.m_WorldObjectWeapons then
 		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] then
+			if self.m_WorldObjectWeapons[i] and isElement(self.m_WorldObjectWeapons[i]) then
 				destroyElement(self.m_WorldObjectWeapons[i])
 			end
 		end
@@ -838,13 +837,19 @@ function Player:payDay()
 	outgoing = outgoing + outgoing_vehicles + outgoing_house
 	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
 	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
+	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeug Steuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
 	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
-	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
+	self:addPaydayText("payday",("Der Payday über %d$ wurde auf dein Konto %s!"):format(total, total > 0 and "überwiesen" or "abgebucht"),255,150,0)
 
 	self:addBankMoney(total, "Payday")
+
+	if EVENT_EASTER then
+		self:sendInfo("Du hast 5 Ostereier bekommen!")
+		self:getInventory():giveItem("Osterei", 5)
+	end
 
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
@@ -881,8 +886,9 @@ function Player:addCrime(crimeType)
 	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end
 
-function Player:giveMoney(money, reason, bNoSound) -- Overriden
+function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 	DatabasePlayer.giveMoney(self, money, reason)
+	if silent then return end
 
 	if money ~= 0 then
 		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Cash)", {0, 94, 255}, 3000)

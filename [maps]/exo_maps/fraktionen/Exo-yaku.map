@@ -542,10 +542,6 @@
     <object id="object (sm_bush_large_1) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="759" doublesided="false" scale="1" dimension="0" posX="2644.0452" posY="-2104.3181" posZ="15.29688" rotX="0" rotY="103.512" rotZ="6.251"></object>
     <object id="object (sm_bush_large_1) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="759" doublesided="false" scale="1" dimension="0" posX="2643.8918" posY="-2104.9414" posZ="13.29688" rotX="358.619" rotY="295.631" rotZ="198.999"></object>
     <object id="object (cs_oldcarjmp) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="18451" doublesided="false" scale="1" dimension="0" posX="2640.9512" posY="-2136.813" posZ="13.0563" rotX="0" rotY="0" rotZ="175.769"></object>
-    <ped id="ped (1)" dimension="0" model="13" interior="0" rotZ="78.732" frozen="false" alpha="255" posX="2875.1255" posY="-1745.5734" posZ="11.0418" rotX="0" rotY="0"></ped>
-    <ped id="ped (2)" dimension="0" model="102" interior="0" rotZ="78.672" frozen="false" alpha="255" posX="2874.9844" posY="-1746.1604" posZ="11.0418" rotX="0" rotY="0"></ped>
-    <ped id="ped (3)" dimension="0" model="103" interior="0" rotZ="78.582" frozen="false" alpha="255" posX="2874.8765" posY="-1746.8501" posZ="11.0418" rotX="0" rotY="0"></ped>
-    <ped id="ped (4)" dimension="0" model="104" interior="0" rotZ="78.582" frozen="false" alpha="255" posX="2874.7119" posY="-1747.5249" posZ="11.0418" rotX="0" rotY="0"></ped>
     <object id="object (subwaygate) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="971" doublesided="false" scale="1" dimension="0" posX="2423.8164" posY="-2080.5693" posZ="14.67743" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (subwaygate) (3)" breakable="true" interior="0" collisions="true" alpha="255" model="971" doublesided="false" scale="1" dimension="0" posX="2423.8164" posY="-2098.3062" posZ="14.67743" rotX="0" rotY="0" rotZ="270"></object>
 </map>
