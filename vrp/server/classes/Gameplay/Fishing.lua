@@ -143,7 +143,7 @@ function Fishing:FishCaught()
 			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
 
 			if #currentValue < bagProperties.max then
-				sql:queryExec("INSERT INTO ??_caught_fishes (PlayerId, Fish, Size, Location, Time) VALUES (?, ?, ?, ?, NOW())", sql:getPrefix(), client:getId(), fishName, size, ("%s - %s"):format(tbl.location, getZoneName(client.position)))
+				sql:queryExec("INSERT INTO ??_fish_caught (PlayerId, Fish, Size, Location, Time) VALUES (?, ?, ?, ?, NOW())", sql:getPrefix(), client:getId(), fishName, size, ("%s - %s"):format(tbl.location, getZoneName(client.position)))
 
 				table.insert(currentValue, {fishName, size})
 				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
