@@ -28,7 +28,6 @@
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
 	<map src="fraktionen/vatos.map" />
-	<map src="fraktionen/Exo-yaku.map" dimension="0" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/rescue.map" />

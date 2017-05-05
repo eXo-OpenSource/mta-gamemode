@@ -165,7 +165,7 @@ factionRankNames[6] = {
 [6] = "Oyabun"
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
-factionCarColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
+factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
 factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)

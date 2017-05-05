@@ -1431,6 +1431,7 @@
 	<vrpfile src="files/audio/carlock.mp3"/>
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
+	<vrpfile src="files/audio/gate_open.mp3"/>
 	<vrpfile src="files/audio/announcment.mp3"/>
 	<vrpfile src="files/audio/wasted.mp3"/>
 	<vrpfile src="files/audio/scary.mp3"/>
