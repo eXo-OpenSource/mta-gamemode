@@ -133,7 +133,7 @@ function Fishing:FishCaught()
 			if #currentValue < bagProperties.max then
 				sql:queryExec("INSERT INTO ??_fish_caught (PlayerId, Fish, Size, Location, Time) VALUES (?, ?, ?, ?, NOW())", sql:getPrefix(), client:getId(), fishName, size, ("%s - %s"):format(tbl.location, getZoneName(client.position)))
 
-				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size})
+				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, timestamp = getRealTime().timestamp})
 				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
 
 				self:increaseFishCaughtCount(fishId)
