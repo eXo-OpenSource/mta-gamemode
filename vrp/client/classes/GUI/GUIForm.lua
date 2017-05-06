@@ -61,7 +61,6 @@ function GUIForm:close(decrementedCursorCounter)
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 		self:toggleKeys(true)
-		NoDm:getSingleton():checkNoDm()
 	end
 
 	-- Disable blur shader if it has been enabled before
