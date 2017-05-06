@@ -19,7 +19,7 @@ function Fishing.load()
 
 	ped:setData("onClickEvent",
 		function()
-			triggerServerEvent("fishingPedClick", localPlayer)
+			FishingPedGUI:new()
 		end
 	)
 end

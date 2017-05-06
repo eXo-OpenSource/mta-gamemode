@@ -619,8 +619,7 @@
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/FishingRodGUI.lua" type="client" />
-	<script src="client/classes/GUIForms/FishingTradeGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/FishingGUIs.lua" type="client" />
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
