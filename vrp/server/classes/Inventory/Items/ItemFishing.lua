@@ -22,7 +22,7 @@ function ItemFishing:canBuy(player, itemName)
 		return true
 	end
 
-	return false, _("Du brauchst mind. Angel Level %s um dieses Item zu kaufen!", player, FISHING_BAGS[itemName].level)
+	return false, _("Du brauchst mind. Fischer Level %s um dieses Item zu kaufen!", player, FISHING_BAGS[itemName].level)
 end
 
 function ItemFishing:use(player, itemId, bag, place, itemName)

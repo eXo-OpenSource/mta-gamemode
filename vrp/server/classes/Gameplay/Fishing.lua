@@ -157,7 +157,7 @@ function Fishing:updatePlayerSkill(player, skill)
 
 	if player:getFishingLevel() < MAX_FISHING_LEVEL then
 		if player:getFishingSkill() >= FISHING_LEVELS[player:getFishingLevel() + 1] then
-			player:sendInfo("Angel Level erhöht!")
+			player:sendInfo("Fischer Level erhöht!")
 			player:setFishingLevel(player:getFishingLevel() + 1)
 			player:setFishingSkill(player:getFishingSkill() - FISHING_LEVELS[player:getFishingLevel()])
 		end

@@ -226,7 +226,7 @@ function SelfGUI:constructor()
 		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
 	end)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Angel level:", tabPoints)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Fischer Level:", tabPoints)
 	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
 	self.m_FishingLevelProgress = GUIProgressBar:new(self.m_Width*.45, self.m_Height*.5, self.m_Width*.3, self.m_Height*.06, tabPoints)
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
