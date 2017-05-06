@@ -6,6 +6,39 @@ TextureReplace.Map = {}
 TextureReplace.Working = false
 TextureReplace.Pending = {}
 
+
+TextureReplace.Modes = {
+	[1] = "onStream",
+	[2] = "permanent",
+	[3] = "noTexture"
+}
+
+function TextureReplace.initalize()
+	TextureReplace.CurrentMode = core:get("Other", "TextureMode", 1)
+end
+
+function TextureReplace.setMode(mode)
+	if TextureReplace.Modes[mode] then
+		TextureReplace.CurrentMode = mode
+		--outputChatBox("Texturemodus auf "..TextureReplace.Modes[mode].." gesetzt!")
+		for index, textureObject in pairs(TextureReplace.Map) do
+			if mode == TextureReplace.Modes.onStream then
+				if textureObject.m_Element and isElement(textureObject.m_Element) and textureObject.m_Element:isStreamedIn() then
+					textureObject:loadShader()
+				else
+					textureObject:unloadShader()
+				end
+			elseif mode == TextureReplace.Modes.permanent then
+				textureObject:loadShader()
+			elseif mode == TextureReplace.Modes.noTexture then
+				textureObject:unloadShader()
+			end
+		end
+	else
+		outputDebugString("Invalid TextureReplace Mode "..mode)
+	end
+end
+
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
@@ -22,11 +55,13 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_IsRenderTarget = isRenderTarget
 	self.m_Element = targetElement
 
-	if not self.m_Element then
-		self:loadShader()
-	else
-		if isElementStreamedIn(self.m_Element) then
+	if not TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+		if not self.m_Element then
 			self:loadShader()
+		else
+			if (TextureReplace.CurrentMode == TextureReplace.Modes.onStream and isElementStreamedIn(self.m_Element)) or TextureReplace.CurrentMode == TextureReplace.Modes.permanent then
+				self:loadShader()
+			end
 		end
 	end
 
@@ -64,6 +99,10 @@ end
 
 function TextureReplace:onElementStreamIn()
 	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
+	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+		return
+	end
+
 	TextureReplace.Pending[source] = self
 	if not TextureReplace.Working then
 		TextureReplace.loadingQueue()
@@ -72,6 +111,10 @@ end
 
 function TextureReplace:onElementStreamOut()
 	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
+	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+		return
+	end
+
 	TextureReplace.Pending[source] = nil
 	if not self:unloadShader() then
 		outputDebugString(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
@@ -265,6 +308,11 @@ function TextureReplace.deleteFromElement(element)
 end
 
 function TextureReplace.loadingQueue()
+	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+		TextureReplace.Pending = {}
+		TextureReplace.Working = false
+		return
+	end
 	TextureReplace.Working = true
 	for veh, obj in pairs(TextureReplace.Pending) do
 		if not obj:loadShader() then
