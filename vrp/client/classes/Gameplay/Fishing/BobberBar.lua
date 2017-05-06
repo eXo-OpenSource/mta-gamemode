@@ -12,6 +12,7 @@ local screenWidth, screenHeight = guiGetScreenSize()
 
 function BobberBar:constructor(difficulty, behavior)
 	local fisherLevel = localPlayer:getPrivateSync("FishingLevel") + 1
+
 	self.m_Size = Vector2(58, screenHeight/2)
 	self.m_RenderTarget = DxRenderTarget(self.m_Size, true)
 	self.m_AnimationMultiplicator = 0
@@ -247,6 +248,6 @@ end
 
 addEventHandler("fishingBobberBar", root,
 	function(data)
-		BobberBar:new(data.difficulty, data.behavior)
+		BobberBar:new(data.Difficulty, data.Behavior)
 	end
 )

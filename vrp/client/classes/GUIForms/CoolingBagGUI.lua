@@ -18,11 +18,11 @@ function CoolingBagGUI:constructor(bagName, value)
 
 	self.m_GridList = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.96, self.m_Height*0.88, self.m_Window)
 	self.m_GridList:addColumn(_"Fisch", 0.6)
-	self.m_GridList:addColumn(_"Größe [cm]", 0.4)
+	self.m_GridList:addColumn(_"Größe (cm)", 0.4)
 
 	if value then
 		for _, v in pairs(value) do
-			self.m_GridList:addItem(v[1], v[2])
+			self.m_GridList:addItem(v.fishName, v.size)
 		end
 	end
 end
