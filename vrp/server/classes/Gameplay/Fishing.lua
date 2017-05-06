@@ -121,6 +121,7 @@ function Fishing:FishCaught()
 	local allBagsFull = false
 
 	self:updatePlayerSkill(client, size)
+	client:addFishSpecies(tbl.lastFish.Id)
 
 	for bagName, bagProperties in pairs(FISHING_BAGS) do
 		if playerInventory:getItemAmount(bagName) > 0 then
