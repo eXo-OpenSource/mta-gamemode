@@ -6,17 +6,21 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "fishingPedClick"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
 	self.m_Players = {}
 
 	self:loadFishDatas()
+	self:updatePricing()
+
+	self.m_UpdatePricingPulse = TimedPulse:new(3600000)
+	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updatePricing, self))
 
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
-	addEventHandler("fishingPedClick", root, bind(Fishing.onPedClick, self))
+	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 end
 
 function Fishing:destructor()
@@ -24,6 +28,7 @@ end
 
 function Fishing:loadFishDatas()
 	local readFuncs = {
+		["Name_DE"] = function (value) return utf8.escape(value) end,
 		["Location"] = function(value) if fromJSON(value) then return fromJSON(value) else return value end end,
 		["Times"] = function(value) return fromJSON(value) end,
 		["Size"] = function(value) return fromJSON(value) end,
@@ -169,8 +174,21 @@ function Fishing:increaseFishSoldCount(fishId)
 	sql:queryExec("UPDATE ??_fish_data SET SoldCount = ? WHERE Id = ?", sql:getPrefix(), Fishing.Fish[fishId].SoldCount, fishId)
 end
 
-function Fishing:onPedClick()
-	--client:triggerEvent("onFishingTrading")
+function Fishing:onFishRequestPricing()
+	-- Todo: Only trigger specific datas
+	client:triggerEvent("openFishPricingGUI", Fishing.Fish)
+end
+
+function Fishing:updatePricing()
+	-- Calculate fish price depending by sold count
+	table.sort(Fishing.Fish, function(a, b) return a.SoldCount < b.SoldCount end)
+
+	-- Define price by the ratio with the average sold fish
+	local averageSoldFish = Fishing.Fish[math.floor(#Fishing.Fish/3)]
+
+	for _, fish in ipairs(Fishing.Fish) do
+		fish.PriceBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish.SoldCount + 1), 0)
+	end
 end
 
 function Fishing:inventoryUse(player)
