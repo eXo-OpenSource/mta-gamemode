@@ -16,7 +16,7 @@ SelfGUI.Stats = {
 	--			return hours.." Stunde(n)" ..minutes.." Minute(n)" end
 	--		},
 	["Driven"] = {
-			["text"] = "gefahrene Kilometer",
+			["text"] = "Gefahrene Kilometer",
 			["value"] = function(value) return math.floor(value/1000).." km" end
 			},
 	["Deaths"] = {
@@ -25,6 +25,10 @@ SelfGUI.Stats = {
 			},
 	["Kills"] =	{
 			["text"] = "Kills",
+			["value"] = function(value) return value end
+			},
+	["FishCaught"] = {
+			["text"] = "Fische gefangen",
 			["value"] = function(value) return value end
 			},
 }

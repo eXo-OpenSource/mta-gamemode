@@ -317,6 +317,11 @@ function DatabasePlayer:increaseStatistics(stat, value)
 	end
 end
 
+function DatabasePlayer:getStatistics(stat)
+	if not self.m_Statistics then return end
+	return self.m_Statistics[stat]
+end
+
 function DatabasePlayer:setGroup(group)
 	self.m_Group = group
 	if self:isActive() then

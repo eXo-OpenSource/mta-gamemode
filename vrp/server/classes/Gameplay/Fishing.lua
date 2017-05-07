@@ -122,6 +122,21 @@ function Fishing:FishCaught()
 
 	self:updatePlayerSkill(client, size)
 	client:addFishSpecies(tbl.lastFish.Id)
+	client:increaseStatistics("FishCaught")
+
+	if client:getFishSpeciesCaughtCount() >= 10 then
+		client:giveAchievement(93) -- Fischer
+	elseif client:getFishSpeciesCaughtCount() >= 24 then
+		client:giveAchievement(94) -- Alter Seemann
+	elseif client:getFishSpeciesCaughtCount() >= #Fishing.Fish then
+		client:giveAchievement(95) -- Angelmeister
+	end
+
+	if client:getStatistics("FishCaught") >= 150 then
+		client:giveAchievement(96) -- Angelgott
+	elseif client:getStatistics("FishCaught") >= 500 then
+		client:giveAchievement(97) -- Für Helene Fischer
+	end
 
 	for bagName, bagProperties in pairs(FISHING_BAGS) do
 		if playerInventory:getItemAmount(bagName) > 0 then
