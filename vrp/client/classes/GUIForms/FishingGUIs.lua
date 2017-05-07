@@ -55,13 +55,14 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 			item.fishId = fish.Id
 			item.fishName = fish.fishName
 			item.fishSize = fish.size
+			item.fishQuality = fish.quality
 
 			item.onLeftClick =
 				function()
 					self.m_FishNameLabel:setText(fish.fishName)
 					self.m_QualityLabel:setText(fish.Quality or "-")
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
-					self.m_QualityBonusLabel:setText("-")
+					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
 					self.m_LevelBonusLabel:setText("-")
 					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].PriceBonus*100))
 				end

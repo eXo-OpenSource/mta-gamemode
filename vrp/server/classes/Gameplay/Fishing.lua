@@ -148,7 +148,7 @@ function Fishing:FishCaught()
 			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
 
 			if #currentValue < bagProperties.max then
-				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, timestamp = getRealTime().timestamp})
+				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, quality = self:getFishQuality(fishId, size), timestamp = getRealTime().timestamp})
 				playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
 
 				self:increaseFishCaughtCount(fishId)
@@ -210,6 +210,20 @@ function Fishing:onFishRequestTrading()
 	end
 
 	client:triggerEvent("openFishTradeGUI", fishes, Fishing.Fish)
+end
+
+function Fishing:getFishQuality(fishId, size)
+	local minFishSize = Fishing.Fish[fishId].Size[1]
+	local maxFishSize = Fishing.Fish[fishId].Size[2]
+	local thirdSpan = (maxFishSize - minFishSize)/3
+
+	if size < minFishSize + thirdSpan then
+		return 0
+	elseif size > maxFishSize - thirdSpan then
+		return 2
+	else
+		return 1
+	end
 end
 
 function Fishing:updatePricing()
