@@ -14,6 +14,8 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 	GUIForm.constructor(self, screenWidth/2-600/2, screenHeight/2-400/2, 600, 400)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fischhandel mit Angler Lutz", true, true, self)
 
+	self.m_FishTable = Fishes
+
 	self.m_GridList = GUIGridList:new(5, 35, 250, self.m_Height - 75, self.m_Window)
 	self.m_GridList:addColumn(_"Fisch", 0.6)
 	self.m_GridList:addColumn(_"Größe (cm)", 0.4)
@@ -44,6 +46,7 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 	self.m_TotalPaymentLabel = GUILabel:new(450, 330, 200, 25, "0$", self.m_Window)
 
 	self.m_Sell = GUIButton:new(300, self.m_Height - 35, 295, 25, _"Verkaufen!", self.m_Window):setBackgroundColor(Color.Red)
+	self.m_Sell.onLeftClick = bind(FishingTradeGUI.requestTrade, self)
 
 	local fisherLevel = localPlayer:getPrivateSync("FishingLevel")
 
@@ -77,23 +80,52 @@ function FishingTradeGUI:addFish()
 	if item then
 		self.m_GridList:removeItemByItem(item)
 		local sellItem = self.m_SellList:addItem(item.fishName, item.fishSize)
-		sellItem.fishId = item.Id
+		sellItem.fishId = item.fishId
 		sellItem.fishName = item.fishName
-		sellItem.fishSize = item.size
+		sellItem.fishSize = item.fishSize
+		sellItem.fishQuality = item.fishQuality
 	end
+
+	self:updateTotalPrice()
 end
 
 function FishingTradeGUI:addAllFish()
 	for _, item in pairs(self.m_GridList:getItems()) do
 		if item and item.onLeftClick then
 			local sellItem = self.m_SellList:addItem(item.fishName, item.fishSize)
-			sellItem.fishId = item.Id
+			sellItem.fishId = item.fishId
 			sellItem.fishName = item.fishName
-			sellItem.fishSize = item.size
+			sellItem.fishSize = item.fishSize
+			sellItem.fishQuality = item.fishQuality
 		end
 	end
 
 	self.m_GridList:clear()
+	self:updateTotalPrice()
+end
+
+function FishingTradeGUI:updateTotalPrice()
+	local fishingLevel = localPlayer:getPrivateSync("FishingLevel")
+	local totalPrice = 0
+
+	for _, item in pairs(self.m_SellList:getItems()) do
+		if item.fishId then
+			local default = self.m_FishTable[item.fishId].DefaultPrice
+			local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
+			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
+			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
+
+			outputChatBox(tostring(rareBonusMultiplicator))
+
+			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
+		end
+	end
+
+	self.m_TotalPaymentLabel:setText(totalPrice)
+end
+
+function FishingTradeGUI:requestTrade()
+	triggerServerEvent("clientSendFishTrading", localPlayer, self.m_SellList:getItems())
 end
 
 addEventHandler("openFishTradeGUI", root,
@@ -111,7 +143,7 @@ addRemoteEvents{"openFishPricingGUI"}
 function FishPricingGUI:constructor(Fishes)
 	GUIForm.constructor(self, screenWidth/2-580/2, screenHeight/2-400/2, 580, 400)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Fisch Preis Tabelle", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Preistabelle", true, true, self)
 
 	GUILabel:new(10, 30, self.m_Width - 20, 30, "Immer auf dem neusten Stand.. Seltene Fische geben einen Bonus!", self.m_Window)
 

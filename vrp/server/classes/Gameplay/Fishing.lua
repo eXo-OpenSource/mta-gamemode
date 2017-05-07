@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -22,6 +22,7 @@ function Fishing:constructor()
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
+	addEventHandler("clientSendFishTrading", root, bind(Fishing.clientSendFishTrading, self))
 end
 
 function Fishing:destructor()
@@ -228,6 +229,45 @@ function Fishing:onFishRequestTrading()
 	end
 
 	client:triggerEvent("openFishTradeGUI", fishes, Fishing.Fish)
+end
+
+function Fishing:clientSendFishTrading(list)
+	local fishingLevel = client:getPrivateSync("FishingLevel")
+	local totalPrice = 0
+
+	for _, item in pairs(list) do
+		if self:isFishInCoolingBag(item.fishId, item.fishSize) then
+			outputChatBox("TRUE")
+		end
+
+		--[[if item.fishId then
+			local default = Fishing.Fish[item.fishId].DefaultPrice
+			local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
+			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
+			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
+
+			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
+		end]]
+	end
+end
+
+function Fishing:isFishInCoolingBag(fishId, fishSize)
+	local playerInventory = client:getInventory()
+
+	for bagName, bagProperties in pairs(FISHING_BAGS) do
+		if playerInventory:getItemAmount(bagName) > 0 then
+			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
+			local currentValue = playerInventory:getItemValueByBag("Items", place)
+			local json = fromJSON(currentValue)
+			if json then currentValue = json else currentValue = {} end
+
+			for _, fish in pairs(currentValue) do
+				if fish.Id == fishId and fish.size == fishSize then
+					return true
+				end
+			end
+		end
+	end
 end
 
 function Fishing:getFishQuality(fishId, size)
