@@ -66,7 +66,7 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
 					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
-					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].PriceBonus*100))
+					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].RareBonus*100))
 				end
 		end
 	end
@@ -120,10 +120,10 @@ function FishPricingGUI:constructor(Fishes)
 	self.m_PriceList:addColumn(_"Preis", .3)
 	self.m_PriceList:addColumn(_"Bonus", .3)
 
-	table.sort(Fishes, function(a, b) return a.PriceBonus > b.PriceBonus end)
+	table.sort(Fishes, function(a, b) return a.RareBonus > b.RareBonus end)
 	for _, fish in ipairs(Fishes) do
-		local item = self.m_PriceList:addItem(fish.Name_EN, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.PriceBonus > 0 and "+" or "", fish.PriceBonus*100))
-		item:setColumnColor(3, tocolor(255*(1-fish.PriceBonus), 255*fish.PriceBonus, 0))
+		local item = self.m_PriceList:addItem(fish.Name_EN, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
+		item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
 	end
 end
 

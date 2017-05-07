@@ -243,7 +243,7 @@ function Fishing:updatePricing()
 	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
 	for _, fish in pairs(Fishing.Fish) do
-		fish.PriceBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
+		fish.RareBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 
