@@ -45,6 +45,8 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 
 	self.m_Sell = GUIButton:new(300, self.m_Height - 35, 295, 25, _"Verkaufen!", self.m_Window):setBackgroundColor(Color.Red)
 
+	local fisherLevel = localPlayer:getPrivateSync("FishingLevel")
+
 	for _, bag in pairs(CoolingBags) do
 		self.m_GridList:addItemNoClick(bag.name)
 
@@ -59,8 +61,6 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 
 			item.onLeftClick =
 				function()
-					local fisherLevel = localPlayer:getPrivateSync("FishingLevel")
-
 					self.m_FishNameLabel:setText(fish.fishName)
 					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
