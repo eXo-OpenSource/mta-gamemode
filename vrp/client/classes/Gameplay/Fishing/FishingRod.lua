@@ -13,7 +13,7 @@ function FishingRod:constructor(fishingRod)
 	self.Random = Randomizer:new()
 
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 30000
+	self.m_maxFishingBiteTime = 1000--30000
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -114,7 +114,7 @@ function FishingRod:handleClick(_, state)
 			self.m_isNibbling = false
 			self.m_Hit = true
 
-			triggerServerEvent("clientFishHit", localPlayer, self.m_Location)
+			triggerServerEvent("clientFishHit", localPlayer, self.m_Location, self.m_PowerProgress)
 		end
 	end
 end

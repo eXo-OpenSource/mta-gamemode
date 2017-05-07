@@ -98,7 +98,7 @@ function Fishing:getFish(location, timeOfDay, weather)
 	return tmp[self.Random:get(1, #tmp)]
 end
 
-function Fishing:FishHit(location)
+function Fishing:FishHit(location, castPower)
 	if not self.m_Players[client] then return end
 
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
@@ -110,14 +110,15 @@ function Fishing:FishHit(location)
 
 	self.m_Players[client].lastFish = fish
 	self.m_Players[client].location = location
+	self.m_Players[client].castPower = castPower
 	self.m_Players[client].lastFishHit = getTickCount()
 end
 
 function Fishing:FishCaught()
 	if not self.m_Players[client] then return end
 	local tbl = self.m_Players[client]
-	local size = math.random(tbl.lastFish.Size[1], tbl.lastFish.Size[2]) -- todo (calc size by rod power // fisher level // time to caught)
-	--outputChatBox(("Caught: %s [%s] // Size: %s"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit, size))
+	local timeToCatch = getTickCount() - tbl.lastFishHit
+	local size = self:getFishSize(client, tbl.lastFish.Id, timeToCatch, tbl.castPower)
 	local playerInventory = client:getInventory()
 	local allBagsFull = false
 
@@ -168,6 +169,20 @@ function Fishing:FishCaught()
 	end
 
 	client:sendError("Du besitzt keine Kühltaschen, in der du deine Fische lagern kannst!")
+end
+
+function Fishing:getFishSize(player, fishId, timeToCatch, castPower)
+	local fishSizeReduction = timeToCatch/2500*1
+	local minFishSize = Fishing.Fish[fishId].Size[1]
+	local maxFishSize = Fishing.Fish[fishId].Size[2]
+	local playerLevel = player:getPrivateSync("FishingLevel")
+
+	local num = self.Random:get(1 + math.min(10, playerLevel/2), 6) / 5
+	local fishSizeMultiplicator = math.max(0, math.min(1, num*(1 + self.Random:get(-10, 10)/100)))
+
+	local fishSize = math.max(minFishSize, ((minFishSize + (maxFishSize - minFishSize) * fishSizeMultiplicator)-fishSizeReduction)*castPower)
+
+	return math.floor(fishSize)
 end
 
 function Fishing:updatePlayerSkill(player, skill)
