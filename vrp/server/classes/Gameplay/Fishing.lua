@@ -145,7 +145,8 @@ function Fishing:FishCaught()
 			local fishId = tbl.lastFish.Id
 			local fishName = tbl.lastFish.Name_EN
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
-			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
+			local json = fromJSON(currentValue)
+			if json then currentValue = json else currentValue = {} end
 
 			if #currentValue < bagProperties.max then
 				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, quality = self:getFishQuality(fishId, size), timestamp = getRealTime().timestamp})
@@ -204,7 +205,9 @@ function Fishing:onFishRequestTrading()
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
-			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
+			local json = fromJSON(currentValue)
+			if json then currentValue = json else currentValue = {} end
+
 			table.insert(fishes, {name = bagName, content = currentValue})
 		end
 	end
