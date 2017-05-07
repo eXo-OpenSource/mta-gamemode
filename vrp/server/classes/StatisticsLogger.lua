@@ -301,3 +301,11 @@ function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
 	end
 end
 
+-- PlayerId, Fish, Size, Location, Time
+
+function StatisticsLogger:addfishCaughtLogs(player, FishName, FishSize, Location)
+	if player and FishName and FishSize and Location then
+		sqlLogs:queryExec("INSERT INTO ??_fishCaught (PlayerId, FishName, FishSize, Location, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			player:getId(), FishName, FishSize, ("%s - %s"):format(Location, self:getZone(player)))
+	end
+end
