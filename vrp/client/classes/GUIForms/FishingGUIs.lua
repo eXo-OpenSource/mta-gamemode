@@ -30,7 +30,7 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 	GUILabel:new(300, 105, 200, 20, _"Level Bonus:", self.m_Window)
 	GUILabel:new(300, 120, 200, 20, _"Seltenheits Bonus:", self.m_Window)
 	self.m_FishNameLabel = GUILabel:new(450, 35, 200, 20, "", self.m_Window)
-	self.m_QualityLabel = GUILabel:new(450, 50, 200, 20, "", self.m_Window)
+	self.m_QualityLabel = GUILabel:new(450, 50, 200, 20, "", self.m_Window):setFont(FontAwesome(20)):setFontSize(1):setColor(Color.Yellow)
 	self.m_PriceLabel = GUILabel:new(450, 65, 200, 20, "", self.m_Window)
 	self.m_QualityBonusLabel = GUILabel:new(450, 90, 200, 20, "", self.m_Window)
 	self.m_LevelBonusLabel = GUILabel:new(450, 105, 200, 20, "", self.m_Window)
@@ -59,11 +59,13 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 
 			item.onLeftClick =
 				function()
+					local fisherLevel = localPlayer:getPrivateSync("FishingLevel")
+
 					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText(fish.Quality or "-")
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
 					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
-					self.m_LevelBonusLabel:setText("-")
+					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
 					self.m_RareBonusLabel:setText(("%d%%"):format(Fishes[fish.Id].PriceBonus*100))
 				end
 		end
