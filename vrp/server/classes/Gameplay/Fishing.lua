@@ -213,14 +213,20 @@ function Fishing:onFishRequestTrading()
 end
 
 function Fishing:updatePricing()
+	-- Create a sort table, otherwise we get trouble with Fish Ids
+	local sortTable = {}
+	for _, fish in pairs(Fishing.Fish) do
+		table.insert(sortTable, fish.SoldCount)
+	end
+
 	-- Calculate fish price depending by sold count
-	table.sort(Fishing.Fish, function(a, b) return a.SoldCount < b.SoldCount end)
+	table.sort(sortTable)
 
 	-- Define price by the ratio with the average sold fish
-	local averageSoldFish = Fishing.Fish[math.floor(#Fishing.Fish/3)]
+	local averageSoldFish = sortTable[math.floor(#sortTable/3)]
 
-	for _, fish in ipairs(Fishing.Fish) do
-		fish.PriceBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish.SoldCount + 1), 0)
+	for _, fish in pairs(Fishing.Fish) do
+		fish.PriceBonus = math.max(1 - (fish.SoldCount)/(averageSoldFish + 1), 0)
 	end
 end
 

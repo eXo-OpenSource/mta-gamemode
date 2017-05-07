@@ -117,6 +117,7 @@ function FishPricingGUI:constructor(Fishes)
 	self.m_PriceList:addColumn(_"Preis", .3)
 	self.m_PriceList:addColumn(_"Bonus", .3)
 
+	table.sort(Fishes, function(a, b) return a.PriceBonus > b.PriceBonus end)
 	for _, fish in ipairs(Fishes) do
 		local item = self.m_PriceList:addItem(fish.Name_EN, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.PriceBonus > 0 and "+" or "", fish.PriceBonus*100))
 		item:setColumnColor(3, tocolor(255*(1-fish.PriceBonus), 255*fish.PriceBonus, 0))
