@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -21,6 +21,7 @@ function Fishing:constructor()
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
+	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
 end
 
 function Fishing:destructor()
@@ -193,6 +194,22 @@ end
 function Fishing:onFishRequestPricing()
 	-- Todo: Only trigger specific datas
 	client:triggerEvent("openFishPricingGUI", Fishing.Fish)
+end
+
+function Fishing:onFishRequestTrading()
+	local fishes = {}
+	local playerInventory = client:getInventory()
+
+	for bagName, bagProperties in pairs(FISHING_BAGS) do
+		if playerInventory:getItemAmount(bagName) > 0 then
+			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
+			local currentValue = playerInventory:getItemValueByBag("Items", place)
+			if fromJSON(currentValue) then currentValue = fromJSON(currentValue) else currentValue = {} end
+			table.insert(fishes, {name = bagName, content = currentValue})
+		end
+	end
+
+	client:triggerEvent("openFishTradeGUI", fishes, Fishing.Fish)
 end
 
 function Fishing:updatePricing()
