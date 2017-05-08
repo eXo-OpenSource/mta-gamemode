@@ -147,8 +147,7 @@ function Fishing:FishCaught()
 			local fishId = tbl.lastFish.Id
 			local fishName = tbl.lastFish.Name_EN
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
-			local json = fromJSON(currentValue)
-			if json then currentValue = json else currentValue = {} end
+			currentValue = fromJSON(currentValue) or {}
 
 			if #currentValue < bagProperties.max then
 				table.insert(currentValue, {Id = fishId, fishName = fishName, size = size, quality = self:getFishQuality(fishId, size), timestamp = getRealTime().timestamp})
@@ -221,8 +220,7 @@ function Fishing:onFishRequestTrading()
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
-			local json = fromJSON(currentValue)
-			if json then currentValue = json else currentValue = {} end
+			currentValue = fromJSON(currentValue) or {}
 
 			table.insert(fishes, {name = bagName, content = currentValue})
 		end
@@ -258,8 +256,7 @@ function Fishing:isFishInCoolingBag(fishId, fishSize)
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
-			local json = fromJSON(currentValue)
-			if json then currentValue = json else currentValue = {} end
+			currentValue = fromJSON(currentValue) or {}
 
 			for _, fish in pairs(currentValue) do
 				if fish.Id == fishId and fish.size == fishSize then
