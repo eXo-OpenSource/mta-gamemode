@@ -157,7 +157,7 @@ function FishPricingGUI:constructor(Fishes)
 
 	table.sort(Fishes, function(a, b) return a.RareBonus > b.RareBonus end)
 	for _, fish in ipairs(Fishes) do
-		local item = self.m_PriceList:addItem(fish.Name_EN, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
+		local item = self.m_PriceList:addItem(fish.Name_DE, ("%s$"):format(fish.DefaultPrice), ("%s%d%%"):format(fish.RareBonus > 0 and "+" or "", fish.RareBonus*100))
 		item:setColumnColor(3, tocolor(255*(1-fish.RareBonus), 255*fish.RareBonus, 0))
 	end
 end
