@@ -249,7 +249,7 @@ function Fishing:clientSendFishTrading(list)
 	end
 
 	if totalPrice > 0 then
-		client:giveMoney(totalPrice, "Fischhandel")
+		client:giveMoney(math.floor(totalPrice), "Fischhandel")
 	end
 end
 

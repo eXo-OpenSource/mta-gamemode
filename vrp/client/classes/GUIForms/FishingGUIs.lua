@@ -65,7 +65,7 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 			item.onLeftClick =
 				function()
 					self.m_FishNameLabel:setText(fish.fishName)
-					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1))
+					self.m_QualityLabel:setText((FontAwesomeSymbols.Star):rep(fish.quality + 1)):setColor(fish.quality == 0 and Color.Brown or (fish.quality == 1 and Color.LightGrey or Color.Yellow))
 					self.m_PriceLabel:setText(("%s$"):format(Fishes[fish.Id].DefaultPrice))
 					self.m_QualityBonusLabel:setText(fish.quality == 2 and "50%" or (fish.quality == 1 and "25%" or "-"))
 					self.m_LevelBonusLabel:setText(fisherLevel >= 10 and "50%" or (fisherLevel >= 5 and "25%" or "-"))
@@ -119,7 +119,7 @@ function FishingTradeGUI:updateTotalPrice()
 		end
 	end
 
-	self.m_TotalPaymentLabel:setText(totalPrice)
+	self.m_TotalPaymentLabel:setText(math.floor(totalPrice))
 end
 
 function FishingTradeGUI:requestTrade()
