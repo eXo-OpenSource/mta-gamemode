@@ -24,6 +24,7 @@ function CoolingBagGUI:constructor(bagName, value)
 	--self.m_GridList.m_Columns[3]:setFont(FontAwesome(20))--:setFontSize(1)
 
 	if value then
+		table.sort(value, function(a, b) return a.quality == b.quality and a.size > b.size or a.quality > b.quality end)
 		for _, v in pairs(value) do
 			local item = self.m_GridList:addItem(v.fishName, v.size, (FontAwesomeSymbols.Star):rep(v.quality + 1))
 			item:setColumnFont(3, FontAwesome(20), 1):setColumnColor(3, v.quality == 0 and Color.Brown or (v.quality == 1 and Color.LightGrey or Color.Yellow))
