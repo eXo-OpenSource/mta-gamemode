@@ -21,8 +21,6 @@ function CoolingBagGUI:constructor(bagName, value)
 	self.m_GridList:addColumn(_"Größe (cm)", 0.3)
 	self.m_GridList:addColumn(_"Qualität", 0.17)
 
-	--self.m_GridList.m_Columns[3]:setFont(FontAwesome(20))--:setFontSize(1)
-
 	if value then
 		table.sort(value, function(a, b) return a.quality == b.quality and a.size > b.size or a.quality > b.quality end)
 		for _, v in pairs(value) do

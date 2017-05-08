@@ -151,15 +151,12 @@ function FishingRod:cast()
 	if self:checkWater(distance) then
 		toggleAllControls(false)
 
-		outputChatBox("Cast power: " .. tostring(self.m_PowerProgress))
 		local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
 		targetPosition.z = 0
 		self.m_Location = self.FishingMap:getLocation(targetPosition)
 		self.m_isFishing = true
 		self.m_timeUntilFishingBite = self.Random:get(self.m_minFishingBiteTime, self.m_maxFishingBiteTime)
 		self.m_nibblingTimer = setTimer(self.m_fishBite, self.m_timeUntilFishingBite, 1)
-		outputChatBox(self.m_timeUntilFishingBite)
-		--Todo do cast animation (max. 600ms duration) --> effect/waterplop after animation
 
 		createEffect("water_swim", targetPosition)
 		self.Sound:play("cast")
