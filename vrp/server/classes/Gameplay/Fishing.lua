@@ -145,7 +145,7 @@ function Fishing:FishCaught()
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local fishId = tbl.lastFish.Id
-			local fishName = tbl.lastFish.Name_EN
+			local fishName = tbl.lastFish.Name_DE
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
 			currentValue = fromJSON(currentValue) or {}
 
@@ -156,6 +156,7 @@ function Fishing:FishCaught()
 				self:increaseFishCaughtCount(fishId)
 
 				StatisticsLogger:getSingleton():addfishCaughtLogs(client, fishName, size, tbl.location)
+				client:sendInfo(("Du hast ein %s gefangen.\nGröße: %scm"):format(fishName, size))
 				return
 			end
 
@@ -172,15 +173,17 @@ function Fishing:FishCaught()
 end
 
 function Fishing:getFishSize(player, fishId, timeToCatch, castPower)
-	local fishSizeReduction = timeToCatch/2500*1
 	local minFishSize = Fishing.Fish[fishId].Size[1]
 	local maxFishSize = Fishing.Fish[fishId].Size[2]
 	local playerLevel = player:getPrivateSync("FishingLevel")
 
+	local fishSizeTimeReduction = timeToCatch/2500
+	local fishSizeLevelReduction = (10-playerLevel)*((maxFishSize-minFishSize)/self.Random:get(15, 25))
+
 	local num = self.Random:get(1 + math.min(10, playerLevel/2), 6) / 5
 	local fishSizeMultiplicator = math.max(0, math.min(1, num*(1 + self.Random:get(-10, 10)/100)))
 
-	local fishSize = math.max(minFishSize, ((minFishSize + (maxFishSize - minFishSize) * fishSizeMultiplicator)-fishSizeReduction)*castPower)
+	local fishSize = math.max(minFishSize, ((minFishSize + (maxFishSize - minFishSize) * fishSizeMultiplicator)-(fishSizeTimeReduction + fishSizeLevelReduction))*castPower)
 
 	return math.floor(fishSize)
 end
