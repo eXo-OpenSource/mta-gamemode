@@ -244,10 +244,12 @@ function Fishing:clientSendFishTrading(list)
 			local qualityMultiplicator = fish.quality == 2 and 1.5 or (fish.quality == 1 and 1.25 or 1)
 			local rareBonusMultiplicator = Fishing.Fish[fish.Id].RareBonus + 1
 
-			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
+			local fishIncome = default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
+			totalPrice = totalPrice + fishIncome
 
 			self:removeFrishFromCoolingBag(fish.Id, fish.size)
 			self:increaseFishSoldCount(fish.Id)
+			StatisticsLogger:getSingleton():addFishTradeLogs(client:getId(), 0, fish.fishName, fish.size, fishIncome, rareBonusMultiplicator)
 		end
 	end
 
