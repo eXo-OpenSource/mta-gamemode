@@ -22,11 +22,12 @@ GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
 --GANGWAR_PAYOUT_PER_AREA = 1250 || not used anymore due to the money beeing paid out depending on the amount of members inside the faction rather than the constant payout per area
-GANGWAR_PAYOUT_PER_PLAYER = 300
-GANGWAR_PAYOUT_PER_AREA = 500
+GANGWAR_PAYOUT_PER_PLAYER = 800
+GANGWAR_PAYOUT_PER_AREA = 1650
 UNIX_TIMESTAMP_24HRS = 86400 --//86400
 GANGWAR_PAY_PER_DAMAGE = 5
 GANGWAR_PAY_PER_KILL = 1000
+PAYDAY_ACTION_BONUS = 5000
 --//
 
 addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientRequestAttack", "GangwarQuestion:disqualify", "gangwarGetAreas" }
@@ -64,12 +65,16 @@ end
 function Gangwar:onAreaPayday()
 	local payouts = {}
 	local m_Owner
+	local areasInTotal = 0
 	for index, area in pairs( self.m_Areas ) do
 		m_Owner = area.m_Owner
 		if not payouts[m_Owner] then payouts[m_Owner] = 0 end
 		payouts[m_Owner] = payouts[m_Owner] + 1
+		areasInTotal = areasInTotal + 1
 	end
-	local amount = 0
+	if areasInTotal == 0 then return end
+	local amount = 0;
+	local amount2 = 0;
 	local facObj, playersOnline
 	for faction, count in pairs( payouts ) do
 		facObj = FactionManager:getSingleton():getFromId(faction)
@@ -77,8 +82,10 @@ function Gangwar:onAreaPayday()
 			playersOnline = facObj:getOnlinePlayers()
 			if #playersOnline > 2 then
 				amount = (count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)) + (GANGWAR_PAYOUT_PER_AREA * count)
-				facObj:giveMoney(amount, "Gangwar-Payday")
+				amount2 = math.floor((1 - ( count/areasInTotal)) * PAYDAY_ACTION_BONUS )
+				facObj:giveMoney(amount+amount2, "Gangwar-Payday")
 				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)	
+				facObj:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)	
 			else 
 				facObj:sendMessage("Ihr seid nicht genügend Spieler online für den Gangwar-Payday!" , 200, 0, 0, true)
 			end

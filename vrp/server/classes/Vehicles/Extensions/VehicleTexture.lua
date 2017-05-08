@@ -27,7 +27,6 @@ function VehicleTexture:constructor(vehicle, path, texture, force)
 				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path}})
 			end
 		end
-
 		-- add destruction handler
 		addEventHandler("onElementDestroy", self.m_Vehicle, bind(delete, self))
 	else

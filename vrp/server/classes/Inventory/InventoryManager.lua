@@ -178,8 +178,8 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 	end
 end
 
-function InventoryManager:validateTrading(player, target)
-	if client ~= target then return false end
+function InventoryManager:validateTrading(player, target, playerClient)
+	--if playerClient ~= target then return false end
 	if not player.sendRequest or not target.receiveRequest then return false end
 	if player.sendRequest.target ~= target or target.receiveRequest.target ~= player then return false end
 
@@ -187,7 +187,7 @@ function InventoryManager:validateTrading(player, target)
 end
 
 function InventoryManager:Event_declineTrade(player, target)
-	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
 
 	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
 	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
@@ -197,7 +197,7 @@ function InventoryManager:Event_declineTrade(player, target)
 end
 
 function InventoryManager:Event_acceptItemTrade(player, target)
-	if not self:validateTrading(player, target) then return end -- Todo: Report possible cheat attempt
+	if not self:validateTrading(player, target, client) then return end -- Todo: Report possible cheat attempt
 
 	local item = player.sendRequest.item
 	local amount = player.sendRequest.amount
