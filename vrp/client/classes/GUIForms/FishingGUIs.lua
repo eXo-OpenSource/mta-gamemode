@@ -106,16 +106,14 @@ end
 
 function FishingTradeGUI:updateTotalPrice()
 	local fishingLevel = localPlayer:getPrivateSync("FishingLevel")
+	local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
 	local totalPrice = 0
 
 	for _, item in pairs(self.m_SellList:getItems()) do
 		if item.fishId then
 			local default = self.m_FishTable[item.fishId].DefaultPrice
-			local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
 			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
 			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
-
-			outputChatBox(tostring(rareBonusMultiplicator))
 
 			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
 		end
@@ -125,7 +123,12 @@ function FishingTradeGUI:updateTotalPrice()
 end
 
 function FishingTradeGUI:requestTrade()
-	triggerServerEvent("clientSendFishTrading", localPlayer, self.m_SellList:getItems())
+	if #self.m_SellList:getItems() > 0 then
+		triggerServerEvent("clientSendFishTrading", localPlayer, self.m_SellList:getItems())
+		self.m_SellList:clear()
+	else
+		WarningBox:new("Du musst zu erst Fische zum verkaufen hinzufügen!")
+	end
 end
 
 addEventHandler("openFishTradeGUI", root,

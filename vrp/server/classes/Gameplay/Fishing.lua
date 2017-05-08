@@ -216,7 +216,7 @@ function Fishing:onFishRequestTrading()
 	local fishes = {}
 	local playerInventory = client:getInventory()
 
-	for bagName, bagProperties in pairs(FISHING_BAGS) do
+	for bagName in pairs(FISHING_BAGS) do
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
@@ -231,28 +231,32 @@ end
 
 function Fishing:clientSendFishTrading(list)
 	local fishingLevel = client:getPrivateSync("FishingLevel")
+	local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
 	local totalPrice = 0
 
 	for _, item in pairs(list) do
-		if self:isFishInCoolingBag(item.fishId, item.fishSize) then
-			outputChatBox("TRUE")
-		end
-
-		--[[if item.fishId then
-			local default = Fishing.Fish[item.fishId].DefaultPrice
-			local fishingLevelMultiplicator = fishingLevel >= 10 and 1.5 or (fishingLevel >= 5 and 1.25 or 1)
-			local qualityMultiplicator = item.fishQuality == 2 and 1.5 or (item.fishQuality == 1 and 1.25 or 1)
-			local rareBonusMultiplicator = self.m_FishTable[item.fishId].RareBonus + 1
+		local fish = self:getFishInCoolingBag(item.fishId, item.fishSize)
+		if fish then
+			local default = Fishing.Fish[fish.Id].DefaultPrice
+			local qualityMultiplicator = fish.quality == 2 and 1.5 or (fish.quality == 1 and 1.25 or 1)
+			local rareBonusMultiplicator = Fishing.Fish[fish.Id].RareBonus + 1
 
 			totalPrice = totalPrice + default*fishingLevelMultiplicator*qualityMultiplicator*rareBonusMultiplicator
-		end]]
+
+			self:removeFrishFromCoolingBag(fish.Id, fish.size)
+			self:increaseFishSoldCount(fish.Id)
+		end
+	end
+
+	if totalPrice > 0 then
+		client:giveMoney(totalPrice, "Fischhandel")
 	end
 end
 
-function Fishing:isFishInCoolingBag(fishId, fishSize)
+function Fishing:getFishInCoolingBag(fishId, fishSize)
 	local playerInventory = client:getInventory()
 
-	for bagName, bagProperties in pairs(FISHING_BAGS) do
+	for bagName in pairs(FISHING_BAGS) do
 		if playerInventory:getItemAmount(bagName) > 0 then
 			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
 			local currentValue = playerInventory:getItemValueByBag("Items", place)
@@ -260,7 +264,27 @@ function Fishing:isFishInCoolingBag(fishId, fishSize)
 
 			for _, fish in pairs(currentValue) do
 				if fish.Id == fishId and fish.size == fishSize then
-					return true
+					return fish
+				end
+			end
+		end
+	end
+end
+
+function Fishing:removeFrishFromCoolingBag(fishId, fishSize)
+	local playerInventory = client:getInventory()
+
+	for bagName in pairs(FISHING_BAGS) do
+		if playerInventory:getItemAmount(bagName) > 0 then
+			local place = playerInventory:getItemPlacesByName(bagName)[1][1]
+			local currentValue = playerInventory:getItemValueByBag("Items", place)
+			currentValue = fromJSON(currentValue) or {}
+
+			for index, fish in pairs(currentValue) do
+				if fish.Id == fishId and fish.size == fishSize then
+					table.remove(currentValue, index)
+					playerInventory:setItemValueByBag("Items", place, toJSON(currentValue))
+					return
 				end
 			end
 		end
