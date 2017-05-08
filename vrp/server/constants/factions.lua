@@ -260,18 +260,18 @@ factionWeaponDepotInfo = {
 	[16] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Grenade
 	[17] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Tear Gas
 	[18] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 80, ["MagazinPreis"] = 0}, -- Molotov Cocktails
-	[22] = {["Waffe"] = 20, ["Magazine"] = 50, ["WaffenPreis"] = 140, ["MagazinPreis"] = 20}, -- Pistol
+	[22] = {["Waffe"] = 30, ["Magazine"] = 50, ["WaffenPreis"] = 140, ["MagazinPreis"] = 20}, -- Pistol
 	[23] = {["Waffe"] = 10, ["Magazine"] = 40, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Taser
-	[24] = {["Waffe"] = 10, ["Magazine"] = 20, ["WaffenPreis"] = 550, ["MagazinPreis"] = 100}, -- Deagle
-	[25] = {["Waffe"] = 16, ["Magazine"] = 100, ["WaffenPreis"] = 170, ["MagazinPreis"] = 3}, -- Shotgun
-	[26] = {["Waffe"] = 8, ["Magazine"] = 30, ["WaffenPreis"] = 0, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun
-	[27] = {["Waffe"] = 8, ["Magazine"] = 16, ["WaffenPreis"] = 0, ["MagazinPreis"] = 60}, -- SPAZ-12 Combat Shotgun
+	[24] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 550, ["MagazinPreis"] = 100}, -- Deagle
+	[25] = {["Waffe"] = 34, ["Magazine"] = 200, ["WaffenPreis"] = 170, ["MagazinPreis"] = 3}, -- Shotgun
+	[26] = {["Waffe"] = 16, ["Magazine"] = 60, ["WaffenPreis"] = 0, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun
+	[27] = {["Waffe"] = 16, ["Magazine"] = 32, ["WaffenPreis"] = 0, ["MagazinPreis"] = 60}, -- SPAZ-12 Combat Shotgun
 	[28] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Uzi
-	[29] = {["Waffe"] = 20, ["Magazine"] = 60, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- MP5
-	[30] = {["Waffe"] = 20, ["Magazine"] = 60, ["WaffenPreis"] = 480, ["MagazinPreis"] = 75}, -- AK47
-	[31] = {["Waffe"] = 15, ["Magazine"] = 40, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4
-	[32] = {["Waffe"] = 20, ["Magazine"] = 60, ["WaffenPreis"] = 200, ["MagazinPreis"] = 70}, -- Tec9
-	[33] = {["Waffe"] = 10, ["Magazine"] = 60, ["WaffenPreis"] = 400, ["MagazinPreis"] = 5}, -- County Rifle
+	[29] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- MP5
+	[30] = {["Waffe"] = 40, ["Magazine"] = 90, ["WaffenPreis"] = 480, ["MagazinPreis"] = 75}, -- AK47
+	[31] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4
+	[32] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 200, ["MagazinPreis"] = 70}, -- Tec9
+	[33] = {["Waffe"] = 20, ["Magazine"] = 120, ["WaffenPreis"] = 400, ["MagazinPreis"] = 5}, -- County Rifle
 	[34] = {["Waffe"] = 5, ["Magazine"] = 15, ["WaffenPreis"] = 5000, ["MagazinPreis"] = 100}, -- Sniper
 	[35] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 2000, ["MagazinPreis"] = 500}, -- Rocket Launcher
 	[36] = {["Waffe"] = 3, ["Magazine"] = 9, ["WaffenPreis"] = 3000, ["MagazinPreis"] = 700}, -- Heat-Seeking RPG
