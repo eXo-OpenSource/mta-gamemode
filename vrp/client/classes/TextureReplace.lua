@@ -194,7 +194,7 @@ function TextureReplace.getCachedTexture(path, instance)
 					function(success)
 						if success then
 							local membefore = dxGetStatus().VideoMemoryUsedByTextures
-							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(TextureReplace.getRawTexture(path)); bRemoteUrl = url}
+							TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(TextureReplace.getRawTexture(path),"argb", true, "clamp", "2d", 1); bRemoteUrl = url}
 
 							instance:loadShader()
 						end
