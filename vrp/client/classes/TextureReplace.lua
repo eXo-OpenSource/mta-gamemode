@@ -6,7 +6,7 @@ TextureReplace.Map = {}
 TextureReplace.Working = false
 TextureReplace.Pending = {}
 
-
+local Texture_Storage = {} --// workaround to store the textures created via dxCreateTexture
 TextureReplace.Modes = {
 	[1] = "onStream",
 	[2] = "permanent",
@@ -20,7 +20,6 @@ end
 function TextureReplace.setMode(mode)
 	if TextureReplace.Modes[mode] then
 		TextureReplace.CurrentMode = mode
-		outputChatBox("Texturemodus auf "..TextureReplace.Modes[mode].." gesetzt!")
 		for index, textureObject in pairs(TextureReplace.Map) do
 			if TextureReplace.Modes[mode] == TextureReplace.Modes[1] then
 				if textureObject.m_Element and isElement(textureObject.m_Element) and textureObject.m_Element:isStreamedIn() then
@@ -31,8 +30,12 @@ function TextureReplace.setMode(mode)
 			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[2] then
 				textureObject:loadShader()
 			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[3] then
-				outputChatBox("no load")
 				textureObject:unloadShader()
+			end
+		end
+		if TextureReplace.Modes[mode] == TextureReplace.Modes[3]
+			for i = 1, #Texture_Storage do 
+				destroyElement(Texture_Storage[i])
 			end
 		end
 	else
@@ -212,13 +215,26 @@ function TextureReplace.getCachedTexture(path, instance)
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(TextureReplace.getRawTexture(path)); bRemoteUrl = url}
+		local dxTexture = TextureReplace.checkTextureTable(path)
+		if not dxTexture then 
+			dxTexture = dxCreateTexture(TextureReplace.getRawTexture(path), "dxt1")
+		end
+		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxTexture; bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
+		Texture_Storage[TextureReplace.getRawTexture(path)] = dxTexture
 	end
 
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter + 1
 	--outputConsole("incremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
 	return TextureReplace.Cache[index].texture
+end
+
+function TextureReplace.checkTextureTable(path) 
+	if path then 
+		if Texture_Storage[TextureReplace.getRawTexture(path)] then 
+			return Texture_Storage[TextureReplace.getRawTexture(path)]
+		end
+	end
 end
 
 function TextureReplace.unloadCache(path)
@@ -232,7 +248,6 @@ function TextureReplace.unloadCache(path)
 
 	if TextureReplace.Cache[index].counter == 0 then
 		--outputConsole("destroying texture "..path)
-		local result = destroyElement(TextureReplace.Cache[index].texture)
 		TextureReplace.Cache[index] = nil
 		return result
 	end
