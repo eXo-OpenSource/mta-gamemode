@@ -20,17 +20,18 @@ end
 function TextureReplace.setMode(mode)
 	if TextureReplace.Modes[mode] then
 		TextureReplace.CurrentMode = mode
-		--outputChatBox("Texturemodus auf "..TextureReplace.Modes[mode].." gesetzt!")
+		outputChatBox("Texturemodus auf "..TextureReplace.Modes[mode].." gesetzt!")
 		for index, textureObject in pairs(TextureReplace.Map) do
-			if mode == TextureReplace.Modes.onStream then
+			if TextureReplace.Modes[mode] == TextureReplace.Modes[1] then
 				if textureObject.m_Element and isElement(textureObject.m_Element) and textureObject.m_Element:isStreamedIn() then
 					textureObject:loadShader()
 				else
 					textureObject:unloadShader()
 				end
-			elseif mode == TextureReplace.Modes.permanent then
+			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[2] then
 				textureObject:loadShader()
-			elseif mode == TextureReplace.Modes.noTexture then
+			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[3] then
+				outputChatBox("no load")
 				textureObject:unloadShader()
 			end
 		end
@@ -55,11 +56,11 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_IsRenderTarget = isRenderTarget
 	self.m_Element = targetElement
 
-	if not TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] ~= TextureReplace.Modes[3] then
 		if not self.m_Element then
 			self:loadShader()
 		else
-			if (TextureReplace.CurrentMode == TextureReplace.Modes.onStream and isElementStreamedIn(self.m_Element)) or TextureReplace.CurrentMode == TextureReplace.Modes.permanent then
+			if (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] and isElementStreamedIn(self.m_Element)) or TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[2] then
 				self:loadShader()
 			end
 		end
@@ -99,7 +100,7 @@ end
 
 function TextureReplace:onElementStreamIn()
 	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
-	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
 		return
 	end
 
@@ -111,7 +112,7 @@ end
 
 function TextureReplace:onElementStreamOut()
 	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
-	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
 		return
 	end
 
@@ -308,7 +309,7 @@ function TextureReplace.deleteFromElement(element)
 end
 
 function TextureReplace.loadingQueue()
-	if TextureReplace.CurrentMode == TextureReplace.Modes.noTexture then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
 		TextureReplace.Pending = {}
 		TextureReplace.Working = false
 		return
