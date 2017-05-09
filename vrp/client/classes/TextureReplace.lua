@@ -30,7 +30,9 @@ function TextureReplace.setMode(mode)
 			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[2] then
 				textureObject:loadShader()
 			elseif TextureReplace.Modes[mode] == TextureReplace.Modes[3] then
-				textureObject:unloadShader()
+				if textureObject.m_IsOptional then
+					textureObject:unloadShader()
+				end
 			end
 		end
 		if TextureReplace.Modes[mode] == TextureReplace.Modes[3] then
@@ -43,7 +45,7 @@ function TextureReplace.setMode(mode)
 	end
 end
 
-function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
+function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, isOptional)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
 		traceback()
@@ -58,13 +60,23 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_TexturePath = path
 	self.m_IsRenderTarget = isRenderTarget
 	self.m_Element = targetElement
-
+	self.m_IsOptional = isOptional
 	if TextureReplace.Modes[TextureReplace.CurrentMode] ~= TextureReplace.Modes[3] then
 		if not self.m_Element then
 			self:loadShader()
 		else
 			if (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] and isElementStreamedIn(self.m_Element)) or TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[2] then
 				self:loadShader()
+			end
+		end
+	else 
+		if not isOptional then
+			if not self.m_Element then
+				self:loadShader()
+			else
+				if isElementStreamedIn(self.m_Element) then
+					self:loadShader()
+				end
 			end
 		end
 	end
@@ -103,19 +115,25 @@ end
 
 function TextureReplace:onElementStreamIn()
 	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
-	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and self.m_IsOptional then
 		return
 	end
-
-	TextureReplace.Pending[source] = self
-	if not TextureReplace.Working then
-		TextureReplace.loadingQueue()
+	
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] then
+		TextureReplace.Pending[source] = self
+		if not TextureReplace.Working then
+			TextureReplace.loadingQueue()
+		end
+	else
+		if not self:loadShader() then
+			outputDebugString(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
+		end
 	end
 end
 
 function TextureReplace:onElementStreamOut()
 	--outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
-	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and self.m_IsOptional then
 		return
 	end
 
@@ -215,10 +233,10 @@ function TextureReplace.getCachedTexture(path, instance)
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		local dxTexture = TextureReplace.checkTextureTable(path)
+		local dxTexture = TextureReplace.checkTextureTable(path, self)
 		if not dxTexture then 
 			dxTexture = dxCreateTexture(TextureReplace.getRawTexture(path), "dxt1")
-		end
+		end	
 		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxTexture; bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 		Texture_Storage[TextureReplace.getRawTexture(path)] = dxTexture
@@ -229,10 +247,10 @@ function TextureReplace.getCachedTexture(path, instance)
 	return TextureReplace.Cache[index].texture
 end
 
-function TextureReplace.checkTextureTable(path) 
+function TextureReplace.checkTextureTable(path, obj) 
 	if path then 
 		if Texture_Storage[TextureReplace.getRawTexture(path)] then 
-			return Texture_Storage[TextureReplace.getRawTexture(path)]
+			return Texture_Storage[TextureReplace.getRawTexture(path)], obj
 		end
 	end
 end
@@ -295,7 +313,7 @@ addEventHandler("changeElementTexture", root,
 			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
-			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle)
+			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.optional)
 		end
 	end
 )
@@ -324,19 +342,22 @@ function TextureReplace.deleteFromElement(element)
 end
 
 function TextureReplace.loadingQueue()
-	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] then
+	
+	--[[if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3]  then
 		TextureReplace.Pending = {}
 		TextureReplace.Working = false
 		return
-	end
+	end--]]
 	TextureReplace.Working = true
 	for veh, obj in pairs(TextureReplace.Pending) do
-		if not obj:loadShader() then
-			outputDebugString(("Loading the texture of element %s failed!"):format(tostring(obj.m_Element)))
+		if (obj.m_IsOptional and TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3]) or (not obj.m_IsOptional and TextureReplace.Modes[TextureReplace.CurrentMode] ~= TextureReplace.Modes[3]) then
+			if not obj:loadShader() then
+				outputDebugString(("Loading the texture of element %s failed!"):format(tostring(obj.m_Element)))
+			end
+			TextureReplace.Pending[veh] = nil
+			setTimer(TextureReplace.loadingQueue, 500, 1)
+			return
 		end
-		TextureReplace.Pending[veh] = nil
-		setTimer(TextureReplace.loadingQueue, 2000, 1)
-		return
 	end
 	TextureReplace.Working = false
 end

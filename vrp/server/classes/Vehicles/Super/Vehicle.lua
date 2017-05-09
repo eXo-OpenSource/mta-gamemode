@@ -452,7 +452,7 @@ function Vehicle:setTexture(texturePath, textureName, force)
 		if isHttp == nil then
 			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, force)
 		else
-			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force)
+			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, force, isHttp)
 		end
 	end
 end
