@@ -33,7 +33,7 @@ function TextureReplace.setMode(mode)
 				textureObject:unloadShader()
 			end
 		end
-		if TextureReplace.Modes[mode] == TextureReplace.Modes[3]
+		if TextureReplace.Modes[mode] == TextureReplace.Modes[3] then
 			for i = 1, #Texture_Storage do 
 				destroyElement(Texture_Storage[i])
 			end
