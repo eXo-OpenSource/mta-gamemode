@@ -133,8 +133,14 @@ SHOP_TYPES = {
 		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158},
 		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)},
 		["Class"] = CJClothes
+	},
+	[19] = {
+		["Name"] = "Anglershop",
+		["Marker"] = Vector3(-202.21, -6.92, 1001.6),			--todo
+		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158}, 	--todo
+		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)}, 	--todo
+		["Class"] = ItemShop
 	}
-
 }
 
 SHOP_ITEMS = {
@@ -178,6 +184,13 @@ SHOP_ITEMS = {
 		["Monster"] = 25,
 		["Shot"] = 8,
 		["Cuba-Libre"] = 12
+	};
+	["Anglershop"] = {
+		["Angelrute"] = 150,
+		["Kleine Kühltasche"] = 50,
+		["Kühltasche"] = 100,
+		["Kühlbox"] = 250,
+		["Köder"] = 2,
 	};
 }
 

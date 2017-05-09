@@ -34,6 +34,7 @@ function Provider:refreshProgress()
 				triggerClientEvent(player, "onDownloadProgressUpdate", resourceRoot, 100, status.totalSize)
 			else
 				self.m_ActiveDL[k] = nil
+				triggerClientEvent(player, "onDownloadStop", resourceRoot, v.filename, true)
 			end
 		end
 	end

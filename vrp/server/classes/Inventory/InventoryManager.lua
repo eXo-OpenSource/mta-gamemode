@@ -61,10 +61,10 @@ function InventoryManager:loadItems()
 	local itemData = {}
 	local itemName
 	for i, row in ipairs(result) do
-		itemName = row["Objektname"]
+		itemName = utf8.escape(row["Objektname"])
 		itemData[itemName] = {}
 		itemData[itemName]["Name"] = itemName
-		itemData[itemName]["Info"] = row["Info"]
+		itemData[itemName]["Info"] = utf8.escape(row["Info"])
 		itemData[itemName]["Tasche"] = row["Tasche"]
 		itemData[itemName]["Icon"] = row["Icon"]
 		itemData[itemName]["Item_Max"] = tonumber(row["max_items"])

@@ -128,6 +128,7 @@
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemRepairKit.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
 
 	<!-- Wearables -->
@@ -350,6 +351,7 @@
 	<script src="client/classes/Provider.lua" type="client"/>
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
+	<script src="client/classes/Sound.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
@@ -616,6 +618,8 @@
 	<script src="client/classes/GUIForms/AchievementGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/CoolingBagGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/FishingGUIs.lua" type="client" />
 	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
@@ -754,9 +758,14 @@
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
-	<script src="client/classes/Gameplay/Fishing.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
+
+	<!-- Fishing -->
+	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/FishingRod.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/BobberBar.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/Fishing.lua" type="client"/>
 
 	<!-- Race -->
 	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>
@@ -824,6 +833,7 @@
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
+
 
 	<!-- Events -->
 	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
@@ -1310,6 +1320,10 @@
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/NagelBand.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Fishingrod.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Coolbag.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Coolbox.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
@@ -1398,6 +1412,11 @@
 	<vrpfile src="files/images/2Cars/block_blue.png"/>
 	<vrpfile src="files/images/2Cars/particleExplode.png"/>
 
+	<!-- Fishing -->
+	<vrpfile src="files/images/Fishing/BobberBarBG.png"/>
+	<vrpfile src="files/images/Fishing/RedGreen.png"/>
+	<vrpfile src="files/images/Fishing/Fish.png"/>
+
 	<!-- Race -->
 	<vrpfile src="files/images/Race/countdown_0.png"/>
 	<vrpfile src="files/images/Race/countdown_1.png"/>
@@ -1475,6 +1494,23 @@
 	<!-- DrWho -->
 	<vrpfile src="files/audio/DrWho/tardis_landing.mp3"/>
 	<vrpfile src="files/audio/DrWho/tardis_takeoff.mp3"/>
+
+	<!-- Fishing -->
+	<vrpfile src="files/audio/Fishing/bit.mp3"/>
+	<vrpfile src="files/audio/Fishing/cast.mp3"/>
+	<vrpfile src="files/audio/Fishing/caught.mp3"/>
+	<vrpfile src="files/audio/Fishing/chirp_cast.mp3"/>
+	<vrpfile src="files/audio/Fishing/chirp_cast_back.mp3"/>
+	<vrpfile src="files/audio/Fishing/dwop.mp3"/>
+	<vrpfile src="files/audio/Fishing/escape.mp3"/>
+	<vrpfile src="files/audio/Fishing/fastReel.mp3"/>
+	<vrpfile src="files/audio/Fishing/slowReel.mp3"/>
+	<vrpfile src="files/audio/Fishing/fishingRodBend.mp3"/>
+	<vrpfile src="files/audio/Fishing/fishingRodBend2.mp3"/>
+	<vrpfile src="files/audio/Fishing/hit.mp3"/>
+	<vrpfile src="files/audio/Fishing/waterplop.mp3"/>
+	<vrpfile src="files/audio/Fishing/woap.mp3"/>
+	<vrpfile src="files/audio/Fishing/woap2.mp3"/>
 
 	<!-- Slotmachines -->
 	<vrpfile src="files/audio/Slotmachines/start_machine.mp3" />
@@ -1633,6 +1669,9 @@
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
+	<vrpfile src="files/models/FishingRod.txd"/>
+	<vrpfile src="files/models/FishingRod.dff"/>
+	<vrpfile src="files/models/FishingRod.col"/>
 	<vrpfile src="files/models/topfun.txd"/>
 	<vrpfile src="files/models/topfun.dff"/>
 	<vrpfile src="files/models/a51fencing.col"/>

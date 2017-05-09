@@ -12,6 +12,7 @@
 	<script src="ZombieSurvival.lua" type="client" />
 	<script src="tour.lua" type="client" />
 	<script src="GravelJob.lua" type="client" />
+	<script src="Fishing.lua" type="client" />
 
     <script src="Cutscene/Scene.lua" type="client" />
     <script src="Cutscene/Cutscene.lua" type="client" />
@@ -26,5 +27,7 @@
 	<script src="Cutscene/Actions/Action.Object.lua" type="client" />
 
     <script src="runthis.lua" type="client" />
+
 	<file src="Logo.png"/>
+	<file src="tour_bobberbar_info.png"/>
 </meta>
