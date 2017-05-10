@@ -25,7 +25,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force)
 		VehicleTexture.Map[self.m_Id] = self
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
-				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional}})
+				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
 			end
 		end
 		-- add destruction handler
@@ -69,7 +69,7 @@ addEventHandler("requestVehicleTextures", root, function()
 	local vehicleTab = {}
 	for index, instance in pairs(VehicleTexture.Map) do
 		if instance.m_Vehicle and isElement(instance.m_Vehicle) then
-			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional}
+			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional; isRequested = true}
 		end
 	end
 	VehicleTexture.sendToClient(client, vehicleTab)

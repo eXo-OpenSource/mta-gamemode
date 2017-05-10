@@ -42,7 +42,7 @@ function TextureReplace.setMode(mode)
 	end
 end
 
-function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, optional)
+function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, optional, onRequest)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
 		traceback()
@@ -58,7 +58,8 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 	self.m_IsRenderTarget = isRenderTarget
 	self.m_Element = targetElement
 	self.m_Optional = optional
-	if TextureReplace.Modes[TextureReplace.CurrentMode] ~= TextureReplace.Modes[3] then
+	self.m_OnRequest = onRequest
+	if TextureReplace.Modes[TextureReplace.CurrentMode] ~= TextureReplace.Modes[3] or not optional then
 		if not self.m_Element then
 			self:loadShader()
 		else
@@ -85,7 +86,7 @@ function TextureReplace:destructor()
 		if self.m_IsRenderTarget then
 			destroyElement(self.m_Texture)
 		else
-			TextureReplace.unloadCache(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
+			TextureReplace.unloadCache(self.m_TexturePath)
 		end
 	end
 	if self.m_Shader and isElement(self.m_Shader) then
@@ -106,7 +107,7 @@ function TextureReplace:onElementStreamIn()
 		return
 	end
 	
-	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] or (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and not self.m_Optional ) then
+	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] or (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and not self.m_Optional ) or  (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[2] and not self.m_OnRequest ) then
 		TextureReplace.Pending[source] = self
 		if not TextureReplace.Working then
 			TextureReplace.loadingQueue()
@@ -316,7 +317,7 @@ addEventHandler("changeElementTexture", root,
 			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
-			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.optional)
+			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.optional, vehData.isRequested)
 		end
 	end
 )
