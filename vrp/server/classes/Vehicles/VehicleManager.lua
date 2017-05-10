@@ -92,6 +92,12 @@ function VehicleManager:constructor()
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
+	
+	VehicleManager.NonOptionalTextures = --// Textures that cant be toggled off
+	{
+		FactionVehicle, 
+		CompanyVehicle,
+	}
 end
 
 function VehicleManager:destructor()

@@ -900,7 +900,8 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange:addItem("deaktiviert (bei schlechter Grafikkarte)")
 		self.m_TextureModeChange.onChange = function(text, index)
 			core:set("Other", "TextureMode", index)
-			TextureReplace.setMode(index)
+			--TextureReplace.setMode(index)
+			outputChatBox("Einstellungen gespeichert, erst nach einem Reconnect angewendet!")
 		end
 		self.m_TextureModeChange:setIndex(core:get("Other", "TextureMode", 1), true)
 
