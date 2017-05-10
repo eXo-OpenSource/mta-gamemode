@@ -93,7 +93,7 @@ function VehicleManager:constructor()
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
 	
-	VehicleManager.NonOptionalTextures = --// Textures that cant be toggled off
+	self.NonOptionalTextures = --// Textures that cant be toggled off
 	{
 		FactionVehicle, 
 		CompanyVehicle,

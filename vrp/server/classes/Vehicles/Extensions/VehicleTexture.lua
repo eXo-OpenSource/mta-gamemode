@@ -69,7 +69,7 @@ addEventHandler("requestVehicleTextures", root, function()
 	local vehicleTab = {}
 	for index, instance in pairs(VehicleTexture.Map) do
 		if instance.m_Vehicle and isElement(instance.m_Vehicle) then
-			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional; isRequested = true}
+			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional, isRequested = true}
 		end
 	end
 	VehicleTexture.sendToClient(client, vehicleTab)
