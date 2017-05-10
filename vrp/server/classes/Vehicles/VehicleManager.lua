@@ -917,14 +917,17 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		veh:purge()
 		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
 
-		self:Event_vehicleRequestInfo()
+		self:Event_vehicleRequestInfo(source)
 
 	else
 		source:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
 	end
 end
 
-function VehicleManager:Event_vehicleRequestInfo()
+function VehicleManager:Event_vehicleRequestInfo(player)
+	if not client then 
+		local client = player 
+	end
 	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client), client:getGarageType(), client:getHangarType())
 end
 
