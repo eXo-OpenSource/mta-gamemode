@@ -895,13 +895,15 @@ function SelfGUI:onSettingChange(setting)
 	elseif setting == "Sonstiges" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
 		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
-		self.m_TextureModeChange:addItem("In der Nähe laden (Standard)")
-		self.m_TextureModeChange:addItem("Beim Joinen laden (bei viel Grafikspeicher)")
+		self.m_TextureModeChange:addItem("In der Nähe laden")
+		self.m_TextureModeChange:addItem("Beim Joinen laden")
 		self.m_TextureModeChange:addItem("Deaktiviert")
 		self.m_TextureModeChange.onChange = function(text, index)
 			core:set("Other", "TextureMode", index)
 			--TextureReplace.setMode(index)
-			outputChatBox("Einstellungen gespeichert, bitte reconnecten um sie anzuwenden!", 200, 200, 200)
+			outputChatBox("Einstellungen gespeichert. Zum Anwenden bitte reconnecten!", 200, 200, 50)
+			self:close()
+			ShortMessage:new(_(TEXTURE_SYSTEM_HELP[index]), "Texture-Settings", Color.DarkLightBlue, 20000)
 		end
 		self.m_TextureModeChange:setIndex(core:get("Other", "TextureMode", 1), true)
 
