@@ -78,7 +78,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT * FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, STVO, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -140,7 +140,6 @@ function DatabasePlayer:load()
 	self.m_SpawnLocation = row.SpawnLocation
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_GunBox = fromJSON(row.GunBox or "")
-	self.m_FishSpeciesCaught = fromJSON(row.FishSpeciesCaught or "[[]]")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_HasTheory = toboolean(row.HasTheory)
 	self.m_HasDrivingLicense = toboolean(row.HasDrivingLicense)
@@ -164,9 +163,6 @@ function DatabasePlayer:load()
 		self:setSessionId(hash("md5", self:getSerial()..self:getName()..self.m_Account:getLastLogin()))
 	end
 
-	self:setFishingSkill(row.FishingSkill)
-
-	self:setFishingLevel(row.FishingLevel)
 	self:setWeaponLevel(row.WeaponLevel)
 	self:setVehicleLevel(row.VehicleLevel)
 	self:setSkinLevel(row.SkinLevel)
@@ -200,9 +196,9 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
-	end
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ?, DeathInJail = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_DeathInJail, self:getId())
+	end 
 	return false
 end
 
@@ -255,8 +251,6 @@ function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getPaNote() return self.m_PaNote end
 function DatabasePlayer:getSTVO() return self.m_STVO end
 function DatabasePlayer:getBail() return self.m_Bail end
-function DatabasePlayer:getFishingSkill() return self.m_FishingSkill end
-function DatabasePlayer:getFishingLevel() return self.m_FishingLevel end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) self:setPublicSync("Money", money) end end
@@ -272,8 +266,6 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 function DatabasePlayer:setPaNote(note) self.m_PaNote = note end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
 function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
-function DatabasePlayer:setFishingSkill(points) self.m_FishingSkill = math.floor(points or 0) if self:isActive() then self:setPrivateSync("FishingSkill", self.m_FishingSkill) end end
-function DatabasePlayer:setFishingLevel(level) self.m_FishingLevel = level or 0	if self:isActive() then self:setPrivateSync("FishingLevel", self.m_FishingLevel) end end
 
 function DatabasePlayer:loadStatistics()
 	local row = sql:queryFetchSingle("SELECT * FROM ??_stats WHERE Id = ?", sql:getPrefix(), self.m_Id)
@@ -315,11 +307,6 @@ function DatabasePlayer:increaseStatistics(stat, value)
 	else
 		outputDebug("Error increasing Stat. "..stat.." for Player Id: "..self.m_Id.."! DB-Column missing!")
 	end
-end
-
-function DatabasePlayer:getStatistics(stat)
-	if not self.m_Statistics then return end
-	return self.m_Statistics[stat]
 end
 
 function DatabasePlayer:setGroup(group)
@@ -840,27 +827,4 @@ function DatabasePlayer:setSTVO(stvo)
 	if self:isActive() then
 		self:setPublicSync("STVO", self.m_STVO)
 	end
-end
-
-function DatabasePlayer:giveFishingSkill(points)
-	self.m_FishingSkill = self.m_FishingSkill + math.floor(points)
-	if self:isActive() then self:setPrivateSync("FishingSkill", self.m_FishingSkill) end
-end
-
-function DatabasePlayer:hasFishSpeciesCaught(fishId)
-	for _, species in pairs(self.m_FishSpeciesCaught) do
-		if species == fishId then
-			return true
-		end
-	end
-end
-
-function DatabasePlayer:addFishSpecies(fishId)
-	if not self:hasFishSpeciesCaught(fishId) then
-		table.insert(self.m_FishSpeciesCaught, fishId)
-	end
-end
-
-function DatabasePlayer:getFishSpeciesCaughtCount()
-	return #self.m_FishSpeciesCaught
 end

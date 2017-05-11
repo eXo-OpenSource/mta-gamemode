@@ -425,6 +425,9 @@ function Player:spawn( )
 		killPed(self)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then 
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -476,6 +479,9 @@ function Player:respawn(position, rotation, bJailSpawn)
 		destroyElement(self.ped_deadDouble)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
 end
 
 function Player:clearReviveWeapons()
@@ -1139,7 +1145,7 @@ end
 function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
-		if not alreadySpawned then
+		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)
 		end
 		self:setPosition(Jail.Cells[rnd])
