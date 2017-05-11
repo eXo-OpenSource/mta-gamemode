@@ -29,22 +29,21 @@ end
 
 function Provider:onDownloadFinish(files)
 	local st = getTickCount()
-	if files then
-		for _, file in pairs(files) do
-			if fileExists(file.path) then
-				fileDelete(file.path)
-			end
 	
-			local fh = fileCreate(file.path)
-			fileWrite(fh, file.data)
-			fileClose(fh)
+	for _, file in pairs(files) do
+		if fileExists(file.path) then
+			fileDelete(file.path)
 		end
-	
-		outputDebug(("Create %s files in %.1dms"):format(#files, getTickCount() - st))
 
-		self.m_RequestedFiles = {}
-		if self.m_OnComplete then self.m_OnComplete() end
+		local fh = fileCreate(file.path)
+		fileWrite(fh, file.data)
+		fileClose(fh)
 	end
+
+	outputDebug(("Create %s files in %.1dms"):format(#files, getTickCount() - st))
+
+	self.m_RequestedFiles = {}
+	if self.m_OnComplete then self.m_OnComplete() end
 end
 
 function Provider:onDownloadProgressUpdate(progress, totalSize)
