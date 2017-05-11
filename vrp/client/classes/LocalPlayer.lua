@@ -255,7 +255,7 @@ function LocalPlayer:Event_playerWasted()
 
 		local soundLength = 20 -- Length of Halleluja in Seconds
 		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
-			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
 		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
