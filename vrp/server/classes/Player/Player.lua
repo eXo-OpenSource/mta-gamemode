@@ -1145,7 +1145,7 @@ end
 function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
-		if not alreadySpawned then
+		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)
 		end
 		self:setPosition(Jail.Cells[rnd])
