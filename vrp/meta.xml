@@ -1689,6 +1689,9 @@
 	<vrpfile src="files/models/academi.col" />
 	<vrpfile src="files/models/hedge01_law.col" />
 	<vrpfile src="files/models/hedge01_law.dff" />
+	<vrpfile src="files/models/fishshop.txd" />
+	<vrpfile src="files/models/fishshop.dff" />
+	<vrpfile src="files/models/fishshop.col" />
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />
