@@ -531,7 +531,7 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 end
 
 function FactionState:createEvidencePickup( x,y,z, int, dim )
-	local pickup = createPickup(x,y,z,3, 1247, 10)
+	local pickup = createPickup(x,y,z,3, 2061, 10)
 	setElementInterior(pickup, int)
 	setElementDimension(pickup, dim)
 	addEventHandler("onPickupUse", pickup, function( hitElement )
@@ -1695,34 +1695,50 @@ function FactionState:Event_acceptEvidenceDestroy(client)
 	if client then
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 			if client:getFaction():getPlayerRank(client) >= 5 then
-				local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
-				local totalMoney = 0
-				for i = 1, #self.m_EvidenceRoomItems do 
-					evObj = self.m_EvidenceRoomItems[i]
-					if evObj then
-						type_ = evObj[1]
-						if type_ then 
-							if type_ == "Waffe" then
-								weapon = evObj[2]
-								if weapon then
-									weapon = tonumber(weapon)
-									weaponMoney  = factionWeaponDepotInfo[weapon]["WaffenPreis"]
-									ammoMoney  = factionWeaponDepotInfo[weapon]["MagazinPreis"]
-									if weaponMoney and ammoMoney then 
-										totalMoney = weaponMoney + ammoMoney
+				local now = getTickCount()
+				local continue 
+				if not self.m_LastStorageEmptied then 
+					self.m_LastStorageEmptied = now 
+					continue = true
+				else 
+					if now - self.m_LastStorageEmptied >= (1000*60*120) then 
+						continue = true
+					else 
+						client:sendShortMessage("Die Asservatenkammer kann nur alle zwei Stunden geleert werden!","Asservatenkammer",{200, 20, 0})
+						continue = false
+					end
+				end		
+				if continue then
+					local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
+					local totalMoney = 0
+					for i = 1, #self.m_EvidenceRoomItems do 
+						evObj = self.m_EvidenceRoomItems[i]
+						if evObj then
+							type_ = evObj[1]
+							if type_ then 
+								if type_ == "Waffe" then
+									weapon = evObj[2]
+									if weapon then
+										weapon = tonumber(weapon)
+										weaponMoney  = factionWeaponDepotInfo[weapon]["WaffenPreis"]
+										ammoMoney  = factionWeaponDepotInfo[weapon]["MagazinPreis"]
+										if weaponMoney and ammoMoney then 
+											totalMoney = weaponMoney + ammoMoney
+										end
 									end
 								end
 							end
 						end
 					end
+					if totalMoney > 0 then 
+						FactionManager:getSingleton():getFromId(1):giveMoney(totalMoney, "Asservatenvernichtung")
+					end
+					FactionState:sendShortMessage(client:getName().." hat die Asservatenkammer zur Leerung freigeben!",10000)
+					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+					self.m_EvidenceRoomItems = {}
+					triggerClientEvent(root,"State:clearEvidenceItems", root)
+					self.m_LastStorageEmptied = getTickCount()
 				end
-				if totalMoney > 0 then 
-					FactionManager:getSingleton():getFromId(1):giveMoney(totalMoney, "Asservatenvernichtung")
-				end
-				FactionState:sendShortMessage(client:getName().." hat die Asservatenkammer zur Leerung freigeben!",10000)
-				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-				self.m_EvidenceRoomItems = {}
-				triggerClientEvent(root,"State:clearEvidenceItems", root)
 			end
 		end
 	end

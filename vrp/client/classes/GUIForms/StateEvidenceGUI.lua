@@ -14,9 +14,9 @@ function StateEvidenceGUI:constructor( evidenceTable )
 	self.m_Window = GUIWindow:new(0,0,500,370,_"Asservatenkammer",true,true,self)
 
 	self.m_List = GUIGridList:new(30, 50, self.m_Width-60, 270, self.m_Window)
-	self.m_List:addColumn(_"Objekt", 0.2)
+	self.m_List:addColumn(_"Objekt", 0.1)
 	self.m_List:addColumn(_"Menge", 0.05)
-	self.m_List:addColumn(_"Besitzer", 0.25)
+	self.m_List:addColumn(_"Besitzer", 0.35)
 	self.m_List:addColumn(_"Konfeszierender", 0.25)
 	self.m_List:addColumn(_"Datum", 0.25)
 	self.m_EvidenceTable = evidenceTable
@@ -28,7 +28,7 @@ function StateEvidenceGUI:constructor( evidenceTable )
 ]]
 
 	self:refreshGrid()
-	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 70, 330, 140, 30, FontAwesomeSymbols.Refresh, self.m_Window):setFont(FontAwesome(15))
+	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 70, 330, 140, 30, "Inhalt entwerten", self.m_Window):setFont(FontAwesome(15))
 	self.m_DestroyEvidenceButton.onLeftClick = function ()
 		triggerServerEvent("State:onRequestEvidenceDestroy", localPlayer)
 	end
