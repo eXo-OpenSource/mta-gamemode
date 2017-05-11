@@ -40,7 +40,7 @@ function FactionState:constructor()
 		["Blitzer"] = 0
 	}
 
-	nextframe( -- Todo workaround
+	nextframe(
 		function ()
 			self:loadLSPD(1)
 			self:loadFBI(2)
@@ -55,8 +55,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:dclineEvidenceDestroy","State:onRequestEvidenceDestroy")
-	}
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:dclineEvidenceDestroy","State:onRequestEvidenceDestroy"}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
 	addCommandHandler("m",bind(self.Command_megaphone, self))
@@ -103,7 +102,7 @@ function FactionState:constructor()
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
 	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
-	
+
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -126,7 +125,7 @@ function FactionState:constructor()
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
-	
+
 	local row = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix())
 	self.m_EvidenceRoomItems = {}
 	if row then
@@ -528,7 +527,7 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 	)
 end
 
-function FactionState:createEvidencePickup( x,y,z, int, dim ) 
+function FactionState:createEvidencePickup( x,y,z, int, dim )
 	local pickup = createPickup(x,y,z,3, 1247, 10)
 	setElementInterior(pickup, int)
 	setElementDimension(pickup, dim)
@@ -922,16 +921,16 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					local wantedLevel = player:getWantedLevel()
 					local jailTime = wantedLevel * 5
 					local factionBonus = JAIL_COSTS[wantedLevel]
-	
+
 					if player:getFaction() and player:getFaction():isEvilFaction() then
 						factionBonus = JAIL_COSTS[wantedLevel]/2
 					end
-	
+
 					if bail then
 						bailcosts = BAIL_PRICES[wantedLevel]
 						player:setJailBail(bailcosts)
 					end
-	
+
 					if policeman.vehicle and player.vehicle then
 						self:Command_tie(policeman, "tie", player:getName(), false, true)
 					end
@@ -967,7 +966,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					-- Give Achievements
 					if wantedLevel > 4 then
 						policeman:giveAchievement(48)
-					else	
+					else
 						policeman:giveAchievement(47)
 					end
 
@@ -982,7 +981,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 				policeman:sendError(_("Du bist nicht im Dienst!", player))
 			end
 		end
-	else 
+	else
 		local bailcosts = 0
 		local wantedLevel = player:getWantedLevel()
 		local jailTime = wantedLevel * 5
@@ -1654,8 +1653,8 @@ function FactionState:Event_attachBug()
 end
 
 function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
-	if self.m_EvidenceRoomItems then 
-		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then 
+	if self.m_EvidenceRoomItems then
+		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then
 			local type_ = "Waffe"
 			local copId = 0
 			local timeStamp =  getTime().timestamp
@@ -1668,15 +1667,15 @@ function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
 	end
 end
 
-function FactionState:showEvidenceStorage(player) 
-	if player then 
+function FactionState:showEvidenceStorage(player)
+	if player then
 		if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() then
 			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems)
 		end
 	end
 end
 
-function FactionState:onRequestEvidenceDestroy() 
+function FactionState:onRequestEvidenceDestroy()
 	if client then
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 			local text = _("Möchtest du wirklich den Inhalt der Asservatenkammer zur Zerstörung freigeben?")
