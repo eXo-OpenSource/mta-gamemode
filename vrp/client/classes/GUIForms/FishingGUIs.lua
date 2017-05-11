@@ -87,6 +87,7 @@ function FishingTradeGUI:addFish()
 	end
 
 	self:updateTotalPrice()
+	self:resetLabels()
 end
 
 function FishingTradeGUI:addAllFish()
@@ -102,6 +103,7 @@ function FishingTradeGUI:addAllFish()
 
 	self.m_GridList:clear()
 	self:updateTotalPrice()
+	self:resetLabels()
 end
 
 function FishingTradeGUI:updateTotalPrice()
@@ -129,6 +131,15 @@ function FishingTradeGUI:requestTrade()
 	else
 		WarningBox:new("Du musst zu erst Fische zum verkaufen hinzufügen!")
 	end
+end
+
+function FishingTradeGUI:resetLabels()
+	self.m_FishNameLabel:setText("")
+	self.m_QualityLabel:setText("")
+	self.m_PriceLabel:setText("")
+	self.m_QualityBonusLabel:setText("")
+	self.m_LevelBonusLabel:setText("")
+	self.m_RareBonusLabel:setText("")
 end
 
 addEventHandler("openFishTradeGUI", root,
@@ -178,13 +189,8 @@ function FishingInformationGUI:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Informationen zum Angeln", true, true, self)
 
 	GUILabel:new(10, 35, self.m_Width - 20, 24,
-		[[Hallo werter Angel Freund,
-		ich bin Angler Lutz und werde dir nun einige Grundlagen zum Angeln erklären!
-
-		Bevor du loslegen kannst, benötigst du logischerweiße eine Angel und etwas, wo du deinen Fang aufbewahren kannst. Das bekommst du alles im Angelshop, der hier ganz in der Nähe ist.
-		Abhängig von deinen Fähigkeiten, kannst du größere Kühltaschen kaufen, um mehr Fische lagern zu können. Bedenke aber das deine Fische verderben können!
-
-		Das Handeln kann manchmal Glücksache sein. Grundsätzlich sind seltene Fische mehr Wert. Ich bekomme im Stundentakt neue Informationen rein. Es lohnt sich also erst mal ein Blick in die Preistabelle zu werfen. Vor allem wenn du weißt, welche Fische man wo und wann fangen kann.]]
+		[[
+		]]
 		, self.m_Window)
 
 	local startTour = GUIButton:new(self.m_Width - 155, self.m_Height - 30, 150, 25, "Tour starten!", self.m_Window):setBackgroundColor(Color.Red)
