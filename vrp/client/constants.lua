@@ -697,3 +697,10 @@ end)
 
 NOTIFICATION_TYPE_INVATION = 1
 NOTIFICATION_TYPE_GAME     = 2
+
+TEXTURE_SYSTEM_HELP = 
+{
+	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen wenn dein Client ein Fahrzeug in der Nähe rendert. Dies kann dazu führen, dass du nur die Texturen lädst, welche du auch benötigst.",
+	[2] = "In diesem Modus werden beim Einloggen alle Texturen runtergeladen. //Achtung dies bedeuted, dass es zu einem Standbild (~5-10 Sekunden ) beim Einloggen kommen kann, da alle Texturen angewendet werden. Jedoch müssen anschließend keine Texturen mehr geladen werden.",
+	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.",
+}
