@@ -102,9 +102,7 @@ end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
 	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
+		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
 		source:clearReviveWeapons()
 	end
@@ -364,9 +362,6 @@ function PlayerManager:playerQuit()
 		destroyElement(source.m_SpeedCol)
 	end
 	VehicleManager:getSingleton():destroyUnusedVehicles( source )
-	if source.m_DeathInJail then 
-		FactionState:getSingleton():Event_JailPlayer(source, false, true, false, true)
-	end 
 end
 
 function PlayerManager:Event_playerReady()
@@ -398,33 +393,13 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 				if killer:isFactionDuty() and not client:isFactionDuty() then
 					local wantedLevel = client:getWantedLevel()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * 5
-						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
-						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
-						client.m_DeathInJail = true
-						-- Pay some money to faction and karma, xp to the policeman
-						local factionBonus = JAIL_COSTS[wantedLevel]
-						if client:getFaction() and client:getFaction():isEvilFaction() then
-							factionBonus = JAIL_COSTS[wantedLevel]/2
-						end
-						killer:getFaction():giveMoney(factionBonus, "Arrest")
-						killer:giveKarma(wantedLevel)
-						killer:givePoints(wantedLevel)
-						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
-						StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, killer, 0)
-						killer:getFaction():addLog(killer, "Knast", "hat "..client:getName().." für "..jailTime.."min. eingesperrt!")
-						-- Give Achievements
-						if wantedLevel > 4 then
-							killer:giveAchievement(48)
-						else	
-							killer:giveAchievement(47)
-						end
-						client:triggerEvent("playerWasted")
+						client:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", client))
+						FactionState:getSingleton():Event_JailPlayer(client, false, true, killer)
 						return
 					end
 				end
-			end 
+			end
 		end
 	end
 

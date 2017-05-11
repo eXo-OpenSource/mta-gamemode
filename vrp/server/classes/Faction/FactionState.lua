@@ -132,6 +132,7 @@ end
 function FactionState:createSelfArrestMarker( pos, int, dim )
 	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
 	self.m_Ped:setImmortal(true)
+	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
 		ped:setInterior(int)
@@ -882,117 +883,73 @@ function FactionState:showRobbedHouseBlip( suspect, housepickup)
 end
 
 
-function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus)
-	if player:getWantedLevel() == 0 then return end
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
-	if not force then
-		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
-			if policeman:isFactionDuty() then
-				if player:getWantedLevel() > 0 then
-					local bailcosts = 0
-					local wantedLevel = player:getWantedLevel()
-					local jailTime = wantedLevel * 5
-					local factionBonus = JAIL_COSTS[wantedLevel]
-	
-					if player:getFaction() and player:getFaction():isEvilFaction() then
-						factionBonus = JAIL_COSTS[wantedLevel]/2
-					end
-	
-					if bail then
-						bailcosts = BAIL_PRICES[wantedLevel]
-						player:setJailBail(bailcosts)
-					end
-	
-					if policeman.vehicle and player.vehicle then
-						self:Command_tie(policeman, "tie", player:getName(), false, true)
-					end
-					local mon = player:getMoney()
-					if mon < factionBonus then
-						local bankM = player:getBankMoney()
-						local remainMoney = factionBonus - mon
-						player:takeMoney(mon, "Knast Strafe (Bar)")
-						if remainMoney > bankM then
-							player:takeBankMoney(bankM, "Knast Strafe (Bank)")
-							player:takeBankMoney(bankM, "Knast Strafe (Bank)")
-						else
-							player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
-						end
-					else
-						player:takeMoney(factionBonus, "Knast Strafe (Bar)")
-					end
+	if policeman:getFaction() and policeman:getFaction():isStateFaction() then
+		if policeman:isFactionDuty() then
+			if player:getWantedLevel() > 0 then
+				local bailcosts = 0
+				local wantedLevel = player:getWantedLevel()
+				local jailTime = wantedLevel * 5
+				local factionBonus = JAIL_COSTS[wantedLevel]
 
-					player:giveKarma(-wantedLevel)
-					player:setJailTime(jailTime)
-					player:setWantedLevel(0)
-					player:moveToJail(CUTSCENE)
-					self:uncuffPlayer( player)
-					player:clearCrimes()
-
-					-- Pay some money to faction and karma, xp to the policeman
-					policeman:getFaction():giveMoney(factionBonus, "Arrest")
-					policeman:giveKarma(wantedLevel)
-					policeman:givePoints(wantedLevel)
-					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
-					StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
-					policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
-					-- Give Achievements
-					if wantedLevel > 4 then
-						policeman:giveAchievement(48)
-					else	
-						policeman:giveAchievement(47)
-					end
-
-					setTimer(function (player) -- (delayed)
-						if isElement(player) then player:giveAchievement(31) end
-					end, 14000, 1, player)
-
-				else
-					policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
+				if player:getFaction() and player:getFaction():isEvilFaction() then
+					factionBonus = JAIL_COSTS[wantedLevel]/2
 				end
+
+				if bail then
+					bailcosts = BAIL_PRICES[wantedLevel]
+					player:setJailBail(bailcosts)
+				end
+
+				if policeman.vehicle and player.vehicle then
+					self:Command_tie(policeman, "tie", player:getName(), false, true)
+				end
+				local mon = player:getMoney()
+				if mon < factionBonus then
+					local bankM = player:getBankMoney()
+					local remainMoney = factionBonus - mon
+					player:takeMoney(mon, "Knast Strafe (Bar)")
+					if remainMoney > bankM then
+						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+					else
+						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+					end
+				else
+					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+				end
+
+				player:giveKarma(-wantedLevel)
+				player:setJailTime(jailTime)
+				player:setWantedLevel(0)
+				player:moveToJail(CUTSCENE)
+				self:uncuffPlayer( player)
+				player:clearCrimes()
+
+				-- Pay some money to faction and karma, xp to the policeman
+				policeman:getFaction():giveMoney(factionBonus, "Arrest")
+				policeman:giveKarma(wantedLevel)
+				policeman:givePoints(wantedLevel)
+				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
+				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
+				policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
+				-- Give Achievements
+				if wantedLevel > 4 then
+					policeman:giveAchievement(48)
+				else
+					policeman:giveAchievement(47)
+				end
+
+				setTimer(function (player) -- (delayed)
+					if isElement(player) then player:giveAchievement(31) end
+				end, 14000, 1, player)
+
 			else
-				policeman:sendError(_("Du bist nicht im Dienst!", player))
-			end
-		end
-	else 
-		local bailcosts = 0
-		local wantedLevel = player:getWantedLevel()
-		local jailTime = wantedLevel * 5
-		local factionBonus = JAIL_COSTS[wantedLevel]
-		if player:getFaction() and player:getFaction():isEvilFaction() then
-			factionBonus = JAIL_COSTS[wantedLevel]/2
-		end
-		if bail then
-			bailcosts = BAIL_PRICES[wantedLevel]
-			player:setJailBail(bailcosts)
-		end
-		if policeman then 
-			if policeman.vehicle and player.vehicle then
-				self:Command_tie(policeman, "tie", player:getName(), false, true)
-			end
-		end
-		local mon = player:getMoney()
-		if mon < factionBonus then
-			local bankM = player:getBankMoney()
-			local remainMoney = factionBonus - mon
-			player:takeMoney(mon, "Knast Strafe (Bar)")
-			if remainMoney > bankM then
-				player:takeBankMoney(bankM, "Knast Strafe (Bank)")
-			else
-				player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 			end
 		else
-			player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+			policeman:sendError(_("Du bist nicht im Dienst!", player))
 		end
-		player:giveKarma(-wantedLevel)
-		player:setJailTime(jailTime)
-		player:setWantedLevel(0)
-		player:moveToJail(CUTSCENE)
-		self:uncuffPlayer( player)
-		player:clearCrimes()
-		setTimer(function (player) -- (delayed)
-			if isElement(player) then player:giveAchievement(31) end
-		end, 14000, 1, player)
-		player.m_DeathInJail = nil
 	end
 end
 
