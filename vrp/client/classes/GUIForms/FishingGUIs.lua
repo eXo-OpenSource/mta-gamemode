@@ -196,15 +196,13 @@ function FishingInformationGUI:constructor()
 
 
 		2) Fangen der Fische (1:30 Minuten)
-
-
-		3) Handeln mit Fische (todo)
 		]]
+		--3) Handeln mit Fische (todo)
 		, self.m_Window)
 
 	local cutscene1 = GUIButton:new(10, 140, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
 	local cutscene2 = GUIButton:new(10, 220, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
-	local cutscene3 = GUIButton:new(10, 300, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
+	local cutscene3 = GUIButton:new(10, 300, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red):hide()
 
 	cutscene1.onLeftClick =
 		function()
@@ -213,7 +211,7 @@ function FishingInformationGUI:constructor()
 			CutscenePlayer:getSingleton():playCutscene("FishingBehavior",
 				function()
 					fadeCamera(true)
-					setCameraTarget(localPlayer)
+					nextframe(setCameraTarget, localPlayer)
 				end, 0)
 		end
 
@@ -229,7 +227,6 @@ function FishingInformationGUI:constructor()
 
 	cutscene3.onLeftClick =
 		function()
-			outputChatBox("TODO")
 			self:delete()
 		end
 end
