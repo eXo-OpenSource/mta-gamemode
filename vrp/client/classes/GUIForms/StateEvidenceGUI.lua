@@ -1,0 +1,57 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/StateEvidenceGUI.lua
+-- *  PURPOSE:     StateEvidenceGUI class
+-- *
+-- ****************************************************************************
+StateEvidenceGUI = inherit(GUIForm)
+inherit(Singleton, StateEvidenceGUI)
+
+addRemoteEvents{"State:sendEvidenceItems"}
+function StateEvidenceGUI:constructor( evidenceTable )
+	GUIForm.constructor(self, screenWidth/2-(500/2), screenHeight/2-(370/2), 500, 370)
+	self.m_Window = GUIWindow:new(0,0,500,370,_"Asservatenkammer",true,true,self)
+
+	self.m_List = GUIGridList:new(30, 50, self.m_Width-60, 270, self.m_Window)
+	self.m_List:addColumn(_"Objekt", 0.2)
+	self.m_List:addColumn(_"Menge", 0.1)
+	self.m_List:addColumn(_"Besitzer", 0.25)
+	self.m_List:addColumn(_"Konfeszierender", 0.25)
+	self.m_List:addColumn(_"Datum", 0.2)
+	self.m_EvidenceTable = evidenceTable
+
+--[[
+	self.m_mitKaution = GUIButton:new(30, 265, self.m_Width-60, 35,_"mit Kaution einknasten", self.m_Window)
+	self.m_mitKaution:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1)
+	self.m_mitKaution.onLeftClick = bind(self.factionArrestMitKaution,self)
+]]
+
+	self:refreshGrid()
+	self.m_DestroyEvidenceButton= GUIButton:new(/self.m_Width/2) - 25, 330, 50, 30, FontAwesomeSymbols.Refresh, self.m_Window):setFont(FontAwesome(15))
+	self.m_DestroyEvidenceButton.onLeftClick = function ()
+		
+	end
+end
+
+function StateEvidenceGUI:refreshGrid()
+	self.m_List:clear()
+	local var1, var2, var3, cop, timeStamp
+	local item
+	for key,evidenceItems in ipairs(self.m_EvidenceTable) do
+		var1, var2, var3, cop, timeStamp = evidenceItems[3], evidenceItems[4], evidenceItems[5], evidenceItems[6], evidenceItems[7]
+		if var1 then
+			item = self.m_List:addItem(var1 or "Unbekannt", var2 or 1, var3 or "Unbekannt", timeStamp or getTime().timestamp) 
+			item.Player = playeritem
+			item.onLeftClick = function() end
+		end
+	end
+end
+
+addEventHandler("State:sendEvidenceItems", root,
+		function( ev )
+			StateFactionArrestGUI:new( ev )
+		end
+	)
+
+
