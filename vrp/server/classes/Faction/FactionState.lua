@@ -101,7 +101,6 @@ function FactionState:constructor()
 	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
-	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -1675,7 +1674,7 @@ function FactionState:showEvidenceStorage(player)
 	end
 end
 
-function FactionState:onRequestEvidenceDestroy()
+function FactionState:Event_onRequestEvidenceDestroy()
 	if client then
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 			local text = _("Möchtest du wirklich den Inhalt der Asservatenkammer zur Zerstörung freigeben?")
