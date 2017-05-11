@@ -127,6 +127,7 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 		local weapon = pickup:getData("weaponId")
 		local ammo = pickup:getData("ammoInWeapon")
 		local owner = pickup:getData("weaponOwner")
+		local factionName = pickup:getData("factionName") or "Keine"
 		local px,py,pz = getElementPosition(pickup)
 		local x,y,z = getElementPosition(client)
 		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
@@ -147,6 +148,7 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 						destroyElement(pickup)
 						--giveWeapon(client,weapon,ammo,true)
 						--FactionState:
+						FactionState:getSingleton():addWeaponToEvidence( client, weapon, ammo, factionName or "Keine")
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer transportiert.", client, 200,200,0)
 					end

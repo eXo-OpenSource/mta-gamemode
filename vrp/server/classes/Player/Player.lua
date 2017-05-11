@@ -492,7 +492,7 @@ function Player:dropReviveWeapons()
 	self:destroyDropWeapons()
 	if self.m_ReviveWeapons then
 		self.m_WorldObjectWeapons =  {}
-		local obj, weapon, ammo, model, x, y, z, dim, int
+		local obj, weapon, ammo, model, x, y, z, dim, int, playerFaction
 		for i = 1, 12 do
 			if self.m_ReviveWeapons[i] then
 				x,y,z = getElementPosition(self)
@@ -501,6 +501,12 @@ function Player:dropReviveWeapons()
 				weapon =  self.m_ReviveWeapons[i][1]
 				ammo = self.m_ReviveWeapons[i][2]
 				model = WEAPON_MODELS_WORLD[weapon]
+				playerFaction = self:getFaction()
+				if not playerFaction then 
+					playerFaction = "Keine"
+				else 
+					playerFaction:getShortName()
+				end
 				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				if model then
 					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
@@ -512,6 +518,7 @@ function Player:dropReviveWeapons()
 							obj:setData("weaponId", weapon)
 							obj:setData("ammoInWeapon", ammo)
 							obj:setData("weaponOwner", self)
+							obj:setData("factionName", playerFaction)
 							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
 							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
 						end

@@ -578,6 +578,7 @@
 	<script src="client/classes/GUIForms/FactionWTLoadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWTHoverGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionMoneyBagHoverGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/StateEvidenceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionNoteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
