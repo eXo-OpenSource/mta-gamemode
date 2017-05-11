@@ -652,6 +652,7 @@
 	<!--<script src="client/classes/Cutscene/Cutscenes/Hospital.lua" type="client"/>-->
 	<script src="client/classes/Cutscene/Cutscenes/ZombieSurvival.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/GravelJob.lua" type="client"/>
+	<script src="client/classes/Cutscene/Cutscenes/Fishing.lua" type="client"/>
 
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
@@ -927,6 +928,9 @@
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>
 	<vrpfile src="files/images/Colorpicker/Cursor.png"/>
+
+	<vrpfile src="files/images/CutsceneAssets/cutscene_bobberbar_info.png" />
+	<vrpfile src="files/images/CutsceneAssets/cutscene_power_info.png" />
 
 	<vrpfile src="files/images/Radio/radio_bg.png"/>
 	<vrpfile src="files/images/Radio/sound_back.png"/>

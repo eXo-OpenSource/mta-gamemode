@@ -189,12 +189,45 @@ function FishingInformationGUI:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Informationen zum Angeln", true, true, self)
 
 	GUILabel:new(10, 35, self.m_Width - 20, 24,
-		[[
+		[[Hallo du!
+		Wenn du möchtest erkläre ich dir in mehreren Schritten wie du Angeln kannst.
+
+		1) Verhalten der Fische (1:30 Minuten)
+
+
+		2) Fangen der Fische (1:30 Minuten)
+
+
+		3) Handeln mit Fische (todo)
 		]]
 		, self.m_Window)
 
-	local startTour = GUIButton:new(self.m_Width - 155, self.m_Height - 30, 150, 25, "Tour starten!", self.m_Window):setBackgroundColor(Color.Red)
-	startTour.onLeftClick =
+	local cutscene1 = GUIButton:new(10, 140, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
+	local cutscene2 = GUIButton:new(10, 220, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
+	local cutscene3 = GUIButton:new(10, 300, 150, 25, "Anschauen!", self.m_Window):setBackgroundColor(Color.Red)
+
+	cutscene1.onLeftClick =
+		function()
+			self:delete()
+
+			CutscenePlayer:getSingleton():playCutscene("FishingBehavior",
+				function()
+					fadeCamera(true)
+					setCameraTarget(localPlayer)
+				end, 0)
+		end
+
+	cutscene2.onLeftClick =
+		function()
+			self:delete()
+			CutscenePlayer:getSingleton():playCutscene("FishingCatch",
+				function()
+					fadeCamera(true)
+					nextframe(setCameraTarget, localPlayer)
+				end, 0)
+		end
+
+	cutscene3.onLeftClick =
 		function()
 			outputChatBox("TODO")
 			self:delete()
