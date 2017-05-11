@@ -1718,10 +1718,11 @@ function FactionState:Event_acceptEvidenceDestroy(client)
 							if type_ then 
 								if type_ == "Waffe" then
 									weapon = evObj[2]
+									weaponAmmo = evObj[3]
 									if weapon then
 										weapon = tonumber(weapon)
-										weaponMoney  = factionWeaponDepotInfo[weapon]["WaffenPreis"]
-										ammoMoney  = factionWeaponDepotInfo[weapon]["MagazinPreis"]
+										weaponMoney  = AmmuNationInfo[weapon].Weapon
+										ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
 										if weaponMoney and ammoMoney then 
 											totalMoney = weaponMoney + ammoMoney
 										end
