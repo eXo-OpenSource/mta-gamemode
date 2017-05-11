@@ -123,6 +123,17 @@ function FactionState:constructor()
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
+	
+	local row = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix())
+	self.m_CurrentEvidenceAmount = 0
+	if row then
+		for i, v in ipairs(row) do
+			self.m_CurrentEvidenceAmount = self.m_CurrentEvidenceAmount + 1
+			self.m_EvidenceRoom[v.Id] = v;
+		end
+	else 
+		self.m_CurrentEvidenceAmount = STATEFACTION_EVIDENCE_MAXITEMS+1
+	end
 end
 
 function FactionState:destructor()
@@ -1622,6 +1633,20 @@ function FactionState:Event_attachBug()
 		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
 		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
+	end
+end
+
+function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
+	if self.m_CurrentEvidenceAmount then 
+		if self.m_CurrentEvidenceAmount < STATEFACTION_EVIDENCE_MAXITEMS  then 
+			local type_ = "Waffe"
+			local copId = 0
+			if isElement(cop) then copId = cop:getId() else copId = cop or 0 end
+			sqlLogs:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Timestamp) VALUES(?, ?, ?, NOW())",
+				sqlLogs:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0)
+				
+			FactionState:sendShortMessage(cop:getName().." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!")
+		end
 	end
 end
 

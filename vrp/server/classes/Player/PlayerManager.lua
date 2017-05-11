@@ -142,7 +142,13 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
 					else
-						client:sendError("Du darfst diese Waffe nicht aufheben!")
+						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
+						setTimer(setPedAnimation,1000,1,client,nil)
+						destroyElement(pickup)
+						--giveWeapon(client,weapon,ammo,true)
+						--FactionState:
+						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
+						outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer transportiert.", client, 200,200,0)
 					end
 				else
 					client:sendError("Du hast zu wenig Spielstunden!")
