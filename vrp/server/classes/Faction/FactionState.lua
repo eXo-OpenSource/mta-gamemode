@@ -132,6 +132,7 @@ end
 function FactionState:createSelfArrestMarker( pos, int, dim )
 	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
 	self.m_Ped:setImmortal(true)
+	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
 		ped:setInterior(int)
