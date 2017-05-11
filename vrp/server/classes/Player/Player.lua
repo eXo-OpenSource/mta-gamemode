@@ -425,6 +425,9 @@ function Player:spawn( )
 		killPed(self)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then 
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -476,6 +479,9 @@ function Player:respawn(position, rotation, bJailSpawn)
 		destroyElement(self.ped_deadDouble)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
 end
 
 function Player:clearReviveWeapons()

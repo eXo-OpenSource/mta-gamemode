@@ -294,7 +294,7 @@ function LocalPlayer:Event_playerWasted()
 		end
 	end
 	setGameSpeed(0.1)
-	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
 	local x,y,z = getPedBonePosition(localPlayer,5)
 	setSkyGradient(10,10,10,30,30,30)
