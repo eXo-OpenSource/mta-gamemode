@@ -28,7 +28,7 @@ function StateEvidenceGUI:constructor( evidenceTable )
 ]]
 
 	self:refreshGrid()
-	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 70, 330, 140, 30, "Inhalt entwerten", self.m_Window):setFont(FontAwesome(15))
+	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 70, 330, 140, 30, "Inhalt entwerten", self.m_Window)
 	self.m_DestroyEvidenceButton.onLeftClick = function ()
 		triggerServerEvent("State:onRequestEvidenceDestroy", localPlayer)
 	end
