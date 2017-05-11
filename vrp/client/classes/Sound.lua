@@ -64,16 +64,22 @@ end
 
 function Sound:fadeIn(length)
 	self.m_Sound:setVolume(0)
-	self.m_Fade:startAnimation(length, "OutQuad", 1)
+	self.m_Fade:startAnimation(length or 10000, "OutQuad", 1)
+	
+	return self
 end
 
 function Sound:fadeOut(length)
 	self.m_Sound:setVolume(1)
-	self.m_Fade:startAnimation(length, "OutQuad", 0)
+	self.m_Fade:startAnimation(length or 10000, "OutQuad", 0)
+	
+	return self
 end
 
 function Sound:setVolume(volume)
 	self.m_Sound:setVolume(volume)
+	
+	return self
 end
 
 function Sound:updateRenderTarget()
