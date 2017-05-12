@@ -298,14 +298,13 @@ HelpTexts = {
 			Jusonex (kleinere Unterstüzung)
 			Strobe
 			PewX
-			MegaThorx
 
 			Projektleitung:
 			[eXo]Stumpy
+			[eXo]Clausus
 			Heisi
 
 			stellv. Projektleitung:
-			[eXo]Clausus
 			[eXo]StiviK
 
 			Servermanagement:
@@ -314,21 +313,27 @@ HelpTexts = {
 
 			Administration:
 			[eXo]Luka
-			[eXo]John_Rambo
 			[eXo]StrongVan
 
 			Moderation:
-			[eXo]Phil
-			[eXo]High5
-			[eXo]Gamer64
+			[eXo]tisti
+			[eXo]ZaPP
 
 			Support:
-			[eXo]Bonez
-			[eXo]Janni_Morita
 			[eXo]AfGun
+			[eXo]Korsakov
+			[eXo]Cpen
+			[eXo]Gamora.
+			[eXo]MiHawk
+			[eXo]SaLvaz
+			
+			Clanmitglied:
+			[eXo]John_Rambo
 			[eXo]Burmtim
-			[eXo]Risi
-
+			Krox
+			Risi
+			Toxsi
+			
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
 
