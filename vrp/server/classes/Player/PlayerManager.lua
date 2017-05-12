@@ -423,6 +423,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
 						StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, killer, 0)
 						killer:getFaction():addLog(killer, "Knast", "hat "..client:getName().." für "..jailTime.."min. eingesperrt!")
+						outputChatBox("Du hast den Spieler "..getPlayerName(client).." außer Gefecht gesetzt und er wird ins Gefängnis transportiert!",killer,0,0,190)
 						-- Give Achievements
 						if wantedLevel > 4 then
 							killer:giveAchievement(48)
