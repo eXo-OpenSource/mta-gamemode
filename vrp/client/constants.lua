@@ -326,14 +326,14 @@ HelpTexts = {
 			[eXo]Gamora.
 			[eXo]MiHawk
 			[eXo]SaLvaz
-			
+
 			Clanmitglied:
 			[eXo]John_Rambo
 			[eXo]Burmtim
 			Krox
 			Risi
 			Toxsi
-			
+
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
 
@@ -703,9 +703,9 @@ end)
 NOTIFICATION_TYPE_INVATION = 1
 NOTIFICATION_TYPE_GAME     = 2
 
-TEXTURE_SYSTEM_HELP = 
+TEXTURE_SYSTEM_HELP =
 {
-	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen wenn dein Client ein Fahrzeug in der Nähe rendert. Dies kann dazu führen, dass du nur die Texturen lädst, welche du auch benötigst.",
-	[2] = "In diesem Modus werden beim Einloggen alle Texturen runtergeladen. //Achtung dies bedeuted, dass es zu einem Standbild (~5-10 Sekunden ) beim Einloggen kommen kann, da alle Texturen angewendet werden. Jedoch müssen anschließend keine Texturen mehr geladen werden.",
-	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.",
+	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen, wenn ein entsprechendes Fahrzeug in deiner Nähe ist. Dies führt dazu, dass du nur die Texturen lädst, welche du auch benötigst.\nSinnvoll bei Graifkkarten mit wenig Videospeicher\n\nZum übernehmen bitte reconnecten!",
+	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!\n\nZum übernehmen bitte reconnecten!",
+	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.\n\nZum übernehmen bitte reconnecten!",
 }

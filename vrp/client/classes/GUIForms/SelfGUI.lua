@@ -247,8 +247,8 @@ function SelfGUI:constructor()
 	self.m_TabSettings = tabSettings
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
-	self.m_SettingsGrid:addColumn(_"Einstellung", 1)
-	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Sonstiges"}
+	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
+	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Texturen", "Sonstiges"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -908,7 +908,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "reddot", state)
 			HUDUI:getSingleton():toggleReddot(state)
 		end
-	elseif setting == "Sonstiges" then
+	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
 		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
 		self.m_TextureModeChange:addItem("In der Nähe laden")
@@ -916,15 +916,17 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange:addItem("Deaktiviert")
 		self.m_TextureModeChange.onChange = function(text, index)
 			core:set("Other", "TextureMode", index)
-			--TextureReplace.setMode(index)
-			outputChatBox("Einstellungen gespeichert. Zum Anwenden bitte reconnecten!", 200, 200, 50)
-			self:close()
-			ShortMessage:new(_(TEXTURE_SYSTEM_HELP[index]), "Texture-Settings", Color.DarkLightBlue, 20000)
+			self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[index]))
 		end
-		self.m_TextureModeChange:setIndex(core:get("Other", "TextureMode", 1), true)
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
-		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_InfoLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.6, self.m_Height*0.055, _"", self.m_SettingBG)
+
+		local currentMode = core:get("Other", "TextureMode", 1)
+		self.m_TextureModeChange:setIndex(currentMode, true)
+		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
+	elseif setting == "Sonstiges" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
+		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		self.m_RadarChange:addItem("Normal")
 		self.m_RadarChange:addItem("Instant")
 		self.m_RadarChange.onChange = function(text, index)
@@ -933,8 +935,8 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.35, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
-		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
+		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
 		self.m_SkinSpawn:setFont(VRPFont(25))
 		self.m_SkinSpawn:setFontSize(1)
 		self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -942,7 +944,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "spawnFactionSkin", bool)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
-		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
+		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
 		self.m_Indicators:setFont(VRPFont(25))
 		self.m_Indicators:setFontSize(1)
 		self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
@@ -951,7 +953,7 @@ function SelfGUI:onSettingChange(setting)
 			Indicator:getSingleton():toggle()
 		end
 
-		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.60, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
+		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
 		self.m_ShortMessageCTC:setFont(VRPFont(25))
 		self.m_ShortMessageCTC:setFontSize(1)
 		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
@@ -959,7 +961,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "shortMessageCTC", state)
 		end
 
-		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.44, self.m_Height*0.60, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
+		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.44, self.m_Height*0.44, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
 		self.m_ShortMessageCTCInfo:setFont(VRPFont(22.5))
 		self.m_ShortMessageCTCInfo:setFontSize(1)
 		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
@@ -976,7 +978,7 @@ function SelfGUI:onSettingChange(setting)
 	--	self.m_StartIntro.onChange = function (state)
 	--		core:set("HUD", "startScreen", state)
 	--	end
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.67, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
 		self.m_HallelujaSound:setFontSize(1)
 		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
@@ -984,7 +986,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "HallelujaSound", state)
 		end
 
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
 		self.m_HitSound:setFont(VRPFont(25))
 		self.m_HitSound:setFontSize(1)
 		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
