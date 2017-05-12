@@ -62,6 +62,7 @@ function createModel(player, weapon, state, slot)
 				if slot >= 3 and (weapon ~= 32 and weapon ~= 28) then 
 					if getElementData(player, "a:weaponIsConcealed") then 
 						setElementAlpha(object, 0)
+						setObjectScale(object,0)
 					end
 				end
 			end
@@ -102,6 +103,7 @@ function alphaWepsVehicle(theVehicle, seat, jacked)
 		local object = getElementData(source, "a:weapon:slot"..i.."")
 		if isElement(object) then
 			setElementAlpha(object, 0)
+			setObjectScale(object,0)
 		end
 	end
 end
@@ -115,6 +117,7 @@ function unalphaWepsVehicle(theVehicle, seat, jacked)
 			local object = getElementData(source, "a:weapon:slot"..i.."")
 			if isElement(object) then 
 				setElementAlpha(object, 255)
+				setObjectScale(object,1)
 			end
 		end 
 	else 
@@ -124,6 +127,7 @@ function unalphaWepsVehicle(theVehicle, seat, jacked)
 				weapon = getElementData(object, "a:weapon:id")
 				if i < 3 and ( weapon ~= 32 and weapon~=28) then
 					setElementAlpha(object, 255)
+					setObjectScale(object,1)
 				end
 			end
 		end
@@ -177,13 +181,13 @@ end)
 
 addEvent("WeaponAttach:removeAllWeapons")
 addEventHandler("WeaponAttach:removeAllWeapons", root, function() 
-	if client then 
+	if source then 
 		for i = 1, 12 do
-			local object = getElementData(player, "a:weapon:slot"..i.."")
+			local object = getElementData(source, "a:weapon:slot"..i.."")
 			if isElement(object) then
-				local id = getElementData(object, "a:weapon:id")
+				local id = getElementData(source, "a:weapon:id")
 				destroyElement(object)
-				setElementData(player, "a:weapon:slot"..i.."", nil)
+				setElementData(source, "a:weapon:slot"..i.."", nil)
 			end
 		end
 	end
@@ -200,6 +204,7 @@ addEventHandler("WeaponAttach:concealWeapons", root , function()
 					weapon = getElementData(wObj, "a:weapon:id")
 					if weapon ~= 32 and weapon ~= 28 then
 						setElementAlpha(wObj, 0)
+						setObjectScale(object,0)
 					end
 				end
 			end
@@ -218,6 +223,7 @@ addEventHandler("WeaponAttach:unconcealWeapons", root , function()
 					wObj =  getElementData(source, "a:weapon:slot"..i.."")
 					if isElement(wObj) then
 						setElementAlpha(wObj, 255)
+						setObjectScale(wObj,1)
 					end
 				end
 			end
