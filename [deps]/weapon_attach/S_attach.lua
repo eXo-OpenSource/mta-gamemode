@@ -109,6 +109,7 @@ addEventHandler("onPlayerVehicleEnter", getRootElement(), alphaWepsVehicle)
 
 function unalphaWepsVehicle(theVehicle, seat, jacked)
 	local isConcealed = getElementData( source, "a:weaponIsConcealed")
+	local weapon
 	if not isConcealed then
 		for i = 1, 12 do
 			local object = getElementData(source, "a:weapon:slot"..i.."")
@@ -117,10 +118,13 @@ function unalphaWepsVehicle(theVehicle, seat, jacked)
 			end
 		end 
 	else 
-		for i = 1, 3 do
+		for i = 1, 12 do
 			local object = getElementData(source, "a:weapon:slot"..i.."")
 			if isElement(object) then 
-				setElementAlpha(object, 255)
+				weapon = getElementData(object, "a:weapon:id")
+				if i < 3 and ( weapon ~= 32 and weapon~=28) then
+					setElementAlpha(object, 255)
+				end
 			end
 		end
 	end	
