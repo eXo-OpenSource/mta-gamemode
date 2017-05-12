@@ -1,3 +1,7 @@
+for key, player in ipairs(getElementsByType("player")) do 
+	setElementData(player, "a:weaponIsConcealed",false)
+end
+
 --	[ID] = {bone, x, y, z, rx, ry, rz, model, slot},
 local weaponTable = {
 	[22] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 346, 2},
@@ -55,6 +59,11 @@ function createModel(player, weapon, state, slot)
 				if theVehicle then
 					setElementAlpha(object, 0)
 				end
+				if slot >= 3 and (weapon ~= 32 and weapon ~= 28) then 
+					if getElementData(player, "a:weaponIsConcealed") then 
+						setElementAlpha(object, 0)
+					end
+				end
 			end
 		elseif state == 0 then
 			for i = 1, 12 do
@@ -99,11 +108,116 @@ end
 addEventHandler("onPlayerVehicleEnter", getRootElement(), alphaWepsVehicle)
 
 function unalphaWepsVehicle(theVehicle, seat, jacked)
-    for i = 1, 12 do
-		local object = getElementData(source, "a:weapon:slot"..i.."")
-		if isElement(object) then 
-			setElementAlpha(object, 255)
+	local isConcealed = getElementData( source, "a:weaponIsConcealed")
+	if not isConcealed then
+		for i = 1, 12 do
+			local object = getElementData(source, "a:weapon:slot"..i.."")
+			if isElement(object) then 
+				setElementAlpha(object, 255)
+			end
+		end 
+	else 
+		for i = 1, 3 do
+			local object = getElementData(source, "a:weapon:slot"..i.."")
+			if isElement(object) then 
+				setElementAlpha(object, 255)
+			end
 		end
-	end
+	end	
 end
 addEventHandler("onPlayerVehicleExit", getRootElement(), unalphaWepsVehicle)
+
+addEvent("onElementDimensionChange")
+addEventHandler("onElementDimensionChange", root, function( dim ) 
+	if source then 
+		if getElementType(source) == "player" then 
+			local wObj
+			for i = 1, 12 do 
+				wObj =  getElementData(source, "a:weapon:slot"..i.."")
+				if isElement(wObj) then
+					setElementDimension(wObj, dim)
+				end
+			end
+		end	
+	end
+end)
+
+addEvent("onElementInteriorChange")
+addEventHandler("onElementInteriorChange", root, function( int ) 
+	if source then 
+		if getElementType(source) == "player" then 
+			local wObj
+			for i = 1, 12 do 
+				wObj =  getElementData(source, "a:weapon:slot"..i.."")
+				if isElement(wObj) then
+					setElementInterior(wObj, int)
+				end
+			end
+		end	
+	end
+end)
+
+addEventHandler("onPlayerQuit", root, function(  ) 
+	if source then 
+		if getElementType(source) == "player" then 
+			local wObj
+			for i = 1, 12 do 
+				wObj =  getElementData(source, "a:weapon:slot"..i.."")
+				if isElement(wObj) then
+					destroyElement(wObj)
+				end
+			end
+		end	
+	end
+end)
+
+addEvent("WeaponAttach:removeAllWeapons")
+addEventHandler("WeaponAttach:removeAllWeapons", root, function() 
+	if client then 
+		for i = 1, 12 do
+			local object = getElementData(player, "a:weapon:slot"..i.."")
+			if isElement(object) then
+				local id = getElementData(object, "a:weapon:id")
+				destroyElement(object)
+				setElementData(player, "a:weapon:slot"..i.."", nil)
+			end
+		end
+	end
+end)
+
+addEvent("WeaponAttach:concealWeapons")
+addEventHandler("WeaponAttach:concealWeapons", root , function() 
+	if source then 
+		if getElementType(source) == "player" then 
+			local wObj, weapon 
+			for i = 3, 12 do 
+				wObj =  getElementData(source, "a:weapon:slot"..i.."")
+				if isElement(wObj) then
+					weapon = getElementData(wObj, "a:weapon:id")
+					if weapon ~= 32 and weapon ~= 28 then
+						setElementAlpha(wObj, 0)
+					end
+				end
+			end
+			setElementData(source, "a:weaponIsConcealed", true)
+		end	
+	end
+end)
+
+addEvent("WeaponAttach:unconcealWeapons")
+addEventHandler("WeaponAttach:unconcealWeapons", root , function() 
+	if source then 
+		if getElementType(source) == "player" then 
+			if not getPedOccupiedVehicle(source) then
+				local wObj
+				for i = 1, 12 do 
+					wObj =  getElementData(source, "a:weapon:slot"..i.."")
+					if isElement(wObj) then
+						setElementAlpha(wObj, 255)
+					end
+				end
+			end
+			setElementData(source, "a:weaponIsConcealed", false)
+		end	
+	end
+end)

@@ -976,10 +976,12 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 				if ( interior["id"] == data ) then
 					local vehicle = getPedOccupiedVehicle ( player )
 					setElementInterior ( player, interior["world"] )
+					triggerEvent("onElementInteriorChange", player, interior["world"])
 					local x, y, z = interior["x"] or 0, interior["y"] or 0, interior["z"] or 0
 					local rot = interior["r"] or 0
 					if ( vehicle ) then 
 						setElementInterior ( vehicle, interior["world"] )
+						triggerEvent("onElementInteriorChange", vehicle, interior["world"])
 						setElementPosition ( vehicle, x, y, z + 0.2 )
 					else
 						setElementPosition ( player, x, y, z + 0.2 )
@@ -987,6 +989,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					end
 					action = "interior"
 					mdata = data
+					
 				end
 			end
 		elseif ( action == "setdimension" ) then
@@ -997,6 +1000,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					action = nil
 				end
 				mdata = dimension
+				triggerEvent("onElementDimensionChange", player, dimension)
 			else
 				action = nil
 			end
@@ -1048,6 +1052,8 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 				vehicle = createVehicle ( data, x, y, z, 0, 0, r )
 				setElementDimension ( vehicle, getElementDimension ( player ) )
 				setElementInterior ( vehicle, getElementInterior ( player ) )
+				triggerEvent("onElementInteriorChange", vehicle, getElementInterior ( player ))
+				triggerEvent("onElementDimensionChange", vehicle, getElementDimension ( player ))
 				warpPedIntoVehicle ( player, vehicle )
 				setElementVelocity ( vehicle, vx, vy, vz )
 			end
@@ -1087,6 +1093,8 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					fadeCamera ( p, false, 1, 0, 0, 0 )
 					setElementDimension ( p, getElementDimension ( to ) )
 					setElementInterior ( p, getElementInterior ( to ) )
+					triggerEvent("onElementInteriorChange", p, getElementInterior ( to ))
+					triggerEvent("onElementDimensionChange", p, getElementDimension ( to ))
 					setTimer ( fadeCamera, 1000, 1, p, true, 1 )
 				end
       		  	if ( isPedInVehicle ( to ) ) then

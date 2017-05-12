@@ -526,6 +526,7 @@ function Player:dropReviveWeapons()
 				end
 			end
 		end
+		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
 

@@ -62,6 +62,9 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		if bConcealOutput then
 			player:meChat(true, "versteckt einige Waffen in sein/e "..objName.." !")
 		end
+		if bIsConceal then 
+			triggerEvent("WeaponAttach:concealWeapons", player)
+		end
 	elseif player.m_IsWearingShirt == itemName and player.m_Shirt then --// if the player clicks onto the same Shirt once more remove it
 		destroyElement(player.m_Shirt)
 		self.m_Shirts[player] = nil
@@ -69,6 +72,7 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		player.m_Shirt = false
 		player:meChat(true, "setzt "..WearableShirt.objectTable[itemName][8].." ab!")
 		setElementData(player,"CanWeaponBeConcealed",false)
+		triggerEvent("WeaponAttach:unconcealWeapons", player)
 	else --// else the player must have clicked on another Shirt otherwise this instance of the class would have not been called
 		if isElement(player.m_Shirt) then
 			destroyElement(player.m_Shirt)
@@ -89,6 +93,9 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 					break
 				end
 			end
+		end
+		if bIsConceal then 
+			triggerEvent("WeaponAttach:concealWeapons", player)
 		end
 		if bConcealOutput then
 			player:meChat(true, "versteckt einige Waffen in "..objName.." !")
