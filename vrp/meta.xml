@@ -1817,7 +1817,7 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
-
+	<include resource="Weapon_Attach" />
 
 	<!-- ACL Request -->
 	<aclrequest>
