@@ -94,6 +94,9 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
 			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
+			if not target:getData("isInDeathMatch") then
+				target:setReviveWeapons()
+			end
 			target:kill(attacker, weapon, bodypart)
 		end
 	else

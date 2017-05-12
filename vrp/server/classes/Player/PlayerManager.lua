@@ -160,7 +160,7 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 	end
 end
 
-function PlayerManager:Event_OnWasted()
+function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 	if source.ped_deadDouble then
 		if isElement(source.ped_deadDouble) then
 			destroyElement(source.ped_deadDouble)
@@ -173,6 +173,9 @@ function PlayerManager:Event_OnWasted()
 		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
 		setElementDimension(source.ped_deadDouble,dim)
 		setElementInterior(source.ped_deadDouble, int)
+		if kWeapon == 34 then 
+			setPedHeadless(source.ped_deadDouble, true)
+		end
 		local randAnim = math.random(1,5)
 		if randAnim == 5 then
 			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
