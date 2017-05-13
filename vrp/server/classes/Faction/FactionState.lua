@@ -761,19 +761,24 @@ end
 
 function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
-		local amount = tonumber(amount)
 		local reason, wAmount = self:getFullReasonFromShortcut(table.concat({...}, " "))
-		if ( amount and amount >= 1 and amount <= 6 ) or wAmount then
+		local reason2, wAmount2
+		if amount then 
+			if not tonumber(amount) then
+				reason2, wAmount2 = self:getFullReasonFromShortcut(amount)
+				if reason2 and wAmount then 
+					reason = reason2
+					amount = wAmount2
+				end	
+			end
+		end
+		local amount = tonumber(amount)
+		if ( amount and amount >= 1 and amount <= 6 )  then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
-						if not wAmount then
-							target:giveWantedLevel(amount)
-						else 
-							target:giveWantedLevel(wAmount)
-							amount = wAmount
-						end
+						target:giveWantedLevel(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
