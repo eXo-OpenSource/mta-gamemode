@@ -47,8 +47,18 @@ function giveWeapon( player, weapon, ammo, current)
 				end
 			end
 		end
+	else 
+		if player and ammo then
+			if ammo ~= 0 then
+				local currentWeapon = getPlayerWeapon(player,slot)
+				if currentWeapon ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
 	end
-	_giveWeapon(player, weapon, ammo, current)
+	local result = _giveWeapon(player, weapon, ammo, current)
+	return result
 end
 
 function takeWeapon( player, weapon, ammo)
@@ -71,15 +81,26 @@ function takeWeapon( player, weapon, ammo)
 			end
 		end
 	end
-	_takeWeapon(player, weapon, ammo)
+	local result =_takeWeapon(player, weapon, ammo)
+	return result
 end
 
 function takeAllWeapons( player ) 
-	if player then 
-		if getElementHealth(player) > 0 then 
-			triggerEvent("WeaponAttach:removeAllWeapons", player)
+	if player ~= getRootElement() then
+		if player then 
+			if getElementHealth(player) > 0 then 
+				triggerEvent("WeaponAttach:removeAllWeapons", player)
+			end
+		end
+	else
+		for key, pl in ipairs(getElementsByType("player")) do 
+			if getElementHealth(pl) > 0 then 
+				triggerEvent("WeaponAttach:removeAllWeapons", pl)
+			end
 		end
 	end
+	local result = _takeAllWeapons( player )
+	return result
 end
 
 addEventHandler ( "onResourceStart", _root, function ( resource )
