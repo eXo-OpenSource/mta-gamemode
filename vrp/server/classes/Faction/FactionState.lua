@@ -766,13 +766,13 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 		if amount then 
 			if not tonumber(amount) then
 				reason2, wAmount2 = self:getFullReasonFromShortcut(amount)
-				if reason2 and wAmount then 
+				if reason2 and wAmount2 then 
 					reason = reason2
 					amount = wAmount2
 				end	
 			end
 		end
-		local amount = tonumber(amount)
+		amount = tonumber(amount)
 		if ( amount and amount >= 1 and amount <= 6 )  then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
