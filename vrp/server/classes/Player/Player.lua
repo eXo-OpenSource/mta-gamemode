@@ -428,6 +428,8 @@ function Player:spawn( )
 	if self.m_DeathInJail then 
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+	triggerEvent("WeaponAttach:removeAllWeapons", self)
+	triggerEvent("WeaponAttach:onInititate", self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -482,6 +484,8 @@ function Player:respawn(position, rotation, bJailSpawn)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+	triggerEvent("WeaponAttach:removeAllWeapons", self)
+	triggerEvent("WeaponAttach:onInititate", self)
 end
 
 function Player:clearReviveWeapons()

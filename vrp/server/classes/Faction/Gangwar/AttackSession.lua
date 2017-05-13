@@ -451,7 +451,6 @@ function AttackSession:takeWeaponFromBox( key )
 			client:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", client, MIN_WEAPON_LEVELS[weaponId]))
 			return
 		end
-
 		giveWeapon( source, weaponId, self.m_BoxWeapons[key][2], true )
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..WEAPON_NAMES[weaponId].." aus der Box heraus.",0,204,204,true)
 		table.remove( self.m_BoxWeapons, key )

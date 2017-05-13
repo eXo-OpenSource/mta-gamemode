@@ -10,12 +10,12 @@ local weaponTable = {
 	[25] = {3, 0, -0.15, 0.245, 8, 90, 0, 349, 3},
 	[26] = {13, -0.07, 0.11, -0.05, 180, 90, -90, 350, 3},
 	[27] = {3, 0, -0.15, 0.245, 8, 90, 0, 351, 3},
-	[28] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 352, 4},
-	[29] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 353, 4},
+	[28] = {3, 0, -0.1, -0.13, 0, 90, 180, 352, 4},
+	[29] = {14, 0.1, -0.07, 0.02, 180, 90, -140, 353, 4},
 	[30] = {3, 0.175, 0.2, 0.125, 180, 240, 5, 355, 5},
-	[31] = {3, 0.175, 0.2, 0.125, 180, 240, 5, 356, 5},
-	[32] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 372, 4},
-	[33] = {3, 0, -0.13, -0.245, -3, 270, 0, 357, 6},
+	[31] = {3, 0.175, 0.24, 0.125, 180, 240, 5, 356, 5},
+	[32] = {3, 0.19, -0.08, -0.12, 0, 60, 180, 372, 4},
+	[33] = {3, 0, -0.18, -0.33, -3, 270, 0, 357, 6},
 	[34] = {3, 0, -0.13, -0.245, -3, 270, 0, 358, 6},
 }
 
@@ -118,6 +118,8 @@ function unalphaWepsVehicle(theVehicle, seat, jacked)
 			if isElement(object) then 
 				setElementAlpha(object, 255)
 				setObjectScale(object,1)
+			else 
+				createModel(source, getPedWeapon(source, i ), 1, i)
 			end
 		end 
 	else 
@@ -128,6 +130,10 @@ function unalphaWepsVehicle(theVehicle, seat, jacked)
 				if i < 3 and ( weapon ~= 32 and weapon~=28) then
 					setElementAlpha(object, 255)
 					setObjectScale(object,1)
+				end
+			else 
+				if i < 3 and ( weapon ~= 32 and weapon~=28) then
+					createModel(source, getPedWeapon(source, i ), 1, i)
 				end
 			end
 		end
@@ -198,17 +204,17 @@ addEventHandler("WeaponAttach:concealWeapons", root , function()
 	if source then 
 		if getElementType(source) == "player" then 
 			local wObj, weapon 
+			setElementData(source, "a:weaponIsConcealed", true)
 			for i = 3, 12 do 
 				wObj =  getElementData(source, "a:weapon:slot"..i.."")
 				if isElement(wObj) then
 					weapon = getElementData(wObj, "a:weapon:id")
 					if weapon ~= 32 and weapon ~= 28 then
-						setElementAlpha(wObj, 0)
-						setObjectScale(object,0)
+						createModel(source, getPedWeapon(source, i ), 0, i)
+						setElementData(source, "a:weapon:slot"..i.."", nil)
 					end
 				end
 			end
-			setElementData(source, "a:weaponIsConcealed", true)
 		end	
 	end
 end)
@@ -217,17 +223,70 @@ addEvent("WeaponAttach:unconcealWeapons")
 addEventHandler("WeaponAttach:unconcealWeapons", root , function() 
 	if source then 
 		if getElementType(source) == "player" then 
+			setElementData(source, "a:weaponIsConcealed", false)
+			local currentWeapon = getPedWeapon(source)
+			local iWeapon
 			if not getPedOccupiedVehicle(source) then
-				local wObj
 				for i = 1, 12 do 
-					wObj =  getElementData(source, "a:weapon:slot"..i.."")
-					if isElement(wObj) then
-						setElementAlpha(wObj, 255)
-						setObjectScale(wObj,1)
+					iWeapon = getPedWeapon(source, i )
+					if iWeapon ~= currentWeapon then
+						createModel(source, iWeapon, 1, i)
 					end
 				end
 			end
-			setElementData(source, "a:weaponIsConcealed", false)
 		end	
+	end
+end)
+
+addEvent("WeaponAttach:onWeaponGive") 
+addEventHandler("WeaponAttach:onWeaponGive", root, function( newWeapon, slot, force, obj)
+	if source then 
+		if getElementType(source) == "player" then 
+			if newWeapon and slot then
+				local wObj =  getElementData(source, "a:weapon:slot"..slot.."")
+				local weapon
+				if isElement(wObj) then
+					weapon = getElementData(wObj, "a:weapon:id")
+					createModel(source, weapon, 0, slot)
+					setElementData(source, "a:weapon:slot"..slot.."", nil)
+				end
+				if not force then
+					createModel(source, newWeapon, 1, slot)
+				end
+			end
+		end
+	end
+end)
+
+addEvent("WeaponAttach:onWeaponTake")
+addEventHandler("WeaponAttach:onWeaponTake", root, function( takeWeaponID )
+	if source then 
+		if getElementType(source) == "player" then 
+			if takeWeaponID then	
+				local slot = getSlotFromWeapon(takeWeaponID)
+				if slot then
+					createModel(source, takeWeaponID, 0, slot)
+					setElementData(source, "a:weapon:slot"..slot.."", nil)
+				end
+			end
+		end
+	end
+end)
+
+addEvent("WeaponAttach:onInititate")
+addEventHandler("WeaponAttach:onInititate", root, function()
+	if source then 
+		if getElementType(source) == "player" then 
+			local weapon
+			local currentWeapon = getPlayerWeapon( source )
+			for i = 1, 12 do 
+				local weapon = getPlayerWeapon(source, i)
+				if weapon then 
+					if weapon ~= currentWeapon then
+						createModel(source, weapon, 1, i)
+					end
+				end
+			end
+		end
 	end
 end)

@@ -11,7 +11,9 @@
 _root = getRootElement()
 _types = { "player", "team", "vehicle", "resource", "bans", "server", "admin" }
 _settings = nil
-
+_giveWeapon = giveWeapon
+_takeWeapon = takeWeapon
+_takeAllWeapons = takeAllWeapons
 aPlayers = {}
 aLogMessages = {}
 aInteriors = {}
@@ -30,6 +32,53 @@ function notifyPlayerLoggedIn(player)
 	end
 	if unread > 0 then
 		outputChatBox( unread .. " unread Admin message" .. ( unread==1 and "" or "s" ), player, 255, 0, 0 )
+	end
+end
+
+function giveWeapon( player, weapon, ammo, current)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) and player and ammo then
+			if ammo ~= 0 then
+				local wId = getElementData(object, "a:weapon:id")
+				if wId ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
+	end
+	_giveWeapon(player, weapon, ammo, current)
+end
+
+function takeWeapon( player, weapon, ammo)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) then
+			local wId = getElementData(object, "a:weapon:id")
+			local tAmmo = getPedTotalAmmo (player, slot)
+			if not ammo then
+				if (wId == weapon ) then
+					triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+				end
+			else
+				if ammo and tAmmo then
+					if ( wId == weapon and (ammo >= tAmmo)) then 
+						triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+					end
+				end
+			end
+		end
+	end
+	_takeWeapon(player, weapon, ammo)
+end
+
+function takeAllWeapons( player ) 
+	if player then 
+		if getElementHealth(player) > 0 then 
+			triggerEvent("WeaponAttach:removeAllWeapons", player)
+		end
 	end
 end
 
@@ -1061,6 +1110,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 		elseif ( action == "giveweapon" ) then
 			if ( giveWeapon ( player, data, additional, true ) ) then
 				mdata = getWeaponNameFromID ( data )
+				
 				more = additional
 			else
 				action = nil
@@ -1540,3 +1590,5 @@ function checkNickOnChange(old, new)
 	end
 end
 addEventHandler("onPlayerChangeNick", root, checkNickOnChange)
+
+
