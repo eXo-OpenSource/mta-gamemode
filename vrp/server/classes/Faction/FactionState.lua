@@ -602,58 +602,99 @@ end
 
 
 function FactionState:getFullReasonFromShortcut(reason)
+	local amount = false
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
 		reason = "Beschuss/Waffennutzung"
+		amount = 2
 	elseif string.lower(reason) == "db" then
-		reason = "Drogenbesitz"
+		reason = "Drogenbesitz <50g"
+		amount = 1
+	elseif string.lower(reason) == "db2" then
+		reason = "Drogenbesitz 50g < 149g <"
+		amount = 2
+	elseif string.lower(reason) == "db2" then
+		reason = "Drogenbesitz 150g <"
+		amount = 3
 	elseif string.lower(reason) == "br" then
 		reason = "Banküberfall"
+		amount = 5
 	elseif string.lower(reason) == "mt" then
 		reason = "Mats-Truck"
+		amount = 4
 	elseif string.lower(reason) == "wt" then
 		reason = "Waffen-Truck"
+		amount = 4
 	elseif string.lower(reason) == "dt" then
 		reason = "Drogen-Truck"
+		amount = 4
 	elseif string.lower(reason) == "gt" then
 		reason = "Geldtruck-Überfall"
+		amount = 4
 	elseif string.lower(reason) == "kh" then
 		reason = "Knasthack/Knastausbruch"
+		amount = 6
 	elseif string.lower(reason) == "swt" then
 		reason = "Staatswaffentruck-Überfall"
+		amount = 5
 	elseif string.lower(reason) == "illad" then
 		reason = "Illegale Werbung"
+		amount = 1
 	elseif string.lower(reason) == "kpv" then
 		reason = "Körperverletzung"
+		amount = 1
 	elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
 		reason = "Einbruch-in-die-PD-Garage"
+		amount = 6
 	elseif string.lower(reason) == "wd" then
 		reason = "Waffen-Drohung"
+		amount = 2
 	elseif string.lower(reason) == "bh" then
 		reason = "Beihilfe einer Straftat"
+		amount = false
 	elseif string.lower(reason) == "vw" then
 		reason = "Verweigerung-zur-Durchsuchung"
+		amount = 2
 	elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
 		reason = "Beamtenbeleidigung"
+		amount = 1
 	elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
 		reason = "Flucht aus Kontrolle"
+		amount = 2
 	elseif string.lower(reason) == "kt" then
 		reason = "Koks-Truck"
+		amount = 4
 	elseif string.lower(reason) == "zt" then
 		reason = "Überfall auf Zeugenschutz"
+		amount = 4
 	elseif string.lower(reason) == "bv" then
 		reason = "Befehlsverweigerung"
+		amount = 1
 	elseif string.lower(reason) == "sb" then
 		reason = "Sachbeschädigung"
+		amount = 1
 	elseif string.lower(reason) == "rts" then
 		reason = "Shop-Überfall"
+		amount = 3
+	elseif string.lower(reason) == "haus" then
+		reason = "Hausrausb"
+		amount = 3
 	elseif string.lower(reason) == "eöä" then
 		reason = "Erregung öffentlichen Ärgernisses"
+		amount = 1
 	elseif string.lower(reason) == "vd" then
 		reason = "versuchter Diebstahl"
+		amount = 1
 	elseif string.lower(reason) == "fof" then
 		reason = "Fahren ohne Führerschein"
+		amount = 1
+	elseif string.lower(reason) == "gn" then 
+		reason = "Geiselnahme"
+		amount = 6
+	elseif  string.lower(reason) == "stellen" then 
+		reason = "Stellenflucht"
+		amount = 6
 	end
-	return reason
+	return reason, amount
 end
 
 function FactionState:sendShortMessage(text, ...)
@@ -721,13 +762,18 @@ end
 function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
-		if amount and amount >= 1 and amount <= 6 then
-			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
+		local reason, wAmount = self:getFullReasonFromShortcut(table.concat({...}, " "))
+		if ( amount and amount >= 1 and amount <= 6 ) or wAmount then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
-						target:giveWantedLevel(amount)
+						if not wAmount then
+							target:giveWantedLevel(amount)
+						else 
+							target:giveWantedLevel(wAmount)
+							amount = wAmount
+						end
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
