@@ -34,13 +34,14 @@ function FactionState:constructor()
 
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker( Vector3(1561.51, -1678.40, 16.20) )
+	self:createEvidencePickup(1584.68, -1686.32, 15.00, 0, 0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
 		["Blitzer"] = 0
 	}
 
-	nextframe( -- Todo workaround
+	nextframe(
 		function ()
 			self:loadLSPD(1)
 			self:loadFBI(2)
@@ -55,7 +56,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick",
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:declineEvidenceDestroy","State:onRequestEvidenceDestroy"
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -101,6 +102,10 @@ function FactionState:constructor()
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
+	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
+
+	addEventHandler("State:acceptEvidenceDestroy", root, bind(self.Event_acceptEvidenceDestroy,self))
+	addEventHandler("State:declineEvidenceDestroy", root, bind(self.Event_declineEvidenceDestroy,self))
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -123,6 +128,14 @@ function FactionState:constructor()
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
+
+	local row = sql:queryFetch("SELECT * FROM ??_StateEvidence", sql:getPrefix())
+	self.m_EvidenceRoomItems = {}
+	if row then
+		for i, v in ipairs(row) do
+			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {v.Type, v.Var1, v.Var2, v.Var3, v.Cop, v.Date}
+		end
+	end
 end
 
 function FactionState:destructor()
@@ -132,6 +145,7 @@ end
 function FactionState:createSelfArrestMarker( pos, int, dim )
 	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
 	self.m_Ped:setImmortal(true)
+	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
 		ped:setInterior(int)
@@ -516,6 +530,23 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 	)
 end
 
+function FactionState:createEvidencePickup( x,y,z, int, dim )
+	local pickup = createPickup(x,y,z,3, 2061, 10)
+	setElementInterior(pickup, int)
+	setElementDimension(pickup, dim)
+	addEventHandler("onPickupUse", pickup, function( hitElement )
+		local dim = source:getDimension() == hitElement:getDimension()
+		if hitElement:getType() == "player" and dim then
+			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
+				hitElement.evidencePickup = source
+				self:showEvidenceStorage( hitElement )
+			else
+				hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
+			end
+		end
+	end)
+end
+
 function FactionState:createGasStation(pos, size)
 	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
 	addEventHandler("onMarkerHit", marker ,
@@ -571,58 +602,99 @@ end
 
 
 function FactionState:getFullReasonFromShortcut(reason)
+	local amount = false
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
 		reason = "Beschuss/Waffennutzung"
+		amount = 2
 	elseif string.lower(reason) == "db" then
-		reason = "Drogenbesitz"
+		reason = "Drogenbesitz <50g"
+		amount = 1
+	elseif string.lower(reason) == "db2" then
+		reason = "Drogenbesitz 50g < 149g <"
+		amount = 2
+	elseif string.lower(reason) == "db2" then
+		reason = "Drogenbesitz 150g <"
+		amount = 3
 	elseif string.lower(reason) == "br" then
 		reason = "Banküberfall"
+		amount = 5
 	elseif string.lower(reason) == "mt" then
 		reason = "Mats-Truck"
+		amount = 4
 	elseif string.lower(reason) == "wt" then
 		reason = "Waffen-Truck"
+		amount = 4
 	elseif string.lower(reason) == "dt" then
 		reason = "Drogen-Truck"
+		amount = 4
 	elseif string.lower(reason) == "gt" then
 		reason = "Geldtruck-Überfall"
+		amount = 4
 	elseif string.lower(reason) == "kh" then
 		reason = "Knasthack/Knastausbruch"
+		amount = 6
 	elseif string.lower(reason) == "swt" then
 		reason = "Staatswaffentruck-Überfall"
+		amount = 5
 	elseif string.lower(reason) == "illad" then
 		reason = "Illegale Werbung"
+		amount = 1
 	elseif string.lower(reason) == "kpv" then
 		reason = "Körperverletzung"
+		amount = 1
 	elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
 		reason = "Einbruch-in-die-PD-Garage"
+		amount = 6
 	elseif string.lower(reason) == "wd" then
 		reason = "Waffen-Drohung"
+		amount = 2
 	elseif string.lower(reason) == "bh" then
 		reason = "Beihilfe einer Straftat"
+		amount = false
 	elseif string.lower(reason) == "vw" then
 		reason = "Verweigerung-zur-Durchsuchung"
+		amount = 2
 	elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
 		reason = "Beamtenbeleidigung"
+		amount = 1
 	elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
 		reason = "Flucht aus Kontrolle"
+		amount = 2
 	elseif string.lower(reason) == "kt" then
 		reason = "Koks-Truck"
+		amount = 4
 	elseif string.lower(reason) == "zt" then
 		reason = "Überfall auf Zeugenschutz"
+		amount = 4
 	elseif string.lower(reason) == "bv" then
 		reason = "Befehlsverweigerung"
+		amount = 1
 	elseif string.lower(reason) == "sb" then
 		reason = "Sachbeschädigung"
+		amount = 1
 	elseif string.lower(reason) == "rts" then
 		reason = "Shop-Überfall"
+		amount = 3
+	elseif string.lower(reason) == "haus" then
+		reason = "Hausrausb"
+		amount = 3
 	elseif string.lower(reason) == "eöä" then
 		reason = "Erregung öffentlichen Ärgernisses"
+		amount = 1
 	elseif string.lower(reason) == "vd" then
 		reason = "versuchter Diebstahl"
+		amount = 1
 	elseif string.lower(reason) == "fof" then
 		reason = "Fahren ohne Führerschein"
+		amount = 1
+	elseif string.lower(reason) == "gn" then 
+		reason = "Geiselnahme"
+		amount = 6
+	elseif  string.lower(reason) == "stellen" then 
+		reason = "Stellenflucht"
+		amount = 6
 	end
-	return reason
+	return reason, amount
 end
 
 function FactionState:sendShortMessage(text, ...)
@@ -689,9 +761,19 @@ end
 
 function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
-		local amount = tonumber(amount)
-		if amount and amount >= 1 and amount <= 6 then
-			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
+		local reason, wAmount = self:getFullReasonFromShortcut(table.concat({...}, " "))
+		local reason2, wAmount2
+		if amount then 
+			if not tonumber(amount) then
+				reason2, wAmount2 = self:getFullReasonFromShortcut(amount)
+				if reason2 and wAmount2 then 
+					reason = reason2
+					amount = wAmount2
+				end	
+			end
+		end
+		amount = tonumber(amount)
+		if ( amount and amount >= 1 and amount <= 6 )  then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
@@ -882,73 +964,117 @@ function FactionState:showRobbedHouseBlip( suspect, housepickup)
 end
 
 
-function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus)
+	if player:getWantedLevel() == 0 then return end
 	local policeman = police or client
-	if policeman:getFaction() and policeman:getFaction():isStateFaction() then
-		if policeman:isFactionDuty() then
-			if player:getWantedLevel() > 0 then
-				local bailcosts = 0
-				local wantedLevel = player:getWantedLevel()
-				local jailTime = wantedLevel * 5
-				local factionBonus = JAIL_COSTS[wantedLevel]
+	if not force then
+		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
+			if policeman:isFactionDuty() then
+				if player:getWantedLevel() > 0 then
+					local bailcosts = 0
+					local wantedLevel = player:getWantedLevel()
+					local jailTime = wantedLevel * 5
+					local factionBonus = JAIL_COSTS[wantedLevel]
 
-				if player:getFaction() and player:getFaction():isEvilFaction() then
-					factionBonus = JAIL_COSTS[wantedLevel]/2
-				end
-
-				if bail then
-					bailcosts = BAIL_PRICES[wantedLevel]
-					player:setJailBail(bailcosts)
-				end
-
-				if policeman.vehicle and player.vehicle then
-					self:Command_tie(policeman, "tie", player:getName(), false, true)
-				end
-				local mon = player:getMoney()
-				if mon < factionBonus then
-					local bankM = player:getBankMoney()
-					local remainMoney = factionBonus - mon
-					player:takeMoney(mon, "Knast Strafe (Bar)")
-					if remainMoney > bankM then
-						player:takeBankMoney(bankM, "Knast Strafe (Bank)")
-					else
-						player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+					if player:getFaction() and player:getFaction():isEvilFaction() then
+						factionBonus = JAIL_COSTS[wantedLevel]/2
 					end
+
+					if bail then
+						bailcosts = BAIL_PRICES[wantedLevel]
+						player:setJailBail(bailcosts)
+					end
+
+					if policeman.vehicle and player.vehicle then
+						self:Command_tie(policeman, "tie", player:getName(), false, true)
+					end
+					local mon = player:getMoney()
+					if mon < factionBonus then
+						local bankM = player:getBankMoney()
+						local remainMoney = factionBonus - mon
+						player:takeMoney(mon, "Knast Strafe (Bar)")
+						if remainMoney > bankM then
+							player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+							player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+						else
+							player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+						end
+					else
+						player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+					end
+
+					player:giveKarma(-wantedLevel)
+					player:setJailTime(jailTime)
+					player:setWantedLevel(0)
+					player:moveToJail(CUTSCENE)
+					self:uncuffPlayer( player)
+					player:clearCrimes()
+
+					-- Pay some money to faction and karma, xp to the policeman
+					policeman:getFaction():giveMoney(factionBonus, "Arrest")
+					policeman:giveKarma(wantedLevel)
+					policeman:givePoints(wantedLevel)
+					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
+					StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
+					policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
+					-- Give Achievements
+					if wantedLevel > 4 then
+						policeman:giveAchievement(48)
+					else
+						policeman:giveAchievement(47)
+					end
+
+					setTimer(function (player) -- (delayed)
+						if isElement(player) then player:giveAchievement(31) end
+					end, 14000, 1, player)
+
 				else
-					player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+					policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 				end
-
-				player:giveKarma(-wantedLevel)
-				player:setJailTime(jailTime)
-				player:setWantedLevel(0)
-				player:moveToJail(CUTSCENE)
-				self:uncuffPlayer( player)
-				player:clearCrimes()
-
-				-- Pay some money to faction and karma, xp to the policeman
-				policeman:getFaction():giveMoney(factionBonus, "Arrest")
-				policeman:giveKarma(wantedLevel)
-				policeman:givePoints(wantedLevel)
-				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
-				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
-				policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
-				-- Give Achievements
-				if wantedLevel > 4 then
-					policeman:giveAchievement(48)
-				else
-					policeman:giveAchievement(47)
-				end
-
-				setTimer(function (player) -- (delayed)
-					if isElement(player) then player:giveAchievement(31) end
-				end, 14000, 1, player)
-
 			else
-				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
+				policeman:sendError(_("Du bist nicht im Dienst!", player))
+			end
+		end
+	else
+		local bailcosts = 0
+		local wantedLevel = player:getWantedLevel()
+		local jailTime = wantedLevel * 5
+		local factionBonus = JAIL_COSTS[wantedLevel]
+		if player:getFaction() and player:getFaction():isEvilFaction() then
+			factionBonus = JAIL_COSTS[wantedLevel]/2
+		end
+		if bail then
+			bailcosts = BAIL_PRICES[wantedLevel]
+			player:setJailBail(bailcosts)
+		end
+		if policeman then
+			if policeman.vehicle and player.vehicle then
+				self:Command_tie(policeman, "tie", player:getName(), false, true)
+			end
+		end
+		local mon = player:getMoney()
+		if mon < factionBonus then
+			local bankM = player:getBankMoney()
+			local remainMoney = factionBonus - mon
+			player:takeMoney(mon, "Knast Strafe (Bar)")
+			if remainMoney > bankM then
+				player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+			else
+				player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
 			end
 		else
-			policeman:sendError(_("Du bist nicht im Dienst!", player))
+			player:takeMoney(factionBonus, "Knast Strafe (Bar)")
 		end
+		player:giveKarma(-wantedLevel)
+		player:setJailTime(jailTime)
+		player:setWantedLevel(0)
+		player:moveToJail(CUTSCENE)
+		self:uncuffPlayer( player)
+		player:clearCrimes()
+		setTimer(function (player) -- (delayed)
+			if isElement(player) then player:giveAchievement(31) end
+		end, 14000, 1, player)
+		player.m_DeathInJail = nil
 	end
 end
 
@@ -1578,6 +1704,100 @@ function FactionState:Event_attachBug()
 	else
 		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
 	end
+end
+
+function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
+	if self.m_EvidenceRoomItems then
+		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then
+			local type_ = "Waffe"
+			local copName = "Unbekannt"
+			local timeStamp =  getRealTime().timestamp
+			if isElement(cop) then 
+				copName = getPlayerName(cop)
+			end
+			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
+				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
+			FactionState:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!")
+			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, Date}
+		end
+	end
+end
+
+function FactionState:showEvidenceStorage(player)
+	if player then
+		if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() then
+			player:triggerEvent("State:sendEvidenceItems", self.m_EvidenceRoomItems)
+		end
+	end
+end
+
+function FactionState:Event_onRequestEvidenceDestroy() 
+	if client then
+		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
+			if client:getFaction():getPlayerRank(client) >= 5 then
+				local text = _("Möchtest du wirklich den Inhalt der Asservatenkammer zur Zerstörung freigeben?", client)
+				QuestionBox:new(client, client, text, "State:acceptEvidenceDestroy", "State:declineEvidenceDestroy", client)
+			end
+		end
+	end
+end	
+
+function FactionState:Event_acceptEvidenceDestroy(client)
+	if client then
+		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
+			if client:getFaction():getPlayerRank(client) >= 5 then
+				local now = getTickCount()
+				local continue 
+				if not self.m_LastStorageEmptied then 
+					self.m_LastStorageEmptied = now 
+					continue = true
+				else 
+					if now - self.m_LastStorageEmptied >= (1000*60*120) then 
+						continue = true
+					else 
+						client:sendShortMessage("Die Asservatenkammer kann nur alle zwei Stunden geleert werden!","Asservatenkammer",{200, 20, 0})
+						continue = false
+					end
+				end		
+				if continue then
+					local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
+					local totalMoney = 0
+					for i = 1, #self.m_EvidenceRoomItems do 
+						evObj = self.m_EvidenceRoomItems[i]
+						if evObj then
+							type_ = evObj[1]
+							if type_ then 
+								if type_ == "Waffe" then
+									weapon = evObj[2]
+									weaponAmmo = evObj[3]
+									if weapon then
+										weapon = tonumber(weapon)
+										weaponMoney  = AmmuNationInfo[weapon].Weapon
+										ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
+										if weaponMoney and ammoMoney then 
+											totalMoney = weaponMoney + ammoMoney
+										end
+									end
+								end
+							end
+						end
+					end
+					if totalMoney > 0 then 
+						FactionManager:getSingleton():getFromId(1):giveMoney(totalMoney, "Asservatenvernichtung")
+					end
+					FactionState:sendShortMessage(client:getName().." hat die Asservatenkammer zur Leerung freigeben!",10000)
+					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+					self.m_EvidenceRoomItems = {}
+					triggerClientEvent(root,"State:clearEvidenceItems", root)
+					self.m_LastStorageEmptied = getTickCount()
+				end
+			end
+		end
+	end
+end
+
+function FactionState:Event_declineEvidenceDestroy()
+
 end
 
 function FactionState:Event_bugAction(action, id)

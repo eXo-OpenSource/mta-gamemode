@@ -29,6 +29,7 @@ end
 
 function Provider:onDownloadFinish(files)
 	local st = getTickCount()
+	
 	for _, file in pairs(files) do
 		if fileExists(file.path) then
 			fileDelete(file.path)

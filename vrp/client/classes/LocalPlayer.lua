@@ -255,7 +255,7 @@ function LocalPlayer:Event_playerWasted()
 
 		local soundLength = 20 -- Length of Halleluja in Seconds
 		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
-			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
 		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
@@ -294,7 +294,7 @@ function LocalPlayer:Event_playerWasted()
 		end
 	end
 	setGameSpeed(0.1)
-	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
 	local x,y,z = getPedBonePosition(localPlayer,5)
 	setSkyGradient(10,10,10,30,30,30)
@@ -354,6 +354,7 @@ end
 
 function LocalPlayer:checkAFK()
 	if not self:isLoggedIn() then return end
+	if DEBUG then return end
 
 	if not self:getPublicSync("AFK") == true then
 		local pos = self:getPosition()

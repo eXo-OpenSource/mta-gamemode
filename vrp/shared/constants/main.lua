@@ -9,6 +9,7 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
+MAX_FISHING_LEVEL = 10
 
 -- EVENTS:
 EVENT_EASTER = false
@@ -533,6 +534,27 @@ WEAPON_LEVEL = {
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
 
+
+FISHING_BAGS = {
+	["Kühlbox"] = {max = 65, level = 8},
+	["Kühltasche"] = {max = 25, level = 4},
+	["Kleine Kühltasche"] = {max = 15, level = 0},
+}
+
+-- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
+FISHING_LEVELS = {
+	[1] = 225,
+	[2] = 900,
+	[3] = 2025,
+	[4] = 3600,
+	[5] = 5625,
+	[6] = 8100,
+	[7] = 11025,
+	[8] = 14400,
+	[9] = 18225,
+	[10] = 22500,
+}
+
 CAR_COLORS_FROM_ID =
 {
 	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
@@ -552,4 +574,5 @@ CAR_COLORS_FROM_ID =
 	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
 	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
 	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
+
 }

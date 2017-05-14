@@ -99,7 +99,7 @@ end
 function Chair:sitDown(player, object, position, rotation, seat)
 	player:setFrozen(true)
 	player:setPosition(self:getPosition(object, position, rotation, seat))
-	player:setRotation(0, 0, rotation.z + Chair.Map[object].rotationOffset or 180)
+	player:setRotation(0, 0, rotation.z + (Chair.Map[object].rotationOffset or 180))
 	player:setAnimation("PED", "SEAT_down", -1, false, false, false, true)
 end
 

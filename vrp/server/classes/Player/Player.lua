@@ -425,6 +425,11 @@ function Player:spawn( )
 		killPed(self)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then 
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
+	triggerEvent("WeaponAttach:removeAllWeapons", self)
+	triggerEvent("WeaponAttach:onInititate", self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)
@@ -476,6 +481,11 @@ function Player:respawn(position, rotation, bJailSpawn)
 		destroyElement(self.ped_deadDouble)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
+	if self.m_DeathInJail then
+		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
+	end
+	triggerEvent("WeaponAttach:removeAllWeapons", self)
+	triggerEvent("WeaponAttach:onInititate", self)
 end
 
 function Player:clearReviveWeapons()
@@ -486,7 +496,7 @@ function Player:dropReviveWeapons()
 	self:destroyDropWeapons()
 	if self.m_ReviveWeapons then
 		self.m_WorldObjectWeapons =  {}
-		local obj, weapon, ammo, model, x, y, z, dim, int
+		local obj, weapon, ammo, model, x, y, z, dim, int, playerFaction
 		for i = 1, 12 do
 			if self.m_ReviveWeapons[i] then
 				x,y,z = getElementPosition(self)
@@ -495,6 +505,12 @@ function Player:dropReviveWeapons()
 				weapon =  self.m_ReviveWeapons[i][1]
 				ammo = self.m_ReviveWeapons[i][2]
 				model = WEAPON_MODELS_WORLD[weapon]
+				playerFaction = self:getFaction()
+				if not playerFaction then 
+					playerFaction = "Keine"
+				else 
+					playerFaction:getShortName()
+				end
 				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				if model then
 					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
@@ -506,6 +522,7 @@ function Player:dropReviveWeapons()
 							obj:setData("weaponId", weapon)
 							obj:setData("ammoInWeapon", ammo)
 							obj:setData("weaponOwner", self)
+							obj:setData("factionName", playerFaction)
 							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
 							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
 						end
@@ -513,6 +530,7 @@ function Player:dropReviveWeapons()
 				end
 			end
 		end
+		triggerEvent("WeaponAttach:removeAllWeapons", self)
 	end
 end
 
@@ -1139,7 +1157,7 @@ end
 function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
-		if not alreadySpawned then
+		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)
 		end
 		self:setPosition(Jail.Cells[rnd])

@@ -26,7 +26,6 @@ function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
 		["additionalParameters"] = additionalParameters,
 		["object"] = self
 	}
-
 	target:triggerEvent("questionBox", id, msg)
 end
 

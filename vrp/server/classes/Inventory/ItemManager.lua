@@ -29,6 +29,11 @@ function ItemManager:constructor()
 		["Osterei"] = ItemEasteregg;
 
 		["Wuerfel"] = ItemDice,
+		["Angelrute"] = ItemFishing,
+		["Kleine Kühltasche"] = ItemFishing,
+		["Kühltasche"] = ItemFishing,
+		["Kühlbox"] = ItemFishing,
+		["Köder"] = ItemFishing,
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
