@@ -27,7 +27,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.POSITION_UP = 5
 	self.POSITION_DOWN = self.m_Size.y - 5
 	self.HEIGHT = self.POSITION_DOWN - self.POSITION_UP
-	self.MAX_PUSHBACK_SPEED = 8
+	self.MAX_PUSHBACK_SPEED = 6
 
 	self.m_Difficulty = difficulty
 	self.m_MotionType = self:getMotionType(behavior)

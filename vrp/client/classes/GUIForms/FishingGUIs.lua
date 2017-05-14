@@ -84,10 +84,10 @@ function FishingTradeGUI:addFish()
 		sellItem.fishName = item.fishName
 		sellItem.fishSize = item.fishSize
 		sellItem.fishQuality = item.fishQuality
-	end
 
-	self:updateTotalPrice()
-	self:resetLabels()
+		self:updateTotalPrice()
+		self:resetLabels()
+	end
 end
 
 function FishingTradeGUI:addAllFish()
