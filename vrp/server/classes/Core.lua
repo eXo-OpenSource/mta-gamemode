@@ -115,7 +115,7 @@ function Core:constructor()
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
 		Chair:new()
-		--Fishing:new()
+		----Fishing:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
