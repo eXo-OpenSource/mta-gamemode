@@ -85,22 +85,22 @@ function Gangwar:onAreaPayday()
 				areaCounts[facObj] = count
 				amount = (count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)) + (GANGWAR_PAYOUT_PER_AREA * count)
 				facObj:giveMoney(amount+amount2, "Gangwar-Payday")
-				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)	
-			else 
+				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)
+			else
 				facObj:sendMessage("Ihr seid nicht genügend Spieler online für den Gangwar-Payday!" , 200, 0, 0, true)
 			end
 		end
 	end
 	local count = 0
-	for k, faction in ipairs(FactionManager:getSingleton().Map) then
+	for k, faction in ipairs(FactionManager:getSingleton().Map) do
 		if not faction:isStateFaction() and faction.m_Id ~= 4 then
-			if areaCounts[faction] then 
+			if areaCounts[faction] then
 				count = areaCounts[faction]
-			else 
+			else
 				count = 0
 			end
 			amount2 = math.floor((1 - ( count/areasInTotal)) * PAYDAY_ACTION_BONUS )
-			faction:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)	
+			faction:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)
 		end
 	end
 end
