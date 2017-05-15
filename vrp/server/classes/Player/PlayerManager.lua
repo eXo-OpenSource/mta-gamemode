@@ -774,7 +774,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
 					if client:getTotalAmmo(weaponSlot) >= math.abs(muni) then
-						client:takeWeapon(weaponId)
+						takeWeapon(client, weaponId)
 						slot["WeaponId"] = weaponId
 						slot["Amount"] = math.abs(muni)
 						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], math.abs(muni), i))

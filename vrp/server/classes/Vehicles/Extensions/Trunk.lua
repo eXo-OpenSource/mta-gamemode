@@ -196,7 +196,7 @@ function Trunk:addWeapon(player, weaponId, muni)
 			local weaponSlot = getSlotFromWeapon(weaponId)
 			if player:getWeapon(weaponSlot) > 0 then
 				if player:getTotalAmmo(weaponSlot) >= muni then
-					player:takeWeapon(weaponId)
+					takeWeapon(player, weaponId)
 					slot["WeaponId"] = weaponId
 					slot["Amount"] = muni
 					player:sendInfo(_("Du hast eine/n %s mit %d Schuss in den Kofferraum (Slot %d) gelegt!", player, WEAPON_NAMES[weaponId], muni, index))

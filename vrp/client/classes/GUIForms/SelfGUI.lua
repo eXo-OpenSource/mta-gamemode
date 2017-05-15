@@ -248,7 +248,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Texturen", "Sonstiges"}
+	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Texturen", "Sonstiges", "Waffen"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -993,9 +993,96 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "HitSoundBell", state)
 		end
+	elseif setting == "Waffen" then 
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
+		
+		self.m_UIMelee = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.35, self.m_Height*0.04, _"Nahkampfwaffen", self.m_SettingBG)
+		self.m_UIMelee:setFont(VRPFont(25))
+		self.m_UIMelee:setFontSize(1)
+		self.m_UIMelee:setChecked(core:get("W_ATTACH", "weapon0", true))
+		setElementData(localPlayer,"W_A:w0", core:get("W_ATTACH", "weapon0", true))
+		self.m_UIMelee.onChange = function (state)
+			core:set("W_ATTACH", "weapon0", state)
+			setElementData(localPlayer,"W_A:w0", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 1)
+		end
+
+		self.m_UIPistols = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Deagle/Pistole/Taser", self.m_SettingBG)
+		self.m_UIPistols:setFont(VRPFont(25))
+		self.m_UIPistols:setFontSize(1)
+		self.m_UIPistols:setChecked(core:get("W_ATTACH", "weapon1", true))
+		setElementData(localPlayer,"W_A:w1", core:get("W_ATTACH", "weapon1", true))
+		self.m_UIPistols.onChange = function (state)
+			core:set("W_ATTACH", "weapon1", state)
+			setElementData(localPlayer,"W_A:w1", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 2)
+		end
+		
+		self.m_UIShotgun = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.35, self.m_Height*0.04, _"Schrotflinten", self.m_SettingBG)
+		self.m_UIShotgun:setFont(VRPFont(25))
+		self.m_UIShotgun:setFontSize(1)
+		self.m_UIShotgun:setChecked(core:get("W_ATTACH", "weapon2", true))
+		setElementData(localPlayer,"W_A:w2", core:get("W_ATTACH", "weapon2", true))
+		self.m_UIShotgun.onChange = function (state)
+			core:set("W_ATTACH", "weapon2", state)
+			setElementData(localPlayer,"W_A:w2", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 3)
+		end
+		
+		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.35, self.m_Height*0.04, _"Mp5", self.m_SettingBG)
+		self.m_UISMG:setFont(VRPFont(25))
+		self.m_UISMG:setFontSize(1)
+		self.m_UISMG:setChecked(core:get("W_ATTACH", "weapon3", true))
+		setElementData(localPlayer,"W_A:w3", core:get("W_ATTACH", "weapon3", true))
+		self.m_UISMG.onChange = function (state)
+			core:set("W_ATTACH", "weapon3", state)
+			setElementData(localPlayer,"W_A:w3", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
+		end
+		
+		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.35, self.m_Height*0.04, _"Mac-10/Tec-9", self.m_SettingBG)
+		self.m_UISMG:setFont(VRPFont(25))
+		self.m_UISMG:setFontSize(1)
+		self.m_UISMG:setChecked(core:get("W_ATTACH", "weapon4", true))
+		setElementData(localPlayer,"W_A:w4", core:get("W_ATTACH", "weapon4", true))
+		self.m_UISMG.onChange = function (state)
+			core:set("W_ATTACH", "weapon4", state)
+			setElementData(localPlayer,"W_A:w4", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
+		end
+		
+		self.m_UIKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"M4/AK-47", self.m_SettingBG)
+		self.m_UIKarabiner:setFont(VRPFont(25))
+		self.m_UIKarabiner:setFontSize(1)
+		self.m_UIKarabiner:setChecked(core:get("W_ATTACH", "weapon5", true))
+		setElementData(localPlayer,"W_A:w5", core:get("W_ATTACH", "weapon5", true))
+		self.m_UIKarabiner.onChange = function (state)
+			core:set("W_ATTACH", "weapon5", state)
+			setElementData(localPlayer,"W_A:w5", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 5)
+		end
+		
+		self.m_UIRifle = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.35, self.m_Height*0.04, _"Country-Rifle", self.m_SettingBG)
+		self.m_UIRifle:setFont(VRPFont(25))
+		self.m_UIRifle:setFontSize(1)
+		self.m_UIRifle:setChecked(core:get("W_ATTACH", "weapon6", true))
+		setElementData(localPlayer,"W_A:w6", core:get("W_ATTACH", "weapon6", true))
+		self.m_UIRifle.onChange = function (state)
+			core:set("W_ATTACH", "weapon6", state)
+			setElementData(localPlayer,"W_A:w6", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 6)
+		end
+		
+		
+		self.m_UIAltKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.35, self.m_Height*0.04, _"Ak-47/M4 auf dem Rücken", self.m_SettingBG)
+		self.m_UIAltKarabiner:setFont(VRPFont(25))
+		self.m_UIAltKarabiner:setFontSize(1)
+		self.m_UIAltKarabiner:setChecked(core:get("W_ATTACH", "alt_w5", true))
+		setElementData(localPlayer,"W_A:alt_w5", core:get("W_ATTACH", "alt_w5", true))
+		self.m_UIAltKarabiner.onChange = function (state)
+			core:set("W_ATTACH",  "alt_w5", state)
+			setElementData(localPlayer,"W_A:alt_w5", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer)
+		end
 	end
-
-
-
-
 end

@@ -2,6 +2,16 @@ for key, player in ipairs(getElementsByType("player")) do
 	setElementData(player, "a:weaponIsConcealed",false)
 end
 
+local slotChecks = 
+{
+	"W_A:w0",
+	"W_A:w1",
+	"W_A:w2",
+	"W_A:w3",
+	"W_A:w5",
+	"W_A:w6",
+}
+
 --	[ID] = {bone, x, y, z, rx, ry, rz, model, slot},
 local weaponTable = {
 	[22] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 346, 2},
@@ -17,6 +27,12 @@ local weaponTable = {
 	[32] = {3, 0.19, -0.08, -0.12, 0, 60, 180, 372, 4},
 	[33] = {3, 0, -0.18, -0.33, -3, 270, 0, 357, 6},
 	[34] = {3, 0, -0.13, -0.245, -3, 270, 0, 358, 6},
+}
+
+local alternativeTable = 
+{
+	[30] = {3, 0.1, -0.16, -0.25, -3, 288, 0, 355, 5},
+	[31] = {3, 0.1, -0.16, -0.25, -3, 288, 0, 356, 5},
 }
 
 function createModel(player, weapon, state, slot)
@@ -35,8 +51,32 @@ function createModel(player, weapon, state, slot)
 		local rz = weaponTable[weapon][7]
 		local objectID = weaponTable[weapon][8]
 		local slotID = weaponTable[weapon][9]
-
 		if state == 1 then
+			local alternativeSlot4
+			if weapon == 30 or weapon == 31 then 
+				alternativeSlot4 = getElementData(player,"W_A:alt_w5")
+			end
+			if alternativeSlot4 then 
+				bone = alternativeTable[weapon][1]
+				x = alternativeTable[weapon][2]
+				y = alternativeTable[weapon][3]
+				z = alternativeTable[weapon][4]
+				rx = alternativeTable[weapon][5]
+				ry = alternativeTable[weapon][6]
+				rz = alternativeTable[weapon][7]
+				objectID = alternativeTable[weapon][8]
+				slotID = alternativeTable[weapon][9]
+			end
+			local bIsEnabled
+			if slotChecks[slot] and (Weapon ~= 32 and Weapon ~= 28) then 
+				bIsEnabled = getElementData(player,slotChecks[slot])
+			elseif prevWeapon == 32 or prevWeapon == 28 then 
+				bIsEnabled = getElementData(player,"W_A:w4")
+			end
+			if weapon == 34 then bIsEnabled = true end
+			if not bIsEnabled then 
+				return
+			end
 			if slot == slotID then
 				if getElementData(player, "a:weapon:slot"..slot.."") then
 					local objectSlot = getElementData(player, "a:weapon:slot"..slot.."")

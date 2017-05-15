@@ -1772,10 +1772,15 @@ function FactionState:Event_acceptEvidenceDestroy(client)
 									weaponAmmo = evObj[3]
 									if weapon then
 										weapon = tonumber(weapon)
-										weaponMoney  = AmmuNationInfo[weapon].Weapon
-										ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
+										if AmmuNationInfo[weapon] then
+											weaponMoney  = AmmuNationInfo[weapon].Weapon
+											ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
+										else 
+											weaponMoney = 500 
+											ammoMoney = 0
+										end
 										if weaponMoney and ammoMoney then 
-											totalMoney = weaponMoney + ammoMoney
+											totalMoney = totalMoney + (weaponMoney + ammoMoney)
 										end
 									end
 								end
