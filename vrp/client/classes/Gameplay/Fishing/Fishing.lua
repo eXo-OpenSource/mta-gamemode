@@ -9,8 +9,7 @@ Fishing = {}
 addRemoteEvents{"onFishingStart", "onFishingStop"}
 
 function Fishing.load()
-	local ped = Ped.create(161, Vector3(368.27, -2072.03, 8.02), 180)
-	Blip:new("Fishing.png", 368.27, -2072.03, 600)
+	local ped = Ped.create(161, Vector3(396.63, -1893.72, 7.88), 150)
 
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
