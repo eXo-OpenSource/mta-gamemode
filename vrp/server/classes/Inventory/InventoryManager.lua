@@ -263,8 +263,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 			if target:getMoney() >= money then
 				player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
-				player:takeWeapon(weaponId)
-				target:giveWeapon(weaponId, amount)
+				takeWeapon(player, weaponId)
+				giveWeapon(target, weaponId, amount)
 				target:takeMoney(money, "Waffen-Handel")
 				player:giveMoney(money, "Waffen-Handel")
 			else

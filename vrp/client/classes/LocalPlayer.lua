@@ -533,6 +533,10 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
+	for i = 1,7 do 
+		setElementData(localPlayer,"W_A:w"..i-1, core:get("W_ATTACH", "weapon"..i-1, true))
+		triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, i-1)
+	end
 end
 
 function LocalPlayer:Event_setAdmin(player, rank)

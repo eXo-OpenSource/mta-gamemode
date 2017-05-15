@@ -27,6 +27,14 @@ AntiCheat.AllowedDataChange = {
 	["parachuting"] = true,
 	["animation_state"] = true,
 	["skydiving"] = true,
+	["W_A:w0"] = true,
+	["W_A:w1"] = true,
+	["W_A:w2"] = true,
+	["W_A:w3"] = true,
+	["W_A:w4"] = true,
+	["W_A:w5"] = true,
+	["W_A:w6"] = true,
+	["W_A:alt_w5"] = true,
 }
 
 function AntiCheat:constructor()
