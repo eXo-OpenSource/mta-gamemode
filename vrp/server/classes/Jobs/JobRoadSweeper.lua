@@ -51,6 +51,6 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	if not bonus then bonus = 0 end
 	client:giveMoney(SWEEPER_LOAN+bonus, "Straßenreiniger-Job", true)
 	if chance(15) then
-		client:givePoints(1)
+		client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 	end
 end

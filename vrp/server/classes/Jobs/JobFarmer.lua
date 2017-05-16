@@ -218,7 +218,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 			local bonus = JobManager.getBonusForNewbies( player , income)
 			if not bonus then bonus = 0 end
 			player:giveMoney(income+bonus, "Farmer-Job")
-			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
+			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
 
@@ -257,7 +257,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 
 		-- Give some points
 		if chance(6) then
-			hitElement:givePoints(1)
+			hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
@@ -271,7 +271,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
-				hitElement:givePoints(1)
+				hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 		end
 	end

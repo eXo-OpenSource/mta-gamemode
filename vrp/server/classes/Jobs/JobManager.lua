@@ -7,6 +7,7 @@
 -- ****************************************************************************
 JobManager = inherit(Singleton)
 local BONUS_MAX_PLAYT = 50 -- < 50 Spielstunden = Bonus beim Jobben
+JOB_EXTRA_POINT_FACTOR = 1.5 -- jeder job gibt 1,5x mehr punkte
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {

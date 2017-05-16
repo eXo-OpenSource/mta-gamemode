@@ -87,7 +87,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						hitElement:giveMoney(loan+bonus, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
-						hitElement:givePoints(5)
+						hitElement:givePoints(math.floor(5*JOB_EXTRA_POINT_FACTOR))
 
 						self:loadTreasure(hitElement)
 					else

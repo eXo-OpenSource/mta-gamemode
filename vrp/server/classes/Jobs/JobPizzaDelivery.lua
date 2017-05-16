@@ -48,6 +48,6 @@ function JobPizza:onPizzaDeliver(distance, time)
 		local bonus = JobManager.getBonusForNewbies( client, pay)
 		if not bonus then bonus = 0 end
 		client:giveMoney(pay+bonus, "Pizza-Job")
-		client:givePoints(2)
+		client:givePoints(math.floor(2*JOB_EXTRA_POINT_FACTOR))
 	end
 end

@@ -110,7 +110,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 							local bonus = JobManager.getBonusForNewbies( hitElement, self.m_MoneyPerTransport)
 							if not bonus then bonus = 0 end
 							hitElement:giveMoney(self.m_MoneyPerTransport+bonus, "Logistiker Job")
-							hitElement:givePoints(10)
+							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))

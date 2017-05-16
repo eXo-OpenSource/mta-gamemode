@@ -178,7 +178,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			client:giveMoney(times*LOAN_MINING+bonus, "Kiesgruben-Job")
 		end
 		if chance(6) then
-			client:givePoints(1)
+			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 
 		self:updateGravelAmount("mined", true)
@@ -218,7 +218,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 				end
 			end
 			if chance(6) then
-				client:givePoints(1)
+				client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 				self:updateGravelAmount("stock", true)
@@ -327,7 +327,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil
 	self.m_DumperDeliverStones[player] =  nil
-	player:givePoints(math.floor(amount/2))
+	player:givePoints(math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR))
 end
 
 JobGravel.Tracks = {

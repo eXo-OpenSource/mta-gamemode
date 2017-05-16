@@ -92,7 +92,7 @@ function JobHeliTransport:onPickupLoad()
 			if not bonus then bonus = 0 end
 			client:giveMoney(client:getData("JobHeliTransport:Money")+bonus, "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
-			client:givePoints(10)
+			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 		else
 			client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
 		end
