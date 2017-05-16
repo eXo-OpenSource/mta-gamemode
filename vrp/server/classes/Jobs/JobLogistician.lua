@@ -107,7 +107,9 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							hitElement:giveMoney(self.m_MoneyPerTransport, "Logistiker Job")
+							local bonus = JobManager.getBonusForNewbies( hitElement, self.m_MoneyPerTransport)
+							if not bonus then bonus = 0 end
+							hitElement:giveMoney(self.m_MoneyPerTransport+bonus, "Logistiker Job")
 							hitElement:givePoints(10)
 						end)
 					else

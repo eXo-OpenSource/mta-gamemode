@@ -103,8 +103,9 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 
 			if numCans and numCans > 0 then
 				local moneyAmount = numCans * MONEY_PER_CAN
-
-				hitElement:giveMoney(moneyAmount, "Müll-Job")
+				local bonus = JobManager.getBonusForNewbies( hitElement, moneyAmount)
+				if not bonus then bonus = 0 end
+				hitElement:giveMoney(moneyAmount+bonus, "Müll-Job")
 				hitElement:givePoints(math.ceil(numCans/3))
 
 				hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)

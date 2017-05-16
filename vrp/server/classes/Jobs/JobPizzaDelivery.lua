@@ -45,7 +45,9 @@ function JobPizza:onPizzaDeliver(distance, time)
 
 		local workFactor = math.min(distance, 1899) / math.max(time, 10) -- Note: 1899 is the longest distance from start point
 		local pay = math.floor( BASE_LOAN * workFactor*2 )
-		client:giveMoney(pay, "Pizza-Job")
+		local bonus = JobManager.getBonusForNewbies( client, pay)
+		if not bonus then bonus = 0 end
+		client:giveMoney(pay+bonus, "Pizza-Job")
 		client:givePoints(2)
 	end
 end

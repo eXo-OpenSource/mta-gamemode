@@ -126,3 +126,15 @@ function JobManager:Event_jobQuit()
 
 	client:setJob(nil)
 end
+
+function JobManager.getBonusForNewbies( player , payout)
+	local playtime = player:getPlayTime()
+	local bonus = 0
+	if playtime then 
+		if playtime <= BONUS_MAX_PLAYT then 
+			bonus = ( 1- ( playtime / BONUS_MAX_PLAYT) ) * (payout*0.25)
+			return bonus
+		end
+	end
+	return bonus
+end
