@@ -6,8 +6,6 @@
 -- *
 -- ****************************************************************************
 Job = inherit(Singleton)
-local BONUS_MAX_PLAYT = 50*60
-
 function Job:constructor()
 	self.m_OnJobVehicleDestroyBind = bind(self.onJobVehicleDestroy, self)
 

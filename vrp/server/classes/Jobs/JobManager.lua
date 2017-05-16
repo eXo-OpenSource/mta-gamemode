@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobManager = inherit(Singleton)
-
+local BONUS_MAX_PLAYT = 50 -- < 50 Spielstunden = Bonus beim Jobben
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
@@ -132,7 +132,7 @@ function JobManager.getBonusForNewbies( player , payout)
 	local bonus = 0
 	if playtime then 
 		if playtime <= BONUS_MAX_PLAYT then 
-			bonus = ( 1- ( playtime / BONUS_MAX_PLAYT) ) * (payout*0.25)
+			bonus = ( 1- ( (playtime/60) / BONUS_MAX_PLAYT) ) * (payout*0.25)
 			return bonus
 		end
 	end
