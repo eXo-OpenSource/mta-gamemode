@@ -134,7 +134,7 @@ function JobManager.getBonusForNewbies( player , payout)
 	if playtime then 
 		if playtime <= BONUS_MAX_PLAYT then 
 			bonus = ( 1- ( (playtime/60) / BONUS_MAX_PLAYT) ) * (payout*0.25)
-			return bonus
+			return math.floor(bonus)
 		end
 	end
 	return bonus

@@ -162,10 +162,10 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 	self:closeFor(client, veh)
 end
 
-function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
+function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, isPreview)
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
-	self:setTexture(source, url, nil, true)
+	self:setTexture(source, url, nil, true, true, client)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
