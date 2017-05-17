@@ -295,6 +295,9 @@ end
 
 function AttackSession:attackLose() --// loose for team1
 	self:notifyFactions()
+	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
+		v:givePoints(20)
+	end
 	self.m_AreaObj:update()
 
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
@@ -310,6 +313,9 @@ end
 function AttackSession:attackWin() --// win for team1
 	self:notifyFactions()
 	self.m_AreaObj.m_Owner = self.m_Faction1.m_Id
+	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do 
+		v:givePoints(20)
+	end
 	self.m_AreaObj:update()
 
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet ist verloren!",2000,0,0,true)

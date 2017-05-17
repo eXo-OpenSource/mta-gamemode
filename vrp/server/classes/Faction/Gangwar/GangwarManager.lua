@@ -248,8 +248,8 @@ function Gangwar:attackArea( player )
 				if areaOwner ~= id then
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
-					if factionCount >= GANGWAR_MIN_PLAYERS then
-						if factionCount2 >= GANGWAR_MIN_PLAYERS then
+					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG then
+						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG then
 							local activeGangwar = self:getCurrentGangwar()
 							local acFaction1,  acFaction2
 							if not activeGangwar then
