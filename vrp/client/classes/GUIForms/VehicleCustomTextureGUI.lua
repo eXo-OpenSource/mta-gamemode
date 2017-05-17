@@ -144,7 +144,7 @@ end
 function VehicleCustomTextureGUI:Texture_Click(item)
     if item.Url then
 		TextureReplace.deleteFromElement(self.m_Vehicle)
-		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"))
+		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"), localPlayer)
 	end
 end
 
