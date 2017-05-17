@@ -196,8 +196,10 @@ function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPrev
 	if temp then
 		veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
 		veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
-		for textureName, texturePath in pairs(veh.OldTexture) do
-			veh.m_Tunings:addTexture(texturePath, textureName)
+		if veh.OldTexture then
+			for textureName, texturePath in pairs(veh.OldTexture) do
+				veh.m_Tunings:addTexture(texturePath, textureName)
+			end
 		end
 	end
 end
@@ -239,7 +241,7 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 	client:setDimension(client:getId()+1000)
 
 	client:setData("TexturePreviewCar", veh, true)
-	self:setTexture(veh, url, nil, true)
+	self:setTexture(veh, url, nil, true, true, client)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
