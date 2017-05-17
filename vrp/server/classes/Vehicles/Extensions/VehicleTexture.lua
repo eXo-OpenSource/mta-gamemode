@@ -8,7 +8,7 @@
 VehicleTexture = inherit(Object)
 VehicleTexture.Map = {}
 
-function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, previewClient)
+function VehicleTexture:constructor(vehicle, path, texture, force)
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
 		self.m_Optional = not self:checkOptional(vehicle)
@@ -25,11 +25,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pr
 		VehicleTexture.Map[self.m_Id] = self
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
-				if not isPreview then
-					VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
-				else 
-					VehicleTexture.sendToClient(previewClient, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
-				end
+				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
 			end
 		end
 		-- add destruction handler

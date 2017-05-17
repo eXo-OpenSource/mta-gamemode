@@ -438,7 +438,7 @@ function Vehicle:getTexture(textureName)
 	return textureName and self.m_Texture[textureName] or self.m_Texture
 end
 
-function Vehicle:setTexture(texturePath, textureName, force, isPreview, previewClient)
+function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
 		if not self.m_Texture then
 			self.m_Texture = {}
@@ -450,9 +450,9 @@ function Vehicle:setTexture(texturePath, textureName, force, isPreview, previewC
 
 		local isHttp = string.find(texturePath,"http://")
 		if isHttp == nil then
-			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, previewClient)
+			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true)
 		else
-			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, true, isPreview, previewClient)
+			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, true)
 		end
 	end
 end

@@ -162,10 +162,10 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 	self:closeFor(client, veh)
 end
 
-function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, isPreview)
+function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
-	self:setTexture(source, url, nil, true, true, client)
+	self:setTexture(source, url, nil, false)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
@@ -187,8 +187,8 @@ end
 
 function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
-	veh.m_Tunings:addTexture(url, textureName)
 	veh.m_Tunings:applyTuning()
+	veh:setTexture(url, textureName, true)
 	if temp then
 		veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
 		veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
