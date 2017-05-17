@@ -1082,7 +1082,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_UIAltKarabiner.onChange = function (state)
 			core:set("W_ATTACH",  "alt_w5", state)
 			setElementData(localPlayer,"W_A:alt_w5", state)
-			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
 	end
 end
