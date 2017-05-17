@@ -83,7 +83,10 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
 		if seat == 0 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+				local income = player:getData("Farmer.Income")
+				local bonus = JobManager.getBonusForNewbies( player , income)
+				if not bonus then bonus = 0 end
+				vehPlayer:giveMoney( income + bonus, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
 			end
@@ -182,7 +185,10 @@ function JobFarmer:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
 	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
-		player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+		local income = player:getData("Farmer.Income")
+		local bonus = JobManager.getBonusForNewbies( player , income)
+		if not bonus then bonus = 0 end
+		player:giveMoney(income+bonus, "Farmer-Job")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
@@ -208,8 +214,11 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
 			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
-			player:giveMoney(self.m_CurrentPlants[player]*MONEY_PER_PLANT, "Farmer-Job")
-			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
+			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
+			local bonus = JobManager.getBonusForNewbies( player , income)
+			if not bonus then bonus = 0 end
+			player:giveMoney(income+bonus, "Farmer-Job")
+			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
 
@@ -248,7 +257,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 
 		-- Give some points
 		if chance(6) then
-			hitElement:givePoints(1)
+			hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
@@ -262,7 +271,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
-				hitElement:givePoints(1)
+				hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 		end
 	end

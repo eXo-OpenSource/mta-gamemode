@@ -164,7 +164,9 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:setData("lumberjack:Trees", 0)
 
 		-- Give money and experience points
-		hitElement:giveMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
+		local bonus = JobManager.getBonusForNewbies( hitElement, numTrees*TREE_MONEY)
+		if not bonus then bonus = 0 end
+		hitElement:giveMoney(numTrees * TREE_MONEY+bonus, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do

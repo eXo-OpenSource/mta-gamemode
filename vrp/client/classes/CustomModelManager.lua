@@ -195,9 +195,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/bankDoor.dff", 1930)
 	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
 
---	self:loadImportTXD("files/models/fishshop.txd", 6289)
---	self:loadImportDFF("files/models/fishshop.dff", 6289)
---	self:loadImportCOL("filEs/models/fishshop.col", 6289)
+	self:loadImportTXD("files/models/fishshop.txd", 6289)
+	self:loadImportDFF("files/models/fishshop.dff", 6289)
+	self:loadImportCOL("filEs/models/fishshop.col", 6289)
 
 	self:loadImportTXD("files/models/fence.txd", 1866)
 	self:loadImportDFF("files/models/fence.dff", 1866)

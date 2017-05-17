@@ -162,10 +162,10 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 	self:closeFor(client, veh)
 end
 
-function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2)
+function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, player)
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
-	self:setTexture(source, url, nil, true)
+	self:setTexture(source, url, nil, false, true, player)
 end
 
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
@@ -178,22 +178,28 @@ function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color
 		source.OldColor2 = color2
 		source.m_Tunings:saveTuning("Color1", color1)
 		source.m_Tunings:saveTuning("Color2", color2)
-		self:setTexture(source, url, nil, true)
+		self:setTexture(source, url, nil, true,false)
 		client:sendInfo("Textur gekauft!")
 	else
 		client:sendError(_("Du hast nicht genug Geld dabei! ($120000)", client))
 	end
 end
 
-function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp)
+function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPreview, player)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
-	veh.m_Tunings:addTexture(url, textureName)
 	veh.m_Tunings:applyTuning()
+	if isPreview then
+		veh:setTexture(url, textureName, true, isPreview, player)
+	else 
+		veh:setTexture(url, textureName, true)
+	end
 	if temp then
 		veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
 		veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
-		for textureName, texturePath in pairs(veh.OldTexture) do
-			veh.m_Tunings:addTexture(texturePath, textureName)
+		if veh.OldTexture then
+			for textureName, texturePath in pairs(veh.OldTexture) do
+				veh.m_Tunings:addTexture(texturePath, textureName)
+			end
 		end
 	end
 end
@@ -235,7 +241,7 @@ function VehicleCustomTextureShop:Event_texPreviewStartPreview(url, model)
 	client:setDimension(client:getId()+1000)
 
 	client:setData("TexturePreviewCar", veh, true)
-	self:setTexture(veh, url, nil, true)
+	self:setTexture(veh, url, nil, true, true, client)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)

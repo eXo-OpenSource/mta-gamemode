@@ -20,7 +20,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = 64 + fisherLevel*4
+	self.m_BobberBarHeight = 64 + fisherLevel*4 - difficulty/10
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -179,8 +179,10 @@ function BobberBar:updateRenderTarget()
 
 	-- Draw BobberBar
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(5, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")
-	dxDrawRectangle(4, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))
+	dxDrawRectangle(4, 4, 32, self.m_Size.y-8, Color.Black)																				-- bobberBar bg Border
+	dxDrawImage(5, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")														-- bobberBar bg
+	--dxDrawRectangle(3, self.m_BobberBarPosition, 34, self.m_BobberBarHeight, Color.Black)												-- bobberBar Border
+	dxDrawRectangle(4, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))	-- bobberBar
 	dxSetBlendMode("blend")
 
 	-- Draw Bobber (Fish)
@@ -189,8 +191,9 @@ function BobberBar:updateRenderTarget()
 	-- Draw Progressbar
 	local progress_height = self.HEIGHT*(self.m_Progress/100)
 	local progress_color = tocolor(255*(1-self.m_Progress/100), 255*self.m_Progress/100, 0)
-	dxDrawRectangle(40, 5, 13, self.m_Size.y-10, tocolor(210, 125, 30))	--progress bg
-	dxDrawRectangle(40, self.POSITION_DOWN - progress_height, 13, progress_height, progress_color) --progressbar
+	dxDrawRectangle(39, 4, 15, self.m_Size.y-8, Color.Black)										--progress bg border
+	dxDrawRectangle(40, 5, 13, self.m_Size.y-10, tocolor(130, 130, 130))							--progress bg
+	dxDrawRectangle(40, self.POSITION_DOWN - progress_height, 13, progress_height, progress_color) 	--progressbar
 
 	dxSetRenderTarget()
 end
@@ -237,11 +240,15 @@ function BobberBar:render()
 
 	-- Update and draw
 	self:updateRenderTarget()
+
+	--[[
 	dxDrawText("Speed: " .. self.m_BobberSpeed, 500, 20)
 	dxDrawText("Current position: " .. self.m_BobberPosition, 500, 35)
 	dxDrawText("Target position: " .. self.m_BobberTargetPosition, 500, 50)
 	dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
 	dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
+	dxDrawText("Difficulty: " .. self.m_Difficulty, 500, 95)
+	]]
 
 	dxDrawImage(screenWidth*0.66 - self.m_Size.x * self.m_AnimationMultiplicator/2, screenHeight/2 - self.m_Size.y * self.m_AnimationMultiplicator/2, self.m_Size * self.m_AnimationMultiplicator, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, 255*self.m_AnimationMultiplicator))
 end

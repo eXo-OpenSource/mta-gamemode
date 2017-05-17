@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 JobManager = inherit(Singleton)
-
+local BONUS_MAX_PLAYT = 50 -- < 50 Spielstunden = Bonus beim Jobben
+JOB_EXTRA_POINT_FACTOR = 1.5 -- jeder job gibt 1,5x mehr punkte
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
@@ -125,4 +126,16 @@ function JobManager:Event_jobQuit()
 	if not job then return end
 
 	client:setJob(nil)
+end
+
+function JobManager.getBonusForNewbies( player , payout)
+	local playtime = player:getPlayTime()
+	local bonus = 0
+	if playtime then 
+		if playtime <= BONUS_MAX_PLAYT then 
+			bonus = ( 1- ( (playtime/60) / BONUS_MAX_PLAYT) ) * (payout*0.25)
+			return math.ceil(bonus)
+		end
+	end
+	return bonus
 end

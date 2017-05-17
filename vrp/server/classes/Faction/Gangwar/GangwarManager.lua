@@ -64,6 +64,7 @@ end
 
 function Gangwar:onAreaPayday()
 	local payouts = {}
+	local areaCounts = {}
 	local m_Owner
 	local areasInTotal = 0
 	for index, area in pairs( self.m_Areas ) do
@@ -81,14 +82,25 @@ function Gangwar:onAreaPayday()
 		if facObj then
 			playersOnline = facObj:getOnlinePlayers()
 			if #playersOnline > 2 then
+				areaCounts[facObj] = count
 				amount = (count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)) + (GANGWAR_PAYOUT_PER_AREA * count)
-				amount2 = math.floor((1 - ( count/areasInTotal)) * PAYDAY_ACTION_BONUS )
 				facObj:giveMoney(amount+amount2, "Gangwar-Payday")
-				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)	
-				facObj:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)	
-			else 
+				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)
+			else
 				facObj:sendMessage("Ihr seid nicht genügend Spieler online für den Gangwar-Payday!" , 200, 0, 0, true)
 			end
+		end
+	end
+	local count = 0
+	for k, faction in ipairs(FactionManager:getSingleton().Map) do
+		if not faction:isStateFaction() and faction.m_Id ~= 4 then
+			if areaCounts[faction] then
+				count = areaCounts[faction]
+			else
+				count = 0
+			end
+			amount2 = math.floor((1 - ( count/areasInTotal)) * PAYDAY_ACTION_BONUS )
+			faction:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)
 		end
 	end
 end

@@ -26,9 +26,6 @@ function ItemFishing:canBuy(player, itemName)
 end
 
 function ItemFishing:use(player, itemId, bag, place, itemName)
-	player:sendError("Aktuell deaktiviert!")
-	if true then return false end
-
 	if itemName == "Angelrute" then
 		Fishing:getSingleton():inventoryUse(player)
 		return
