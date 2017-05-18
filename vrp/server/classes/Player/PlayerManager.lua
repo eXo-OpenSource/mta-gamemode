@@ -401,6 +401,15 @@ function PlayerManager:playerQuit()
 	if source.m_DeathInJail then 
 		FactionState:getSingleton():Event_JailPlayer(source, false, true, false, true)
 	end
+	if DrivingSchool.m_LessonVehicles[source] then
+		if DrivingSchool.m_LessonVehicles[source].m_NPC then 
+			destroyElement(DrivingSchool.m_LessonVehicles[source].m_NPC)
+		end
+		destroyElement(DrivingSchool.m_LessonVehicles[source])
+		DrivingSchool.m_LessonVehicles[source] = nil
+		source:triggerEvent("DrivingLesson:endLesson")
+		outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", source, 200,0,0)
+	end
 end
 
 function PlayerManager:Event_playerReady()

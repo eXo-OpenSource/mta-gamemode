@@ -150,6 +150,7 @@ function Core:ready()
 	ChessSession:new()
 
 	GroupRob:new()
+	DrivingSchool:new() 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end
