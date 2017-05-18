@@ -1010,6 +1010,20 @@ function VehicleManager:Event_vehicleEmpty()
 				if occupant:getData("BeggarId") then
 					occupant:onTransportExit(client)
 				end
+				if occupant:getData("isDrivingCoach") then 
+					if DrivingSchool.m_LessonVehicles[client] == source then
+						DrivingSchool.m_LessonVehicles[client] = nil
+						if source.m_NPC then 
+							destroyElement(source.m_NPC)
+						end
+						destroyElement(source)
+					end
+					client:triggerEvent("DrivingLesson:endLesson")
+					fadeCamera(client,false,0.5)
+					setTimer(setElementPosition,1000,1,client,1348.97, -1620.68, 13.60)
+					setTimer(fadeCamera,1500,1, client,true,0.5)
+					outputChatBox("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client, 200,0,0)
+				end
 			end
 		end
 		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
