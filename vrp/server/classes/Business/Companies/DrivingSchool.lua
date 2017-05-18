@@ -44,6 +44,10 @@ local randomName =
 	"Kempes Waldemar",
 	"Avram Vachnadze",
 	"Klaus Schweiger",
+	"Luca Pasqualini",
+	"Peter Schmidt",
+	"Muhammad Vegas",
+	"Isaha Rosenberg",
 }
 function DrivingSchool:constructor()
     self:createDrivingSchoolMarker(Vector3(1362.04, -1663.74, 13.57))
@@ -222,7 +226,9 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			if DrivingSchool.m_LessonVehicles[player] == source then
 				DrivingSchool.m_LessonVehicles[player] = nil
 				if source.m_NPC then 
-					destroyElement(source.m_NPC)
+					if isElement(source.m_NPC) then
+						destroyElement(source.m_NPC)
+					end
 				end
 				destroyElement(source)
 			end
