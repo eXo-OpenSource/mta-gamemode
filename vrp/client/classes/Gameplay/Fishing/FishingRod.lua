@@ -83,7 +83,8 @@ function FishingRod:handleClick(_, state)
 	if isCursorShowing() then return end
 	setControlState("fire", false)
 	toggleControl("fire", false)
-
+	if localPlayer.vehicle then return end
+	
 	self.m_MouseDown = state == "down"
 
 	if self.m_isCasting and self.m_MouseDown then
@@ -182,6 +183,8 @@ function FishingRod:checkWater(distance)
 end
 
 function FishingRod:render()
+	if not self.m_FishingRod then return end
+
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
 
