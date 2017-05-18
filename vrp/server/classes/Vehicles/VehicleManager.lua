@@ -532,10 +532,12 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 				if getElementType(player) == "player" then
 					local playerHealth = getElementHealth(player)
 					local bIsKill = (playerHealth - loss*0.02)  <= 0
-					if not bIsKill then
-						setElementHealth(player, playerHealth - loss*0.02)
-					else
-						setElementHealth(player, 1)
+					if not player.m_SeatBelt then 
+						if not bIsKill then
+							setElementHealth(player, playerHealth - loss*0.02)
+						else
+							setElementHealth(player, 1)
+						end
 					end
 					if sForce < 0.85 then
 						if not player.m_lastInjuryMe then
