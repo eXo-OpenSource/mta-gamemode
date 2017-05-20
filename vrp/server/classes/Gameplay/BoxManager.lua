@@ -204,6 +204,12 @@ function BoxManager:respawnPlayer(player, killer)
 		player:setHeadless(false)
 		player:setCameraTarget(player)
 		player:fadeCamera(true, 1)
+		setElementAlpha(player,255)
+		if player.ped_deadDouble then
+			if isElement(player.ped_deadDouble) then
+				destroyElement(player.ped_deadDouble)
+			end
+		end
 		player:triggerEvent("CountdownStop", "Respawn in")
 	end,5000,1)
 end
