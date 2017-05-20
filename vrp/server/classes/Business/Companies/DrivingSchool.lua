@@ -46,7 +46,7 @@ local randomName =
 	"Klaus Schweiger",
 	"Luca Pasqualini",
 	"Peter Schmidt",
-	"Muhammad Vegas",
+	"Mohammed Vegas",
 	"Isaha Rosenberg",
 }
 function DrivingSchool:constructor()
@@ -192,8 +192,10 @@ function DrivingSchool:onDrivingTestNPCStart( )
 	end)
 	addEventHandler("onVehicleExit",veh,function(player, seat) 
 		if seat ~= 0 then return end
+		if not source.m_IsFinished then
+			outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+		end
 		if DrivingSchool.m_LessonVehicles[player] == source then
-		local alreadyFinished = source.m_IsFinished
 			DrivingSchool.m_LessonVehicles[player] = nil
 			if source.m_NPC then 
 				destroyElement(source.m_NPC)
@@ -204,9 +206,6 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		fadeCamera(player,false,0.5)
 		setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
 		setTimer(fadeCamera,1500,1, player,true,0.5)
-		if not alreadyFinished then
-			outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
-		end
 	end)
 	addEventHandler("onVehicleExplode",veh,function()
 		local player = getVehicleOccupant(source)
@@ -231,6 +230,9 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		if player then
 			if DrivingSchool.m_LessonVehicles[player] == source then
 				DrivingSchool.m_LessonVehicles[player] = nil
+				if not source.m_IsFinished then
+					outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+				end
 				if source.m_NPC then 
 					if isElement(source.m_NPC) then
 						destroyElement(source.m_NPC)
@@ -242,7 +244,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			fadeCamera(player,false,0.5)
 			setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
 			setTimer(fadeCamera,1500,1, player,true,0.5)
-			outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+			
 		end
 	end)
 	source:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
@@ -258,7 +260,7 @@ function DrivingSchool:onHitRouteMarker()
 		else 
 			veh.m_IsFinished = true
 			if getElementHealth(veh) >= 500 then 
-				if veh.m_AutoTestMode == "car" then
+				if veh.m_TestMode == "car" then
 					client.m_HasDrivingLicense = true
 				else 
 					client.m_HasBikeLicense = true
