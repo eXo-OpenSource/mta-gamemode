@@ -29,8 +29,10 @@ function HUDSpeedo:constructor()
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 then
-				if not VEHICLE_BIKES[vehicle:getModel()] then
-					self:hide()
+				if vehicle then
+					if not VEHICLE_BIKES[vehicle:getModel()] then
+						self:hide()
+					end
 				end
 			end
 		end

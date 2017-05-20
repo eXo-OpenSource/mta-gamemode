@@ -142,10 +142,6 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		end
 		destroyElement(DrivingSchool.m_LessonVehicles[source])
 	end
-	if source:getMoney() < DrivingSchool.LicenseCosts["car"] then  
-		source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["car"].."$ )!", source)) 
-		return 
-	end
 	local veh  = TemporaryVehicle.create(410,1355.07, -1621.64, 14.22,90)
 	if source.m_AutoTestMode == "bike" then setElementModel(veh,586) end
 	setVehicleHandling(veh,"maxVelocity",60)
@@ -165,9 +161,17 @@ function DrivingSchool:onDrivingTestNPCStart( )
 	veh.m_TestMode = source.m_AutoTestMode
 	veh.m_NPC:setData("isDrivingCoach",true)
 	if source.m_AutoTestMode == "car" then
+		if source:getMoney() < DrivingSchool.LicenseCosts["car"] then  
+			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["car"].."$ )!", source)) 
+			return 
+		end
 		source:takeMoney(DrivingSchool.LicenseCosts["car"], "Fahrprüfung")
 		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]))
 	else 
+		if source:getMoney() < DrivingSchool.LicenseCosts["bike"] then  
+			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["bike"].."$ )!", source)) 
+			return 
+		end
 		source:takeMoney(DrivingSchool.LicenseCosts["bike"], "Fahrprüfung")
 		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]))
 	end
