@@ -10,6 +10,7 @@ end
 
 function DrivingSchool:Event_onNextMarker( pos, vehicle ) 
 	if pos then 
+		setPedCanBeKnockedOffBike(localPlayer,false)
 		local x,y,z, rot = unpack(pos)
 		if self.m_CurrentMarker then 
 			if isElement(self.m_CurrentMarker) then
@@ -45,6 +46,7 @@ function DrivingSchool:Event_endLesson()
 		delete(self.m_CurrentBlip)
 	end
 	self.m_CurrentVehicle = nil
+	setPedCanBeKnockedOffBike(localPlayer,true)
 end
 
 function DrivingSchool.Event_getSpeakBubble( ped, ped2 )

@@ -193,6 +193,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 	addEventHandler("onVehicleExit",veh,function(player, seat) 
 		if seat ~= 0 then return end
 		if DrivingSchool.m_LessonVehicles[player] == source then
+		local alreadyFinished = source.m_IsFinished
 			DrivingSchool.m_LessonVehicles[player] = nil
 			if source.m_NPC then 
 				destroyElement(source.m_NPC)
@@ -203,11 +204,14 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		fadeCamera(player,false,0.5)
 		setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
 		setTimer(fadeCamera,1500,1, player,true,0.5)
-		outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+		if not alreadyFinished then
+			outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
+		end
 	end)
 	addEventHandler("onVehicleExplode",veh,function()
 		local player = getVehicleOccupant(source)
 		if DrivingSchool.m_LessonVehicles[player] == source then
+		local alreadyFinished = source.m_IsFinished
 			DrivingSchool.m_LessonVehicles[player] = nil
 			if source.m_NPC then 
 				destroyElement(source.m_NPC)
@@ -218,7 +222,9 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		fadeCamera(player,false,0.5)
 		setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
 		setTimer(fadeCamera,1500,1, player,true,0.5)
-		outputChatBox("Du hast das Fahrzeug zerstört!", player, 200,0,0)
+		if not alreadyFinished then
+			outputChatBox("Du hast das Fahrzeug zerstört!", player, 200,0,0)
+		end
 	end)
 	addEventHandler("onElementDestroy",veh,function()
 		local player = getVehicleOccupant(source)
@@ -250,6 +256,7 @@ function DrivingSchool:onHitRouteMarker()
 		if veh.m_CurrentNode <= #DrivingSchool.testRoute then
 			client:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
 		else 
+			veh.m_IsFinished = true
 			if getElementHealth(veh) >= 500 then 
 				if veh.m_AutoTestMode == "car" then
 					client.m_HasDrivingLicense = true
@@ -273,6 +280,7 @@ function DrivingSchool:onHitRouteMarker()
 				DrivingSchool.m_LessonVehicles[client] = nil
 				client:triggerEvent("DrivingLesson:endLesson")
 			end
+			
 		end
 	end
 end

@@ -934,9 +934,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 end
 
 function VehicleManager:Event_vehicleRequestInfo(player)
-	if not client then 
-		local client = player 
-	end
+	local client = client or player
 	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client), client:getGarageType(), client:getHangarType())
 end
 
