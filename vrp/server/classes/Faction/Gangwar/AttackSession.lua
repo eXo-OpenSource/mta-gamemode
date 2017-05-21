@@ -168,7 +168,7 @@ end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
-		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, loss)
+		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, WEAPON_DAMAGE[weapon] or loss)
 	end
 end
 
