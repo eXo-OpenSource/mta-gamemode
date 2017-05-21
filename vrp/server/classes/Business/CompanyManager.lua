@@ -374,8 +374,9 @@ function CompanyManager:Event_toggleDuty()
 			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 			client:setPublicSync("Company:Duty",true)
             takeAllWeapons(client)
-			giveWeapon(client, 43, 50) -- Camera
-
+			if company.m_Id == 3 then
+				giveWeapon(client, 43, 50) -- Camera
+			end
             if company.start then
                 company:start(client)
             end
