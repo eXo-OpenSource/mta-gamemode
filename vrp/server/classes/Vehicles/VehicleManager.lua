@@ -719,7 +719,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if (client:getRank() >= RANK.Moderator) and not DEBUG then
+		if (client:getRank() >= RANK.Moderator) then
 			source:respawn( true )
 			return
 		else
