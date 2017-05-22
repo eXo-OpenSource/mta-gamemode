@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -59,7 +59,7 @@ function PlayerManager:constructor()
 	end)
 
 	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
-
+	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
@@ -105,6 +105,16 @@ function PlayerManager:Event_OnDeadDoubleDestroy()
 		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
 		source:clearReviveWeapons()
+	end
+end
+
+function PlayerManager:Event_onToggleSeatBelt( )
+	if client then
+		local vehicle = getPedOccupiedVehicle(client) 
+			if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then 
+				client:buckleSeatBelt(vehicle) 
+			end
+		end
 	end
 end
 
