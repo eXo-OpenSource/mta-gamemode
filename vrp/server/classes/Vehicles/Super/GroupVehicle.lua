@@ -38,7 +38,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 	return false
 end
 
-function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior)
+function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior, forSale, salePrice)
 	self.m_Id = Id
 	self.m_Group = Group
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -49,6 +49,7 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self.m_Rotation = self:getRotation()
 	setElementData(self, "OwnerName", self.m_Group:getName())
 	setElementData(self, "OwnerType", "group")
+	setElementData(self, "GroupType", self.m_Group:getType())
 	if health and health <= 300 then
 		health = 300
 	end
@@ -91,6 +92,9 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	else
 		self.m_Tunings = VehicleTuning:new(self)
 	end
+
+	self.m_ForSale = forSale and forSale == 1 and true or false
+	self.m_SalePrice = salePrice or 0
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
@@ -190,4 +194,14 @@ function GroupVehicle:respawn(force)
 	self:fix()
 
 	return true
+end
+
+function GroupVehicle:setForSale(sale, price)
+	if sale then
+		self.m_ForSale = true
+		self.m_SalePrice = price
+	else
+		self.m_ForSale = false
+		self.m_SalePrice = 0
+	end
 end

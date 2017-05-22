@@ -25,6 +25,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
+			if localPlayer:getGroupName() == getElementData(element, "OwnerName") and (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
+				self:addItem(_"Firma: zum Verkauf anbieten",
+					function()
+						if self:getElement() then
+							delete(self)
+							InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
+							function (amount)
+								if tonumber(amount) > 0 and tonumber(amount) <= 1000000 then
+									triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
+								else
+									ErrorBox:new(_("Der Betrag muss zwischen 1 und 1.000.000$ liegen!"))
+								end
+							end, true)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Home)
+			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
