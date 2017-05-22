@@ -82,7 +82,7 @@ function PlayerManager:constructor()
 
 end
 
-function PlayerMana:Event_onRequestGateOpen() 
+function PlayerManager:Event_onRequestGateOpen() 
 	if client then 
 		if Gate.Map then 
 			local obj
