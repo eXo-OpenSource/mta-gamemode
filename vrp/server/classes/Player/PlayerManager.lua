@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt","onPlayerTryGateOpen"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -60,6 +60,7 @@ function PlayerManager:constructor()
 
 	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
+	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
@@ -79,6 +80,28 @@ function PlayerManager:constructor()
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 
+end
+
+function PlayerMana:Event_onRequestGateOpen() 
+	if client then 
+		if Gate.Map then 
+			local obj
+			for i = 1,#Gate.Map do 
+				obj = Gate.Map[i]
+				local int, dim = obj:getInterior(), obj:getDimension()
+				if int == client:getInterior() and dim == client:getDimension() then
+					if obj:getPosition() and client:getPosition() then
+						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 7 then 
+							local instance = obj.m_Super
+							if instance then 
+								instance:Event_onColShapeHit(client, true)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
