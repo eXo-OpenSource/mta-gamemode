@@ -125,6 +125,8 @@ end
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
+			setPedArmor(player,100)
+			player:sendInfo(_("Du hast dir eine neue Schutzweste geholt!",player))
 			player:triggerEvent("showFactionWeaponShopGUI")
 		else
 			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))

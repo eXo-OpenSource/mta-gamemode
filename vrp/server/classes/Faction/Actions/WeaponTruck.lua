@@ -323,8 +323,11 @@ function WeaponTruck:addDestinationMarker(factionId, type, blip)
 	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
 
 	if blip then
-		local blipId = #self.m_DestinationBlips+1
-		self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
+		local facObj = FactionManager:getSingleton():getFromId(factionId)
+		if facObj then
+			local blipId = #self.m_DestinationBlips+1
+			self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction",facObj}, 9999)
+		end
 	end
 
 end

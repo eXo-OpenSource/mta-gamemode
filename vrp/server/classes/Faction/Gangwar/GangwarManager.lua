@@ -117,7 +117,7 @@ function Gangwar:Event_OnPickupHit( player )
 end
 
 function Gangwar:RESET()
-	local sql_query = "UPDATE ??_gangwar SET Besitzer='5'"
+	local sql_query = "UPDATE ??_gangwar SET Besitzer='8'"
 	sql:queryFetch(sql_query,  sql:getPrefix())
 	outputDebugString("Gangwar-areas were reseted!")
 end
@@ -248,8 +248,8 @@ function Gangwar:attackArea( player )
 				if areaOwner ~= id then
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
-					if factionCount >= GANGWAR_MIN_PLAYERS then
-						if factionCount2 >= GANGWAR_MIN_PLAYERS then
+					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG then
+						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG then
 							local activeGangwar = self:getCurrentGangwar()
 							local acFaction1,  acFaction2
 							if not activeGangwar then

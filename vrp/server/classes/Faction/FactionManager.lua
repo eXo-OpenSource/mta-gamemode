@@ -285,7 +285,12 @@ function FactionManager:Event_factionRankUp(playerId)
 				-- Todo: Report possible cheat attempt
 				return
 			end
-
+			
+			if client:getId() == playerId then 
+				client:sendError(_("Du kannst deinen eigenen Rang nicht höher setzen!", client))
+				return
+			end
+			
 			local playerRank = faction:getPlayerRank(playerId)
 			local player, isOffline = DatabasePlayer.get(playerId)
 			if isOffline then

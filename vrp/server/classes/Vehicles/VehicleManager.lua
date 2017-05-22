@@ -246,6 +246,8 @@ function VehicleManager.loadVehicles()
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
+			setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
+			vehicle.m_IsNotSpawnedYet = true
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		else
@@ -436,6 +438,8 @@ function VehicleManager:refreshGroupVehicles(group)
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew)
+			setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
+			vehicle.m_IsNotSpawnedYet = true
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -529,46 +533,49 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 	if getPedOccupiedVehicle(source) == veh then
 		if sForce >0.4 and loss*0.1 >= 2  then
 			for seat, player in pairs(occupants) do
-				local playerHealth = getElementHealth(player)
-				local bIsKill = (playerHealth - loss*0.02)  <= 0
-				if not bIsKill then
-					setElementHealth(player, playerHealth - loss*0.02)
-				else
-					setElementHealth(player, 1)
-				end
-				if sForce < 0.85 then
-					if not player.m_lastInjuryMe then
-						player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
-						player.m_lastInjuryMe = tickCount
-					elseif player.m_lastInjuryMe + 5000 <= tickCount then
-						player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
-						player.m_lastInjuryMe = tickCount
+				if getElementType(player) == "player" then
+					local playerHealth = getElementHealth(player)
+					local bIsKill = (playerHealth - loss*0.02)  <= 0
+					if not player.m_SeatBelt then 
+						if not bIsKill then
+							setElementHealth(player, playerHealth - loss*0.02)
+						else
+							setElementHealth(player, 1)
+						end
 					end
-					setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
-					setTimer(setPedAnimation, 700,2, player, nil)
-				elseif sForce >= 0.85 then
-					if not player.m_SeatBelt then
-						player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-						removePedFromVehicle(player)
-						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
-						setTimer(setPedAnimation, 5000,1, player, nil)
-					elseif player.m_SeatBelt == veh then
+					if sForce < 0.85 then
 						if not player.m_lastInjuryMe then
 							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 							player.m_lastInjuryMe = tickCount
-
 						elseif player.m_lastInjuryMe + 5000 <= tickCount then
 							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 							player.m_lastInjuryMe = tickCount
 						end
-					else
-						player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-						removePedFromVehicle(player)
-						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
-						setTimer(setPedAnimation, 5000,1, player, nil)
+						setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
+						setTimer(setPedAnimation, 700,2, player, nil)
+					elseif sForce >= 0.85 then
+						if not player.m_SeatBelt then
+							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+							removePedFromVehicle(player)
+							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+							setTimer(setPedAnimation, 5000,1, player, nil)
+						elseif player.m_SeatBelt == veh then
+							if not player.m_lastInjuryMe then
+								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+								player.m_lastInjuryMe = tickCount
+							elseif player.m_lastInjuryMe + 5000 <= tickCount then
+								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+								player.m_lastInjuryMe = tickCount
+							end
+						else
+							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+							removePedFromVehicle(player)
+							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+							setTimer(setPedAnimation, 5000,1, player, nil)
+						end
 					end
+					player:triggerEvent("clientBloodScreen")
 				end
-				player:triggerEvent("clientBloodScreen")
 			end
 		end
 	end
@@ -712,7 +719,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if (client:getRank() >= RANK.Moderator) then
 			source:respawn( true )
 			return
 		else
@@ -721,19 +728,24 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				return
 			end
 			local group = client:getGroup()
-			if group:getMoney() >= 100 then
-				group:takeMoney(100, "Fahrzeug-Respawn")
-			else
-				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
-				return
+			if not source.m_IsNotSpawnedYet then
+				if group:getMoney() >= 100 then
+					group:takeMoney(100, "Fahrzeug-Respawn")
+					group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
+				else
+					client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
+					return
+				end
+			else 
+				source.m_IsNotSpawnedYet = false
+				client:sendShortMessage(_("Du hast das Fahrzeug kostenlos gespawnt!", client))
+				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s kostenlos gespawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			end
 			source:respawn()
-			group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			return
 		end
 	end
-	--
-
+	
 	if source:getPositionType() == VehiclePositionType.Mechanic then
 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
 		return
@@ -786,7 +798,6 @@ end
 
 function VehicleManager:Event_vehicleRespawnWorld()
 	self:checkVehicle(source)
-
 	if not source:isRespawnAllowed() then
 		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
 		return
@@ -931,9 +942,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 end
 
 function VehicleManager:Event_vehicleRequestInfo(player)
-	if not client then 
-		local client = player 
-	end
+	local client = client or player
 	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client), client:getGarageType(), client:getHangarType())
 end
 
@@ -1008,6 +1017,20 @@ function VehicleManager:Event_vehicleEmpty()
 				removePedFromVehicle(occupant)
 				if occupant:getData("BeggarId") then
 					occupant:onTransportExit(client)
+				end
+				if occupant:getData("isDrivingCoach") then 
+					if DrivingSchool.m_LessonVehicles[client] == source then
+						DrivingSchool.m_LessonVehicles[client] = nil
+						if source.m_NPC then 
+							destroyElement(source.m_NPC)
+						end
+						destroyElement(source)
+					end
+					client:triggerEvent("DrivingLesson:endLesson")
+					fadeCamera(client,false,0.5)
+					setTimer(setElementPosition,1000,1,client,1348.97, -1620.68, 13.60)
+					setTimer(fadeCamera,1500,1, client,true,0.5)
+					outputChatBox("Du hast den Fahrlehrer rausgeworfen und die Prüfung beendet!", client, 200,0,0)
 				end
 			end
 		end

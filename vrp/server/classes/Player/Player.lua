@@ -392,6 +392,7 @@ function Player:spawn( )
 			else
 				setElementModel( self, self.m_AltSkin or self.m_Skin)
 			end
+			setPedArmor(self, 100)
 		end
 		if self.m_PrisonTime > 0 then
 			self:setPrison(self.m_PrisonTime, true)
@@ -464,6 +465,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 		else
 			setElementModel( self, self.m_AltSkin or self.m_Skin)
 		end
+		setPedArmor(self, 100)
 	end
 
 	if self:isPremium() then

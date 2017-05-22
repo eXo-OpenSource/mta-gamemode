@@ -168,7 +168,10 @@ end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
-		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, loss)
+		local basicDamage = WEAPON_DAMAGE[weapon]
+		local multiplier = DAMAGE_MULTIPLIER[bpart] and DAMAGE_MULTIPLIER[bpart] or 1
+		local realLoss = basicDamage*multiplier
+		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss or loss)
 	end
 end
 
@@ -191,7 +194,7 @@ function AttackSession:sessionCheck()
 	end
 end
 
-function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
+function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 	local bParticipant = self:isParticipantInList( player )
 	if bParticipant then
 		if killer then
@@ -200,7 +203,10 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 				self:disqualifyPlayer( player )
-				triggerClientEvent("onGangwarKill", killer, player, weapon, bpart)
+				local basicDamage = WEAPON_DAMAGE[weapon]
+				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+				local realLoss = basicDamage*multiplier
+				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, realLoss or 0 )
 			end
 			if killer.kills then 
 				killer.kills = killer.kills + 1
@@ -295,6 +301,9 @@ end
 
 function AttackSession:attackLose() --// loose for team1
 	self:notifyFactions()
+	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
+		v:givePoints(20)
+	end
 	self.m_AreaObj:update()
 
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
@@ -310,6 +319,9 @@ end
 function AttackSession:attackWin() --// win for team1
 	self:notifyFactions()
 	self.m_AreaObj.m_Owner = self.m_Faction1.m_Id
+	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do 
+		v:givePoints(20)
+	end
 	self.m_AreaObj:update()
 
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet ist verloren!",2000,0,0,true)

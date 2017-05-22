@@ -131,9 +131,12 @@ end
 function JobManager.getBonusForNewbies( player , payout)
 	local playtime = player:getPlayTime()
 	local bonus = 0
+	if payout then 
+		bonus = math.ceil(payout*1.1)
+	end
 	if playtime then 
 		if playtime <= BONUS_MAX_PLAYT then 
-			bonus = ( 1- ( (playtime/60) / BONUS_MAX_PLAYT) ) * (payout*0.25)
+			bonus = bonus + ( 1- ( (playtime/60) / BONUS_MAX_PLAYT) ) * (payout*0.25)
 			return math.ceil(bonus)
 		end
 	end
