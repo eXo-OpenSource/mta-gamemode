@@ -246,6 +246,8 @@ function VehicleManager.loadVehicles()
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
+			setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
+			vehicle.m_IsNotSpawnedYet = true
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		else
@@ -436,6 +438,8 @@ function VehicleManager:refreshGroupVehicles(group)
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew)
+			setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
+			vehicle.m_IsNotSpawnedYet = true
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -715,7 +719,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if (client:getRank() >= RANK.Moderator) and not DEBUG then
 			source:respawn( true )
 			return
 		else
@@ -724,19 +728,24 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				return
 			end
 			local group = client:getGroup()
-			if group:getMoney() >= 100 then
-				group:takeMoney(100, "Fahrzeug-Respawn")
-			else
-				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
-				return
+			if not source.m_IsNotSpawnedYet then
+				if group:getMoney() >= 100 then
+					group:takeMoney(100, "Fahrzeug-Respawn")
+					group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
+				else
+					client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
+					return
+				end
+			else 
+				source.m_IsNotSpawnedYet = false
+				client:sendShortMessage(_("Du hast das Fahrzeug kostenlos gespawnt!", client))
+				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s kostenlos gespawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			end
 			source:respawn()
-			group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			return
 		end
 	end
-	--
-
+	
 	if source:getPositionType() == VehiclePositionType.Mechanic then
 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
 		return
@@ -789,7 +798,6 @@ end
 
 function VehicleManager:Event_vehicleRespawnWorld()
 	self:checkVehicle(source)
-
 	if not source:isRespawnAllowed() then
 		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
 		return
