@@ -327,7 +327,7 @@ function DrivingSchool:createAutomaticTestPed( pos, pos2 )
 			if button == "left" and state == "up" then
 				if source == self.m_DrivingSchoolAutoPed then
 					if player.m_HasTheory then
-						if #self:getOnlinePlayers() < 3 then
+						if #self:getOnlinePlayers() <= 4 then
 							if not player.m_HasDrivingLicense  then
 								if getPlayerMoney(player) >= DrivingSchool.LicenseCosts["car"] then
 									player.m_AutoTestMode = "car"
@@ -357,7 +357,7 @@ function DrivingSchool:createAutomaticTestPed( pos, pos2 )
 			if button == "left" and state == "up" then
 				if source == self.m_DrivingSchoolAutoPed2 then
 					if player.m_HasTheory then
-						if #self:getOnlinePlayers() < 3 then
+						if #self:getOnlinePlayers() <= 4 then
 							if not player.m_HasBikeLicense  then
 								if getPlayerMoney(player) >= DrivingSchool.LicenseCosts["bike"] then
 									player.m_AutoTestMode = "bike"

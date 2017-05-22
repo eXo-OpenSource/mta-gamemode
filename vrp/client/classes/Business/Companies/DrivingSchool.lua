@@ -51,11 +51,11 @@ end
 
 function DrivingSchool.Event_getSpeakBubble( ped, ped2 )
 	local name = _"Fahrprüfung (Auto)"
-	local description = _"Falls zu wenig Fahrlehrer online sind!"
+	local description = _"Wenn wenig Fahrlehrer online sind!"
 	ped.SpeakBubble = SpeakBubble3D:new(ped, name, description, 270)
 	
 	local name = _"Fahrprüfung (Motorrad)"
-	local description = _"Falls zu wenig Fahrlehrer online sind!"
+	local description = _"Wenn wenig Fahrlehrer online sind!"
 	ped2.SpeakBubble = SpeakBubble3D:new(ped2, name, description, 270)
 end
 

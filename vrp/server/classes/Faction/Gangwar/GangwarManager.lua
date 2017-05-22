@@ -10,7 +10,7 @@ Gangwar = inherit(Singleton)
 
 
 --// RESET VARIABLE //
-GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
+GANGWAR_RESET_AREAS = true --// NUR IM FALLE VON GEBIET-RESET
 
 
 --// Gangwar - Constants //--
@@ -117,7 +117,7 @@ function Gangwar:Event_OnPickupHit( player )
 end
 
 function Gangwar:RESET()
-	local sql_query = "UPDATE ??_gangwar SET Besitzer='5'"
+	local sql_query = "UPDATE ??_gangwar SET Besitzer='8'"
 	sql:queryFetch(sql_query,  sql:getPrefix())
 	outputDebugString("Gangwar-areas were reseted!")
 end
