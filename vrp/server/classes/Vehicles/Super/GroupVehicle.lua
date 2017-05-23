@@ -93,8 +93,12 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 		self.m_Tunings = VehicleTuning:new(self)
 	end
 
-	self.m_ForSale = forSale and forSale == 1 and true or false
-	self.m_SalePrice = salePrice or 0
+	if forSale and forSale == 1 then
+		self:setForSale(true, salePrice)
+	else
+		self:setForSale(false, 0)
+	end
+
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
@@ -134,8 +138,8 @@ function GroupVehicle:save()
 	local health = getElementHealth(self)
 	if self.m_Trunk then self.m_Trunk:save() end
 
-	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
-   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
+	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ?, ForSale = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_ForSale and 1 or 0, self.m_SalePrice or 0, self.m_Id)
 end
 
 function GroupVehicle:isGroupPremiumVehicle()
@@ -204,4 +208,6 @@ function GroupVehicle:setForSale(sale, price)
 		self.m_ForSale = false
 		self.m_SalePrice = 0
 	end
+	setElementData(self, "forSale", self.m_ForSale)
+	setElementData(self, "forSalePrice", self.m_SalePrice)
 end

@@ -33,7 +33,7 @@ function GroupManager:constructor()
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
 		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo",
-		"groupSetVehicleForSale"}
+		"groupSetVehicleForSale", "groupBuyVehicle"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -55,6 +55,8 @@ function GroupManager:constructor()
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
+	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
+
 
 
 end
@@ -602,4 +604,9 @@ function GroupManager:Event_SetVehicleForSale(amount)
 		end
 		source:setForSale(true, amount)
 	end
+end
+
+function GroupManager:Event_BuyVehicle()
+	local group = client:getGroup()
+	source:buy(client)
 end

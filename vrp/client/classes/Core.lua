@@ -132,6 +132,7 @@ function Core:ready()
 	PlantWeed.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
+	GroupSaleVehicles.initalize()
 	TextureReplace.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
@@ -150,7 +151,7 @@ function Core:ready()
 	ChessSession:new()
 
 	GroupRob:new()
-	DrivingSchool:new() 
+	DrivingSchool:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end

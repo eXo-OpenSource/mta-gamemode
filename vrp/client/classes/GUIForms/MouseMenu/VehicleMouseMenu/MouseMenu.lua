@@ -237,6 +237,20 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Long_Down)
 	end
 
+	if getElementData(element, "OwnerType") == "group" and getElementData(element, "forSale") == true then
+		self:addItem(_"Fahrzeug kaufen",
+			function()
+				if self:getElement() then
+					delete(self)
+					QuestionBox:new(
+						_("Möchtest du das Fahrzeug für %d$ kaufen?", getElementData(element, "forSalePrice")),
+						function() 	triggerServerEvent("groupBuyVehicle", self:getElement()) end
+					)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Cart)
+	end
+
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
 			delete(self)
