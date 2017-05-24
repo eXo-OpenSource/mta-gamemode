@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect", "nickchange","checkOverlappingVehicles"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -520,7 +520,8 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
-
+	elseif func == "checkOverlappingVehicles" then 
+		triggerServerEvent("checkOverlappingVehicles", localPlayer)
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then

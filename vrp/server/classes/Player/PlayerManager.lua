@@ -91,7 +91,7 @@ function PlayerManager:Event_onRequestGateOpen()
 				local int, dim = obj:getInterior(), obj:getDimension()
 				if int == client:getInterior() and dim == client:getDimension() then
 					if obj:getPosition() and client:getPosition() then
-						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 7 then 
+						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then 
 							local instance = obj.m_Super
 							if instance then 
 								instance:Event_onColShapeHit(client, true)
