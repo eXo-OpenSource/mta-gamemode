@@ -52,13 +52,14 @@ function HTTPMinimalDownloadGUI:setCurrentFile(file)
 	if file:sub(-9, #file) == "index.xml" then
 		return
 	else
+		self.m_File = file
 		self:updateText(("Custom Textur wird geladen...\nTextur: %s"):format(file))
 	end
 end
 
 function HTTPMinimalDownloadGUI:markAsFailed(reason)
 	self.m_Failed = true
-	self:updateText(("Download-Error: %s"):format(reason))
+	self:updateText(("Download-Error: %s\n(%s)"):format(reason, self.m_File))
 	self:setColorRGB(125, 0, 0, 200)
 end
 
