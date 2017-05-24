@@ -32,7 +32,7 @@ function GasStation:constructor()
 	end
 
 	self.m_StreamedIn = 0
-
+	self.m_StreamedObjects = {}
 	addEventHandler("onClientElementStreamIn",root, bind(self.onStreamIn, self))
 	addEventHandler("onClientElementStreamOut",root ,bind(self.onStreamOut, self))
 
@@ -77,6 +77,7 @@ end
 function GasStation:onStreamIn()
 	if source:getModel() == 1676 then
 		self.m_StreamedIn = self.m_StreamedIn+1
+		self.m_StreamedObjects[source] = true
 		removeEventHandler("onClientRender", root, self.m_RenderBind)
 		addEventHandler("onClientRender", root, self.m_RenderBind)
 	end
@@ -84,7 +85,8 @@ end
 
 function GasStation:onStreamOut()
 	if source:getModel() == 1676 then
-		self.m_StreamedIn = self.m_StreamedIn + -1
+		self.m_StreamedIn = self.m_StreamedIn-1
+		self.m_StreamedObjects[source] = nil
 		if self.m_StreamedIn <= 0 then
 			removeEventHandler("onClientRender", root, self.m_RenderBind)
 		end
@@ -93,11 +95,25 @@ function GasStation:onStreamOut()
 end
 
 function GasStation:gasRender()
-	dxSetRenderTarget(self.m_RenderTarget)
-	self:renderBackground()
-	self:renderDisplay()
-	dxSetRenderTarget()
-	dxSetShaderValue(self.m_Shader, "gTexture", self.m_RenderTarget)
+	local rendering = self:checkRender() 
+	if rendering then
+		dxSetRenderTarget(self.m_RenderTarget)
+		self:renderBackground()
+		self:renderDisplay()
+		dxSetRenderTarget()
+		dxSetShaderValue(self.m_Shader, "gTexture", self.m_RenderTarget)
+	end
+end
+
+function GasStation:checkRender() 
+	for obj, k in pairs(self.m_StreamedObjects) do 
+		if obj.getPosition then 
+			if getDistanceBetweenPoints3D(obj:getPosition(), localPlayer:getPosition() ) <= 15 then 
+				return true
+			end
+		end
+	end
+	return false
 end
 
 function GasStation:onUpdate(amount, price)
