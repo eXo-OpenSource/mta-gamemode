@@ -1,5 +1,5 @@
 BankRobberyManager = inherit(Singleton)
-BANKROB_VAULT_OPEN_TIME = 3*60*1000
+BANKROB_VAULT_OPEN_TIME = 3*(60*1000)
 
 function BankRobberyManager:constructor()
 	self.m_Banks = {}
@@ -89,9 +89,9 @@ function BankRobberyManager:Event_onHackSuccessful()
 	client:giveKarma(-5)
 	local brobFaction = client:getFaction()
 	for k, player in ipairs(brobFaction:getOnlinePlayers()) do 
-		player:triggerEvent("Countdown", BANKROB_VAULT_OPEN_TIME, "Safe offen:")
+		player:triggerEvent("Countdown", (BANKROB_VAULT_OPEN_TIME/(60*1000)), "Safe offen:")
 	end
-	self.m_OpenVaulTimer = setTimer(bind(self.m_CurrentBank.openSafeDoor,self), BANKROB_VAULT_OPEN_TIME, 1)
+	self.m_OpenVaulTimer = setTimer(bind(self.m_CurrentBank.openSafeDoor,self.m_CurrentBank), BANKROB_VAULT_OPEN_TIME, 1)
 end
 
 

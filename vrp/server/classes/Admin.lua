@@ -72,7 +72,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -1112,7 +1112,7 @@ function Admin:runString(player, cmd, ...)
 end
 
 function Admin:checkOverlappingVehicles()
-	QuestionBox:new(client, client, "Warnung! Diese Funktion ist performance-lastig", "admin:acceptOverlappingCheck")
+	QuestionBox:new(client, client,  _("Warnung! Diese Funktion ist performance-lastig",client), "admin:acceptOverlappingCheck")
 end
 
 function Admin:Event_OnAcceptOverlapCheck()
@@ -1120,13 +1120,15 @@ function Admin:Event_OnAcceptOverlapCheck()
 		local vehicles = getElementsByType("vehicle") 
 		OVERLAPPING_VEHICLES = {}
 		for i = 1, #vehicles do 
-			for i2 = 1, #vehicles do 
-				if getElementDimension(vehicles[i]) == 0 and getElementInterior(vehicles[i]) == 0 then
-					if vehicles[i].getPosition and vehicles[i2].getPosition then
-						local pos1, pos2 = vehicles[i]:getPosition(), vehicles[i2]:getPosition()
-						local dist = getDistanceBetweenPoints3D(pos1, pos2)
-						if dist <= ADMIN_OVERLAP_THRESHOLD then 
-							OVERLAPPING_VEHICLES[#OVERLAPPING_VEHICLES+1] = vehicles[i]
+			if (getElementDimension(vehicles[i]) == 0 and getElementInterior(vehicles[i])) == 0 and not (instanceof(vehicles[i], FactionVehicle) or instanceof(vehicles[i], CompanyVehicle)) then
+				for i2 = 1, #vehicles do 
+					if vehicles[i2] ~= vehicles[i] then
+						if vehicles[i].getPosition and vehicles[i2].getPosition then
+							local pos1, pos2 = vehicles[i]:getPosition(), vehicles[i2]:getPosition()
+							local dist = getDistanceBetweenPoints3D(pos1, pos2)
+							if dist <= ADMIN_OVERLAP_THRESHOLD then 
+								OVERLAPPING_VEHICLES[#OVERLAPPING_VEHICLES+1] = vehicles[i]
+							end
 						end
 					end
 				end
@@ -1143,5 +1145,7 @@ function Admin:Event_OnAcceptOverlapCheck()
 			end
 		end
 		outputChatBox("^^^ Es wurden "..#OVERLAPPING_VEHICLES.." die sich möglicherweise Überlappen gefunden! ^^^", source, 200, 50, 0)
+	else 
+		source:sendError("Erst ab Administrator!")
 	end
 end
