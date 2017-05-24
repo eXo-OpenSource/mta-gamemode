@@ -7,8 +7,8 @@
 -- ****************************************************************************
 BankRobbery = inherit(Object)
 --Info 68 Tresors
-local MONEY_PER_SAFE_MIN = 500
-local MONEY_PER_SAFE_MAX = 750
+local MONEY_PER_SAFE_MIN = 2000
+local MONEY_PER_SAFE_MAX = 3000
 local BANKROB_TIME = 60*1000*12
 
 function BankRobbery:constructor()
