@@ -1,4 +1,5 @@
 BankRobberyManager = inherit(Singleton)
+BANKROB_VAULT_OPEN_TIME = 3*(60*1000)
 
 function BankRobberyManager:constructor()
 	self.m_Banks = {}
@@ -41,7 +42,16 @@ function BankRobberyManager:stopRob()
 			end
 		end
 	end
-
+	if self.m_OpenVaulTimer then 
+		if isTimer(self.m_OpenVaulTimer) then 
+			destroyElement(self.m_OpenVaulTimer)
+			if self.m_RobFaction then 
+				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do 
+					pl:triggerEvent("CountdownStop","Safe offen:")
+				end
+			end
+		end
+	end
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 end
@@ -77,8 +87,11 @@ function BankRobberyManager:Event_onHackSuccessful()
 	end
 	self.m_CircuitBreakerPlayers = {	}
 	client:giveKarma(-5)
-
-	self.m_CurrentBank:openSafeDoor()
+	local brobFaction = client:getFaction()
+	for k, player in ipairs(brobFaction:getOnlinePlayers()) do 
+		player:triggerEvent("Countdown", (BANKROB_VAULT_OPEN_TIME/1000), "Safe offen:")
+	end
+	self.m_OpenVaulTimer = setTimer(bind(self.m_CurrentBank.openSafeDoor,self.m_CurrentBank), BANKROB_VAULT_OPEN_TIME, 1)
 end
 
 

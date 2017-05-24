@@ -11,8 +11,8 @@ PlantWeed = inherit( Object )
 addRemoteEvents{"PlantWeed:sendClientCheck", "PlantWeed:syncPlantMap", "PlantWeed:onWaterPlant"}
 
 function PlantWeed.initalize()
-	PlantWeed.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
-	PlantWeed.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
+	PlantWeed.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
+	PlantWeed.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,20,true, "object" )
 	PlantWeed.WaterDrop =  "files/images/Inventory/waterdrop.png"
 end
 
@@ -49,7 +49,7 @@ function PlantWeed:Render()
 			dxSetShaderValue( PlantWeed.Shader2, "sMorphColor", 1, 0, 0, alpha )
 		end
 	end
-	if self.m_HydPlant then
+	if self.m_HydPlant  and isElementStreamedIn(self.m_HydPlant) then
 		local now = getTickCount()
 		if self.m_HydDrawTick+1000 >= now then
 			local prog = ( now - self.m_HydDrawTick) / 1000

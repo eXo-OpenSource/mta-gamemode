@@ -16,7 +16,7 @@ SelfGUI.Stats = {
 	--			return hours.." Stunde(n)" ..minutes.." Minute(n)" end
 	--		},
 	["Driven"] = {
-			["text"] = "gefahrene Kilometer",
+			["text"] = "Gefahrene Kilometer",
 			["value"] = function(value) return math.floor(value/1000).." km" end
 			},
 	["Deaths"] = {
@@ -25,6 +25,10 @@ SelfGUI.Stats = {
 			},
 	["Kills"] =	{
 			["text"] = "Kills",
+			["value"] = function(value) return value end
+			},
+	["FishCaught"] = {
+			["text"] = "Fische gefangen",
 			["value"] = function(value) return value end
 			},
 }
@@ -206,13 +210,6 @@ function SelfGUI:constructor()
 		end
 	end)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
-	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
-	GUILabel:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
-	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
-		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
-	end)
-
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
 	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -226,13 +223,32 @@ function SelfGUI:constructor()
 		end
 	end)
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
+	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
+	GUILabel:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
+	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
+		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
+	end)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Fischer Level:", tabPoints)
+	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
+	self.m_FishingLevelProgress = GUIProgressBar:new(self.m_Width*.45, self.m_Height*.5, self.m_Width*.3, self.m_Height*.06, tabPoints)
+	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
+		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
+			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
+			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
+		else
+			self.m_FishingLevelProgress:hide()
+		end
+	end)
+
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
-	self.m_SettingsGrid:addColumn(_"Einstellung", 1)
-	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Sonstiges"}
+	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
+	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Texturen", "Sonstiges", "Waffen"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -892,6 +908,22 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "reddot", state)
 			HUDUI:getSingleton():toggleReddot(state)
 		end
+	elseif setting == "Texturen" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
+		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
+		self.m_TextureModeChange:addItem("In der Nähe laden")
+		self.m_TextureModeChange:addItem("Beim Joinen laden")
+		self.m_TextureModeChange:addItem("Deaktiviert")
+		self.m_TextureModeChange.onChange = function(text, index)
+			core:set("Other", "TextureMode", index)
+			self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[index]))
+		end
+
+		self.m_InfoLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.6, self.m_Height*0.055, _"", self.m_SettingBG)
+
+		local currentMode = core:get("Other", "TextureMode", 1)
+		self.m_TextureModeChange:setIndex(currentMode, true)
+		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
 	elseif setting == "Sonstiges" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
 		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
@@ -921,7 +953,7 @@ function SelfGUI:onSettingChange(setting)
 			Indicator:getSingleton():toggle()
 		end
 
-		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren?", self.m_SettingBG)
+		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
 		self.m_ShortMessageCTC:setFont(VRPFont(25))
 		self.m_ShortMessageCTC:setFontSize(1)
 		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
@@ -929,7 +961,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "shortMessageCTC", state)
 		end
 
-		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.9, self.m_Height*0.40, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
+		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.44, self.m_Height*0.44, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
 		self.m_ShortMessageCTCInfo:setFont(VRPFont(22.5))
 		self.m_ShortMessageCTCInfo:setFontSize(1)
 		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
@@ -961,9 +993,96 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "HitSoundBell", state)
 		end
+	elseif setting == "Waffen" then 
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
+		
+		self.m_UIMelee = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.35, self.m_Height*0.04, _"Nahkampfwaffen", self.m_SettingBG)
+		self.m_UIMelee:setFont(VRPFont(25))
+		self.m_UIMelee:setFontSize(1)
+		self.m_UIMelee:setChecked(core:get("W_ATTACH", "weapon0", true))
+		setElementData(localPlayer,"W_A:w0", core:get("W_ATTACH", "weapon0", true))
+		self.m_UIMelee.onChange = function (state)
+			core:set("W_ATTACH", "weapon0", state)
+			setElementData(localPlayer,"W_A:w0", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 1)
+		end
+
+		self.m_UIPistols = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Deagle/Pistole/Taser", self.m_SettingBG)
+		self.m_UIPistols:setFont(VRPFont(25))
+		self.m_UIPistols:setFontSize(1)
+		self.m_UIPistols:setChecked(core:get("W_ATTACH", "weapon1", true))
+		setElementData(localPlayer,"W_A:w1", core:get("W_ATTACH", "weapon1", true))
+		self.m_UIPistols.onChange = function (state)
+			core:set("W_ATTACH", "weapon1", state)
+			setElementData(localPlayer,"W_A:w1", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 2)
+		end
+		
+		self.m_UIShotgun = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.35, self.m_Height*0.04, _"Schrotflinten", self.m_SettingBG)
+		self.m_UIShotgun:setFont(VRPFont(25))
+		self.m_UIShotgun:setFontSize(1)
+		self.m_UIShotgun:setChecked(core:get("W_ATTACH", "weapon2", true))
+		setElementData(localPlayer,"W_A:w2", core:get("W_ATTACH", "weapon2", true))
+		self.m_UIShotgun.onChange = function (state)
+			core:set("W_ATTACH", "weapon2", state)
+			setElementData(localPlayer,"W_A:w2", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 3)
+		end
+		
+		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.35, self.m_Height*0.04, _"Mp5", self.m_SettingBG)
+		self.m_UISMG:setFont(VRPFont(25))
+		self.m_UISMG:setFontSize(1)
+		self.m_UISMG:setChecked(core:get("W_ATTACH", "weapon3", true))
+		setElementData(localPlayer,"W_A:w3", core:get("W_ATTACH", "weapon3", true))
+		self.m_UISMG.onChange = function (state)
+			core:set("W_ATTACH", "weapon3", state)
+			setElementData(localPlayer,"W_A:w3", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
+		end
+		
+		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.35, self.m_Height*0.04, _"Mac-10/Tec-9", self.m_SettingBG)
+		self.m_UISMG:setFont(VRPFont(25))
+		self.m_UISMG:setFontSize(1)
+		self.m_UISMG:setChecked(core:get("W_ATTACH", "weapon4", true))
+		setElementData(localPlayer,"W_A:w4", core:get("W_ATTACH", "weapon4", true))
+		self.m_UISMG.onChange = function (state)
+			core:set("W_ATTACH", "weapon4", state)
+			setElementData(localPlayer,"W_A:w4", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
+		end
+		
+		self.m_UIKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"M4/AK-47", self.m_SettingBG)
+		self.m_UIKarabiner:setFont(VRPFont(25))
+		self.m_UIKarabiner:setFontSize(1)
+		self.m_UIKarabiner:setChecked(core:get("W_ATTACH", "weapon5", true))
+		setElementData(localPlayer,"W_A:w5", core:get("W_ATTACH", "weapon5", true))
+		self.m_UIKarabiner.onChange = function (state)
+			core:set("W_ATTACH", "weapon5", state)
+			setElementData(localPlayer,"W_A:w5", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 5)
+		end
+		
+		self.m_UIRifle = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.35, self.m_Height*0.04, _"Country-Rifle", self.m_SettingBG)
+		self.m_UIRifle:setFont(VRPFont(25))
+		self.m_UIRifle:setFontSize(1)
+		self.m_UIRifle:setChecked(core:get("W_ATTACH", "weapon6", true))
+		setElementData(localPlayer,"W_A:w6", core:get("W_ATTACH", "weapon6", true))
+		self.m_UIRifle.onChange = function (state)
+			core:set("W_ATTACH", "weapon6", state)
+			setElementData(localPlayer,"W_A:w6", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 6)
+		end
+		
+		
+		self.m_UIAltKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.35, self.m_Height*0.04, _"Ak-47/M4 auf dem Rücken", self.m_SettingBG)
+		self.m_UIAltKarabiner:setFont(VRPFont(25))
+		self.m_UIAltKarabiner:setFontSize(1)
+		self.m_UIAltKarabiner:setChecked(core:get("W_ATTACH", "alt_w5", true))
+		setElementData(localPlayer,"W_A:alt_w5", core:get("W_ATTACH", "alt_w5", true))
+		self.m_UIAltKarabiner.onChange = function (state)
+			core:set("W_ATTACH",  "alt_w5", state)
+			setElementData(localPlayer,"W_A:alt_w5", state)
+			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
+		end
 	end
-
-
-
-
 end

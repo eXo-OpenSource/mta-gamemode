@@ -132,7 +132,7 @@ function VehicleCustomTextureGUI:initTextures(textures)
 		item.Id = row["Id"]
         item.onLeftClick = bind(self.Texture_Click, self)
 		item.onLeftDoubleClick = function()
-			QuestionBox:new(_("Möchtest du die Textur wirklich für 75.000$ kaufen?"),
+			QuestionBox:new(_("Möchtest du die Textur wirklich für 120.000$ kaufen?"),
 				function()
 					triggerServerEvent("vehicleCustomTextureBuy", self.m_Vehicle, item.Id, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"))
 				end
@@ -144,7 +144,7 @@ end
 function VehicleCustomTextureGUI:Texture_Click(item)
     if item.Url then
 		TextureReplace.deleteFromElement(self.m_Vehicle)
-		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"))
+		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"), localPlayer)
 	end
 end
 

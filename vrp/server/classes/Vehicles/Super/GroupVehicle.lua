@@ -19,14 +19,15 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local fuel = vehicle:getFuel()
 			local tuningJSON = vehicle.m_Tunings:getJSON()
 			local premium = vehicle:isPremiumVehicle() and vehicle:getOwner() or 0
-
+			local dimension = 0
+			local interior = 0
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
 			trunk:save()
 			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, milage, fuel, trunkId, tuningJSON, premium, dimension, interior)
 				vehicle:setHealth(health)
 
 				return vehicle:save(), vehicle
@@ -37,7 +38,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 	return false
 end
 
-function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium)
+function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior)
 	self.m_Id = Id
 	self.m_Group = Group
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -59,6 +60,7 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	if self.m_PositionType ~= VehiclePositionType.World then
 		-- Move to unused dimension | Todo: That's probably a bad solution
 		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+		self.m_Dimesion = dimension
 	end
 
 	if self.m_Group.m_Vehicles then
@@ -82,6 +84,8 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
+	self.m_Dimesion = dimension
+	self.m_Interior = interior
 	if self.m_Group:canVehiclesBeModified() then
 		self.m_Tunings = VehicleTuning:new(self, tuningJSON)
 	else
@@ -158,7 +162,7 @@ end
 
 function GroupVehicle:respawn(force)
     local vehicleType = self:getVehicleType()
-	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force and not self.m_IsNotSpawnedYet then
 		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
@@ -175,6 +179,8 @@ function GroupVehicle:respawn(force)
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)
+	setElementDimension(self, self.m_Dimesion or 0)
+	setElementInterior(self, self.m_Interior or 0)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
 	self:setFrozen(true)

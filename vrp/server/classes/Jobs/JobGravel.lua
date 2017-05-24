@@ -173,10 +173,12 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			end
 		)
 		if rockDestroyed then
-			client:giveMoney(times*LOAN_MINING, "Kiesgruben-Job")
+		local bonus = JobManager.getBonusForNewbies( client, times*LOAN_MINING)
+		if not bonus then bonus = 0 end
+			client:giveMoney(times*LOAN_MINING+bonus, "Kiesgruben-Job")
 		end
 		if chance(6) then
-			client:givePoints(1)
+			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 
 		self:updateGravelAmount("mined", true)
@@ -210,11 +212,13 @@ function JobGravel:Event_onCollectingContainerHit(track)
 			source.delivered = true
 			if source.vehicle and isElement(source.vehicle) then
 				if source.vehicle:getOccupant() then
-					source.vehicle:getOccupant():giveMoney(LOAN_DOZER, "Kiesgruben-Job")
+					local bonus = JobManager.getBonusForNewbies( source, LOAN_DOZER)
+					if not bonus then bonus = 0 end
+					source.vehicle:getOccupant():giveMoney(LOAN_DOZER+bonus, "Kiesgruben-Job")
 				end
 			end
 			if chance(6) then
-				client:givePoints(1)
+				client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 				self:updateGravelAmount("stock", true)
@@ -317,11 +321,13 @@ function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
 	local loan = amount*LOAN_DUMPER
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
-	player:giveMoney(loan, "Kiesgruben-Job")
+	local bonus = JobManager.getBonusForNewbies( player, loan)
+	if not bonus then bonus = 0 end
+	player:giveMoney(loan+bonus, "Kiesgruben-Job")
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil
 	self.m_DumperDeliverStones[player] =  nil
-	player:givePoints(math.floor(amount/2))
+	player:givePoints(math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR))
 end
 
 JobGravel.Tracks = {

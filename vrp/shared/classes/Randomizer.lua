@@ -38,3 +38,7 @@ end
 function Randomizer:getRandomTableValue(tab)
 	return tab[math.random(1, #tab)]
 end
+
+function Randomizer:nextDouble()
+	return self:get(0, 10^6)/10^6
+end

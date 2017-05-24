@@ -47,9 +47,11 @@ end
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		client:giveMoney(MONEY_PER_BOX, "Gabelstapler-Job")
+		local bonus = JobManager.getBonusForNewbies( client, MONEY_PER_BOX)
+		if not bonus then bonus = 0 end
+		client:giveMoney(MONEY_PER_BOX+bonus, "Gabelstapler-Job")
 		if chance(50) then
-			client:givePoints(1)
+			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	end
 end

@@ -29,8 +29,10 @@ function HUDSpeedo:constructor()
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 then
-				if not VEHICLE_BIKES[vehicle:getModel()] then
-					self:hide()
+				if vehicle then
+					if not VEHICLE_BIKES[vehicle:getModel()] then
+						self:hide()
+					end
 				end
 			end
 		end
@@ -66,7 +68,7 @@ function HUDSpeedo:draw()
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end
 	local vx, vy, vz = getElementVelocity(vehicle)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 205
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 	local mileage = localPlayer:getPrivateSync("vehicleMileage")
 

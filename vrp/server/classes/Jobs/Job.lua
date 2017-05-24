@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 Job = inherit(Singleton)
-
 function Job:constructor()
 	self.m_OnJobVehicleDestroyBind = bind(self.onJobVehicleDestroy, self)
 
@@ -97,3 +96,4 @@ function Job:countPlayers()
 end
 
 Job.start = pure_virtual
+

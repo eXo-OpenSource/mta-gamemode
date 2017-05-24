@@ -22,10 +22,12 @@ GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
 --GANGWAR_PAYOUT_PER_AREA = 1250 || not used anymore due to the money beeing paid out depending on the amount of members inside the faction rather than the constant payout per area
-GANGWAR_PAYOUT_PER_PLAYER = 90
+GANGWAR_PAYOUT_PER_PLAYER = 800
+GANGWAR_PAYOUT_PER_AREA = 1650
 UNIX_TIMESTAMP_24HRS = 86400 --//86400
 GANGWAR_PAY_PER_DAMAGE = 5
 GANGWAR_PAY_PER_KILL = 1000
+PAYDAY_ACTION_BONUS = 5000
 --//
 
 addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientRequestAttack", "GangwarQuestion:disqualify", "gangwarGetAreas" }
@@ -62,25 +64,43 @@ end
 
 function Gangwar:onAreaPayday()
 	local payouts = {}
+	local areaCounts = {}
 	local m_Owner
+	local areasInTotal = 0
 	for index, area in pairs( self.m_Areas ) do
 		m_Owner = area.m_Owner
 		if not payouts[m_Owner] then payouts[m_Owner] = 0 end
 		payouts[m_Owner] = payouts[m_Owner] + 1
+		areasInTotal = areasInTotal + 1
 	end
-	local amount = 0
+	if areasInTotal == 0 then return end
+	local amount = 0;
+	local amount2 = 0;
 	local facObj, playersOnline
 	for faction, count in pairs( payouts ) do
 		facObj = FactionManager:getSingleton():getFromId(faction)
 		if facObj then
 			playersOnline = facObj:getOnlinePlayers()
 			if #playersOnline > 2 then
-				amount = count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)
-				facObj:giveMoney(amount, "Gangwar-Payday")
-				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER..")" , 0, 200, 0, true)	
-			else 
+				areaCounts[facObj] = count
+				amount = (count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)) + (GANGWAR_PAYOUT_PER_AREA * count)
+				facObj:giveMoney(amount+amount2, "Gangwar-Payday")
+				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.." )" , 0, 200, 0, true)
+			else
 				facObj:sendMessage("Ihr seid nicht genügend Spieler online für den Gangwar-Payday!" , 200, 0, 0, true)
 			end
+		end
+	end
+	local count = 0
+	for k, faction in ipairs(FactionManager:getSingleton().Map) do
+		if not faction:isStateFaction() and faction.m_Id ~= 4 then
+			if areaCounts[faction] then
+				count = areaCounts[faction]
+			else
+				count = 0
+			end
+			amount2 = math.floor((1 - ( count/areasInTotal)) * PAYDAY_ACTION_BONUS )
+			faction:sendMessage("Grundeinkommen der Fraktion: "..amount2.." !" , 0, 200, 0, true)
 		end
 	end
 end
@@ -97,7 +117,7 @@ function Gangwar:Event_OnPickupHit( player )
 end
 
 function Gangwar:RESET()
-	local sql_query = "UPDATE ??_gangwar SET Besitzer='5'"
+	local sql_query = "UPDATE ??_gangwar SET Besitzer='8'"
 	sql:queryFetch(sql_query,  sql:getPrefix())
 	outputDebugString("Gangwar-areas were reseted!")
 end
@@ -228,8 +248,8 @@ function Gangwar:attackArea( player )
 				if areaOwner ~= id then
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
-					if factionCount >= GANGWAR_MIN_PLAYERS then
-						if factionCount2 >= GANGWAR_MIN_PLAYERS then
+					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG then
+						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG then
 							local activeGangwar = self:getCurrentGangwar()
 							local acFaction1,  acFaction2
 							if not activeGangwar then

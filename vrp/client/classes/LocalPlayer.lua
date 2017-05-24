@@ -255,7 +255,7 @@ function LocalPlayer:Event_playerWasted()
 
 		local soundLength = 20 -- Length of Halleluja in Seconds
 		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
-			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
 		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
@@ -294,7 +294,7 @@ function LocalPlayer:Event_playerWasted()
 		end
 	end
 	setGameSpeed(0.1)
-	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
 	local x,y,z = getPedBonePosition(localPlayer,5)
 	setSkyGradient(10,10,10,30,30,30)
@@ -354,6 +354,7 @@ end
 
 function LocalPlayer:checkAFK()
 	if not self:isLoggedIn() then return end
+	if DEBUG then return end
 
 	if not self:getPublicSync("AFK") == true then
 		local pos = self:getPosition()
@@ -532,6 +533,10 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
+	for i = 1,7 do 
+		setElementData(localPlayer,"W_A:w"..i-1, core:get("W_ATTACH", "weapon"..i-1, true))
+		triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, i-1)
+	end
 end
 
 function LocalPlayer:Event_setAdmin(player, rank)
@@ -601,6 +606,21 @@ end
 
 function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
+end
+
+function LocalPlayer:getWorldObject()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		elseif result[12] then
+			return result[12], {result[13], result[14], result[15]}, {result[16], result[17], result[18]}
+		end
+	end
+
+	return false
 end
 
 function LocalPlayer:Event_onClientPlayerSpawn()

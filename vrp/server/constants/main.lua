@@ -155,6 +155,10 @@ setWeaponProperty(24,"pro","accuracy",1.5)
 setWeaponProperty(24,"poor","accuracy",1.5)
 setWeaponProperty(24,"std","accuracy",1.5)
 
+setWeaponProperty(28,"poor", "accuracy",1.1000000238419)
+setWeaponProperty(28,"pro", "accuracy",1.1000000238419)
+setWeaponProperty(28,"std", "accuracy",1.1000000238419)
+
 setWeaponProperty(29,"pro","accuracy",0.9)
 setWeaponProperty(29,"poor","accuracy",0.9)
 setWeaponProperty(29,"std","accuracy",0.9)
@@ -166,6 +170,18 @@ setWeaponProperty(31,"std","accuracy",0.8)
 setWeaponProperty(31,"pro","weapon_range",105)
 setWeaponProperty(31,"poor","weapon_range",105)
 setWeaponProperty(31,"std", "weapon_range",105)
+
+setWeaponProperty(32,"pro","weapon_range",50)
+setWeaponProperty(32,"poor","weapon_range",50)
+setWeaponProperty(32,"std", "weapon_range",50)
+
+setWeaponProperty(32,"pro","target_range",50)
+setWeaponProperty(32,"poor","target_range",50)
+setWeaponProperty(32,"std", "target_range",50)
+
+setWeaponProperty(32,"poor", "accuracy",1.1999999523163)
+setWeaponProperty(32,"pro", "accuracy",1.1999999523163)
+setWeaponProperty(32,"std", "accuracy",1.1999999523163)
 
 setWeaponProperty(33,"pro","weapon_range",160)
 setWeaponProperty(33,"poor","weapon_range",160)

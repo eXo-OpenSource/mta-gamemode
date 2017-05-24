@@ -68,6 +68,10 @@ function GUIGridList:removeItemByItem(item)
 	else
 		delete(item)
 	end
+
+	if item == self.m_SelectedItem then
+		self.m_SelectedItem = nil
+	end
 end
 
 function GUIGridList:getItems()

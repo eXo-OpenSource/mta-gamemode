@@ -88,9 +88,11 @@ function JobHeliTransport:onPickupLoad()
 		self.m_PickupPos = vehicle:getPosition()
 		if client:getData("JobHeliTransport:Money") and client:getData("JobHeliTransport:Money") > 0 then
 			client:sendInfo(_("Du hast %d$ erhalten! Liefere die neue Ladung ab!", client, client:getData("JobHeliTransport:Money")))
-			client:giveMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
+			local bonus = JobManager.getBonusForNewbies( client, client:getData("JobHeliTransport:Money"))
+			if not bonus then bonus = 0 end
+			client:giveMoney(client:getData("JobHeliTransport:Money")+bonus, "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
-			client:givePoints(10)
+			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 		else
 			client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
 		end

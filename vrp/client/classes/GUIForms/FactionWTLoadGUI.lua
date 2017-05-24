@@ -128,7 +128,7 @@ function FactionWTLoadGUI:updateButtons()
 
 			if self.m_WeaponsBuyMunition[weaponID] then
 				if self.depot[weaponID]["Munition"]+self.m_Cart[weaponID]["Munition"] < self.m_DepotWeaponsMax[weaponID]["Magazine"] then
-					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] < self.m_MaxLoad then
+					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] <= self.m_MaxLoad then
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 					else
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)

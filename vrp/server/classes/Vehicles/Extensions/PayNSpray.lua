@@ -18,7 +18,9 @@ function PayNSpray:constructor(x, y, z, garageId)
 				if not vehicle or getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 					return
 				end
-
+				if vehicle.m_IsAutoLesson then 
+					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
+				end
 				if vehicle:getHealth() > 999 then
 					hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
 					return

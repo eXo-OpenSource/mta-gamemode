@@ -35,7 +35,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, colo
 
 	local m_String = BlipConversion[imagePath]
 	if m_String and type(m_String) == "number" then
-		self.DefaultBlips[self.m_ID] = createBlip(worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
+		Blip.DefaultBlips[self.m_ID] = createBlip(worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
 	else
 		outputDebug("Missing Standard Blip for "..imagePath)
 	end
@@ -49,17 +49,17 @@ function Blip:destructor()
 		self:dettach()
 		Blip.Blips[self.m_ID] = nil
 
-		if self.DefaultBlips[self.m_ID] then
-		  destroyElement(self.DefaultBlips[self.m_ID] )
+		if Blip.DefaultBlips[self.m_ID] then
+		  destroyElement(Blip.DefaultBlips[self.m_ID] )
 		end
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
 			self:dettach()
 			Blip.Blips[index] = nil
-			if isElement(self.DefaultBlips[index] ) then
-				destroyElement( self.DefaultBlips[index] )
-				self.DefaultBlips[index] = nil
+			if isElement(Blip.DefaultBlips[index] ) then
+				destroyElement( Blip.DefaultBlips[index] )
+				Blip.DefaultBlips[index] = nil
 			end
 		end
 	end
@@ -142,19 +142,19 @@ end
 function Blip:attachTo(element)
   if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
   Blip.AttachedBlips[self] = element
-  if isElement(self.DefaultBlips[self.m_ID] ) then
-	self.DefaultBlips[self.m_ID] = nil
+  if isElement(Blip.DefaultBlips[self.m_ID] ) then
+	Blip.DefaultBlips[self.m_ID] = nil
 	local r,g,b,a = unpack(self.m_DefaultColor)
-	if isElement(self.DefaultBlips[self.m_ID]) then destroyElement(self.DefaultBlips[self.m_ID]) end
-	self.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
+	if isElement(Blip.DefaultBlips[self.m_ID]) then destroyElement(Blip.DefaultBlips[self.m_ID]) end
+	Blip.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
   end
 end
 
 function Blip:dettach()
 	if Blip.AttachedBlips[self] then
 	  	Blip.AttachedBlips[self] = nil
-		if self.DefaultBlips[self.m_ID] then
-			detachElements(self.DefaultBlips[self.m_ID])
+		if Blip.DefaultBlips[self.m_ID] then
+			detachElements(Blip.DefaultBlips[self.m_ID])
 		end
 	end
 end

@@ -87,6 +87,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/donut.col", 1915)
 	self:loadImportDFF("files/models/donut.dff", 1915)
 
+	self:loadImportTXD("files/models/FishingRod.txd", 1826)
+	self:loadImportCOL("files/models/FishingRod.col", 1826)
+	self:loadImportDFF("files/models/FishingRod.dff", 1826)
+
 	self:loadImportTXD("files/models/pickaxe.txd", 1858)
 	self:loadImportCOL("files/models/pickaxe.col", 1858)
 	self:loadImportDFF("files/models/pickaxe.dff", 1858)
@@ -190,6 +194,14 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/bankDoor.txd", 1930)
 	self:loadImportDFF("files/models/bankDoor.dff", 1930)
 	self:loadImportCOL("filEs/models/bankDoor.col", 1930)
+
+	self:loadImportTXD("files/models/fishshop.txd", 6289)
+	self:loadImportDFF("files/models/fishshop.dff", 6289)
+	self:loadImportCOL("filEs/models/fishshop.col", 6289)
+
+	self:loadImportTXD("files/models/fence.txd", 1866)
+	self:loadImportDFF("files/models/fence.dff", 1866)
+	self:loadImportCOL("files/models/fence.col", 1866)
 
 	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
 end

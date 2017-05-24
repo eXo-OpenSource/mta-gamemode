@@ -61,7 +61,6 @@ function GUIForm:close(decrementedCursorCounter)
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 		self:toggleKeys(true)
-		NoDm:getSingleton():checkNoDm()
 	end
 
 	-- Disable blur shader if it has been enabled before
@@ -155,6 +154,6 @@ end
 GUIForm.keysEnabled = true
 GUIForm.onClientKey =
 	function(button)
-		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") then return end
+		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") or button:match("b") or button:match("m") then return end
 		cancelEvent()
 	end

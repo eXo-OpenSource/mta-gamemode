@@ -298,14 +298,13 @@ HelpTexts = {
 			Jusonex (kleinere Unterstüzung)
 			Strobe
 			PewX
-			MegaThorx
 
 			Projektleitung:
 			[eXo]Stumpy
+			[eXo]Clausus
 			Heisi
 
 			stellv. Projektleitung:
-			[eXo]Clausus
 			[eXo]StiviK
 
 			Servermanagement:
@@ -314,20 +313,26 @@ HelpTexts = {
 
 			Administration:
 			[eXo]Luka
-			[eXo]John_Rambo
 			[eXo]StrongVan
 
 			Moderation:
-			[eXo]Phil
-			[eXo]High5
-			[eXo]Gamer64
+			[eXo]tisti
+			[eXo]ZaPP
 
 			Support:
-			[eXo]Bonez
-			[eXo]Janni_Morita
 			[eXo]AfGun
+			[eXo]Korsakov
+			[eXo]Cpen
+			[eXo]Gamora.
+			[eXo]MiHawk
+			[eXo]SaLvaz
+
+			Clanmitglied:
+			[eXo]John_Rambo
 			[eXo]Burmtim
-			[eXo]Risi
+			Krox
+			Risi
+			Toxsi
 
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
@@ -697,3 +702,10 @@ end)
 
 NOTIFICATION_TYPE_INVATION = 1
 NOTIFICATION_TYPE_GAME     = 2
+
+TEXTURE_SYSTEM_HELP =
+{
+	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen, wenn ein entsprechendes Fahrzeug in deiner Nähe ist. Dies führt dazu, dass du nur die Texturen lädst, welche du auch benötigst.\nSinnvoll bei Graifkkarten mit wenig Videospeicher\n\nZum übernehmen bitte reconnecten!",
+	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!\n\nZum übernehmen bitte reconnecten!",
+	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.\n\nZum übernehmen bitte reconnecten!",
+}
