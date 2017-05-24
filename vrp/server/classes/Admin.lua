@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Admin = inherit(Singleton)
+ADMIN_OVERLAP_THRESHOLD = 5 
 
 function Admin:constructor()
     self.m_OnlineAdmins = {}
@@ -71,7 +72,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -85,7 +86,9 @@ function Admin:constructor()
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
-
+	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
+	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
+	
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -1108,3 +1111,37 @@ function Admin:runString(player, cmd, ...)
 	end
 end
 
+function Admin:checkOverlappingVehicles()
+	QuestionBox:new(client, client, "Warnung! Diese Funktion ist performance-lastig", "admin:acceptOverlappingCheck")
+end
+
+function Admin:Event_OnAcceptOverlapCheck()
+    if source:getRank() >= RANK.Administrator then	
+		local vehicles = getElementsByType("vehicle") 
+		OVERLAPPING_VEHICLES = {}
+		for i = 1, #vehicles do 
+			for i2 = 1, #vehicles do 
+				if getElementDimension(vehicles[i]) == 0 and getElementInterior(vehicles[i]) == 0 then
+					if vehicles[i].getPosition and vehicles[i2].getPosition then
+						local pos1, pos2 = vehicles[i]:getPosition(), vehicles[i2]:getPosition()
+						local dist = getDistanceBetweenPoints3D(pos1, pos2)
+						if dist <= ADMIN_OVERLAP_THRESHOLD then 
+							OVERLAPPING_VEHICLES[#OVERLAPPING_VEHICLES+1] = vehicles[i]
+						end
+					end
+				end
+			end
+		end
+		local markedVehicles = {}
+		local veh, x,y,z
+		for i = 1,#OVERLAPPING_VEHICLES do 
+			veh = OVERLAPPING_VEHICLES[i]
+			if not markedVehicles[veh] then 
+				x,y,z = getElementPosition(veh)
+				outputChatBox(x..","..y..","..z, source, 200, 0, 0)
+				markedVehicles[veh] = true
+			end
+		end
+		outputChatBox("^^^ Es wurden "..#OVERLAPPING_VEHICLES.." die sich möglicherweise Überlappen gefunden! ^^^", source, 200, 50, 0)
+	end
+end
