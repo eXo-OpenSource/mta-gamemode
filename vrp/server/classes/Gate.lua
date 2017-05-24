@@ -1,5 +1,5 @@
 Gate = inherit(Object)
-
+Gate.Map = {}
 function Gate:constructor(model, pos, rot, openPos, customOffset)
     self.m_Gates = {}
 	self.m_Closed = true
@@ -7,8 +7,8 @@ function Gate:constructor(model, pos, rot, openPos, customOffset)
 	self:addGate(model, pos, rot, openPos)
     self:createColshapes(model, pos, rot, customOffset)
 
-    addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
-    addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
+    --addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
+    --addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
 end
 
 function Gate:addGate(model, pos, rot, openPos)
@@ -16,6 +16,8 @@ function Gate:addGate(model, pos, rot, openPos)
 	self.m_Gates[id] = createObject(model, pos, rot)
 	self.m_Gates[id].openPos = openPos
 	self.m_Gates[id].closedPos = pos
+	self.m_Gates[id].m_Super = self
+	Gate.Map[#Gate.Map+1] = self.m_Gates[id]
 end
 
 function Gate:createColshapes(model, pos, rot, customOffset)
