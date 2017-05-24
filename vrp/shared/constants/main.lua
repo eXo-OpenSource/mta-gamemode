@@ -105,7 +105,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineNickchange"] = RANK.Moderator,
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
-	["removeWarn"] = RANK.Administrator
+	["removeWarn"] = RANK.Administrator,
+	["checkOverlappingVehicles"] = RANK.Administrator
 }
 
 GroupRank = {
