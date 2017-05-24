@@ -34,9 +34,11 @@ end)
 function JobTreasureSeeker:drawRopes()
 	for engine, magnet in pairs(JobTreasureSeeker.Rope) do
 		if isElement(engine) and isElement(magnet) then
-			local pos1 = engine:getPosition()
-			local pos2 = magnet:getPosition()
-			dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
+			if isElementStreamedIn(engine) then
+				local pos1 = engine:getPosition()
+				local pos2 = magnet:getPosition()
+				dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
+			end
 		else
 			JobTreasureSeeker.Rope[engine] = nil
 		end
