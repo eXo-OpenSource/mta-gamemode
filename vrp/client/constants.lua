@@ -298,6 +298,7 @@ HelpTexts = {
 			Jusonex (kleinere Unterstüzung)
 			Strobe
 			PewX
+			MasterM
 
 			Projektleitung:
 			[eXo]Stumpy
@@ -305,27 +306,28 @@ HelpTexts = {
 			Heisi
 
 			stellv. Projektleitung:
-			[eXo]StiviK
+			StiviK
+			[eXo]xXKing
 
 			Servermanagement:
-			[eXo]xXKing
 			[eXo]Chris
-
-			Administration:
 			[eXo]Luka
 			[eXo]StrongVan
 
+			Administration:
+			[eXo]Tisti
+
 			Moderation:
-			[eXo]tisti
 			[eXo]ZaPP
+			[eXo]MiHawk
+			[eXo]AfGun
 
 			Support:
-			[eXo]AfGun
 			[eXo]Korsakov
 			[eXo]Cpen
 			[eXo]Gamora.
-			[eXo]MiHawk
 			[eXo]SaLvaz
+			[eXo]Swatbird
 
 			Clanmitglied:
 			[eXo]John_Rambo
