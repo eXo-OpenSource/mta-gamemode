@@ -223,6 +223,8 @@ function GroupVehicle:buy(player)
 
 				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
 				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..self.m_SalePrice.." gekauft!")
+				removeElementData(newVeh, "forSale")
+				removeElementData(newVeh, "forSalePrice")
 			else
 				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
 			end
