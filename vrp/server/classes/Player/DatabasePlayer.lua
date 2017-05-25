@@ -255,6 +255,7 @@ function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getPaNote() return self.m_PaNote end
 function DatabasePlayer:getSTVO() return self.m_STVO end
 function DatabasePlayer:getBail() return self.m_Bail end
+function DatabasePlayer:isStateCuffed() return self.m_StateCuffed end
 function DatabasePlayer:getFishingSkill() return self.m_FishingSkill end
 function DatabasePlayer:getFishingLevel() return self.m_FishingLevel end
 
@@ -272,6 +273,7 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 function DatabasePlayer:setPaNote(note) self.m_PaNote = note end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
 function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
+function DatabasePlayer:setStateCuffed(state) self.m_StateCuffed = state end
 function DatabasePlayer:setFishingSkill(points) self.m_FishingSkill = math.floor(points or 0) if self:isActive() then self:setPrivateSync("FishingSkill", self.m_FishingSkill) end end
 function DatabasePlayer:setFishingLevel(level) self.m_FishingLevel = level or 0	if self:isActive() then self:setPrivateSync("FishingLevel", self.m_FishingLevel) end end
 
