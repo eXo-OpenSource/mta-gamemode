@@ -32,7 +32,8 @@ function GroupManager:constructor()
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo"}
+		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo",
+		"groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -53,6 +54,14 @@ function GroupManager:constructor()
 	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
+	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
+	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
+	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
+
+
+
+
+
 end
 
 function GroupManager:destructor()
@@ -587,4 +596,31 @@ function GroupManager:Event_GetShopInfo()
 
 		client:triggerEvent("groupRetriveBusinessInfo", info)
 	end
+end
+
+function GroupManager:Event_SetVehicleForSale(amount)
+	local group = client:getGroup()
+	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 1000000 then
+		if group:getPlayerRank(client) < GroupRank.Manager then
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+			return
+		end
+		if source:isGroupPremiumVehicle() then
+			client:sendError(_("Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!", client))
+			return
+		end
+		source:setForSale(true, amount)
+	end
+end
+
+function GroupManager:Event_StopVehicleForSale()
+	local group = client:getGroup()
+	if group and group == source:getGroup() then
+		source:setForSale(false, 0)
+	end
+end
+
+function GroupManager:Event_BuyVehicle()
+	local group = client:getGroup()
+	source:buy(client)
 end

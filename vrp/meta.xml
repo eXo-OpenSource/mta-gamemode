@@ -676,7 +676,7 @@
 	<script src="client/classes/Business/Companies/PublicTransport.lua" type="client"/>
 	<script src="client/classes/Business/Companies/MechanicTow.lua" type="client"/>
 	<script src="client/classes/Business/Companies/DrivingSchool.lua" type="client"/>
-	
+
 
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>
@@ -715,6 +715,7 @@
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
+	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>

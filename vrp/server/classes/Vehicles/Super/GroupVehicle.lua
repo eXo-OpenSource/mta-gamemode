@@ -38,7 +38,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 	return false
 end
 
-function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior)
+function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior, forSale, salePrice)
 	self.m_Id = Id
 	self.m_Group = Group
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -49,6 +49,7 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self.m_Rotation = self:getRotation()
 	setElementData(self, "OwnerName", self.m_Group:getName())
 	setElementData(self, "OwnerType", "group")
+	setElementData(self, "GroupType", self.m_Group:getType())
 	if health and health <= 300 then
 		health = 300
 	end
@@ -91,6 +92,13 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	else
 		self.m_Tunings = VehicleTuning:new(self)
 	end
+
+	if forSale and forSale == 1 then
+		self:setForSale(true, salePrice)
+	else
+		self:setForSale(false, 0)
+	end
+
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
@@ -130,8 +138,8 @@ function GroupVehicle:save()
 	local health = getElementHealth(self)
 	if self.m_Trunk then self.m_Trunk:save() end
 
-	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
-   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
+	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ?, ForSale = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_ForSale and 1 or 0, self.m_SalePrice or 0, self.m_Id)
 end
 
 function GroupVehicle:isGroupPremiumVehicle()
@@ -190,4 +198,40 @@ function GroupVehicle:respawn(force)
 	self:fix()
 
 	return true
+end
+
+function GroupVehicle:setForSale(sale, price)
+	if sale then
+		self.m_ForSale = true
+		self.m_SalePrice = price
+	else
+		self.m_ForSale = false
+		self.m_SalePrice = 0
+	end
+	setElementData(self, "forSale", self.m_ForSale)
+	setElementData(self, "forSalePrice", self.m_SalePrice)
+end
+
+function GroupVehicle:buy(player)
+	if self.m_ForSale then
+		if self.m_SalePrice >= 0 and player:getMoney() >= self.m_SalePrice then
+			local group = self:getGroup()
+			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
+			if status then
+				player:takeMoney(self.m_SalePrice, "Firmen-Fahrzeug Kauf")
+				group:giveMoney(self.m_SalePrice, "Firmen-Fahrzeug Verkauf")
+
+				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
+				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..self.m_SalePrice.." gekauft!")
+				removeElementData(newVeh, "forSale")
+				removeElementData(newVeh, "forSalePrice")
+			else
+				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
+			end
+		else
+			player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, self.m_SalePrice))
+		end
+	else
+		player:sendError(_("Dieses Fahrzeug steht nicht zum verkauf!", player))
+	end
 end
