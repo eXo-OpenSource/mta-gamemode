@@ -211,3 +211,25 @@ function GroupVehicle:setForSale(sale, price)
 	setElementData(self, "forSale", self.m_ForSale)
 	setElementData(self, "forSalePrice", self.m_SalePrice)
 end
+
+function GroupVehicle:buy(player)
+	if self.m_ForSale then
+		if self.m_SalePrice >= 0 and player:getMoney() >= self.m_SalePrice then
+			local group = self:getGroup()
+			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
+			if status then
+				player:takeMoney(self.m_SalePrice, "Firmen-Fahrzeug Kauf")
+				group:giveMoney(self.m_SalePrice, "Firmen-Fahrzeug Verkauf")
+
+				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
+				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..self.m_SalePrice.." gekauft!")
+			else
+				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
+			end
+		else
+			player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, self.m_SalePrice))
+		end
+	else
+		player:sendError(_("Dieses Fahrzeug steht nicht zum verkauf!", player))
+	end
+end
