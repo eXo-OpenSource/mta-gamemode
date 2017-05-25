@@ -605,6 +605,10 @@ function GroupManager:Event_SetVehicleForSale(amount)
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
+		if source:isGroupPremiumVehicle() then
+			client:sendError(_("Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!", client))
+			return
+		end
 		source:setForSale(true, amount)
 	end
 end
