@@ -296,7 +296,7 @@ function BankRobbery:Event_onBagClick(button, state, player)
 				player:sendError(_("Nur Fraktionisten können den Geldsack aufheben!", player))
 			end
 		else
-			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
+			player:sendError(_("Du bist zu weit von dem Geldsack entfernt!", player))
 		end
 	end
 end

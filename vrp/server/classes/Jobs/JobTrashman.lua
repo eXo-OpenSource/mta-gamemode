@@ -108,8 +108,6 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				hitElement:giveMoney(moneyAmount+bonus, "Müll-Job")
 				hitElement:givePoints(math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR))
 
-				hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
-
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")
 				QuestionBox:new(hitElement, hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)

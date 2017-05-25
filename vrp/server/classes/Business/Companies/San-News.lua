@@ -104,7 +104,7 @@ end
 function SanNews:onInterviewColshapeLeave(leaveElement)
 	if table.find(self.m_InterviewPlayer, leaveElement) then
 		for index, player in pairs(self.m_InterviewPlayer) do
-			player:sendInfo(_("Interview beendet! Ihr habt euch zuweit entfernt!", player))
+			player:sendInfo(_("Interview beendet! Ihr habt euch zu weit entfernt!", player))
 		end
 		self:stopInterview()
 	end

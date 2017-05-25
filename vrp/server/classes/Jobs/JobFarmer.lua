@@ -213,7 +213,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			--player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
 			local bonus = JobManager.getBonusForNewbies( player , income)
 			if not bonus then bonus = 0 end

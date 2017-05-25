@@ -300,7 +300,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
 			end
 		else
-			hitElement:sendError(_("Du musst ihm Kiesgruben Job tätig sein!", hitElement))
+			hitElement:sendError(_("Du musst im Kiesgruben-Job tätig sein!", hitElement))
 		end
 	end
 end

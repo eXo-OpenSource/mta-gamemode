@@ -28,7 +28,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 
 				local costs = math.floor((1000-getElementHealth(vehicle))*0.5) + math.floor((1000-getElementHealth(vehicle))*0.5*0.33)
 				if hitElement:getMoney() < costs then
-					hitElement:sendError(_("Du hast nicht genügend Geld!", hitElement))
+					hitElement:sendError(_("Du benötigst %d$ um dein Fahrzeug zu reparieren", hitElement, costs))
 					return
 				end
 
@@ -54,7 +54,6 @@ function PayNSpray:constructor(x, y, z, garageId)
 						end
 
 						hitElement:takeMoney(costs, "Pay'N'Spray")
-						hitElement:sendShortMessage(_("Die Reparatur kostete %d$", hitElement, costs))
 						vehicle.m_DisableToggleHandbrake = nil
 					end,
 					3000,

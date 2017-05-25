@@ -29,7 +29,7 @@ function JobHeliTransport:stop()
 end
 
 function JobHeliTransport:endHeliTransport()
-	if self.m_Target["marker"] then self.m_Target["marker"]:destroy() end
+	if isElement(self.m_Target["marker"]) then self.m_Target["marker"]:destroy() end
 	if self.m_Target["blip"] then delete(self.m_Target["blip"]) end
 end
 

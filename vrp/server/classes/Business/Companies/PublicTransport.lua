@@ -62,11 +62,7 @@ function PublicTransport:addBusStops()
 end
 
 function PublicTransport:onBarrierHit(player)
-    if player:getCompany() ~= self then
-        player:sendError(_("Zufahrt Verboten!", player))
-        return false
-    end
-    return true
+    return player:getCompany() == self
 end
 
 function PublicTransport:onVehiceEnter(veh, player, seat)
@@ -255,7 +251,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 					player:takeMoney(40, "Public Transport Bus")
 				else
 					player:removeFromVehicle()
-					player:sendInfo(_("Du hast nicht mehr genug Geld dabeI!", player))
+					player:sendInfo(_("Du hast nicht mehr genug Geld dabei!", player))
 				end
 			end
 		end
