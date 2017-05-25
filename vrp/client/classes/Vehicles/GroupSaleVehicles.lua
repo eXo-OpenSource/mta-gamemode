@@ -10,11 +10,11 @@ function GroupSaleVehicles.initalize()
 			if dataName == "forSale" then
 				if isElementStreamedIn(source) then
 					if getElementData(source,"forSale") == true then
-						GroupSaleVehicles.loadSpeekBubble(veh)
+						GroupSaleVehicles.loadSpeekBubble(source)
 						return
 					end
 				end
-				GroupSaleVehicles.destroySpeekBubble(veh)
+				GroupSaleVehicles.destroySpeekBubble(source)
 			end
 	end)
 end
@@ -47,12 +47,12 @@ end
 
 function GroupSaleVehicles.loadSpeekBubble(veh)
 	if not SpeakBubble3D.Map[veh] then
-		SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, "Zu Verkaufen!", _("Preis: ", getElementData(veh, "forSalePrice")))
+		SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, "Zu Verkaufen!", _("Preis: %d$", getElementData(veh, "forSalePrice")))
 	end
 end
 
 function GroupSaleVehicles.destroySpeekBubble(veh)
-	if not SpeakBubble3D.Map[veh] then
+	if SpeakBubble3D.Map[veh] then
 		delete(SpeakBubble3D.Map[veh])
 	end
 end

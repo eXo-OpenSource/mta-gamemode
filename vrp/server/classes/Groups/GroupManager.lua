@@ -33,7 +33,7 @@ function GroupManager:constructor()
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
 		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo",
-		"groupSetVehicleForSale", "groupBuyVehicle"}
+		"groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -56,6 +56,9 @@ function GroupManager:constructor()
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
+	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
+
+
 
 
 
@@ -597,12 +600,19 @@ end
 
 function GroupManager:Event_SetVehicleForSale(amount)
 	local group = client:getGroup()
-	if group and tonumber(amount) > 0 and tonumber(amount) <= 1000000 then
+	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 1000000 then
 		if group:getPlayerRank(client) < GroupRank.Manager then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
 		end
 		source:setForSale(true, amount)
+	end
+end
+
+function GroupManager:Event_StopVehicleForSale()
+	local group = client:getGroup()
+	if group and group == source:getGroup() then
+		source:setForSale(false, 0)
 	end
 end
 
