@@ -609,7 +609,7 @@ function GroupManager:Event_SetVehicleForSale(amount)
 			client:sendError(_("Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!", client))
 			return
 		end
-		source:setForSale(true, amount)
+		source:setForSale(true, tonumber(amount))
 	end
 end
 

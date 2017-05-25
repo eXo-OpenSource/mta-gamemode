@@ -203,7 +203,7 @@ end
 function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
-		self.m_SalePrice = price
+		self.m_SalePrice = tonumber(price)
 	else
 		self.m_ForSale = false
 		self.m_SalePrice = 0
