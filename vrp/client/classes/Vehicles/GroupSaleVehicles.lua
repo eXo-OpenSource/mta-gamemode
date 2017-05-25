@@ -53,8 +53,12 @@ function GroupSaleVehicles.loadSpeekBubble(veh)
 	SpeakBubble3D.Map[veh] = SpeakBubble3D:new(veh, _"Zu Verkaufen!", _("Preis: %d$", getElementData(veh, "forSalePrice")))
 end
 
+
+
 function GroupSaleVehicles.destroySpeekBubble(veh)
 	if SpeakBubble3D.Map[veh] then
 		delete(SpeakBubble3D.Map[veh])
 	end
 end
+addEvent("groupSaleVehiclesDestroyBubble", true)
+addEventHandler("groupSaleVehiclesDestroyBubble", root, GroupSaleVehicles.destroySpeekBubble)

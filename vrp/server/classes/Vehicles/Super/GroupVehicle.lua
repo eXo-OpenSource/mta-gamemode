@@ -228,6 +228,7 @@ function GroupVehicle:buy(player)
 				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
 				removeElementData(newVeh, "forSale")
 				removeElementData(newVeh, "forSalePrice")
+				triggerClientEvent("groupSaleVehiclesDestroyBubble", root, newVeh)
 			else
 				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
 			end

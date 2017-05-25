@@ -45,10 +45,10 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								delete(self)
 								InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
 								function (amount)
-									if tonumber(amount) > 0 and tonumber(amount) <= 1000000 then
+									if amount and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
 										triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
 									else
-										ErrorBox:new(_("Der Betrag muss zwischen 1 und 1.000.000$ liegen!"))
+										ErrorBox:new(_("Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"))
 									end
 								end, true)
 							end
