@@ -197,6 +197,8 @@ function GroupVehicle:respawn(force)
 	self:resetIndicator()
 	self:fix()
 
+	self:setForSale(self.m_ForSale, self.m_SalePrice)
+
 	return true
 end
 
@@ -208,21 +210,22 @@ function GroupVehicle:setForSale(sale, price)
 		self.m_ForSale = false
 		self.m_SalePrice = 0
 	end
-	setElementData(self, "forSale", self.m_ForSale)
-	setElementData(self, "forSalePrice", self.m_SalePrice)
+	setElementData(self, "forSale", self.m_ForSale, true)
+	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
 end
 
 function GroupVehicle:buy(player)
 	if self.m_ForSale then
 		if self.m_SalePrice >= 0 and player:getMoney() >= self.m_SalePrice then
 			local group = self:getGroup()
+			local price = self.m_SalePrice
 			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
 			if status then
-				player:takeMoney(self.m_SalePrice, "Firmen-Fahrzeug Kauf")
-				group:giveMoney(self.m_SalePrice, "Firmen-Fahrzeug Verkauf")
+				player:takeMoney(price, "Firmen-Fahrzeug Kauf")
+				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
 
 				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
-				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..self.m_SalePrice.." gekauft!")
+				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
 				removeElementData(newVeh, "forSale")
 				removeElementData(newVeh, "forSalePrice")
 			else
