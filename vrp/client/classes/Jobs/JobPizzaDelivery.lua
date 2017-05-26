@@ -47,10 +47,10 @@ function JobPizza:stop( )
 	if self.m_PizzaJobBlip then
 		self.m_PizzaJobBlip:delete()
 	end
-	if self.m_PizzaJobMarker then
+	if isElement(self.m_PizzaJobMarker) then
 		destroyElement( self.m_PizzaJobMarker )
 	end
-	if self.m_PizzaPickupMarker then
+	if isElement(self.m_PizzaPickupMarker) then
 		destroyElement( self.m_PizzaPickupMarker )
 	end
 end

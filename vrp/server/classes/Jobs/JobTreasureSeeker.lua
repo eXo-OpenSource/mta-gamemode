@@ -143,7 +143,7 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 
 				setTimer(function()
 					veh.Magnet:attach(veh, 0, -6.2, 2)
-					player:sendShortMessage(_("Glückwunsch du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
+					player:sendShortMessage(_("Glückwunsch, du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
 					veh:setFrozen(false)
 				end, 30000, 1)
 

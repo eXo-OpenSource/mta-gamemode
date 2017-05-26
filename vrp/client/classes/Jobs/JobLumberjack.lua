@@ -15,6 +15,7 @@ function JobLumberjack:constructor()
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
+	self.m_LastStackInfoSent = 0
 
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
@@ -97,8 +98,9 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 						moveObject(object, 8000, x, y, z - 10)
 
 						-- Add tree to stack
-						if not self:addStackedTree() then
-							localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge oder Punkt auf der Map)")
+						if not self:addStackedTree() and (getTickCount() - self.m_LastStackInfoSent > 30000) then
+							self.m_LastStackInfoSent = getTickCount()
+							InfoBox:new(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge oder Punkt auf der Map)")
 						end
 
 						-- "Respawn" the tree after a while
@@ -124,7 +126,7 @@ end
 function JobLumberjack:addStackedTree()
 	self.m_NumTrees = self.m_NumTrees + 1
 
-	if self.m_NumTrees > (#JobLumberjack.WoodStackOffsets * #JobLumberjack.WoodStacks) then
+	if self.m_NumTrees >= (#JobLumberjack.WoodStackOffsets * #JobLumberjack.WoodStacks) then
 		return false
 	end
 

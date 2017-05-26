@@ -22,12 +22,12 @@ function JobPizza:constructor( )
 end
 
 function JobPizza:start(player)
+	player:sendInfo(_("Job angenommen! Gehe zum roten Marker um ein Fahrzeug zu erhalten und die Schicht zu starten.", player))
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
 
 function JobPizza:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
-	player:sendInfo(_("Schicht beendet!" , player ))
 	if isTimer(player.m_EndPizzaJobTimer) then
 		killTimer( player.m_EndPizzaJobTimer )
 	end
@@ -35,6 +35,7 @@ end
 
 function JobPizza:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, true)
+	player:sendInfo(_("Liefere die Pizza nun zur Markierung auf der Karte.", player))
 end
 
 --// Loan-Formula = BASE_LOAN * ( distance / time )

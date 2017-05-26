@@ -87,7 +87,7 @@ function JobHeliTransport:onPickupLoad()
 		self.m_VehData[vehicle].load = true
 		self.m_PickupPos = vehicle:getPosition()
 		if client:getData("JobHeliTransport:Money") and client:getData("JobHeliTransport:Money") > 0 then
-			client:sendInfo(_("Du hast %d$ erhalten! Liefere die neue Ladung ab!", client, client:getData("JobHeliTransport:Money")))
+			client:sendInfo(_("Dein Helikopter wurde wieder neu beladen.", client)) --TODO
 			local bonus = JobManager.getBonusForNewbies( client, client:getData("JobHeliTransport:Money"))
 			if not bonus then bonus = 0 end
 			client:giveMoney(client:getData("JobHeliTransport:Money")+bonus, "Helitransport-Job")

@@ -71,7 +71,7 @@ end
 
 function JobLumberjack:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LUMBERJACK) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK))
 		return false
 	end
 	return true
@@ -85,12 +85,12 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Bitte benutze einen Flatbed", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Bitte benutze einen Flatbed", hitElement))
 			return
 		end
 
 		if hitElement.vehicleSeat ~= 0 then
-			hitElement:sendMessage(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement))
 			return
 		end
 
@@ -100,7 +100,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 
 		local numTrees = hitElement:getData("lumberjack:Trees") or 0
 		if numTrees == 0 then
-			hitElement:sendMessage(_("Du musst erst Bäume fällen um welche aufladen zu können!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Du musst erst Bäume fällen um welche aufladen zu können!", hitElement))
 			return
 		end
 
@@ -144,7 +144,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
+			hitElement:sendError(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
 
@@ -154,7 +154,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 
 		local numTrees = hitElement:getData("lumberjack:Trees")
 		if not numTrees or numTrees == 0 then
-			hitElement:sendMessage(_("Säge und lade zuerst einige Bäume auf!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Säge und lade zuerst einige Bäume auf!", hitElement))
 			return
 		end
 
