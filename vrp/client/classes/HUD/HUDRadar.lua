@@ -322,7 +322,10 @@ function HUDRadar:drawBlips()
 		local blipX, blipY = blip:getPosition()
 
 		if Blip.AttachedBlips[blip] then
-			if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
+			if not isElement(Blip.AttachedBlips[blip]) then
+				delete(self.m_Blips[k])
+				break
+			end
 
 			local int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
 			if int == 0 and dim == 0 then

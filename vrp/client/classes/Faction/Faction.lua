@@ -24,7 +24,7 @@ function FactionManager:constructor()
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
-	
+
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
@@ -113,13 +113,13 @@ function FactionManager:OnRenderSpeed()
 	local now = getTickCount()
 	if now <= self.m_RemoveDraw then
 		if now >= self.m_DrawStart then
-			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then
 				if self.m_bLineChecked == self.m_SpeedCamVehicle then
 					local speed = math.floor(self.m_SpeedCamSpeed)
 					local vName = getVehicleName(self.m_SpeedCamVehicle)
 					local occ = getVehicleOccupant(self.m_SpeedCamVehicle)
 					local name = "Unbekannt"
-					if occ then 
+					if occ then
 						name = getPlayerName(occ)
 					end
 					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
@@ -141,7 +141,7 @@ function FactionManager:OnRenderSpeed()
 						playSoundFrontEnd(5)
 						self.m_PlaySoundOnce = true
 					end
-				else 
+				else
 					local localVeh = getPedOccupiedVehicle(localPlayer)
 					if localVeh then
 						local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
@@ -151,14 +151,14 @@ function FactionManager:OnRenderSpeed()
 							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 							if bLineCheck then
 								self.m_bLineChecked = self.m_SpeedCamVehicle
-								self.m_RemoveDraw = self.m_DrawStart + 10000	
+								self.m_RemoveDraw = self.m_DrawStart + 10000
 							end
 						end
 					end
 				end
 			end
-		else 
-			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+		else
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then
 				local localVeh = getPedOccupiedVehicle(localPlayer)
 				if localVeh then
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
@@ -168,7 +168,7 @@ function FactionManager:OnRenderSpeed()
 						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
-							self.m_RemoveDraw = self.m_DrawStart + 10000	
+							self.m_RemoveDraw = self.m_DrawStart + 10000
 							if not self.m_PlaySoundSnap then
 								playSound("files/audio/speedcam.ogg")
 								self.m_PlaySoundSnap = true
@@ -178,7 +178,7 @@ function FactionManager:OnRenderSpeed()
 				end
 			end
 		end
-	else 
+	else
 		removeEventHandler("onClientRender", root, self.m_DrawSpeed)
 	end
 end
