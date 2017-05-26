@@ -30,9 +30,6 @@ function FactionEvil:constructor()
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
 	addEventHandler("factionEvilFailedRaid", root, bind(self.Event_FailedRaid, self))
-
-
-
 end
 
 function FactionEvil:destructor()
@@ -145,7 +142,7 @@ function FactionEvil:onDepotClicked(button, state, player)
 end
 
 function FactionEvil:loadYakGates(factionId)
-	
+
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.6))
 	for index, gate in pairs(lcnGates) do
@@ -164,7 +161,6 @@ function FactionEvil:onBarrierGateHit(player, gate)
 	else
 		return false
 	end
-
 end
 
 function FactionEvil:Event_StartRaid(target)

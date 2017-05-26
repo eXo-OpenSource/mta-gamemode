@@ -104,17 +104,6 @@ function JobPizza:onNextDeliver( elem, dim )
 	end
 end
 
-function getPointFromDistanceRotation(x, y, dist, angle)
-
-    local a = math.rad(90 - angle);
-
-    local dx = math.cos(a) * dist;
-    local dy = math.sin(a) * dist;
-
-    return x+dx, y+dy;
-
-end
-
 JobPizza.DeliverPositions = {
 	{2308.986328125,-1715.6317138672,14.64959526062},
 	{2326.3557128906,-1717.2272949219,13.907408714294},
