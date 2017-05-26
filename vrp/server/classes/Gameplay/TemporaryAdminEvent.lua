@@ -14,11 +14,21 @@ function table.valueToIndex(tab)
 	return temp
 end
 
+
 TemporaryAdminEvent = inherit(Object)
 TemporaryAdminEvent.ms_MarkerPositions = {
-    {1913, -2358, 13.5, "checkpoint", 30, 0, 0, 200},
-    {1913, -2398, 13.5, "checkpoint", 30, 0, 200, 0},
-    {1913, -2428, 13.5, "checkpoint", 30, 200, 0, 0},
+    {-2664.0000000, 1768.6000000, 15.0000000, "checkpoint", 30, 199, 188, 55, 50}, --0
+    {359.8999900, 250.8999900, 1.0000000, "checkpoint", 200, 199, 188, 55, 50}, --1
+    {376.7999900, -722.9000200, 19.8000000, "checkpoint", 15, 0, 0, 255, 50}, --2
+    {334.3999900, -1190.1000000, 76.3000000, "checkpoint", 20, 0, 0, 255, 50}, --3
+    {105.9000000, -1490.7000000, 13.0000000, "checkpoint", 20, 0, 0, 255, 50}, --4
+    {288.1000100, -1485.3000000, 32.6000000, "checkpoint", 20, 0, 0, 255, 50}, --5
+    {387.0000000, -1522.2000000, 32.3000000, "checkpoint", 25, 199, 188, 55, 50}, --6
+    {623.4000200, -1575.8000000, 15.5000000, "checkpoint", 20, 0, 0, 255, 50}, --7
+    {820.7999900, -1439.6000000, 13.5000000, "checkpoint", 9, 0, 0, 255, 50}, --8
+    {1070.6000000, -1495.0000000, 13.6000000, "checkpoint", 10, 0, 0, 255, 50}, --9
+    {1331.2000000, -1853.4000000, 13.4000000, "checkpoint", 20, 0, 0, 255, 50}, --10
+    {1461.7000000, -1734.7000000, 13.4000000, "checkpoint", 15, 199, 188, 55, 50}, --11
 }
 
 function TemporaryAdminEvent:constructor()
@@ -59,7 +69,7 @@ function TemporaryAdminEvent:onEventMarkerHit(hitElement, dim)
                     hitElement:sendInfo(_("Du hast Wegpunkt %s/%s durchquert, auf zum nächsten!", hitElement, i, #self.m_Markers))
                     self.m_Players[hitElement].currentMarker = self.m_Players[hitElement].currentMarker + 1
                     self.m_Players[hitElement].currentBlip:delete()
-                    self.m_Players[hitElement].currentBlip = Blip:new("Waypoint.png", TemporaryAdminEvent.ms_MarkerPositions[i][1], TemporaryAdminEvent.ms_MarkerPositions[i][2], hitElement, 9999)
+                    self.m_Players[hitElement].currentBlip = Blip:new("Waypoint.png", TemporaryAdminEvent.ms_MarkerPositions[i+1][1], TemporaryAdminEvent.ms_MarkerPositions[i+1][2], hitElement, 9999)
                 else
                     hitElement:sendInfo(_("Du hast den Triathlon geschafft!", hitElement))
                     table.insert(self.m_PlayersFinished, hitElement)
