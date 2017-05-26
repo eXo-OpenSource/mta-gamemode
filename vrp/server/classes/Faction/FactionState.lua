@@ -1165,6 +1165,7 @@ function FactionState:Event_speedRadar()
 						addEventHandler("onColShapeHit",client.m_SpeedCol, self.m_onSpeedColHit)
 						playSoundFrontEnd(client, 101)
 						client:sendInfo("Radarfalle ist angeschaltet!")
+						setElementData(stateVehicle, "speedCamEnabled", true)
 					else
 						playSoundFrontEnd(client, 101)
 						if isElement(client.m_SpeedCol) then
@@ -1175,13 +1176,13 @@ function FactionState:Event_speedRadar()
 						end
 						client.m_SpeedCol = false
 						client:sendInfo("Radarfalle ist ausgeschaltet!")
+						setElementData(stateVehicle, "speedCamEnabled", false)
 					end
 				end
 			end
 		end
 	end
 end
-
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
