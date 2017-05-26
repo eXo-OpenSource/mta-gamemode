@@ -14,8 +14,7 @@ function table.valueToIndex(tab)
 	return temp
 end
 
-
-TemporaryAdminEvent = inherit(Object)
+TemporaryAdminEvent = inherit(Singleton)
 TemporaryAdminEvent.ms_MarkerPositions = {
     {-2664.0000000, 1768.6000000, 15.0000000, "checkpoint", 30, 199, 188, 55, 50}, --0
     {359.8999900, 250.8999900, 1.0000000, "checkpoint", 200, 199, 188, 55, 50}, --1
@@ -44,6 +43,15 @@ function TemporaryAdminEvent:constructor()
     return self
 end
 
+function TemporaryAdminEvent:destructor()
+	for _, v in pairs(self.m_Players) do
+		v.currentBlip:delete()
+	end
+
+	for _, v in pairs(self.m_Markers) do
+		v:destroy()
+	end
+end
 
 function TemporaryAdminEvent:startEvent()
     if not self.m_Started then
@@ -85,29 +93,14 @@ function TemporaryAdminEvent:onEventMarkerHit(hitElement, dim)
     end
 end
 
-
-function TemporaryAdminEvent:stopEvent()
-    if self.m_Started then
-        self.m_Started = false
-        for i, v in pairs(self.m_Markers) do
-            v:destroy()
-        end
-    end
-end
-
-
-
 -- dirty
 
-local curEvent
-addCommandHandler("tempevent_createevent",
+addCommandHandler("tempevent_create",
     function(player)
         if player:getRank() >= 6 then
             if AdminEventManager:getSingleton().m_CurrentEvent then
-                if not curEvent then
-                    curEvent = TemporaryAdminEvent:new()
-                    player:sendShortMessage(_("Eventmarker erstellt. gestartet wird mit /tempevent_startevent", player))
-                end
+				TemporaryAdminEvent:new()
+				player:sendShortMessage(_("Eventmarker erstellt. gestartet wird mit /tempevent_startevent", player))
             else
                 player:sendShortMessage(_("Bitte erst das Admin-Event starten.", player))
             end
@@ -115,11 +108,11 @@ addCommandHandler("tempevent_createevent",
     end
 )
 
-addCommandHandler("tempevent_startevent",
+addCommandHandler("tempevent_start",
     function(player)
         if player:getRank() >= 6 then
-            if curEvent then
-                curEvent:startEvent()
+            if TemporaryAdminEvent:isInstantiated() then
+				TemporaryAdminEvent:getSingleton():startEvent()
             else
                 player:sendShortMessage(_("Bitte erst das Temp-Event erstellen (/tempevent_createevent).", player))
             end
@@ -127,12 +120,11 @@ addCommandHandler("tempevent_startevent",
     end
 )
 
-addCommandHandler("tempevent_stopevent",
+addCommandHandler("tempevent_stop",
     function(player)
         if player:getRank() >= 6 then
-            if curEvent and curEvent.m_Started then
-                curEvent:stopEvent()
-                curEvent:delete()
+            if TemporaryAdminEvent:isInstantiated() and TemporaryAdminEvent:getSingleton().m_Started then
+				delete(TemporaryAdminEvent:getSingleton())
             else
                 player:sendShortMessage(_("Das Event ist nicht gestartet.", player))
             end
@@ -143,9 +135,9 @@ addCommandHandler("tempevent_stopevent",
 addCommandHandler("tempevent_listplayers",
     function(player)
         if player:getRank() >= 1 then
-            if curEvent and curEvent.m_Started then
+			if TemporaryAdminEvent:isInstantiated() and TemporaryAdminEvent:getSingleton().m_Started then
                 outputConsole("Liste der Spieler im Ziel:", player)
-                for i, v in ipairs(curEvent.m_PlayersFinished) do
+                for i, v in ipairs(TemporaryAdminEvent:getSingleton().m_PlayersFinished) do
                     outputConsole(("%02d - %s"):format(i, v:getName()), player)
                 end
                 outputConsole("Ende der Liste.", player)
