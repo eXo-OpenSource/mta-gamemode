@@ -14,9 +14,12 @@ function HelpGUI:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hilfe", true, true, self)
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.9, self.m_Window)
 	self.m_Grid:addColumn("", 0.95)
-	self.m_ContentLabel = GUIScrollableText:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "", self.m_Height*0.04, self.m_Window)
+	self.m_WebView = GUIWebView:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "http://mta/local/files/html/help.htm", true, self.m_Window)
+	-- self.m_ContentLabel = GUIScrollableText:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "", self.m_Height*0.04, self.m_Window)
 
 	self.m_Items = {}
+	-- Linebreaks aren't supported yet
+	local tmpText = [[## This is a markdown file]]
 
 	for category, texts in pairs(HelpTextManager:getSingleton():getTexts()) do
 		self.m_Grid:addItemNoClick(category)
@@ -29,7 +32,8 @@ function HelpGUI:constructor()
 						HUDUI:setEnabled(false)
 					end
 				self.m_Window:setTitleBarText(title.." - Hilfe")
-				self.m_ContentLabel:setText(text)
+				self.m_WebView:callEvent("onTextChange", tmpText)
+				-- self.m_ContentLabel:setText(text)
 			end
 		end
 	end

@@ -865,6 +865,11 @@
 	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
 	<export function="phpSDKGiveQRAchievement" type="server" http="true" />
 
+	<!-- Needs to be file against manipulation -->
+	<file src="files/html/js/mtaevents.min.js" />
+	<file src="files/html/js/showdown.min.js" />
+	<file src="files/html/help.htm" />
+
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>

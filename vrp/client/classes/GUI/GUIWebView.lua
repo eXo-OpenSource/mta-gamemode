@@ -14,6 +14,9 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self.m_Browser = Browser.create(width, height, self.m_IsLocal, transparent)
     self.m_PauseOnHide = true
 
+	outputDebugString(setDevelopmentMode(true, true)) -- TODO-RB: Remove
+	outputDebugString(self.m_Browser:toggleDevTools(true)) -- TODO-RB: Remove
+    outputDebugString(toggleBrowserDevTools(self.m_Browser, true)) -- TODO-RB: Remove
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.update, self)
     addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)

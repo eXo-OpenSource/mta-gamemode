@@ -1,0 +1,19 @@
+<html>
+<body style="color: white;">
+    <div id="content"></div>
+</body>
+<script src="http://mta/vrp/files/html/js/mtaevents.min.js"></script>
+<script src="http://mta/vrp/files/html/js/showdown.min.js"></script>
+<script>
+(function() {
+    mtatools.registerEvent("onTextChange", function(text) {
+        console.log(text)
+        console.log(text[0])
+        var converter = new showdown.Converter(),
+            html      = converter.makeHtml(text[0]);
+        
+        document.getElementById("content").innerHTML = html;
+    });
+})();
+</script>
+</html>
