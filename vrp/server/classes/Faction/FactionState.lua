@@ -1125,8 +1125,7 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 										return
 									end
 								end
-								local speedx, speedy, speedz = getElementVelocity(hE)
-								local actualspeed = (speedx ^ 2 + speedy ^ 2 + speedz ^ 2) ^ (0.5) * 205
+								local actualspeed = hE:getSpeed()
 								local maxSpeed = source.m_SpeedLimit or 80
 								if actualspeed > maxSpeed then
 									local secondOccupant = getVehicleOccupant(copVehicle,1)

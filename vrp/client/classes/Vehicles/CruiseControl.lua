@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 CruiseControl = inherit(Singleton)
-local SPEED_VECTOR_RELATION = 205
+local SPEED_VECTOR_RELATION = 195
 local DEFAULT_CRUISE_SPEED = 80
 
 function CruiseControl:constructor()
@@ -43,11 +43,11 @@ function CruiseControl:setSpeed(speed)
 end
 
 function CruiseControl:getSpeed()
-	return self.m_Speed and self.m_Speed * 205
+	return self.m_Speed and self.m_Speed * SPEED_VECTOR_RELATION
 end
 
 function CruiseControl:getDefaultSpeed()
-	return DEFAULT_CRUISE_SPEED / 205
+	return DEFAULT_CRUISE_SPEED / SPEED_VECTOR_RELATION
 end
 
 function CruiseControl:Tick_CruiseTimer()

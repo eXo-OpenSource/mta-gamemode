@@ -67,8 +67,7 @@ function HUDSpeedo:draw()
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end
-	local vx, vy, vz = getElementVelocity(vehicle)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 205
+	local speed = vehicle:getSpeed()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 	local mileage = localPlayer:getPrivateSync("vehicleMileage")
 
@@ -116,7 +115,7 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 		end
 	end
-		
+
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 	end

@@ -46,7 +46,7 @@ end
 
 function Vehicle:getSpeed()
 	local vx, vy, vz = getElementVelocity(self)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 195
 	return speed
 end
 
