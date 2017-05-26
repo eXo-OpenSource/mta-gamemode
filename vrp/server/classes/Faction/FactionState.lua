@@ -1130,7 +1130,7 @@ function FactionState:Event_OnSpeedColShapeHit(hE, bDim)
 								if actualspeed > maxSpeed then
 									local secondOccupant = getVehicleOccupant(copVehicle,1)
 									cop:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
-									if secondOccupant then
+									if secondOccupant and secondOccupant:getFaction() and secondOccupant:getFaction():isStateFaction() then
 										secondOccupant:triggerEvent("SpeedCam:showSpeeder", actualspeed, hE)
 										secondOccupant.m_LastVehicle = hE
 									end
