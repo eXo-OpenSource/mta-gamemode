@@ -22,7 +22,7 @@ TemporaryAdminEvent.ms_MarkerPositions = {
     {376.7999900, -722.9000200, 19.8000000, "checkpoint", 15, 0, 0, 255, 50}, --2
     {334.3999900, -1190.1000000, 76.3000000, "checkpoint", 20, 0, 0, 255, 50}, --3
     {105.9000000, -1490.7000000, 13.0000000, "checkpoint", 20, 0, 0, 255, 50}, --4
-    {288.1000100, -1485.3000000, 32.6000000, "checkpoint", 20, 0, 0, 255, 50}, --5
+    {288.1000100, -1485.3000000, 30.6000000, "checkpoint", 20, 0, 0, 255, 50}, --5
     {387.0000000, -1522.2000000, 32.3000000, "checkpoint", 25, 199, 188, 55, 50}, --6
     {623.4000200, -1575.8000000, 15.5000000, "checkpoint", 20, 0, 0, 255, 50}, --7
     {820.7999900, -1439.6000000, 13.5000000, "checkpoint", 9, 0, 0, 255, 50}, --8
@@ -64,16 +64,19 @@ function TemporaryAdminEvent:onEventMarkerHit(hitElement, dim)
     local i = source.m_Tempevent_index
     if hitElement.type == "player" and dim and i then
         if self.m_Players and self.m_Players[hitElement] then
-            if self.m_Players[hitElement].currentMarker == i then
+            if self.m_Players[hitElement].currentMarker >= i then
                 if TemporaryAdminEvent.ms_MarkerPositions[i+1] then
                     hitElement:sendInfo(_("Du hast Wegpunkt %s/%s durchquert, auf zum nächsten!", hitElement, i, #self.m_Markers))
                     self.m_Players[hitElement].currentMarker = self.m_Players[hitElement].currentMarker + 1
                     self.m_Players[hitElement].currentBlip:delete()
                     self.m_Players[hitElement].currentBlip = Blip:new("Waypoint.png", TemporaryAdminEvent.ms_MarkerPositions[i+1][1], TemporaryAdminEvent.ms_MarkerPositions[i+1][2], hitElement, 9999)
                 else
-                    hitElement:sendInfo(_("Du hast den Triathlon geschafft!", hitElement))
-                    table.insert(self.m_PlayersFinished, hitElement)
-                    self.m_Players[hitElement].currentBlip:delete()
+                    if not hitElement.m_TriathlonFinished then
+                        hitElement:sendInfo(_("Du hast den Triathlon geschafft!", hitElement))
+                        hitElement.m_TriathlonFinished = true
+                        table.insert(self.m_PlayersFinished, hitElement)
+                        self.m_Players[hitElement].currentBlip:delete()
+                    end
                 end
             else
                 hitElement:sendError(_("Dies ist Wegpunkt #%s, du bist aber erst bei Wegpunkt #%s.", hitElement, i, self.m_Players[hitElement].currentMarker))
