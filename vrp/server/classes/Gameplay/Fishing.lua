@@ -18,6 +18,7 @@ function Fishing:constructor()
 	self.m_UpdatePricingPulse = TimedPulse:new(3600000)
 	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updatePricing, self))
 
+	addEventHandler("onPlayerQuit", root, bind(Fishing.onPlayerQuit, self))
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
@@ -346,4 +347,11 @@ function Fishing:inventoryUse(player)
 	}
 
 	player:triggerEvent("onFishingStart", fishingRod)
+end
+
+function Fishing:onPlayerQuit()
+	if self.m_Players[source] then
+		local fishingRod = self.m_Players[source].fishingRod
+		if fishingRod then fishingRod:destroy() end
+	end
 end
