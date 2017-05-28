@@ -35,6 +35,13 @@ function Vehicle:virtual_constructor()
 		source:setSirensOn(false)
 		setVehicleOverrideLights(self, 1)
 	end)
+
+	if self:getModel() == 417 then
+		self:addMagnet()
+		self.m_MagnetVehicleCheck = bind(Vehicle.magnetVehicleCheck, self)
+		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
+		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
+	end
 end
 
 function Vehicle:virtual_destructor()
@@ -42,6 +49,10 @@ function Vehicle:virtual_destructor()
 		self:countdownDestroyAbort(player)
 	end
 	VehicleManager:getSingleton():removeRef(self, not self:isPermanent())
+
+	if self.m_Magnet then
+		self.m_Magnet:destroy()
+	end
 end
 
 function Vehicle:setOwner(owner)
@@ -102,25 +113,39 @@ end
 
 function Vehicle:onPlayerEnter(player, seat)
 	if player:getType() ~= "player" then return end
+
 	if seat == 0 then
 		if not player:hasCorrectLicense(source) then
 			player:sendShortMessage(_("Achtung: Du hast keinen Führerschein für dieses Fahrzeug!", player))
 		end
+
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 			bindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
+
 		if self.m_CustomHorn and self.m_CustomHorn > 0 then
 			player:sendShortMessage(_("Du kannst die Spezialhupe mit 'J' benutzen!", player))
 			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 		end
+
 		if self.m_HandBrake then
 			setControlState( player, "handbrake", true)
 		end
+
 		if self.m_CountdownDestroy then
 			self:countdownDestroyAbort(player)
 		end
+
+		if self.m_Magnet then
+			bindKey(player, "lctrl", "down", self.m_MagnetVehicleCheck)
+			bindKey(player, "rctrl", "down", self.m_MagnetVehicleCheck)
+			bindKey(player, "num_sub", "down", self.m_MagnetUp)
+			bindKey(player, "num_add", "down", self.m_MagnetDown)
+		end
+
 		player.m_InVehicle = self
 	end
+
 	if self.m_HasBeenUsed then
 		if self.m_HasBeenUsed == 0 then
 			self.m_HasBeenUsed = 1
@@ -132,21 +157,26 @@ function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
 	local hbState = getControlState( player, "handbrake")
 	if player:getType() ~= "player" then return end
+
 	if seat == 0 then
 		if hbState then
 			setControlState( player, "handbrake", false)
 		end
+
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 			self:toggleInternalSmoke()
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
+
 		if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
 			triggerClientEvent("vehicleStopCustomHorn", self)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
+
 		player.m_SeatBelt = false
 		setElementData(player,"isBuckeled", false)
+
 		if self.m_HandBrake then
 			local ground = isVehicleOnGround( self )
 			if ground then
@@ -157,9 +187,11 @@ function Vehicle:onPlayerExit(player, seat)
 				self:setData( "Handbrake",  self.m_HandBrake , true )
 			end
 		end
+
 		if self.m_CountdownDestroy then
 			self:countdownDestroyStart(player)
 		end
+
 		player.m_InVehicle = nil
 	end
 end
@@ -508,6 +540,60 @@ function Vehicle:resetIndicator()
 	setElementData(self, "i:left", false)
 	setElementData(self, "i:right", false)
 	setElementData(self, "i:warn", false)
+end
+
+function Vehicle:addMagnet()
+	self.m_Magnet = createObject(1301, self.position)
+	self.m_Magnet:attach(self, 0, 0, -1.5)
+
+	self.m_MagnetHeight = -1.5
+	self.m_MagnetActivated = false
+
+	--setElementData(self, "MagnetData", {Activated = false, Magnet = self.m_Magnet, Height = -1.5, IsMagnetic = true})
+
+	setElementData(self, "Magnet", self.m_Magnet)
+end
+
+function Vehicle:magnetVehicleCheck(player)
+	if player.vehicle ~= self then return end
+
+	if self.m_MagnetActivated then
+		self.m_MagnetActivated = false
+		detachElements(self.m_GrabbedVehicle)
+	else
+		local colShape = createColSphere(self.m_Magnet.position, 2)
+		local vehicles = getElementsWithinColShape(colShape, "vehicle")
+		colShape:destroy()
+
+		for _, vehicle in pairs(vehicles) do
+			if vehicle ~= self then
+				self.m_MagnetActivated = true
+				self.m_GrabbedVehicle = vehicle
+				vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, getVehicleRotation(vehicle))
+				break
+			end
+		end
+	end
+end
+
+function Vehicle:magnetMoveUp(player)
+	if player.vehicle ~= self then return end
+
+	if self.m_MagnetHeight < -1.5 then
+		detachElements(self.m_Magnet)
+		self.m_MagnetHeight = self.m_MagnetHeight + 0.1
+		self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+	end
+end
+
+function Vehicle:magnetMoveDown(player)
+	if player.vehicle ~= self then return end
+
+	if self.m_MagnetHeight > -15 then
+		detachElements(self.m_Magnet)
+		self.m_MagnetHeight = self.m_MagnetHeight - 0.1
+		self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+	end
 end
 
 -- Override it

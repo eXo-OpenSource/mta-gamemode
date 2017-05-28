@@ -249,3 +249,14 @@ function( dir )
 		playSound("files/audio/headlight_down.mp3")
 	end
 end)
+
+addEventHandler("onClientRender", root,
+	function()
+		if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then
+			local magnet = getElementData(localPlayer.vehicle, "Magnet")
+			if magnet then
+				dxDrawLine3D(localPlayer.vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+			end
+		end
+	end
+)
