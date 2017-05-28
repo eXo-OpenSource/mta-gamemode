@@ -59,6 +59,13 @@ function Vehicle:getVehicleType()
 	return getVehicleType(self)
 end
 
+function Vehicle:magnetVehicleCheck()
+	local vehicle = self:getData("MagnetGrabbedVehicle")
+	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+
+	triggerServerEvent("clientMagnetGrabVehicle", localPlayer, groundPosition)
+end
+
 addEventHandler("vehicleEngineStart", root,
 	function(veh)
 		local sound = "files/audio/Enginestart.ogg"
@@ -250,12 +257,31 @@ function( dir )
 	end
 end)
 
+local renderLeviathanRope = {}
+addEventHandler("onClientElementStreamIn", root,
+	function()
+		if getElementType(source) == "vehicle" and source:getModel() == 417 then
+			renderLeviathanRope[source] = true
+		end
+	end
+)
+
+addEventHandler("onClientElementStreamOut", root,
+	function()
+		if renderLeviathanRope[source] then
+			renderLeviathanRope[source] = nil
+		end
+	end
+)
+
 addEventHandler("onClientRender", root,
 	function()
-		if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then
-			local magnet = getElementData(localPlayer.vehicle, "Magnet")
+		for vehicle in pairs(renderLeviathanRope) do
+			if not isElement(vehicle) then renderLeviathanRope[vehicle] = nil break end
+
+			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
-				dxDrawLine3D(localPlayer.vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
 			end
 		end
 	end

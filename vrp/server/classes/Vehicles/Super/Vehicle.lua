@@ -7,6 +7,8 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 
+addRemoteEvents{"clientMagnetGrabVehicle"}
+
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -41,6 +43,8 @@ function Vehicle:virtual_constructor()
 		self.m_MagnetVehicleCheck = bind(Vehicle.magnetVehicleCheck, self)
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
+
+		addEventHandler("clientMagnetGrabVehicle", root, self.m_MagnetVehicleCheck)
 	end
 end
 
@@ -137,10 +141,8 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 
 		if self.m_Magnet then
-			bindKey(player, "lctrl", "down", self.m_MagnetVehicleCheck)
-			bindKey(player, "rctrl", "down", self.m_MagnetVehicleCheck)
-			bindKey(player, "num_sub", "down", self.m_MagnetUp)
-			bindKey(player, "num_add", "down", self.m_MagnetDown)
+			bindKey(player, "num_sub", "both", self.m_MagnetUp)
+			bindKey(player, "num_add", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = self
@@ -190,6 +192,11 @@ function Vehicle:onPlayerExit(player, seat)
 
 		if self.m_CountdownDestroy then
 			self:countdownDestroyStart(player)
+		end
+
+		if self.m_Magnet then
+			unbindKey(player, "num_sub", "both", self.m_MagnetUp)
+			unbindKey(player, "num_add", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = nil
@@ -549,50 +556,82 @@ function Vehicle:addMagnet()
 	self.m_MagnetHeight = -1.5
 	self.m_MagnetActivated = false
 
-	--setElementData(self, "MagnetData", {Activated = false, Magnet = self.m_Magnet, Height = -1.5, IsMagnetic = true})
-
 	setElementData(self, "Magnet", self.m_Magnet)
 end
 
-function Vehicle:magnetVehicleCheck(player)
-	if player.vehicle ~= self then return end
-
+function Vehicle:magnetVehicleCheck(groundPosition)
 	if self.m_MagnetActivated then
-		self.m_MagnetActivated = false
-		detachElements(self.m_GrabbedVehicle)
+		local groundDiff = self.m_GrabbedVehicle.position.z - groundPosition
+
+		if groundDiff > 0.8 and groundDiff < 4 then
+			self.m_MagnetActivated = false
+			detachElements(self.m_GrabbedVehicle)
+
+			setElementData(self, "MagnetGrabbedVehicle", nil)
+		else
+			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
+		end
 	else
-		local colShape = createColSphere(self.m_Magnet.position, 2)
+		local colShape = createColSphere(self.m_Magnet.matrix:transformPosition(Vector3(0, 0, -0.5)), 2)
 		local vehicles = getElementsWithinColShape(colShape, "vehicle")
 		colShape:destroy()
 
 		for _, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
-				self.m_MagnetActivated = true
-				self.m_GrabbedVehicle = vehicle
-				vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, getVehicleRotation(vehicle))
-				break
+				if vehicle:isRespawnAllowed() then
+					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
+						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
+					else
+						self.m_MagnetActivated = true
+						self.m_GrabbedVehicle = vehicle
+						vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, vehicle.rotation.z - self.m_Magnet.rotation.z)
+
+						setElementData(self, "MagnetGrabbedVehicle", vehicle)
+						break
+					end
+				end
 			end
 		end
 	end
 end
 
-function Vehicle:magnetMoveUp(player)
+function Vehicle:magnetMoveUp(player, _, state)
 	if player.vehicle ~= self then return end
 
-	if self.m_MagnetHeight < -1.5 then
-		detachElements(self.m_Magnet)
-		self.m_MagnetHeight = self.m_MagnetHeight + 0.1
-		self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+	if state == "down" then
+		self.m_MoveUpTimer = setTimer(
+			function()
+				if self.m_MagnetHeight < -1.5 then
+					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+
+					detachElements(self.m_Magnet)
+					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
+					self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+				end
+			end, 50, 0
+		)
+	else
+		if isTimer(self.m_MoveUpTimer) then killTimer(self.m_MoveUpTimer) end
 	end
 end
 
-function Vehicle:magnetMoveDown(player)
+function Vehicle:magnetMoveDown(player, _, state)
 	if player.vehicle ~= self then return end
 
-	if self.m_MagnetHeight > -15 then
-		detachElements(self.m_Magnet)
-		self.m_MagnetHeight = self.m_MagnetHeight - 0.1
-		self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+	if state == "down" then
+		self.m_MoveDownTimer = setTimer(
+			function()
+				if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+
+				if self.m_MagnetHeight > -15 then
+					detachElements(self.m_Magnet)
+					self.m_MagnetHeight = self.m_MagnetHeight - 0.1
+					self.m_Magnet:attach(self, 0, 0, self.m_MagnetHeight)
+				end
+			end, 50, 0
+		)
+	else
+		if isTimer(self.m_MoveDownTimer) then killTimer(self.m_MoveDownTimer) end
 	end
 end
 
