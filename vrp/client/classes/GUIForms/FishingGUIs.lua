@@ -180,6 +180,32 @@ addEventHandler("openFishPricingGUI", root,
 )
 
 ----------------------------------------------------------------------------------------------------------------------
+FisherStatisticsGUI = inherit(GUIForm)
+inherit(Singleton, FisherStatisticsGUI)
+
+addRemoteEvents{"openFisherStatisticsGUI"}
+
+function FisherStatisticsGUI:constructor(Statistics)
+	GUIForm.constructor(self, screenWidth/2-580/2, screenHeight/2-400/2, 580, 400)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Fischer Statistiken", true, true, self)
+
+	GUILabel:new(10, 30, self.m_Width - 20, 30, "Ich update mich stündlich!", self.m_Window)
+
+	self.m_Statistics = GUIGridList:new(10, 60, self.m_Width-20, self.m_Height-70, self.m_Window)
+	self.m_Statistics:addColumn(_"Spieler", .6)
+	self.m_Statistics:addColumn(_"Gefangene Fische", .4)
+
+	for _, data in ipairs(Statistics) do
+		self.m_Statistics:addItem(data.Name, data.FishCaught)
+	end
+end
+
+addEventHandler("openFisherStatisticsGUI", root,
+	function(...)
+		FisherStatisticsGUI:new(...)
+	end
+)
+----------------------------------------------------------------------------------------------------------------------
 FishingInformationGUI = inherit(GUIForm)
 inherit(Singleton, FishingInformationGUI)
 
@@ -246,6 +272,12 @@ function FishingPedGUI:constructor()
 	self:addItem(_"Fische verkaufen", Color.LightBlue,
 		function()
 			triggerServerEvent("clientRequestFishTrading", localPlayer)
+			self:delete()
+		end
+	)
+	self:addItem(_"Statistiken", Color.LightBlue,
+		function()
+			triggerServerEvent("clientRequestFisherStatistics", localPlayer)
 			self:delete()
 		end
 	)
