@@ -233,10 +233,12 @@ function SelfGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Fischer Level:", tabPoints)
 	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
 	self.m_FishingLevelProgress = GUIProgressBar:new(self.m_Width*.45, self.m_Height*.5, self.m_Width*.3, self.m_Height*.06, tabPoints)
+	self.m_FishingLevelStatLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.3, self.m_Height*0.06, (""):format(), tabPoints):setAlignX("center"):setColor(Color.LightGrey)
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
 		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
 			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
 			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
+			self.m_FishingLevelStatLabel:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]))
 		else
 			self.m_FishingLevelProgress:hide()
 		end
@@ -993,9 +995,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "HitSoundBell", state)
 		end
-	elseif setting == "Waffen" then 
+	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
-		
+
 		self.m_UIMelee = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.35, self.m_Height*0.04, _"Nahkampfwaffen", self.m_SettingBG)
 		self.m_UIMelee:setFont(VRPFont(25))
 		self.m_UIMelee:setFontSize(1)
@@ -1017,7 +1019,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w1", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 2)
 		end
-		
+
 		self.m_UIShotgun = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.35, self.m_Height*0.04, _"Schrotflinten", self.m_SettingBG)
 		self.m_UIShotgun:setFont(VRPFont(25))
 		self.m_UIShotgun:setFontSize(1)
@@ -1028,7 +1030,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w2", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 3)
 		end
-		
+
 		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.35, self.m_Height*0.04, _"Mp5", self.m_SettingBG)
 		self.m_UISMG:setFont(VRPFont(25))
 		self.m_UISMG:setFontSize(1)
@@ -1039,7 +1041,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w3", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
 		end
-		
+
 		self.m_UISMG = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.35, self.m_Height*0.04, _"Mac-10/Tec-9", self.m_SettingBG)
 		self.m_UISMG:setFont(VRPFont(25))
 		self.m_UISMG:setFontSize(1)
@@ -1050,7 +1052,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w4", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 4)
 		end
-		
+
 		self.m_UIKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"M4/AK-47", self.m_SettingBG)
 		self.m_UIKarabiner:setFont(VRPFont(25))
 		self.m_UIKarabiner:setFontSize(1)
@@ -1061,7 +1063,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 5)
 		end
-		
+
 		self.m_UIRifle = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.35, self.m_Height*0.04, _"Country-Rifle", self.m_SettingBG)
 		self.m_UIRifle:setFont(VRPFont(25))
 		self.m_UIRifle:setFontSize(1)
@@ -1072,8 +1074,8 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:w6", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, 6)
 		end
-		
-		
+
+
 		self.m_UIAltKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.35, self.m_Height*0.04, _"Ak-47/M4 auf dem Rücken", self.m_SettingBG)
 		self.m_UIAltKarabiner:setFont(VRPFont(25))
 		self.m_UIAltKarabiner:setFontSize(1)
