@@ -40,7 +40,7 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local groupId = 0
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
-    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp, Date) VALUES(?, ?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
 
