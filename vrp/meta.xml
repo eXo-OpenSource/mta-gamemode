@@ -865,14 +865,18 @@
 	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
 	<export function="phpSDKGiveQRAchievement" type="server" http="true" />
 
-	<!-- Needs to be file against manipulation -->
-	<file src="files/html/js/mtaevents.min.js" />
-	<file src="files/html/js/showdown.min.js" />
-	<file src="files/html/help.htm" />
-
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
+
+	<!-- Needs to be file against manipulation -->
+	<file src="files/html/js/mtaevents.min.js" />
+	<file src="files/html/js/showdown.min.js" />
+	<file src="files/html/js/showdown-button.js" />
+	<file src="files/html/help.htm" />
+
+
+	<vrpfile src="files/help/jobs.lumberjack.md"/>
 
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>

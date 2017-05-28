@@ -15,7 +15,7 @@ function JobGravel:constructor()
 	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), "jobs.gravel")
 
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)

@@ -17,7 +17,7 @@ function JobPizza:constructor()
 	self:setJobLevel(JOB_LEVEL_PIZZA)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), "jobs.pizzadelivery")
 	addEventHandler("nextPizzaDelivery", localPlayer, bind(JobPizza.nextDeliver, self))
 end
 

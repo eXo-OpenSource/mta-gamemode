@@ -14,9 +14,6 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self.m_Browser = Browser.create(width, height, self.m_IsLocal, transparent)
     self.m_PauseOnHide = true
 
-	outputDebugString(setDevelopmentMode(true, true)) -- TODO-RB: Remove
-	outputDebugString(self.m_Browser:toggleDevTools(true)) -- TODO-RB: Remove
-    outputDebugString(toggleBrowserDevTools(self.m_Browser, true)) -- TODO-RB: Remove
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.update, self)
     addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
@@ -29,9 +26,14 @@ end
 function GUIWebView:destructor()
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    focusBrowser(nil)
     self.m_Browser:destroy()
 
     GUIElement.destructor(self)
+end
+
+function GUIWebView:setAjaxHandler(handler)
+    self.m_Browser:setAjaxHandler("ajax", handler)
 end
 
 function GUIWebView:drawThis()
@@ -63,8 +65,9 @@ function GUIWebView:getUnderlyingBrowser()
     return self.m_Browser
 end
 
-function GUIWebView:callEvent(eventName, ...)
-    local code = ("mtatools._callEvent('%s', '%s')"):format(eventName, toJSON({...}))
+function GUIWebView:callEvent(eventName, data)
+    outputConsole(string.gsub(string.gsub(data, "'", "\\'"), "\n", "\\n"))
+    local code = ("mtatools._callEvent('%s', `%s`)"):format(eventName, string.gsub(data, "`", "\\`"))
     return self.m_Browser:executeJavascript(code)
 end
 

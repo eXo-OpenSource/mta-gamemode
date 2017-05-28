@@ -58,6 +58,8 @@ function GUIForm:open(hiddenCursor)
 end
 
 function GUIForm:close(decrementedCursorCounter)
+    guiSetInputEnabled(false)
+	focusBrowser()
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 		self:toggleKeys(true)
@@ -71,7 +73,6 @@ function GUIForm:close(decrementedCursorCounter)
 			RadialShader:getSingleton():setEnabled(false)
 		end
 	end
-	focusBrowser()
 	return self:setVisible(false)
 end
 

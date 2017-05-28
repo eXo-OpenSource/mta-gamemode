@@ -18,29 +18,45 @@ function HelpGUI:constructor()
 	-- self.m_ContentLabel = GUIScrollableText:new(self.m_Width*0.28, self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.9, "", self.m_Height*0.04, self.m_Window)
 
 	self.m_Items = {}
-	-- Linebreaks aren't supported yet
-	local tmpText = [[## This is a markdown file]]
 
 	for category, texts in pairs(HelpTextManager:getSingleton():getTexts()) do
 		self.m_Grid:addItemNoClick(category)
 
-		for title, text in pairs(texts) do
+		for title, helpId in pairs(texts) do
 			self.m_Items[title] = self.m_Grid:addItem("  "..title)
 			self.m_Items[title].onLeftClick = function()
 					if HUDUI:getSingleton().m_Visible then
 						HUDUI:getSingleton():refreshHandler()
 						HUDUI:setEnabled(false)
 					end
+				local file = File.Open("files/help/" .. helpId .. ".md")
+				local text = "## Fehler: Hilfetext ist nicht vorhanden!"
+
+				if file then
+					text = file:getContent()
+					file:close()
+				end
+
 				self.m_Window:setTitleBarText(title.." - Hilfe")
-				self.m_WebView:callEvent("onTextChange", tmpText)
+				self.m_WebView:callEvent("onTextChange", text)
 				-- self.m_ContentLabel:setText(text)
 			end
 		end
 	end
 
-	local item = self.m_Grid:getItems()[2]
-	self.m_Grid:onInternalSelectItem(item)
-	item.onLeftClick()
+	self.m_WebView:setAjaxHandler(function(get)
+		if get["method"] then
+			if get["method"] == "gps" then
+				GPS:getSingleton():startNavigationTo(Vector3(get["x"], get["y"], 0))
+			end
+		end
+	end)
+
+	self.m_WebView.onDocumentReady = function()
+		local item = self.m_Grid:getItems()[2]
+		self.m_Grid:onInternalSelectItem(item)
+		item.onLeftClick()
+	end
 end
 
 function HelpGUI:select(title)

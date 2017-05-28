@@ -1,17 +1,57 @@
 <html>
-<body style="color: white;">
+<head>
+    <style>
+    
+    @font-face {
+        font-family: ekMukta;
+        src: url('http://mta/vrp/files/fonts/EkMukta.ttf')
+    }
+    body {
+        color: white;
+        font-family: ekMukta;
+        width: 90%;
+        overflow-x: hidden;
+        word-wrap: break-word;
+    }
+    button {
+        background-color: #171717;
+        border: none;
+        text-decoration: none;
+        color: white;
+        border-top: 2px #3f7fbf;
+        border-style: solid;
+        border-bottom: transparent;
+        border-left: transparent;
+        border-right: transparent;
+        width: 162px;
+        height: 32px;
+    }
+    button:hover {
+        border-top: 2px white;
+        border-style: solid;
+        border-bottom: transparent;
+        border-left: transparent;
+        border-right: transparent;
+    }
+    button:focus {
+        outline: none;
+    }
+    button:active {
+        outline: none;
+    }
+    </style>
+</head>
+<body>
     <div id="content"></div>
 </body>
 <script src="http://mta/vrp/files/html/js/mtaevents.min.js"></script>
 <script src="http://mta/vrp/files/html/js/showdown.min.js"></script>
+<script src="http://mta/vrp/files/html/js/showdown-button.js"></script>
 <script>
 (function() {
     mtatools.registerEvent("onTextChange", function(text) {
-        console.log(text)
-        console.log(text[0])
-        var converter = new showdown.Converter(),
-            html      = converter.makeHtml(text[0]);
-        
+        var converter = new showdown.Converter({ extensions: ['button'] }),
+            html      = converter.makeHtml(text);
         document.getElementById("content").innerHTML = html;
     });
 })();

@@ -20,7 +20,7 @@ function JobLumberjack:constructor()
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), "jobs.lumberjack")
 end
 
 function JobLumberjack:start()
