@@ -89,7 +89,6 @@ deploy_job_production:
     url: http://mta.exo-reallife.de:5000/
   only:
     - release/production
-  when: manual
 
 # Cleanup jobs
 clean_env_job_docker:
