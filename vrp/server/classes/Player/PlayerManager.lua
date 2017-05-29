@@ -82,18 +82,18 @@ function PlayerManager:constructor()
 
 end
 
-function PlayerManager:Event_onRequestGateOpen() 
-	if client then 
-		if Gate.Map then 
+function PlayerManager:Event_onRequestGateOpen()
+	if client then
+		if Gate.Map then
 			local obj
-			for i = 1,#Gate.Map do 
+			for i = 1,#Gate.Map do
 				obj = Gate.Map[i]
 				local int, dim = obj:getInterior(), obj:getDimension()
 				if int == client:getInterior() and dim == client:getDimension() then
 					if obj:getPosition() and client:getPosition() then
-						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then 
+						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then
 							local instance = obj.m_Super
-							if instance then 
+							if instance then
 								instance:Event_onColShapeHit(client, true)
 							end
 						end
@@ -133,9 +133,9 @@ end
 
 function PlayerManager:Event_onToggleSeatBelt( )
 	if client then
-		local vehicle = getPedOccupiedVehicle(client) 
-		if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then 
-			client:buckleSeatBelt(vehicle) 
+		local vehicle = getPedOccupiedVehicle(client)
+		if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then
+			client:buckleSeatBelt(vehicle)
 		end
 	end
 end
@@ -205,7 +205,7 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
 		setElementDimension(source.ped_deadDouble,dim)
 		setElementInterior(source.ped_deadDouble, int)
-		if kWeapon == 34 then 
+		if kWeapon == 34 then
 			setPedHeadless(source.ped_deadDouble, true)
 		end
 		local randAnim = math.random(1,5)
@@ -229,24 +229,24 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 	end
 	local facSource = source:getFaction()
 	if k_ then
-		if facSource then 
+		if facSource then
 			if facSource.m_Id ~= 4 then
-				if facSource:isStateFaction() and source:isFactionDuty()  then 
-					local facKiller = k_:getFaction() 
-					if facKiller then 
-						if not facKiller:isStateFaction() then 
+				if facSource:isStateFaction() and source:isFactionDuty()  then
+					local facKiller = k_:getFaction()
+					if facKiller then
+						if not facKiller:isStateFaction() then
 							k_:givePoints(15)
 						end
 					end
 				end
 			end
 		end
-		if facSource then 
+		if facSource then
 			if facSource.m_Id ~= 4 then
-				if not facSource:isStateFaction() and not source:isFactionDuty()  then 
-					local facKiller = k_:getFaction() 
-					if facKiller then 
-						if facKiller:isStateFaction() then 
+				if not facSource:isStateFaction() and not source:isFactionDuty()  then
+					local facKiller = k_:getFaction()
+					if facKiller then
+						if facKiller:isStateFaction() then
 							k_:givePoints(15)
 						end
 					end
@@ -432,11 +432,11 @@ function PlayerManager:playerQuit()
 		destroyElement(source.m_SpeedCol)
 	end
 	VehicleManager:getSingleton():destroyUnusedVehicles( source )
-	if source.m_DeathInJail then 
+	if source.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(source, false, true, false, true)
 	end
 	if DrivingSchool.m_LessonVehicles[source] then
-		if DrivingSchool.m_LessonVehicles[source].m_NPC then 
+		if DrivingSchool.m_LessonVehicles[source].m_NPC then
 			destroyElement(DrivingSchool.m_LessonVehicles[source].m_NPC)
 		end
 		destroyElement(DrivingSchool.m_LessonVehicles[source])
@@ -495,7 +495,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 						-- Give Achievements
 						if wantedLevel > 4 then
 							killer:giveAchievement(48)
-						else	
+						else
 							killer:giveAchievement(47)
 						end
 						client:triggerEvent("playerWasted")

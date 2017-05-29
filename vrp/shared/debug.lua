@@ -102,15 +102,17 @@ function tableToString(tab)
 end
 
 -- Hacked in from runcode
-function runString(commandstring, source)
+function runString(commandstring, source, suppress)
 	local sourceName, output, outputPlayer
 	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
 		output = function (msg)
-			if SERVER then
-				Admin:getSingleton():sendMessage(msg, 255, 51, 51)
-			else
-				outputChatBox(msg, 255, 51, 51)
+			if not suppress then
+				if SERVER then
+					Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+				else
+					outputChatBox(msg, 255, 51, 51)
+				end
 			end
 		end
 		outputPlayer = source
