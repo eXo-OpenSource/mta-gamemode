@@ -187,10 +187,6 @@ function Core:constructor()
 			GlobalTimer:getSingleton():registerEvent(function()
 				outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
 			end, "Server Restart Message 2", nil, 04, 55)
-
-			GlobalTimer:getSingleton():registerEvent(function()
-				getThisResource():restart()
-			end, "Server Restart", nil, 05, 00)
 		end
 	end
 end
