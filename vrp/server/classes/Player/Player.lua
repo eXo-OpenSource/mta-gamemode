@@ -426,7 +426,7 @@ function Player:spawn( )
 		killPed(self)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
-	if self.m_DeathInJail then 
+	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
@@ -508,9 +508,9 @@ function Player:dropReviveWeapons()
 				ammo = self.m_ReviveWeapons[i][2]
 				model = WEAPON_MODELS_WORLD[weapon]
 				playerFaction = self:getFaction()
-				if not playerFaction then 
+				if not playerFaction then
 					playerFaction = "Keine"
-				else 
+				else
 					playerFaction:getShortName()
 				end
 				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))

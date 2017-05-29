@@ -45,6 +45,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
+	addCommandHandler("anim", bind(self.startAnimation, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
 
@@ -657,6 +658,10 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 			end
 		end, 10000, 1
 	)]]
+end
+
+function LocalPlayer:startAnimation(_, ...)
+	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
 
 addEvent("showModCheck", true)
