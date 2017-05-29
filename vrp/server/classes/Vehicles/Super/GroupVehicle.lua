@@ -128,6 +128,7 @@ end
 function GroupVehicle:purge()
 	if sql:queryExec("DELETE FROM ??_group_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
+		triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 		destroyElement(self)
 		return true
 	end
@@ -219,16 +220,16 @@ function GroupVehicle:buy(player)
 		if self.m_SalePrice >= 0 and player:getMoney() >= self.m_SalePrice then
 			local group = self:getGroup()
 			local price = self.m_SalePrice
+			triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
 			if status then
 				player:takeMoney(price, "Firmen-Fahrzeug Kauf")
 				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
-
+				group:sendShortMessage(_("%s hat ein Fahrzeug um %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
 				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
 				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
 				removeElementData(newVeh, "forSale")
 				removeElementData(newVeh, "forSalePrice")
-				triggerClientEvent("groupSaleVehiclesDestroyBubble", root, newVeh)
 			else
 				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
 			end
