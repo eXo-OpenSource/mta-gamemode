@@ -1114,7 +1114,7 @@ end
 
 function Admin:runPlayerString(player, cmd, target, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
-		local player = target ~= "root" and PlayerManager:getSingleton():getPlayerFromPartOfName(target, admin) or root
+		local player = target ~= "root" and PlayerManager:getSingleton():getPlayerFromPartOfName(target, player) or root
 		if player then
 			triggerClientEvent(player, "onServerRunString", player, table.concat({...}, " "))
 
