@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -42,6 +42,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
+	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
@@ -533,7 +534,7 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
-	for i = 1,7 do 
+	for i = 1,7 do
 		setElementData(localPlayer,"W_A:w"..i-1, core:get("W_ATTACH", "weapon"..i-1, true))
 		triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, i-1)
 	end
@@ -595,6 +596,10 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
+function LocalPlayer:Event_RunString(codeString)
+	runString(codeString, localPlayer, true)
+	outputDebug("Running server string: "..tostring(codeString))
+end
 
 function LocalPlayer:getAchievements ()
 	return table.setIndexToInteger(fromJSON(self:getPrivateSync("Achievements"))) or {[0] = false}
