@@ -92,10 +92,10 @@ function VehicleManager:constructor()
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
-	
+
 	self.NonOptionalTextures = --// Textures that cant be toggled off
 	{
-		FactionVehicle, 
+		FactionVehicle,
 		CompanyVehicle,
 	}
 end
@@ -498,11 +498,14 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == 2 or client:getRank() >= RANK.Moderator then
+	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= RANK.Moderator then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
-			client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+
+			if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC then
+				client:getCompany():addLog(client, "Handbremsen-Logs", ("hat eine Handbremse gelöst. %s von %s"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+			end
 		else
 			client:sendError(_("Die Handbremse ist nicht angezogen!", client))
 		end
@@ -536,7 +539,7 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 				if getElementType(player) == "player" then
 					local playerHealth = getElementHealth(player)
 					local bIsKill = (playerHealth - loss*0.02)  <= 0
-					if not player.m_SeatBelt then 
+					if not player.m_SeatBelt then
 						if not bIsKill then
 							setElementHealth(player, playerHealth - loss*0.02)
 						else
@@ -736,7 +739,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 					client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
 					return
 				end
-			else 
+			else
 				source.m_IsNotSpawnedYet = false
 				client:sendShortMessage(_("Du hast das Fahrzeug kostenlos gespawnt!", client))
 				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s kostenlos gespawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
@@ -745,7 +748,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 			return
 		end
 	end
-	
+
 	if source:getPositionType() == VehiclePositionType.Mechanic then
 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
 		return
@@ -1018,10 +1021,10 @@ function VehicleManager:Event_vehicleEmpty()
 				if occupant:getData("BeggarId") then
 					occupant:onTransportExit(client)
 				end
-				if occupant:getData("isDrivingCoach") then 
+				if occupant:getData("isDrivingCoach") then
 					if DrivingSchool.m_LessonVehicles[client] == source then
 						DrivingSchool.m_LessonVehicles[client] = nil
-						if source.m_NPC then 
+						if source.m_NPC then
 							destroyElement(source.m_NPC)
 						end
 						destroyElement(source)
