@@ -211,10 +211,10 @@ function JobGravel:Event_onCollectingContainerHit(track)
 			self:updateGravelAmount("mined", false)
 			source.delivered = true
 			if source.vehicle and isElement(source.vehicle) then
-				if source.vehicle:getOccupant() and source.vehicle:getOccupant() == client then
-					local bonus = JobManager.getBonusForNewbies(client, LOAN_DOZER)
+				if source.vehicle:getOccupant() then
+					local bonus = JobManager.getBonusForNewbies( source, LOAN_DOZER)
 					if not bonus then bonus = 0 end
-					client:giveMoney(LOAN_DOZER+bonus, "Kiesgruben-Job")
+					source.vehicle:getOccupant():giveMoney(LOAN_DOZER+bonus, "Kiesgruben-Job")
 				end
 			end
 			if chance(6) then
