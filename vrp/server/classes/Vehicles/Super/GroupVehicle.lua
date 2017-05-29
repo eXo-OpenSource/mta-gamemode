@@ -207,9 +207,14 @@ function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
 		self.m_SalePrice = tonumber(price)
+		self.m_DisableToggleEngine = true
+		self.m_DisableToggleHandbrake = true
+		self:setFrozen(true)
 	else
 		self.m_ForSale = false
 		self.m_SalePrice = 0
+		self.m_DisableToggleEngine = false
+		self.m_DisableToggleHandbrake = false
 	end
 	setElementData(self, "forSale", self.m_ForSale, true)
 	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
@@ -227,7 +232,7 @@ function GroupVehicle:buy(player)
 				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
 				group:sendShortMessage(_("%s hat ein Fahrzeug um %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
 				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
-				group:addLog(player, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
+				group:addLog(player, "Fahrzeugverkauf", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
 				removeElementData(newVeh, "forSale")
 				removeElementData(newVeh, "forSalePrice")
 			else

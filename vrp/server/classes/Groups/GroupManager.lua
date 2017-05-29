@@ -609,7 +609,10 @@ function GroupManager:Event_SetVehicleForSale(amount)
 			client:sendError(_("Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!", client))
 			return
 		end
-		group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." um "..amount.." angeboten!")
+		if getVehicleEngineState(source) then
+			source:setEngineState(false)
+		end
+		group:addLog(client, "Fahrzeugverkauf", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." um "..amount.." angeboten!")
 		client:sendInfo(_("Du hast das Fahrzeug für %d$ angeboten!", client, amount))
 		source:setForSale(true, tonumber(amount))
 	end
