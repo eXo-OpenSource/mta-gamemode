@@ -58,16 +58,44 @@ function JobGravel:start()
 	end)
 
 	addEventHandler("gravelOnDozerSpawn", root, function(vehicle)
+		self:dozerCleanup()
+
+		self.m_Vehicle = vehicle
+
 		vehicle.col1 = createColSphere(0, 0, 0, 1.2)
 		vehicle.col1:attach(vehicle, -1, 3, -0.8)
 		vehicle.col1.vehicle = vehicle
+		self.m_VehicleCol1 = vehicle.col1
 
 		vehicle.col2 = createColSphere(0, 0, 0, 1.2)
 		vehicle.col2:attach(vehicle, 1, 3, -0.8)
 		vehicle.col2.vehicle = vehicle
+		self.m_VehicleCol2 = vehicle.col2
+
 		addEventHandler("onClientColShapeHit", vehicle.col1, bind(self.onDozerColHit, self))
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
+		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
 	end)
+end
+
+function JobGravel:dozerCheckCleanup()
+	if self.m_Vehicle and isElement(self.m_Vehicle) then
+		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
+	else
+		self:dozerCleanup()
+	end
+end
+
+function JobGravel:dozerCleanup()
+	if self.m_VehicleCol1 then
+		destroyElement(self.m_VehicleCol1)
+		self.m_VehicleCol1 = nil
+	end
+
+	if self.m_VehicleCol2 then
+		destroyElement(self.m_VehicleCol2)
+		self.m_VehicleCol2 = nil
+	end
 end
 
 function JobGravel:onInfo()
@@ -137,7 +165,7 @@ function JobGravel:generateRocks()
 end
 
 function JobGravel:onDozerColHit(hitElement, dim)
-	if hitElement:getModel() == 2936 and source.vehicle and source.vehicle:getOccupant() == localPlayer then
+	if hitElement:getModel() == 2936 then
 		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
 	end
 end
