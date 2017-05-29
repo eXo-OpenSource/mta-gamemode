@@ -82,8 +82,10 @@ Das Update wird dann automatisch um 05:00 Uhr auf den Server geladen!
 
 ### Hotfixes auf dem Produktiv-Server machen
 
-1. Hotfix-Branch erstellen
+1. Hotfix-Branch auf basis von `release/production` erstellen
 	```
+	git checkout release/production
+	git pull
 	git checkout -b hotfix/mein-hotfix-name
 	```
 	Als Konvention hat es sich eingebürgert den Namen danach durch Bindestriche zu trennen.
