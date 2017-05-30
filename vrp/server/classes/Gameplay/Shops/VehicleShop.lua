@@ -45,10 +45,13 @@ end
 
 function VehicleShop:onMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
+		if hitElement.vehicle then hitElement:sendWarning("Bitte steige erst aus dem Fahrzeug aus!") return end
+		
 		local vehicles = {}
 		for model, vehicleData in pairs(self.m_VehicleList) do
 			vehicles[model] = {vehicleData.vehicle, vehicleData.price, vehicleData.level}
 		end
+		
 		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
 	end
 end
