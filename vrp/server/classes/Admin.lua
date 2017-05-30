@@ -1118,7 +1118,7 @@ function Admin:runPlayerString(player, cmd, target, ...)
 		if target ~= "root" then
 			player = PlayerManager:getSingleton():getPlayerFromPartOfName(target, player)
 		else
-			target = root
+			player = root
 		end
 		if player then
 			triggerClientEvent(player, "onServerRunString", player, table.concat({...}, " "))
