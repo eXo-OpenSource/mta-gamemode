@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt","onPlayerTryGateOpen"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerSwitchSpawnLocation", "onPlayerUpdateSpawnLocation"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -54,6 +54,9 @@ function PlayerManager:constructor()
 	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
+	addEventHandler("onPlayerSwitchSpawnLocation", root, bind(self.Event_OnSwitchSpawnLocation, self))
+	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -949,3 +952,20 @@ function PlayerManager:Event_moveToJail()
 	end
 end
 
+function PlayerManager:Event_OnSwitchSpawnLocation(locationId)
+	client:setSpawnLocation(locationId)
+	client:sendInfo("Spawnpunkt wurde geändert.")
+end
+
+function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
+	if locationId == SPAWN_LOCATIONS.HOUSE then
+		client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
+		client:setSpawnLocationProperty(property)
+
+	elseif locationId == SPAWN_LOCATIONS.VEHICLE then
+		if VEHICLE_MODEL_SPAWNS[source:getModel()] then
+			client:setSpawnLocation(SPAWN_LOCATIONS.VEHICLE)
+			client:setSpawnLocationProperty(source:getId())
+		end
+	end
+end

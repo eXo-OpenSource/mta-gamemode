@@ -72,10 +72,10 @@ function House:toggleLockState( player )
 end
 
 function House:showGUI(player)
-	
+
 	local bIsGang = false
-	if player:getGroup() then 
-		if player:getGroup():getType() == "Gang" then 
+	if player:getGroup() then
+		if player:getGroup():getType() == "Gang" then
 			bIsGang = true
 		end
 	end
@@ -84,9 +84,9 @@ function House:showGUI(player)
 		for playerId, timestamp in pairs(self.m_Keys) do
 			tenants[playerId] = Account.getNameFromId(playerId)
 		end
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false, self.m_Id)
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false,false,bIsGang)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, bIsGang)
 	end
 end
 
@@ -325,7 +325,7 @@ end
 
 function House:enterHouse(player)
 	local isRobberEntering = false
-	if self.m_RobGroup then 
+	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
 			isRobberEntering = true
 		end
@@ -339,12 +339,12 @@ function House:enterHouse(player)
 				player.m_HasAlreadyHouseWanteds  = false
 				player.m_LastRobHouse = self
 			end
-		else 
+		else
 			player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
 			player.m_HasAlreadyHouseWanteds  = false
 			player.m_LastRobHouse = self
 		end
-	else 
+	else
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
 	player:setPosition(x, y, z)
@@ -365,7 +365,7 @@ end
 
 function House:leaveHouse(player)
 	local isRobberLeaving = false
-	if self.m_RobGroup then 
+	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup then
 			isRobberLeaving = true
 		end
@@ -373,7 +373,7 @@ function House:leaveHouse(player)
 	if isRobberLeaving then
 		player:meChat(true, "verlässt das Haus!")
 		player:triggerEvent("onClientEndHouseRob")
-	else 
+	else
 		player:meChat(true, "öffnet die Tür und verlässt das Haus!")
 	end
 	self:removePlayerFromList(player)
@@ -386,12 +386,12 @@ function House:leaveHouse(player)
 	end
 end
 
-function House:tryRob( player ) 
+function House:tryRob( player )
 	local gRob = GroupHouseRob:getSingleton()
 	local bContinue = gRob:startNewRob( self, player)
-	if bContinue then 
-		if self.m_LockStatus then 
-			self.m_LockStatus = false 
+	if bContinue then
+		if self.m_LockStatus then
+			self.m_LockStatus = false
 			player:meChat(true, "holt zu einem Kick aus und tritt gegen die Tür!")
 			player:districtChat("Der Klang von aufbrechenden Holz ertönt durch die Gegend!")
 			self.m_RobGroup = player:getGroup()
@@ -402,11 +402,11 @@ function House:tryRob( player )
 end
 
 function House:giveRobItem( player )
-	if player then 
-		local group = player:getGroup() 
-		if group and self.m_RobGroup then 
-			if group == self.m_RobGroup then 
-				local item = GroupHouseRob:getSingleton():getRandomItem() 
+	if player then
+		local group = player:getGroup()
+		if group and self.m_RobGroup then
+			if group == self.m_RobGroup then
+				local item = GroupHouseRob:getSingleton():getRandomItem()
 				player:meChat(true, "entdeckt etwas und versucht es einzustecken. (("..item.."))")
 				player:getInventory():giveItem("Diebesgut",1)
 			end
@@ -415,17 +415,17 @@ function House:giveRobItem( player )
 end
 
 function House:tryToCatchRobbers( player )
-	if player then 
-		local group = player:getGroup() 
-		if group and self.m_RobGroup then 
-			if group == self.m_RobGroup then 
-				local item = GroupHouseRob:getSingleton():getRandomItem() 
+	if player then
+		local group = player:getGroup()
+		if group and self.m_RobGroup then
+			if group == self.m_RobGroup then
+				local item = GroupHouseRob:getSingleton():getRandomItem()
 				local isFaceConcealed = player:getData("isFaceConcealed")
 				local wantedChance = math.random(1,10)
-				if isFaceConcealed then 
+				if isFaceConcealed then
 					wantedChance = math.random(1,20)
 				end
-				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then 
+				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
 					player:setWantedLevel(player:getWantedLevel() + 3)
 					group.m_RobReported = true

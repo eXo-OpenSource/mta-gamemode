@@ -11,7 +11,7 @@ inherit(Singleton, HouseGUI)
 
 addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
-function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
+function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt, houseId)
 	local columnWidth
 	if owner == localPlayer:getName() then
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.35/2), screenHeight/2-(370/2), screenWidth*0.35, 370)
@@ -45,7 +45,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Sell:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Sell.onLeftClick = bind(self.sellHouse,self)
 	self.m_Sell:setVisible(false)
-	
+
 	self.m_Enter = GUIButton:new(10, 225, columnWidth-20, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)
@@ -58,18 +58,19 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Lock:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Lock.onLeftClick = bind(self.lockHouse,self)
 	self.m_Lock:setVisible(false)
-	
+
 	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self)
 	self.m_Rob:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rob.onLeftClick = bind(self.tryRob,self)
 	if bRobPrompt then
 		self.m_Rob:setVisible(true)
 	end
-	
-	self.m_Close = GUIButton:new(10, 325, columnWidth-20, 35, _("Schließen"), self)
-	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Close.onLeftClick = function () delete(self) end
-	
+
+	if houseId then
+		self.m_UpdateSpawnpoint = GUIButton:new(10, 325, columnWidth-20, 35, _("Als Spawnpunkt festlegen"), self)
+		self.m_UpdateSpawnpoint:setFont(VRPFont(28)):setFontSize(1)
+		self.m_UpdateSpawnpoint.onLeftClick = function() triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.HOUSE, houseId) end
+	end
 
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))
@@ -219,16 +220,16 @@ function HouseGUI:lockHouse()
 	triggerServerEvent("lockHouse",root)
 end
 
-function HouseGUI:tryRob() 
+function HouseGUI:tryRob()
 	triggerServerEvent("tryRobHouse", localPlayer)
 end
 
 addEventHandler("showHouseMenu", root,
-	function(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
+	function(...)
 		if HouseGUI:isInstantiated() then
 			delete(HouseGUI:getSingleton())
 		end
-		HouseGUI:new(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
+		HouseGUI:new(...)
 	end
 )
 

@@ -62,7 +62,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_GarageType = 0
 	self.m_HangarType = 0
 	self.m_LastGarageEntrance = 0
-	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
+	self.m_SpawnLocation = SPAWN_LOCATIONS.DEFAULT
 	self.m_Collectables = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
 	self.m_DMMatchID = 0
@@ -138,6 +138,7 @@ function DatabasePlayer:load()
 	self.m_HangarType = row.HangarType
 	self.m_LastHangarEntrance = row.LastHangarEntrance
 	self.m_SpawnLocation = row.SpawnLocation
+	self.m_SpawnLocationProperty = fromJSON(row.SpawnLocationProperty or "")
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_GunBox = fromJSON(row.GunBox or "")
 	self.m_FishSpeciesCaught = fromJSON(row.FishSpeciesCaught or "[[]]")
@@ -200,8 +201,8 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
 	end
 	return false
 end
@@ -246,6 +247,7 @@ function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: Only Databseside implemented
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
+function DatabasePlayer:getSpawnLocationProperty() return self.m_SpawnLocationProperty end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:getCompany() return self.m_Company end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
@@ -265,6 +267,7 @@ function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setSpawnerVehicle(vehicle) self.m_SpawnerVehicle = vehicle end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
+function DatabasePlayer:setSpawnLocationProperty(prop) outputChatBox(tostring("SET SPAWN PROPERTY TO: " .. tostring(prop))) self.m_SpawnLocationProperty = prop end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end

@@ -190,7 +190,7 @@ function Player:loadCharacter()
 		end
 	end
 
-	VehicleManager:getSingleton():createVehiclesForPlayer( self )
+	VehicleManager:getSingleton():createVehiclesForPlayer(self)
 	triggerEvent("characterInitialized", self)
 	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
@@ -346,7 +346,7 @@ function Player:save()
 	end
 end
 
-function Player:spawn( )
+function Player:spawn()
 	if self:isGuest() then
 		-- set default data (fallback / guest)
 		self:setMoney(0)
@@ -362,9 +362,22 @@ function Player:spawn( )
 		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
-		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
+		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
+			spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
+			-- TODO: Need some verifications..
+			local SpawnLocationProperty = self:getSpawnLocationProperty()
+			local vehicleMatrix = VehicleManager:getSingleton():getVehiclePositionFromId(SpawnLocationProperty)
+			spawnPlayer(self, vehicleMatrix:transformPosition(Vector3(0, 5, 0)), 0, self.m_Skin or 0, 0, 0)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
+			outputChatBox("todo")
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
+
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
+
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		else
 			outputServerLog("Invalid spawn location ("..self:getName()..")")

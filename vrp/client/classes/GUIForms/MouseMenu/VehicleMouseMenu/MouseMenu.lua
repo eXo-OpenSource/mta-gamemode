@@ -265,6 +265,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Cart)
 	end
 
+	if VEHICLE_MODEL_SPAWNS[element:getModel()] then
+		self:addItem(_"Als Spawnpunkt festlegen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleSetPlayerSpawnLocation", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Home)
+	end
+
+
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
 			delete(self)

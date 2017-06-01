@@ -927,8 +927,21 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange:setIndex(currentMode, true)
 		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
 	elseif setting == "Sonstiges" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
-		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn Ort", self.m_SettingBG)
+		self.m_SpawnChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_SpawnChange:addItem("Letzter Standort")
+		self.m_SpawnChange:addItem("Usertreff")
+		self.m_SpawnChange:addItem("Fraktionsbase")
+		self.m_SpawnChange:addItem("Unternehmensbase")
+		self.m_SpawnChange:addItem("Haus")
+		self.m_SpawnChange:addItem("Wohnwagen")
+		self.m_SpawnChange.onChange = function(text, index)
+			local locationIDs = {["Letzter Standort"] = 0, ["Usertreff"] = 1, ["Fraktionsbase"] = 3, ["Unternehmensbase"] = 4, ["Haus"] = 5, ["Wohnwagen"] = 6}
+			triggerServerEvent("onPlayerSwitchSpawnLocation", localPlayer, locationIDs[text])
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
+		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		self.m_RadarChange:addItem("Normal")
 		self.m_RadarChange:addItem("Instant")
 		self.m_RadarChange.onChange = function(text, index)
@@ -937,8 +950,9 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
-		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
+
+		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
 		self.m_SkinSpawn:setFont(VRPFont(25))
 		self.m_SkinSpawn:setFontSize(1)
 		self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -946,7 +960,8 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "spawnFactionSkin", bool)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
-		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
+
+		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
 		self.m_Indicators:setFont(VRPFont(25))
 		self.m_Indicators:setFontSize(1)
 		self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
@@ -955,7 +970,7 @@ function SelfGUI:onSettingChange(setting)
 			Indicator:getSingleton():toggle()
 		end
 
-		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
+		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
 		self.m_ShortMessageCTC:setFont(VRPFont(25))
 		self.m_ShortMessageCTC:setFontSize(1)
 		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
@@ -963,7 +978,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "shortMessageCTC", state)
 		end
 
-		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.44, self.m_Height*0.44, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
+		--[[self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.44, self.m_Height*0.44, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
 		self.m_ShortMessageCTCInfo:setFont(VRPFont(22.5))
 		self.m_ShortMessageCTCInfo:setFontSize(1)
 		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
@@ -971,16 +986,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ShortMessageCTCInfo.onUnhover = function () self.m_ShortMessageCTCInfo:setColor(Color.LightBlue) end
 		self.m_ShortMessageCTCInfo.onLeftClick = function ()
 			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
-		end
+		end]]
 
-	--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
-	--	self.m_StartIntro:setFont(VRPFont(25))
-	--	self.m_StartIntro:setFontSize(1)
-	--	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
-	--	self.m_StartIntro.onChange = function (state)
-	--		core:set("HUD", "startScreen", state)
-	--	end
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.61, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
 		self.m_HallelujaSound:setFontSize(1)
 		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
@@ -988,13 +996,21 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "HallelujaSound", state)
 		end
 
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
 		self.m_HitSound:setFont(VRPFont(25))
 		self.m_HitSound:setFontSize(1)
 		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "HitSoundBell", state)
 		end
+
+		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
+		--	self.m_StartIntro:setFont(VRPFont(25))
+		--	self.m_StartIntro:setFontSize(1)
+		--	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
+		--	self.m_StartIntro.onChange = function (state)
+		--		core:set("HUD", "startScreen", state)
+		--	end
 	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
 
