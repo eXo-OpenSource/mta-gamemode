@@ -199,7 +199,7 @@ function GroupVehicle:respawn(force)
 	self:fix()
 
 	self:setForSale(self.m_ForSale, self.m_SalePrice)
-
+	self.m_IsNotSpawnedYet = false
 	return true
 end
 
