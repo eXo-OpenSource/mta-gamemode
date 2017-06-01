@@ -737,7 +737,6 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 					return
 				end
 			else 
-				source.m_IsNotSpawnedYet = false
 				client:sendShortMessage(_("Du hast das Fahrzeug kostenlos gespawnt!", client))
 				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s kostenlos gespawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			end
