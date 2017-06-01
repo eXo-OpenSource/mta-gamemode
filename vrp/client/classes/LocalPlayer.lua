@@ -597,8 +597,17 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
-function LocalPlayer:Event_RunString(codeString)
-	runString(codeString, localPlayer, true)
+function LocalPlayer:Event_RunString(codeString, sendResponse)
+	local result = runString(codeString, localPlayer, true)
+
+	if sendResponse then
+		triggerServerEvent("onClientRunStringResult", source, tostring(result))
+	else
+		if source == localPlayer then
+			triggerServerEvent("onClientRunStringResult", source, tostring(result))
+		end
+	end 
+
 	outputDebug("Running server string: "..tostring(codeString))
 end
 
