@@ -188,6 +188,6 @@ function GroupVehicle:respawn(force)
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()
 	self:fix()
-
+	self.m_IsNotSpawnedYet = false
 	return true
 end
