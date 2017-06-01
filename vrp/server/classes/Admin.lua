@@ -73,7 +73,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -89,6 +89,8 @@ function Admin:constructor()
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
 	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
+	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
+	
 
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
@@ -1114,17 +1116,28 @@ end
 
 function Admin:runPlayerString(player, cmd, target, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
-		local player
+		local tPlayer
+		local sendResponse
 		if target ~= "root" then
-			player = PlayerManager:getSingleton():getPlayerFromPartOfName(target, player)
+			tPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, player)
+			sendResponse = true
 		else
-			player = root
+			tPlayer = root
+			sendResponse = false
 		end
-		if player then
-			triggerClientEvent(player, "onServerRunString", player, table.concat({...}, " "))
+		if tPlayer then
+			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
 
 			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
+	  	else
+			player:sendError(_("Kein Ziel gefunden!", player))
 		end
+	end
+end
+
+function Admin:Event_OnClientRunStringResult(result)
+	if isElement(source) and source:getType() == "player" then
+		outputChatBox(source:getName() .." executed command: "..result, source, 255, 51, 51)
 	end
 end
 

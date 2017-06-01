@@ -162,8 +162,10 @@ function runString(commandstring, source, suppress)
 			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
 		output("Command results: "..resultsString, outputPlayer)
+		return resultsString
 	elseif not errorMsg then
 		output("Command executed!", outputPlayer)
+		return
 	end
 end
 
