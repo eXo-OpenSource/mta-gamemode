@@ -953,8 +953,10 @@ function PlayerManager:Event_moveToJail()
 end
 
 function PlayerManager:Event_OnSwitchSpawnLocation(locationId)
-	client:setSpawnLocation(locationId)
-	client:sendInfo("Spawnpunkt wurde geändert.")
+	--if locationId == SPAWN_LOCATIONS.DEFAULT or locationId == SPAWN_LOCATIONS.NOOBSPAWN then
+		client:setSpawnLocation(locationId)
+		client:sendInfo("Spawnpunkt wurde geändert.")
+	--end
 end
 
 function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)

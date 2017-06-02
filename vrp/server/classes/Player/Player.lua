@@ -370,27 +370,31 @@ function Player:spawn()
 			spawnSuccess = true
 
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
-			spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-
+			spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
 			-- TODO: Need some verifications..
 			local vehicleMatrix = VehicleManager:getSingleton():getVehiclePositionFromId(SpawnLocationProperty)
-			spawnPlayer(self, vehicleMatrix:transformPosition(Vector3(0, 5, 0)), 0, self.m_Skin or 0, 0, 0)
-			spawnSuccess = true
-
+			spawnSuccess = spawnPlayer(self, vehicleMatrix:transformPosition(Vector3(0, 5, 0)), 0, self.m_Skin or 0, 0, 0)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
 			if SpawnLocationProperty then
 				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
 				if house:isValidToEnter(self) then
-					spawnPlayer(self, Vector3(0,0,0), 0, self.m_Skin or 0, 0, 0)
-					house:enterHouse(self)
-					spawnSuccess = true
+					if spawnPlayer(self, Vector3(0,0,0), 0, self.m_Skin or 0, 0, 0) then
+						house:enterHouse(self)
+						spawnSuccess = true
+					end
 				end
 			end
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
-
+			if self:getFaction() then
+				local position = factionSpawnpoint[self:getFaction():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+			end
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
-
+			if self:getCompany() then
+				local position = companySpawnpoint[self:getCompany():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+			end
 		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		end
