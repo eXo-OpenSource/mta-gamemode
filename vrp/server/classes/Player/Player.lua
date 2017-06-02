@@ -38,6 +38,7 @@ function Player:constructor()
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
+	self.m_LastJobAction = 0
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
