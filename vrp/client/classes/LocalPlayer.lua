@@ -242,8 +242,10 @@ function LocalPlayer:Event_playerWasted()
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
+	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
 	local funcA = function()
+		self.m_Death = false
 		if self.m_DeathMessage then
 			delete(self.m_DeathMessage)
 		end
@@ -260,7 +262,7 @@ function LocalPlayer:Event_playerWasted()
 			soundLength = self.m_Halleluja:getLength()
 		end
 		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
-		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
+		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
 		self.m_Add = 0
@@ -272,7 +274,7 @@ function LocalPlayer:Event_playerWasted()
 				-- stop moving
 				removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 				fadeCamera(true, 0.5)
-
+				
 				-- now death gui
 				DeathGUI:new(self:getPublicSync("DeathTime"),
 					function()
@@ -287,10 +289,10 @@ function LocalPlayer:Event_playerWasted()
 		)
 	end
 	local SMClick = function()
-		if localPlayer:isDead() then
+		if self.m_Death then
 			funcA()
 		else
-			ErrorBox:new(_"Du bist nicht mehr tod!")
+			ErrorBox:new(_"Du bist nicht mehr tot!")
 			return
 		end
 	end
