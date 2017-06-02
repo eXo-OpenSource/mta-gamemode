@@ -69,6 +69,14 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
         sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
 end
 
+function StatisticsLogger:addJobLog(player, job, duration, earned)
+	local userId = 0
+    if isElement(player) then userId = player:getId() end
+
+    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Date) VALUES (?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, job, duration, earned)
+end
+
 function StatisticsLogger:addKillLog(player, target, weapon)
 	local userId = 0
     if isElement(player) then userId = player:getId() else userId = player or 0 end

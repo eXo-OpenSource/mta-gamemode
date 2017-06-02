@@ -33,6 +33,7 @@ function JobTrashman:constructor()
 end
 
 function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	self:registerJobVehicle(player, vehicle, true, true)
 end
 
@@ -105,6 +106,9 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				local moneyAmount = numCans * MONEY_PER_CAN
 				local bonus = JobManager.getBonusForNewbies( hitElement, moneyAmount)
 				if not bonus then bonus = 0 end
+				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+				hitElement.m_LastJobAction = getRealTime().timestamp
+				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount+bonus)
 				hitElement:giveMoney(moneyAmount+bonus, "Müll-Job")
 				hitElement:givePoints(math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR))
 

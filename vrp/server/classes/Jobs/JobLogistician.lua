@@ -61,6 +61,7 @@ function JobLogistician:stop(player)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	vehicle.m_DisableToggleHandbrake = true
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
@@ -109,6 +110,9 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						function()
 							local bonus = JobManager.getBonusForNewbies( hitElement, self.m_MoneyPerTransport)
 							if not bonus then bonus = 0 end
+							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+							hitElement.m_LastJobAction = getRealTime().timestamp
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport + bonus)
 							hitElement:giveMoney(self.m_MoneyPerTransport+bonus, "Logistiker Job")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
