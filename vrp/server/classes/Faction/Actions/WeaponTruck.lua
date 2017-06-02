@@ -43,7 +43,6 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setFrozen(true)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
-	self.m_Truck:setEngineState(true)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
@@ -116,10 +115,12 @@ function WeaponTruck:destructor()
 	end
 
 	for index, value in pairs(self.m_Boxes) do
-		if value:isAttached() and value:getAttachedTo():getType() == "player" then
-			value:getAttachedTo():detachPlayerObject(value)
+		if isElement(value) then
+			if value:isAttached() and isElement(value:getAttachedTo()) and value:getAttachedTo():getType() == "player" then
+				value:getAttachedTo():detachPlayerObject(value)
+			end
+		 	value:destroy() 
 		end
-		if isElement(value) then value:destroy() end
 	end
 end
 

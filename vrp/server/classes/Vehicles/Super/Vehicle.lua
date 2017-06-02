@@ -515,5 +515,8 @@ function Vehicle:getVehicleType()
 	return getVehicleType(self)
 end
 
+function Vehicle:getFaction() end
+
+
 Vehicle.isPermanent = pure_virtual
 Vehicle.respawn = pure_virtual

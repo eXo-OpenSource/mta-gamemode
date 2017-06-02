@@ -33,7 +33,7 @@ function VehicleHealth:refresh()
 	local i = 1000-self.m_Max
 	self.m_Health = math.floor((localPlayer.vehicle.health-i)/self.m_Max*100)
 	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%")
-	self.m_Progress:setProgress(self.m_Health)
+	self.m_Progress:setProgress(math.max(0, self.m_Health))
 end
 
 function VehicleHealth:stopVehicleHealth()
