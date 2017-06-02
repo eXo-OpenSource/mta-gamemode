@@ -44,6 +44,7 @@ function JobHeliTransport:stop(player)
 end
 
 function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	self.m_VehData[vehicle] = {}
 	self.m_VehData[vehicle].package = createObject(1299, 0, 0, 0)
 	self.m_VehData[vehicle].package:attach(vehicle, -0.5, -1.5, -1)
@@ -90,6 +91,9 @@ function JobHeliTransport:onPickupLoad()
 			client:sendInfo(_("Dein Helikopter wurde wieder neu beladen.", client)) --TODO
 			local bonus = JobManager.getBonusForNewbies( client, client:getData("JobHeliTransport:Money"))
 			if not bonus then bonus = 0 end
+			local duration = getRealTime().timestamp - client.m_LastJobAction
+			client.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(client, "farmerHeliTransport", duration, client:getData("JobHeliTransport:Money")+bonus)
 			client:giveMoney(client:getData("JobHeliTransport:Money")+bonus, "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
 			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))

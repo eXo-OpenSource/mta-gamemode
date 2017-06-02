@@ -70,6 +70,7 @@ function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
+	player.m_LastJobAction = getRealTime().timestamp
 	setTimer(function()
 		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
 	end, 1000, 1)
@@ -175,6 +176,9 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		if rockDestroyed then
 		local bonus = JobManager.getBonusForNewbies( client, times*LOAN_MINING)
 		if not bonus then bonus = 0 end
+			local duration = getRealTime().timestamp - client.m_LastJobAction
+			client.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.mining", duration, times*LOAN_MINING+bonus)
 			client:giveMoney(times*LOAN_MINING+bonus, "Kiesgruben-Job")
 		end
 		if chance(6) then
@@ -214,6 +218,9 @@ function JobGravel:Event_onCollectingContainerHit(track)
 				if source.vehicle:getOccupant() and source.vehicle:getOccupant() == client then
 					local bonus = JobManager.getBonusForNewbies(client, LOAN_DOZER)
 					if not bonus then bonus = 0 end
+					local duration = getRealTime().timestamp - client.m_LastJobAction
+					client.m_LastJobAction = getRealTime().timestamp
+					StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, LOAN_DOZER+bonus)
 					client:giveMoney(LOAN_DOZER+bonus, "Kiesgruben-Job")
 				end
 			end
@@ -323,6 +330,9 @@ function JobGravel:giveDumperDeliverLoan(player)
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	local bonus = JobManager.getBonusForNewbies( player, loan)
 	if not bonus then bonus = 0 end
+	local duration = getRealTime().timestamp - player.m_LastJobAction
+	player.m_LastJobAction = getRealTime().timestamp
+	StatisticsLogger:getSingleton():addJobLog(player, "jobGravel.dumper", duration, loan+bonus)
 	player:giveMoney(loan+bonus, "Kiesgruben-Job")
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil

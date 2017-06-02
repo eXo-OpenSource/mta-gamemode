@@ -60,6 +60,8 @@ function JobFarmer:constructor()
 end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
+
 	if vehicleModel == 531 then
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
@@ -86,6 +88,13 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 				local income = player:getData("Farmer.Income")
 				local bonus = JobManager.getBonusForNewbies( player , income)
 				if not bonus then bonus = 0 end
+				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
+				vehPlayer.m_LastJobAction = getRealTime().timestamp
+				if vehicle:getModel() == 531 then
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income + bonus)
+				else
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income + bonus)
+				end
 				vehPlayer:giveMoney( income + bonus, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
@@ -188,6 +197,9 @@ function JobFarmer:stop(player)
 		local income = player:getData("Farmer.Income")
 		local bonus = JobManager.getBonusForNewbies( player , income)
 		if not bonus then bonus = 0 end
+		local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
+		vehPlayer.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income + bonus)
 		player:giveMoney(income+bonus, "Farmer-Job")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
@@ -217,6 +229,9 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
 			local bonus = JobManager.getBonusForNewbies( player , income)
 			if not bonus then bonus = 0 end
+			local duration = getRealTime().timestamp - player.m_LastJobAction
+			player.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income + bonus)
 			player:giveMoney(income+bonus, "Farmer-Job")
 			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0

@@ -47,6 +47,7 @@ function JobLumberjack:constructor()
 end
 
 function JobLumberjack:start(player)
+	player.m_LastJobAction = getRealTime().timestamp
 	giveWeapon(player, 9, 1, true)
 	player:giveAchievement(11)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
@@ -166,6 +167,9 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		-- Give money and experience points
 		local bonus = JobManager.getBonusForNewbies( hitElement, numTrees*TREE_MONEY)
 		if not bonus then bonus = 0 end
+		local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+		hitElement.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY+bonus)
 		hitElement:giveMoney(numTrees * TREE_MONEY+bonus, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
