@@ -362,25 +362,42 @@ function Player:spawn()
 		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
+		local spawnSuccess = false
+		local SpawnLocationProperty = self:getSpawnLocationProperty()
+
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+			spawnSuccess = true
+
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
 			spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
 			-- TODO: Need some verifications..
-			local SpawnLocationProperty = self:getSpawnLocationProperty()
 			local vehicleMatrix = VehicleManager:getSingleton():getVehiclePositionFromId(SpawnLocationProperty)
 			spawnPlayer(self, vehicleMatrix:transformPosition(Vector3(0, 5, 0)), 0, self.m_Skin or 0, 0, 0)
+			spawnSuccess = true
+
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
-			outputChatBox("todo")
+			if SpawnLocationProperty then
+				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
+				if house:isValidToEnter(self) then
+					spawnPlayer(self, Vector3(0,0,0), 0, self.m_Skin or 0, 0, 0)
+					house:enterHouse(self)
+					spawnSuccess = true
+				end
+			end
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
 
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
 
-		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
-		else
-			outputServerLog("Invalid spawn location ("..self:getName()..")")
+		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		end
+
+		-- if not able to spawn, spawn at last known location
+		if not spawnSuccess then
+			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		end
 
 		-- Update Skin

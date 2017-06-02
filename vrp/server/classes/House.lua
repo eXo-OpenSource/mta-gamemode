@@ -84,7 +84,7 @@ function House:showGUI(player)
 		for playerId, timestamp in pairs(self.m_Keys) do
 			tenants[playerId] = Account.getNameFromId(playerId)
 		end
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false, self.m_Id)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false)
 	else
 		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, bIsGang)
 	end
@@ -148,8 +148,8 @@ function House:onColShapeLeave(hitElement, matchingDimension)
 	end
 end
 
-function House:isValidToEnter(playerName)
-	return self.m_Keys[playerName] ~= false
+function House:isValidToEnter(player)
+	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
 end
 
 function House:rentHouse(player)
@@ -319,7 +319,6 @@ function House:enterHouseTry(player)
 		self:enterHouse(player)
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))
-
 	end
 end
 

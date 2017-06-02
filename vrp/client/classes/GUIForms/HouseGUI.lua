@@ -11,12 +11,11 @@ inherit(Singleton, HouseGUI)
 
 addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
-function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt, houseId)
+function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
 	local columnWidth
 	if owner == localPlayer:getName() then
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.35/2), screenHeight/2-(370/2), screenWidth*0.35, 370)
 		columnWidth = self.m_Width*0.5
-
 	else
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.2/2), screenHeight/2-(370/2), screenWidth*0.2, 370)
 		columnWidth = self.m_Width
@@ -24,7 +23,6 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hausmenü", true, true, self)
 	self.m_Window:deleteOnClose( true )
-
 
 	self.m_LabelOwner =     GUILabel:new(10, 40, self.m_Width-20, 30,_"s", self.m_Window)
 	self.m_LabelPrice =     GUILabel:new(10, 70, self.m_Width-20, 30,_"s", self.m_Window)
@@ -66,11 +64,10 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 		self.m_Rob:setVisible(true)
 	end
 
-	if houseId then
-		self.m_UpdateSpawnpoint = GUIButton:new(10, 325, columnWidth-20, 35, _("Als Spawnpunkt festlegen"), self)
-		self.m_UpdateSpawnpoint:setFont(VRPFont(28)):setFontSize(1)
-		self.m_UpdateSpawnpoint.onLeftClick = function() triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.HOUSE, houseId) end
-	end
+	self.m_UpdateSpawnpoint = GUIButton:new(10, 325, columnWidth-20, 35, _("Als Spawnpunkt festlegen"), self)
+	self.m_UpdateSpawnpoint:setFont(VRPFont(28)):setFontSize(1)
+	self.m_UpdateSpawnpoint.onLeftClick = function() triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.HOUSE) end
+
 
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))

@@ -959,9 +959,12 @@ end
 
 function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 	if locationId == SPAWN_LOCATIONS.HOUSE then
-		client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
-		client:setSpawnLocationProperty(property)
-
+		if HouseManager:getSingleton().m_Houses[client.visitingHouse]:isValidToEnter(client) then
+			client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
+			client:setSpawnLocationProperty(client.visitingHouse)
+		else
+			client:sendError("Du kannst dieses Haus nicht als Spawnpunkt festlegen!")
+		end
 	elseif locationId == SPAWN_LOCATIONS.VEHICLE then
 		if VEHICLE_MODEL_SPAWNS[source:getModel()] then
 			client:setSpawnLocation(SPAWN_LOCATIONS.VEHICLE)
