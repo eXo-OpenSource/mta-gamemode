@@ -44,6 +44,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setRepairAllowed(false)
+	self.m_Truck:toggleRespawn(false)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
 	self.m_StartTime = getTickCount()
@@ -54,6 +55,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 
+	TollStation.openAll()
 
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
@@ -234,7 +236,7 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
 		self.m_Truck:setLocked(false)
-		self.m_LoadMarker:destroy()
+		if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	else
 		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, boxesOnTruck, self.m_BoxesCount))
 	end
