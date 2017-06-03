@@ -572,6 +572,12 @@ VEHICLE_MODEL_SPAWNS = {
 	[454] = true,
 }
 
+VEHICLE_SPAWN_OFFSETS = {
+	[508] = Vector3(4, 0, 0),
+	[484] = Vector3(0, 0, 2),
+	[454] = Vector3(0, 0, 0),
+}
+
 CAR_COLORS_FROM_ID =
 {
 	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",

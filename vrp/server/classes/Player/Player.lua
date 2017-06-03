@@ -366,15 +366,23 @@ function Player:spawn()
 		local SpawnLocationProperty = self:getSpawnLocationProperty()
 
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
-			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-			spawnSuccess = true
-
+			spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
 			spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
-			-- TODO: Need some verifications..
-			local vehicleMatrix = VehicleManager:getSingleton():getVehiclePositionFromId(SpawnLocationProperty)
-			spawnSuccess = spawnPlayer(self, vehicleMatrix:transformPosition(Vector3(0, 5, 0)), 0, self.m_Skin or 0, 0, 0)
+			if SpawnLocationProperty then
+				local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
+
+				if vehicle and vehicle:getPositionType() == VehiclePositionType.World then
+					if vehicle:getSpeed() == 0 then
+						spawnSuccess = spawnPlayer(self, vehicle.matrix:transformPosition(VEHICLE_SPAWN_OFFSETS[vehicle:getModel()]), 0, self.m_Skin or 0, 0, 0)
+					else
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
+					end
+				else
+					self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+				end
+			end
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
 			if SpawnLocationProperty then
 				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]

@@ -205,7 +205,7 @@ function Core:afterLogin()
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
-	triggerServerEvent("remoteClientSpawn", localPlayer)
+	--triggerServerEvent("remoteClientSpawn", localPlayer)
 	-- //Miami Spawn deactivated:
 
 	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)

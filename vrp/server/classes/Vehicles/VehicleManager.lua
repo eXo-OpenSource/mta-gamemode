@@ -20,7 +20,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar","vehicleOnRadioChange", "vehicleSetPlayerSpawnLocation" }
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar","vehicleOnRadioChange"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -47,7 +47,6 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleOnRadioChange",root,bind(self.Event_OnRadioChange, self))
-	addEventHandler("vehicleSetPlayerSpawnLocation",root,bind(self.Event_SetPlayerSpawnLocation, self))
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -163,10 +162,11 @@ function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end
 
-function VehicleManager:getVehiclePositionFromId(vehicleId)
-	local result = sql:queryFetchSingle("SELECT PosX, PosY, PosZ, RotX, RotY, Rotation FROM ??_vehicles WHERE Id = ?", sql:getPrefix(), vehicleId)
-	if result then
-		return Matrix(result.PosX, result.PosY, result.PosZ, result.RotX, result.RotY, result.Rotation)
+function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
+	for _, vehicle in pairs(self:getPlayerVehicles(playerId)) do
+		if vehicle:getId() == vehicleId then
+			return vehicle
+		end
 	end
 end
 
@@ -1097,8 +1097,4 @@ function VehicleManager:Event_TrailerAttach(truck)
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
 	end
-end
-
-function VehicleManager:Event_SetPlayerSpawnLocation()
-
 end

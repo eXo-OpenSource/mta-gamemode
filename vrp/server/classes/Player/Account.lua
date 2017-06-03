@@ -8,7 +8,6 @@
 local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
-addRemoteEvents{"remoteClientSpawn" }
 
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
@@ -137,6 +136,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		player:createCharacter()
 	end
 	player:loadCharacter()
+	player:spawn()
 	player:triggerEvent("Event_StartScreen")
 
 	StatisticsLogger:addLogin( player, Username, "Login")
@@ -355,8 +355,3 @@ function Account.getBoardIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 	return row.ForumID or 0
 end
-
-addEventHandler("remoteClientSpawn", root, function()
-	client:spawn()
-end
-)

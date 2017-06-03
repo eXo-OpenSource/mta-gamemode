@@ -91,6 +91,7 @@ FontAwesomeSymbols = {
 	Bolt = "",
 	Speedo = "",
 	Long_Down = "",
+	Waypoint = "",
 }
 
 Fonts = {
