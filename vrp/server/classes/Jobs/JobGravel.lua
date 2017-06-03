@@ -178,7 +178,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		if not bonus then bonus = 0 end
 			local duration = getRealTime().timestamp - client.m_LastJobAction
 			client.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.mining", duration, times*LOAN_MINING+bonus)
+			StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.mining", duration, times*LOAN_MINING, bonus)
 			client:giveMoney(times*LOAN_MINING+bonus, "Kiesgruben-Job")
 		end
 		if chance(6) then
@@ -220,7 +220,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 					if not bonus then bonus = 0 end
 					local duration = getRealTime().timestamp - client.m_LastJobAction
 					client.m_LastJobAction = getRealTime().timestamp
-					StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, LOAN_DOZER+bonus)
+					StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, LOAN_DOZER, bonus)
 					client:giveMoney(LOAN_DOZER+bonus, "Kiesgruben-Job")
 				end
 			end
@@ -332,7 +332,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	if not bonus then bonus = 0 end
 	local duration = getRealTime().timestamp - player.m_LastJobAction
 	player.m_LastJobAction = getRealTime().timestamp
-	StatisticsLogger:getSingleton():addJobLog(player, "jobGravel.dumper", duration, loan+bonus)
+	StatisticsLogger:getSingleton():addJobLog(player, "jobGravel.dumper", duration, loan, bonus)
 	player:giveMoney(loan+bonus, "Kiesgruben-Job")
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil

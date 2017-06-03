@@ -108,7 +108,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				if not bonus then bonus = 0 end
 				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 				hitElement.m_LastJobAction = getRealTime().timestamp
-				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount+bonus)
+				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, bonus)
 				hitElement:giveMoney(moneyAmount+bonus, "Müll-Job")
 				hitElement:givePoints(math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR))
 

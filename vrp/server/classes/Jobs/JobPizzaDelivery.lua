@@ -51,7 +51,7 @@ function JobPizza:onPizzaDeliver(distance, time)
 		if not bonus then bonus = 0 end
 		local duration = getRealTime().timestamp - client.m_LastJobAction
 		client.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay+bonus)
+		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, bonus)
 		client:giveMoney(pay+bonus, "Pizza-Job")
 		client:givePoints(math.floor(2*JOB_EXTRA_POINT_FACTOR))
 	end

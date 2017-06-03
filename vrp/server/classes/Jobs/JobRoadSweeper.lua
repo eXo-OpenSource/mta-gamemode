@@ -52,7 +52,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	if not bonus then bonus = 0 end
 	local duration = getRealTime().timestamp - client.m_LastJobAction
 	client.m_LastJobAction = getRealTime().timestamp
-	StatisticsLogger:getSingleton():addJobLog(client, "jobRoadSweeper", duration, SWEEPER_LOAN+bonus)
+	StatisticsLogger:getSingleton():addJobLog(client, "jobRoadSweeper", duration, SWEEPER_LOAN, bonus)
 	client:giveMoney(SWEEPER_LOAN+bonus, "Straßenreiniger-Job", true)
 	if chance(15) then
 		client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))

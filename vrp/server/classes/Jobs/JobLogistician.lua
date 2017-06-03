@@ -112,7 +112,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 							if not bonus then bonus = 0 end
 							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 							hitElement.m_LastJobAction = getRealTime().timestamp
-							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport + bonus)
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, bonus)
 							hitElement:giveMoney(self.m_MoneyPerTransport+bonus, "Logistiker Job")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
