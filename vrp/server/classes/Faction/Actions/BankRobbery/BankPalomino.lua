@@ -105,7 +105,6 @@ function BankPalomino:startRob(player)
 	self.m_Truck:setData("BankRobberyTruck", true, true)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
-	self.m_Truck:setEngineState(true)
 	self.m_Truck:toggleRespawn(false)
 	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 
