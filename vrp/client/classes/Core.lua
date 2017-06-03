@@ -137,8 +137,6 @@ function Core:ready()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
-	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
-
 
 	Shaders.load()
 
@@ -200,15 +198,11 @@ function Core:afterLogin()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 
-	-- Miami Spawn deactivated:
 	HUDRadar:getSingleton():setEnabled(true)
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
-	--triggerServerEvent("remoteClientSpawn", localPlayer)
-	-- //Miami Spawn deactivated:
 
-	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)

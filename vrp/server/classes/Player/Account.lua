@@ -137,7 +137,6 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 	end
 	player:loadCharacter()
 	player:spawn()
-	player:triggerEvent("Event_StartScreen")
 
 	StatisticsLogger:addLogin( player, Username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
