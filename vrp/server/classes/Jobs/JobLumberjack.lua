@@ -169,7 +169,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		if not bonus then bonus = 0 end
 		local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 		hitElement.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY+bonus)
+		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY, bonus)
 		hitElement:giveMoney(numTrees * TREE_MONEY+bonus, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
