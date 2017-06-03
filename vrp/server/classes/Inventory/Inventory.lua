@@ -600,7 +600,7 @@ function Inventory:giveItem(item, amount, value)
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]
 		if self:getItemAmount(item)+amount > itemMax  then
-			self.m_Owner:sendError(_("Item passt nicht mehr ins Inventar!", self.m_Owner,item,itemMax))
+			self.m_Owner:sendError(_("Du kannst maximal %d %s in dein Inventar legen!", self.m_Owner,itemMax, item))
 			return
 		end
 		local placeType, place

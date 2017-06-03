@@ -164,8 +164,7 @@ function ShopManager:buyItem(shopId, item, amount)
 		end
 
 		if client:getMoney() >= shop.m_Items[item]*amount then
-			if client:getInventory():getFreePlacesForItem(item) >= amount then
-				client:getInventory():giveItem(item, amount)
+			if client:getInventory():giveItem(item, amount) then
 				if item == "Kanne" then
 					client:getInventory():setSpecialItemData(item, 10)
 				elseif item == "Mautpass" then
@@ -176,7 +175,7 @@ function ShopManager:buyItem(shopId, item, amount)
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 			else
-				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
+				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
 				return
 			end
 		else
