@@ -20,7 +20,7 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -257,6 +257,16 @@ function( dir )
 	end
 end)
 
+addEventHandler("vehicleReceiveTuningList", localPlayer,
+function (vehicle, tunings)
+	if tunings then
+		ShortMessage:new(_("Das Fahrzeug besitzt folgende Tunings:\n%s", tunings), "Tunings von "..vehicle:getName())
+	else
+		ErrorBox:new(_"Das Fahrzeug hat keine Tunings!")
+	end
+end)
+
+
 local renderLeviathanRope = {}
 addEventHandler("onClientElementStreamIn", root,
 	function()
@@ -286,3 +296,4 @@ addEventHandler("onClientRender", root,
 		end
 	end
 )
+

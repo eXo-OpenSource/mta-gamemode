@@ -20,7 +20,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar","vehicleOnRadioChange"}
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -46,7 +46,9 @@ function VehicleManager:constructor()
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
-	addEventHandler("vehicleOnRadioChange",root,bind(self.Event_OnRadioChange, self))
+	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
+
+
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -148,6 +150,10 @@ function VehicleManager:Event_OnRadioChange( vehicle, radio)
 	if vehicle and radio then
 
 	end
+end
+
+function VehicleManager:Event_GetTuningList()
+	source:getTuningList(client)
 end
 
 function VehicleManager:getFactionVehicles(factionId)

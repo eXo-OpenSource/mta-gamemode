@@ -176,3 +176,18 @@ function VehicleTuning:addTexture(texturePath, textureName)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	self.m_Tuning["Texture"][textureName] = texturePath
 end
+
+function VehicleTuning:getList()
+	local text = ""
+
+	local neon = self.m_Tuning["Neon"] and "Ja" or "Nein"
+	local horn = self.m_Tuning["CustomHorn"] > 0 and "Ja" or "Nein"
+	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	local texture = self.m_Tuning["Texture"][textureName] and "Ja" or "Nein"
+
+
+	text = text.."Neon: "..neon.."\n"
+	text = text.."Spezial-Hupe: "..horn.."\n"
+	text = text.."Textur: "..texture.."\n"
+	return text
+end

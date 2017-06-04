@@ -252,6 +252,13 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	end
 
 	if getElementData(element, "OwnerType") == "group" and getElementData(element, "forSale") == true then
+		self:addItem(_"Tunings anzeigen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleGetTuningList", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Cart)
 		self:addItem(_"Fahrzeug kaufen",
 			function()
 				if self:getElement() then

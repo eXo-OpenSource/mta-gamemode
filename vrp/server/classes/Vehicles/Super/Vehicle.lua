@@ -640,6 +640,14 @@ function Vehicle:magnetMoveDown(player, _, state)
 	end
 end
 
+function Vehicle:getTuningList(player)
+	if self.m_Tunings and self.m_Tunings.getList then
+		player:triggerEvent("vehicleReceiveTuningList", self, self.m_Tunings:getList())
+	else
+		player:triggerEvent("vehicleReceiveTuningList", self, false)
+	end
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
