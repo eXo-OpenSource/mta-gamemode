@@ -1213,6 +1213,7 @@
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	<vrpfile src="files/images/HUD/wanted.png"/>
+	<vrpfile src="files/images/HUD/payday_money.png"/>
 
 	<vrpfile src="files/images/HUD/exo/bg.png"/>
 	<vrpfile src="files/images/HUD/exo/armor.png"/>

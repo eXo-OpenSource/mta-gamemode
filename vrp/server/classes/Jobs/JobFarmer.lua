@@ -86,16 +86,14 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 		if seat == 0 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
 				local income = player:getData("Farmer.Income")
-				local bonus = JobManager.getBonusForNewbies( player , income)
-				if not bonus then bonus = 0 end
 				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
 				vehPlayer.m_LastJobAction = getRealTime().timestamp
 				if vehicle:getModel() == 531 then
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income, bonus)
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
 				else
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income, bonus)
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
 				end
-				vehPlayer:giveMoney( income + bonus, "Farmer-Job")
+				vehPlayer:addBankMoney( income, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
 			end
@@ -195,12 +193,10 @@ function JobFarmer:stop(player)
 
 	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
 		local income = player:getData("Farmer.Income")
-		local bonus = JobManager.getBonusForNewbies( player , income)
-		if not bonus then bonus = 0 end
 		local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
 		vehPlayer.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income, bonus)
-		player:giveMoney(income+bonus, "Farmer-Job")
+		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income)
+		player:addBankMoney(income, "Farmer-Job")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
@@ -225,18 +221,15 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			--player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
-			local bonus = JobManager.getBonusForNewbies( player , income)
-			if not bonus then bonus = 0 end
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, bonus)
-			player:giveMoney(income+bonus, "Farmer-Job")
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income)
+			player:addBankMoney(income, "Farmer-Job")
 			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
-
 			for i, v in pairs(getAttachedElements(hitElement)) do
 				if v:getModel() == 2968 then -- only destroy crates
 					destroyElement(v)

@@ -72,7 +72,7 @@ end
 function StatisticsLogger:addJobLog(player, job, duration, earned, bonus)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
-
+	if not bonus then bonus = 0 end
     sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Date) VALUES (?, ?, ?, ?, ?, Now())",
         sqlLogs:getPrefix(), userId, job, duration, earned, bonus)
 end

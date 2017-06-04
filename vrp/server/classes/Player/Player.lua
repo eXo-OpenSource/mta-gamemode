@@ -865,57 +865,88 @@ function Player:payDay()
 	--Income:
 	if self:getFaction() then
 		income_faction = self:getFaction():paydayPlayer(self)
-		income = income + income_faction
-		self:addPaydayText("faction","Fraktion: "..income_faction.."$",255,255,255)
+		if income_faction > 0 then
+			income = income + income_faction
+			self:addPaydayText("income", _("%s-Lohn", self, self:getFaction():getShortName()), income_faction)
+		end
 	end
 	if self:getCompany() then
 		income_company = self:getCompany():paydayPlayer(self)
-		income = income + income_company
-		self:addPaydayText("company","Unternehmen: "..income_company.."$",255,255,255)
+		if income_company > 0 then
+			income = income + income_company
+			self:addPaydayText("income", _("%s-Lohn", self, self:getCompany():getShortName()), income_company)
+		end
 	end
 	if self:getGroup() then
 		income_group = self:getGroup():paydayPlayer(self)
-		income = income + income_group
-		self:addPaydayText("group","Gang/Firma: "..income_group.."$",255,255,255)
-	end
-
-	if self:getWantedLevel() > 0 then
-		self:sendShortMessage(_("Dir wurde ein Wanted erlassen!", self))
-		self:takeWantedLevel(1)
+		if income_group > 0 then
+			income = income + income_group
+			self:addPaydayText("income", _("%s-Lohn", self, self:getGroup():getName()), income_group)
+		end
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
 	if income_interest > 1500 then income_interest = 1500 end
-	income = income + income_interest
-	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
-
-	--Outgoing
-	if HouseManager:isInstantiated() then
-		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
-		--if #houses > 0 then
-			for index, house in pairs(houses) do
-				outgoing_house = outgoing_house + house:getRent()
-				house.m_Money = house.m_Money + house:getRent()
-				houseAmount = houseAmount + 1
-			end
-		--end
+	if income_interest > 0 then
+		income = income + income_interest
+		self:addPaydayText("income", _("Bankzinsen", self), income_interest)
 	end
 
+	--noob bonus
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then 
+		income = income + PAYDAY_NOOB_BONUS
+		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
+	end
+
+	--Outgoing
+	local temp_bank_money = self:getBankMoney() + income
+
 	outgoing_vehicles = #self:getVehicles()*75
-	outgoing = outgoing + outgoing_vehicles + outgoing_house
-	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
-	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
-	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeug Steuer", true)
+	if outgoing_vehicles > 0 then
+		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
+		temp_bank_money = temp_bank_money - outgoing_vehicles
+	end
+
+	if HouseManager:isInstantiated() then
+		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
+		for index, house in pairs(houses) do
+			local rent = house:getRent()
+			if temp_bank_money - rent >= 0 then
+				outgoing_house = outgoing_house + rent
+				house.m_Money = house.m_Money + rent
+				houseAmount = houseAmount + 1
+				temp_bank_money = temp_bank_money - rent
+				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), outgoing_house)
+			else
+				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
+				house:unrentHouse(self)
+			end
+		end
+	end
+
+	outgoing = outgoing_vehicles + outgoing_house
+	
+	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
-	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
-	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
-	self:addPaydayText("payday",("Der Payday über %d$ wurde auf dein Konto %s!"):format(total, total > 0 and "überwiesen" or "abgebucht"),255,150,0)
+	self:addPaydayText("totalIncome", "", income)
+	self:addPaydayText("totalOutgoing", "", outgoing)
+	self:addPaydayText("total", "Total", total)
+	
 
-	self:addBankMoney(total, "Payday")
+	if self:getWantedLevel() > 0 then
+		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
+		self:takeWantedLevel(1)
+	end
+
+	if total > 0 then
+		self:addBankMoney(total, "Payday")
+	else
+		self:takeBankMoney(-total, "Payday")
+	end
 
 	if EVENT_EASTER then
-		self:sendInfo("Du hast 5 Ostereier bekommen!")
+		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
 		self:getInventory():giveItem("Osterei", 5)
 	end
 
@@ -925,12 +956,12 @@ function Player:payDay()
 	self:save()
 end
 
-function Player:addPaydayText(typ,text,r,g,b)
-	self.m_paydayTexts[typ] = {}
-	self.m_paydayTexts[typ]["text"] = text
-	self.m_paydayTexts[typ]["r"] = r
-	self.m_paydayTexts[typ]["g"] = g
-	self.m_paydayTexts[typ]["b"] = b
+function Player:addPaydayText(type, text, amount)
+	if not self.m_paydayTexts[type] then self.m_paydayTexts[type] = {} end
+	table.insert(self.m_paydayTexts[type], {text, amount})
+	--self.m_paydayTexts[typ]["r"] = r
+	--self.m_paydayTexts[typ]["g"] = g
+	--self.m_paydayTexts[typ]["b"] = b
 end
 
 function Player:togglePhone(status)
@@ -959,7 +990,17 @@ function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 	if silent then return end
 
 	if money ~= 0 then
-		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Cash)", {0, 94, 255}, 3000)
+		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+	end
+	self:triggerEvent("playerCashChange", bNoSound)
+end
+
+function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
+	DatabasePlayer.addBankMoney(self, money, reason)
+	if silent then return end
+
+	if money ~= 0 then
+		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
 	end
 	self:triggerEvent("playerCashChange", bNoSound)
 end
