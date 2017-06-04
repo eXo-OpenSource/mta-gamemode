@@ -187,7 +187,7 @@ addEventHandler("onClientVehicleDamage", root,
 			counter = counter + 1
 		end
 		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
-		if source:getData("disableVehicleDamageSystem") then return end
+		if source:getData("disableVehicleDamageSystem") then return outputDebug("also nope") end
 		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
 			if source:getHealth() - loss < 310 then
 				cancelEvent()

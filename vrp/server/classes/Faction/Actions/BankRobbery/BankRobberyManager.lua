@@ -44,7 +44,7 @@ function BankRobberyManager:stopRob()
 	end
 	if self.m_OpenVaulTimer then 
 		if isTimer(self.m_OpenVaulTimer) then 
-			destroyElement(self.m_OpenVaulTimer)
+			stopTimer(self.m_OpenVaulTimer)
 			if self.m_RobFaction then 
 				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do 
 					pl:triggerEvent("CountdownStop","Safe offen:")

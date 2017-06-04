@@ -20,8 +20,8 @@ function WeedTruck:constructor(driver)
     self.m_Truck:setColor(0, 50, 0)
 	self.m_Truck:setFrozen(true)
 	self.m_Truck:setVariant(255, 255)
-	self.m_Truck:setEngineState(true)
 	self.m_Truck:setRepairAllowed(false)
+	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setData("disableVehicleDamageSystem", true, true)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
