@@ -332,9 +332,10 @@ function Vehicle:toggleEngine(player)
 	return false
 end
 
-function Vehicle:toggleHandBrake( player )
+function Vehicle:toggleHandBrake( player, preferredState )
 	if self.m_DisableToggleHandbrake then return end
-	if not self.m_HandBrake then
+	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
+	if not self.m_HandBrake or preferredState then
 		if self:isOnGround() then
 			setControlState(player, "handbrake", true)
 			self.m_HandBrake = true

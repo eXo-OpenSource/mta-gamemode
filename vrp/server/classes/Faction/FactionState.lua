@@ -106,7 +106,7 @@ function FactionState:constructor()
 	addEventHandler("State:declineEvidenceDestroy", root, bind(self.Event_declineEvidenceDestroy,self))
 
 	-- Prepare the Area51
-	self:createDefendActors(
+	--[[self:createDefendActors( --these are no longer wanted (as MBT is there now)
 		{
 			{Vector3(128.396, 1954.551, 19.428), Vector3(0, 0, 354.965), 287, 31, 25};
 			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 25};
@@ -120,7 +120,7 @@ function FactionState:constructor()
 			{Vector3(386.04, 2078.10, 33.68), Vector3(0, 0, 0), 287, 34, 80};
 			{Vector3(191.48, 2031.94, 33.68), Vector3(0, 0, 0), 287, 34, 80};
 		}
-	)
+	)]]
 
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
@@ -188,7 +188,6 @@ function FactionState:loadLSPD(factionId)
 	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
-	VehicleBarrier:new(Vector3(283.900390625, 1817.7998046875, 17.400001525879), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- Army Barrier
 
 	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
@@ -244,6 +243,7 @@ function FactionState:loadArmy(factionId)
 
 
 	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
+	areaGarage.m_Gates[1]:setDoubleSided(true)
 	areaGarage:addCustomShapes(Vector3(277.25, 1821.42, 17.67), Vector3( 290.66, 1821.49, 17.64))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 
@@ -557,6 +557,7 @@ function FactionState:createGasStation(pos, size)
 					if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 						if hitElement.vehicle and hitElement.vehicle:getFaction() and hitElement.vehicle:getFaction():isStateFaction() then
 							hitElement.stateGasStation = source
+							hitElement.vehicle:toggleHandBrake(hitElement, true)
 							hitElement:triggerEvent("showStateFactionGasStationGUI")
 						else
 							hitElement:sendError(_("Nur für Fahrzeuge des Staates!", hitElement))
@@ -587,6 +588,7 @@ function FactionState:Event_fillRepairVehicle(type)
 						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ repariert!", client, costs))
 						client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
 					end
+					client.vehicle:toggleHandBrake(client, false)
 				else
 					client:sendError(_("Du bist zuweit entfernt!", client))
 				end
@@ -607,13 +609,13 @@ function FactionState:getFullReasonFromShortcut(reason)
 		reason = "Beschuss/Waffennutzung"
 		amount = 2
 	elseif string.lower(reason) == "db" then
-		reason = "Drogenbesitz <50g"
+		reason = "Drogenbesitz (>= 10 Gramm)"
 		amount = 1
 	elseif string.lower(reason) == "db2" then
-		reason = "Drogenbesitz 50g < 149g <"
+		reason = "Drogenbesitz (>= 50 Gramm)"
 		amount = 2
-	elseif string.lower(reason) == "db2" then
-		reason = "Drogenbesitz 150g <"
+	elseif string.lower(reason) == "db3" then
+		reason = "Drogenbesitz (>= 150 Gramm)"
 		amount = 3
 	elseif string.lower(reason) == "br" then
 		reason = "Banküberfall"

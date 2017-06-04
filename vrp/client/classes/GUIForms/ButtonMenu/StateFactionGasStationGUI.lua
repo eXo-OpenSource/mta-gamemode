@@ -30,6 +30,7 @@ function StateFactionGasStationGUI:itemCallback(type)
 	elseif type == 2 then
 		triggerServerEvent("factionStateFillRepairVehicle", localPlayer, "repair")
 	else
+		triggerServerEvent("factionStateFillRepairVehicle", localPlayer) --to release hand brake
 		self:close()
 	end
 
