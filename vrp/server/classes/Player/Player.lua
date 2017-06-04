@@ -371,7 +371,7 @@ function Player:spawn()
 			if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 				spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
-				spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, 0, 0)
+				spawnSuccess = spawnPlayer(self, Vector3(1480.54, -1778.65, 13.55), 0, self.m_Skin or 0, 0, 0)
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
 				if SpawnLocationProperty then
 					local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
@@ -893,7 +893,7 @@ function Player:payDay()
 	end
 
 	--noob bonus
-	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then 
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then
 		income = income + PAYDAY_NOOB_BONUS
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end
@@ -925,14 +925,14 @@ function Player:payDay()
 	end
 
 	outgoing = outgoing_vehicles + outgoing_house
-	
+
 	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome", "", income)
 	self:addPaydayText("totalOutgoing", "", outgoing)
 	self:addPaydayText("total", "Total", total)
-	
+
 
 	if self:getWantedLevel() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
