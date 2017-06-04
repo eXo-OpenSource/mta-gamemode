@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt","onPlayerTryGateOpen"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -54,6 +54,8 @@ function PlayerManager:constructor()
 	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
+	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -79,7 +81,6 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
-
 end
 
 function PlayerManager:Event_onRequestGateOpen()
@@ -452,16 +453,17 @@ function PlayerManager:Event_playerReady()
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 end
 
-function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	-- Call wasted hook
 	if self.m_WastedHook:call(client, killer, killerWeapon, bodypart) then
 		return
 	end
+
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
-	-- give a achievement
 	client:giveAchievement(37)
-	for key, obj in ipairs( getAttachedElements(client)) do
+
+	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
@@ -949,3 +951,37 @@ function PlayerManager:Event_moveToJail()
 	end
 end
 
+function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
+	if locationId == SPAWN_LOCATIONS.HOUSE then
+		if HouseManager:getSingleton().m_Houses[client.visitingHouse]:isValidToEnter(client) then
+			client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
+			client:setSpawnLocationProperty(client.visitingHouse)
+			client:sendInfo("Spawnposition geändert!")
+		else
+			client:sendError("Du kannst dieses Haus nicht als Spawnpunkt festlegen!")
+		end
+	elseif locationId == SPAWN_LOCATIONS.VEHICLE then
+		if VEHICLE_MODEL_SPAWNS[source:getModel()] then
+			if source:getOwner() ~= client:getId() then
+				return
+			end
+
+			client:setSpawnLocation(SPAWN_LOCATIONS.VEHICLE)
+			client:setSpawnLocationProperty(source:getId())
+			client:sendInfo("Spawnposition geändert!")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.FACTION_BASE then
+		if client:getFaction() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.COMPANY_BASE then
+		if client:getCompany() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	else
+		client:setSpawnLocation(locationId)
+		client:sendInfo("Spawnpunkt wurde geändert.")
+	end
+end

@@ -191,7 +191,7 @@ function Player:loadCharacter()
 		end
 	end
 
-	VehicleManager:getSingleton():createVehiclesForPlayer( self )
+	VehicleManager:getSingleton():createVehiclesForPlayer(self)
 	triggerEvent("characterInitialized", self)
 	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
@@ -347,7 +347,7 @@ function Player:save()
 	end
 end
 
-function Player:spawn( )
+function Player:spawn()
 	if self:isGuest() then
 		-- set default data (fallback / guest)
 		self:setMoney(0)
@@ -363,12 +363,56 @@ function Player:spawn( )
 		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
-		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
+		local spawnSuccess = false
+		local SpawnLocationProperty = self:getSpawnLocationProperty()
+
+		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
+			spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
+			spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, 0, 0)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
+			if SpawnLocationProperty then
+				local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
+
+				if vehicle and vehicle:getPositionType() == VehiclePositionType.World then
+					if vehicle:getSpeed() == 0 then
+						spawnSuccess = spawnPlayer(self, vehicle.matrix:transformPosition(VEHICLE_SPAWN_OFFSETS[vehicle:getModel()]), 0, self.m_Skin or 0, 0, 0)
+					else
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
+					end
+				else
+					self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+				end
+			end
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
+			if SpawnLocationProperty then
+				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
+				if house and house:isValidToEnter(self) then
+					if spawnPlayer(self, Vector3(0,0,0), 0, self.m_Skin or 0, 0, 0) then
+						house:enterHouse(self)
+						spawnSuccess = true
+					end
+				else
+					self:sendWarning("Spawnen im Haus nicht möglich, du hast kein Zugriff mehr auf das Haus")
+				end
+			end
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
+			if self:getFaction() then
+				local position = factionSpawnpoint[self:getFaction():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+			end
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
+			if self:getCompany() then
+				local position = companySpawnpoint[self:getCompany():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+			end
+		--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+		--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		end
+
+		-- if not able to spawn, spawn at last known location
+		if not spawnSuccess then
 			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
-			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
-		else
-			outputServerLog("Invalid spawn location ("..self:getName()..")")
 		end
 
 		-- Update Skin

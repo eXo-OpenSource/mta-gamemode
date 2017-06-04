@@ -556,6 +556,28 @@ FISHING_LEVELS = {
 	[10] = 22500,
 }
 
+SPAWN_LOCATIONS = {
+	DEFAULT = 0,
+	NOOBSPAWN = 1,
+	GARAGE = 2,
+	FACTION_BASE = 3,
+	COMPANY_BASE = 4,
+	HOUSE = 5,
+	VEHICLE = 6,
+}
+
+VEHICLE_MODEL_SPAWNS = {
+	[508] = true,
+	[484] = true,
+	[454] = true,
+}
+
+VEHICLE_SPAWN_OFFSETS = {
+	[508] = Vector3(4, 0, 0),
+	[484] = Vector3(0, -2, 2),
+	[454] = Vector3(-0.4, -3.0, 2),
+}
+
 CAR_COLORS_FROM_ID =
 {
 	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
@@ -575,5 +597,4 @@ CAR_COLORS_FROM_ID =
 	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
 	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
 	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
-
 }

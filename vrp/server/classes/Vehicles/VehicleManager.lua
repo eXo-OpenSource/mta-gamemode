@@ -21,6 +21,7 @@ function VehicleManager:constructor()
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
 		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar","vehicleOnRadioChange"}
+
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -46,6 +47,7 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleOnRadioChange",root,bind(self.Event_OnRadioChange, self))
+
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
 			local occVeh = getPedOccupiedVehicle(client)
@@ -158,6 +160,14 @@ end
 
 function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
+end
+
+function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
+	for _, vehicle in pairs(self:getPlayerVehicles(playerId)) do
+		if vehicle:getId() == vehicleId then
+			return vehicle
+		end
+	end
 end
 
 function VehicleManager:createVehiclesForPlayer(player)
