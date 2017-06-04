@@ -575,12 +575,14 @@ SPAWN_LOCATIONS = {
 VEHICLE_MODEL_SPAWNS = {
 	[508] = true,
 	[484] = true,
+	[483] = true,
 	[454] = true,
 }
 
 VEHICLE_SPAWN_OFFSETS = {
-	[508] = Vector3(4, 0, 0),
+	[508] = Vector3(3, 0, 0),
 	[484] = Vector3(0, -2, 2),
+	[483] = Vector3(2, 2, 0),
 	[454] = Vector3(-0.4, -3.0, 2),
 }
 
