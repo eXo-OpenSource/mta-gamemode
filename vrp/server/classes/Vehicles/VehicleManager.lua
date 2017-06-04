@@ -255,9 +255,11 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
-			setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
-			vehicle.m_IsNotSpawnedYet = true
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
+			if not row.ForSale == 1 then
+				setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
+				vehicle.m_IsNotSpawnedYet = true
+			end
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		else
