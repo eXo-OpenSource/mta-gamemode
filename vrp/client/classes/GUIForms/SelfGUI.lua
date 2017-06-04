@@ -898,18 +898,20 @@ function SelfGUI:onSettingChange(setting)
 
 		self.m_FactionBase:setEnabled(localPlayer:getFaction() and true or false)
 		self.m_CompanyBase:setEnabled(localPlayer:getCompany() and true or false)
+		self.m_House:setEnabled(false)
+		self.m_Vehicle:setEnabled(false)
 
 		local SpawnIDToCheckbox = {[0] = self.m_Default, [1] = self.m_Noobspawn, [3] = self.m_FactionBase, [4] = self.m_CompanyBase, [5] = self.m_House, [6] = self.m_Vehicle}
 		local uncheckAll = function() for _, checkbox in pairs(SpawnIDToCheckbox) do checkbox:setChecked(false) end end
 
 		SpawnIDToCheckbox[localPlayer:getPrivateSync("SpawnLocation")]:setChecked(true)
 
-		self.m_Default.onChange = function() uncheckAll() self.m_Default:setChecked(true) triggerServerEvent("onPlayerSwitchSpawnLocation", localPlayer, SPAWN_LOCATIONS.DEFAULT) end
-		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerSwitchSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end
-		self.m_FactionBase.onChange = function() uncheckAll() self.m_FactionBase:setChecked(true) triggerServerEvent("onPlayerSwitchSpawnLocation", localPlayer, SPAWN_LOCATIONS.FACTION_BASE) end
-		self.m_CompanyBase.onChange = function() uncheckAll() self.m_CompanyBase:setChecked(true) triggerServerEvent("onPlayerSwitchSpawnLocation", localPlayer, SPAWN_LOCATIONS.COMPANY_BASE) end
-		self.m_House.onChange = function() self.m_House:setChecked(false) WarningBox:new("Dies ist nur im Haus GUI möglich!") end
-		self.m_Vehicle.onChange = function() self.m_Vehicle:setChecked(false) WarningBox:new("Nutze das Klicksystem am Fahrzeug!") end
+		self.m_Default.onChange = function() uncheckAll() self.m_Default:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.DEFAULT) end
+		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end
+		self.m_FactionBase.onChange = function() uncheckAll() self.m_FactionBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.FACTION_BASE) end
+		self.m_CompanyBase.onChange = function() uncheckAll() self.m_CompanyBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.COMPANY_BASE) end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.7, self.m_Height*0.055, _"Nutze das Klicksystem bzw. das Hausmenü um den Spawnpunkt für ein Fahrzeug oder Haus festzulegen!", self.m_SettingBG)
 	elseif setting == "Nametag/Reddot" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Nametag", self.m_SettingBG)
 		self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)

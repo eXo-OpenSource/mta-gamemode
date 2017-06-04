@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerSwitchSpawnLocation", "onPlayerUpdateSpawnLocation"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -54,7 +54,6 @@ function PlayerManager:constructor()
 	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
-	addEventHandler("onPlayerSwitchSpawnLocation", root, bind(self.Event_OnSwitchSpawnLocation, self))
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
 
 	addEventHandler("onPlayerPrivateMessage", root, function()
@@ -952,13 +951,6 @@ function PlayerManager:Event_moveToJail()
 	end
 end
 
-function PlayerManager:Event_OnSwitchSpawnLocation(locationId)
-	--if locationId == SPAWN_LOCATIONS.DEFAULT or locationId == SPAWN_LOCATIONS.NOOBSPAWN then
-		client:setSpawnLocation(locationId)
-		client:sendInfo("Spawnpunkt wurde geändert.")
-	--end
-end
-
 function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 	if locationId == SPAWN_LOCATIONS.HOUSE then
 		if HouseManager:getSingleton().m_Houses[client.visitingHouse]:isValidToEnter(client) then
@@ -978,5 +970,18 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 			client:setSpawnLocationProperty(source:getId())
 			client:sendInfo("Spawnposition geändert!")
 		end
+	elseif locationId ==  SPAWN_LOCATIONS.FACTION_BASE then
+		if client:getFaction() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.COMPANY_BASE then
+		if client:getCompany() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	else
+		client:setSpawnLocation(locationId)
+		client:sendInfo("Spawnpunkt wurde geändert.")
 	end
 end
