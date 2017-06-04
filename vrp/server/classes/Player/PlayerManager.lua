@@ -17,6 +17,7 @@ function PlayerManager:constructor()
 	self.m_QuitHook = Hook:new()
 	self.m_AFKHook = Hook:new()
 	self.m_ReadyPlayers = {}
+	self.m_QuitPlayers = {}
 
 	-- Register events
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -399,7 +400,7 @@ end
 
 function PlayerManager:playerQuit()
 	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
-
+	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
