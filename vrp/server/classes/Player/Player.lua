@@ -368,7 +368,7 @@ function Player:spawn()
 		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 			spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
-			spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+			spawnSuccess = spawnPlayer(self, Vector3(1479.99, -1747.69, 13.55), 0, self.m_Skin or 0, 0, 0)
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
 			if SpawnLocationProperty then
 				local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
@@ -386,11 +386,13 @@ function Player:spawn()
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
 			if SpawnLocationProperty then
 				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
-				if house:isValidToEnter(self) then
+				if house and house:isValidToEnter(self) then
 					if spawnPlayer(self, Vector3(0,0,0), 0, self.m_Skin or 0, 0, 0) then
 						house:enterHouse(self)
 						spawnSuccess = true
 					end
+				else
+					self:sendWarning("Spawnen im Haus nicht möglich, du hast kein Zugriff mehr auf das Haus")
 				end
 			end
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then

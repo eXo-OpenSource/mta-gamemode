@@ -82,7 +82,6 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
-
 end
 
 function PlayerManager:Event_onRequestGateOpen()
@@ -455,16 +454,17 @@ function PlayerManager:Event_playerReady()
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 end
 
-function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	-- Call wasted hook
 	if self.m_WastedHook:call(client, killer, killerWeapon, bodypart) then
 		return
 	end
+
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
-	-- give a achievement
 	client:giveAchievement(37)
-	for key, obj in ipairs( getAttachedElements(client)) do
+
+	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")

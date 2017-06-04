@@ -132,12 +132,11 @@ function DatabasePlayer:load()
 	if row.CompanyId and row.CompanyId ~= 0 then
 		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
 	end
-	--self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
+
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_HangarType = row.HangarType
 	self.m_LastHangarEntrance = row.LastHangarEntrance
-	self.m_SpawnLocation = row.SpawnLocation
 	self.m_SpawnLocationProperty = fromJSON(row.SpawnLocationProperty or "")
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_GunBox = fromJSON(row.GunBox or "")
@@ -165,8 +164,8 @@ function DatabasePlayer:load()
 		self:setSessionId(hash("md5", self:getSerial()..self:getName()..self.m_Account:getLastLogin()))
 	end
 
+	self:setSpawnLocation(row.SpawnLocation)
 	self:setFishingSkill(row.FishingSkill)
-
 	self:setFishingLevel(row.FishingLevel)
 	self:setWeaponLevel(row.WeaponLevel)
 	self:setVehicleLevel(row.VehicleLevel)
@@ -266,7 +265,7 @@ function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:is
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setSpawnerVehicle(vehicle) self.m_SpawnerVehicle = vehicle end
-function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
+function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l if self:isActive() then self:setPrivateSync("SpawnLocation", self.m_SpawnLocation) end end
 function DatabasePlayer:setSpawnLocationProperty(prop) self.m_SpawnLocationProperty = prop end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
