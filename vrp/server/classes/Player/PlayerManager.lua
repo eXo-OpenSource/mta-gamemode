@@ -578,6 +578,10 @@ function PlayerManager:playerChat(message, messageType)
 			end
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
 			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
+
+			if phonePartner and phonePartner:getName() == "PewX" and (message:lower():find("pewpew") or message:lower():find("pew pew")) then
+				Achievements["PewPew"](source)
+			end
 		end
 
 		Admin:getSingleton():outputSpectatingChat(source, "C", message, phonePartner, playersToSend)

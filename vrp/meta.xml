@@ -428,6 +428,7 @@
 	<script src="client/classes/EasterEggs/QRCode.lua" type="client"/>
 	<script src="client/classes/EasterEggs/Scream.lua" type="client"/>"
 	<script src="client/classes/EasterEggs/DrWho.lua" type="client"/>"
+	<script src="client/classes/EasterEggs/PewPew.lua" type="client"/>"
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
@@ -1024,6 +1025,9 @@
 	<vrpfile src="files/images/Other/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
+
+	<vrpfile src="files/images/Other/PewPew/head.png"/>
+	<vrpfile src="files/images/Other/PewPew/body.png"/>
 
 	<vrpfile src="files/images/Deathmatch/death_img.png"/>
 	<vrpfile src="files/images/Deathmatch/death_round.png"/>
