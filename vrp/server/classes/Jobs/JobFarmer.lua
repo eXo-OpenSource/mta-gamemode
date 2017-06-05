@@ -205,7 +205,7 @@ end
 
 function JobFarmer:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FARMER) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER))
 		return false
 	end
 	return true
@@ -236,7 +236,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 				end
 			end
 		else
-			player:sendError(_("Du hast keine Ladung dabei!", player), 255, 0, 0)
+			player:sendError(_("Du hast keine Ladung dabei!", player))
 		end
 	end
 end

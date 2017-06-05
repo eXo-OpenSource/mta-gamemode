@@ -40,7 +40,7 @@ end
 
 function JobLogistician:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN))
 		return false
 	end
 	return true

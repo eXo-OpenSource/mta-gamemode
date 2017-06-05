@@ -29,7 +29,7 @@ end
 
 function JobForkLift:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FORKLIFT) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT))
 		return false
 	end
 	return true

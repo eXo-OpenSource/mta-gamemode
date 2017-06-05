@@ -63,7 +63,7 @@ end
 
 function JobTrashman:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_TRASHMAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TRASHMAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TRASHMAN))
 		return false
 	end
 	return true
@@ -93,7 +93,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		-- Increment the can counter now
 		client:setData("Trashman:Cans", client:getData("Trashman:Cans") + containerNum)
 	else
-		client:sendError(_("Du musst im Müll-Fahrzeug sitzen!", client), 255, 0, 0)
+		client:sendError(_("Du musst im Müll-Fahrzeug sitzen!", client))
 	end
 end
 
@@ -118,7 +118,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				hitElement:sendInfo(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount))
 			end
 		else
-			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement))
 		end
 	end
 end

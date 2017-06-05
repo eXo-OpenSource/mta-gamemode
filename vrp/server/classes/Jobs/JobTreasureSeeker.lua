@@ -42,7 +42,7 @@ end
 
 function JobTreasureSeeker:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_TREASURESEEKER) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER))
 		return false
 	end
 	return true

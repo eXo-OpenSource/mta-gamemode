@@ -93,7 +93,7 @@ end
 function House:breakHouse(player)
 	if getRealTime().timestamp >= self.m_LastRobbed + ROB_DELAY then
 		if not HouseManager:getSingleton():isCharacterAllowedToRob(player) then
-			player:sendWarning(_("Du hast vor kurzem schon ein Haus ausgeraubt!", player), 125, 0, 0)
+			player:sendWarning(_("Du hast vor kurzem schon ein Haus ausgeraubt!", player))
 			return
 		end
 		self.m_CurrentRobber = player
@@ -165,7 +165,7 @@ function House:rentHouse(player)
 
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
-			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player), 0, 255, 0)
+			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player))
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
@@ -179,7 +179,7 @@ function House:unrentHouse(player)
 	if self.m_Keys[player:getId()] then
 		self.m_Keys[player:getId()] = nil
 		if player and isElement(player) then
-			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
+			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player))
 			player:triggerEvent("removeHouseBlip", self.m_Id)
 
 			if self.m_PlayersInterior[player] then
@@ -243,10 +243,10 @@ function House:removeTenant(player, id)
 		if self.m_Keys[id] then
 			self.m_Keys[id] = nil
 			local name = Account.getNameFromId(id)
-			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, name), 255, 0, 0)
+			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, name))
 			if getPlayerFromName(name) then
 				local target = getPlayerFromName(name)
-				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()), 255, 0, 0)
+				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()))
 				target:triggerEvent("removeHouseBlip", self.m_Id)
 			end
 			self:showGUI(player)
@@ -442,7 +442,7 @@ end
 
 function House:buyHouse(player)
 	if HouseManager:getSingleton():getPlayerHouse(player) then
-		player:sendWarning(_("Du hast bereits ein Haus!", player), 125, 0, 0)
+		player:sendWarning(_("Du hast bereits ein Haus!", player))
 		return
 	end
 
