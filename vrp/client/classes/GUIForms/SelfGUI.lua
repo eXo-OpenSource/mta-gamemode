@@ -262,11 +262,11 @@ function SelfGUI:constructor()
 
 	local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
 
-	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setFontSize(1.2)
 	self.m_ShaderButton:setFontSize(1)
 	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
 
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setFontSize(1.2)
 	self.m_ServerTour:setFontSize(1)
 	self.m_ServerTour.onLeftClick = function()
 		if not Tour:getSingleton():isActive() then
@@ -280,7 +280,7 @@ function SelfGUI:constructor()
 	end
 	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
 
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setFontSize(1.2)
 	self.m_KeyBindingsButton:setFontSize(1)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
@@ -840,6 +840,21 @@ function SelfGUI:onSettingChange(setting)
 		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
 		if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
 
+		self.m_BNBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.50, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News-Box (oben links)", self.m_SettingBG)
+		self.m_BNBox:setFont(VRPFont(25))
+		self.m_BNBox:setFontSize(1)
+		self.m_BNBox:setChecked(core:get("HUD", "breakingNewsBox", true))
+		self.m_BNBox.onChange = function (state)
+			core:set("HUD", "breakingNewsBox", state)
+		end
+
+		self.m_BNChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News im Chat anzeigen", self.m_SettingBG)
+		self.m_BNChat:setFont(VRPFont(25))
+		self.m_BNChat:setFontSize(1)
+		self.m_BNChat:setChecked(core:get("HUD", "breakingNewsInChat", false))
+		self.m_BNChat.onChange = function (state)
+			core:set("HUD", "breakingNewsInChat", state)
+		end
 	elseif setting == "Radar" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", self.m_SettingBG)
 		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)

@@ -95,11 +95,15 @@ end
 
 addEventHandler("breakingNews", root,
 	function(...)
-		if BreakingNews:isInstantiated() then
-			BreakingNews:getSingleton():addNews(...)
-			return
+		if core:get("HUD", "breakingNewsBox", true) then
+			if BreakingNews:isInstantiated() then
+				BreakingNews:getSingleton():addNews(...)
+				return
+			end
+			BreakingNews:new(...)
 		end
-
-		BreakingNews:new(...)
+		if core:get("HUD", "breakingNewsInChat", false) then
+			outputChatBox(("#DD1111[Breaking News] #FFFFFF %s"):format(...), 0, 0, 0, true)
+		end
 	end
 )
