@@ -204,6 +204,17 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/fence.col", 1866)
 
 	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
+
+	self:loadImportTXD("files/models/vehicles/sandking.txd", 495)
+	self:loadImportDFF("files/models/vehicles/sandking.dff", 495)
+
+	self:loadImportTXD("files/models/vehicles/uranus.txd", 558)
+	self:loadImportDFF("files/models/vehicles/uranus.dff", 558)
+
+	self:loadImportTXD("files/models/vehicles/supergt.txd", 506)
+	self:loadImportDFF("files/models/vehicles/supergt.dff", 506)
+
+	self:loadImportDFF("files/models/vehicles/dft30.dff", 578)
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
