@@ -1,1 +1,0 @@
-In diesem Event geht es darum, die anderen Teilnehmer mit Waffengewalt zu eliminieren. Wer die meisten Spieler eleminiert gewinnt.

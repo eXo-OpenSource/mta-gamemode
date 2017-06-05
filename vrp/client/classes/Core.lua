@@ -152,6 +152,7 @@ function Core:ready()
 
 	GroupRob:new()
 	DrivingSchool:new()
+	Help:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end

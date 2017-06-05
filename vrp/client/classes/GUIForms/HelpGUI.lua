@@ -19,26 +19,19 @@ function HelpGUI:constructor()
 
 	self.m_Items = {}
 
-	for category, texts in pairs(HelpTextManager:getSingleton():getTexts()) do
+	for category, texts in pairs(Help:getSingleton():getText()) do
 		self.m_Grid:addItemNoClick(category)
 
-		for title, helpId in pairs(texts) do
-			self.m_Items[title] = self.m_Grid:addItem("  "..title)
-			self.m_Items[title].onLeftClick = function()
-					if HUDUI:getSingleton().m_Visible then
-						HUDUI:getSingleton():refreshHandler()
-						HUDUI:setEnabled(false)
-					end
-				local file = File.Open("files/help/" .. helpId .. ".md")
-				local text = "## Fehler: Hilfetext ist nicht vorhanden!"
-
-				if file then
-					text = file:getContent()
-					file:close()
+		for index, helpText in pairs(texts) do
+			self.m_Items[helpText.title] = self.m_Grid:addItem("  "..helpText.title)
+			self.m_Items[helpText.title].onLeftClick = function()
+				if HUDUI:getSingleton().m_Visible then
+					HUDUI:getSingleton():refreshHandler()
+					HUDUI:setEnabled(false)
 				end
 
-				self.m_Window:setTitleBarText(title.." - Hilfe")
-				self.m_WebView:callEvent("onTextChange", text)
+				self.m_Window:setTitleBarText(helpText.title.." - Hilfe")
+				self.m_WebView:callEvent("onTextChange", helpText.text)
 				-- self.m_ContentLabel:setText(text)
 			end
 		end
@@ -48,6 +41,20 @@ function HelpGUI:constructor()
 		if get["method"] then
 			if get["method"] == "gps" then
 				GPS:getSingleton():startNavigationTo(Vector3(get["x"], get["y"], 0))
+			end
+
+			if get["method"] == "cutscene" then
+				if localPlayer.vehicle then
+					ErrorBox:new(_"Bitte erst aus dem Fahrzeug aussteigen!")
+					return
+				end
+
+				CutscenePlayer:getSingleton():playCutscene(get["scene"],
+					function()
+						fadeCamera(true)
+						setCameraTarget(localPlayer)
+					end, 0)
+				delete(self)
 			end
 		end
 	end)
