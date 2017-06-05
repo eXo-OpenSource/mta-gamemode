@@ -406,8 +406,6 @@ function FactionManager:Event_getFactions()
 	end
 end
 
-
-
 function FactionManager:checkPermissionForVehicleServiceMarker(player, type)
 	if player.vehicle and player.vehicleSeat == 0 then
 		if player:getFaction() and player:getFaction():getType() == type and player:isFactionDuty() then
@@ -439,23 +437,22 @@ function FactionManager:createVehicleServiceMarker(type, pos, size)
 	)
 end
 
-
 function FactionManager:Event_serviceMarkerPerformAction(type)
 	if client.factionVehicleServiceMarker and getDistanceBetweenPoints3D(client:getPosition(), client.factionVehicleServiceMarker:getPosition()) <= 3 then
 		local costs
 		if type == "fill" then
 			costs = math.floor((100-client.vehicle:getFuel())*5)
+			if costs == 0 then client:sendInfo(_("Dein Fahrzeugtank ist noch voll.", client)) end
 			client.vehicle:setFuel(100)
-			client:sendShortMessage(_("Das Fahrzeug wurde für %d$ betankt!", client, costs))
 			client:getFaction():takeMoney(costs, "Fahrzeug-Betankung")
 		elseif type == "repair" then
 			costs = math.floor((1000-client.vehicle:getHealth()))
+			if costs == 0 then client:sendInfo(_("Dein Fahrzeug benötigt keine Reparaturen.", client)) end
 			fixVehicle(client.vehicle)
-			client:sendShortMessage(_("Das Fahrzeug wurde für %d$ repariert!", client, costs))
 			client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
 		end
 		client.vehicle:toggleHandBrake(client, false)
 	else
-		client:sendError(_("Du bist zuweit entfernt!", client))
+		client:sendError(_("Du bist zu weit entfernt!", client))
 	end
 end

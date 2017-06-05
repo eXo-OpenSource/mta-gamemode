@@ -940,9 +940,9 @@ function Player:payDay()
 	end
 
 	if total > 0 then
-		self:addBankMoney(total, "Payday")
+		self:addBankMoney(total, "Payday", true, true)
 	else
-		self:takeBankMoney(-total, "Payday")
+		self:takeBankMoney(-total, "Payday", true, true)
 	end
 
 	if EVENT_EASTER then
