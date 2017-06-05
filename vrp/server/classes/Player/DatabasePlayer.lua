@@ -394,10 +394,12 @@ end
 function DatabasePlayer:giveMoney(amount, reason)
 	self:setMoney(self:getMoney() + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
+	return true
 end
 
 function DatabasePlayer:takeMoney(amount, reason)
 	self:giveMoney(-amount, reason)
+	return true
 end
 
 function DatabasePlayer:setXP(xp)

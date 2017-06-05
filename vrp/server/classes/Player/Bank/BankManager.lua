@@ -22,11 +22,11 @@ function BankManager:Event_Withdraw(amount)
 	if isNan(amount) then return end
 
 	if client:getBankMoney() < amount then
-		client:sendError(_("Auf deinem Konto befindet sich nicht soviel Geld!", client))
+		client:sendError(_("Auf deinem Konto befindet sich nicht so viel Geld!", client))
 		return
 	end
 
-	if client:takeBankMoney(amount, "Bank Auszahlung") then
+	if client:takeBankMoney(amount, "Bank Auszahlung", true, true) then
 		client:giveMoney(amount, "Bank Auszahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
@@ -38,7 +38,7 @@ function BankManager:Event_Deposit(amount)
 	if isNan(amount) then return end
 
 	if client:getMoney() < amount then
-		client:sendError(_("Du hast nicht soviel Geld!", client))
+		client:sendError(_("Du hast nicht so viel Geld!", client))
 		return
 	end
 

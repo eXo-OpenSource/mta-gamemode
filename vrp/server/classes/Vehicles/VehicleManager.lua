@@ -783,8 +783,8 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if client:getMoney() < 100 and source:getOwner() == client:getId() then
-		client:sendError(_("Du hast nicht genügend Geld!", client))
+	if client:getBankMoney() < 100 and source:getOwner() == client:getId() then
+		client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto (100$)!", client))
 		return
 	end
 	if source:isInGarage() then
@@ -794,7 +794,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		source.m_EngineState = false
 		source:setSirensOn(false)
 		if source:getOwner() == client:getId() then
-			client:takeMoney(100, "Fahrzeug Respawn")
+			client:takeBankMoney(100, "Fahrzeug Respawn")
 		end
 		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
@@ -806,7 +806,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if source:respawn(garageOnly) then
 		if source:getOwner() == client:getId() then
-			client:takeMoney(100, "Fahrzeug-Respawn")
+			client:takeBankMoney(100, "Fahrzeug-Respawn")
 		end
 		source:fix()
 		setVehicleOverrideLights(source, 1)
@@ -850,14 +850,14 @@ function VehicleManager:Event_vehicleRespawnWorld()
 		return
 	end
 
- 	if source:getOwner() == client:getId() and client:getMoney() < 100 then
- 		client:sendError(_("Du hast nicht genügend Geld!", client))
+ 	if source:getOwner() == client:getId() and client:getBankMoney() < 100 then
+ 		client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto (100$)!", client))
  		return
 	end
 
  	if source:getPositionType() == VehiclePositionType.World then
  		if source:getOwner() == client:getId() then
-			client:takeMoney(100, "Fahrzeug Respawn")
+			client:takeBankMoney(100, "Fahrzeug Respawn")
 		end
 		source:respawnOnSpawnPosition()
  	else
@@ -973,13 +973,13 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 	if currentGarage >= 0 then
 		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
-			if client:getMoney() >= price then
-				client:takeMoney(price, "Garagen-Upgrade")
+			if client:getBankMoney() >= price then
+				client:takeBankMoney(price, "Garagen-Upgrade")
 				client:setGarageType(currentGarage + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
 			else
-				client:sendError(_("Du hast nicht genügend Geld, um die Garage zu kaufen oder upzugraden", client))
+				client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto, um die Garage zu kaufen oder upzugraden", client))
 			end
 		else
 			client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
@@ -995,7 +995,7 @@ function VehicleManager:Event_vehicleUpgradeHangar()
 		local price = HANGAR_UPGRADES_COSTS[currentHangar + 1]
 		if price then
 			if client:getMoney() >= price then
-				client:takeMoney(price, "Hangar-Upgrade")
+				client:takeBankMoney(price, "Hangar-Upgrade")
 				client:setHangarType(currentHangar + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
