@@ -53,6 +53,8 @@ function FactionRescue:constructor()
 		function ()
 			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
+
+			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1783.385, -1732.047, 5)) --Unity garage
 		end
 	)
 

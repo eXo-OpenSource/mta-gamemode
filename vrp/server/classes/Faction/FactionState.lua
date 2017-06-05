@@ -17,14 +17,6 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
-	self:createGasStation(Vector3(2295.80, 2460.90, 2.30)) -- LVT
-	self:createGasStation(Vector3(124.90, 1908.10, 17.9)) -- Area
-	self:createGasStation(Vector3(-1623.30, 662.30, -5.80)) -- SF PD
-	self:createGasStation(Vector3(-1528.10, 458.10, 6.20)) -- SF Army
-	self:createGasStation(Vector3(-1609.10,286.10,6.20), 5) -- SF Army Flug
-	self:createGasStation(Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
-	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
-	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do
@@ -45,6 +37,15 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
+			
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1563.98,-1614.40, 12.5)) --LSPD
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1552.93,-1614.40, 12.5))
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2295.80, 2460.90, 2.30)) -- LVT
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(124.90, 1908.10, 17.9)) -- Area
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1623.30, 662.30, -5.80)) -- SF PD
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1528.10, 458.10, 6.20)) -- SF Army
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1609.10,286.10,6.20), 5) -- SF Army Flug
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
 		end
 	)
 
@@ -133,6 +134,7 @@ function FactionState:constructor()
 		end
 	end
 end
+
 
 function FactionState:destructor()
 end
