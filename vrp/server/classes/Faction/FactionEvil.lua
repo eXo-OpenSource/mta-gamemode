@@ -119,6 +119,12 @@ function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	end
 end
 
+function FactionEvil:sendWarning(text, header, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+end
+
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then

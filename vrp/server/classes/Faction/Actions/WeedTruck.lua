@@ -42,6 +42,7 @@ function WeedTruck:constructor(driver)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
+	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "neuer Einsatz", true)
 
 	self.m_Blip = Blip:new("Waypoint.png", WeedTruck.Destination.x, WeedTruck.Destination.y, root, 9999)
 	self.m_DestinationMarker = createMarker(WeedTruck.Destination,"cylinder",8)

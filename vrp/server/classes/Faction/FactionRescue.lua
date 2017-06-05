@@ -104,6 +104,14 @@ function FactionRescue:getOnlinePlayers()
 	return players
 end
 
+function FactionRescue:sendWarning(text, header, withOffDuty, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if player:isFactionDuty() or withOffDuty then
+			player:sendWarning(_(text, player, ...), 30000, header)
+		end
+	end
+end
+
 function FactionRescue:onBarrierHit(player)
     if not player:getFaction() or not player:getFaction():isRescueFaction() then
         player:sendError(_("Zufahrt Verboten!", player))

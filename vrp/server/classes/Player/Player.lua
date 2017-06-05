@@ -630,11 +630,10 @@ end
 
 
 -- Message Boxes
-function Player:sendError(text) 	self:triggerEvent("errorBox", text) 	end
-function Player:sendWarning(text)	self:triggerEvent("warningBox", text) 	end
-function Player:sendInfo(text)		self:triggerEvent("infoBox", text)		end
-function Player:sendInfoTimeout(text, timeout) self:triggerEvent("infoBox", text, timeout) end
-function Player:sendSuccess(text)	self:triggerEvent("successBox", text)	end
+function Player:sendError(text, timeout, title) 	self:triggerEvent("errorBox", text, timeout, title) 	end
+function Player:sendWarning(text, timeout, title)	self:triggerEvent("warningBox", text, timeout, title) 	end
+function Player:sendInfo(text, timeout, title)		self:triggerEvent("infoBox", text, timeout, title)		end
+function Player:sendSuccess(text, timeout, title)	self:triggerEvent("successBox", text)	end
 
 function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox", text, ...)	end
 
@@ -986,23 +985,25 @@ function Player:addCrime(crimeType)
 end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
-	DatabasePlayer.giveMoney(self, money, reason)
-	if silent then return end
-
-	if money ~= 0 then
-		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+	local success = DatabasePlayer.giveMoney(self, money, reason)
+	if not silent then 
+		if money ~= 0 then
+			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
 	end
-	self:triggerEvent("playerCashChange", bNoSound)
+	return success
 end
 
 function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
-	DatabasePlayer.addBankMoney(self, money, reason)
-	if silent then return end
-
-	if money ~= 0 then
-		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+	local success = DatabasePlayer.addBankMoney(self, money, reason)
+	if not silent then
+		if money ~= 0 then
+			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
 	end
-	self:triggerEvent("playerCashChange", bNoSound)
+	return success
 end
 
 function Player:startTrading(tradingPartner)

@@ -1,7 +1,7 @@
 ToastMessage = inherit(DxElement)
 inherit(GUIFontContainer, ToastMessage)
 
-function ToastMessage:constructor(text, timeout)
+function ToastMessage:constructor(text, timeout, title)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(23))
 	local x, y, w, h
 	if MessageBoxManager.Mode then
@@ -15,7 +15,7 @@ function ToastMessage:constructor(text, timeout)
 
 	DxElement.constructor(self, x, y, w, h)
 
-	self.m_Title = self:getDefaultTitle()
+	self.m_Title = title or self:getDefaultTitle()
 	self.m_TitleFont = VRPFont(28, Fonts.EkMukta_Bold)
 	self.m_TextHeight = textHeight
 
@@ -30,8 +30,8 @@ function ToastMessage:constructor(text, timeout)
 	MessageBoxManager.resortPositions()
 end
 
-function ToastMessage:virtual_constructor(text, timeout)
-	ToastMessage.constructor(self, text, timeout)
+function ToastMessage:virtual_constructor(text, timeout, title)
+	ToastMessage.constructor(self, text, timeout, title)
 end
 
 function ToastMessage:virtual_destructor()

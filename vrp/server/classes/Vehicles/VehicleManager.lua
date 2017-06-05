@@ -1016,7 +1016,7 @@ function VehicleManager:Event_vehicleHotwire()
 			client:sendError(_("Dieses Fahrzeug ist kaputt und kann nicht kurzgeschlossen werden!", client))
 			return
 		end
-		client:sendInfoTimeout(_("Schließe kurz...", client), 20000)
+		client:sendInfo(_("Schließe kurz...", client), 20000)
 		client:reportCrime(Crime.Hotwire)
 		client:giveKarma(-0.1)
 

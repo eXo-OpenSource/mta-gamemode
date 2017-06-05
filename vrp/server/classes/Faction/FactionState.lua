@@ -709,6 +709,14 @@ function FactionState:sendShortMessage(text, ...)
 	end
 end
 
+function FactionState:sendWarning(text, header, withOffDuty, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if player:isFactionDuty() or withOffDuty then
+			player:sendWarning(_(text, player, ...), 30000, header)
+		end
+	end
+end
+
 function FactionState:sendMessage(text, r, g, b, ...)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)

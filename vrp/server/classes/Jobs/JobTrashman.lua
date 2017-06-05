@@ -115,7 +115,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				QuestionBox:new(hitElement, hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
 
 			else
-				hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
+				hitElement:sendInfo(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount))
 			end
 		else
 			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement), 255, 0, 0)
