@@ -877,9 +877,6 @@
 	<file src="files/html/js/showdown-button.js" />
 	<file src="files/html/help.htm" />
 
-
-	<vrpfile src="files/help/jobs.lumberjack.md"/>
-
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
