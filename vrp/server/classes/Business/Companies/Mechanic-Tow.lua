@@ -94,7 +94,7 @@ function MechanicTow:Event_mechanicRepair()
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
 
-	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 60) then
+	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 20) then
 		client:sendError(_("Du kannst nur jede Minute eine Reparatur-Anfrage stellen!", client))
 		return
 	end
@@ -111,8 +111,10 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 
 		if vehicle.PendingMechanic then
 			if source ~= vehicle.PendingMechanic then
+				self.m_PendingQuestions[vehicle.PendingMechanic] = getRealTime().timestamp
+
 				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech & Tow Reparatur")
-				vehicle.PendingMechanic:givePoints(5)
+				vehicle.PendingMechanic:givePoints(2)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
