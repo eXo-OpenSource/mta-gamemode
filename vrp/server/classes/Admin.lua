@@ -90,7 +90,7 @@ function Admin:constructor()
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
 	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
-	
+
 
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
@@ -1085,7 +1085,7 @@ function Admin:Command_MarkPos(player, add)
 		if not add then
 			local markPos = getElementData(player, "Admin_MarkPos")
 			if markPos then
-				player:sendInfo("Du hast dich zu Makierung geportet!")
+				player:sendInfo("Du hast dich zu Markierung geportet!")
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
@@ -1094,14 +1094,14 @@ function Admin:Command_MarkPos(player, add)
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else
-				player:sendError("Du hast keine Makierung /mark")
+				player:sendError("Du hast keine Markierung /mark")
 			end
 		else
 			local pos = player:getPosition()
 			local dim = player:getDimension()
 			local interior = player:getInterior()
 			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
-			player:sendInfo("Makierung gesetzt!")
+			player:sendInfo("Markierung gesetzt!")
 		end
 	end
 end
