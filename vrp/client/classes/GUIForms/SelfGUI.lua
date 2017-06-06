@@ -250,7 +250,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Sonstiges", "Waffen"}
+	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sonstiges"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -988,16 +988,7 @@ function SelfGUI:onSettingChange(setting)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
 
-		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
-		self.m_Indicators:setFont(VRPFont(25))
-		self.m_Indicators:setFontSize(1)
-		self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
-		self.m_Indicators.onChange = function (bool)
-			core:set("Vehicles", "Indicators", bool)
-			Indicator:getSingleton():toggle()
-		end
-
-		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
+		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
 		self.m_ShortMessageCTC:setFont(VRPFont(25))
 		self.m_ShortMessageCTC:setFontSize(1)
 		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
@@ -1005,7 +996,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "shortMessageCTC", state)
 		end
 
-		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.42, self.m_Height*0.395, self.m_Width*0.03, self.m_Height*0.04, "(?)", self.m_SettingBG)
+		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.42, self.m_Height*0.325, self.m_Width*0.03, self.m_Height*0.04, "(?)", self.m_SettingBG)
 		self.m_ShortMessageCTCInfo:setFont(VRPFont(25))
 		self.m_ShortMessageCTCInfo:setFontSize(1)
 		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
@@ -1015,7 +1006,7 @@ function SelfGUI:onSettingChange(setting)
 			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
 		end
 
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
 		self.m_HallelujaSound:setFontSize(1)
 		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
@@ -1023,7 +1014,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "HallelujaSound", state)
 		end
 
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
 		self.m_HitSound:setFont(VRPFont(25))
 		self.m_HitSound:setFontSize(1)
 		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
@@ -1129,5 +1120,52 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:alt_w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
+	elseif setting == "Fahrzeuge" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Fahrzeuge", self.m_SettingBG)
+
+		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.35, self.m_Height*0.04, _"Blinker", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
+		self.m_Indicators.onChange = function (bool)
+			core:set("Vehicles", "Indicators", bool)
+			Indicator:getSingleton():toggle()
+		end
+
+		self.m_Neon = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Unterbodenbeleuchtung", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_Neon:setChecked(core:get("Vehicles", "Neon", true))
+		self.m_Neon.onChange = function (bool)
+			core:set("Vehicles", "Neon", bool)
+			Neon.toggle(bool)
+		end
+
+		self.m_ELS = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.35, self.m_Height*0.04, _"Rundumleuchten (ELS)", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_ELS:setChecked(core:get("Vehicles", "ELS", true))
+		self.m_ELS.onChange = function (bool)
+			core:set("Vehicles", "ELS", bool)
+			ELSSystem:getSingleton():toggle(bool)
+		end
+
+		self.mCustomHorn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.35, self.m_Height*0.04, _"Spezialhupe", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.mCustomHorn:setChecked(core:get("Vehicles", "customHorn", true))
+		self.mCustomHorn.onChange = function (bool)
+			core:set("Vehicles", "customHorn", bool)
+			if bool then
+				for i,v in pairs(getElementsByType("vehicle", true)) do
+					if v.m_HornSound then
+						setSoundVolume(v.m_HornSound, 1)
+					end
+				end
+			else
+				for i,v in pairs(getElementsByType("vehicle", true)) do
+					if v.m_HornSound then
+						setSoundVolume(v.m_HornSound, 0)
+					end
+				end
+			end
+		end
+
 	end
 end

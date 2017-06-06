@@ -123,7 +123,7 @@ addEventHandler("vehicleHandbrake", root,
 
 addEventHandler("vehiclePlayCustomHorn", root,
 	function (horn)
-		if not source.m_HornSound then
+		if not source.m_HornSound and core:get("Vehicles", "customHorn", true) then
 			source.m_HornSound = playSound3D(("files/audio/Horns/%s.mp3"):format(horn), source:getPosition(), true)
 			source.m_HornSound:setMinDistance(0)
 			source.m_HornSound:setMaxDistance(70)
