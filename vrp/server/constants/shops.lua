@@ -140,6 +140,11 @@ SHOP_TYPES = {
 		["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop
+	},
+	[20] = {
+		["Name"] = "Tankstelle ohne Shop",
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = GasStation
 	}
 }
 
@@ -324,6 +329,10 @@ SHOP_FUEL = {
 	["Tierra Roboda 1"] = {
 		["Marker"] = Vector3(-1465.9541015625,1864.23046875,32),
 		["FuelStation"] = {-1465.5, 1868.2, 33.4, 3.239}
+	},
+	["LS-Airport Tankstelle"] = {
+		["Marker"] = Vector3(2029.56, -2418.43, 12.7),
+		["FuelStation"] = { 2029.52, -2404.90, 14, 180}
 	}
 }
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}
