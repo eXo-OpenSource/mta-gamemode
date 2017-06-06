@@ -112,7 +112,8 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
-	["checkOverlappingVehicles"] = RANK.Administrator
+	["checkOverlappingVehicles"] = RANK.Administrator,
+	["showDebugElementView"] = RANK.Administrator, --F10 view
 }
 
 GroupRank = {
