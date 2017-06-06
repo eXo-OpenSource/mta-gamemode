@@ -90,11 +90,11 @@ function GUIWebView:onInternalRightClickDown()
 end
 
 function GUIWebView:onInternalMouseWheelDown()
-    self.m_Browser:injectMouseWheel(-20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -40 or -20, 0)
 end
 
 function GUIWebView:onInternalMouseWheelUp()
-    self.m_Browser:injectMouseWheel(20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 40 or 20, 0)
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)
