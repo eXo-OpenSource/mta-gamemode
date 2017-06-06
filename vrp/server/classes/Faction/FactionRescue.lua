@@ -133,7 +133,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 							hitElement:triggerEvent("showRescueFactionDutyGUI")
 							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 						else
-      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", player))
+      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", hitElement))
 						end
 					end
 				end
