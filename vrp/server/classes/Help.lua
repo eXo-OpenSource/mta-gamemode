@@ -19,7 +19,7 @@ function Help:constructor()
 end
 
 function Help:loadHelpTexts()
-	local query = sql:queryFetch("SELECT hc.Category, ht.Title, ht.Text FROM ??_helpCategory hc INNER JOIN ??_help ht ON ht.Category = hc.Id ORDER BY hc.SortId, ht.SortId ASC", sql:getPrefix(), sql:getPrefix())
+	local query = sql:queryFetch("SELECT h2.Title as Category, h1.Title, h1.Text FROM ??_help h1 INNER JOIN ??_help h2 ON h2.Id = h1.Parent WHERE h1.Parent IS NOT NULL ORDER BY h2.SortId, h1.SortId ASC", sql:getPrefix(), sql:getPrefix())
 
     self.m_HelpTexts = {}
 
@@ -50,19 +50,20 @@ function Help:destructor()
 end
 
 --[[
-    CREATE TABLE `vrp`.`vrp_help` (
-    `Id` INT NOT NULL AUTO_INCREMENT,
-    `SortId` INT NULL,
-    `Category` INT NOT NULL,
-    `Title` VARCHAR(45) NULL,
-    `Text` LONGTEXT NULL,
-    PRIMARY KEY (`Id`))
-    ENGINE = InnoDB;
+create table vrp_help
+(
+	Id int auto_increment
+		primary key,
+	Title varchar(45) null,
+	Parent int null,
+	SortId int default '0' null,
+	Text longtext null,
+	constraint vrp_help_vrp_help_Id_fk
+		foreign key (Parent) references vrp.vrp_help (Id)
+)
+;
 
-    CREATE TABLE `vrp`.`vrp_helpCategory` (
-    `Id` INT NOT NULL AUTO_INCREMENT,
-    `Category` VARCHAR(45) NULL,
-    `SortId` INT NULL,
-    PRIMARY KEY (`Id`))
-    ENGINE = InnoDB;
+create index vrp_help_vrp_help_Id_fk
+	on vrp_help (Parent)
+;
 ]]
