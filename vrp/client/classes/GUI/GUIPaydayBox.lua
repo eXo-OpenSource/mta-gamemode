@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 GUIPaydayBox = inherit(GUIRectangle)
-inherit(GUIPaydayBox)
 
 function GUIPaydayBox:constructor(texts)
 	self.m_AnimTime = 1000
@@ -126,7 +125,7 @@ function GUIPaydayBox:createUI()
 end
 
 
-function GUIPaydayBox:renderMoney() -- draw method hook
+function GUIPaydayBox:renderMoney()
 	if self.m_FloatingMoneyMap then
 		local time = getTickCount()
 		if time - self.m_MoneySpawnStart > self.m_MoneyFadeTime then

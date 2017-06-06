@@ -57,7 +57,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Lock.onLeftClick = bind(self.lockHouse,self)
 	self.m_Lock:setVisible(false)
 
-	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self)
+	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self):setVisible(false)
 	self.m_Rob:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rob.onLeftClick = bind(self.tryRob,self)
 	if bRobPrompt then
