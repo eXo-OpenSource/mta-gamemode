@@ -19,10 +19,10 @@ function HelpGUI:constructor()
 
 	self.m_Items = {}
 
-	for category, texts in pairs(Help:getSingleton():getText()) do
-		self.m_Grid:addItemNoClick(category)
+	for index, data in pairs(Help:getSingleton():getText()) do
+		self.m_Grid:addItemNoClick(data.category)
 
-		for index, helpText in pairs(texts) do
+		for index, helpText in pairs(data.childs) do
 			self.m_Items[helpText.title] = self.m_Grid:addItem("  "..helpText.title)
 			self.m_Items[helpText.title].onLeftClick = function()
 				if HUDUI:getSingleton().m_Visible then

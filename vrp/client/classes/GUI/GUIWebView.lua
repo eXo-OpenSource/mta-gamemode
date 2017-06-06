@@ -66,7 +66,6 @@ function GUIWebView:getUnderlyingBrowser()
 end
 
 function GUIWebView:callEvent(eventName, data)
-    outputConsole(string.gsub(string.gsub(data, "'", "\\'"), "\n", "\\n"))
     local code = ("mtatools._callEvent('%s', `%s`)"):format(eventName, string.gsub(data, "`", "\\`"))
     return self.m_Browser:executeJavascript(code)
 end

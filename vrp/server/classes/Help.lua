@@ -23,16 +23,29 @@ function Help:loadHelpTexts()
 
     self.m_HelpTexts = {}
 
+    local lastCategory = nil
+    local data = nil
+
 	for key, value in pairs(query) do
-        if not self.m_HelpTexts[value["Category"]] then
-            self.m_HelpTexts[value["Category"]] = {}
+
+        if lastCategory ~= value["Category"] then
+            if data then
+                table.insert(self.m_HelpTexts, data)
+            end
+            lastCategory = value["Category"]
+
+            data = {category = value["Category"], childs = {}}
         end
 
-        table.insert(self.m_HelpTexts[value["Category"]],{
+        table.insert(data.childs,{
             title = utf8.escape(value["Title"]),
             text = utf8.escape(value["Text"])
         })
 	end
+
+    if data then
+        table.insert(self.m_HelpTexts, data)
+    end
 
     self.m_HelpTexts = toJSON(self.m_HelpTexts)
     self.m_HelpHash = hash("sha1", self.m_HelpTexts)
@@ -48,22 +61,3 @@ end
 function Help:destructor()
 
 end
-
---[[
-create table vrp_help
-(
-	Id int auto_increment
-		primary key,
-	Title varchar(45) null,
-	Parent int null,
-	SortId int default '0' null,
-	Text longtext null,
-	constraint vrp_help_vrp_help_Id_fk
-		foreign key (Parent) references vrp.vrp_help (Id)
-)
-;
-
-create index vrp_help_vrp_help_Id_fk
-	on vrp_help (Parent)
-;
-]]
