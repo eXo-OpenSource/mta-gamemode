@@ -404,11 +404,11 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
-	self:setHealth(301)
 	if state then
+		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
 	end
-
+	self:setDamageProof(state)
 	if self.m_BrokenHook then
 		self.m_BrokenHook:call(vehicle)
 		return
@@ -416,7 +416,7 @@ function Vehicle:setBroken(state)
 end
 
 function Vehicle:isBroken()
-	return self:getHealth() <= 301.01
+	return self:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH
 end
 
 function Vehicle:toggleInternalSmoke()
@@ -471,6 +471,13 @@ function Vehicle:isRepairAllowed()
 	return self.m_RepairAllowed
 end
 
+function Vehicle:fix()
+	if self.m_RepairAllowed then
+		fixVehicle(self)
+		self:setBroken(false)
+	end
+end
+
 function Vehicle:toggleRespawn(state)
 	self.m_RespawnAllowed = state
 end
@@ -523,7 +530,7 @@ function Vehicle:respawnOnSpawnPosition()
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
-		fixVehicle(self)
+		self:fix()
 		self:setEngineState(false)
 		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)

@@ -106,7 +106,7 @@ end
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
 	if source:getMoney() >= price then
-		fixVehicle(vehicle)
+		vehicle:fix()
 		source:takeMoney(price, "Mech&Tow")
 
 		if vehicle.PendingMechanic then

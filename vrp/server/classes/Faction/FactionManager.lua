@@ -448,7 +448,7 @@ function FactionManager:Event_serviceMarkerPerformAction(type)
 		elseif type == "repair" then
 			costs = math.floor((1000-client.vehicle:getHealth()))
 			if costs == 0 then client:sendInfo(_("Dein Fahrzeug benötigt keine Reparaturen.", client)) end
-			fixVehicle(client.vehicle)
+			client.vehicle:fix()
 			client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
 		end
 		client.vehicle:toggleHandBrake(client, false)

@@ -694,7 +694,7 @@ function VehicleManager:Event_vehicleRepair()
 		return
 	end
 
-	fixVehicle(source)
+	source:fix()
 end
 
 function VehicleManager:Event_vehicleRespawn(garageOnly)
@@ -788,7 +788,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 	if source:isInGarage() then
-		fixVehicle(source)
+		source:fix()
 		setVehicleOverrideLights(source, 1)
 		setVehicleEngineState(source, false)
 		source.m_EngineState = false

@@ -296,6 +296,7 @@ Tasks = {
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
+VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
 

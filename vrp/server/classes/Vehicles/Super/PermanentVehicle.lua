@@ -220,7 +220,7 @@ function PermanentVehicle:respawn(garageOnly)
         if maxSlots > numVehiclesInGarage then
 			self:setInGarage(true)
 			self:setDimension(PRIVATE_DIMENSION_SERVER)
-			fixVehicle(self)
+			self:fix()
 			setVehicleOverrideLights(self, 1)
 			self:setEngineState(false)
 			self:setSirensOn(false)
