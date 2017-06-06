@@ -12,7 +12,7 @@ function JobForkLift:constructor()
 	self:setJobLevel(JOB_LEVEL_FORKLIFT)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.ForkLift):gsub("Job: ", ""), _(HelpTexts.Jobs.ForkLift))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.ForkLift):gsub("Job: ", ""), "jobs.forklift")
 	self:generateLoadMarkers()
 
 end

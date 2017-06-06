@@ -19,7 +19,7 @@ function JobTrashman:constructor()
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), "jobs.trashman")
 end
 
 function JobTrashman:start()

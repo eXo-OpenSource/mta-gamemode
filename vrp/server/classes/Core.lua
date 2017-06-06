@@ -117,6 +117,8 @@ function Core:constructor()
 		GPS:new()
 		Chair:new()
 
+		Help:new()
+
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
 		VehicleGarages.initalizeAll()

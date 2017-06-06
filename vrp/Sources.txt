@@ -40,3 +40,6 @@ https://www.jamendo.com/de/track/1094513/dollarmentary-n.b.k.-forever-prod-by-vi
 Fonts:
 http://www.dafont.com/mostwasted.font
 Font Awesome by Dave Gandy - http://fontawesome.io
+
+Javascript Libs:
+Showdown MD Parser - https://github.com/showdownjs/showdown

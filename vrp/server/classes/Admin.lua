@@ -70,6 +70,7 @@ function Admin:constructor()
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
+	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
@@ -1103,6 +1104,12 @@ function Admin:Command_MarkPos(player, add)
 			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
 			player:sendInfo("Markierung gesetzt!")
 		end
+	end
+end
+
+function Admin:reloadHelpText(player)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+		Help:getSingleton():loadHelpTexts()
 	end
 end
 

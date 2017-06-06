@@ -12,7 +12,7 @@ function JobFarmer:constructor()
 	Job.constructor(self, 1, -62.62, 76.34, 3.12, 250, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_FARMER)
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), "jobs.farmer")
 end
 function JobFarmer:onInfo()
 	if localPlayer.vehicle then
