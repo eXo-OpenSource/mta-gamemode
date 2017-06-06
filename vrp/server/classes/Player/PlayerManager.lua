@@ -764,6 +764,7 @@ end
 
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
+	if client.vehicle then return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]

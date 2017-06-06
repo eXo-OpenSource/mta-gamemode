@@ -672,7 +672,9 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 end
 
 function LocalPlayer:startAnimation(_, ...)
-	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
+	if not localPlayer.vehicle then
+		triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
+	end
 end
 
 addEvent("showModCheck", true)
