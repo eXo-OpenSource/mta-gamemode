@@ -855,6 +855,14 @@ function SelfGUI:onSettingChange(setting)
 		self.m_BNChat.onChange = function (state)
 			core:set("HUD", "breakingNewsInChat", state)
 		end
+
+		self.m_Paydaybox_r = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.8, self.m_Height*0.04, _"Payday-Box an Bildschirmgröße anpassen", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_Paydaybox_r:setChecked(core:get("HUD", "paydayBox_relative", true))
+		self.m_Paydaybox_r.onChange = function (state)
+			core:set("HUD", "paydayBox_relative", state)
+		end
+
 	elseif setting == "Radar" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", self.m_SettingBG)
 		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)

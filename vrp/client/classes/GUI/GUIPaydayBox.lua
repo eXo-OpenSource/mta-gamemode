@@ -12,10 +12,17 @@ function GUIPaydayBox:constructor(texts)
 	self.m_AnimTime = 1000
 	self.m_MoneyFadeTime = 5000
 	localPlayer.m_PaydayShowing = true
-	self.m_W = screenWidth * 0.2
-	self.m_H = self.m_W
-	self.m_HeaderHeight = screenWidth * 0.027
-	self.m_MoneySize = screenWidth * 0.01
+	if core:get("HUD", "paydayBox_relative", true) then
+		self.m_W = screenWidth * 0.2
+		self.m_H = self.m_W
+		self.m_HeaderHeight = screenWidth * 0.027
+		self.m_MoneySize = screenWidth * 0.01
+	else
+		self.m_W = 384
+		self.m_H = self.m_W
+		self.m_HeaderHeight = 52
+		self.m_MoneySize = 20
+	end
 	
 	
 	GUIRectangle.constructor(self, screenWidth/2 - self.m_W/2, -self.m_H, self.m_W, self.m_H)
