@@ -30,8 +30,9 @@ function ItemNails:use(player)
 						return
 					end
 
-					local worldItem = self:place(player, position, rotation)
-
+				
+					local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
+					worldItem:setFactionSuperOwner(true)
 					player:getInventory():removeItem(self:getName(), 1)
 
 					local object = worldItem:getObject()
@@ -93,31 +94,11 @@ end
 function ItemNails:removeNail(player, key, state, shape)
 	if isElementWithinColShape(player, shape) then
 		if shape.worldItem then
-			shape.worldItem:collect(player)
+			shape.worldItem:onCollect(player)
 		end
 	else
 		unbindKey(player, "backspace", "down", self.m_RemoveBind)
 	end
-end
-
-
-function ItemNails:onClick(player, worldItem)
-	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-		triggerClientEvent(player, "ItemNailsMenu", worldItem:getObject())
-	else
-		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
-	end
-end
-
-function ItemNails:isCollectAllowed(player, worlditem)
-	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-		if player:getInventory():getFreePlacesForItem("Nagel-Band") >= 1 then
-			return true
-		else
-			player:sendError(_("Du hast keinen Platz im Inventar!", player))
-		end
-	end
-	return false
 end
 
 function ItemNails:removeFromWorld(player, worlditem)
@@ -129,6 +110,5 @@ function ItemNails:removeFromWorld(player, worlditem)
 			table.remove(ItemNails.Map, index)
 		end
 	end
-	player:sendInfo(_("Du hast das Nagel-Band abgebaut!", player))
 	unbindKey(player, "backspace", "down", self.m_RemoveBind)
 end

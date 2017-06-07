@@ -103,7 +103,9 @@
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
-	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -520,6 +522,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/BugCheckerPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/WorldItemMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/FactionVehicleServiceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>

@@ -248,12 +248,9 @@ end
 function FactionVehicle:takeFactionItem(player, itemName)
 	if self.m_FactionTrunk and self.m_FactionTrunk[itemName] then
 		if self.m_FactionTrunk[itemName] >= 1 then
-			if player:getInventory():getFreePlacesForItem(itemName) >= 1 then
+			if player:getInventory():giveItem(itemName, 1) then	
 				self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]-1
-				player:getInventory():giveItem(itemName, 1)
 				player:sendShortMessage(_("Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!", player, itemName))
-			else
-				player:sendError(_("Kein Platz in deinem Inventar! (%s)", player, itemName))
 			end
 		else
 			player:sendError(_("Dieses Item ist nicht mehr im Fahrzeug! (%s)", player, itemName))

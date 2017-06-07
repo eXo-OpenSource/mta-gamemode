@@ -114,6 +114,9 @@ ADMIN_RANK_PERMISSION = {
 	["removeWarn"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
 	["showDebugElementView"] = RANK.Administrator, --F10 view
+	["moveWorldItem"] = RANK.Moderator,
+	["deleteWorldItem"] = RANK.Moderator,
+	["showWorldItemInformation"] = RANK.Supporter,
 }
 
 GroupRank = {
@@ -140,6 +143,7 @@ CompanyRank = {
 	Leader = 5
 }
 
+OBJECT_DELETE_MIN_RANK = 4 -- faction/company/group rank to destroy WorldItems (i.e. not put them into their inventory)
 
 local r3 = {}
 for k, v in pairs(GroupRank) do

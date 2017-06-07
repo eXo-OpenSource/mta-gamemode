@@ -9,6 +9,7 @@ ObjectPlacer = inherit(Object)
 
 function ObjectPlacer:constructor(model, callback)
 	showCursor(true)
+	localPlayer.m_ObjectPlacerActive = true
 
 	self.m_Object = createObject(model, localPlayer:getPosition())
 	self.m_Object:setCollisionsEnabled(false)
@@ -39,7 +40,11 @@ function ObjectPlacer:destructor()
 	if self.m_Object and isElement(self.m_Object) then
 		self.m_Object:destroy()
 	end
-
+	setTimer(
+		function()
+			localPlayer.m_ObjectPlacerActive = false
+		end, 
+	50, 1)
 	delete(self.m_ShortMessage)
 	unbindKey("mouse_wheel_down", "down", self.m_MouseWheel)
 	unbindKey("mouse_wheel_up", "down", self.m_MouseWheel)
@@ -51,7 +56,7 @@ function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, wor
 	local camX, camY, camZ = getCameraMatrix()
 	local surfaceFound, surfaceX, surfaceY, surfaceZ, element, nx, ny, nz, materialID = processLineOfSight(camX, camY, camZ, worldX, worldY, worldZ, true,
 		true, true, true, true, true, false, true, localPlayer, false, true)
-	if surfaceFound and materialID ~= 51 and materialID ~= 53 then -- probably add more unexpeted materialIDs
+	if surfaceFound then 
 		local groundZ = getGroundPosition(surfaceX, surfaceY, surfaceZ + 2)
 		if groundZ > surfaceZ then return end -- just stop the object if if would spawn underground
 
@@ -86,7 +91,10 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
-			iprint(self.m_HitElement)
+			if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
+				ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
+				return
+			end
 			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 		end
 	else

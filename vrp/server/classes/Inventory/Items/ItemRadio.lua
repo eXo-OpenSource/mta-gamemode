@@ -20,12 +20,8 @@ function ItemRadio:use(player)
 	local result = self:startObjectPlacing(player,
 		function(item, position, rotation)
 			if item ~= self then return end
-			if (position - player:getPosition()).length > 20 then
-				player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
-				return
-			end
 
-			local worldItem = self:place(player, position, rotation)
+			local worldItem = PlayerWorldItem:new(self, player, position, rotation, false, player)
 			StatisticsLogger:getSingleton():itemPlaceLogs( player, "Radio", position.x..","..position.y..","..position.z) 
 			player:getInventory():removeItem(self:getName(), 1)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),

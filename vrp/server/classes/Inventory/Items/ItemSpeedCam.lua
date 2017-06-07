@@ -30,7 +30,8 @@ function ItemSpeedCam:use(player)
 						return
 					end
 
-					local worldItem = self:place(player, position, rotation)
+					local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
+					worldItem:setFactionSuperOwner(true)
 
 					player:getInventory():removeItem(self:getName(), 1)
 
