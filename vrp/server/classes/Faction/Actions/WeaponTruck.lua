@@ -43,6 +43,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setFrozen(true)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
+	self.m_Truck:setHandling("collisionDamageMultiplier", 0.1)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck:toggleRespawn(false)
 	self.m_Truck.m_DisableToggleHandbrake = true

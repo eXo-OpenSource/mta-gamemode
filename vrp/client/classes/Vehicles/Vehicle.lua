@@ -179,6 +179,14 @@ setTimer(
 )
 
 -- The following code prevents vehicle from exploding "fully"
+local totalLossVehicleTypes = {
+	["Monster Truck"] = true,
+	["Automobile"] = true,
+	["Bike"] = true,
+	["Monster Truck"] = true,
+	["Quad"] = true,
+}
+
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
 		local occ = getVehicleOccupants(source)
@@ -188,8 +196,8 @@ addEventHandler("onClientVehicleDamage", root,
 		end
 		if not getElementData(source, "syncEngine") and not tId then return cancelEvent() end
 		if source:getData("disableVehicleDamageSystem") then return cancelEvent() end
-		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
-			if source:getHealth() - loss < VEHICLE_TOTAL_LOSS_HEALTH then
+		if totalLossVehicleTypes[source:getVehicleType()] then
+			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) then
 					triggerServerEvent("vehicleBreak", source)
 					source.m_Broken = true
@@ -210,10 +218,13 @@ addEventHandler("onClientVehicleDamage", root,
 	end
 )
 
-addEventHandler("onClientVehicleCollision", root, function() 
-	if source:getHealth() < VEHICLE_TOTAL_LOSS_HEALTH then
-		cancelEvent()
-		source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH) 
+addEventHandler("onClientVehicleCollision", root, function(theHitElement,force) 
+	if totalLossVehicleTypes[source:getVehicleType()] then
+		local rx,ry,rz = getElementRotation(source)
+		source:setDamageProof((rx > 160 and rx < 200)) -- to disable burning
+		if source:getHealth() < VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then -- Crashfix
+			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH) 
+		end
 	end
 end)
 

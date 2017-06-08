@@ -123,7 +123,7 @@ function TextureReplace:onElementStreamOut()
 
 	TextureReplace.Pending[source] = nil
 	if not self:unloadShader() then
-		outputDebugString(("Unloading the texture of %s failed!"):format(inspect(self.m_Element)), 1)
+		outputDebugString(("Unloading the texture of %s failed!"):format(inspect(self.m_Element)))
 	end
 end
 

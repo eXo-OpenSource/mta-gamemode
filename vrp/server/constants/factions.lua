@@ -66,8 +66,11 @@ factionVehicleShaders = {
 	-- Army
 	[3] = {
 		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		--[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/Special/6.png"}; --camo needed
+		--[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
+		[598] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
+		[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
+		[500] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Mesa
+		[433] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Barracks
 	};
 
 	-- Rescue

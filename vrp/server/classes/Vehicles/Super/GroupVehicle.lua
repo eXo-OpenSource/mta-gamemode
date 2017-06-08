@@ -70,7 +70,6 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
-			veh:setHealth(1000)
 			veh:respawn(true)
 		end, 10000, 1, source)
 	end)

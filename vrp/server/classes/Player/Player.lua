@@ -893,7 +893,7 @@ function Player:payDay()
 	if income_interest > 0 then
 		income = income + income_interest
 		self:addPaydayText("income", _("Bankzinsen", self), income_interest)
-		points_total = points_total + math.floor(income/500)
+		points_total = points_total + math.floor(income_interest/500)
 	end
 
 	--noob bonus
@@ -930,6 +930,7 @@ function Player:payDay()
 		end
 		--give points if the player owns a house
 		if HouseManager:getSingleton():getPlayerHouse(self) then
+			outputDebug("player has a house")
 			points_total = points_total + 10
 		end
 	end
