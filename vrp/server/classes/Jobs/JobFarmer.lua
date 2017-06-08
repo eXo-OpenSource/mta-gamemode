@@ -90,7 +90,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 
 	player.farmerVehicle = vehicle
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 then
+		if seat == 0 and source:getModel() ~= 478 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
 				local income = player:getData("Farmer.Income")
 				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
