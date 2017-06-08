@@ -220,7 +220,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 				if source.vehicle:getOccupant() then
 					if not self.m_DozerDropStones[client] then self.m_DozerDropStones[client] = 0 end
 					self.m_DozerDropStones[client] = self.m_DozerDropStones[client] + 1
-					
+
 					if not self.m_DozerDropTimer[client] then
 						self.m_DozerDropTimer[client] = setTimer(function()
 							local loan = LOAN_DOZER * (self.m_DozerDropStones[client] or 0)
@@ -228,8 +228,8 @@ function JobGravel:Event_onCollectingContainerHit(track)
 							client.m_LastJobAction = getRealTime().timestamp
 							StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, loan)
 							source.vehicle:getOccupant():addBankMoney(loan, ("Kiesgruben-Job (%d Steine)"):format(self.m_DozerDropStones[client]))
-							self.m_DozerDropStones[client] = nil			
-							self.m_DozerDropTimer[client] = nil			
+							self.m_DozerDropStones[client] = nil
+							self.m_DozerDropTimer[client] = nil
 						end, 1500, 1)
 					end
 				end
@@ -279,10 +279,11 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 					hitElement:sendWarning(_("Der vordere Ladevorgang wurde noch nicht beendet! Bitte warten!", hitElement))
 					return
 				end
-				if not hitElement.vehicle.gravelLoaded then
+				if not hitElement.vehicle.gravelLoaded and not hitElement.gravelLoaded then
 					if self.m_GravelStock >= 1 then
 						hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
 						hitElement.vehicle.gravelLoaded = true
+						hitElement.gravelLoaded = true
 						source.isBusy = true
 						local speed, pos = unpack(source.Track[1])
 						local gravel
@@ -311,7 +312,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 						hitElement:sendError(_("Das Lager ist leer! Bitte bau neues Material ab!", hitElement))
 					end
 				else
-					hitElement:sendError(_("Du hast diesen Dumper bereits beladen!", hitElement))
+					hitElement:sendError(_("Du hast diesen Dumper bereits beladen, oder deine alte Ladung nicht abgegeben!", hitElement))
 				end
 			else
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
@@ -327,6 +328,7 @@ function JobGravel:Event_onDumperDeliver()
 		if not self.m_DumperDeliverStones[client] then self.m_DumperDeliverStones[client] = 0 end
 		self.m_DumperDeliverStones[client]= self.m_DumperDeliverStones[client] + 1
 		client.vehicle.gravelLoaded = false
+		client.gravelLoaded = false
 		source:destroy()
 		if not self.m_DumperDeliverTimer[client] then
 			self.m_DumperDeliverTimer[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
