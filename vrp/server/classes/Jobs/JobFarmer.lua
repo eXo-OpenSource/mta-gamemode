@@ -59,7 +59,7 @@ function JobFarmer:constructor()
 
 end
 
-function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
 
 	if vehicleModel == 531 then
@@ -68,12 +68,19 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 
 		addEventHandler("onElementDestroy", vehicle,
 			function()
-				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
+				self.m_CurrentPlants[player] = 0
+				self:updatePrivateData(player)
 			end)
 
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
 		end)
+	elseif vehicleModel == 478 then --Walton
+		self:registerJobVehicle(player, vehicle, true, false)
+		addEventHandler("onElementDestroy", vehicle,
+			function()
+				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
+			end)
 	end
 
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
