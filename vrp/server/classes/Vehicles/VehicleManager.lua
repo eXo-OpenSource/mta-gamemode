@@ -784,7 +784,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
+	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
