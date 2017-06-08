@@ -81,6 +81,7 @@ ADMIN_RANK_PERMISSION = {
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
 	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
