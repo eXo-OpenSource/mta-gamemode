@@ -231,7 +231,7 @@ function giveWeapon( player, weapon, ammo, current)
 	else 
 		if player and ammo then
 			if ammo ~= 0 then
-				local currentWeapon = getPlayerWeapon(player,slot)
+				local currentWeapon = getPedWeapon(player,slot)
 				if currentWeapon ~= weapon then
 					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
 				end

@@ -98,7 +98,9 @@ function Inventory:Event_syncInventoryFromServer(bag, items)
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
-	outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	if self.m_Debug then
+		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	end
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end

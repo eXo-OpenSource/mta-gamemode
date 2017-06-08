@@ -1691,8 +1691,6 @@
 	<vrpfile src="files/models/FishingRod.txd"/>
 	<vrpfile src="files/models/FishingRod.dff"/>
 	<vrpfile src="files/models/FishingRod.col"/>
-	<vrpfile src="files/models/topfun.txd"/>
-	<vrpfile src="files/models/topfun.dff"/>
 	<vrpfile src="files/models/a51fencing.col"/>
 	<vrpfile src="files/models/a51fencing.dff"/>
 	<vrpfile src="files/models/a51fencing.txd"/>
@@ -1740,6 +1738,8 @@
 	<vrpfile src="files/models/vehicles/supergt.txd"/>
 	<vrpfile src="files/models/vehicles/supergt.dff"/>
 	<vrpfile src="files/models/vehicles/dft30.dff"/>
+	<vrpfile src="files/models/vehicles/topfun.txd"/>
+	<vrpfile src="files/models/vehicles/topfun.dff"/>
 
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />

@@ -9,7 +9,7 @@ CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
 function CompanyManager:constructor()
-  outputServerLog("Loading companies...")
+  local st, count = getTickCount(), 0
   local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
   for i, row in pairs(result) do
     local result2 = sql:queryFetch("SELECT Id, CompanyRank FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
@@ -24,8 +24,9 @@ function CompanyManager:constructor()
         outputServerLog(("Company class for Id %s not found!"):format(row.Id))
       --self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
     end
+	count = count + 1
   end
-
+  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
   -- Add events
   addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
   addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))

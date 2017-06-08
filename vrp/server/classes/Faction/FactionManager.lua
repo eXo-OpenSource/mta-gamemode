@@ -53,7 +53,7 @@ function FactionManager:destructor()
 end
 
 function FactionManager:loadFactions()
-  outputServerLog("Loading factions...")
+  local st, count = getTickCount(), 0
   local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   for k, row in pairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
@@ -64,7 +64,9 @@ function FactionManager:loadFactions()
 
 	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type)
     FactionManager.Map[row.Id] = instance
+	count = count + 1
   end
+  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s factions in %sms"):format(count, getTickCount()-st)) end
 end
 
 function FactionManager:getAllFactions()

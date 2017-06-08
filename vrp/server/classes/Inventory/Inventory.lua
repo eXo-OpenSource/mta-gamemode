@@ -323,9 +323,9 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 		return false
 	end
 	local itemValue = value or ""
-	
-	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.." !",0,200,0,200)
-
+	if self.m_Debug == true then
+		outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.." !",0,200,0,200)
+	end
 	if(ItemAmount - amount < 0) then
 		return false
 	elseif(ItemAmount - amount > 0) then

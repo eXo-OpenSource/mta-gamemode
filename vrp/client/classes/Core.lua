@@ -222,6 +222,9 @@ end
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	if CustomModelManager:isInstantiated() then
+		delete(CustomModelManager:getSingleton())
+	end
 end
 
 function Core:getConfig()

@@ -140,7 +140,7 @@ function Admin:destructor()
 end
 
 function Admin:addAdmin(player,rank)
-	outputDebug("Added Admin "..player:getName())
+	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)

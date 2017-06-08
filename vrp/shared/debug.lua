@@ -6,8 +6,9 @@
 -- *
 -- ****************************************************************************
 DEBUG = GIT_BRANCH ~= "release/production"
+DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
 
-if triggerClientEvent then
+if triggerClientEvent and DEBUG_LOAD_SAVE then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
 end
 
