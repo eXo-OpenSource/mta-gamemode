@@ -23,6 +23,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	self.m_Rotation = rotation or 0
 	self.m_ConditionFunc = spawnConditionFunc
 	self.m_ConditionError = true
+	self.m_ShowEPTAdvertisement = false
 	self.m_PostSpawnFunc = postSpawnFunc
 
 	self.m_Marker = createMarker(x, y, z, "cylinder", 1.2, 255, 0, 0)
@@ -39,7 +40,7 @@ function VehicleSpawner:markerHit(hitElement, matchingDimension)
 				return
 			end
 
-			hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles)
+			hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles, self.m_ShowEPTAdvertisement)
 		end
 	end
 end
@@ -107,8 +108,13 @@ end
 
 function VehicleSpawner:toggleConditionError(state)
 	self.m_ConditionError = state
+	return self
 end
 
+function VehicleSpawner:showEPTAdvertisement(state)
+	self.m_ShowEPTAdvertisement = state
+	return self
+end
 
 function VehicleSpawner:initializeAll()
 	-- Create 'general' vehicle spawners
@@ -125,12 +131,7 @@ function VehicleSpawner:initializeAll()
 		CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT):giveMoney(100, "Fahrzeugverleih")
 	end
 
-	local spawners = {}
-	spawners[1] = VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn)
-	spawners[2] = VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn)
-	spawners[3] = VehicleSpawner:new(1742.06, -1742.61, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn)
-
-	for index, spawner in pairs(spawners) do
-		spawner:toggleConditionError(false)
-	end
+	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
+	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
+	VehicleSpawner:new(1742.06, -1742.61, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 end

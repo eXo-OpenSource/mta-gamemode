@@ -6,22 +6,19 @@
 -- *
 -- ****************************************************************************
 
-FactionWTBoxHoverGUI = inherit(GUIForm)
+FactionWTBoxHoverGUI = inherit(GUIRectangle)
 inherit(Singleton, FactionWTBoxHoverGUI)
 
 function FactionWTBoxHoverGUI:constructor(box)
 
-	GUIForm.constructor(self, screenWidth-220, screenHeight/2-100/2, 180, 200, false)
-	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0,0,0,150), self)
+	GUIRectangle.constructor(self, screenWidth-220, screenHeight/2-100/2, 180, 200, false)
+	self:setColor(tocolor(0,0,0,150))
 	GUILabel:new(0, 0, self.m_Width, 30, "Kisteninhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.LightBlue)
 	self.m_ContentLabels = {}
 	self.m_CurrentBox = box
 	self:loadContent()
 end
 
-function FactionWTBoxHoverGUI:destructor()
-	self:close()
-end
 
 function FactionWTBoxHoverGUI:loadContent()
 

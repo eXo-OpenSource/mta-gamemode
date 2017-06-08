@@ -60,6 +60,8 @@ function JobFarmer:constructor()
 end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
+
 	if vehicleModel == 531 then
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
@@ -83,7 +85,15 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
 		if seat == 0 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+				local income = player:getData("Farmer.Income")
+				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
+				vehPlayer.m_LastJobAction = getRealTime().timestamp
+				if vehicle:getModel() == 531 then
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
+				else
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
+				end
+				vehPlayer:addBankMoney( income, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
 			end
@@ -118,6 +128,8 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
 			self.m_CurrentPlants[player] = PLANTSONWALTON
 			self:updatePrivateData(player)
+			local x,y,z = unpack (PLANT_DELIVERY)
+			player:startNavigationTo(Vector3(x, y, z))
 
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
 			self:updateClientData()
@@ -180,7 +192,11 @@ function JobFarmer:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
 	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
-		player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+		local income = player:getData("Farmer.Income")
+		local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
+		vehPlayer.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income)
+		player:addBankMoney(income, "Farmer-Job")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
@@ -189,7 +205,7 @@ end
 
 function JobFarmer:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FARMER) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER))
 		return false
 	end
 	return true
@@ -206,18 +222,21 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
 			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
-			player:giveMoney(self.m_CurrentPlants[player]*MONEY_PER_PLANT, "Farmer-Job")
-			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
+			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
+			local duration = getRealTime().timestamp - player.m_LastJobAction
+			player.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income)
+			player:addBankMoney(income, "Farmer-Job")
+			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
-
 			for i, v in pairs(getAttachedElements(hitElement)) do
 				if v:getModel() == 2968 then -- only destroy crates
 					destroyElement(v)
 				end
 			end
 		else
-			player:sendError(_("Du hast keine Ladung dabei!", player), 255, 0, 0)
+			player:sendError(_("Du hast keine Ladung dabei!", player))
 		end
 	end
 end
@@ -246,7 +265,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 
 		-- Give some points
 		if chance(6) then
-			hitElement:givePoints(1)
+			hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
@@ -260,7 +279,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
-				hitElement:givePoints(1)
+				hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 		end
 	end

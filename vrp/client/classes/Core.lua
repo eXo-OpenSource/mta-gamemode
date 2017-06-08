@@ -39,7 +39,25 @@ function Core:constructor()
 		)()
 	else
 		local dgi = DownloadGUI:getSingleton()
-		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		Provider:getSingleton():addFileToRequest("vrp.list")
+		Provider:getSingleton():requestFiles(
+			function()
+				local fh = fileOpen("vrp.list")
+				local json = fileRead(fh, fileGetSize(fh))
+				fileClose(fh)
+				local tbl = fromJSON(json)
+
+				for _, v in pairs(tbl) do
+					Provider:getSingleton():addFileToRequest(v)
+				end
+
+				Provider:getSingleton():requestFiles(
+					bind(DownloadGUI.onComplete, dgi),
+					bind(DownloadGUI.onProgress, dgi)
+				)
+			end
+		)
+
 		setAmbientSoundEnabled( "gunfire", false )
 		showChat(true)
 	end
@@ -114,11 +132,11 @@ function Core:ready()
 	PlantWeed.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
+	GroupSaleVehicles.initalize()
+	TextureReplace.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
-	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
-
 
 	Shaders.load()
 
@@ -129,9 +147,10 @@ function Core:ready()
 	GasStation:new()
 
 	ChessSession:new()
-	
-	GroupRob:new() 
 
+	GroupRob:new()
+	DrivingSchool:new()
+	Help:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end
@@ -180,15 +199,11 @@ function Core:afterLogin()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 
-	-- Miami Spawn deactivated:
 	HUDRadar:getSingleton():setEnabled(true)
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
-	triggerServerEvent("remoteClientSpawn", localPlayer)
-	-- //Miami Spawn deactivated:
 
-	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
@@ -226,7 +241,7 @@ function Core:throwInternalError(message)
 end
 
 
--- AntiCheat for blips // Workaround
+-- AntiCheat for blips // Workaround // this wont detect cheated blips
 setTimer(
 	function()
 		local attachedBlips = {}

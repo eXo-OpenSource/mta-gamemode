@@ -1,0 +1,72 @@
+<html>
+<head>
+    <style>
+    
+    @font-face {
+        font-family: ekMukta;
+        src: url('http://mta/local/files/fonts/EkMukta.ttf')
+    }
+    body {
+        color: white;
+        font-family: ekMukta;
+        width: 90%;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        user-select: none;
+    }
+    ::selection { background: transparent; }
+    button {
+        background-color: #171717;
+        border: none;
+        text-decoration: none;
+        color: white;
+        border-top: 2px #3f7fbf;
+        border-style: solid;
+        border-bottom: transparent;
+        border-left: transparent;
+        border-right: transparent;
+        width: 162px;
+        height: 32px;
+    }
+    button:hover {
+        border-top: 2px white;
+        border-style: solid;
+        border-bottom: transparent;
+        border-left: transparent;
+        border-right: transparent;
+    }
+    button:focus {
+        outline: none;
+    }
+    button:active {
+        outline: none;
+    }
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px;
+        left: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        opacity: 0;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: white;
+    }
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+</body>
+<script src="http://mta/local/files/html/js/mtaevents.min.js"></script>
+<script src="http://mta/local/files/html/js/showdown.min.js"></script>
+<script src="http://mta/local/files/html/js/showdown-button.js"></script>
+<script>
+(function() {
+    mtatools.registerEvent("onTextChange", function(text) {
+        var converter = new showdown.Converter({ extensions: ['button'] }),
+            html      = converter.makeHtml(text);
+        document.getElementById("content").innerHTML = html;
+    });
+})();
+</script>
+</html>

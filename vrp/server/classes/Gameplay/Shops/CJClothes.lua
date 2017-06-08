@@ -34,7 +34,7 @@ function CJClothes:onCJClothesMarkerHit(hitElement, dim)
 			hitElement:triggerEvent("showClothesShopGUI", self.m_Id, source.typeId, source.clothes)
 		else
 			local cjName, cjPrice = unpack(SkinInfo[0])
-			hitElement:triggerEvent("questionBox", _("Diese Kleidung ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+			QuestionBox:new(hitElement, hitElement, _("Diese Kleidung ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
 		end
 	end
 end
@@ -45,7 +45,7 @@ function CJClothes:onTattooMarkerHit(hitElement, dim)
 			hitElement:triggerEvent("showTattooSelectionGUI", self.m_Id)
 		else
 			local cjName, cjPrice = unpack(SkinInfo[0])
-			hitElement:triggerEvent("questionBox", _("Diese Tattoos ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+			QuestionBox:new(hitElement, hitElement, _("Diese Tattoos ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
 		end
 	end
 end

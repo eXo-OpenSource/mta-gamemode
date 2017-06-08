@@ -9,12 +9,6 @@ GUIForm = inherit(CacheArea)
 GUIForm.Map = {}
 GUIForm.BlurCounter = 0
 
-GUIForm.Controls = {
-	"forwards", "backwards", "left", "right", "jump",
-	"vehicle_left", "vehicle_right", "steer_forward", "steer_back", "accelerate", "brake_reverse"
-}
-
-
 function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
 	self.m_KeyBinds = {}
@@ -64,10 +58,11 @@ function GUIForm:open(hiddenCursor)
 end
 
 function GUIForm:close(decrementedCursorCounter)
+    guiSetInputEnabled(false)
+	focusBrowser()
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 		self:toggleKeys(true)
-		NoDm:getSingleton():checkNoDm()
 	end
 
 	-- Disable blur shader if it has been enabled before
@@ -78,7 +73,6 @@ function GUIForm:close(decrementedCursorCounter)
 			RadialShader:getSingleton():setEnabled(false)
 		end
 	end
-	focusBrowser()
 	return self:setVisible(false)
 end
 
@@ -91,8 +85,12 @@ function GUIForm:toggle(cursor)
 end
 
 function GUIForm:toggleKeys(state)
-	for id, control in pairs(GUIForm.Controls) do
-		toggleControl(control, state)
+	if state then
+		removeEventHandler("onClientKey", root, GUIForm.onClientKey)
+		GUIForm.keysEnabled = true
+	elseif GUIForm.keysEnabled then
+		addEventHandler("onClientKey", root, GUIForm.onClientKey)
+		GUIForm.keysEnabled = false
 	end
 end
 
@@ -153,3 +151,10 @@ end
 function GUIForm:isBackgroundBlurred()
 	return false
 end
+
+GUIForm.keysEnabled = true
+GUIForm.onClientKey =
+	function(button)
+		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") or button:match("b") or button:match("m") then return end
+		cancelEvent()
+	end

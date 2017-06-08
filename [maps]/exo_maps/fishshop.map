@@ -1,0 +1,4 @@
+<map edf:definitions="editor_main">
+    <object id="object (pier03b_LAw2) (1)" breakable="true" interior="0" alpha="255" model="6289" doublesided="false" scale="1" dimension="0" posX="387.89059" posY="-1900.439" posZ="9.39" rotX="0" rotY="0" rotZ="0"></object>
+    <removeWorldObject id="removeWorldObject (pier03b_LAw2) (1)" radius="11.214766" interior="0" model="6289" lodModel="6459" posX="387.89063" posY="-1900.4375" posZ="9.39063" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+</map>

@@ -17,7 +17,7 @@ function FactionManager:constructor()
 	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
 	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
 	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles"}
+	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction"}
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -34,10 +34,16 @@ function FactionManager:constructor()
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
+	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 
 	FactionState:new()
 	FactionRescue:new()
 	FactionEvil:new(self.EvilFactions)
+
+	self.m_ServiceMarkerErrorTexts = { --valid faction types for vehicle service markers
+		["State"] = {"Nur für Fahrzeuge des Staates!", "Nur für Staatsfraktionisten im Dienst!"},
+		["Rescue"] = {"Nur für Fahrzeuge des Medical Centers!", "Nur für Mitglieder des Rettungsdienstes im Dienst!"},
+	}
 end
 
 function FactionManager:destructor()
@@ -285,7 +291,12 @@ function FactionManager:Event_factionRankUp(playerId)
 				-- Todo: Report possible cheat attempt
 				return
 			end
-
+			
+			if client:getId() == playerId then 
+				client:sendError(_("Du kannst deinen eigenen Rang nicht höher setzen!", client))
+				return
+			end
+			
 			local playerRank = faction:getPlayerRank(playerId)
 			local player, isOffline = DatabasePlayer.get(playerId)
 			if isOffline then
@@ -389,32 +400,59 @@ function FactionManager:Event_factionRespawnVehicles()
 	end
 end
 
-function FactionManager:sendAllToClient(client)
-	--[[
-	local vehicleTab = {}
-	for i, faction in pairs(self:getAllFactions()) do
-		if faction:isStateFaction() or faction:isRescueFaction() then
-			for i, v in pairs(faction.m_Vehicles) do
-				if factionVehicleShaders[faction:getId()] and factionVehicleShaders[faction:getId()][v:getModel()] then
-					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
-					if v.m_Decal == "" or v.m_Decal == false then
-						if shaderInfo.shaderEnabled then
-							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
-						end
-					else
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = v.m_Decal}
-					end
-				end
-			end
-		end
-	end
-
-	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
-	]]
-end
-
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do
 		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
+	end
+end
+
+function FactionManager:checkPermissionForVehicleServiceMarker(player, type)
+	if player.vehicle and player.vehicleSeat == 0 then
+		if player:getFaction() and player:getFaction():getType() == type and player:isFactionDuty() then
+			if player.vehicle:getFaction() and player.vehicle:getFaction():getType() == type then
+				return true
+			else
+				player:sendError(_(self.m_ServiceMarkerErrorTexts[type][1], player))
+			end
+		else
+			player:sendError(_(self.m_ServiceMarkerErrorTexts[type][2], player))
+		end
+	end
+	return false
+end
+
+function FactionManager:createVehicleServiceMarker(type, pos, size)
+	if not self.m_ServiceMarkerErrorTexts[type] then return outputDebug("invalid faction type") end
+	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
+	addEventHandler("onMarkerHit", marker ,
+		function(hitElement, dim)
+			if hitElement:getType() == "player" and dim then
+				if self:checkPermissionForVehicleServiceMarker(hitElement, type) then
+					hitElement.factionVehicleServiceMarker = source
+					hitElement.vehicle:toggleHandBrake(hitElement, true)
+					hitElement:triggerEvent("showFactionVehicleServiceGUI")
+				end
+			end
+		end
+	)
+end
+
+function FactionManager:Event_serviceMarkerPerformAction(type)
+	if client.factionVehicleServiceMarker and getDistanceBetweenPoints3D(client:getPosition(), client.factionVehicleServiceMarker:getPosition()) <= 3 then
+		local costs
+		if type == "fill" then
+			costs = math.floor((100-client.vehicle:getFuel())*5)
+			if costs == 0 then client:sendInfo(_("Dein Fahrzeugtank ist noch voll.", client)) end
+			client.vehicle:setFuel(100)
+			client:getFaction():takeMoney(costs, "Fahrzeug-Betankung")
+		elseif type == "repair" then
+			costs = math.floor((1000-client.vehicle:getHealth()))
+			if costs == 0 then client:sendInfo(_("Dein Fahrzeug benötigt keine Reparaturen.", client)) end
+			client.vehicle:fix()
+			client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
+		end
+		client.vehicle:toggleHandBrake(client, false)
+	else
+		client:sendError(_("Du bist zu weit entfernt!", client))
 	end
 end

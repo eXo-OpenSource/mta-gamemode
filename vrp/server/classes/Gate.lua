@@ -1,5 +1,5 @@
 Gate = inherit(Object)
-
+Gate.Map = {}
 function Gate:constructor(model, pos, rot, openPos, customOffset)
     self.m_Gates = {}
 	self.m_Closed = true
@@ -7,8 +7,8 @@ function Gate:constructor(model, pos, rot, openPos, customOffset)
 	self:addGate(model, pos, rot, openPos)
     self:createColshapes(model, pos, rot, customOffset)
 
-    addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
-    addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
+    --addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
+    --addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
 end
 
 function Gate:addGate(model, pos, rot, openPos)
@@ -16,6 +16,8 @@ function Gate:addGate(model, pos, rot, openPos)
 	self.m_Gates[id] = createObject(model, pos, rot)
 	self.m_Gates[id].openPos = openPos
 	self.m_Gates[id].closedPos = pos
+	self.m_Gates[id].m_Super = self
+	Gate.Map[#Gate.Map+1] = self.m_Gates[id]
 end
 
 function Gate:createColshapes(model, pos, rot, customOffset)
@@ -35,6 +37,9 @@ function Gate:createColshapes(model, pos, rot, customOffset)
 	elseif model == 7657 then
 		x1, y1 = getPointFromDistanceRotation(pos.x+4, pos.y, 4, rot.z-90)
         x2, y2 = getPointFromDistanceRotation(pos.x-2, pos.y, 4, rot.z+90)
+	elseif model == 10558 then
+		x1, y1 = getPointFromDistanceRotation(pos.x-4, pos.y+6, 3.5, rot.z)
+        x2, y2 = getPointFromDistanceRotation(pos.x-4, pos.y-6, 3.5, rot.z)
     end
    -- self.m_Marker1 = createMarker(Vector3(x1, y1, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset and -customOffset or -2),"cylinder",1) -- Developement Test
     --self.m_Marker2 = createMarker(Vector3(x2, y2, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset or 2),"cylinder",1,255) -- Developement Test
@@ -63,15 +68,17 @@ function Gate:Event_onColShapeHit(hitEle, matchingDimension)
         end
         if self.m_Closed then
             for index, gate in pairs(self.m_Gates) do
-				gate:move(1250, gate.openPos)
+				gate:move(6000, gate.openPos)
+				triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3")
 			end
 
 			self.m_Closed = false
-            self.m_Timer = setTimer(bind(self.Event_onColShapeHit, self, player, true), 10000, 1)
+            self.m_Timer = setTimer(bind(self.Event_onColShapeHit, self, player, true), 22000, 1)
             --outputDebug("Opening: "..(0-rot.y).." ["..rot.y.."; 0]")
         else
            for index, gate in pairs(self.m_Gates) do
-				gate:move(1250, gate.closedPos)
+				gate:move(6000, gate.closedPos)
+				triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3")
 			end
 
             self.m_Closed = true

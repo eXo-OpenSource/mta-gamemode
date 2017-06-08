@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Admin = inherit(Singleton)
+ADMIN_OVERLAP_THRESHOLD = 5
 
 function Admin:constructor()
     self.m_OnlineAdmins = {}
@@ -68,10 +69,12 @@ function Admin:constructor()
 	addCommandHandler("gotocords", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
+	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
+	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -85,6 +88,10 @@ function Admin:constructor()
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
+	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
+	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
+	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
+
 
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
@@ -408,45 +415,63 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
-			if target ~= admin then
-				local preTarget = admin:getPrivateSync("isSpecting")
-				if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then
-					removeEventHandler("onElementDimensionChange", preTarget, admin.m_SpectDimensionFunc)
-					removeEventHandler("onElementInteriorChange", preTarget, admin.m_SpectInteriorFunc)
-				end
-				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-				admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
-				setCameraTarget(admin, target)
-				admin:setFrozen(true)
-				admin.m_PreSpectInt = getElementInterior(admin)
-				admin.m_IsSpecting = true
-				admin:setPrivateSync("isSpecting",target)
-				admin.m_PreSpectDim = getElementDimension(admin)
-				admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
-				addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-				admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
-				addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-				if admin:isInVehicle() then
-					admin:getOccupiedVehicle():setFrozen(true)
-				end
-					bindKey(admin, "space", "down", function()
-						setCameraTarget(admin, admin)
+			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+
+			admin.m_IsSpecting = true
+			admin:setPrivateSync("isSpecting", target)
+			admin.m_PreSpectInt = getElementInterior(admin)
+			admin.m_PreSpectDim = getElementDimension(admin)
+			admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
+			admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
+			admin.m_SpectStop =
+				function()
+					for i, v in pairs(target.spectBy) do
+						if v == admin then
+							table.remove(target.spectBy, i)
+						end
+					end
+
+					setCameraTarget(admin, admin)
 					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 					unbindKey(admin, "space", "down")
+
 					admin:setFrozen(false)
-					if admin:isInVehicle() then
-						admin:getOccupiedVehicle():setFrozen(false)
-					end
-					setElementInterior(admin, admin.m_PreSpectInt)
-					setElementDimension(admin, admin.m_PreSpectDim)
+					if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
+
 					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
+					admin:setInterior(admin.m_PreSpectInt)
+					admin:setDimension(admin.m_PreSpectDim)
+
 					admin.m_IsSpecting = false
-					admin:setPrivateSync("isSpecting",false)
-				end)
-			else admin:sendError("Sie können sich nicht selbst specten!")
-			end
+					admin:setPrivateSync("isSpecting", false)
+				end
+
+			if not target.spectBy then target.spectBy = {} end
+			table.insert(target.spectBy, admin)
+
+			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
+
+			admin:setInterior(target.interior)
+			admin:setCameraInterior(target.interior)
+			admin:setDimension(target.dimension)
+
+			-- this will probably fix the camera issue
+			local position = target.position
+			setCameraMatrix(admin, position)
+			setCameraTarget(admin, target)
+
+			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+			addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+			bindKey(admin, "space", "down", admin.m_SpectStop)
+
+			admin:setFrozen(true)
+			if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
         elseif func == "offlinePermaban" then
 			if not target then return end
 			if not reason or #reason == 0 then return end
@@ -570,6 +595,33 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
     end
 end
 
+function Admin:outputSpectatingChat(source, messageType, message, phonePartner, playerToSend)
+	if source.spectBy then
+		for _, admin in pairs(source.spectBy) do
+			if isElement(admin) then
+				outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), admin, 150, 150, 150)
+			end
+		end
+
+		return
+	end
+
+	if playerToSend then
+		for _, v in pairs(playerToSend) do
+			if v.spectBy then
+				for _, admin in pairs(v.spectBy) do
+					if isElement(admin) then
+						outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), admin, 150, 150, 150)
+					end
+				end
+			end
+		end
+	end
+
+	--[[if phonePartner and phonePartner.spectBy then
+
+	end]]
+end
 
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Ticketsupporter then
@@ -772,6 +824,7 @@ local tpTable = {
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
         ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
+        ["texture"] =    	{["pos"] = Vector3(1844.30, -1861.05, 13.38),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
@@ -785,6 +838,9 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),  	["typ"] = "Fraktionen"},
+		["yakuza"] =         {["pos"] = Vector3(1441.33, -1329.08, 13.55),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
@@ -982,20 +1038,47 @@ function Admin:getVehFromId(player, cmd, vehId)
     end
 end
 
-function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Clanmember then
-        if isElement(source) then
+function Admin:Event_vehicleDespawn(reason)
+    if client:getRank() < RANK.Clanmember then
+		-- Todo: Report cheat attempt
+		return
+	end
 
-			VehicleManager:getSingleton():checkVehicle(source)
-			if not source:isRespawnAllowed() then
-				client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
-				return
+	if not isElement(source) or getElementType(source) ~= "vehicle" then
+		return
+	end
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht despawnt werden!", client))
+		return
+	end
+
+	VehicleManager:getSingleton():checkVehicle(source)
+
+	if source:isPermanent() then
+		client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+
+		if getElementData(source, "OwnerName") then
+			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
+			if targetId and targetId > 0 then
+				local delTarget, isOffline = DatabasePlayer.get(targetId)
+				if delTarget then
+					if isOffline then
+						delTarget:addOfflineMessage(("Dein Fahrzeug (%s) wurde von %s despawnt (%s)!"):format(source:getName(), client:getName(), reason))
+						delete(delTarget)
+					else
+						delTarget:sendInfo(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason))
+					end
+				end
 			end
+		end
 
-			client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
-            source:setDimension(PRIVATE_DIMENSION_SERVER)
-        end
-    end
+		source:setDimension(PRIVATE_DIMENSION_SERVER)
+		source.despawned = true
+	elseif instanceof(source, TemporaryVehicle) then
+		client:sendInfo(_("Du hast das Fahrzeug %s gelöscht!", client, source:getName()))
+		source:destroy()
+	end
 end
 
 function Admin:Command_MarkPos(player, add)
@@ -1003,7 +1086,7 @@ function Admin:Command_MarkPos(player, add)
 		if not add then
 			local markPos = getElementData(player, "Admin_MarkPos")
 			if markPos then
-				player:sendInfo("Du hast dich zu Makierung geportet!")
+				player:sendInfo("Du hast dich zu Markierung geportet!")
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
@@ -1012,15 +1095,21 @@ function Admin:Command_MarkPos(player, add)
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else
-				player:sendError("Du hast keine Makierung /mark")
+				player:sendError("Du hast keine Markierung /mark")
 			end
 		else
 			local pos = player:getPosition()
 			local dim = player:getDimension()
 			local interior = player:getInterior()
 			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
-			player:sendInfo("Makierung gesetzt!")
+			player:sendInfo("Markierung gesetzt!")
 		end
+	end
+end
+
+function Admin:reloadHelpText(player)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+		Help:getSingleton():loadHelpTexts()
 	end
 end
 
@@ -1032,3 +1121,68 @@ function Admin:runString(player, cmd, ...)
 	end
 end
 
+function Admin:runPlayerString(player, cmd, target, ...)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+		local tPlayer
+		local sendResponse
+		if target ~= "root" then
+			tPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, player)
+			sendResponse = true
+		else
+			tPlayer = root
+			sendResponse = false
+		end
+		if tPlayer then
+			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
+
+			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
+	  	else
+			player:sendError(_("Kein Ziel gefunden!", player))
+		end
+	end
+end
+
+function Admin:Event_OnClientRunStringResult(result)
+	if isElement(source) and source:getType() == "player" then
+		outputChatBox(source:getName() .." executed command: "..result, source, 255, 51, 51)
+	end
+end
+
+function Admin:checkOverlappingVehicles()
+	QuestionBox:new(client, client,  _("Warnung! Diese Funktion ist performance-lastig",client), "admin:acceptOverlappingCheck")
+end
+
+function Admin:Event_OnAcceptOverlapCheck()
+    if source:getRank() >= RANK.Administrator then
+		local vehicles = getElementsByType("vehicle")
+		OVERLAPPING_VEHICLES = {}
+		for i = 1, #vehicles do
+			if (getElementDimension(vehicles[i]) == 0 and getElementInterior(vehicles[i])) == 0 and not (instanceof(vehicles[i], FactionVehicle) or instanceof(vehicles[i], CompanyVehicle)) then
+				for i2 = 1, #vehicles do
+					if vehicles[i2] ~= vehicles[i] then
+						if vehicles[i].getPosition and vehicles[i2].getPosition then
+							local pos1, pos2 = vehicles[i]:getPosition(), vehicles[i2]:getPosition()
+							local dist = getDistanceBetweenPoints3D(pos1, pos2)
+							if dist <= ADMIN_OVERLAP_THRESHOLD then
+								OVERLAPPING_VEHICLES[#OVERLAPPING_VEHICLES+1] = vehicles[i]
+							end
+						end
+					end
+				end
+			end
+		end
+		local markedVehicles = {}
+		local veh, x,y,z
+		for i = 1,#OVERLAPPING_VEHICLES do
+			veh = OVERLAPPING_VEHICLES[i]
+			if not markedVehicles[veh] then
+				x,y,z = getElementPosition(veh)
+				outputChatBox(x..","..y..","..z, source, 200, 0, 0)
+				markedVehicles[veh] = true
+			end
+		end
+		outputChatBox("^^^ Es wurden "..#OVERLAPPING_VEHICLES.." die sich möglicherweise Überlappen gefunden! ^^^", source, 200, 50, 0)
+	else
+		source:sendError("Erst ab Administrator!")
+	end
+end

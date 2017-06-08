@@ -7,6 +7,7 @@
 -- ****************************************************************************
 JobManager = inherit(Singleton)
 
+
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {

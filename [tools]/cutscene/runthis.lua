@@ -7,7 +7,7 @@ end
 PRIVATE_DIMENSION_CLIENT = 0
 setPlayerHudComponentVisible("all", false)
 showChat(false)
-Cutscene:new(SceneGravel):play()
+Cutscene:new(Fishing):play()
 
 addEventHandler( "onClientResourceStop", getRootElement(),
     function ( stoppedRes )

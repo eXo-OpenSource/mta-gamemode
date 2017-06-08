@@ -42,6 +42,8 @@ function JobGravel:constructor()
 
 	self.m_DumperDeliverTimer = {}
 	self.m_DumperDeliverStones = {}
+	self.m_DozerDropTimer = {}
+	self.m_DozerDropStones = {}
 
 	self.m_Col = createColSphere(592.54, 868.73, -42.497, 300)
 	addEventHandler("onColShapeLeave", self.m_Col , bind(self.onGravelJobLeave, self))
@@ -70,6 +72,7 @@ function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
+	player.m_LastJobAction = getRealTime().timestamp
 	setTimer(function()
 		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
 	end, 1000, 1)
@@ -173,10 +176,13 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			end
 		)
 		if rockDestroyed then
-			client:giveMoney(times*LOAN_MINING, "Kiesgruben-Job")
+			local duration = getRealTime().timestamp - client.m_LastJobAction
+			client.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.mining", duration, times*LOAN_MINING)
+			client:addBankMoney(times*LOAN_MINING, "Kiesgruben-Job")
 		end
 		if chance(6) then
-			client:givePoints(1)
+			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 
 		self:updateGravelAmount("mined", true)
@@ -201,6 +207,8 @@ end
 --Step 2 Dozer Part
 
 function JobGravel:Event_onCollectingContainerHit(track)
+	local client = client --to use in-line timer
+	local source = source --to use in-line timer
 	if JobGravel.Tracks[track] then
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
 			if source.delivered then
@@ -210,11 +218,24 @@ function JobGravel:Event_onCollectingContainerHit(track)
 			source.delivered = true
 			if source.vehicle and isElement(source.vehicle) then
 				if source.vehicle:getOccupant() then
-					source.vehicle:getOccupant():giveMoney(LOAN_DOZER, "Kiesgruben-Job")
+					if not self.m_DozerDropStones[client] then self.m_DozerDropStones[client] = 0 end
+					self.m_DozerDropStones[client] = self.m_DozerDropStones[client] + 1
+					
+					if not self.m_DozerDropTimer[client] then
+						self.m_DozerDropTimer[client] = setTimer(function()
+							local loan = LOAN_DOZER * (self.m_DozerDropStones[client] or 0)
+							local duration = getRealTime().timestamp - client.m_LastJobAction
+							client.m_LastJobAction = getRealTime().timestamp
+							StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, loan)
+							source.vehicle:getOccupant():addBankMoney(loan, ("Kiesgruben-Job (%d Steine)"):format(self.m_DozerDropStones[client]))
+							self.m_DozerDropStones[client] = nil			
+							self.m_DozerDropTimer[client] = nil			
+						end, 1500, 1)
+					end
 				end
 			end
 			if chance(6) then
-				client:givePoints(1)
+				client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 				self:updateGravelAmount("stock", true)
@@ -296,7 +317,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
 			end
 		else
-			hitElement:sendError(_("Du musst ihm Kiesgruben Job tätig sein!", hitElement))
+			hitElement:sendError(_("Du musst im Kiesgruben-Job tätig sein!", hitElement))
 		end
 	end
 end
@@ -316,12 +337,14 @@ end
 function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
 	local loan = amount*LOAN_DUMPER
-	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
-	player:giveMoney(loan, "Kiesgruben-Job")
+	local duration = getRealTime().timestamp - player.m_LastJobAction
+	player.m_LastJobAction = getRealTime().timestamp
+	StatisticsLogger:getSingleton():addJobLog(player, "jobGravel.dumper", duration, loan)
+	player:addBankMoney(loan, ("Kiesgruben-Job (%d Steine)"):format(amount))
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil
 	self.m_DumperDeliverStones[player] =  nil
-	player:givePoints(math.floor(amount/2))
+	player:givePoints(math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR))
 end
 
 JobGravel.Tracks = {

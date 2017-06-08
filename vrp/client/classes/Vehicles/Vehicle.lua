@@ -20,7 +20,7 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -46,13 +46,24 @@ end
 
 function Vehicle:getSpeed()
 	local vx, vy, vz = getElementVelocity(self)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 195
 	return speed
+end
+
+function Vehicle:getMileage()
+	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
 end
 
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
+end
+
+function Vehicle:magnetVehicleCheck()
+	local vehicle = self:getData("MagnetGrabbedVehicle")
+	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+
+	triggerServerEvent("clientMagnetGrabVehicle", localPlayer, groundPosition)
 end
 
 addEventHandler("vehicleEngineStart", root,
@@ -112,7 +123,7 @@ addEventHandler("vehicleHandbrake", root,
 
 addEventHandler("vehiclePlayCustomHorn", root,
 	function (horn)
-		if not source.m_HornSound then
+		if not source.m_HornSound and core:get("Vehicles", "customHorn", true) then
 			source.m_HornSound = playSound3D(("files/audio/Horns/%s.mp3"):format(horn), source:getPosition(), true)
 			source.m_HornSound:setMinDistance(0)
 			source.m_HornSound:setMaxDistance(70)
@@ -175,12 +186,11 @@ addEventHandler("onClientVehicleDamage", root,
 		for seat, player in pairs(occ) do
 			counter = counter + 1
 		end
-		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
-		if source:getData("disableVehicleDamageSystem") then return end
+		if not getElementData(source, "syncEngine") and not tId then return cancelEvent() end
+		if source:getData("disableVehicleDamageSystem") then return cancelEvent() end
 		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
-			if source:getHealth() - loss < 310 then
-				cancelEvent()
-				if isElementSyncer(source) and source:getHealth() >= 310 then
+			if source:getHealth() - loss < VEHICLE_TOTAL_LOSS_HEALTH then
+				if isElementSyncer(source) then
 					triggerServerEvent("vehicleBreak", source)
 					source.m_Broken = true
 
@@ -189,16 +199,37 @@ addEventHandler("onClientVehicleDamage", root,
 					end
 				end
 				setVehicleEngineState(source, false)
-				source:setHealth(301)
+				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 			end
 		end
-		if getVehicleOccupant(source,0) == localPlayer then 
+		if getVehicleOccupant(source,0) == localPlayer then
 			if not weapon then
 				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
 			end
 		end
 	end
 )
+
+addEventHandler("onClientVehicleCollision", root, function() 
+	if source:getHealth() < VEHICLE_TOTAL_LOSS_HEALTH then
+		cancelEvent()
+		source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH) 
+	end
+end)
+
+if EVENT_EASTER then
+	addEventHandler("onClientVehicleCollision", root,
+		function(hitElement, force)
+			if not localPlayer.vehicle then return end
+			if localPlayer.vehicle ~= source then return end
+			if localPlayer.vehicleSeat ~= 0 then return end
+
+			if hitElement and hitElement:getModel() == 1933 and force > 500 then
+				localPlayer:giveAchievement(92)
+			end
+		end
+	)
+end
 
 addEventHandler("soundvanChangeURLClient", root,
 	function(url)
@@ -231,3 +262,44 @@ function( dir )
 		playSound("files/audio/headlight_down.mp3")
 	end
 end)
+
+addEventHandler("vehicleReceiveTuningList", localPlayer,
+function (vehicle, tunings)
+	if tunings then
+		ShortMessage:new(_("Das Fahrzeug besitzt folgende Tunings:\n%s", tunings), "Tunings von "..vehicle:getName())
+	else
+		ErrorBox:new(_"Das Fahrzeug hat keine Tunings!")
+	end
+end)
+
+
+local renderLeviathanRope = {}
+addEventHandler("onClientElementStreamIn", root,
+	function()
+		if getElementType(source) == "vehicle" and source:getModel() == 417 then
+			renderLeviathanRope[source] = true
+		end
+	end
+)
+
+addEventHandler("onClientElementStreamOut", root,
+	function()
+		if renderLeviathanRope[source] then
+			renderLeviathanRope[source] = nil
+		end
+	end
+)
+
+addEventHandler("onClientRender", root,
+	function()
+		for vehicle in pairs(renderLeviathanRope) do
+			if not isElement(vehicle) then renderLeviathanRope[vehicle] = nil break end
+
+			local magnet = getElementData(vehicle, "Magnet")
+			if magnet then
+				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+			end
+		end
+	end
+)
+

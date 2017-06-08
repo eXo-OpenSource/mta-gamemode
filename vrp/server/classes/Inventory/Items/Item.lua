@@ -63,7 +63,13 @@ addEventHandler("itemPlaced", root,
 	function(x, y, z, rotation)
 		local placingInfo = client.m_PlacingInfo
 		if placingInfo then
-			placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
+			if x then
+				client:sendShortMessage(_("Objekt platziert.", client), nil, nil, 1000)
+				placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
+			else
+				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
+				--placingInfo.callback(placingInfo.item, false) -- maybe callback on fail, but useless for now
+			end
 			client.m_PlacingInfo = nil
 		end
 	end

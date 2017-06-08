@@ -26,7 +26,7 @@ function IDCardGUI:constructor(player)
 	GUILabel:new(200, 120, 140, 20, _"Motorrad-Schein:", self)
 	GUILabel:new(200, 140, 140, 20, _"LKW-Schein:", self)
 	GUILabel:new(200, 160, 140, 20, _"Flugschein:", self)
-	GUILabel:new(200, 190, 140, 20, _"PA-Note:", self)
+	GUILabel:new(200, 190, 140, 20, _"GWD-Note:", self)
 	GUILabel:new(200, 210, 140, 20, _"STVO-Punkte:", self)
 
 
@@ -93,7 +93,7 @@ end
 
 function IDCardGUI:getSymbol(bool)
 	if bool == true then
-		return FontAwesomeSymbols.Check, Color.Green
+		return FontAwesomeSymbols.CheckSquare, Color.Green
 	else
 		return FontAwesomeSymbols.Square, Color.Red
 	end

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
 local TREE_MONEY = 50
+local DUMP_POSITION = Vector3(-1969.8, -2432.6, 29.5)
 
 function JobLumberjack:constructor()
 	Job.constructor(self)
@@ -15,7 +16,7 @@ function JobLumberjack:constructor()
 	setElementVisibleTo(self.m_LoadUpMarker, root, false)
 	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
 
-	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
+	self.m_DumpMarker = createMarker(DUMP_POSITION, "corona", 4)
 	setElementVisibleTo(self.m_DumpMarker, root, false)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
@@ -46,6 +47,7 @@ function JobLumberjack:constructor()
 end
 
 function JobLumberjack:start(player)
+	player.m_LastJobAction = getRealTime().timestamp
 	giveWeapon(player, 9, 1, true)
 	player:giveAchievement(11)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
@@ -70,7 +72,7 @@ end
 
 function JobLumberjack:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LUMBERJACK) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK))
 		return false
 	end
 	return true
@@ -84,12 +86,12 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Bitte benutze einen Flatbed", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Bitte benutze einen Flatbed", hitElement))
 			return
 		end
 
 		if hitElement.vehicleSeat ~= 0 then
-			hitElement:sendMessage(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement))
 			return
 		end
 
@@ -99,7 +101,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 
 		local numTrees = hitElement:getData("lumberjack:Trees") or 0
 		if numTrees == 0 then
-			hitElement:sendMessage(_("Du musst erst Bäume fällen um welche aufladen zu können!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Du musst erst Bäume fällen um welche aufladen zu können!", hitElement))
 			return
 		end
 
@@ -123,7 +125,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 				end
 			end
 		end
-
+		hitElement:startNavigationTo(DUMP_POSITION)
 		hitElement:triggerEvent("lumberjackTreesLoadUp")
 	end
 end
@@ -143,7 +145,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
+			hitElement:sendError(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
 
@@ -153,7 +155,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 
 		local numTrees = hitElement:getData("lumberjack:Trees")
 		if not numTrees or numTrees == 0 then
-			hitElement:sendMessage(_("Säge und lade zuerst einige Bäume auf!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Säge und lade zuerst einige Bäume auf!", hitElement))
 			return
 		end
 
@@ -163,7 +165,11 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:setData("lumberjack:Trees", 0)
 
 		-- Give money and experience points
-		hitElement:giveMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
+
+		local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+		hitElement.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY)
+		hitElement:addBankMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do

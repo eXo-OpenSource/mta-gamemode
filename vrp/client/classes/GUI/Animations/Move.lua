@@ -1,13 +1,14 @@
 Animation.Move = inherit(Animation)
 
 -- Move the gui element
-function Animation.Move:constructor(guielement, time, tx, ty)
+function Animation.Move:constructor(guielement, time, tx, ty, easing)
 	self.m_Element = guielement
 	self.m_Time = time
 	self.m_X, self.m_Y = guielement:getPosition()
 	self.m_TX = tx
 	self.m_TY = ty
 	self.m_Start = getTickCount()
+	self.m_Easing = easing or "Linear"
 	self.m_fnPreRender = bind(Animation.Move.preRender, self)
 	addEventHandler("onClientPreRender", root, self.m_fnPreRender)
 end
@@ -25,8 +26,8 @@ function Animation.Move:preRender()
 		self.m_Element:setPosition(self.m_TX, self.m_TY)
 		delete(self)
 	else
-		local x = self.m_X + (self.m_TX - self.m_X) * progress
-		local y = self.m_Y + (self.m_TY - self.m_Y) * progress
+		local x = self.m_X + (self.m_TX - self.m_X) * getEasingValue(progress, self.m_Easing)
+		local y = self.m_Y + (self.m_TY - self.m_Y) * getEasingValue(progress, self.m_Easing)
 		self.m_Element:setPosition(x, y)
 	end
 end

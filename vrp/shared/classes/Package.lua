@@ -7,12 +7,16 @@
 -- ****************************************************************************
 Package = {}
 
-function Package.save(path, filelist)
+function Package.save(path, filelist, onlyFileList)
 	local pack = setmetatable({}, { __index = Package })
 	local fh = fileCreate(path)
 
-	for k, v in pairs(filelist) do
-		pack:addFile(fh, v)
+	if onlyFileList then
+		fileWrite(fh, toJSON(filelist))
+	else
+		for k, v in pairs(filelist) do
+			pack:addFile(fh, v)
+		end
 	end
 
 	fileClose(fh)

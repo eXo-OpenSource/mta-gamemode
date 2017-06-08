@@ -38,7 +38,7 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 	return false
 end
 
-function CompanyVehicle:constructor(Id, company, color, health, posionType, tunings, mileage)
+function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage)
 	self.m_Id = Id
 	self.m_Company = company
 	self.m_PositionType = positionType or VehiclePositionType.World

@@ -21,13 +21,13 @@
 	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
+	<map src="fraktionen/lspd-int.map" />
 	<map src="fraktionen/sfpd_int.map" />
 	<map src="fraktionen/sfpd_out.map" />
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
 	<map src="fraktionen/vatos.map" />
-	<map src="fraktionen/Exo-yaku.map" dimension="0" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/rescue.map" />
@@ -61,6 +61,7 @@
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
 	<map src="gangwar.map" />
+	<map src="bankLS.map" />
 
 	<map src="tankstellen_removals.map" />
 
@@ -68,8 +69,11 @@
 	<map src="Kartbahn.map" />
 
 	<map src="tankstelle-marcel.map"/>
-	
+
 	<map src="stuntfix.map"/>
-		
+
+	<map src="fishshop.map"/>
+
 	<map src="minigamescafe.map" dimension="2" />
+	<map src="tokyotown.map" dimension="0" />
 </meta>

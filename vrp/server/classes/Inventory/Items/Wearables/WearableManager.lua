@@ -98,3 +98,57 @@ function WearableManager:Event_onPlayerQuit(  )
 		destroyElement(source.m_Portables)
 	end
 end
+
+function WearableManager:removeAllWearables( player )
+	if player.m_Helmet then 
+		destroyElement(player.m_Helmet)
+		player.m_IsWearingHelmet = false
+		player.m_Helmet = false
+		player:setData("isFaceConcealed", false)
+	end
+	if player.m_Shirt then 
+		destroyElement(player.m_Shirt)
+		player.m_IsWearingShirt = false
+		player.m_Shirt = false
+	end
+	if player.m_Portables then 
+		destroyElement(player.m_Portables)
+		player.m_Portables = false
+		player.m_IsWearingPortables = false
+	end
+end
+
+function WearableManager:removeWearable( player, itemName, value )
+	if itemName then
+		local itemManager = ItemManager:getSingleton()
+		if itemManager then 
+			local classes = itemManager.m_ClassItems
+			if classes then 
+				local wearableClass = classes[itemName]
+				if wearableClass then 
+					if wearableClass == WearablePortables then 
+						destroyElement(player.m_Portables)
+						player.m_Portables = false
+						player.m_IsWearingPortables = false
+					elseif wearableClass == WearableHelmet then 
+						destroyElement(player.m_Helmet)
+						player.m_IsWearingHelmet = false
+						player.m_Helmet = false
+						player:setData("isFaceConcealed", false)
+					elseif wearableClass == WearableShirt then 
+						destroyElement(player.m_Shirt)
+						player.m_IsWearingShirt = false
+						player.m_Shirt = false
+					elseif wearableClass == WearableClothes then 
+						if getElementModel(player) == tonumber(value) then
+							player:setSkin(252)
+							player:meChat(true, "zieht seine Kleidung aus!")
+							setPedAnimation(player,"on_lookers","lkaround_in",1000,true,true,true)
+							setTimer(setPedAnimation,1000,1,player,false)
+						end
+					end
+				end
+			end
+		end
+	end
+end

@@ -11,7 +11,7 @@ function Main.resourceStart()
 	-- Instantiate Core
 	core = Core:new()
 	
-	
+	setWorldSpecialPropertyEnabled("extraairresistance",false)
 end
 addEventHandler("onClientResourceStart", resourceRoot, Main.resourceStart, true, "high+99999")
 

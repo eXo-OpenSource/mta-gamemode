@@ -28,7 +28,7 @@ end
 
 function JobHeliTransport:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_HELITRANSPORT) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT))
 		return false
 	end
 	return true
@@ -44,6 +44,7 @@ function JobHeliTransport:stop(player)
 end
 
 function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	self.m_VehData[vehicle] = {}
 	self.m_VehData[vehicle].package = createObject(1299, 0, 0, 0)
 	self.m_VehData[vehicle].package:attach(vehicle, -0.5, -1.5, -1)
@@ -87,10 +88,13 @@ function JobHeliTransport:onPickupLoad()
 		self.m_VehData[vehicle].load = true
 		self.m_PickupPos = vehicle:getPosition()
 		if client:getData("JobHeliTransport:Money") and client:getData("JobHeliTransport:Money") > 0 then
-			client:sendInfo(_("Du hast %d$ erhalten! Liefere die neue Ladung ab!", client, client:getData("JobHeliTransport:Money")))
-			client:giveMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
+			client:sendInfo(_("Dein Helikopter wurde wieder neu beladen.", client)) --TODO
+			local duration = getRealTime().timestamp - client.m_LastJobAction
+			client.m_LastJobAction = getRealTime().timestamp
+			StatisticsLogger:getSingleton():addJobLog(client, "farmerHeliTransport", duration, client:getData("JobHeliTransport:Money"))
+			client:addBankMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
-			client:givePoints(10)
+			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 		else
 			client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
 		end

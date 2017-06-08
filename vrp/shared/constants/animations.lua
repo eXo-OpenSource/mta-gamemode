@@ -1,17 +1,15 @@
-
-
 ANIMATION_GROUPS = {"Standard", "Tänze", "Sonstiges", "Vulgär"}
 
 ANIMATIONS = {
 	["Hände hoch"] = 			{["group"] = "Standard", ["block"] = "shop", ["animation"] = "SHP_HandsUp_Scr", ["loop"] = false, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["hinlegen"] = 				{["group"] = "Standard", ["block"] = "beach", ["animation"] = "bather", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["ducken"] = 				{["group"] = "Standard", ["block"] = "ped", ["animation"] = "cower", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["hinsetzen"] = 			{["group"] = "Standard", ["block"] = "beach", ["animation"] = "ParkSit_M_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["hinsetzen (Sessel)"] = 	{["group"] = "Standard", ["block"] = "BEACH", ["animation"] = "SitnWait_loop_W", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["sprechen"] = 				{["group"] = "Standard", ["block"] = "ped", ["animation"] = "IDLE_chat", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["winken"] = 				{["group"] = "Standard", ["block"] = "ON_LOOKERS", ["animation"] = "wave_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Hinlegen"] = 				{["group"] = "Standard", ["block"] = "beach", ["animation"] = "bather", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Ducken"] = 				{["group"] = "Standard", ["block"] = "ped", ["animation"] = "cower", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Hinsetzen (Sessel)"] = 	{["group"] = "Standard", ["block"] = "beach", ["animation"] = "ParkSit_M_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Hinsetzen"] = 			{["group"] = "Standard", ["block"] = "BEACH", ["animation"] = "SitnWait_loop_W", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Sprechen"] = 				{["group"] = "Standard", ["block"] = "ped", ["animation"] = "IDLE_chat", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Winken"] = 				{["group"] = "Standard", ["block"] = "ON_LOOKERS", ["animation"] = "wave_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Arme verschränken"] = 	{["group"] = "Standard", ["block"] = "cop_ambient", ["animation"] = "Coplook_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["lachen"] = 				{["group"] = "Standard", ["block"] = "rapping", ["animation"] = "Laugh_01", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Lachen"] = 				{["group"] = "Standard", ["block"] = "rapping", ["animation"] = "Laugh_01", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Links/Rechts schauen"] =	{["group"] = "Standard", ["block"] = "ped", ["animation"] = "roadcross", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Strecken"] =				{["group"] = "Standard", ["block"] = "playidles", ["animation"] = "stretch", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Handstand"] =				{["group"] = "Standard", ["block"] = "dam_jump", ["animation"] = "DAM_Dive_Loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
@@ -30,7 +28,6 @@ ANIMATIONS = {
 	["Fuck you"] = 				{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "fucku", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Po klatschen"] =			{["group"] = "Sonstiges", ["block"] = "sweet", ["animation"] = "sweet_ass_slap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Bitch Slap"] =			{["group"] = "Sonstiges", ["block"] = "misc", ["animation"] = "bitchslap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
---	["Crack"] =					{["group"] = "Sonstiges", ["block"] = "crack", ["animation"] = "crckdeth2 ", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = false},
 	["Überreichen"] =			{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "dealer_deal", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Bezahlen"] =				{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "drugs_buy", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Geld abheben"] =			{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "atm", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
@@ -40,6 +37,5 @@ ANIMATIONS = {
 	["Sex oben"] =				{["group"] = "Vulgär", ["block"] = "sex", ["animation"] = "sex_1_cum_p", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Sex unten"] =				{["group"] = "Vulgär", ["block"] = "sex", ["animation"] = "sex_1_cum_w", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Kotzen"] =				{["group"] = "Vulgär", ["block"] = "food", ["animation"] = "EAT_Vomit_P", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-
 }
 

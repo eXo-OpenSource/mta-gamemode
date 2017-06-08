@@ -11,7 +11,9 @@
 _root = getRootElement()
 _types = { "player", "team", "vehicle", "resource", "bans", "server", "admin" }
 _settings = nil
-
+_giveWeapon = giveWeapon
+_takeWeapon = takeWeapon
+_takeAllWeapons = takeAllWeapons
 aPlayers = {}
 aLogMessages = {}
 aInteriors = {}
@@ -31,6 +33,74 @@ function notifyPlayerLoggedIn(player)
 	if unread > 0 then
 		outputChatBox( unread .. " unread Admin message" .. ( unread==1 and "" or "s" ), player, 255, 0, 0 )
 	end
+end
+
+function giveWeapon( player, weapon, ammo, current)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) and player and ammo then
+			if ammo ~= 0 then
+				local wId = getElementData(object, "a:weapon:id")
+				if wId ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
+	else 
+		if player and ammo then
+			if ammo ~= 0 then
+				local currentWeapon = getPlayerWeapon(player,slot)
+				if currentWeapon ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
+	end
+	local result = _giveWeapon(player, weapon, ammo, current)
+	return result
+end
+
+function takeWeapon( player, weapon, ammo)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) then
+			local wId = getElementData(object, "a:weapon:id")
+			local tAmmo = getPedTotalAmmo (player, slot)
+			if not ammo then
+				if (wId == weapon ) then
+					triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+				end
+			else
+				if ammo and tAmmo then
+					if ( wId == weapon and (ammo >= tAmmo)) then 
+						triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+					end
+				end
+			end
+		end
+	end
+	local result =_takeWeapon(player, weapon, ammo)
+	return result
+end
+
+function takeAllWeapons( player ) 
+	if player ~= getRootElement() then
+		if player then 
+			if getElementHealth(player) > 0 then 
+				triggerEvent("WeaponAttach:removeAllWeapons", player)
+			end
+		end
+	else
+		for key, pl in ipairs(getElementsByType("player")) do 
+			if getElementHealth(pl) > 0 then 
+				triggerEvent("WeaponAttach:removeAllWeapons", pl)
+			end
+		end
+	end
+	local result = _takeAllWeapons( player )
+	return result
 end
 
 addEventHandler ( "onResourceStart", _root, function ( resource )
@@ -976,10 +1046,12 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 				if ( interior["id"] == data ) then
 					local vehicle = getPedOccupiedVehicle ( player )
 					setElementInterior ( player, interior["world"] )
+					triggerEvent("onElementInteriorChange", player, interior["world"])
 					local x, y, z = interior["x"] or 0, interior["y"] or 0, interior["z"] or 0
 					local rot = interior["r"] or 0
 					if ( vehicle ) then 
 						setElementInterior ( vehicle, interior["world"] )
+						triggerEvent("onElementInteriorChange", vehicle, interior["world"])
 						setElementPosition ( vehicle, x, y, z + 0.2 )
 					else
 						setElementPosition ( player, x, y, z + 0.2 )
@@ -987,6 +1059,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					end
 					action = "interior"
 					mdata = data
+					
 				end
 			end
 		elseif ( action == "setdimension" ) then
@@ -997,6 +1070,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					action = nil
 				end
 				mdata = dimension
+				triggerEvent("onElementDimensionChange", player, dimension)
 			else
 				action = nil
 			end
@@ -1040,7 +1114,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 			local vehicle = getPedOccupiedVehicle ( player )
 			if ( vehicle ) then
 				setElementModel(vehicle, data)
-				fixVehicle(vehicle)
+				vehicle:fix()
 			else
 				local x, y, z = getElementPosition ( player )
 				local r = getPedRotation ( player )
@@ -1048,6 +1122,8 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 				vehicle = createVehicle ( data, x, y, z, 0, 0, r )
 				setElementDimension ( vehicle, getElementDimension ( player ) )
 				setElementInterior ( vehicle, getElementInterior ( player ) )
+				triggerEvent("onElementInteriorChange", vehicle, getElementInterior ( player ))
+				triggerEvent("onElementDimensionChange", vehicle, getElementDimension ( player ))
 				warpPedIntoVehicle ( player, vehicle )
 				setElementVelocity ( vehicle, vx, vy, vz )
 			end
@@ -1055,6 +1131,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 		elseif ( action == "giveweapon" ) then
 			if ( giveWeapon ( player, data, additional, true ) ) then
 				mdata = getWeaponNameFromID ( data )
+				
 				more = additional
 			else
 				action = nil
@@ -1087,6 +1164,8 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 					fadeCamera ( p, false, 1, 0, 0, 0 )
 					setElementDimension ( p, getElementDimension ( to ) )
 					setElementInterior ( p, getElementInterior ( to ) )
+					triggerEvent("onElementInteriorChange", p, getElementInterior ( to ))
+					triggerEvent("onElementDimensionChange", p, getElementDimension ( to ))
 					setTimer ( fadeCamera, 1000, 1, p, true, 1 )
 				end
       		  	if ( isPedInVehicle ( to ) ) then
@@ -1140,7 +1219,7 @@ addEventHandler ( "aVehicle", _root, function ( player, action, data )
 		if ( vehicle ) then
 			local mdata = ""
 			if ( action == "repair" ) then
-				fixVehicle ( vehicle )
+				vehicle:fix()
 				local rx, ry, rz = getVehicleRotation ( vehicle )
 				if ( rx > 110 ) and ( rx < 250 ) then
 					local x, y, z = getElementPosition ( vehicle )
@@ -1478,6 +1557,7 @@ addEventHandler ( "aAdminChat", _root, function ( chat )
 	outputServerLog ("(ADMIN CHAT) "..tostring(getPlayerName(source))..": "..chat)
 end )
 
+--[[
 addEventHandler('onElementDataChange', root,
 	function(dataName, oldValue )
 		if getElementType(source)=='player' and checkClient( false, source, 'onElementDataChange', dataName ) then
@@ -1486,6 +1566,7 @@ addEventHandler('onElementDataChange', root,
 		end
 	end
 )
+--]]
 
 -- returns true if there is trouble
 function checkClient(checkAccess,player,...)
@@ -1530,3 +1611,5 @@ function checkNickOnChange(old, new)
 	end
 end
 addEventHandler("onPlayerChangeNick", root, checkNickOnChange)
+
+

@@ -37,9 +37,11 @@ function WorldItem:collect(player)
 		self.m_Item:removeFromWorld(player, self)
 	end
 
-	player:getInventory():giveItem(self.m_ItemName, 1)
-
-	delete(self)
+	if player:getInventory():giveItem(self.m_ItemName, 1) then
+		delete(self)
+		return true
+	end
+	return false
 end
 
 function WorldItem:onClick(player)

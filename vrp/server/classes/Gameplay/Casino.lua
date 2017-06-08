@@ -42,6 +42,17 @@ function Casino:constructor()
 	Slotmachine:new(2223.2060546875, 1571.296875, 1008.959375, 0, 0, 120,1)
 	Slotmachine:new(2229.0947265625, 1563.3232421875, 1008.959375, 0, 0, 120,1)
 
+	if EVENT_EASTER then
+		EasterSlotmachine:new(1484.71, -1779.22, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1496.80, -1779.20, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1496.69, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1485.75, -1795.99, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1474.80, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1464.18, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1452.44, -1789.24, 14, 0, 0, 90, 0, 0)
+		EasterSlotmachine:new(1464.05, -1779.20, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1475.17, -1779.20, 14, 0, 0, 0, 0, 0)
+	end
 end
 
 function Casino:onChessMarkerHit(hitElement, dim)
@@ -52,7 +63,7 @@ end
 
 function Casino:startMultiplayerGame(game, target)
 	if target and isElement(target) then
-		target:triggerEvent("questionBox", _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
+		QuestionBox:new(client, target, _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
 		client:sendShortMessage(_("Du hast eine %s-Anfrage an %s gesendet!", client, Casino.MultiPlayerGameNames[game], target:getName()))
 	else
 		client:sendInfo(_("Spieler nicht gefunden!", client))

@@ -19,24 +19,27 @@ function GUICheckbox:constructor(posX, posY, width, height, text, parent)
 	GUIColorable.constructor(self)
 
 	self.m_Checked = false
+	self.m_Enabled = true
 end
 
 function GUICheckbox:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox.png")
-	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true)
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox.png", 0, 0, 0, self:getColor())
+	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true, false, false, true)
 
 	if self.m_Checked then
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox_checked.png")
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox_checked.png", 0, 0, 0, self:getColor())
 	end
 	dxSetBlendMode("blend")
 end
 
 function GUICheckbox:onInternalLeftClick()
-	self:setChecked(not self:isChecked())
+	if self.m_Enabled then
+		self:setChecked(not self:isChecked())
 
-	if self.onChange then
-		self.onChange(self:isChecked())
+		if self.onChange then
+			self.onChange(self:isChecked())
+		end
 	end
 end
 
@@ -47,7 +50,16 @@ end
 function GUICheckbox:setChecked(checked)
 	checkArgs("GUICheckbox:setChecked", "boolean")
 	self.m_Checked = checked
-
 	self:anyChange()
 	return self
+end
+
+function GUICheckbox:setEnabled(state)
+	self:setColor(state and Color.White or Color.LightGrey)
+	self.m_Enabled = state
+	self:anyChange()
+end
+
+function GUICheckbox:isEnabled()
+	return self.m_Enabled
 end

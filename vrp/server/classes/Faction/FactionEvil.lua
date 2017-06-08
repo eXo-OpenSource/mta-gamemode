@@ -30,9 +30,6 @@ function FactionEvil:constructor()
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
 	addEventHandler("factionEvilFailedRaid", root, bind(self.Event_FailedRaid, self))
-
-
-
 end
 
 function FactionEvil:destructor()
@@ -122,9 +119,17 @@ function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	end
 end
 
+function FactionEvil:sendWarning(text, header, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+end
+
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
+			setPedArmor(player,100)
+			player:sendInfo(_("Du hast dir eine neue Schutzweste geholt!",player))
 			player:triggerEvent("showFactionWeaponShopGUI")
 		else
 			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))
@@ -143,12 +148,17 @@ function FactionEvil:onDepotClicked(button, state, player)
 end
 
 function FactionEvil:loadYakGates(factionId)
+
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(980, Vector3(2423.81640625,-2089.4482421875,14.677430152893), Vector3(0, 0, 270), Vector3(2423.81640625,-2089.4482421875,8.928430557251))
+	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.6))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
+	local elevator = Elevator:new()
+	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
+	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
+	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
@@ -157,44 +167,47 @@ function FactionEvil:onBarrierGateHit(player, gate)
 	else
 		return false
 	end
-
 end
 
 function FactionEvil:Event_StartRaid(target)
 	if client:getFaction() and client:getFaction():isEvilFaction() then
-		if not target:isFactionDuty() and not target:isCompanyDuty() then
-			if client.vehicle then
-				client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
-				return
-			end
-			if target:getPublicSync("supportMode") then
-				client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
-				return
-			end
-			if target:getInterior() > 0 then
-				client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
-				return
-			end
-			if math.floor(target:getPlayTime()/60) < 10 then
-				client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
-				return
-			end
-			if target:getMoney() > 0 then
-
-				local targetName = target:getName()
-				if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
-					client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
+		if target and isElement(target) and target:isLoggedIn() then
+			if not target:isFactionDuty() and not target:isCompanyDuty() then
+				if client.vehicle then
+					client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
 					return
 				end
-				target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
-				target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
-				target:triggerEvent("CountdownStop",  15, "Überfallen in")
-				target:triggerEvent("Countdown", 15, "Überfallen in")
-				client:triggerEvent("Countdown", 15, "Überfallen in")
-				client:triggerEvent("factionEvilStartRaid", target)
-				self.m_Raids[targetName] = getRealTime().timestamp
+				if target:getPublicSync("supportMode") then
+					client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
+					return
+				end
+				if target:getInterior() > 0 then
+					client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
+					return
+				end
+				if math.floor(target:getPlayTime()/60) < 10 then
+					client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
+					return
+				end
+				if target:getMoney() > 0 then
+
+					local targetName = target:getName()
+					if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
+						client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
+						return
+					end
+					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
+					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
+					target:triggerEvent("CountdownStop",  15, "Überfallen in")
+					target:triggerEvent("Countdown", 15, "Überfallen in")
+					client:triggerEvent("Countdown", 15, "Überfallen in")
+					client:triggerEvent("factionEvilStartRaid", target)
+					self.m_Raids[targetName] = getRealTime().timestamp
+				else
+					client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+				end
 			else
-				client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+				client:sendError(_("Der Spieler ist nicht mehr online!", client))
 			end
 		else
 			client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))

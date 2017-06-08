@@ -374,6 +374,9 @@ function CompanyManager:Event_toggleDuty()
 			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 			client:setPublicSync("Company:Duty",true)
             takeAllWeapons(client)
+			if company.m_Id == CompanyStaticId.SANNEWS then
+				giveWeapon(client, 43, 50) -- Camera
+			end
             if company.start then
                 company:start(client)
             end
@@ -388,24 +391,4 @@ function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
 	end
-end
-
-function CompanyManager:sendAllToClient(client)
-	--[[
-	local vehicleTab = {}
-	for i, company in pairs(CompanyManager.Map) do
-		if companyVehicleShaders[company:getId()] then
-			for i, v in pairs(company.m_Vehicles) do
-				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
-					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
-					if shaderInfo.shaderEnabled then
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
-					end
-				end
-			end
-		end
-	end
-
-	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
-	]]
 end

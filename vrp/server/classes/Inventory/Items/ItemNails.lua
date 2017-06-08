@@ -47,11 +47,11 @@ function ItemNails:use(player)
 					addEventHandler("onColShapeLeave", object.col, bind(self.onColShapeLeave, self) )
 					local pos = player:getPosition()
 					FactionState:getSingleton():sendShortMessage(_("%s hat ein Nagelband bei %s/%s hingelegt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
-					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Nagelband", pos.x..","..pos.y..","..pos.z) 
+					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Nagelband", pos.x..","..pos.y..","..pos.z)
 				end
 			)
 		else
-			player:sendError(_("Es sind bereits %d/%d Nagelbänder ausgelegt!", player, self:count(), MAX_SPEEDCAMS))
+			player:sendError(_("Es sind bereits %d/%d Nagelbänder ausgelegt!", player, self:count(), MAX_NAILS))
 		end
 	else
 		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))

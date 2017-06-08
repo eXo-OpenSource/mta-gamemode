@@ -758,3 +758,14 @@ function isVehicleOnGround(vehicle)
 	end
 end
 function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end
+
+function getColorNameFromVehicle(c1, c2)
+	local color1 = CAR_COLORS_FROM_ID[c1] or "Unerkannt"
+	local color2 = CAR_COLORS_FROM_ID[c2] or "Unerkannt"
+	
+	if color1 ~= color2 then
+		return color1 .. " & " .. color2
+	else
+		return color1
+	end
+end

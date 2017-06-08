@@ -59,7 +59,7 @@ function ScoreboardGUI:onHide()
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 
 	-- //Right Click Shoot Bugfix
-	if not getElementData(localPlayer,"no_driveby") == true then
+	if not getElementData(localPlayer,"no_driveby") and not FishingRod:isInstantiated() then
 		toggleControl("next_weapon", true)
 		toggleControl("previous_weapon", true)
 		setTimer(setPedWeaponSlot, 500, 1, localPlayer, self.m_OldWeaponSlot)
@@ -176,7 +176,7 @@ function ScoreboardGUI:insertPlayers()
 			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
+			player:getCompany() and player:getCompany():getShortName()  or "- Keins -",
 			string.short(gname, 16),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),

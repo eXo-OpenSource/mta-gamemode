@@ -16,15 +16,46 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	self:addItem(_("Fahrzeug: %s", element:getName())):setTextColor(Color.LightBlue)
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
-			self:addItem(_"Auf-/Zuschließen",
+			self:addItem(_("%sschließen", element:isLocked() and "Auf" or "Zu"),
 				function()
 					if self:getElement() then
 						triggerServerEvent("vehicleLock", self:getElement())
 					end
 				end
-			)
+			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
+			if localPlayer:getGroupName() == getElementData(element, "OwnerName") and (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
+				if getElementData(element, "forSale") == true then
+					self:addItem(_"Firma: Verkauf beenden",
+						function()
+							if self:getElement() then
+								delete(self)
+								QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+								function ()
+									triggerServerEvent("groupStopVehicleForSale", self:getElement())
+								end)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Home)
+				else
+					self:addItem(_"Firma: zum Verkauf anbieten",
+						function()
+							if self:getElement() then
+								delete(self)
+								InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
+								function (amount)
+									if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
+										triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
+									else
+										ErrorBox:new(_("Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"))
+									end
+								end, true)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Home)
+				end
+			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
@@ -33,7 +64,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuRespawn:new(posX, posY, element), element)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Home)
 			else
 				self:addItem(_"Respawn",
 					function()
@@ -41,7 +72,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							triggerServerEvent("vehicleRespawn", self:getElement())
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Home)
 			end
 		end
 
@@ -52,19 +83,18 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("factionRescueToggleLadder", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Arrows)
 		end
-
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
-				self:addItem(_("Items >>>", item),
+				self:addItem(_("Items >>>"),
 					function()
 						if self:getElement() then
 							delete(self)
 							ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuFactionItems:new(posX, posY, element), element)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.List)
 			end
 			if localPlayer:getFaction():getId() == 2 then
 				self:addItem(_"Wanze anbringen",
@@ -73,17 +103,26 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								triggerServerEvent("factionStateAttachBug", self:getElement())
 							end
 						end
-					)
+					):setIcon(FontAwesomeSymbols.Bug)
 				end
+			if localPlayer.vehicleSeat == 0 and getElementData(element, "StateVehicle") then
+				self:addItem(_("Radar %s", getElementData(element, "speedCamEnabled") and "stoppen" or "starten"),
+					function()
+						if self:getElement() then
+							triggerServerEvent("SpeedCam:onStartClick", self:getElement())
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Speedo)
+			end
 		end
-		if getElementData(element, "OwnerName") == localPlayer.name then
+		if getElementData(element, "OwnerName") == localPlayer.name and getElementData(element, "OwnerType") == "player" then
 			self:addItem(_"Schlüssel",
 				function()
 					if self:getElement() then
 						VehicleKeyGUI:new(self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Key)
 
 			if getVehicleInteractType(element) == "Special" then
 				self:addItem(_"Repairkit: reparieren",
@@ -92,7 +131,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							triggerServerEvent("onMouseMenuRepairkit", self:getElement())
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Wrench)
 			end
 
 			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
@@ -102,22 +141,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Music)
 			end
-			--[[self:addItem(_"An Server verkaufen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("vehicleSell", self:getElement())
-					end
-				end
-			)
-			self:addItem(_"An Spieler verkaufen",
-				function()
-					if self:getElement() then
-						outputChatBox("[I] Begib dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200, 200, 0, true)
-					end
-				end
-			)]]
 		end
 
 		if element:getVehicleType() ~= VehicleType.Trailer then
@@ -127,7 +152,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("vehicleEmpty", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.SignOut)
 		end
 		--[[if localPlayer:isInVehicle() then
 			self:addItem(_"Kurzschließen",
@@ -136,7 +161,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("vehicleHotwire", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Random)
 		end
 		]]
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
@@ -145,14 +170,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					function()
 						triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(2912, localPlayer) > 0 then
 				self:addItem(_"Kiste aufladen",
 					function()
 						triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Up)
 			end
 		end
 
@@ -162,14 +187,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					function()
 						triggerServerEvent("bankRobberyDeloadBag", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(1550, localPlayer) > 0 then
 				self:addItem(_"Geldsack aufladen",
 					function()
 						triggerServerEvent("bankRobberyLoadBag", self:getElement(), element)
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Double_Up)
 			end
 		end
 
@@ -181,7 +206,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						triggerServerEvent("mechanicRepair", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Wrench)
 			if getElementData(element, "Handbrake") == true then
 				self:addItem(_"Mechaniker: Handbremse lösen",
 					function()
@@ -190,7 +215,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 							delete(self)
 						end
 					end
-				)
+				):setIcon(FontAwesomeSymbols.Cogs)
 			end
 		end
 	end
@@ -202,9 +227,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuAdmin:new(posX, posY, element), element)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Star)
 	end
-	if #element.occupants > 0 then
+	if element.occupants and table.size(element.occupants) > 0 then
 		self:addItem(_"Insassen >>>",
 			function()
 				if self:getElement() then
@@ -212,14 +237,58 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(PassengerMouseMenu:new(posX, posY, element), element)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Group)
+	end
+
+	if element:getVehicleType() == VehicleType.Helicopter and element == localPlayer.vehicle and localPlayer.vehicleSeat ~= 0 then
+		self:addItem(_"Abseilen",
+			function()
+				if self:getElement() then
+					delete(self)
+					exports.helicopterrope:abseilBind()
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Long_Down)
+	end
+
+	if getElementData(element, "OwnerType") == "group" and getElementData(element, "forSale") == true then
+		self:addItem(_"Tunings anzeigen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleGetTuningList", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Cart)
+		self:addItem(_"Fahrzeug kaufen",
+			function()
+				if self:getElement() then
+					delete(self)
+					QuestionBox:new(
+						_("Möchtest du das Fahrzeug für %d$ kaufen?", getElementData(element, "forSalePrice")),
+						function() 	triggerServerEvent("groupBuyVehicle", self:getElement()) end
+					)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Cart)
+	end
+
+	if VEHICLE_MODEL_SPAWNS[element:getModel()] and getElementData(element, "OwnerName") == localPlayer.name then
+		self:addItem(_"Als Spawnpunkt festlegen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("onPlayerUpdateSpawnLocation", self:getElement(), SPAWN_LOCATIONS.VEHICLE)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Waypoint)
 	end
 
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
-			delete( self )
+			delete(self)
 		end
 	end
+
+	self:adjustWidth()
 end
 
 function VehicleMouseMenu:getAttachedElement(model, element)

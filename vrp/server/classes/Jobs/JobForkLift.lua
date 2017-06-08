@@ -29,7 +29,7 @@ end
 
 function JobForkLift:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FORKLIFT) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT))
 		return false
 	end
 	return true
@@ -42,14 +42,18 @@ end
 
 function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, true)
+	player.m_LastJobAction = getRealTime().timestamp
 end
 
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		client:giveMoney(MONEY_PER_BOX, "Gabelstapler-Job")
+		local duration = getRealTime().timestamp - client.m_LastJobAction
+		client.m_LastJobAction = getRealTime().timestamp
+		StatisticsLogger:getSingleton():addJobLog(client, "jobForkLift", duration, MONEY_PER_BOX)
+		client:addBankMoney(MONEY_PER_BOX, "Gabelstapler-Job")
 		if chance(50) then
-			client:givePoints(1)
+			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	end
 end

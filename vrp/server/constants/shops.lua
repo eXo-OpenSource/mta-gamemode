@@ -133,8 +133,19 @@ SHOP_TYPES = {
 		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158},
 		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)},
 		["Class"] = CJClothes
+	},
+	[19] = {
+		["Name"] = "Anglershop",
+		["Marker"] = Vector3(393.19, -1902.86, 6.95),
+		["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop
+	},
+	[20] = {
+		["Name"] = "Tankstelle ohne Shop",
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = GasStation
 	}
-
 }
 
 SHOP_ITEMS = {
@@ -178,6 +189,13 @@ SHOP_ITEMS = {
 		["Monster"] = 25,
 		["Shot"] = 8,
 		["Cuba-Libre"] = 12
+	};
+	["Anglershop"] = {
+		["Angelrute"] = 150,
+		["Kleine Kühltasche"] = 50,
+		["Kühltasche"] = 100,
+		["Kühlbox"] = 250,
+		--["Köder"] = 5,
 	};
 }
 
@@ -311,6 +329,10 @@ SHOP_FUEL = {
 	["Tierra Roboda 1"] = {
 		["Marker"] = Vector3(-1465.9541015625,1864.23046875,32),
 		["FuelStation"] = {-1465.5, 1868.2, 33.4, 3.239}
+	},
+	["LS-Airport Tankstelle"] = {
+		["Marker"] = Vector3(2029.56, -2418.43, 12.7),
+		["FuelStation"] = { 2029.52, -2404.90, 14, 180}
 	}
 }
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}

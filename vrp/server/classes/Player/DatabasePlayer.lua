@@ -26,9 +26,7 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	if self.m_DoNotSave then
-		self:save()
-	end
+	self:save()
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -64,7 +62,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_GarageType = 0
 	self.m_HangarType = 0
 	self.m_LastGarageEntrance = 0
-	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
+	self.m_SpawnLocation = SPAWN_LOCATIONS.DEFAULT
 	self.m_Collectables = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
 	self.m_DMMatchID = 0
@@ -80,11 +78,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	if self.m_DoNotSave then
-		return
-	end
-
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, STVO, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel, CJClothes FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT * FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -138,14 +132,15 @@ function DatabasePlayer:load()
 	if row.CompanyId and row.CompanyId ~= 0 then
 		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
 	end
-	--self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
+
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_HangarType = row.HangarType
 	self.m_LastHangarEntrance = row.LastHangarEntrance
-	self.m_SpawnLocation = row.SpawnLocation
+	self.m_SpawnLocationProperty = fromJSON(row.SpawnLocationProperty or "")
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_GunBox = fromJSON(row.GunBox or "")
+	self.m_FishSpeciesCaught = fromJSON(row.FishSpeciesCaught or "[[]]")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_HasTheory = toboolean(row.HasTheory)
 	self.m_HasDrivingLicense = toboolean(row.HasDrivingLicense)
@@ -169,6 +164,9 @@ function DatabasePlayer:load()
 		self:setSessionId(hash("md5", self:getSerial()..self:getName()..self.m_Account:getLastLogin()))
 	end
 
+	self:setSpawnLocation(row.SpawnLocation)
+	self:setFishingSkill(row.FishingSkill)
+	self:setFishingLevel(row.FishingLevel)
 	self:setWeaponLevel(row.WeaponLevel)
 	self:setVehicleLevel(row.VehicleLevel)
 	self:setSkinLevel(row.SkinLevel)
@@ -189,9 +187,6 @@ function DatabasePlayer:save()
 	if self:isGuest() then
 		return false
 	end
-	if self.m_DoNotSave then
-		return false
-	end
 	if self.m_LoggedIn then
 		self:saveStatistics()
 
@@ -205,8 +200,8 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
 	end
 	return false
 end
@@ -251,6 +246,7 @@ function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: Only Databseside implemented
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
+function DatabasePlayer:getSpawnLocationProperty() return self.m_SpawnLocationProperty end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:getCompany() return self.m_Company end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
@@ -260,13 +256,17 @@ function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getPaNote() return self.m_PaNote end
 function DatabasePlayer:getSTVO() return self.m_STVO end
 function DatabasePlayer:getBail() return self.m_Bail end
+function DatabasePlayer:isStateCuffed() return self.m_StateCuffed end
+function DatabasePlayer:getFishingSkill() return self.m_FishingSkill end
+function DatabasePlayer:getFishingLevel() return self.m_FishingLevel end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) self:setPublicSync("Money", money) end end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setSpawnerVehicle(vehicle) self.m_SpawnerVehicle = vehicle end
-function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
+function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l if self:isActive() then self:setPrivateSync("SpawnLocation", self.m_SpawnLocation) end end
+function DatabasePlayer:setSpawnLocationProperty(prop) self.m_SpawnLocationProperty = prop end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
@@ -275,6 +275,9 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 function DatabasePlayer:setPaNote(note) self.m_PaNote = note end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
 function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
+function DatabasePlayer:setStateCuffed(state) self.m_StateCuffed = state end
+function DatabasePlayer:setFishingSkill(points) self.m_FishingSkill = math.floor(points or 0) if self:isActive() then self:setPrivateSync("FishingSkill", self.m_FishingSkill) end end
+function DatabasePlayer:setFishingLevel(level) self.m_FishingLevel = level or 0	if self:isActive() then self:setPrivateSync("FishingLevel", self.m_FishingLevel) end end
 
 function DatabasePlayer:loadStatistics()
 	local row = sql:queryFetchSingle("SELECT * FROM ??_stats WHERE Id = ?", sql:getPrefix(), self.m_Id)
@@ -316,7 +319,11 @@ function DatabasePlayer:increaseStatistics(stat, value)
 	else
 		outputDebug("Error increasing Stat. "..stat.." for Player Id: "..self.m_Id.."! DB-Column missing!")
 	end
+end
 
+function DatabasePlayer:getStatistics(stat)
+	if not self.m_Statistics then return end
+	return self.m_Statistics[stat]
 end
 
 function DatabasePlayer:setGroup(group)
@@ -387,10 +394,12 @@ end
 function DatabasePlayer:giveMoney(amount, reason)
 	self:setMoney(self:getMoney() + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
+	return true
 end
 
 function DatabasePlayer:takeMoney(amount, reason)
 	self:giveMoney(-amount, reason)
+	return true
 end
 
 function DatabasePlayer:setXP(xp)
@@ -486,17 +495,28 @@ end
 function DatabasePlayer:setAlcoholLevel(level, oldLevel)
 	self.m_AlcoholLevel = math.round(level, 2)
 
-	if level > MAX_ALCOHOL_LEVEL then
-		self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
-	elseif level < 0 then
-		self.m_AlcoholLevel = 0
-	end
-
 	if self:isActive() then
-		if level == MAX_ALCOHOL_LEVEL then
+		if level > MAX_ALCOHOL_LEVEL then
+			self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
+		elseif level < 0 then
+			self.m_AlcoholLevel = 0
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		elseif level  >= 2 then
+			setPedWalkingStyle(self,126)
+		elseif level <= 2 then
+			toggleControl(self,"sprint",true)
+			setControlState(self,"walk",false)
+		elseif level == 0 then
+			toggleControl(self,"sprint",true)
+			setPedWalkingStyle(self,0)
+		end
+
+		if level >= MAX_ALCOHOL_LEVEL then
 			self:sendShortMessage(_("Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!", self))
+			self:setAlcoholLevel(0)
 			self:kill()
-			self:setAlcoholLevel(MAX_ALCOHOL_LEVEL-1)
+			return
 		end
 		if oldLevel then
 			local diff = self.m_AlcoholLevel - oldLevel
@@ -522,9 +542,10 @@ end
 function DatabasePlayer:addBankMoney(amount, reason)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():addMoney(amount)
-		if self.m_BankMoney >= 10000000 then
+
+		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)
-		elseif self.m_BankMoney >= 1000000 then
+		elseif self:getBankAccount():getMoney() >= 1000000 then
 			self:giveAchievement(21)
 		end
 		return true
@@ -825,4 +846,27 @@ function DatabasePlayer:setSTVO(stvo)
 	if self:isActive() then
 		self:setPublicSync("STVO", self.m_STVO)
 	end
+end
+
+function DatabasePlayer:giveFishingSkill(points)
+	self.m_FishingSkill = self.m_FishingSkill + math.floor(points)
+	if self:isActive() then self:setPrivateSync("FishingSkill", self.m_FishingSkill) end
+end
+
+function DatabasePlayer:hasFishSpeciesCaught(fishId)
+	for _, species in pairs(self.m_FishSpeciesCaught) do
+		if species == fishId then
+			return true
+		end
+	end
+end
+
+function DatabasePlayer:addFishSpecies(fishId)
+	if not self:hasFishSpeciesCaught(fishId) then
+		table.insert(self.m_FishSpeciesCaught, fishId)
+	end
+end
+
+function DatabasePlayer:getFishSpeciesCaughtCount()
+	return #self.m_FishSpeciesCaught
 end

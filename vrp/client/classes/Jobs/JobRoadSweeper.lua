@@ -14,7 +14,7 @@ function JobRoadSweeper:constructor()
 	self.m_Rubbish = {}
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), _(HelpTexts.Jobs.RoadSweeper))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), "jobs.roadsweeper")
 end
 
 function JobRoadSweeper:start()

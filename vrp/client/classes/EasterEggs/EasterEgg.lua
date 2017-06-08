@@ -4,6 +4,7 @@ function EasterEgg:constructor()
 	EasterEgg.Scream:new()
 	EasterEgg.QRCode:new()
 	EasterEgg.DrWho:new()
+	EasterEgg.PewPew:new()
 
 	-- Doge EasterEgg
 	self.m_DogeString  =

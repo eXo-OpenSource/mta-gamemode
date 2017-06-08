@@ -20,6 +20,9 @@ ELSSystem.BlinkMarkers ={
 	[598] = {["y"] = -1.5, ["z"] = 0.4},
 	[601] = {["y"] = -2.2, ["z"] = 1.1},
 	[528] = {["y"] = -2.2, ["z"] = 1.1},
+	[416] = {["y"] = -3.6, ["z"] = 1.7},
+	[544] = {["y"] = -3.6, ["z"] = 1.5},
+	[407] = {["y"] = -3.5, ["z"] = 1.5},
 }
 
 function ELSSystem:constructor(vehicle)
@@ -51,7 +54,7 @@ function ELSSystem:destructor( )
 		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
 		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
-	for i = 1,8 do
+	for i = 1,6 do
 		if self.m_Markers[i] then
 			destroyElement( self.m_Markers[i] )
 		end
@@ -101,7 +104,7 @@ function ELSSystem:setLightPeriod(press, key, state, period)
 	if getVehicleOccupant(self.m_Vehicle) == press then
 		if state == "up" then self.m_LightSystem = not self.m_LightSystem end
 
-		triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period)
+		triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period, true)
 
 		if state == "down" then
 			triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle)
@@ -135,10 +138,4 @@ function ELSSystem:createBlinkMarkers( )
 		self.m_Markers[i] = createMarker(pos, "corona", 0.14, 200, 0, 0, 0)
 		self.m_Markers[i]:attach(self.m_Vehicle, -1+(i*0.3), offsetY, offsetZ)
 	end
-
-	self.m_Markers[7] = createMarker(pos, "corona", 0.1, 200, 0, 0, 0)
-	self.m_Markers[7]:attach(self.m_Vehicle, -1+0.1, offsetY, offsetZ)
-
-	self.m_Markers[8] = createMarker(pos, "corona", 0.1, 200, 0, 0, 0)
-	self.m_Markers[8]:attach(self.m_Vehicle, -1+(6*0.3), offsetY, offsetZ)
 end

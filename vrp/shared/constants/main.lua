@@ -1,21 +1,43 @@
-
+PROJECT_NAME = "eXo Reallife"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
--- TODO: Change before release
+-- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
+MAX_FISHING_LEVEL = 10
 
+-- EVENTS:
+EVENT_EASTER = false
+
+-- BONI:
+PAYDAY_NOOB_BONUS = 500 -- dollar
+PAYDAY_NOOB_BONUS_MAX_PLAYTIME = 50 -- hours
+
+--TEXTURES:
+TEXTURE_STATUS = {
+	["Testing"] = 0,
+	["Pending"] = 1,
+	["Active"] = 2,
+	["Declined"] = 3
+}
+local status = {}
+for k, v in pairs(TEXTURE_STATUS) do
+	status[k] = v
+	status[v] = k
+end
+TEXTURE_STATUS = status
+
+--ALCOHOL:
 MAX_ALCOHOL_LEVEL = 6
 ALCOHOL_LOSS_INTERVAL =  5*60 -- IN SECONDS
 ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
-PROJECT_NAME = "eXo Reallife"
-
+--JOB_LEVELS:
 JOB_LEVEL_PIZZA = 0
 JOB_LEVEL_SWEEPER = 0
 JOB_LEVEL_LOGISTICAN = 1
@@ -27,7 +49,9 @@ JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 
+JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+--USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -49,6 +73,7 @@ for k, v in pairs(RANK) do
 end
 RANK = r2
 
+--ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
@@ -64,14 +89,14 @@ ADMIN_RANK_PERMISSION = {
 	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
-	["smode"] = RANK.Clanmember,
+	["smode"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
 	["respawnRadius"] = RANK.Supporter,
 	["clearChat"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
-	["tp"] = RANK.Clanmember,
+	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["gotocords"] = RANK.Supporter,
@@ -86,11 +111,14 @@ ADMIN_RANK_PERMISSION = {
 	["offlineNickchange"] = RANK.Moderator,
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
-	["removeWarn"] = RANK.Administrator
+	["removeWarn"] = RANK.Administrator,
+	["checkOverlappingVehicles"] = RANK.Administrator,
+	["showDebugElementView"] = RANK.Administrator, --F10 view
 }
 
 GroupRank = {
-	Normal = 1,
+	Normal = 0,
+	Rank1 = 1,
 	Rank2 = 2,
 	Rank3 = 3,
 	Rank4 = 4,
@@ -269,6 +297,7 @@ Tasks = {
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
+VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
 
@@ -284,8 +313,8 @@ HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 20000
-WEAPONTRUCK_MAX_LOAD_STATE = 40000
+WEAPONTRUCK_MAX_LOAD = 60000
+WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.3, 0.3), ["rot"] = Vector3(0, 0, 180)},
@@ -514,3 +543,69 @@ WEAPON_LEVEL = {
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
+
+
+FISHING_BAGS = {
+	["Kühlbox"] = {max = 65, level = 8},
+	["Kühltasche"] = {max = 25, level = 4},
+	["Kleine Kühltasche"] = {max = 15, level = 0},
+}
+
+-- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
+FISHING_LEVELS = {
+	[1] = 225,
+	[2] = 900,
+	[3] = 2025,
+	[4] = 3600,
+	[5] = 5625,
+	[6] = 8100,
+	[7] = 11025,
+	[8] = 14400,
+	[9] = 18225,
+	[10] = 22500,
+}
+
+SPAWN_LOCATIONS = {
+	DEFAULT = 0,
+	NOOBSPAWN = 1,
+	GARAGE = 2,
+	FACTION_BASE = 3,
+	COMPANY_BASE = 4,
+	HOUSE = 5,
+	VEHICLE = 6,
+}
+
+VEHICLE_MODEL_SPAWNS = {
+	[508] = true,
+	[484] = true,
+	[483] = true,
+	[454] = true,
+}
+
+VEHICLE_SPAWN_OFFSETS = {
+	[508] = Vector3(3, 0, 0),
+	[484] = Vector3(0, -2, 2),
+	[483] = Vector3(2, 2, 0),
+	[454] = Vector3(-0.4, -3.0, 2),
+}
+
+CAR_COLORS_FROM_ID =
+{
+	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
+	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
+	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
+	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
+	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
+	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
+	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
+	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
+	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
+	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
+	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
+	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
+	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
+	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
+	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
+	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
+	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
+}

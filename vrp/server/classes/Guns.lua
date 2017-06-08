@@ -6,6 +6,9 @@
 -- *
 -- ****************************************************************************
 
+_giveWeapon = giveWeapon
+_takeWeapon = takeWeapon
+_takeAllWeapons = takeAllWeapons
 Guns = inherit(Singleton)
 
 function Guns:constructor()
@@ -40,7 +43,10 @@ function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
 end
 
 function Guns:Event_onTaser(target)
+	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
+	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle or target.vehicle then return end
+	
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
@@ -58,6 +64,9 @@ function Guns:Event_onTaser(target)
 end
 
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
+	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
+	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
+	
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -69,15 +78,18 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 					if inventory then
 						local itemCount = inventory:getItemAmount("Einsatzhelm")
 						if itemCount > 0 then 
-							inventory:removeItem("Einsatzhelm", 1)
-							destroyElement(hasHelmet)
-							target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
-							target.m_IsWearingHelmet = false
-							target.m_Helmet = false
-							target:setData("isFaceConcealed", false)
-							outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
-							target:triggerEvent("clientBloodScreen")
-							return
+							local isProtect = math.random(1,8)
+							if isProtect == 1 then
+								inventory:removeItem("Einsatzhelm", 1)
+								destroyElement(hasHelmet)
+								target:meChat(true, "wird von einer Kugel am Helm getroffen, welcher zerspringt!")
+								target.m_IsWearingHelmet = false
+								target.m_Helmet = false
+								target:setData("isFaceConcealed", false)
+								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
+								target:triggerEvent("clientBloodScreen")
+								return
+							end
 						end
 					end
 				end
@@ -85,6 +97,9 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
 			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
+			if not target:getData("isInDeathMatch") then
+				target:setReviveWeapons()
+			end
 			target:kill(attacker, weapon, bodypart)
 		end
 	else
@@ -199,4 +214,64 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	end
 	StatisticsLogger:getSingleton():addDamageLog(attacker, player, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))
+end
+
+function giveWeapon( player, weapon, ammo, current)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) and player and ammo then
+			local wId = getElementData(object, "a:weapon:id")
+			if ammo ~= 0 then
+				if wId ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
+	else 
+		if player and ammo then
+			if ammo ~= 0 then
+				local currentWeapon = getPlayerWeapon(player,slot)
+				if currentWeapon ~= weapon then
+					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
+				end
+			end
+		end
+	end
+	local result = _giveWeapon(player, weapon, ammo, current)
+	return result
+end
+
+function takeWeapon( player, weapon, ammo)
+	local slot = getSlotFromWeapon(weapon)
+	local object = getElementData(player, "a:weapon:slot"..slot.."")
+	if object then
+		if isElement(object) then
+			local wId = getElementData(object, "a:weapon:id")
+			local tAmmo = getPedTotalAmmo (player, slot)
+			if not ammo then
+				if (wId == weapon ) then
+					triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+				end
+			else
+				if ammo and tAmmo then
+					if ( wId == weapon and (ammo >= tAmmo)) then 
+						triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
+					end
+				end
+			end
+		end
+	end
+	local result = _takeWeapon(player, weapon, ammo)
+	return result
+end
+
+function takeAllWeapons( player ) 
+	if player then 
+		if getElementHealth(player) > 0 then 
+			triggerEvent("WeaponAttach:removeAllWeapons", player)
+		end
+	end
+	local result = _takeAllWeapons( player )
+	return result
 end

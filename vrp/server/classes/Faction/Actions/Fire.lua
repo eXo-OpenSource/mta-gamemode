@@ -19,6 +19,7 @@ function Fire:constructor(fireTable)
 	self.m_DestroyFireFunc = bind(self.destroyFire, self)
 
 	PlayerManager:getSingleton():breakingNews(self.m_Message, self.m_PositionName)
+	FactionRescue:getSingleton():sendWarning(self.m_Message, "Brand-Meldung", true, self.m_PositionName)
 
 	addRemoteEvents{"requestFireDeletion"}
 	addEventHandler("requestFireDeletion", root, self.m_DestroyFireFunc)

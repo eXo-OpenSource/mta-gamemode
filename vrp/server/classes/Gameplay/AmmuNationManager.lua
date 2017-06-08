@@ -170,10 +170,10 @@ function AmmuNationManager:buyWeapon(id)
 				end
 			end
 		else
-			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
+			client:sendError(_("Du hast nicht genuegend Geld.",client))
 		end
 	else
-		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
+		client:sendError(_("Dein Waffenlevel ist zu niedrig!",client))
 	end
 end
 
@@ -189,9 +189,9 @@ function AmmuNationManager:buyMagazine(id)
 			reloadPedWeapon(client)
 			return
 		else
-			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
+			client:sendError(_("Du hast nicht genuegend Geld.",client))
 		end
 	else
-		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
+		client:sendError(_("Dein Waffenlevel ist zu niedrig!",client))
 	end
 end

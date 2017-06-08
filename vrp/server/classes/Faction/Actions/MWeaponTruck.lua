@@ -59,12 +59,12 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 		if faction then
 			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state" and hitElement:isFactionDuty()) then
 				if source.type == "evil" then
-					if FactionState:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] then
+					if FactionState:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] and not DEBUG then
 						hitElement:sendError(_("Es müssen mindestens 3 Staatsfraktionisten online sein!",hitElement))
 						return
 					end
 				elseif source.type == "state" then
-					if FactionEvil:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] then
+					if FactionEvil:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] and not DEBUG then
 						hitElement:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!",hitElement))
 						return
 					end
@@ -135,6 +135,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 						client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 						self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
 						PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
+						if self.m_CurrentType == "evil" then
+							FactionState:getSingleton():sendWarning("Ein %s wird beladen", "neuer Einsatz", true, WEAPONTRUCK_NAME[self.m_CurrentType])
+						else
+							FactionEvil:getSingleton():sendWarning("Ein %s wird beladen", "neue Aktion", WEAPONTRUCK_NAME[self.m_CurrentType])
+						end
 						StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
 					end
 				else

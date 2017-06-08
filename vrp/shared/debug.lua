@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Debug stuff
 -- *
 -- ****************************************************************************
-DEBUG = GIT_BRANCH == nil or GIT_BRANCH == "master" or GIT_BRANCH == "develop" or GIT_BRANCH == "release/testing"
+DEBUG = GIT_BRANCH ~= "release/production"
 
 if triggerClientEvent then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
@@ -102,15 +102,17 @@ function tableToString(tab)
 end
 
 -- Hacked in from runcode
-function runString(commandstring, source)
+function runString(commandstring, source, suppress)
 	local sourceName, output, outputPlayer
 	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
 		output = function (msg)
-			if SERVER then
-				Admin:getSingleton():sendMessage(msg, 255, 51, 51)
-			else
-				outputChatBox(msg, 255, 51, 51)
+			if not suppress then
+				if SERVER then
+					Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+				else
+					outputChatBox(msg, 255, 51, 51)
+				end
 			end
 		end
 		outputPlayer = source
@@ -160,8 +162,10 @@ function runString(commandstring, source)
 			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
 		output("Command results: "..resultsString, outputPlayer)
+		return resultsString
 	elseif not errorMsg then
 		output("Command executed!", outputPlayer)
+		return
 	end
 end
 

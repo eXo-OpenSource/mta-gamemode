@@ -28,7 +28,7 @@ function CAnimation:destructor()
 end
 
 function CAnimation:updateCallbackFunction(...)
-	self.callbackArguments = {... }
+	self.callbackArguments = {...}
 
 	if type(self.callbackArguments[1]) == "function" then
 		self.callbackFunction = self.callbackArguments[1]
@@ -38,6 +38,7 @@ end
 
 function CAnimation:callRenderTarget(state)
 	self.doCall = state
+	return self
 end
 
 function CAnimation:startAnimation(nDuration, sAnimationType, ...)

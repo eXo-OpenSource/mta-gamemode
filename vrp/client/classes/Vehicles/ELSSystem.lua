@@ -9,14 +9,11 @@
 ELSSystem = inherit( Singleton )
 addRemoteEvents{ "updateVehicleELS", "updateVehicleBlink", "onClientELSVehicleDestroy", "onVehicleYelp" }
 
---CONSTANTS--
-local R_COLOR_STATE_1 = {0,0,200}
-local R_COLOR_STATE_2 = {200,0,0}
-local R_COLOR_STATE_N = {255,255,255}
 
 function ELSSystem:constructor( )
   	self.m_Vehicles = {  }
     self.m_Vehicles_Blink = { }
+    self.m_Enabled = core:get("Vehicles", "ELS", true)
     addEventHandler( "updateVehicleELS", localPlayer, bind( ELSSystem.updateVehicleELS, self))
     addEventHandler( "updateVehicleBlink", localPlayer, bind( ELSSystem.updateBlink, self))
     self.m_DestrucBind = function( vehicle ) self:onVehicleDestroy( vehicle ) end
@@ -29,10 +26,9 @@ function ELSSystem:destructor( )
 end
 
 function ELSSystem:updateVehicleELS( vehicle, state, period)
-  if state then
+  if state and self.m_Enabled then
     if self.m_Vehicles[vehicle] then
-      local isTimer = isTimer( self.m_Vehicles[vehicle][1] )
-      if isTimer then
+      if isTimer( self.m_Vehicles[vehicle][1] ) then
 				killTimer( self.m_Vehicles[vehicle][1] )
 			end
     end
@@ -42,13 +38,11 @@ function ELSSystem:updateVehicleELS( vehicle, state, period)
       self.m_Vehicles[vehicle][1] = setTimer( bind( ELSSystem.switchLights, self), period, 0, vehicle)
   else
       if self.m_Vehicles[vehicle] then
-          local isTimer = isTimer( self.m_Vehicles[vehicle][1] )
-          if isTimer then
+          if  isTimer( self.m_Vehicles[vehicle][1] ) then
             killTimer( self.m_Vehicles[vehicle][1] )
           end
-          local r,g,b = R_COLOR_STATE_N[1],R_COLOR_STATE_N[2],R_COLOR_STATE_N[3]
           if isElement( vehicle ) then
-              setVehicleHeadLightColor ( vehicle, r, g, b)
+              setVehicleHeadLightColor ( vehicle, 255, 255, 255)
               setVehicleOverrideLights( vehicle, 2)
               setVehicleLightState ( vehicle,0,0)
               setVehicleLightState ( vehicle,1,0)
@@ -59,8 +53,7 @@ end
 
 function ELSSystem:onVehicleDestroy( vehicle )
     if self.m_Vehicles[vehicle] then
-      local isTimer = isTimer( self.m_Vehicles[vehicle][1] )
-      if isTimer then
+      if  isTimer( self.m_Vehicles[vehicle][1] ) then
         killTimer( self.m_Vehicles[vehicle][1] )
       end
     end
@@ -84,43 +77,31 @@ function ELSSystem:onVehicleYelp( vehicle )
 end
 
 function ELSSystem:switchLights( vehicle )
+  if not self.m_Enabled then return false end
   local state = self.m_Vehicles[vehicle][2]
   local r,g,b
-  if state == 1 or state == 4 then
-    r,g,b = R_COLOR_STATE_1[1],R_COLOR_STATE_1[2],R_COLOR_STATE_1[3]
-		setVehicleHeadLightColor ( vehicle, r,g,b)
+  --blau  rot   weiß  rot   blau  weiß
+  --1     2      3    4     5     6
+
+  if state == 1 or state == 5 then --blue
+		setVehicleHeadLightColor ( vehicle, 0, 0, 255)
 		setVehicleLightState ( vehicle,0,1)
 		setVehicleLightState ( vehicle,1,0)
-    if state == 1 then
-			setVehicleLightState ( vehicle,0,1)
-			setVehicleLightState ( vehicle,1,0)
-		else
-			setVehicleLightState ( vehicle,0,0)
-			setVehicleLightState ( vehicle,1,1)
-		end
-    self.m_Vehicles[vehicle][2] = self.m_Vehicles[vehicle][2] + 1
-  elseif state == 2 or state == 5 then
-    r,g,b = R_COLOR_STATE_2[1],R_COLOR_STATE_2[2],R_COLOR_STATE_2[3]
-    setVehicleHeadLightColor ( vehicle, r, g, b)
-    if i_state == 2 then
-      setVehicleLightState ( vehicle, 0, 0)
-      setVehicleLightState ( vehicle, 1, 1)
-    else
-      setVehicleLightState ( vehicle, 0, 1)
-      setVehicleLightState ( vehicle, 1, 0)
-    end
-    self.m_Vehicles[vehicle][2] = self.m_Vehicles[vehicle][2] + 1
-  elseif state == 3 or state == 6 then
-    r,g,b = R_COLOR_STATE_N[1],R_COLOR_STATE_N[2],R_COLOR_STATE_N[3]
-		setVehicleHeadLightColor ( vehicle, r,g,b)
+  elseif state == 2 or state == 4 then -- red
+    setVehicleHeadLightColor ( vehicle, 200, 0, 0)
+    setVehicleLightState ( vehicle, 0, 0)
+    setVehicleLightState ( vehicle, 1, 1)
+  else --white
+    setVehicleHeadLightColor (vehicle, 255, 255, 255)
 		setVehicleLightState ( vehicle,0,0)
 		setVehicleLightState ( vehicle,1,0)
-    self.m_Vehicles[vehicle][2] = self.m_Vehicles[vehicle][2] + 1
-    if self.m_Vehicles[vehicle][2] == 7 then self.m_Vehicles[vehicle][2] = 1 end
   end
+  self.m_Vehicles[vehicle][2] = self.m_Vehicles[vehicle][2] + 1
+  if self.m_Vehicles[vehicle][2] == 7 then self.m_Vehicles[vehicle][2] = 1 end
 end
 
 function ELSSystem:updateBlink( vehicle , marker, state)
+  if not self.m_Enabled then return false end
   if state == "right" then
       if self.m_Vehicles_Blink[vehicle] then
         if isTimer( self.m_Vehicles_Blink[vehicle][1] )  then
@@ -150,9 +131,9 @@ function ELSSystem:updateBlink( vehicle , marker, state)
         end
       end
 		self.m_Vehicles_Blink[vehicle] = { }
-		self.m_Vehicles_Blink[vehicle][2] = 3
+		self.m_Vehicles_Blink[vehicle][2] = 1
   		self.m_Vehicles_Blink[vehicle][3] = marker
-  		self.m_Vehicles_Blink[vehicle][1] = setTimer( bind( ELSSystem.setBlinkAll, self),100,0,vehicle)
+  		self.m_Vehicles_Blink[vehicle][1] = setTimer( bind( ELSSystem.setBlinkAll, self),250,0,vehicle)
   		self.m_Vehicles_Blink[vehicle][4] = "blink"
   else
       if self.m_Vehicles_Blink[vehicle] then
@@ -166,8 +147,6 @@ function ELSSystem:updateBlink( vehicle , marker, state)
 					setMarkerColor(marker[4],150,0,0,0)
 					setMarkerColor(marker[5],0,0,200,0)
 					setMarkerColor(marker[6],0,0,200,0)
-					setMarkerColor(marker[7],0,0,200,0)
-					setMarkerColor(marker[8],0,0,200,0)
 					self.m_Vehicles_Blink[vehicle][2] = 0
 				end
       end
@@ -175,11 +154,10 @@ function ELSSystem:updateBlink( vehicle , marker, state)
 end
 
 function ELSSystem:setBlinkLeft( vehicle )
+  if not self.m_Enabled then return false end
   local marker = self.m_Vehicles_Blink[vehicle][3]
   local state = self.m_Vehicles_Blink[vehicle][2]
   if state == 1 then
-    setMarkerColor(marker[7] ,200,200,0,255)
-		setMarkerColor(marker[8] ,200,0,0,0)
 		setMarkerColor(marker[6] ,200,200,0.255)
 		setMarkerColor(marker[5] ,200,200,0,255)
 		setMarkerColor(marker[4] ,0,0,200,0)
@@ -188,8 +166,6 @@ function ELSSystem:setBlinkLeft( vehicle )
 		setMarkerColor(marker[1] ,0,0,200,0)
     self.m_Vehicles_Blink[vehicle][2] = 2
   elseif state == 2 then
-    setMarkerColor(marker[7] ,200,200,0,0)
-		setMarkerColor(marker[8] ,200,0,0,0)
 		setMarkerColor(marker[6] ,200,0,0,0)
 		setMarkerColor(marker[5] ,200,0,0,0)
 		setMarkerColor(marker[4] ,200,200,0,255)
@@ -198,8 +174,6 @@ function ELSSystem:setBlinkLeft( vehicle )
 		setMarkerColor(marker[1] ,200,200,0,0)
     self.m_Vehicles_Blink[vehicle][2] = 3
   elseif state == 3 then
-    setMarkerColor(marker[7] ,200,200,0,255)
-    setMarkerColor(marker[8] ,200,200,0,0)
     setMarkerColor(marker[6] ,200,200,0,0)
     setMarkerColor(marker[5] ,200,200,0,0)
     setMarkerColor(marker[4] ,200,200,0,0)
@@ -211,11 +185,10 @@ function ELSSystem:setBlinkLeft( vehicle )
 end
 
 function ELSSystem:setBlinkRight( vehicle )
+  if not self.m_Enabled then return false end
   local marker = self.m_Vehicles_Blink[vehicle][3]
   local state = self.m_Vehicles_Blink[vehicle][2]
   if state == 1 then
-    setMarkerColor(marker[7] ,200,200,0,0)
-		setMarkerColor(marker[8] ,200,200,0,255)
 		setMarkerColor(marker[6] ,200,0,0,0)
 		setMarkerColor(marker[5] ,200,0,0,0)
 		setMarkerColor(marker[4] ,200,0,0,0)
@@ -224,8 +197,6 @@ function ELSSystem:setBlinkRight( vehicle )
 		setMarkerColor(marker[1] ,200,200,0,255)
     self.m_Vehicles_Blink[vehicle][2] = 2
   elseif state == 2 then
-    setMarkerColor(marker[7] ,200,200,0,0)
-    setMarkerColor(marker[8] ,200,200,0,0)
     setMarkerColor(marker[6] ,200,0,0,0)
     setMarkerColor(marker[5] ,200,0,0,0)
     setMarkerColor(marker[4] ,200,200,0,255)
@@ -234,8 +205,6 @@ function ELSSystem:setBlinkRight( vehicle )
     setMarkerColor(marker[1] ,200,200,0,0)
     self.m_Vehicles_Blink[vehicle][2] = 3
   elseif state == 3 then
-    setMarkerColor(marker[7] ,200,200,0,0)
-  	setMarkerColor(marker[8] ,200,200,0,255)
   	setMarkerColor(marker[6] ,200,200,0,255)
   	setMarkerColor(marker[5] ,200,200,0,255)
   	setMarkerColor(marker[4] ,200,0,0,0)
@@ -247,31 +216,63 @@ function ELSSystem:setBlinkRight( vehicle )
 end
 
 function ELSSystem:setBlinkAll( vehicle )
+  if not self.m_Enabled then return false end
   local marker = self.m_Vehicles_Blink[vehicle][3]
   local state = self.m_Vehicles_Blink[vehicle][2]
   if state == 1 then
-		setMarkerColor(marker[1] ,0,0,255,255)
-		setMarkerColor(marker[2] ,0,0,255,255)
-		setMarkerColor(marker[3] ,0,0,255,255)
-		setMarkerColor(marker[4] ,255,0,0,255)
-		setMarkerColor(marker[5] ,255,0,0,255)
-		setMarkerColor(marker[6] ,255,0,0,255)
-    self.m_Vehicles_Blink[vehicle][2] = 2
-  elseif state == 2 then
 		setMarkerColor(marker[1] ,255,0,0,255)
 		setMarkerColor(marker[2] ,255,0,0,255)
 		setMarkerColor(marker[3] ,255,0,0,255)
+		setMarkerColor(marker[4] ,0,0,255,0)
+		setMarkerColor(marker[5] ,0,0,255,0)
+		setMarkerColor(marker[6] ,0,0,255,0)
+    self.m_Vehicles_Blink[vehicle][2] = 2
+  elseif state == 2 then
+		setMarkerColor(marker[1] ,255,0,0,0)
+		setMarkerColor(marker[2] ,255,0,0,0)
+		setMarkerColor(marker[3] ,255,0,0,0)
 		setMarkerColor(marker[4] ,0,0,255,255)
 		setMarkerColor(marker[5] ,0,0,255,255)
 		setMarkerColor(marker[6] ,0,0,255,255)
     self.m_Vehicles_Blink[vehicle][2] = 3
-  elseif state == 3 then
-		setMarkerColor(marker[5] ,255,0,0,255)
-		setMarkerColor(marker[6] ,255,0,0,255)
-		setMarkerColor(marker[4] ,255,0,0,255)
-		setMarkerColor(marker[1] ,0,0,255,255)
-		setMarkerColor(marker[2] ,0,0,255,255)
-		setMarkerColor(marker[3] ,0,0,255,255)
+   elseif state == 3 then
+    setMarkerColor(marker[1] ,255,0,0,255)
+		setMarkerColor(marker[2] ,255,0,0,0)
+		setMarkerColor(marker[3] ,255,0,0,255)
+		setMarkerColor(marker[4] ,0,0,255,0)
+		setMarkerColor(marker[5] ,0,0,255,255)
+		setMarkerColor(marker[6] ,0,0,255,0)
+    self.m_Vehicles_Blink[vehicle][2] = 4
+  elseif state == 4 then
+		setMarkerColor(marker[1] ,255,0,0,0)
+		setMarkerColor(marker[2] ,255,0,0,255)
+		setMarkerColor(marker[3] ,255,0,0,0)
+		setMarkerColor(marker[4] ,0,0,255,255)
+		setMarkerColor(marker[5] ,0,0,255,0)
+		setMarkerColor(marker[6] ,0,0,255,255)
     self.m_Vehicles_Blink[vehicle][2] = 1
+  end
+end
+
+
+function ELSSystem:toggle(state)
+  if state ~= self.m_Enabled then
+    if not state then
+      for veh, data in pairs(self.m_Vehicles) do
+        if isTimer(data[1]) then killTimer(data[1]) end
+        setVehicleHeadLightColor(veh, 255, 255, 255)
+        setVehicleLightState(veh, 0, 0)
+        setVehicleLightState(veh, 1, 0)
+      end
+      for veh, data in pairs(self.m_Vehicles_Blink) do
+        if isTimer(data[1]) then killTimer(data[1]) end
+        if data[3] then
+          for i, marker in pairs(data[3]) do
+            setMarkerColor(marker, 0, 0, 0, 0)
+          end
+        end
+      end
+    end
+    self.m_Enabled = not self.m_Enabled
   end
 end

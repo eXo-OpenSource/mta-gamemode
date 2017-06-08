@@ -12,6 +12,7 @@ ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 HTTP_DOWNLOAD = not DEBUG
 FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/master/vrp_assets/" -- Todo: move to config
 FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/master/vrp_assets/" -- Todo: see above
+TEXTURE_HTTP_URL = "http://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {
@@ -239,7 +240,6 @@ HelpTextTitles = {
 		Gravel = "Job: Kiesgruben Arbeiter";
 	};
 	Gameplay = {
-		Cars = "Fahrzeuge";
 		Beggar = "Gameplay: Bettler";
 	};
 	Minigames = {
@@ -268,6 +268,10 @@ HelpTextTitles = {
 	Settings = {
 		ShortMessageCTC = "Information - ShortMessage-CTC";
 	};
+	Vehicles = {
+		Info = "Info zu Fahrzeugen";
+		CustomTextures = "Fahrzeug-Texturen";
+	};
 }
 
 HelpTexts = {
@@ -294,36 +298,43 @@ HelpTexts = {
 			Jusonex (kleinere Unterstüzung)
 			Strobe
 			PewX
-			MegaThorx
+			MasterM
 
 			Projektleitung:
 			[eXo]Stumpy
+			[eXo]Clausus
 			Heisi
 
 			stellv. Projektleitung:
-			[eXo]Clausus
-			[eXo]StiviK
+			StiviK
+			[eXo]xXKing
 
 			Servermanagement:
-			[eXo]xXKing
 			[eXo]Chris
-
-			Administration:
 			[eXo]Luka
-			[eXo]John_Rambo
 			[eXo]StrongVan
 
+			Administration:
+			[eXo]Tisti
+
 			Moderation:
-			[eXo]Phil
-			[eXo]High5
-			[eXo]Gamer64
+			[eXo]ZaPP
+			[eXo]MiHawk
+			[eXo]AfGun
 
 			Support:
-			[eXo]Bonez
-			[eXo]Janni_Morita
-			[eXo]AfGun
+			[eXo]Korsakov
+			[eXo]Cpen
+			[eXo]Gamora.
+			[eXo]SaLvaz
+			[eXo]Swatbird
+
+			Clanmitglied:
+			[eXo]John_Rambo
 			[eXo]Burmtim
-			[eXo]Risi
+			Krox
+			Risi
+			Toxsi
 
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
@@ -475,33 +486,6 @@ HelpTexts = {
 		]];
 	};
 	Gameplay = {
-		Cars = [[
-			Fahrzeuge können in folgende Kategorien unterteilt werden.
-
-			Leihfahrzeuge:
-			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
-			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
-			auszuleihende Fahrzeug auswählen.
-
-			Private Fahrzeuge:
-			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
-			sind auf der Karte mit einem Auto-Blip markiert.
-			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
-			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
-			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
-			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
-			sendet.
-
-			Fraktionsfahrzeuge:
-			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
-			vom Fraktionsanführer verwaltet.
-
-			Firmen-/Gangfahrzeuge:
-			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
-			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen
-			Button, welcher dir erlaubt deine privaten Fahrzeuge zur Gang/Firma hinzuzufügen.
-			]];
 		Beggar = [[
 			Wenn du einen Bettler antriffst, kann es passieren, dass dieser dich nach Geld fragt. Es liegt
 			an dir ob du ihn ignorierst, bezahlst oder ausraubst. Bedenke jedoch, dass solche Aktionen einen
@@ -600,6 +584,57 @@ HelpTexts = {
 	Settings = {
 		ShortMessageCTC = "ShortMessage-CTC (Click-to-Close) ist eine Option mit der eingestellt werden kann, ob eine ShortMessage-Box (wie diese) durch ein einfaches klicken geschlossen werden kann oder nur durch den Timeout.\n\nNote: Callback-clicks are always working!";
 	};
+	Vehicles = {
+		 Info = [[
+			Fahrzeuge können in folgende Kategorien unterteilt werden.
+
+			Leihfahrzeuge:
+			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
+			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
+			auszuleihende Fahrzeug auswählen.
+
+			Private Fahrzeuge:
+			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
+			sind auf der Karte mit einem Auto-Blip markiert.
+			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
+			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
+			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
+			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
+			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
+			sendet.
+
+			Fraktionsfahrzeuge:
+			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
+			vom Fraktionsanführer verwaltet.
+
+			Firmen-/Gangfahrzeuge:
+			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
+			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen
+			Button, welcher dir erlaubt deine privaten Fahrzeuge zur Gang/Firma hinzuzufügen.
+			]];
+		 CustomTextures = [[
+			Auf eXo-Reallife kannst du selbst Texturen für dein Fahrzeug erstellen. Lade diese im cPanel
+			unter exo-reallife.de hoch und teste sie hier.
+			Du kannst Texturen auch für andere Spieler freigeben.
+
+			Bitte beachte das jede Textur erst durch einen Admin akzeptiert werden muss.
+			Also teste die Textur hier erst	sorgfältig bevor du Sie zur Überprüfung freigibst, bereits akzeptierte Texturen können nicht mehr verändert werden.
+
+			Hier nun der ganze Prozess in einer Schritt für Schritt Anleitung:
+			1.) Hochladen: Textur im 'Control-Panel -> Fahrzeug Texturen' unter eXo-Reallife.de hochladen
+			2.) Testen: Direkt neben dem Custom Texture Shop ist ein gelbes Info-Pickup, dort kannst du deine hochgeladenen Texturen testen
+			3.) Im Textur-Test Fenster kannst du Texturen zur Überprüfung einsenden wenn Sie dir gefällt.
+			(Wichtig: Erst zur Überprüfung einsenden wenn dir die Textur auf dem Fahrzeug gefällt)
+			4.) Die Textur wird nun von einem Admin überprüft. Wenn diese ordentlich gemacht ist wird Sie freigeschaltet.
+			5.) Nachdem die Textur überprüft und freigeschaltet wurde kannst du Sie im Custom-Textur Shop auf dein Fahrzeug speichern.
+
+			Regeln:
+			+ Beleidigungen oder Serverwerbung ist verboten!
+			+ Admins behalten Sich jederzeit das Recht vor Texturen abzulehnen, oder nachträglich zu löschen
+			+ Texturen dürfen eine Größe von 600x600px sowie 200kb Dateigröße nicht überschreiten
+			+ Texturen müssen einen gewissen Qualitätsstandard erfüllen, dieser liegt im Ermessen des Admin-Teams
+			]];
+	};
 };
 
 Tipps = {
@@ -669,3 +704,10 @@ end)
 
 NOTIFICATION_TYPE_INVATION = 1
 NOTIFICATION_TYPE_GAME     = 2
+
+TEXTURE_SYSTEM_HELP =
+{
+	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen, wenn ein entsprechendes Fahrzeug in deiner Nähe ist. Dies führt dazu, dass du nur die Texturen lädst, welche du auch benötigst.\nSinnvoll bei Graifkkarten mit wenig Videospeicher\n\nZum übernehmen bitte reconnecten!",
+	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!\n\nZum übernehmen bitte reconnecten!",
+	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.\n\nZum übernehmen bitte reconnecten!",
+}

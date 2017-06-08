@@ -91,7 +91,7 @@ function Inventory:Event_OnRender()
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
-	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+--	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()

@@ -6,7 +6,7 @@ function Neon.initalize()
     Neon.getNeonTable()
     addEventHandler("onClientElementStreamIn",getRootElement(),Neon.VehiclestreamedIn)
     addEventHandler("onClientElementStreamOut",getRootElement(),Neon.VehiclestreamedOut)
-    addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+	Neon.toggle(core:get("Vehicles", "Neon", true))
 
 	addEventHandler("onClientElementDataChange", getRootElement(),
 		function(dataName)
@@ -106,5 +106,16 @@ function Neon.Render()
 		else
 			Neon.Vehicles[veh] = nil
 		end
+	end
+end
+
+
+function Neon.toggle(state)
+	if state and not Neon.ms_Active then
+		addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+		Neon.ms_Active = true
+	elseif not state and Neon.ms_Active then
+		removeEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+		Neon.ms_Active = false
 	end
 end

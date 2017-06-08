@@ -36,6 +36,7 @@ function ItemSpeedCam:use(player)
 
 					local object = worldItem:getObject()
 					setElementData(object, "earning", 0)
+					setElementData(object, "owner", player:getName())
 					ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
 					object.col = createColSphere(position, 10)
@@ -82,7 +83,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 
 				player:takeBankMoney(costs, "Blitzer-Strafe")
 				FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe")
-      			player:sendShortMessage(_("Du wurdest mit %d km/H geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
+      			player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
 				player:giveAchievement(62)
 				if speed > 180 then
 					player:giveAchievement(63)

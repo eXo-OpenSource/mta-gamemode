@@ -16,10 +16,6 @@ end
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 IS_TESTSERVER = getServerName():find("Script") ~= nil
 
-SPAWN_LOCATION_DEFAULT = 0
-SPAWN_LOCATION_JAIL = 1
-SPAWN_LOCATION_GARAGE = 2
-
 CHAT_WHISPER_RANGE = 2.5
 CHAT_TALK_RANGE = 10
 CHAT_SCREAM_RANGE = 30
@@ -29,7 +25,6 @@ CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
 NOOB_SPAWN = Vector3(1798.417, -1303.119, 120.255)
 NOOB_SKIN = 78
-
 
 START_MONEY_BAR = 5000
 
@@ -130,32 +125,17 @@ BAIL_PRICES =
 
 JAIL_COSTS =
 {
-	[1] = 200,
-	[2] = 400,
-	[3] = 800,
-	[4] = 1600,
-	[5] = 3200,
-	[6] = 6400,
+	[1] = 500,
+	[2] = 1000,
+	[3] = 1500,
+	[4] = 2500,
+	[5] = 3500,
+	[6] = 4500,
 }
 
 RESOURCES_TO_STOP = {
     "scoreboard";
     "helpmanager";
-}
-
-DONT_BUCKLE = 
-{
-[581] = true,
-[509] = true,
-[481] = true,
-[462] = true,
-[521] = true,
-[463] = true,
-[510] = true,
-[522] = true,
-[461] = true, 
-[448] = true, 
-[586] = true,
 }
 
 setWeaponProperty(24,"pro","target_range",45)
@@ -166,9 +146,13 @@ setWeaponProperty(24,"pro","weapon_range",45)
 setWeaponProperty(24,"poor","weapon_range",45)
 setWeaponProperty(24,"std","weapon_range",45)
 
-setWeaponProperty(24,"pro","accuracy",0.9)
-setWeaponProperty(24,"poor","accuracy",0.9)
-setWeaponProperty(24,"std","accuracy",0.9)
+setWeaponProperty(24,"pro","accuracy",1.5)
+setWeaponProperty(24,"poor","accuracy",1.5)
+setWeaponProperty(24,"std","accuracy",1.5)
+
+setWeaponProperty(28,"poor", "accuracy",1.1000000238419)
+setWeaponProperty(28,"pro", "accuracy",1.1000000238419)
+setWeaponProperty(28,"std", "accuracy",1.1000000238419)
 
 setWeaponProperty(29,"pro","accuracy",0.9)
 setWeaponProperty(29,"poor","accuracy",0.9)
@@ -181,6 +165,18 @@ setWeaponProperty(31,"std","accuracy",0.8)
 setWeaponProperty(31,"pro","weapon_range",105)
 setWeaponProperty(31,"poor","weapon_range",105)
 setWeaponProperty(31,"std", "weapon_range",105)
+
+setWeaponProperty(32,"pro","weapon_range",50)
+setWeaponProperty(32,"poor","weapon_range",50)
+setWeaponProperty(32,"std", "weapon_range",50)
+
+setWeaponProperty(32,"pro","target_range",50)
+setWeaponProperty(32,"poor","target_range",50)
+setWeaponProperty(32,"std", "target_range",50)
+
+setWeaponProperty(32,"poor", "accuracy",1.1999999523163)
+setWeaponProperty(32,"pro", "accuracy",1.1999999523163)
+setWeaponProperty(32,"std", "accuracy",1.1999999523163)
 
 setWeaponProperty(33,"pro","weapon_range",160)
 setWeaponProperty(33,"poor","weapon_range",160)

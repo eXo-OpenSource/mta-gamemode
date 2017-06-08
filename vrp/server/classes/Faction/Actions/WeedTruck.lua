@@ -20,8 +20,8 @@ function WeedTruck:constructor(driver)
     self.m_Truck:setColor(0, 50, 0)
 	self.m_Truck:setFrozen(true)
 	self.m_Truck:setVariant(255, 255)
-	self.m_Truck:setEngineState(true)
 	self.m_Truck:setRepairAllowed(false)
+	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setData("disableVehicleDamageSystem", true, true)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
@@ -42,6 +42,7 @@ function WeedTruck:constructor(driver)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
+	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "neuer Einsatz", true)
 
 	self.m_Blip = Blip:new("Waypoint.png", WeedTruck.Destination.x, WeedTruck.Destination.y, root, 9999)
 	self.m_DestinationMarker = createMarker(WeedTruck.Destination,"cylinder",8)
@@ -51,7 +52,6 @@ function WeedTruck:constructor(driver)
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeedTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnWeedTruckExit,self))
 	addEventHandler("onVehicleExplode", self.m_Truck, self.m_DestroyFunc)
-	addEventHandler("onElementDestroy", self.m_Truck, self.m_DestroyFunc)
 end
 
 function WeedTruck:destructor()

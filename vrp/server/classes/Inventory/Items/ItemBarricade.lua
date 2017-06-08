@@ -25,9 +25,9 @@ function ItemBarricade:use(player)
 					return
 				end
 				
-				local worldItem = self:place(player, position, rotation)
+				self.m_WorldItem = self:place(player, position, rotation)
 				--StatisticsLogger:getSingleton():itemPlaceLogs( player, "Barrikade", position.x..","..position.y..","..position.z ) --// disabled to prevent possible spam 
-				worldItem.m_Breakable = self.m_Breakable
+				self.m_WorldItem.m_Breakable = self.m_Breakable
 				player:getInventory():removeItem(self:getName(), 1)
 			end
 		)
@@ -38,5 +38,13 @@ function ItemBarricade:use(player)
 end
 
 function ItemBarricade:onClick(player, worldItem)
+	if worldItem:collect(player) then
+		player:sendShortMessage(_("Barrikade eingesammelt.", player))
+	end
+end
 
+function ItemBarricade:isCollectAllowed(player, worldItem)
+	if player:isFactionDuty() then return true end
+	if player:getFaction():isStateFaction() then player:sendError(_("Du bist nicht im Dienst!", player)) end --to prevent spam for non-cop players
+	return false
 end

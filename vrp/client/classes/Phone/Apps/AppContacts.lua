@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/Phone/AppCall.lua
+-- *  PURPOSE:     Contacts app class
 -- *
 -- ****************************************************************************
 AppContacts = inherit(PhoneApp)
@@ -50,7 +50,7 @@ function AppContacts:ButtonCallPlayer_Click()
 		return
 	end
 
-	CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, false)
+	CallResultActivity:new(self, "player", player, CALL_RESULT_CALLING, false)
 	triggerServerEvent("callStart", root, player, false)
 end
 

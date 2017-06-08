@@ -43,8 +43,8 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setFrozen(true)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
-	self.m_Truck:setEngineState(true)
 	self.m_Truck:setRepairAllowed(false)
+	self.m_Truck:toggleRespawn(false)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
 	self.m_StartTime = getTickCount()
@@ -55,16 +55,17 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 
+	TollStation.openAll()
 
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
-		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true)
+		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true, true)
 	elseif self.m_Type == "state" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-			self:addDestinationMarker(faction:getId(), "evil", false)
+			self:addDestinationMarker(faction:getId(), "evil", false, false)
 		end
 	end
 
@@ -103,6 +104,7 @@ function WeaponTruck:destructor()
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_Type], "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 	self.m_Truck:destroy()
+	TollStation.closeAll()
 
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
@@ -116,16 +118,18 @@ function WeaponTruck:destructor()
 	end
 
 	for index, value in pairs(self.m_Boxes) do
-		if value:isAttached() and value:getAttachedTo():getType() == "player" then
-			value:getAttachedTo():detachPlayerObject(value)
+		if isElement(value) then
+			if value:isAttached() and isElement(value:getAttachedTo()) and value:getAttachedTo():getType() == "player" then
+				value:getAttachedTo():detachPlayerObject(value)
+			end
+		 	value:destroy() 
 		end
-		if isElement(value) then value:destroy() end
 	end
 end
 
 
 function WeaponTruck:timeUp()
-	outputChatBox(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+	self.m_StartPlayer:sendError(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]))
 
 	if self.m_Type == "evil" then
 		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
@@ -233,7 +237,7 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
 		self.m_Truck:setLocked(false)
-		self.m_LoadMarker:destroy()
+		if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	else
 		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, boxesOnTruck, self.m_BoxesCount))
 	end
@@ -299,7 +303,7 @@ function WeaponTruck:Event_OnWeaponTruckDestroy()
 	if self and not self.m_Destroyed then
 		self.m_Destroyed = true
 		self:Event_OnWeaponTruckExit(self.m_Driver,0)
-		outputChatBox(_("Der %s ist fehlgeschlagen! (Zerstört)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+		PlayerManager:getSingleton():breakingNews("Der %s wurde zerstört!", WEAPONTRUCK_NAME[self.m_Type])
 		self:delete()
 	end
 end
@@ -312,7 +316,7 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	end
 end
 
-function WeaponTruck:addDestinationMarker(factionId, type, blip)
+function WeaponTruck:addDestinationMarker(factionId, type, blip, isEvil)
 	local markerId = #self.m_DestinationMarkers+1
 	local color = factionColors[factionId]
 	local destination = factionWTDestination[factionId]
@@ -323,8 +327,15 @@ function WeaponTruck:addDestinationMarker(factionId, type, blip)
 	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
 
 	if blip then
-		local blipId = #self.m_DestinationBlips+1
-		self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
+		local facObj = FactionManager:getSingleton():getFromId(factionId)
+		if facObj then
+			local blipId = #self.m_DestinationBlips+1
+			if isEvil then
+				self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction",facObj}, 9999)
+			else 
+				self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
+			end
+		end
 	end
 
 end
@@ -455,20 +466,20 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 		self:Event_OnWeaponTruckExit(hitElement,0)
 		if self.m_Type == "evil" then
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
-			outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+			PlayerManager:getSingleton():breakingNews("Der %s wurde erfolgreich abgegeben!", WEAPONTRUCK_NAME[self.m_Type])
 		elseif self.m_Type == "state" then
 			if faction:isEvilFaction() then
-				outputChatBox("Der Waffentruck wurde bei einer bösen Fraktion abgegeben!", rootElement, 255, 0, 0)
+				PlayerManager:getSingleton():breakingNews("Der %s wurde von der Fraktion %s gestohlen!", WEAPONTRUCK_NAME[self.m_Type], faction:getName())
 			else
 				FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
-				outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+				PlayerManager:getSingleton():breakingNews("Der %s wurde erfolgreich abgegeben!", WEAPONTRUCK_NAME[self.m_Type])
 			end
 		end
 		finish = true
 	elseif hitElement:getPlayerAttachedObject() then
 		if self:getAttachedBoxes(hitElement) > 0 then
 			boxes = getAttachedElements(hitElement)
-			outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
+			PlayerManager:getSingleton():breakingNews("%d von %d Waffenkisten wurden abgegeben!", self.m_BoxesCount-self:getRemainingBoxAmount()+1, self.m_BoxesCount)
 			hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 		end
@@ -494,12 +505,12 @@ function WeaponTruck:onStateMarkerHit(hitElement)
 	local boxes
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		boxes = getAttachedElements(self.m_Truck)
-		outputChatBox(_("Der %s wurde sichergestellt!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+		PlayerManager:getSingleton():breakingNews("Der %s wurde sichergestellt!", WEAPONTRUCK_NAME[self.m_Type])
 		hitElement:sendInfo(_("Truck erfolgreich sichergestellt",hitElement))
 		self:Event_OnWeaponTruckExit(hitElement,0)
 	elseif hitElement:getPlayerAttachedObject() then
 		boxes = getAttachedElements(hitElement)
-		outputChatBox(_("Eine Waffenkiste wurde sichergestellt! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
+		PlayerManager:getSingleton():breakingNews("%d von %d Waffenkisten wurden sichergestellt!", self.m_BoxesCount-self:getRemainingBoxAmount()+1, self.m_BoxesCount)
 		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
 		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 	elseif hitElement:getOccupiedVehicle() then

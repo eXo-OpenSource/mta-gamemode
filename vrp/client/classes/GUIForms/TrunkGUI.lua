@@ -90,6 +90,7 @@ function TrunkGUI:loadItems()
                 self.m_SelectedItemType = "item"
                 self.m_SelectedItem = itemInv["Objekt"]
                 self.m_SelectedItemAmount = itemInv["Menge"]
+				self.m_SelectedItemValue = itemInv["Value"]
                 self.m_ToTrunk:setEnabled(true)
                 self.m_AmountLabel:setVisible(true)
                 self.m_Amount:setVisible(true)
@@ -181,7 +182,7 @@ function TrunkGUI:toTrunk()
             local amount = tonumber(self.m_Amount:getText())
             if amount and amount > 0 then
                 if amount <= self.m_SelectedItemAmount then
-                    triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount)
+                    triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount, self.m_SelectedItemValue)
                     self.m_MyItemsGrid:setVisible(false)
                     self.m_LoadingLabel:setVisible(true)
                 else

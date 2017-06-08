@@ -12,8 +12,8 @@ function Tour:constructor()
   self.m_Active = false
   if core:get("Tour", "done", false) == false then
     QuestionBox:new(
-      _("Möchtest du eine Server-Tour starten? Die Server-Tour bringt dir Erfahrung und eine kleine Anzahl an Belohnungen!"),
-      function() triggerServerEvent("tourStart", localPlayer) end, function() core:set("Tour", "done", true) end)
+      _("Möchtest du eine Server-Tour starten?\nNach Abschluss erhälst du Erfahrung und eine kleine Belohnung!"),
+      function() triggerServerEvent("tourStart", localPlayer) end, function() InfoBox:new("Du kannst die Tour jederzeit unter F2 -> Einstellungen erneut starten!") core:set("Tour", "done", true) end)
   end
   addRemoteEvents{"tourShow", "tourStop"}
   addEventHandler("tourShow", root, bind(self.show, self))
@@ -43,6 +43,8 @@ function Tour:show(id, title, description, success, x, y, z)
   self.m_CurrentId = id
   self.m_TargetBlip = Blip:new("Waypoint.png", x, y, 9999)
   self.m_TargetMarker = createMarker(self.m_TargetPos, "cylinder", 2, 50, 200, 255)
+  GPS:getSingleton():startNavigationTo(self.m_TargetPos)
+
   addEventHandler("onClientMarkerHit", self.m_TargetMarker, function(hitElement, dim)
       if localPlayer == hitElement and dim then
 	  	delete(self.m_TargetBlip)

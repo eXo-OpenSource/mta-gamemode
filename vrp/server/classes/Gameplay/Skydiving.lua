@@ -21,14 +21,14 @@ end
 
 function SkydivingManager:startSkydiving(id)
 	if Skydiving.Map[id] then
-		if client:getMoney() >= Skydiving.Costs then
-			client:takeMoney(Skydiving.Costs, "Skydiving")
-			Skydiving.Map[id]:start(client)
+		if source:getMoney() >= Skydiving.Costs then
+			source:takeMoney(Skydiving.Costs, "Skydiving")
+			Skydiving.Map[id]:start(source)
 		else
-			client:sendError(_("Du hast zuwenig Geld dabei! (%d$)", client, Skydiving.Costs))
+			source:sendError(_("Du hast zuwenig Geld dabei! (%d$)", source, Skydiving.Costs))
 		end
 	else
-		client:sendError("Internal Error: Skydiving not found! ID:"..id)
+		source:sendError("Internal Error: Skydiving not found! ID:"..id)
 	end
 end
 
@@ -47,7 +47,7 @@ end
 
 function Skydiving:onMarkerHit(hitElement, dim)
 	if hitElement.type == "player" and dim and not hitElement.vehicle then
-		hitElement:triggerEvent("questionBox", _("Möchtest du die Fallschirm springen? Kosten: %d$", hitElement, Skydiving.Costs), "skydivingStart", nil, self.m_Id)
+		QuestionBox:new(hitElement, hitElement, _("Möchtest du die Fallschirm springen? Kosten: %d$", hitElement, Skydiving.Costs), "skydivingStart", nil, self.m_Id)
 	end
 end
 

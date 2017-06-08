@@ -40,7 +40,7 @@ end
 
 function JobLogistician:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN))
 		return false
 	end
 	return true
@@ -61,6 +61,7 @@ function JobLogistician:stop(player)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	vehicle.m_DisableToggleHandbrake = true
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
@@ -75,6 +76,7 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 	if player:getData("Logistician:Blip") then
 		delete(player:getData("Logistician:Blip"))
 	end
+	player:startNavigationTo(pos)
 
 	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player,9999)
 	blip:setStreamDistance(10000)
@@ -82,6 +84,7 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
 	player:setData("Logistician:LastCrane", crane)
+
 end
 
 function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)
@@ -105,8 +108,11 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							hitElement:giveMoney(self.m_MoneyPerTransport, "Logistiker Job")
-							hitElement:givePoints(10)
+							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+							hitElement.m_LastJobAction = getRealTime().timestamp
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport)
+							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
+							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))

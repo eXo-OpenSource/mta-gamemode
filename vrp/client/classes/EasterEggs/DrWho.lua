@@ -50,7 +50,7 @@ end
 local rotationTick = getTickCount()
 function EasterEgg.DrWho:renderTardisAlpha()
 	local angle = math.fmod((getTickCount() - rotationTick) * 360 / 5000, 360)
-
+	if not isElementStreamedIn(self.m_Tardis) then return end
 	if self.m_TardisAlpha == "pulsating" then
 		local x = interpolateBetween(160, 0, 0, 255, 0, 0, ((getTickCount()-self.m_StartTick)%2000)/2000, "CosineCurve")
 		self.m_Tardis:setAlpha(x)

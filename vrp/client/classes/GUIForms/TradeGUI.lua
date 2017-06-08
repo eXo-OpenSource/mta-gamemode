@@ -14,7 +14,7 @@ function TradeGUI:constructor(target)
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Handel mit %s", target:getName()), true, true, self)
 
-	self.m_TabPanel = GUITabPanel:new(10, 35, 330, 315, self)
+	self.m_TabPanel = GUITabPanel:new(10, 35, 320, 350, self.m_Window)
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 
 	self.m_TabItems = self.m_TabPanel:addTab(_"Items")
@@ -85,6 +85,7 @@ function TradeGUI:loadItems()
 						self.m_SelectedType = "Item"
 						self.m_SelectedItem = itemInv["Objekt"]
 						self.m_SelectedItemAmount = itemInv["Menge"]
+						self.m_SelectedItemValue = itemInv["Value"]
 						self.m_ButtonTrade:setEnabled(true)
 						self.m_Preview:setImage("files/images/Inventory/items/"..self.m_ItemData[itemInv["Objekt"]]["Icon"])
 						self.m_LabelDescription:setText(self.m_ItemData[itemInv["Objekt"]]["Info"])
@@ -98,18 +99,19 @@ end
 
 function TradeGUI:loadWeapons()
    self.m_MyWeaponsGrid:clear()
-    for i=2, 12 do
+    for i = 0, 12 do
 		local weaponId = getPedWeapon(localPlayer, i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
-            item.onLeftClick = function()
-                self.m_SelectedType = "Weapon"
-				self.m_SelectedItem = weaponId
-                self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
-				self.m_ButtonTrade:setEnabled(true)
-				self.m_Preview:setImage(WeaponIcons[weaponId])
-				self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
-            end
+            local item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
+			item.onLeftClick =
+				function()
+					self.m_SelectedType = "Weapon"
+					self.m_SelectedItem = weaponId
+					self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
+					self.m_ButtonTrade:setEnabled(true)
+					self.m_Preview:setImage(WeaponIcons[weaponId])
+					self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
+				end
 		end
 	end
 end
@@ -144,7 +146,7 @@ function TradeGUI:requestTrade()
 	if self.m_SelectedType == "Item" then
 		if tonumber(self.m_Amount:getText()) > 0 then
 			if tonumber(self.m_Amount:getText()) <= self.m_SelectedItemAmount then
-				triggerServerEvent("requestTrade", localPlayer, "Item", self.m_TargetPlayer, self.m_SelectedItem, tonumber(self.m_Amount:getText()), tonumber(self.m_Money:getText()))
+				triggerServerEvent("requestTrade", localPlayer, "Item", self.m_TargetPlayer, self.m_SelectedItem, tonumber(self.m_Amount:getText()), tonumber(self.m_Money:getText()), self.m_SelectedItemValue)
 				delete(self)
 			else
 				ErrorBox:new(_("Du nicht ausreichend %s!", self.m_SelectedItem))
