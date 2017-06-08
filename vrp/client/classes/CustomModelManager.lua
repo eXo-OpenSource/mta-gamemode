@@ -243,7 +243,6 @@ function CustomModelManager:restoreCOL(modelId)
 end
 
 function CustomModelManager:unloadAllModels()
-	outputDebug("unloading all models")
 	for modelId in pairs(self.m_COLMap) do
 		self:restoreCOL(modelId)
 	end

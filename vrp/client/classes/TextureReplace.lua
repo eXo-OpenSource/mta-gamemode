@@ -193,11 +193,11 @@ function TextureReplace:loadShader()
 end
 
 function TextureReplace:unloadShader()
-	if not self.m_Shader or not isElement(self.m_Shader) then outputDebug("no shader for "..inspect(self.m_Element)) return false end
-	if not self.m_Texture or not isElement(self.m_Texture) then outputDebug("no texture for "..inspect(self.m_Element)) return false end
+	if not self.m_Shader or not isElement(self.m_Shader) then return false end
+	if not self.m_Texture or not isElement(self.m_Texture) then return false end
 	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_Optional)
 	local b = destroyElement(self.m_Shader)
-	outputDebug(inspect(self.m_Element).." cache unloaded: "..inspect(a).." shader destroyed: "..inspect(b))
+	--outputDebug(inspect(self.m_Element).." cache unloaded: "..inspect(a).." shader destroyed: "..inspect(b))
 	return a and b
 end
 
