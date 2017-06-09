@@ -190,10 +190,12 @@ function getDebugInfo(stack)
 	return className, tostring(debug.getinfo(stack or 2).name), tostring(debug.getinfo(stack or 2).currentline)
 end
 
-function outputDebug(errmsg)
+function outputDebug(...)
 	if DEBUG then
 		local className, methodName, currentline = getDebugInfo(3)
-		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, methodName, currentline, tostring(errmsg)), 3)
+		local msgs = {...}
+		for i,v in pairs(msgs) do msgs[i] = inspect(v) end
+		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, methodName, currentline, table.concat(msgs, " | ")), 3)
 	end
 end
 

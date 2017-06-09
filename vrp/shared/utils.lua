@@ -540,13 +540,22 @@ function countLineBreaks(text)
 	return count
 end
 
-function math.round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
+function convertNumber ( number )  
+	local formatted = number  
+	while true do      
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1.%2')    
+		if ( k==0 ) then      
+			break   
+		end  
+	end  
+	return formatted
 end
 
-function math.clamp(low,value,high)
-    return math.max(low,math.min(value,high))
+function toMoneyString(money)
+	if tonumber(money) then
+		return convertNumber(money).."$"
+	end
+	return tostring(money)
 end
 
 function linear(t, b, c, d)

@@ -94,7 +94,7 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
-	self:setMileage(mileage)
+	self:setMileage(mileage or 0)
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 

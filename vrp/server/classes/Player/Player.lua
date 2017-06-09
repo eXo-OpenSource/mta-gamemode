@@ -860,30 +860,29 @@ function Player:payDay()
 	local income, outgoing, total = 0, 0, 0
 	local income_faction, income_company, income_group, income_interest = 0, 0, 0, 0
 	local outgoing_vehicles, outgoing_house = 0, 0
-	local houseAmount = 0
 	local points_total = 0
 	--Income:
 	if self:getFaction() then
 		income_faction = self:getFaction():paydayPlayer(self)
+		points_total = points_total + self:getFaction():getPlayerRank(self)
 		if income_faction > 0 then
 			income = income + income_faction
-			points_total = points_total + self:getFaction():getPlayerRank(self)
 			self:addPaydayText("income", _("%s-Lohn", self, self:getFaction():getShortName()), income_faction)
 		end
 	end
 	if self:getCompany() then
 		income_company = self:getCompany():paydayPlayer(self)
+		points_total = points_total + self:getCompany():getPlayerRank(self)
 		if income_company > 0 then
 			income = income + income_company
-			points_total = points_total + self:getCompany():getPlayerRank(self)
 			self:addPaydayText("income", _("%s-Lohn", self, self:getCompany():getShortName()), income_company)
 		end
 	end
 	if self:getGroup() then
 		income_group = self:getGroup():paydayPlayer(self)
+		points_total = points_total + self:getGroup():getPlayerRank(self)
 		if income_group > 0 then
 			income = income + income_group
-			points_total = points_total + self:getGroup():getPlayerRank(self)
 			self:addPaydayText("income", _("%s-Lohn", self, self:getGroup():getName()), income_group)
 		end
 	end
@@ -919,10 +918,9 @@ function Player:payDay()
 			if temp_bank_money - rent >= 0 then
 				outgoing_house = outgoing_house + rent
 				house.m_Money = house.m_Money + rent
-				houseAmount = houseAmount + 1
 				temp_bank_money = temp_bank_money - rent
 				points_total = points_total + 1
-				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), outgoing_house)
+				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
 				house:unrentHouse(self)
@@ -930,7 +928,6 @@ function Player:payDay()
 		end
 		--give points if the player owns a house
 		if HouseManager:getSingleton():getPlayerHouse(self) then
-			outputDebug("player has a house")
 			points_total = points_total + 10
 		end
 	end
