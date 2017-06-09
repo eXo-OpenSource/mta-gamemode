@@ -83,10 +83,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			end)
 	end
 
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-		cancelEvent()
-	end)
+
 
 	player.farmerVehicle = vehicle
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
@@ -103,6 +100,11 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 				vehPlayer:addBankMoney( income, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
+
+				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+					vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+					cancelEvent()
+				end)
 			end
 			vehicle:destroy()
 			self.m_CurrentPlants[vehPlayer] = 0
