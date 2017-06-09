@@ -11,15 +11,15 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 local ROB_DELAY = 1000*60*15
 
 function HouseManager:constructor()
-
+	local st, count = getTickCount(), 0
 	self.m_RobPlayers = {}
 	self.m_Houses = {}
 
-	outputServerLog("Loading houses...")
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
 		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
+		count = count + 1
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -38,6 +38,7 @@ function HouseManager:constructor()
 	addEventHandler("playerFindRobableItem",root,bind(self.onFindRobItem,self))
 	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
 
 function HouseManager:createNewHouse(player,cmd,...)

@@ -43,8 +43,10 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setFrozen(true)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
+	self.m_Truck:setMaxHealth(4000, true)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck:toggleRespawn(false)
+	self.m_Truck:setAlwaysDamageable(true)
 	self.m_Truck.m_DisableToggleHandbrake = true
 
 	self.m_StartTime = getTickCount()
@@ -129,8 +131,7 @@ end
 
 
 function WeaponTruck:timeUp()
-	self.m_StartPlayer:sendError(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]))
-
+	PlayerManager:getSingleton():breakingNews("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type])
 	if self.m_Type == "evil" then
 		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
 	elseif self.m_Type == "state" then

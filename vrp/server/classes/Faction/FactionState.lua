@@ -586,7 +586,7 @@ function FactionState:Event_fillRepairVehicle(type)
 						client:getFaction():takeMoney(costs, "Fahrzeug-Betankung")
 					elseif type == "repair" then
 						costs = math.floor((1000-client.vehicle:getHealth()))
-						fixVehicle(client.vehicle)
+						client.vehicle:fix()
 						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ repariert!", client, costs))
 						client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
 					end

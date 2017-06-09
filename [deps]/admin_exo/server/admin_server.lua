@@ -1114,7 +1114,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 			local vehicle = getPedOccupiedVehicle ( player )
 			if ( vehicle ) then
 				setElementModel(vehicle, data)
-				fixVehicle(vehicle)
+				vehicle:fix()
 			else
 				local x, y, z = getElementPosition ( player )
 				local r = getPedRotation ( player )
@@ -1219,7 +1219,7 @@ addEventHandler ( "aVehicle", _root, function ( player, action, data )
 		if ( vehicle ) then
 			local mdata = ""
 			if ( action == "repair" ) then
-				fixVehicle ( vehicle )
+				vehicle:fix()
 				local rx, ry, rz = getVehicleRotation ( vehicle )
 				if ( rx > 110 ) and ( rx < 250 ) then
 					local x, y, z = getElementPosition ( vehicle )

@@ -1,12 +1,13 @@
 GroupPropertyManager = inherit(Singleton)
 addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText","requestImmoPanelClose","requestPropertyItemDepot"}
 function GroupPropertyManager:constructor( )
+	local st, count = getTickCount(), 0
 	self.Map = {}
 	self.ChangeMap = {}
-	outputServerLog("Loading group-propertys...")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
 		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId, row.ElevatorData)
+		count = count + 1
 	end
 
 	addEventHandler("GroupPropertyClientInput",root,function()
@@ -25,7 +26,7 @@ function GroupPropertyManager:constructor( )
 	addEventHandler("requestRefresh", root, bind( GroupPropertyManager.OnRefreshRequest, self))
 	addEventHandler("updatePropertyText",root,bind(GroupPropertyManager.OnMessageTextChange,self))
 	addEventHandler("requestPropertyItemDepot",root,bind(GroupPropertyManager.OnRequestPropertyItemDepot,self))
-
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s group-properties in %sms"):format(count, getTickCount()-st)) end
 end
 
 function GroupPropertyManager:OnMessageTextChange( text )

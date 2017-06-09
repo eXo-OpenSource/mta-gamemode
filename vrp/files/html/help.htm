@@ -12,7 +12,9 @@
         width: 90%;
         overflow-x: hidden;
         word-wrap: break-word;
+        user-select: none;
     }
+    ::selection { background: transparent; }
     button {
         background-color: #171717;
         border: none;
@@ -38,6 +40,17 @@
     }
     button:active {
         outline: none;
+    }
+    ::-webkit-scrollbar {
+        position: relative;
+        width: 4px;
+        left: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        opacity: 0;
+    }
+    ::-webkit-scrollbar-thumb {
+        background-color: white;
     }
     </style>
 </head>

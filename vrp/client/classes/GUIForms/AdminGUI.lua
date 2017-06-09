@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -48,7 +48,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", 10, 270, 250, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", 10, 310, 250, 30, Color.Blue, tabAllgemein)
-	
+
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
 	self.m_EditPosY = GUIEdit:new(95, 400, 80, 25, tabAllgemein):setNumeric(true, false)
@@ -117,6 +117,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("gethere", "her porten", 440, 250, 160, 30, Color.Green, tabSpieler)
 	self:addAdminButton("nickchange", "Nick ändern", 440, 290, 160, 30, Color.Orange, tabSpieler)
 
+	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", 610, 130, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 610, 170, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("warn", "Warns verwalten", 610, 210, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("setFaction", "in Fraktion setzen", 610, 250, 160, 30, Color.Blue, tabSpieler)
@@ -373,6 +374,9 @@ function AdminGUI:onButtonClick(func)
 	if func == "showVehicles" then
 		AdminVehicleGUI:new(self.m_SelectedPlayer, self)
 		self:close()
+	elseif func == "showGroupVehicles" then
+		AdminVehicleGUI:new(self.m_SelectedPlayer, self, true)
+		self:close()
 	elseif func == "gethere" or func == "goto" or func == "spect" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
@@ -519,7 +523,7 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
-	elseif func == "checkOverlappingVehicles" then 
+	elseif func == "checkOverlappingVehicles" then
 		triggerServerEvent("checkOverlappingVehicles", localPlayer)
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
@@ -597,11 +601,11 @@ end
 
 AdminVehicleGUI = inherit(GUIForm)
 
-function AdminVehicleGUI:constructor(player, adminGui)
+function AdminVehicleGUI:constructor(player, adminGui, isGroup)
 	self.m_Player = player
 	self.m_AdminGui = adminGui
 	GUIForm.constructor(self, screenWidth/2-500/2, screenHeight/2-300/2, 500, 300)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", player:getName()), true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", isGroup and (player:getGroupName() and player:getGroupName() or "-") or player:getName()), true, true, self)
 	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
 	self.m_VehiclesGrid = GUIGridList:new(10, 40, 300, 250, self.m_Window)
 	self.m_VehiclesGrid:addColumn(_"Name", 0.5)
@@ -627,7 +631,7 @@ function AdminVehicleGUI:constructor(player, adminGui)
 	addRemoteEvents{"adminVehicleRetrieveInfo"}
 	addEventHandler("adminVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 
-	triggerServerEvent("adminGetPlayerVehicles", localPlayer, player)
+	triggerServerEvent("adminGetPlayerVehicles", localPlayer, player, isGroup)
 end
 
 function AdminVehicleGUI:Event_vehicleRetrieveInfo(vehiclesInfo)

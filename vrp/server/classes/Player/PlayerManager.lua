@@ -171,14 +171,19 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 				if (client:getPlayTime() / 60) >=  3 then
 					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
+
 						destroyElement(pickup)
 						giveWeapon(client,weapon,ammo,true)
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
 					else
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
 						destroyElement(pickup)
 						--giveWeapon(client,weapon,ammo,true)
 						--FactionState:

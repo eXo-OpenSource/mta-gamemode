@@ -59,7 +59,7 @@ function JobFarmer:constructor()
 
 end
 
-function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
 
 	if vehicleModel == 531 then
@@ -74,16 +74,20 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
 		end)
+	elseif vehicleModel == 478 then --Walton
+		self:registerJobVehicle(player, vehicle, true, false)
+		addEventHandler("onElementDestroy", vehicle,
+			function()
+				self.m_CurrentPlants[player] = 0
+				self:updatePrivateData(player)
+			end)
 	end
 
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-		cancelEvent()
-	end)
+
 
 	player.farmerVehicle = vehicle
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 then
+		if seat == 0 and source:getModel() ~= 478 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
 				local income = player:getData("Farmer.Income")
 				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
@@ -96,6 +100,11 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 				vehPlayer:addBankMoney( income, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
+
+				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+					vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+					cancelEvent()
+				end)
 			end
 			vehicle:destroy()
 			self.m_CurrentPlants[vehPlayer] = 0

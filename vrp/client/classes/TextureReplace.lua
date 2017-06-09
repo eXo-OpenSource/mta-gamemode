@@ -44,11 +44,11 @@ end
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, optional, onRequest)
 	if not path or #path <= 5 then
-		outputConsole("Texturepath is blow 6 chars traceback in Console")
+		outputConsole("Texturepath "..path.." is blow 6 chars traceback in Console")
 		traceback()
 	end
 	if not textureName or #textureName <= 5 then
-		outputConsole("TextureName is blow 6 chars traceback in Console")
+		outputConsole("TextureName "..textureName.." is blow 6 chars traceback in Console")
 		traceback()
 	end
 	self.m_Width = width
@@ -197,6 +197,7 @@ function TextureReplace:unloadShader()
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
 	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_Optional)
 	local b = destroyElement(self.m_Shader)
+	--outputDebug(inspect(self.m_Element).." cache unloaded: "..inspect(a).." shader destroyed: "..inspect(b))
 	return a and b
 end
 
@@ -227,7 +228,7 @@ function TextureReplace.getCachedTexture(path, instance)
 				return false
 			else
 				if DEBUG then
-					outputConsole("Texturepath is blow 6 chars traceback in Console")
+					outputConsole("Texturepath "..path.." is blow 6 chars traceback in Console")
 					traceback()
 				end
 			end
@@ -317,6 +318,7 @@ addEventHandler("changeElementTexture", root,
 			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
+			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
 			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.optional, vehData.isRequested)
 		end
 	end

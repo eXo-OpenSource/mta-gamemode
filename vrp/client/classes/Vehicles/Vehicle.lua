@@ -36,6 +36,18 @@ function Vehicle:getFuel()
 	return 100
 end
 
+function Vehicle:getMaxHealth()
+	return self:getData("customMaxHealth") or 1000
+end
+
+function Vehicle:isAlwaysDamageable()
+	return self:getData("alwaysDamageable")
+end
+
+function Vehicle:isBroken()
+	return self:getData("vehicleEngineBroken")
+end
+
 function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
 end
@@ -179,28 +191,23 @@ setTimer(
 )
 
 -- The following code prevents vehicle from exploding "fully"
+local totalLossVehicleTypes = {
+	[VehicleType.Automobile] = true,
+	[VehicleType.Bike] = true,
+}
+
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		local occ = getVehicleOccupants(source)
-		local counter = 0
-		for seat, player in pairs(occ) do
-			counter = counter + 1
-		end
-		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
-		if source:getData("disableVehicleDamageSystem") then return outputDebug("also nope") end
-		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
-			if source:getHealth() - loss < 310 then
-				cancelEvent()
-				if isElementSyncer(source) and source:getHealth() >= 310 then
+		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
+		if source.isBroken and source:isBroken() then return cancelEvent() end
+		if totalLossVehicleTypes[source:getVehicleType()] then
+			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
+				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
+					source.m_LastBroken = getTickCount()
 					triggerServerEvent("vehicleBreak", source)
-					source.m_Broken = true
-
-					if localPlayer:getOccupiedVehicle() == source then
-						WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
-					end
 				end
 				setVehicleEngineState(source, false)
-				source:setHealth(301)
+				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 			end
 		end
 		if getVehicleOccupant(source,0) == localPlayer then
@@ -210,6 +217,16 @@ addEventHandler("onClientVehicleDamage", root,
 		end
 	end
 )
+
+addEventHandler("onClientVehicleCollision", root, function(theHitElement,force) 
+	if totalLossVehicleTypes[source:getVehicleType()] then
+		local rx,ry,rz = getElementRotation(source)
+		source:setDamageProof((rx > 160 and rx < 200)) -- to disable burning
+		if source:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then -- Crashfix
+			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH) 
+		end
+	end
+end)
 
 if EVENT_EASTER then
 	addEventHandler("onClientVehicleCollision", root,

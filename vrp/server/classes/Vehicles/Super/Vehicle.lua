@@ -404,11 +404,12 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
-	self:setHealth(301)
 	if state then
+		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
 	end
-
+	self:setData("vehicleEngineBroken", state, true)
+	self:setDamageProof(state)
 	if self.m_BrokenHook then
 		self.m_BrokenHook:call(vehicle)
 		return
@@ -416,7 +417,7 @@ function Vehicle:setBroken(state)
 end
 
 function Vehicle:isBroken()
-	return self:getHealth() <= 301.01
+	return self:getData("vehicleEngineBroken")
 end
 
 function Vehicle:toggleInternalSmoke()
@@ -471,6 +472,41 @@ function Vehicle:isRepairAllowed()
 	return self.m_RepairAllowed
 end
 
+function Vehicle:fix()
+	if self.m_RepairAllowed then
+		fixVehicle(self)
+		if self:getMaxHealth() ~= 1000 then
+			self:setHealth(self:getMaxHealth())
+		end	
+		self:setBroken(false)
+	end
+end
+
+function Vehicle:setAlwaysDamageable(state) -- trigger damage event even if engine is off 
+	self:setData("alwaysDamageable", state, true)
+end
+
+function Vehicle:isAlwaysDamageable()
+	return self:getData("alwaysDamageable")
+end
+
+function Vehicle:setMaxHealth(health, giveHealth)
+	if type(health) == "number" then
+		health = math.clamp(VEHICLE_TOTAL_LOSS_HEALTH, health, 100000)
+		 self:setData("customMaxHealth", health, true)
+		if giveHealth then
+			self:setHealth(health) -- possible duplicate of :fix(), but only for repairable vehicles
+			self:setBroken(false)
+		end
+		return true
+	end
+	return false
+end
+
+function Vehicle:getMaxHealth()
+	return self:getData("customMaxHealth") or 1000
+end
+
 function Vehicle:toggleRespawn(state)
 	self.m_RespawnAllowed = state
 end
@@ -523,7 +559,7 @@ function Vehicle:respawnOnSpawnPosition()
 	if self.m_PositionType == VehiclePositionType.World then
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
-		fixVehicle(self)
+		self:fix()
 		self:setEngineState(false)
 		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
