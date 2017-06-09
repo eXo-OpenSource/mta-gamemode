@@ -545,6 +545,10 @@ function math.round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
+function math.clamp(low,value,high)
+    return math.max(low,math.min(value,high))
+end
+
 function linear(t, b, c, d)
   return c * t / d + b
 end

@@ -20,10 +20,12 @@ function WeedTruck:constructor(driver)
     self.m_Truck:setColor(0, 50, 0)
 	self.m_Truck:setFrozen(true)
 	self.m_Truck:setVariant(255, 255)
+	self.m_Truck:setMaxHealth(3000, true)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck:toggleRespawn(false)
-	self.m_Truck:setData("disableVehicleDamageSystem", true, true)
+	self.m_Truck:setAlwaysDamageable(true)
 	self.m_Truck.m_DisableToggleHandbrake = true
+
 
 	self.m_StartTime = getTickCount()
 	warpPedIntoVehicle(driver, self.m_Truck)
