@@ -6,9 +6,9 @@ local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 30 --// default 10
-local MONEY_PLANT_HARVESTER = 7
-local MONEY_PLANT_TRACTOR = 9
+local MONEY_PER_PLANT = 58 --// default 10
+local MONEY_PLANT_HARVESTER = 10
+local MONEY_PLANT_TRACTOR = 8
 
 function JobFarmer:constructor()
 	Job.constructor(self)

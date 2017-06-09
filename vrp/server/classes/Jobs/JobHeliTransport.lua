@@ -110,7 +110,7 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		local distance = getDistanceBetweenPoints3D(self.m_PickupPos, vehicle:getPosition())
-		client:setData("JobHeliTransport:Money", math.floor(distance/3)) --// Default distance/8
+		client:setData("JobHeliTransport:Money", math.floor(distance/3.489)) --// Default distance/8
 		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else

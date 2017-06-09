@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobTrashman = inherit(Job)
-local MONEY_PER_CAN = 40 --// 15 default
+local MONEY_PER_CAN = 29 --// 15 default
 
 function JobTrashman:constructor()
 	Job.constructor(self)
