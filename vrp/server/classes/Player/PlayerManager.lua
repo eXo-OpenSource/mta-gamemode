@@ -770,6 +770,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
@@ -783,6 +784,7 @@ function PlayerManager:Event_startAnimation(animation)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
+		client.lastAnimation = getTickCount()
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
 	end
