@@ -108,7 +108,7 @@ addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
 	function(model, callbackEvent)
 		Inventory:getSingleton():hide()
-		setTimer(
+		nextframe(
 		function(model,callbackEvent)
 			local objectPlacer = ObjectPlacer:new(model,
 				function(position, rotation)
@@ -117,13 +117,13 @@ addEventHandler("objectPlacerStart", root,
 					else
 						triggerServerEvent(callbackEvent, localPlayer, false)
 					end
-					setTimer(
+					nextframe(
 						function()
 							Inventory:getSingleton():show()
-						end, 
-					50, 1)
+						end
+					)
 				end
 			)
-		end,50,1,model,callbackEvent)
+		end, model, callbackEvent)
 	end
 )

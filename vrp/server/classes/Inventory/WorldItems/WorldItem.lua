@@ -47,7 +47,7 @@ function WorldItem:virtual_destructor()
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
-function WorldItem:onCollect(player)
+function WorldItem:onCollect(player) --use silent if player disconnects
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Collect) then
 		return false
 	end
@@ -56,7 +56,7 @@ function WorldItem:onCollect(player)
 		if self.m_Item.removeFromWorld then
 			self.m_Item:removeFromWorld(player, self)
 		end
-		player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000)
+		if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
 		delete(self)
 		return true
 	end
@@ -66,6 +66,9 @@ end
 function WorldItem:onDelete(player)
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 		return false
+	end
+	if self.m_Item.removeFromWorld then
+		self.m_Item:removeFromWorld(player, self)
 	end
 	player:sendShortMessage(_("%s gelöscht.", player, self.m_ItemName), nil, nil, 1000)
 	delete(self)
@@ -91,7 +94,7 @@ function WorldItem:getItem()
 	return self.m_Item
 end
 
-function WorldItem:hasPlayerPermissionTo(player, action)
+function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
 	if not isElement(player) or player:getType() ~= "player" then return false end
 	if not ADMIN_RANK_PERMISSION[action] or player:getRank() >= ADMIN_RANK_PERMISSION[action] then
 		return true
@@ -99,14 +102,14 @@ function WorldItem:hasPlayerPermissionTo(player, action)
 	return false
 end
 
-function WorldItem.getItemsByOwner(player)
-	local result = {}
-	for k, worldItem in pairs(WorldItem.Map) do
-		if worldItem.m_Owner == player:getId() then
-			result[#result + 1] = worldItem
+function WorldItem.collectAllFromOwner(owner)
+	if WorldItem.Map[owner] then
+		for modelid, objects in pairs(WorldItem.Map[owner]) do
+			for object, worlditem in pairs(objects) do
+				worlditem:onCollect(owner)
+			end
 		end
 	end
-	return result
 end
 
 addEvent("worldItemMove", true)
@@ -137,6 +140,13 @@ addEventHandler("worldItemDelete", root,
 )
 
 
-addCommandHandler("objects", function() --DEBUG
-	outputConsole(inspect(WorldItem.Map))
+addCommandHandler("objects", function(player) --DEBUG
+	if player:getRank() >= RANK.Developer then
+		for owner, objects in pairs(WorldItem.Map) do
+			outputConsole(owner:getName(), player)
+			for id, elements in pairs(objects) do
+				outputConsole(("%d Model %d"):format(table.size(elements), id), player)
+			end
+		end
+	end
 end)

@@ -16,7 +16,7 @@ function ItemBarricade:destructor()
 end
 
 function ItemBarricade:use(player)
-	--if player:isFactionDuty() then
+	if player:isFactionDuty() then
 		local result = self:startObjectPlacing(player,
 			function(item, position, rotation)
 				if item ~= self then return end
@@ -27,8 +27,8 @@ function ItemBarricade:use(player)
 				player:getInventory():removeItem(self:getName(), 1)
 			end
 		)
-	--else
-		--player:sendError(_("Du bist nicht im Dienst!", player))
-		--player:getInventory():removeAllItem(self:getName())
-	--end
+	else
+		player:sendError(_("Du bist nicht im Dienst!", player))
+		player:getInventory():removeAllItem(self:getName())
+	end
 end

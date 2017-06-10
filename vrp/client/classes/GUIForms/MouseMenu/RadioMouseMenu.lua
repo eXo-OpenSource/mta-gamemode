@@ -8,7 +8,8 @@
 RadioMouseMenu = inherit(GUIMouseMenu)
 
 function RadioMouseMenu:constructor(posX, posY, element)
-	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
+	--reference code, now implemented in WorldItemMouseMenu
+	--[[GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	self:addItem(_("Besitzer: %s", element:getData("Owner") or "Besitzer unbekannt")):setTextColor(Color.Red)
 	self:addItem(_"Musik ändern",
 		function()
@@ -34,7 +35,5 @@ function RadioMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Trash)
-	end
-
-
+	end]]
 end
