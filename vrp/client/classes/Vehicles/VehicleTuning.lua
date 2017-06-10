@@ -68,12 +68,7 @@ function VehicleTuning:getTuning(type)
 end
 
 function VehicleTuning:saveTuning(type, data)
-	--if self.m_Tuning[type] then
-	outputChatBox(("Type: %s // Data: %s"):format(tostring(type), tostring(data)))
-		self.m_Tuning[type] = data
-	--else
-	--	outputDebugString("Invalid Tuning Type "..type)
-	--end
+	self.m_Tuning[type] = data
 end
 
 function VehicleTuning:saveGTATuning()

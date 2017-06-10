@@ -81,11 +81,7 @@ function VehicleTuning:createNew()
 end
 
 function VehicleTuning:saveTuning(type, data)
-	--if self.m_Tuning[type] then
 	self.m_Tuning[type] = data
-	--else
-	--	outputDebugString("Invalid Tuning Type "..type)
-	--end
 end
 
 function VehicleTuning:getTuning(type)
