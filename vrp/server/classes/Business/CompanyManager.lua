@@ -353,34 +353,37 @@ function CompanyManager:Event_toggleDuty()
 	end
 	local company = client:getCompany()
 	if company then
-		if client:isCompanyDuty() then
-			client:setDefaultSkin()
-			client.m_CompanyDuty = false
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
-			client:setPublicSync("Company:Duty",false)
-            takeAllWeapons(client)
-            if company.stop then
-                company:stop(client)
-            end
+		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 then
+			if client:isCompanyDuty() then
+				client:setDefaultSkin()
+				client.m_CompanyDuty = false
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
+				client:setPublicSync("Company:Duty",false)
+				takeAllWeapons(client)
+				if company.stop then
+					company:stop(client)
+				end
+			else
+				if client:getPublicSync("Faction:Duty") and client:getFaction() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
+					return false
+				end		
+				company:changeSkin(client)
+				client.m_CompanyDuty = true
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
+				client:setPublicSync("Company:Duty",true)
+				takeAllWeapons(client)
+				if company.m_Id == CompanyStaticId.SANNEWS then
+					giveWeapon(client, 43, 50) -- Camera
+				end
+				if company.start then
+					company:start(client)
+				end
+			end
 		else
-            if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
-				return false
-			end
-
-			company:changeSkin(client)
-			client.m_CompanyDuty = true
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
-			client:setPublicSync("Company:Duty",true)
-            takeAllWeapons(client)
-			if company.m_Id == CompanyStaticId.SANNEWS then
-				giveWeapon(client, 43, 50) -- Camera
-			end
-            if company.start then
-                company:start(client)
-            end
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))

@@ -386,9 +386,14 @@ function FactionManager:Event_receiveFactionWeaponShopInfos()
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
-	local faction = client:getFaction()
-	local depot = faction.m_Depot
-	depot:takeWeaponsFromDepot(client,weaponTable)
+	if not client.m_WeaponStoragePosition then return outputDebug("no weapon storage position for this faction implemented") end
+	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
+		local faction = client:getFaction()
+		local depot = faction.m_Depot
+		depot:takeWeaponsFromDepot(client,weaponTable)
+	else
+		client:sendError(_("Du bist zu weit entfernt", client))
+	end
 end
 
 function FactionManager:Event_factionRespawnVehicles()
