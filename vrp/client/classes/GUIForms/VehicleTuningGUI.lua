@@ -363,8 +363,8 @@ function VehicleTuningGUI:PartItem_Click(item)
                     else
                         setElementData(self.m_Vehicle, "Neon", false)
                         setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-                        if Neon.Vehicles[veh] then
-                            Neon.Vehicles[veh] = nil
+                        if Neon.Vehicles[self.m_Vehicle] then
+                            Neon.Vehicles[self.m_Vehicle] = nil
                         end
                     end
                 end

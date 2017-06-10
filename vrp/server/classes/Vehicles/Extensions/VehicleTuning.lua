@@ -36,11 +36,11 @@ function VehicleTuning:applyTuning(disableTextureForce)
 	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
 	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
 
-	for i = 0, 16 do
-		removeVehicleUpgrade(self.m_Vehicle, i)
+	for _, v in pairs(self.m_Vehicle.upgrades) do
+		removeVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	for k, v in pairs(self.m_Tuning["GTATuning"] or {}) do
+	for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
