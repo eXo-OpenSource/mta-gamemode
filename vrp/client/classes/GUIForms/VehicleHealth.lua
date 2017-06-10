@@ -32,7 +32,7 @@ end
 function VehicleHealth:refresh()
 	if not localPlayer:isInVehicle() then self:stopVehicleHealth() return end
 	
-	self.m_Health = math.clamp(0, math.ceil((localPlayer.vehicle.health - self.m_Min)/(self.m_Max - self.m_Min)*100), 100)
+	self.m_Health = localPlayer.vehicle:getHealthInPercent()
 	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%") 
 	self.m_Progress:setProgress(self.m_Health)
 end

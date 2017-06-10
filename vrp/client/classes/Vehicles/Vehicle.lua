@@ -40,6 +40,10 @@ function Vehicle:getMaxHealth()
 	return self:getData("customMaxHealth") or 1000
 end
 
+function Vehicle:getHealthInPercent()
+	return math.clamp(0, math.ceil((self.health - VEHICLE_TOTAL_LOSS_HEALTH)/(self:getMaxHealth() - VEHICLE_TOTAL_LOSS_HEALTH)*100), 100)
+end
+
 function Vehicle:isAlwaysDamageable()
 	return self:getData("alwaysDamageable")
 end

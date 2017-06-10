@@ -490,13 +490,20 @@ function Vehicle:isAlwaysDamageable()
 	return self:getData("alwaysDamageable")
 end
 
-function Vehicle:setMaxHealth(health, giveHealth)
+function Vehicle:setMaxHealth(health, giveHealth, timer)
 	if type(health) == "number" then
 		health = math.clamp(VEHICLE_TOTAL_LOSS_HEALTH, health, 100000)
 		 self:setData("customMaxHealth", health, true)
 		if giveHealth then
-			self:setHealth(health) -- possible duplicate of :fix(), but only for repairable vehicles
-			self:setBroken(false)
+			if timer then -- use the timer arg if vehicles just spawned
+				nextframe(function()
+					self:setHealth(health) 
+					self:setBroken(false)
+				end)
+			else
+				self:setHealth(health) -- possible duplicate of :fix(), but only for repairable vehicles
+				self:setBroken(false)
+			end
 		end
 		return true
 	end
@@ -505,6 +512,10 @@ end
 
 function Vehicle:getMaxHealth()
 	return self:getData("customMaxHealth") or 1000
+end
+
+function Vehicle:getHealthInPercent()
+	return math.clamp(0, math.ceil((self.health - VEHICLE_TOTAL_LOSS_HEALTH)/(self:getMaxHealth() - VEHICLE_TOTAL_LOSS_HEALTH)*100), 100)
 end
 
 function Vehicle:toggleRespawn(state)
