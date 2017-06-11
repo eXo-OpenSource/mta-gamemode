@@ -52,6 +52,10 @@ function Vehicle:isBroken()
 	return self:getData("vehicleEngineBroken")
 end
 
+function Vehicle:getBulletArmorLevel()
+	return self:getData("vehicleBulletArmorLevel") or 1
+end
+
 function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
 end
@@ -204,6 +208,12 @@ addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
 		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
 		if source.isBroken and source:isBroken() then return cancelEvent() end
+		--calculate vehicle armor
+		if weapon and source.getBulletArmorLevel then
+			cancelEvent()
+			local newLoss = loss / source:getBulletArmorLevel()
+			source:setHealth(math.max(0, source:getHealth()-newLoss))
+		end
 		if totalLossVehicleTypes[source:getVehicleType()] then
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
