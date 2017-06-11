@@ -509,11 +509,17 @@ function VehicleManager:Event_vehiclePark()
 				return
 			end
 
+			if not source:isOnGround() then
+				client:sendError(_("Das Fahrzeug kann nicht in der Luft geparkt werden!", client))
+				return
+			end
+
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
 				return
 			end
+
 			if source:getInterior() == 0 then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
