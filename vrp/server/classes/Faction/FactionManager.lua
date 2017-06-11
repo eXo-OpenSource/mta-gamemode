@@ -109,7 +109,7 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons)
+		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -293,12 +293,12 @@ function FactionManager:Event_factionRankUp(playerId)
 				-- Todo: Report possible cheat attempt
 				return
 			end
-			
-			if client:getId() == playerId then 
+
+			if client:getId() == playerId then
 				client:sendError(_("Du kannst deinen eigenen Rang nicht höher setzen!", client))
 				return
 			end
-			
+
 			local playerRank = faction:getPlayerRank(playerId)
 			local player, isOffline = DatabasePlayer.get(playerId)
 			if isOffline then
