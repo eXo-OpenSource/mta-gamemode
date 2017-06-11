@@ -589,6 +589,11 @@ function Vehicle:respawnOnSpawnPosition()
 			self:setDimension(0)
 		end
 
+		if self.m_Magnet then
+			detachElements(self.m_Magnet)
+			self.m_Magnet:attach(self, 0, 0, -1.5)
+		end
+
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
