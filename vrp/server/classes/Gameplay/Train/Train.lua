@@ -4,9 +4,10 @@ function Train:new(Id, Track, Node, ...)
 	-- 449: Tram
 	local vehicle = createVehicle(Id, TrainManager:getSingleton():getNode(Track, Node).pos)
 	enew(vehicle, self, ...)
-	
+
 	vehicle:setDirection(true)
 	vehicle:setDerailable(false)
+	setVehicleLocked(true)
 	vehicle.getMileage = function () end
 	return vehicle
 end
