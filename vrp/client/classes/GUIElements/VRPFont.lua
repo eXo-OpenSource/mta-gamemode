@@ -92,6 +92,8 @@ FontAwesomeSymbols = {
 	Speedo = "",
 	Long_Down = "",
 	Waypoint = "",
+	Cart_Plus = "",
+	Cart_Down = "",
 }
 
 Fonts = {

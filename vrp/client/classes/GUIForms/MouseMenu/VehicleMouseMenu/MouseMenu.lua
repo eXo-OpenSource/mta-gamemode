@@ -37,7 +37,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								end)
 							end
 						end
-					):setIcon(FontAwesomeSymbols.Home)
+					):setIcon(FontAwesomeSymbols.Cart_Down)
 				else
 					self:addItem(_"Firma: zum Verkauf anbieten",
 						function()
@@ -53,7 +53,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 								end, true)
 							end
 						end
-					):setIcon(FontAwesomeSymbols.Home)
+					):setIcon(FontAwesomeSymbols.Cart_Plus)
 				end
 			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
@@ -258,7 +258,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					triggerServerEvent("vehicleGetTuningList", self:getElement())
 				end
 			end
-		):setIcon(FontAwesomeSymbols.Cart)
+		):setIcon(FontAwesomeSymbols.Search)
 		self:addItem(_"Fahrzeug kaufen",
 			function()
 				if self:getElement() then
