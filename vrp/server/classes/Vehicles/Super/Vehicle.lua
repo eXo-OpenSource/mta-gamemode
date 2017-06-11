@@ -316,7 +316,7 @@ function Vehicle:toggleEngine(player)
 			end
 			return false
 		else
-			if VEHICLE_BIKES[self:getModel()] then -- Bikes
+			if VEHICLE_BIKES[self:getModel()] then
 				player:meChat(true, "verschließt sein Fahrradschloss!")
 			end
 			self:setEngineState(state)

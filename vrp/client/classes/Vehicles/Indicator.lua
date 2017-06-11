@@ -230,7 +230,9 @@ end
 * performIndicatorChecks
 Checks how the indicators state should be: created, updated or destroyed.
 --]]
-function Indicator:performIndicatorChecks ( vehicle )
+function Indicator:performIndicatorChecks(vehicle)
+	if VEHICLE_BIKES[vehicle:getModel()] then return end
+
     -- Get the current indicator states
     local indicatorLeft = getElementData(vehicle, 'i:left')
     local indicatorRight = getElementData(vehicle, 'i:right')
@@ -339,7 +341,7 @@ function Indicator:processIndicators ( state )
         -- Turn to switched on indicators, in both cases. When turning on,
         -- it goes straight to the full alpha mode. When turning off, it
         -- fades out from full alpha to full transparent.
-        
+
         self:setIndicatorsAlpha ( state, self.ms_Color[4], playerVehicle == state.vehicle )
 
         -- Switch the state
