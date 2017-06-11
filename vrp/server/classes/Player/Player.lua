@@ -923,7 +923,7 @@ function Player:payDay()
 				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
-				house:unrentHouse(self)
+				house:unrentHouse(self, true)
 			end
 		end
 		--give points if the player owns a house

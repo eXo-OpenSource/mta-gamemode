@@ -34,7 +34,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 
-	self.m_ColShape = createColSphere(position, 1)
+	--self.m_ColShape = createColSphere(position, 1)
 
 	if owner == false then
 		self.m_Keys = {}
@@ -45,7 +45,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
-	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
+	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
 
 	self:updatePickup()
@@ -142,17 +142,18 @@ function House:isValidRob(player)
 	return true
 end
 
-function House:onColShapeLeave(hitElement, matchingDimension)
+--[[function House:onColShapeLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension and self.m_Id == hitElement.visitingHouse then
 		hitElement:triggerEvent("hideHouseMenu")
 	end
-end
+end]]
 
 function House:isValidToEnter(player)
 	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
 end
 
 function House:rentHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if not self.m_Keys[player:getId()] then
 		if not self.m_Owner or self.m_Owner == 0 then
 			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
@@ -165,7 +166,7 @@ function House:rentHouse(player)
 
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
-			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player))
+			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
@@ -175,7 +176,8 @@ function House:rentHouse(player)
 	end
 end
 
-function House:unrentHouse(player)
+function House:unrentHouse(player, noDistanceCheck)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 and not noDistanceCheck then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if self.m_Keys[player:getId()] then
 		self.m_Keys[player:getId()] = nil
 		if player and isElement(player) then
@@ -192,6 +194,7 @@ function House:unrentHouse(player)
 end
 
 function House:setRent(player, rent)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if player:getId() == self.m_Owner then
 		self.m_RentPrice = rent
 		if rent > 0 then
@@ -209,6 +212,7 @@ function House:getRent()
 end
 
 function House:deposit(player, amount)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
 		if player:getMoney() >= amount then
@@ -224,6 +228,7 @@ function House:deposit(player, amount)
 end
 
 function House:withdraw(player, amount)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
 		if self.m_Money >= amount then
@@ -239,6 +244,7 @@ function House:withdraw(player, amount)
 end
 
 function House:removeTenant(player, id)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if player:getId() == self.m_Owner then
 		if self.m_Keys[id] then
 			self.m_Keys[id] = nil
@@ -323,6 +329,7 @@ function House:enterHouseTry(player)
 end
 
 function House:enterHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	local isRobberEntering = false
 	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
@@ -441,6 +448,7 @@ function House:onPlayerFade()
 end
 
 function House:buyHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if HouseManager:getSingleton():getPlayerHouse(player) then
 		player:sendWarning(_("Du hast bereits ein Haus!", player))
 		return
