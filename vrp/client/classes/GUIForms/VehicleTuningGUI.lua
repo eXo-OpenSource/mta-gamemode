@@ -141,8 +141,10 @@ function VehicleTuningGUI:updateUpgradeList(slot)
 
     -- Add compatible upgrades
     for k, upgradeId in pairs(upgrades) do
-        local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
-        self.m_UpgradeIdMapping[rowId] = upgradeId
+		if not (self.m_Vehicle:getModel() == 560 and upgradeId == 1164) then	-- Buggy spoiler for Sultan (invisible after reconnect)
+			local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
+			self.m_UpgradeIdMapping[rowId] = upgradeId
+		end
     end
 end
 
