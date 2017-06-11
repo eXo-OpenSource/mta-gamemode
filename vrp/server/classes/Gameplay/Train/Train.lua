@@ -7,7 +7,7 @@ function Train:new(Id, Track, Node, ...)
 
 	vehicle:setDirection(true)
 	vehicle:setDerailable(false)
-	setVehicleLocked(true)
+	vehicle:setLocked(true)
 	vehicle.getMileage = function () end
 	return vehicle
 end

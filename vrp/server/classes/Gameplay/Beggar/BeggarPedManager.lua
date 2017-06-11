@@ -47,7 +47,7 @@ function BeggarPedManager:spawnPeds()
 	end
 end
 
-function BeggarPedManager:getPhrase(beggarType, phraseType)
+function BeggarPedManager:getPhrase(beggarType, phraseType, arg1)
 	if phraseType == BeggarPhraseTypes.Help then
 		return Randomizer:getRandomTableValue(BeggarHelpPhrases[beggarType])
 	elseif phraseType == BeggarPhraseTypes.Thanks then
@@ -58,6 +58,12 @@ function BeggarPedManager:getPhrase(beggarType, phraseType)
 		return Randomizer:getRandomTableValue(BeggarRobPhrases)
 	elseif phraseType == BeggarPhraseTypes.Decline then
 		return Randomizer:getRandomTableValue(BeggarDeclinePhrases)
+		elseif phraseType == BeggarPhraseTypes.InVehicle then
+		return Randomizer:getRandomTableValue(BeggarInVehiclePhrases)
+	elseif phraseType == BeggarPhraseTypes.NoTrust then
+		return Randomizer:getRandomTableValue(BeggarNoTrustPhrases)
+	elseif phraseType == BeggarPhraseTypes.Destination then
+		return Randomizer:getRandomTableValue(BeggarDestinationPhrases):format(arg1)
 	end
 end
 
