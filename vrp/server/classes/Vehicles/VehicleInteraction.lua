@@ -32,7 +32,7 @@ function VehicleInteraction:doInteractions(door)
 
 			client:triggerEvent("onDoorOpened", getElementPosition(client))
 		else
-			client:sendError(_("Du hast keinen Schlüssel für das Fahrzeug!", client))
+			client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
 		end
    end
 end
@@ -51,7 +51,7 @@ function VehicleInteraction:doLock()
 			end
 		end
 	else
-		client:sendError(_("Du hast keinen Schlüssel für das Fahrzeug!", client))
+		client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
 	end
 end
 
@@ -105,7 +105,7 @@ function VehicleInteraction:doAction(door)
 							veh:getTrunk():open(client)
 						end
 					else
-						client:sendError(_("Du hast keinen Schlüssel für das Fahrzeug!", client))
+						client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
 					end
 				end
 			elseif door == 0 then

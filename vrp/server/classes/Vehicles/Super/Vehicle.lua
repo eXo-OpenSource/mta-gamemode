@@ -324,40 +324,44 @@ function Vehicle:toggleEngine(player)
 			return true
 		end
 	end
+
 	if VEHICLE_BIKES[self:getModel()] then -- Bikes
-		player:sendError(_("Du hast keinen Schlüssel für das Fahrradschloss!", player))
+		player:sendError(_("Du hast kein Schlüssel für das Fahrradschloss!", player))
 	else
-		player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
 	end
+
 	return false
 end
 
-function Vehicle:toggleHandBrake( player, preferredState )
+function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
-	if not self.m_HandBrake or preferredState then
-		if self:isOnGround() then
-			setControlState(player, "handbrake", true)
-			self.m_HandBrake = true
-			player:triggerEvent("vehicleHandbrake", true)
+
+	if self:hasKey(player) or player:getRank() >= RANK.Moderator then
+		if not self.m_HandBrake or preferredState then
+			if self:isOnGround() then
+				setControlState(player, "handbrake", true)
+				self.m_HandBrake = true
+				player:triggerEvent("vehicleHandbrake", true)
+			end
+		else
+			self.m_HandBrake = false
+			setControlState(player, "handbrake", false)
+			if isElementFrozen(self) then
+				setElementFrozen(self, false)
+			end
+			player:triggerEvent("vehicleHandbrake" )
 		end
+		self:setData("Handbrake", self.m_HandBrake, true)
 	else
-		self.m_HandBrake = false
-		setControlState(player, "handbrake", false)
-		if isElementFrozen(self) then
-			setElementFrozen(self, false)
-		end
-		player:triggerEvent("vehicleHandbrake" )
+		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
 	end
-	self:setData("Handbrake", self.m_HandBrake, true)
 end
 
 function Vehicle:setEngineState(state)
-	--local player = getVehicleOccupant(self, 0)
-	--if player then
-		setVehicleEngineState(self, state)
-		self.m_EngineState = state
-	--end
+	setVehicleEngineState(self, state)
+	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
 end
 
@@ -477,12 +481,12 @@ function Vehicle:fix()
 		fixVehicle(self)
 		if self:getMaxHealth() ~= 1000 then
 			self:setHealth(self:getMaxHealth())
-		end	
+		end
 		self:setBroken(false)
 	end
 end
 
-function Vehicle:setAlwaysDamageable(state) -- trigger damage event even if engine is off 
+function Vehicle:setAlwaysDamageable(state) -- trigger damage event even if engine is off
 	self:setData("alwaysDamageable", state, true)
 end
 
@@ -497,7 +501,7 @@ function Vehicle:setMaxHealth(health, giveHealth, timer)
 		if giveHealth then
 			if timer then -- use the timer arg if vehicles just spawned
 				nextframe(function()
-					self:setHealth(health) 
+					self:setHealth(health)
 					self:setBroken(false)
 				end)
 			else
