@@ -410,6 +410,14 @@ function Faction:phoneCallAbbort(caller)
 end
 
 function Faction:phoneTakeOff(player, key, state, caller)
+	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
 	player:triggerEvent("callAnswer", caller, voiceCall)

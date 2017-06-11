@@ -437,16 +437,24 @@ function Group:phoneCallAbbort(caller)
 end
 
 function Group:phoneTakeOff(player, key, state, caller)
-  self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-  caller:triggerEvent("callAnswer", player, false)
-  player:triggerEvent("callAnswer", caller, false)
-  caller:setPhonePartner(player)
-  player:setPhonePartner(caller)
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-      unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-    end
-  end
+  	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, false)
+	player:triggerEvent("callAnswer", caller, false)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		end
+	end
 end
 
 function Group:openBankGui(player)

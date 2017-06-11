@@ -373,6 +373,14 @@ function Company:phoneCallAbbort(caller)
 end
 
 function Company:phoneTakeOff(player, key, state, caller)
+	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	self:addLog(player, "Telefonate", ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
