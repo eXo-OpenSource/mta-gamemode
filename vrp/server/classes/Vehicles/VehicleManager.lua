@@ -64,6 +64,11 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
 			if player:getType() ~= "player" then return end
+
+			if source:isAttached() then -- If the vehicle is attached to a magnet helicopter
+				return cancelEvent()
+			end
+
 			if seat == 0 then
 				self:checkVehicle(source)
 

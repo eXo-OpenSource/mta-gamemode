@@ -644,12 +644,15 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
-						self.m_MagnetActivated = true
-						self.m_GrabbedVehicle = vehicle
-						vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, vehicle.rotation.z - self.m_Magnet.rotation.z)
-
-						setElementData(self, "MagnetGrabbedVehicle", vehicle)
-						break
+						if table.size(getVehicleOccupants(vehicle)) == 0 then
+							self.m_MagnetActivated = true
+							self.m_GrabbedVehicle = vehicle
+							vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, vehicle.rotation.z - self.m_Magnet.rotation.z)
+							setElementData(self, "MagnetGrabbedVehicle", vehicle)
+							break
+						else
+							client:sendWarning("Das Fahrzeug ist nicht leer!")
+						end
 					end
 				end
 			end
