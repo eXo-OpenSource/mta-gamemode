@@ -970,7 +970,9 @@ end
 
 function Admin:Event_portToVehicle(veh)
     if client:getRank() >= RANK.Supporter then
-        local pos = client:getPosition()
+        if client.vehicle then return end
+
+		local pos = client:getPosition()
         local pos = veh:getPosition()
 		client:setInterior(veh:getInterior())
 		client:setDimension(veh:getDimension())
