@@ -186,7 +186,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             if upgradeId ~= 0 then
                 vehicle:addUpgrade(upgradeId)
             else
-                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
+                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(slot))
             end
         else
 			--outputChatBox(slot..": "..tostring(upgradeId))
