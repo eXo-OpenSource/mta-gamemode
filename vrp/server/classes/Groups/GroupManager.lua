@@ -417,7 +417,7 @@ function GroupManager:Event_RankDown(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Leader then
+	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
