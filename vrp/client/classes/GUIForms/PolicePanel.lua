@@ -44,8 +44,11 @@ function PolicePanel:constructor()
 	self.m_GPS:setChecked(GPSEnabled)
 	self.m_GPS.onChange = function() GPSEnabled = self.m_GPS:isChecked() end
 
-	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
+	self.m_RefreshBtn = GUIButton:new(280, 390, 30, 30, FontAwesomeSymbols.Refresh, self.m_TabSpieler):setFont(FontAwesome(20)):setFontSize(1)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
+
+	self.m_PlayerSearch = GUIEdit:new(10, 390, 260, 30, self.m_TabSpieler)
+	self.m_PlayerSearch.onChange = function () self:loadPlayers() end
 
 	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 125, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green):setFontSize(1)
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
@@ -159,17 +162,26 @@ end
 function PolicePanel:loadPlayers()
 	self.m_PlayersGrid:clear()
 	self.m_Players = {}
-	for i=0, 6 do
+
+	for i = 0, 6 do
 		for Id, player in pairs(Element.getAllByType("player")) do
 			if player:getWanteds() == i then
 				if not self.m_Players[i] then self.m_Players[i] = {} end
-				self.m_Players[i][player] = true
+				if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
+					self.m_Players[i][player] = player:getName()
+				end
 			end
 		end
+
+		if self.m_Players[i] then
+			table.sort(self.m_Players[i], function(a, b) return a < b end)
+		end
 	end
+
 	for i = 6, 0, -1 do
 		if self.m_Players[i] then
-			self.m_PlayersGrid:addItemNoClick(i.." Wanteds", "")
+			self.m_PlayersGrid:addItemNoClick(("%s Wanteds"):format(i), "")
+
 			for player, bool in pairs(self.m_Players[i]) do
 				if isElement(player) then
 					local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction() and player:getFaction():getShortName() or "- Keine -")
