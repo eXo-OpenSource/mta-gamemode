@@ -118,25 +118,24 @@ function FactionManager:OnRenderSpeed()
 					local speed = math.floor(self.m_SpeedCamSpeed)
 					local vName = getVehicleName(self.m_SpeedCamVehicle)
 					local occ = getVehicleOccupant(self.m_SpeedCamVehicle)
-					local name = "Unbekannt"
-					if occ then
-						name = getPlayerName(occ)
-					end
 					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
 					local colName = getColorNameFromVehicle(c1, c2)
-					local text = "Radar: "..name.." fährt "..speed.." KM/H".." in "..colName.."em "..vName.." !"
-					dxDrawText(text,0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-					dxDrawText(text,1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-					dxDrawText(text,0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
+					local text = ("Radar: %s fährt %s km/h in %sem %s!"):format(occ and occ:getName() or "-", speed, colName, vName)
+
+					dxDrawText(text, 0, 1, w, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 1, 1, w+1, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 0, 0, w, h*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
+
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
 					if speeder then
 						local px,py,pz = getPedBonePosition(speeder,8)
 						local dx,dy = getScreenFromWorldPosition(px,py,pz)
 						if dx and dy then
-							dxDrawText(speed.." KM/H", dx,dy+1,dx,dy+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText(speed.." KM/H", dx,dy,dx,dy,tocolor(230,0,0,255),1,"default-bold")
+							dxDrawText(("%s km/h"):format(speed), dx, dy+1, dx, dy+1, tocolor(0,0,0,255), 1, "default-bold")
+							dxDrawText(("%s km/h"):format(speed), dx, dy, dx, dy, tocolor(230,0,0,255), 1, "default-bold")
 						end
 					end
+
 					if not self.m_PlaySoundOnce then
 						playSoundFrontEnd(5)
 						self.m_PlaySoundOnce = true
