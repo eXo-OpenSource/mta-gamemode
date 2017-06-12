@@ -373,6 +373,8 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
+	<script src="client/classes/EXPORT/export.lua" type="client"/>
+	<export function="exportWrapper" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

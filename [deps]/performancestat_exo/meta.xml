@@ -1,0 +1,21 @@
+<meta>
+	<info name="eXo Data Collection" author="eXo Data fetishists" type="resource"/>
+	<min_mta_version server="1.5.4" client="1.5.4"/>
+	<oop>true</oop>
+
+	<!-- Dependencies -->
+	<script src="deps/classlib.lua" type="shared"/>
+	<script src="deps/Object.lua" type="shared"/>
+	<script src="deps/Singleton.lua" type="shared"/>
+	<script src="deps/TimedPulse.lua" type="shared"/>
+	<file src="client_config.json"/>
+
+	<!-- Server -->
+	<script src="server/Collector.lua" type="server"/>
+	<script src="server/Main.lua" type="server"/>
+
+	<!-- Client -->
+	<script src="client/Helper.lua" type="client"/>
+	<script src="client/Collector.lua" type="client"/>
+	<script src="client/Main.lua" type="client"/>
+</meta>
