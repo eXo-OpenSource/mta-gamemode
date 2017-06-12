@@ -1120,6 +1120,7 @@ end
 function Admin:reloadHelpText(player)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
 		Help:getSingleton():loadHelpTexts()
+		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
 	end
 end
 
