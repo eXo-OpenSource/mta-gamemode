@@ -200,12 +200,6 @@ function Company:sendChatMessage(sourcePlayer,message)
     StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, toJSON(receivedPlayers))
 end
 
-function Company:sendMessage(text, r, g, b, ...)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, r, g, b, ...)
-	end
-end
-
 function Company:invitePlayer(player)
     client:sendShortMessage(("Du hast %s erfolgreich in dein Unternehmen eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("companyInvitationRetrieve", self:getId(), self:getName())
