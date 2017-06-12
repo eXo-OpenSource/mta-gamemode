@@ -38,6 +38,7 @@ end
 
 function Collector:check()
 	if getCurrentFPS() <= Main.m_Config.min_fps and (getTickCount() - self.m_LastFPSCheck) >= Main.m_Config.min_fps_wait then
+		self.m_LastFPSCheck = getTickCount()
 		self:collect()
 	end
 end
@@ -95,6 +96,7 @@ end
 
 function Collector:send()
 	if (getTickCount() - self.m_LastSend) >= Main.m_Config.check_rate then
+		self.m_LastSend = getTickCount()
 		triggerServerEvent("dataCollectionServer", root, self.m_Data)
 	end
 end
