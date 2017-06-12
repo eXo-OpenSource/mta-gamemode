@@ -127,7 +127,8 @@ factionRankNames[3] = {
 [6] = "General"
 }
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
-factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
+--factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
+factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true}
 factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 13.45)

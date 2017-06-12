@@ -61,7 +61,6 @@ function FactionState:constructor()
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
-	addCommandHandler("m",bind(self.Command_megaphone, self))
 	addCommandHandler("tie",bind(self.Command_tie, self))
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 	addCommandHandler("bail",bind(self.Command_bail, self))
@@ -687,7 +686,7 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 	end
 end
 
-function FactionState:Command_megaphone(player, cmd, ...)
+function FactionState:outputMegaphone(player, ...)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() == true then
 		if player:isFactionDuty() then
@@ -703,6 +702,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 
 				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(receivedPlayers))
 				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
+				return true
 			else
 				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
 			end
@@ -710,6 +710,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 			player:sendError(_("Du bist nicht im Dienst!", player))
 		end
 	end
+	return false
 end
 
 function FactionState:Command_suspect(player,cmd,target,amount,...)

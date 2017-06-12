@@ -608,6 +608,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local text = table.concat ( argTable , " " )
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
+	local faction = source:getFaction()
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():isStateVehicle() then
+		local success = FactionState:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
