@@ -1,6 +1,8 @@
 {
     "config": {
-		"check_rate": 3000,
+		"min_fps": 35,
+		"min_fps_wait": 60000,
+		"check_rate": 600000,
 		"auto_check": true,
 		"known_spots": [
 			{

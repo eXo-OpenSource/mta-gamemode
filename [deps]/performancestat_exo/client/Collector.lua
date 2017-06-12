@@ -11,8 +11,10 @@ function Collector:constructor(auto_check, check_rate)
 
 	self.m_Data = {}
 	self.m_WaitTime = 30*60*1000
+	self.m_LastFPSCheck = 0
 	self.m_LastSend = getTickCount()
 	self.m_VRPWrapper = function() return false end
+	addEventHandler("onClientRender", root, bind(Collector.check, self))
 
 	local vrp = Resource.getFromName("vrp")
 	if vrp then
@@ -34,9 +36,15 @@ function Collector:destructor()
 	end
 end
 
+function Collector:check()
+	if getCurrentFPS() <= Main.m_Config.min_fps and (getTickCount() - self.m_LastFPSCheck) >= Main.m_Config.min_fps_wait then
+		self:collect()
+	end
+end
+
 function Collector:collect()
 	local time = getRealTime()
-	local screenX, screenY = guiGetSize()
+	local screenX, screenY = guiGetScreenSize()
 	local x, y, z, dim, int = getElementPosition(localPlayer), getElementDimension(localPlayer), getElementInterior(localPlayer)
 	local vx, vy, vz = getElementVelocity(localPlayer)
 	table.insert(self.m_Data,
@@ -79,4 +87,14 @@ function Collector:collect()
 			radar_mode        = self.m_VRPWrapper("radarStatus"),
 		}
 	)
+
+	if (getTickCount() - self.m_LastSend) >= Main.m_Config.check_rate then
+		self:send()
+	end
+end
+
+function Collector:send()
+	if (getTickCount() - self.m_LastSend) >= Main.m_Config.check_rate then
+		triggerServerEvent("dataCollectionServer", root, self.m_Data)
+	end
 end
