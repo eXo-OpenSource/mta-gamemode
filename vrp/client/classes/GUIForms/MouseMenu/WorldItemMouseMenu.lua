@@ -71,8 +71,9 @@ end
 
 
 function WorldItemMouseMenu:hasPermissionTo(action, element)
-	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
 	if ADMIN_RANK_PERMISSION[action] and localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then return true end
+	
+	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
 	return (localPlayer:getName() == superUserName or localPlayer:getFaction():getShortName() == superUserName) 
 end
 

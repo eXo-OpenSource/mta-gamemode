@@ -40,11 +40,11 @@ function ObjectPlacer:destructor()
 	if self.m_Object and isElement(self.m_Object) then
 		self.m_Object:destroy()
 	end
-	setTimer(
+	nextframe(
 		function()
 			localPlayer.m_ObjectPlacerActive = false
-		end, 
-	50, 1)
+		end
+	)
 	delete(self.m_ShortMessage)
 	unbindKey("mouse_wheel_down", "down", self.m_MouseWheel)
 	unbindKey("mouse_wheel_up", "down", self.m_MouseWheel)
