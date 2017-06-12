@@ -38,6 +38,10 @@ function VehicleCustomTextureShop:constructor()
 	Player.getQuitHook():register(
         function(player)
             if player.TempTexVehicle and isElement(player.TempTexVehicle) then player.TempTexVehicle:destroy() end
+			local vehicle = player:getOccupiedVehicle()
+            if player.m_VehicleTuningGarageId and vehicle then
+                self:closeFor(player, vehicle, true)
+            end
         end
     )
 
