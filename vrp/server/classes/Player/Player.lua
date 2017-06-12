@@ -84,6 +84,10 @@ function Player:destructor()
 	-- Unload stuff
 	PhoneNumber.unload(1, self.m_Id)
 
+	if self:getGroup() then
+		self:getGroup():checkDespawnVehicle()
+	end
+
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
 end
@@ -192,6 +196,11 @@ function Player:loadCharacter()
 	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
+
+	if self:getGroup() then
+		self:getGroup():spawnVehicles()
+	end
+
 	triggerEvent("characterInitialized", self)
 	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
@@ -952,7 +961,7 @@ function Player:payDay()
 	else
 		self:takeBankMoney(-total, "Payday", true, true)
 	end
-	
+
 	self:givePoints(points_total)
 
 	if EVENT_EASTER then
@@ -997,7 +1006,7 @@ end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 	local success = DatabasePlayer.giveMoney(self, money, reason)
-	if success then 
+	if success then
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end

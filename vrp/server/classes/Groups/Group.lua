@@ -21,6 +21,9 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
   self.m_Shops = {} -- shops automatically add the reference
   self.m_Markers = {}
   self.m_MarkersAttached = false
+
+  self.m_VehiclesSpawned = false
+
   local saveRanks = false
   if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
   if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
@@ -491,4 +494,16 @@ end
 
 function Group:getPhoneNumber()
 	return self.m_PhoneNumber:getNumber()
+end
+
+function Group:spawnVehicles()
+	if not self.m_VehiclesSpawned then
+		VehicleManager:getSingleton():loadGroupVehicles(self)
+	end
+end
+
+function Group:checkDespawnVehicle()
+	if self.m_VehiclesSpawned and #self:getOnlinePlayers()-1 <= 0 then
+		VehicleManager:getSingleton():destroyGroupVehicles(self)
+	end
 end

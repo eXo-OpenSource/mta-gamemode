@@ -274,22 +274,6 @@ function VehicleManager.loadVehicles()
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		if GroupManager:getFromId(row.Group) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
-			if not row.ForSale == 1 then
-				setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
-				vehicle.m_IsNotSpawnedYet = true
-			end
-			VehicleManager:getSingleton():addRef(vehicle, false)
-			count = count + 1
-		else
-			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
-		end
-	end
-	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s group_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
@@ -461,27 +445,46 @@ function VehicleManager:refreshGroupVehicles(group)
 		return
 	end
 	-- Delete old Group Vehicles
+	self:destroyGroupVehicles(group)
+
+	-- Reload Group Vehicles from DB
+	self:loadGroupVehicles(group)
+end
+
+function VehicleManager:destroyGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:destroyGroupVehicles: Group-Id Not Found!")
+		return
+	end
+
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(self.m_GroupVehicles[groupId]) do
 			veh:destroy()
 		end
 	end
-	-- Reload Group Vehicles from DB
+	self.m_GroupVehicles[groupId] = nil
+end
+
+function VehicleManager:loadGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:loadGroupVehicles: Group-Id Not Found!")
+		return
+	end
+
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
-			if not row.ForSale == 1 then
-				setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
-				vehicle.m_IsNotSpawnedYet = true
-			end
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
 end
+
 
 function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
