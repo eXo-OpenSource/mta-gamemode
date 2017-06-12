@@ -19,7 +19,7 @@ end
 function ItemRadio:use(player)
 	local result = self:startObjectPlacing(player,
 		function(item, position, rotation)
-			if item ~= self then return end
+			if item ~= self or not position then return end
 
 			local worldItem = PlayerWorldItem:new(self, player, position, rotation, false, player)
 			StatisticsLogger:getSingleton():itemPlaceLogs( player, "Radio", position.x..","..position.y..","..position.z) 

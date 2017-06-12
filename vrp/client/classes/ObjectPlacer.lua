@@ -7,14 +7,19 @@
 -- ****************************************************************************
 ObjectPlacer = inherit(Object)
 
-function ObjectPlacer:constructor(model, callback)
+function ObjectPlacer:constructor(model, callback, hideObject)
 	showCursor(true)
 	localPlayer.m_ObjectPlacerActive = true
 
 	self.m_Object = createObject(model, localPlayer:getPosition())
+	self.m_hideObject = hideObject
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Callback = callback
 
+	if self.m_hideObject then
+		self.m_Object:setRotation(0, 0, self.m_hideObject:getRotation().z)
+		hideObject:setDimension(PRIVATE_DIMENSION_CLIENT)
+	end
 	self.m_CursorMove = bind(self.Event_CursorMove, self)
 	addEventHandler("onClientCursorMove", root, self.m_CursorMove)
 
@@ -43,6 +48,9 @@ function ObjectPlacer:destructor()
 	nextframe(
 		function()
 			localPlayer.m_ObjectPlacerActive = false
+			if self.m_hideObject then
+				self.m_hideObject:setDimension(0)
+			end
 		end
 	)
 	delete(self.m_ShortMessage)
@@ -106,24 +114,25 @@ end
 
 addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
-	function(model, callbackEvent)
+	function(model, callbackEvent, hideObject)
 		Inventory:getSingleton():hide()
 		nextframe(
-		function(model,callbackEvent)
-			local objectPlacer = ObjectPlacer:new(model,
-				function(position, rotation)
-					if position then
-						triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
-					else
-						triggerServerEvent(callbackEvent, localPlayer, false)
-					end
-					nextframe(
-						function()
-							Inventory:getSingleton():show()
+			function(model,callbackEvent)
+				local objectPlacer = ObjectPlacer:new(model,
+					function(position, rotation)
+						if position then
+							triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
+						else
+							triggerServerEvent(callbackEvent, localPlayer, false)
 						end
-					)
-				end
-			)
-		end, model, callbackEvent)
+						nextframe(
+							function()
+								Inventory:getSingleton():show()
+							end
+						)
+					end, hideObject
+				)
+			end, model, callbackEvent
+		)
 	end
 )

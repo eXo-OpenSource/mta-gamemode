@@ -15,13 +15,13 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	
 	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
 
-    --[[self:addItem(_"Verschieben", -- maybe some other day
+    self:addItem(_"Verschieben", -- maybe some other day
 		function()
 			if self:getElement() then
 				triggerServerEvent("worldItemMove", self:getElement())
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Arrows)]]
+	):setIcon(FontAwesomeSymbols.Arrows)
 
 	self:addModelSpecificItems(element)
 

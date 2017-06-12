@@ -17,12 +17,12 @@ WorldItem.constructor = pure_virtual
 
 function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player)
 	iprint(player)
-	print("WorldItem "..(isElement(owner) and getElementType(owner) or "something else").." "..getElementType(player), root)
 	self.m_Item = item
 	self.m_ItemName = item:getName()
 	self.m_ModelId = item:getModelId()
 	self.m_Owner = owner
 	self.m_Placer = player
+	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
 	self.m_Object.m_Super = self
 	--self.m_Object:setBreakable(breakable)
@@ -47,7 +47,11 @@ function WorldItem:virtual_destructor()
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
-function WorldItem:onCollect(player) --use silent if player disconnects
+function WorldItem:onCollect(player)
+	if self:getMovingPlayer() then 
+		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
+		return false 
+	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Collect) then
 		return false
 	end
@@ -64,18 +68,48 @@ function WorldItem:onCollect(player) --use silent if player disconnects
 end
 
 function WorldItem:onDelete(player)
-	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
-		return false
+	if player then
+		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
+			return false
+		end
+		if self.m_Item.removeFromWorld then
+			self.m_Item:removeFromWorld(player, self)
+		end
+		player:sendShortMessage(_("%s gelöscht.", player, self.m_ItemName), nil, nil, 1000)
 	end
-	if self.m_Item.removeFromWorld then
-		self.m_Item:removeFromWorld(player, self)
-	end
-	player:sendShortMessage(_("%s gelöscht.", player, self.m_ItemName), nil, nil, 1000)
 	delete(self)
 end
 
 function WorldItem:onMove(player)
-	outputDebug(player)
+	if self:getMovingPlayer() then 
+		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
+		return false 
+	end
+	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Move) then
+		return false
+	end
+	self.m_CurrentMovingPlayer = player
+	addEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
+	self.m_Item:startObjectPlacing(player,
+		function(item, position, rotation)
+			if position then -- item moved
+				self.m_Object:setPosition(position)
+				self.m_Object:setRotation(0, 0, rotation)
+			end
+			self.m_CurrentMovingPlayer = nil
+			removeEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
+		end, self.m_Object
+	)
+end
+
+function WorldItem:getMovingPlayer()
+	return self.m_CurrentMovingPlayer
+end
+
+function WorldItem:Event_OnMovePlayerDisconnect()
+	if self.m_CurrentMovingPlayer == source then
+		self.m_CurrentMovingPlayer = nil
+	end
 end
 
 function WorldItem:getObject()

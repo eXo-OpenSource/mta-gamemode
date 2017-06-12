@@ -19,10 +19,13 @@ function ItemBarricade:use(player)
 	if player:isFactionDuty() then
 		local result = self:startObjectPlacing(player,
 			function(item, position, rotation)
-				if item ~= self then return end
+				if item ~= self or not position then return end
 				
 				self.m_WorldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, true, player)
 				self.m_WorldItem:setFactionSuperOwner(true)
+				addEventHandler("onClientBreakItem", self.m_WorldItem.m_Object, function()
+					self.m_WorldItem:onDelete()
+				end)
 
 				player:getInventory():removeItem(self:getName(), 1)
 			end
