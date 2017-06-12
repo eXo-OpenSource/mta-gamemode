@@ -40,10 +40,10 @@ function VehicleTuning:applyTuning()
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"])
+	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"] == 1)
 	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"])
 
-    if self.m_Tuning["Neon"] then
+    if self.m_Tuning["Neon"] == 1 then
 		Neon.Vehicles[self.m_Vehicle] = true
 	end
 end

@@ -208,7 +208,6 @@ function VehicleTuningGUI:updatePrices()
 					end
 				end
 			end
-            if slot == VehicleSpecialProperty.Neon and upgradeId == 1 then price = 0 end
 
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
             overallPrice = overallPrice + price
@@ -263,13 +262,8 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
 			end
 		end
     end
-	--[[
-    -- Standard parts are free
-    if info == 0 then
-        price = 0
-    end
-	]]
-    if partId == VehicleSpecialProperty.Neon and info == 1 then
+
+    if partId == "Neon" and info == 0 then
         price = 0
         partName = "Neon-Ausbau"
     end
@@ -350,15 +344,14 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_NeonPicker = VehicleTuningItemGrid:new(
                 "Neonröhren ein/ausbauen",
-                {[1] = _"Keine Neonröhre", [2] = _"Neonröhre einbauen"},
+                {[0] = _"Keine Neonröhre", [1] = _"Neonröhre einbauen"},
                 function(neon)
-                    local neonBool = neon == 2 and true or false
-					self.m_NewTuning:saveTuning(item.PartSlot, neonBool)
+					self.m_NewTuning:saveTuning(item.PartSlot, neon == 1)
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neonBool)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neon)
                 end,
                 function(neon)
-                    if neon ~= 1 then
+                    if neon == 1 then
                         setElementData(self.m_Vehicle, "Neon", true)
                         setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
                         Neon.Vehicles[self.m_Vehicle] = true

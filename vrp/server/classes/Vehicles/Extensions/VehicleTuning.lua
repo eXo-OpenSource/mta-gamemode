@@ -112,7 +112,7 @@ function VehicleTuning:loadTuningFromVehicle()
 end
 
 function VehicleTuning:updateNeon()
-	local state = self.m_Tuning["Neon"]
+	local state = self.m_Tuning["Neon"] == 1
 	self.m_Vehicle:setData("Neon", state, true)
 	if state == true then
 		self.m_Vehicle.m_Neon = self.m_Tuning["NeonColor"] or {255, 0, 0}
@@ -176,7 +176,7 @@ end
 function VehicleTuning:getList()
 	local text = ""
 
-	local neon = self.m_Tuning["Neon"] and "Ja" or "Nein"
+	local neon = self.m_Tuning["Neon"] == 1 and "Ja" or "Nein"
 	local horn = self.m_Tuning["CustomHorn"] > 0 and "Ja" or "Nein"
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	local texture = self.m_Tuning["Texture"][textureName] and "Ja" or "Nein"
