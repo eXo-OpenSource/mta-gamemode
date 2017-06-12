@@ -105,6 +105,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Disabled clickhandler as long as the player is not logged in
 	if not localPlayer:isLoggedIn() then return end
+	if localPlayer.m_InObjectPlacer then return end
 
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end

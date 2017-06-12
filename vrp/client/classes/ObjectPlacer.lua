@@ -9,7 +9,7 @@ ObjectPlacer = inherit(Object)
 
 function ObjectPlacer:constructor(model, callback)
 	showCursor(true)
-
+	localPlayer.m_InObjectPlacer = true
 	self.m_Object = createObject(model, localPlayer:getPosition())
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Callback = callback
@@ -39,7 +39,6 @@ function ObjectPlacer:destructor()
 	if self.m_Object and isElement(self.m_Object) then
 		self.m_Object:destroy()
 	end
-
 	delete(self.m_ShortMessage)
 	unbindKey("mouse_wheel_down", "down", self.m_MouseWheel)
 	unbindKey("mouse_wheel_up", "down", self.m_MouseWheel)
@@ -86,7 +85,6 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
-			iprint(self.m_HitElement)
 			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 		end
 	else
@@ -112,6 +110,7 @@ addEventHandler("objectPlacerStart", root,
 					setTimer(
 						function()
 							Inventory:getSingleton():show()
+							localPlayer.m_InObjectPlacer = nil
 						end, 
 					50, 1)
 				end
