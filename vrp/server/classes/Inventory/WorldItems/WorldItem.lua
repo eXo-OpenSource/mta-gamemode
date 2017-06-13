@@ -12,7 +12,7 @@ WorldItem.Action = {
 	Collect = "collectWorldItem",
 	Delete = "deleteWorldItem",
 }
-addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemDelete", "requestWorldItemListOfOwner"}
+addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "worldItemDelete", "worldItemMassDelete", "requestWorldItemListOfOwner"}
 
 WorldItem.constructor = pure_virtual
 
@@ -59,7 +59,7 @@ function WorldItem:onCollect(player)
 
 	if player:getInventory():giveItem(self.m_ItemName, 1) then
 		if self.m_Item.removeFromWorld then
-			self.m_Item:removeFromWorld(player, self)
+			self.m_Item:removeFromWorld(player, self, self.m_Object)
 		end
 		if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
 		delete(self)
@@ -73,10 +73,10 @@ function WorldItem:onDelete(player)
 		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 			return false
 		end
-		if self.m_Item.removeFromWorld then
-			self.m_Item:removeFromWorld(player, self)
-		end
 		player:sendShortMessage(_("%s gelöscht.", player, self.m_ItemName), nil, nil, 1000)
+	end
+	if self.m_Item.removeFromWorld then
+		self.m_Item:removeFromWorld(nil, self, self.m_Object)
 	end
 	delete(self)
 end
@@ -163,6 +163,14 @@ addEventHandler("worldItemCollect", root,
 	end
 )
 
+addEventHandler("worldItemMassCollect", root,
+	function()
+		if source.m_Super then
+			source.m_Super:onCollect(client)
+		end
+	end
+)
+
 addEventHandler("worldItemDelete", root,
 	function()
 		if source.m_Super then
@@ -170,6 +178,15 @@ addEventHandler("worldItemDelete", root,
 		end
 	end
 )
+
+addEventHandler("worldItemMassDelete", root,
+	function()
+		if source.m_Super then
+			source.m_Super:onDelete(client)
+		end
+	end
+)
+
 
 addEventHandler("requestWorldItemListOfOwner", root, 
 	function(id, type)

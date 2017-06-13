@@ -15,31 +15,37 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	
 	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
 
-    self:addItem(_"Verschieben", -- maybe some other day
-		function()
-			if self:getElement() then
-				triggerServerEvent("worldItemMove", self:getElement())
+	if self:hasPermissionTo("moveWorldItem", element) then
+		self:addItem(_"Verschieben", -- maybe some other day
+			function()
+				if self:getElement() then
+					triggerServerEvent("worldItemMove", self:getElement())
+				end
 			end
-		end
-	):setIcon(FontAwesomeSymbols.Arrows)
+		):setIcon(FontAwesomeSymbols.Arrows)
+	end
 
 	self:addModelSpecificItems(element)
 
-	self:addItem(_"Aufheben",
-		function()
-			if self:getElement() then
-				triggerServerEvent("worldItemCollect", self:getElement())
+	if self:hasPermissionTo("", element) then
+		self:addItem(_"Aufheben",
+			function()
+				if self:getElement() then
+					triggerServerEvent("worldItemCollect", self:getElement())
+				end
 			end
-		end
-	):setIcon(FontAwesomeSymbols.Double_Up)
+		):setIcon(FontAwesomeSymbols.Double_Up)
+	end
 
-    self:addItem(_"Löschen",
-        function()
-            if self:getElement() then
-                triggerServerEvent("worldItemDelete", self:getElement())
-            end
-        end
-    ):setIcon(FontAwesomeSymbols.Trash)
+	if self:hasPermissionTo("deleteWorldItem", element) then
+		self:addItem(_"Löschen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("worldItemDelete", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Trash)
+	end
 
 	if self:hasPermissionTo("showWorldItemInformation", element) then
         self:addItem(_"Informationen >>>",
@@ -65,6 +71,16 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Music)
+		end
+	elseif model == 1238 then
+		if self:hasPermissionTo("", element) then
+			self:addItem(_"Warnleuchte",
+				function()
+					if self:getElement() then
+						triggerServerEvent("worldItemToggleConeLight", self:getElement())
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Lightbulb)
 		end
 	end
 end
