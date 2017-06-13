@@ -499,11 +499,13 @@ end
 function Group:spawnVehicles()
 	if not self.m_VehiclesSpawned then
 		VehicleManager:getSingleton():loadGroupVehicles(self)
+		self.m_VehiclesSpawned = true
 	end
 end
 
 function Group:checkDespawnVehicle()
 	if self.m_VehiclesSpawned and #self:getOnlinePlayers()-1 <= 0 then
 		VehicleManager:getSingleton():destroyGroupVehicles(self)
+		self.m_VehiclesSpawned = false
 	end
 end
