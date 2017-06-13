@@ -15,6 +15,9 @@ function CustomModelManager:constructor()
 
 
 	--world objects
+	self:loadImportCOL("files/models/mech.col", 7520)
+	self:loadImportDFF("files/models/mech.dff", 7520)
+
 	--rescue base
 	self:loadImportCOL("files/models/medic.col", 4027)
 	self:loadImportTXD("files/models/medic.txd", 4027)
