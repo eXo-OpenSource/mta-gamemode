@@ -56,7 +56,7 @@ function JobPizza:onPizzaDeliver(distance, time)
 			client:givePoints(points)
 		end	
 
-		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, client.vehicle:getModel(), distance, points)
+		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, client.vehicle:getModel(), distance, points, time)
 		client:addBankMoney(pay, "Pizza-Job")
 	end
 end
