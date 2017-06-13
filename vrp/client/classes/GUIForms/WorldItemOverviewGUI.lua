@@ -18,7 +18,6 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
     self.m_Width = 640
     self.m_Height = 415
     self.m_Refreshing = false
-    self.m_FiltersApplied = false
     GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Objektübersicht - %s", sOwnerName), true, true, self)
    
@@ -29,6 +28,7 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
         :addColumn(_"Position", 0.3)
         :addColumn(_"Ersteller", 0.2)
         :addColumn(_"Erstellzeit", 0.3)
+    self.m_ObjectList.onLeftClick = bind(WorldItemOverviewGUI.Event_OnListItemClick, self)
 
     self.m_ListRefreshButton = GUIButton:new(self.m_Width-35, 65, 30, 30, " "..FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1)
     self.m_ListRefreshButton:setBackgroundColor(Color.LightBlue)
@@ -41,12 +41,13 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
     
     --filter
     GUILabel:new(5, 270, self.m_Width, 30, _"Filter", self) 
-    GUIEdit:new(5, 305, 120, 30, self):setFontSize(1)
-    GUIEdit:new(130, 305, 190, 30, self):setFontSize(1)
-    GUIEdit:new(325, 305, 120, 30, self):setFontSize(1)
-    GUIEdit:new(450, 305, 150, 30, self):setFontSize(1)
-    self.m_FilterApplyButton = GUIButton:new(self.m_Width-35, 305, 30, 30, " "..FontAwesomeSymbols.Check, self):setFont(FontAwesome(15)):setFontSize(1)
+    self.m_FilterEditName       = GUIEdit:new(5, 305, 120, 30, self):setFontSize(1)
+    self.m_FilterEditPosition   = GUIEdit:new(130, 305, 190, 30, self):setFontSize(1)
+    self.m_FilterEditPlacer     = GUIEdit:new(325, 305, 120, 30, self):setFontSize(1)
+    self.m_FilterEditTime       = GUIEdit:new(450, 305, 150, 30, self):setFontSize(1)
+    self.m_FilterApplyButton    = GUIButton:new(self.m_Width-35, 305, 30, 30, " "..FontAwesomeSymbols.Check, self):setFont(FontAwesome(15)):setFontSize(1)
     self.m_FilterApplyButton:setBackgroundColor(Color.LightBlue)
+    self.m_FilterApplyButton.onLeftClick = bind(WorldItemOverviewGUI.applyFilter, self)
     
     --options
     GUILabel:new(5, 340, self.m_Width, 30, _"Optionen", self)
@@ -56,29 +57,95 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
     VRPButton:new(260, 375, 165, 30, _"auf Karte markieren", true, self)
     VRPButton:new(430, 375, 100, 30, _"Aufheben", true, self)
     VRPButton:new(535, 375, 100, 30, _"Löschen", true, self):setBarColor(Color.Red)
+end
 
-    --[[
-        self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.42, self.m_Height*0.325, self.m_Width*0.03, self.m_Height*0.04, "(?)", self.m_SettingBG)
-		self.m_ShortMessageCTCInfo:setFont(VRPFont(25))
-		self.m_ShortMessageCTCInfo:setFontSize(1)
-		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
-		self.m_ShortMessageCTCInfo.onHover = function () self.m_ShortMessageCTCInfo:setColor(Color.White) end
-		self.m_ShortMessageCTCInfo.onUnhover = function () self.m_ShortMessageCTCInfo:setColor(Color.LightBlue) end
-		self.m_ShortMessageCTCInfo.onLeftClick = function ()
-			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
-		end
-    ]]
+function WorldItemOverviewGUI:destructor()
+    self:updateDebugArrow(true)
+    GUIForm.destructor(self)
 end
 
 function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
     self.m_ListRefreshButton:setEnabled(true)
     self.m_Refreshing = false
     self.m_ObjectList:clear()
+    self.m_FullObjectList = {}
+    self.m_FilteredObjectList = {}
+    local i = 1
     for modelid, objects in pairs(tblObjects) do
         for object in pairs(tblObjects[modelid]) do
             self.m_ObjectList:addItem(
-                object:getData("Name"), getZoneName(object:getPosition()), object:getData("Placer"), getOpticalTimestamp(object:getData("PlacedTimestamp"))
-            )
+                object:getData("Name"), 
+                getZoneName(object:getPosition()), 
+                object:getData("Placer"), 
+                getOpticalTimestamp(object:getData("PlacedTimestamp"))
+            ).m_Id = i
+            table.insert(self.m_FullObjectList, {
+                Object      = object,
+                Name        = object:getData("Name"),
+                Zone        = getZoneName(object:getPosition()),
+                Placer      = object:getData("Placer"),
+                Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
+            })
+            i = i + 1
+        end
+    end
+    self.m_FilteredObjectList = self.m_FullObjectList
+end
+
+function WorldItemOverviewGUI:Event_OnListItemClick()
+    nextframe(function()
+        self.m_SelectedListItem = self.m_ObjectList:getSelectedItem()
+        if self.m_SelectedListItem and not isElement(self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object) then
+            WarningBox:new(_"Dieses Objekt existiert nicht mehr!")
+        end
+        self:updateDebugArrow()
+    end)
+end
+
+function WorldItemOverviewGUI:applyFilter()
+    local nameFilter        = self.m_FilterEditName:getDrawnText():lower()
+    local positionFilter    = self.m_FilterEditPosition:getDrawnText():lower()
+    local placerFilter      = self.m_FilterEditPlacer:getDrawnText():lower()
+    local timeFilter        = self.m_FilterEditTime:getDrawnText():lower()
+    self.m_ObjectList:clear()
+    self.m_FilteredObjectList = {}
+    local i = 1
+    for _, v in ipairs(self.m_FullObjectList) do
+        local insert =  v.Name:lower():find(nameFilter) 
+                        and v.Zone:lower():find(positionFilter) 
+                        and v.Placer:lower():find(placerFilter) 
+                        and v.Timestamp:lower():find(timeFilter)
+        if insert then
+            self.m_ObjectList:addItem(
+                v.Name, 
+                v.Zone, 
+                v.Placer, 
+                v.Timestamp
+            ).m_Id = i
+            table.insert(self.m_FilteredObjectList, v)
+            i = i + 1
+        end
+    end
+end
+
+function WorldItemOverviewGUI:updateDebugArrow(forceDestroy)
+    if self.m_SelectedListItem and not forceDestroy then
+        local obj = self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object
+        if isElement(obj) then
+            local _, _, _, _, _, maxZ = getElementBoundingBox(obj)
+            if not self.m_DebugArrow then
+                self.m_DebugArrow = createMarker(obj.position.x, obj.position.y, obj.position.z + maxZ + 2, "arrow", 1, 200, 100, 0, 100)
+            else
+                self.m_DebugArrow:setPosition(obj.position.x, obj.position.y, obj.position.z + maxZ + 2)
+            end
+        else
+            self:updateDebugArrow(true)
+        end
+        --self.m_DebugArrow:attach(obj, 0, 0, maxZ + 0.5)
+    else
+        if self.m_DebugArrow then
+            self.m_DebugArrow:destroy()
+            self.m_DebugArrow = nil
         end
     end
 end
