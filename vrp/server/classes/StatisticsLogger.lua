@@ -69,12 +69,18 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
         sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
 end
 
-function StatisticsLogger:addJobLog(player, job, duration, earned, bonus)
+function StatisticsLogger:addJobLog(player, job, duration, earned, bonus, vehicle, distance, points, amount)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
+	
 	if not bonus then bonus = 0 end
-    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Date) VALUES (?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, job, duration, earned, bonus)
+	if not vehicle then vehicle = 0 end
+	if not distance then distance = 0 end
+	if not points then points = 0 end
+	if not amount then amount = 0 end
+
+    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Vehicle, Distance, Points, Amount, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, job, duration, earned, bonus, vehicle, distance, points, amount)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)

@@ -234,7 +234,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income)
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			player:addBankMoney(income, "Farmer-Job")
 			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0

@@ -91,7 +91,7 @@ function JobHeliTransport:onPickupLoad()
 			client:sendInfo(_("Dein Helikopter wurde wieder neu beladen.", client)) --TODO
 			local duration = getRealTime().timestamp - client.m_LastJobAction
 			client.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(client, "farmerHeliTransport", duration, client:getData("JobHeliTransport:Money"))
+			StatisticsLogger:getSingleton():addJobLog(client, "jobHeliTransport", duration, client:getData("JobHeliTransport:Money"), nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR))
 			client:addBankMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
 			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
