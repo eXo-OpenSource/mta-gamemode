@@ -55,7 +55,7 @@ local function sendSlackMessage(msg, level, file, line)
 	end
 end
 
-local STACK_TIMING = 60000
+local STACK_TIMING = 300000
 local slackMessages = {}
 local function stackSlackMessages(msg, level, file, line)
 	local index = ("%s%s%s%s"):format(msg, level, file or "", line or "")
