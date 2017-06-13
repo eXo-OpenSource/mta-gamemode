@@ -331,11 +331,13 @@ end
 function House:enterHouse(player)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	local isRobberEntering = false
+
 	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
 			isRobberEntering = true
 		end
 	end
+
 	local int, x, y, z = unpack(House.interiorTable[self.m_InteriorID])
 	if isRobberEntering  then
 		player:meChat(true, "betritt das Haus an der kaputten Tür vorbei!")
@@ -353,11 +355,14 @@ function House:enterHouse(player)
 	else
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
+
 	player:setPosition(x, y, z)
 	setElementDimension(player, self.m_Id)
 	setElementInterior(player,int)
 	player.m_CurrentHouse = self
 	self.m_PlayersInterior[player] = true
+
+	return true
 end
 
 function House:removePlayerFromList(player)
