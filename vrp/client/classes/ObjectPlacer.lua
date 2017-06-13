@@ -82,9 +82,9 @@ function ObjectPlacer:Event_MouseWheel(button, state)
 	if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
 	if getKeyState("lalt") then offset = 5 end
 	if button == "mouse_wheel_down" and state == "down" then
-		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z + offset)
-	else
 		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z - offset)
+	else
+		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z + offset)
 	end
 end
 

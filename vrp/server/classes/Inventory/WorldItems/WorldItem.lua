@@ -12,6 +12,7 @@ WorldItem.Action = {
 	Collect = "collectWorldItem",
 	Delete = "deleteWorldItem",
 }
+addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemDelete", "requestWorldItemListOfOwner"}
 
 WorldItem.constructor = pure_virtual
 
@@ -146,7 +147,6 @@ function WorldItem.collectAllFromOwner(owner)
 	end
 end
 
-addEvent("worldItemMove", true)
 addEventHandler("worldItemMove", root,
 	function(state)
 		if source.m_Super then
@@ -155,7 +155,6 @@ addEventHandler("worldItemMove", root,
 	end
 )
 
-addEvent("worldItemCollect", true)
 addEventHandler("worldItemCollect", root,
 	function()
 		if source.m_Super then
@@ -164,11 +163,24 @@ addEventHandler("worldItemCollect", root,
 	end
 )
 
-addEvent("worldItemDelete", true)
 addEventHandler("worldItemDelete", root,
 	function()
 		if source.m_Super then
 			source.m_Super:onDelete(client)
+		end
+	end
+)
+
+addEventHandler("requestWorldItemListOfOwner", root, 
+	function(id, type)
+		local owner
+		if type == "player" then
+			owner = DatabasePlayer.getFromId(id)	
+		elseif type == "faction" then
+			owner = FactionManager:getSingleton():getFromId(id)
+		end
+		if owner then
+			triggerClientEvent(client, "recieveWorldItemListOfOwner", root, owner:getName(), WorldItem.Map[owner] or {}, id, type)
 		end
 	end
 )
