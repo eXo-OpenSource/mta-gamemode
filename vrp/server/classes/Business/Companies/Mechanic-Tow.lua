@@ -5,7 +5,8 @@ function MechanicTow:constructor()
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 
-	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
+	local safe = createObject(2332, 857.594, -1180.628, 17.569, 0, 0, 270)
+	safe:setScale(0.7)
 	self:setSafe(safe)
 
 	local x, y, z, rot
@@ -162,7 +163,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 end
 
 function MechanicTow:createTowLot()
-	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
+	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
 	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
@@ -222,9 +223,9 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 end
 
 MechanicTow.SpawnPositions = {
-	{894.370, -1187.525, 16.704, 180},
-	{924.837, -1192.842, 16.704, 90},
-	--{1097.2, -1198.1, 17.70, 180},
+	{904.833, -1183.605, 16.65, 180},
+	{900.833, -1183.605, 16.65, 180},
+	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--
 }
