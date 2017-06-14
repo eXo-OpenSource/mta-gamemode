@@ -203,6 +203,7 @@ function DatabasePlayer:save()
 			spawnFac = 0
 		end
 		
+		-- TODO: Make it less dirty?
 		local pId = self:getId()
 		local pStartTime = self.m_StartTime
 		local pLoginTime = self.m_LoginTime
@@ -211,10 +212,10 @@ function DatabasePlayer:save()
 		sql:queryFetchSingle(function(row)
 			if not row then
 				sql:queryExec("INSERT INTO ??_accountActivity (UserID, SessionStart, Duration) VALUES (?, ?, ?);", sql:getPrefix(), 
-				pId, pLoginTime, pStartTime - pPlayTime)
+				pId, pLoginTime, pPlayTime - pStartTime)
 			else
 				sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), 
-				pStartTime - pPlayTime, pId, pLoginTime)
+				pPlayTime - pStartTime, pId, pLoginTime)
 			end
 		end, "SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
 		
