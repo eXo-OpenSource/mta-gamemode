@@ -77,7 +77,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	local zone1, zone2 = getZoneName(shop.m_Position), getZoneName(shop.m_Position, true)
-	if zone1 then 
+	if zone1 then
 		FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall\nPosition: %s/%s", "neuer Einsatz", true, shop:getName(), zone1, zone2)
 	else
 		FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall", "neuer Einsatz", true, shop:getName())
@@ -93,6 +93,8 @@ function RobableShop:startRob(shop, attacker, ped)
 	attacker:giveKarma(-5)
 	attacker:giveWantedLevel(3)
 	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
+
+	self.m_Attacker = attacker
 
 	self.m_Bag = createObject(1550, pos)
 	self.m_Bag.Money = 0
@@ -140,6 +142,9 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	self.m_Func = bind(RobableShop.m_onExpire, self)
 	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1)
+
+	attacker:triggerEvent("Countdown", ROBSHOP_TIME/1000, "Shop Überfall")
+
 end
 
 function RobableShop:m_onExpire()
@@ -174,6 +179,10 @@ function RobableShop:m_onExpire()
 	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 	self.m_Gang:sendMessage("[Shop-Rob] Die Zeit für den Rob ist ausgelaufen!",200,0,0,true)
 	FactionManager:getSingleton():getFromId(1):sendMessage("[Shop-Rob] #EEEEEEDie Zeit für den Rob ist ausgelaufen!",200,200,0,true)
+
+	if self.m_Attacker and isElement(self.m_Attacker) then
+		self.m_Attacker:triggerEvent("CountdownStop", "Shop Überfall")
+	end
 end
 
 function RobableShop:stopRob(player)
@@ -205,6 +214,10 @@ function RobableShop:stopRob(player)
 
 	self.m_Gang:removePlayerMarkers()
 	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
+
+	if self.m_Attacker and isElement(self.m_Attacker) then
+		self.m_Attacker:triggerEvent("CountdownStop", "Shop Überfall")
+	end
 end
 
 function RobableShop:giveBag(player)

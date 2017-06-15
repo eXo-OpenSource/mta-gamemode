@@ -21,6 +21,9 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
   self.m_Shops = {} -- shops automatically add the reference
   self.m_Markers = {}
   self.m_MarkersAttached = false
+
+  self.m_VehiclesSpawned = false
+
   local saveRanks = false
   if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
   if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
@@ -437,16 +440,24 @@ function Group:phoneCallAbbort(caller)
 end
 
 function Group:phoneTakeOff(player, key, state, caller)
-  self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-  caller:triggerEvent("callAnswer", player, false)
-  player:triggerEvent("callAnswer", caller, false)
-  caller:setPhonePartner(player)
-  player:setPhonePartner(caller)
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-      unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-    end
-  end
+  	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, false)
+	player:triggerEvent("callAnswer", caller, false)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		end
+	end
 end
 
 function Group:openBankGui(player)
@@ -483,4 +494,18 @@ end
 
 function Group:getPhoneNumber()
 	return self.m_PhoneNumber:getNumber()
+end
+
+function Group:spawnVehicles()
+	if not self.m_VehiclesSpawned then
+		VehicleManager:getSingleton():loadGroupVehicles(self)
+		self.m_VehiclesSpawned = true
+	end
+end
+
+function Group:checkDespawnVehicle()
+	if self.m_VehiclesSpawned and #self:getOnlinePlayers()-1 <= 0 then
+		VehicleManager:getSingleton():destroyGroupVehicles(self)
+		self.m_VehiclesSpawned = false
+	end
 end

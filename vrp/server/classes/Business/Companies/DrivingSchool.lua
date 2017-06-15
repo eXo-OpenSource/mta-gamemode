@@ -2,7 +2,7 @@ DrivingSchool = inherit(Company)
 DrivingSchool.LicenseCosts = {["car"] = 1500, ["bike"] = 750, ["truck"] = 4000, ["heli"] = 15000, ["plane"] = 20000 }
 DrivingSchool.TypeNames = {["car"] = "Autoführerschein", ["bike"] = "Motorradschein", ["truck"] = "LKW-Schein", ["heli"] = "Helikopterschein", ["plane"] = "Flugschein" }
 DrivingSchool.m_LessonVehicles = {}
-DrivingSchool.testRoute = 
+DrivingSchool.testRoute =
 {
 	--{1355.07, -1621.64, 13.22, 90} .. start
 	{1378.94, -1648.58, 13.03},
@@ -38,7 +38,7 @@ DrivingSchool.testRoute =
 
 }
 
-local randomName = 
+local randomName =
 {
 	"Nero Soliven",
 	"Kempes Waldemar",
@@ -60,7 +60,7 @@ function DrivingSchool:constructor()
     --VehicleBarrier:new(Vector3(1354.80, -1591.00, 13.39), Vector3(0, 90, 161), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
-	
+
     local safe = createObject(2332, -2032.70, -113.70, 1036.20)
     safe:setInterior(3)
 	self:setSafe(safe)
@@ -104,8 +104,8 @@ end
 
 function DrivingSchool:onBarrierHit(player)
 	local veh = player.vehicle
-	if veh then 
-		if player.vehicle.m_IsAutoLesson then 
+	if veh then
+		if player.vehicle.m_IsAutoLesson then
 		return true
 		end
 	end
@@ -132,10 +132,10 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
     )
 end
 
-function DrivingSchool:onDrivingTestNPCStart( ) 
-	if DrivingSchool.m_LessonVehicles[source] then 
+function DrivingSchool:onDrivingTestNPCStart( )
+	if DrivingSchool.m_LessonVehicles[source] then
 		source:triggerEvent("DrivingLesson:endLesson")
-		if DrivingSchool.m_LessonVehicles[source].m_NPC then 
+		if DrivingSchool.m_LessonVehicles[source].m_NPC then
 			if isElement(DrivingSchool.m_LessonVehicles[source].m_NPC ) then
 				destroyElement(DrivingSchool.m_LessonVehicles[source].m_NPC)
 			end
@@ -147,7 +147,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 	setVehicleHandling(veh,"maxVelocity",60)
 	setElementPosition(source,1348.97, -1620.68, 13.60)
 	setCameraTarget(source, source)
-	
+
 	veh.m_NPC = createPed(295,1355.07, -1621.64, 13.22)
 	veh.m_NPC:setData("NPC:Immortal", true, true)
 	setElementData(veh.m_NPC,"isBuckeled", true)
@@ -161,47 +161,47 @@ function DrivingSchool:onDrivingTestNPCStart( )
 	veh.m_TestMode = source.m_AutoTestMode
 	veh.m_NPC:setData("isDrivingCoach",true)
 	if source.m_AutoTestMode == "car" then
-		if source:getMoney() < DrivingSchool.LicenseCosts["car"] then  
-			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["car"].."$ )!", source)) 
-			return 
+		if source:getMoney() < DrivingSchool.LicenseCosts["car"] then
+			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["car"].."$ )!", source))
+			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["car"], "Fahrprüfung")
 		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]))
-	else 
-		if source:getMoney() < DrivingSchool.LicenseCosts["bike"] then  
-			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["bike"].."$ )!", source)) 
-			return 
+	else
+		if source:getMoney() < DrivingSchool.LicenseCosts["bike"] then
+			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["bike"].."$ )!", source))
+			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["bike"], "Fahrprüfung")
 		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]))
 	end
 	outputChatBox("Steige in das Fahrzeug vor dir ein!", source, 200,200,0)
-	addEventHandler("onVehicleStartEnter",veh,function(player, seat) 
-		if source.m_Driver == player then 
-			if seat == 0 then 
+	addEventHandler("onVehicleStartEnter",veh,function(player, seat)
+		if source.m_Driver == player then
+			if seat == 0 then
 				local name2 = name
 				outputChatBox("Fahre die vorgesehene Strecke ab und achte darauf, dass dein Fahrzeug nicht beschädigt wird!", player, 200,200,0)
 				outputChatBox(name.." sagt: Mit 'X' schaltest du den Motor an.", player, 200, 200, 200)
 				setTimer(outputChatBox,1000,1,name2.." sagt: Anschließend mit 'L' die Lichter.", player, 200, 200, 200)
 				if player.m_AutoTestMode == "car" then
 					setTimer(outputChatBox,3000,1,name2.." sagt: Nun Anschnallen mit 'M'. Falls du die Handbremse ziehen willst benutze 'G'.", player, 200, 200, 200)
-				else 
+				else
 					setTimer(outputChatBox,3000,1,name2.." sagt: Ziehe deinen Helm an. Falls du die Handbremse ziehen willst benutze 'G'.", player, 200, 200, 200)
 				end
 				setTimer(outputChatBox,5000,1,name2.." sagt: Und abgeht es! Vergess nicht den Limiter mit der Taste 'K' anzuschalten.", player, 200, 200, 200)
 			end
-		else 
+		else
 			cancelEvent()
 		end
 	end)
-	addEventHandler("onVehicleExit",veh,function(player, seat) 
+	addEventHandler("onVehicleExit",veh,function(player, seat)
 		if seat ~= 0 then return end
 		if not source.m_IsFinished then
 			outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
 		end
 		if DrivingSchool.m_LessonVehicles[player] == source then
 			DrivingSchool.m_LessonVehicles[player] = nil
-			if source.m_NPC then 
+			if source.m_NPC then
 				destroyElement(source.m_NPC)
 			end
 			destroyElement(source)
@@ -216,7 +216,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 		if DrivingSchool.m_LessonVehicles[player] == source then
 		local alreadyFinished = source.m_IsFinished
 			DrivingSchool.m_LessonVehicles[player] = nil
-			if source.m_NPC then 
+			if source.m_NPC then
 				destroyElement(source.m_NPC)
 			end
 			destroyElement(source)
@@ -237,7 +237,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 				if not source.m_IsFinished then
 					outputChatBox("Du hast das Fahrzeug verlassen und die Prüfung beendet!", player, 200,0,0)
 				end
-				if source.m_NPC then 
+				if source.m_NPC then
 					if isElement(source.m_NPC) then
 						destroyElement(source.m_NPC)
 					end
@@ -248,45 +248,45 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			fadeCamera(player,false,0.5)
 			setTimer(setElementPosition,1000,1,player,1348.97, -1620.68, 13.60)
 			setTimer(fadeCamera,1500,1, player,true,0.5)
-			
+
 		end
 	end)
 	source:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
 	DrivingSchool.m_LessonVehicles[source] = veh
 end
 
-function DrivingSchool:onHitRouteMarker() 
-	if DrivingSchool.m_LessonVehicles[client] then 
+function DrivingSchool:onHitRouteMarker()
+	if DrivingSchool.m_LessonVehicles[client] then
 		local veh = DrivingSchool.m_LessonVehicles[client]
 		veh.m_CurrentNode = veh.m_CurrentNode + 1
 		if veh.m_CurrentNode <= #DrivingSchool.testRoute then
 			client:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
-		else 
+		else
 			veh.m_IsFinished = true
-			if getElementHealth(veh) >= 500 then 
+			if getElementHealth(veh) >= 500 then
 				if veh.m_TestMode == "car" then
 					client.m_HasDrivingLicense = true
-				else 
+				else
 					client.m_HasBikeLicense = true
 				end
 				outputChatBox("Du hast die Prüfung bestanden und dein Fahrzeug ist in einem ausreichenden Zustand!", client, 0, 200, 0)
-				if veh.m_NPC then 
+				if veh.m_NPC then
 					destroyElement(veh.m_NPC)
 				end
 				destroyElement(veh)
 				DrivingSchool.m_LessonVehicles[client] = nil
 				client:triggerEvent("DrivingLesson:endLesson")
-			else 
+			else
 				client.m_HasDrivingLicense = false
 				outputChatBox("Da dein Fahrzeug zu beschädigt war hast du nicht bestanden!", client, 200, 0, 0)
-				if veh.m_NPC then 
+				if veh.m_NPC then
 					destroyElement(veh.m_NPC)
 				end
 				destroyElement(veh)
 				DrivingSchool.m_LessonVehicles[client] = nil
 				client:triggerEvent("DrivingLesson:endLesson")
 			end
-			
+
 		end
 	end
 end
@@ -332,13 +332,13 @@ function DrivingSchool:createAutomaticTestPed( pos, pos2 )
 								if getPlayerMoney(player) >= DrivingSchool.LicenseCosts["car"] then
 									player.m_AutoTestMode = "car"
 									QuestionBox:new(player, player, _("Möchtest du die automatische Fahrprüfung starten (Auto-Schein)? Kosten: "..DrivingSchool.LicenseCosts["car"].."$",  player), "drivingSchoolStartAutomaticTest")
-								else 
+								else
 									player:sendError("Du musst mind. "..DrivingSchool.LicenseCosts["car"].."$ dabei haben!")
 								end
-							else 
+							else
 								player:sendError("Du hast bereits den Führerschein für ein Auto!")
 							end
-						else 
+						else
 							player:sendError("Es sind zurzeit genügend Fahrlehrer online!")
 						end
                     else
@@ -362,13 +362,13 @@ function DrivingSchool:createAutomaticTestPed( pos, pos2 )
 								if getPlayerMoney(player) >= DrivingSchool.LicenseCosts["bike"] then
 									player.m_AutoTestMode = "bike"
 									QuestionBox:new(player, player, _("Möchtest du die automatische Fahrprüfung starten (Motorrad-Schein)? Kosten: "..DrivingSchool.LicenseCosts["bike"].."$",  player), "drivingSchoolStartAutomaticTest")
-								else 
+								else
 									player:sendError("Du musst mind. "..DrivingSchool.LicenseCosts["bike"].."$ dabei haben!")
 								end
-							else 
+							else
 								player:sendError("Du hast bereits den Führerschein für ein Motorrad!")
 							end
-						else 
+						else
 							player:sendError("Es sind zurzeit genügend Fahrlehrer online!")
 						end
                     else
@@ -396,7 +396,7 @@ end
 function DrivingSchool:Event_drivingSchoolMenu(func)
     if func == "callInstructor" then
         client:sendInfo(_("Alle Fahrlehrer werden gerufen!",client))
-        self:sendMessage(_("Der Spieler %s sucht einen Fahrlehrer! Bitte melden!",client, client.name), 255, 125, 0)
+        self:sendShortMessage(_("Der Spieler %s sucht einen Fahrlehrer! Bitte melden!", client, client.name))
     elseif func == "showInstructor" then
         outputChatBox(_("Folgende Fahrlehrer sind online:",client), client, 255, 255, 255)
         for k, player in pairs(self:getOnlinePlayers()) do

@@ -100,11 +100,11 @@ function StaticWorldItems:reload()
 	end
 	self.m_Objects = {}
 
-   	local result, count, countPositions
+   	local result
 
 	for typ, data in pairs(self.m_Items) do
 		if data["enabled"] == true then
-			count, countPositions = 0, 0
+			local st, count = getTickCount(), 0
 			result = sql:queryFetch("SELECT * FROM ??_word_objects WHERE Typ = ?;", sql:getPrefix(), typ)
 			for i, row in pairs(result) do
 				if row.Typ and self.m_Items[row.Typ] then
@@ -112,12 +112,11 @@ function StaticWorldItems:reload()
 						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
 						count = count+1
 					end
-					countPositions = countPositions+1
 				else
 					outputDebugString("Unknown Type ("..row.Typ..") for Static World Item ID: "..row.Id)
 				end
 			end
-			outputDebugString(count.." "..typ.."-StaticWorldItems von "..countPositions.." Positionen geladen!")
+			if DEBUG_LOAD_SAVE then outputServerLog(("Created %s %s-StaticWorldItems in %sms"):format(count, typ, getTickCount()-st)) end
 		end
 	end
 end

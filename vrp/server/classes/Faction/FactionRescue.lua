@@ -130,6 +130,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 				if faction then
 					if faction:isRescueFaction() == true then
 						if not hitElement.vehicle then
+							hitElement.m_CurrentDutyPickup = source
 							hitElement:triggerEvent("showRescueFactionDutyGUI")
 							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 						else
@@ -174,30 +175,35 @@ end
 function FactionRescue:Event_toggleDuty(type)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",false)
-			client:setPublicSync("Rescue:Type",false)
-			client:getInventory():removeAllItem("Warnkegel")
-			takeWeapon(client,42)
+
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+			if client:isFactionDuty() then
+				client:setDefaultSkin()
+				client.m_FactionDuty = false
+				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",false)
+				client:setPublicSync("Rescue:Type",false)
+				client:getInventory():removeAllItem("Warnkegel")
+				takeWeapon(client,42)
+			else
+				if client:getPublicSync("Company:Duty") and client:getCompany() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					return false
+				end
+				takeWeapon(client,42)
+				if type == "fire" then
+					giveWeapon(client, 42, 2000, true)
+				end
+				client.m_FactionDuty = true
+				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",true)
+				client:setPublicSync("Rescue:Type",type)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 10)
+				self:Event_changeSkin(client)
+			end
 		else
-			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-				return false
-			end
-			takeWeapon(client,42)
-			if type == "fire" then
-				giveWeapon(client, 42, 2000, true)
-			end
-			client.m_FactionDuty = true
-			client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",true)
-			client:setPublicSync("Rescue:Type",type)
-			client:getInventory():removeAllItem("Warnkegel")
-			client:getInventory():giveItem("Warnkegel", 5)
-			self:Event_changeSkin(client)
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in nicht im Rescue-Team!", client))

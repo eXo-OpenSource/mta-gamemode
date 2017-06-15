@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobRoadSweeper = inherit(Job)
-local SWEEPER_LOAN = 8
+local SWEEPER_LOAN = 11
 
 function JobRoadSweeper:constructor()
 	Job.constructor(self)
@@ -50,9 +50,11 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	client:setData("Sweeper:Last", getTickCount())
 	local duration = getRealTime().timestamp - client.m_LastJobAction
 	client.m_LastJobAction = getRealTime().timestamp
-	StatisticsLogger:getSingleton():addJobLog(client, "jobRoadSweeper", duration, SWEEPER_LOAN)
 	client:addBankMoney(SWEEPER_LOAN, "Straßenreiniger-Job", true)
+	local points = 0
 	if chance(15) then
-		client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
+		points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
+		client:givePoints(points)
 	end	
+	StatisticsLogger:getSingleton():addJobLog(client, "jobRoadSweeper", duration, SWEEPER_LOAN, nil, nil, points)
 end

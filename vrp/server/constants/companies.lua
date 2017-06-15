@@ -54,8 +54,8 @@ companyRankNames[2] = {
 }
 companyColors[2] = {["r"] = 0,["g"] = 220,["b"] = 255}
 companySkins[2] = {[36]=true, [44]=true, [50]=true,[192]=true,[268]=true}
-companyDutyMarker[2] = Vector3(920.61, -1163.71, 16.98)
-companySpawnpoint[2] = {Vector3(923.15, -1174.55, 16.98), 0, 0}
+companyDutyMarker[2] = Vector3(857.006, -1183.823, 17.269)
+companySpawnpoint[2] = {Vector3(854.230, -1186.297, 17.269), 0, 0}
 
 -- ID 3 = SAN News:
 companyRankNames[3] = {

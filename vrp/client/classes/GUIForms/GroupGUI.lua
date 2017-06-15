@@ -540,12 +540,12 @@ function GroupGUI:Event_retriveBusinessInfo(info)
 		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), ("%d$"):format(shop.money))
 		item.ShopId = shop.id
 		item.ShopName = shop.name
-		item.LastRob = shop.LastRob
+		item.LastRob = shop.lastRob
 		item.Position = Vector3(shop.position)
 		item.onLeftClick = function(item)
 			self.m_ShopsNameLabel:setText(_(item.ShopName))
 			self.m_ShopsPositionLabel:setText(_(getZoneName(item.Position)))
-			self.m_ShopsRobLabel:setText(getOpticalTimestamp(item.LastRob))
+			self.m_ShopsRobLabel:setText(item.LastRob > 0 and getOpticalTimestamp(item.LastRob) or "-")
 		end
 
 		compMoney = compMoney + shop.money

@@ -81,6 +81,7 @@ ADMIN_RANK_PERMISSION = {
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
 	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
@@ -289,8 +290,6 @@ SkinInfo = {
 
 MAX_KARMA_LEVEL = 150
 
-VehicleSpecialProperty = {Color = -1, LightColor = -2, Color2 = -3, Shader = -4, Horn = -5, Neon = -6, NeonColor = -7}
-
 Tasks = {
 	TASK_GUARD = 1,
 	TASK_SHOOT_TARGET = 2,
@@ -327,19 +326,42 @@ PlayerAttachObjects = {
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
 VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
 VEHICLE_SPECIAL_TEXTURE = {
+	[417] = "leviathnbody8bit256",
+	[425] = "hunterbody8bit256a",
+	[447] = "sparrow92body128",
+	[460] = "skimmer92body128",
+	[469] = "sparrow92body128",
+	[481] = "vehiclegeneric256", --bmx
+	[483] = "#emapcamperbody256",
+	[487] = "maverick92body128",
+	[488] = "polmavbody128a",
+	[497] = "polmavbody128a",
+	[510] = "mtbike64x128",
+	[511] = "beagle256",
+	[512] = "cropdustbody256",
+	[513] = "stunt256",
+	[519] = "shamalbody256",
+	[521] = "fcr90092body128",
+	[522] = "nrg50092body128",
+	[534] = "remapremington256body",
+	[535] = "#emapslamvan92body128",
+	[536] = "#emapblade92body128",
+	[548] = "cargobob92body256",
+	[553] = "nevada92body256",
+	[558] = "@hite",
+	[559] = "#emapjesterbody256",
 	[560] = "#emapsultanbody256",
 	[561] = "#emapstratum292body256",
-	[495] = "vehiclegrunge256",
-	[575] = "remapbroadway92body128",
+	[562] = "#emapelegybody128",
+	[563] = "raindance92body128",
 	[565] = "#emapflash92body256",
-	[536] = "#emapblade92body128",
-	[483] = "#emapcamperbody256",
-	[415] = "vehiclegrunge256",
-	[411] = "vehiclegrunge256",
-	[562] = "#emapelegybody128",
-	[562] = "#emapelegybody128",
-	[535] = "#emapslamvan92body128",
-	[559] = "#emapjesterbody256",
+	[567] = "#emapsavanna92body128",
+	[575] = "remapbroadway92body128",
+	[576] = "remaptornado92body128",
+	[577] = "at400_92_256",
+	[581] = "bf40092body128",
+	[586] = "wayfarerbody8bit128",
+	[593] = "dodo92body8bit256",
 }
 
 VEHICLE_BIKES = {

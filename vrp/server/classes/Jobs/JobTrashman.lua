@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobTrashman = inherit(Job)
-local MONEY_PER_CAN = 40 --// 15 default
+local MONEY_PER_CAN = 29 --// 15 default
 
 function JobTrashman:constructor()
 	Job.constructor(self)
@@ -105,10 +105,11 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 			if numCans and numCans > 0 then
 				local moneyAmount = numCans * MONEY_PER_CAN
 				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+				local points = math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR)
 				hitElement.m_LastJobAction = getRealTime().timestamp
-				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount)
+				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, nil, nil, points, numCans)
 				hitElement:addBankMoney(moneyAmount, "Müll-Job")
-				hitElement:givePoints(math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR))
+				hitElement:givePoints(points)
 
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")

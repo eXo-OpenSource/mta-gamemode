@@ -316,7 +316,7 @@ function Vehicle:toggleEngine(player)
 			end
 			return false
 		else
-			if VEHICLE_BIKES[self:getModel()] then -- Bikes
+			if VEHICLE_BIKES[self:getModel()] then
 				player:meChat(true, "verschließt sein Fahrradschloss!")
 			end
 			self:setEngineState(state)
@@ -324,40 +324,44 @@ function Vehicle:toggleEngine(player)
 			return true
 		end
 	end
+
 	if VEHICLE_BIKES[self:getModel()] then -- Bikes
-		player:sendError(_("Du hast keinen Schlüssel für das Fahrradschloss!", player))
+		player:sendError(_("Du hast kein Schlüssel für das Fahrradschloss!", player))
 	else
-		player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
 	end
+
 	return false
 end
 
-function Vehicle:toggleHandBrake( player, preferredState )
+function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
-	if not self.m_HandBrake or preferredState then
-		if self:isOnGround() then
-			setControlState(player, "handbrake", true)
-			self.m_HandBrake = true
-			player:triggerEvent("vehicleHandbrake", true)
+
+	if self:hasKey(player) or player:getRank() >= RANK.Moderator then
+		if not self.m_HandBrake or preferredState then
+			if self:isOnGround() then
+				setControlState(player, "handbrake", true)
+				self.m_HandBrake = true
+				player:triggerEvent("vehicleHandbrake", true)
+			end
+		else
+			self.m_HandBrake = false
+			setControlState(player, "handbrake", false)
+			if isElementFrozen(self) then
+				setElementFrozen(self, false)
+			end
+			player:triggerEvent("vehicleHandbrake" )
 		end
+		self:setData("Handbrake", self.m_HandBrake, true)
 	else
-		self.m_HandBrake = false
-		setControlState(player, "handbrake", false)
-		if isElementFrozen(self) then
-			setElementFrozen(self, false)
-		end
-		player:triggerEvent("vehicleHandbrake" )
+		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
 	end
-	self:setData("Handbrake", self.m_HandBrake, true)
 end
 
 function Vehicle:setEngineState(state)
-	--local player = getVehicleOccupant(self, 0)
-	--if player then
-		setVehicleEngineState(self, state)
-		self.m_EngineState = state
-	--end
+	setVehicleEngineState(self, state)
+	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
 end
 
@@ -408,6 +412,7 @@ function Vehicle:setBroken(state)
 		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
 	end
+	self:setData("vehicleEngineBroken", state, true)
 	self:setDamageProof(state)
 	if self.m_BrokenHook then
 		self.m_BrokenHook:call(vehicle)
@@ -416,7 +421,7 @@ function Vehicle:setBroken(state)
 end
 
 function Vehicle:isBroken()
-	return self:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH
+	return self:getData("vehicleEngineBroken")
 end
 
 function Vehicle:toggleInternalSmoke()
@@ -449,7 +454,15 @@ function Vehicle:countdownDestroyStart(player)
 	player:triggerEvent("Countdown", self.m_CountdownDestroy, "Fahrzeug")
 	self.m_CountdownDestroyTimer = setTimer(function()
 		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
-		if self and isElement(self) then self:destroy() end
+		if self and isElement(self) then 
+			local occs = getVehicleOccupants(self)
+			if occs then
+				for i,v in pairs(occs) do
+					removePedFromVehicle(v)
+				end
+			end
+			self:destroy() 
+		end
 		player:triggerEvent("CountdownStop", "Fahrzeug")
 	end, self.m_CountdownDestroy*1000, 1)
 end
@@ -474,8 +487,53 @@ end
 function Vehicle:fix()
 	if self.m_RepairAllowed then
 		fixVehicle(self)
+		if self:getMaxHealth() ~= 1000 then
+			self:setHealth(self:getMaxHealth())
+		end
 		self:setBroken(false)
 	end
+end
+
+function Vehicle:setAlwaysDamageable(state) -- trigger damage event even if engine is off
+	self:setData("alwaysDamageable", state, true)
+end
+
+function Vehicle:isAlwaysDamageable()
+	return self:getData("alwaysDamageable")
+end
+
+function Vehicle:setMaxHealth(health, giveHealth)
+	if type(health) == "number" then
+		health = math.clamp(VEHICLE_TOTAL_LOSS_HEALTH, health, 2000)
+		self:setData("customMaxHealth", health, true)
+		if giveHealth then
+			self:setHealth(health) -- possible duplicate of :fix(), but only for repairable vehicles
+			self:setBroken(false)
+		end
+		return true
+	end
+	return false
+end
+
+function Vehicle:getMaxHealth()
+	return self:getData("customMaxHealth") or 1000
+end
+
+function Vehicle:getHealthInPercent()
+	return math.clamp(0, math.ceil((self.health - VEHICLE_TOTAL_LOSS_HEALTH)/(self:getMaxHealth() - VEHICLE_TOTAL_LOSS_HEALTH)*100), 100)
+end
+
+function Vehicle:setBulletArmorLevel(level)
+	if type(level) == "number" then
+		level = math.clamp(0, level, 4)
+		self:setData("vehicleBulletArmorLevel", level, true)
+		return true
+	end
+	return false
+end
+
+function Vehicle:getBulletArmorLevel()
+	return self:getData("vehicleBulletArmorLevel") or 1
 end
 
 function Vehicle:toggleRespawn(state)
@@ -545,6 +603,11 @@ function Vehicle:respawnOnSpawnPosition()
 			self:setDimension(0)
 		end
 
+		if self.m_Magnet then
+			detachElements(self.m_Magnet)
+			self.m_Magnet:attach(self, 0, 0, -1.5)
+		end
+
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
@@ -595,12 +658,15 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
-						self.m_MagnetActivated = true
-						self.m_GrabbedVehicle = vehicle
-						vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, vehicle.rotation.z - self.m_Magnet.rotation.z)
-
-						setElementData(self, "MagnetGrabbedVehicle", vehicle)
-						break
+						if table.size(getVehicleOccupants(vehicle)) == 0 then
+							self.m_MagnetActivated = true
+							self.m_GrabbedVehicle = vehicle
+							vehicle:attach(self.m_Magnet, 0, 0, -1, 0, 0, vehicle.rotation.z - self.m_Magnet.rotation.z)
+							setElementData(self, "MagnetGrabbedVehicle", vehicle)
+							break
+						else
+							client:sendWarning("Das Fahrzeug ist nicht leer!")
+						end
 					end
 				end
 			end

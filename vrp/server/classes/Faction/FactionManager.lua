@@ -53,7 +53,7 @@ function FactionManager:destructor()
 end
 
 function FactionManager:loadFactions()
-  outputServerLog("Loading factions...")
+  local st, count = getTickCount(), 0
   local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   for k, row in pairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
@@ -64,7 +64,9 @@ function FactionManager:loadFactions()
 
 	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type)
     FactionManager.Map[row.Id] = instance
+	count = count + 1
   end
+  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s factions in %sms"):format(count, getTickCount()-st)) end
 end
 
 function FactionManager:getAllFactions()
@@ -107,7 +109,7 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons)
+		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -291,12 +293,12 @@ function FactionManager:Event_factionRankUp(playerId)
 				-- Todo: Report possible cheat attempt
 				return
 			end
-			
-			if client:getId() == playerId then 
+
+			if client:getId() == playerId then
 				client:sendError(_("Du kannst deinen eigenen Rang nicht höher setzen!", client))
 				return
 			end
-			
+
 			local playerRank = faction:getPlayerRank(playerId)
 			local player, isOffline = DatabasePlayer.get(playerId)
 			if isOffline then
@@ -384,9 +386,14 @@ function FactionManager:Event_receiveFactionWeaponShopInfos()
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)
-	local faction = client:getFaction()
-	local depot = faction.m_Depot
-	depot:takeWeaponsFromDepot(client,weaponTable)
+	if not client.m_WeaponStoragePosition then return outputDebug("no weapon storage position for this faction implemented") end
+	if getDistanceBetweenPoints3D(client.position, client.m_WeaponStoragePosition) <= 10 then
+		local faction = client:getFaction()
+		local depot = faction.m_Depot
+		depot:takeWeaponsFromDepot(client,weaponTable)
+	else
+		client:sendError(_("Du bist zu weit entfernt", client))
+	end
 end
 
 function FactionManager:Event_factionRespawnVehicles()

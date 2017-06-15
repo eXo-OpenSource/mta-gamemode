@@ -140,7 +140,7 @@ function Admin:destructor()
 end
 
 function Admin:addAdmin(player,rank)
-	outputDebug("Added Admin "..player:getName())
+	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
@@ -939,10 +939,18 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_vehicleRequestInfo(target)
+function Admin:Event_vehicleRequestInfo(target, isGroup)
+	local vehicleTable = {}
+
+	if isGroup and target:getGroup() then
+		vehicleTable = VehicleManager:getSingleton():getGroupVehicles(target:getGroup():getId())
+	else
+		vehicleTable = target:getVehicles()
+	end
+
 	local vehicles = {}
-	for k, vehicle in pairs(target:getVehicles()) do
-        vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	for k, vehicle in pairs(vehicleTable) do
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 
 	client:triggerEvent("adminVehicleRetrieveInfo", vehicles)
@@ -962,7 +970,9 @@ end
 
 function Admin:Event_portToVehicle(veh)
     if client:getRank() >= RANK.Supporter then
-        local pos = client:getPosition()
+        if client.vehicle then return end
+
+		local pos = client:getPosition()
         local pos = veh:getPosition()
 		client:setInterior(veh:getInterior())
 		client:setDimension(veh:getDimension())
@@ -1110,6 +1120,7 @@ end
 function Admin:reloadHelpText(player)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
 		Help:getSingleton():loadHelpTexts()
+		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
 	end
 end
 

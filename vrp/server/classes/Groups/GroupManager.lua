@@ -14,7 +14,7 @@ for i, v in pairs(GroupManager.GroupTypes) do
 end
 
 function GroupManager:constructor()
-	outputServerLog("Loading groups...")
+	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 
@@ -27,8 +27,10 @@ function GroupManager:constructor()
 
 		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
+		count = count + 1
 	end
 
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
@@ -415,7 +417,7 @@ function GroupManager:Event_RankDown(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Leader then
+	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return

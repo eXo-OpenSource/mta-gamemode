@@ -23,8 +23,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	setElementData(self, "OwnerType", "faction")
 	setElementData(self, "StateVehicle", faction:isStateFaction())
 	if health then
-		if health <= 300 then
-			self:setHealth(health or 1000)
+		if health <= VEHICLE_TOTAL_LOSS_HEALTH then
+			self:setBroken(true)
+		else
+			self:setHealth(health)
 		end
 	end
 	if color then
@@ -53,7 +55,6 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
     addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
     addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
-			veh:setHealth(1000)
 			veh:respawn(true)
 		end, 10000, 1, source)
 	end)

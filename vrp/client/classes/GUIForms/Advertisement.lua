@@ -118,10 +118,10 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 					return
 				end
 
-				CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "player", player, CALL_RESULT_CALLING, false)
-				triggerServerEvent("callStart", root, player)
+				Phone:getSingleton():getAppByClass(AppCall):openInCall("player", player, CALL_RESULT_CALLING, false)
+				triggerServerEvent("callStart", root, player, false)
 			elseif sender.referenz == "group" then
-				CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "group", sender.name, CALL_RESULT_CALLING, false)
+				Phone:getSingleton():getAppByClass(AppCall):openInCall("group", sender.name, CALL_RESULT_CALLING, false)
 				triggerServerEvent("callStartSpecial", root, sender.number)
 			end
 		else

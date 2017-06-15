@@ -331,10 +331,11 @@ SHOP_FUEL = {
 		["FuelStation"] = {-1465.5, 1868.2, 33.4, 3.239}
 	},
 	["LS-Airport Tankstelle"] = {
-		["Marker"] = Vector3(2029.56, -2418.43, 12.7),
-		["FuelStation"] = { 2029.52, -2404.90, 14, 180}
+		["Marker"] = Vector3(1605.76, -2456.51, 12.7),
+		["FuelStation"] = { 1606.10, -2445.5, 14.1, 0}
 	}
 }
+
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}
 ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(2862.30, -1439.80, 9),

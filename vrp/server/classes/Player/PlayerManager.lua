@@ -171,14 +171,19 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 				if (client:getPlayTime() / 60) >=  3 then
 					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
+
 						destroyElement(pickup)
 						giveWeapon(client,weapon,ammo,true)
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
 					else
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
 						destroyElement(pickup)
 						--giveWeapon(client,weapon,ammo,true)
 						--FactionState:
@@ -603,6 +608,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local text = table.concat ( argTable , " " )
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
+	local faction = source:getFaction()
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():isStateVehicle() then
+		local success = FactionState:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
@@ -765,6 +775,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
@@ -778,6 +789,7 @@ function PlayerManager:Event_startAnimation(animation)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
+		client.lastAnimation = getTickCount()
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
 	end

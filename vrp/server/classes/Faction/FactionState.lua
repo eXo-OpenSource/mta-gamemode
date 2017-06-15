@@ -56,13 +56,12 @@ function FactionState:constructor()
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
-	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
+	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
 	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:declineEvidenceDestroy","State:onRequestEvidenceDestroy"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
-	addCommandHandler("m",bind(self.Command_megaphone, self))
 	addCommandHandler("tie",bind(self.Command_tie, self))
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 	addCommandHandler("bail",bind(self.Command_bail, self))
@@ -101,7 +100,6 @@ function FactionState:constructor()
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
-	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
 	addEventHandler("State:acceptEvidenceDestroy", root, bind(self.Event_acceptEvidenceDestroy,self))
@@ -491,10 +489,11 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 	setElementDimension ( self.m_DutyPickup, dim or 0)
 	addEventHandler("onPickupHit", self.m_DutyPickup,
 		function(hitElement)
-			if getElementType(hitElement) == "player" then
+			if getElementType(hitElement) == "player" and not hitElement.vehicle then
 				local faction = hitElement:getFaction()
 				if faction then
 					if faction:isStateFaction() == true then
+						hitElement.m_CurrentDutyPickup = source
 						hitElement:triggerEvent("showStateFactionDutyGUI")
 						hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 					end
@@ -549,61 +548,6 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 			end
 		end
 	end)
-end
-
-function FactionState:createGasStation(pos, size)
-	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
-	addEventHandler("onMarkerHit", marker ,
-		function(hitElement, dim)
-			if hitElement:getType() == "player" and dim then
-				if hitElement.vehicle and hitElement.vehicleSeat == 0 then
-					if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-						if hitElement.vehicle and hitElement.vehicle:getFaction() and hitElement.vehicle:getFaction():isStateFaction() then
-							hitElement.stateGasStation = source
-							hitElement.vehicle:toggleHandBrake(hitElement, true)
-							hitElement:triggerEvent("showStateFactionGasStationGUI")
-						else
-							hitElement:sendError(_("Nur für Fahrzeuge des Staates!", hitElement))
-						end
-					else
-						hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
-					end
-				end
-			end
-		end
-	)
-end
-
-function FactionState:Event_fillRepairVehicle(type)
-	if client.vehicle then
-		if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
-			if client.vehicle and client.vehicle:getFaction() and client.vehicle:getFaction():isStateFaction() then
-				if client.stateGasStation and getDistanceBetweenPoints3D(client:getPosition(), client.stateGasStation:getPosition()) <= 3 then
-					local costs
-					if type == "fill" then
-						costs = math.floor((100-client.vehicle:getFuel())*5)
-						client.vehicle:setFuel(100)
-						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ betankt!", client, costs))
-						client:getFaction():takeMoney(costs, "Fahrzeug-Betankung")
-					elseif type == "repair" then
-						costs = math.floor((1000-client.vehicle:getHealth()))
-						client.vehicle:fix()
-						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ repariert!", client, costs))
-						client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
-					end
-					client.vehicle:toggleHandBrake(client, false)
-				else
-					client:sendError(_("Du bist zuweit entfernt!", client))
-				end
-			else
-				client:sendError(_("Nur für Fahrzeuge des Staates!", client))
-			end
-		else
-			client:sendError(_("Nur für Staatsfraktionisten im Dienst!", client))
-		end
-	else
-		client:sendError(_("Du musst in einem Fahrzeug sitzen!", client))
-	end
 end
 
 function FactionState:getFullReasonFromShortcut(reason)
@@ -681,7 +625,7 @@ function FactionState:getFullReasonFromShortcut(reason)
 		reason = "Shop-Überfall"
 		amount = 3
 	elseif string.lower(reason) == "haus" then
-		reason = "Hausrausb"
+		reason = "Hauseinbruch"
 		amount = 3
 	elseif string.lower(reason) == "eöä" then
 		reason = "Erregung öffentlichen Ärgernisses"
@@ -743,7 +687,7 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 	end
 end
 
-function FactionState:Command_megaphone(player, cmd, ...)
+function FactionState:outputMegaphone(player, ...)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() == true then
 		if player:isFactionDuty() then
@@ -759,6 +703,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 
 				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(receivedPlayers))
 				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
+				return true
 			else
 				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
 			end
@@ -766,6 +711,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 			player:sendError(_("Du bist nicht im Dienst!", player))
 		end
 	end
+	return false
 end
 
 function FactionState:Command_suspect(player,cmd,target,amount,...)
@@ -1231,6 +1177,7 @@ end
 
 function FactionState:Event_FactionRearm()
 	if client:isFactionDuty() then
+		client.m_WeaponStoragePosition = client.position
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
 		client:setHealth(100)
 		client:setArmor(100)
@@ -1250,38 +1197,43 @@ function FactionState:Event_toggleDuty(wasted)
 	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			takeAllWeapons(client)
-			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
-			client:setPublicSync("Faction:Swat",false)
-			client:setPublicSync("Faction:Duty",false)
-			client:getInventory():removeAllItem("Warnkegel")
-			client:getInventory():removeAllItem("Nagel-Band")
-			client:getInventory():removeAllItem("Blitzer")
-			client:getInventory():removeAllItem("Einsatzhelm")
-			faction:updateStateFactionDutyGUI(client)
-			Guns:getSingleton():setWeaponInStorage(client, false, false)
-		else
-			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-				return false
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+			if client:isFactionDuty() then
+				client:setDefaultSkin()
+				client.m_FactionDuty = false
+				takeAllWeapons(client)
+				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+				client:setPublicSync("Faction:Swat",false)
+				client:setPublicSync("Faction:Duty",false)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():removeAllItem("Nagel-Band")
+				client:getInventory():removeAllItem("Blitzer")
+				client:getInventory():removeAllItem("Einsatzhelm")
+				faction:updateStateFactionDutyGUI(client)
+				Guns:getSingleton():setWeaponInStorage(client, false, false)
+			else
+				if client:getPublicSync("Company:Duty") and client:getCompany() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					return false
+				end
+				faction:changeSkin(client)
+				client.m_FactionDuty = true
+				client:setHealth(100)
+				client:setArmor(100)
+				takeAllWeapons(client)
+				Guns:getSingleton():setWeaponInStorage(client, false, false)
+				client:sendInfo(_("Du bist nun im Dienst!", client))
+				client:setPublicSync("Faction:Duty",true)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 5)
+				client:getInventory():removeAllItem("Einsatzhelm")
+				client:getInventory():giveItem("Einsatzhelm", 1)
+				client.m_WeaponStoragePosition = client.position
+				client:triggerEvent("showFactionWeaponShopGUI")
+				faction:updateStateFactionDutyGUI(client)
 			end
-
-			faction:changeSkin(client)
-			client.m_FactionDuty = true
-			client:setHealth(100)
-			client:setArmor(100)
-			takeAllWeapons(client)
-			Guns:getSingleton():setWeaponInStorage(client, false, false)
-			client:sendInfo(_("Du bist nun im Dienst!", client))
-			client:setPublicSync("Faction:Duty",true)
-			client:getInventory():removeAllItem("Warnkegel")
-			client:getInventory():giveItem("Einsatzhelm", 1)
-			client:getInventory():giveItem("Warnkegel", 5)
-			client:triggerEvent("showFactionWeaponShopGUI")
-			faction:updateStateFactionDutyGUI(client)
+		else
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
@@ -1291,18 +1243,22 @@ end
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then
-		local faction = client:getFaction()
-		local swat = client:getPublicSync("Faction:Swat")
-		if swat == true then
-			faction:changeSkin(client)
-			client:setPublicSync("Faction:Swat",false)
-			client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
-			faction:updateStateFactionDutyGUI(client)
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+			local faction = client:getFaction()
+			local swat = client:getPublicSync("Faction:Swat")
+			if swat == true then
+				faction:changeSkin(client)
+				client:setPublicSync("Faction:Swat",false)
+				client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
+				faction:updateStateFactionDutyGUI(client)
+			else
+				client:setJobDutySkin(285)
+				client:setPublicSync("Faction:Swat",true)
+				client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
+				faction:updateStateFactionDutyGUI(client)
+			end
 		else
-			client:setJobDutySkin(285)
-			client:setPublicSync("Faction:Swat",true)
-			client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
-			faction:updateStateFactionDutyGUI(client)
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	end
 end

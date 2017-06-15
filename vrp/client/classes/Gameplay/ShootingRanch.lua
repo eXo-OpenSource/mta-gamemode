@@ -59,18 +59,22 @@ function ShootingRanch:onWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hitZ, 
 end
 
 
-addEventHandler("startClientShootingRanch", root, function()
-	ShootingRanch:new()
-end)
+addEventHandler("startClientShootingRanch", root,
+	function()
+		ShootingRanch:new()
+	end
+)
 
-addEventHandler("stopClientShootingRanch", root, function()
-	delete(ShootingRanch:getSingleton())
-end)
+addEventHandler("stopClientShootingRanch", root,
+	function()
+		delete(ShootingRanch:getSingleton())
+	end
+)
 
 ShootingRanchResult = inherit(GUIForm)
 inherit(Singleton, ShootingRanchResult)
 
-function ShootingRanchResult:constructor(data, success)
+function ShootingRanchResult:constructor(data, success, totalAmmo)
 	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2/2-220/2, 400, 220, false)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Schießstand Ergebnis", true, true, self)
@@ -81,7 +85,7 @@ function ShootingRanchResult:constructor(data, success)
 
 	local startTime = getElementData(localPlayer, "ShootingRanch:ClientStartTime") or data["StartTime"]
 	local time = getRealTime().timestamp - startTime
-	local acc =  data["Hits"]*100/(data["StartMuni"] - localPlayer:getTotalAmmo())
+	local acc =  data["Hits"]*100/(data["StartMuni"] - totalAmmo)
 
 	self.m_Hits:setText(_("Treffer: %d von benötigten %d", data["Hits"], data["TargetHits"]))
 	self.m_Time:setText(_("Benötigte Zeit: %d/%d", time > 60 and 60 or time, data["Time"]))
@@ -93,6 +97,8 @@ function ShootingRanchResult:constructor(data, success)
 	end
 end
 
-addEventHandler("showShootingRanchResult", root, function(data, success)
-	ShootingRanchResult:new(data, success)
-end)
+addEventHandler("showShootingRanchResult", root,
+	function(...)
+		ShootingRanchResult:new(...)
+	end
+)

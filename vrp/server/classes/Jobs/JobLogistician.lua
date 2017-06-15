@@ -6,8 +6,8 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT_MIN = 500 --// default 200
-local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
+local MONEY_PER_TRANSPORT_MIN = 520 --// default 200
+local MONEY_PER_TRANSPORT_MAX = 1020 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
@@ -110,7 +110,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						function()
 							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 							hitElement.m_LastJobAction = getRealTime().timestamp
-							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport)
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
 							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)

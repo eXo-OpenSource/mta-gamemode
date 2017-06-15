@@ -265,6 +265,5 @@
     <object id="object (smashboxpile) (1)" breakable="true" interior="0" alpha="255" model="1299" doublesided="false" scale="1" dimension="0" posX="1598" posY="-2441.6001" posZ="12.9" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (kmb_atm1) (1)" breakable="true" interior="0" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="1604.5" posY="-2440.3999" posZ="13.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (xjetty01) (3)" breakable="true" interior="0" alpha="255" model="17068" doublesided="false" scale="1" dimension="0" posX="2370.3" posY="-2551.3" posZ="0.8" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (washgaspump) (10)" breakable="true" interior="0" collisions="true" alpha="255" model="1676" doublesided="false" scale="1" dimension="0" posX="1606.0996" posY="-2445.5" posZ="14.1" rotX="0" rotY="0" rotZ="359.995"></object>
     <object id="object (laxrf_refinerypipe) (4)" breakable="true" interior="0" alpha="255" model="3675" doublesided="false" scale="0.61920929" dimension="0" posX="2370.3401" posY="-2552.8999" posZ="0.8" rotX="270" rotY="90" rotZ="90"></object>
 </map>

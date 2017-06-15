@@ -64,6 +64,11 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
 			if player:getType() ~= "player" then return end
+
+			if source:isAttached() then -- If the vehicle is attached to a magnet helicopter
+				return cancelEvent()
+			end
+
 			if seat == 0 then
 				self:checkVehicle(source)
 
@@ -105,31 +110,41 @@ function VehicleManager:constructor()
 end
 
 function VehicleManager:destructor()
+	local st, count = getTickCount(), 0
 	for ownerId, vehicles in pairs(self.m_Vehicles) do
 		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
+			count = count + 1
 		end
 	end
-	outputServerLog("Saved vehicles")
+	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s private_vehicles in %sms"):format(count, getTickCount()-st)) end
 
+	local st, count = getTickCount(), 0
 	for companyId, vehicles in pairs(self.m_CompanyVehicles) do
 		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
+			count = count + 1
 		end
 	end
-	outputServerLog("Saved company vehicles")
+	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
+
+	local st, count = getTickCount(), 0
 	for groupId, vehicles in pairs(self.m_GroupVehicles) do
 		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
+			count = count + 1
 		end
 	end
-	outputServerLog("Saved Group vehicles")
+	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s group_vehicles in %sms"):format(count, getTickCount()-st)) end
+
+	local st, count = getTickCount(), 0
 	for factionId, vehicles in pairs(self.m_FactionVehicles) do
 		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
+			count = count + 1
 		end
 	end
-	outputServerLog("Saved faction vehicles")
+	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
 function VehicleManager:Event_OnElementDestroy()
@@ -221,7 +236,7 @@ function VehicleManager:destroyUnusedVehicles( player )
 					end
 				end
 			end
-			outputDebugString("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
+			--outputDebugString("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
 			outputServerLog("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
 		end
 	end
@@ -238,7 +253,7 @@ function VehicleManager.loadVehicles()
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
 	]]--
-	outputServerLog("Loading company vehicles")
+	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
@@ -246,7 +261,8 @@ function VehicleManager.loadVehicles()
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
 	end
-	outputServerLog("Loading faction vehicles")
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
+	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
@@ -256,24 +272,8 @@ function VehicleManager.loadVehicles()
 			count = count + 1
 		end
 	end
-	outputServerLog("Loading group vehicles")
-	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		if GroupManager:getFromId(row.Group) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
-			if not row.ForSale == 1 then
-				setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
-				vehicle.m_IsNotSpawnedYet = true
-			end
-			VehicleManager:getSingleton():addRef(vehicle, false)
-			count = count + 1
-		else
-			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
-		end
-	end
-
-	outputServerLog(("Created %s vehicles in %sms"):format(count, getTickCount()-st))
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
+	local st, count = getTickCount(), 0
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
@@ -445,27 +445,46 @@ function VehicleManager:refreshGroupVehicles(group)
 		return
 	end
 	-- Delete old Group Vehicles
+	self:destroyGroupVehicles(group)
+
+	-- Reload Group Vehicles from DB
+	self:loadGroupVehicles(group)
+end
+
+function VehicleManager:destroyGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:destroyGroupVehicles: Group-Id Not Found!")
+		return
+	end
+
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(self.m_GroupVehicles[groupId]) do
 			veh:destroy()
 		end
 	end
-	-- Reload Group Vehicles from DB
+	self.m_GroupVehicles[groupId] = nil
+end
+
+function VehicleManager:loadGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:loadGroupVehicles: Group-Id Not Found!")
+		return
+	end
+
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
-			if not row.ForSale == 1 then
-				setElementDimension(vehicle,PRIVATE_DIMENSION_SERVER)
-				vehicle.m_IsNotSpawnedYet = true
-			end
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
 end
+
 
 function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
@@ -498,11 +517,17 @@ function VehicleManager:Event_vehiclePark()
 				return
 			end
 
+			if not source:isOnGround() then
+				client:sendError(_("Das Fahrzeug kann nicht in der Luft geparkt werden!", client))
+				return
+			end
+
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
 				return
 			end
+
 			if source:getInterior() == 0 then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
@@ -773,7 +798,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
+	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
@@ -1078,10 +1103,15 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 end
 
 function VehicleManager:Event_vehicleBreak()
-	self:checkVehicle(source)
-	outputDebug("Vehicle has been broken by "..client:getName())
-	-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
-	source:setBroken(true)
+	if not source.isBroken or not source:isBroken() then
+		self:checkVehicle(source)
+		outputDebug("Vehicle has been broken by "..client:getName())
+		if source.controller then
+			source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
+		end
+		-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+		source:setBroken(true)
+	end
 end
 
 function VehicleManager:Event_soundvanChangeURL(url)

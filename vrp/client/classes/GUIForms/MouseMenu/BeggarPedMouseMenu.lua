@@ -34,7 +34,7 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 			function ()
 				InputBox:new("Weed verkaufen", "Wieviel Weed möchtest du verkaufen?",
 					function (amount)
-						if tonumber(amount) > 0 and tonumber(amount) <= 200 then
+						if tonumber(amount) and tonumber(amount) > 0 and tonumber(amount) <= 200 then
 							triggerServerEvent("sellBeggarWeed", self:getElement(), tonumber(amount))
 						else
 							outputChatBox(_("%s (Obdachloser): Mehr als 200g Weed kann ich mir nicht leisten!", element:getData("BeggarName")))
@@ -55,4 +55,5 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 			triggerServerEvent("robBeggarPed", self:getElement())
 		end
 	)
+	self:adjustWidth()
 end

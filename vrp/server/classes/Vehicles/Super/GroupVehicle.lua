@@ -70,7 +70,6 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
-			veh:setHealth(1000)
 			veh:respawn(true)
 		end, 10000, 1, source)
 	end)
@@ -185,6 +184,7 @@ function GroupVehicle:respawn(force)
 		end
 	end
 
+	self.m_IsNotSpawnedYet = false
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)
@@ -197,10 +197,13 @@ function GroupVehicle:respawn(force)
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()
 	self:fix()
-	
 	self:setForSale(self.m_ForSale, self.m_SalePrice)
 
-	self.m_IsNotSpawnedYet = false
+	if self.m_Magnet then
+		detachElements(self.m_Magnet)
+		self.m_Magnet:attach(self, 0, 0, -1.5)
+	end
+
 	return true
 end
 

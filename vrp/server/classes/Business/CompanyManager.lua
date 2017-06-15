@@ -9,7 +9,7 @@ CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
 function CompanyManager:constructor()
-  outputServerLog("Loading companies...")
+  local st, count = getTickCount(), 0
   local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
   for i, row in pairs(result) do
     local result2 = sql:queryFetch("SELECT Id, CompanyRank FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
@@ -24,8 +24,9 @@ function CompanyManager:constructor()
         outputServerLog(("Company class for Id %s not found!"):format(row.Id))
       --self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
     end
+	count = count + 1
   end
-
+  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
   -- Add events
   addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
   addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
@@ -352,34 +353,37 @@ function CompanyManager:Event_toggleDuty()
 	end
 	local company = client:getCompany()
 	if company then
-		if client:isCompanyDuty() then
-			client:setDefaultSkin()
-			client.m_CompanyDuty = false
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
-			client:setPublicSync("Company:Duty",false)
-            takeAllWeapons(client)
-            if company.stop then
-                company:stop(client)
-            end
+		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 then
+			if client:isCompanyDuty() then
+				client:setDefaultSkin()
+				client.m_CompanyDuty = false
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
+				client:setPublicSync("Company:Duty",false)
+				takeAllWeapons(client)
+				if company.stop then
+					company:stop(client)
+				end
+			else
+				if client:getPublicSync("Faction:Duty") and client:getFaction() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
+					return false
+				end		
+				company:changeSkin(client)
+				client.m_CompanyDuty = true
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
+				client:setPublicSync("Company:Duty",true)
+				takeAllWeapons(client)
+				if company.m_Id == CompanyStaticId.SANNEWS then
+					giveWeapon(client, 43, 50) -- Camera
+				end
+				if company.start then
+					company:start(client)
+				end
+			end
 		else
-            if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
-				return false
-			end
-
-			company:changeSkin(client)
-			client.m_CompanyDuty = true
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
-			client:setPublicSync("Company:Duty",true)
-            takeAllWeapons(client)
-			if company.m_Id == CompanyStaticId.SANNEWS then
-				giveWeapon(client, 43, 50) -- Camera
-			end
-            if company.start then
-                company:start(client)
-            end
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))

@@ -26,7 +26,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return
 				end
 
-				local costs = math.floor((1000-getElementHealth(vehicle))*0.5) + math.floor((1000-getElementHealth(vehicle))*0.5*0.33)
+				local costs = (100 - vehicle:getHealthInPercent()) * 5 -- max. 500$, maybe improve this later to get higher costs based on maxHealth (armor)
 				if hitElement:getBankMoney() < costs then
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
 					return

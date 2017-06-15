@@ -10,7 +10,6 @@ ObjectPlacer = inherit(Object)
 function ObjectPlacer:constructor(model, callback, hideObject)
 	showCursor(true)
 	localPlayer.m_ObjectPlacerActive = true
-
 	self.m_Object = createObject(model, localPlayer:getPosition())
 	self.m_hideObject = hideObject
 	self.m_Object:setCollisionsEnabled(false)

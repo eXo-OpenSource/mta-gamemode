@@ -75,7 +75,7 @@ function GUIPaydayBox:createUI()
 	--create income and outgoing list
 	if self.m_PaydayTexts["income"] then
 		for _, value in ipairs(self.m_PaydayTexts["income"]) do
-			GUILabel:new(margin, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_inc, self.m_W, self.m_HeaderHeight/2.5, value[2].."$", self):setAlignX("left")
+			GUILabel:new(margin, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_inc, self.m_W, self.m_HeaderHeight/2.5, toMoneyString(value[2]), self):setAlignX("left")
 			GUILabel:new(money_margin + margin, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_inc, self.m_W, self.m_HeaderHeight/2.5, value[1], self):setAlignX("left")
 			i_inc = i_inc + 1
 		end
@@ -83,7 +83,7 @@ function GUIPaydayBox:createUI()
 	if self.m_PaydayTexts["outgoing"] then
 		for _, value in ipairs(self.m_PaydayTexts["outgoing"]) do
 			GUILabel:new(0, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_out, self.m_W - margin - money_margin, self.m_HeaderHeight/2.5, value[1], self):setAlignX("right")
-			GUILabel:new(0, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_out, self.m_W - margin, self.m_HeaderHeight/2.5, value[2].."$", self):setAlignX("right")
+			GUILabel:new(0, self.m_BaseHeight + self.m_HeaderHeight/2.5*i_out, self.m_W - margin, self.m_HeaderHeight/2.5, toMoneyString(value[2]), self):setAlignX("right")
 			i_out = i_out + 1
 		end
 	end
@@ -92,12 +92,12 @@ function GUIPaydayBox:createUI()
 	--subtotal
 	GUIRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self)
 	self.m_BaseHeight = self.m_BaseHeight + 4
-	GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, self.m_PaydayTexts["totalIncome"][1][2].."$", self):setAlignX("left")
-	GUILabel:new(0, self.m_BaseHeight, self.m_W - margin, self.m_HeaderHeight/2, self.m_PaydayTexts["totalOutgoing"][1][2].."$", self):setAlignX("right")
+	GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalIncome"][1][2]), self):setAlignX("left")
+	GUILabel:new(0, self.m_BaseHeight, self.m_W - margin, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalOutgoing"][1][2]), self):setAlignX("right")
 	
 	--total
 	self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/2
-	GUILabel:new(margin, self.m_BaseHeight, self.m_W - margin*2, self.m_HeaderHeight/1.5, ("%s: %s$"):format(self.m_PaydayTexts["total"][1][1], self.m_PaydayTexts["total"][1][2]), self)
+	GUILabel:new(margin, self.m_BaseHeight, self.m_W - margin*2, self.m_HeaderHeight/1.5, ("%s: %s"):format(self.m_PaydayTexts["total"][1][1], toMoneyString(self.m_PaydayTexts["total"][1][2])), self)
 		:setAlignX("center")
 	self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/1.5
 	

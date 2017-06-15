@@ -20,15 +20,20 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 
 	self.m_SoundUrl = ""
 
-
-	self.m_OnBarWasted = bind(self.onBarWasted, self)
-
 	if self.m_Marker then
 		self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
 		self.m_SoundCol:setDimension(self.m_Dimension)
 		self.m_SoundCol:setInterior(self.m_Interior)
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
 	end
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			if self:isPlayerInBar(player) then
+				self:onShopExit(player)
+			end
+		end
+	)
 end
 
 function BarShop:onBarMarkerHit(hitElement, dim)
@@ -48,21 +53,23 @@ end
 function BarShop:onShopEnter(player)
 	if self.m_SoundUrl ~= "" then
 		player:triggerEvent("barUpdateMusic", self.m_SoundUrl)
-		addEventHandler("onPlayerWasted", player, self.m_OnBarWasted)
 	end
 end
 
 function BarShop:onShopExit(player)
 	player:triggerEvent("barUpdateMusic")
-	removeEventHandler("onPlayerWasted", player, self.m_OnBarWasted)
-end
-
-function BarShop:onBarWasted()
-	self:onShopExit(source)
 end
 
 function BarShop:getPlayerInBar()
 	return self.m_SoundCol:getElementsWithin("player")
+end
+
+function BarShop:isPlayerInBar(player)
+	if player and isElement(player) and player:isWithinColShape(self.m_SoundCol) then
+		return true
+	else
+		return false
+	end
 end
 
 function BarShop:changeMusic(player, stream)

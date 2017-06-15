@@ -9,7 +9,7 @@
 JobPizza = inherit(Job)
 addRemoteEvents{ "onPizzaDelivered"}
 
-local BASE_LOAN = 45 --// 15
+local BASE_LOAN = 14 --// 15
 
 function JobPizza:constructor( )
 	Job.constructor(self)
@@ -48,9 +48,15 @@ function JobPizza:onPizzaDeliver(distance, time)
 		local workFactor = math.min(distance, 1899) / math.max(time, 10) -- Note: 1899 is the longest distance from start point
 		local pay = math.floor( BASE_LOAN * workFactor*2 )
 		local duration = getRealTime().timestamp - client.m_LastJobAction
+		local points = 0
 		client.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay)
+		
+		if chance(30) then
+			points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
+			client:givePoints(points)
+		end	
+
+		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, client.vehicle:getModel(), distance, points, time)
 		client:addBankMoney(pay, "Pizza-Job")
-		client:givePoints(math.floor(2*JOB_EXTRA_POINT_FACTOR))
 	end
 end
