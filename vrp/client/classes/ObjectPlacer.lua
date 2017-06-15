@@ -98,13 +98,10 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
-<<<<<<< HEAD
-=======
 			if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
 				ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
 				return
 			end
->>>>>>> feature/object-placer-refactor
 			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 		end
 	else
@@ -118,26 +115,6 @@ addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
 	function(model, callbackEvent, hideObject)
 		Inventory:getSingleton():hide()
-<<<<<<< HEAD
-		setTimer(
-		function(model,callbackEvent)
-			local objectPlacer = ObjectPlacer:new(model,
-				function(position, rotation)
-					if position then
-						triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
-					else
-						triggerServerEvent(callbackEvent, localPlayer, false)
-					end
-					setTimer(
-						function()
-							Inventory:getSingleton():show()
-							localPlayer.m_InObjectPlacer = nil
-						end, 
-					50, 1)
-				end
-			)
-		end,50,1,model,callbackEvent)
-=======
 		nextframe(
 			function(model,callbackEvent)
 				local objectPlacer = ObjectPlacer:new(model,
@@ -156,6 +133,5 @@ addEventHandler("objectPlacerStart", root,
 				)
 			end, model, callbackEvent
 		)
->>>>>>> feature/object-placer-refactor
 	end
 )
