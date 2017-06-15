@@ -211,8 +211,8 @@ function DatabasePlayer:save()
 		
 		sql:queryFetchSingle(function(row)
 			if not row then
-				sql:queryExec("INSERT INTO ??_accountActivity (UserID, SessionStart, Duration) VALUES (?, ?, ?);", sql:getPrefix(), 
-				pId, pLoginTime, pPlayTime - pStartTime)
+				sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(), 
+				pLoginTime, pId, pLoginTime, pPlayTime - pStartTime)
 			else
 				sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), 
 				pPlayTime - pStartTime, pId, pLoginTime)
