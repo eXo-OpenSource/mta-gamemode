@@ -19,6 +19,7 @@ function JobGravel:constructor()
 
 	self.m_GravelStock = 0
 	self.m_GravelMined = 0
+	self.m_DontEndOnVehicleDestroy = true
 
 	self.m_Jobber = {}
 	self.m_Gravel = {}
@@ -27,6 +28,7 @@ function JobGravel:constructor()
 		createMarker(544.3, 919.9, -44, "cylinder", 6, 250, 130, 0, 100),
 		createMarker(594.7, 926.3, -43, "cylinder", 6, 250, 130, 0, 100)
 	}
+
 	for index, marker in pairs(self.m_DumpLoadMarker) do
 		marker.Track = JobGravel.Tracks["Dumper"..index]
 		addEventHandler("onMarkerHit", marker, bind(self.onDumperLoadMarkerHit, self))
@@ -51,8 +53,9 @@ function JobGravel:constructor()
 	self.m_TimedPulse = TimedPulse:new(60000)
 	self.m_TimedPulse:registerHandler(bind(self.destroyUnusedGravel, self))
 
-	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe", "gravelOnDestroy"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
+	addEventHandler("gravelOnDestroy", root, bind(self.Event_onGravelDestroyHit, self))
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
 	addEventHandler("gravelOnDozerHit", root, bind(self.Event_onDozerHit, self))
@@ -79,11 +82,26 @@ function JobGravel:start(player)
 end
 
 function JobGravel:stop(player)
+	self:destroyJobVehicle(player)
 	table.remove(self.m_Jobber, table.find(self.m_Jobber, player))
 	self.m_DozerSpawner:toggleForPlayer(player, false)
 	self.m_DumperSpawner:toggleForPlayer(player, false)
 	if player.pickaxe and isElement(player.pickaxe) then player.pickaxe:destroy() end
 	self:destroyDumperGravel(player)
+end
+
+function JobGravel:Event_onGravelDestroyHit()
+	if source:getType() == "object" then
+		if source:getModel() == 2936 then
+			for index, v in pairs(self.m_Gravel) do
+				if v == source then
+					table.remove(self.m_Gravel, index)
+					break
+				end
+			end
+			source:destroy()
+		end
+	end
 end
 
 function JobGravel:onGravelJobLeave(hitElement, dim)
@@ -297,6 +315,9 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								table.insert(self.m_Gravel, gravel)
 								gravel.dumper = true
 								gravel.player = player
+								gravel:setData("syncer", player, true)
+								gravel:setData("syncer:changeable", true, true)
+
 								self:updateGravelAmount("stock", false)
 								self:moveOnTrack(track, gravel, 1, function(gravel)
 									gravel.LoadTime = getRealTime().timestamp
