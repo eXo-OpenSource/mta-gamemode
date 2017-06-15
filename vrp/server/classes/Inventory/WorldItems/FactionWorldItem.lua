@@ -22,10 +22,10 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 	local rank = self.m_MinRank or 0
 	if action == WorldItem.Action.Move then
 		if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
-			if self:getObject() and not (player:isFactionDuty()) then --just show it if the player used his moderator rights
+			if self:getObject() and (player:getFaction() ~= self:getOwner() or not (player:isFactionDuty())) then --just show it if the player used his moderator rights
 				local x, y, z = getElementPosition(self:getObject())
 				local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
-				self:getOwner():sendShortMessage(("%s %s hat euer Objekt %s in %s, %s verschoben!"):format(RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2))
+				self:getOwner():sendShortMessage(("%s %s verschiebt euer Objekt %s in %s, %s!"):format(RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2))
 				return true 
 			end
 		end
@@ -33,39 +33,39 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 			if player:getFaction():getPlayerRank(player) >= rank then
 				return true
 			else
-				player:sendError(_("Dazu benötigst du mindestens Rang %d", player, rank))
+				player:sendError(_("Dazu benötigst du mindestens Rang %d.", player, rank))
 			end
 		elseif self:getPlacer() == player and not self.m_SuperOwner then
 			return true
 		else
-			player:sendError(_("Dieses Objekt gehört der Fraktion %s", player, self:getOwner():getName()))
+			player:sendError(_("Dieses Objekt gehört der Fraktion %s.", player, self:getOwner():getName()))
 			return false
 		end
 		return false
 	elseif action == WorldItem.Action.Collect then
 		if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
-			outputDebug("admin rights")
+			--outputDebug("admin rights")
 			return true 
 		end
 		if player:getFaction() == self:getOwner() and player:isFactionDuty() then
 			outputDebug("faction and duty")
 			if player:getFaction():getPlayerRank(player) >= rank then
-				outputDebug("rank")
+				--outputDebug("rank")
 				return true
 			else
-				player:sendError(_("Dazu benötigst du mindestens Rang %d", player, rank))
+				player:sendError(_("Dazu benötigst du mindestens Rang %d.", player, rank))
 			end
 		elseif self:getPlacer() == player and not self.m_SuperOwner then
-			 outputDebug("private")
+			 --outputDebug("private")
 			return true
 		else
-			player:sendError(_("Dieses Objekt gehört der Fraktion %s", player, self:getOwner():getName()))
+			player:sendError(_("Dieses Objekt gehört der Fraktion %s.", player, self:getOwner():getName()))
 			return false
 		end
 		return false
 	elseif action == WorldItem.Action.Delete then
 		if WorldItem.hasPlayerPermissionTo(self, player, action) then -- does the player have superuser rights (admin)?
-			if self:getObject() and not (player:isFactionDuty()) then --just show it if the player used his moderator rights
+			if self:getObject() and (player:getFaction() ~= self:getOwner() or not (player:isFactionDuty())) then --just show it if the player used his moderator rights
 				local x, y, z = getElementPosition(self:getObject())
 				local zone1, zone2 = getZoneName(x, y, z), getZoneName(x, y, z, true)
 				self:getOwner():sendShortMessage(("%s %s hat euer Objekt %s in %s, %s gelöscht!"):format(RANK[player:getRank()], player:getName(), self.m_ItemName, zone1, zone2))

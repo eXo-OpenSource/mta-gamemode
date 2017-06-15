@@ -61,11 +61,9 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_Changer = GUIChanger:new(5, 375, 250, 30, self)
 	self.m_Changer:addItem("Filter (gesamte Liste)")
 	self.m_Changer:addItem("Auswahl in Liste")
-	self.m_MapMarkBtn = VRPButton:new(260, 375, 165, 30, _"auf Karte markieren", true, self)
-	self.m_MapMarkBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Mark)
-	self.m_CollectBtn = VRPButton:new(430, 375, 100, 30, _"Aufheben", true, self)
+	self.m_CollectBtn = VRPButton:new(260, 375, 185, 30, _"Aufheben", true, self)
 	self.m_CollectBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Collect)
-	self.m_DeleteBtn = VRPButton:new(535, 375, 100, 30, _"Löschen", true, self):setBarColor(Color.Red)
+	self.m_DeleteBtn = VRPButton:new(450, 375, 185, 30, _"Löschen", true, self):setBarColor(Color.Red)
 	self.m_DeleteBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Delete)
 end
 
@@ -104,6 +102,7 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 	self.m_FilteredObjectList = self.m_FullObjectList
 	if self.m_FilterApplied then
 		self:applyFilter()
+		self:updateDebugArrow(true)
 	end
 end
 
@@ -180,12 +179,12 @@ function WorldItemOverviewGUI:Event_OnActionButtonClick(action)
 	if type == 1 then -- list
 		outputDebug(action.." list")
 		if action == WorldItemOverviewGUI.Action.Collect then
-			QuestionBox:new(_("möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
+			QuestionBox:new(_("Möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
 			function()
 				triggerServerEvent("worldItemMassCollect", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
 			end)
 		elseif action == WorldItemOverviewGUI.Action.Delete then
-			QuestionBox:new(_("möchtest du wirklich %d Objekte permanent löschen? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
+			QuestionBox:new(_("Möchtest du wirklich %d Objekte permanent löschen?", self.m_ListSize), 
 			function()
 				triggerServerEvent("worldItemMassDelete", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
 			end)
