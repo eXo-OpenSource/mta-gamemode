@@ -69,13 +69,13 @@ function JobGravel:start()
 
 		self.m_Vehicle = vehicle
 
-		vehicle.col1 = createColSphere(0, 0, 0, 1.2)
-		vehicle.col1:attach(vehicle, -1, 3, -0.8)
+		vehicle.col1 = createColSphere(0, 0, 0, 1.5)
+		vehicle.col1:attach(vehicle, -1.2, 3.8, -0.8)
 		vehicle.col1.vehicle = vehicle
 		self.m_VehicleCol1 = vehicle.col1
 
-		vehicle.col2 = createColSphere(0, 0, 0, 1.2)
-		vehicle.col2:attach(vehicle, 1, 3, -0.8)
+		vehicle.col2 = createColSphere(0, 0, 0, 1.5)
+		vehicle.col2:attach(vehicle, 1.2, 3.8, -0.8)
 		vehicle.col2.vehicle = vehicle
 		self.m_VehicleCol2 = vehicle.col2
 

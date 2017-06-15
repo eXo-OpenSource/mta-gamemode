@@ -28,6 +28,7 @@ function JobPizza:start(player)
 end
 
 function JobPizza:stop(player)
+	self:destroyJobVehicle(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	if isTimer(player.m_EndPizzaJobTimer) then
 		killTimer( player.m_EndPizzaJobTimer )
