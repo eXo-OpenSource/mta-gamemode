@@ -170,7 +170,7 @@ end
 
 function GroupVehicle:respawn(force)
     local vehicleType = self:getVehicleType()
-	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force and not self.m_IsNotSpawnedYet then
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
@@ -184,7 +184,6 @@ function GroupVehicle:respawn(force)
 		end
 	end
 
-	self.m_IsNotSpawnedYet = false
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)

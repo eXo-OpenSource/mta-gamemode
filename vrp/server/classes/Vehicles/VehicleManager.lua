@@ -262,6 +262,7 @@ function VehicleManager.loadVehicles()
 		count = count + 1
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
+
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
@@ -273,7 +274,6 @@ function VehicleManager.loadVehicles()
 		end
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
-	local st, count = getTickCount(), 0
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
@@ -459,7 +459,7 @@ function VehicleManager:destroyGroupVehicles(group)
 	end
 
 	if self.m_GroupVehicles[groupId] then
-		for index, veh in pairs(self.m_GroupVehicles[groupId]) do
+		for index, veh in pairs(table.copy(self.m_GroupVehicles[groupId])) do
 			veh:destroy()
 		end
 	end
@@ -753,6 +753,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 			return
 		end
 	end
+
 	if instanceof(source, CompanyVehicle) then
 		if client:getRank() >= RANK.Moderator then
 			source:respawn( true )
@@ -768,26 +769,23 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if instanceof(source, GroupVehicle) then
 		if (client:getRank() >= RANK.Moderator) then
-			source:respawn( true )
+			source:respawn(true)
 			return
 		else
 			if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
 				return
 			end
+
 			local group = client:getGroup()
-			if not source.m_IsNotSpawnedYet then
-				if group:getMoney() >= 100 then
-					group:takeMoney(100, "Fahrzeug-Respawn")
-					group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
-				else
-					client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
-					return
-				end
+			if group:getMoney() >= 100 then
+				group:takeMoney(100, "Fahrzeug-Respawn")
+				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			else
-				client:sendShortMessage(_("Du hast das Fahrzeug kostenlos gespawnt!", client))
-				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s kostenlos gespawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
+				client:sendError(_("In eurer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
+				return
 			end
+
 			source:respawn()
 			return
 		end
