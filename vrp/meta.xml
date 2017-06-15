@@ -1817,6 +1817,7 @@
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
+	<map src="files/maps/GravelJob.map"/>
 	<file src="files/maps/Garages.parsed_map"/>
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
