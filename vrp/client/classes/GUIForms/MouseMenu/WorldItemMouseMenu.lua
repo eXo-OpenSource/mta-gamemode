@@ -15,6 +15,8 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	
 	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
 
+	self:addModelSpecificItems(element)
+
 	if self:hasPermissionTo("moveWorldItem", element) then
 		self:addItem(_"Verschieben", -- maybe some other day
 			function()
@@ -24,8 +26,6 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Arrows)
 	end
-
-	self:addModelSpecificItems(element)
 
 	if self:hasPermissionTo("", element) then
 		self:addItem(_"Aufheben",
@@ -62,25 +62,29 @@ end
 
 function WorldItemMouseMenu:addModelSpecificItems(element)
 	local model = getElementModel(element)
-	if model == 2226 then
+	if model == 2226 then -- Radio
 		if self:hasPermissionTo("showWorldItemInformation", element) then
 			self:addItem(_"Musik ändern",
 				function()
-					if self:getElement() then
-						StreamGUI:new("Musik ändern", function(url) triggerServerEvent("itemRadioChangeURL", self:getElement(), url) end, function() triggerServerEvent("itemRadioStopSound", self:getElement()) end)
+					if element then
+						StreamGUI:new("Musik ändern", function(url) triggerServerEvent("itemRadioChangeURL", element, url) end, function() triggerServerEvent("itemRadioStopSound", element) end)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Music)
 		end
-	elseif model == 1238 then
+	elseif model == 1238 then -- Warnkegel
 		if self:hasPermissionTo("", element) then
 			self:addItem(_"Warnleuchte",
 				function()
-					if self:getElement() then
-						triggerServerEvent("worldItemToggleConeLight", self:getElement())
+					if element then
+						triggerServerEvent("worldItemToggleConeLight", element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Lightbulb)
+		end
+	elseif model == 3902 then -- Blitzer
+		if self:hasPermissionTo("", element) then
+			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.LightBlue)
 		end
 	end
 end

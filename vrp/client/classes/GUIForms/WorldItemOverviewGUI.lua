@@ -23,11 +23,12 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_Width = 640
 	self.m_Height = 410
 	self.m_Refreshing = false
+	self.m_FilterApplied = false
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Objektübersicht - %s", sOwnerName), true, true, self)
    
 	--object list
-	GUILabel:new(5, 30, self.m_Width, 30, _"platzierte Objekte", self)
+	self.m_PlacedObjectsLabel = GUILabel:new(5, 30, self.m_Width, 30, "", self) --will be set on list loading
 	self.m_ObjectList = GUIGridList:new(5, 65, self.m_Width - 10, 200, self)
 		:addColumn(_"Name", 0.2)
 		:addColumn(_"Position", 0.3)
@@ -39,6 +40,7 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_ListRefreshButton:setBackgroundColor(Color.LightBlue)
 	self.m_ListRefreshButton.onLeftClick = function()
 		self.m_Refreshing = true
+		self.m_FilterApplied = false
 		self.m_ListRefreshButton:setEnabled(false)
 		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, self.m_OwnerId, self.m_OwnerType)
 	end
@@ -97,7 +99,12 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 			i = i + 1
 		end
 	end
+	self.m_ListSize = i - 1
+	self.m_PlacedObjectsLabel:setText(_("platzierte Objekte (%d)", self.m_ListSize))
 	self.m_FilteredObjectList = self.m_FullObjectList
+	if self.m_FilterApplied then
+		self:applyFilter()
+	end
 end
 
 function WorldItemOverviewGUI:Event_OnListItemClick()
@@ -134,6 +141,9 @@ function WorldItemOverviewGUI:applyFilter()
 			i = i + 1
 		end
 	end
+	self.m_FilterApplied = true
+	self.m_ListSize = i - 1
+	self.m_PlacedObjectsLabel:setText(_("platzierte Objekte (%d)", self.m_ListSize))
 end
 
 function WorldItemOverviewGUI:updateDebugArrow(forceDestroy)
@@ -170,18 +180,24 @@ function WorldItemOverviewGUI:Event_OnActionButtonClick(action)
 	if type == 1 then -- list
 		outputDebug(action.." list")
 		if action == WorldItemOverviewGUI.Action.Collect then
-			triggerServerEvent("worldItemMassCollect", self:getObjectsInList())
+			QuestionBox:new(_("möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
+			function()
+				triggerServerEvent("worldItemMassCollect", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
+			end)
 		elseif action == WorldItemOverviewGUI.Action.Delete then
-			triggerServerEvent("worldItemMassDelete", self:getObjectsInList())
+			QuestionBox:new(_("möchtest du wirklich %d Objekte permanent löschen? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
+			function()
+				triggerServerEvent("worldItemMassDelete", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
+			end)
 		end
 	elseif type == 2 then -- selection
 		outputDebug(action.." selection")
 		if self.m_SelectedListItem then
 			if action == WorldItemOverviewGUI.Action.Collect then
-				triggerServerEvent("worldItemCollect", self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object)
+				triggerServerEvent("worldItemCollect", self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object, true, self.m_OwnerId, self.m_OwnerType)
 				self:updateDebugArrow(true)
 			elseif action == WorldItemOverviewGUI.Action.Delete then
-				triggerServerEvent("worldItemDelete", self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object)
+				triggerServerEvent("worldItemDelete", self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object, true, self.m_OwnerId, self.m_OwnerType)
 				self:updateDebugArrow(true)
 			end
 		else

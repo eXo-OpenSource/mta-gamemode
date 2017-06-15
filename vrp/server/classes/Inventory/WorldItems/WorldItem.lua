@@ -17,7 +17,6 @@ addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "wo
 WorldItem.constructor = pure_virtual
 
 function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player)
-	iprint(player)
 	self.m_Item = item
 	self.m_ItemName = item:getName()
 	self.m_ModelId = item:getModelId()
@@ -48,7 +47,7 @@ function WorldItem:virtual_destructor()
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
-function WorldItem:onCollect(player)
+function WorldItem:onCollect(player, resendList, id, type)
 	if self:getMovingPlayer() then 
 		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
 		return false 
@@ -63,12 +62,13 @@ function WorldItem:onCollect(player)
 		end
 		if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
 		delete(self)
+		if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
 		return true
 	end
 	return false
 end
 
-function WorldItem:onDelete(player)
+function WorldItem:onDelete(player, resendList, id, type)
 	if player then
 		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 			return false
@@ -78,6 +78,7 @@ function WorldItem:onDelete(player)
 	if self.m_Item.removeFromWorld then
 		self.m_Item:removeFromWorld(nil, self, self.m_Object)
 	end
+	if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
 	delete(self)
 end
 
@@ -131,10 +132,10 @@ end
 
 function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
 	if not isElement(player) or player:getType() ~= "player" then return false end
-	if not ADMIN_RANK_PERMISSION[action] or player:getRank() >= ADMIN_RANK_PERMISSION[action] then
-		return true
+	if not ADMIN_RANK_PERMISSION[action] or player:getRank() < ADMIN_RANK_PERMISSION[action] then
+		return false
 	end
-	return false
+	return true
 end
 
 function WorldItem.collectAllFromOwner(owner)
@@ -147,42 +148,66 @@ function WorldItem.collectAllFromOwner(owner)
 	end
 end
 
+function WorldItem.sendItemListToPlayer(id, type, player)
+	local owner
+	if type == "player" then
+		owner = DatabasePlayer.getFromId(id)	
+	elseif type == "faction" then
+		owner = FactionManager:getSingleton():getFromId(id)
+	end
+	if owner then
+		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, owner:getName(), WorldItem.Map[owner] or {}, id, type)
+	end
+end
+
 addEventHandler("worldItemMove", root,
-	function(state)
+	function(...)
 		if source.m_Super then
-			source.m_Super:onMove(client)
+			source.m_Super:onMove(client, ...)
 		end
 	end
 )
 
 addEventHandler("worldItemCollect", root,
-	function()
+	function(...)
 		if source.m_Super then
-			source.m_Super:onCollect(client)
+			source.m_Super:onCollect(client, ...)
 		end
 	end
 )
 
 addEventHandler("worldItemMassCollect", root,
-	function()
-		if source.m_Super then
-			source.m_Super:onCollect(client)
+	function(tblObjects, ...)
+		for i, object in pairs(tblObjects) do
+			if object.m_Super then
+				if i == #tblObjects then
+					object.m_Super:onCollect(client, ...)
+				else
+					object.m_Super:onCollect(client)
+				end
+			end
 		end
 	end
 )
 
 addEventHandler("worldItemDelete", root,
-	function()
+	function(...)
 		if source.m_Super then
-			source.m_Super:onDelete(client)
+			source.m_Super:onDelete(client, ...)
 		end
 	end
 )
 
 addEventHandler("worldItemMassDelete", root,
-	function()
-		if source.m_Super then
-			source.m_Super:onDelete(client)
+	function(tblObjects, ...)
+		for i, object in pairs(tblObjects) do
+			if object.m_Super then
+				if i == #tblObjects then
+					object.m_Super:onDelete(client, ...)
+				else
+					object.m_Super:onDelete(client)
+				end
+			end
 		end
 	end
 )
@@ -190,15 +215,7 @@ addEventHandler("worldItemMassDelete", root,
 
 addEventHandler("requestWorldItemListOfOwner", root, 
 	function(id, type)
-		local owner
-		if type == "player" then
-			owner = DatabasePlayer.getFromId(id)	
-		elseif type == "faction" then
-			owner = FactionManager:getSingleton():getFromId(id)
-		end
-		if owner then
-			triggerClientEvent(client, "recieveWorldItemListOfOwner", root, owner:getName(), WorldItem.Map[owner] or {}, id, type)
-		end
+		WorldItem.sendItemListToPlayer(id, type, client)
 	end
 )
 

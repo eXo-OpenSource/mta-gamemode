@@ -25,19 +25,15 @@ function ItemSpeedCam:use(player)
 			local result = self:startObjectPlacing(player,
 				function(item, position, rotation)
 					if item ~= self or not position then return end
-					if (position - player:getPosition()).length > 20 then
-						player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
-						return
-					end
 
 					local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
 					worldItem:setFactionSuperOwner(true)
+					worldItem:setMinRank(3)
 
 					player:getInventory():removeItem(self:getName(), 1)
 
 					local object = worldItem:getObject()
 					setElementData(object, "earning", 0)
-					setElementData(object, "owner", player:getName())
 					ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
 					object.col = createColSphere(position, 10)
@@ -104,27 +100,15 @@ function ItemSpeedCam:onClick(player, worldItem)
 	end
 end
 
-function ItemSpeedCam:isCollectAllowed(player, worlditem)
-	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
-		if player:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
-			return true
-		else
-			client:sendError(_("Du hast keinen Platz im Inventar!", client))
-		end
-	end
-	return false
-end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local object = worlditem:getObject()
 	local pos = object:getPosition()
 	local col = object.col
-	FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s abgebaut!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 	col:destroy()
 	for index, cam in pairs(ItemSpeedCam.Map) do
 		if cam == object then
 			table.remove(ItemSpeedCam.Map, index)
 		end
 	end
-	player:sendInfo(_("Du hast den Blitzer abgebaut!", player))
 end

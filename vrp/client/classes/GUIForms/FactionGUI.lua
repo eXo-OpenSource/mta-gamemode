@@ -38,6 +38,8 @@ function FactionGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
 	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
 	self.m_FactionRespawnVehicleButton.onLeftClick = bind(self.FactionRespawnVehicles, self)
+	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
+	self.m_ObjectListButton.onLeftClick = bind(self.ShowObjectList, self)
 
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
@@ -362,4 +364,9 @@ end
 
 function FactionGUI:FactionRespawnVehicles()
 	triggerServerEvent("factionRespawnVehicles", root)
+end
+
+function FactionGUI:ShowObjectList()
+	self:close()
+	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getFaction():getId(), "faction")
 end

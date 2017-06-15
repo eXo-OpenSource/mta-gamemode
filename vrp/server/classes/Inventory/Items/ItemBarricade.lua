@@ -18,7 +18,7 @@ function ItemBarricade:destructor()
 end
 
 function ItemBarricade:use(player)
-	--if player:isFactionDuty() then
+	if player:isFactionDuty() then
 		local result = self:startObjectPlacing(player,
 			function(item, position, rotation)
 				if item ~= self or not position then return end
@@ -29,7 +29,6 @@ function ItemBarricade:use(player)
 					source.m_Item:onDelete()
 				end)
 				if self:getModelId() == 1238 then
-					outputDebug("cone placed")
 					addEventHandler("worldItemToggleConeLight", self.m_WorldItem.m_Object, function()
 						self:toggleConeLight(source, client)
 					end)
@@ -38,10 +37,10 @@ function ItemBarricade:use(player)
 				player:getInventory():removeItem(self:getName(), 1)
 			end
 		)
-	--else
-		--player:sendError(_("Du bist nicht im Dienst!", player))
-		--player:getInventory():removeAllItem(self:getName())
-	--end
+	else
+		player:sendError(_("Du bist nicht im Dienst!", player))
+		player:getInventory():removeAllItem(self:getName())
+	end
 end
 
 function ItemBarricade:toggleConeLight(object, player)
