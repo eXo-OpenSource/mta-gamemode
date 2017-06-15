@@ -303,13 +303,18 @@ function House:sellHouse(player)
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
-		self.m_Owner = 0
-		self.m_Keys = {}
-		self:updatePickup()
-		self:save()
+		
+		self:clearHouse()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
+end
+
+function House:clearHouse(player)
+	self.m_Owner = 0
+	self.m_Keys = {}
+	self:updatePickup()
+	self:save()
 end
 
 function House:onPickupHit(hitElement)

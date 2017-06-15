@@ -335,6 +335,17 @@ function PlayerManager:breakingNews(text, ...)
 	end
 end
 
+function PlayerManager:getPlayerFromId(userId)
+	if userId then
+		for i, v in ipairs(getElementsByType('player')) do
+			if v:getId() == userId then
+				return v
+			end
+		end
+	end
+	return false
+end
+
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	if name and sourcePlayer then
 		local matches = {}
