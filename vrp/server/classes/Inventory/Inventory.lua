@@ -66,7 +66,9 @@ function Inventory:destructor()
 end
 
 function Inventory:syncClient()
-	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
+	if not self.m_Owner.m_Disconnecting then
+		self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
+	end
 end
 
 function Inventory:forceRefresh()
@@ -590,7 +592,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function Inventory:giveItem(item, amount, value)
+function Inventory:giveItem(item, amount, value) -- donotsync if player disconnects
 	checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
@@ -629,10 +631,10 @@ function Inventory:giveItem(item, amount, value)
 					return true
 				end
 			end
-		else
+		elseif not self.m_Owner.m_Disconnecting then
 			self.m_Owner:sendError(_("Nicht genug Platz für %d %s in deinem Inventar!", self.m_Owner,amount,item))
 		end
-	else
+	elseif not self.m_Owner.m_Disconnecting then
 		self.m_Owner:sendError(_("Ungültiges Item! (%s)", self.m_Owner,item))
 	end
 end

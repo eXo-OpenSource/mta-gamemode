@@ -3,9 +3,10 @@ VEHICLE_BOX_LOAD[543] = {["count"]= 1,	[1] = Vector3(0, -1.2, 0)}
 VEHICLE_BOX_LOAD[427] = {["count"]= 2,	[1] = Vector3(0, -1.5, -0.2), [2] = Vector3(0, -3, -0.2)}
 
 FACTION_TRUNK_MAX_ITEMS = {
-	["Barrikade"] = 5,
+	["Barrikade"] = 10,
 	["Nagel-Band"] = 3,
-	["Blitzer"] = 3
+	["Blitzer"] = 3,
+	["Warnkegel"] = 10,
 }
 
 VEHICLE_BAG_LOAD = {}

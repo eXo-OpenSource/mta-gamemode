@@ -46,14 +46,14 @@ function Item:place(owner, pos, rotation, amount)
 	return worldItem
 end
 
-function Item:startObjectPlacing(player, callback)
+function Item:startObjectPlacing(player, callback, hideObject)
 	if player.m_PlacingInfo then
 		player:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", player))
 		return false
 	end
 
 	-- Start the object placer on the client
-	player:triggerEvent("objectPlacerStart", self:getModelId(), "itemPlaced")
+	player:triggerEvent("objectPlacerStart", self:getModelId(), "itemPlaced", hideObject)
 	player.m_PlacingInfo = {item = self, callback = callback}
 	return true
 end
@@ -64,11 +64,11 @@ addEventHandler("itemPlaced", root,
 		local placingInfo = client.m_PlacingInfo
 		if placingInfo then
 			if x then
-				client:sendShortMessage(_("Objekt platziert.", client), nil, nil, 1000)
+				client:sendShortMessage(_("%s platziert.", client, placingInfo.item:getName()), nil, nil, 1000)
 				placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
 			else
 				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
-				--placingInfo.callback(placingInfo.item, false) -- maybe callback on fail, but useless for now
+				placingInfo.callback(placingInfo.item, false) 
 			end
 			client.m_PlacingInfo = nil
 		end

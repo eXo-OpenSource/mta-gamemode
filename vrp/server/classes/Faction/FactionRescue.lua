@@ -182,7 +182,7 @@ function FactionRescue:Event_toggleDuty(type)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
-				client:getInventory():removeAllItem("Barrikade")
+				client:getInventory():removeAllItem("Warnkegel")
 				takeWeapon(client,42)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
@@ -197,8 +197,8 @@ function FactionRescue:Event_toggleDuty(type)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",true)
 				client:setPublicSync("Rescue:Type",type)
-				client:getInventory():removeAllItem("Barrikade")
-				client:getInventory():giveItem("Barrikade", 10)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 10)
 				self:Event_changeSkin(client)
 			end
 		else

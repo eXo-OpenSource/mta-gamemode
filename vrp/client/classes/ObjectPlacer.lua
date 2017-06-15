@@ -7,13 +7,18 @@
 -- ****************************************************************************
 ObjectPlacer = inherit(Object)
 
-function ObjectPlacer:constructor(model, callback)
+function ObjectPlacer:constructor(model, callback, hideObject)
 	showCursor(true)
-	localPlayer.m_InObjectPlacer = true
+	localPlayer.m_ObjectPlacerActive = true
 	self.m_Object = createObject(model, localPlayer:getPosition())
+	self.m_hideObject = hideObject
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Callback = callback
 
+	if self.m_hideObject then
+		self.m_Object:setRotation(0, 0, self.m_hideObject:getRotation().z)
+		hideObject:setDimension(PRIVATE_DIMENSION_CLIENT)
+	end
 	self.m_CursorMove = bind(self.Event_CursorMove, self)
 	addEventHandler("onClientCursorMove", root, self.m_CursorMove)
 
@@ -39,6 +44,14 @@ function ObjectPlacer:destructor()
 	if self.m_Object and isElement(self.m_Object) then
 		self.m_Object:destroy()
 	end
+	nextframe(
+		function()
+			localPlayer.m_ObjectPlacerActive = false
+			if self.m_hideObject then
+				self.m_hideObject:setDimension(0)
+			end
+		end
+	)
 	delete(self.m_ShortMessage)
 	unbindKey("mouse_wheel_down", "down", self.m_MouseWheel)
 	unbindKey("mouse_wheel_up", "down", self.m_MouseWheel)
@@ -50,7 +63,7 @@ function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, wor
 	local camX, camY, camZ = getCameraMatrix()
 	local surfaceFound, surfaceX, surfaceY, surfaceZ, element, nx, ny, nz, materialID = processLineOfSight(camX, camY, camZ, worldX, worldY, worldZ, true,
 		true, true, true, true, true, false, true, localPlayer, false, true)
-	if surfaceFound and materialID ~= 51 and materialID ~= 53 then -- probably add more unexpeted materialIDs
+	if surfaceFound then 
 		local groundZ = getGroundPosition(surfaceX, surfaceY, surfaceZ + 2)
 		if groundZ > surfaceZ then return end -- just stop the object if if would spawn underground
 
@@ -68,9 +81,9 @@ function ObjectPlacer:Event_MouseWheel(button, state)
 	if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
 	if getKeyState("lalt") then offset = 5 end
 	if button == "mouse_wheel_down" and state == "down" then
-		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z + offset)
-	else
 		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z - offset)
+	else
+		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z + offset)
 	end
 end
 
@@ -85,6 +98,13 @@ function ObjectPlacer:Event_Click(btn, state)
 			return ErrorBox:new(_"Du kannst Objekte nicht an Fahrzeugen platzieren.")
 		end
 		if self.m_Callback then
+<<<<<<< HEAD
+=======
+			if (self.m_Object:getPosition() - localPlayer:getPosition()).length > 20 then
+				ErrorBox:new(_"Du musst in der Nähe der Zielposition sein!")
+				return
+			end
+>>>>>>> feature/object-placer-refactor
 			self.m_Callback(self.m_Object:getPosition(), self.m_Object:getRotation().z)
 		end
 	else
@@ -96,8 +116,9 @@ end
 
 addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
-	function(model, callbackEvent)
+	function(model, callbackEvent, hideObject)
 		Inventory:getSingleton():hide()
+<<<<<<< HEAD
 		setTimer(
 		function(model,callbackEvent)
 			local objectPlacer = ObjectPlacer:new(model,
@@ -116,5 +137,25 @@ addEventHandler("objectPlacerStart", root,
 				end
 			)
 		end,50,1,model,callbackEvent)
+=======
+		nextframe(
+			function(model,callbackEvent)
+				local objectPlacer = ObjectPlacer:new(model,
+					function(position, rotation)
+						if position then
+							triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
+						else
+							triggerServerEvent(callbackEvent, localPlayer, false)
+						end
+						nextframe(
+							function()
+								Inventory:getSingleton():show()
+							end
+						)
+					end, hideObject
+				)
+			end, model, callbackEvent
+		)
+>>>>>>> feature/object-placer-refactor
 	end
 )

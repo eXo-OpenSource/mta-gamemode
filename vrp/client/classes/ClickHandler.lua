@@ -105,7 +105,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Disabled clickhandler as long as the player is not logged in
 	if not localPlayer:isLoggedIn() then return end
-	if localPlayer.m_InObjectPlacer then return end
+	if localPlayer.m_ObjectPlacerActive then return end
 
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end
@@ -135,7 +135,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if getElementData(element, "worlditem") then
 		if trigger then
 			if button == "left" then
-				triggerServerEvent("worldItemClick", element)
+				self:addMouseMenu(WorldItemMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				--triggerServerEvent("worldItemClick", element)
 			elseif button == "right" then
 			end
 		end

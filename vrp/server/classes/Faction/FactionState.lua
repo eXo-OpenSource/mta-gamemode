@@ -29,7 +29,8 @@ function FactionState:constructor()
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
-		["Blitzer"] = 0
+		["Blitzer"] = 0,
+		["Warnkegel"] = 0,
 	}
 
 	nextframe(
@@ -1204,7 +1205,7 @@ function FactionState:Event_toggleDuty(wasted)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
 				client:setPublicSync("Faction:Duty",false)
-				client:getInventory():removeAllItem("Barrikade")
+				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
@@ -1223,8 +1224,8 @@ function FactionState:Event_toggleDuty(wasted)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
 				client:setPublicSync("Faction:Duty",true)
-				client:getInventory():removeAllItem("Barrikade")
-				client:getInventory():giveItem("Barrikade", 10)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 5)
 				client:getInventory():removeAllItem("Einsatzhelm")
 				client:getInventory():giveItem("Einsatzhelm", 1)
 				client.m_WeaponStoragePosition = client.position
