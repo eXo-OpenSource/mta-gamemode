@@ -35,20 +35,22 @@ function GroupGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
 	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupCreateLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.14, self.m_Width*0.5, self.m_Height*0.06, _"Du kannst in der Stadthalle eine neue Firma oder Gang gründen!", tabGroups):setMultiline(true)
-	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
 	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
 	--self.m_GroupMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabGroups):setCaption(_"Betrag")
 	--self.m_GroupMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabGroups)
 	--self.m_GroupMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabGroups)
-	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.4, self.m_Height*0.5, tabGroups)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.7)
-	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.3)
-	self.m_GroupAddPlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabGroups):setBarColor(Color.Green)
-	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
-	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
+	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
+	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.55)
+	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
+	self.m_GroupPlayersGrid:addColumn(_"Aktivität", 0.27)
+	
+	self.m_GroupAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabGroups):setBarColor(Color.Green)
+	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
+	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -177,7 +179,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 
 		self.m_GroupPlayersGrid:clear()
 		for _, info in ipairs(players) do
-			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
+			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
 			item.Id = info.playerId
 		end
 		if rank >= GroupRank.Manager then

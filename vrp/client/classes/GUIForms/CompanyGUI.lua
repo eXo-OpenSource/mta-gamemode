@@ -46,9 +46,10 @@ function CompanyGUI:constructor()
 	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
-	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabMitglieder)
-	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.7)
-	self.m_CompanyPlayersGrid:addColumn(_"Rang", 0.3)
+	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
+	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.5)
+	self.m_CompanyPlayersGrid:addColumn(_"Rang", 0.18)
+	self.m_CompanyPlayersGrid:addColumn(_"Aktivität", 0.27)
 	self.m_CompanyAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
 	self.m_CompanyRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_CompanyRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
@@ -176,7 +177,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 
 			self.m_CompanyPlayersGrid:clear()
 			for _, info in ipairs(players) do
-				local item = self.m_CompanyPlayersGrid:addItem(info.name, info.rank)
+				local item = self.m_CompanyPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
 				item.Id = info.playerId
 			end
 
