@@ -10,10 +10,17 @@ local slotChecks =
 	"W_A:w3",
 	"W_A:w5",
 	"W_A:w6",
+	[10] = "W_A:w0"
 }
 
 --	[ID] = {bone, x, y, z, rx, ry, rz, model, slot},
 local weaponTable = {
+	[2] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 333, 1},
+	[3] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 334, 1},
+	[4] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 335, 1},
+	[5] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 336, 1},
+	[6] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 337, 1},
+	[10] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 321, 10},
 	[22] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 346, 2},
 	[23] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 347, 2},
 	[24] = {14, 0.1, 0.11, -0.05, 180, 90, -90, 348, 2},
@@ -40,7 +47,6 @@ function createModel(player, weapon, state, slot)
 	local r = getPedRotation(player)
 	local dim = getElementDimension(player)
 	local int = getElementInterior(player)
-	
 	if weaponTable[weapon] then
 		local bone = weaponTable[weapon][1]
 		local x = weaponTable[weapon][2]
