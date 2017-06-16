@@ -63,33 +63,41 @@ function ItemSpeedCam:count()
 end
 
 function ItemSpeedCam:onColShapeHit(element, dim)
-  if dim then
-    if element:getType() == "vehicle" then
-		if element:getSpeed() > 85 then
-			if element:getOccupant() then
-				local player = element:getOccupant()
+	if dim then
+		if element:getType() == "vehicle" then
+			if element:getSpeed() > 85 then
+				if element:getOccupant() then
+					local player = element:getOccupant()
 
-				if player:isFactionDuty() then return end
+					if player:isFactionDuty() then return end
 
-				local speed = math.floor(element:getSpeed())
-				local costs = (speed-80)*COST_FACTOR
+					local speed = math.floor(element:getSpeed())
+					local costs = (speed-80)*COST_FACTOR
 
-				if player:getBankMoney() < costs then
-					costs = player:getBankMoney()
+					if player:getBankMoney() < costs then
+						costs = player:getBankMoney()
+					end
+
+					player:takeBankMoney(costs, "Blitzer-Strafe")
+					FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe")
+					player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
+
+					player:giveAchievement(62)
+					if speed > 180 then
+						player:giveAchievement(63)
+					end
+
+					if player:getCompany() and player:isCompanyDuty() and player:getCompany():getId() == CompanyStaticId.SANNEWS then
+						if element:getModel() == 582 then
+							player:giveAchievement(99) -- Rasender Reporter
+						end
+					end
+
+					setElementData(source.object, "earning", getElementData(source.object, "earning") + costs)
 				end
-
-				player:takeBankMoney(costs, "Blitzer-Strafe")
-				FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe")
-      			player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
-				player:giveAchievement(62)
-				if speed > 180 then
-					player:giveAchievement(63)
-				end
-				setElementData(source.object, "earning", getElementData(source.object, "earning") + costs)
 			end
 		end
-    end
-  end
+	end
 end
 
 function ItemSpeedCam:onClick(player, worldItem)
