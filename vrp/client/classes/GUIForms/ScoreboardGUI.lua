@@ -87,7 +87,9 @@ function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
 	self.m_Players = {}
 	self.m_CompanyCount = {}
+	self.m_CompanyAFKCount = {}
 	self.m_FactionCount = {}
+	self.m_FactionAFKCount = {}
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
@@ -97,12 +99,22 @@ function ScoreboardGUI:refresh()
 
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
+			if not self.m_FactionAFKCount[factionId] then self.m_FactionAFKCount[factionId] = 0 end
+
 			self.m_FactionCount[factionId] = self.m_FactionCount[factionId] + 1
+			if player:isAFK() then
+				self.m_FactionAFKCount[factionId] = self.m_FactionAFKCount[factionId] + 1
+			end
 		end
 
 		if companyId ~= 0 then
 			if not self.m_CompanyCount[companyId] then self.m_CompanyCount[companyId] = 0 end
+			if not self.m_CompanyAFKCount[companyId] then self.m_CompanyAFKCount[companyId] = 0 end
+
 			self.m_CompanyCount[companyId] = self.m_CompanyCount[companyId] + 1
+			if player:isAFK() then
+				self.m_CompanyAFKCount[companyId] = self.m_CompanyAFKCount[companyId] + 1
+			end
 		end
 	end
 
@@ -126,29 +138,34 @@ function ScoreboardGUI:refresh()
 	self.m_CountColumn = 0
 	for id, faction in pairs(FactionManager.Map) do
 		local color = faction:getColor()
-		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0, tocolor(color.r, color.g, color.b))
+		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0, self.m_FactionAFKCount[id] or 0, tocolor(color.r, color.g, color.b))
 	end
 	for id, company in ipairs(CompanyManager.Map) do
-		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0)
+		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0, self.m_CompanyAFKCount[id] or 0)
 	end
 
 	self.m_PlayerCount:setText(_("Derzeit sind %d Spieler online", #getElementsByType("player")))
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
 end
 
-function ScoreboardGUI:addPlayerCount(name, value, color)
+function ScoreboardGUI:addPlayerCount(name, value, valueAFK, color)
 	if self.m_CountRow >= 3 then
 		self.m_CountRow = 0
 		self.m_CountColumn =  self.m_CountColumn+1
 	end
-	if self.m_PlayerCountLabels[name] then
-		self.m_PlayerCountLabels[name]:setText(("%s: %d"):format(name, value))
-	else
-		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/6*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
+	if not self.m_PlayerCountLabels[name] then
+		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/6*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, "", self.m_Rect)
 		if color then
 			self.m_PlayerCountLabels[name]:setColor(color)
 		end
 	end
+	
+	if valueAFK ~= 0 then
+		self.m_PlayerCountLabels[name]:setText(("%s: %d (%d AFK)"):format(name, value, valueAFK))
+	else
+		self.m_PlayerCountLabels[name]:setText(("%s: %d"):format(name, value))
+	end
+
 	self.m_CountRow = self.m_CountRow + 1
 
 end
