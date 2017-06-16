@@ -71,10 +71,10 @@ function VehicleTuning:createNew()
 	self.m_Tuning = {}
 	self.m_Tuning["Color1"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
 	self.m_Tuning["Color2"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["ColorLight"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["ColorLight"] = {255, 255, 255}
 	self.m_Tuning["GTATuning"] = {}
 	self.m_Tuning["Neon"] = false
-	self.m_Tuning["NeonColor"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["NeonColor"] = {0, 0, 0}
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
 	self.m_Tuning["Texture"] = {}
