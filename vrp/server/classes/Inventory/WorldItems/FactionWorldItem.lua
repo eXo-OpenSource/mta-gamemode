@@ -48,7 +48,7 @@ function FactionWorldItem:hasPlayerPermissionTo(player, action)
 			return true 
 		end
 		if player:getFaction() == self:getOwner() and player:isFactionDuty() then
-			outputDebug("faction and duty")
+			--outputDebug("faction and duty")
 			if player:getFaction():getPlayerRank(player) >= rank then
 				--outputDebug("rank")
 				return true
