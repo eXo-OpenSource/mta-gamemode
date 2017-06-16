@@ -44,7 +44,7 @@ function MechanicTow:VehicleTakeGUI(vehicleType)
 	elseif vehicleType == "groupVehicle" then
 		local group = client:getGroup()
 		if not group then client:sendError(_("Du bist in keiner Gruppe!", client)) return end
-		vehicleTable = VehicleManager:getSingleton():getGroupVehicles(group:getId())
+		vehicleTable = group:getVehicles()
 	end
 
 	-- Get a list of vehicles that need manual repairing

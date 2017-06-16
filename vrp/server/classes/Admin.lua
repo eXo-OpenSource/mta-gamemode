@@ -943,7 +943,7 @@ function Admin:Event_vehicleRequestInfo(target, isGroup)
 	local vehicleTable = {}
 
 	if isGroup and target:getGroup() then
-		vehicleTable = VehicleManager:getSingleton():getGroupVehicles(target:getGroup():getId())
+		vehicleTable = target:getGroup():getVehicles()
 	else
 		vehicleTable = target:getVehicles()
 	end
