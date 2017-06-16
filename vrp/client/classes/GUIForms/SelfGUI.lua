@@ -1180,5 +1180,12 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 
+		self.m_SeatbeltWarning = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"Warnton bei offnem Gurt", self.m_SettingBG)
+			:setFont(VRPFont(25)):setFontSize(1)
+		self.m_SeatbeltWarning:setChecked(core:get("Vehicles", "seatbeltWarning", true))
+		self.m_SeatbeltWarning.onChange = function (bool)
+			core:set("Vehicles", "seatbeltWarning", bool)
+		end
+
 	end
 end

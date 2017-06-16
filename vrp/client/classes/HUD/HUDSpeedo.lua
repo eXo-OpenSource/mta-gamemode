@@ -7,6 +7,7 @@
 -- ****************************************************************************
 HUDSpeedo = inherit(Singleton)
 
+
 function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
@@ -24,6 +25,7 @@ function HUDSpeedo:constructor()
 					self:show()
 				end
 			end
+			self:playSeatbeltAlarm(true)
 		end
 	)
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
@@ -35,12 +37,19 @@ function HUDSpeedo:constructor()
 					end
 				end
 			end
+			self:playSeatbeltAlarm(false)
 		end
 	)
 	addEvent("vehicleFuelSync", true)
 	addEventHandler("vehicleFuelSync", root,
 		function(fuel)
 			self.m_Fuel = fuel
+		end
+	)
+	addEvent("playSeatbeltAlarm", true)
+	addEventHandler("playSeatbeltAlarm", root,
+		function(state)
+			self:playSeatbeltAlarm(state)
 		end
 	)
 end
@@ -143,6 +152,22 @@ function HUDSpeedo:allOccupantsBuckeled()
 	end
 
 	return true
+end
+
+function HUDSpeedo:playSeatbeltAlarm(state)
+	if state then
+		if not isElement(self.m_SeatbeltSound) then
+			if localPlayer.vehicle and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") then
+				if core:get("Vehicles", "seatbeltWarning", true) then
+					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+				end
+			end
+		end
+	else
+		if isElement(self.m_SeatbeltSound) then
+			stopSound(self.m_SeatbeltSound)
+		end
+	end
 end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)

@@ -1476,6 +1476,8 @@
 	<vrpfile src="files/audio/onDoorClosed.mp3"/>
 	<vrpfile src="files/audio/onDoorOpened.mp3"/>
 	<vrpfile src="files/audio/carlock.mp3"/>
+	<vrpfile src="files/audio/car_seatbelt_warning.mp3"/>
+	<vrpfile src="files/audio/car_seatbelt_click.wav"/>
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
 	<vrpfile src="files/audio/gate_open.mp3"/>

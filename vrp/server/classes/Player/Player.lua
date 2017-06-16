@@ -298,17 +298,25 @@ function Player:buckleSeatBelt(vehicle)
 	if self.m_SeatBelt then
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
+		triggerClientEvent(self, "playSeatbeltAlarm", self, true)
 	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
+		triggerClientEvent(self, "playSeatbeltAlarm", self, false)
+		self:playSound("files/audio/car_seatbelt_click.wav")
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
+		triggerClientEvent(self, "playSeatbeltAlarm", self, true)
 	end
 
 	if self.vehicle then
 		self:sendShortMessage(_("Du hast dich %sgeschnallt!", self, self.m_SeatBelt and "an" or "ab"))
 	end
+end
+
+function Player:playSound(path)
+	triggerClientEvent(self, "playSound", self, path)
 end
 
 function Player:save()

@@ -99,6 +99,9 @@ addEventHandler("vehicleEngineStart", root,
 		veh.EngineStart = true
 		setTimer(function()
 			veh.EngineStart = false
+			if localPlayer.vehicle == veh then
+				HUDSpeedo:playSeatbeltAlarm(true)
+			end
 		end, 2050 ,1)
 	end
 )
