@@ -197,6 +197,8 @@ function Vehicle:onPlayerExit(player, seat)
 		if self.m_Magnet then
 			unbindKey(player, "num_sub", "both", self.m_MagnetUp)
 			unbindKey(player, "num_add", "both", self.m_MagnetDown)
+			if isTimer(self.m_MoveDownTimer) then killTimer(self.m_MoveDownTimer) end
+			if isTimer(self.m_MoveUpTimer) then killTimer(self.m_MoveUpTimer) end
 		end
 
 		player.m_InVehicle = nil
@@ -681,7 +683,7 @@ function Vehicle:magnetMoveUp(player, _, state)
 		self.m_MoveUpTimer = setTimer(
 			function()
 				if self.m_MagnetHeight < -1.5 then
-					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveUpTimer) end
 
 					detachElements(self.m_Magnet)
 					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
