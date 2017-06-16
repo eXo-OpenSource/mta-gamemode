@@ -102,7 +102,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
 
 				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-					vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+					vehPlayer:sendError("Du kannst nicht in dieses Jobfahrzeug!")
 					cancelEvent()
 				end)
 			end
@@ -131,7 +131,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton !",player,255,0,0)
+			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton!",player,255,0,0)
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then

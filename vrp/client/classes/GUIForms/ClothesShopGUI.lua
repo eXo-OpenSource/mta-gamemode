@@ -15,7 +15,7 @@ function ClothesShopGUI:constructor(shopId, typeId, clothes)
 
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kleidungs Shop", false, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Kleidungsshop", false, true, self)
 	self.m_Grid = GUIGridList:new(0, self.m_Height*0.22, self.m_Width, self.m_Height*0.72, self.m_Window)
 	self.m_Grid:addColumn(_"Name", 0.75)
 	self.m_Grid:addColumn(_"Preis", 0.25)

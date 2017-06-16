@@ -30,7 +30,7 @@ function AdminEventGUI:constructor(money)
 
 	self.m_EventButton = {}
 
-	self.m_EventButton["setPortPoint"] = GUIButton:new(10, 85, 250, 30, "Teleport-Punkt setzen",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
+	self.m_EventButton["setPortPoint"] = GUIButton:new(10, 85, 250, 30, "Teleportpunkt setzen",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
 	self.m_EventButton["setPortPoint"].onLeftClick = function() triggerServerEvent("adminEventTrigger", localPlayer, "setTeleportPoint") end
 
 	self.m_EventButton["portPlayers"] = GUIButton:new(10, 120, 250, 30, "Spieler porten",  self.m_TabGeneral):setFontSize(1):setBackgroundColor(Color.Orange)
