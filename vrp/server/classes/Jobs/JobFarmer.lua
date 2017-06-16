@@ -6,9 +6,9 @@ local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 30 --// default 10
-local MONEY_PLANT_HARVESTER = 7
-local MONEY_PLANT_TRACTOR = 9
+local MONEY_PER_PLANT = 58 --// default 10
+local MONEY_PLANT_HARVESTER = 10
+local MONEY_PLANT_TRACTOR = 8
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -59,7 +59,7 @@ function JobFarmer:constructor()
 
 end
 
-function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
 
 	if vehicleModel == 531 then
@@ -74,30 +74,37 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
 		end)
+	elseif vehicleModel == 478 then --Walton
+		self:registerJobVehicle(player, vehicle, true, false)
+		addEventHandler("onElementDestroy", vehicle,
+			function()
+				self.m_CurrentPlants[player] = 0
+				self:updatePrivateData(player)
+			end)
 	end
 
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-		cancelEvent()
-	end)
+
 
 	player.farmerVehicle = vehicle
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 then
+		if seat == 0 and source:getModel() ~= 478 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
 				local income = player:getData("Farmer.Income")
-				local bonus = JobManager.getBonusForNewbies( player , income)
-				if not bonus then bonus = 0 end
 				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
 				vehPlayer.m_LastJobAction = getRealTime().timestamp
 				if vehicle:getModel() == 531 then
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income, bonus)
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
 				else
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income, bonus)
+					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
 				end
-				vehPlayer:giveMoney( income + bonus, "Farmer-Job")
+				vehPlayer:addBankMoney( income, "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
+
+				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+					vehPlayer:sendError("Du kannst nicht in dieses Jobfahrzeug!")
+					cancelEvent()
+				end)
 			end
 			vehicle:destroy()
 			self.m_CurrentPlants[vehPlayer] = 0
@@ -124,7 +131,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton !",player,255,0,0)
+			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton!",player,255,0,0)
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
@@ -195,12 +202,10 @@ function JobFarmer:stop(player)
 
 	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
 		local income = player:getData("Farmer.Income")
-		local bonus = JobManager.getBonusForNewbies( player , income)
-		if not bonus then bonus = 0 end
 		local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
 		vehPlayer.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income, bonus)
-		player:giveMoney(income+bonus, "Farmer-Job")
+		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income)
+		player:addBankMoney(income, "Farmer-Job")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
@@ -209,7 +214,7 @@ end
 
 function JobFarmer:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FARMER) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER))
 		return false
 	end
 	return true
@@ -225,25 +230,22 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			--player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
-			local bonus = JobManager.getBonusForNewbies( player , income)
-			if not bonus then bonus = 0 end
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, bonus)
-			player:giveMoney(income+bonus, "Farmer-Job")
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
+			player:addBankMoney(income, "Farmer-Job")
 			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
-
 			for i, v in pairs(getAttachedElements(hitElement)) do
 				if v:getModel() == 2968 then -- only destroy crates
 					destroyElement(v)
 				end
 			end
 		else
-			player:sendError(_("Du hast keine Ladung dabei!", player), 255, 0, 0)
+			player:sendError(_("Du hast keine Ladung dabei!", player))
 		end
 	end
 end

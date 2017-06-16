@@ -10,6 +10,8 @@ Group = inherit(Object)
 function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
   self.m_Id = Id
   self.m_Players = players or {}
+	self.m_PlayerActivity = {}
+	self.m_LastActivityUpdate = 0
   self.m_Name = name
   self.m_Money = money or 0
   self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
@@ -21,6 +23,9 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
   self.m_Shops = {} -- shops automatically add the reference
   self.m_Markers = {}
   self.m_MarkersAttached = false
+
+  self.m_VehiclesSpawned = false
+
   local saveRanks = false
   if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
   if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
@@ -32,6 +37,8 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 
   self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
   self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+
+	self:getActivity()
 end
 
 function Group:destructor()
@@ -199,6 +206,8 @@ function Group:addPlayer(playerId, rank)
 	x,y,z = getElementPosition( v.m_Pickup )
 	player:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
   end
+
+  self:getActivity(true)
 end
 
 function Group:removePlayer(playerId)
@@ -294,14 +303,38 @@ function Group:setMoney(amount)
   sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
 
+function Group:getActivity(force)
+	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
+		return
+	end
+	self.m_LastActivityUpdate = getRealTime().timestamp
+
+	for playerId, rank in pairs(self.m_Players) do
+		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(NOW()) - 7 AND DATE(NOW());", sql:getPrefix(), playerId)
+	
+		local activity = 0
+			
+		if row and row.Activity then
+			activity = row.Activity
+		end
+
+		self.m_PlayerActivity[playerId] = activity
+	end
+end
+
 function Group:getPlayers(getIDsOnly)
   if getIDsOnly then
     return self.m_Players
   end
 
+	self:getActivity()
+
   local temp = {}
   for playerId, rank in pairs(self.m_Players) do
-    temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank}
+		local activity = self.m_PlayerActivity[playerId]
+		if not activity then activity = 0 end
+
+    temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
   end
   return temp
 end
@@ -437,16 +470,24 @@ function Group:phoneCallAbbort(caller)
 end
 
 function Group:phoneTakeOff(player, key, state, caller)
-  self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-  caller:triggerEvent("callAnswer", player, false)
-  player:triggerEvent("callAnswer", caller, false)
-  caller:setPhonePartner(player)
-  player:setPhonePartner(caller)
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-      unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-    end
-  end
+  	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, false)
+	player:triggerEvent("callAnswer", caller, false)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		end
+	end
 end
 
 function Group:openBankGui(player)
@@ -483,4 +524,18 @@ end
 
 function Group:getPhoneNumber()
 	return self.m_PhoneNumber:getNumber()
+end
+
+function Group:spawnVehicles()
+	if not self.m_VehiclesSpawned then
+		VehicleManager:getSingleton():loadGroupVehicles(self)
+		self.m_VehiclesSpawned = true
+	end
+end
+
+function Group:checkDespawnVehicle()
+	if self.m_VehiclesSpawned and #self:getOnlinePlayers()-1 <= 0 then
+		VehicleManager:getSingleton():destroyGroupVehicles(self)
+		self.m_VehiclesSpawned = false
+	end
 end

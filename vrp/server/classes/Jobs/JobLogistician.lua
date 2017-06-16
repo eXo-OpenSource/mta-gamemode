@@ -6,8 +6,8 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT_MIN = 500 --// default 200
-local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
+local MONEY_PER_TRANSPORT_MIN = 520 --// default 200
+local MONEY_PER_TRANSPORT_MAX = 1020 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
@@ -40,7 +40,7 @@ end
 
 function JobLogistician:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN))
 		return false
 	end
 	return true
@@ -108,12 +108,10 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							local bonus = JobManager.getBonusForNewbies( hitElement, self.m_MoneyPerTransport)
-							if not bonus then bonus = 0 end
 							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 							hitElement.m_LastJobAction = getRealTime().timestamp
-							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, bonus)
-							hitElement:giveMoney(self.m_MoneyPerTransport+bonus, "Logistiker Job")
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
+							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else

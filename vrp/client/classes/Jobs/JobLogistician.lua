@@ -13,7 +13,7 @@ function JobLogistician:constructor()
 	self:setJobLevel(JOB_LEVEL_LOGISTICAN)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), "jobs.logistican")
 end
 
 function JobLogistician:start()

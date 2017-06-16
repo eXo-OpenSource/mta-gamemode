@@ -68,7 +68,7 @@ local createFuncs = {
 			func = function(vehicle) setElementModel(vehicle, info.model) end
 		else
 			model = 2837
-			func = function(vehicle) fixVehicle(vehicle) end
+			func = function(vehicle) vehicle:fix() end
 		end
 		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
 		addEventHandler("onPickupHit", pickup, function(player)

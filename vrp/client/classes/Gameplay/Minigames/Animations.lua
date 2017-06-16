@@ -38,6 +38,7 @@ end
 
 function CAnimation:callRenderTarget(state)
 	self.doCall = state
+	return self
 end
 
 function CAnimation:startAnimation(nDuration, sAnimationType, ...)

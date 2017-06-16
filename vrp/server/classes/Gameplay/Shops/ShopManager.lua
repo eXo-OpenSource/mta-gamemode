@@ -122,7 +122,7 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 	end
 end
 
-function ShopManager:onGasStationFill(shopId)
+function ShopManager:onGasStationFill(shopId, drawFromBank)
 	local shop = self:getFromId(shopId)
 	if not shop then
 		client:sendError(_("Internal Error! Shop not found!", client))
@@ -132,17 +132,25 @@ function ShopManager:onGasStationFill(shopId)
 	local vehicle = getPedOccupiedVehicle(client)
 	if not vehicle then return end
 	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
-		if client:getMoney() >= 10 then
+		if (drawFromBank and client:getBankMoney() or client:getMoney()) >= 10 then
 			if vehicle:getFuel() <= 100-10 then
 				vehicle:setFuel(vehicle:getFuel() + 10)
-				client:takeMoney(10, "Tanken")
+				if drawFromBank then 
+					client:takeBankMoney(10, "Tanken")
+				else
+					client:takeMoney(10, "Tanken")
+				end
 				client:triggerEvent("gasStationUpdate", 10, 10)
 				shop:giveMoney(5, "Betankung")
 			else
 				client:sendError(_("Dein Tank ist bereits voll", client))
 			end
 		else
-			client:sendError(_("Du hast nicht genügend Geld!", client))
+			if drawFromBank then 
+				client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto!", client))
+			else
+				client:sendError(_("Du hast nicht genügend Geld auf der Hand!", client))
+			end
 		end
 	else
 		client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
@@ -164,8 +172,7 @@ function ShopManager:buyItem(shopId, item, amount)
 		end
 
 		if client:getMoney() >= shop.m_Items[item]*amount then
-			if client:getInventory():getFreePlacesForItem(item) >= amount then
-				client:getInventory():giveItem(item, amount)
+			if client:getInventory():giveItem(item, amount) then
 				if item == "Kanne" then
 					client:getInventory():setSpecialItemData(item, 10)
 				elseif item == "Mautpass" then
@@ -176,7 +183,7 @@ function ShopManager:buyItem(shopId, item, amount)
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 			else
-				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
+				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
 				return
 			end
 		else

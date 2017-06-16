@@ -56,7 +56,10 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			player:setCameraTarget(player)
 
 			fadeCamera(player, true)
-			player:setFrozen(false)
+			
+			setTimer(function() --map glitch fix
+				setElementFrozen( player, false)
+			end, 1000, 1)
 
 			if type == "enter" then
 				if self.m_EnterEvent then self.m_EnterEvent(player) end

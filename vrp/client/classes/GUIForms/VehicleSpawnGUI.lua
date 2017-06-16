@@ -50,7 +50,8 @@ function VehicleSpawnGUI:CallEPT_Click()
 		Phone:getSingleton():closeAllApps()
 		Phone:getSingleton():openAppByClass(AppCall)
 
-		CallResultActivity:new(Phone:getSingleton():getAppByClass(AppCall), "company", "EPT", CALL_RESULT_CALLING, false)
+
+		Phone:getSingleton():getAppByClass(AppCall):openInCall("company", "EPT", CALL_RESULT_CALLING, false)
 		triggerServerEvent("callStartSpecial", root, 389)
 		delete(self)
 	else

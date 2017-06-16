@@ -7,8 +7,9 @@
 -- ****************************************************************************
 VehicleInteraction = inherit(Singleton)
 inherit(GUIFontContainer, VehicleInteraction)
+
 addRemoteEvents{"onDoorOpened", "onDoorClosed"}
-local fontHeight = dxGetFontHeight(1,"default-bold")
+
 function VehicleInteraction:constructor()
 	self.sWidth, self.sHeight = guiGetScreenSize()
 	self.m_minDistance = 10
@@ -51,10 +52,8 @@ function VehicleInteraction:render()
 			if getDistanceBetweenPoints3D(vehPos, playerPos) < self.m_minDistance and self:getDoor() then
 				if not isVehicleLocked(self.m_lookAtVehicle) then
 					local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
-
 					local door = self:getDoor()
 					local doorName = self.m_doorNames[door]
-
 					local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, self:getDoor())
 
 					if doorRatio <= 0 and checkDoor ~= 4 then
@@ -90,23 +89,6 @@ function VehicleInteraction:render()
 	        end
 		end
     end
-	--[[ --// Scrapped until new tunings are implemented
-	local ownerText, vehiclePos
-	for key, vehicle in ipairs(getElementsByType("vehicle", true)) do
-		vehiclePos = vehicle:getPosition()
-		if getDistanceBetweenPoints2D(vehiclePos, playerPos) < self.m_minDistance2 then
-			x,y = getScreenFromWorldPosition( vehiclePos)
-			if x and y then
-				if getKeyState("lalt") then
-					ownerText = getElementData(vehicle,"OwnerName") or _"Unbekannter Besitzer"
-					dxDrawLine(x,y,x+self.sWidth*0.1,y-self.sHeight*0.05)
-					dxDrawLine(x+self.sWidth*0.1,y-self.sHeight*0.05,x+self.sWidth*0.2,y-self.sHeight*0.05)
-					dxDrawText("Besitzer: "..ownerText,x+self.sWidth*0.1,y-self.sHeight*0.05-fontHeight,x+self.sWidth*0.2,y-self.sHeight*0.05,tocolor(200,220,220,255),1,"default-bold")
-				end
-			end
-		end
-	end
-	--]]
 end
 
 function VehicleInteraction:drawTextBox(text, count)
@@ -279,11 +261,9 @@ function VehicleInteraction:interact()
     if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
         local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
         if (checkDoor ~= 4 ) then
-            if not(isVehicleLocked(self.m_lookAtVehicle)) then
+            if not (isVehicleLocked(self.m_lookAtVehicle)) then
                 if not isPedInVehicle(localPlayer) then
 					triggerServerEvent("onInteractVehicleDoor", localPlayer, tonumber(self:getDoor()))
-					local x, y, z = getElementPosition(localPlayer)
-					triggerEvent("onDoorOpened", root, x, y, z)
 				end
             end
         end
@@ -322,7 +302,7 @@ function VehicleInteraction:lock()
 end
 
 function VehicleInteraction:onDoorOpened(x, y, z)
-    local sound = playSound3D("files/audio/onDoorOpened.mp3", x, y, z, false)
+	local sound = playSound3D("files/audio/onDoorOpened.mp3", x, y, z, false)
     setSoundMaxDistance(sound, 5)
 end
 

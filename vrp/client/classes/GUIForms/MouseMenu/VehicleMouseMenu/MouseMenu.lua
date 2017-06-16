@@ -25,6 +25,37 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
 		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
+			if localPlayer:getGroupName() == getElementData(element, "OwnerName") and (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
+				if getElementData(element, "forSale") == true then
+					self:addItem(_"Firma: Verkauf beenden",
+						function()
+							if self:getElement() then
+								delete(self)
+								QuestionBox:new("Möchtest du den Verkauf des Fahrzeuges beenden?",
+								function ()
+									triggerServerEvent("groupStopVehicleForSale", self:getElement())
+								end)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Cart_Down)
+				else
+					self:addItem(_"Firma: zum Verkauf anbieten",
+						function()
+							if self:getElement() then
+								delete(self)
+								InputBox:new("Fahrzeug zum Verkauf anbieten", "Für welchen Betrag möchtest du das Fahrzeug anbieten?",
+								function (amount)
+									if amount and #amount > 0 and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
+										triggerServerEvent("groupSetVehicleForSale", self:getElement(), tonumber(amount))
+									else
+										ErrorBox:new(_("Der Betrag muss zwischen 1$ und 5.000.000$ liegen!"))
+									end
+								end, true)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Cart_Plus)
+				end
+			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
@@ -56,7 +87,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
-				self:addItem(_("Items >>>", item),
+				self:addItem(_("Items >>>"),
 					function()
 						if self:getElement() then
 							delete(self)
@@ -75,7 +106,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					):setIcon(FontAwesomeSymbols.Bug)
 				end
 			if localPlayer.vehicleSeat == 0 and getElementData(element, "StateVehicle") then
-				self:addItem(_("Radar starten", item),
+				self:addItem(_("Radar %s", getElementData(element, "speedCamEnabled") and "stoppen" or "starten"),
 					function()
 						if self:getElement() then
 							triggerServerEvent("SpeedCam:onStartClick", self:getElement())
@@ -218,6 +249,37 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Long_Down)
+	end
+
+	if getElementData(element, "OwnerType") == "group" and getElementData(element, "forSale") == true then
+		self:addItem(_"Tunings anzeigen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleGetTuningList", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Search)
+		self:addItem(_"Fahrzeug kaufen",
+			function()
+				if self:getElement() then
+					delete(self)
+					QuestionBox:new(
+						_("Möchtest du das Fahrzeug für %d$ kaufen?", getElementData(element, "forSalePrice")),
+						function() 	triggerServerEvent("groupBuyVehicle", self:getElement()) end
+					)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Cart)
+	end
+
+	if VEHICLE_MODEL_SPAWNS[element:getModel()] and getElementData(element, "OwnerName") == localPlayer.name then
+		self:addItem(_"Als Spawnpunkt festlegen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("onPlayerUpdateSpawnLocation", self:getElement(), SPAWN_LOCATIONS.VEHICLE)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Waypoint)
 	end
 
 	if VehicleSellGUI then

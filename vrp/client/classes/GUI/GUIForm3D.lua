@@ -22,7 +22,7 @@ function GUIForm3D:constructor(position, rotation, size, resolution, streamdista
 	-- Remove CacheArea3D immediately from the render queue (or do it already in CacheArea3D) a bit delayed
 	nextframe(
 		function()
-			if localPlayer:isWithinColShape(self.m_StreamArea) then
+			if self.m_StreamArea and isElement(self.m_StreamArea) and localPlayer:isWithinColShape(self.m_StreamArea) then
 				self:StreamArea_Hit(localPlayer, true)
 			end
 		end

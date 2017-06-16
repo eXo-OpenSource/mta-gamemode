@@ -40,7 +40,7 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local groupId = 0
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
-    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp, Date) VALUES(?, ?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
 
@@ -69,12 +69,18 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
         sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
 end
 
-function StatisticsLogger:addJobLog(player, job, duration, earned, bonus)
+
+function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, distance, points, amount)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
+	
+	if not vehicle then vehicle = 0 end
+	if not distance then distance = 0 end
+	if not points then points = 0 end
+	if not amount then amount = 0 end
 
-    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Date) VALUES (?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, job, duration, earned, bonus)
+    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Vehicle, Distance, Points, Amount, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, job, duration, earned, 0, vehicle, distance, points, amount)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)

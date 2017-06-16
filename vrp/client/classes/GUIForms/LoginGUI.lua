@@ -19,6 +19,20 @@ function LoginGUI:constructor()
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[
+eXo 1.2 - 16.06.2017
+
+einige Neuerungen:
+- Spawnauswahl
+- automat. Firmen-
+  Fahrzeugverkauf
+- neue Objektplatzierung
+- endlich wieder Magnet-Helis
+- ...und noch viel mehr!
+
+Einen ausführlichen Change-
+log findet ihr natürlich unter
+forum.exo-reallife.de!
+
 		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
@@ -38,7 +52,7 @@ function LoginGUI:constructor()
 	self.m_LoginInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.025,
 		sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
 
-	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen so kannst du dich im "Registrieren"-Tab registrieren.
+	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen, so kannst du dich im "Registrieren"-Tab registrieren.
 	]], self.m_LoginTab):setFont(VRPFont(sh*0.03))
 
 	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)

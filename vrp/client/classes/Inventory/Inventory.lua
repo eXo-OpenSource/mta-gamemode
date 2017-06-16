@@ -43,7 +43,7 @@ function Inventory:constructor()
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
 	self:addItemSlots(14, self.m_Tabs[1])
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
-	self:addItemSlots(3, self.m_Tabs[2])
+	self:addItemSlots(5, self.m_Tabs[2])
 	self.m_Tabs[3] = self:addTab("files/images/Inventory/food.png", tabArea)
 	self:addItemSlots(5, self.m_Tabs[3])
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
@@ -91,14 +91,16 @@ function Inventory:Event_OnRender()
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
-	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+--	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
-	outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	if self.m_Debug then
+		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	end
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end

@@ -53,6 +53,8 @@ function FactionRescue:constructor()
 		function ()
 			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
+
+			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1783.385, -1732.047, 5)) --Unity garage
 		end
 	)
 
@@ -102,6 +104,14 @@ function FactionRescue:getOnlinePlayers()
 	return players
 end
 
+function FactionRescue:sendWarning(text, header, withOffDuty, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		if player:isFactionDuty() or withOffDuty then
+			player:sendWarning(_(text, player, ...), 30000, header)
+		end
+	end
+end
+
 function FactionRescue:onBarrierHit(player)
     if not player:getFaction() or not player:getFaction():isRescueFaction() then
         player:sendError(_("Zufahrt Verboten!", player))
@@ -120,10 +130,11 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 				if faction then
 					if faction:isRescueFaction() == true then
 						if not hitElement.vehicle then
+							hitElement.m_CurrentDutyPickup = source
 							hitElement:triggerEvent("showRescueFactionDutyGUI")
 							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 						else
-      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", player))
+      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", hitElement))
 						end
 					end
 				end
@@ -164,30 +175,34 @@ end
 function FactionRescue:Event_toggleDuty(type)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",false)
-			client:setPublicSync("Rescue:Type",false)
-			client:getInventory():removeAllItem("Barrikade")
-			takeWeapon(client,42)
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+			if client:isFactionDuty() then
+				client:setDefaultSkin()
+				client.m_FactionDuty = false
+				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",false)
+				client:setPublicSync("Rescue:Type",false)
+				client:getInventory():removeAllItem("Warnkegel")
+				takeWeapon(client,42)
+			else
+				if client:getPublicSync("Company:Duty") and client:getCompany() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					return false
+				end
+				takeWeapon(client,42)
+				if type == "fire" then
+					giveWeapon(client, 42, 2000, true)
+				end
+				client.m_FactionDuty = true
+				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",true)
+				client:setPublicSync("Rescue:Type",type)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 10)
+				self:Event_changeSkin(client)
+			end
 		else
-			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-				return false
-			end
-			takeWeapon(client,42)
-			if type == "fire" then
-				giveWeapon(client, 42, 2000, true)
-			end
-			client.m_FactionDuty = true
-			client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",true)
-			client:setPublicSync("Rescue:Type",type)
-			client:getInventory():removeAllItem("Barrikade")
-			client:getInventory():giveItem("Barrikade", 10)
-			self:Event_changeSkin(client)
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in nicht im Rescue-Team!", client))

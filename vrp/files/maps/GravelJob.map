@@ -1,0 +1,11 @@
+<map edf:definitions="editor_main">
+    <object id="object (mtbfence43) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="771" posY="838.59961" posZ="5.7" rotX="0" rotY="2" rotZ="283.497"></object>
+    <object id="object (mtbfence43) (4)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="745" posY="887.09998" posZ="-1.3" rotX="6" rotY="0" rotZ="306"></object>
+    <object id="object (mtbfence43) (5)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="750" posY="863.90002" posZ="-4.5" rotX="0" rotY="17" rotZ="298.747"></object>
+    <object id="object (mtbfence43) (6)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="751" posY="840.20001" posZ="-7.5" rotX="5.999" rotY="0" rotZ="288.497"></object>
+    <object id="object (mtbfence43) (7)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="747.90002" posY="816.09998" posZ="-7.5" rotX="5.999" rotY="360" rotZ="278.495"></object>
+    <object id="object (mtbfence43) (9)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="737.70001" posY="909.59998" posZ="-5.5" rotX="5.627" rotY="339.648" rotZ="314.08"></object>
+    <object id="object (mtbfence43) (10)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="732.2998" posY="924" posZ="-7.4" rotX="5.999" rotY="0" rotZ="310.995"></object>
+    <object id="object (mtbfence43) (11)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="739.40039" posY="793.59961" posZ="-7.5" rotX="5.999" rotY="359.995" rotZ="261.491"></object>
+    <object id="object (mtbfence43) (13)" breakable="true" interior="0" collisions="true" alpha="255" model="18446" doublesided="true" scale="1" dimension="0" posX="720.59998" posY="945" posZ="-7.4" rotX="5.999" rotY="0" rotZ="328.995"></object>
+</map>

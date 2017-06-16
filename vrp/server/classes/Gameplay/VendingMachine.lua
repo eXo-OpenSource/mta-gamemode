@@ -40,36 +40,43 @@ function VendingMachine.Event_vendingRob()
 	end
 
 	if not vendingMachine then return end
+	if not client.vehicle then
+		if getTickCount() - vendingMachine.m_LastRobTime < 5*60*1000 then
+			client:sendMessage(_("Dieser Automat kann zurzeit nicht ausgeraubt werden!", client), 255, 0, 0)
+			return
+		end
 
-	if getTickCount() - vendingMachine.m_LastRobTime < 5*60*1000 then
-		client:sendMessage(_("Dieser Automat kann zurzeit nicht ausgeraubt werden!", client), 255, 0, 0)
-		return
+		-- Play animation
+		client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
+
+		-- Give wage
+		client:giveWantedLevel(2)
+		client:sendMessage("Verbrechen begangen: Automaten-Raub, 2 Wanteds", 255, 255, 0)
+		client:giveMoney(math.random(10, 100), "Automaten-Raub")
+		client:giveKarma(-1)
+
+		-- give Achievement
+		client:giveAchievement(19)
+
+		-- Update rob time
+		vendingMachine.m_LastRobTime = getTickCount()
+	else
+		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
 	end
-
-	-- Play animation
-	client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
-
-	-- Give wage
-	client:giveWantedLevel(2)
-	client:sendMessage("Verbrechen begangen: Automaten-Raub, 2 Wanteds", 255, 255, 0)
-	client:giveMoney(math.random(10, 100), "Automaten-Raub")
-	client:giveKarma(-1)
-
-	-- give Achievement
-	client:giveAchievement(19)
-
-	-- Update rob time
-	vendingMachine.m_LastRobTime = getTickCount()
 end
 
 function VendingMachine.Event_vendingBuySnack()
-	if client:getMoney() >= 20 then
-		client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
-		client:setHealth(client:getHealth() + 10)
-		StatisticsLogger:getSingleton():addHealLog(client, 10, "VendingMachine")
-		client:takeMoney(20, "Automat")
+	if not client.vehicle then
+		if client:getMoney() >= 20 then
+			client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
+			client:setHealth(client:getHealth() + 10)
+			StatisticsLogger:getSingleton():addHealLog(client, 10, "VendingMachine")
+			client:takeMoney(20, "Automat")
+		else
+			client:sendError(_("Du hast nicht genügend Geld!", client))
+		end
 	else
-		client:sendError(_("Du hast nicht genügend Geld!", client))
+		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
 	end
 end
 

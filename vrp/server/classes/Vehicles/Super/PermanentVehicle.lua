@@ -94,7 +94,7 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
-	self:setMileage(mileage)
+	self:setMileage(mileage or 0)
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
@@ -220,7 +220,7 @@ function PermanentVehicle:respawn(garageOnly)
         if maxSlots > numVehiclesInGarage then
 			self:setInGarage(true)
 			self:setDimension(PRIVATE_DIMENSION_SERVER)
-			fixVehicle(self)
+			self:fix()
 			setVehicleOverrideLights(self, 1)
 			self:setEngineState(false)
 			self:setSirensOn(false)

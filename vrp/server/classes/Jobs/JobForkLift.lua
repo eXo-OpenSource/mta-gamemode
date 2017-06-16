@@ -7,7 +7,7 @@
 -- ****************************************************************************
 JobForkLift = inherit(Job)
 
-local MONEY_PER_BOX = 60
+local MONEY_PER_BOX = 55
 
 function JobForkLift:constructor()
 	Job.constructor(self)
@@ -29,7 +29,7 @@ end
 
 function JobForkLift:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_FORKLIFT) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT))
 		return false
 	end
 	return true
@@ -48,15 +48,15 @@ end
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		local bonus = JobManager.getBonusForNewbies( client, MONEY_PER_BOX)
-		if not bonus then bonus = 0 end
 		local duration = getRealTime().timestamp - client.m_LastJobAction
+		local points
 		client.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(client, "jobForkLift", duration, MONEY_PER_BOX, bonus)
-		client:giveMoney(MONEY_PER_BOX+bonus, "Gabelstapler-Job")
+		client:addBankMoney(MONEY_PER_BOX, "Gabelstapler-Job")
 		if chance(50) then
-			client:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
+			points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
+			client:givePoints(points)
 		end
+		StatisticsLogger:getSingleton():addJobLog(client, "jobForkLift", duration, MONEY_PER_BOX, nil, nil, points)
 	end
 end
 

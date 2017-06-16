@@ -188,7 +188,7 @@ function CustomTextureInfoGUI:constructor()
 
 	self:addItem(_"Hilfe/Info anzeigen",Color.Green ,
 		function()
-			HelpGUI:getSingleton():select(HelpTextTitles.Vehicles.CustomTextures)
+			HelpGUI:getSingleton():select("Fahrzeug-Texturen")
 			delete(self)
 		end
 	)

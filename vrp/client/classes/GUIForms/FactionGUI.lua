@@ -28,6 +28,9 @@ function FactionGUI:constructor()
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
 	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Aktions-Status:", tabAllgemein)
+	self.m_FactionNextActionLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.7, self.m_Height*0.06, "", tabAllgemein)
+
 --	self.m_FactionQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", true, tabAllgemein):setBarColor(Color.Red)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabAllgemein)
@@ -38,12 +41,15 @@ function FactionGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
 	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
 	self.m_FactionRespawnVehicleButton.onLeftClick = bind(self.FactionRespawnVehicles, self)
+	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
+	self.m_ObjectListButton.onLeftClick = bind(self.ShowObjectList, self)
 
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
-	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabMitglieder)
-	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.7)
-	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.3)
+	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
+	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.55)
+	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
+	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
 	self.m_FactionAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
 	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
@@ -271,7 +277,7 @@ function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack)
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -282,11 +288,25 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 			self.m_FactionRankLabel:setText(tostring(rank).." - "..rankNames[rank])
 			self.m_FactionMoneyLabel:setText(tostring(money).."$")
 
+
+			if actionStatus["current"] == false then
+				if getRealTime().timestamp > actionStatus["next"] then
+					self.m_FactionNextActionLabel:setText(_"bereits möglich")
+					self.m_FactionNextActionLabel:setColor(Color.Green)
+				else
+					self.m_FactionNextActionLabel:setText(_("möglich um %s Uhr", getRealTime(actionStatus["next"]).hour..":"..getRealTime(actionStatus["next"]).minute))
+					self.m_FactionNextActionLabel:setColor(Color.Red)
+				end
+			else
+				self.m_FactionNextActionLabel:setText(_("%s läuft", actionStatus["current"]))
+				self.m_FactionNextActionLabel:setColor(Color.Red)
+			end
+
 			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
 
 			self.m_FactionPlayersGrid:clear()
 			for _, info in ipairs(players) do
-				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank)
+				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
 				item.Id = info.playerId
 			end
 
@@ -362,4 +382,9 @@ end
 
 function FactionGUI:FactionRespawnVehicles()
 	triggerServerEvent("factionRespawnVehicles", root)
+end
+
+function FactionGUI:ShowObjectList()
+	self:close()
+	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getFaction():getId(), "faction")
 end

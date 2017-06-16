@@ -46,7 +46,7 @@ function Guns:Event_onTaser(target)
 	if not (client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then return end -- Report possible cheat attempt
 	if getDistanceBetweenPoints3D(client.position, target.position) > 10 then return end
 	if client.vehicle or target.vehicle then return end
-	
+
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
@@ -66,18 +66,18 @@ end
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
-	
+
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
 			local hasHelmet = target.m_Helmet
-			if hasHelmet then 
+			if hasHelmet then
 				local isProtectingHeadShot = hasHelmet:getData("isProtectingHeadshot")
-				if isProtectingHeadShot then 
+				if isProtectingHeadShot then
 					local inventory = target:getInventory()
 					if inventory then
 						local itemCount = inventory:getItemAmount("Einsatzhelm")
-						if itemCount > 0 then 
+						if itemCount > 0 then
 							local isProtect = math.random(1,8)
 							if isProtect == 1 then
 								inventory:removeItem("Einsatzhelm", 1)
@@ -86,7 +86,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 								target.m_IsWearingHelmet = false
 								target.m_Helmet = false
 								target:setData("isFaceConcealed", false)
-								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).." !", source, 200,200,0)
+								outputChatBox("Dein Schuss zerstörte den Helm von "..getPlayerName(target).."!", source, 200,200,0)
 								target:triggerEvent("clientBloodScreen")
 								return
 							end
@@ -122,17 +122,17 @@ function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
 end
 
 function Guns:Event_ToggleWeapon( oldweapon )
-	if oldweapon then 
-		if client then 
-			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end 
-			local slot = getSlotFromWeapon(oldweapon) 
+	if oldweapon then
+		if client then
+			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end
+			local slot = getSlotFromWeapon(oldweapon)
 			if client.m_WeaponStorage[slot] then
 				local weaponInStorage, ammoInStorage = unpack(client.m_WeaponStorage[slot])
 				if getSlotFromWeapon(weaponInStorage) == slot then
 					if weaponInStorage and ammoInStorage then
 						client.m_WeaponStorage[slot] = {oldweapon, getPedTotalAmmo(client,slot)}
 						giveWeapon(client, weaponInStorage, ammoInStorage, true)
-						if weaponInStorage == 23 then 
+						if weaponInStorage == 23 then
 							client:meChat(true, "zieht seinen Taser.")
 							setTimer(setPedAnimation, 1000, 1, client, false)
 						end
@@ -145,17 +145,17 @@ function Guns:Event_ToggleWeapon( oldweapon )
 end
 
 function Guns:setWeaponInStorage(player, weapon, ammo)
-	if weapon and player then 
-		if not player.m_WeaponStorage then 
+	if weapon and player then
+		if not player.m_WeaponStorage then
 			player.m_WeaponStorage = {}
 		end
 		player.m_WeaponStorage[getSlotFromWeapon(weapon)] = {weapon, ammo}
 		setElementData(player, "hasSecondWeapon", true)
-	else 
-		if not player.m_WeaponStorage then 
+	else
+		if not player.m_WeaponStorage then
 			player.m_WeaponStorage = {}
 		end
-		for i = 1,10 do 
+		for i = 1,10 do
 			player.m_WeaponStorage[i] = {false, false}
 			setElementData(player, "hasSecondWeapon", false)
 		end
@@ -163,17 +163,17 @@ function Guns:setWeaponInStorage(player, weapon, ammo)
 end
 
 function Guns:getWeaponInStorage( player, slot)
-	if player and slot then 
-		if not player.m_WeaponStorage then 
+	if player and slot then
+		if not player.m_WeaponStorage then
 			player.m_WeaponStorage = {}
 			return false, false
 		end
-		if player.m_WeaponStorage then 
-			if not player.m_WeaponStorage[slot] then 
+		if player.m_WeaponStorage then
+			if not player.m_WeaponStorage[slot] then
 				return false, false
 			end
 			local weaponInStorage, ammoInStorage = unpack(player.m_WeaponStorage[slot])
-			if weaponInStorage and ammoInStorage then 
+			if weaponInStorage and ammoInStorage then
 				return weaponInStorage, ammoInStorage
 			end
 		end
@@ -228,10 +228,10 @@ function giveWeapon( player, weapon, ammo, current)
 				end
 			end
 		end
-	else 
+	else
 		if player and ammo then
 			if ammo ~= 0 then
-				local currentWeapon = getPlayerWeapon(player,slot)
+				local currentWeapon = getPedWeapon(player,slot)
 				if currentWeapon ~= weapon then
 					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
 				end
@@ -255,7 +255,7 @@ function takeWeapon( player, weapon, ammo)
 				end
 			else
 				if ammo and tAmmo then
-					if ( wId == weapon and (ammo >= tAmmo)) then 
+					if ( wId == weapon and (ammo >= tAmmo)) then
 						triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
 					end
 				end
@@ -266,9 +266,9 @@ function takeWeapon( player, weapon, ammo)
 	return result
 end
 
-function takeAllWeapons( player ) 
-	if player then 
-		if getElementHealth(player) > 0 then 
+function takeAllWeapons( player )
+	if player then
+		if getElementHealth(player) > 0 then
 			triggerEvent("WeaponAttach:removeAllWeapons", player)
 		end
 	end

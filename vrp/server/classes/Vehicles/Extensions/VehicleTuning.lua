@@ -36,11 +36,11 @@ function VehicleTuning:applyTuning(disableTextureForce)
 	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
 	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
 
-	for i = 0, 16 do
-		removeVehicleUpgrade(self.m_Vehicle, i)
+	for _, v in pairs(self.m_Vehicle.upgrades) do
+		removeVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	for k, v in pairs(self.m_Tuning["GTATuning"] or {}) do
+	for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
@@ -71,21 +71,17 @@ function VehicleTuning:createNew()
 	self.m_Tuning = {}
 	self.m_Tuning["Color1"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
 	self.m_Tuning["Color2"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["ColorLight"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["ColorLight"] = {255, 255, 255}
 	self.m_Tuning["GTATuning"] = {}
 	self.m_Tuning["Neon"] = false
-	self.m_Tuning["NeonColor"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["NeonColor"] = {0, 0, 0}
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
 	self.m_Tuning["Texture"] = {}
 end
 
 function VehicleTuning:saveTuning(type, data)
-	--if self.m_Tuning[type] then
 	self.m_Tuning[type] = data
-	--else
-	--	outputDebugString("Invalid Tuning Type "..type)
-	--end
 end
 
 function VehicleTuning:getTuning(type)
@@ -116,7 +112,7 @@ function VehicleTuning:loadTuningFromVehicle()
 end
 
 function VehicleTuning:updateNeon()
-	local state = self.m_Tuning["Neon"]
+	local state = self.m_Tuning["Neon"] == 1
 	self.m_Vehicle:setData("Neon", state, true)
 	if state == true then
 		self.m_Vehicle.m_Neon = self.m_Tuning["NeonColor"] or {255, 0, 0}
@@ -175,4 +171,19 @@ end
 function VehicleTuning:addTexture(texturePath, textureName)
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
 	self.m_Tuning["Texture"][textureName] = texturePath
+end
+
+function VehicleTuning:getList()
+	local text = ""
+
+	local neon = self.m_Tuning["Neon"] == 1 and "Ja" or "Nein"
+	local horn = self.m_Tuning["CustomHorn"] > 0 and "Ja" or "Nein"
+	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	local texture = self.m_Tuning["Texture"][textureName] and "Ja" or "Nein"
+
+
+	text = text.."Neon: "..neon.."\n"
+	text = text.."Spezial-Hupe: "..horn.."\n"
+	text = text.."Textur: "..texture.."\n"
+	return text
 end

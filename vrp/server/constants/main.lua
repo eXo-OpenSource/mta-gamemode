@@ -16,10 +16,6 @@ end
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 IS_TESTSERVER = getServerName():find("Script") ~= nil
 
-SPAWN_LOCATION_DEFAULT = 0
-SPAWN_LOCATION_JAIL = 1
-SPAWN_LOCATION_GARAGE = 2
-
 CHAT_WHISPER_RANGE = 2.5
 CHAT_TALK_RANGE = 10
 CHAT_SCREAM_RANGE = 30
@@ -29,7 +25,6 @@ CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
 NOOB_SPAWN = Vector3(1798.417, -1303.119, 120.255)
 NOOB_SKIN = 78
-
 
 START_MONEY_BAR = 5000
 

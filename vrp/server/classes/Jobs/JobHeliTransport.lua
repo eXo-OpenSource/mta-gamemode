@@ -28,7 +28,7 @@ end
 
 function JobHeliTransport:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_HELITRANSPORT) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT))
 		return false
 	end
 	return true
@@ -89,12 +89,10 @@ function JobHeliTransport:onPickupLoad()
 		self.m_PickupPos = vehicle:getPosition()
 		if client:getData("JobHeliTransport:Money") and client:getData("JobHeliTransport:Money") > 0 then
 			client:sendInfo(_("Dein Helikopter wurde wieder neu beladen.", client)) --TODO
-			local bonus = JobManager.getBonusForNewbies( client, client:getData("JobHeliTransport:Money"))
-			if not bonus then bonus = 0 end
 			local duration = getRealTime().timestamp - client.m_LastJobAction
 			client.m_LastJobAction = getRealTime().timestamp
-			StatisticsLogger:getSingleton():addJobLog(client, "farmerHeliTransport", duration, client:getData("JobHeliTransport:Money"), bonus)
-			client:giveMoney(client:getData("JobHeliTransport:Money")+bonus, "Helitransport-Job")
+			StatisticsLogger:getSingleton():addJobLog(client, "jobHeliTransport", duration, client:getData("JobHeliTransport:Money"), nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR))
+			client:addBankMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
 			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 		else
@@ -112,7 +110,7 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		local distance = getDistanceBetweenPoints3D(self.m_PickupPos, vehicle:getPosition())
-		client:setData("JobHeliTransport:Money", math.floor(distance/3)) --// Default distance/8
+		client:setData("JobHeliTransport:Money", math.floor(distance/3.489)) --// Default distance/8
 		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else

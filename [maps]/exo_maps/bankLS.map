@@ -223,5 +223,4 @@
     <removeWorldObject id="removeWorldObject (DYN_woodpile) (3)" radius="4.0495329" interior="0" model="1462" lodModel="0" posX="-84.72302" posY="-1116.4227" posZ="1.1413" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (DYN_MESH_4) (1)" radius="4.9541278" interior="0" model="1447" lodModel="0" posX="-84.90825" posY="-1118.9542" posZ="1.09901" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (DYN_MESH_4) (2)" radius="4.9541278" interior="0" model="1447" lodModel="0" posX="-89.18814" posY="-1131.6567" posZ="1.89917" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
-    <object id="object (BinNt07_LA) (2)" breakable="true" interior="0" alpha="255" model="1337" doublesided="false" scale="1" dimension="0" posX="1036.0304" posY="-1024.18274" posZ="32.67954"></object>
 </map>

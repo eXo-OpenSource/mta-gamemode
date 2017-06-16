@@ -15,7 +15,7 @@ function JobGravel:constructor()
 	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), "jobs.gravel")
 
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
@@ -29,6 +29,7 @@ function JobGravel:start()
 
 	self.m_Rocks = {}
 	self.m_RockCols = {}
+	self.m_DestroyGravelCollider = {}
 	self:generateRocks()
 
 	self.m_GravelDeliverCol = {
@@ -46,6 +47,12 @@ function JobGravel:start()
 		addEventHandler("onClientColShapeHit", col, bind(self.onCollectingColHit, self))
 	end
 
+	table.insert(self.m_DestroyGravelCollider, createColCuboid(Vector3(544.3, 919.9, -44) - Vector3(5, 5, 0.5), Vector3(10, 10, 2)))
+	table.insert(self.m_DestroyGravelCollider, createColCuboid(Vector3(594.7, 926.3, -43) - Vector3(5, 5, 0.5), Vector3(10, 10, 2)))
+
+	for index, collider in pairs(self.m_DestroyGravelCollider) do
+		addEventHandler("onClientColShapeHit", collider, bind(self.onGravelDestroyHit, self))
+	end
 	-- Create info display
 	self.m_GravelImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/GravelDisplay.png")
 	self.m_MinedLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_GravelImage):setFont(VRPFont(40))
@@ -62,13 +69,13 @@ function JobGravel:start()
 
 		self.m_Vehicle = vehicle
 
-		vehicle.col1 = createColSphere(0, 0, 0, 1.2)
-		vehicle.col1:attach(vehicle, -1, 3, -0.8)
+		vehicle.col1 = createColSphere(0, 0, 0, 1.5)
+		vehicle.col1:attach(vehicle, -1.2, 3.8, -0.8)
 		vehicle.col1.vehicle = vehicle
 		self.m_VehicleCol1 = vehicle.col1
 
-		vehicle.col2 = createColSphere(0, 0, 0, 1.2)
-		vehicle.col2:attach(vehicle, 1, 3, -0.8)
+		vehicle.col2 = createColSphere(0, 0, 0, 1.5)
+		vehicle.col2:attach(vehicle, 1.2, 3.8, -0.8)
 		vehicle.col2.vehicle = vehicle
 		self.m_VehicleCol2 = vehicle.col2
 
@@ -76,6 +83,16 @@ function JobGravel:start()
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
 		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
 	end)
+end
+
+function JobGravel:onGravelDestroyHit(hitElement)
+	if hitElement:getType() == "object" then
+		if hitElement:getModel() == 2936 then
+			if hitElement:getData("syncer") == localPlayer then
+				triggerServerEvent("gravelOnDestroy", hitElement)
+			end
+		end
+	end
 end
 
 function JobGravel:dozerCheckCleanup()
@@ -126,6 +143,9 @@ function JobGravel:stop()
 		if element and isElement(element) then element:destroy() end
 	end
 	for index, element in pairs(self.m_GravelDeliverCol) do
+		if element and isElement(element) then element:destroy() end
+	end
+	for index, element in pairs(self.m_DestroyGravelCollider) do
 		if element and isElement(element) then element:destroy() end
 	end
 

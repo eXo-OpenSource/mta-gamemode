@@ -14,7 +14,7 @@ for i, v in pairs(GroupManager.GroupTypes) do
 end
 
 function GroupManager:constructor()
-	outputServerLog("Loading groups...")
+	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 
@@ -27,12 +27,15 @@ function GroupManager:constructor()
 
 		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
+		count = count + 1
 	end
 
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo"}
+		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo",
+		"groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -53,6 +56,14 @@ function GroupManager:constructor()
 	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
+	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
+	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
+	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
+
+
+
+
+
 end
 
 function GroupManager:destructor()
@@ -406,7 +417,7 @@ function GroupManager:Event_RankDown(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Leader then
+	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -587,4 +598,36 @@ function GroupManager:Event_GetShopInfo()
 
 		client:triggerEvent("groupRetriveBusinessInfo", info)
 	end
+end
+
+function GroupManager:Event_SetVehicleForSale(amount)
+	local group = client:getGroup()
+	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
+		if group:getPlayerRank(client) < GroupRank.Manager then
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+			return
+		end
+		if source:isGroupPremiumVehicle() then
+			client:sendError(_("Premium-Fahrzeuge können nicht zum Verkauf angeboten werden!", client))
+			return
+		end
+		if getVehicleEngineState(source) then
+			source:setEngineState(false)
+		end
+		group:addLog(client, "Fahrzeugverkauf", "hat das Fahrzeug "..source.getNameFromModel(source:getModel()).." um "..amount.." angeboten!")
+		client:sendInfo(_("Du hast das Fahrzeug für %d$ angeboten!", client, amount))
+		source:setForSale(true, tonumber(amount))
+	end
+end
+
+function GroupManager:Event_StopVehicleForSale()
+	local group = client:getGroup()
+	if group and group == source:getGroup() then
+		source:setForSale(false, 0)
+	end
+end
+
+function GroupManager:Event_BuyVehicle()
+	local group = client:getGroup()
+	source:buy(client)
 end

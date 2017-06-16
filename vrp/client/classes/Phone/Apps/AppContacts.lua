@@ -50,7 +50,7 @@ function AppContacts:ButtonCallPlayer_Click()
 		return
 	end
 
-	CallResultActivity:new(self, "player", player, CALL_RESULT_CALLING, false)
+	Phone:getSingleton():getAppByClass(AppCall):openInCall("player", player, CALL_RESULT_CALLING, false)
 	triggerServerEvent("callStart", root, player, false)
 end
 

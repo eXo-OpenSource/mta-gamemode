@@ -14,6 +14,10 @@ MAX_FISHING_LEVEL = 10
 -- EVENTS:
 EVENT_EASTER = false
 
+-- BONI:
+PAYDAY_NOOB_BONUS = 500 -- dollar
+PAYDAY_NOOB_BONUS_MAX_PLAYTIME = 50 -- hours
+
 --TEXTURES:
 TEXTURE_STATUS = {
 	["Testing"] = 0,
@@ -45,6 +49,8 @@ JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 
+JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
+
 --USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
@@ -75,6 +81,7 @@ ADMIN_RANK_PERMISSION = {
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
 	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
@@ -106,7 +113,11 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
-	["checkOverlappingVehicles"] = RANK.Administrator
+	["checkOverlappingVehicles"] = RANK.Administrator,
+	["showDebugElementView"] = RANK.Administrator, --F10 view
+	["moveWorldItem"] = RANK.Moderator,
+	["deleteWorldItem"] = RANK.Moderator,
+	["showWorldItemInformation"] = RANK.Supporter,
 }
 
 GroupRank = {
@@ -133,6 +144,7 @@ CompanyRank = {
 	Leader = 5
 }
 
+OBJECT_DELETE_MIN_RANK = 4 -- faction/company/group rank to destroy WorldItems (i.e. not put them into their inventory)
 
 local r3 = {}
 for k, v in pairs(GroupRank) do
@@ -274,11 +286,48 @@ SkinInfo = {
 	[184] = {"Blau weiß Schwarzes Shirt", 90},
 	[206] = {"Olives Shirt", 100},
 
+	[1] = {"Offenes Hemd", 50},
+	[9] = {"Brauner Anzug", 120},
+	[10] = {"Alte Dame", 50},
+	[12] = {"Schwarzes Kleid", 120},
+	[31] = {"Farmerin", 70},
+	[38] = {"Golferin", 80},
+	[39] = {"Alte Dame", 60},
+	[40] = {"Roter Rock", 100},
+	[41] = {"Trainingsanzug", 60},
+	[45] = {"Grüne Badehose", 50},
+	[53] = {"Golferin 2", 80},
+	[55] = {"Gestreifter Rock", 80},
+	[56] = {"Rock mit grünes Oberteil", 70},
+	[62] = {"Opa in Schlafanzug", 50},
+	[67] = {"Gangster mit weißen Oberteil", 70},
+	[69] = {"Jeanshose, Jeansoberteil", 60},
+	[72] = {"Trucker mit Bart", 60},
+	[76] = {"Business Dame", 130},
+	[88] = {"Alte Dame mit roten Oberteil", 60},
+	[91] = {"Weißer Rock", 80},
+	[95] = {"Armer Rentner", 90},
+	[148] = {"Frau mit blauen Anzug", 120},
+	[150] = {"Frau mit gestreifter Kleidung", 110},
+	[157] = {"Bauerin", 60},
+	[170] = {"Rotes T-Shirt", 70},
+	[172] = {"Anzug, Fliege 2", 170},
+	[182] = {"Rentner mit Bierbauch", 70},
+	[185] = {"Gesteiftes Hemd mit schwarzer Hose", 90},
+	[190] = {"Frau Bauchfrei", 80},
+	[193] = {"Frau Bauchfrei 2", 80},
+	[214] = {"Weißes Kleid", 120},
+	[215] = {"Weiße Rose mit gelben Oberteil", 100},
+	[223] = {"Gangster mit Goldkette", 120},
+	[241] = {"Afro mit Bierbauch", 100},
+	[249] = {"Zuhälter", 250},
+	[250] = {"Mann mit grünes T-Shirt", 80},
+	[258] = {"Kariertes Hemd", 100},
+	[259] = {"Kariertes Hemd 2", 100},
+	[261] = {"Trucker mit Bart 2", 60},
 }
 
 MAX_KARMA_LEVEL = 150
-
-VehicleSpecialProperty = {Color = -1, LightColor = -2, Color2 = -3, Shader = -4, Horn = -5, Neon = -6, NeonColor = -7}
 
 Tasks = {
 	TASK_GUARD = 1,
@@ -289,6 +338,7 @@ Tasks = {
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
+VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
 
@@ -315,19 +365,42 @@ PlayerAttachObjects = {
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
 VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
 VEHICLE_SPECIAL_TEXTURE = {
+	[417] = "leviathnbody8bit256",
+	[425] = "hunterbody8bit256a",
+	[447] = "sparrow92body128",
+	[460] = "skimmer92body128",
+	[469] = "sparrow92body128",
+	[481] = "vehiclegeneric256", --bmx
+	[483] = "#emapcamperbody256",
+	[487] = "maverick92body128",
+	[488] = "polmavbody128a",
+	[497] = "polmavbody128a",
+	[510] = "mtbike64x128",
+	[511] = "beagle256",
+	[512] = "cropdustbody256",
+	[513] = "stunt256",
+	[519] = "shamalbody256",
+	[521] = "fcr90092body128",
+	[522] = "nrg50092body128",
+	[534] = "remapremington256body",
+	[535] = "#emapslamvan92body128",
+	[536] = "#emapblade92body128",
+	[548] = "cargobob92body256",
+	[553] = "nevada92body256",
+	[558] = "@hite",
+	[559] = "#emapjesterbody256",
 	[560] = "#emapsultanbody256",
 	[561] = "#emapstratum292body256",
-	[495] = "vehiclegrunge256",
-	[575] = "remapbroadway92body128",
+	[562] = "#emapelegybody128",
+	[563] = "raindance92body128",
 	[565] = "#emapflash92body256",
-	[536] = "#emapblade92body128",
-	[483] = "#emapcamperbody256",
-	[415] = "vehiclegrunge256",
-	[411] = "vehiclegrunge256",
-	[562] = "#emapelegybody128",
-	[562] = "#emapelegybody128",
-	[535] = "#emapslamvan92body128",
-	[559] = "#emapjesterbody256",
+	[567] = "#emapsavanna92body128",
+	[575] = "remapbroadway92body128",
+	[576] = "remaptornado92body128",
+	[577] = "at400_92_256",
+	[581] = "bf40092body128",
+	[586] = "wayfarerbody8bit128",
+	[593] = "dodo92body8bit256",
 }
 
 VEHICLE_BIKES = {
@@ -556,6 +629,30 @@ FISHING_LEVELS = {
 	[10] = 22500,
 }
 
+SPAWN_LOCATIONS = {
+	DEFAULT = 0,
+	NOOBSPAWN = 1,
+	GARAGE = 2,
+	FACTION_BASE = 3,
+	COMPANY_BASE = 4,
+	HOUSE = 5,
+	VEHICLE = 6,
+}
+
+VEHICLE_MODEL_SPAWNS = {
+	[508] = true,
+	[484] = true,
+	[483] = true,
+	[454] = true,
+}
+
+VEHICLE_SPAWN_OFFSETS = {
+	[508] = Vector3(3, 0, 0),
+	[484] = Vector3(0, -2, 2),
+	[483] = Vector3(2, 2, 0),
+	[454] = Vector3(-0.4, -3.0, 2),
+}
+
 CAR_COLORS_FROM_ID =
 {
 	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
@@ -575,5 +672,4 @@ CAR_COLORS_FROM_ID =
 	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
 	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
 	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
-
 }

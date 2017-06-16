@@ -7,6 +7,7 @@
 -- ****************************************************************************
 HUDSpeedo = inherit(Singleton)
 
+
 function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
@@ -24,6 +25,7 @@ function HUDSpeedo:constructor()
 					self:show()
 				end
 			end
+			self:playSeatbeltAlarm(true)
 		end
 	)
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
@@ -35,12 +37,19 @@ function HUDSpeedo:constructor()
 					end
 				end
 			end
+			self:playSeatbeltAlarm(false)
 		end
 	)
 	addEvent("vehicleFuelSync", true)
 	addEventHandler("vehicleFuelSync", root,
 		function(fuel)
 			self.m_Fuel = fuel
+		end
+	)
+	addEvent("playSeatbeltAlarm", true)
+	addEventHandler("playSeatbeltAlarm", root,
+		function(state)
+			self:playSeatbeltAlarm(state)
 		end
 	)
 end
@@ -67,8 +76,7 @@ function HUDSpeedo:draw()
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end
-	local vx, vy, vz = getElementVelocity(vehicle)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 205
+	local speed = vehicle:getSpeed()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 	local mileage = localPlayer:getPrivateSync("vehicleMileage")
 
@@ -116,7 +124,7 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 		end
 	end
-		
+
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 	end
@@ -144,6 +152,23 @@ function HUDSpeedo:allOccupantsBuckeled()
 	end
 
 	return true
+end
+
+function HUDSpeedo:playSeatbeltAlarm(state)
+	if state then
+		if not self.m_SeatbeltSoundEnabled then
+			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") then
+				if core:get("Vehicles", "seatbeltWarning", true) then
+					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+					self.m_SeatbeltSoundEnabled = true
+				end
+			end
+		end
+	else
+		if isElement(self.m_SeatbeltSound) then stopSound(self.m_SeatbeltSound) end
+		self.m_SeatbeltSoundEnabled = false
+		outputDebug(self.m_SeatbeltSoundEnabled)
+	end
 end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)

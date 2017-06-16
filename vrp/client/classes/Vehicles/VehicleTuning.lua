@@ -28,20 +28,24 @@ function VehicleTuning:applyTuning()
 	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
 	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
 
-	for i = 0, 16 do
-		removeVehicleUpgrade(self.m_Vehicle, i)
+	for _, v in pairs(self.m_Vehicle.upgrades) do
+		removeVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	for k, v in pairs(self.m_Tuning["GTATuning"] or {}) do
+	setElementData(self.m_Vehicle, "Neon", false)
+	setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
+	Neon.Vehicles[self.m_Vehicle] = nil
+
+	for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"], true)
-    if self.m_Tuning["Neon"] then
+	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"] == 1)
+	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"])
+
+    if self.m_Tuning["Neon"] == 1 then
 		Neon.Vehicles[self.m_Vehicle] = true
 	end
-
-	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
 end
 
 function VehicleTuning:setTexture(texture)
@@ -64,11 +68,7 @@ function VehicleTuning:getTuning(type)
 end
 
 function VehicleTuning:saveTuning(type, data)
-	--if self.m_Tuning[type] then
-		self.m_Tuning[type] = data
-	--else
-	--	outputDebugString("Invalid Tuning Type "..type)
-	--end
+	self.m_Tuning[type] = data
 end
 
 function VehicleTuning:saveGTATuning()

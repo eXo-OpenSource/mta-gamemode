@@ -44,11 +44,11 @@ end
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, optional, onRequest)
 	if not path or #path <= 5 then
-		outputConsole("Texturepath is blow 6 chars traceback in Console")
+		outputConsole("Texturepath "..path.." is blow 6 chars traceback in Console")
 		traceback()
 	end
 	if not textureName or #textureName <= 5 then
-		outputConsole("TextureName is blow 6 chars traceback in Console")
+		outputConsole("TextureName "..textureName.." is blow 6 chars traceback in Console")
 		traceback()
 	end
 	self.m_Width = width
@@ -106,7 +106,7 @@ function TextureReplace:onElementStreamIn()
 	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and self.m_Optional then
 		return
 	end
-	
+
 	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] or (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and not self.m_Optional ) or  (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[2] and not self.m_OnRequest ) then
 		TextureReplace.Pending[source] = self
 		if not TextureReplace.Working then
@@ -123,7 +123,7 @@ function TextureReplace:onElementStreamOut()
 
 	TextureReplace.Pending[source] = nil
 	if not self:unloadShader() then
-		outputDebugString(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
+		outputDebugString(("Unloading the texture of %s failed!"):format(inspect(self.m_Element)))
 	end
 end
 
@@ -169,14 +169,14 @@ function TextureReplace:loadShader()
 		self.m_Shader:destroy()
 
 		return false
-	else 
-		if type(self.m_Texture) ~= "userdata" or not isElement(self.m_Texture) then 
+	else
+		if type(self.m_Texture) ~= "userdata" or not isElement(self.m_Texture) then
 			outputDebugString("Loading the texture failed! ("..self.m_TexturePath..")")
 			self.m_Shader:destroy()
 			return false
-		else 
-			if isElement(self.m_Texture) then 
-				if not getElementType(self.m_Texture) == "texture" then 
+		else
+			if isElement(self.m_Texture) then
+				if not getElementType(self.m_Texture) == "texture" then
 					outputDebugString("Loading the texture failed! ("..self.m_TexturePath..")")
 					self.m_Shader:destroy()
 					return false
@@ -197,6 +197,7 @@ function TextureReplace:unloadShader()
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
 	local a = TextureReplace.unloadCache(self.m_TexturePath, self.m_Optional)
 	local b = destroyElement(self.m_Shader)
+	--outputDebug(inspect(self.m_Element).." cache unloaded: "..inspect(a).." shader destroyed: "..inspect(b))
 	return a and b
 end
 
@@ -227,7 +228,7 @@ function TextureReplace.getCachedTexture(path, instance)
 				return false
 			else
 				if DEBUG then
-					outputConsole("Texturepath is blow 6 chars traceback in Console")
+					outputConsole("Texturepath "..path.." is blow 6 chars traceback in Console")
 					traceback()
 				end
 			end
@@ -239,9 +240,9 @@ function TextureReplace.getCachedTexture(path, instance)
 			local dxTexture = dxCreateTexture(createFromPath, "dxt1",true, "clamp", "2d", 1)
 			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxTexture;}
 			TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
-		else 
-			outputDebugString("Could not locate file: "..path.." !")
-			return false 
+		else
+			outputDebugString("Could not locate file: "..path.."!")
+			return false
 		end
 	end
 
@@ -265,7 +266,7 @@ function TextureReplace.unloadCache(path, optional)
 			local result = destroyElement(TextureReplace.Cache[index].texture)
 			TextureReplace.Cache[index] = nil
 			return result
-		else 
+		else
 			return true
 		end
 	end
@@ -299,8 +300,8 @@ function TextureReplace.getRawTexture(path)
 			file:close()
 
 			return base64Decode(data)
-		else 
-			return false 
+		else
+			return false
 		end
 	end
 end
@@ -317,6 +318,7 @@ addEventHandler("changeElementTexture", root,
 			if TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] then
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
+			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
 			TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.optional, vehData.isRequested)
 		end
 	end

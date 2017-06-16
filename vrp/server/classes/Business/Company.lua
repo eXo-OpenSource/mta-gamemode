@@ -18,6 +18,8 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
   self.m_ShortName = ShortName
   self.m_Creator = Creator
   self.m_Players = players
+	self.m_PlayerActivity = {}
+	self.m_LastActivityUpdate = 0
   self.m_LastNameChange = lastNameChange or 0
   self.m_Invitations = {}
   self.m_Vehicles = {}
@@ -43,6 +45,7 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
 
   self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
+	self:getActivity()
 end
 
 function Company:destructor()
@@ -152,8 +155,11 @@ function Company:addPlayer(playerId, rank)
 
   if self.onPlayerJoin then -- Only for Companies with own class
     self:onPlayerJoin(playerId, rank)
-  end
+  end  
+
+  self:getActivity(true)
 end
+
 function Company:removePlayer(playerId)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
@@ -200,12 +206,6 @@ function Company:sendChatMessage(sourcePlayer,message)
     StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, toJSON(receivedPlayers))
 end
 
-function Company:sendMessage(text, r, g, b, ...)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, r, g, b, ...)
-	end
-end
-
 function Company:invitePlayer(player)
     client:sendShortMessage(("Du hast %s erfolgreich in dein Unternehmen eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("companyInvitationRetrieve", self:getId(), self:getName())
@@ -246,14 +246,38 @@ function Company:setPlayerRank(playerId, rank)
 	sql:queryExec("UPDATE ??_character SET CompanyRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
+function Company:getActivity(force)
+	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
+		return
+	end
+	self.m_LastActivityUpdate = getRealTime().timestamp
+
+	for playerId, rank in pairs(self.m_Players) do
+		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(NOW()) - 7 AND DATE(NOW());", sql:getPrefix(), playerId)
+	
+		local activity = 0
+			
+		if row and row.Activity then
+			activity = row.Activity
+		end
+
+		self.m_PlayerActivity[playerId] = activity
+	end
+end
+
 function Company:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
+	
+	self:getActivity()
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank}
+		local activity = self.m_PlayerActivity[playerId]
+		if not activity then activity = 0 end
+
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
 	end
 	return temp
 end
@@ -321,7 +345,7 @@ function Company:createDutyMarker()
         if companyDutyMarkerInterior[self.m_Id] then self.m_DutyPickup:setInterior(companyDutyMarkerInterior[self.m_Id]) end
     	addEventHandler("onPickupHit", self.m_DutyPickup,
     		function(hitElement)
-    			if getElementType(hitElement) == "player" then
+    			if getElementType(hitElement) == "player" and not hitElement.vehicle then
     				local company = hitElement:getCompany()
     				if company and company == self then
     					hitElement:triggerEvent("showCompanyDutyGUI")
@@ -373,6 +397,14 @@ function Company:phoneCallAbbort(caller)
 end
 
 function Company:phoneTakeOff(player, key, state, caller)
+	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	self:addLog(player, "Telefonate", ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)

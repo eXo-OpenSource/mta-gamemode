@@ -34,7 +34,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 
-	self.m_ColShape = createColSphere(position, 1)
+	--self.m_ColShape = createColSphere(position, 1)
 
 	if owner == false then
 		self.m_Keys = {}
@@ -45,7 +45,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
-	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
+	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
 
 	self:updatePickup()
@@ -72,10 +72,10 @@ function House:toggleLockState( player )
 end
 
 function House:showGUI(player)
-	
+
 	local bIsGang = false
-	if player:getGroup() then 
-		if player:getGroup():getType() == "Gang" then 
+	if player:getGroup() then
+		if player:getGroup():getType() == "Gang" then
 			bIsGang = true
 		end
 	end
@@ -84,16 +84,16 @@ function House:showGUI(player)
 		for playerId, timestamp in pairs(self.m_Keys) do
 			tenants[playerId] = Account.getNameFromId(playerId)
 		end
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false)
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false,false,bIsGang)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, bIsGang)
 	end
 end
 
 function House:breakHouse(player)
 	if getRealTime().timestamp >= self.m_LastRobbed + ROB_DELAY then
 		if not HouseManager:getSingleton():isCharacterAllowedToRob(player) then
-			player:sendWarning(_("Du hast vor kurzem schon ein Haus ausgeraubt!", player), 125, 0, 0)
+			player:sendWarning(_("Du hast vor kurzem schon ein Haus ausgeraubt!", player))
 			return
 		end
 		self.m_CurrentRobber = player
@@ -142,17 +142,18 @@ function House:isValidRob(player)
 	return true
 end
 
-function House:onColShapeLeave(hitElement, matchingDimension)
+--[[function House:onColShapeLeave(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension and self.m_Id == hitElement.visitingHouse then
 		hitElement:triggerEvent("hideHouseMenu")
 	end
-end
+end]]
 
-function House:isValidToEnter(playerName)
-	return self.m_Keys[playerName] ~= false
+function House:isValidToEnter(player)
+	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
 end
 
 function House:rentHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if not self.m_Keys[player:getId()] then
 		if not self.m_Owner or self.m_Owner == 0 then
 			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
@@ -165,7 +166,7 @@ function House:rentHouse(player)
 
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
-			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player), 0, 255, 0)
+			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
@@ -175,11 +176,12 @@ function House:rentHouse(player)
 	end
 end
 
-function House:unrentHouse(player)
+function House:unrentHouse(player, noDistanceCheck)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 and not noDistanceCheck then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if self.m_Keys[player:getId()] then
 		self.m_Keys[player:getId()] = nil
 		if player and isElement(player) then
-			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
+			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player))
 			player:triggerEvent("removeHouseBlip", self.m_Id)
 
 			if self.m_PlayersInterior[player] then
@@ -192,6 +194,7 @@ function House:unrentHouse(player)
 end
 
 function House:setRent(player, rent)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if player:getId() == self.m_Owner then
 		self.m_RentPrice = rent
 		if rent > 0 then
@@ -209,6 +212,7 @@ function House:getRent()
 end
 
 function House:deposit(player, amount)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
 		if player:getMoney() >= amount then
@@ -224,6 +228,7 @@ function House:deposit(player, amount)
 end
 
 function House:withdraw(player, amount)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
 		if self.m_Money >= amount then
@@ -239,14 +244,15 @@ function House:withdraw(player, amount)
 end
 
 function House:removeTenant(player, id)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if player:getId() == self.m_Owner then
 		if self.m_Keys[id] then
 			self.m_Keys[id] = nil
 			local name = Account.getNameFromId(id)
-			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, name), 255, 0, 0)
+			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, name))
 			if getPlayerFromName(name) then
 				local target = getPlayerFromName(name)
-				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()), 255, 0, 0)
+				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()))
 				target:triggerEvent("removeHouseBlip", self.m_Id)
 			end
 			self:showGUI(player)
@@ -297,13 +303,18 @@ function House:sellHouse(player)
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
-		self.m_Owner = 0
-		self.m_Keys = {}
-		self:updatePickup()
-		self:save()
+		
+		self:clearHouse()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
+end
+
+function House:clearHouse(player)
+	self.m_Owner = 0
+	self.m_Keys = {}
+	self:updatePickup()
+	self:save()
 end
 
 function House:onPickupHit(hitElement)
@@ -319,17 +330,19 @@ function House:enterHouseTry(player)
 		self:enterHouse(player)
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))
-
 	end
 end
 
 function House:enterHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	local isRobberEntering = false
-	if self.m_RobGroup then 
+
+	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
 			isRobberEntering = true
 		end
 	end
+
 	local int, x, y, z = unpack(House.interiorTable[self.m_InteriorID])
 	if isRobberEntering  then
 		player:meChat(true, "betritt das Haus an der kaputten Tür vorbei!")
@@ -339,19 +352,22 @@ function House:enterHouse(player)
 				player.m_HasAlreadyHouseWanteds  = false
 				player.m_LastRobHouse = self
 			end
-		else 
+		else
 			player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
 			player.m_HasAlreadyHouseWanteds  = false
 			player.m_LastRobHouse = self
 		end
-	else 
+	else
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
+
 	player:setPosition(x, y, z)
 	setElementDimension(player, self.m_Id)
 	setElementInterior(player,int)
 	player.m_CurrentHouse = self
 	self.m_PlayersInterior[player] = true
+
+	return true
 end
 
 function House:removePlayerFromList(player)
@@ -365,7 +381,7 @@ end
 
 function House:leaveHouse(player)
 	local isRobberLeaving = false
-	if self.m_RobGroup then 
+	if self.m_RobGroup then
 		if player:getGroup() == self.m_RobGroup then
 			isRobberLeaving = true
 		end
@@ -373,7 +389,7 @@ function House:leaveHouse(player)
 	if isRobberLeaving then
 		player:meChat(true, "verlässt das Haus!")
 		player:triggerEvent("onClientEndHouseRob")
-	else 
+	else
 		player:meChat(true, "öffnet die Tür und verlässt das Haus!")
 	end
 	self:removePlayerFromList(player)
@@ -386,12 +402,12 @@ function House:leaveHouse(player)
 	end
 end
 
-function House:tryRob( player ) 
+function House:tryRob( player )
 	local gRob = GroupHouseRob:getSingleton()
 	local bContinue = gRob:startNewRob( self, player)
-	if bContinue then 
-		if self.m_LockStatus then 
-			self.m_LockStatus = false 
+	if bContinue then
+		if self.m_LockStatus then
+			self.m_LockStatus = false
 			player:meChat(true, "holt zu einem Kick aus und tritt gegen die Tür!")
 			player:districtChat("Der Klang von aufbrechenden Holz ertönt durch die Gegend!")
 			self.m_RobGroup = player:getGroup()
@@ -402,11 +418,11 @@ function House:tryRob( player )
 end
 
 function House:giveRobItem( player )
-	if player then 
-		local group = player:getGroup() 
-		if group and self.m_RobGroup then 
-			if group == self.m_RobGroup then 
-				local item = GroupHouseRob:getSingleton():getRandomItem() 
+	if player then
+		local group = player:getGroup()
+		if group and self.m_RobGroup then
+			if group == self.m_RobGroup then
+				local item = GroupHouseRob:getSingleton():getRandomItem()
 				player:meChat(true, "entdeckt etwas und versucht es einzustecken. (("..item.."))")
 				player:getInventory():giveItem("Diebesgut",1)
 			end
@@ -415,17 +431,17 @@ function House:giveRobItem( player )
 end
 
 function House:tryToCatchRobbers( player )
-	if player then 
-		local group = player:getGroup() 
-		if group and self.m_RobGroup then 
-			if group == self.m_RobGroup then 
-				local item = GroupHouseRob:getSingleton():getRandomItem() 
+	if player then
+		local group = player:getGroup()
+		if group and self.m_RobGroup then
+			if group == self.m_RobGroup then
+				local item = GroupHouseRob:getSingleton():getRandomItem()
 				local isFaceConcealed = player:getData("isFaceConcealed")
 				local wantedChance = math.random(1,10)
-				if isFaceConcealed then 
+				if isFaceConcealed then
 					wantedChance = math.random(1,20)
 				end
-				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then 
+				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
 					player:setWantedLevel(player:getWantedLevel() + 3)
 					group.m_RobReported = true
@@ -442,8 +458,9 @@ function House:onPlayerFade()
 end
 
 function House:buyHouse(player)
+	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if HouseManager:getSingleton():getPlayerHouse(player) then
-		player:sendWarning(_("Du hast bereits ein Haus!", player), 125, 0, 0)
+		player:sendWarning(_("Du hast bereits ein Haus!", player))
 		return
 	end
 

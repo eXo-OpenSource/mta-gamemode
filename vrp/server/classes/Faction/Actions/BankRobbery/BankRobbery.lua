@@ -36,7 +36,7 @@ function BankRobbery:spawnPed(skin, pos, rot)
 	self.m_Ped:setData("NPC:Immortal",true)
 	addEventHandler("onPedWasted", self.m_Ped,
 		function()
-			setTimer(function() self:spawnPed() end, 5*60*1000, 1)
+			setTimer(function() self:spawnPed(skin, pos, rot) end, 30*60*1000, 1)
 		end
 	)
 end

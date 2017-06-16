@@ -24,7 +24,7 @@ Achievement.Client = {
 	[92] = true, -- Ramme ein Osterei
 }
 
-function Achievement:constructor ()
+function Achievement:constructor()
 	local row = sql:queryFetch("SELECT * FROM ??_achievements WHERE enabled = 1;", sql:getPrefix())
 	if not row then
 		delete(Achievement)
@@ -41,7 +41,7 @@ function Achievement:constructor ()
 	addEventHandler("Achievement.onPlayerReceiveAchievement", root, bind(self.Event_onPlayerReceiveAchievement, self))
 end
 
-function Achievement:giveAchievement (player, id)
+function Achievement:giveAchievement(player, id)
 	if self.ms_Achievements[id] ~= nil then
 		if not player:isLoggedIn() then return end
 		if not player:getAchievementStatus(id) then
@@ -58,11 +58,11 @@ function Achievement:giveAchievement (player, id)
 	end
 end
 
-function Achievement:Event_onRequestAchievements ()
+function Achievement:Event_onRequestAchievements()
 	client:triggerEvent("Achievement.sendAchievements", self.ms_Achievements)
 end
 
-function Achievement:Event_onPlayerReceiveAchievement (player, id)
+function Achievement:Event_onPlayerReceiveAchievement(player, id)
 	if Achievement.Client[id] then
 		self:giveAchievement(player, id)
 	end
@@ -72,13 +72,12 @@ end
 Achievements = {}
 Achievements.events = {}
 
---[[Achievements.events["onPlayerDamage"] = function  (attacker, weapon) -- Achievement ID: 6
-	if attacker and getElementType(attacker) == "player" and attacker ~= source then
-		if attacker:getName() == "Doneasty" and weapon == 0 then -- ID 6
-			source:giveAchievement(6)
-		end
+Achievements["PewPew"] = function(player) --Achievement ID: 98
+	if not player:getAchievementStatus(98) then
+		player:giveAchievement(98)
+		player:triggerEvent("renderPewPewAchievement")
 	end
-end]]
+end
 
 Achievements.events["onPlayerWasted"] = function (_, attacker, weapon) -- Achievement ID: 3, 39
 	if attacker and getElementType(attacker) == "player" and attacker ~= source then
@@ -90,6 +89,4 @@ Achievements.events["onPlayerWasted"] = function (_, attacker, weapon) -- Achiev
 	end
 end
 
--- Add the Eventhandlers
---addEventHandler("onPlayerDamage", root, Achievements.events["onPlayerDamage"])
 addEventHandler("onPlayerWasted", root, Achievements.events["onPlayerWasted"])

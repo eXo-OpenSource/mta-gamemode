@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobTrashman = inherit(Job)
-local MONEY_PER_CAN = 40 --// 15 default
+local MONEY_PER_CAN = 29 --// 15 default
 
 function JobTrashman:constructor()
 	Job.constructor(self)
@@ -63,7 +63,7 @@ end
 
 function JobTrashman:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_TRASHMAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TRASHMAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TRASHMAN))
 		return false
 	end
 	return true
@@ -93,7 +93,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		-- Increment the can counter now
 		client:setData("Trashman:Cans", client:getData("Trashman:Cans") + containerNum)
 	else
-		client:sendError(_("Du musst im Müll-Fahrzeug sitzen!", client), 255, 0, 0)
+		client:sendError(_("Du musst im Müll-Fahrzeug sitzen!", client))
 	end
 end
 
@@ -104,23 +104,22 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 
 			if numCans and numCans > 0 then
 				local moneyAmount = numCans * MONEY_PER_CAN
-				local bonus = JobManager.getBonusForNewbies( hitElement, moneyAmount)
-				if not bonus then bonus = 0 end
 				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+				local points = math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR)
 				hitElement.m_LastJobAction = getRealTime().timestamp
-				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, bonus)
-				hitElement:giveMoney(moneyAmount+bonus, "Müll-Job")
-				hitElement:givePoints(math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR))
+				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, nil, nil, points, numCans)
+				hitElement:addBankMoney(moneyAmount, "Müll-Job")
+				hitElement:givePoints(points)
 
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")
 				QuestionBox:new(hitElement, hitElement, _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
 
 			else
-				hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
+				hitElement:sendInfo(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount))
 			end
 		else
-			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement))
 		end
 	end
 end

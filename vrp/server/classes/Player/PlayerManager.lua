@@ -10,13 +10,14 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt","onPlayerTryGateOpen"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
 	self.m_QuitHook = Hook:new()
 	self.m_AFKHook = Hook:new()
 	self.m_ReadyPlayers = {}
+	self.m_QuitPlayers = {}
 
 	-- Register events
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -54,6 +55,8 @@ function PlayerManager:constructor()
 	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
+	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -79,7 +82,6 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
-
 end
 
 function PlayerManager:Event_onRequestGateOpen()
@@ -169,14 +171,19 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 				if (client:getPlayTime() / 60) >=  3 then
 					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
+
 						destroyElement(pickup)
 						giveWeapon(client,weapon,ammo,true)
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
 					else
 						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(setPedAnimation,1000,1,client,nil)
+						setTimer(function(player)
+							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+						end, 1000, 1, client)
 						destroyElement(pickup)
 						--giveWeapon(client,weapon,ammo,true)
 						--FactionState:
@@ -328,6 +335,17 @@ function PlayerManager:breakingNews(text, ...)
 	end
 end
 
+function PlayerManager:getPlayerFromId(userId)
+	if userId then
+		for i, v in ipairs(getElementsByType('player')) do
+			if v:getId() == userId then
+				return v
+			end
+		end
+	end
+	return false
+end
+
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	if name and sourcePlayer then
 		local matches = {}
@@ -398,7 +416,7 @@ end
 
 function PlayerManager:playerQuit()
 	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
-
+	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
@@ -452,16 +470,17 @@ function PlayerManager:Event_playerReady()
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 end
 
-function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 	-- Call wasted hook
 	if self.m_WastedHook:call(client, killer, killerWeapon, bodypart) then
 		return
 	end
+
 	client:setAlcoholLevel(0)
 	client:increaseStatistics("Deaths", 1)
-	-- give a achievement
 	client:giveAchievement(37)
-	for key, obj in ipairs( getAttachedElements(client)) do
+
+	for key, obj in ipairs(getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
@@ -575,6 +594,10 @@ function PlayerManager:playerChat(message, messageType)
 			end
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
 			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
+
+			if phonePartner and phonePartner:getName() == "PewX" and (message:lower():find("pewpew") or message:lower():find("pew pew")) then
+				Achievements["PewPew"](source)
+			end
 		end
 
 		Admin:getSingleton():outputSpectatingChat(source, "C", message, phonePartner, playersToSend)
@@ -596,6 +619,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local text = table.concat ( argTable , " " )
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
+	local faction = source:getFaction()
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle():isStateVehicle() then
+		local success = FactionState:getSingleton():outputMegaphone(source, ...)
+		if success then return true end -- cancel screaming if megaphone succeeds
+	end
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
@@ -757,6 +785,8 @@ end
 
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
+	if client.vehicle then return end
+	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
@@ -770,6 +800,7 @@ function PlayerManager:Event_startAnimation(animation)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
+		client.lastAnimation = getTickCount()
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
 	end
@@ -949,3 +980,37 @@ function PlayerManager:Event_moveToJail()
 	end
 end
 
+function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
+	if locationId == SPAWN_LOCATIONS.HOUSE then
+		if HouseManager:getSingleton().m_Houses[client.visitingHouse]:isValidToEnter(client) then
+			client:setSpawnLocation(SPAWN_LOCATIONS.HOUSE)
+			client:setSpawnLocationProperty(client.visitingHouse)
+			client:sendInfo("Spawnposition geändert!")
+		else
+			client:sendError("Du kannst dieses Haus nicht als Spawnpunkt festlegen!")
+		end
+	elseif locationId == SPAWN_LOCATIONS.VEHICLE then
+		if VEHICLE_MODEL_SPAWNS[source:getModel()] then
+			if source:getOwner() ~= client:getId() then
+				return
+			end
+
+			client:setSpawnLocation(SPAWN_LOCATIONS.VEHICLE)
+			client:setSpawnLocationProperty(source:getId())
+			client:sendInfo("Spawnposition geändert!")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.FACTION_BASE then
+		if client:getFaction() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.COMPANY_BASE then
+		if client:getCompany() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	else
+		client:setSpawnLocation(locationId)
+		client:sendInfo("Spawnpunkt wurde geändert.")
+	end
+end

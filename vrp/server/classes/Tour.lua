@@ -6,14 +6,6 @@
 -- *
 -- ****************************************************************************
 
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Tour.lua
--- *  PURPOSE:     eXo Tour Class (server)
--- *
--- ****************************************************************************
-
 Tour = inherit(Singleton)
 function Tour:constructor()
 	addRemoteEvents{"tourStart", "tourStop", "tourSuccess"}
@@ -155,9 +147,9 @@ Tour.Data = {
 	},
 	[11] = {
 		["Title"] = "Fishing? Still funny!",
-		["Description"] = "Der nächste Punkt auf unserer Liste ist der Angelplatz. Folge einfach wieder dem Pfeil!",
-		["Success"] = "Hier an den grünen Markern kannst du Angeln. Verkaufe deine Beute einfach bei Angler Lutz, rechts von der Treppe",
-		["Position"] = Vector3(351.64, -2085.80, 7.3),
+		["Description"] = "Der nächste Punkt auf unserer Liste ist der Angler Lutz. Folge einfach wieder dem Pfeil!",
+		["Success"] = "Hier ist der Angelshop, weitere Infos zu unserem Angelsystem erhälst du im Hilfemenü (F1)",
+		["Position"] = Vector3(393.06, -1897.12, 7.3),
 		["Money"] = 50
 	},
 	[12] = {

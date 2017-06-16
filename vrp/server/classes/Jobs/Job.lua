@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Job = inherit(Singleton)
 function Job:constructor()
+	self.m_DontEndOnVehicleDestroy = false
 	self.m_OnJobVehicleDestroyBind = bind(self.onJobVehicleDestroy, self)
 
 end
@@ -61,13 +62,16 @@ function Job:onJobVehicleDestroy()
 	removeEventHandler("onElementDestroy", source, self.m_OnJobVehicleDestroyBind)
 	removeEventHandler("onVehicleExplode", source, self.m_OnJobVehicleDestroyBind)
 	local player = source.jobPlayer
-	nextframe( -- Workarround to avoid Stack Overflow
-		function()
-			if player and player.setJob then
-				player:setJob(nil)
+
+	if not self.m_DontEndOnVehicleDestroy then
+		nextframe( -- Workarround to avoid Stack Overflow
+			function()
+				if player and player.setJob then
+					player:setJob(nil)
+				end
 			end
-		end
-	)
+		)
+	end
 end
 
 function Job:destroyJobVehicle(player)

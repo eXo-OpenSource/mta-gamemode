@@ -24,7 +24,7 @@ function FactionManager:constructor()
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	addEventHandler("SpeedCam:showSpeeder", localPlayer, bind(self.Event_OnSpeederCatch,self))
-	
+
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
@@ -113,35 +113,34 @@ function FactionManager:OnRenderSpeed()
 	local now = getTickCount()
 	if now <= self.m_RemoveDraw then
 		if now >= self.m_DrawStart then
-			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then
 				if self.m_bLineChecked == self.m_SpeedCamVehicle then
 					local speed = math.floor(self.m_SpeedCamSpeed)
 					local vName = getVehicleName(self.m_SpeedCamVehicle)
 					local occ = getVehicleOccupant(self.m_SpeedCamVehicle)
-					local name = "Unbekannt"
-					if occ then 
-						name = getPlayerName(occ)
-					end
 					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
 					local colName = getColorNameFromVehicle(c1, c2)
-					local text = "Radar: "..name.." fährt "..speed.." KM/H".." in "..colName.."em "..vName.." !"
-					dxDrawText(text,0,1, w, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-					dxDrawText(text,1,1, w+1, h*0.8+1, tocolor(0,0,0,255),2,"default-bold","center","bottom")
-					dxDrawText(text,0,0, w, h*0.8, tocolor(0,150,0,255),2,"default-bold","center","bottom")
+					local text = ("Radar: %s fährt %s km/h in %sem %s!"):format(occ and occ:getName() or "-", speed, colName, vName)
+
+					dxDrawText(text, 0, 1, w, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 1, 1, w+1, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
+					dxDrawText(text, 0, 0, w, h*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
+
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
 					if speeder then
 						local px,py,pz = getPedBonePosition(speeder,8)
 						local dx,dy = getScreenFromWorldPosition(px,py,pz)
 						if dx and dy then
-							dxDrawText(speed.." KM/H", dx,dy+1,dx,dy+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText(speed.." KM/H", dx,dy,dx,dy,tocolor(230,0,0,255),1,"default-bold")
+							dxDrawText(("%s km/h"):format(speed), dx, dy+1, dx, dy+1, tocolor(0,0,0,255), 1, "default-bold")
+							dxDrawText(("%s km/h"):format(speed), dx, dy, dx, dy, tocolor(230,0,0,255), 1, "default-bold")
 						end
 					end
+
 					if not self.m_PlaySoundOnce then
 						playSoundFrontEnd(5)
 						self.m_PlaySoundOnce = true
 					end
-				else 
+				else
 					local localVeh = getPedOccupiedVehicle(localPlayer)
 					if localVeh then
 						local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
@@ -151,14 +150,14 @@ function FactionManager:OnRenderSpeed()
 							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 							if bLineCheck then
 								self.m_bLineChecked = self.m_SpeedCamVehicle
-								self.m_RemoveDraw = self.m_DrawStart + 10000	
+								self.m_RemoveDraw = self.m_DrawStart + 10000
 							end
 						end
 					end
 				end
 			end
-		else 
-			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then 
+		else
+			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then
 				local localVeh = getPedOccupiedVehicle(localPlayer)
 				if localVeh then
 					local speeder = getVehicleOccupant(self.m_SpeedCamVehicle)
@@ -168,7 +167,7 @@ function FactionManager:OnRenderSpeed()
 						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
 						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
-							self.m_RemoveDraw = self.m_DrawStart + 10000	
+							self.m_RemoveDraw = self.m_DrawStart + 10000
 							if not self.m_PlaySoundSnap then
 								playSound("files/audio/speedcam.ogg")
 								self.m_PlaySoundSnap = true
@@ -178,7 +177,7 @@ function FactionManager:OnRenderSpeed()
 				end
 			end
 		end
-	else 
+	else
 		removeEventHandler("onClientRender", root, self.m_DrawSpeed)
 	end
 end

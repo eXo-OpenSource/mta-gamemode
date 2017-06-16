@@ -70,6 +70,7 @@ function Admin:constructor()
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
+	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
@@ -90,7 +91,7 @@ function Admin:constructor()
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
 	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
-	
+
 
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
@@ -139,7 +140,7 @@ function Admin:destructor()
 end
 
 function Admin:addAdmin(player,rank)
-	outputDebug("Added Admin "..player:getName())
+	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
@@ -783,12 +784,14 @@ local tpTable = {
         ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
+        ["angeln"] =        {["pos"] = Vector3(382.74, -1897.72, 7.52),  	["typ"] = "Orte"},
         ["casino"] =        {["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
         ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
         ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},
         ["flughafensf"] =   {["pos"] = Vector3(-1559.40, -445.55,  5.73),  	["typ"] = "Orte"},
         ["stadthalle"] =    {["pos"] = Vector3(1802.17, -1284.10, 13.33),  	["typ"] = "Orte"},
-        ["bank"] =          {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
+        ["bankpc"] =        {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
+        ["bankls"] =        {["pos"] = Vector3(1461.12, -998.87, 26.51),   	["typ"] = "Orte"},
         ["garten"] =        {["pos"] = Vector3(2450.16, 110.44, 26.16),  	["typ"] = "Orte"},
         ["premium"] =       {["pos"] = Vector3(1246.52, -2055.33, 59.53),  	["typ"] = "Orte"},
 		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
@@ -799,6 +802,9 @@ local tpTable = {
         ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
         ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
+		["lsdocks"] =       {["pos"] = Vector3(2711.48, -2405.28, 13.49),	["typ"] = "Orte"},
+		["pferderennen"] =  {["pos"] = Vector3(1631.56, -1166.35, 23.66),  	["typ"] = "Orte"},
+		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
@@ -822,24 +828,24 @@ local tpTable = {
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
-        ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
+        ["tuning"] =    	{["pos"] = Vector3(1050.65, -1031.07, 31.75),  	["typ"] = "Shops"},
         ["texture"] =    	{["pos"] = Vector3(1844.30, -1861.05, 13.38),  	["typ"] = "Shops"},
+        ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-        ["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
-        ["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+        --["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
+        --["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1534.83, -1440.72, 13.16),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
-		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),  	["typ"] = "Fraktionen"},
-		["yakuza"] =         {["pos"] = Vector3(1441.33, -1329.08, 13.55),  	["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
+		["yakuza"] =        {["pos"] = Vector3(1441.33, -1329.08, 13.55),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
@@ -938,10 +944,18 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_vehicleRequestInfo(target)
+function Admin:Event_vehicleRequestInfo(target, isGroup)
+	local vehicleTable = {}
+
+	if isGroup and target:getGroup() then
+		vehicleTable = target:getGroup():getVehicles()
+	else
+		vehicleTable = target:getVehicles()
+	end
+
 	local vehicles = {}
-	for k, vehicle in pairs(target:getVehicles()) do
-        vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	for k, vehicle in pairs(vehicleTable) do
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 
 	client:triggerEvent("adminVehicleRetrieveInfo", vehicles)
@@ -961,7 +975,9 @@ end
 
 function Admin:Event_portToVehicle(veh)
     if client:getRank() >= RANK.Supporter then
-        local pos = client:getPosition()
+        if client.vehicle then return end
+
+		local pos = client:getPosition()
         local pos = veh:getPosition()
 		client:setInterior(veh:getInterior())
 		client:setDimension(veh:getDimension())
@@ -1085,7 +1101,7 @@ function Admin:Command_MarkPos(player, add)
 		if not add then
 			local markPos = getElementData(player, "Admin_MarkPos")
 			if markPos then
-				player:sendInfo("Du hast dich zu Makierung geportet!")
+				player:sendInfo("Du hast dich zu Markierung geportet!")
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
@@ -1094,15 +1110,22 @@ function Admin:Command_MarkPos(player, add)
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else
-				player:sendError("Du hast keine Makierung /mark")
+				player:sendError("Du hast keine Markierung /mark")
 			end
 		else
 			local pos = player:getPosition()
 			local dim = player:getDimension()
 			local interior = player:getInterior()
 			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
-			player:sendInfo("Makierung gesetzt!")
+			player:sendInfo("Markierung gesetzt!")
 		end
+	end
+end
+
+function Admin:reloadHelpText(player)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+		Help:getSingleton():loadHelpTexts()
+		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
 	end
 end
 

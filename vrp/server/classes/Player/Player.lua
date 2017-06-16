@@ -48,9 +48,12 @@ function Player:destructor()
 	if not self:isLoggedIn() then
 		return
 	end
+	self.m_Disconnecting = true -- use this variable e.g. to prevent the server from sending events to this player
 	if self.m_SpawnerVehicle and isElement(self.m_SpawnerVehicle) then -- TODO: Move this to an appropriate position to be able to use the quit hook
 		destroyElement(self.m_SpawnerVehicle)
 	end
+
+	WorldItem.collectAllFromOwner(self)
 
 	if self.m_Inventory then
 		delete(self.m_Inventory)
@@ -83,6 +86,10 @@ function Player:destructor()
 
 	-- Unload stuff
 	PhoneNumber.unload(1, self.m_Id)
+
+	if self:getGroup() then
+		self:getGroup():checkDespawnVehicle()
+	end
 
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
@@ -191,9 +198,13 @@ function Player:loadCharacter()
 		end
 	end
 
-	VehicleManager:getSingleton():createVehiclesForPlayer( self )
+	VehicleManager:getSingleton():createVehiclesForPlayer(self)
+
+	if self:getGroup() then
+		self:getGroup():spawnVehicles()
+	end
+
 	triggerEvent("characterInitialized", self)
-	--self:triggerEvent("PlatformEnv:generate", 4, 4, self.m_Id or math.random(1,69000), false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 end
 
 function Player:createCharacter()
@@ -287,9 +298,12 @@ function Player:buckleSeatBelt(vehicle)
 	if self.m_SeatBelt then
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
+		triggerClientEvent(self, "playSeatbeltAlarm", self, true)
 	elseif vehicle == getPedOccupiedVehicle(self) then
 		self.m_SeatBelt = vehicle
 		setElementData(self,"isBuckeled", true)
+		triggerClientEvent(self, "playSeatbeltAlarm", self, false)
+		self:playSound("files/audio/car_seatbelt_click.wav")
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
@@ -298,6 +312,10 @@ function Player:buckleSeatBelt(vehicle)
 	if self.vehicle then
 		self:sendShortMessage(_("Du hast dich %sgeschnallt!", self, self.m_SeatBelt and "an" or "ab"))
 	end
+end
+
+function Player:playSound(path)
+	triggerClientEvent(self, "playSound", self, path)
 end
 
 function Player:save()
@@ -347,7 +365,7 @@ function Player:save()
 	end
 end
 
-function Player:spawn( )
+function Player:spawn()
 	if self:isGuest() then
 		-- set default data (fallback / guest)
 		self:setMoney(0)
@@ -363,12 +381,58 @@ function Player:spawn( )
 		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
-		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
+		local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
+		local spawnSuccess = false
+		local SpawnLocationProperty = self:getSpawnLocationProperty()
+
+		if not quitTick or (getTickCount() - quitTick > 300000) then
+			if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
+				spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
+				spawnSuccess = spawnPlayer(self, Vector3(1480.54, -1778.65, 13.55), 0, self.m_Skin or 0, 0, 0)
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
+				if SpawnLocationProperty then
+					local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
+
+					if vehicle and vehicle:getPositionType() == VehiclePositionType.World then
+						if vehicle:getSpeed() == 0 then
+							spawnSuccess = spawnPlayer(self, vehicle.matrix:transformPosition(VEHICLE_SPAWN_OFFSETS[vehicle:getModel()]), 0, self.m_Skin or 0, 0, 0)
+						else
+							self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
+						end
+					else
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+					end
+				end
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
+				if SpawnLocationProperty then
+					local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
+					if house and house:isValidToEnter(self) then
+						if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
+							spawnSuccess = true
+						end
+					else
+						self:sendWarning("Spawnen im Haus nicht möglich, du hast kein Zugriff mehr auf das Haus")
+					end
+				end
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
+				if self:getFaction() then
+					local position = factionSpawnpoint[self:getFaction():getId()]
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+				end
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
+				if self:getCompany() then
+					local position = companySpawnpoint[self:getCompany():getId()]
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+				end
+			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+			end
+		end
+
+		-- if not able to spawn, spawn at last known location
+		if not spawnSuccess then
 			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
-			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
-		else
-			outputServerLog("Invalid spawn location ("..self:getName()..")")
 		end
 
 		-- Update Skin
@@ -427,7 +491,7 @@ function Player:spawn( )
 		killPed(self)
 	end
 	WearableManager:getSingleton():removeAllWearables(self)
-	if self.m_DeathInJail then 
+	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
@@ -509,9 +573,9 @@ function Player:dropReviveWeapons()
 				ammo = self.m_ReviveWeapons[i][2]
 				model = WEAPON_MODELS_WORLD[weapon]
 				playerFaction = self:getFaction()
-				if not playerFaction then 
+				if not playerFaction then
 					playerFaction = "Keine"
-				else 
+				else
 					playerFaction:getShortName()
 				end
 				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
@@ -583,11 +647,10 @@ end
 
 
 -- Message Boxes
-function Player:sendError(text) 	self:triggerEvent("errorBox", text) 	end
-function Player:sendWarning(text)	self:triggerEvent("warningBox", text) 	end
-function Player:sendInfo(text)		self:triggerEvent("infoBox", text)		end
-function Player:sendInfoTimeout(text, timeout) self:triggerEvent("infoBox", text, timeout) end
-function Player:sendSuccess(text)	self:triggerEvent("successBox", text)	end
+function Player:sendError(text, timeout, title) 	self:triggerEvent("errorBox", text, timeout, title) 	end
+function Player:sendWarning(text, timeout, title)	self:triggerEvent("warningBox", text, timeout, title) 	end
+function Player:sendInfo(text, timeout, title)		self:triggerEvent("infoBox", text, timeout, title)		end
+function Player:sendSuccess(text, timeout, title)	self:triggerEvent("successBox", text)	end
 
 function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox", text, ...)	end
 
@@ -814,61 +877,103 @@ function Player:payDay()
 	local income, outgoing, total = 0, 0, 0
 	local income_faction, income_company, income_group, income_interest = 0, 0, 0, 0
 	local outgoing_vehicles, outgoing_house = 0, 0
-	local houseAmount = 0
+	local points_total = 0
 	--Income:
 	if self:getFaction() then
 		income_faction = self:getFaction():paydayPlayer(self)
-		income = income + income_faction
-		self:addPaydayText("faction","Fraktion: "..income_faction.."$",255,255,255)
+		points_total = points_total + self:getFaction():getPlayerRank(self)
+		if income_faction > 0 then
+			income = income + income_faction
+			self:addPaydayText("income", _("%s-Lohn", self, self:getFaction():getShortName()), income_faction)
+		end
 	end
 	if self:getCompany() then
 		income_company = self:getCompany():paydayPlayer(self)
-		income = income + income_company
-		self:addPaydayText("company","Unternehmen: "..income_company.."$",255,255,255)
+		points_total = points_total + self:getCompany():getPlayerRank(self)
+		if income_company > 0 then
+			income = income + income_company
+			self:addPaydayText("income", _("%s-Lohn", self, self:getCompany():getShortName()), income_company)
+		end
 	end
 	if self:getGroup() then
 		income_group = self:getGroup():paydayPlayer(self)
-		income = income + income_group
-		self:addPaydayText("group","Gang/Firma: "..income_group.."$",255,255,255)
-	end
-
-	if self:getWantedLevel() > 0 then
-		self:sendShortMessage(_("Dir wurde ein Wanted erlassen!", self))
-		self:takeWantedLevel(1)
+		points_total = points_total + self:getGroup():getPlayerRank(self)
+		if income_group > 0 then
+			income = income + income_group
+			self:addPaydayText("income", _("%s-Lohn", self, self:getGroup():getName()), income_group)
+		end
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
 	if income_interest > 1500 then income_interest = 1500 end
-	income = income + income_interest
-	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
-
-	--Outgoing
-	if HouseManager:isInstantiated() then
-		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
-		--if #houses > 0 then
-			for index, house in pairs(houses) do
-				outgoing_house = outgoing_house + house:getRent()
-				house.m_Money = house.m_Money + house:getRent()
-				houseAmount = houseAmount + 1
-			end
-		--end
+	if income_interest > 0 then
+		income = income + income_interest
+		self:addPaydayText("income", _("Bankzinsen", self), income_interest)
+		points_total = points_total + math.floor(income_interest/500)
 	end
 
+	--noob bonus
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then
+		income = income + PAYDAY_NOOB_BONUS
+		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
+	end
+
+	--Outgoing
+	local temp_bank_money = self:getBankMoney() + income
+
 	outgoing_vehicles = #self:getVehicles()*75
-	outgoing = outgoing + outgoing_vehicles + outgoing_house
-	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
-	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
-	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeug Steuer", true)
+	if outgoing_vehicles > 0 then
+		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
+		temp_bank_money = temp_bank_money - outgoing_vehicles
+		points_total = points_total + #self:getVehicles() * 2
+	end
+
+	if HouseManager:isInstantiated() then
+		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
+		for index, house in pairs(houses) do
+			local rent = house:getRent()
+			if temp_bank_money - rent >= 0 then
+				outgoing_house = outgoing_house + rent
+				house.m_Money = house.m_Money + rent
+				temp_bank_money = temp_bank_money - rent
+				points_total = points_total + 1
+				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
+			else
+				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
+				house:unrentHouse(self, true)
+			end
+		end
+		--give points if the player owns a house
+		if HouseManager:getSingleton():getPlayerHouse(self) then
+			points_total = points_total + 10
+		end
+	end
+
+	outgoing = outgoing_vehicles + outgoing_house
+
+	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
-	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
-	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
-	self:addPaydayText("payday",("Der Payday über %d$ wurde auf dein Konto %s!"):format(total, total > 0 and "überwiesen" or "abgebucht"),255,150,0)
+	self:addPaydayText("totalIncome", "", income)
+	self:addPaydayText("totalOutgoing", "", outgoing)
+	self:addPaydayText("total", "Total", total)
 
-	self:addBankMoney(total, "Payday")
+
+	if self:getWantedLevel() > 0 then
+		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
+		self:takeWantedLevel(1)
+	end
+
+	if total > 0 then
+		self:addBankMoney(total, "Payday", true, true)
+	else
+		self:takeBankMoney(-total, "Payday", true, true)
+	end
+
+	self:givePoints(points_total)
 
 	if EVENT_EASTER then
-		self:sendInfo("Du hast 5 Ostereier bekommen!")
+		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
 		self:getInventory():giveItem("Osterei", 5)
 	end
 
@@ -878,12 +983,12 @@ function Player:payDay()
 	self:save()
 end
 
-function Player:addPaydayText(typ,text,r,g,b)
-	self.m_paydayTexts[typ] = {}
-	self.m_paydayTexts[typ]["text"] = text
-	self.m_paydayTexts[typ]["r"] = r
-	self.m_paydayTexts[typ]["g"] = g
-	self.m_paydayTexts[typ]["b"] = b
+function Player:addPaydayText(type, text, amount)
+	if not self.m_paydayTexts[type] then self.m_paydayTexts[type] = {} end
+	table.insert(self.m_paydayTexts[type], {text, amount})
+	--self.m_paydayTexts[typ]["r"] = r
+	--self.m_paydayTexts[typ]["g"] = g
+	--self.m_paydayTexts[typ]["b"] = b
 end
 
 function Player:togglePhone(status)
@@ -908,13 +1013,36 @@ function Player:addCrime(crimeType)
 end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
-	DatabasePlayer.giveMoney(self, money, reason)
-	if silent then return end
-
-	if money ~= 0 then
-		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Cash)", {0, 94, 255}, 3000)
+	local success = DatabasePlayer.giveMoney(self, money, reason)
+	if success then
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
 	end
-	self:triggerEvent("playerCashChange", bNoSound)
+	return success
+end
+
+function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
+	local success = DatabasePlayer.addBankMoney(self, money, reason)
+	if success then
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s$%s"):format("+"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
+	end
+	return success
+end
+
+function Player:takeBankMoney(money, reason, bNoSound, silent) -- Overriden
+	local success = DatabasePlayer.takeBankMoney(self, money, reason)
+	if success then
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s$%s"):format("-"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
+	end
+	return success
 end
 
 function Player:startTrading(tradingPartner)

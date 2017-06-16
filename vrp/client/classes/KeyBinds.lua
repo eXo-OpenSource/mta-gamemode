@@ -19,27 +19,29 @@ function KeyBinds:constructor()
 	self.m_CruiseControl = bind(HUDSpeedo.Bind_CruiseControl, HUDSpeedo:getSingleton())
 
 	self.m_Keys = {
-	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
-	  ["KeyTogglePolicePanel"]   = {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
-	  ["KeyToggleSelfGUI"]       = {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
-	  ["KeyToggleHelpGUI"]       = {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
-	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
-	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
-	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
-	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
-	  ["KeyIndicatorLeft"]     	 = {["defaultKey"] = ",", ["name"] = "Blinker Links", ["func"] = function() Indicator:getSingleton():switchIndicatorState("left") end};
-	  ["KeyIndicatorRight"]      = {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
-	  ["KeyIndicatorWarn"]       = {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
-	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
-	  ["KeyCruiseControl"]       = {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
-	  ["KeyChairSitDown"]        = {["defaultKey"] = "l", ["name"] = "Hinsetzen", ["func"] = function() if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
-	  ["KeyToggleSeatbelt"]      = {["defaultKey"] = "m", ["name"] = "An/Abschnallen", ["func"] = function() if getPedOccupiedVehicle(localPlayer) then triggerServerEvent("toggleSeatBelt",localPlayer) end end, ["trigger"] =  "up"};
-	  ["KeyToggleGate"]			 = {["defaultKey"] = "h", ["name"] = "Tore benutzen", ["func"] = function() if getElementHealth(localPlayer) > 0 then	triggerServerEvent("onPlayerTryGateOpen",localPlayer) end end, ["trigger"] = "down"};
-	  --Disabled cause of MTA Bug #9178
+		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
+		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
+		["KeyToggleSelfGUI"]		= {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
+		["KeyToggleHelpGUI"]		= {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
+		["KeyToggleAnimationMenu"]	= {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
+		["KeyToggleScoreboard"]		= {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
+		["KeyToggleCustomMap"]		= {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
+		["KeyToggleInventory"]		= {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
+		["KeyIndicatorLeft"]		= {["defaultKey"] = ",", ["name"] = "Blinker Links", ["func"] = function() Indicator:getSingleton():switchIndicatorState("left") end};
+		["KeyIndicatorRight"]		= {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
+		["KeyIndicatorWarn"]		= {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
+		["KeyToggleCursor"]			= {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
+		["KeyCruiseControl"]		= {["defaultKey"] = "k", ["name"] = "Tempolimiter", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
+		["KeyChairSitDown"]			= {["defaultKey"] = "l", ["name"] = "Hinsetzen", ["func"] = function() if localPlayer:getWorldObject() then triggerServerEvent("onPlayerChairSitDown", localPlayer, localPlayer:getWorldObject()) end end};
+		["KeyToggleSeatbelt"]		= {["defaultKey"] = "m", ["name"] = "An/Abschnallen", ["func"] = function() if getPedOccupiedVehicle(localPlayer) then triggerServerEvent("toggleSeatBelt",localPlayer) end end, ["trigger"] =  "up"};
+		["KeyToggleGate"]			= {["defaultKey"] = "h", ["name"] = "Tore benutzen", ["func"] = function() if getElementHealth(localPlayer) > 0 then	triggerServerEvent("onPlayerTryGateOpen",localPlayer) end end, ["trigger"] = "down"};
+		["KeyMagnetUse"]		 	= {["defaultKey"] = "lctrl", ["name"] = "Magnet benutzen", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle:getModel() == 417 then localPlayer.vehicle:magnetVehicleCheck() end end, ["trigger"] = "down"};
+		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
 	--  ["KeyChatGroup"]           = {["defaultKey"] = "3", ["name"] = "Chat: Firma/Gang", ["func"] = "chatbox", ["extra"] = "Firma/Gang"};
 	}
+
 	self:unloadBinds()
 	self:loadBinds()
 end

@@ -3,6 +3,7 @@ companyRankNames = {}
 companySkins = {}
 companyDutyMarker = {}
 companyDutyMarkerInterior = {}
+companySpawnpoint = {}
 
 COMPANY_MAX_RANK_LOANS ={
 	[0] = 750,
@@ -40,6 +41,7 @@ companyColors[1] = {["r"] = 255,["g"] = 255,["b"] = 255}
 companySkins[1] = {[217]=true, [226]=true, [250]=true, [290]=true, [295]=true,[296]=true,[299]=true}
 companyDutyMarker[1] = Vector3(-2023.07, -114.14, 1035.17)
 companyDutyMarkerInterior[1] = 3
+companySpawnpoint[1] = {Vector3(-2029.85, -116.75, 1035.17), 3, 0}
 
 -- ID 2 = Mech & Tow:
 companyRankNames[2] = {
@@ -52,7 +54,8 @@ companyRankNames[2] = {
 }
 companyColors[2] = {["r"] = 0,["g"] = 220,["b"] = 255}
 companySkins[2] = {[36]=true, [44]=true, [50]=true,[192]=true,[268]=true}
-companyDutyMarker[2] = Vector3(920.61, -1163.71, 16.98)
+companyDutyMarker[2] = Vector3(857.006, -1183.823, 17.269)
+companySpawnpoint[2] = {Vector3(854.230, -1186.297, 17.269), 0, 0}
 
 -- ID 3 = SAN News:
 companyRankNames[3] = {
@@ -66,6 +69,7 @@ companyRankNames[3] = {
 companyColors[3] = {["r"] = 255, ["g"] = 170, ["b"] = 0}
 companySkins[3] = {[59]=true,[141]=true,[186]=true,[187]=true,[188]=true,[189]=true}
 companyDutyMarker[3] = Vector3(735.65, -1348.45, 13.51)
+companySpawnpoint[3] = {Vector3(735.97, -1338.20, 13.53), 0, 0}
 
 -- ID 4 = Public Transport:
 companyRankNames[4] = {
@@ -79,6 +83,7 @@ companyRankNames[4] = {
 companyColors[4] = {["r"] = 255, ["g"] = 210, ["b"] = 0}
 companySkins[4] = {[61]=true, [147]=true, [240]=true, [253]=true,[255]=true, [275]=true}
 companyDutyMarker[4] = Vector3(1755.45, -1896.06, 13.56)
+companySpawnpoint[4] = {Vector3(1756.01, -1887.32, 13.56), 0, 0}
 
 CompanyStaticId = {
 	MECHANIC = 2,

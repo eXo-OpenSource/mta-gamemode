@@ -20,10 +20,13 @@ function WeedTruck:constructor(driver)
     self.m_Truck:setColor(0, 50, 0)
 	self.m_Truck:setFrozen(true)
 	self.m_Truck:setVariant(255, 255)
-	self.m_Truck:setEngineState(true)
+	self.m_Truck:setMaxHealth(1500, true)
+	self.m_Truck:setBulletArmorLevel(2)
 	self.m_Truck:setRepairAllowed(false)
-	self.m_Truck:setData("disableVehicleDamageSystem", true, true)
+	self.m_Truck:toggleRespawn(false)
+	self.m_Truck:setAlwaysDamageable(true)
 	self.m_Truck.m_DisableToggleHandbrake = true
+
 
 	self.m_StartTime = getTickCount()
 	warpPedIntoVehicle(driver, self.m_Truck)
@@ -42,6 +45,7 @@ function WeedTruck:constructor(driver)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
+	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "neuer Einsatz", true)
 
 	self.m_Blip = Blip:new("Waypoint.png", WeedTruck.Destination.x, WeedTruck.Destination.y, root, 9999)
 	self.m_DestinationMarker = createMarker(WeedTruck.Destination,"cylinder",8)

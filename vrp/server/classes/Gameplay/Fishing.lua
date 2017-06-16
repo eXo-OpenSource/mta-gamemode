@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
-addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "clientRequestFishPricing", "clientRequestFishTrading", "clientSendFishTrading", "clientRequestFisherStatistics"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
@@ -14,15 +14,19 @@ function Fishing:constructor()
 
 	self:loadFishDatas()
 	self:updatePricing()
+	self:updateStatistics()
 
 	self.m_UpdatePricingPulse = TimedPulse:new(3600000)
 	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updatePricing, self))
+	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updateStatistics, self))
 
+	addEventHandler("onPlayerQuit", root, bind(Fishing.onPlayerQuit, self))
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 	addEventHandler("clientRequestFishPricing", root, bind(Fishing.onFishRequestPricing, self))
 	addEventHandler("clientRequestFishTrading", root, bind(Fishing.onFishRequestTrading, self))
 	addEventHandler("clientSendFishTrading", root, bind(Fishing.clientSendFishTrading, self))
+	addEventHandler("clientRequestFisherStatistics", root, bind(Fishing.onFishRequestStatistics, self))
 end
 
 function Fishing:destructor()
@@ -44,6 +48,16 @@ function Fishing:loadFishDatas()
 				Fishing.Fish[i][key] = readFuncs[key](value)
 			end
 		end
+	end
+end
+
+function Fishing:updateStatistics()
+	self.m_Statistics = {}
+
+	local result = sql:queryFetch("SELECT Id, FishCaught FROM ??_stats ORDER BY FishCaught DESC LIMIT 0, 10", sql:getPrefix())
+
+	for key, value in pairs(result) do
+		table.insert(self.m_Statistics, {Name = Account.getNameFromId(value.Id), FishCaught = value.FishCaught})
 	end
 end
 
@@ -346,4 +360,15 @@ function Fishing:inventoryUse(player)
 	}
 
 	player:triggerEvent("onFishingStart", fishingRod)
+end
+
+function Fishing:onPlayerQuit()
+	if self.m_Players[source] then
+		local fishingRod = self.m_Players[source].fishingRod
+		if fishingRod then fishingRod:destroy() end
+	end
+end
+
+function Fishing:onFishRequestStatistics()
+	client:triggerEvent("openFisherStatisticsGUI", self.m_Statistics)
 end

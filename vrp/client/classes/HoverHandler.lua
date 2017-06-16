@@ -30,15 +30,22 @@ function HoverHandler:onClientCursorMove(cursorX, cursorY, absX, absY, worldX, w
 
 	local element = getElementBehindCursor(worldX, worldY, worldZ)
 	if isElement(element) then
+		if self.m_CurrentHoverElement == element then return end -- do nothing if it is the same element
 		if getElementData(element,"weaponBox")  then
 			if self.m_CurrentHoverElement == false or self.m_CurrentHoverElement ~= element then
 				self.m_CurrentHoverElement = element
+				if FactionWTBoxHoverGUI:isInstantiated() then
+					delete(FactionWTBoxHoverGUI:getSingleton())
+				end
 				FactionWTBoxHoverGUI:getSingleton(element)
 				return
 			end
 		elseif getElementData(element,"MoneyBag")  then
 			if self.m_CurrentHoverElement == false or self.m_CurrentHoverElement ~= element then
 				self.m_CurrentHoverElement = element
+				if FactionMoneyBagHoverGUI:isInstantiated() then
+					delete(FactionMoneyBagHoverGUI:getSingleton())
+				end
 				FactionMoneyBagHoverGUI:getSingleton(element)
 				return
 			end

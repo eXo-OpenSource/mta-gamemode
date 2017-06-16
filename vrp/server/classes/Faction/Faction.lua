@@ -15,6 +15,8 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Name_Short = name_short
 	self.m_Name = name
 	self.m_Players = players
+	self.m_PlayerActivity = {}
+	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
 	self.m_Invitations = {}
 	self.m_RankNames = factionRankNames[Id]
@@ -42,6 +44,8 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
 	self.m_VehicleTexture = factionVehicleShaders[Id] or false
+
+	self:getActivity()
 end
 
 function Faction:destructor()
@@ -188,6 +192,8 @@ function Faction:addPlayer(playerId, rank)
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+  
+  	self:getActivity(true)
 end
 
 function Faction:removePlayer(playerId)
@@ -305,14 +311,39 @@ function Faction:getRankWeapons(rank)
 	return self.m_RankWeapons[tostring(rank)]
 end
 
+function Faction:getActivity(force)
+	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
+		return
+	end
+	self.m_LastActivityUpdate = getRealTime().timestamp
+
+	for playerId, rank in pairs(self.m_Players) do
+		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(NOW()) - 7 AND DATE(NOW());", sql:getPrefix(), playerId)
+	
+		local activity = 0
+			
+		if row and row.Activity then
+			activity = row.Activity
+		end
+
+		self.m_PlayerActivity[playerId] = activity
+	end
+end
+
 function Faction:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
 
 	local temp = {}
+	
+	self:getActivity()
+
 	for playerId, rank in pairs(self.m_Players) do
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank}
+		local activity = self.m_PlayerActivity[playerId]
+		if not activity then activity = 0 end
+
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
 	end
 	return temp
 end
@@ -410,6 +441,14 @@ function Faction:phoneCallAbbort(caller)
 end
 
 function Faction:phoneTakeOff(player, key, state, caller)
+	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
 	player:triggerEvent("callAnswer", caller, voiceCall)

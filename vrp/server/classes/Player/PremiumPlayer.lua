@@ -72,7 +72,7 @@ function PremiumPlayer:takeVehicle(model)
 				self.m_Player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", self.m_Player), 255, 0, 0)
 			end
 		else
-			self.m_Player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", self.m_Player), 255, 0, 0)
+			self.m_Player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", self.m_Player))
 		end
 	else
 		self.m_Player:sendError("Ungültiges Fahrzeug!")

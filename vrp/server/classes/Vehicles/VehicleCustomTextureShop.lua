@@ -38,6 +38,10 @@ function VehicleCustomTextureShop:constructor()
 	Player.getQuitHook():register(
         function(player)
             if player.TempTexVehicle and isElement(player.TempTexVehicle) then player.TempTexVehicle:destroy() end
+			local vehicle = player:getOccupiedVehicle()
+            if player.m_VehicleTuningGarageId and vehicle then
+                self:closeFor(player, vehicle, true)
+            end
         end
     )
 
@@ -117,6 +121,8 @@ function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
 	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
 	vehicle.OldColor1 = vehicle.m_Tunings:getTuning("Color1")
 	vehicle.OldColor2 = vehicle.m_Tunings:getTuning("Color2")
+
+	player.m_WasBuckeled = getElementData(player, "isBuckeled")
 end
 
 function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
@@ -143,6 +149,10 @@ function VehicleCustomTextureShop:closeFor(player, vehicle, doNotCallEvent)
             warpPedIntoVehicle(player, vehicle)
         end
 
+		if player.m_WasBuckeled then
+			player.m_SeatBelt = vehicle
+			setElementData(player, "isBuckeled", true)
+		end
     end
 end
 
@@ -163,7 +173,7 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 	end
 	veh.m_Tunings:applyTuning()
 	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or "vehiclegrunge256"
-	if oldCount == 0 then 
+	if oldCount == 0 then
 		veh:removeTexture(textureName)
 	end
 	self:closeFor(client, veh)
@@ -198,7 +208,7 @@ function VehicleCustomTextureShop:setTexture(veh, url, textureName, temp, isPrev
 	veh.m_Tunings:applyTuning()
 	if isPreview then
 		veh:setTexture(url, textureName, true, isPreview, player)
-	else 
+	else
 		veh:setTexture(url, textureName, true)
 	end
 	if temp then

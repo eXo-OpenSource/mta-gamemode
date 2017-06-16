@@ -31,6 +31,14 @@ function ActionsCheck:setAction(action)
 	self.m_CurrentAction = action
 end
 
+function ActionsCheck:isCurrentAction()
+	return self.m_CurrentAction
+end
+
+function ActionsCheck:getStatus()
+	return {["current"] = self.m_CurrentAction, ["next"] = self.m_LastAction+ActionsCheck.Pause}
+end
+
 function ActionsCheck:endAction()
 	self.m_LastAction = getRealTime().timestamp
 	self.m_CurrentAction = false

@@ -13,7 +13,7 @@ function JobHeliTransport:constructor()
 	self:setJobLevel(JOB_LEVEL_HELITRANSPORT)
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), "jobs.helitransport")
 
 	addRemoteEvents{"jobHeliTransportCreateMarker", "endHeliTransport"}
 	addEventHandler("jobHeliTransportCreateMarker", root, bind(self.createTarget, self))

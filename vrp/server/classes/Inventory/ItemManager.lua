@@ -12,6 +12,7 @@ function ItemManager:constructor()
 	addRemoteEvents{"onClientBreakItem"}
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
+		["Warnkegel"] = ItemBarricade,
 		["Blitzer"] = ItemSpeedCam,
 		["Nagel-Band"] = ItemNails,
 		["Radio"] = ItemRadio,
@@ -63,7 +64,8 @@ function ItemManager:constructor()
 	}
 
 	self.m_Properties = {
-	["Barrikade"] = {true} --// breakable,
+	["Barrikade"] = {true}, --// breakable,
+	["Warnkegel"] = {true}, --// breakable,
 }
 	self.m_SpecialItems = {
 		["Mautpass"] = true,

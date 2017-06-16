@@ -21,6 +21,7 @@ function ItemRepairKit:use(player)
 			local irandom = math.random(1,100)
 			if irandom >= 50 then
 				setElementHealth(player.vehicle, 500)
+				player.vehicle:setBroken(false)
 				player:sendSuccess(_("Dein Fahrzeug funktioniert wieder einigermaßen!", player))
 				player:getInventory():removeItem(self:getName(), 1)
 				setVehicleEngineState(player.vehicle, true)

@@ -30,9 +30,6 @@ function FactionEvil:constructor()
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
 	addEventHandler("factionEvilFailedRaid", root, bind(self.Event_FailedRaid, self))
-
-
-
 end
 
 function FactionEvil:destructor()
@@ -122,11 +119,18 @@ function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	end
 end
 
+function FactionEvil:sendWarning(text, header, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+end
+
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
 			setPedArmor(player,100)
 			player:sendInfo(_("Du hast dir eine neue Schutzweste geholt!",player))
+			player.m_WeaponStoragePosition = player.position
 			player:triggerEvent("showFactionWeaponShopGUI")
 		else
 			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))
@@ -145,7 +149,7 @@ function FactionEvil:onDepotClicked(button, state, player)
 end
 
 function FactionEvil:loadYakGates(factionId)
-	
+
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.6))
 	for index, gate in pairs(lcnGates) do
@@ -164,7 +168,6 @@ function FactionEvil:onBarrierGateHit(player, gate)
 	else
 		return false
 	end
-
 end
 
 function FactionEvil:Event_StartRaid(target)

@@ -63,6 +63,8 @@ function VehicleTuningShop:openFor(player, vehicle, garageId)
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
+
+	player.m_WasBuckeled = getElementData(player, "isBuckeled")
 end
 
 function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
@@ -89,6 +91,10 @@ function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
             warpPedIntoVehicle(player, vehicle)
         end
 
+		if player.m_WasBuckeled then
+			player.m_SeatBelt = vehicle
+			setElementData(player, "isBuckeled", true)
+		end
     end
 end
 
@@ -186,7 +192,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             if upgradeId ~= 0 then
                 vehicle:addUpgrade(upgradeId)
             else
-                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
+                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(slot))
             end
         else
 			--outputChatBox(slot..": "..tostring(upgradeId))

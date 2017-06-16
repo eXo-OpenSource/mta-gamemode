@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
-local TREE_MONEY = 50
+local TREE_MONEY = 58
 local DUMP_POSITION = Vector3(-1969.8, -2432.6, 29.5)
 
 function JobLumberjack:constructor()
@@ -165,12 +165,11 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:setData("lumberjack:Trees", 0)
 
 		-- Give money and experience points
-		local bonus = JobManager.getBonusForNewbies( hitElement, numTrees*TREE_MONEY)
-		if not bonus then bonus = 0 end
+
 		local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 		hitElement.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY, bonus)
-		hitElement:giveMoney(numTrees * TREE_MONEY+bonus, "Holzfäller-Job") --// default *20
+		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY, nil, nil, numTrees, numTrees)
+		hitElement:addBankMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do

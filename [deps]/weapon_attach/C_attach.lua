@@ -11,10 +11,12 @@ local slotChecks =
 function removeWeaponOnSwitch(prevSlot, newSlot)
 	local bIsEnabled
 	local prevWeapon = getPedWeapon(localPlayer, prevSlot)
-	if slotChecks[prevSlot] and (prevWeapon ~= 32 and prevWeapon ~= 28) then 
+	if slotChecks[prevSlot] and (prevWeapon ~= 32 and prevWeapon ~= 28) and (prevSlot ~= 1 and prevSlot ~= 10) then 
 		bIsEnabled = getElementData(localPlayer,slotChecks[prevSlot])
 	elseif prevWeapon == 32 or prevWeapon == 28 then 
 		bIsEnabled = getElementData(localPlayer,"W_A:w4")
+	elseif prevSlot == 1 or prevSlot == 10 then 
+		bIsEnabled = getElementData(localPlayer,"W_A:w0")
 	end
 	if prevWeapon == 34 then bIsEnabled = true end
 	triggerServerEvent("createWepObject", localPlayer, localPlayer, getPedWeapon(localPlayer, newSlot), 0, getSlotFromWeapon(getPedWeapon(localPlayer, newSlot)))

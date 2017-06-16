@@ -75,7 +75,6 @@ function MWeedTruck:Event_weedTruckStart()
 					self.m_CurrentWeedTruck = WeedTruck:new(source)
 					ActionsCheck:getSingleton():setAction("Weed-Truck")
 					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", source, faction, "faction")
-
 				else
 					source:sendError(_("Du hast nicht genug Geld dabei! (%d$)", source, MWeedTruck.Settings["costs"]))
 				end

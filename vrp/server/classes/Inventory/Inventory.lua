@@ -66,7 +66,9 @@ function Inventory:destructor()
 end
 
 function Inventory:syncClient()
-	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
+	if not self.m_Owner.m_Disconnecting then
+		self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
+	end
 end
 
 function Inventory:forceRefresh()
@@ -323,9 +325,9 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 		return false
 	end
 	local itemValue = value or ""
-	
-	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.." !",0,200,0,200)
-
+	if self.m_Debug == true then
+		outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.."!",0,200,0,200)
+	end
 	if(ItemAmount - amount < 0) then
 		return false
 	elseif(ItemAmount - amount > 0) then
@@ -405,7 +407,7 @@ function Inventory:removeItem(item, amount, value)
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
 								self:removeItemFromPlace(bag, place, amount)
-							else 
+							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
 									self:removeItemFromPlace(bag, place, amount, value)
@@ -436,9 +438,9 @@ function Inventory:removeAllItem(item, value)
 				if itemName == item then
 					if not value then
 						self:removeItemFromPlace(bag, place)
-					else 
+					else
 						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then 
+						if itemValue == value then
 							self:removeItemFromPlace(bag, place)
 						end
 					end
@@ -466,8 +468,8 @@ function Inventory:removeOneItem(item, value)
 						self.m_Items[id]["Menge"] = amount-1
 						self:saveItemAmount(id, self.m_Items[id]["Menge"])
 						return true
-					else 
-						if itemValue == value then 
+					else
+						if itemValue == value then
 							self.m_Items[id]["Menge"] = amount-1
 							self:saveItemAmount(id, self.m_Items[id]["Menge"])
 							return true
@@ -477,7 +479,7 @@ function Inventory:removeOneItem(item, value)
 					if not value then
 						self:removeItemFromPlace(bag, place, 1)
 						return true
-					else 
+					else
 						if itemValue == value then
 							self:removeItemFromPlace(bag, place, 1)
 							return true
@@ -526,7 +528,7 @@ function Inventory:getItemAmount(item)
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
 			if id then
-				if self.m_Items[id]["Objekt"] == item then 
+				if self.m_Items[id]["Objekt"] == item then
 					amount = amount+self.m_Items[id]["Menge"]
 				end
 			end
@@ -590,7 +592,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function Inventory:giveItem(item, amount, value)
+function Inventory:giveItem(item, amount, value) -- donotsync if player disconnects
 	checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
@@ -600,7 +602,7 @@ function Inventory:giveItem(item, amount, value)
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]
 		if self:getItemAmount(item)+amount > itemMax  then
-			self.m_Owner:sendError(_("Item passt nicht mehr ins Inventar!", self.m_Owner,item,itemMax))
+			self.m_Owner:sendError(_("Du kannst maximal %d %s in dein Inventar legen!", self.m_Owner,itemMax, item))
 			return
 		end
 		local placeType, place
@@ -629,10 +631,10 @@ function Inventory:giveItem(item, amount, value)
 					return true
 				end
 			end
-		else
+		elseif not self.m_Owner.m_Disconnecting then
 			self.m_Owner:sendError(_("Nicht genug Platz für %d %s in deinem Inventar!", self.m_Owner,amount,item))
 		end
-	else
+	elseif not self.m_Owner.m_Disconnecting then
 		self.m_Owner:sendError(_("Ungültiges Item! (%s)", self.m_Owner,item))
 	end
 end

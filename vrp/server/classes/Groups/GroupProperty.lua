@@ -201,26 +201,30 @@ function GroupProperty:openForPlayer(player)
 	if self.m_Owner then
 		rank = self.m_Owner:getPlayerRank(player:getId())
 	end
-	if self.m_Open == 1 or self:hasKey(player) or rank == 6 then
-		if getElementType(player) == "player" then
-			fadeCamera(player,false,1,0,0,0)
-			setElementFrozen( player, true)
-			self:outputEntry( player )
-			setTimer( bind( GroupProperty.setInside,self),2500,1, player)
+	if not player.vehicle then
+		if self.m_Open == 1 or self:hasKey(player) or rank == 6 then
+			if getElementType(player) == "player" then
+				fadeCamera(player,false,1,0,0,0)
+				setElementFrozen( player, true)
+				self:outputEntry( player )
+				setTimer( bind( GroupProperty.setInside,self),2500,1, player)
+			end
+		else
+			player:sendError("Tür kann nicht geöffnet werden!")
 		end
-	else
-		player:sendError("Tür kann nicht geöffnet werden!")
 	end
 end
 
 function GroupProperty:setInside( player )
-	if isElement(player) then
+	if isElement(player) and not player.vehicle then
 		setElementInterior(player,self.m_Interior, self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z)
 		setElementDimension(player,self.m_Dimension)
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
-		setElementFrozen( player, false)
+		setTimer(function() --map glitch fix
+			setElementFrozen( player, false)
+		end, 1000, 1)
 		player.justEntered = true
 		setTimer(function() player.justEntered = false end, 2000,1)
 	end

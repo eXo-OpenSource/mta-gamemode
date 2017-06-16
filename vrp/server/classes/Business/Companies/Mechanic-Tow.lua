@@ -5,7 +5,8 @@ function MechanicTow:constructor()
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 
-	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
+	local safe = createObject(2332, 857.594, -1182.628, 17.569, 0, 0, 270)
+	safe:setScale(0.7)
 	self:setSafe(safe)
 
 	local x, y, z, rot
@@ -43,7 +44,7 @@ function MechanicTow:VehicleTakeGUI(vehicleType)
 	elseif vehicleType == "groupVehicle" then
 		local group = client:getGroup()
 		if not group then client:sendError(_("Du bist in keiner Gruppe!", client)) return end
-		vehicleTable = VehicleManager:getSingleton():getGroupVehicles(group:getId())
+		vehicleTable = group:getVehicles()
 	end
 
 	-- Get a list of vehicles that need manual repairing
@@ -94,7 +95,7 @@ function MechanicTow:Event_mechanicRepair()
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
 
-	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 60) then
+	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 20) then
 		client:sendError(_("Du kannst nur jede Minute eine Reparatur-Anfrage stellen!", client))
 		return
 	end
@@ -106,13 +107,15 @@ end
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
 	if source:getMoney() >= price then
-		fixVehicle(vehicle)
+		vehicle:fix()
 		source:takeMoney(price, "Mech&Tow")
 
 		if vehicle.PendingMechanic then
 			if source ~= vehicle.PendingMechanic then
+				self.m_PendingQuestions[vehicle.PendingMechanic] = getRealTime().timestamp
+
 				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech & Tow Reparatur")
-				vehicle.PendingMechanic:givePoints(5)
+				vehicle.PendingMechanic:givePoints(2)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
@@ -160,7 +163,7 @@ function MechanicTow:Event_mechanicTakeVehicle()
 end
 
 function MechanicTow:createTowLot()
-	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
+	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
 	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
@@ -220,9 +223,9 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 end
 
 MechanicTow.SpawnPositions = {
-	{894.370, -1187.525, 16.704, 180},
-	{924.837, -1192.842, 16.704, 90},
-	--{1097.2, -1198.1, 17.70, 180},
+	{904.833, -1183.605, 16.65, 180},
+	{900.833, -1183.605, 16.65, 180},
+	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--
 }

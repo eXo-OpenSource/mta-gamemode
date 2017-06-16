@@ -132,12 +132,11 @@ function Core:ready()
 	PlantWeed.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
+	GroupSaleVehicles.initalize()
 	TextureReplace.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
-	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
-
 
 	Shaders.load()
 
@@ -150,7 +149,8 @@ function Core:ready()
 	ChessSession:new()
 
 	GroupRob:new()
-	DrivingSchool:new() 
+	DrivingSchool:new()
+	Help:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 end
@@ -199,15 +199,11 @@ function Core:afterLogin()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 
-	-- Miami Spawn deactivated:
 	HUDRadar:getSingleton():setEnabled(true)
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
-	triggerServerEvent("remoteClientSpawn", localPlayer)
-	-- //Miami Spawn deactivated:
 
-	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
@@ -226,6 +222,9 @@ end
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	if CustomModelManager:isInstantiated() then
+		delete(CustomModelManager:getSingleton())
+	end
 end
 
 function Core:getConfig()

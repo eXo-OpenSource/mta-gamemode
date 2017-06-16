@@ -10,11 +10,12 @@ local RESOURCES_DISTRIBUTE_INTERVAL = 15*60*1000
 
 function GangAreaManager:constructor()
 	self.m_Map = {}
-
-	outputServerLog("Loading gangareas...")
+	local st, count = getTickCount(), 0
 	for i, info in ipairs(GangAreaData) do
 		self.m_Map[i] = GangArea:new(i, info.areaPosition, info.width, info.height, info.resources or DEFAULT_GANGAREA_RESOURCES)
+		count = count + 1
 	end
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s gang-areas in %sms"):format(count, getTickCount()-st)) end
 
 	addRemoteEvents{"gangAreaTagSprayed"}
 	addEventHandler("gangAreaTagSprayed", root, bind(self.Event_gangAreaTagSprayed, self))
