@@ -141,8 +141,8 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 
 		if self.m_Magnet then
-			bindKey(player, "num_sub", "both", self.m_MagnetUp)
-			bindKey(player, "num_add", "both", self.m_MagnetDown)
+			bindKey(player, "special_control_up", "both", self.m_MagnetUp)
+			bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = self

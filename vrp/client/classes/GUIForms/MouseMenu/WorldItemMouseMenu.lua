@@ -17,7 +17,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 
 	self:addModelSpecificItems(element)
 
-	if self:hasPermissionTo("moveWorldItem", element) then
+	if self:hasPermissionTo("moveWorldItem", element, true) then
 		self:addItem(_"Verschieben", -- maybe some other day
 			function()
 				if self:getElement() then
@@ -27,7 +27,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Arrows)
 	end
 
-	if self:hasPermissionTo("", element) then
+	if self:hasPermissionTo("", element, true) then
 		self:addItem(_"Aufheben",
 			function()
 				if self:getElement() then
@@ -37,7 +37,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 		):setIcon(FontAwesomeSymbols.Double_Up)
 	end
 
-	if self:hasPermissionTo("deleteWorldItem", element) then
+	if self:hasPermissionTo("deleteWorldItem", element, true) then
 		self:addItem(_"Löschen",
 			function()
 				if self:getElement() then
@@ -73,7 +73,7 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 			):setIcon(FontAwesomeSymbols.Music)
 		end
 	elseif model == 1238 then -- Warnkegel
-		if self:hasPermissionTo("", element) then
+		if self:hasPermissionTo("", element, true) then
 			self:addItem(_"Warnleuchte",
 				function()
 					if element then
@@ -83,23 +83,39 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 			):setIcon(FontAwesomeSymbols.Lightbulb)
 		end
 	elseif model == 3902 then -- Blitzer
-		if self:hasPermissionTo("", element) then
+		if self:hasPermissionTo("", element, true) then
 			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.LightBlue)
 		end
 	end
 end
 
 
-function WorldItemMouseMenu:hasPermissionTo(action, element)
-	if ADMIN_RANK_PERMISSION[action] then
-		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then 
+function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
+	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
+	local lpSuperUser = (localPlayer:getName() == superUserName or localPlayer:getFaction():getShortName() == superUserName)
+	if ADMIN_RANK_PERMISSION[action] then --specified action
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then --if allowed
 			return true 
-		else 
-			return false 
+		end
+
+		return ownerPriority and lpSuperUser --just return it if owner can peform admin funcs (e.g. move)
+	else -- not an admin action
+		return lpSuperUser --basic owner check
+	end
+	--[[if (localPlayer:getName() == superUserName or localPlayer:getFaction():getShortName() == superUserName) then
+		if ownerPriority or not ADMIN_RANK_PERMISSION[action] then --owner can use admin funcs or there is no func
+
+		end
+	else
+		if ADMIN_RANK_PERMISSION[action] then
+			if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then 
+				return true 
+			else 
+				return false 
+			end
 		end
 	end
-	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
-	return (localPlayer:getName() == superUserName or localPlayer:getFaction():getShortName() == superUserName) 
+	return (localPlayer:getName() == superUserName or localPlayer:getFaction():getShortName() == superUserName) ]]
 end
 
 

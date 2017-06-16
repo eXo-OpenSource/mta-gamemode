@@ -156,17 +156,18 @@ end
 
 function HUDSpeedo:playSeatbeltAlarm(state)
 	if state then
-		if not isElement(self.m_SeatbeltSound) then
-			if localPlayer.vehicle and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") then
+		if not self.m_SeatbeltSoundEnabled then
+			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") then
 				if core:get("Vehicles", "seatbeltWarning", true) then
 					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+					self.m_SeatbeltSoundEnabled = true
 				end
 			end
 		end
 	else
-		if isElement(self.m_SeatbeltSound) then
-			stopSound(self.m_SeatbeltSound)
-		end
+		if isElement(self.m_SeatbeltSound) then stopSound(self.m_SeatbeltSound) end
+		self.m_SeatbeltSoundEnabled = false
+		outputDebug(self.m_SeatbeltSoundEnabled)
 	end
 end
 

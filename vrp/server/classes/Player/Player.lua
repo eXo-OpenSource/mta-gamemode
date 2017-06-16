@@ -307,7 +307,6 @@ function Player:buckleSeatBelt(vehicle)
 	else
 		self.m_SeatBelt = false
 		setElementData(self,"isBuckeled", false)
-		triggerClientEvent(self, "playSeatbeltAlarm", self, true)
 	end
 
 	if self.vehicle then
