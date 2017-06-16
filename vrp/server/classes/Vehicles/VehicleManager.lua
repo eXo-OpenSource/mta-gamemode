@@ -460,6 +460,7 @@ function VehicleManager:destroyGroupVehicles(group)
 
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(table.copy(self.m_GroupVehicles[groupId])) do
+			veh:save()
 			veh:destroy()
 		end
 	end
