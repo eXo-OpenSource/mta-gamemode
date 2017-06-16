@@ -7,16 +7,17 @@ function MechanicTow:constructor()
 	self.m_Ped:setFrozen(true)
 	self.m_Ped:setData("onClickEvent",
 		function()
-			local questionBox = QuestionBox:new("Welches Fahrzeug möchtest du freikaufen?",
+			self.ms_SelectionGUI = GUIButtonMenu:new("Fahrzeug Art")
+			self.ms_SelectionGUI:addItem(_"Privat Fahrzeug", Color.LightBlue,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "permanentVehicle")
-				end,
+				end
+			)
+			self.ms_SelectionGUI:addItem(_"Firma/Gruppen Fahrzeug", Color.LightBlue,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "groupVehicle")
 				end
 			)
-
-			questionBox:setButtonText("Privat", "Firma/Gruppe")
 		end
 	)
 

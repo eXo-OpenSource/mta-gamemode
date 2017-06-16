@@ -20,15 +20,6 @@ function QuestionBox:constructor(text, yesCallback, noCallback)
 	self.m_NoButton.onLeftClick = function() if noCallback then noCallback() end delete(self) end
 end
 
-function QuestionBox:setButtonText(yesButton, noButton)
-	if yesButton then
-		self.m_YesButton:setText(yesButton)
-	end
-	if noButton then
-		self.m_NoButton:setText(noButton)
-	end
-end
-
 addEvent("questionBox", true)
 addEventHandler("questionBox", root,
 	function(id, text)
