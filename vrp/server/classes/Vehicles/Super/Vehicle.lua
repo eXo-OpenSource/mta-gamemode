@@ -657,7 +657,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 
 		for _, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
-				if vehicle:isRespawnAllowed() then
+				if vehicle:isRespawnAllowed() and vehicle:getVehicleType() == VehicleType.Automobile and vehicle:getVehicleType() == VehicleType.Bike then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
