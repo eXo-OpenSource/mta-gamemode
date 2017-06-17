@@ -87,7 +87,7 @@ function JobPizza:onMarkerHit( element, bdim )
 end
 
 function JobPizza:pickupDeliver( )
-	triggerEvent("infoBox", localPlayer,"Fahre zurück zum Pizza-Stack !")
+	triggerEvent("infoBox", localPlayer,"Fahre zurück zum Pizza-Stack!")
 	self:throwPizza()
 	self.m_PizzaPickupMarker = createMarker( PickupX, PickupY, PickupZ , "checkpoint", 2, 200, 200, 0, 255)
 	GPS:getSingleton():startNavigationTo(Vector3(PickupX, PickupY, PickupZ))

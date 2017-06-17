@@ -5,7 +5,7 @@ function MechanicTow:constructor()
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 
-	local safe = createObject(2332, 857.594, -1180.628, 17.569, 0, 0, 270)
+	local safe = createObject(2332, 857.594, -1182.628, 17.569, 0, 0, 270)
 	safe:setScale(0.7)
 	self:setSafe(safe)
 

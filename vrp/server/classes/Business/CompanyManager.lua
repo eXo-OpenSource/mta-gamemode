@@ -347,13 +347,13 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty()
+function CompanyManager:Event_toggleDuty(wasted)
 	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
 	local company = client:getCompany()
 	if company then
-		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 then
+		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
 			if client:isCompanyDuty() then
 				client:setDefaultSkin()
 				client.m_CompanyDuty = false

@@ -49,7 +49,7 @@ function GasStation:constructor()
 end
 
 function GasStation:onStart(shopId)
-	ShortMessage:new(_"Drücke Leertaste um zu tanken.\nMit gedrückter Shift-Taste wird das Geld von deinem Konto abgebucht.")
+	ShortMessage:new(_"Drücke Leertaste um zu tanken.\nMit zusätzlich gedrückter Shift-Taste wird das Geld von deinem Konto abgebucht.")
 	self.m_Amount = 0
 	self.m_Price = 0
 	if not self.m_FillTimer then

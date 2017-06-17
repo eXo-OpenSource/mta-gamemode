@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -43,6 +43,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
+	addEventHandler("playSound", root, bind(self.Event_PlaySound, self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
@@ -227,12 +228,12 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
 			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then
-			triggerServerEvent("companyToggleDuty", localPlayer)
+			triggerServerEvent("companyToggleDuty", localPlayer, true)
 		end
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
@@ -611,6 +612,12 @@ function LocalPlayer:Event_RunString(codeString, sendResponse)
 	end 
 
 	outputDebug("Running server string: "..tostring(codeString))
+end
+
+function LocalPlayer:Event_PlaySound(path)
+	if type(path) == "string" then
+		playSound(path)
+	end
 end
 
 function LocalPlayer:getAchievements ()

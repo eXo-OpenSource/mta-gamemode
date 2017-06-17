@@ -540,14 +540,14 @@ function countLineBreaks(text)
 	return count
 end
 
-function convertNumber ( number )  
-	local formatted = number  
-	while true do      
-		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1.%2')    
-		if ( k==0 ) then      
-			break   
-		end  
-	end  
+function convertNumber ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1.%2')
+		if ( k==0 ) then
+			break
+		end
+	end
 	return formatted
 end
 
@@ -764,10 +764,14 @@ local vehicles = {
 }
 local _isVehicleOnGround = isVehicleOnGround
 function isVehicleOnGround(vehicle)
-	if isElement(vehicle) and vehicles[vehicle:getModel()] then
-		return vehicle.velocity.length == 0
-	else
-		return _isVehicleOnGround(vehicle)
+	if isElement(vehicle) then
+		if vehicles[vehicle:getModel()] then
+			return vehicle:getSpeed() == 0
+		elseif vehicle:getVehicleType() == VehicleType.Boat then
+			return vehicle:getSpeed() < 3
+		else
+			return _isVehicleOnGround(vehicle)
+		end
 	end
 end
 function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end
@@ -775,7 +779,7 @@ function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end
 function getColorNameFromVehicle(c1, c2)
 	local color1 = CAR_COLORS_FROM_ID[c1] or "Unerkannt"
 	local color2 = CAR_COLORS_FROM_ID[c2] or "Unerkannt"
-	
+
 	if color1 ~= color2 then
 		return color1 .. " & " .. color2
 	else

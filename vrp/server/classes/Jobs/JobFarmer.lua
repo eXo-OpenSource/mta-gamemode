@@ -6,9 +6,9 @@ local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 58 --// default 10
-local MONEY_PLANT_HARVESTER = 10
-local MONEY_PLANT_TRACTOR = 8
+local MONEY_PER_PLANT = 58*2.5 --// default 10
+local MONEY_PLANT_HARVESTER = 10*2
+local MONEY_PLANT_TRACTOR = 8*2
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -102,7 +102,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)
 
 				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-					vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+					vehPlayer:sendError("Du kannst nicht in dieses Jobfahrzeug!")
 					cancelEvent()
 				end)
 			end
@@ -131,7 +131,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton !",player,255,0,0)
+			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton!",player,255,0,0)
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then

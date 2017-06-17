@@ -73,7 +73,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			self.m_VehELSObj = ELSSystem:new(self)
 		end
 	end
-	
+
 	if faction:isRescueFaction() then
 		if self:getVehicleType() == VehicleType.Automobile then
 			self.m_VehELSObj = ELSSystem:new(self)
@@ -249,7 +249,7 @@ end
 function FactionVehicle:takeFactionItem(player, itemName)
 	if self.m_FactionTrunk and self.m_FactionTrunk[itemName] then
 		if self.m_FactionTrunk[itemName] >= 1 then
-			if player:getInventory():giveItem(itemName, 1) then	
+			if player:getInventory():giveItem(itemName, 1) then
 				self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]-1
 				player:sendShortMessage(_("Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!", player, itemName))
 			end
@@ -303,6 +303,14 @@ function FactionVehicle:respawn(force)
 				setVehicleHandling(self,property,faktor)
 			end
 		end
+	end
+
+	if self.m_Magnet then
+		detachElements(self.m_Magnet)
+		self.m_Magnet:attach(self, 0, 0, -1.5)
+
+		self.m_MagnetHeight = -1.5
+		self.m_MagnetActivated = false
 	end
 
 	return true

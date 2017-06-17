@@ -460,6 +460,9 @@ function VehicleManager:destroyGroupVehicles(group)
 
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(table.copy(self.m_GroupVehicles[groupId])) do
+			if veh.m_ForSale then triggerClientEvent("groupSaleVehiclesDestroyBubble", root, veh) end
+
+			veh:save()
 			veh:destroy()
 		end
 	end

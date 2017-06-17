@@ -43,7 +43,7 @@ function AnimationGUI:startAnimation()
 
 	if ANIMATIONS[self.m_AnimationList:getSelectedItem().Name] then
 		if not self.m_InfoMessage then
-			self.m_InfoMessage = ShortMessage:new(_"Benutze 'Leertaste' zum beenden der Animation!", -1)
+			self.m_InfoMessage = ShortMessage:new(_"Benutze 'Leertaste' zum Beenden der Animation!", -1)
 		end
 		local animation = self.m_AnimationList:getSelectedItem().Name
 		triggerServerEvent("startAnimation", localPlayer, animation)

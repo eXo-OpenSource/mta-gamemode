@@ -141,8 +141,10 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 
 		if self.m_Magnet then
-			bindKey(player, "num_sub", "both", self.m_MagnetUp)
-			bindKey(player, "num_add", "both", self.m_MagnetDown)
+			if not isKeyBound(player, "special_control_up", "both", self.m_MagnetUp) then
+				bindKey(player, "special_control_up", "both", self.m_MagnetUp)
+				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
+			end
 		end
 
 		player.m_InVehicle = self
@@ -195,8 +197,8 @@ function Vehicle:onPlayerExit(player, seat)
 		end
 
 		if self.m_Magnet then
-			unbindKey(player, "num_sub", "both", self.m_MagnetUp)
-			unbindKey(player, "num_add", "both", self.m_MagnetDown)
+			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
+			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = nil
@@ -338,25 +340,21 @@ function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
 
-	if self:hasKey(player) or player:getRank() >= RANK.Moderator then
-		if not self.m_HandBrake or preferredState then
-			if self:isOnGround() then
-				setControlState(player, "handbrake", true)
-				self.m_HandBrake = true
-				player:triggerEvent("vehicleHandbrake", true)
-			end
-		else
-			self.m_HandBrake = false
-			setControlState(player, "handbrake", false)
-			if isElementFrozen(self) then
-				setElementFrozen(self, false)
-			end
-			player:triggerEvent("vehicleHandbrake" )
+	if not self.m_HandBrake or preferredState then
+		if self:isOnGround() then
+			setControlState(player, "handbrake", true)
+			self.m_HandBrake = true
+			player:triggerEvent("vehicleHandbrake", true)
 		end
-		self:setData("Handbrake", self.m_HandBrake, true)
 	else
-		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
+		self.m_HandBrake = false
+		setControlState(player, "handbrake", false)
+		if isElementFrozen(self) then
+			setElementFrozen(self, false)
+		end
+		player:triggerEvent("vehicleHandbrake")
 	end
+	self:setData("Handbrake", self.m_HandBrake, true)
 end
 
 function Vehicle:setEngineState(state)
@@ -454,14 +452,14 @@ function Vehicle:countdownDestroyStart(player)
 	player:triggerEvent("Countdown", self.m_CountdownDestroy, "Fahrzeug")
 	self.m_CountdownDestroyTimer = setTimer(function()
 		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
-		if self and isElement(self) then 
+		if self and isElement(self) then
 			local occs = getVehicleOccupants(self)
 			if occs then
 				for i,v in pairs(occs) do
 					removePedFromVehicle(v)
 				end
 			end
-			self:destroy() 
+			self:destroy()
 		end
 		player:triggerEvent("CountdownStop", "Fahrzeug")
 	end, self.m_CountdownDestroy*1000, 1)
@@ -606,6 +604,9 @@ function Vehicle:respawnOnSpawnPosition()
 		if self.m_Magnet then
 			detachElements(self.m_Magnet)
 			self.m_Magnet:attach(self, 0, 0, -1.5)
+
+			self.m_MagnetHeight = -1.5
+			self.m_MagnetActivated = false
 		end
 
 		local owner = Player.getFromId(self.m_Owner)
@@ -654,7 +655,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 
 		for _, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
-				if vehicle:isRespawnAllowed() then
+				if vehicle:isRespawnAllowed() and (vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike) then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
@@ -681,7 +682,7 @@ function Vehicle:magnetMoveUp(player, _, state)
 		self.m_MoveUpTimer = setTimer(
 			function()
 				if self.m_MagnetHeight < -1.5 then
-					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+					if not self.controller then killTimer(sourceTimer) return end
 
 					detachElements(self.m_Magnet)
 					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
@@ -700,7 +701,7 @@ function Vehicle:magnetMoveDown(player, _, state)
 	if state == "down" then
 		self.m_MoveDownTimer = setTimer(
 			function()
-				if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+				if not self.controller then killTimer(sourceTimer) return end
 
 				if self.m_MagnetHeight > -15 then
 					detachElements(self.m_Magnet)

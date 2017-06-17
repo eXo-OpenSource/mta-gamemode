@@ -326,7 +326,7 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 	end
 	local itemValue = value or ""
 	if self.m_Debug == true then
-		outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.." !",0,200,0,200)
+		outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount..", value: "..itemValue.."!",0,200,0,200)
 	end
 	if(ItemAmount - amount < 0) then
 		return false
@@ -407,7 +407,7 @@ function Inventory:removeItem(item, amount, value)
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
 								self:removeItemFromPlace(bag, place, amount)
-							else 
+							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
 									self:removeItemFromPlace(bag, place, amount, value)
@@ -438,9 +438,9 @@ function Inventory:removeAllItem(item, value)
 				if itemName == item then
 					if not value then
 						self:removeItemFromPlace(bag, place)
-					else 
+					else
 						itemValue = self:getItemValueByBag(bag, place)
-						if itemValue == value then 
+						if itemValue == value then
 							self:removeItemFromPlace(bag, place)
 						end
 					end
@@ -468,8 +468,8 @@ function Inventory:removeOneItem(item, value)
 						self.m_Items[id]["Menge"] = amount-1
 						self:saveItemAmount(id, self.m_Items[id]["Menge"])
 						return true
-					else 
-						if itemValue == value then 
+					else
+						if itemValue == value then
 							self.m_Items[id]["Menge"] = amount-1
 							self:saveItemAmount(id, self.m_Items[id]["Menge"])
 							return true
@@ -479,7 +479,7 @@ function Inventory:removeOneItem(item, value)
 					if not value then
 						self:removeItemFromPlace(bag, place, 1)
 						return true
-					else 
+					else
 						if itemValue == value then
 							self:removeItemFromPlace(bag, place, 1)
 							return true
@@ -528,7 +528,7 @@ function Inventory:getItemAmount(item)
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
 			if id then
-				if self.m_Items[id]["Objekt"] == item then 
+				if self.m_Items[id]["Objekt"] == item then
 					amount = amount+self.m_Items[id]["Menge"]
 				end
 			end

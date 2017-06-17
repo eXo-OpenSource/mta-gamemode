@@ -59,16 +59,16 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			if shop:getMoney() >= 250 then
 				self:startRob(shop, attacker, ped)
 			else
-				attacker:sendError("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker)
+				attacker:sendError(_("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker))
 			end
 		else
-      		attacker:sendError("Du bist im Dienst, du darfst keinen Überfall machen!", attacker)
+      		attacker:sendError(_("Du bist im Dienst, du darfst keinen Überfall machen!", attacker))
    		end
     else
-      attacker:sendError("Du bist Mitglied einer privaten Firma! Nur Gangs können überfallen!", attacker)
+      attacker:sendError(_("Du bist Mitglied einer privaten Firma! Nur Gangs können überfallen!", attacker))
     end
   else
-    attacker:sendError("Du bist kein Mitglied einer privaten Gang!", attacker)
+    attacker:sendError(_("Du bist kein Mitglied einer privaten Gang!", attacker))
   end
 end
 

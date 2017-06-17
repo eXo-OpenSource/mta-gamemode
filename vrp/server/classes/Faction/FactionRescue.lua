@@ -172,10 +172,10 @@ function FactionRescue:Event_changeSkin(player)
 
 end
 
-function FactionRescue:Event_toggleDuty(type)
+function FactionRescue:Event_toggleDuty(type, wasted)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
 				client.m_FactionDuty = false

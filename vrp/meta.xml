@@ -1476,6 +1476,8 @@
 	<vrpfile src="files/audio/onDoorClosed.mp3"/>
 	<vrpfile src="files/audio/onDoorOpened.mp3"/>
 	<vrpfile src="files/audio/carlock.mp3"/>
+	<vrpfile src="files/audio/car_seatbelt_warning.mp3"/>
+	<vrpfile src="files/audio/car_seatbelt_click.wav"/>
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
 	<vrpfile src="files/audio/gate_open.mp3"/>
@@ -1639,8 +1641,6 @@
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/mech.dff"/>
 	<vrpfile src="files/models/mech.col"/>
-	<vrpfile src="files/models/yoda.dff"/>
-	<vrpfile src="files/models/yoda.txd"/>
 	<vrpfile src="files/models/blitzer.col"/>
 	<vrpfile src="files/models/blitzer.dff"/>
 	<vrpfile src="files/models/blitzer.txd"/>

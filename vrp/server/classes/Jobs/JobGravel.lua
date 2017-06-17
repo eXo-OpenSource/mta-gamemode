@@ -10,9 +10,9 @@ JobGravel = inherit(Job)
 MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
-LOAN_MINING = 29 -- Per Stone
-LOAN_DOZER = 59 -- Per Stone
-LOAN_DUMPER = 79 -- Per Stone
+LOAN_MINING = 29*2 -- Per Stone
+LOAN_DOZER = 59*2 -- Per Stone
+LOAN_DUMPER = 79*2 -- Per Stone
 
 function JobGravel:constructor()
 	Job.constructor(self)
@@ -176,7 +176,7 @@ end
 
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
-		client:setAnimation("sword", "sword_4", 2200, true, true, false, false)
+		client:setAnimation("sword", "sword_4", 2200, true, false, false, false)
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)

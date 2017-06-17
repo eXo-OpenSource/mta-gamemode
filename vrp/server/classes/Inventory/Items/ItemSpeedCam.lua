@@ -10,6 +10,7 @@ ItemSpeedCam.Map = {}
 
 local MAX_SPEEDCAMS = 3
 local COST_FACTOR = 15
+local MIN_RANK = 2
 
 function ItemSpeedCam:constructor()
 
@@ -22,29 +23,33 @@ end
 function ItemSpeedCam:use(player)
 	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		if self:count() < MAX_SPEEDCAMS then
-			local result = self:startObjectPlacing(player,
-				function(item, position, rotation)
-					if item ~= self or not position then return end
+			if player:getFaction():getPlayerRank(player) >= MIN_RANK then
+				local result = self:startObjectPlacing(player,
+					function(item, position, rotation)
+						if item ~= self or not position then return end
 
-					local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
-					worldItem:setFactionSuperOwner(true)
-					worldItem:setMinRank(3)
+						local worldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, false, player)
+						worldItem:setFactionSuperOwner(true)
+						worldItem:setMinRank(MIN_RANK)
 
-					player:getInventory():removeItem(self:getName(), 1)
+						player:getInventory():removeItem(self:getName(), 1)
 
-					local object = worldItem:getObject()
-					setElementData(object, "earning", 0)
-					ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
+						local object = worldItem:getObject()
+						setElementData(object, "earning", 0)
+						ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
-					object.col = createColSphere(position, 10)
-					object.col.object = object
-					self.m_func = bind(self.onColShapeHit, self)
-					addEventHandler("onColShapeHit", object.col, self.m_func )
-					local pos = player:getPosition()
-					FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
-					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z)
-				end
-			)
+						object.col = createColSphere(position, 10)
+						object.col.object = object
+						self.m_func = bind(self.onColShapeHit, self)
+						addEventHandler("onColShapeHit", object.col, self.m_func )
+						local pos = player:getPosition()
+						FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
+						StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z)
+					end
+				)
+			else
+				player:sendError(_("Dafür brauchst du mind. Rang %d!", player, MIN_RANK))
+			end
 		else
 			player:sendError(_("Es sind bereits %d/%d Anlagen aufgestellt!", player, self:count(), MAX_SPEEDCAMS))
 		end
@@ -99,15 +104,6 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 		end
 	end
 end
-
-function ItemSpeedCam:onClick(player, worldItem)
-	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
-		triggerClientEvent(player, "ItemSpeedCamMenu", worldItem:getObject())
-	else
-		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
-	end
-end
-
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local object = worlditem:getObject()

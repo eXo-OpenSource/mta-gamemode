@@ -106,7 +106,7 @@ function TextureReplace:onElementStreamIn()
 	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and self.m_Optional then
 		return
 	end
-	
+
 	if TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[1] or (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[3] and not self.m_Optional ) or  (TextureReplace.Modes[TextureReplace.CurrentMode] == TextureReplace.Modes[2] and not self.m_OnRequest ) then
 		TextureReplace.Pending[source] = self
 		if not TextureReplace.Working then
@@ -169,14 +169,14 @@ function TextureReplace:loadShader()
 		self.m_Shader:destroy()
 
 		return false
-	else 
-		if type(self.m_Texture) ~= "userdata" or not isElement(self.m_Texture) then 
+	else
+		if type(self.m_Texture) ~= "userdata" or not isElement(self.m_Texture) then
 			outputDebugString("Loading the texture failed! ("..self.m_TexturePath..")")
 			self.m_Shader:destroy()
 			return false
-		else 
-			if isElement(self.m_Texture) then 
-				if not getElementType(self.m_Texture) == "texture" then 
+		else
+			if isElement(self.m_Texture) then
+				if not getElementType(self.m_Texture) == "texture" then
 					outputDebugString("Loading the texture failed! ("..self.m_TexturePath..")")
 					self.m_Shader:destroy()
 					return false
@@ -240,9 +240,9 @@ function TextureReplace.getCachedTexture(path, instance)
 			local dxTexture = dxCreateTexture(createFromPath, "dxt1",true, "clamp", "2d", 1)
 			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxTexture;}
 			TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
-		else 
-			outputDebugString("Could not locate file: "..path.." !")
-			return false 
+		else
+			outputDebugString("Could not locate file: "..path.."!")
+			return false
 		end
 	end
 
@@ -266,7 +266,7 @@ function TextureReplace.unloadCache(path, optional)
 			local result = destroyElement(TextureReplace.Cache[index].texture)
 			TextureReplace.Cache[index] = nil
 			return result
-		else 
+		else
 			return true
 		end
 	end
@@ -300,8 +300,8 @@ function TextureReplace.getRawTexture(path)
 			file:close()
 
 			return base64Decode(data)
-		else 
-			return false 
+		else
+			return false
 		end
 	end
 end
