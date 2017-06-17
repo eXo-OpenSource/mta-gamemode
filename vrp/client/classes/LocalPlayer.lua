@@ -228,12 +228,12 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
 			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then
-			triggerServerEvent("companyToggleDuty", localPlayer)
+			triggerServerEvent("companyToggleDuty", localPlayer, true)
 		end
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
