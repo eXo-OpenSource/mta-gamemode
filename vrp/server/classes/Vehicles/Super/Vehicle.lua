@@ -141,8 +141,10 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 
 		if self.m_Magnet then
-			bindKey(player, "special_control_up", "both", self.m_MagnetUp)
-			bindKey(player, "special_control_down", "both", self.m_MagnetDown)
+			if not isKeyBound(player, "special_control_up", "both", self.m_MagnetUp) then
+				bindKey(player, "special_control_up", "both", self.m_MagnetUp)
+				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
+			end
 		end
 
 		player.m_InVehicle = self
@@ -680,7 +682,7 @@ function Vehicle:magnetMoveUp(player, _, state)
 		self.m_MoveUpTimer = setTimer(
 			function()
 				if self.m_MagnetHeight < -1.5 then
-					if not self.controller then killTimer(self.m_MoveUpTimer) end
+					if not self.controller then killTimer(sourceTimer) return end
 
 					detachElements(self.m_Magnet)
 					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
@@ -699,7 +701,7 @@ function Vehicle:magnetMoveDown(player, _, state)
 	if state == "down" then
 		self.m_MoveDownTimer = setTimer(
 			function()
-				if not self.controller then killTimer(self.m_MoveDownTimer) end
+				if not self.controller then killTimer(sourceTimer) return end
 
 				if self.m_MagnetHeight > -15 then
 					detachElements(self.m_Magnet)
