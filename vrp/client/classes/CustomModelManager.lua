@@ -178,9 +178,6 @@ function CustomModelManager:constructor()
 
 
 	--skins
-	-- Yoda
-	self:loadImportTXD("files/models/yoda.txd", 41)
-	self:loadImportDFF("files/models/yoda.dff", 41)
 	-- Zombie
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)

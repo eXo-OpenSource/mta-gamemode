@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobRoadSweeper = inherit(Job)
-local SWEEPER_LOAN = 11
+local SWEEPER_LOAN = 11*2
 
 function JobRoadSweeper:constructor()
 	Job.constructor(self)

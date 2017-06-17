@@ -7,7 +7,7 @@
 -- ****************************************************************************
 JobForkLift = inherit(Job)
 
-local MONEY_PER_BOX = 55
+local MONEY_PER_BOX = 55*2
 
 function JobForkLift:constructor()
 	Job.constructor(self)

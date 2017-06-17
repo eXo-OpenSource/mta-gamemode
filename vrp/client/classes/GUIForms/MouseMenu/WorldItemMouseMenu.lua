@@ -63,7 +63,7 @@ end
 function WorldItemMouseMenu:addModelSpecificItems(element)
 	local model = getElementModel(element)
 	if model == 2226 then -- Radio
-		if self:hasPermissionTo("showWorldItemInformation", element) then
+		if self:hasPermissionTo("showWorldItemInformation", element, true) then
 			self:addItem(_"Musik ändern",
 				function()
 					if element then

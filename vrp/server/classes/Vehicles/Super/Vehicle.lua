@@ -195,8 +195,8 @@ function Vehicle:onPlayerExit(player, seat)
 		end
 
 		if self.m_Magnet then
-			unbindKey(player, "num_sub", "both", self.m_MagnetUp)
-			unbindKey(player, "num_add", "both", self.m_MagnetDown)
+			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
+			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = nil
@@ -606,6 +606,9 @@ function Vehicle:respawnOnSpawnPosition()
 		if self.m_Magnet then
 			detachElements(self.m_Magnet)
 			self.m_Magnet:attach(self, 0, 0, -1.5)
+
+			self.m_MagnetHeight = -1.5
+			self.m_MagnetActivated = false
 		end
 
 		local owner = Player.getFromId(self.m_Owner)
@@ -654,7 +657,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 
 		for _, vehicle in pairs(vehicles) do
 			if vehicle ~= self then
-				if vehicle:isRespawnAllowed() then
+				if vehicle:isRespawnAllowed() and vehicle:getVehicleType() == VehicleType.Automobile and vehicle:getVehicleType() == VehicleType.Bike then
 					if vehicle.m_HandBrake and (client:getCompany() and (client:getCompany():getId() ~= CompanyStaticId.MECHANIC or not client:isCompanyDuty())) then
 						client:sendWarning("Bitte löse erst die Handbremse von diesem Fahrzeug!")
 					else
@@ -681,7 +684,7 @@ function Vehicle:magnetMoveUp(player, _, state)
 		self.m_MoveUpTimer = setTimer(
 			function()
 				if self.m_MagnetHeight < -1.5 then
-					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+					if not self.controller then killTimer(self.m_MoveUpTimer) end
 
 					detachElements(self.m_Magnet)
 					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
@@ -700,7 +703,7 @@ function Vehicle:magnetMoveDown(player, _, state)
 	if state == "down" then
 		self.m_MoveDownTimer = setTimer(
 			function()
-				if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+				if not self.controller then killTimer(self.m_MoveDownTimer) end
 
 				if self.m_MagnetHeight > -15 then
 					detachElements(self.m_Magnet)

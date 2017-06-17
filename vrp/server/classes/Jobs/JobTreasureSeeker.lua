@@ -24,12 +24,12 @@ function JobTreasureSeeker:constructor()
 	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
-		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
-		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] =1200, ["Max"] = 2000, ["Scale"] = 5.5},
-		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
-		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 200, ["Max"] = 400},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 800, ["Max"] = 1600},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 400, ["Max"] = 800},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 1800, ["Max"] = 2500, ["Scale"] = 5.5},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 800, ["Max"] = 1600},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 800, ["Max"] = 1600, ["Scale"] = 2}
 	}
 end
 

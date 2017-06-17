@@ -21,6 +21,7 @@ function HUDSpeedo:constructor()
 			if seat == 0 then
 				if VEHICLE_BIKES[vehicle:getModel()] then
 					ShortMessage:new(_"Öffne das Fahrradschloss mit 'X'!")
+					ShortMessage:new(_"Löse die Bremse mit 'G'!")
 				else
 					self:show()
 				end
@@ -157,7 +158,7 @@ end
 function HUDSpeedo:playSeatbeltAlarm(state)
 	if state then
 		if not self.m_SeatbeltSoundEnabled then
-			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") then
+			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") and not VEHICLE_BIKES[localPlayer.vehicle:getModel()] then
 				if core:get("Vehicles", "seatbeltWarning", true) then
 					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
 					self.m_SeatbeltSoundEnabled = true
@@ -167,7 +168,6 @@ function HUDSpeedo:playSeatbeltAlarm(state)
 	else
 		if isElement(self.m_SeatbeltSound) then stopSound(self.m_SeatbeltSound) end
 		self.m_SeatbeltSoundEnabled = false
-		outputDebug(self.m_SeatbeltSoundEnabled)
 	end
 end
 
