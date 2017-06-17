@@ -76,3 +76,7 @@ WEAPON_MODELS_WORLD =
 	[45] = 369,
 	[46] = 371,
 }
+
+TRADE_DISABLED_WEAPONS = { --weapons that should not be traded with
+	[9] = true, --Chainsaw
+}
