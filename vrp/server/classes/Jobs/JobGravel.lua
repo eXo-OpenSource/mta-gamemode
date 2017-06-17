@@ -10,9 +10,9 @@ JobGravel = inherit(Job)
 MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
-LOAN_MINING = 29 -- Per Stone
-LOAN_DOZER = 59 -- Per Stone
-LOAN_DUMPER = 79 -- Per Stone
+LOAN_MINING = 29*2 -- Per Stone
+LOAN_DOZER = 59*2 -- Per Stone
+LOAN_DUMPER = 79*2 -- Per Stone
 
 function JobGravel:constructor()
 	Job.constructor(self)
