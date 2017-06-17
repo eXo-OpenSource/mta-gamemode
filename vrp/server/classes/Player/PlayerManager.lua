@@ -620,7 +620,7 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()
-	if source:getOccupiedVehicle() and source:getOccupiedVehicle():isStateVehicle() then
+	if source:getOccupiedVehicle() and source:getOccupiedVehicle().isStateVehicle() and source:getOccupiedVehicle():isStateVehicle() then
 		local success = FactionState:getSingleton():outputMegaphone(source, ...)
 		if success then return true end -- cancel screaming if megaphone succeeds
 	end
