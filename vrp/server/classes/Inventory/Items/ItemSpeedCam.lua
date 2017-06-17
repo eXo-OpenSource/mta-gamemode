@@ -23,7 +23,7 @@ end
 function ItemSpeedCam:use(player)
 	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		if self:count() < MAX_SPEEDCAMS then
-			if self:getFaction():getPlayerRank(self) >= MIN_RANK then
+			if player:getFaction():getPlayerRank(player) >= MIN_RANK then
 				local result = self:startObjectPlacing(player,
 					function(item, position, rotation)
 						if item ~= self or not position then return end
@@ -104,15 +104,6 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 		end
 	end
 end
-
-function ItemSpeedCam:onClick(player, worldItem)
-	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
-		triggerClientEvent(player, "ItemSpeedCamMenu", worldItem:getObject())
-	else
-		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
-	end
-end
-
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local object = worlditem:getObject()
