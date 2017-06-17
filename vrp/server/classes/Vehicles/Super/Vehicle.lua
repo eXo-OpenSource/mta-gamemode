@@ -338,25 +338,21 @@ function Vehicle:toggleHandBrake(player, preferredState)
 	if self.m_DisableToggleHandbrake then return end
 	if preferredState ~= nil and preferredState == self.m_HandBrake then return false end
 
-	if self:hasKey(player) or player:getRank() >= RANK.Moderator then
-		if not self.m_HandBrake or preferredState then
-			if self:isOnGround() then
-				setControlState(player, "handbrake", true)
-				self.m_HandBrake = true
-				player:triggerEvent("vehicleHandbrake", true)
-			end
-		else
-			self.m_HandBrake = false
-			setControlState(player, "handbrake", false)
-			if isElementFrozen(self) then
-				setElementFrozen(self, false)
-			end
-			player:triggerEvent("vehicleHandbrake")
+	if not self.m_HandBrake or preferredState then
+		if self:isOnGround() then
+			setControlState(player, "handbrake", true)
+			self.m_HandBrake = true
+			player:triggerEvent("vehicleHandbrake", true)
 		end
-		self:setData("Handbrake", self.m_HandBrake, true)
 	else
-		player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player))
+		self.m_HandBrake = false
+		setControlState(player, "handbrake", false)
+		if isElementFrozen(self) then
+			setElementFrozen(self, false)
+		end
+		player:triggerEvent("vehicleHandbrake")
 	end
+	self:setData("Handbrake", self.m_HandBrake, true)
 end
 
 function Vehicle:setEngineState(state)
