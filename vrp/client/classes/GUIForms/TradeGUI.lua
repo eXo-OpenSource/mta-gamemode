@@ -102,16 +102,18 @@ function TradeGUI:loadWeapons()
     for i = 0, 12 do
 		local weaponId = getPedWeapon(localPlayer, i)
 		if weaponId and weaponId ~= 0 then
-            local item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
-			item.onLeftClick =
-				function()
-					self.m_SelectedType = "Weapon"
-					self.m_SelectedItem = weaponId
-					self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
-					self.m_ButtonTrade:setEnabled(true)
-					self.m_Preview:setImage(WeaponIcons[weaponId])
-					self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
-				end
+			if not TRADE_DISABLED_WEAPONS[weaponId] then
+				local item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
+				item.onLeftClick =
+					function()
+						self.m_SelectedType = "Weapon"
+						self.m_SelectedItem = weaponId
+						self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
+						self.m_ButtonTrade:setEnabled(true)
+						self.m_Preview:setImage(WeaponIcons[weaponId])
+						self.m_LabelDescription:setText(WEAPON_NAMES[weaponId])
+					end
+			end
 		end
 	end
 end
