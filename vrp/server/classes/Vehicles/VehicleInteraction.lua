@@ -19,7 +19,7 @@ end
 function VehicleInteraction:doInteractions(door)
 	local lookAtVehicle = getPedTarget(client)
     if lookAtVehicle and (getElementType(lookAtVehicle) == "vehicle" ) then
-		if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator or (not isVehicleLocked(veh) and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then
+		if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator or (not isVehicleLocked(lookAtVehicle) and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then
 			local doorRatio = getVehicleDoorOpenRatio(lookAtVehicle, door)
 			local doorStateS = getElementData(lookAtVehicle, tostring(door), true)
 
