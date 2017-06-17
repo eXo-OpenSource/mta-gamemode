@@ -305,10 +305,5 @@ function FactionVehicle:respawn(force)
 		end
 	end
 
-	if self.m_Magnet then
-		detachElements(self.m_Magnet)
-		self.m_Magnet:attach(self, 0, 0, -1.5)
-	end
-
 	return true
 end

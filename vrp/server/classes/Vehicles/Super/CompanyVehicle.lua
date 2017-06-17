@@ -233,5 +233,13 @@ function CompanyVehicle:respawn(force)
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()
 
+	if self.m_Magnet then
+		detachElements(self.m_Magnet)
+		self.m_Magnet:attach(self, 0, 0, -1.5)
+
+		self.m_MagnetHeight = -1.5
+		self.m_MagnetActivated = false
+	end
+
 	return true
 end

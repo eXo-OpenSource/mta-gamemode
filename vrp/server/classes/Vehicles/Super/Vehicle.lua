@@ -195,10 +195,8 @@ function Vehicle:onPlayerExit(player, seat)
 		end
 
 		if self.m_Magnet then
-			unbindKey(player, "num_sub", "both", self.m_MagnetUp)
-			unbindKey(player, "num_add", "both", self.m_MagnetDown)
-			if isTimer(self.m_MoveDownTimer) then killTimer(self.m_MoveDownTimer) end
-			if isTimer(self.m_MoveUpTimer) then killTimer(self.m_MoveUpTimer) end
+			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
+			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
 
 		player.m_InVehicle = nil
@@ -608,6 +606,9 @@ function Vehicle:respawnOnSpawnPosition()
 		if self.m_Magnet then
 			detachElements(self.m_Magnet)
 			self.m_Magnet:attach(self, 0, 0, -1.5)
+
+			self.m_MagnetHeight = -1.5
+			self.m_MagnetActivated = false
 		end
 
 		local owner = Player.getFromId(self.m_Owner)
@@ -683,7 +684,7 @@ function Vehicle:magnetMoveUp(player, _, state)
 		self.m_MoveUpTimer = setTimer(
 			function()
 				if self.m_MagnetHeight < -1.5 then
-					if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveUpTimer) end
+					if not self.controller then killTimer(self.m_MoveUpTimer) end
 
 					detachElements(self.m_Magnet)
 					self.m_MagnetHeight = self.m_MagnetHeight + 0.1
@@ -702,7 +703,7 @@ function Vehicle:magnetMoveDown(player, _, state)
 	if state == "down" then
 		self.m_MoveDownTimer = setTimer(
 			function()
-				if not isElement(player) or player.vehicle ~= self then killTimer(self.m_MoveDownTimer) end
+				if not self.controller then killTimer(self.m_MoveDownTimer) end
 
 				if self.m_MagnetHeight > -15 then
 					detachElements(self.m_Magnet)
