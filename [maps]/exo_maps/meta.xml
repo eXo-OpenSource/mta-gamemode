@@ -27,10 +27,10 @@
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/fbi_int.map" dimension="23" />
+	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
-	<map src="unternehmen/rescue.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 	<map src="banken/bankPalomino.map" />
@@ -59,7 +59,7 @@
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
-  	<map src="hospital.map" />
+  	<!--<map src="hospital.map" />-->
 	<map src="airport.map" />
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />

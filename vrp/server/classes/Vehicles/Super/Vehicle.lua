@@ -355,6 +355,28 @@ function Vehicle:toggleHandBrake(player, preferredState)
 		player:triggerEvent("vehicleHandbrake")
 	end
 	self:setData("Handbrake", self.m_HandBrake, true)
+
+	local ownerType = ""
+	local owner = 0
+
+	if self.m_Faction then
+		ownerType = 'Faction'
+		owner = self.m_Faction
+	elseif self.m_Company then
+		ownerType = 'Company'
+		owner = self.m_Company
+	elseif self.m_Group then
+		ownerType = 'Group'
+		owner = self.m_Group
+	elseif self.m_Temporary then
+		ownerType = 'Temporary'
+		owner = self.m_Owner
+	else
+		ownerType = 'Player'
+		owner = self.m_Owner
+	end
+
+	StatisticsLogger:getSingleton():addVehicleLog(player, owner, ownerType, self.m_Id, self:getModel(), self.m_HandBrake and "Handbremse gezogen" or "Handbremse gelöst")
 end
 
 function Vehicle:setEngineState(state)
