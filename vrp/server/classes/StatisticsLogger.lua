@@ -82,6 +82,20 @@ function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, dist
         sqlLogs:getPrefix(), userId, job, duration, earned, 0, vehicle, distance, points, amount)
 end
 
+function StatisticsLogger:addVehicleLog(player, ownerId, ownerType, elementId, model, action)
+	local userId = 0
+    if isElement(player) then userId = player:getId() end
+	
+	if not ownerId then ownerId = 0 end
+	if not ownerType then ownerType = "" end
+	if not elementId then elementId = 0 end
+	if not model then model = 0 end
+	if not action then action = "" end
+
+    sqlLogs:queryExec("INSERT INTO ??_Vehicles (UserId, ElementId, OwnerId, OwnerType, Action, Model, Date) VALUES (?, ?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, elementId, ownerId, ownerType, action, model)
+end
+
 function StatisticsLogger:addKillLog(player, target, weapon)
 	local userId = 0
     if isElement(player) then userId = player:getId() else userId = player or 0 end
