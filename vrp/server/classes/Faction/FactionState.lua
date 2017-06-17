@@ -1197,7 +1197,7 @@ function FactionState:Event_toggleDuty(wasted)
 	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
 				client.m_FactionDuty = false

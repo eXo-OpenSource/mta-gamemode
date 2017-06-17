@@ -176,7 +176,7 @@ end
 
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
-		client:setAnimation("sword", "sword_4", 2200, true, true, false, false)
+		client:setAnimation("sword", "sword_4", 2200, true, false, false, false)
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
