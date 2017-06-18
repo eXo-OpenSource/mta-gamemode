@@ -297,7 +297,6 @@ function Vehicle:toggleEngine(player)
 				if VEHICLE_BIKES[self:getModel()] then -- Bikes
 					player:meChat(true, "öffnet sein Fahrradschloss!")
 					self:setEngineState(state)
-					setElementData(self, "syncEngine", state)
 					return true
 				else
 					if not self.m_StartingEnginePhase then
@@ -310,8 +309,19 @@ function Vehicle:toggleEngine(player)
 								other:triggerEvent("vehicleEngineStart", self)
 							end
 						end
-						setTimer(bind(self.setEngineState, self), 2000, 1, true)
-						setTimer(setElementData, 2000, 1 , self, "syncEngine", true)
+						setTimer(
+							function()
+								self:setEngineState(true)
+								local occs = self:getOccupants()
+								if occs then
+									nextframe(function() --this might not work because of ping resons
+										for i, v in pairs(occs) do
+											triggerClientEvent(v, "playSeatbeltAlarm", v, true)
+										end
+									end)
+								end
+							end,
+						2000, 1)
 						return true
 					end
 				end
@@ -322,7 +332,12 @@ function Vehicle:toggleEngine(player)
 				player:meChat(true, "verschließt sein Fahrradschloss!")
 			end
 			self:setEngineState(state)
-			setElementData(self, "syncEngine", state)
+			local occs = self:getOccupants()
+			if occs then
+				for i, v in pairs(occs) do
+					triggerClientEvent(v, "playSeatbeltAlarm", v, false)
+				end
+			end
 			return true
 		end
 	end
@@ -381,6 +396,7 @@ end
 
 function Vehicle:setEngineState(state)
 	setVehicleEngineState(self, state)
+	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
 end

@@ -39,6 +39,7 @@ function ItemSpeedCam:use(player)
 						ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
 						object.col = createColSphere(position, 10)
+						object.col:attach(object)
 						object.col.object = object
 						self.m_func = bind(self.onColShapeHit, self)
 						addEventHandler("onColShapeHit", object.col, self.m_func )
