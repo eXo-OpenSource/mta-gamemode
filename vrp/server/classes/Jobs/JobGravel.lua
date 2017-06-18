@@ -153,6 +153,8 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
+	else
+		player.gravelLoaded = false
 	end
 end
 
@@ -264,6 +266,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 				if gravel and isElement(gravel) then gravel:destroy() end
 			end)
 		else
+			self:updateGravelAmount("mined", false)
 			client:sendError(_("Das Lager ist voll! Bitte erst mit einem Dumper die Waren nach oben befördern!", client))
 			source:destroy()
 		end
