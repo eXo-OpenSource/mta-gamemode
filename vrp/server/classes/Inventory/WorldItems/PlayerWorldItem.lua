@@ -15,7 +15,7 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
         elseif self:getOwner() == player then
             return true
         else
-            player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName()))
+            if isElement(self:getOwner()) then player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName())) end
             return false
         end
     elseif action == WorldItem.Action.Collect then
@@ -24,7 +24,7 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
         elseif self:getOwner() == player then
             return true
         else
-            player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName()))
+            if isElement(self:getOwner()) then player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName())) end
             return false
         end
     elseif action == WorldItem.Action.Delete then
@@ -39,7 +39,7 @@ function PlayerWorldItem:hasPlayerPermissionTo(player, action)
         elseif self:getOwner() == player then
             return true
         else
-            player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName()))
+            if isElement(self:getOwner()) then player:sendError(_("Dieses Objekt gehört %s", player, self:getOwner():getName())) end
             return false
         end
     end
