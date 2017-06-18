@@ -43,13 +43,19 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 end
 
 function WorldItem:virtual_destructor()
-	self.m_Object:destroy()
+	if isElement(self.m_Object) then
+		self.m_Object:destroy()
+	end
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
 function WorldItem:onCollect(player, resendList, id, type)
 	if self:getMovingPlayer() then 
 		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
+		return false 
+	end
+	if not isElement(self:getObject()) then 
+		player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
 		return false 
 	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Collect) then
@@ -70,6 +76,10 @@ end
 
 function WorldItem:onDelete(player, resendList, id, type)
 	if player then
+		if not isElement(self:getObject()) then 
+			player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
+			return false 
+		end
 		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 			return false
 		end
@@ -87,6 +97,10 @@ function WorldItem:onMove(player)
 		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
 		return false 
 	end
+	if not isElement(self:getObject()) then 
+		player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
+		return false 
+	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Move) then
 		return false
 	end
@@ -94,6 +108,10 @@ function WorldItem:onMove(player)
 	addEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
 	self.m_Item:startObjectPlacing(player,
 		function(item, position, rotation)
+			if not isElement(self:getObject()) then 
+				player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
+				return false 
+			end
 			if position then -- item moved
 				self.m_Object:setPosition(position)
 				self.m_Object:setRotation(0, 0, rotation)

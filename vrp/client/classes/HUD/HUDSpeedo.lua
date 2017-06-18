@@ -74,6 +74,10 @@ function HUDSpeedo:draw()
 	end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
+	if not vehicle then  -- death in veh fix
+		self:hide()
+		return 
+	end 
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end

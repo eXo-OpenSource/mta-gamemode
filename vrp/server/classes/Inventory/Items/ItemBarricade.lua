@@ -26,11 +26,10 @@ function ItemBarricade:use(player)
 				self.m_WorldItem = FactionWorldItem:new(self, player:getFaction(), position, rotation, true, player)
 				self.m_WorldItem:setFactionSuperOwner(true)
 				addEventHandler("onClientBreakItem", self.m_WorldItem.m_Object, function()
-					self.m_WorldItem:onDelete()
+					source.m_Super:onDelete()
 				end)
 				if self:getModelId() == 1238 then
 					addEventHandler("worldItemToggleConeLight", self.m_WorldItem.m_Object, function()
-						outputDebug(self.m_WorldItem.m_Object)
 						self:toggleConeLight(source, client)
 					end)
 				end
