@@ -483,19 +483,24 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
 		if not self:getData("isInDeathMatch") then
 			self:setReviveWeapons()
 		end
 		killPed(self)
 	end
+
 	WearableManager:getSingleton():removeAllWearables(self)
+
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	self:triggerEvent("checkNoDm")
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
+
+	VehicleTexture.requestTextures(self)
 end
 
 function Player:respawn(position, rotation, bJailSpawn)

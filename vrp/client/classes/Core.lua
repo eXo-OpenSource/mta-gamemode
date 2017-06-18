@@ -152,7 +152,6 @@ function Core:ready()
 	DrivingSchool:new()
 	Help:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
-
 end
 
 function Core:afterLogin()
@@ -210,7 +209,6 @@ function Core:afterLogin()
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
-	triggerServerEvent("requestVehicleTextures", localPlayer)
 
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
