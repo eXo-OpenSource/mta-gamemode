@@ -488,7 +488,6 @@ function VehicleManager:loadGroupVehicles(group)
 	end
 end
 
-
 function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
 		local vehicle = getPedOccupiedVehicle(player)

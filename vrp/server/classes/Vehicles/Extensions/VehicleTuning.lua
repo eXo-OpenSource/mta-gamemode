@@ -73,7 +73,7 @@ function VehicleTuning:createNew()
 	self.m_Tuning["Color2"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
 	self.m_Tuning["ColorLight"] = {255, 255, 255}
 	self.m_Tuning["GTATuning"] = {}
-	self.m_Tuning["Neon"] = false
+	self.m_Tuning["Neon"] = 0
 	self.m_Tuning["NeonColor"] = {0, 0, 0}
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
@@ -104,7 +104,7 @@ end
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
-	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
+	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon") and 1 or 0
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 	if self.m_Vehicle.m_Texture then
 		self.m_Tuning["Texture"][self.m_Vehicle.m_Texture:getTextureName() or "vehiclegrunge256"] = self.m_Vehicle.m_Texture:getPath() or ""
@@ -112,6 +112,8 @@ function VehicleTuning:loadTuningFromVehicle()
 end
 
 function VehicleTuning:updateNeon()
+	if self.m_Tuning["Neon"] == true then self.m_Tuning["Neon"] = 1 end -- Workaround, remove until irgendwann
+
 	local state = self.m_Tuning["Neon"] == 1
 	self.m_Vehicle:setData("Neon", state, true)
 	if state == true then
