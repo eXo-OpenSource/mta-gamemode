@@ -399,7 +399,7 @@ end
 function FactionManager:Event_factionRespawnVehicles()
 	if client:getFaction() then
 		local faction = client:getFaction()
-		if faction:getPlayerRank(client) >= FactionRank.Rank4 or (faction:getPlayerRank(client) >= FactionRank.Rank3 and client:getFactionId == 3) then
+		if faction:getPlayerRank(client) >= FactionRank.Rank4 or (faction:getPlayerRank(client) >= FactionRank.Rank3 and client:getFactionId() == 3) then
 			faction:respawnVehicles()
 		else
 			client:sendError(_("Die Fahrzeuge können erst ab Rang %d respawnt werden!", client, FactionRank.Manager))
