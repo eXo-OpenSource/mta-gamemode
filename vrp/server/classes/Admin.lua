@@ -291,7 +291,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" or cmd == "unprison" then
+        if cmd == "spect" or cmd == "unprison" or cmd == "freeze" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
         elseif cmd == "rkick" or cmd == "permaban" then
@@ -319,6 +319,17 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:goToPlayer(admin, func, target:getName())
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
+		elseif func == "freeze" then
+            if target:isFrozen() then
+				target:setFrozen(false)
+				self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+			else
+				if target.vehicle then target:removeFromVehicle() end
+				target:setFrozen(true)
+				self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+			end
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
 			outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)

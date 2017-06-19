@@ -77,6 +77,7 @@ RANK = r2
 ADMIN_RANK_PERMISSION = {
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
+	["freeze"] = RANK.Supporter,
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
@@ -118,6 +119,7 @@ ADMIN_RANK_PERMISSION = {
 	["moveWorldItem"] = RANK.Moderator,
 	["deleteWorldItem"] = RANK.Moderator,
 	["showWorldItemInformation"] = RANK.Supporter,
+
 }
 
 GroupRank = {

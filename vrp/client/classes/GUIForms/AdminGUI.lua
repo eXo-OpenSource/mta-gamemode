@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -113,9 +113,10 @@ function AdminGUI:constructor(money)
 
 	GUILabel:new(440, 130, 160, 30, _"Sonstiges:", tabSpieler)
 	self:addAdminButton("spect", "specten", 440, 170, 160, 30, Color.LightRed, tabSpieler)
-	self:addAdminButton("goto", "hin porten", 440, 210, 160, 30, Color.Green, tabSpieler)
-	self:addAdminButton("gethere", "her porten", 440, 250, 160, 30, Color.Green, tabSpieler)
-	self:addAdminButton("nickchange", "Nick ändern", 440, 290, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("freeze", "ent/freezen", 440, 210, 160, 30, Color.LightRed, tabSpieler)
+	self:addAdminButton("goto", "hin porten", 440, 250, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("gethere", "her porten", 440, 290, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("nickchange", "Nick ändern", 440, 330, 160, 30, Color.Orange, tabSpieler)
 
 	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", 610, 130, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 610, 170, 160, 30, Color.LightBlue, tabSpieler)
@@ -377,7 +378,7 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "showGroupVehicles" then
 		AdminVehicleGUI:new(self.m_SelectedPlayer, self, true)
 		self:close()
-	elseif func == "gethere" or func == "goto" or func == "spect" then
+	elseif func == "gethere" or func == "goto" or func == "spect" or func == "freeze" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
