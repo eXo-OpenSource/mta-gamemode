@@ -138,8 +138,9 @@ end
 
 function super(self)
 	if isElement(self) then
-		assert(oop.elementInfo[self], ("Cannot get the superclass of this element\n%s"):format(debug.traceback())) -- at least: not yet
-		self = oop.elementInfo[self]
+		--assert(oop.elementInfo[self], ("Cannot get the superclass of this element\n%s"):format(debug.traceback()))
+		--self = oop.elementInfo[self]
+		return {}
 	end
 	local metatable = getmetatable(self)
 	if metatable then return metatable.__super
