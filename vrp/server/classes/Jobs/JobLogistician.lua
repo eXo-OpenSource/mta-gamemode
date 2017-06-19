@@ -13,19 +13,32 @@ function JobLogistician:constructor()
 	Job.constructor(self)
 
 	-- Create Cranes
-	self.m_Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
-	self.m_Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
+	self.m_Cranes = {
+		["LS-Docks"] = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6),
+		["Fleischberg"] = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30),
+		["Las Venturas"] = Crane:new(1607.5, 2300.1, 16.40, 1607.5, 2371.20, 16.40),
+		["San Fierro"] = Crane:new(-2078, 1360.40, 13, -2078, 1425.40, 13),
+	}
 
-	self.m_Marker1 = self:createCraneMarker(self.m_Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0)
-	self.m_Marker2 = self:createCraneMarker(self.m_Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180)
+	self.m_Markers = {
+		["LS-Docks"] = self:createCraneMarker(self.m_Cranes["LS-Docks"], Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0),
+		["Fleischberg"] = self:createCraneMarker(self.m_Cranes["Fleischberg"], Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180),
+		["Las Venturas"] = self:createCraneMarker(self.m_Cranes["Las Venturas"], Vector3(1607.5, 2300.10, 9.8), Vector3(1607.5, 2299.10, 11.4), 180),
+		["San Fierro"] = self:createCraneMarker(self.m_Cranes["San Fierro"], Vector3(-2078, 1360.40, 6.4), Vector3(-2078, 1358.40, 7.8), 180),
+	}
 
-	self.m_VehicleSpawner1 = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
-	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
-	self.m_VehicleSpawner1:disable()
+	self.m_VehicleSpawners = {
+		["LS-Docks"] = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self)),
+		["Fleischberg"] = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self)),
+		["Las Venturas"] = VehicleSpawner:new(1595.93, 2294.12, 9.8, {"DFT-30"}, 220, bind(Job.requireVehicle, self)),
+		["San Fierro"] = VehicleSpawner:new(-2067.19, 1341, 6.1, {"DFT-30"}, 180, bind(Job.requireVehicle, self)),
 
-	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
-	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
-	self.m_VehicleSpawner2:disable()
+	}
+
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+		spawner:disable()
+	end
 
 	self:changeLoan()
 
@@ -34,8 +47,9 @@ function JobLogistician:constructor()
 end
 
 function JobLogistician:start(player)
-	self.m_VehicleSpawner1:toggleForPlayer(player, true)
-	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner:toggleForPlayer(player, true)
+	end
 end
 
 function JobLogistician:checkRequirements(player)
@@ -51,8 +65,9 @@ function JobLogistician:changeLoan()
 end
 
 function JobLogistician:stop(player)
-	self.m_VehicleSpawner1:toggleForPlayer(player, false)
-	self.m_VehicleSpawner2:toggleForPlayer(player, false)
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner:toggleForPlayer(player, false)
+	end
 	self:destroyJobVehicle(player)
 	if isElement(player.LogisticanContainer) then player.LogisticanContainer:destroy() end
 	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
@@ -96,6 +111,17 @@ function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)
 	return marker
 end
 
+function JobLogistician:getRandomTargetMarker(sourceMarker)
+	local markers = {}
+	for name, marker in pairs(self.m_Markers) do
+		if marker ~= sourceMarker then
+			table.insert(markers, marker)
+		end
+	end
+
+	return markers[math.random(1, #markers)]
+end
+
 function JobLogistician:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getOccupiedVehicle() and hitElement.vehicleSeat == 0 and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
@@ -122,14 +148,8 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						hitElement:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", hitElement))
 					else
 						crane:loadContainer(veh, hitElement)
-
-						if source == self.m_Marker1 then
-							self:setNewDestination(hitElement, self.m_Marker2, crane)
-						elseif source == self.m_Marker2 then
-							self:setNewDestination(hitElement, self.m_Marker1, crane)
-						else
-							hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
-						end
+						local target = self:getRandomTargetMarker(source)
+						self:setNewDestination(hitElement, target, crane)
 					end
 				end
 			else
