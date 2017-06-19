@@ -16,7 +16,7 @@ end
 
 function MTAFixes:onTrailerAttach(veh)
 	local driver = getVehicleOccupant(veh)
-	if driver then
+	if driver and getElementType(driver) == "player" then
 		if self.m_TrailerSyncer[source] ~= driver then
 			self.m_TrailerSyncer[source] = driver
 			setElementSyncer(source, driver) -- Set Sycronisation

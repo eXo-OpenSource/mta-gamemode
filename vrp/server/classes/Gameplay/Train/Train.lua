@@ -7,11 +7,8 @@ function Train:new(Id, Track, Node, ...)
     obj.m_EngineModel = Id
     obj.m_RenderCol = createColSphere(obj.position, 200)
     obj.m_RenderCol:attach(obj)
-    obj.m_Blip = Blip:new("Train.png", obj.position.x, obj.position.y, root, 200)
-    setTimer(function()
-        obj.m_Blip:attach(obj)
-    end, 10000, 1)
     obj:setCollisionsEnabled(false)
+    obj:setAlpha(140)
 	return obj
 end
 
@@ -111,5 +108,5 @@ function Train:update()
         self.m_Speed = 0.6
     end
 
-	--triggerClientEvent("onTrainSync", self, x, y, z, self.m_Speed/1.398356930606537) -- Speed = 1 => TrainSpeed = 0.715125
+	triggerClientEvent("onTrainSync", self, x, y, z, self.m_Visible and self.m_VisibleVehs[1])
 end

@@ -24,10 +24,16 @@ function TrainManager:constructor()
     }
     self.m_SlowPositions =
     {
-        ["doherty"]         = true,
-        ["prickle pine"]    = true,
-        ["linden side"]     = true,
-        ["verdant bluffs"]  = true,
+        ["doherty"]         	= true,
+        ["prickle pine"]    	= true,
+        ["linden side"]    		= true,
+        ["verdant bluffs"]  	= true,
+        ["conference center"]  	= true,
+        ["marina"]  			= true,
+        ["market"]  			= true,
+        ["market station"]  	= true,
+		["verona beach"]		= true,
+		["vinewood"]			= true,
 		["cranberry station"]   = true, 
         ["linden station"]      = true,
         ["sobell rail yards"]   = true,
@@ -118,7 +124,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 	self.m_Tracks[trackIndex][nodeIndex] = node
 
 	
-	if DEBUG then
+	--[[if DEBUG then
 		local marker = Marker.create(node.pos, "cylinder", 2)
 		marker:setColor(6, 163, 212, 150)
 
@@ -129,7 +135,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 		end)
 
 		node.DEBUG = {Marker = marker}
-	end
+	end]]
 	
 	return node
 end
@@ -177,8 +183,7 @@ function TrainManager:updateTrains()
 end
 
 function TrainManager.onInitFinished()
-	train = Train:new(537, 1, 255, 0.8, {
-        569,
+	Train:new(537, 1, 255, 0.8, {
         569,
         569,
         569,
@@ -186,48 +191,6 @@ function TrainManager.onInitFinished()
         569,
         590,
     })
-
-	--[[
-	-- Train at Linden Stationw
-	local train = Train:new(538, 1, 1, 0.8)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	for i = 1, 3 do
-		setTimer(function ()
-			local trailer = createVehicle(570, train:getPosition())
-			train.Trailers[#train.Trailers+1] = trailer
-			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-		end, 50*i, 1)
-	end
-
-	-- Tram in Los Santos
-	local train = Train:new(449, 2, 1, 0.4)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	setTimer(function ()
-		local trailer = createVehicle(449, train:getPosition())
-		attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-	end, 50, 1)
-
-	-- Train at Los Santos
-	local train = Train:new(537, 1, 599, 0.8)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	for i = 1, 5 do
-		setTimer(function ()
-			local trailer
-			if i == 1 then
-				trailer = createVehicle(537, train:getPosition())
-			elseif i ~= 5 then
-				trailer = createVehicle(590, train:getPosition())
-			else
-				trailer = createVehicle(569, train:getPosition())
-			end
-			train.Trailers[#train.Trailers+1] = trailer
-			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-		end, 50*i, 1)
-	end
-	--]]
 end
 
 
