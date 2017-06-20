@@ -52,8 +52,8 @@ function HTTPTextureReplacer:downloadTexture()
 			end
 
 			-- process next download (if exists)
-			self:processNext()
-			--nextframe(self.processNext, self)
+			--self:processNext()
+			nextframe(self.processNext, self)
 		end
 	)()
 end
