@@ -20,7 +20,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 					self.m_InTarget = true
 
 					if self.onTargetted then
-						source:sendShortMessage(_("Achtung du überfällst den NPC in 5 Sekunden, wenn du weiter auf ihn zielst!", source))
+						source:sendWarning(_("Du überfällst den NPC in 5 Sekunden, wenn du weiter auf ihn zielst!", source))
 						local targetTimer = setTimer(function(player)
 							if player:getTarget() == self then
 								self:onTargetted(player)
@@ -31,7 +31,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 
 					-- Block inTarget for a while | TODO: Optimize this
 					setTimer(function(player)
-						if player:getTarget() == false then
+						if not isElement(player) or getElementType(player) ~= "player" or player:getTarget() == false then
 							self.m_InTarget = false
 							self:setAnimation(nil)
 							killTimer(sourceTimer)

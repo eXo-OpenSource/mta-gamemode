@@ -51,7 +51,6 @@ function JobPizza:onPizzaDeliver(distance, time)
 		local duration = getRealTime().timestamp - client.m_LastJobAction
 		local points = 0
 		client.m_LastJobAction = getRealTime().timestamp
-		
 		if chance(30) then
 			points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
 			client:givePoints(points)

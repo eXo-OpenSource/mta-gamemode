@@ -69,6 +69,7 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
         sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
 end
 
+
 function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, distance, points, amount)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
