@@ -24,8 +24,6 @@ function TextureReplacer:constructor(element, textureName, options)
 	self.m_LoadingMode = core:get("Other", "TextureMode", 1)
 	self.m_Active      = true
 
-
-
 	self.m_OnElementDestory   = bind(delete, self)
 	self.m_OnElementStreamOut = bind(self.onStramIn, self)
 	self.m_OnElementStreamIn  = bind(self.onStramOut, self)
@@ -124,21 +122,15 @@ function TextureReplacer.removeCached(path)
 end
 
 function TextureReplacer.getPixels(path)
-	local file = fileOpen(("%s.pixels"):format(path))
+	local filePath = ("%s.pixels"):format(path)
 	local pixels = false
-	if file then
-		pixels = fileRead(file, fileGetSize(file))
-		fileClose(file)
+	if fileExists(filePath) then
+		local file = fileOpen(filePath)
+		if file then
+			pixels = fileRead(file, fileGetSize(file))
+			fileClose(file)
+		end
 	end
 
 	return pixels
-end
-
--- getter methods
-function TextureReplacer:getTexture()
-	return self.m_Texture
-end
-
-function TextureReplacer:getShader()
-	return self.m_Shader
 end
