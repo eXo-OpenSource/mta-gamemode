@@ -8,7 +8,7 @@
 HouseManager = inherit(Singleton)
 addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant","tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted"}
 
-local ROB_DELAY = 1000*60*15
+local ROB_DELAY = DEBUG and 50 or 1000*60*15
 
 function HouseManager:constructor()
 	local st, count = getTickCount(), 0
