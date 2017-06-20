@@ -264,7 +264,7 @@ end
 
 function RobableShop:removeBag(player, logout)
 	if player.vehicle and logout then player.vehicle:setVelocity(0, 0, 0.2) end --to prevent bag from being stuck in vehicle
-	player:detachPlayerObject(self.m_Bag)
+	player:detachPlayerObject(self.m_Bag, logout)
 
 	removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
 	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)

@@ -1184,16 +1184,18 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 	self:detachPlayerObject(object)
 end
 
-function Player:detachPlayerObject(object)
+function Player:detachPlayerObject(object, collisionNextFrame)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		object:detach(self)
 		object:setPosition(self.position + self.matrix.forward)
-		nextframe(function() --to "prevent" it from spawning in another player
-			if not object:getAttachedElements() then
+		if collisionNextFrame then
+			nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
 				object:setCollisionsEnabled(true)
-			end
-		end)
+			end)
+		else
+			object:setCollisionsEnabled(true)
+		end
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 		self:toggleControlsWhileObjectAttached(true)
