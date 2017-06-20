@@ -711,3 +711,6 @@ TEXTURE_SYSTEM_HELP =
 	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!\n\nZum übernehmen bitte reconnecten!",
 	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.\n\nZum übernehmen bitte reconnecten!",
 }
+
+TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3}
+for i, v in pairs(TEXTURE_LOADING_MODE) do TEXTURE_LOADING_MODE[v] = i end

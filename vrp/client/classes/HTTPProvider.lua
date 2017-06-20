@@ -131,7 +131,7 @@ function HTTPProvider:start(force)
 	end
 end
 
-function HTTPProvider:startCustom(fileName, targetPath, encrypt)
+function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 	-- request url access for download
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("file count", 1)
@@ -145,7 +145,7 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt)
 		end
 
 		if responseData ~= "" then
-			local filePath = ("%s/%s.texture"):format(targetPath, fileName)
+			local filePath = ("%s/%s%s"):format(targetPath, fileName, encrypt and ".texture" or "")
 			if fileExists(filePath) then
 				fileDelete(filePath)
 			end
@@ -158,6 +158,17 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt)
 				end
 				file:setPos(file:getSize())
 				file:close()
+			end
+
+			if raw then
+				local pixelFile = fileCreate(("%s.pixels"):format(filePath))
+				if pixelFile then
+					local texture = DxTexture(filePath, "dxt5", true, "wrap")
+					pixelFile:write(texture:getPixels())
+					texture:destroy()
+					pixelFile:close()
+				end
+				fileDelete(filePath)
 			end
 
 			-- success
