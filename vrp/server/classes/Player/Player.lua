@@ -1190,7 +1190,9 @@ function Player:detachPlayerObject(object)
 		object:detach(self)
 		object:setPosition(self.position + self.matrix.forward)
 		nextframe(function() --to "prevent" it from spawning in another player
-			object:setCollisionsEnabled(true)
+			if not object:getAttachedElements() then
+				object:setCollisionsEnabled(true)
+			end
 		end)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
