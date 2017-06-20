@@ -156,11 +156,11 @@ function House:rentHouse(player)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if not self.m_Keys[player:getId()] then
 		if not self.m_Owner or self.m_Owner == 0 then
-			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
+			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player))
 			return
 		end
 		if self.m_RentPrice <= 0 then
-			player:sendError(_("Einmieten fehlgeschlagen - Der Eigentümer erlaubt kein einmieten!", player), 255, 0, 0)
+			player:sendError(_("Einmieten fehlgeschlagen - Der Eigentümer erlaubt kein einmieten!", player))
 			return
 		end
 

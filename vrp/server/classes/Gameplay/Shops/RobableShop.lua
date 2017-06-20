@@ -263,7 +263,7 @@ function RobableShop:onBagClick(button, state, player)
 end
 
 function RobableShop:removeBag(player, logout)
-	if player.vehicle and logout then player.vehicle:setVelocity(0, 0, 0.2) end --to prevent bag from being stuck in vehicle
+	if player.vehicle and logout then player.vehicle:setVelocity(0, 0, 0.1) end --to prevent bag from being stuck in vehicle
 	player:detachPlayerObject(self.m_Bag, logout)
 
 	removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
@@ -302,7 +302,7 @@ function RobableShop:onDamage(attacker, weapon)
 				source.RobableShopDmgPause = true
 				local source = source -- source in timer fix
 				setTimer(function() source.RobableShopDmgPause = false end, 1500, 1)
-				if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(attacker) then
+				if source:getPlayerAttachedObject() and source:getPlayerAttachedObject():getModel() == 1550 and self:checkBagAllowed(attacker) then
 					self:removeBag(source)
 					self:giveBag(attacker)
 				else
