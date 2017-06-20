@@ -8,18 +8,9 @@ ENV TZ=Europe/Berlin
 RUN echo $TZ | tee /etc/timezone && \
 	dpkg-reconfigure --frontend noninteractive tzdata
 
-# Add required libraries
-ADD build/libs/libmysqlclient.so.16 /usr/lib/
-
-# Add entrypoint script
-ADD build/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-# Setup user and change to the new user
-RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa
-USER mtasa
-
-RUN	cd /var/lib/mtasa && \
+# Setup user and change to its home
+RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
+	cd /var/lib/mtasa && \
 
 	# Download and install MTA Server
 	wget -O mta.tar.gz https://nightly.mtasa.com/?multitheftauto_linux_x64-1.5.4-rc-latest && \
@@ -45,10 +36,16 @@ EXPOSE 8080/tcp
 ADD build/workerserver /var/lib/mtasa/workerserver
 ADD build/ml_gps.so /var/lib/mtasa/x64/modules/ml_gps.so
 
+# Add entrypoint script
+ADD build/docker-entrypoint.sh /docker-entrypoint.sh
+
 # Add MTA configs and modules
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
 ADD build/modules/* /var/lib/mtasa/x64/modules/
 ADD vrp/server/config/config.json.dist /var/lib/mtasa/config.json.dist
+
+# Add required libraries
+ADD build/libs/libmysqlclient.so.16 /usr/lib/
 
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
@@ -57,7 +54,9 @@ ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
 RUN rm /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config/*
 
 # Update permissions
-RUN chmod +x /var/lib/mtasa/workerserver
+RUN chown -R mtasa:mtasa /var/lib/mtasa && \
+	chmod +x /var/lib/mtasa/workerserver && \
+	chmod +x /docker-entrypoint.sh
 
 # Expose config directory
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
@@ -67,4 +66,5 @@ VOLUME /var/lib/mtasa/mods/deathmatch/logs
 VOLUME /var/lib/mtasa/mods/deathmatch/dumps
 
 # Start commands
+USER mtasa
 CMD ["/docker-entrypoint.sh"]
