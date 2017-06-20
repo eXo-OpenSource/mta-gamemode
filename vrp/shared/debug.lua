@@ -128,11 +128,12 @@ function runString(commandstring, source, suppress)
 	output(sourceName.." executed command: "..commandstring, outputPlayer)
 	local notReturned
 	--First we test with return
-	local commandFunction,errorMsg = loadstring("return "..commandstring)
+	local runConstants = sourceName ~= "Console" and "local me = getPlayerFromName('"..sourceName.."') local gPFN = getPlayerFromName local my = me" or ""
+	local commandFunction,errorMsg = loadstring(runConstants.." return "..commandstring)
 	if errorMsg then
 		--It failed.  Lets try without "return"
 		notReturned = true
-		commandFunction, errorMsg = loadstring(commandstring)
+		commandFunction, errorMsg = loadstring(runConstants.." "..commandstring)
 	end
 	if errorMsg then
 		--It still failed.  Print the error message and stop the function
@@ -156,13 +157,15 @@ function runString(commandstring, source, suppress)
 			else
 				resultsString = resultsString..", "
 			end
-			local resultType = type(results[i])
-			if isElement(results[i]) then
-				resultType = "element:"..getElementType(results[i])
+			if type(results[i]) ~= "table" then
+				resultsString = resultsString..inspect(results[i])
+			else
+				resultsString = resultsString..tostring(results[i])
 			end
-			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
-		output("Command results: "..resultsString, outputPlayer)
+		if resultsString ~= "" then
+			output("Command results: "..resultsString, outputPlayer)
+		end
 		return resultsString
 	elseif not errorMsg then
 		output("Command executed!", outputPlayer)
