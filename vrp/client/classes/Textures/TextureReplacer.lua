@@ -97,10 +97,7 @@ end
 -- Cache methods
 function TextureReplacer.getCached(path)
 	if not TextureReplacer.Map.TEXTURE_CACHE[path] then
-		local pixels = TextureReplacer.getPixels(path)
-		if not pixels then
-			return nil
-		end
+		local pixels = TextureReplacer.getPixels(path) or path -- if we dont have a pixels file use normal load
 		TextureReplacer.Map.TEXTURE_CACHE[path] = {
 			texture = DxTexture(pixels),
 			counter = 0,
