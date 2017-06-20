@@ -32,6 +32,7 @@ function DrugsHeroin:use( player )
 end
 
 function DrugsHeroin:expire( player )
+  if not isElement(player) or getElementType(player) ~= "player" then return false end
   player.m_DrugOverDose = 0
   player:triggerEvent("onClientItemExpire", "Heroin" )
 end

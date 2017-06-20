@@ -36,11 +36,13 @@ function DrugsWeed:use( player )
 end
 
 function DrugsWeed:expire( player )
+  if not isElement(player) or getElementType(player) ~= "player" then return false end
   player.m_DrugOverDose = 0
   player:triggerEvent("onClientItemExpire", "Weed" )
 end
 
 function DrugsWeed:effect( player )
+  if not isElement(player) or getElementType(player) ~= "player" then return false end
   local health = getElementHealth( player )
   if health < 100 then
     setElementHealth( player, health + DrugsWeed.m_HealValue )
