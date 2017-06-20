@@ -10,7 +10,7 @@ RobableShop = inherit(Object)
 addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
-local ROBSHOP_PAUSE = 30*60 --in Sec
+local ROBSHOP_PAUSE = DEBUG and 0 or 30*60 --in Sec
 
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
@@ -262,7 +262,8 @@ function RobableShop:onBagClick(button, state, player)
 	end
 end
 
-function RobableShop:removeBag(player)
+function RobableShop:removeBag(player, logout)
+	if player.vehicle and logout then player.vehicle:setVelocity(0, 0, 0.2) end --to prevent bag from being stuck in vehicle
 	player:detachPlayerObject(self.m_Bag)
 
 	removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
@@ -329,7 +330,7 @@ function RobableShop:onVehicleExit(veh)
 end
 
 function RobableShop:onPlayerQuit()
-	self:removeBag(source)
+	self:removeBag(source, true)
 	self.m_Gang:removePlayerMarker(source)
 end
 

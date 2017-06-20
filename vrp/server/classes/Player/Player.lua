@@ -1189,7 +1189,9 @@ function Player:detachPlayerObject(object)
 	if PlayerAttachObjects[model] then
 		object:detach(self)
 		object:setPosition(self.position + self.matrix.forward)
-		object:setCollisionsEnabled(true)
+		nextframe(function() --to "prevent" it from spawning in another player
+			object:setCollisionsEnabled(true)
+		end)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 		self:toggleControlsWhileObjectAttached(true)
