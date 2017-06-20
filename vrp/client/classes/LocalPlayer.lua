@@ -587,7 +587,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			end
 		)
 
-		if rank >= RANK.Developer then
+		if rank >= RANK.Servermanager then
 			addCommandHandler("dcrun", function(cmd, ...)
 				if self:getRank() >= RANK.Servermanager then
 					local codeString = table.concat({...}, " ")

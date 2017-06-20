@@ -52,6 +52,7 @@ function ItemFood:use(player)
 	player:setAnimation(block, animation, time, true, false, false)
 	setTimer(function()
 		item:destroy()
+		if not isElement(player) or getElementType(player) ~= "player" then return false end
 		player:setHealth(player:getHealth()+ItemSettings["Health"])
 		player:setAnimation()
 	end, time, 1)
