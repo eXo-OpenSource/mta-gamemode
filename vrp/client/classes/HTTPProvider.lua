@@ -163,7 +163,7 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 			if raw then
 				local pixelFile = fileCreate(("%s.pixels"):format(filePath))
 				if pixelFile then
-					local texture = DxTexture(filePath, "dxt5", true, "wrap")
+					local texture = DxTexture(filePath)
 					pixelFile:write(texture:getPixels())
 					texture:destroy()
 					pixelFile:close()

@@ -97,16 +97,12 @@ end
 -- Cache methods
 function TextureReplacer.getCached(path)
 	if not TextureReplacer.Map.TEXTURE_CACHE[path] then
-		local file = fileOpen(("%s.pixels"):format(path))
-		local pixels = ""
-		if file then
-			pixels = fileRead(file, fileGetSize(file))
-			fileClose(file)
-		else
+		local pixels = TextureReplacer.getPixels(path)
+		if not pixels then
 			return nil
 		end
 		TextureReplacer.Map.TEXTURE_CACHE[path] = {
-			texture = DxTexture(pixels, "dxt5", true, "wrap"),
+			texture = DxTexture(pixels),
 			counter = 0,
 			tick    = getTickCount(),
 		}
@@ -128,6 +124,17 @@ function TextureReplacer.removeCached(path)
 	end
 
 	return false
+end
+
+function TextureReplacer.getPixels(path)
+	local file = fileOpen(("%s.pixels"):format(path))
+	local pixels = false
+	if file then
+		pixels = fileRead(file, fileGetSize(file))
+		fileClose(file)
+	end
+
+	return pixels
 end
 
 -- getter methods
