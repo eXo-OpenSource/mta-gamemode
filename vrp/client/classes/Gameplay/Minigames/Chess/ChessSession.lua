@@ -47,7 +47,7 @@ function ChessSession:Event_onClockUpdate( turn, mTable )
 		self.m_ChessGraphics.m_Clock:update( turn, mTable)
 	end
 end
-function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)#
+function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)
 	localPlayer.m_InChessGame = true
 	self.m_Team = localTeam
 	self.m_Players = players
