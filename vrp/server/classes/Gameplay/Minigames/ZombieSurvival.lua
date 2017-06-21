@@ -123,9 +123,9 @@ function ZombieSurvival:removePlayer(player)
 	player:setInterior(0)
 	player:setPosition(-35.72, 1380.00, 9.42)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
-
+	player:setAlpha(255)
 	MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
-	self.m_ZombieKills[player] = false
+	self.m_ZombieKills[player] = nil
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
