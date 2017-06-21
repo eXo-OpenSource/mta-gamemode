@@ -1,8 +1,7 @@
 HTTPTextureReplacer = inherit(TextureReplacer)
 HTTPTextureReplacer.BasePath = "http://picupload.pewx.de/textures/"
 HTTPTextureReplacer.ClientPath = "files/images/Textures/remote/%s"
-HTTPTextureReplacer.Queue = Stack:new()
-HTTPTextureReplacer.Locked = false
+HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
@@ -25,13 +24,13 @@ function HTTPTextureReplacer:load()
 		self:addToQeue()
 		return TextureReplacer.Status.DELAYED
 	else
-		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_FileName))
+		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
 		return self:attach()
 	end
 end
 
 function HTTPTextureReplacer:unload()
-	local a = TextureReplacer.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_FileName))
+	local a = TextureReplacer.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
 end
@@ -52,7 +51,6 @@ function HTTPTextureReplacer:downloadTexture()
 			end
 
 			-- process next download (if exists)
-			--self:processNext()
 			nextframe(self.processNext, self)
 		end
 	)()
@@ -60,16 +58,16 @@ end
 
 function HTTPTextureReplacer:processNext()
 	if HTTPTextureReplacer.Queue:empty() then
-		HTTPTextureReplacer.Locked = false
+		HTTPTextureReplacer.Queue:unlock()
 	else
-		HTTPTextureReplacer.Queue:pop():downloadTexture()
+		HTTPTextureReplacer.Queue:pop_back(1):downloadTexture()
 	end
 end
 
 function HTTPTextureReplacer:addToQeue()
-	HTTPTextureReplacer.Queue:push(self)
-	if not HTTPTextureReplacer.Locked then
-		HTTPTextureReplacer.Locked = true
+	HTTPTextureReplacer.Queue:push_back(self)
+	if not HTTPTextureReplacer.Queue:locked() then
+		HTTPTextureReplacer.Queue:lock()
 		self:processNext()
 	end
 end
