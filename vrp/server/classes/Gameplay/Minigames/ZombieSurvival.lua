@@ -129,9 +129,10 @@ function ZombieSurvival:removePlayer(player)
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
-	if #self:getPlayers() == 0 then
-		delete(self)
-	end
+	--if #self:getPlayers() == 0 then
+	--	delete(self)
+	--end
+	delete(self) -- SP only
 
 	-- Check for Freaks Achievement
 	if MinigameManager:getSingleton():checkForFreaks(player) then
