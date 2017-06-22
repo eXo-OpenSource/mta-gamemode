@@ -9,46 +9,35 @@ function TrainManager:constructor()
 		--"files/data/traintracks/tracks3.dat",
 		--"files/data/traintracks/tracks4.dat",
 	}
-	if DEBUG then
-		self.m_UpdateInterval = 50
-	else
-		self.m_UpdateInterval = 1000
-	end
+
+	self.m_UpdateInterval = 1000
 
     self.m_VerySlowPositions =
     {
-        ["cranberry station"]   = true,
-        ["unity station"]       = true,
-        ["linden station"]      = true,
-        ["sobell rail yards"]   = true,
-        ["yellow bell station"] = true,
-        ["market station"]      = true,
-    }
-    self.m_SlowPositions =
-    {
-        ["el corona"]       = true,
+        ["unity station"]   = true,
+		["el corona"]       = true,
         ["jefferson"]       = true,
         ["east los santos"] = true,
         ["idlewood"]        = true,
         ["willowfield"]     = true,
-        ["doherty"]         = true,
-        ["prickle pine"]    = true,
-        ["linden side"]     = true,
-        ["verdant bluffs"]  = true,
+        ["las colinas"]     = true,
     }
-    self.m_VeryFastPositions =
+    self.m_SlowPositions =
     {
-        ["richman"]                 = true,
-        ["los santos"]              = true,
-        ["whetstone"]               = true,
-        ["easter basin"]            = true,
-        ["san fierro"]              = true,
-        ["las venturas"]            = true,
-        ["kincaid bridge"]          = true,
-        ["tierra robada"]           = true,
-        ["bone county"]             = true,
-        ["lil' probe inn"]          = true,
-        ["frederick bridge"]        = true,
+        ["doherty"]         	= true,
+        ["prickle pine"]    	= true,
+        ["linden side"]    		= true,
+        ["verdant bluffs"]  	= true,
+        ["conference center"]  	= true,
+        ["marina"]  			= true,
+        ["market"]  			= true,
+        ["market station"]  	= true,
+		["verona beach"]		= true,
+		["vinewood"]			= true,
+		["cranberry station"]   = true, 
+        ["linden station"]      = true,
+        ["sobell rail yards"]   = true,
+        ["yellow bell station"] = true,
     }
 
 	-- Finally load the tracks
@@ -134,8 +123,8 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 	local node = {index = nodeIndex, track = trackIndex, pos = pos}
 	self.m_Tracks[trackIndex][nodeIndex] = node
 
-	--[[
-	if DEBUG then
+	
+	--[[if DEBUG then
 		local marker = Marker.create(node.pos, "cylinder", 2)
 		marker:setColor(6, 163, 212, 150)
 
@@ -146,8 +135,8 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 		end)
 
 		node.DEBUG = {Marker = marker}
-	end
-	]]
+	end]]
+	
 	return node
 end
 
@@ -194,82 +183,22 @@ function TrainManager:updateTrains()
 end
 
 function TrainManager.onInitFinished()
-	local train = Train:new(537, 1, 133, 0.8)
-	train.Trailers = {}
-	local trailers = {
-		537,
-        569,
-        590,
-        590,
-        590,
+	Train:new(537, 1, 255, 0.8, {
         569,
         569,
         569,
         569,
         569,
         590,
-        590,
-        590,
-        570,
-    }
-
-	for i, v in pairs(trailers) do
-		setTimer(function ()
-			local trailer = createVehicle(v, train:getPosition())
-			train.Trailers[#train.Trailers+1] = trailer
-			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-		end, 50*i, 1)
-	end
-
-	--[[
-	-- Train at Linden Stationw
-	local train = Train:new(538, 1, 1, 0.8)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	for i = 1, 3 do
-		setTimer(function ()
-			local trailer = createVehicle(570, train:getPosition())
-			train.Trailers[#train.Trailers+1] = trailer
-			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-		end, 50*i, 1)
-	end
-
-	-- Tram in Los Santos
-	local train = Train:new(449, 2, 1, 0.4)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	setTimer(function ()
-		local trailer = createVehicle(449, train:getPosition())
-		attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-	end, 50, 1)
-
-	-- Train at Los Santos
-	local train = Train:new(537, 1, 599, 0.8)
-	train:addSyncerEvent()
-	train.Trailers = {}
-	for i = 1, 5 do
-		setTimer(function ()
-			local trailer
-			if i == 1 then
-				trailer = createVehicle(537, train:getPosition())
-			elseif i ~= 5 then
-				trailer = createVehicle(590, train:getPosition())
-			else
-				trailer = createVehicle(569, train:getPosition())
-			end
-			train.Trailers[#train.Trailers+1] = trailer
-			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
-		end, 50*i, 1)
-	end
-	--]]
+    })
 end
 
---[[ DEBUG
+
 function TrainManager:outputNodeInfo(trackIndex, nodeIndex, hitElement)
 	local node = self:getNode(trackIndex, nodeIndex)
-	if node then
+	if node and hitElement:getOccupant() then
 		--outputDebug(("Found new node.\nNode: %s NodeDistanceData: %s (Track: %s)"):format(tostring(node.index), tostring(node.distance), tostring(node.track)))
 		hitElement:getOccupant():sendShortMessage(("TrainTrack Node:\nNode: %s\nNodeDistanceData: %s\nTrack: %s"):format(tostring(node.index), tostring(node.distance), tostring(node.track)), "TrainManager - Nerd Statistics", nil, 5000)
 	end
 end
---]]
+

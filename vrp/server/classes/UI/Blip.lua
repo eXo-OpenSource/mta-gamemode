@@ -91,21 +91,22 @@ end
 
 function Blip.sendAllToClient(player)
 	local data = {}
+	local attached = {}
 	for k, v in pairs(Blip.Map) do
 		if v.m_VisibleTo == root then
-			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+			data[v.m_Id] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 		elseif v.m_VisibleType then
 			if v.m_VisibleType == "faction" and player:getFaction() == v.m_VisibleObject then
-				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+				data[v.m_Id] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 			elseif v.m_VisibleType == "company" and player:getCompany() == v.m_VisibleObject then
-				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+				data[v.m_Id] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 			elseif v.m_VisibleType == "group" and player:getGroup() == v.m_VisibleObject then
-				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
+				data[v.m_Id] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 			end
 		end
 		if v.m_AttachedTo then
-			player:triggerEvent("blipAttach", v.m_Id, v.m_AttachedTo)
+			attached[v.m_Id] = v.m_AttachedTo
 		end
 	end
-	player:triggerEvent("blipsRetrieve", data)
+	player:triggerEvent("blipsRetrieve", data, attached)
 end
