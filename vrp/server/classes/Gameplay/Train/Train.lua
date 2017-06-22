@@ -13,6 +13,8 @@ function Train:constructor(speed, trailers)
 	self.m_Id = #self.m_Manager.Map+1
 	self.m_Speed = speed or 0.5
     self.Trailers = trailers
+    self.m_Blip = Blip:new("Train.png", 0, 0, root, 200)
+    self.m_Blip:attach(self)
     self.m_Visible = false
 	-- Add ref to Manager
 	self.m_Manager:addRef(self)
@@ -30,6 +32,7 @@ function Train:toggleVisibleTrain(state)
             self.m_VisibleVehs[1]:setDirection(true)
             self.m_VisibleVehs[1]:setDerailable(false)
             self.m_VisibleVehs[1]:setLocked(true)
+            self.m_Blip:attach(self.m_VisibleVehs[1])
             for i, v in pairs(self.Trailers) do
                 nextframe(function ()
                     local trailer = createVehicle(v, self:getPosition())
@@ -43,6 +46,7 @@ function Train:toggleVisibleTrain(state)
                 end
             end, 50*(#self.m_VisibleVehs), 1)
         else
+            self.m_Blip:attach(self)
             for i,v in pairs(self.m_VisibleVehs) do
                 if isElement(v) then v:destroy() end
             end
@@ -104,5 +108,5 @@ function Train:update()
         self.m_Speed = 0.6
     end
 
-	triggerClientEvent("onTrainSync", self, x, y, z, self.m_Visible and self.m_VisibleVehs[1])
+	--triggerClientEvent("onTrainSync", self, x, y, z, self.m_Visible and self.m_VisibleVehs[1])
 end
