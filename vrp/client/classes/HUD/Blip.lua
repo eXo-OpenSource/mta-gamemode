@@ -190,11 +190,13 @@ addEventHandler("blipsRetrieve", root,
 	  		Blip.ServerBlips[id] = Blip:new(unpack(v))
 		end
     end
-	 for id, element in pairs(attached) do
-	  	if Blip.ServerBlips[id] then
-		  	 Blip.ServerBlips[id]:attachTo(element)
+	if attached then
+		for id, element in pairs(attached) do
+			if Blip.ServerBlips[id] then
+				Blip.ServerBlips[id]:attachTo(element)
+			end
 		end
-    end
+	end
   end
 )
 
