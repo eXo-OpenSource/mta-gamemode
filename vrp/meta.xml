@@ -552,6 +552,7 @@
 	<script src="client/classes/GUIForms/DebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HouseEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailBreakGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MapGUI.lua" type="client"/>
