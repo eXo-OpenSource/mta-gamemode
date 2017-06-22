@@ -184,10 +184,15 @@ addEventHandler("blipDestroy", root,
 
 addEvent("blipsRetrieve", true)
 addEventHandler("blipsRetrieve", root,
-  function(data)
-    for k, v in pairs(data) do
-		if not Blip.ServerBlips[k] then
-	  		Blip.ServerBlips[k] = Blip:new(unpack(v))
+  function(data, attached)
+    for id, v in pairs(data) do
+		if not Blip.ServerBlips[id] then
+	  		Blip.ServerBlips[id] = Blip:new(unpack(v))
+		end
+    end
+	 for id, element in pairs(attached) do
+	  	if Blip.ServerBlips[id] then
+		  	 Blip.ServerBlips[id]:attachTo(element)
 		end
     end
   end
