@@ -103,6 +103,9 @@ function Blip.sendAllToClient(player)
 				data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance, v.m_Color}
 			end
 		end
+		if v.m_AttachedTo then
+			player:triggerEvent("blipAttach", v.m_Id, v.m_AttachedTo)
+		end
 	end
 	player:triggerEvent("blipsRetrieve", data)
 end
