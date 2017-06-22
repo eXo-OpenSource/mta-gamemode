@@ -1,14 +1,10 @@
 Train = inherit(Object)
 
 function Train:new(Id, Track, Node, ...)
-    local obj = createObject(1337, TrainManager:getSingleton():getNode(Track, Node).pos)
+    local obj = createColSphere(TrainManager:getSingleton():getNode(Track, Node).pos, 200)
 	--local vehicle = createVehicle(411, TrainManager:getSingleton():getNode(Track, Node).pos)
 	enew(obj, self, ...)
     obj.m_EngineModel = Id
-    obj.m_RenderCol = createColSphere(obj.position, 200)
-    obj.m_RenderCol:attach(obj)
-    obj:setCollisionsEnabled(false)
-    obj:setAlpha(140)
 	return obj
 end
 
@@ -93,7 +89,7 @@ function Train:update()
 	local x, y, z = interpolateBetween(self.m_CurrentNode.pos, nextNode.pos, progress, "Linear")
     
     self:setPosition(x, y, z+2)
-    self:toggleVisibleTrain(#getElementsWithinColShape(self.m_RenderCol, "player") > 0)
+    self:toggleVisibleTrain(#getElementsWithinColShape(self, "player") > 0)
     if self.m_Visible then 
         --self.m_VisibleVehs[1]:setTrainSpeed(self.m_Speed/1.398356930606537)
         self.m_VisibleVehs[1]:setTrainSpeed(self.m_Speed*0.99)

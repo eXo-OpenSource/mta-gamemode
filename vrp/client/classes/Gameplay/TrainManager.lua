@@ -17,9 +17,13 @@ function TrainManager:onTrainSync(x, y, z, attachedElement)
 		self.m_Blips[source] = Blip:new("Train.png", 0, 0, 200)
 	end
 	if attachedElement then
-		self.m_Blips[source]:attachTo(attachedElement)
+		if not self.m_Blips[source]:getAttachedElement() then
+			self.m_Blips[source]:attachTo(attachedElement)
+		end
 	else
-		self.m_Blips[source]:detach()
+		if self.m_Blips[source]:getAttachedElement() then
+			self.m_Blips[source]:detach()
+		end
 		self.m_Blips[source]:setPosition(x, y)
 	end
 end

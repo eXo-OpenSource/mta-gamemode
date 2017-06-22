@@ -150,6 +150,10 @@ function Blip:attachTo(element)
   end
 end
 
+function Blip:getAttachedElement()
+	return Blip.AttachedBlips[self]
+end
+
 function Blip:detach()
 	if Blip.AttachedBlips[self] then
 	  	Blip.AttachedBlips[self] = nil
