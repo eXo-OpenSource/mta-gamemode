@@ -46,7 +46,7 @@ end
 function Blip:destructor()
 	if self.m_ID and Blip.Blips[self.m_ID] then
 
-		self:dettach()
+		self:detach()
 		Blip.Blips[self.m_ID] = nil
 
 		if Blip.DefaultBlips[self.m_ID] then
@@ -55,7 +55,7 @@ function Blip:destructor()
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
-			self:dettach()
+			self:detach()
 			Blip.Blips[index] = nil
 			if isElement(Blip.DefaultBlips[index] ) then
 				destroyElement( Blip.DefaultBlips[index] )
@@ -150,10 +150,14 @@ function Blip:attachTo(element)
   end
 end
 
-function Blip:dettach()
+function Blip:getAttachedElement()
+	return Blip.AttachedBlips[self]
+end
+
+function Blip:detach()
 	if Blip.AttachedBlips[self] then
 	  	Blip.AttachedBlips[self] = nil
-		if Blip.DefaultBlips[self.m_ID] then
+		if isElement(Blip.DefaultBlips[self.m_ID]) then
 			detachElements(Blip.DefaultBlips[self.m_ID])
 		end
 	end
@@ -180,10 +184,15 @@ addEventHandler("blipDestroy", root,
 
 addEvent("blipsRetrieve", true)
 addEventHandler("blipsRetrieve", root,
-  function(data)
-    for k, v in pairs(data) do
-		if not Blip.ServerBlips[k] then
-	  		Blip.ServerBlips[k] = Blip:new(unpack(v))
+  function(data, attached)
+    for id, v in pairs(data) do
+		if not Blip.ServerBlips[id] then
+	  		Blip.ServerBlips[id] = Blip:new(unpack(v))
+		end
+    end
+	 for id, element in pairs(attached) do
+	  	if Blip.ServerBlips[id] then
+		  	 Blip.ServerBlips[id]:attachTo(element)
 		end
     end
   end
