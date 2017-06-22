@@ -32,7 +32,6 @@ function Train:toggleVisibleTrain(state)
             self.m_VisibleVehs[1]:setDirection(true)
             self.m_VisibleVehs[1]:setDerailable(false)
             self.m_VisibleVehs[1]:setLocked(true)
-            self.m_Blip:attach(self.m_VisibleVehs[1])
             for i, v in pairs(self.Trailers) do
                 nextframe(function ()
                     local trailer = createVehicle(v, self:getPosition())
@@ -46,7 +45,6 @@ function Train:toggleVisibleTrain(state)
                 end
             end, 50*(#self.m_VisibleVehs), 1)
         else
-            self.m_Blip:attach(self)
             for i,v in pairs(self.m_VisibleVehs) do
                 if isElement(v) then v:destroy() end
             end
