@@ -51,7 +51,7 @@ function ZombieSurvival:constructor()
 
 	self:addZombie()
 	self:loadMap()
-
+	outputDebugString("ZombieSurvival: Lobby erstellt - Dimension"..self.m_Dimension)
 	addEventHandler("onZombieWasted", root, bind(self.zombieWasted, self))
 end
 
@@ -74,6 +74,7 @@ function ZombieSurvival:destructor()
 	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
 	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
 	if isElement(self.m_Pickup) then self.m_Pickup:destroy() end
+	outputDebugString("ZombieSurvival: Lobby zerstört - Dimension"..self.m_Dimension)
 end
 
 function ZombieSurvival:zombieWasted(ped, player)
@@ -113,7 +114,7 @@ function ZombieSurvival:addPlayer(player)
 			source:setHealth(source:getHealth()-loss*15)
 		end
 	end)
-
+	outputDebugString("ZombieSurvival: Spieler "..player:getName().." hinzugefügt - Dimension"..self.m_Dimension)
 end
 
 function ZombieSurvival:removePlayer(player)
@@ -140,6 +141,7 @@ function ZombieSurvival:removePlayer(player)
 	end
 
 	delete(player.Minigame) -- SP only
+	outputDebugString("ZombieSurvival: Spieler "..player:getName().." entfernt - Dimension"..self.m_Dimension)
 end
 
 function ZombieSurvival:getRandomPlayer()
