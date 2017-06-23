@@ -558,6 +558,12 @@ function toMoneyString(money)
 	return tostring(money)
 end
 
+function getOpticalZoneName(x, y, z)
+	local zone1 = getZoneName(x, y, z or 0)
+	local zone2 = getZoneName(x, y, z or 0, true)
+	return zone1 ~= zone2 and ("%s, %s"):format(zone1, zone2) or zone1
+end
+
 function linear(t, b, c, d)
   return c * t / d + b
 end

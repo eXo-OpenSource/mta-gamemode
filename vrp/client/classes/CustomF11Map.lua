@@ -80,7 +80,7 @@ function CustomF11Map:draw()
 
 	-- Draw GPS info
 	dxDrawRectangle(self.m_PosX, 0, self.m_Width, 25, tocolor(0, 0, 0, 140))
-	dxDrawText("Doppelklick auf die Karte, um die Zielposition des GPS zu setzen. Rechtsklick, um die Navigation zu beenden.", screenWidth/2, 5, nil, nil, Color.White, 1.1, "default-bold", "center")
+	dxDrawText("Doppelklick auf die Karte, um die Zielposition des GPS zu setzen. Rechtsklick, um die Navigation zu beenden.", screenWidth/2, 5, nil, nil, Color.White, 1, "default-bold", "center")
 
 	-- Draw gang areas
 	if core:get("HUD", "drawGangAreas", true) then
@@ -126,6 +126,23 @@ function CustomF11Map:draw()
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
 	dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
+
+	--draw coordinate and zone info
+	if isCursorOverArea(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height) and getKeyState("lshift") then
+		local cursorX, cursorY = getCursorPosition()
+			cursorX = cursorX * screenWidth cursorY = cursorY * screenHeight
+		local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
+		local mapX, mapY = cursorX - overlayX, cursorY - overlayY
+		local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
+		local text = getOpticalZoneName(worldX, worldY)
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["gotocords"] then
+			text = ("%s\nX:%s  Y:%s"):format(getOpticalZoneName(worldX, worldY), math.floor(worldX), math.floor(worldY))
+		end
+		--dxDrawRectangle(cx, cy, self.m_Width, 25, tocolor(0, 0, 0, 140))
+		dxDrawText(text, cursorX + 1, cursorY + 1, cursorX + 1, cursorY + 1, Color.Black, 1, "default-bold", "center", "bottom")
+		dxDrawText(text, cursorX, cursorY, cursorX, cursorY, Color.White, 1, "default-bold", "center", "bottom")
+	end
+	
 end
 
 function CustomF11Map:worldToMapPosition(worldX, worldY)
@@ -154,6 +171,31 @@ function CustomF11Map:Doubleclick_ClickOverlay(element, cursorX, cursorY)
 	GPS:getSingleton():startNavigationTo(Vector3(worldX, worldY, 0))
 end
 
-function CustomF11Map:Rightclick_ClickOverlay()
-	GPS:getSingleton():stopNavigation()
+function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)
+	if getKeyState("lshift") and localPlayer:getRank() >= ADMIN_RANK_PERMISSION["gotocords"] then
+		fadeCamera(false)
+		setTimer(function()
+			local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
+			local mapX, mapY = cursorX - overlayX, cursorY - overlayY
+			local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
+			local teleportElement = localPlayer.vehicle and localPlayer.vehicle or localPlayer
+			teleportElement:setFrozen(true)
+			teleportElement:setPosition(worldX, worldY, 0)
+			teleportElement:setInterior(0)
+			teleportElement:setDimension(0)
+			if not teleportElement.vehicle then
+				localPlayer:setInterior(0)
+				localPlayer:setDimension(0)
+			end
+
+			setTimer(function()
+				local z = getGroundPosition(worldX, worldY, 500)
+				teleportElement:setPosition(worldX, worldY, z + 2)
+				fadeCamera(true)
+				teleportElement:setFrozen(false)
+			end, 250, 1)
+		end, 2000, 1)	
+	else
+		GPS:getSingleton():stopNavigation()
+	end
 end

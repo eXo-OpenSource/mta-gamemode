@@ -549,7 +549,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -560,7 +560,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle then
 						local vx, vy, vz = getElementVelocity(vehicle)
@@ -569,7 +569,15 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		)
-		bindKey("f5", "down",
+		bindKey("lctrl", "down",
+			function()
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
+					ShortMessage:new(_("Fahrzeug-Flugmodus %s.", isWorldSpecialPropertyEnabled("aircars") and "aktiviert" or "deaktiviert"))
+				end
+			end
+		)
+		--[[bindKey("f5", "down",
 			function()
 				if self:getRank() >= RANK.Moderator then
 					if MapGUI:isInstantiated() then
@@ -585,7 +593,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 					end
 				end
 			end
-		)
+		)]]
 
 		if rank >= RANK.Servermanager then
 			addCommandHandler("dcrun", function(cmd, ...)

@@ -648,7 +648,7 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:toggleJetPack(player)
-	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+	if player:getRank() >= RANK.Administrator and (player:getPublicSync("supportMode") or DEBUG) and not doesPedHaveJetPack(player) then
 		givePedJetPack(player)
 	else
 		if doesPedHaveJetPack(player) then
