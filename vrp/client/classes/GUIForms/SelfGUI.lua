@@ -810,6 +810,11 @@ function SelfGUI:onSettingChange(setting)
 				self.m_HUDScale:setVisible(true);
 				self.m_LifeArmor:setVisible(false)
 				self.m_ZoneName:setVisible(false)
+			elseif index == UIStyle.Chart then 
+				self.m_LabelHUDScale1:setVisible(true)
+				self.m_HUDScale:setVisible(true)
+				self.m_LifeArmor:setVisible(false)
+				self.m_ZoneName:setVisible(false)
 			else
 				self.m_LifeArmor:setVisible(false)
 				self.m_ZoneName:setVisible(false)
@@ -841,9 +846,17 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
 		self.m_HUDScale:setColor(Color.LightBlue)
-		self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
+		local oldScale = 0.75
+		self.m_HUDScale.onScroll = function() 
+			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2); 
+			if scale ~= oldScale then
+				HUDUI:getSingleton():setScale( scale ); 
+				oldScale = scale
+				core:set("HUD","scaleScroll",scale*0.75)
+			end 
+		end
 		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
-		if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
+		if core:get("HUD", "UIStyle") ~= UIStyle.eXo and core:get("HUD", "UIStyle") ~= UIStyle.Chart then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
 
 		self.m_BNBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.50, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News-Box (oben links)", self.m_SettingBG)
 		self.m_BNBox:setFont(VRPFont(25))

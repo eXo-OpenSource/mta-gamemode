@@ -24,6 +24,20 @@ Color = {
 	LightBlue = {50, 200, 255},
 	Orange    = {254, 138, 0},
 	LightRed  = {242, 0, 86},
+
+	HUD_Red		= {161,	47,	47},
+	HUD_Red_D	= {133,	28,	28},
+	HUD_Grey	= {158,158,158},
+	HUD_Grey_D	= {97,97,97},
+	HUD_Green	= {56,	142,60},
+	HUD_Green_D	= {27,	94,	32},
+	HUD_Blue	= {25,118,210},
+	HUD_Blue_D	= {13,71,161},
+	HUD_Cyan	= {0,151,167},
+	HUD_Cyan_D	= {0,96,100},
+	HUD_Orange_D= {245,127,23},
+	HUD_Lime_D	= {130,119,23},
+
 }
 
 AdminColor = {

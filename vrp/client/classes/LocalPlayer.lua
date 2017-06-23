@@ -202,6 +202,10 @@ function LocalPlayer:getJobLevel()
 	return self:getPrivateSync("JobLevel") or 0
 end
 
+function LocalPlayer:getFishingLevel()
+	return self:getPrivateSync("FishingLevel") or 0
+end
+
 function LocalPlayer:getSessionId()
 	return self:getPrivateSync("SessionID") or ""
 end

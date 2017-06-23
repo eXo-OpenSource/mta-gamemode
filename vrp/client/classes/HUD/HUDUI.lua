@@ -66,6 +66,8 @@ function HUDUI:draw()
 		end
 	elseif self.m_UIMode == UIStyle.eXo then
 		self:drawExo()
+	elseif self.m_UIMode == UIStyle.Chart then
+		self:drawChart()
 	elseif self.m_UIMode == UIStyle.Default then
 		return
 	end
@@ -312,95 +314,175 @@ function HUDUI:drawExo()
 	local imageHeight = 322
 	local progressBarSpeed = 24000
 
-		if not start_count then start_count = getTickCount() end
-		if not end_count then end_count = start_count + progressBarSpeed end
+	if not start_count then start_count = getTickCount() end
+	if not end_count then end_count = start_count + progressBarSpeed end
 
 
-		local now = getTickCount()
-		local elapsed = now - start_count
-		local duration = end_count - start_count
-		local prog = elapsed / duration
-		local scroll_ = interpolateBetween(207,0,0,-207,0,0,prog,'Linear')
-		local time =  string.format("%02d:%02d",getRealTime().hour,getRealTime().minute)
-		dxDrawImage(hudStartX,1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
-		dxDrawText (convertNumber(localPlayer:getMoney()),screenWidth-width*0.7-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default-bold" ) --Money
-		dxDrawText (time,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
-		dxDrawText (self:getZone(),screenWidth-width*0.7-r_os,width*0.372,width,height, tocolor ( 255, 255, 255, 255 ), 1.02*width*0.0039, "default" ) -- ORT
-		--dxDrawText (getSpielzeit(),screenWidth-width*0.55-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
-		--dxDrawText (getLevel(),screenWidth-width*0.15-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
+	local now = getTickCount()
+	local elapsed = now - start_count
+	local duration = end_count - start_count
+	local prog = elapsed / duration
+	local scroll_ = interpolateBetween(207,0,0,-207,0,0,prog,'Linear')
+	local time =  string.format("%02d:%02d",getRealTime().hour,getRealTime().minute)
+	dxDrawImage(hudStartX,1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
+	dxDrawText (convertNumber(localPlayer:getMoney()),screenWidth-width*0.7-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default-bold" ) --Money
+	dxDrawText (time,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
+	dxDrawText (self:getZone(),screenWidth-width*0.7-r_os,width*0.372,width,height, tocolor ( 255, 255, 255, 255 ), 1.02*width*0.0039, "default" ) -- ORT
+	--dxDrawText (getSpielzeit(),screenWidth-width*0.55-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
+	--dxDrawText (getLevel(),screenWidth-width*0.15-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
 
-		local wanted = localPlayer:getWantedLevel()
-		if wanted > 0 then dxDrawImage(screenWidth-width*0.146-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-		if wanted > 1 then dxDrawImage(screenWidth-width*0.256-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-		if wanted > 2 then dxDrawImage(screenWidth-width*0.36-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-		if wanted > 3 then dxDrawImage(screenWidth-width*0.47-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-		if wanted > 4 then dxDrawImage(screenWidth-width*0.58-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-		if wanted > 5 then dxDrawImage(screenWidth-width*0.69-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	local wanted = localPlayer:getWantedLevel()
+	if wanted > 0 then dxDrawImage(screenWidth-width*0.146-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	if wanted > 1 then dxDrawImage(screenWidth-width*0.256-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	if wanted > 2 then dxDrawImage(screenWidth-width*0.36-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	if wanted > 3 then dxDrawImage(screenWidth-width*0.47-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	if wanted > 4 then dxDrawImage(screenWidth-width*0.58-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+	if wanted > 5 then dxDrawImage(screenWidth-width*0.69-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
 
-		local b_x = 100
-		local bar_x = hudStartX+ (((97/imageWidth))*width)
-		local bar_width = width * (201/imageWidth)
-		local bar_height = height*(12/imageHeight)
+	local b_x = 100
+	local bar_x = hudStartX+ (((97/imageWidth))*width)
+	local bar_width = width * (201/imageWidth)
+	local bar_height = height*(12/imageHeight)
 
-		b_x = localPlayer:getArmor()/100
-		dxDrawImageSection(bar_x, height*(155/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
+	b_x = localPlayer:getArmor()/100
+	dxDrawImageSection(bar_x, height*(155/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
 
-		b_x = localPlayer:getHealth()/100
-		if b_x > (15*0.01) then
-			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
-		elseif b_x <= (15*0.01) and ( getTickCount() % 1000 > 500 ) then
-			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+	b_x = localPlayer:getHealth()/100
+	if b_x > (15*0.01) then
+		dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
+	elseif b_x <= (15*0.01) and ( getTickCount() % 1000 > 500 ) then
+		dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+	end
+
+	local karma = localPlayer:getKarma()
+	b_x = math.abs(karma)/150
+	if karma < 0 then
+		dxDrawImageSection(bar_x ,height*(218/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
+	elseif karma > 0 then
+		dxDrawImageSection(bar_x ,height*(218/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
+	end
+	if prog >= 1 then
+		start_count = getTickCount()
+		end_count = start_count + progressBarSpeed
+	end
+	local r,g,b,a = 0,0,0,200
+
+	if lebensanzeige > 0 and lebensanzeige < 1 then lebensanzeige = 1 end
+	lebensanzeige = math.floor(lebensanzeige)
+
+	dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+	dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+	dxDrawText ("KARMA: "..math.round(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+
+	dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[localPlayer:getWeapon()])
+	local tAmmo = getPedTotalAmmo( localPlayer )
+	local iClip = getPedAmmoInClip( localPlayer )
+	local weaponSlot = getPedWeaponSlot(localPlayer)
+	if weaponSlot >= 2 then
+		dxDrawText ( iClip.."-"..tAmmo-iClip,hudStartX+width*0.5, height*0.125,width*0.5, height*0.28, tocolor ( 255,255,255,255 ), 1.1*width*0.0039, "sans","left","top" ) --Money
+	end
+	dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+
+	dxDrawText ( math.floor(localPlayer:getLevel() or 0) or 0,hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+
+
+	--[[if getPedWeapon(localPlayer) > 9  then
+			firestate = getHudFirestate()
+			dxDrawText(getPedTotalAmmo ( localPlayer)-getPedAmmoInClip(localPlayer)..'-'..getPedAmmoInClip(localPlayer),screenWidth-width*0.57-r_os,width*0.14,width,height,tocolor(255,255,255,255),0.7,'pricedown')
+			dxDrawText(firestate,screenWidth-width*0.57-r_os,width*0.07,width,height,tocolor(255,255,255,255),0.8*width*0.0039,'pricedown')
+
+			local ammoTyp = getElementData ( localPlayer, "curAmmoTyp" )
+			if not isElementInWater(localPlayer) and ammoTyp and ammoTyp > 0 and spezMuniWaffen[getPedWeapon(localPlayer)] then
+				local ammo = specialAmmoName[ammoTyp]
+				dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 255,0,0,125 ))
+				dxDrawText ("Spezialmunition: "..ammo.."",screenWidth-width*0.687-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+			end
+	end]]
+
+	if isElementInWater(localPlayer) then
+		dxDrawRectangle ((screenWidth-width)*1.05,sx*0.318,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
+		dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+	end
+end
+
+function HUDUI:drawChart()
+	local scale = self.m_Scale*1.2
+	local height = 30*scale
+	local margin = 5*scale
+	local w_height = height*2 + margin
+	local border = margin*5
+	local col1_w = 240*scale -- bars
+	local col2_w = height*2 --level etc
+	local col1_x = screenWidth - border - col2_w - margin - col1_w
+	local col2_x = screenWidth - border - col2_w
+	local col1_i = 0
+	local col2_i = 0
+	local font = VRPFont(height)
+	local fontAwesome = FontAwesome(height*0.7)
+
+	local function dxDrawTextInCenter(text, x, y, w, h, icon)
+		--local text = tostring(text)
+		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.White, 1, icon and fontAwesome or font, "center", "center")
+	end
+	
+	local function drawCol(col, progress, color, text, icon, iconbgcolor)
+		local x, w, i = col1_x, col1_w, col1_i
+		if col == 2 then x, w, i = col2_x, col2_w, col2_i end
+		dxDrawRectangle(x, border + (height + margin)*i, w, height, tocolor(0, 0, 0, 150)) --bg
+		local isIcon = icon and icon:len() == 1
+		dxDrawRectangle(x + (isIcon and height or 0), border + (height + margin)*i, (w - (isIcon and height or 0))/100*progress, height, color) --progress
+		dxDrawTextInCenter(text, x + (isIcon and height or 0), border + (height + margin)*i, w - (isIcon and height or 0), height, false) --label
+		if isIcon then
+			if iconbgcolor then
+				dxDrawRectangle(x, border + (height + margin)*i, height, height, iconbgcolor) --iconbg
+			end
+			dxDrawTextInCenter(icon, x, border + (height + margin)*i, height, height, true) --icon
 		end
-
-		local karma = localPlayer:getKarma()
-		b_x = math.abs(karma)/150
-		if karma < 0 then
-			dxDrawImageSection(bar_x ,height*(218/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
-		elseif karma > 0 then
-			dxDrawImageSection(bar_x ,height*(218/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
+		if col == 1 then
+			col1_i = col1_i + 1
+		elseif col == 2 then
+			col2_i = col2_i + 1
 		end
-		if prog >= 1 then
-			start_count = getTickCount()
-			end_count = start_count + progressBarSpeed
-		end
-		local r,g,b,a = 0,0,0,200
+	end
 
-		if lebensanzeige > 0 and lebensanzeige < 1 then lebensanzeige = 1 end
-		lebensanzeige = math.floor(lebensanzeige)
+	local health, armor, karma = localPlayer:getHealth(), localPlayer:getArmor(), math.round(localPlayer:getKarma())
+	local oxygen = math.percent(getPedOxygenLevel(localPlayer), 1000)
+	if health > 0 then 
+		drawCol(1, health, Color.HUD_Red, "Leben ("..math.round(health).."%)", FontAwesomeSymbols.Heart, Color.HUD_Red_D) 
+	end
+	if armor > 0 then 
+		drawCol(1, armor, Color.HUD_Grey, "Schutzweste ("..math.round(armor).."%)", FontAwesomeSymbols.Shield, Color.HUD_Grey_D)
+	end
+	if localPlayer:isInWater() or oxygen < 100 then 
+		drawCol(1, oxygen, Color.HUD_Blue, "Luft ("..math.round(oxygen).."%)", FontAwesomeSymbols.Comment, Color.HUD_Blue_D) 
+	end
+	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, "Karma ("..karma..")", FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D)
+	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D)
+	drawCol(1, 0, Color.Clear, localPlayer:getPoints().." Punkte", FontAwesomeSymbols.Points, Color.HUD_Lime_D)
 
-		dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
-		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
-		dxDrawText ("KARMA: "..math.round(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+	if false then 
+		dxDrawRectangle(col2_x, border, col2_w, w_height, tocolor(0, 0, 0, 150)) --skin
+		col2_i = 2
+	end
+	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute))
+	if localPlayer:getWantedLevel() > 0 then drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D) end
+	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car)
+	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player)
+	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye)
+	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase)
+	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor)
 
-		dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[localPlayer:getWeapon()])
-		local tAmmo = getPedTotalAmmo( localPlayer )
-		local iClip = getPedAmmoInClip( localPlayer )
-		local weaponSlot = getPedWeaponSlot(localPlayer)
-		if weaponSlot >= 2 then
-			dxDrawText ( iClip.."-"..tAmmo-iClip,hudStartX+width*0.5, height*0.125,width*0.5, height*0.28, tocolor ( 255,255,255,255 ), 1.1*width*0.0039, "sans","left","top" ) --Money
-		end
-		dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
-
-		dxDrawText ( math.floor(localPlayer:getLevel() or 0) or 0,hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
-
-
-		--[[if getPedWeapon(localPlayer) > 9  then
-				firestate = getHudFirestate()
-				dxDrawText(getPedTotalAmmo ( localPlayer)-getPedAmmoInClip(localPlayer)..'-'..getPedAmmoInClip(localPlayer),screenWidth-width*0.57-r_os,width*0.14,width,height,tocolor(255,255,255,255),0.7,'pricedown')
-				dxDrawText(firestate,screenWidth-width*0.57-r_os,width*0.07,width,height,tocolor(255,255,255,255),0.8*width*0.0039,'pricedown')
-
-				local ammoTyp = getElementData ( localPlayer, "curAmmoTyp" )
-				if not isElementInWater(localPlayer) and ammoTyp and ammoTyp > 0 and spezMuniWaffen[getPedWeapon(localPlayer)] then
-					local ammo = specialAmmoName[ammoTyp]
-					dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 255,0,0,125 ))
-					dxDrawText ("Spezialmunition: "..ammo.."",screenWidth-width*0.687-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
-				end
-		end]]
-
-		if isElementInWater(localPlayer) then
-			dxDrawRectangle ((screenWidth-width)*1.05,sx*0.318,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
-			dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
-		end
+	--weapons
+	local weaponIconPath = WeaponIcons[localPlayer:getWeapon()]
+	if weaponIconPath and localPlayer:getWeapon() ~= 0 then
+		local base_y = border + (height + margin)*col1_i
+		dxDrawRectangle(col1_x, base_y, col1_w, w_height, tocolor(0, 0, 0, 150)) --bg
+		dxDrawImage(col1_x + margin, base_y + margin, w_height - margin*2, w_height - margin*2, weaponIconPath)
+		dxDrawTextInCenter(WEAPON_NAMES[localPlayer:getWeapon()], col1_x + w_height, base_y, col1_w - w_height, w_height/2)
+		local inClip = getPedAmmoInClip(localPlayer)
+		local totalAmmo = getPedTotalAmmo(localPlayer)
+		dxDrawTextInCenter(("%d - %d"):format(inClip,totalAmmo-inClip), col1_x + w_height, base_y + w_height/2, col1_w - w_height, w_height/2)
+	end
 end
 
 function HUDUI:drawRedDot()
@@ -425,6 +507,9 @@ end
 
 function HUDUI:setScale( scale )
 	scale = scale*1.25
-	self.m_Scale = 0.5 + math.floor( ((1.5 * scale))*10)/10
-	core:set("HUD", "hudScale", self.m_Scale)
+	local newScale = 0.5 + math.floor( ((1.5 * scale))*10)/10
+	if self.m_Scale ~= newScale then
+		self.m_Scale = newScale
+		core:set("HUD", "hudScale", self.m_Scale)
+	end
 end
