@@ -59,9 +59,8 @@ addEventHandler("MinigameSendHighscore", resourceRoot, MinigameManager.receiveHi
 function MinigameManager:addHooks()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
+			if player.Minigame then
+				player.Minigame:removePlayer(player)
 				return true
 			else
 				return false
@@ -71,9 +70,8 @@ function MinigameManager:addHooks()
 
 	PlayerManager:getSingleton():getAFKHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
+			if player.Minigame then
+				player.Minigame:removePlayer(player)
 				return true
 			else
 				return false
@@ -83,9 +81,8 @@ function MinigameManager:addHooks()
 
 	Player.getQuitHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
+			if player.Minigame then
+				player.Minigame:removePlayer(player)
 				return true
 			else
 				return false
