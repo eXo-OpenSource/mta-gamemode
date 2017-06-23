@@ -58,9 +58,12 @@ function deathScreen.onDeath(killer, gui)
 		playSound("files/audio/wasted.mp3")
 		deathScreen.sCount = getTickCount()
 		deathScreen.eCount = deathScreen.sCount + 1000
-		if killer and killer ~= localPlayer then
-				deathScreen.killerName = getPlayerName(killer).." pulverized you"
-			else deathScreen.killerName = "Suicide..."
+		if killer and killer ~= localPlayer and killer ~= "Zombie" then
+			deathScreen.killerName = getPlayerName(killer).." pulverized you"
+		elseif killer == "Zombie" then
+			deathScreen.killerName = "Zombie-Kill"
+		else
+			deathScreen.killerName = "Suicide..."
 		end
 
 		addEventHandler("onClientRender",root,deathScreen.runDeathAnim)

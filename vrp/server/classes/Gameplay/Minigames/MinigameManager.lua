@@ -60,10 +60,9 @@ function MinigameManager:addHooks()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
 			if player.Minigame then
+				player:triggerEvent("abortDeathGUI", true)
 				player.Minigame:removePlayer(player)
 				return true
-			else
-				return false
 			end
 		end
 	)
@@ -72,9 +71,6 @@ function MinigameManager:addHooks()
 		function(player)
 			if player.Minigame then
 				player.Minigame:removePlayer(player)
-				return true
-			else
-				return false
 			end
 		end
 	)
@@ -83,13 +79,9 @@ function MinigameManager:addHooks()
 		function(player)
 			if player.Minigame then
 				player.Minigame:removePlayer(player)
-				return true
-			else
-				return false
 			end
 		end
 	)
-
 end
 
 function MinigameManager:getPlayerMinigame(player)
