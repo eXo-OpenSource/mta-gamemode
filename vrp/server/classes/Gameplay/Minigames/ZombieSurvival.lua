@@ -29,11 +29,12 @@ function ZombieSurvival.initalize()
 
 	addRemoteEvents{"startZombieSurvival"}
 	addEventHandler("startZombieSurvival", root, function()
-		local instance = ZombieSurvival:new()
-		instance:addPlayer(client)
+
 		local index = #MinigameManager.Current+1
-		MinigameManager.Current[index] = instance
+		MinigameManager.Current[index] = ZombieSurvival:new()
+		MinigameManager.Current[index]:addPlayer(client)
 		MinigameManager.Current[index].Type = "ZombieSurvival"
+		client.Minigame = MinigameManager.Current[index]
 	end)
 end
 
@@ -132,12 +133,13 @@ function ZombieSurvival:removePlayer(player)
 	--if #self:getPlayers() == 0 then
 	--	delete(self)
 	--end
-	delete(self) -- SP only
 
 	-- Check for Freaks Achievement
 	if MinigameManager:getSingleton():checkForFreaks(player) then
 		player:giveAchievement(22)
 	end
+
+	delete(player.Minigame) -- SP only
 end
 
 function ZombieSurvival:getRandomPlayer()
