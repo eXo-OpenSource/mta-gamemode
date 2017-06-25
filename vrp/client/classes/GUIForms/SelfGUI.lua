@@ -882,6 +882,10 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
 		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
 
+		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartPoints:setChecked(core:get("HUD", "chartPlaytimeVisible", false))
+		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPlaytimeVisible", state) end
+
 		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
 		self.m_HUDScale:setColor(Color.LightBlue)

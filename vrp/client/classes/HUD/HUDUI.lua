@@ -501,10 +501,19 @@ function HUDUI:drawChart()
 	local health, armor, karma = localPlayer:getHealth(), localPlayer:getArmor(), math.round(localPlayer:getKarma())
 	local oxygen = math.percent(getPedOxygenLevel(localPlayer), 1000)
 	local dsc = core:get("HUD", "chartLabels", true)
-	drawCol(1, health, Color.HUD_Red, dsc and "Leben ("..math.round(health).."%)" or math.round(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
-	drawCol(1, armor, Color.HUD_Grey, dsc and "Schutzweste ("..math.round(armor).."%)" or math.round(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
-	drawCol(1, oxygen, Color.HUD_Blue, dsc and "Luft ("..math.round(oxygen).."%)" or math.round(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
-	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and "Karma ("..karma..")" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
+	local healthColor = Color.HUD_Red
+	if health <= 20 then --quick and dirty flash animation
+		healthColor = Color.changeAlphaPeriod(healthColor, getProgress("health-color", getTickCount()%1000 > 500))
+	end
+	local oxygenColor = Color.HUD_Blue
+	if oxygen <= 50 then 
+		oxygenColor = Color.changeAlphaPeriod(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
+	end
+
+	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
+	drawCol(1, armor, Color.HUD_Grey, dsc and math.ceil(armor).."% Schutzweste" or math.ceil(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
+	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
+	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and karma.." Karma" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
 	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
@@ -518,6 +527,8 @@ function HUDUI:drawChart()
 		col2_i = prog * 2
 	end]]
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
+	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(localPlayer), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
+	drawCol(2, 0, Color.Clear, ("%dh"):format(math.floor(localPlayer:getPlayTime()/60)), false, Color.Clear, "playtime", not core:get("HUD", "chartPlaytimeVisible", false))
 	drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWantedLevel() == 0)
 	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level", not core:get("HUD", "chartPointLevelVisible", true))
