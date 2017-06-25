@@ -37,7 +37,7 @@ Color = {
 	HUD_Cyan_D	= {0,96,100},
 	HUD_Orange_D= {245,127,23},
 	HUD_Lime_D	= {130,119,23},
-
+	HUD_Brown_D	= {62,39,35},
 }
 
 AdminColor = {
@@ -59,4 +59,29 @@ end
 
 for k, v in pairs(Color) do
 	Color[k] = tocolor(unpack(v))
+end
+
+
+--originally from misterdick's color tests
+function Color.fromcolor(color)
+    local blue = bitAnd(color,255)
+    local green = bitAnd(bitRShift(color,8),255)
+    local red = bitAnd(bitRShift(color,16),255)
+    local alpha = bitAnd(bitRShift(color,24),255)
+    return red, green, blue, alpha
+end
+
+function Color.changeAlphaPeriod(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
+	p = math.clamp(0, p, 1)
+	if p == 0 then return Color.Clear end
+	if p == 1 then return color end
+	local r, g, b, a = Color.fromcolor(color)
+	return tocolor(r, g, b, a * p)
+end
+
+function Color.changeAlpha(color, alpha)
+	p = math.clamp(0, p, 255)
+	if p == 0 then return Color.Clear end
+	local r, g, b, a = Color.fromcolor(color)
+	return tocolor(r, g, b, alpha)
 end

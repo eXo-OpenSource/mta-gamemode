@@ -18,6 +18,7 @@ function HUDUI:constructor()
 	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
 	local enabled = core:get("HUD", "showRadar")
 	self.m_MunitionProgress = 0
+	self.m_ChartAnims = {}
 
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
 		setPlayerHudComponentVisible("all", true)
@@ -405,83 +406,134 @@ function HUDUI:drawExo()
 	end
 end
 
+function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture and manage the underlying browser
+	if not self.m_SkinBrowser then 
+		self.m_SkinBrowser = createBrowser(w, h, false, true)
+		self.m_SkinID = skinid
+		self.m_BrowserW = w
+		self.m_BrowserH = h
+		addEventHandler("onClientBrowserCreated", self.m_SkinBrowser, function()
+			self.m_SkinBrowser:loadURL("https://exo-reallife.de/images/skins_head/"..skinid..".png")
+		end)
+	end
+	if skinid ~= self.m_SkinID then
+		self.m_SkinBrowser:loadURL("https://exo-reallife.de/images/skins_head/"..skinid..".png")
+		self.m_SkinID = skinid
+	end
+	if w ~= self.m_BrowserW or h ~= self.m_BrowserH then
+		resizeBrowser (self.m_SkinBrowser, w, h)
+		self.m_BrowserW = w
+		self.m_BrowserH = h
+	end
+	return self.m_SkinBrowser
+end
+
 function HUDUI:drawChart()
 	local scale = self.m_Scale*1.2
 	local height = 30*scale
-	local margin = 5*scale
+	local margin = 5*scale --used in UI setting
+	local margin_save = 5*scale --used internally for images and to separate col1 from col2
 	local w_height = height*2 + margin
-	local border = margin*5
+	local border = height
 	local col1_w = 240*scale -- bars
 	local col2_w = height*2 --level etc
-	local col1_x = screenWidth - border - col2_w - margin - col1_w
+	local col1_x = screenWidth - border - col2_w - margin_save - col1_w
 	local col2_x = screenWidth - border - col2_w
 	local col1_i = 0
 	local col2_i = 0
 	local font = VRPFont(height)
 	local fontAwesome = FontAwesome(height*0.7)
 
-	local function dxDrawTextInCenter(text, x, y, w, h, icon)
-		--local text = tostring(text)
-		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.White, 1, icon and fontAwesome or font, "center", "center")
+	local function getProgress(identifier, fadeOut, justGet)
+		if not justGet and not self.m_ChartAnims[identifier] then self.m_ChartAnims[identifier] = {0, getTickCount(), false} end
+		if justGet then return self.m_ChartAnims and self.m_ChartAnims[identifier] and self.m_ChartAnims[identifier][1] or 0 end -- little hack to get the progress without updating it
+		
+		local d = self.m_ChartAnims[identifier]
+		local prog = d[1]
+
+		if fadeOut ~= d[3] then d[2] = getTickCount() d[3] = fadeOut end -- reset Animation if fade status changes
+		if not fadeOut and d[1] < 1 then prog = (getTickCount() - d[2])/200 end
+		if fadeOut and d[1] > 0 then prog = 1 - (getTickCount() - d[2])/200 end
+		
+		prog = math.clamp(0, prog, 1)
+		d[1] = prog
+
+		return getEasingValue(prog, "OutQuad")
+	end
+
+	local function dxDrawTextInCenter(text, x, y, w, h, icon, prog)
+		if not prog then prog = 0 end
+		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaPeriod(Color.White, prog), 1, icon and fontAwesome or font, "center", "center")
 	end
 	
-	local function drawCol(col, progress, color, text, icon, iconbgcolor)
+	local function drawCol(col, progress, color, text, icon, iconBgColor, identifier, fadeOut)
+		local prog = identifier and getProgress(identifier, fadeOut) or 0
+		if fadeOut and prog == 0 then return true end --don't draw if it isn't visible anyways
 		local x, w, i = col1_x, col1_w, col1_i
 		if col == 2 then x, w, i = col2_x, col2_w, col2_i end
-		dxDrawRectangle(x, border + (height + margin)*i, w, height, tocolor(0, 0, 0, 150)) --bg
+		local base_y =  border + (height + margin)*i - margin * (1 - prog)
 		local isIcon = icon and icon:len() == 1
-		dxDrawRectangle(x + (isIcon and height or 0), border + (height + margin)*i, (w - (isIcon and height or 0))/100*progress, height, color) --progress
-		dxDrawTextInCenter(text, x + (isIcon and height or 0), border + (height + margin)*i, w - (isIcon and height or 0), height, false) --label
+
+		dxDrawRectangle(x, base_y, w, height, tocolor(0, 0, 0, 150*prog)) --bg
+		dxDrawRectangle(x + (isIcon and height or 0), base_y, (w - (isIcon and height or 0))/100*progress, height, Color.changeAlphaPeriod(color, prog)) --progress
+		dxDrawTextInCenter(text, x + (isIcon and height or 0), base_y, w - (isIcon and height or 0), height, false, prog) --label
+		
 		if isIcon then
-			if iconbgcolor then
-				dxDrawRectangle(x, border + (height + margin)*i, height, height, iconbgcolor) --iconbg
+			if iconBgColor then
+				dxDrawRectangle(x, base_y, height, height, Color.changeAlphaPeriod(iconBgColor, prog)) --iconbg
 			end
-			dxDrawTextInCenter(icon, x, border + (height + margin)*i, height, height, true) --icon
+			dxDrawTextInCenter(icon, x, base_y, height, height, true, prog) --icon
 		end
+
 		if col == 1 then
-			col1_i = col1_i + 1
+			col1_i = col1_i + prog
 		elseif col == 2 then
-			col2_i = col2_i + 1
+			col2_i = col2_i + prog
 		end
 	end
 
 	local health, armor, karma = localPlayer:getHealth(), localPlayer:getArmor(), math.round(localPlayer:getKarma())
 	local oxygen = math.percent(getPedOxygenLevel(localPlayer), 1000)
-	if health > 0 then 
-		drawCol(1, health, Color.HUD_Red, "Leben ("..math.round(health).."%)", FontAwesomeSymbols.Heart, Color.HUD_Red_D) 
-	end
-	if armor > 0 then 
-		drawCol(1, armor, Color.HUD_Grey, "Schutzweste ("..math.round(armor).."%)", FontAwesomeSymbols.Shield, Color.HUD_Grey_D)
-	end
-	if localPlayer:isInWater() or oxygen < 100 then 
-		drawCol(1, oxygen, Color.HUD_Blue, "Luft ("..math.round(oxygen).."%)", FontAwesomeSymbols.Comment, Color.HUD_Blue_D) 
-	end
-	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, "Karma ("..karma..")", FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D)
-	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D)
-	drawCol(1, 0, Color.Clear, localPlayer:getPoints().." Punkte", FontAwesomeSymbols.Points, Color.HUD_Lime_D)
 
-	if false then 
-		dxDrawRectangle(col2_x, border, col2_w, w_height, tocolor(0, 0, 0, 150)) --skin
-		col2_i = 2
-	end
-	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute))
-	if localPlayer:getWantedLevel() > 0 then drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D) end
-	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car)
-	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player)
-	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye)
-	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase)
-	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor)
+	drawCol(1, health, Color.HUD_Red, "Leben ("..math.round(health).."%)", FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
+	drawCol(1, armor, Color.HUD_Grey, "Schutzweste ("..math.round(armor).."%)", FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
+	drawCol(1, oxygen, Color.HUD_Blue, "Luft ("..math.round(oxygen).."%)", FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
+	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, "Karma ("..karma..")", FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
+	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
+	drawCol(1, 0, Color.Clear, localPlayer:getPoints().." Punkte", FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points")
+	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0)
+
+	--[[if SKIN or getProgress("skin", true, true) > 0 then 
+		local prog = getProgress("skin", not SKIN)
+		
+		dxDrawRectangle(col2_x, border - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
+		dxDrawImage(col2_x - margin_save, border - margin * (1 - prog), col2_w + margin_save*2, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
+		
+		col2_i = prog * 2
+	end]]
+	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
+	drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWantedLevel() == 0)
+	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level")
+	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level")
+	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level")
+	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level")
+	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level")
 
 	--weapons
 	local weaponIconPath = WeaponIcons[localPlayer:getWeapon()]
-	if weaponIconPath and localPlayer:getWeapon() ~= 0 then
-		local base_y = border + (height + margin)*col1_i
-		dxDrawRectangle(col1_x, base_y, col1_w, w_height, tocolor(0, 0, 0, 150)) --bg
-		dxDrawImage(col1_x + margin, base_y + margin, w_height - margin*2, w_height - margin*2, weaponIconPath)
-		dxDrawTextInCenter(WEAPON_NAMES[localPlayer:getWeapon()], col1_x + w_height, base_y, col1_w - w_height, w_height/2)
-		local inClip = getPedAmmoInClip(localPlayer)
-		local totalAmmo = getPedTotalAmmo(localPlayer)
-		dxDrawTextInCenter(("%d - %d"):format(inClip,totalAmmo-inClip), col1_x + w_height, base_y + w_height/2, col1_w - w_height, w_height/2)
+	if weaponIconPath and (localPlayer:getWeapon() ~= 0 or getProgress("weapon", true, true) > 0) then
+		local prog = getProgress("weapon", localPlayer:getWeapon() == 0)
+		local base_y = border + (height + margin)*col1_i - margin * (1 - prog)
+
+		local ammo = ("%d - %d"):format(getPedAmmoInClip(localPlayer),getPedTotalAmmo(localPlayer) - getPedAmmoInClip(localPlayer))
+		local showAmmo = ammo ~= "0 - 1" -- do not show ammo for melee weapons
+		
+		dxDrawRectangle(col1_x, base_y, col1_w, w_height, tocolor(0, 0, 0, 150*prog)) --bg
+		dxDrawImage(col1_x + margin_save, base_y + margin_save, w_height - margin_save*2, w_height - margin_save*2, weaponIconPath, 0, 0, 0, tocolor(255, 255, 255, 255*prog))
+		dxDrawTextInCenter(WEAPON_NAMES[localPlayer:getWeapon()], col1_x + w_height, base_y, col1_w - w_height, showAmmo and w_height/2 or w_height, false, prog)
+		if showAmmo then
+			dxDrawTextInCenter(ammo, col1_x + w_height, base_y + w_height/2, col1_w - w_height, w_height/2, false, prog)
+		end
 	end
 end
 
