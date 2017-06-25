@@ -866,9 +866,13 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartMargin:setChecked(core:get("HUD", "chartMargin", true))
 		self.m_ChartMargin.onChange = function (state) core:set("HUD", "chartMargin", state) end
 
-		self.m_ChartZone = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartZone = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.20, self.m_Height*0.04, _"Zone-Name", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartZone:setChecked(core:get("HUD", "chartZoneVisible", true))
 		self.m_ChartZone.onChange = function (state) core:set("HUD", "chartZoneVisible", state) end
+
+		self.m_ChartSkin = GUICheckbox:new(self.m_Width*0.22, self.m_Height*0.76, self.m_Width*0.15, self.m_Height*0.04, _"Passbild", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartSkin:setChecked(core:get("HUD", "chartSkinVisible", false))
+		self.m_ChartSkin.onChange = function (state) core:set("HUD", "chartSkinVisible", state) end
 
 		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))

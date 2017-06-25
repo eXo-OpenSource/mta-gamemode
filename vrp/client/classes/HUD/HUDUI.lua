@@ -413,11 +413,11 @@ function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture 
 		self.m_BrowserW = w
 		self.m_BrowserH = h
 		addEventHandler("onClientBrowserCreated", self.m_SkinBrowser, function()
-			self.m_SkinBrowser:loadURL("https://exo-reallife.de/images/skins_head/"..skinid..".png")
+			self.m_SkinBrowser:loadURL("https://exo-reallife.de/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
 		end)
 	end
 	if skinid ~= self.m_SkinID then
-		self.m_SkinBrowser:loadURL("https://exo-reallife.de/images/skins_head/"..skinid..".png")
+		self.m_SkinBrowser:loadURL("https://exo-reallife.de/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
 		self.m_SkinID = skinid
 	end
 	if w ~= self.m_BrowserW or h ~= self.m_BrowserH then
@@ -518,15 +518,15 @@ function HUDUI:drawChart()
 	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
-	--[[if SKIN or getProgress("skin", true, true) > 0 then 
-		local prog = getProgress("skin", not SKIN)
-		
-		dxDrawRectangle(col2_x, border - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
-		dxDrawImage(col2_x - margin_save, border - margin * (1 - prog), col2_w + margin_save*2, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
-		
-		col2_i = prog * 2
-	end]]
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
+	if core:get("HUD", "chartSkinVisible", false) or getProgress("skin", true, true) > 0 then 
+		local prog = getProgress("skin", not core:get("HUD", "chartSkinVisible", false))
+		
+		dxDrawRectangle(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
+		dxDrawImage(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
+		
+		col2_i = col2_i + prog * 2
+	end
 	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(localPlayer), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
 	drawCol(2, 0, Color.Clear, ("%dh"):format(math.floor(localPlayer:getPlayTime()/60)), false, Color.Clear, "playtime", not core:get("HUD", "chartPlaytimeVisible", false))
 	drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWantedLevel() == 0)
