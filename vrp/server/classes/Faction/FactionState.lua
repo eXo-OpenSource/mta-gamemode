@@ -47,6 +47,7 @@ function FactionState:constructor()
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1528.10, 458.10, 6.20)) -- SF Army
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1609.10,286.10,6.20), 5) -- SF Army Flug
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
+			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1210.2,-1827.4,12.5)) -- FBI
 		end
 	)
 
@@ -212,21 +213,30 @@ function FactionState:loadLSPD(factionId)
 end
 
 function FactionState:loadFBI(factionId)
-	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
-	self:createDutyPickup(1510.67871, -1479.12988, 9.50000)
+	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
+	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
 	local safe = createObject(2332, 226.80, 128.50, 1010.20)
 	safe:setInterior(10)
+	safe:setDimension(23)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1513.28772, -1461.14819, 9.50), 180)
-	elevator:addStation("Erdgeschoss", Vector3(266.70, 107.80, 1008.80), 270, 10, 23)
-	elevator:addStation("Dach - Heliports", Vector3(1536.08386,-1460.68518,63.8593), 90)
+	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270)
+	elevator:addStation("Erdgeschoss", Vector3(266.70, 107.80, 1008.80), 0, 10, 23)
+	elevator:addStation("Parkplatz", Vector3(1219.147, -1811.706, 16.594), 180)
 
+	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
+																						
+	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
+	gateLeft.onGateHit = bind(self.onBarrierGateHit, self)
+	gateLeft:addGate(988, Vector3(1216.5, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1221.9004, -1841.9004, 13.4))
 
-	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(238.30, 114.9, 1010.207), 0, 0, 10, 23)
+	local gateRight = Gate:new(988, Vector3(1267.4, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1262, -1841.9004, 13.4))
+	gateRight.onGateHit = bind(self.onBarrierGateHit, self)
+	gateRight:addGate(988, Vector3(1272.9004, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1277.9004, -1841.9004, 13.4))
+
+	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(238.3, 114.9, 1010.207), 0, 0, 10, 23) -- main entrance
 end
 
 function FactionState:loadArmy(factionId)

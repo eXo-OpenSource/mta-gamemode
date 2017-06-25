@@ -17,6 +17,7 @@ function Gate:addGate(model, pos, rot, openPos)
 	self.m_Gates[id].openPos = openPos
 	self.m_Gates[id].closedPos = pos
 	self.m_Gates[id].m_Super = self
+	self.m_Gates[id].m_Id = id
 	Gate.Map[#Gate.Map+1] = self.m_Gates[id]
 end
 

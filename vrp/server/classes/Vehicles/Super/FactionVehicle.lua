@@ -33,7 +33,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		local a, r, g, b = getBytesInInt32(color)
 		if factionCarColors[self.m_Faction:getId()] then
 			if getElementModel(self) == 420 and faction.m_Id == 2 then
-				setVehicleColor(self, 255, 255, 0)
+				setVehicleColor(self, 255, 210, 0)
 			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
 				setVehicleColor(self, 255, 255, 255)
 			elseif getElementModel(self) == 407 or getElementModel(self) == 544 and faction.m_Id == 4 then -- Rescue Fire Trucks

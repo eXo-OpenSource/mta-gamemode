@@ -95,7 +95,7 @@ function PlayerManager:Event_onRequestGateOpen()
 					if obj:getPosition() and client:getPosition() then
 						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then
 							local instance = obj.m_Super
-							if instance then
+							if instance and obj.m_Id == 1 then
 								instance:Event_onColShapeHit(client, true)
 							end
 						end

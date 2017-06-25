@@ -10,7 +10,11 @@ ELSSystem = inherit( Object )
 ELSSystem.CustomSirens ={
 	[560] = {0.7,0.2},
 	[426] = {0.6,0.2},
+	[402] = {0.6,0.2},
 	[420] = {0.6,0.2},
+	[470] = {0.6,0.2},
+	[500] = {0.6,0.2},
+	[579] = {0.6,0.2},
 }
 ELSSystem.BlinkMarkers ={
 	[490] = {["y"] = -3 },
@@ -36,6 +40,7 @@ function ELSSystem:constructor(vehicle)
 
 	local model = vehicle.model
 	if ELSSystem.CustomSirens[model] then
+		removeVehicleSirens(vehicle)
 		addVehicleSirens(vehicle, 2, 3, true)
 		setVehicleSirens(vehicle, 1, 0 - ELSSystem.CustomSirens[model][2]/2, 0.000, ELSSystem.CustomSirens[model][1], 255, 0, 0, 255, 255)
 		setVehicleSirens(vehicle, 2, 0 + ELSSystem.CustomSirens[model][2]/2, 0.000, ELSSystem.CustomSirens[model][1], 0, 0, 255, 255, 255)

@@ -26,7 +26,6 @@
 	<map src="fraktionen/sfpd_out.map" />
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
-	<map src="fraktionen/fbi_int.map" dimension="23" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
 	<map src="unternehmen/fahrschule.map" />
