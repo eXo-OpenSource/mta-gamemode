@@ -575,12 +575,28 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) and localPlayer.vehicle then
 					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
+					self.m_AircarsEnabled = true
 					ShortMessage:new(_("Fahrzeug-Flugmodus %s.", isWorldSpecialPropertyEnabled("aircars") and "aktiviert" or "deaktiviert"))
+				elseif self.m_AircarsEnabled then 
+					setWorldSpecialPropertyEnabled("aircars", false)
+					self.m_AircarsEnabled = false
+					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
 				end
 			end
 		)
+
+		self:setPublicSyncChangeHandler("supportMode", function(state)
+			outputDebug(state)
+			if not state then
+				if self.m_AircarsEnabled then 
+					setWorldSpecialPropertyEnabled("aircars", false)
+					self.m_AircarsEnabled = false
+					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
+				end
+			end
+		end)
 		--[[bindKey("f5", "down",
 			function()
 				if self:getRank() >= RANK.Moderator then

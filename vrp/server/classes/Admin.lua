@@ -648,7 +648,7 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:toggleJetPack(player)
-	if player:getRank() >= RANK.Administrator and (player:getPublicSync("supportMode") or DEBUG) and not doesPedHaveJetPack(player) then
+	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
 		givePedJetPack(player)
 	else
 		if doesPedHaveJetPack(player) then
@@ -849,7 +849,7 @@ local tpTable = {
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
         --["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
-        ["fbi"] =           {["pos"] = Vector3(1534.83, -1440.72, 13.16),  	["typ"] = "Fraktionen"},
+        ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
