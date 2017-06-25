@@ -285,7 +285,7 @@ function HUDRadar:draw()
 	end
 
 	-- Draw region name (above health bar)
-	if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
+	if core:get("HUD", "drawZone", true) then
 		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
 		dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_PosY+self.m_Height+3,
 			Color.White, 1, VRPFont(self.m_Height/10), "center", "center")

@@ -100,7 +100,7 @@ function HUDUI:setUIMode(uiMode)
 		else setPlayerHudComponentVisible("radar",false)
 		end
 	end
-
+	self.m_ChartAnims = {} -- unload chart ui animations
 	self.m_UIMode = uiMode
 end
 
@@ -245,7 +245,7 @@ function HUDUI:drawKarmaBar(height, fontSize)
 		dxDrawRectangle(left, top, width/2-1, height, tocolor(50,0,0,220))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawRectangle((left + width/2)-barWidth-1, top, barWidth, height, tocolor(160,75,75,220))
-		dxDrawText("Karma: -"..math.round(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
+		dxDrawText("Karma: "..math.round(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	end
 end
 
@@ -431,7 +431,7 @@ end
 function HUDUI:drawChart()
 	local scale = self.m_Scale*1.2
 	local height = 30*scale
-	local margin = 5*scale --used in UI setting
+	local margin = core:get("HUD", "chartMargin", true) and 5*scale or 0 --used in UI setting
 	local margin_save = 5*scale --used internally for images and to separate col1 from col2
 	local w_height = height*2 + margin
 	local border = height
@@ -474,10 +474,16 @@ function HUDUI:drawChart()
 		local base_y =  border + (height + margin)*i - margin * (1 - prog)
 		local isIcon = icon and icon:len() == 1
 
+		--change colors based on setting
+		if core:get("HUD", "chartColorBlue", false) then
+			color = color ~= Color.Clear and Color.LightBlue or color
+			iconBgColor = iconBgColor ~= Color.Clear and Color.DarkLightBlue or iconBgColor
+		end
+
 		dxDrawRectangle(x, base_y, w, height, tocolor(0, 0, 0, 150*prog)) --bg
 		dxDrawRectangle(x + (isIcon and height or 0), base_y, (w - (isIcon and height or 0))/100*progress, height, Color.changeAlphaPeriod(color, prog)) --progress
 		dxDrawTextInCenter(text, x + (isIcon and height or 0), base_y, w - (isIcon and height or 0), height, false, prog) --label
-		
+
 		if isIcon then
 			if iconBgColor then
 				dxDrawRectangle(x, base_y, height, height, Color.changeAlphaPeriod(iconBgColor, prog)) --iconbg
@@ -494,14 +500,14 @@ function HUDUI:drawChart()
 
 	local health, armor, karma = localPlayer:getHealth(), localPlayer:getArmor(), math.round(localPlayer:getKarma())
 	local oxygen = math.percent(getPedOxygenLevel(localPlayer), 1000)
-
-	drawCol(1, health, Color.HUD_Red, "Leben ("..math.round(health).."%)", FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
-	drawCol(1, armor, Color.HUD_Grey, "Schutzweste ("..math.round(armor).."%)", FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
-	drawCol(1, oxygen, Color.HUD_Blue, "Luft ("..math.round(oxygen).."%)", FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
-	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, "Karma ("..karma..")", FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
+	local dsc = core:get("HUD", "chartLabels", true)
+	drawCol(1, health, Color.HUD_Red, dsc and "Leben ("..math.round(health).."%)" or math.round(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
+	drawCol(1, armor, Color.HUD_Grey, dsc and "Schutzweste ("..math.round(armor).."%)" or math.round(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
+	drawCol(1, oxygen, Color.HUD_Blue, dsc and "Luft ("..math.round(oxygen).."%)" or math.round(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
+	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and "Karma ("..karma..")" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
-	drawCol(1, 0, Color.Clear, localPlayer:getPoints().." Punkte", FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points")
-	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0)
+	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
 	--[[if SKIN or getProgress("skin", true, true) > 0 then 
 		local prog = getProgress("skin", not SKIN)
@@ -513,11 +519,11 @@ function HUDUI:drawChart()
 	end]]
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
 	drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWantedLevel() == 0)
-	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level")
-	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level")
-	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level")
-	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level")
-	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level")
+	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level", not core:get("HUD", "chartPointLevelVisible", true))
 
 	--weapons
 	local weaponIconPath = WeaponIcons[localPlayer:getWeapon()]
