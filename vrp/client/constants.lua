@@ -134,8 +134,10 @@ BlipConversion =
 	["Horse.png"] = 35,
 
 }
-UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
-for i, v in pairs(UIStyle) do UIStyle[v] = i end
+UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4, 
+		[1] = "vRoleplay", [2] = "eXo", [3] = "Default", [4] = "Chart",}
+
+--for i, v in pairs(UIStyle) do UIStyle[v] = i end -- this doesn't work for some weird reason!
 
 NametagStyle = {On = 1, Off = 2}
 for i, v in pairs(NametagStyle) do NametagStyle[v] = i end

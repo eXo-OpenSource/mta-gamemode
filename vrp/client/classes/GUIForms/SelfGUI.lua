@@ -783,69 +783,16 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChatCheckBox:setChecked(isChatVisible())
 		self.m_ChatCheckBox.onChange = function (state) showChat(state) end
 
-		self.m_HelpBarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.21, self.m_Width*0.35, self.m_Height*0.04, _"Hilfe Leiste", self.m_SettingBG)
+		self.m_HelpBarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.21, self.m_Width*0.35, self.m_Height*0.04, _"Hilfeleiste", self.m_SettingBG)
 		self.m_HelpBarCheckBox:setFont(VRPFont(25))
 		self.m_HelpBarCheckBox:setFontSize(1)
 		self.m_HelpBarCheckBox:setChecked(core:get("HUD", "showHelpBar", true))
 		self.m_HelpBarCheckBox.onChange = function (state)
 			core:set("HUD", "showHelpBar", state)
 			HelpBar:getSingleton():toggle()
-
 		end
 
-		self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		for i, v in ipairs(UIStyle) do
-			self.m_UIChange:addItem(v)
-		end
-		self.m_UIChange.onChange = function(text, index)
-			core:set("HUD", "UIStyle", index)
-			HUDUI:getSingleton():setUIMode(index)
-			if index == UIStyle.vRoleplay then
-				self.m_LifeArmor:setVisible(true)
-				self.m_ZoneName:setVisible(true)
-				self.m_LabelHUDScale1:setVisible(false);
-				self.m_HUDScale:setVisible(false);
-			elseif index == UIStyle.eXo then
-				self.m_LabelHUDScale1:setVisible(true);
-				self.m_HUDScale:setVisible(true);
-				self.m_LifeArmor:setVisible(false)
-				self.m_ZoneName:setVisible(false)
-			else
-				self.m_LifeArmor:setVisible(false)
-				self.m_ZoneName:setVisible(false)
-				self.m_LabelHUDScale1:setVisible(false);
-				self.m_HUDScale:setVisible(false);
-			end
-		end
-		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
-
-		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
-		self.m_LifeArmor:setFont(VRPFont(25))
-		self.m_LifeArmor:setFontSize(1)
-		self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
-		if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_LifeArmor:setVisible(false) end
-		self.m_LifeArmor.onChange = function (state)
-			core:set("HUD", "defaultHealthArmor", state)
-			HUDUI:getSingleton():toggleDefaultHealthArmor(state)
-		end
-
-		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
-		self.m_ZoneName:setFont(VRPFont(25))
-		self.m_ZoneName:setFontSize(1)
-		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
-		if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_ZoneName:setVisible(false) end
-		self.m_ZoneName.onChange = function (state)
-			core:set("HUD", "drawZone", state)
-		end
-
-		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
-		self.m_HUDScale:setColor(Color.LightBlue)
-		self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
-		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
-		if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
-
-		self.m_BNBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.50, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News-Box (oben links)", self.m_SettingBG)
+		self.m_BNBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News-Box (oben links)", self.m_SettingBG)
 		self.m_BNBox:setFont(VRPFont(25))
 		self.m_BNBox:setFontSize(1)
 		self.m_BNBox:setChecked(core:get("HUD", "breakingNewsBox", true))
@@ -853,7 +800,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "breakingNewsBox", state)
 		end
 
-		self.m_BNChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News im Chat anzeigen", self.m_SettingBG)
+		self.m_BNChat = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.5, self.m_Height*0.04, _"Breaking News im Chat anzeigen", self.m_SettingBG)
 		self.m_BNChat:setFont(VRPFont(25))
 		self.m_BNChat:setFontSize(1)
 		self.m_BNChat:setChecked(core:get("HUD", "breakingNewsInChat", false))
@@ -861,12 +808,99 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "breakingNewsInChat", state)
 		end
 
-		self.m_Paydaybox_r = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.8, self.m_Height*0.04, _"Payday-Box an Bildschirmgröße anpassen", self.m_SettingBG)
+		self.m_Paydaybox_r = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.8, self.m_Height*0.04, _"Payday-Box an Bildschirmgröße anpassen", self.m_SettingBG)
 			:setFont(VRPFont(25)):setFontSize(1)
 		self.m_Paydaybox_r:setChecked(core:get("HUD", "paydayBox_relative", true))
 		self.m_Paydaybox_r.onChange = function (state)
 			core:set("HUD", "paydayBox_relative", state)
 		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Design", self.m_SettingBG)
+
+		local function updateDesignOptions(index)
+			self.m_LifeArmor:setVisible(false)
+			self.m_LabelHUDScale1:setVisible(false)
+			self.m_HUDScale:setVisible(false)
+			self.m_ChartMargin:setVisible(false)
+			self.m_ChartBlue:setVisible(false)
+			self.m_ChartLabels:setVisible(false)
+			self.m_ChartPoints:setVisible(false)
+				self.m_ChartZone:setVisible(false)
+			if index == UIStyle.vRoleplay then
+				self.m_LifeArmor:setVisible(true)
+			elseif index == UIStyle.eXo then
+				self.m_LabelHUDScale1:setVisible(true)
+				self.m_HUDScale:setVisible(true)
+			elseif index == UIStyle.Chart then 
+				self.m_LabelHUDScale1:setVisible(true)
+				self.m_HUDScale:setVisible(true)
+				self.m_ChartMargin:setVisible(true)
+				self.m_ChartBlue:setVisible(true)
+				self.m_ChartLabels:setVisible(true)
+				self.m_ChartPoints:setVisible(true)
+				self.m_ChartZone:setVisible(true)
+			end
+		end
+
+		self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG) --0.53
+		for i, v in ipairs(UIStyle) do
+			self.m_UIChange:addItem(v)
+		end
+		self.m_UIChange.onChange = function(text, index)
+			core:set("HUD", "UIStyle", index)
+			HUDUI:getSingleton():setUIMode(index)
+			updateDesignOptions(index)
+		end
+		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
+
+		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
+		self.m_LifeArmor:setFont(VRPFont(25))
+		self.m_LifeArmor:setFontSize(1)
+		self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
+		self.m_LifeArmor.onChange = function (state)
+			core:set("HUD", "defaultHealthArmor", state)
+			HUDUI:getSingleton():toggleDefaultHealthArmor(state)
+		end
+
+		self.m_ChartMargin = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Abstand zwischen Balken", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartMargin:setChecked(core:get("HUD", "chartMargin", true))
+		self.m_ChartMargin.onChange = function (state) core:set("HUD", "chartMargin", state) end
+
+		self.m_ChartZone = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartZone:setChecked(core:get("HUD", "chartZoneVisible", true))
+		self.m_ChartZone.onChange = function (state) core:set("HUD", "chartZoneVisible", state) end
+
+		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
+		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
+		
+		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
+		self.m_ChartLabels.onChange = function (state) core:set("HUD", "chartLabels", state) end
+		
+		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Punkte / Level", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
+		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
+
+		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartPoints:setChecked(core:get("HUD", "chartPlaytimeVisible", false))
+		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPlaytimeVisible", state) end
+
+		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
+		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
+		self.m_HUDScale:setColor(Color.LightBlue)
+		local oldScale = 0.75
+		self.m_HUDScale.onScroll = function() 
+			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2); 
+			if scale ~= oldScale then
+				HUDUI:getSingleton():setScale( scale ); 
+				oldScale = scale
+				core:set("HUD","scaleScroll",scale*0.75)
+			end 
+		end
+		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
+		
+		updateDesignOptions(core:get("HUD", "UIStyle")) --only show items which are relevant for current UI
 
 	elseif setting == "Radar" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", self.m_SettingBG)
@@ -901,14 +935,24 @@ function SelfGUI:onSettingChange(setting)
 			HUDRadar:getSingleton():updateMapTexture()
 		end
 
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ZoneName:setFont(VRPFont(25))
+		self.m_ZoneName:setFontSize(1)
+		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
+		self.m_ZoneName.onChange = function (state)
+			core:set("HUD", "drawZone", state)
+		end
+
 		self.m_RadarChange.onChange = function(text, index)
 			HUDRadar:getSingleton():setDesignSet(index)
 			if index == RadarDesign.Monochrome or index == RadarDesign.GTA then
 				self.m_BlipCheckBox:setVisible(true)
 				self.m_GangAreaCheckBox:setVisible(true)
+				self.m_ZoneName:setVisible(true)
 			else
 				self.m_BlipCheckBox:setVisible(false)
 				self.m_GangAreaCheckBox:setVisible(false)
+				self.m_ZoneName:setVisible(false)
 			end
 		end
 		local currentRadarIndex = core:get("HUD", "RadarDesign") or 2

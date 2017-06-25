@@ -95,6 +95,14 @@ FontAwesomeSymbols = {
 	Lightbulb = "",
 	Cart_Plus = "",
 	Cart_Down = "",
+	Car = "",
+	Bullseye = "",
+	Circle_O_Notch = "",
+	Heart = "",
+	Shield = "",
+	Comment = "",
+	Anchor = "",
+	Points = "",
 }
 
 Fonts = {
