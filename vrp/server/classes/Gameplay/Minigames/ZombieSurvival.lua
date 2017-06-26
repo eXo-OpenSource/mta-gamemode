@@ -118,14 +118,13 @@ function ZombieSurvival:addPlayer(player)
 end
 
 function ZombieSurvival:removePlayer(player)
-
 	player:triggerEvent("deathmatchStartDeathScreen", "Zombie", false)
 	fadeCamera(player, false, 2)
 	player:triggerEvent("Countdown", 10, "Respawn in")
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
-	setTimer(function(player)
+	setTimer(function(score)
 		if player and isElement(player) then
 			local skin = player:getModel()
 			spawnPlayer(player, -35.72, 1380.00, 9.42, 0, skin, 0, 0)
@@ -136,12 +135,13 @@ function ZombieSurvival:removePlayer(player)
 			player:fadeCamera(true, 1)
 			player:setAlpha(255)
 			player:triggerEvent("CountdownStop", "Respawn in")
-			player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
-			MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
-			self.m_ZombieKills[player] = nil
+			player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, score))
+			MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), score)
 		end
-	end, 10000, 1, player)
-
+	end, 10000, 1, self.m_ZombieKills[player])
+	
+	self.m_ZombieKills[player] = nil
+	
 	--if #self:getPlayers() == 0 then
 	--	delete(self)
 	--end
