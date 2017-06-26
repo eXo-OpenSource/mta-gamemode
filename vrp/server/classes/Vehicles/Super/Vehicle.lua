@@ -596,9 +596,10 @@ function Vehicle:setTexture(texturePath, textureName, force, isPreview, player)
 
 		local isHttp = string.find(texturePath,"http://")
 		if isHttp == nil then
-			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, player)
+			-- Backward compability
+			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath:sub(23, #texturePath), textureName, "file", true, isPreview)
 		else
-			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, true, isPreview, player)
+			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath:sub(35, #texturePath), textureName, "http", true, isPreview)
 		end
 	end
 end
