@@ -95,16 +95,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		end
 	end
 
-	if self.m_Faction.m_VehicleTexture then
-		if self.m_Faction.m_VehicleTexture[self:getModel()] and self.m_Faction.m_VehicleTexture[self:getModel()] then
-			local textureData = self.m_Faction.m_VehicleTexture[self:getModel()]
-			if textureData.shaderEnabled then
-				local texturePath, textureName = textureData.texturePath, textureData.textureName
-				if self.m_Decal then texturePath = self.m_Decal end
-				if texturePath and #texturePath > 3 then
-					self:setTexture(texturePath, textureName)
-				end
-			end
+	if decal then
+		for i, v in pairs(decal) do
+			self:setTexture(v, i)
 		end
 	end
 
