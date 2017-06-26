@@ -357,6 +357,7 @@
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/Sound.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
+	<script src="client/classes/TextureReplace.lua" type="client"/>
 	<script src="client/classes/Textures/TextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/HTTPTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>

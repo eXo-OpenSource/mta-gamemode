@@ -160,6 +160,7 @@ function TextureReplacer.addRef(instance)
 end
 
 function TextureReplacer.removeRef(instance)
+	outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
 	TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName] = nil
 end
 
@@ -201,38 +202,3 @@ function TextureReplacer:loadNext()
 		return TextureReplacer.Queue:pop_back(1):load()
 	end
 end
-
--- // Events
-
--- Events
-addEvent("changeElementTexture", true)
-addEventHandler("changeElementTexture", root,
-	function(vehicles)
-		for i, vehData in pairs(vehicles) do
-			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] = {}
-			end
-
-			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] then
-				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName])
-			end
-			outputConsole(("%s \\ %s \\ %s\n"):format(inspect(vehData.vehicle), vehData.textureName, vehData.texturePath))
-			local class = vehData.type == "http" and HTTPTextureReplacer or vehData.type == "file" and FileTextureReplacer or nil
-			TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = class:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {})
-		end
-	end
-)
-
-addEvent("removeElementTexture", true)
-addEventHandler("removeElementTexture", root,
-	function(textureName)
-		if TextureReplacer.Map.SERVER_ELEMENTS[source] and TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] then
-			delete(TextureReplacer.Map.SERVER_ELEMENTS[source][textureName])
-			TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] = nil
-		end
-
-		if table.size(TextureReplacer.Map.SERVER_ELEMENTS[source]) <= 0 then
-			TextureReplacer.Map.SERVER_ELEMENTS[source] = nil
-		end
-	end
-)
