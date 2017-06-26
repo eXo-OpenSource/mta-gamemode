@@ -36,7 +36,7 @@ Weitere Funktionen:
   [Shift] - Objekt schneller drehen (45°)
   [Alt] - Objekt langsamer drehen (5°)
 Linksklick zum Platzieren
-Rechtsklick zum Abbrechen]], "Objektplatzierung", Color.DarkBlue, 9999999)
+Rechtsklick zum Abbrechen]], "Objektplatzierung", Color.DarkBlue, 0)
 
 end
 
@@ -120,13 +120,15 @@ addEventHandler("objectPlacerStart", root,
 				local objectPlacer = ObjectPlacer:new(model,
 					function(position, rotation)
 						if position then
-							triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
+							triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation, hideObject)
 						else
 							triggerServerEvent(callbackEvent, localPlayer, false)
 						end
 						nextframe(
 							function()
-								Inventory:getSingleton():show()
+								if not hideObject then --if no object was moved
+									Inventory:getSingleton():show()
+								end
 							end
 						)
 					end, hideObject

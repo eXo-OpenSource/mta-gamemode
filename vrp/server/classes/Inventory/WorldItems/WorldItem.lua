@@ -24,6 +24,7 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_Placer = player
 	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
+	self.m_AttachedElements = {}
 	self.m_Object.m_Super = self
 	--self.m_Object:setBreakable(breakable)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
@@ -42,8 +43,27 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	WorldItem.Map[owner][self.m_ModelId][self.m_Object] = self
 end
 
+function WorldItem:attach(ele, offsetPos, offsetRot)
+	if isElement(ele) then
+		self.m_AttachedElements[ele] = self
+		ele:attach(self.m_Object, offsetPos or Vector3(0, 0, 0), offsetRot or Vector3(0, 0, 0))
+		if getElementType(ele) == "object" then
+			setElementData(ele, "worlditem_attachment", self.m_Object)
+		end
+		return ele
+	end
+	return false
+end
+
 function WorldItem:virtual_destructor()
 	if isElement(self.m_Object) then
+		if self.m_AttachedElements then
+			for i,v in pairs(self.m_AttachedElements) do
+				if isElement(i) then
+					destroyElement(i)
+				end
+			end
+		end
 		self.m_Object:destroy()
 	end
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil

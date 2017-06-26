@@ -38,11 +38,10 @@ function ItemSpeedCam:use(player)
 						setElementData(object, "earning", 0)
 						ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
-						object.col = createColSphere(position, 10)
-						object.col:attach(object)
-						object.col.object = object
+						object.col = worldItem:attach(createColSphere(position, 10))
 						self.m_func = bind(self.onColShapeHit, self)
 						addEventHandler("onColShapeHit", object.col, self.m_func )
+
 						local pos = player:getPosition()
 						FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 						StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z)
@@ -56,7 +55,7 @@ function ItemSpeedCam:use(player)
 		end
 	else
 		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))
-		player:getInventory():removeItem(self:getName(), 1)
+		player:getInventory():removeAllItem(self:getName())
 	end
 end
 
@@ -108,9 +107,6 @@ end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local object = worlditem:getObject()
-	local pos = object:getPosition()
-	local col = object.col
-	col:destroy()
 	for index, cam in pairs(ItemSpeedCam.Map) do
 		if cam == object then
 			table.remove(ItemSpeedCam.Map, index)

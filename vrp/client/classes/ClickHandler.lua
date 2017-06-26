@@ -137,8 +137,15 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		if trigger then
 			if button == "left" then
 				self:addMouseMenu(WorldItemMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-				--triggerServerEvent("worldItemClick", element)
-			elseif button == "right" then
+			end
+		end
+		return true
+	end
+	if getElementData(element, "worlditem_attachment") then
+		if trigger then
+			if button == "left" then
+				local ele = getElementData(element, "worlditem_attachment")
+				self:addMouseMenu(WorldItemMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, ele), ele)
 			end
 		end
 		return true

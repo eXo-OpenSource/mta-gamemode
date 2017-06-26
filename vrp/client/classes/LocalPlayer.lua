@@ -588,7 +588,6 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 
 		self:setPublicSyncChangeHandler("supportMode", function(state)
-			outputDebug(state)
 			if not state then
 				if self.m_AircarsEnabled then 
 					setWorldSpecialPropertyEnabled("aircars", false)
