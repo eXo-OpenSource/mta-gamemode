@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.4" client="1.5.4"/>
+	<min_mta_version server="1.5.4-9.11342" client="1.5.4"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -159,6 +159,12 @@
 	<!-- Gameplay -->
 
 	<!-- Race -->
+	<script src="server/classes/Gameplay/Race/Super/Race.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Race/Modes/RaceDD.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/Modes/RaceDM.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/Super/RaceManager.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/MovementRecorder.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
