@@ -82,11 +82,25 @@ function Group:purge()
 end
 
 function Group:getId()
-  return self.m_Id
+	return self.m_Id
 end
 
 function Group:getType()
-  return self.m_Type
+	return self.m_Type
+end
+
+function Group:setType(type, player)
+	if type == "Firma" or type == "Gang" then
+		self.m_Type = type
+		for i, player in pairs(self:getOnlinePlayers()) do
+			player:setPublicSync("GroupType", self:getType())
+		end
+		for k, vehicle in pairs(self:getVehicles() or {}) do
+			setElementData(vehicle, "GroupType", self:getType())
+		end
+	else
+		player:sendError(_("Invalid Group Type", player))
+	end
 end
 
 function Group:onPlayerJoin(player)
@@ -126,6 +140,8 @@ function Group:setName(name)
 
 	for k, vehicle in pairs(self:getVehicles() or {}) do
 		setElementData(vehicle, "OwnerName", name)
+		setElementData(vehicle, "GroupType", self:getType())
+
 	end
 
 	return true
@@ -311,9 +327,9 @@ function Group:getActivity(force)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(NOW()) - 7 AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end

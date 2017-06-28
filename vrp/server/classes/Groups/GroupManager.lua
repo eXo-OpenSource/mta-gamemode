@@ -34,7 +34,7 @@ function GroupManager:constructor()
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo",
+		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType",
 		"groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
@@ -59,6 +59,7 @@ function GroupManager:constructor()
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
+	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 
 
 
@@ -630,4 +631,40 @@ end
 function GroupManager:Event_BuyVehicle()
 	local group = client:getGroup()
 	source:buy(client)
+end
+
+function GroupManager:Event_ChangeType()
+	local group = client:getGroup()
+	if group:getPlayerRank(client) < GroupRank.Leader then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+	if group:getType() == "Firma" then
+		if #group:getShops() > 0 then
+			client:sendError(_("Deine Firma besitzt noch Geschäfte! Bitte verkaufe diese erst!", client))
+			return
+		end
+		for _, vehicle in pairs(group:getVehicles() or {}) do
+			if vehicle.m_ForSale == true then
+				client:sendError(_("Du bietest noch Fahrzeuge zum Verkauf an! Beende diese erst!", client))
+				return
+			end
+		end
+		if #self:getPropsForPlayer(client) > 0 then
+			client:sendError(_("Deine Firma besitzt noch eine Immobilie! Bitte verkaufe diese erst!", client))
+			return
+		end
+	end
+	if group:getMoney() < 20000 then
+		client:sendError(_("In der Kasse befindet sich nicht genug Geld! (20.000$)", client))
+		return
+	end
+
+	local oldType = group:getType()
+	local newType = oldType == "Firma" and "Gang" or "Firma"
+	group:takeMoney(20000, "Typ Änderung")
+	group:setType(newType)
+	group:addLog(client, "Gang/Firma", "hat die "..oldType.." in eine "..newType.." umgewandelt!")
+	group:sendShortMessage(_("%s hat deine %s in eine %s umgewandelt!", client, client:getName(), oldType, newType))
+	self:sendInfosToClient(client)
 end
