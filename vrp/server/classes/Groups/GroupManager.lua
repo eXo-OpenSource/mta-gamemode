@@ -650,11 +650,14 @@ function GroupManager:Event_ChangeType()
 				return
 			end
 		end
-		if #self:getPropsForPlayer(client) > 0 then
-			client:sendError(_("Deine Firma besitzt noch eine Immobilie! Bitte verkaufe diese erst!", client))
-			return
-		end
+
 	end
+
+	if #self:getPropsForPlayer(client) > 0 then
+		client:sendError(_("Deine %s besitzt noch eine Immobilie! Bitte verkaufe diese erst!", client, group:getType()))
+		return
+	end
+
 	if group:getMoney() < 20000 then
 		client:sendError(_("In der Kasse befindet sich nicht genug Geld! (20.000$)", client))
 		return
