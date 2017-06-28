@@ -107,7 +107,7 @@ function GroupGUI:constructor()
 
 	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.LightBlue, tabBusiness)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
-	self.m_ShopsMoneyLable = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
+	self.m_ShopsMoneyLabel = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.LightBlue)
 	self.m_ShopsLocate = VRPButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", true, tabBusiness)
 	self.m_ShopsLocate.onLeftClick = bind(self.ShopLocateButton_Click, self)
@@ -170,7 +170,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
-		self.m_GroupMoneyLabel:setText(tostring(money).."$")
+		self.m_GroupMoneyLabel:setText(toMoneyString(money))
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
 
@@ -553,7 +553,7 @@ function GroupGUI:Event_retriveBusinessInfo(info)
 
 	local compMoney = 0
 	for i, shop in pairs(info) do
-		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), ("%d$"):format(shop.money))
+		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), toMoneyString(shop.money))
 		item.ShopId = shop.id
 		item.ShopName = shop.name
 		item.LastRob = shop.lastRob
@@ -567,7 +567,7 @@ function GroupGUI:Event_retriveBusinessInfo(info)
 		compMoney = compMoney + shop.money
 	end
 
-	self.m_ShopsMoneyLable:setText(_("%d$", compMoney))
+	self.m_ShopsMoneyLabel:setText(toMoneyString(compMoney))
 end
 
 function GroupGUI:ShopLocateButton_Click()

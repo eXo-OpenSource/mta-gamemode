@@ -69,7 +69,7 @@ function BankGUI:onShow()
 end
 
 function BankGUI:Event_OnMoneyReceive(amount)
-	self.m_AccountBalanceLabel:setText(tostring(amount).."$")
+	self.m_AccountBalanceLabel:setText(toMoneyString(amount))
 end
 
 function BankGUI:WithdrawButton_Click()
