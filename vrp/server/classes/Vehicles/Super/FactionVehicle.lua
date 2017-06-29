@@ -109,7 +109,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	end
 
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
-		FactionRescue:getSingleton():onLadderTruckSpawn(self)
+		FactionRescue:getSingleton():onLadderTruckReset(self)
 	end
 
 end
@@ -290,6 +290,9 @@ function FactionVehicle:respawn(force)
 	end
 	self:resetIndicator()
 	self:fix()
+	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
+		FactionRescue:getSingleton():onLadderTruckReset(self)
+	end
 
 	if self.m_HandlingFactor ~= "" and self.m_HandlingFactor then
 		local handling = getOriginalHandling(getElementModel(self))

@@ -481,66 +481,85 @@ function FactionRescue:onLadderTruckEnter(player, seat)
 	end
 end
 
-function FactionRescue:onLadderTruckExit(player, seat)
-	if seat > 0 then return end
-	if source.LadderEnabled then
-		self:toggleLadder(source, player)
-	end
-end
-
-function FactionRescue:onLadderTruckSpawn(veh)
-	if veh.Ladder then
-		for index, obj in pairs(veh.Ladder) do
-			obj:destroy()
-		end
-	end
-
-	if veh.LadderTimer and isTimer(veh.LadderTimer) then
-		killTimer(veh.LadderTimer)
-	end
-
-	veh.LadderEnabled = false
-	veh.LadderMove = {}
-
-	veh.Ladder = {}
-	veh.Ladder["main"] = createObject(1932, veh:getPosition())
-	veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
-
-	veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
-
-	veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder2"]:setScale(0.8)
-	veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
-
-	veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder3"]:setScale(0.6)
-	veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
-
-	for index, obj in pairs(veh.Ladder) do
-		obj:setCollisionsEnabled(false)
-	end
-
-	addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
-	addEventHandler("onVehicleExit", veh, bind(self.onLadderTruckExit, self))
-
-end
-
-function FactionRescue:toggleLadder(veh, player, force)
-	if veh.LadderEnabled and not force then
-		player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeuge wieder fahren!", player))
-		veh.LadderEnabled = false
+function FactionRescue:disableLadderBinds(player)
+	if player and isElement(player) and getElementType(player) == "player" then
 		unbindKey(player, "w", "both", self.m_LadderBind)
 		unbindKey(player, "a", "both", self.m_LadderBind)
 		unbindKey(player, "s", "both", self.m_LadderBind)
 		unbindKey(player, "d", "both", self.m_LadderBind)
 		unbindKey(player, "lctrl", "both", self.m_LadderBind)
 		unbindKey(player, "lshift", "both", self.m_LadderBind)
-		self:onLadderTruckSpawn(veh)
-		veh:setFrozen(false)
+		player:setCameraTarget()
+	end
+end
+
+function FactionRescue:onLadderTruckExit(player, seat)
+	if seat > 0 then return end
+	if source.LadderEnabled then
+		self:disableLadderBinds(player)
+		if source.LadderTimer and isTimer(source.LadderTimer) then
+			killTimer(source.LadderTimer)
+		end
+	end
+end
+
+function FactionRescue:onLadderTruckReset(veh)
+	if veh.Ladder then
+		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
+		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+		veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
+		veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+		veh.LadderEnabled = false
 		veh.m_DisableToggleHandbrake = false
 	else
-		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit WASD, STRG und SHIFT!", player))
+		addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
+		addEventHandler("onVehicleStartExit", veh, bind(self.onLadderTruckExit, self))
+
+		veh.LadderEnabled = false
+		veh.LadderMove = {}
+
+		veh.Ladder = {}
+		veh.Ladder["main"] = createObject(1932, veh:getPosition())
+		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
+		veh.Ladder["mainAttachOffset"] = Vector3(0, 0.5, 1.1)
+
+		veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+
+		veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder2"]:setScale(0.8)
+		veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
+
+		veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder3"]:setScale(0.6)
+		veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+	end
+
+	for i,v in pairs(veh.Ladder) do
+		if isElement(v) then
+			setElementCollisionsEnabled(v, false)
+		end
+	end
+
+	if veh.LadderTimer and isTimer(veh.LadderTimer) then
+		killTimer(veh.LadderTimer)
+	end
+end
+
+function FactionRescue:toggleLadder(veh, player, force)
+	if veh.LadderEnabled and not force then
+		if veh.LadderTimer and isTimer(veh.LadderTimer) then
+			killTimer(veh.LadderTimer)
+		end
+		if player then 
+			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
+			self:disableLadderBinds(player)
+			player:setCameraTarget()
+		end
+		self:onLadderTruckReset(veh)
+		veh:setFrozen(false)
+	else
+		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
 		veh.LadderEnabled = true
 		bindKey(player, "w", "both", self.m_LadderBind)
 		bindKey(player, "a", "both", self.m_LadderBind)
@@ -548,13 +567,12 @@ function FactionRescue:toggleLadder(veh, player, force)
 		bindKey(player, "d", "both", self.m_LadderBind)
 		bindKey(player, "lctrl", "both", self.m_LadderBind)
 		bindKey(player, "lshift", "both", self.m_LadderBind)
-		setTimer(self.m_MoveLadderBind, 50, 0, veh)
+		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-		veh.Ladder["main"]:detach(veh)
-		for index, obj in pairs(veh.Ladder) do
-			if not index == "main" then
-				obj:setCollisionsEnabled(true)
+		for i,v in pairs(veh.Ladder) do
+			if isElement(v) then
+				setElementCollisionsEnabled(v, true)
 			end
 		end
 	end
@@ -567,11 +585,11 @@ end
 
 function FactionRescue:ladderFunction(player, key, state)
 	local veh = player.vehicle
-	if not veh then return end
-	if veh:getModel() ~= 544 then return end
+	if not veh then self:disableLadderBinds(player) return end
+	if veh:getModel() ~= 544 then self:disableLadderBinds(player) return end
 
-	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
-	if key == "d" then	veh.LadderMove["right"] = state == "down" and true or false end
+	if key == "d" then	veh.LadderMove["left"] = state == "down" and true or false end
+	if key == "a" then	veh.LadderMove["right"] = state == "down" and true or false end
 	if key == "w" then	veh.LadderMove["up"] = state == "down" and true or false end
 	if key == "s" then	veh.LadderMove["down"] = state == "down" and true or false end
 	if key == "lctrl" then	veh.LadderMove["in"] = state == "down" and true or false end
@@ -579,17 +597,19 @@ function FactionRescue:ladderFunction(player, key, state)
 end
 
 function FactionRescue:moveLadder(veh)
-
-	local rx, ry, rz = getElementRotation(veh.Ladder["main"])
+	local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"])
 	local x1, y1, z1, rx1, ry1, rz1 = getElementAttachedOffsets(veh.Ladder["ladder1"])
 	local x2, y2, z2, rx2, ry2, rz2 = getElementAttachedOffsets(veh.Ladder["ladder2"])
 	local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder3"])
 
+
 	if veh.LadderMove["right"] then
-		veh.Ladder["main"]:setRotation(rx, ry, rz+0.7)
+		veh.Ladder["main"]:attach(veh, x, y, z, rx, ry, rz+0.7)
 	elseif veh.LadderMove["left"] then
-		veh.Ladder["main"]:setRotation(rx, ry, rz-0.7)
-	elseif veh.LadderMove["up"] then
+		veh.Ladder["main"]:attach(veh, x, y, z, rx, ry, rz-0.7)
+	end
+
+	if veh.LadderMove["up"] then
 		if rx1 > -50 then
 			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
 		end
@@ -597,7 +617,9 @@ function FactionRescue:moveLadder(veh)
 		if rx1 < 0 then
 			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1+0.5, ry1, rz1)
 		end
-	elseif veh.LadderMove["in"] then
+	end
+
+	if veh.LadderMove["in"] then
 		if y3 < -1.4 then
 			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3+0.1, z3, rx3, ry3, rz3)
 		elseif y2 < -1.4 then
@@ -609,5 +631,18 @@ function FactionRescue:moveLadder(veh)
 		elseif y3 > -4.5 then
 			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3-0.05, z3, rx3, ry3, rz3)
 		end
+	end
+
+	if veh.controller then 
+		veh.Ladder.LastController = veh.controller
+		local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"]) -- get new offsets
+		local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder1"])
+		local m = veh.matrix
+			--m:setRotation(m.rotation.x, m.rotation.y, m.rotation.z + rz)
+			--m:transformPosition(Vector3(x, y, z))
+		veh.controller:setCameraMatrix(m.position + m.up * 10 - m.forward * 20 + m.right * 20 , m.position)
+	elseif veh.Ladder.LastController then
+		veh.Ladder.LastController:setCameraTarget()
+		veh.Ladder.LastController = nil
 	end
 end
