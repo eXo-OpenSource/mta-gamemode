@@ -1068,11 +1068,11 @@ function FactionState:Event_onPlayerExitVehicle(vehicle, seat)
 		if source.m_SpeedCol then
 			if isElement(source.m_SpeedCol) then
 				delete(source.m_SpeedCol)
-				setElementData(stateVehicle, "speedCamEnabled", false)
+				setElementData(source, "speedCamEnabled", false)
 			end
 			if isElement(source.m_SpeedCol) then
 				destroyElement(source.m_SpeedCol)
-				setElementData(stateVehicle, "speedCamEnabled", false)
+				setElementData(source, "speedCamEnabled", false)
 			end
 			source.m_SpeedCol = false
 		end
