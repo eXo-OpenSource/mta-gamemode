@@ -86,6 +86,7 @@ companyDutyMarker[4] = Vector3(1755.45, -1896.06, 13.56)
 companySpawnpoint[4] = {Vector3(1756.01, -1887.32, 13.56), 0, 0}
 
 CompanyStaticId = {
+	DRIVINGSCHOOL = 1,
 	MECHANIC = 2,
 	SANNEWS = 3,
 	EPT = 4,
