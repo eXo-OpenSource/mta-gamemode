@@ -490,7 +490,6 @@ function FactionRescue:disableLadderBinds(player)
 		unbindKey(player, "lctrl", "both", self.m_LadderBind)
 		unbindKey(player, "lshift", "both", self.m_LadderBind)
 		player:setCameraTarget()
-		veh.Ladder.LastController = nil
 	end
 end
 
