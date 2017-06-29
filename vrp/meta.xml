@@ -1268,22 +1268,32 @@
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
 	<vrpfile src="files/images/Textures/BusTexture.png"/>
-	<vrpfile src="files/images/Textures/FBITexture.png"/>
 	<vrpfile src="files/images/Textures/MechanicTexture.png"/>
 	<vrpfile src="files/images/Textures/MechanicTexture2.png"/>
-	<vrpfile src="files/images/Textures/PoliceHPTexture.png"/>
-	<vrpfile src="files/images/Textures/PoliceAcademyTexture.png"/>
-	<vrpfile src="files/images/Textures/PoliceSWAT.png"/>
-	<vrpfile src="files/images/Textures/PoliceRAM.png"/>
-	<vrpfile src="files/images/Textures/PoliceTexture.png"/>
-	<vrpfile src="files/images/Textures/RescueTexture.png"/>
-	<vrpfile src="files/images/Textures/RescueTexture2.png"/>
-	<vrpfile src="files/images/Textures/RescueTextureLeviathan.png"/>
-	<vrpfile src="files/images/Textures/MBT_Camo.png"/>
 	<vrpfile src="files/images/Textures/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
 	<vrpfile src="files/images/Textures/SASFHuntleyTexture.png"/>
+
+	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/MBT_Huntley.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/MBT_Camo.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/MBT_Copcar.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/PatrolDec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/PoliceDec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/RamDec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SADec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SWAT.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SWATdec.png"/>
+	
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ambu.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Copcar.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Firetruck.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_FT_Ladder.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Leviathan.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
+	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
 
 	<!-- Vehicle Textures -->
 	<vrpfile src="files/images/Textures/Special/1.png"/>
@@ -1301,7 +1311,6 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
-	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 	<vrpfile src="files/images/Textures/waretex.png"/>
 	<vrpfile src="files/images/Textures/tracer.png"/>
 

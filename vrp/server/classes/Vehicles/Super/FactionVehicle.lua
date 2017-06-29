@@ -29,22 +29,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			self:setHealth(health)
 		end
 	end
-	if color then
-		local a, r, g, b = getBytesInInt32(color)
-		if factionCarColors[self.m_Faction:getId()] then
-			if getElementModel(self) == 420 and faction.m_Id == 2 then
-				setVehicleColor(self, 255, 210, 0)
-			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
-				setVehicleColor(self, 255, 255, 255)
-			elseif getElementModel(self) == 407 or getElementModel(self) == 544 and faction.m_Id == 4 then -- Rescue Fire Trucks
-				setVehicleColor(self, 255, 0, 0, 255, 255, 255)
-			else
-				local color = factionCarColors[self.m_Faction:getId()]
-				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
-			end
-		else
-			setVehicleColor(self, r, g, b)
-		end
+	if color and fromJSON(color) then	
+		setVehicleColor(self, fromJSON(color))
+	elseif factionCarColors[self.m_Faction:getId()] then
+		local color = factionCarColors[self.m_Faction:getId()]
+		setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
 	end
 
 	for k, v in pairs(tunings or {}) do
@@ -174,13 +163,7 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	local health = getElementHealth(self)
-	local r, g, b = getVehicleColor(self, true)
-	local color = setBytesInInt32(255, r, g, b) -- Format: argb
-	local tunings = getVehicleUpgrades(self) or {}
-
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Color = ? WHERE Id = ?", sql:getPrefix(),
-	self:getMileage(), color, self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ? WHERE Id = ?", sql:getPrefix(), self:getMileage(), self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)

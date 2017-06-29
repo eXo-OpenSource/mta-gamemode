@@ -43,45 +43,6 @@ FACTION_MIN_RANK_KARMA = {
 	[6] = 150;
 }
 
--- Vehicle Shaders
-factionVehicleShaders = {
-	-- SAPD
-	[1] = {
-		[560] = {shaderEnabled = true, textureName = "#emapsultanbody256", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-
-	};
-
-	-- FBI
-	[2] = {
-		[528] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[601] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-	};
-
-	-- Army
-	[3] = {
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		--[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
-		[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
-		[500] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Mesa
-		[433] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Barracks
-	};
-
-	-- Rescue
-	[4] = {
-		[416] = {shaderEnabled = true, textureName = "ambulan92decal128", texturePath = "files/images/Textures/RescueTexture.png"};
-		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
-		[417] = {shaderEnabled = true, textureName = "leviathnbody8bit256", texturePath = "files/images/Textures/RescueTextureLeviathan.png"};
-	};
-}
-
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
 [0] = "Cadet",
@@ -145,7 +106,7 @@ factionRankNames[4] = {
 	[6] = "Commissioner"
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
-factionCarColors[4] = {["r"] = 255, ["g"] = 255, ["b"] = 255, ["r1"] = 178, ["g1"] = 35, ["b1"] = 33}
+factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1752.10, -1785.50, 13.57), 0, 0}
