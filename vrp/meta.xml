@@ -1273,7 +1273,6 @@
 	<vrpfile src="files/images/Textures/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
-	<vrpfile src="files/images/Textures/SASFHuntleyTexture.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Huntley.png"/>
@@ -1283,7 +1282,6 @@
 	<vrpfile src="files/images/Textures/Faction/State/PoliceDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/RamDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SAdec.png"/>
-	<vrpfile src="files/images/Textures/Faction/State/SWAT.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SWATdec.png"/>
 	
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ambu.png"/>
