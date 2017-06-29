@@ -66,6 +66,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
+	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
@@ -654,6 +655,24 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
 	Admin:getSingleton():outputSpectatingChat(source, "W", text, nil, playersToSend)
 end
+
+function PlayerManager:Command_playerOOC(source , cmd, ...)
+	local argTable = { ... }
+	local text = table.concat(argTable , " ")
+	local playersToSend = source:getPlayersInChatRange(1)
+	local receivedPlayers = {}
+	for index = 1,#playersToSend do
+		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 50, 200, 255)
+		if playersToSend[index] ~= source then
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
+	end
+	FactionState:getSingleton():addBugLog(source, "OOC", text)
+	StatisticsLogger:getSingleton():addChatLog(source, "ooc", text, toJSON(receivedPlayers))
+	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
+end
+
+
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
