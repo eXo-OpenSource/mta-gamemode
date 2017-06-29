@@ -189,7 +189,9 @@ function CompanyVehicle:hasKey(player)
   if self:isPermanent() then
     if player:getCompany() == self:getCompany() then
       return true
-    end
+    elseif self:getCompany():getId() == CompanyStaticId.DRIVINGSCHOOL then 
+		return player:getPublicSync("inDrivingLession") == true
+	end
   end
 
   return false

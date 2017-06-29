@@ -254,15 +254,19 @@ function CompanyManager:Event_companyRankUp(playerId)
 	end
 
 	if company:getPlayerRank(playerId) < CompanyRank.Leader then
-		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
-		local player = DatabasePlayer.getFromId(playerId)
-		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+		if company:getPlayerRank(playerId) < company:getPlayerRank(client) then
+			company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
+			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
+			local player = DatabasePlayer.getFromId(playerId)
+			if player and isElement(player) and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+			end
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, company:getPlayerRank(client)))
 		end
-		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 5 setzen!", client))
+		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 5 befördern!", client))
 	end
 end
 
@@ -283,13 +287,17 @@ function CompanyManager:Event_companyRankDown(playerId)
 	end
 
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
-		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
-		local player = DatabasePlayer.getFromId(playerId)
-		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+		if company:getPlayerRank(playerId) <= company:getPlayerRank(client) then
+			company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
+			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
+			local player = DatabasePlayer.getFromId(playerId)
+			if player and isElement(player) and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+			end
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 		end
-		self:sendInfosToClient(client)
 	end
 end
 

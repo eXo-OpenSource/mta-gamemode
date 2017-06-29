@@ -305,13 +305,13 @@ function FactionManager:Event_factionRankUp(playerId)
 				player:load()
 			end
 			if faction:isEvilFaction() then
-				if player:getKarma() > ( -FACTION_MIN_RANK_KARMA[playerRank + 1] or -100000) then
+				if player:getKarma() > ( -FACTION_MIN_RANK_KARMA[playerRank + 1] or -100000) and playerRank < FactionRank.Leader then
 					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					if isOffline then delete(player) end
 					return
 				end
 			else
-				if player:getKarma() < (FACTION_MIN_RANK_KARMA[playerRank + 1] or 10000) then
+				if player:getKarma() < (FACTION_MIN_RANK_KARMA[playerRank + 1] or 10000) and playerRank < FactionRank.Leader then
 					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					if isOffline then delete(player) end
 					return
@@ -319,18 +319,22 @@ function FactionManager:Event_factionRankUp(playerId)
 			end
 
 			if playerRank < FactionRank.Leader then
-				faction:setPlayerRank(playerId, playerRank + 1)
-				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
-				if isOffline then
-					delete(player)
-				else
-					if isElement(player) then
-						player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+				if playerRank < faction:getPlayerRank(client) then
+					faction:setPlayerRank(playerId, playerRank + 1)
+					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
+					if isOffline then
+						delete(player)
+					else
+						if isElement(player) then
+							player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+						end
 					end
+					self:sendInfosToClient(client)
+				else
+					client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, faction:getPlayerRank(client)))
 				end
-				self:sendInfosToClient(client)
 			else
-				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
+				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 befördern!", client))
 				if isOffline then delete(player) end
 			end
 		end
@@ -359,16 +363,20 @@ function FactionManager:Event_factionRankDown(playerId)
 				player:load()
 			end
 			if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
-				faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
-				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
-				if isOffline then
-					delete(player)
-				else
-					if isElement(player) then
-						player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+				if faction:getPlayerRank(playerId) <= faction:getPlayerRank(client) then
+					faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
+					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
+					if isOffline then
+						delete(player)
+					else
+						if isElement(player) then
+							player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+						end
 					end
+					self:sendInfosToClient(client)
+				else
+					client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 				end
-				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
 				if isOffline then delete(player) end

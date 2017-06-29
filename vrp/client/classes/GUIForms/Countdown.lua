@@ -19,7 +19,7 @@ function Countdown:constructor(seconds, title)
 	local offset = Countdown.getCurrentCountdowns()*90
 	GUIForm.constructor(self, screenWidth/2-187/2, 60+offset, 187, 90, false)
 	self.m_Title = title
-	self.m_Seconds = 0
+	self.m_StartTick = getTickCount()
 	self.m_Rect = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 125), self)
 	self.m_Text = GUILabel:new(0, 0, self.m_Width, 30, self.m_Title, self):setColor(Color.Red):setFont(VRPFont(self.m_Height*0.4)):setAlignX("center")
 	self.m_Background = GUIImage:new(10, 30, self.m_Width-20, 60, "files/images/Other/Countdown.png", self)
@@ -28,7 +28,7 @@ function Countdown:constructor(seconds, title)
 
 	self.m_Seconds = seconds
 	self:updateTime()
-	self.m_Timer = setTimer(bind(self.updateTime, self), 1000, 0)
+	self.m_Timer = setTimer(bind(self.updateTime, self), 500, 0)
 	Countdown.Map[title] = self
 end
 
@@ -47,15 +47,17 @@ function Countdown:updateTime()
 	else
 		self:setVisible(true)
 	end
-	self.m_Seconds = self.m_Seconds - 1
 
-	local mins = string.format("%02.f", math.floor(self.m_Seconds/60)) or "0";
-	local secs = string.format("%02.f", math.floor(self.m_Seconds - mins *60)) or "0";
+	local elapsedSecs = math.floor((getTickCount() - self.m_StartTick)/1000)
+	local secsTotal = self.m_Seconds - elapsedSecs
+
+	local mins = string.format("%02.f", math.floor(secsTotal/60)) or "0";
+	local secs = string.format("%02.f", math.floor(secsTotal - mins *60)) or "0";
 
 	self.m_MinutesLabel:setText(mins)
 	self.m_SecondLabel:setText(secs)
 
-	if self.m_Seconds <= 0 then
+	if secsTotal <= 0 then
 		delete(self)
 	else
 		if self.m_TickEvent then

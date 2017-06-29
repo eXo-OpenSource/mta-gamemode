@@ -129,9 +129,9 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton!",player,255,0,0)
+			player:sendError(_("Du hast schon %d Getreide auf deinem Walton!", player, self.m_CurrentPlants[player]))
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
@@ -158,7 +158,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 				end,3500,1,hitElement
 			)
 		else
-			player:sendMessage(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON  ,self.m_CurrentPlantsFarm),255,0,0)
+			player:sendError(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON, self.m_CurrentPlantsFarm))
 		end
 	end
 end
@@ -228,9 +228,9 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp

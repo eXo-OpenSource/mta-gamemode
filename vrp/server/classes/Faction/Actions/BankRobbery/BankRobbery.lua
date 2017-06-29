@@ -196,7 +196,7 @@ end
 
 function BankRobbery:timeUp()
 	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert!")
-	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!")
+	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
 	self:destroyRob()
 end
 
