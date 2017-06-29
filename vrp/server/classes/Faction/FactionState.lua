@@ -38,7 +38,7 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
-			
+
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1563.98,-1614.40, 12.5)) --LSPD
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1552.93,-1614.40, 12.5))
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2295.80, 2460.90, 2.30)) -- LVT
@@ -227,7 +227,7 @@ function FactionState:loadFBI(factionId)
 	elevator:addStation("Parkplatz", Vector3(1219.147, -1811.706, 16.594), 180)
 
 	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
-																						
+
 	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
 	gateLeft.onGateHit = bind(self.onBarrierGateHit, self)
 	gateLeft:addGate(988, Vector3(1216.5, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1221.9004, -1841.9004, 13.4))
@@ -1594,23 +1594,17 @@ end
 function FactionState:addBugLog(player, func, msg)
 	self:refreshBugs()
 	if not self:isBugActive() then return end
-	local colSize = CHAT_TALK_RANGE
+	local range = CHAT_TALK_RANGE
 
 	if func == "flüstert" then
-		colSize = CHAT_WHISPER_RANGE
+		range = CHAT_WHISPER_RANGE
 	elseif func == "schreit" then
-		colSize = CHAT_SCREAM_RANGE
+		range = CHAT_SCREAM_RANGE
 	end
 
-	local col = createColSphere(player:getPosition(), colSize)
-	local elements = col:getElementsWithin()
-	col:destroy()
-
-	for i=1, #elements do
-		if elements[i] and isElement(elements[i]) and elements[i].BugId then
-			local id = elements[i].BugId
-
-			if self.m_Bugs[id] then
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			if (player:getPosition() - bugData["element"]:getPosition()).length < range then
 				if getTickCount() - self.m_Bugs[id]["lastMessage"] >= 300000 then
 					self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
 				end
@@ -1621,6 +1615,7 @@ function FactionState:addBugLog(player, func, msg)
 			end
 		end
 	end
+
 end
 
 function FactionState:Event_loadBugs()
