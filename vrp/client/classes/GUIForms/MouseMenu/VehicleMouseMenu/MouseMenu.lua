@@ -77,13 +77,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 
 		if element:getModel() == 544 and localPlayer:getFaction() and localPlayer:getFaction():isRescueFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-			self:addItem(_"Leiter Modus wechseln",
-				function()
-					if self:getElement() then
-						triggerServerEvent("factionRescueToggleLadder", self:getElement())
+			if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+				self:addItem(_"Leiter Modus wechseln",
+					function()
+						if self:getElement() then
+							triggerServerEvent("factionRescueToggleLadder", self:getElement())
+						end
 					end
-				end
-			):setIcon(FontAwesomeSymbols.Arrows)
+				):setIcon(FontAwesomeSymbols.Arrows)
+			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
