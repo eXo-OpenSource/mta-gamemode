@@ -489,7 +489,6 @@ function FactionRescue:disableLadderBinds(player)
 		unbindKey(player, "d", "both", self.m_LadderBind)
 		unbindKey(player, "lctrl", "both", self.m_LadderBind)
 		unbindKey(player, "lshift", "both", self.m_LadderBind)
-		player:setCameraTarget()
 	end
 end
 
@@ -497,6 +496,7 @@ function FactionRescue:onLadderTruckExit(player, seat)
 	if seat > 0 then return end
 	if source.LadderEnabled then
 		self:disableLadderBinds(player)
+		triggerClientEvent(player, "rescueLadderFixCamera", source)
 		if source.LadderTimer and isTimer(source.LadderTimer) then
 			killTimer(source.LadderTimer)
 		end
@@ -562,7 +562,7 @@ function FactionRescue:toggleLadder(veh, player, force)
 		if player then 
 			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
 			self:disableLadderBinds(player)
-			player:setCameraTarget()
+			triggerClientEvent(player, "rescueLadderFixCamera", veh)
 		end
 		self:onLadderTruckReset(veh)
 		veh:setFrozen(false)
@@ -579,7 +579,6 @@ function FactionRescue:toggleLadder(veh, player, force)
 		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-	
 		triggerClientEvent("rescueLadderUpdateCollision", veh, true)
 	end
 end
@@ -640,11 +639,8 @@ function FactionRescue:moveLadder(veh)
 	end
 
 	if veh.controller then 
-		veh.Ladder.LastController = veh.controller
 		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
-	elseif veh.Ladder.LastController then
-		veh.Ladder.LastController:setCameraTarget()
-		veh.Ladder.LastController = nil
+	else --fallback, timer gets killed automatically in most cases
 		killTimer(sourceTimer)
 	end
 end
