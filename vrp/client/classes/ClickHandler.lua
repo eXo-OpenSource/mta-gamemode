@@ -203,6 +203,17 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			return true
 		end
 	end
+	-- check vehicle attachments
+	if getElementData(element, "vehicle-attachment") and isElement(getElementData(element, "vehicle-attachment")) then
+		if range < 10 and not localPlayer.m_inTuning then
+			if trigger then
+				if button == "left" then
+					self:addMouseMenu(self.m_Menu["vehicle"]:new(clickInfo.absoluteX, clickInfo.absoluteY, getElementData(element, "vehicle-attachment")), getElementData(element, "vehicle-attachment"))
+				end
+			end
+			return true
+		end
+	end
 
 	return false
 end

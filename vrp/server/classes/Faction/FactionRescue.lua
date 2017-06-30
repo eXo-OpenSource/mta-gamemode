@@ -489,7 +489,6 @@ function FactionRescue:disableLadderBinds(player)
 		unbindKey(player, "d", "both", self.m_LadderBind)
 		unbindKey(player, "lctrl", "both", self.m_LadderBind)
 		unbindKey(player, "lshift", "both", self.m_LadderBind)
-		player:setCameraTarget()
 	end
 end
 
@@ -497,6 +496,7 @@ function FactionRescue:onLadderTruckExit(player, seat)
 	if seat > 0 then return end
 	if source.LadderEnabled then
 		self:disableLadderBinds(player)
+		triggerClientEvent(player, "rescueLadderFixCamera", source)
 		if source.LadderTimer and isTimer(source.LadderTimer) then
 			killTimer(source.LadderTimer)
 		end
@@ -505,10 +505,10 @@ end
 
 function FactionRescue:onLadderTruckReset(veh)
 	if veh.Ladder then
-		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
-		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
-		veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
-		veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+		veh.Ladder["main"]:setAttachedOffsets(0, 0.5, 1.1)
+		veh.Ladder["ladder1"]:setAttachedOffsets(0, 0, 0)
+		veh.Ladder["ladder2"]:setAttachedOffsets(0, -1.4, 0.2)
+		veh.Ladder["ladder3"]:setAttachedOffsets(0, -1, 0.2)
 		veh.LadderEnabled = false
 		veh.m_DisableToggleHandbrake = false
 	else
@@ -533,6 +533,14 @@ function FactionRescue:onLadderTruckReset(veh)
 		veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
 		veh.Ladder["ladder3"]:setScale(0.6)
 		veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+		for i,v in pairs(veh.Ladder) do
+			if isElement(v) then
+				if i ~= "main" then
+					setElementCollisionsEnabled(v, true)
+				end
+				setElementData(v, "vehicle-attachment", veh) --register as a clickable object of the fire truck (mouse menu)
+			end
+		end
 	end
 
 	for i,v in pairs(veh.Ladder) do
@@ -554,10 +562,11 @@ function FactionRescue:toggleLadder(veh, player, force)
 		if player then 
 			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
 			self:disableLadderBinds(player)
-			player:setCameraTarget()
+			triggerClientEvent(player, "rescueLadderFixCamera", veh)
 		end
 		self:onLadderTruckReset(veh)
 		veh:setFrozen(false)
+		triggerClientEvent("rescueLadderUpdateCollision", veh, false)
 	else
 		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
 		veh.LadderEnabled = true
@@ -570,11 +579,7 @@ function FactionRescue:toggleLadder(veh, player, force)
 		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-		for i,v in pairs(veh.Ladder) do
-			if isElement(v) then
-				setElementCollisionsEnabled(v, true)
-			end
-		end
+		triggerClientEvent("rescueLadderUpdateCollision", veh, true)
 	end
 end
 
@@ -604,46 +609,38 @@ function FactionRescue:moveLadder(veh)
 
 
 	if veh.LadderMove["right"] then
-		veh.Ladder["main"]:attach(veh, x, y, z, rx, ry, rz+0.7)
+		veh.Ladder["main"]:setAttachedOffsets(x, y, z, rx, ry, rz+0.7)
 	elseif veh.LadderMove["left"] then
-		veh.Ladder["main"]:attach(veh, x, y, z, rx, ry, rz-0.7)
+		veh.Ladder["main"]:setAttachedOffsets(x, y, z, rx, ry, rz-0.7)
 	end
 
 	if veh.LadderMove["up"] then
 		if rx1 > -50 then
-			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
+			veh.Ladder["ladder1"]:setAttachedOffsets(x1, y1, z1, rx1-0.5, ry1, rz1)
 		end
 	elseif veh.LadderMove["down"] then
 		if rx1 < 0 then
-			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1+0.5, ry1, rz1)
+			veh.Ladder["ladder1"]:setAttachedOffsets(x1, y1, z1, rx1+0.5, ry1, rz1)
 		end
 	end
 
 	if veh.LadderMove["in"] then
 		if y3 < -1.4 then
-			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3+0.1, z3, rx3, ry3, rz3)
+			veh.Ladder["ladder3"]:setAttachedOffsets(x3, y3+0.1, z3, rx3, ry3, rz3)
 		elseif y2 < -1.4 then
-			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2+0.1, z2, rx2, ry2, rz2)
+			veh.Ladder["ladder2"]:setAttachedOffsets(x2, y2+0.1, z2, rx2, ry2, rz2)
 		end
 	elseif veh.LadderMove["out"] then
 		if y2 > -5.5 then
-			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2-0.05, z2, rx2, ry2, rz2)
+			veh.Ladder["ladder2"]:setAttachedOffsets(x2, y2-0.05, z2, rx2, ry2, rz2)
 		elseif y3 > -4.5 then
-			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3-0.05, z3, rx3, ry3, rz3)
+			veh.Ladder["ladder3"]:setAttachedOffsets(x3, y3-0.05, z3, rx3, ry3, rz3)
 		end
 	end
 
 	if veh.controller then 
-		veh.Ladder.LastController = veh.controller
-		local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"]) -- get new offsets
-		local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder1"])
-		local m = veh.matrix
-			--m:setRotation(m.rotation.x, m.rotation.y, m.rotation.z + rz)
-			--m:transformPosition(Vector3(x, y, z))
-		veh.controller:setCameraMatrix(m.position + m.up * 10 - m.forward * 20 + m.right * 20 , m.position)
-	elseif veh.Ladder.LastController then
-		veh.Ladder.LastController:setCameraTarget()
-		veh.Ladder.LastController = nil
+		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
+	else --fallback, timer gets killed automatically in most cases
 		killTimer(sourceTimer)
 	end
 end

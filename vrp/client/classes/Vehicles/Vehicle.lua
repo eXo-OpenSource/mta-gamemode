@@ -304,8 +304,12 @@ end)
 local renderLeviathanRope = {}
 addEventHandler("onClientElementStreamIn", root,
 	function()
-		if getElementType(source) == "vehicle" and source:getModel() == 417 then
-			renderLeviathanRope[source] = true
+		if getElementType(source) == "vehicle" then
+			if source:getModel() == 417 then
+				renderLeviathanRope[source] = true
+			elseif source:getModel() == 544 then
+				triggerEvent("rescueLadderUpdateCollision", source, false)
+			end
 		end
 	end
 )
@@ -317,6 +321,7 @@ addEventHandler("onClientElementStreamOut", root,
 		end
 	end
 )
+
 
 addEventHandler("onClientRender", root,
 	function()
