@@ -35,6 +35,16 @@ function textHeight(text, lineWidth, font, size)
 	return height
 end
 
+function grid(type, pos)
+	if not pos then pos = 1 end
+	if type == "x" then
+		return 30*(pos - 1) + 10*pos
+	elseif type == "y" then
+		return 30 + 30*(pos - 1) + 10*pos
+	end
+	return 30*pos + 10*(pos - 1)
+end
+
 --[[local text = "BlaBlaBlaBla\nfffasdfasdfasdf\nasdf"
 local lineWidth = 200
 local h = textHeight(text, lineWidth, "arial", 3)

@@ -463,7 +463,7 @@ function HUDUI:drawChart()
 
 	local function dxDrawTextInCenter(text, x, y, w, h, icon, prog)
 		if not prog then prog = 0 end
-		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaPeriod(Color.White, prog), 1, icon and fontAwesome or font, "center", "center")
+		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaRate(Color.White, prog), 1, icon and fontAwesome or font, "center", "center")
 	end
 	
 	local function drawCol(col, progress, color, text, icon, iconBgColor, identifier, fadeOut)
@@ -481,12 +481,12 @@ function HUDUI:drawChart()
 		end
 
 		dxDrawRectangle(x, base_y, w, height, tocolor(0, 0, 0, 150*prog)) --bg
-		dxDrawRectangle(x + (isIcon and height or 0), base_y, (w - (isIcon and height or 0))/100*progress, height, Color.changeAlphaPeriod(color, prog)) --progress
+		dxDrawRectangle(x + (isIcon and height or 0), base_y, (w - (isIcon and height or 0))/100*progress, height, Color.changeAlphaRate(color, prog)) --progress
 		dxDrawTextInCenter(text, x + (isIcon and height or 0), base_y, w - (isIcon and height or 0), height, false, prog) --label
 
 		if isIcon then
 			if iconBgColor then
-				dxDrawRectangle(x, base_y, height, height, Color.changeAlphaPeriod(iconBgColor, prog)) --iconbg
+				dxDrawRectangle(x, base_y, height, height, Color.changeAlphaRate(iconBgColor, prog)) --iconbg
 			end
 			dxDrawTextInCenter(icon, x, base_y, height, height, true, prog) --icon
 		end
@@ -503,11 +503,11 @@ function HUDUI:drawChart()
 	local dsc = core:get("HUD", "chartLabels", true)
 	local healthColor = Color.HUD_Red
 	if health <= 20 then --quick and dirty flash animation
-		healthColor = Color.changeAlphaPeriod(healthColor, getProgress("health-color", getTickCount()%1000 > 500))
+		healthColor = Color.changeAlphaRate(healthColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 	local oxygenColor = Color.HUD_Blue
 	if oxygen <= 50 then 
-		oxygenColor = Color.changeAlphaPeriod(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
+		oxygenColor = Color.changeAlphaRate(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 
 	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
