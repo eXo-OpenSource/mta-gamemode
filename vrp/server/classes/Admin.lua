@@ -703,9 +703,11 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b)
+function Admin:sendMessage(msg,r,g,b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(msg, key, r,g,b)
+		if key:getRank() >= (minRank or 1) then
+			outputChatBox(msg, key, r,g,b)
+		end
 	end
 end
 
@@ -1141,7 +1143,7 @@ function Admin:reloadHelpText(player)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
@@ -1149,7 +1151,7 @@ function Admin:runString(player, cmd, ...)
 end
 
 function Admin:runPlayerString(player, cmd, target, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local tPlayer
 		local sendResponse
 		if target ~= "root" then

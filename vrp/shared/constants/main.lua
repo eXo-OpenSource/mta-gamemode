@@ -1,4 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
+PROJECT_VERSION = "1.3"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -120,6 +121,8 @@ ADMIN_RANK_PERMISSION = {
 	["deleteWorldItem"] = RANK.Moderator,
 	["showWorldItemInformation"] = RANK.Supporter,
 	["editHouse"] = RANK.Administrator,
+	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
+	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
 }
 
 GroupRank = {

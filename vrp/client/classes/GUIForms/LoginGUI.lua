@@ -168,6 +168,10 @@ forum.exo-reallife.de!
 	)
 
 	self:showLogin()
+	nextframe(function()
+		if DEBUG_AUTOLOGIN then self.m_LoginLoginButton:onLeftClick() end
+	end)
+	
 
 	-- Show some help
 	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)
