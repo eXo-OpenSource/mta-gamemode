@@ -99,17 +99,8 @@ function Toptimes:getMapID()
 	return self.m_MapID
 end
 
---[[function Toptimes:sendToptimes(Player)
-    if Player then
-        callClientFunction(Player, "setToptimeTable", self.m_Toptimes)
-    end
-    return false
-end]]
 
 function Toptimes:sortToptimes()
-    -- Storage the old last toptime
-    --local old12 = self.m_Toptimes[12]
-
     -- Sort table
     table.sort(self.m_Toptimes,
         function(a, b)
@@ -118,23 +109,6 @@ function Toptimes:sortToptimes()
     )
 
 	self:save()
-	--[[
-    -- Storage the new last toptime
-    local new12 = self.m_Toptimes[12]
-
-    -- Update player toptimes
-    if old12 ~= new12 then
-        for _, Player in pairs(getElementsByType("player")) do
-           if Player.m_ID == old12.PlayerID then
-               if getPlayerGamemode(Player) == gGamemodeDM then
-                   Player:setData("TopTimes", Player:getData("TopTimes") - 1)
-                   Player:setData("TopTimeCounter", Player:getData("TopTimeCounter") - 1)
-               elseif getPlayerGamemode(Player) == gGamemodeRA then
-                   Player:setData("TopTimesRA", Player:getData("TopTimesRA") - 1)
-               end
-           end
-        end
-    end]]
 end
 
 function Toptimes.getPlayerToptimeCount(player, prefix)
