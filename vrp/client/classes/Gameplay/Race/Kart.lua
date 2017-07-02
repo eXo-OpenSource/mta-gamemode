@@ -100,8 +100,6 @@ end
 
 addEventHandler("KartReceiveGhostDriver", root,
 	function(record)
-		Kart.LastRequest = false
-
 		local unparsed = fromJSON(record)
 		Kart.record = table.setIndexToInteger(unparsed)
 
