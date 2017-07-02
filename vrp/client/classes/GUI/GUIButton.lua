@@ -18,17 +18,22 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 
 	self.m_NormalColor = Color.White
 	self.m_HoverColor = Color.Black
-	self.m_BackgroundColor = tocolor(0, 32, 63, 255)
-	self.m_BackgroundNormalColor = tocolor(0, 32, 63, 255)
+	self.m_BackgroundNormalColor = Color.Accent
 	self.m_BackgroundHoverColor = Color.White
 	self.m_Color = self.m_NormalColor
+	self.m_BackgroundColor = self.m_BackgroundNormalColor
 	self.m_Enabled = true
 end
 
 function GUIButton:drawThis()
 	dxSetBlendMode("modulate_add")
 
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+	if self.m_BarActivated then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 2, self.m_Width, self.m_Height - 2, Color.Primary)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, 2, self.m_BackgroundColor)
+	else
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+	end
 	dxDrawText(self:getText(), self.m_AbsoluteX + GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + GUI_BUTTON_BORDER_MARGIN,
 		self.m_AbsoluteX + self.m_Width - GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height - GUI_BUTTON_BORDER_MARGIN, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
 
@@ -44,7 +49,9 @@ end
 
 function GUIButton:onInternalHover()
 	if self.m_Enabled then
-		self.m_Color = self.m_HoverColor
+		if not self.m_BarActivated then 
+			self.m_Color = self.m_HoverColor
+		end
 		self.m_BackgroundColor = self.m_BackgroundHoverColor
 		self:anyChange()
 	end
@@ -99,6 +106,13 @@ function GUIButton:setBackgroundColor(color)
 	self:anyChange()
 	return self
 end
+
+function GUIButton:setBarEnabled(activate)
+	self.m_BarActivated = activate
+	self:anyChange()
+	return self
+end
+
 
 function GUIButton:setEnabled(state, tabButton)
 	if state == true then

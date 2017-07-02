@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 
+local defaultAlpha = 150
+
 Color = {
 	Clear     = {0, 0, 0, 0   },
 	Black     = {0,     0,   0},
@@ -38,7 +40,38 @@ Color = {
 	HUD_Orange_D= {245,127,23},
 	HUD_Lime_D	= {130,119,23},
 	HUD_Brown_D	= {62,39,35},
+
+	Background	= {0, 0, 0, defaultAlpha}, --black
+	Primary		= {35, 35, 35, 230}, --grey
+	Accent		= {50, 200, 255}, --light blue
+	Success 	= {11,  102,   8}, -- green
+	Error 		= {178,  35,  33}, -- green
+	Warning 	= {254, 138, 0}, -- green
+	
 }
+
+function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
+	p = math.clamp(0, p, 1)
+	if p == 0 then return Color.Clear end
+	if p == 1 then return color end
+	local a, r, g, b = getBytesInInt32(color)
+	return tocolor(r, g, b, a * p)
+end
+
+function Color.changeAlpha(color, alpha)
+	p = math.clamp(0, alpha, 255)
+	if p == 0 then return Color.Clear end
+	local a, r, g, b = getBytesInInt32(color)
+	return tocolor(r, g, b, alpha)
+end
+
+Color.calculateColorScheme = function()
+	Color.Accent_Alpha = Color.changeAlpha(Color.Accent, defaultAlpha)
+	Color.Success_Alpha = Color.changeAlpha(Color.Success, defaultAlpha)
+	Color.Error_Alpha = Color.changeAlpha(Color.Error, defaultAlpha)
+	Color.Warning_Alpha = Color.changeAlpha(Color.Warning, defaultAlpha)
+
+end
 
 AdminColor = {
 	[0] = {255,255,255},
@@ -58,20 +91,9 @@ for k,v in pairs(AdminColor) do
 end
 
 for k, v in pairs(Color) do
-	Color[k] = tocolor(unpack(v))
+	if type(v) == "table" then
+		Color[k] = tocolor(unpack(v))
+	end
 end
 
-function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
-	p = math.clamp(0, p, 1)
-	if p == 0 then return Color.Clear end
-	if p == 1 then return color end
-	local a, r, g, b = getBytesInInt32(color)
-	return tocolor(r, g, b, a * p)
-end
-
-function Color.changeAlpha(color, alpha)
-	p = math.clamp(0, p, 255)
-	if p == 0 then return Color.Clear end
-	local a, r, g, b = getBytesInInt32(color)
-	return tocolor(r, g, b, alpha)
-end
+Color.calculateColorScheme()

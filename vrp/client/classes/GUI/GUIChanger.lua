@@ -14,9 +14,10 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 
 	self.m_Items = {}
 	self.m_CurrentItem = 1
+	self.m_FontSize = self.m_Height-8
 
 	--self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
+	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Accent):setFontSize(1)
 	self.m_LeftButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem - 1
 		if self.m_CurrentItem <= 0 then
@@ -24,7 +25,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 		end
 		self:setIndex(self.m_CurrentItem)
 	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
+	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Accent):setFontSize(1)
 	self.m_RightButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem + 1
 		if self.m_CurrentItem > #self.m_Items then
@@ -36,8 +37,8 @@ end
 
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.LightBlue)
-	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_Height-8), "center", "center")
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Primary)
+	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_FontSize), "center", "center")
 	dxSetBlendMode("blend")
 end
 
@@ -74,6 +75,10 @@ end
 
 function GUIChanger:getIndex()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
+end
+
+function GUIChanger:setVRPFontSize(size)
+	self.m_FontSize = tonumber(size) or self.m_Height-8
 end
 
 function GUIChanger:clear()

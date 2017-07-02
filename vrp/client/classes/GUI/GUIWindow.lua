@@ -22,7 +22,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
-		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Grey, self)
+		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Primary, self)
 		self.m_TitlebarDummy.onLeftClickDown = function()
 			if GUIWindowsFocus:getSingleton():getCurrentFocus() == self or  GUIWindowsFocus:getSingleton():getCurrentFocus() == nil then
 				GUIWindowsFocus:getSingleton():setCurrentFocus( self )
@@ -34,6 +34,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
+		self.m_TitleBarAccentStripe = GUIRectangle:new(0, 28, self.m_Width, 2, Color.Accent, self)
 
 		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
 			:setAlignX("center")
@@ -62,16 +63,11 @@ function GUIWindow:drawThis()
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
 
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 175))
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Background)
 
 	-- Draw logo
 	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
 		dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height - 29 - 10, 62, 29, "files/images/GUI/logo.png")
-	end
-
-	if self.m_HasTitlebar then
-		-- Draw line under title bar
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 1, Color.White)
 	end
 
 	dxSetBlendMode("blend")

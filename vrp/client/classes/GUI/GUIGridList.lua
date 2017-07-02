@@ -98,6 +98,12 @@ function GUIGridList:setColumnText(columnIndex, text)
 	return self
 end
 
+function GUIGridList:setColumnBackgroundColor(color)
+	if color == Color.Clear then color = false end
+	self.m_ColumnBGColor = color
+	return self
+end
+
 function GUIGridList:addColumn(text, width)
 	table.insert(self.m_Columns, {text = text, width = width})
 	return self
@@ -148,10 +154,13 @@ end
 
 function GUIGridList:drawThis()
 	-- Draw column header
+	if self.m_ColumnBGColor then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_ColumnBGColor)
+	end
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
 		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self.m_FontSize, self.m_Font)
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue) -- tocolor(255, 255, 255, 150)
 end
