@@ -77,7 +77,7 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 			self:addItem(_"Warnleuchte",
 				function()
 					if element then
-						triggerServerEvent("worldItemToggleConeLight", element)
+						triggerServerEvent("worldItemToggleBlinkingLight", element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Lightbulb)
