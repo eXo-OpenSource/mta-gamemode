@@ -4,9 +4,12 @@ addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptT
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
+	self:loadPositions()
 	self:spawnPeds()
+
 	self.m_TimedPulse = TimedPulse:new(30*60*1000)
 	self.m_TimedPulse:registerHandler(bind(self.spawnPeds, self))
+
 
 	-- Event Zone
 	addEventHandler("robBeggarPed", root, bind(self.Event_robBeggarPed, self))
@@ -30,6 +33,19 @@ function BeggarPedManager:removeRef(ref)
 	BeggarPedManager.Map[ref:getId()] = nil
 end
 
+function BeggarPedManager:loadPositions()
+	self.m_Positions = {}
+	local result = sql:queryFetch("SELECT * FROM ??_npc", sql:getPrefix())
+ 	for i, row in pairs(result) do
+	 	self.m_Positions[row.Id] = {
+			 ["Pos"] = Vector3(row.PosX, row.PosY, row.PosZ),
+			 ["Rot"] = Vector3(0, 0, row.Rot),
+			 ["Names"] = fromJSON(row.Names) or {},
+			 ["Roles"] = fromJSON(row.Roles) or {}
+			}
+	end
+end
+
 function BeggarPedManager:spawnPeds()
 	-- Delete current Peds
 	for i, v in pairs(self.Map) do
@@ -39,9 +55,9 @@ function BeggarPedManager:spawnPeds()
 	end
 
 	-- Create new Peds
-	for i, v in ipairs(BeggarPositions) do
+	for i, v in ipairs(self.m_Positions) do
 		if chance(50) then -- They only spawn with a probability of 50%
-			local ped = BeggarPed:new(v[1], v[2], i)
+			local ped = BeggarPed:new(v.Pos, v.Rot, i, v.Names, v.Roles)
 			self:addRef(ped)
 		end
 	end
