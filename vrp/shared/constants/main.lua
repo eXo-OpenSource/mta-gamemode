@@ -115,6 +115,7 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
+	["npcControl"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["moveWorldItem"] = RANK.Moderator,

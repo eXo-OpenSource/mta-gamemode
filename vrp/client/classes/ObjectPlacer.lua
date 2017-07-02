@@ -10,7 +10,12 @@ ObjectPlacer = inherit(Object)
 function ObjectPlacer:constructor(model, callback, hideObject)
 	showCursor(true)
 	localPlayer.m_ObjectPlacerActive = true
-	self.m_Object = createObject(model, localPlayer:getPosition())
+	if model > 312 then
+		self.m_Object = createObject(model, localPlayer:getPosition())
+	else
+		self.m_Object = createPed(model, localPlayer:getPosition())
+	end
+
 	self.m_hideObject = hideObject
 	self.m_Object:setCollisionsEnabled(false)
 	self.m_Callback = callback
@@ -28,7 +33,7 @@ function ObjectPlacer:constructor(model, callback, hideObject)
 
 	self.m_Click = bind(self.Event_Click, self)
 	addEventHandler("onClientClick", root, self.m_Click)
-	
+
 	--do not indent as it will destroy the short message design
 	self.m_ShortMessage = ShortMessage:new(_[[Bewege das Objekt mit deiner Maus
 Weitere Funktionen:
@@ -63,13 +68,13 @@ function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, wor
 	local camX, camY, camZ = getCameraMatrix()
 	local surfaceFound, surfaceX, surfaceY, surfaceZ, element, nx, ny, nz, materialID = processLineOfSight(camX, camY, camZ, worldX, worldY, worldZ, true,
 		true, true, true, true, true, false, true, localPlayer, false, true)
-	if surfaceFound then 
+	if surfaceFound then
 		local groundZ = getGroundPosition(surfaceX, surfaceY, surfaceZ + 2)
 		if groundZ > surfaceZ then return end -- just stop the object if if would spawn underground
 
 		self.m_Object:setPosition(surfaceX, surfaceY, surfaceZ + self.m_Object:getDistanceFromCentreOfMassToBaseOfModel())
 		self.m_HitElement = element
-		
+
 		--[[dxDrawLine3D(surfaceX + 1, surfaceY, surfaceZ, surfaceX - 1, surfaceY, surfaceZ, tocolor(200, 0, 0), 2)
 		dxDrawLine3D(surfaceX, surfaceY + 1, surfaceZ, surfaceX, surfaceY - 1, surfaceZ, tocolor(200, 0, 0), 2)
 		dxDrawLine3D(surfaceX, surfaceY, surfaceZ + 1, surfaceX, surfaceY, surfaceZ - 1, tocolor(200, 0, 0), 2)]]
@@ -89,7 +94,7 @@ end
 
 function ObjectPlacer:Event_Click(btn, state)
 	if state ~= "up" then return false end
-	
+
 	if btn == "left" then
 		if self.m_HitElement and isElement(self.m_HitElement) and (self.m_HitElement:getType() == "player" or self.m_HitElement:getType() == "ped") then
 			return ErrorBox:new(_"Du kannst Objekte nicht an Spielern platzieren.")

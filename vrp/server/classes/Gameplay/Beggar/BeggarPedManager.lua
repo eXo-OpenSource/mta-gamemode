@@ -1,6 +1,6 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
-addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed"}
+addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "beggarPlaced"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -10,6 +10,7 @@ function BeggarPedManager:constructor()
 	self.m_TimedPulse = TimedPulse:new(30*60*1000)
 	self.m_TimedPulse:registerHandler(bind(self.spawnPeds, self))
 
+	addCommandHandler("createPed", bind(self.createPed, self))
 
 	-- Event Zone
 	addEventHandler("robBeggarPed", root, bind(self.Event_robBeggarPed, self))
@@ -17,6 +18,8 @@ function BeggarPedManager:constructor()
 	addEventHandler("giveBeggarItem", root, bind(self.Event_giveBeggarItem, self))
 	addEventHandler("acceptTransport", root, bind(self.Event_acceptTransport, self))
 	addEventHandler("sellBeggarWeed", root, bind(self.Event_sellWeed, self))
+	addEventHandler("beggarPlaced", root, bind(self.Event_beggarPlaced, self))
+
 end
 
 function BeggarPedManager:destructor()
@@ -40,8 +43,8 @@ function BeggarPedManager:loadPositions()
 	 	self.m_Positions[row.Id] = {
 			 ["Pos"] = Vector3(row.PosX, row.PosY, row.PosZ),
 			 ["Rot"] = Vector3(0, 0, row.Rot),
-			 ["Names"] = fromJSON(row.Names) or {},
-			 ["Roles"] = fromJSON(row.Roles) or {}
+			 ["Names"] = row.Names and fromJSON(row.Names) or {},
+			 ["Roles"] = row.Roles and fromJSON(row.Roles) or {}
 			}
 	end
 end
@@ -106,4 +109,28 @@ end
 function BeggarPedManager:Event_sellWeed(amount)
 	if not instanceof(source, BeggarPed) then return end
 	source:sellWeed(client, amount)
+end
+
+function BeggarPedManager:createPed(player)
+	if player:getRank() < ADMIN_RANK_PERMISSION["npcControl"] then
+		player:sendError(_("Du darfst diese Funktion nicht nutzen!!", player))
+		return
+	end
+
+	-- Start the object placer on the client
+	player:triggerEvent("objectPlacerStart", Randomizer:getRandomTableValue(BeggarSkins), "beggarPlaced", false)
+	return true
+end
+
+function BeggarPedManager:Event_beggarPlaced(x, y, z, rotation)
+	if client.m_PlacingInfo then
+		client:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", client))
+		return false
+	end
+
+	if sql:queryExec("INSERT INTO ??_npc (PosX, PosY, PosZ, Rot) VALUES (?, ?, ?, ?)", sql:getPrefix(), x, y, z, rotation) then
+		local ped = BeggarPed:new(Vector3(x, y, z), Vector3(0, 0, rotation), sql:lastInsertId(), {}, {})
+		self:addRef(ped)
+		client:sendInfo(_("Neuen NPC hinzugefügt!", client))
+	end
 end
