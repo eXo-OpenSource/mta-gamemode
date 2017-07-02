@@ -455,7 +455,6 @@ function Kart:clientRequestRecord(id)
 			self.m_GhostCache[playerID] = record
 
 			triggerLatentClientEvent(client, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
-			--client:triggerEvent("KartReceiveGhostDriver", record)
 			client:sendInfo("Geist übernommen!")
 			return
 		end
@@ -463,24 +462,3 @@ function Kart:clientRequestRecord(id)
 
 	client:sendError("Für den Spieler ist kein Geist gespeichert!")
 end
-
---[[ Possible race states for kart race
-	Waiting = Warten auf Spieler / Aufbau (o.ä.)
-	Countdown
-	Running
-	SomeoneWon
-	EveryoneFinished
-]]
-
---[[
-
-	NOTES:
-		Features:
-					Zeitrennen - Gegen die Uhr, mit möglicher einblendung eines Ghost-Drivers - Highscore für Rundenzeit
-
-					Eventrennen - San News kann Event rennen starten. HUD mit Platzierung für jeden Spieler - Einstellbare Runden anzahl
-									Benachrichtigung für die ersten 5 Plätze an die San News
-
-		Sonstiges:
-					Bei Runden, abfrage ob alle Marker durchfahren werden, damit nicht gecheatet wird
-]]
