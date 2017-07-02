@@ -30,6 +30,7 @@ function Kart:constructor()
 	self.m_Players = {}
 	self.m_MapIndex = {}
 	self.m_Maps = {}
+	self.m_GhostCache = {}
 
 	-- Create and validate map instances
 	for k, v in pairs(Kart.Maps) do
@@ -126,6 +127,7 @@ function Kart:unloadMap()
 
 	delete(self.m_Toptimes)
 	delete(self.m_MovementRecorder)
+	self.m_GhostCache = {}
 
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -439,6 +441,7 @@ function Kart:clientSendRecord(record)
 	local json = toJSON(record, true)
 	if json then
 		self.m_MovementRecorder:saveRecord(client, json)
+		self.m_GhostCache[client:getId()] = json
 	end
 end
 
@@ -446,9 +449,12 @@ function Kart:clientRequestRecord(id)
 	local playerID = self.m_Toptimes:getPlayerFromToptime(id)
 
 	if playerID then
-		local record = self.m_MovementRecorder:getRecord(playerID)
+		local record = self.m_GhostCache[playerID] or self.m_MovementRecorder:getRecord(playerID)
+
 		if record then
-			client:triggerEvent("KartReceiveGhostDriver", record)
+			self.m_GhostCache[playerID] = record
+
+			triggerLatentClientEvent(client, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
 			client:sendInfo("Geist übernommen!")
 			return
 		end
@@ -456,24 +462,3 @@ function Kart:clientRequestRecord(id)
 
 	client:sendError("Für den Spieler ist kein Geist gespeichert!")
 end
-
---[[ Possible race states for kart race
-	Waiting = Warten auf Spieler / Aufbau (o.ä.)
-	Countdown
-	Running
-	SomeoneWon
-	EveryoneFinished
-]]
-
---[[
-
-	NOTES:
-		Features:
-					Zeitrennen - Gegen die Uhr, mit möglicher einblendung eines Ghost-Drivers - Highscore für Rundenzeit
-
-					Eventrennen - San News kann Event rennen starten. HUD mit Platzierung für jeden Spieler - Einstellbare Runden anzahl
-									Benachrichtigung für die ersten 5 Plätze an die San News
-
-		Sonstiges:
-					Bei Runden, abfrage ob alle Marker durchfahren werden, damit nicht gecheatet wird
-]]
