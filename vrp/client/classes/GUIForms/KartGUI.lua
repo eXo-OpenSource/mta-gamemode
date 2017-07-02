@@ -122,8 +122,14 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes)
 		local item = self.m_GridList:addItem(("%d."):format(k), timeMsToTimeText(v.time), v.name)
 		item.onLeftDoubleClick =
 		function()
-			self.m_DisableGhost:setVisible(true)
-			triggerServerEvent("requestKartGhost", localPlayer, k)
+			if not Kart.LastRequest then
+				Kart.LastRequest = true
+				self.m_DisableGhost:setVisible(true)
+
+				triggerServerEvent("requestKartGhost", localPlayer, k)
+			else
+				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
+			end
 		end
 	end
 end

@@ -30,6 +30,7 @@ function Kart:constructor()
 	self.m_Players = {}
 	self.m_MapIndex = {}
 	self.m_Maps = {}
+	self.m_GhostCache = {}
 
 	-- Create and validate map instances
 	for k, v in pairs(Kart.Maps) do
@@ -126,6 +127,7 @@ function Kart:unloadMap()
 
 	delete(self.m_Toptimes)
 	delete(self.m_MovementRecorder)
+	self.m_GhostCache = {}
 
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -439,6 +441,7 @@ function Kart:clientSendRecord(record)
 	local json = toJSON(record, true)
 	if json then
 		self.m_MovementRecorder:saveRecord(client, json)
+		self.m_GhostCache[client:getId()] = json
 	end
 end
 
@@ -446,9 +449,13 @@ function Kart:clientRequestRecord(id)
 	local playerID = self.m_Toptimes:getPlayerFromToptime(id)
 
 	if playerID then
-		local record = self.m_MovementRecorder:getRecord(playerID)
+		local record = self.m_GhostCache[playerID] or self.m_MovementRecorder:getRecord(playerID)
+
 		if record then
-			client:triggerEvent("KartReceiveGhostDriver", record)
+			self.m_GhostCache[playerID] = record
+
+			triggerLatentClientEvent(client, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
+			--client:triggerEvent("KartReceiveGhostDriver", record)
 			client:sendInfo("Geist übernommen!")
 			return
 		end
