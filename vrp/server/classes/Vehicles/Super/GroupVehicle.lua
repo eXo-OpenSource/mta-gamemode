@@ -236,9 +236,9 @@ function GroupVehicle:buy(player)
 			if status then
 				player:takeMoney(price, "Firmen-Fahrzeug Kauf")
 				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
-				group:sendShortMessage(_("%s hat ein Fahrzeug um %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
+				group:sendShortMessage(_("%s hat ein Fahrzeug für %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
 				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
-				group:addLog(player, "Fahrzeugverkauf", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." um "..price.." gekauft!")
+				group:addLog(player, "Fahrzeugverkauf", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." für "..price.." gekauft!")
 				removeElementData(newVeh, "forSale")
 				removeElementData(newVeh, "forSalePrice")
 			else
