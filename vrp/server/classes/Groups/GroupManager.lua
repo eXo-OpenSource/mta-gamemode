@@ -112,7 +112,7 @@ end
 function GroupManager:Event_RequestLog()
 	local group = client:getGroup()
 	if group then
-		client:triggerEvent("groupRetrieveLog", group:getPlayers(), group:getLog())
+		client:triggerEvent("groupRetrieveLog", group:getPlayerNamesFromLog(), group:getLog())
 	end
 end
 

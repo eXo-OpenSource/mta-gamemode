@@ -51,6 +51,13 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
     return result
 end
 
+function StatisticsLogger:getGroupLogUserIDs(groupType, groupId)
+	local days = 7
+	local since = getRealTime().timestamp-days*24*60*60
+	local result = sqlLogs:queryFetch("SELECT DISTINCT UserId FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
+	return result
+end
+
 function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
     local userId = player
     local adminId = 0
@@ -73,7 +80,7 @@ end
 function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, distance, points, amount)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
-	
+
 	if not vehicle then vehicle = 0 end
 	if not distance then distance = 0 end
 	if not points then points = 0 end
@@ -86,7 +93,7 @@ end
 function StatisticsLogger:addVehicleLog(player, ownerId, ownerType, elementId, model, action)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
-	
+
 	if not ownerId then ownerId = 0 end
 	if not ownerType then ownerType = "" end
 	if not elementId then elementId = 0 end

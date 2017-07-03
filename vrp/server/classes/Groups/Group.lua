@@ -355,6 +355,16 @@ function Group:getPlayers(getIDsOnly)
   return temp
 end
 
+function Group:getPlayerNamesFromLog(getIDsOnly)
+	local userIDs = StatisticsLogger:getSingleton():getGroupLogUserIDs("group", self.m_Id) or {}
+	local temp = {}
+
+	for _, row in pairs(userIDs) do
+		temp[row.UserId] = {name = Account.getNameFromId(row.UserId)}
+	end
+	return temp
+end
+
 function Group:getOnlinePlayers()
 	local players = {}
 	for playerId in pairs(self.m_Players) do
