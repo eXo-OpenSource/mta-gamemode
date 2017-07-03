@@ -334,7 +334,7 @@ function ShopManager:deposit(amount, shopId)
 
 		client:takeMoney(amount, "Shop-Einlage")
 		shop:giveMoney(amount, "Shop-Einlage")
-		shop.m_Owner:addLog(client, "Kasse", "hat "..amount.."$ in die Shop-Kasse gelegt! ("..shop:getName()..")")
+		shop.m_Owner:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Shop-Kasse gelegt! ("..shop:getName()..")")
 		shop:refreshBankGui(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
@@ -359,7 +359,7 @@ function ShopManager:withdraw(amount, shopId)
 
 		shop:takeMoney(amount, "Shop-Auslage")
 		client:giveMoney(amount, "Shop-Auslage")
-		shop.m_Owner:addLog(client, "Kasse", "hat "..amount.."$ aus der Shop-Kasse genommen! ("..shop:getName()..")")
+		shop.m_Owner:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Shop-Kasse genommen! ("..shop:getName()..")")
 		shop:refreshBankGui(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))

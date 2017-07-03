@@ -141,7 +141,7 @@ function FactionManager:Event_factionDeposit(amount)
 
 	client:takeMoney(amount, "Fraktion-Einlage")
 	faction:giveMoney(amount, "Fraktion-Einlage")
-	faction:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
+	faction:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 	faction:refreshBankAccountGUI(client)
 end
@@ -163,7 +163,7 @@ function FactionManager:Event_factionWithdraw(amount)
 	end
 
 	faction:takeMoney(amount, "Fraktion-Auslage")
-	faction:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+	faction:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 	client:giveMoney(amount, "Fraktion-Auslage")
 	self:sendInfosToClient(client)
 	faction:refreshBankAccountGUI(client)

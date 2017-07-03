@@ -267,7 +267,7 @@ function GroupManager:Event_Deposit(amount)
 
 	client:takeMoney(amount, "Firmen/Gang Einzahlung")
 	group:giveMoney(amount, "Firmen/Gang Auszahlung")
-	group:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
+	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 	group:refreshBankGui(client)
 end
@@ -290,7 +290,7 @@ function GroupManager:Event_Withdraw(amount)
 
 	group:takeMoney(amount, "Firmen/Gang Auszahlung")
 	client:giveMoney(amount, "Firmen/Gang Auszahlung")
-	group:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 
 	self:sendInfosToClient(client)
 	group:refreshBankGui(client)

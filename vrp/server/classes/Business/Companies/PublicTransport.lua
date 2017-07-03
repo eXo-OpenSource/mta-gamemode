@@ -11,6 +11,7 @@ function PublicTransport:constructor()
 
 	VehicleBarrier:new(Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
+	self:setSafe(createObject(2332, 1733.52, -1931.28, 13, 0, 0, 270))
 	self:addBusStops()
 end
 
@@ -70,6 +71,7 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 		if veh:getModel() == 420 or veh:getModel() == 438 then
 			player:triggerEvent("showTaxoMeter")
 		elseif veh:getModel() == 437 then
+			veh:setVariant(0, 0)
 			self:startBusTour(player)
 		end
 	else
@@ -197,6 +199,7 @@ function PublicTransport:Event_sendTargetTellMessage(posX, posY)
 end
 
 function PublicTransport:stopBusTour(player)
+	player.Bus_LastStop = nil
 	player.Bus_NextStop = nil
 	player.Bus_Line = nil
 	delete(player.Bus_Blip)
@@ -210,7 +213,7 @@ function PublicTransport:startBusTour(player)
 
 	local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
 	player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
-
+	triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][player.Bus_NextStop]].name, false, line)
 	player:giveAchievement(17)
 end
 
@@ -222,6 +225,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		end
 
 		-- Check if this is really the destination bus stop
+		local lastId = player.Bus_LastStop
 		local destinationId = player.Bus_NextStop
 		local line = player.Bus_Line
 		if not destinationId or not line then
@@ -235,11 +239,17 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		end
 
 		-- Give the player some money and switch to the next bus stop
-		player:giveMoney(50, "Public Transport Bus")
-		player:givePoints(2)
+		if lastId then 
+			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].marker.position, self.m_BusStops[stopId].marker.position)
+			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
+			player:givePoints(math.round(5 * (dist/1000))) --5 / km
+			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
+			self:addLog(player, "Kasse", ("hat %s in die Kasse gelegt (Busfahrt Linie %d)!"):format(toMoneyString(math.round(30 * (dist/1000))), line))
+		end
 		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestinationId
+
 
 		local nextStopId = self.m_Lines[line][newDestinationId]
 		local x, y, z = getElementPosition(self.m_BusStops[nextStopId].object)
@@ -249,6 +259,8 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
 		local nextNewDestinationId = self.m_Lines[line][newDestinationId + 1] and newDestinationId + 1 or 1
 		local nextNewStopId = self.m_Lines[line][nextNewDestinationId] -- get the stop two stations ahead to determine if next stop is an end station
-		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[nextStopId].name, self.m_BusStops[nextNewStopId].name == self.m_BusStops[stopId].name)
+		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[nextStopId].name, self.m_BusStops[nextNewStopId].name == self.m_BusStops[stopId].name, line)
+
+		player.Bus_LastStop = stopId
 	end
 end

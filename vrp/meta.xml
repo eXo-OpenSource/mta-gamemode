@@ -1497,6 +1497,7 @@
 	<vrpfile src="files/audio/wasted.mp3"/>
 	<vrpfile src="files/audio/scary.mp3"/>
 	<vrpfile src="files/audio/scream.mp3"/>
+	<vrpfile src="files/audio/ept_notification.wav"/>
 	<vrpfile src="files/audio/scary_source.txt"/>
 	<vrpfile src="files/audio/jobs/pickaxe1.mp3"/>
 	<vrpfile src="files/audio/jobs/pickaxe2.mp3"/>
