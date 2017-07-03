@@ -24,12 +24,13 @@ function AdminPedGUI:constructor(money)
 
 	self.m_PedGrid = GUIGridList:new(10, 50, self.m_Width-20, 300, self.m_Window)
 	self.m_PedGrid:addColumn(_"ID", 0.1)
-	self.m_PedGrid:addColumn(_"Name", 0.3)
+	self.m_PedGrid:addColumn(_"Name", 0.25)
 	self.m_PedGrid:addColumn(_"Zone", 0.2)
 	self.m_PedGrid:addColumn(_"Rollen", 0.3)
-	self.m_PedGrid:addColumn(_"gespawnt", 0.1)
+	self.m_PedGrid:addColumn(_"gespawnt", 0.15)
 
-	self.m_EventToggleButton = GUIButton:new(10, 370, 250, 30, "asdf",  self):setFontSize(1):setBackgroundColor(Color.Blue)
+	self.m_CreatePed = GUIButton:new(10, 370, 160, 30, "neuen Ped plazieren",  self):setFontSize(1):setBackgroundColor(Color.Blue)
+	self.m_CreatePed.onLeftClick = function() delete(self) triggerServerEvent("adminCreatePed", localPlayer) end
 
 	addEventHandler("adminPedReceiveData", root, bind(self.onReceiveData, self))
 end

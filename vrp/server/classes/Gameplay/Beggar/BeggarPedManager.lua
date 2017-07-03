@@ -1,6 +1,7 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
-addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "beggarPlaced", "adminPedRequestData"}
+addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed",
+"adminPedPlaced", "adminPedRequestData", "adminCreatePed"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -10,17 +11,15 @@ function BeggarPedManager:constructor()
 	self.m_TimedPulse = TimedPulse:new(30*60*1000)
 	self.m_TimedPulse:registerHandler(bind(self.spawnPeds, self))
 
-	addCommandHandler("createPed", bind(self.createPed, self))
-
 	-- Event Zone
 	addEventHandler("robBeggarPed", root, bind(self.Event_robBeggarPed, self))
 	addEventHandler("giveBeggarPedMoney", root, bind(self.Event_giveBeggarMoney, self))
 	addEventHandler("giveBeggarItem", root, bind(self.Event_giveBeggarItem, self))
 	addEventHandler("acceptTransport", root, bind(self.Event_acceptTransport, self))
 	addEventHandler("sellBeggarWeed", root, bind(self.Event_sellWeed, self))
-	addEventHandler("beggarPlaced", root, bind(self.Event_beggarPlaced, self))
 	addEventHandler("adminPedRequestData", root, bind(self.Event_adminRequestData, self))
-
+	addEventHandler("adminCreatePed", root, bind(self.Event_createPed, self))
+	addEventHandler("adminPedPlaced", root, bind(self.Event_pedPlaced, self))
 
 end
 
@@ -112,18 +111,18 @@ function BeggarPedManager:Event_sellWeed(amount)
 	source:sellWeed(client, amount)
 end
 
-function BeggarPedManager:createPed(player)
-	if player:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
-		player:sendError(_("Du darfst diese Funktion nicht nutzen!!", player))
+function BeggarPedManager:Event_createPed()
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
 		return
 	end
 
 	-- Start the object placer on the client
-	player:triggerEvent("objectPlacerStart", Randomizer:getRandomTableValue(BeggarSkins), "beggarPlaced", false)
+	client:triggerEvent("objectPlacerStart", Randomizer:getRandomTableValue(BeggarSkins), "adminPedPlaced", false, true)
 	return true
 end
 
-function BeggarPedManager:Event_beggarPlaced(x, y, z, rotation)
+function BeggarPedManager:Event_pedPlaced(x, y, z, rotation)
 	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
 		return
