@@ -594,6 +594,7 @@
 	<script src="client/classes/GUIForms/StateFactionNoteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminEventGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AdminPedGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
@@ -1283,7 +1284,7 @@
 	<vrpfile src="files/images/Textures/Faction/State/RamDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SAdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SWATdec.png"/>
-	
+
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ambu.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Copcar.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Firetruck.png"/>

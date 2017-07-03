@@ -1,6 +1,6 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
-addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "beggarPlaced"}
+addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "beggarPlaced", "adminPedRequestData"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -19,6 +19,8 @@ function BeggarPedManager:constructor()
 	addEventHandler("acceptTransport", root, bind(self.Event_acceptTransport, self))
 	addEventHandler("sellBeggarWeed", root, bind(self.Event_sellWeed, self))
 	addEventHandler("beggarPlaced", root, bind(self.Event_beggarPlaced, self))
+	addEventHandler("adminPedRequestData", root, bind(self.Event_adminRequestData, self))
+
 
 end
 
@@ -43,7 +45,6 @@ function BeggarPedManager:loadPositions()
 	 	self.m_Positions[row.Id] = {
 			 ["Pos"] = Vector3(row.PosX, row.PosY, row.PosZ),
 			 ["Rot"] = Vector3(0, 0, row.Rot),
-			 ["Names"] = row.Names and fromJSON(row.Names) or {},
 			 ["Roles"] = row.Roles and fromJSON(row.Roles) or {}
 			}
 	end
@@ -58,9 +59,9 @@ function BeggarPedManager:spawnPeds()
 	end
 
 	-- Create new Peds
-	for i, v in ipairs(self.m_Positions) do
+	for i, v in pairs(self.m_Positions) do
 		if chance(50) then -- They only spawn with a probability of 50%
-			local ped = BeggarPed:new(v.Pos, v.Rot, i, v.Names, v.Roles)
+			local ped = BeggarPed:new(v.Pos, v.Rot, i, v.Roles)
 			self:addRef(ped)
 		end
 	end
@@ -112,7 +113,7 @@ function BeggarPedManager:Event_sellWeed(amount)
 end
 
 function BeggarPedManager:createPed(player)
-	if player:getRank() < ADMIN_RANK_PERMISSION["npcControl"] then
+	if player:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
 		player:sendError(_("Du darfst diese Funktion nicht nutzen!!", player))
 		return
 	end
@@ -123,6 +124,11 @@ function BeggarPedManager:createPed(player)
 end
 
 function BeggarPedManager:Event_beggarPlaced(x, y, z, rotation)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
 	if client.m_PlacingInfo then
 		client:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", client))
 		return false
@@ -132,5 +138,25 @@ function BeggarPedManager:Event_beggarPlaced(x, y, z, rotation)
 		local ped = BeggarPed:new(Vector3(x, y, z), Vector3(0, 0, rotation), sql:lastInsertId(), {}, {})
 		self:addRef(ped)
 		client:sendInfo(_("Neuen NPC hinzugefügt!", client))
+		self:loadPositions()
 	end
 end
+
+function BeggarPedManager:Event_adminRequestData()
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
+	local table = {}
+	for i, v in pairs(self.m_Positions) do
+		table[i] = {}
+		table[i]["Pos"] = serialiseVector(v.Pos)
+		table[i]["Rot"] = serialiseVector(v.Rot)
+		table[i]["Name"] = BeggarPedManager.Map[i] and BeggarPedManager.Map[i].m_Name or "- nicht geladen"
+		table[i]["Roles"] = v.Roles
+		table[i]["Spawned"] = BeggarPedManager.Map[i] and true or false
+	end
+	client:triggerEvent("adminPedReceiveData", table)
+end
+

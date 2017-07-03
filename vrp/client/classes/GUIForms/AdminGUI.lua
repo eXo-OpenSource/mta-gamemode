@@ -65,7 +65,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
-	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 270, 250, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 310, 210, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("pedMenu", "Ped-Menü", 340, 350, 210, 30, Color.Blue, tabAllgemein)
 
 
 	--Column 3
@@ -521,6 +522,9 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "eventMenu" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
+	elseif func == "pedMenu" then
+		self:close()
+		AdminPedGUI:getSingleton():open()
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
@@ -532,7 +536,7 @@ function AdminGUI:onButtonClick(func)
 			local pos = {x, y, z}
 			triggerServerEvent("adminTriggerFunction", root, func, pos)
 		else
-			ErrorBox("Ungültige Koordinaten-Angabe")
+			ErrorBox:new("Ungültige Koordinaten-Angabe")
 		end
 	elseif func == "nickchange" then
 		InputBox:new(_("Spieler %s umbenennen", self.m_SelectedPlayer:getName()),
