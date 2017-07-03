@@ -237,31 +237,18 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		-- Give the player some money and switch to the next bus stop
 		player:giveMoney(50, "Public Transport Bus")
 		player:givePoints(2)
-		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
-		player.Bus_NextStop = newDestination
+		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))
+		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
+		player.Bus_NextStop = newDestinationId
 
-		-- Pay extra money for extra occupants
-		if table.size(getVehicleOccupants(vehicle)) > 1 then
-			player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40, "Public Transport Bus (Passagiere)")
-		end
-
-		for seat, player in pairs(getVehicleOccupants(vehicle)) do
-			if seat ~= 0 then
-				if player:getMoney() >= 40 then
-					player:takeMoney(40, "Public Transport Bus")
-				else
-					player:removeFromVehicle()
-					player:sendInfo(_("Du hast nicht mehr genug Geld dabei!", player))
-				end
-			end
-		end
-
-		local stopId = self.m_Lines[line][newDestination]
-		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
+		local nextStopId = self.m_Lines[line][newDestinationId]
+		local x, y, z = getElementPosition(self.m_BusStops[nextStopId].object)
 		delete(player.Bus_Blip)
 		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player,9999)
 
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
-		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[stopId].name)
+		local nextNewDestinationId = self.m_Lines[line][newDestinationId + 1] and newDestinationId + 1 or 1
+		local nextNewStopId = self.m_Lines[line][nextNewDestinationId] -- get the stop two stations ahead to determine if next stop is an end station
+		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[nextStopId].name, self.m_BusStops[nextNewStopId].name == self.m_BusStops[stopId].name)
 	end
 end

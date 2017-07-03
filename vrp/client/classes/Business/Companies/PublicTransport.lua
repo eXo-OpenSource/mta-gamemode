@@ -17,16 +17,19 @@ function PublicTransport:setBusDisplayText(vehicle, text)
 	dxSetRenderTarget(nil)
 end
 
-function PublicTransport:Event_busReachNextStop(vehicle, nextStopName)
+function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop)
 	local vehicleX, vehicleY, vehicleZ = getElementPosition(vehicle)
 	local playerX, playerY, playerZ = getElementPosition(localPlayer)
-	if getDistanceBetweenPoints3D(vehicleX, vehicleY, vehicleZ, playerX, playerY, playerZ) > 300 then
+	--[[if getDistanceBetweenPoints3D(vehicleX, vehicleY, vehicleZ, playerX, playerY, playerZ) > 300 then
 		return
-	end
+	end]]
 
 	self:setBusDisplayText(vehicle, nextStopName)
-
 	if getPedOccupiedVehicle(localPlayer) == vehicle then
-		playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..nextStopName.."&client=tw-ob")
+		local text = nextStopName
+		if endStop then
+			text = nextStopName..". Endstation"
+		end
+		playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..text.."&client=tw-ob")
 	end
 end
