@@ -15,7 +15,7 @@ function MovementRecorder:destructor()
 end
 
 function MovementRecorder:getRecord(playerID)
-	local result = sql:queryFetchSingle("SELECT Data FROM ??_ghostdriver WHERE MapID = ? AND PlayerID = ?", sql:getPrefix(), self.m_MapID, playerID)
+	local result = sql:asyncQueryFetchSingle("SELECT Data FROM ??_ghostdriver WHERE MapID = ? AND PlayerID = ?", sql:getPrefix(), self.m_MapID, playerID)
 	return result and result.Data or false
 end
 

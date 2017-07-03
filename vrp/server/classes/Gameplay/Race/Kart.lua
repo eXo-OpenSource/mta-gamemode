@@ -71,7 +71,7 @@ function Kart:constructor()
 	addEventHandler("onColShapeHit", self.m_Polygon, bind(Kart.onKartZoneEnter, self))
 	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
 	addEventHandler("sendKartGhost", root, bind(Kart.clientSendRecord, self))
-	addEventHandler("requestKartGhost", root, bind(Kart.clientRequestRecord, self))
+	addEventHandler("requestKartGhost", root, bindAsync(Kart.clientRequestRecord, self))
 
 	GlobalTimer:getSingleton():registerEvent(bind(self.changeMap, self), "KartMapChange", nil, nil, 00)
 end
@@ -446,6 +446,7 @@ function Kart:clientSendRecord(record)
 end
 
 function Kart:clientRequestRecord(id)
+	local c = client
 	local playerID = self.m_Toptimes:getPlayerFromToptime(id)
 
 	if playerID then
@@ -454,11 +455,11 @@ function Kart:clientRequestRecord(id)
 		if record then
 			self.m_GhostCache[playerID] = record
 
-			triggerLatentClientEvent(client, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
-			client:sendInfo("Geist übernommen!")
+			triggerLatentClientEvent(c, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
+			c:sendInfo("Geist übernommen!")
 			return
 		end
 	end
 
-	client:sendError("Für den Spieler ist kein Geist gespeichert!")
+	c:sendError("Für den Spieler ist kein Geist gespeichert!")
 end
