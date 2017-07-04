@@ -18,7 +18,7 @@ BeggarHelpPhrases = {
         "Ich brauch GRAS! SOFORT!!!",
         "Du siehst mir aus wie ein Drogenkurier, hast du auch was für mich?"
 	};
-    { -- Type: Heroin (unused)
+    { -- Type: Heroin
 		"Hey! Bock auf nen Heroin Trip?",
 		"Pssst, du da! Habe das beste Heroin der Stadt!"
 	};
