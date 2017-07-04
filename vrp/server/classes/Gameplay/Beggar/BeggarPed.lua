@@ -1,18 +1,20 @@
 BeggarPed = inherit(Object)
 
-function BeggarPed:new(position, rotation, ...)
+function BeggarPed:new(id, position, rotation, ...)
     local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z)
-    enew(ped, self, ...)
+    enew(ped, self, id, ...)
 	addEventHandler("onPedWasted", ped, bind(self.Event_onPedWasted, ped))
 
     return ped
 end
 
-function BeggarPed:constructor(Id)
-	self.m_Id = Id
+function BeggarPed:constructor(id, roles)
+	self.m_Id = id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = createColSphere(self:getPosition(), 10)
-	self.m_Type = math.random(1, 4)
+	self.m_Type = #roles > 0 and Randomizer:getRandomTableValue(roles) or math.random(1, #BeggarTypeNames)
+	self.m_RoleName = BeggarTypeNames[self.m_Type]
+
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -186,7 +188,7 @@ function BeggarPed:acceptTransport(player)
 			if not veh:getOccupant(seat) then
 				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)
 				self:warpIntoVehicle(veh, seat)
-				
+
 				player:meChat(true, ("bittet %s in sein Fahrzeug"):format(self.m_Name))
 				self:sendMessage(player, BeggarPhraseTypes.Destination, getZoneName(pos.x, pos.y, pos.z))
 				player.beggarTransportVehicle = veh

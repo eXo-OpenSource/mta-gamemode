@@ -585,15 +585,17 @@ VRP_RADIO = {
 	{"User Track Player", 12}
 }
 
-BeggarTypes = {
+BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
 	Transport = 3;
     Weed = 4;
 	Ecstasy = 5;
 }
+
+BeggarTypeNames = {}
 for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
+	BeggarTypeNames[v] = i
 end
 
 HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)

@@ -1,7 +1,7 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
 addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed",
-"adminPedPlaced", "adminPedRequestData", "adminCreatePed"}
+"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -20,6 +20,11 @@ function BeggarPedManager:constructor()
 	addEventHandler("adminPedRequestData", root, bind(self.Event_adminRequestData, self))
 	addEventHandler("adminCreatePed", root, bind(self.Event_createPed, self))
 	addEventHandler("adminPedPlaced", root, bind(self.Event_pedPlaced, self))
+	addEventHandler("adminPedChangeRole", root, bind(self.Event_changeRole, self))
+	addEventHandler("adminPedSpawn", root, bind(self.Event_adminPedSpawn, self))
+
+
+
 
 end
 
@@ -60,7 +65,7 @@ function BeggarPedManager:spawnPeds()
 	-- Create new Peds
 	for i, v in pairs(self.m_Positions) do
 		if chance(50) then -- They only spawn with a probability of 50%
-			local ped = BeggarPed:new(v.Pos, v.Rot, i, v.Roles)
+			local ped = BeggarPed:new(i, v.Pos, v.Rot, v.Roles)
 			self:addRef(ped)
 		end
 	end
@@ -134,7 +139,7 @@ function BeggarPedManager:Event_pedPlaced(x, y, z, rotation)
 	end
 
 	if sql:queryExec("INSERT INTO ??_npc (PosX, PosY, PosZ, Rot) VALUES (?, ?, ?, ?)", sql:getPrefix(), x, y, z, rotation) then
-		local ped = BeggarPed:new(Vector3(x, y, z), Vector3(0, 0, rotation), sql:lastInsertId(), {}, {})
+		local ped = BeggarPed:new(sql:lastInsertId(), Vector3(x, y, z), Vector3(0, 0, rotation), {})
 		self:addRef(ped)
 		client:sendInfo(_("Neuen NPC hinzugefügt!", client))
 		self:loadPositions()
@@ -147,15 +152,59 @@ function BeggarPedManager:Event_adminRequestData()
 		return
 	end
 
+	self:adminSendData(client)
+end
+
+function BeggarPedManager:adminSendData(player)
 	local table = {}
 	for i, v in pairs(self.m_Positions) do
 		table[i] = {}
 		table[i]["Pos"] = serialiseVector(v.Pos)
 		table[i]["Rot"] = serialiseVector(v.Rot)
 		table[i]["Name"] = BeggarPedManager.Map[i] and BeggarPedManager.Map[i].m_Name or "- nicht geladen"
+		table[i]["CurrentRole"] = BeggarPedManager.Map[i] and BeggarPedManager.Map[i].m_RoleName or "n. V."
 		table[i]["Roles"] = v.Roles
 		table[i]["Spawned"] = BeggarPedManager.Map[i] and true or false
 	end
-	client:triggerEvent("adminPedReceiveData", table)
+	player:triggerEvent("adminPedReceiveData", table, BeggarTypes, BeggarTypeNames)
 end
 
+function BeggarPedManager:Event_changeRole(pedId, func, roleId)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+	--roleId = tonumber(roleId)
+
+	if self.m_Positions[pedId] then
+		if func == "add" then
+			table.insert(self.m_Positions[pedId]["Roles"], roleId)
+			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s zugewiesen!", client, pedId, BeggarTypeNames[roleId]))
+		elseif func == "rem" then
+			table.remove(self.m_Positions[pedId]["Roles"], table.find(roleId))
+			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s entfernt!", client, pedId, BeggarTypeNames[roleId]))
+		end
+		self:savePedRoles(pedId)
+	end
+	self:adminSendData(client)
+end
+
+function BeggarPedManager:savePedRoles(pedId)
+	if self.m_Positions[pedId] then
+		sql:queryExec("UPDATE ??_npc SET Roles = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Positions[pedId]["Roles"]), pedId)
+	end
+end
+
+function BeggarPedManager:Event_adminPedSpawn(pedId)
+	if BeggarPedManager.Map[pedId] then
+		delete(BeggarPedManager.Map[pedId])
+		client:sendInfo(_("Ped mit ID %d despawnt!", client, pedId))
+	else
+		if self.m_Positions[pedId] then
+			local ped = BeggarPed:new(pedId, self.m_Positions[pedId].Pos, self.m_Positions[pedId].Rot, self.m_Positions[pedId].Roles)
+			self:addRef(ped)
+			client:sendInfo(_("Ped mit ID %d gespawnt!", client, pedId))
+		end
+	end
+	self:adminSendData(client)
+end
