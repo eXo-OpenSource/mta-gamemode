@@ -590,7 +590,7 @@ BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Food = 2;
 	Transport = 3;
     Weed = 4;
-	Ecstasy = 5;
+	Heroin = 5;
 }
 
 BeggarTypeNames = {}

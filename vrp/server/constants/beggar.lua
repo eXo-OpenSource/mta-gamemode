@@ -18,32 +18,38 @@ BeggarHelpPhrases = {
         "Ich brauch GRAS! SOFORT!!!",
         "Du siehst mir aus wie ein Drogenkurier, hast du auch was für mich?"
 	};
-    { -- Type: Ecstasy (unused)
-		"Hey! Bock auf nen Ecstasy Trip?"
+    { -- Type: Heroin (unused)
+		"Hey! Bock auf nen Heroin Trip?",
+		"Pssst, du da! Habe das beste Heroin der Stadt!"
 	};
 }
 
 BeggarThanksPhrases = {
-	{
+	{ -- Type: Money
 		"Vielen Dank. Jetzt kann ich mir wieder Bier kaufen!",
         "Danke dir! Und mach nicht die gleichen Fehler wie ich!",
         "Da wird sich gleich eine ganz bestimmte Stripperin freuen - danke!"
 	};
-	{
+	{ -- Type: Food
 		"Danke Meister, meine Ratte wäre fast verhungert.",
         "Danke... ich bin zwar Vegetarier, aber das Fleisch kann ich ja wegwerfen..",
         "Danke dir, der Abfall vom Cluckin' Bell schmeckt einfach nicht",
         "Grazie! Iste viele beeesser als der Miiist von Pizza Stack!"
 	};
-	{
+	{ -- Type: Transport
 		"Vielen Dank, genau da musste ich hin!",
         "Danke Kollege, San Andreas braucht mehr von deiner Sorte!",
         "Hier ist doch ein viel besserer Platz zum Betteln."
 	};
-    {
+    { -- Type: Weed
 		"Schön, mit dir Geschäfte zu machen.",
         "Danke, ich brauche das Zeug echt dringend!",
         "Das wird ein tolles Geburtstagsgeschenk!"
+	};
+	{ -- Type: Heroin
+		"Schön, mit dir Geschäfte zu machen.",
+        "Nimm nicht zu viel davon!",
+        "Ich bin nicht schuld, wenn du im Krankenhaus aufwachst!"
 	};
 }
 
@@ -113,6 +119,10 @@ BeggarSkins = {
     135,
     136,
     137
+}
+
+BeggarItemBuy = {
+	["Heroin"] = {["amount"] = 5, ["pricePerAmount"] = 30}
 }
 
 BeggarNames = { -- Wer namen zwischendrin einfügt wird erschossen!

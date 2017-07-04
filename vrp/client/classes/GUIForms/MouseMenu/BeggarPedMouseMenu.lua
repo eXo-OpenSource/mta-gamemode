@@ -28,6 +28,19 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("giveBeggarItem", self:getElement(), "Burger")
 			end
 		)
+	elseif element:getData("BeggarType") == BeggarTypes.Heroin then
+
+
+		self:addItem("5g Heroin kaufen",
+			function ()
+				QuestionBox:new(
+					_("Möchtest du 5g Heroin für 150$ kaufen?"),
+					function ()
+						triggerServerEvent("buyBeggarItem", self:getElement(), "Heroin")
+					end
+				)
+			end
+		)
 	elseif element:getData("BeggarType") == BeggarTypes.Weed then
 
 		self:addItem("Weed verkaufen",
