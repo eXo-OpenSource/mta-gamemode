@@ -84,7 +84,7 @@ function JobGravel:start()
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
 		addEventHandler("onClientVehicleCollision", vehicle, bind(self.onDozerCollide, self))
 
-		if self.m_Timer then JselfobGravel.m_Timer:destroy() end
+		if self.m_Timer then self.m_Timer:destroy() end
 		self.m_Timer = setTimer(bind(self.syncGravel, self), 1000, 0)
 
 		if getDevelopmentMode() then
