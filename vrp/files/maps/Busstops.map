@@ -6,9 +6,9 @@
     <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Marina" alpha="255" interior="0" posX="713.17267" posY="-1745.7576" posZ="14.67861" rotX="0" rotY="0" rotZ="69.177"></bus_stop>
     <bus_stop id="bus_stop (5)" markerdistance="4.5" lines="1" name="Santa Maria Beach" alpha="255" interior="0" posX="386.5744" posY="-1765.3474" posZ="5.78414" rotX="0" rotY="0" rotZ="90.824"></bus_stop>
     <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Rodeo" alpha="255" interior="0" posX="135.58604" posY="-1539.4307" posZ="9.01914" rotX="0" rotY="0" rotZ="57.35"></bus_stop>
-    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Fleischberg Fabrik" alpha="255" interior="0" posX="-200.53172" posY="-303.01425" posZ="1.66437" rotX="0" rotY="0" rotZ="43.524"></bus_stop>
+    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Fleischberg-Fabrik" alpha="255" interior="0" posX="-200.53172" posY="-303.01425" posZ="1.66437" rotX="0" rotY="0" rotZ="43.524"></bus_stop>
     <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Blueberry" alpha="255" interior="0" posX="114.57994" posY="-218.64977" posZ="1.81281" rotX="0" rotY="0" rotZ="269.277"></bus_stop>
-    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Fleischberg Fabrik" alpha="255" interior="0" posX="-217.10378" posY="-318.42487" posZ="1.63937" rotX="0" rotY="0" rotZ="220.517"></bus_stop>
+    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Fleischberg-Fabrik" alpha="255" interior="0" posX="-217.10378" posY="-318.42487" posZ="1.63937" rotX="0" rotY="0" rotZ="220.517"></bus_stop>
     <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Rodeo" alpha="255" interior="0" posX="107.17" posY="-1556.818" posZ="7.48429" rotX="0" rotY="0" rotZ="246.837"></bus_stop>
     <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" name="Santa Maria Beach" alpha="255" interior="0" posX="386.5762" posY="-1779.5887" posZ="5.83171" rotX="0" rotY="0" rotZ="270.484"></bus_stop>
     <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Marina" alpha="255" interior="0" posX="700.11285" posY="-1772.1278" posZ="13.72861" rotX="0" rotY="0" rotZ="251.425"></bus_stop>

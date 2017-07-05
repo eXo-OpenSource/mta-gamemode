@@ -486,6 +486,7 @@
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
+	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRace.lua" type="client"/>
@@ -943,6 +944,7 @@
 	<file src="files/images/GUI/Mouse.png"/>
 	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
+	<vrpfile src="files/images/GUI/FullCircle.png"/>
 	<vrpfile src="files/images/GUI/HelpIcon.png"/>
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>

@@ -567,6 +567,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle then
+				
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
 					end

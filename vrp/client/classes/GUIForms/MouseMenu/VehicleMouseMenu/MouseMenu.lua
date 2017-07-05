@@ -87,6 +87,18 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
 		end
+		if element:getModel() == 437 and localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+			if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+				self:addItem(_"Busfahrer >>>",
+					function()
+						if self:getElement() then
+							delete(self)
+							ClickHandler:getSingleton():addMouseMenu(BusLineMouseMenu:new(posX, posY, element), element)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Arrows)
+			end
+		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
 				self:addItem(_("Items >>>"),

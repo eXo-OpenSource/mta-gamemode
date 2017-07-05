@@ -225,6 +225,12 @@ function CompanyVehicle:respawn(force)
 		end
 	end
 
+	if self:getCompany():getId() == 4 then -- Public Transport
+		if self:getCompany():isBusOnTour(self) then
+			self:getCompany():stopBusTour(self)
+		end
+	end
+
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
