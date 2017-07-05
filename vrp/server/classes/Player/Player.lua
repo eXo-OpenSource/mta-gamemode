@@ -969,6 +969,11 @@ function Player:payDay()
 		self:takeWantedLevel(1)
 	end
 
+	if self:getSTVO() > 0 then
+		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
+		self:setSTVO(self:getSTVO() - 1)
+	end
+
 	if total > 0 then
 		self:addBankMoney(total, "Payday", true, true)
 	else
