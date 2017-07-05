@@ -53,13 +53,14 @@ function JobGravel:constructor()
 	self.m_TimedPulse = TimedPulse:new(60000)
 	self.m_TimedPulse:registerHandler(bind(self.destroyUnusedGravel, self))
 
-	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe", "gravelOnDestroy"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe", "gravelOnDestroy", "gravelOnSync"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
 	addEventHandler("gravelOnDestroy", root, bind(self.Event_onGravelDestroyHit, self))
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
 	addEventHandler("gravelOnDozerHit", root, bind(self.Event_onDozerHit, self))
 	addEventHandler("gravelTogglePickaxe", root, bind(self.Event_togglePickaxe, self))
+	addEventHandler("gravelOnSync", root, bind(self.Event_gravelOnSync, self))
 
 end
 
@@ -101,6 +102,16 @@ function JobGravel:Event_onGravelDestroyHit()
 			end
 			source:destroy()
 		end
+	end
+end
+
+function JobGravel:Event_gravelOnSync(position, rotation, velocity)
+	if source:getData("syncer") == client then
+		source:setPosition(position)
+		source:setRotation(rotation)
+		source:setVelocity(velocity)
+	else
+		-- TODO: event faking?
 	end
 end
 
@@ -183,6 +194,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
 		gravel.mined = true
+		gravel:setData("mined", true, true)
 		gravel.LastHit = getRealTime().timestamp
 		client:triggerEvent("gravelDisableCollission", gravel)
 		gravel:setScale(0)

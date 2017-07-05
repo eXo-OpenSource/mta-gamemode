@@ -20,6 +20,7 @@ function JobGravel:constructor()
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
+	self.Event_onDebugRender = bind(self.onDebugRender, self)
 	addEventHandler("gravelDisableCollission", root, bind(self.Event_disableGravelCollission, self))
 
 end
@@ -81,6 +82,15 @@ function JobGravel:start()
 
 		addEventHandler("onClientColShapeHit", vehicle.col1, bind(self.onDozerColHit, self))
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
+		addEventHandler("onClientVehicleCollision", vehicle, bind(self.onDozerCollide, self))
+
+		if self.m_Timer then JselfobGravel.m_Timer:destroy() end
+		self.m_Timer = setTimer(bind(self.syncGravel, self), 1000, 0)
+
+		if getDevelopmentMode() then
+			addEventHandler("onClientRender", root, self.Event_onDebugRender)
+		end
+
 		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
 	end)
 end
@@ -113,6 +123,8 @@ function JobGravel:dozerCleanup()
 		destroyElement(self.m_VehicleCol2)
 		self.m_VehicleCol2 = nil
 	end
+	if self.m_Timer then self.m_Timer:destroy() end
+	removeEventHandler("onClientRender", root, self.Event_onDebugRender)
 end
 
 function JobGravel:onInfo()
@@ -155,6 +167,8 @@ function JobGravel:stop()
 
 	removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
 
+	if self.m_Timer then self.m_Timer:destroy() end
+	removeEventHandler("onClientRender", root, self.Event_onDebugRender)
 	-- delete infopanels
 	delete(self.m_GravelImage)
 
@@ -187,6 +201,60 @@ end
 function JobGravel:onDozerColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
 		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
+	end
+end
+
+function JobGravel:onDozerCollide(gravel)
+	if gravel and gravel:getModel() == 2936 then
+		if gravel:getData("mined") then
+			if gravel:getData("syncer") ~= localPlayer then
+				gravel:setData("syncer", localPlayer, true)
+			end
+
+			if not gravel:getData("lastSync") or gravel:getData("lastSync") < getRealTime().timestamp then
+				gravel:setData("lastSync", getRealTime().timestamp, true)
+				gravel:setData("lastPosition", gravel.position)
+				
+				triggerServerEvent("gravelOnSync", gravel, gravel.position, gravel.rotation, gravel.velocity)
+			end
+		end
+	end
+end
+
+function JobGravel:syncGravel()
+	for k, v in ipairs(getElementsByType("object", root, true)) do
+		if v:getModel() == 2936 then
+			if v:getData("mined") and v:getData("syncer") == localPlayer then
+				if not v:getData("lastSync") or v:getData("lastSync") < getRealTime().timestamp then
+					if v:getData("lastPosition") == v.position then 
+						v:setData("lastSync", getRealTime().timestamp, true)
+						v:setData("lastPosition", v.position)
+						
+						triggerServerEvent("gravelOnSync", v, v.position, v.rotation, v.velocity)
+					end
+				end
+			end
+		end
+	end
+end
+
+function JobGravel:onDebugRender()
+	for k, v in ipairs(getElementsByType("object", root, true)) do
+		if v:getModel() == 2936 then
+			if v:getData("mined") then
+				local vX, vY = getScreenFromWorldPosition(v.position, 0, false)
+				if vX and vY then
+					local syncer = "none"
+					local lastSync = 0
+
+					if v:getData("syncer") then syncer = v:getData("syncer"):getName() end
+					if v:getData("lastSync") then lastSync = v:getData("lastSync") end
+
+					dxDrawText("Syncer: "..syncer .. "\nLastSync: " .. lastSync, vX - 1, vY - 1, nil, nil, tocolor(0, 0, 0, 255))
+					dxDrawText("Syncer: "..syncer .. "\nLastSync: " .. lastSync, vX, vY)
+				end
+			end
+		end
 	end
 end
 
