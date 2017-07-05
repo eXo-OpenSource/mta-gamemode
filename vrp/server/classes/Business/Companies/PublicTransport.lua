@@ -50,6 +50,8 @@ function PublicTransport:addBusStops()
 		local stationName = getElementData(busStop, "name")
 
 		local object = createObject(1257, x, y, z, rx, ry, rz)
+			object:setData("EPT_bus_station", stationName, true)
+			object:setData("EPT_bus_station_lines", lines, true)
 		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
 		local marker = createColSphere(markerX, markerY, markerZ, 5)
 		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
@@ -125,7 +127,9 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			veh:setVariant(0, 0)
 			veh:setHandling("handlingFlags", 18874448)
 			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
-			triggerClientEvent("busReachNextStop", root, player.vehicle, "Ausser Dienst", false)
+			if not self:isBusOnTour(player.vehicle) then
+				triggerClientEvent("busReachNextStop", root, player.vehicle, "Ausser Dienst", false)
+			end
 		end
 	else
 		if veh:getModel() == 420 or veh:getModel() == 438 then
@@ -290,6 +294,7 @@ function PublicTransport:stopBusTour(vehicle, player)
 	vehicle.Bus_LastStop = nil
 	vehicle.Bus_NextStop = nil
 	vehicle.Bus_Line = nil
+	vehicle:setData("EPT_bus_duty", false, true)
 	vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, companyColors[4].r, companyColors[4].g, companyColors[4].b)
 	for i,v in pairs(vehicle:getOccupants()) do
 		if v.vehicleSeat ~= 0 then
@@ -309,6 +314,7 @@ function PublicTransport:startBusTour(vehicle, player, line)
 		end
 		vehicle.Bus_NextStop = 1
 		vehicle.Bus_Line = line
+		vehicle:setData("EPT_bus_duty", line, true)
 		vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, unpack(PublicTransport.ms_BusLineData[line].color))
 		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
 		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)

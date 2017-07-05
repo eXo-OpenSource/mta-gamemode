@@ -2,13 +2,13 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIElements/BusRoutePlan.lua
--- *  PURPOSE:     Special progressbar which supports positive as well as negative values
+-- *  PURPOSE:     utility element to create a simple route view for bus routes
 -- *
 -- ****************************************************************************
 BusRoutePlan = inherit(GUIScrollableArea)
 
-function BusRoutePlan:constructor(x, y, w, h, parent)
-	GUIScrollableArea.constructor(self, x, y, w, h, 0, 0, true, false, parent, 5) --gets resized later on
+function BusRoutePlan:constructor(x, y, w, h, scrollBarOffset, parent)
+	GUIScrollableArea.constructor(self, x, y, w, h, 0, 0, true, false, parent, scrollBarOffset) --gets resized later on
 
 end
 
