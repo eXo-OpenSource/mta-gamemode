@@ -24,10 +24,6 @@ function BeggarPedManager:constructor()
 	addEventHandler("adminPedSpawn", root, bind(self.Event_adminPedSpawn, self))
 	addEventHandler("buyBeggarItem", root, bind(self.Event_buyBeggarItem, self))
 
-
-
-
-
 end
 
 function BeggarPedManager:destructor()
