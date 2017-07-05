@@ -167,7 +167,7 @@ function JobGravel:stop()
 
 	removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
 
-	if self.m_Timer then self.m_Timer:destroy() end
+	if self.m_Timer and isElement(self.m_Timer) then self.m_Timer:destroy() end
 	removeEventHandler("onClientRender", root, self.Event_onDebugRender)
 	-- delete infopanels
 	delete(self.m_GravelImage)
