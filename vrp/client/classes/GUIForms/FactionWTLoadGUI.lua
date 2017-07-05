@@ -31,7 +31,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_MaxLoad = localPlayer:getFaction():isStateFaction() and WEAPONTRUCK_MAX_LOAD_STATE or WEAPONTRUCK_MAX_LOAD
 
 	GUILabel:new(645,30, 280, 35, "im Waffentruck:", self.m_Window)
-	self.m_CartGrid = GUIGridList:new(645, 65, 280, 300, self.m_Window)
+	self.m_CartGrid = GUIGridList:new(645, 65, 280, 280, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anz.", 0.1)
 	self.m_CartGrid:addColumn(_"Preis", 0.3)
@@ -41,6 +41,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
+	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Mit Shift-Klick auf den Button kannst du direkt die maximal Menge aufladen."), self.m_Window)
 	self.m_Sum = GUILabel:new(645,390, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
@@ -183,8 +184,28 @@ function FactionWTLoadGUI:deleteItemFromCart()
 end
 
 function FactionWTLoadGUI:addItemToCart(typ,weapon)
-	if typ == "weapon" then self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"]+1 end
-	if typ == "munition" then self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"]+1 end
+	if getKeyState("lshift") then
+		local index = "Waffe"
+		local index2 = "Waffe"
+		local indexPrice = "WaffenPreis"
+		if typ == "munition" then index = "Munition"; index2 = "Magazine"; indexPrice = "MagazinPreis" end
+
+		local max = self.m_DepotWeaponsMax[weapon][index2] - self.depot[weapon][index]
+		local pricePerUnit = self.m_DepotWeaponsMax[weapon][indexPrice]
+		local remainingBudget = self.m_MaxLoad - self.m_TotalCosts
+
+		local maxMoney = math.floor(remainingBudget / pricePerUnit)
+
+		if maxMoney > max then
+			self.m_Cart[weapon][index] = self.m_Cart[weapon][index] + max
+		else
+			self.m_Cart[weapon][index] = self.m_Cart[weapon][index] + maxMoney
+		end
+	else
+		if typ == "weapon" then self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"]+1 end
+		if typ == "munition" then self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"]+1 end
+	end
+
 
 	self:updateCart()
 	self:updateButtons()
