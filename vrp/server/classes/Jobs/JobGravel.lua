@@ -66,7 +66,7 @@ end
 
 function JobGravel:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_GRAVEL) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_GRAVEL), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_GRAVEL))
 		return false
 	end
 	return true
