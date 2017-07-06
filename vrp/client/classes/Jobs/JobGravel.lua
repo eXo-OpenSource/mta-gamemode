@@ -84,15 +84,15 @@ function JobGravel:start()
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
 		addEventHandler("onClientVehicleCollision", vehicle, bind(self.onDozerCollide, self))
 
-		if self.m_Timer then self.m_Timer:destroy() end
-		self.m_Timer = setTimer(bind(self.syncGravel, self), 1000, 0)
-
-		if getDevelopmentMode() then
-			addEventHandler("onClientRender", root, self.Event_onDebugRender)
-		end
-
 		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
 	end)
+
+	if self.m_Timer then self.m_Timer:destroy() end
+	self.m_Timer = setTimer(bind(self.syncGravel, self), 1000, 0)
+
+	if getDevelopmentMode() then
+		addEventHandler("onClientRender", root, self.Event_onDebugRender)
+	end
 end
 
 function JobGravel:onGravelDestroyHit(hitElement)
@@ -123,8 +123,6 @@ function JobGravel:dozerCleanup()
 		destroyElement(self.m_VehicleCol2)
 		self.m_VehicleCol2 = nil
 	end
-	if self.m_Timer then self.m_Timer:destroy() end
-	removeEventHandler("onClientRender", root, self.Event_onDebugRender)
 end
 
 function JobGravel:onInfo()
@@ -206,16 +204,16 @@ end
 
 function JobGravel:onDozerCollide(gravel)
 	if gravel and gravel:getModel() == 2936 then
-		if gravel:getData("mined") then
-			if gravel:getData("syncer") ~= localPlayer then
-				gravel:setData("syncer", localPlayer, true)
+		if getElementData(gravel, "mined") then
+			if getElementData(gravel, "syncer") ~= localPlayer then
+				setElementData(gravel, "syncer", localPlayer, true)
 			end
 
-			if not gravel:getData("lastSync") or gravel:getData("lastSync") < getRealTime().timestamp then
-				gravel:setData("lastSync", getRealTime().timestamp, true)
-				gravel:setData("lastPosition", gravel.position)
+			if not getElementData(gravel, "lastSync") or getElementData(gravel, "lastSync") < getRealTime().timestamp then
+				setElementData(gravel, "lastSync", getRealTime().timestamp, true)
+				gravel.m_LastPosition = gravel.position
 				
-				triggerServerEvent("gravelOnSync", gravel, gravel.position, gravel.rotation, gravel.velocity)
+				triggerServerEvent("gravelOnSync", gravel, gravel.position.x, gravel.position.y, gravel.position.z, gravel.rotation.x, gravel.rotation.y, gravel.rotation.z, gravel.velocity.x, gravel.velocity.y, gravel.velocity.z)
 			end
 		end
 	end
@@ -224,13 +222,13 @@ end
 function JobGravel:syncGravel()
 	for k, v in ipairs(getElementsByType("object", root, true)) do
 		if v:getModel() == 2936 then
-			if v:getData("mined") and v:getData("syncer") == localPlayer then
-				if not v:getData("lastSync") or v:getData("lastSync") < getRealTime().timestamp then
-					if v:getData("lastPosition") == v.position then 
-						v:setData("lastSync", getRealTime().timestamp, true)
-						v:setData("lastPosition", v.position)
+			if getElementData(v, "mined") and getElementData(v, "syncer") == localPlayer then
+				if not getElementData(v, "lastSync") or getElementData(v, "lastSync") < getRealTime().timestamp then
+					if not v.m_LastPosition or not (v.position.x == v.m_LastPosition.x and v.position.y == v.m_LastPosition.y and v.position.z == v.m_LastPosition.z) then 
+						setElementData(v, "lastSync", getRealTime().timestamp, true)
+						v.m_LastPosition = v.position
 						
-						triggerServerEvent("gravelOnSync", v, v.position, v.rotation, v.velocity)
+						triggerServerEvent("gravelOnSync", v, v.position.x, v.position.y, v.position.z, v.rotation.x, v.rotation.y, v.rotation.z, v.velocity.x, v.velocity.y, v.velocity.z)
 					end
 				end
 			end
@@ -246,12 +244,20 @@ function JobGravel:onDebugRender()
 				if vX and vY then
 					local syncer = "none"
 					local lastSync = 0
+					local moved = not v.m_LastPosition or not (v.position.x == v.m_LastPosition.x and v.position.y == v.m_LastPosition.y and v.position.z == v.m_LastPosition.z)
 
-					if v:getData("syncer") then syncer = v:getData("syncer"):getName() end
-					if v:getData("lastSync") then lastSync = v:getData("lastSync") end
+					if getElementData(v, "syncer") then syncer = getElementData(v, "syncer"):getName() end
+					if getElementData(v, "lastSync") then lastSync = getElementData(v, "lastSync") end
 
-					dxDrawText("Syncer: "..syncer .. "\nLastSync: " .. lastSync, vX - 1, vY - 1, nil, nil, tocolor(0, 0, 0, 255))
-					dxDrawText("Syncer: "..syncer .. "\nLastSync: " .. lastSync, vX, vY)
+		
+					local text = "Syncer: "..syncer 
+					text = text .. "\nLastSync: " .. lastSync 
+					text = text .. "\nMoved: " .. tostring(moved)
+					text = text .. "\nCurPos: " .. tostring(v.position)
+					text = text .. "\nLstPos: " .. tostring(v.m_LastPosition) 
+
+					dxDrawText(text, vX - 1, vY - 1, nil, nil, tocolor(0, 0, 0, 255))
+					dxDrawText(text, vX, vY)
 				end
 			end
 		end
