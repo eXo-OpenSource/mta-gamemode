@@ -302,22 +302,36 @@ end)
 
 
 local renderLeviathanRope = {}
+
+
 addEventHandler("onClientElementStreamIn", root,
 	function()
 		if getElementType(source) == "vehicle" then
 			if source:getModel() == 417 then
 				renderLeviathanRope[source] = true
 			elseif source:getModel() == 544 then
+				setVehicleComponentVisible(source, "misc_a", false)
+				setVehicleComponentVisible(source, "misc_b", false)
+				setVehicleComponentVisible(source, "misc_c", false)
 				triggerEvent("rescueLadderUpdateCollision", source, false)
 			end
+			GroupSaleVehicles.VehiclestreamedIn(source)
+			Indicator:getSingleton():onVehicleStreamedIn(source)
+			Neon.VehiclestreamedIn(source)
 		end
 	end
 )
+
 
 addEventHandler("onClientElementStreamOut", root,
 	function()
 		if renderLeviathanRope[source] then
 			renderLeviathanRope[source] = nil
+		end
+		if getElementType(source) == "vehicle" then
+			GroupSaleVehicles.VehiclestreamedOut(source)
+			Indicator:getSingleton():onVehicleStreamedOut(source)
+			Neon.VehiclestreamedOut(source)
 		end
 	end
 )
@@ -325,14 +339,31 @@ addEventHandler("onClientElementStreamOut", root,
 
 addEventHandler("onClientRender", root,
 	function()
+		if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/VehicleRopes") end
 		for vehicle in pairs(renderLeviathanRope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
 			if not isElement(vehicle) then renderLeviathanRope[vehicle] = nil break end
 
 			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
+				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
 				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
 			end
 		end
+		for engine, magnet in pairs(JobTreasureSeeker.Rope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
+			if isElement(engine) and isElement(magnet) then
+				if isElementStreamedIn(engine) then
+					local pos1 = engine:getPosition()
+					local pos2 = magnet:getPosition()
+					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
+					dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
+				end
+			else
+				JobTreasureSeeker.Rope[engine] = nil
+			end
+		end
+		if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/VehicleRopes") end
 	end
 )
 

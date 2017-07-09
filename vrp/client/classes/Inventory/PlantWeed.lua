@@ -36,6 +36,7 @@ function PlantWeed:onUse()
 end
 
 function PlantWeed:Render()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/WeedUI") end
 	if PlantWeed.Shader and PlantWeed.Shader2 then
 		if #self.m_EntityTable ~= 0 then
 			local timeElapsed = getTickCount() - self.m_RendTick
@@ -63,6 +64,7 @@ function PlantWeed:Render()
 			self.m_HydPlant = nil
 		end
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/WeedUI", 1, 1) end
 end
 
 function PlantWeed:destructor( )

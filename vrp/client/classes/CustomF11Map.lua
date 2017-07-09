@@ -68,6 +68,7 @@ function CustomF11Map:disable()
 end
 
 function CustomF11Map:draw()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/F11Map") end
 	local height = self.m_Height
 	local mapPosX, mapPosY = self.m_PosX, self.m_PosY
 
@@ -101,6 +102,7 @@ function CustomF11Map:draw()
 	-- Draw blips
 	if core:get("HUD", "drawBlips", true) then
 		for i, blip in pairs(Blip.Blips) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map") end
 			local display = true
 			local posX, posY = blip:getPosition()
 
@@ -115,6 +117,7 @@ function CustomF11Map:draw()
 			end
 
 			if display then
+				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)
 				dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, blip.m_ImagePath, 0)
 			end
@@ -142,7 +145,7 @@ function CustomF11Map:draw()
 		dxDrawText(text, cursorX + 1, cursorY + 1, cursorX + 1, cursorY + 1, Color.Black, 1, "default-bold", "center", "bottom")
 		dxDrawText(text, cursorX, cursorY, cursorX, cursorY, Color.White, 1, "default-bold", "center", "bottom")
 	end
-	
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/F11Map") end
 end
 
 function CustomF11Map:worldToMapPosition(worldX, worldY)

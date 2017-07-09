@@ -90,7 +90,9 @@ function BreakingNews:updateRenderTarget()
 end
 
 function BreakingNews:render()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/BreakingNews") end
 	dxDrawImage(0, 0, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha), true)
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/BreakingNews", 1, 1) end
 end
 
 addEventHandler("breakingNews", root,

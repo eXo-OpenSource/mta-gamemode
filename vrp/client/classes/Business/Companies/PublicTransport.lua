@@ -9,7 +9,7 @@ end
 function PublicTransport:setBusDisplayText(vehicle, text)
 	if not vehicle.Bus_TexReplace then
 		vehicle.Bus_TexReplace = TextureReplace:new("coach92decals128", "files/images/Textures/CoachTexture.png", true, 256, 256)
-		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end)
+		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end, false)
 	end
 
 	dxSetRenderTarget(vehicle.Bus_TexReplace:getTexture(), true)

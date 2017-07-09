@@ -27,13 +27,13 @@ function Nametag:destructor()
 end
 
 function Nametag:draw()
-	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("Nametag") end
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/Nametag") end
 	local cx,cy,cz = getCameraMatrix()
 	local bRifleCheck = self:_weaponCheck()
 	local lpX, lpY, lpZ = getElementPosition(localPlayer)
 	for _, player in pairs(getElementsByType("player", root, true)) do
 		if player ~= localPlayer then
-			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("Nametag") end
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
 			local phX, phY, phZ = player:getBonePosition(8)
@@ -59,6 +59,7 @@ function Nametag:draw()
 							dxDrawImage(scx - textWidth/2 - fontHeight*1.1,scy - fontHeight/2, fontHeight, fontHeight, "files/images/Nametag/"..faction:getShortName()..".png", 0, 0, 0, tocolor(255, 255, 255, 255*alpha))
 							scx = scx + fontHeight*1.1
 						end
+						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
 						dxDrawText(player:getName(), scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
 						dxDrawText(player:getName(), scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
 					end
@@ -66,7 +67,7 @@ function Nametag:draw()
 			end
 		end
 	end
-	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("Nametag") end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/Nametag") end
 end
 
 function Nametag:_weaponCheck ( player )

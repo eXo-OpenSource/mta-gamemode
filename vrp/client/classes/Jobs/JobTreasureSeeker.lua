@@ -15,7 +15,6 @@ function JobTreasureSeeker:constructor()
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.TreasureSeeker):gsub("Job: ", ""), "jobs.treasureseeker")
 	NonCollidingArea:new(717, -1708.08, 8, 18)
 
-	addEventHandler("onClientRender", root, bind(self.drawRopes, self))
 end
 
 function JobTreasureSeeker:start()
@@ -28,19 +27,5 @@ end
 
 addRemoteEvents{"jobTreasureDrawRope"}
 addEventHandler("jobTreasureDrawRope", root,function(engine, magnet)
-	JobTreasureSeeker.Rope[engine] = magnet
+	JobTreasureSeeker.Rope[engine] = magnet --gets drawn in client/classes/Vehicle.lua
 end)
-
-function JobTreasureSeeker:drawRopes()
-	for engine, magnet in pairs(JobTreasureSeeker.Rope) do
-		if isElement(engine) and isElement(magnet) then
-			if isElementStreamedIn(engine) then
-				local pos1 = engine:getPosition()
-				local pos2 = magnet:getPosition()
-				dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
-			end
-		else
-			JobTreasureSeeker.Rope[engine] = nil
-		end
-	end
-end

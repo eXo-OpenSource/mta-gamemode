@@ -14,14 +14,6 @@ addEventHandler("rescueRemoveDeathBlip", root, function(player)
 	if DeathBlips[player] then delete(DeathBlips[player]) end
 end)
 
-addEventHandler("onClientElementStreamIn", root, function()
-	if source:getType() == "vehicle" and source:getModel() == 544 then
-		setVehicleComponentVisible(source, "misc_a", false)
-		setVehicleComponentVisible(source, "misc_b", false)
-		setVehicleComponentVisible(source, "misc_c", false)
-	end
-end)
-
 addEventHandler("rescueLadderUpdateCollision", root, function(enable)
 	if source:getType() == "vehicle" and source:getModel() == 544 then
 		local source = source

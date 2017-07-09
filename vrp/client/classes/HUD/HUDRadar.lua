@@ -223,6 +223,7 @@ function HUDRadar:draw()
 		end
 	end
 
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Radar") end
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
 
@@ -294,6 +295,7 @@ function HUDRadar:draw()
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Radar") end
 end
 
 function HUDRadar:drawBlips()
@@ -318,6 +320,7 @@ function HUDRadar:drawBlips()
 	end
 
 	for k, blip in pairs(self.m_Blips) do
+		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar") end
 		local display = true
 		local blipX, blipY = blip:getPosition()
 
@@ -377,6 +380,7 @@ function HUDRadar:drawBlips()
 					end
 				end
 				if fileExists(imagePath) then
+					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar", true) end
 					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
 				else
 					outputDebugString("Blip not found: "..imagePath)

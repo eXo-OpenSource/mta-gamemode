@@ -28,31 +28,39 @@ end
 
 function ExecTimeRecorder:startRecording(name)
     if not self.m_Enabled then return false end
-    self.m_Recordings[name] = {getTickCount(), 0}
+    self.m_Recordings[name] = {getTickCount(), 0, 0}
 end
 
-function ExecTimeRecorder:addIteration(name)
-     if not self.m_Enabled then return false end
+function ExecTimeRecorder:addIteration(name, drawCall)
+    if not self.m_Enabled then return false end
     if self.m_Recordings[name] then
-        self.m_Recordings[name][2] = self.m_Recordings[name][2] + 1
+        if drawCall then
+            self.m_Recordings[name][3] = self.m_Recordings[name][3] + 1
+        else
+            self.m_Recordings[name][2] = self.m_Recordings[name][2] + 1
+        end
     end
 end
 
-function ExecTimeRecorder:endRecording(name, iterations)
-     if not self.m_Enabled then return false end
+function ExecTimeRecorder:endRecording(name, iterations, drawCalls)
+    if not self.m_Enabled then return false end
     if self.m_Recordings[name] then
         self.m_Recordings[name][1] = getTickCount() - self.m_Recordings[name][1]
         self.m_Recordings[name][2] = iterations and iterations or self.m_Recordings[name][2]
-        self.m_Recordings[name][3] = true
+        self.m_Recordings[name][3] = drawCalls and drawCalls or self.m_Recordings[name][3]
     end
 end
 
 function ExecTimeRecorder:renderResults()
     local i = 0
+    local total = 0
     for name, recDat in pairs(self.m_Recordings) do
-        dxDrawText(("[%s] %dms (%d iterations)"):format(name, recDat[1], recDat[3] and recDat[2] or "ongoing"), 10, screenHeight/2 - 200 + i*20)
+        dxDrawText(("%dms > %s (%d iterations, %d draws)"):format(recDat[1], name, recDat[2], recDat[3]), 10, screenHeight/2 - 200 + i*20)
         i = i + 1
+        total = total + recDat[1]
     end
+    i = i + 1
+    dxDrawText(total.."ms", 10, screenHeight/2 - 200 + i*20)
     self.m_Recordings = {}
 end
 

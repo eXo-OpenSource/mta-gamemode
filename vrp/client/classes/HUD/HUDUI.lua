@@ -56,7 +56,7 @@ end
 function HUDUI:draw()
 	if not self.m_Enabled then return end
 	if not self.m_IsVisible then return end
-
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD_general") end
 	if self.m_UIMode == UIStyle.vRoleplay then
 		self:drawDefault()
 		if self.m_DefaultHealhArmor == true then
@@ -69,8 +69,6 @@ function HUDUI:draw()
 		self:drawExo()
 	elseif self.m_UIMode == UIStyle.Chart then
 		self:drawChart()
-	elseif self.m_UIMode == UIStyle.Default then
-		return
 	end
 
 	if self.m_RedDot == true then
@@ -80,6 +78,7 @@ function HUDUI:draw()
 	if localPlayer:getPublicSync("AFK") == true then
 		self:drawAFK()
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD_general", 1, 1) end
 end
 
 function HUDUI:setUIMode(uiMode)

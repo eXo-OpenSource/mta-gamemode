@@ -110,6 +110,7 @@ function HUDRace:updateRenderTarget()
 end
 
 function HUDRace:render()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Race") end
 	if self.m_StartTick then
 		self.m_Time = getTickCount() - self.m_StartTick
 	end
@@ -120,6 +121,7 @@ function HUDRace:render()
 	if self.m_TrackStats then
 		dxDrawImage(screenWidth - self.m_TS_Size.x - 10, 10, self.m_TS_Size, self.m_TrackStats)
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Race", 1, 1) end
 end
 
 addEventHandler("HUDRaceUpdateTimes", root,

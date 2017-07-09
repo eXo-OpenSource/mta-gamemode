@@ -28,7 +28,7 @@ function TextureReplacer:constructor(element, textureName, options)
 	self.m_OnElementStreamIn  = bind(self.onStramIn, self)
 	self.m_OnElementStreamOut = bind(self.onStramOut, self)
 
-	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory)
+	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory, false)
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)

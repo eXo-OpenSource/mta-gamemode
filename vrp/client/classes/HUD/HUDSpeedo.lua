@@ -68,6 +68,7 @@ function HUDSpeedo:setIndicatorAlpha(direction, alpha)
 end
 
 function HUDSpeedo:draw()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Speedo") end
 	if not isPedInVehicle(localPlayer) then
 		self:hide()
 		return
@@ -145,6 +146,7 @@ function HUDSpeedo:draw()
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 	--dxSetBlendMode("blend")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
 end
 
 function HUDSpeedo:allOccupantsBuckeled()
