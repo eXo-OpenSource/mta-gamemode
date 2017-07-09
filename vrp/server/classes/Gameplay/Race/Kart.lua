@@ -305,6 +305,7 @@ function Kart:startTimeRace(laps, index)
 	vehicle.m_DisableToggleEngine = true
 	vehicle:addCountdownDestroy(10)
 	vehicle:setDamageProof(true)
+	vehicle:setData("disableCollisionCheck", true, true)
 
 	vehicle.timeRacePlayer = client
 	client.kartVehicle = vehicle

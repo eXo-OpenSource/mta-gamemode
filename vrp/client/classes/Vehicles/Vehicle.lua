@@ -235,12 +235,14 @@ addEventHandler("onClientVehicleDamage", root,
 	end
 )
 
-addEventHandler("onClientVehicleCollision", root, function(theHitElement,force) 
+addEventHandler("onClientVehicleCollision", root, function()
+	if source:getData("disableCollisionCheck") then return end
+
 	if totalLossVehicleTypes[source:getVehicleType()] then
-		local rx,ry,rz = getElementRotation(source)
-		source:setDamageProof((rx > 160 and rx < 200)) -- to disable burning
+		local rx, ry, rz = getElementRotation(source)
+		source:setDamageProof(rx > 160 and rx < 200) -- to disable burning
 		if source:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then -- Crashfix
-			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH) 
+			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		end
 	end
 end)
