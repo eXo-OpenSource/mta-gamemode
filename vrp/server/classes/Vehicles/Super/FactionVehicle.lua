@@ -93,6 +93,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
 	end
+	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
+		self:setMaxHealth(1500, true)
+		self:setDoorsUndamageable(true)
+	end
 
 end
 

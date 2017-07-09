@@ -236,6 +236,13 @@ function FactionState:loadFBI(factionId)
 	gateRight.onGateHit = bind(self.onBarrierGateHit, self)
 	gateRight:addGate(988, Vector3(1272.9004, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1277.9004, -1841.9004, 13.4))
 
+	for i,v in pairs(gateLeft:getGateObjects()) do
+		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
+	end
+	for i,v in pairs(gateRight:getGateObjects()) do
+		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
+	end
+
 	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(238.3, 114.9, 1010.207), 0, 0, 10, 23) -- main entrance
 end
 

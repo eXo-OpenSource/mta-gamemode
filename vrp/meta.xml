@@ -1277,6 +1277,7 @@
 	<vrpfile src="files/images/Textures/Empty.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Huntley.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Camo.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Copcar.png"/>

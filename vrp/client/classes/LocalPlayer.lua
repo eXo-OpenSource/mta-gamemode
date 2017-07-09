@@ -440,41 +440,6 @@ function LocalPlayer:toggleAFK(state, teleport)
 	end
 end
 
-function LocalPlayer:renderPostMortemInfo()
-	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/PostMortemInfo") end
-	local isMortem,x,y,z, name
-	local px, py, pz, tx, ty, tz, dist
-	px, py, pz = getCameraMatrix( )
-	for k, ped in pairs(getElementsByType("ped", root, true)) do
-		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PostMortemInfo") end
-		isMortem = getElementData(ped, "NPC:isDyingPed")
-		if isMortem then
-			x,y,z = getPedBonePosition(ped, 8)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
-			if dist then
-				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z)
-						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
-						if x and y then
-							if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PostMortemInfo", true) end
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
-						end
-					end
-				end
-			end
-		end
-	end
-	if self.m_MortemWeaponPickup then
-		if getKeyState("lalt") and getKeyState("m") then
-			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
-			self.m_MortemWeaponPickup = false
-		end
-	end
-	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/PostMortemInfo") end
-end
-
 
 function LocalPlayer:renderPedNameTags()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/PedNameTag") end
@@ -570,7 +535,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			function()
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx, vy, 0.3)
 					end
@@ -581,7 +546,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			function()
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
 					end
