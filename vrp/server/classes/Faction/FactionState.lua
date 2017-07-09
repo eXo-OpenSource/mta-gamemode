@@ -11,8 +11,9 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
-	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD Zellen
+	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD garare
+	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
+	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
