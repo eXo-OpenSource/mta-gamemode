@@ -69,7 +69,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
-			end)
+			end, false)
 
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
@@ -80,7 +80,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			function()
 				self.m_CurrentPlants[player] = 0
 				self:updatePrivateData(player)
-			end)
+			end, false)
 	end
 
 

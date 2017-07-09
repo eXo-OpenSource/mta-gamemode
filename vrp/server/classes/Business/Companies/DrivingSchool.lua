@@ -250,7 +250,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			setTimer(fadeCamera,1500,1, player,true,0.5)
 
 		end
-	end)
+	end, false)
 	source:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
 	DrivingSchool.m_LessonVehicles[source] = veh
 end

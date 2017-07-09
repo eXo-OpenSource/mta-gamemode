@@ -221,7 +221,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 				else
 					self:getStretcher(client, vehicle)
 					setElementAlpha(client,255)
-					if client.ped_deadDouble then
+					if isElement(client.ped_deadDouble) then
 						destroyElement(client.ped_deadDouble)
 					end
 				end
@@ -249,7 +249,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
 	setElementAlpha(player,255)
-	if player.ped_deadDouble then
+	if isElement(player.ped_deadDouble) then
 		destroyElement(player.ped_deadDouble)
 	end
 	-- Move the Stretcher to the Player
@@ -266,7 +266,7 @@ function FactionRescue:getStretcher(player, vehicle)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
 			setElementAlpha(player,255)
-			if player.ped_deadDouble then
+			if isElement(player.ped_deadDouble) then
 				destroyElement(player.ped_deadDouble)
 			end
 		end, 3000, 1, player

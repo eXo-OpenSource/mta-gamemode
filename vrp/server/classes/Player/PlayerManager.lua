@@ -127,7 +127,7 @@ function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
-	if source.ped_deadDouble then
+	if isElement(source.ped_deadDouble) then
 		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
 		source:clearReviveWeapons()

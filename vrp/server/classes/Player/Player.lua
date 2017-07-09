@@ -1226,16 +1226,18 @@ function Player:setModel( skin )
 end
 
 function Player:endPrison()
-	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
-	setElementDimension(self,0)
-	setElementInterior(self, 0)
-	toggleControl(self, "fire", true)
-	toggleControl(self, "jump", true)
-	toggleControl(self, "aim_weapon", true)
-	self:triggerEvent("playerLeftPrison")
-	self:triggerEvent("checkNoDm")
-	self:setData("inAdminPrison",false,true)
-	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	if isElement(self) then
+		self:setPosition(Vector3(1478.87, -1726.17, 13.55))
+		setElementDimension(self,0)
+		setElementInterior(self, 0)
+		toggleControl(self, "fire", true)
+		toggleControl(self, "jump", true)
+		toggleControl(self, "aim_weapon", true)
+		self:triggerEvent("playerLeftPrison")
+		self:triggerEvent("checkNoDm")
+		self:setData("inAdminPrison",false,true)
+		self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	end
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
 	if self.m_JailTime > 0 then

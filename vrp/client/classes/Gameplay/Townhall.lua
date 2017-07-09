@@ -58,7 +58,7 @@ function Townhall:constructor()
 	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
 	itemSpawnerPed.Description = _"Fahrzeug 200$ ausleihen!"
-	itemSpawnerPed.Func = function() end
+	itemSpawnerPed.FuLnc = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
 
 	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))

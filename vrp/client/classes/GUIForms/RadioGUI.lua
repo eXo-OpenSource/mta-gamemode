@@ -51,7 +51,7 @@ function RadioGUI:constructor()
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(veh)
 			self:setRadioStation(self.m_CurrentStation)
-			addEventHandler("onClientElementDestroy", veh, self.m_OnVehicleDestroyOrExplodeBind)
+			addEventHandler("onClientElementDestroy", veh, self.m_OnVehicleDestroyOrExplodeBind, false)
 			addEventHandler("onClientVehicleExplode", veh, self.m_OnVehicleDestroyOrExplodeBind)
 		end
 	)

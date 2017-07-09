@@ -309,7 +309,7 @@ function Kart:startTimeRace(laps, index)
 	vehicle.timeRacePlayer = client
 	client.kartVehicle = vehicle
 
-	addEventHandler("onElementDestroy", vehicle, self.m_OnKartDestroy)
+	addEventHandler("onElementDestroy", vehicle, self.m_OnKartDestroy, false)
 	addEventHandler("onVehicleStartEnter", vehicle, self.m_KartAccessHandler)
 	addEventHandler("onPlayerQuit", client, self.m_OnPlayerQuit)
 

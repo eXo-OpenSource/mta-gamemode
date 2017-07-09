@@ -93,7 +93,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeaponTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeaponTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnWeaponTruckExit,self))
-	addEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
+	addEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc, false)
 	addEventHandler("onVehicleExplode",self.m_Truck,self.m_DestroyFunc)
 
 	self:spawnBoxes()
