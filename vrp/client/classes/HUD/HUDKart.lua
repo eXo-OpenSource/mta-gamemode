@@ -110,7 +110,7 @@ function HUDKart:updateRenderTarget()
 end
 
 function HUDKart:render()
-	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Race") end
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Kart") end
 	if self.m_StartTick then
 		self.m_Time = getTickCount() - self.m_StartTick
 	end
@@ -126,7 +126,7 @@ function HUDKart:render()
 		dxDrawText("Drücke 'x' zum respawnen!", 0, screenHeight - 25, screenWidth, 0, Color.White, 1, VRPFont(25), "center")
 	end
 
-	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Race", 1, 1) end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Kart", 1, 1) end
 end
 
 addEventHandler("HUDRaceUpdateTimes", root,
