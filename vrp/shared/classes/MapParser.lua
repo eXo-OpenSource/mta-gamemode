@@ -30,7 +30,7 @@ local readFuncs = {
 	end;
 	info = function(attributes)
 		return {type="infoPed", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), respawn = toboolean(attributes.Respawn)}
 	end;
 }
 local createFuncs = {

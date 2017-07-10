@@ -121,6 +121,11 @@ function HUDRace:render()
 	if self.m_TrackStats then
 		dxDrawImage(screenWidth - self.m_TS_Size.x - 10, 10, self.m_TS_Size, self.m_TrackStats)
 	end
+
+	if self.m_ShowRespawnLabel then
+		dxDrawText("Drücke 'x' zum respawnen!", 0, screenHeight - 25, screenWidth, 0, Color.White, 1, VRPFont(25), "center")
+	end
+
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Race", 1, 1) end
 end
 

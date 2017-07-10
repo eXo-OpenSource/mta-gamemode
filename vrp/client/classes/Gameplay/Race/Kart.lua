@@ -10,7 +10,7 @@ addRemoteEvents{"KartStart", "KartStop", "KartRequestGhostDriver", "KartReceiveG
 
 Kart.record = false
 
-function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
+function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnEnabled)
 	self.m_State = "Flying"
 	self.m_HittedCheckpoints = {}
 
@@ -18,16 +18,22 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
 	self.m_Checkpoints = checkpoints
 	self.m_Laps = 1
 	self.m_SelectedLaps = selectedLaps
+	self.m_RespawnEnabled = respawnEnabled
 
 	HUDRace:getSingleton():setSelectedLaps(self.m_SelectedLaps)
+	HUDRace:getSingleton().m_ShowRespawnLabel = respawnEnabled
 
 	self.m_onStartFinishMarkerHit = bind(Kart.startFinishMarkerHit, self)
 	self.m_onCheckpointHit = bind(Kart.checkpointHit, self)
+	self.m_Respawn = bind(Kart.respawnToLastCheckpoint, self)
 
 	self.m_GhostRecord = MovementRecorder:new(571)
 	self.m_GhostPlayback = MovementRecorder:new(571)
 	self.m_GhostPlayback.m_Record =  Kart.record or false
 
+	if self.m_RespawnEnabled then
+		bindKey("x", "down", self.m_Respawn)
+	end
 
 	for _, v in pairs(self.m_Checkpoints) do
 		addEventHandler("onClientMarkerHit", v, self.m_onCheckpointHit)
@@ -37,6 +43,10 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
 end
 
 function Kart:destructor()
+	if self.m_RespawnEnabled then
+		unbindKey("x", "down", self.m_Respawn)
+	end
+
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onClientMarkerHit", v, self.m_onCheckpointHit)
 	end
@@ -94,7 +104,17 @@ function Kart:checkpointHit(hitPlayer, matchingDimension)
 			end
 
 			table.insert(self.m_HittedCheckpoints, v)
+			self.m_LastCheckpoint = {position = localPlayer.vehicle.position, rotation = localPlayer.vehicle.rotation}
 		end
+	end
+end
+
+function Kart:respawnToLastCheckpoint()
+	if self.m_RespawnEnabled and self.m_LastCheckpoint then
+		localPlayer.vehicle:setPosition(self.m_LastCheckpoint.position)
+		localPlayer.vehicle:setRotation(self.m_LastCheckpoint.rotation)
+		localPlayer.vehicle:setVelocity(0, 0, 0)
+		localPlayer.vehicle:setTurnVelocity(0, 0, 0)
 	end
 end
 

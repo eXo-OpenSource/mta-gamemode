@@ -156,7 +156,7 @@
     <object id="object (sub_roadbarrier) (92)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="true" scale="1" dimension="0" posX="1318.4" posY="129.60001" posZ="21.1" rotX="0" rotY="0" rotZ="65.402"></object>
     <object id="object (sub_roadbarrier) (93)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="true" scale="1" dimension="0" posX="1334.2" posY="68" posZ="21.1" rotX="0" rotY="0" rotZ="113.234"></object>
     <info id="info (1)" Mapname="Wild West" Author="Chris411" model="64" posX="1310.0996" posY="139.2998" posZ="20.7" rotX="0" rotY="0" rotZ="149.996"></info>
-    <startmarker id="startmarker (1)" posX="1309.3" posY="137.8" posZ="19.8" rotX="0" rotY="0" rotZ="0"></startmarker>
+    <startmarker id="startmarker (1)" posX="1309.3" posY="137.8" posZ="19.8" rotX="0" rotY="0" rotZ="0" Respawn="true"></startmarker>
     <spawnpoint id="spawnpoint (1)" posX="1311.2" posY="134.10001" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
     <spawnpoint id="spawnpoint (3)" alpha="255" interior="0" posX="1312.7" posY="133.39999" posZ="20.6" rotX="0" rotY="0" rotZ="153.99"></spawnpoint>
     <spawnpoint id="spawnpoint (4)" alpha="255" interior="0" posX="1314.3" posY="132.60001" posZ="20.6" rotX="0" rotY="0" rotZ="153.99"></spawnpoint>

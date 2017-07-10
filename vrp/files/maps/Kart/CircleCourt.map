@@ -96,7 +96,7 @@
     <object id="object (O2_Bottles) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="930" doublesided="false" scale="1" dimension="0" posX="1357.3" posY="78.5" posZ="20.7" rotX="0" rotY="0" rotZ="340"></object>
     <object id="object (DockCrates1_LA) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3577" doublesided="false" scale="1" dimension="0" posX="1359.2" posY="84.1" posZ="21" rotX="0" rotY="0" rotZ="0"></object>
     <checkpoint id="checkpoint (1)" size="6" posX="1304.3" posY="86.5" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
-    <info id="info (1)" Mapname="Circle-Court" Author="Chris411" model="64" posX="1346.9" posY="99.8" posZ="21.2" rotX="0" rotY="0" rotZ="130"></info>
+    <info id="info (1)" Mapname="Circle-Court" Author="Chris411" model="64" posX="1346.9" posY="99.8" posZ="21.2" rotX="0" rotY="0" rotZ="130" Respawn="true"></info>
     <spawnpoint id="spawnpoint (1)" posX="1340" posY="118" posZ="20.6" rotX="0" rotY="0" rotZ="152"></spawnpoint>
     <spawnpoint id="spawnpoint (2)" alpha="255" interior="0" collisions="true" posX="1306.7" posY="94.7" posZ="20.6" rotX="0" rotY="0" rotZ="159.999"></spawnpoint>
     <checkpoint id="checkpoint (2)" size="6" posX="1303.5" posY="65.7" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
