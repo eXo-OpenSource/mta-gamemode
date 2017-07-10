@@ -71,11 +71,6 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 	elseif self.m_State == "Running" then
 		if #self.m_HittedCheckpoints == #self.m_Checkpoints then
 			self.m_Laps = self.m_Laps + 1
-
-			if self.m_StartTick then
-				local laptime = getTickCount() - self.m_StartTick
-				outputChatBox("CLIENT: " .. timeMsToTimeText(laptime))
-			end
 		end
 	end
 
