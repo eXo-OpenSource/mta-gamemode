@@ -339,7 +339,7 @@ function nextframe(fn, ...)
 end
 
 function toboolean(num)
-	return num ~= 0 and num ~= "0"
+	return num and num ~= 0 and num ~= "0" and num ~= "false"
 end
 
 function addRemoteEvents(eventList)

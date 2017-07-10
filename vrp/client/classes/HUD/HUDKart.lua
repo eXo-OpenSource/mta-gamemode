@@ -1,14 +1,14 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/HUD/HUDRace.lua
+-- *  FILE:        client/classes/HUD/HUDKart.lua
 -- *  PURPOSE:     Race HUD class
 -- *
 -- ****************************************************************************
-HUDRace = inherit(Singleton)
+HUDKart = inherit(Singleton)
 addRemoteEvents{"showRaceHUD", "HUDRaceUpdate", "HUDRaceUpdateDelta", "HUDRaceUpdateTimes"}
 
-function HUDRace:constructor(showPersonalTrackStats)
+function HUDKart:constructor(showPersonalTrackStats)
 	self.m_Width, self.m_Height = 250*screenWidth/1920, 52*screenHeight/1080
 	self.m_PosX, self.m_PosY = screenWidth/2-self.m_Width/2, 0
 	self.m_RenderTarget = DxRenderTarget(self.m_Width, self.m_Height, true)
@@ -23,29 +23,29 @@ function HUDRace:constructor(showPersonalTrackStats)
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 
-	self.m_Render = bind(HUDRace.render, self)
+	self.m_Render = bind(HUDKart.render, self)
 	addEventHandler("onClientRender", root, self.m_Render)
 end
 
-function HUDRace:destructor()
+function HUDKart:destructor()
 	HUDRadar:getSingleton():show()
 	HUDUI:getSingleton():show()
 	removeEventHandler("onClientRender", root, self.m_Render)
 end
 
-function HUDRace:setStartTick(startTick)
+function HUDKart:setStartTick(startTick)
 	self.m_StartTick = startTick and getTickCount() or false
 end
 
-function HUDRace:setLaps(laps)
+function HUDKart:setLaps(laps)
 	self.m_Laps = laps and laps or self.m_Laps
 end
 
-function HUDRace:setSelectedLaps(laps)
+function HUDKart:setSelectedLaps(laps)
 	self.m_SelectedLaps = laps and laps or self.m_SelectedLaps
 end
 
-function HUDRace:setDelta(delta)
+function HUDKart:setDelta(delta)
 	if delta then
 		self.m_DeltaTime = (delta > 0 and "+%s" or "-%s"):format(timeMsToTimeText(math.abs(delta), true))
 		self.m_DeltaColor = delta > 0 and Color.Red or Color.Green
@@ -55,7 +55,7 @@ function HUDRace:setDelta(delta)
 	end
 end
 
-function HUDRace:update(startTick, laps, delta)
+function HUDKart:update(startTick, laps, delta)
 	--self.m_StartTick = startTick and getTickCount() or false
 	--self.m_Laps = laps and laps or self.m_Laps
 
@@ -68,7 +68,7 @@ function HUDRace:update(startTick, laps, delta)
 	end]]
 end
 
-function HUDRace:updateTimes(toptimes, playerID)
+function HUDKart:updateTimes(toptimes, playerID)
 	self.m_BestTime = toptimes[1]
 
 	for k, v in pairs(toptimes) do
@@ -79,7 +79,7 @@ function HUDRace:updateTimes(toptimes, playerID)
 	end
 end
 
-function HUDRace:updateRenderTarget()
+function HUDKart:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget(true)
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 200))
 	dxDrawRectangle(0, 0, self.m_Width, 5, Color.LightBlue)
@@ -109,8 +109,8 @@ function HUDRace:updateRenderTarget()
 	dxSetRenderTarget()
 end
 
-function HUDRace:render()
-	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Race") end
+function HUDKart:render()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Kart") end
 	if self.m_StartTick then
 		self.m_Time = getTickCount() - self.m_StartTick
 	end
@@ -121,33 +121,38 @@ function HUDRace:render()
 	if self.m_TrackStats then
 		dxDrawImage(screenWidth - self.m_TS_Size.x - 10, 10, self.m_TS_Size, self.m_TrackStats)
 	end
-	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Race", 1, 1) end
+
+	if self.m_ShowRespawnLabel then
+		dxDrawText("Drücke 'x' zum respawnen!", 0, screenHeight - 25, screenWidth, 0, Color.White, 1, VRPFont(25), "center")
+	end
+
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Kart", 1, 1) end
 end
 
 addEventHandler("HUDRaceUpdateTimes", root,
 	function(...)
-		HUDRace:getSingleton():updateTimes(...)
+		HUDKart:getSingleton():updateTimes(...)
 	end
 )
 
 addEventHandler("HUDRaceUpdate", root,
 	function(...)
-		HUDRace:getSingleton():update(...)
+		HUDKart:getSingleton():update(...)
 	end
 )
 
 addEventHandler("HUDRaceUpdateDelta", root,
 	function(delta)
-		HUDRace:getSingleton():setDelta(delta)
+		HUDKart:getSingleton():setDelta(delta)
 	end
 )
 
 addEventHandler("showRaceHUD", root,
 	function(show, ...)
 		if show then
-			HUDRace:new(...)
+			HUDKart:new(...)
 		else
-			delete(HUDRace:getSingleton())
+			delete(HUDKart:getSingleton())
 		end
 	end
 )

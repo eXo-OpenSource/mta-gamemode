@@ -16,6 +16,7 @@ Kart.Maps = {
 	"files/maps/Kart/CircleCourt.map",
 	--"files/maps/Kart/Funny Tubes.map",
 	"files/maps/Kart/CircleCourt.map",
+	"files/maps/Kart/pewxv1.map",
 }
 
 local lapPrice = 50
@@ -109,7 +110,8 @@ function Kart:loadMap(mapFileName)
 	self.m_Ped:setImmortal(true)
 	self.m_StartFinishMarker = self:getStartFinishMarker()
 
-	self.m_PlayRespawnPosition = self.m_Ped.matrix:transformPosition(Vector3(0, 5, 0))
+	self.m_PlayerRespawnPosition = self.m_Ped.matrix:transformPosition(Vector3(0, 5, 0))
+	self.m_MapRespawnEnabled = infoPed.respawn
 
 	for _, v in pairs(self.m_Checkpoints) do
 		addEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -138,6 +140,15 @@ function Kart:unloadMap()
 end
 
 function Kart:getStartFinishMarker()
+	-- Probably there exists a start/finish marker
+	for k, v in pairs(self.m_Checkpoints) do
+		if v.checkpointType == "start/finish" then
+			table.remove(self.m_Checkpoints, k)
+			return v
+		end
+	end
+
+	-- Otherwise calculate start/finish marker by nearest random spawnposition
 	local spawnpoint = self:getRandomSpawnpoint()
 	local spawnpointPosition = Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z)
 
@@ -210,7 +221,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 
 			if anyChange then
 				self:syncToptimes()
-				player:triggerEvent("KartRequestGhostDriver", lapTime)
+				player:triggerEvent("KartRequestGhostDriver")
 
 				local toptimeData, pos = self.m_Toptimes:getToptimeFromPlayer(player:getId())
 				if pos == 1 then
@@ -305,6 +316,7 @@ function Kart:startTimeRace(laps, index)
 	vehicle.m_DisableToggleEngine = true
 	vehicle:addCountdownDestroy(10)
 	vehicle:setDamageProof(true)
+	vehicle:setData("disableCollisionCheck", true, true)
 
 	vehicle.timeRacePlayer = client
 	client.kartVehicle = vehicle
@@ -320,7 +332,7 @@ function Kart:startTimeRace(laps, index)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, selectedLaps = selectedLaps, state = "Flying", checkpoints = {}, startTick = getTickCount()}
 	client:triggerEvent("showRaceHUD", true, true)
-	client:triggerEvent("KartStart", self.m_StartFinishMarker, self.m_Checkpoints, selectedLaps)
+	client:triggerEvent("KartStart", self.m_StartFinishMarker, self.m_Checkpoints, selectedLaps, self.m_MapRespawnEnabled)
 	client:sendInfo("Vollende eine Einführungsrunde!")
 
 	self:syncToptimes(client)
@@ -337,7 +349,7 @@ function Kart:onTimeRaceDone(player, vehicle)
 			vehicle:destroy()
 			nextframe(
 				function()
-					player:setPosition(self.m_PlayRespawnPosition)
+					player:setPosition(self.m_PlayerRespawnPosition)
 				end
 			)
 		end, 3000, 1, player, vehicle
