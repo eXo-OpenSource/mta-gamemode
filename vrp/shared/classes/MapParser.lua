@@ -23,7 +23,7 @@ local readFuncs = {
 			rx = tonumber(attr.rotX), ry = tonumber(attr.rotY), rz = tonumber(attr.rotZ), model = tonumber(attr.vehicle)}
 	end;
 	checkpoint = function(attributes)
-		return {type = "checkpoint", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
+		return {type = "checkpoint", checkpointType = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
 	end;
 	startmarker = function(attributes)
 		return {type="startmarker", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ)}
@@ -48,6 +48,7 @@ local createFuncs = {
 	end;
 	checkpoint = function(info)
 		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
+		m.checkpointType = info.checkpointType
 		return m
 	end;
 	removeWorldObject = function(info)

@@ -102,7 +102,6 @@ function Kart:loadMap(mapFileName)
 	local startMarker = self.m_Map:getElementsByType("startmarker")[1]
 	local infoPed = self.m_Map:getElementsByType("infoPed")[1]
 
-	self.m_StartFinish = self.m_Map:getElementsByType("startfinish")
 	self.m_Checkpoints = self.m_Map:getElementsByType("checkpoint")
 	self.m_Spawnpoints = self.m_Map:getElementsByType("spawnpoint")
 	self.m_KartMarker = createMarker(startMarker.x, startMarker.y, startMarker.z, "cylinder", 1, 255, 125, 0, 125)
@@ -140,6 +139,15 @@ function Kart:unloadMap()
 end
 
 function Kart:getStartFinishMarker()
+	-- Probably there exists a start/finish marker
+	for k, v in pairs(self.m_Checkpoints) do
+		if v.checkpointType == "start/finish" then
+			table.remove(self.m_Checkpoints, k)
+			return v
+		end
+	end
+
+	-- Otherwise calculate start/finish marker by nearest random spawnposition
 	local spawnpoint = self:getRandomSpawnpoint()
 	local spawnpointPosition = Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z)
 
