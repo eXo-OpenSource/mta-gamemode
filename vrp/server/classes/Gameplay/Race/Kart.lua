@@ -220,7 +220,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 
 			if anyChange then
 				self:syncToptimes()
-				player:triggerEvent("KartRequestGhostDriver", lapTime)
+				player:triggerEvent("KartRequestGhostDriver")
 
 				local toptimeData, pos = self.m_Toptimes:getToptimeFromPlayer(player:getId())
 				if pos == 1 then

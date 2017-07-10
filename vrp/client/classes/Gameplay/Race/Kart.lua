@@ -71,6 +71,11 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 	elseif self.m_State == "Running" then
 		if #self.m_HittedCheckpoints == #self.m_Checkpoints then
 			self.m_Laps = self.m_Laps + 1
+
+			if self.m_StartTick then
+				local laptime = getTickCount() - self.m_StartTick
+				outputChatBox("CLIENT: " .. timeMsToTimeText(laptime))
+			end
 		end
 	end
 
@@ -135,7 +140,7 @@ addEventHandler("KartReceiveGhostDriver", root,
 )
 
 addEventHandler("KartRequestGhostDriver", root,
-	function(lapTime)
+	function()
 		local record = Kart:getSingleton().m_LastGhost
 
 		if record then
@@ -148,7 +153,7 @@ addEventHandler("KartRequestGhostDriver", root,
 				end
 			end
 
-			record.duration = lapTime
+			record.duration = getTickCount() - Kart:getSingleton().m_StartTick
 			triggerLatentServerEvent("sendKartGhost", 100000, false, root, record)
 		end
 	end
