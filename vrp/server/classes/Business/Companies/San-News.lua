@@ -47,6 +47,14 @@ function SanNews:Event_news(player, cmd, ...)
 			local argTable = { ... }
 			local text = table.concat ( argTable , " " )
 			outputChatBox(_("#FE8D14Reporter %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
+
+    		local receivedPlayers = {}
+			for k, targetPlayer in ipairs(getElementsByType("player")) do
+				if targetPlayer ~= player then
+					receivedPlayers[#receivedPlayers+1] = targetPlayer
+				end
+			end
+			StatisticsLogger:getSingleton():addChatLog(player, "news", text, receivedPlayers)
 		else
 			player:sendError(_("Du bist nicht im Dienst!", player))
 		end
@@ -128,6 +136,14 @@ function SanNews:Event_onPlayerChat(player, text, type)
 				else
 					outputChatBox(_("#FE8D14[Interview] %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
 				end
+
+				local receivedPlayers = {}
+				for k, targetPlayer in ipairs(getElementsByType("player")) do
+					if targetPlayer ~= player then
+						receivedPlayers[#receivedPlayers+1] = targetPlayer
+					end
+				end
+				StatisticsLogger:getSingleton():addChatLog(player, "interview", text, receivedPlayers)
 				return true
 			end
 		end

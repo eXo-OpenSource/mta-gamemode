@@ -385,10 +385,10 @@ function Group:sendChatMessage(sourcePlayer, message)
     for k, player in ipairs(self:getOnlinePlayers()) do
         player:sendMessage(text, 0, 255, 150)
         if player ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = player:getName()
+            receivedPlayers[#receivedPlayers+1] = player
         end
     end
-    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, toJSON(receivedPlayers))
+    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, receivedPlayers)
 end
 
 function Group:sendMessage(text, r, g, b, ...)

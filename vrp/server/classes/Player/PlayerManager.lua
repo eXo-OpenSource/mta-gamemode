@@ -574,26 +574,26 @@ function PlayerManager:playerChat(message, messageType)
 			for index = 1, #playersToSend do
 				outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 				if playersToSend[index] ~= source then
-					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+					receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 				end
 			end
-			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, toJSON(receivedPlayers))
+			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, receivedPlayers)
 			FactionState:getSingleton():addBugLog(source, "sagt", message)
 		else
 			-- Send handy message
 			outputChatBox(_("%s (Handy) sagt: %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
 			outputChatBox(_("%s (Handy) sagt: %s", source, getPlayerName(source), message), source, 0, 255, 0)
-			StatisticsLogger:getSingleton():addChatLog(source, "phone", message, toJSON({phonePartner:getName()}))
+			StatisticsLogger:getSingleton():addChatLog(source, "phone", message, {phonePartner})
 			local receivedPlayers = {}
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
 					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					--if not playersToSend[index] == source then
-						receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 					--end
 				end
 			end
-			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
+			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), receivedPlayers)
 			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
 
 			if phonePartner and phonePartner:getName() == "PewX" and (message:lower():find("pewpew") or message:lower():find("pew pew")) then
@@ -628,11 +628,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]
         end
 	end
 	FactionState:getSingleton():addBugLog(source, "schreit", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "S", text, nil, playersToSend)
 end
 
@@ -648,11 +648,11 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s flüstert: %s"):format(getPlayerName(source), text), playersToSend[index], 140, 140, 140)
 		if playersToSend[index] ~= source then
-			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 		end
 	end
 	FactionState:getSingleton():addBugLog(source, "flüstert", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "W", text, nil, playersToSend)
 end
 
@@ -664,11 +664,11 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 50, 200, 255)
 		if playersToSend[index] ~= source then
-			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 		end
 	end
 	FactionState:getSingleton():addBugLog(source, "OOC", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "ooc", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "ooc", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
 end
 

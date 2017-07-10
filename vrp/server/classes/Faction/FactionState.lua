@@ -698,10 +698,10 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 		for k, player in pairs(self:getOnlinePlayers()) do
 			player:sendMessage(text, r, g, b)
 			if player ~= sourcePlayer then
-				receivedPlayers[#receivedPlayers+1] = player:getName()
+				receivedPlayers[#receivedPlayers+1] = player
 			end
 		end
-		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, toJSON(receivedPlayers))
+		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, receivedPlayers)
 	end
 end
 
@@ -716,10 +716,12 @@ function FactionState:outputMegaphone(player, ...)
 				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
 				for index = 1,#playersToSend do
 					playersToSend[index]:sendMessage(text, 255, 255, 0)
-					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+					if playersToSend[index] ~= player then
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
+					end
 				end
 
-				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(receivedPlayers))
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, receivedPlayers)
 				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
 				return true
 			else

@@ -384,10 +384,10 @@ function Faction:sendChatMessage(sourcePlayer, message)
 		for k, player in ipairs(self:getOnlinePlayers()) do
 			player:sendMessage(text, r, g, b)
 			if player ~= sourcePlayer then
-	            receivedPlayers[#receivedPlayers+1] = player:getName()
+	            receivedPlayers[#receivedPlayers+1] = player
 	        end
 		end
-		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "faction:"..self.m_Id, message, toJSON(receivedPlayers))
+		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "faction:"..self.m_Id, message, receivedPlayers)
 	--else
 	--	sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
 	--end
