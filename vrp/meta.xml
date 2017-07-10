@@ -489,7 +489,7 @@
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
-	<script src="client/classes/HUD/HUDRace.lua" type="client"/>
+	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>

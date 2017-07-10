@@ -20,8 +20,8 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnE
 	self.m_SelectedLaps = selectedLaps
 	self.m_RespawnEnabled = respawnEnabled
 
-	HUDRace:getSingleton():setSelectedLaps(self.m_SelectedLaps)
-	HUDRace:getSingleton().m_ShowRespawnLabel = respawnEnabled
+	HUDKart:getSingleton():setSelectedLaps(self.m_SelectedLaps)
+	HUDKart:getSingleton().m_ShowRespawnLabel = respawnEnabled
 
 	self.m_onStartFinishMarkerHit = bind(Kart.startFinishMarkerHit, self)
 	self.m_onCheckpointHit = bind(Kart.checkpointHit, self)
@@ -78,8 +78,8 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 		self.m_StartTick = getTickCount()
 		self.m_HittedCheckpoints = {}
 
-		HUDRace:getSingleton():setStartTick(true)
-		HUDRace:getSingleton():setLaps(self.m_Laps)
+		HUDKart:getSingleton():setStartTick(true)
+		HUDKart:getSingleton():setLaps(self.m_Laps)
 
 		self.m_GhostRecord:stopRecording()
 		self.m_LastGhost = self.m_GhostRecord.m_Record
