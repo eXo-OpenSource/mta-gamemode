@@ -16,6 +16,7 @@ Kart.Maps = {
 	"files/maps/Kart/CircleCourt.map",
 	--"files/maps/Kart/Funny Tubes.map",
 	"files/maps/Kart/CircleCourt.map",
+	"files/maps/Kart/pewxv1.map",
 }
 
 local lapPrice = 50
