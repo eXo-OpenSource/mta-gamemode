@@ -262,7 +262,7 @@
     <object id="object (des_oldwattwr_) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3252" doublesided="false" scale="1" dimension="0" posX="1368.6" posY="126.9" posZ="20.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (sw_watertower01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="13367" doublesided="false" scale="1" dimension="0" posX="1391.8" posY="80.5" posZ="32.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (kmb_lockeddoor) (1)" breakable="true" interior="0" alpha="0" model="2949" doublesided="false" scale="1" dimension="0" posX="1290.6" posY="90.3" posZ="22" rotX="10" rotY="90" rotZ="336"></object>
-    <info id="info (1)" Mapname="Hallenrace" Author="Chris411" model="64" posX="1318.5" posY="98.3" posZ="21.2" rotX="0" rotY="0" rotZ="250" Respawn="true"></info>
+    <info id="info (1)" Mapname="Hallenrace" Author="Chris411" model="64" posX="1318.5" posY="98.3" posZ="21.2" rotX="0" rotY="0" rotZ="250" Respawn="false"></info>
     <spawnpoint id="spawnpoint (1)" posX="1322.5" posY="77.3" posZ="20.6" rotX="0" rotY="0" rotZ="156"></spawnpoint>
     <spawnpoint id="spawnpoint (2)" alpha="255" interior="0" posX="1321.2" posY="74.3" posZ="20.6" rotX="0" rotY="0" rotZ="155.995"></spawnpoint>
     <spawnpoint id="spawnpoint (3)" alpha="255" interior="0" posX="1325.4" posY="71.3" posZ="20.6" rotX="0" rotY="0" rotZ="155.995"></spawnpoint>

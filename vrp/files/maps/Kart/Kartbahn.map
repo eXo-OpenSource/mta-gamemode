@@ -212,7 +212,7 @@
     <checkpoint id="marker (cylinder) (10)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1380.8" posY="61.9" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
     <checkpoint id="marker (cylinder) (11)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1309.7002" posY="122.09961" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
     <startmarker id="startmarker (1)" posX="1311.1" posY="141.60001" posZ="19.8" rotX="0" rotY="0" rotZ="0"></startmarker>
-    <info id="info (1)" Autor="" Mapname="Kartmap" model="64" Author="Stumpy, Clausus, xXKing" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252" Respawn="true"></info>
+    <info id="info (1)" Autor="" Mapname="Kartmap" model="64" Author="Stumpy, Clausus, xXKing" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252" Respawn="false"></info>
     <object id="object (sub_roadright) (6)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1326.5" posY="139.2998" posZ="21.1" rotX="0" rotY="0" rotZ="209.987"></object>
     <object id="object (sub_roadright) (7)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1335.4004" posY="142.09961" posZ="21.1" rotX="0" rotY="0" rotZ="183.983"></object>
     <object id="object (sub_roadright) (8)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1308.9004" posY="106.5" posZ="21.1" rotX="0" rotY="0" rotZ="245.995"></object>
