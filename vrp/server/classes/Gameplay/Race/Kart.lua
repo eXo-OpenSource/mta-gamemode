@@ -19,7 +19,7 @@ Kart.Maps = {
 	"files/maps/Kart/pewxv1.map",
 }
 
-local lapPrice = 50
+local lapPrice = 20
 local lapPackDiscount = 4
 
 function Kart:constructor()

@@ -10,7 +10,7 @@ inherit(Singleton, KartGUI)
 
 addRemoteEvents{"showKartGUI", "receiveKartDatas"}
 
-local lapPrice = 50
+local lapPrice = 20
 local lapPackDiscount = 4
 
 function KartGUI:constructor()
