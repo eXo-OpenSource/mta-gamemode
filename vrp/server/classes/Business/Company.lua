@@ -369,6 +369,9 @@ function Company:respawnVehicles()
 				vehicles = vehicles + 1
 				if not vehicle:respawn() then
 					fails = fails + 1
+				else
+					vehicle:setInterior(0)
+					vehicle:setDimension(0)
 				end
 			end
 		end

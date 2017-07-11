@@ -412,6 +412,9 @@ function Faction:respawnVehicles( isAdmin )
 			vehicles = vehicles + 1
 			if not vehicle:respawn(true) then
 				fails = fails + 1
+			else
+				vehicle:setInterior(0)
+				vehicle:setDimension(0)
 			end
 			self.m_LastRespawn = getRealTime().timestamp
 		end
