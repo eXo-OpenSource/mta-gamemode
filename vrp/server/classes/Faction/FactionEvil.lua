@@ -84,7 +84,7 @@ function FactionEvil:createInterior(Id, faction)
 end
 
 function FactionEvil:getFactions()
-	local factions = FactionManager:getSingleton():getAllFactions()
+	local factions = FactionManager.Map
 	local returnFactions = {}
 	for i, faction in pairs(factions) do
 		if faction:isEvilFaction() then
@@ -95,7 +95,7 @@ function FactionEvil:getFactions()
 end
 
 function FactionEvil:getOnlinePlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
+	local factions = FactionManager.Map
 	local players = {}
 	for index,faction in pairs(factions) do
 		if faction:isEvilFaction() then
@@ -237,6 +237,14 @@ function FactionEvil:Event_FailedRaid(target)
 	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
 end
 
+function FactionEvil:loadDiplomacy()
+	local evilFactions = self:getFactions()
+	for Id, faction in pairs(evilFactions) do
+		if faction:isEvilFaction() then
+			faction:loadDiplomacy()
+		end
+	end
+end
 
 
 

@@ -44,10 +44,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 	self.m_VehicleTexture = false
 
-	if self:isEvilFaction() then
-		self.m_Diplomacy = diplomacy and fromJSON(diplomacy) or self:createDiplomacy()
-	end
-
+	self.m_DiplomacyJSON = diplomacy
 
 	self:getActivity()
 end
@@ -61,7 +58,7 @@ function Faction:destructor()
 end
 
 function Faction:save()
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), toJSON(self.m_Diplomacy), self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), self.m_Diplomacy and toJSON(self.m_Diplomacy) or {}, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -499,10 +496,15 @@ function Faction:createBlip(img, posX, posY, streamDistance)
 	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
 end
 
-function Faction:createDiplomacy()
-	local diplomacy = {}
-	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-		table.insert(diplomacy, {faction:getId(), FACTION_DIPLOMACY.Neutral})
+function Faction:loadDiplomacy()
+	if self.m_DiplomacyJSON then
+		self.m_Diplomacy = fromJSON(self.m_DiplomacyJSON)
+	else
+		self.m_Diplomacy = {}
+		for Id, faction in pairs(FactionManager.Map) do
+			if faction:isEvilFaction() then
+				table.insert(self.m_Diplomacy, {faction:getId(), FACTION_DIPLOMACY.Neutral})
+			end
+		end
 	end
-	return diplomacy
 end
