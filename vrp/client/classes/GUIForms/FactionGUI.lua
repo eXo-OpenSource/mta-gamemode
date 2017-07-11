@@ -7,7 +7,12 @@
 -- ****************************************************************************
 FactionGUI = inherit(GUIForm)
 inherit(Singleton, FactionGUI)
-
+FactionGUI.DiplomacyColors = {
+	[1] = Color.Green,
+	[2] = Color.White,
+	[3] = Color.Orange,
+	[4] = Color.Red,
+}
 function FactionGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
@@ -19,7 +24,6 @@ function FactionGUI:constructor()
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_Leader = false
-	self.m_LogTab = false
 
 	-- Tab: Allgemein
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
@@ -41,9 +45,10 @@ function FactionGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
 	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
 	self.m_FactionRespawnVehicleButton.onLeftClick = bind(self.FactionRespawnVehicles, self)
-	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
+	self.m_LogButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Fraktions-Logs", true, tabAllgemein)
+	self.m_LogButton.onLeftClick = bind(self.ShowLogs, self)
+	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
 	self.m_ObjectListButton.onLeftClick = bind(self.ShowObjectList, self)
-
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
@@ -69,12 +74,14 @@ function FactionGUI:constructor()
 	self.m_WeaponsImage = {}
 	self.m_WeaponsCheck = {}
 
-	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+	self.m_TabDiplomacy = self.m_TabPanel:addTab(_"Diplomatie")
 
-
-	addRemoteEvents{"factionRetrieveInfo", "factionRetrieveLog", "gangwarLoadArea"}
+	addRemoteEvents{"factionRetrieveInfo", "factionRetrieveLog", "gangwarLoadArea", "factionRetrieveDiplomacy"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionRetrieveLog", root, bind(self.Event_factionRetrieveLog, self))
+	addEventHandler("factionRetrieveDiplomacy", root, bind(self.Event_retrieveDiplomacy, self))
+
+
 	addEventHandler("gangwarLoadArea", root, bind(self.Event_gangwarLoadArea, self))
 
 
@@ -94,10 +101,10 @@ function FactionGUI:onHide()
 end
 
 function FactionGUI:TabPanel_TabChanged(tabId)
-	if tabId == self.m_TabLogs.TabIndex then
-		triggerServerEvent("factionRequestLog", root)
-	elseif tabId == self.m_tabGangwar.TabIndex then
+	if tabId == self.m_tabGangwar.TabIndex then
 		self:loadGangwarTab()
+	elseif tabId == self.m_TabDiplomacy.TabIndex then
+		self:loadDiplomacyTab()
 	else
 		triggerServerEvent("factionRequestInfo", root)
 	end
@@ -105,7 +112,8 @@ end
 
 function FactionGUI:Event_factionRetrieveLog(players, logs)
 	if not self.m_LogGUI then
-		self.m_LogGUI = LogGUI:new(self.m_TabLogs, logs, players)
+		self.m_LogGUI = LogGUI:new(nil, logs, players)
+		self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() self.m_LogGUI = nil end)
 	else
 		self.m_LogGUI:updateLog(players, logs)
 	end
@@ -244,6 +252,43 @@ function FactionGUI:loadGangwarTab()
 	triggerServerEvent("gangwarGetAreas", localPlayer)
 	self.m_GangAreasGrid:onInternalSelectItem(self.m_GangAreasOverviewItem)
 	self:onGangwarItemSelect(self.m_GangAreasOverviewItem)
+end
+
+function FactionGUI:loadDiplomacyTab()
+	if not self.m_DiplomacyLoaded then
+
+		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.85, self.m_TabDiplomacy)
+		self.m_DiplomacyGrid:addColumn(_"Fraktion", 1)
+
+		self.m_DiplomacyLabels = {}
+		local y = self.m_Height*0.05
+
+		local item
+		for Id, faction in pairs(FactionManager.Map) do
+			if faction:isEvilFaction() then
+				item = self.m_DiplomacyGrid:addItem(faction:getShortName())
+				item.Id = faction:getId()
+				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
+				self.m_DiplomacyLabels[Id] = GUILabel:new(self.m_Width*0.44, y, self.m_Width*0.5, self.m_Height*0.06, "", self.m_TabDiplomacy)
+				y = y + self.m_Height*0.06
+			end
+		end
+		self.m_DiplomacyLoaded = true
+	end
+end
+
+function FactionGUI:Event_retrieveDiplomacy(diplomacy)
+	local factionId, status
+	for index, label in pairs(self.m_DiplomacyLabels) do
+		label:setText("")
+		label:setColor(Color.White)
+	end
+
+	for index, data in pairs(diplomacy) do
+		factionId, status = unpack(data)
+		self.m_DiplomacyLabels[factionId]:setText(_("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status]))
+		self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
+	end
 end
 
 function FactionGUI:onGangwarItemSelect(item)
@@ -388,3 +433,9 @@ function FactionGUI:ShowObjectList()
 	self:close()
 	triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getFaction():getId(), "faction")
 end
+
+function FactionGUI:ShowLogs()
+	self:close()
+	triggerServerEvent("factionRequestLog", root)
+end
+

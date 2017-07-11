@@ -17,7 +17,7 @@ function FactionManager:constructor()
 	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
 	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
 	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction"}
+	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy"}
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -35,6 +35,9 @@ function FactionManager:constructor()
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
+	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
+
+
 
 	FactionState:new()
 	FactionRescue:new()
@@ -472,4 +475,14 @@ function FactionManager:Event_serviceMarkerPerformAction(type)
 	else
 		client:sendError(_("Du bist zu weit entfernt!", client))
 	end
+end
+
+function FactionManager:Event_requestDiplomacy(factionId)
+	local faction = self:getFromId(factionId)
+	if faction and faction.m_Diplomacy then
+		client:triggerEvent("factionRetrieveDiplomacy", faction.m_Diplomacy)
+	else
+		client:sendError("Internal Error: Invalid Faction")
+	end
+
 end
