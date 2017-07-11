@@ -32,10 +32,17 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 	else
-		self:addItem(_"Respawn",
+		self:addItem(_"Fahrzeug respawnen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleRespawn", self:getElement())
+				end
+			end
+		)
+		self:addItem(_"Fahrzeug parken",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehiclePark", self:getElement())
 				end
 			end
 		)

@@ -11,8 +11,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_Position = self:getPosition()
-	self.m_Rotation = self:getRotation()
+	self.m_SpawnPos = self:getPosition()
+	self.m_SpawnRot = self:getRotation()
 	self.m_HandlingFactor = handlingFaktor
 	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
 	if #faction:getName() <= 29 then
@@ -167,7 +167,8 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ? WHERE Id = ?", sql:getPrefix(), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", 
+		sql:getPrefix(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)
@@ -263,8 +264,8 @@ function FactionVehicle:respawn(force)
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
-	self:setPosition(self.m_Position)
-	self:setRotation(self.m_Rotation)
+	self:setPosition(self.m_SpawnPos)
+	self:setRotation(self.m_SpawnRot)
 	if self.m_VehELSObj then
 		self.m_VehELSObj:setBlink("off")
 	end
