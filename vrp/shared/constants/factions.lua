@@ -13,3 +13,13 @@ VEHICLE_BAG_LOAD = {}
 VEHICLE_BAG_LOAD[428] = {["count"]=5,[1] = Vector3(0, -1.2, 0), [2] = Vector3(0, -1.2, 0), [3] = Vector3(0, -1.2, 0), [4] = Vector3(0, -1.2, 0), [5] = Vector3(0, -1.2, 0)}
 
 FACTION_FBI_BUGS = 5
+
+FACTION_DIPLOMACY = {
+	[1] = "Verbündet",
+	[2] = "Neutral",
+	[3] = "Waffenstillstand",
+	[4] = "im Krieg",
+}
+for i, v in pairs(FACTION_DIPLOMACY) do
+	FACTION_DIPLOMACY[v] = i
+end

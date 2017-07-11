@@ -62,7 +62,7 @@ function FactionManager:loadFactions()
       players[factionRow.Id] = factionRow.FactionRank
     end
 
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
     FactionManager.Map[row.Id] = instance
 	count = count + 1
   end
@@ -407,7 +407,7 @@ end
 function FactionManager:Event_factionRespawnVehicles()
 	if client:getFaction() then
 		local faction = client:getFaction()
-		
+
 		if faction:getPlayerRank(client) >= FactionRank.Rank4 or (faction:getPlayerRank(client) >= FactionRank.Rank3 and faction:getId() == 3) then
 			faction:respawnVehicles()
 		else

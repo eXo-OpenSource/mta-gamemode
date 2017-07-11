@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType)
+function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_Name = name
@@ -24,7 +24,6 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
 	self.m_Blips = {}
-
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 
 	self.m_Vehicles = {}
@@ -45,6 +44,11 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 	self.m_VehicleTexture = false
 
+	if self:isEvilFaction() then
+		self.m_Diplomacy = diplomacy and fromJSON(diplomacy) or self:createDiplomacy()
+	end
+
+
 	self:getActivity()
 end
 
@@ -57,7 +61,7 @@ function Faction:destructor()
 end
 
 function Faction:save()
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), toJSON(self.m_Diplomacy), self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -192,7 +196,7 @@ function Faction:addPlayer(playerId, rank)
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
-  
+
   	self:getActivity(true)
 end
 
@@ -319,9 +323,9 @@ function Faction:getActivity(force)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end
@@ -336,7 +340,7 @@ function Faction:getPlayers(getIDsOnly)
 	end
 
 	local temp = {}
-	
+
 	self:getActivity()
 
 	for playerId, rank in pairs(self.m_Players) do
@@ -493,4 +497,12 @@ end
 
 function Faction:createBlip(img, posX, posY, streamDistance)
 	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
+end
+
+function Faction:createDiplomacy()
+	local diplomacy = {}
+	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
+		table.insert(diplomacy, {faction:getId(), FACTION_DIPLOMACY.Neutral})
+	end
+	return diplomacy
 end
