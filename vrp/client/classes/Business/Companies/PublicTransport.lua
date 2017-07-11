@@ -3,6 +3,7 @@ PublicTransport = inherit(Singleton)
 function PublicTransport:constructor()
 	addRemoteEvents{"busReachNextStop"}
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
+	self.m_ActiveBusVehicles = {}
 end
 
 
@@ -27,6 +28,8 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 	local playerX, playerY, playerZ = getElementPosition(localPlayer)
 
 	self:setBusDisplayText(vehicle, nextStopName, line)
+	self.m_ActiveBusVehicles[vehicle] = line
+
 	if getPedOccupiedVehicle(localPlayer) == vehicle and line then
 		if not getElementData(vehicle, "i:warn") then
 			Indicator:getSingleton():switchIndicatorState("warn")
@@ -51,6 +54,9 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 end
 
 
+function PublicTransport:getActiveBusVehicles()
+	return self.m_ActiveBusVehicles
+end
 
 
 BusLineMouseMenu = inherit(GUIMouseMenu)
@@ -66,7 +72,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1)
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Arrows)
+	)
 
 	self:addItem(_"Linie 2 bedienen",
 		function()
@@ -74,7 +80,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2)
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Arrows)
+	)
 
 	self:addItem(_"Sonderfahrt",
 		function()
@@ -82,7 +88,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutySpecial")
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Arrows)
+	)
 
 	self:addItem(_"Dienst beenden",
 		function()
@@ -90,7 +96,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "offDuty")
 			end
 		end
-	):setIcon(FontAwesomeSymbols.Arrows)
+	)
 
 
 	self:adjustWidth()

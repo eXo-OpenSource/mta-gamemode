@@ -954,6 +954,8 @@
 
 	<vrpfile src="files/images/CutsceneAssets/cutscene_bobberbar_info.png" />
 	<vrpfile src="files/images/CutsceneAssets/cutscene_power_info.png" />
+	
+	<vrpfile src="files/images/Company/EPT/Bus.png" />
 
 	<vrpfile src="files/images/Radio/radio_bg.png"/>
 	<vrpfile src="files/images/Radio/sound_back.png"/>

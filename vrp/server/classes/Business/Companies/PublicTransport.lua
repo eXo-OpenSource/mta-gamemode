@@ -53,13 +53,11 @@ function PublicTransport:addBusStops()
 			object:setData("EPT_bus_station", stationName, true)
 			object:setData("EPT_bus_station_lines", lines, true)
 		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
-		local marker = createColSphere(markerX, markerY, markerZ, 5)
 		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
 		local signObject = createObject(1229, signX, signY, signZ, 0, 0, rz)
 
 		-- Push to the bus stop list and add the hit event
-		table.insert(self.m_BusStops, {object = object, marker = marker, sign = signObject, name = stationName})
-		addEventHandler("onColShapeHit", marker, self.m_FuncStopHit)
+		table.insert(self.m_BusStops, {object = object, marker = {}, markerPos = Vector3(markerX, markerY, markerZ), sign = signObject, name = stationName})
 
 		-- Push bus stop id to the line lists
 		for i, lineString in pairs(lines) do
@@ -103,7 +101,7 @@ function PublicTransport:Event_PlayerRequestBusData()
 				if endStationFound then
 					table.insert(data[line], {
 						name = self.m_BusStops[id].name,
-						position = serialiseVector(self.m_BusStops[id].marker.position)
+						position = serialiseVector(self.m_BusStops[id].object.position)
 					})
 				end
 				if quitNextStation then 
@@ -127,7 +125,9 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			veh:setVariant(0, 0)
 			veh:setHandling("handlingFlags", 18874448)
 			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
-			if not self:isBusOnTour(player.vehicle) then
+			if self:isBusOnTour(player.vehicle) then
+				self:startBusTour_Driver(player, player.vehicle.Bus_NextStop)
+			else
 				triggerClientEvent("busReachNextStop", root, player.vehicle, "Ausser Dienst", false)
 			end
 		end
@@ -159,7 +159,7 @@ function PublicTransport:onVehiceExit(veh, player, seat)
 		if veh:getModel() == 420 or veh:getModel() == 438 then
 			player:triggerEvent("hideTaxoMeter")
 		elseif veh:getModel() == 437 then
-			self:stopBusTour(player)
+			self:stopBusTour_Driver(player)
 		end
 	else
 		self:endTaxiDrive(player)
@@ -279,7 +279,18 @@ function PublicTransport:stopBusTour_Driver(player) --also gets triggered when p
 		delete(player.Bus_Blip)
 		player.Bus_Blip = nil
 	end
+	player:setPublicSync("EPT:BusDuty", false)
 end
+
+function PublicTransport:startBusTour_Driver(player, nextStation) 
+	if player.Bus_Blip then
+		delete(player.Bus_Blip)
+	end
+	local x, y, z = getElementPosition(self.m_BusStops[nextStation].object)
+	player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
+	player:setPublicSync("EPT:BusDuty", true)
+end
+
 
 function PublicTransport:isBusOnTour(vehicle)
 	return vehicle and (vehicle.Bus_OnDuty and true or false) 
@@ -290,37 +301,45 @@ function PublicTransport:stopBusTour(vehicle, player)
 	if player then
 		self:stopBusTour_Driver(player)
 	end
-	vehicle.Bus_OnDuty = nil
-	vehicle.Bus_LastStop = nil
-	vehicle.Bus_NextStop = nil
-	vehicle.Bus_Line = nil
-	vehicle:setData("EPT_bus_duty", false, true)
-	vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, companyColors[4].r, companyColors[4].g, companyColors[4].b)
+	if  isElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle]) then
+		destroyElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle])
+	end
 	for i,v in pairs(vehicle:getOccupants()) do
 		if v.vehicleSeat ~= 0 then
 			v:removeFromVehicle()
 			v:sendWarning(_("Dieser Bus ist nicht mehr auf dieser Route im Dienst.", v))
 		end
 	end
+	vehicle.Bus_OnDuty = nil
+	vehicle.Bus_LastStop = nil
+	vehicle.Bus_NextStop = nil
+	vehicle.Bus_Line = nil
+	vehicle:setData("EPT_bus_duty", false, true)
+	vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, companyColors[4].r, companyColors[4].g, companyColors[4].b)
+
 	triggerClientEvent("busReachNextStop", root, vehicle, "Ausser Dienst", false)
 end
 
 function PublicTransport:startBusTour(vehicle, player, line)
 	if vehicle.Bus_OnDuty and line == vehicle.Bus_Line then return false end
-	vehicle.Bus_OnDuty = true
 	if self.m_Lines[line] then -- otherwise special service
 		if vehicle.Bus_Line then -- lines changed, so notify that the old bus route no longer recieves service
-			self:stopBusTour_Driver(player)
+			self:stopBusTour(vehicle, player)
 		end
+		vehicle.Bus_OnDuty = true
 		vehicle.Bus_NextStop = 1
+		local marker = createColSphere(self.m_BusStops[self.m_Lines[line][1]].markerPos, 5)
+		addEventHandler("onColShapeHit", marker, self.m_FuncStopHit)
+		self.m_BusStops[self.m_Lines[line][1]].marker[vehicle] = marker
+
 		vehicle.Bus_Line = line
 		vehicle:setData("EPT_bus_duty", line, true)
 		vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, unpack(PublicTransport.ms_BusLineData[line].color))
-		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
-		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
-		triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][vehicle.Bus_NextStop]].name, false, line)
+		triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][1]].name, false, line)
 		player:giveAchievement(17)
+		self:startBusTour_Driver(player, self.m_Lines[line][1]) 
 	else
+		vehicle.Bus_OnDuty = true
 		triggerClientEvent("busReachNextStop", root, client.vehicle, "Sonderfahrt", false)
 	end
 end
@@ -341,28 +360,37 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		end
 
 		local stopId = self.m_Lines[line][destinationId]
-		if not stopId or not self.m_BusStops[stopId] or self.m_BusStops[stopId].marker ~= source then
+		if not stopId or not self.m_BusStops[stopId] or self.m_BusStops[stopId].marker[vehicle] ~= source then
 			-- Show an error message maybe?
 			return
 		end
 
 		-- Give the player some money and switch to the next bus stop
 		if lastId then 
-			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].marker.position, self.m_BusStops[stopId].marker.position)
+			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position)
 			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
 			player:givePoints(math.round(5 * (dist/1000))) --5 / km
 			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
 			self:addLog(player, "Kasse", ("hat %s in die Kasse gelegt (Busfahrt Linie %d)!"):format(toMoneyString(math.round(30 * (dist/1000))), line))
 		end
 		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))
+
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		vehicle.Bus_NextStop = newDestinationId
-
-
 		local nextStopId = self.m_Lines[line][newDestinationId]
 		local x, y, z = getElementPosition(self.m_BusStops[nextStopId].object)
 		delete(player.Bus_Blip)
 		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player,9999)
+
+		if isElement(self.m_BusStops[stopId].marker[vehicle]) then
+			destroyElement(self.m_BusStops[stopId].marker[vehicle])
+
+			local marker = createColSphere(self.m_BusStops[nextStopId].markerPos, 5)
+			addEventHandler("onColShapeHit", marker, self.m_FuncStopHit)
+			self.m_BusStops[nextStopId].marker[vehicle] = marker
+		else
+			player:sendError(_("Interner Fehler: Bitte Linie neu starten", player))
+		end
 
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
 		local nextNewDestinationId = self.m_Lines[line][newDestinationId + 1] and newDestinationId + 1 or 1
@@ -370,5 +398,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[nextStopId].name, self.m_BusStops[nextNewStopId].name == self.m_BusStops[stopId].name, line)
 
 		vehicle.Bus_LastStop = stopId
+		vehicle:setData("EPT:Bus_LastStopName", self.m_BusStops[stopId].name, true)
+		vehicle:setData("EPT:Bus_NextStopName", self.m_BusStops[nextStopId].name, true)
 	end
 end
