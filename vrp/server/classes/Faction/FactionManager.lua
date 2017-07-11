@@ -480,7 +480,7 @@ end
 function FactionManager:Event_requestDiplomacy(factionId)
 	local faction = self:getFromId(factionId)
 	if faction and faction.m_Diplomacy then
-		client:triggerEvent("factionRetrieveDiplomacy", faction.m_Diplomacy)
+		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy)
 	else
 		client:sendError("Internal Error: Invalid Faction")
 	end

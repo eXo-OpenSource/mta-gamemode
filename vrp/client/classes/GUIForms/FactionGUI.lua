@@ -277,7 +277,7 @@ function FactionGUI:loadDiplomacyTab()
 	end
 end
 
-function FactionGUI:Event_retrieveDiplomacy(diplomacy)
+function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 	local factionId, status
 	for index, label in pairs(self.m_DiplomacyLabels) do
 		label:setText("")
@@ -286,8 +286,13 @@ function FactionGUI:Event_retrieveDiplomacy(diplomacy)
 
 	for index, data in pairs(diplomacy) do
 		factionId, status = unpack(data)
-		self.m_DiplomacyLabels[factionId]:setText(_("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status]))
-		self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
+		if factionId == sourceId then
+			self.m_DiplomacyLabels[factionId]:setText(_("%s - n/V", FactionManager:getSingleton():getFromId(factionId):getShortName()))
+		else
+			self.m_DiplomacyLabels[factionId]:setText(_("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status]))
+			self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
+		end
+
 	end
 end
 
