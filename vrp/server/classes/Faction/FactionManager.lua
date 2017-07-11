@@ -67,8 +67,6 @@ function FactionManager:loadFactions()
 		count = count + 1
 	end
 
-	FactionEvil:getSingleton():loadDiplomacy()
-
   	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s factions in %sms"):format(count, getTickCount()-st)) end
 end
 

@@ -26,6 +26,8 @@ function FactionEvil:constructor()
 		end
 	end
 
+	self:loadDiplomacy()
+
 	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
