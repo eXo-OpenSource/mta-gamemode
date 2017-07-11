@@ -343,6 +343,7 @@ end
 function Company:createDutyMarker()
     	self.m_DutyPickup = createPickup(companyDutyMarker[self.m_Id], 3, 1275)
         if companyDutyMarkerInterior[self.m_Id] then self.m_DutyPickup:setInterior(companyDutyMarkerInterior[self.m_Id]) end
+        if companyDutyMarkerDimension[self.m_Id] then self.m_DutyPickup:setDimension(companyDutyMarkerDimension[self.m_Id]) end
     	addEventHandler("onPickupHit", self.m_DutyPickup,
     		function(hitElement)
     			if getElementType(hitElement) == "player" and not hitElement.vehicle then
