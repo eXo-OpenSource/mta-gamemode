@@ -25,8 +25,10 @@ function FactionEvil:constructor()
 			self:createInterior(Id, faction)
 		end
 	end
+	nextframe(function()
+		self:loadDiplomacy()
+	end)
 
-	self:loadDiplomacy()
 
 	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
@@ -86,7 +88,7 @@ function FactionEvil:createInterior(Id, faction)
 end
 
 function FactionEvil:getFactions()
-	local factions = FactionManager.Map
+	local factions = FactionManager:getSingleton():getAllFactions()
 	local returnFactions = {}
 	for i, faction in pairs(factions) do
 		if faction:isEvilFaction() then
@@ -97,7 +99,7 @@ function FactionEvil:getFactions()
 end
 
 function FactionEvil:getOnlinePlayers()
-	local factions = FactionManager.Map
+	local factions = FactionManager:getSingleton():getAllFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
 		if faction:isEvilFaction() then

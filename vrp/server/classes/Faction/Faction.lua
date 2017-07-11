@@ -501,7 +501,7 @@ function Faction:loadDiplomacy()
 		self.m_Diplomacy = fromJSON(self.m_DiplomacyJSON)
 	else
 		self.m_Diplomacy = {}
-		for Id, faction in pairs(FactionManager.Map) do
+		for Id, faction in pairs(FactionManager:getSingleton():getAllFactions()) do
 			if faction:isEvilFaction() then
 				table.insert(self.m_Diplomacy, {faction:getId(), FACTION_DIPLOMACY.Neutral})
 			end
