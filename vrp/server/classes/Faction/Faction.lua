@@ -14,7 +14,8 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_Name = name
-	self.m_Players = players
+	self.m_Players = players[1]
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -179,6 +180,7 @@ function Faction:addPlayer(playerId, rank)
 
 	rank = rank or 0
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
@@ -192,7 +194,7 @@ function Faction:addPlayer(playerId, rank)
 		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   	self:getActivity(true)
 end
@@ -203,6 +205,7 @@ function Faction:removePlayer(playerId)
 	end
 
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
@@ -217,7 +220,7 @@ function Faction:removePlayer(playerId)
 		end
 	end
 	unbindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
 function Faction:invitePlayer(player)
@@ -341,10 +344,10 @@ function Faction:getPlayers(getIDsOnly)
 	self:getActivity()
 
 	for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end

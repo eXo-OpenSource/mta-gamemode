@@ -18,7 +18,7 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
 	self.m_ShortName = ShortName
 	self.m_Creator = Creator
 	self.m_Players = players[1]
-	self.m_ActivePlayers = players[2]
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_LastNameChange = lastNameChange or 0
@@ -147,12 +147,13 @@ function Company:addPlayer(playerId, rank)
 
 	rank = rank or 0
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(self)
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyIsActive = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   if self.onPlayerJoin then -- Only for Companies with own class
     self:onPlayerJoin(playerId, rank)
@@ -167,6 +168,7 @@ function Company:removePlayer(playerId)
 	end
 
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(nil)
@@ -174,7 +176,7 @@ function Company:removePlayer(playerId)
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyIsActive = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 
 	if self.onPlayerLeft then -- Only for Companies with own class
 		self:onPlayerLeft(playerId)
@@ -275,11 +277,10 @@ function Company:getPlayers(getIDsOnly)
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
-		local isActive = self.m_ActivePlayers[playerId]
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, isActive = isActive, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end

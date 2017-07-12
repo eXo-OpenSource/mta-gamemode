@@ -55,7 +55,7 @@ function CompanyGUI:constructor()
 	self.m_CompanyRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_CompanyRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_CompanyRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	self.m_CompanyToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Inaktiv setzen", true, tabMitglieder)
+	self.m_CompanyToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
 
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
@@ -179,9 +179,9 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 
 			self.m_CompanyPlayersGrid:clear()
 			for _, info in ipairs(players) do
-				local activitySymbol = info.isActive == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
 				local item = self.m_CompanyPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
-				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.isActive == 1 and Color.Green or Color.Red)
+				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item.Id = info.playerId
 			end
 

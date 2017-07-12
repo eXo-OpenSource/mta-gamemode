@@ -42,15 +42,15 @@ function CompanyManager:loadCompanies()
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
 	for i, row in pairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, CompanyRank, CompanyIsActive FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
-		local players, activePlayers = {}, {}
+		local result2 = sql:queryFetch("SELECT Id, CompanyRank, CompanyLoanEnabled FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
 		for i, row2 in ipairs(result2) do
 			players[row2.Id] = row2.CompanyRank
-			activePlayers[row2.Id] = row2.CompanyIsActive
+			playerLoans[row2.Id] = row2.CompanyLoanEnabled
 		end
 
 		if Company.DerivedClasses[row.Id] then
-			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, activePlayers}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
 		else
 			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
 			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))

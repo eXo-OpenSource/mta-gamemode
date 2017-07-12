@@ -56,13 +56,14 @@ function FactionManager:loadFactions()
   	local st, count = getTickCount(), 0
   	local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   	for k, row in pairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-		local players = {}
+		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
 		for i, factionRow in ipairs(result2) do
-		players[factionRow.Id] = factionRow.FactionRank
+			players[factionRow.Id] = factionRow.FactionRank
+			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
