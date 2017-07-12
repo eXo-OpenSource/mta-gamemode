@@ -9,7 +9,8 @@ Group = inherit(Object)
 
 function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
 	self.m_Id = Id
-	self.m_Players = players or {}
+	self.m_Players = players[1] or {}
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_Name = name
@@ -204,6 +205,7 @@ function Group:addPlayer(playerId, rank)
 
 	rank = rank or GroupRank.Normal
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setGroup(self)
@@ -214,7 +216,7 @@ function Group:addPlayer(playerId, rank)
 		end
 	end
 
-	sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ?, GroupLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
 	local x,y,z
 	for k,v in ipairs( props ) do
@@ -230,7 +232,9 @@ function Group:removePlayer(playerId)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end
+
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
 	for k,v in ipairs( props ) do
@@ -242,7 +246,7 @@ function Group:removePlayer(playerId)
 		player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
 		self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
 	end
-	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0, GroupLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 	self:removePlayerMarker(player)
 end
 
@@ -346,10 +350,10 @@ function Group:getPlayers(getIDsOnly)
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-	temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end
