@@ -257,11 +257,8 @@ end
 function FactionGUI:loadDiplomacyTab()
 	if not self.m_DiplomacyLoaded then
 
-		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.85, self.m_TabDiplomacy)
+		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.35, self.m_Height*0.85, self.m_TabDiplomacy)
 		self.m_DiplomacyGrid:addColumn(_"Fraktion", 1)
-
-		self.m_DiplomacyLabels = {}
-		local y = self.m_Height*0.05
 
 		local item
 		for Id, faction in pairs(FactionManager.Map) do
@@ -269,8 +266,6 @@ function FactionGUI:loadDiplomacyTab()
 				item = self.m_DiplomacyGrid:addItem(faction:getShortName())
 				item.Id = faction:getId()
 				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
-				self.m_DiplomacyLabels[Id] = GUILabel:new(self.m_Width*0.44, y, self.m_Width*0.5, self.m_Height*0.06, "", self.m_TabDiplomacy)
-				y = y + self.m_Height*0.06
 			end
 		end
 		self.m_DiplomacyLoaded = true
@@ -278,21 +273,53 @@ function FactionGUI:loadDiplomacyTab()
 end
 
 function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
-	local factionId, status
-	for index, label in pairs(self.m_DiplomacyLabels) do
-		label:setText("")
-		label:setColor(Color.White)
+	self.m_DiplomacySelected = sourceId
+
+	local factionId, status, currentDiplomacy
+
+	if self.m_DiplomacyLabels then
+		for index, label in pairs(self.m_DiplomacyLabels) do
+			delete(label)
+		end
 	end
+
+	self.m_DiplomacyLabels = {}
+	self.m_DiplomacyLabels["Current"] = GUILabel:new(self.m_Width*0.39, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.08, _("Diplomatie der %s", FactionManager:getSingleton():getFromId(sourceId):getShortName()), self.m_TabDiplomacy)
+
+	local y = self.m_Height*0.13
+	local text
 
 	for index, data in pairs(diplomacy) do
 		factionId, status = unpack(data)
-		if factionId == sourceId then
-			self.m_DiplomacyLabels[factionId]:setText(_("%s - n/V", FactionManager:getSingleton():getFromId(factionId):getShortName()))
-		else
-			self.m_DiplomacyLabels[factionId]:setText(_("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status]))
+		if factionId ~= sourceId then
+			text = _("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status])
+			self.m_DiplomacyLabels[factionId] = GUILabel:new(self.m_Width*0.39, y, self.m_Width*0.5, self.m_Height*0.06, text, self.m_TabDiplomacy)
 			self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
+			y = y + self.m_Height*0.06
+			if factionId == localPlayer:getFaction():getId() then
+				currentDiplomacy = status
+			end
 		end
+	end
 
+	if self.m_DiplomacyButtons then
+		for index, button in pairs(self.m_DiplomacyButtons) do
+			delete(button)
+		end
+	end
+	self.m_DiplomacyButtons = {}
+
+	if localPlayer:getFaction():isEvilFaction() and currentDiplomacy then
+		if currentDiplomacy == FACTION_DIPLOMACY["Verbündet"] then
+			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.38, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis kündigen", true, self.m_TabDiplomacy):setBarColor(Color.Yellow)
+			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Krieg erklären", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		elseif currentDiplomacy == FACTION_DIPLOMACY["Waffenstillstand"] then
+			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Green)
+			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Krieg erklären", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		else
+			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Green)
+			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Waffenstillstand anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Yellow)
+		end
 	end
 end
 

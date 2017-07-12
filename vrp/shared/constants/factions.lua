@@ -16,9 +16,8 @@ FACTION_FBI_BUGS = 5
 
 FACTION_DIPLOMACY = {
 	[1] = "Verbündet",
-	[2] = "Neutral",
-	[3] = "Waffenstillstand",
-	[4] = "im Krieg",
+	[2] = "Waffenstillstand",
+	[3] = "im Krieg",
 }
 for i, v in pairs(FACTION_DIPLOMACY) do
 	FACTION_DIPLOMACY[v] = i
