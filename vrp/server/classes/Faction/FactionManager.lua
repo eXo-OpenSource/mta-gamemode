@@ -14,10 +14,8 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
-	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
-	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionToggleActivity"}
+
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -36,8 +34,7 @@ function FactionManager:constructor()
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
-
-
+	addEventHandler("factionToggleActivity", root, bind(self.Event_ToggleActivity, self))
 
 	FactionState:new()
 	FactionRescue:new()
@@ -484,5 +481,8 @@ function FactionManager:Event_requestDiplomacy(factionId)
 	else
 		client:sendError("Internal Error: Invalid Faction")
 	end
+end
 
+function FactionManager:Event_ToggleActivity(playerId)
+	outputChatBox("toggle faction lol")
 end

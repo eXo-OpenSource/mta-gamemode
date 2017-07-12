@@ -12,38 +12,39 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins )
-  self.m_Id = Id
-  self.m_Name = Name
-  self.m_ShortName = ShortName
-  self.m_Creator = Creator
-  self.m_Players = players
+function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
+	self.m_Id = Id
+	self.m_Name = Name
+	self.m_ShortName = ShortName
+	self.m_Creator = Creator
+	self.m_Players = players[1]
+	self.m_ActivePlayers = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
-  self.m_LastNameChange = lastNameChange or 0
-  self.m_Invitations = {}
-  self.m_Vehicles = {}
-  self.m_Level = 0
-  self.m_RankNames = companyRankNames[Id]
-  self.m_Skins = companySkins[Id]
-  -- Settings
-  self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
+	self.m_LastNameChange = lastNameChange or 0
+	self.m_Invitations = {}
+	self.m_Vehicles = {}
+	self.m_Level = 0
+	self.m_RankNames = companyRankNames[Id]
+	self.m_Skins = companySkins[Id]
+	-- Settings
+	self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
 
-  if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
-  if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
+	if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
+	if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
 
-  self.m_RankLoans = fromJSON(rankLoans)
-  self.m_RankSkins = fromJSON(rankSkins)
+	self.m_RankLoans = fromJSON(rankLoans)
+	self.m_RankSkins = fromJSON(rankSkins)
 
-  self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
+	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
 
-  sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
+	sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
-  self:createDutyMarker()
-  self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
-  self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+	self:createDutyMarker()
+	self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
+	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
-  self.m_VehicleTexture = companyVehicleShaders[Id] or false
+	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
 	self:getActivity()
 end
@@ -151,11 +152,11 @@ function Company:addPlayer(playerId, rank)
 		player:setCompany(self)
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyIsActive = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   if self.onPlayerJoin then -- Only for Companies with own class
     self:onPlayerJoin(playerId, rank)
-  end  
+  end
 
   self:getActivity(true)
 end
@@ -173,11 +174,11 @@ function Company:removePlayer(playerId)
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyIsActive = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 
-  if self.onPlayerLeft then -- Only for Companies with own class
-    self:onPlayerLeft(playerId)
-  end
+	if self.onPlayerLeft then -- Only for Companies with own class
+		self:onPlayerLeft(playerId)
+	end
 end
 
 function Company:getOnlinePlayers()
@@ -254,9 +255,9 @@ function Company:getActivity(force)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end
@@ -269,15 +270,16 @@ function Company:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
-	
+
 	self:getActivity()
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
+		local isActive = self.m_ActivePlayers[playerId]
 		local activity = self.m_PlayerActivity[playerId]
 		if not activity then activity = 0 end
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, isActive = isActive, activity = activity}
 	end
 	return temp
 end

@@ -9,60 +9,68 @@ CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
 function CompanyManager:constructor()
-  local st, count = getTickCount(), 0
-  local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
-  for i, row in pairs(result) do
-    local result2 = sql:queryFetch("SELECT Id, CompanyRank FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
-    local players = {}
-    for i, row2 in ipairs(result2) do
-      players[row2.Id] = row2.CompanyRank
-    end
+	self:loadCompanies()
 
-    if Company.DerivedClasses[row.Id] then
-      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
-    else
-        outputServerLog(("Company class for Id %s not found!"):format(row.Id))
-      --self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
-    end
-	count = count + 1
-  end
-  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
-  -- Add events
-  addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
-  addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
-  addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
-  addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
-  addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
-  addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
-  addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
-  addEventHandler("companyDeleteMember", root, bind(self.Event_companyDeleteMember, self))
-  addEventHandler("companyInvitationAccept", root, bind(self.Event_companyInvitationAccept, self))
-  addEventHandler("companyInvitationDecline", root, bind(self.Event_companyInvitationDecline, self))
-  addEventHandler("companyRankUp", root, bind(self.Event_companyRankUp, self))
-  addEventHandler("companyRankDown", root, bind(self.Event_companyRankDown, self))
-  addEventHandler("companySaveRank", root, bind(self.Event_companySaveRank, self))
-  addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
-  addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
-  addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
+	-- Events
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyTogglaActivity"}
 
+	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
+	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
+	addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
+	addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
+	addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
+	addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
+	addEventHandler("companyDeleteMember", root, bind(self.Event_companyDeleteMember, self))
+	addEventHandler("companyInvitationAccept", root, bind(self.Event_companyInvitationAccept, self))
+	addEventHandler("companyInvitationDecline", root, bind(self.Event_companyInvitationDecline, self))
+	addEventHandler("companyRankUp", root, bind(self.Event_companyRankUp, self))
+	addEventHandler("companyRankDown", root, bind(self.Event_companyRankDown, self))
+	addEventHandler("companySaveRank", root, bind(self.Event_companySaveRank, self))
+	addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
+	addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
+	addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
+	addEventHandler("companyTogglaActivity", root, bind(self.Event_toggleActivity, self))
 end
 
 function CompanyManager:destructor()
-  for i, v in pairs(CompanyManager.Map) do
-    delete(v)
-  end
+	for i, v in pairs(CompanyManager.Map) do
+		delete(v)
+	end
+end
+
+function CompanyManager:loadCompanies()
+	local st, count = getTickCount(), 0
+	local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
+	for i, row in pairs(result) do
+		local result2 = sql:queryFetch("SELECT Id, CompanyRank, CompanyIsActive FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
+		local players, activePlayers = {}, {}
+		for i, row2 in ipairs(result2) do
+			players[row2.Id] = row2.CompanyRank
+			activePlayers[row2.Id] = row2.CompanyIsActive
+		end
+
+		if Company.DerivedClasses[row.Id] then
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, activePlayers}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+		else
+			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
+			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+		end
+
+		count = count + 1
+	end
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
 end
 
 function CompanyManager:getFromId(Id)
-  return CompanyManager.Map[Id]
+	return CompanyManager.Map[Id]
 end
 
 function CompanyManager:addRef(ref)
-  CompanyManager.Map[ref:getId()] = ref
+	CompanyManager.Map[ref:getId()] = ref
 end
 
 function CompanyManager:removeRef(ref)
-  CompanyManager.Map[ref:getId()] = nil
+	CompanyManager.Map[ref:getId()] = nil
 end
 
 function CompanyManager:Event_companyRequestLog()
@@ -376,7 +384,7 @@ function CompanyManager:Event_toggleDuty(wasted)
 				if client:getPublicSync("Faction:Duty") and client:getFaction() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 					return false
-				end		
+				end
 				company:changeSkin(client)
 				client.m_CompanyDuty = true
 				company:updateCompanyDutyGUI(client)
@@ -397,6 +405,10 @@ function CompanyManager:Event_toggleDuty(wasted)
 		client:sendError(_("Du bist in keinem Unternehmen!", client))
         return false
 	end
+end
+
+function CompanyManager:Event_toggleActivity(playerId)
+	outputChatBox("toggle company lol")
 end
 
 function CompanyManager:Event_getCompanies()

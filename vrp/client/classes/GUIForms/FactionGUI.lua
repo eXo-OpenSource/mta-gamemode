@@ -59,6 +59,7 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
+	self.m_FactionToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Inaktiv setzen", true, tabMitglieder)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -68,7 +69,7 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
-
+	self.m_FactionToggleActivityButton.onLeftClick = bind(self.FactionToggleActivityButton_Click, self)
 
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
@@ -80,11 +81,7 @@ function FactionGUI:constructor()
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionRetrieveLog", root, bind(self.Event_factionRetrieveLog, self))
 	addEventHandler("factionRetrieveDiplomacy", root, bind(self.Event_retrieveDiplomacy, self))
-
-
 	addEventHandler("gangwarLoadArea", root, bind(self.Event_gangwarLoadArea, self))
-
-
 end
 
 function FactionGUI:destructor()
@@ -427,6 +424,13 @@ function FactionGUI:FactionRankDownButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("factionRankDown", root, selectedItem.Id)
+	end
+end
+
+function FactionGUI:FactionToggleActivityButton_Click()
+	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("factionToggleActivity", root, selectedItem.Id)
 	end
 end
 
