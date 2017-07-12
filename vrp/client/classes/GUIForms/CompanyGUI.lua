@@ -183,6 +183,11 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 				local item = self.m_CompanyPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
 				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item.Id = info.playerId
+
+				item.onLeftClick =
+					function()
+						self.m_CompanyToggleActivityButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+					end
 			end
 
 			if rank >= CompanyRank.Manager then
