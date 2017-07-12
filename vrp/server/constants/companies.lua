@@ -75,9 +75,9 @@ companySpawnpoint[3] = {Vector3(735.97, -1338.20, 13.53), 0, 0}
 -- ID 4 = Public Transport:
 companyRankNames[4] = {
 [0] = "Polierer",
-[1] = "Taxi-Fahrer",
-[2] = "Kassier",
-[3] = "Bus-Fahrer",
+[1] = "Taxifahrer",
+[2] = "Kassierer",
+[3] = "Busfahrer",
 [4] = "Fahrzeugverwalter",
 [5] = "Transportmanager"
 }

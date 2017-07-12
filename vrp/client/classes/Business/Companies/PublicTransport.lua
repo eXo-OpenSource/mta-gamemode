@@ -4,6 +4,11 @@ function PublicTransport:constructor()
 	addRemoteEvents{"busReachNextStop"}
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
 	self.m_ActiveBusVehicles = {}
+	self.m_ActiveLines = {}
+
+	self.m_Event_BusStopStreamIn = bind(PublicTransport.busStopStreamIn, self)
+	self.m_Event_BusStopStreamOut = bind(PublicTransport.busStopStreamOut, self)
+	self:registerBusStopObjects()
 end
 
 
@@ -23,12 +28,32 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	dxSetRenderTarget(nil)
 end
 
+function PublicTransport:busStopStreamIn(obj)
+	local source = source -- scope to local
+	if obj then source = obj end
+	if not source.m_BusCol then
+		source.m_BusCol = createColSphere(source.position, 3)
+		addEventHandler("onClientColShapeHit", source.m_BusCol, function(hit, dim)
+			if not dim then return end
+			if hit ~= localPlayer or localPlayer.vehicle then return end
+			InfoBox:new(_"Klicke auf die Bushaltestelle, um den Busfahrplan einzusehen.")
+		end)
+	end
+end
+
+function PublicTransport:busStopStreamOut()
+	if source.m_BusCol then	
+		source.m_BusCol:destroy()
+		source.m_BusCol = nil
+	end
+end
+
 function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, line)
 	local vehicleX, vehicleY, vehicleZ = getElementPosition(vehicle)
 	local playerX, playerY, playerZ = getElementPosition(localPlayer)
 
 	self:setBusDisplayText(vehicle, nextStopName, line)
-	self.m_ActiveBusVehicles[vehicle] = line
+	self:updateLineCounter(vehicle, line)
 
 	if getPedOccupiedVehicle(localPlayer) == vehicle and line then
 		if not getElementData(vehicle, "i:warn") then
@@ -53,9 +78,53 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 	end
 end
 
+function PublicTransport:updateLineCounter(vehicle, line)
+	if EPTBusData.lineData then -- check if line data is instantiated
+		if line and not self.m_ActiveLines[line] then self.m_ActiveLines[line] = 0 end
+		if self.m_ActiveBusVehicles[vehicle] and not line then -- vehicle offduty
+			local line = self.m_ActiveBusVehicles[vehicle]
+			self.m_ActiveLines[line] = self.m_ActiveLines[line] - 1
+			if self.m_ActiveLines[line] == 0 then
+				ShortMessage:new(_("Buslinie %d (%s) wird leider nicht mehr bedient.", line, EPTBusData.lineData.lineDisplayData[line].displayName), _"Public Transport", {230, 170, 0})
+			end
+			self.m_ActiveBusVehicles[vehicle] = nil
+		elseif not self.m_ActiveBusVehicles[vehicle] and line then -- vehicle onduty
+			self.m_ActiveBusVehicles[vehicle] = line
+			if self.m_ActiveLines[line] == 0 then
+				ShortMessage:new(_("Buslinie %d (%s) wird wieder bedient.", line, EPTBusData.lineData.lineDisplayData[line].displayName), _"Public Transport", {230, 170, 0})
+			end
+			self.m_ActiveLines[line] = self.m_ActiveLines[line] + 1
+		end
+	end
+end
+
 
 function PublicTransport:getActiveBusVehicles()
 	return self.m_ActiveBusVehicles
+end
+
+function PublicTransport:setActiveBusVehicles(tblVehs)
+	self.m_ActiveBusVehicles = tblVehs
+	for veh, line in pairs(tblVehs) do
+		self:updateLineCounter(veh, line)
+	end
+end
+
+function PublicTransport:registerBusStopObjects()
+	--[[
+		local object = createObject(1257, x, y, z, rx, ry, rz)
+			object:setData("EPT_bus_station", stationName, true)
+			object:setData("EPT_bus_station_lines", lines, true)
+	]]
+	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
+		if v:getData("object") then
+			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
+			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
+			if v:getData("object"):isStreamedIn() then
+				self:busStopStreamIn(v:getData("object"))
+			end
+		end
+	end
 end
 
 

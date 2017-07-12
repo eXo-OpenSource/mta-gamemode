@@ -14,6 +14,7 @@ local TAXI_PRICE_PER_KM = 20
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
+	self.m_ActiveBusVehicles = {}
 	self.m_TaxoMeter = bind(self.updateTaxometer, self)
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	addRemoteEvents{"publicTransportSetTargetMap", "publicTransportSetTargetTell", "publicTransportChangeBusDutyState"}
@@ -29,7 +30,7 @@ function PublicTransport:constructor()
 	InteriorEnterExit:constructor(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
 
 	
-	local safe = createObject(1235.93, -62.10, 1012, 13.5, 0, 0, 90)
+	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
 	safe:setInterior(12)
 	safe:setDimension(4)
 	self:setSafe(safe)
@@ -60,6 +61,7 @@ function PublicTransport:addBusStops()
 		local object = createObject(1257, x, y, z, rx, ry, rz)
 			object:setData("EPT_bus_station", stationName, true)
 			object:setData("EPT_bus_station_lines", lines, true)
+		busStop:setData("object", object, true)
 		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
 		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
 		local signObject = createObject(1229, signX, signY, signZ, 0, 0, rz)
@@ -118,7 +120,7 @@ function PublicTransport:Event_PlayerRequestBusData()
 			end
 		end
 	end
-	triggerClientEvent(client, "recieveEPTBusData", resourceRoot, self.m_BusStationDataForClient)
+	triggerClientEvent(client, "recieveEPTBusData", resourceRoot, self.m_BusStationDataForClient, self.m_ActiveBusVehicles)
 end
 
 function PublicTransport:onBarrierHit(player)
@@ -267,7 +269,7 @@ function PublicTransport:Event_sendTargetTellMessage(posX, posY)
 end
 
 
-function PublicTransport:Event_changeBusDutyState(state, arg)
+function PublicTransport:Event_changeBusDutyState(state, arg) -- from clientside mouse menu
 	if state == "dutyLine" then
 		self:startBusTour(client.vehicle, client, arg)
 	elseif state == "dutySpecial" then
@@ -323,6 +325,7 @@ function PublicTransport:stopBusTour(vehicle, player)
 	vehicle.Bus_NextStop = nil
 	vehicle.Bus_Line = nil
 	vehicle:setData("EPT_bus_duty", false, true)
+	self.m_ActiveBusVehicles[vehicle] = nil
 	vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, companyColors[4].r, companyColors[4].g, companyColors[4].b)
 
 	triggerClientEvent("busReachNextStop", root, vehicle, "Ausser Dienst", false)
@@ -346,6 +349,7 @@ function PublicTransport:startBusTour(vehicle, player, line)
 		triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][1]].name, false, line)
 		player:giveAchievement(17)
 		self:startBusTour_Driver(player, self.m_Lines[line][1]) 
+		self.m_ActiveBusVehicles[vehicle] = line
 	else
 		vehicle.Bus_OnDuty = true
 		triggerClientEvent("busReachNextStop", root, client.vehicle, "Sonderfahrt", false)
