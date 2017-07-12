@@ -52,7 +52,7 @@ function GroupGUI:constructor()
 	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
 	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
 	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
-	self.m_GroupToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabGroups)
+	self.m_GroupToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabGroups)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -71,7 +71,7 @@ function GroupGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-	self.m_GroupToggleActivityButton.onLeftClick = bind(self.GroupToggleActivityButton_Click, self)
+	self.m_GroupToggleLoanButton.onLeftClick = bind(self.GroupToggleLoanButton_Click, self)
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -187,7 +187,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 
 			item.onLeftClick =
 				function()
-					self.m_GroupToggleActivityButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+					self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
 				end
 		end
 		if rank >= GroupRank.Manager then
@@ -598,9 +598,9 @@ function GroupGUI:ShopLocateButton_Click()
 	end
 end
 
-function GroupGUI:GroupToggleActivityButton_Click()
+function GroupGUI:GroupToggleLoanButton_Click()
 	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupToggleActivity", root, selectedItem.Id)
+		triggerServerEvent("groupToggleLoan", root, selectedItem.Id)
 	end
 end

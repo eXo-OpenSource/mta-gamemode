@@ -60,7 +60,7 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	self.m_FactionToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
+	self.m_FactionToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -70,7 +70,7 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
-	self.m_FactionToggleActivityButton.onLeftClick = bind(self.FactionToggleActivityButton_Click, self)
+	self.m_FactionToggleLoanButton.onLeftClick = bind(self.FactionToggleLoanButton_Click, self)
 
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
@@ -361,7 +361,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 
 				item.onLeftClick =
 					function()
-						self.m_FactionToggleActivityButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+						self.m_FactionToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
 					end
 			end
 
@@ -435,10 +435,10 @@ function FactionGUI:FactionRankDownButton_Click()
 	end
 end
 
-function FactionGUI:FactionToggleActivityButton_Click()
+function FactionGUI:FactionToggleLoanButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("factionToggleActivity", root, selectedItem.Id)
+		triggerServerEvent("factionToggleLoan", root, selectedItem.Id)
 	end
 end
 

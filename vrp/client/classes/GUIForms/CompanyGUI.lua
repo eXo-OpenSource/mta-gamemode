@@ -55,7 +55,7 @@ function CompanyGUI:constructor()
 	self.m_CompanyRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_CompanyRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_CompanyRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	self.m_CompanyToggleActivityButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
+	self.m_CompanyToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
 
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
@@ -66,7 +66,7 @@ function CompanyGUI:constructor()
 	self.m_CompanyRemovePlayerButton.onLeftClick = bind(self.CompanyRemovePlayerButton_Click, self)
 	self.m_CompanyRankUpButton.onLeftClick = bind(self.CompanyRankUpButton_Click, self)
 	self.m_CompanyRankDownButton.onLeftClick = bind(self.CompanyRankDownButton_Click, self)
-	self.m_CompanyToggleActivityButton.onLeftClick = bind(self.CompanyToggleActivityButton_Click, self)
+	self.m_CompanyToggleLoanButton.onLeftClick = bind(self.CompanyToggleLoanButton_Click, self)
 
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 
@@ -186,7 +186,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 
 				item.onLeftClick =
 					function()
-						self.m_CompanyToggleActivityButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+						self.m_CompanyToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
 					end
 			end
 
@@ -276,10 +276,10 @@ function CompanyGUI:CompanyRankDownButton_Click()
 	end
 end
 
-function CompanyGUI:CompanyToggleActivityButton_Click()
+function CompanyGUI:CompanyToggleLoanButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("companyToggleActivity", root, selectedItem.Id)
+		triggerServerEvent("companyToggleLoan", root, selectedItem.Id)
 	end
 end
 

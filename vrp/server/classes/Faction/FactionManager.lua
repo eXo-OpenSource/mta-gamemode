@@ -14,7 +14,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionToggleActivity"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionToggleLoan"}
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -34,7 +34,7 @@ function FactionManager:constructor()
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
-	addEventHandler("factionToggleActivity", root, bind(self.Event_ToggleActivity, self))
+	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
 	FactionState:new()
 	FactionRescue:new()
@@ -484,6 +484,6 @@ function FactionManager:Event_requestDiplomacy(factionId)
 	end
 end
 
-function FactionManager:Event_ToggleActivity(playerId)
+function FactionManager:Event_ToggleLoan(playerId)
 	outputChatBox("toggle faction lol")
 end

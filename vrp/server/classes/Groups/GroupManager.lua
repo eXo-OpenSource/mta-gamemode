@@ -17,7 +17,7 @@ function GroupManager:constructor()
 	self:loadGroups()
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleActivity"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
@@ -43,7 +43,7 @@ function GroupManager:constructor()
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
-	addEventHandler("groupToggleActivity", root, bind(self.Event_toggleActivity, self))
+	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
 end
 
 function GroupManager:destructor()
@@ -672,6 +672,6 @@ function GroupManager:Event_ChangeType()
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_toggleActivity(playerId)
+function GroupManager:Event_ToggleLoan(playerId)
 	outputChatBox("toggle group lol")
 end
