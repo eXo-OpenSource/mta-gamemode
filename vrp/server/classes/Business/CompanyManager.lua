@@ -12,7 +12,7 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyTogglaActivity"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleActivity"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -29,7 +29,7 @@ function CompanyManager:constructor()
 	addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
 	addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
-	addEventHandler("companyTogglaActivity", root, bind(self.Event_toggleActivity, self))
+	addEventHandler("companyToggleActivity", root, bind(self.Event_toggleActivity, self))
 end
 
 function CompanyManager:destructor()

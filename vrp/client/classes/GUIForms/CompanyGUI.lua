@@ -274,7 +274,7 @@ end
 function CompanyGUI:CompanyToggleActivityButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("companyTogglaActivity", root, selectedItem.Id)
+		triggerServerEvent("companyToggleActivity", root, selectedItem.Id)
 	end
 end
 
