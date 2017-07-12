@@ -349,7 +349,9 @@ end
 
 function Company:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
-	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
+	local loan = loanEnabled and tonumber(self.m_RankLoans[tostring(rank)]) or 0
+
 	if self:getMoney() < loan then loan = self:getMoney() end
 	if loan < 0 then loan = 0 end
 	self:takeMoney(loan, "Lohn von "..player:getName())
