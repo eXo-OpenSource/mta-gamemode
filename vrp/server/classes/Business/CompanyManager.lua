@@ -408,7 +408,25 @@ function CompanyManager:Event_toggleDuty(wasted)
 end
 
 function CompanyManager:Event_toggleLoan(playerId)
-	outputChatBox("toggle company lol")
+	if not playerId then return end
+	local company = client:getCompany()
+	if not company then return end
+
+	if not company:isPlayerMember(client) or not company:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if company:getPlayerRank(client) < CompanyRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = company:isPlayerLoanEnabled(playerId)
+	company:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	company:addLog(client, "Unternehmen", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
 
 function CompanyManager:Event_getCompanies()

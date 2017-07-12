@@ -485,5 +485,23 @@ function FactionManager:Event_requestDiplomacy(factionId)
 end
 
 function FactionManager:Event_ToggleLoan(playerId)
-	outputChatBox("toggle faction lol")
+	if not playerId then return end
+	local faction = client:getFaction()
+	if not faction then return end
+
+	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = faction:isPlayerLoanEnabled(playerId)
+	faction:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	faction:addLog(client, "Fraktion", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end

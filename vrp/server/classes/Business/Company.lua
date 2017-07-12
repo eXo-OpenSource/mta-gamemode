@@ -249,6 +249,19 @@ function Company:setPlayerRank(playerId, rank)
 	sql:queryExec("UPDATE ??_character SET CompanyRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
+function Company:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Company:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET CompanyLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
 function Company:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return

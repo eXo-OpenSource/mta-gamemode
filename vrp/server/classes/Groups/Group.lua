@@ -302,6 +302,19 @@ function Group:setPlayerRank(playerId, rank)
 	end
 end
 
+function Group:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Group:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET GroupLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
 function Group:getMoney()
 	return self.m_Money
 end

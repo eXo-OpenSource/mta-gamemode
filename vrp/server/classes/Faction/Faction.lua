@@ -246,7 +246,6 @@ function Faction:isPlayerMember(playerId)
 	return self.m_Players[playerId] ~= nil
 end
 
-
 function Faction:getPlayerRank(playerId)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
@@ -274,6 +273,19 @@ function Faction:setPlayerRank(playerId, rank)
 	--	delete(player)
 	--end
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
+end
+
+function Faction:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Faction:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
 end
 
 function Faction:getMoney()

@@ -673,5 +673,22 @@ function GroupManager:Event_ChangeType()
 end
 
 function GroupManager:Event_ToggleLoan(playerId)
-	outputChatBox("toggle group lol")
+	if not playerId then return end
+	local group = client:getGroup()
+	if not group then return end
+
+	if not group:isPlayerMember(client) or not group:isPlayerMember(playerId) then
+		return
+	end
+
+	if group:getPlayerRank(client) < GroupRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = group:isPlayerLoanEnabled(playerId)
+	group:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	group:addLog(client, "Gang/Firma", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
