@@ -256,7 +256,7 @@ end
 function FactionGUI:loadDiplomacyTab()
 	if not self.m_DiplomacyLoaded then
 
-		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.35, self.m_Height*0.85, self.m_TabDiplomacy)
+		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.43, self.m_TabDiplomacy)
 		self.m_DiplomacyGrid:addColumn(_"Fraktion", 1)
 
 		local item
@@ -283,7 +283,7 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 	end
 
 	self.m_DiplomacyLabels = {}
-	self.m_DiplomacyLabels["Current"] = GUILabel:new(self.m_Width*0.39, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.08, _("Diplomatie der %s", FactionManager:getSingleton():getFromId(sourceId):getShortName()), self.m_TabDiplomacy)
+	self.m_DiplomacyLabels["Current"] = GUILabel:new(self.m_Width*0.34, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.08, _("Diplomatie der %s", FactionManager:getSingleton():getFromId(sourceId):getShortName()), self.m_TabDiplomacy)
 
 	local y = self.m_Height*0.13
 
@@ -291,7 +291,7 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 		factionId, status = unpack(data)
 		if factionId ~= sourceId then
 			text = _("%s - %s", FactionManager:getSingleton():getFromId(factionId):getShortName(), FACTION_DIPLOMACY[status])
-			self.m_DiplomacyLabels[factionId] = GUILabel:new(self.m_Width*0.39, y, self.m_Width*0.5, self.m_Height*0.06, text, self.m_TabDiplomacy)
+			self.m_DiplomacyLabels[factionId] = GUILabel:new(self.m_Width*0.34, y, self.m_Width*0.5, self.m_Height*0.06, text, self.m_TabDiplomacy)
 			self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
 			y = y + self.m_Height*0.06
 			if factionId == localPlayer:getFaction():getId() then
@@ -324,14 +324,14 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 		qText = {}
 		new = {}
 		text, color, new[1], qText[1] = unpack(btnData[currentDiplomacy][1])
-		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.33, self.m_Height*0.41, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
 		self.m_DiplomacyButtons[1].onLeftClick = function()
 			QuestionBox:new(_(qText[1], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[1]) end
 			)
 		end
 		text, color, new[2], qText[2] = unpack(btnData[currentDiplomacy][2])
-		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.41, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
 		self.m_DiplomacyButtons[2].onLeftClick = function()
 			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
