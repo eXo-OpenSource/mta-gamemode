@@ -55,6 +55,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		end
 	end
 	self:setLocked(false)
+	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
 	if color and fromJSON(color) then	
 		self:setColor(fromJSON(color))

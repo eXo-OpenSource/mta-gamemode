@@ -52,6 +52,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		table.insert(self.m_Faction.m_Vehicles, self)
 	end
 
+	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
 	self:setFrozen(true)
 	self.m_HandBrake = true
