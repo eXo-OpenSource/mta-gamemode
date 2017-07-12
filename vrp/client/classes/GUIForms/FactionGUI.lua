@@ -10,8 +10,7 @@ inherit(Singleton, FactionGUI)
 FactionGUI.DiplomacyColors = {
 	[1] = Color.Green,
 	[2] = Color.White,
-	[3] = Color.Orange,
-	[4] = Color.Red,
+	[3] = Color.Red,
 }
 function FactionGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
@@ -275,7 +274,7 @@ end
 function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 	self.m_DiplomacySelected = sourceId
 
-	local factionId, status, currentDiplomacy
+	local factionId, status, currentDiplomacy, text, color, new, qText
 
 	if self.m_DiplomacyLabels then
 		for index, label in pairs(self.m_DiplomacyLabels) do
@@ -287,7 +286,6 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 	self.m_DiplomacyLabels["Current"] = GUILabel:new(self.m_Width*0.39, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.08, _("Diplomatie der %s", FactionManager:getSingleton():getFromId(sourceId):getShortName()), self.m_TabDiplomacy)
 
 	local y = self.m_Height*0.13
-	local text
 
 	for index, data in pairs(diplomacy) do
 		factionId, status = unpack(data)
@@ -308,17 +306,36 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 		end
 	end
 	self.m_DiplomacyButtons = {}
-
+	local btnData = {
+		[FACTION_DIPLOMACY["Verbündet"]] = {
+			[1] = {_"Bündnis kündigen", Color.Yellow, FACTION_DIPLOMACY["Waffenstillstand"], "Möchtest du das Bündnis mit der Fraktion %s kündigen?"},
+			[2] = {_"Krieg erklären", Color.Red, FACTION_DIPLOMACY["im Krieg"], "Möchtest du der Fraktion %s den Krieg erklären?"},
+		},
+		[FACTION_DIPLOMACY["Waffenstillstand"]] = {
+			[1] = {_"Bündnis anbieten", Color.Green, FACTION_DIPLOMACY["Verbündet"], "Möchtest du der Fraktion %s ein Bündnis anbieten?"},
+			[2] = {_"Krieg erklären", Color.Red, FACTION_DIPLOMACY["im Krieg"], "Möchtest du der Fraktion %s den Krieg erklären?"},
+		},
+		[FACTION_DIPLOMACY["im Krieg"]] = {
+			[1] = {_"Bündnis anbieten", Color.Green, FACTION_DIPLOMACY["Verbündet"], "Möchtest du der Fraktion %s ein Bündnis anbieten?"},
+			[2] = {_"Waffenstillstand anbieten", Color.Yellow, FACTION_DIPLOMACY["Waffenstillstand"], "Möchtest du der Fraktion %s einen Waffenstillstand anbieten?"},
+		}
+	}
 	if localPlayer:getFaction():isEvilFaction() and currentDiplomacy then
-		if currentDiplomacy == FACTION_DIPLOMACY["Verbündet"] then
-			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.38, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis kündigen", true, self.m_TabDiplomacy):setBarColor(Color.Yellow)
-			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Krieg erklären", true, self.m_TabDiplomacy):setBarColor(Color.Red)
-		elseif currentDiplomacy == FACTION_DIPLOMACY["Waffenstillstand"] then
-			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Green)
-			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Krieg erklären", true, self.m_TabDiplomacy):setBarColor(Color.Red)
-		else
-			self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Bündnis anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Green)
-			self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, _"Waffenstillstand anbieten", true, self.m_TabDiplomacy):setBarColor(Color.Yellow)
+		qText = {}
+		new = {}
+		text, color, new[1], qText[1] = unpack(btnData[currentDiplomacy][1])
+		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.39, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[1].onLeftClick = function()
+			QuestionBox:new(_(qText[1], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
+				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[1]) end
+			)
+		end
+		text, color, new[2], qText[2] = unpack(btnData[currentDiplomacy][2])
+		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.70, self.m_Height*0.83, self.m_Width*0.28, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[2].onLeftClick = function()
+			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
+				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
+			)
 		end
 	end
 end

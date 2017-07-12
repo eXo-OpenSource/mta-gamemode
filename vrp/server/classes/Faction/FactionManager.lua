@@ -17,7 +17,7 @@ function FactionManager:constructor()
 	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
 	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
 	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy"}
+	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy"}
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -36,6 +36,8 @@ function FactionManager:constructor()
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
+	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
+
 
 
 
@@ -484,5 +486,14 @@ function FactionManager:Event_requestDiplomacy(factionId)
 	else
 		client:sendError("Internal Error: Invalid Faction")
 	end
+end
 
+function FactionManager:Event_changeDiplomacy(target, diplomacy)
+	local faction1 = client:getFaction()
+	local faction2 = self:getFromId(target)
+
+	faction1:changeDiplomacy(client, faction2, diplomacy)
+	faction2:changeDiplomacy(client, faction1, diplomacy)
+
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy)
 end

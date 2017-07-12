@@ -508,3 +508,14 @@ function Faction:loadDiplomacy()
 		end
 	end
 end
+
+function Faction:changeDiplomacy(player, targetFaction, diplomacy)
+	local factionId
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if factionId == targetFaction:getId() then
+			self.m_Diplomacy[index] = {factionId, diplomacy}
+			self:sendShortMessage(("%s hat den Diplomatiestatus mit den %s zu '%s' geändert!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+		end
+	end
+end
