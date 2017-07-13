@@ -108,21 +108,28 @@ end
 
 local runStringSavedVars = {}
 
-local function prepareRunStringVars(player)
+local function prepareRunStringVars(runPlayer)
 	runStringSavedVars.me = me
 	runStringSavedVars.my = my
-	runStringSavedVars.gPFN = gPFN
+	runStringSavedVars.player = player
+	runStringSavedVars.cprint = cprint
 
-	me = player
-	my = player
-	gPFN = getPlayerFromName	
+	me = runPlayer
+	my = runPlayer
+	player = function(target)
+		return PlayerManager:getSingleton():getPlayerFromPartOfName(target,runPlayer)
+	end 
+	cprint = function(var)
+		outputConsole(inspect(var), runPlayer)
+	end
 end
 
 
 local function restoreRunStringVars()
 	me = runStringSavedVars.me
 	my = runStringSavedVars.my
-	gPFN = runStringSavedVars.gPFN
+	cprint = runStringSavedVars.cprint
+	player = runStringSavedVars.player
 
 	runStringSavedVars = {}
 end
