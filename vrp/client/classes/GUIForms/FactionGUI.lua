@@ -51,13 +51,15 @@ function FactionGUI:constructor()
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
-	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.55)
+	self.m_FactionPlayersGrid:addColumn(_"", 0.06)
+	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.49)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
 	self.m_FactionAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
 	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
+	self.m_FactionToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -67,7 +69,7 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
-
+	self.m_FactionToggleLoanButton.onLeftClick = bind(self.FactionToggleLoanButton_Click, self)
 
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
@@ -79,11 +81,7 @@ function FactionGUI:constructor()
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionRetrieveLog", root, bind(self.Event_factionRetrieveLog, self))
 	addEventHandler("factionRetrieveDiplomacy", root, bind(self.Event_retrieveDiplomacy, self))
-
-
 	addEventHandler("gangwarLoadArea", root, bind(self.Event_gangwarLoadArea, self))
-
-
 end
 
 function FactionGUI:destructor()
@@ -400,8 +398,15 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 
 			self.m_FactionPlayersGrid:clear()
 			for _, info in ipairs(players) do
-				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
+				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+				local item = self.m_FactionPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item.Id = info.playerId
+
+				item.onLeftClick =
+					function()
+						self.m_FactionToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+					end
 			end
 
 			if rank >= FactionRank.Manager then
@@ -471,6 +476,13 @@ function FactionGUI:FactionRankDownButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("factionRankDown", root, selectedItem.Id)
+	end
+end
+
+function FactionGUI:FactionToggleLoanButton_Click()
+	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("factionToggleLoan", root, selectedItem.Id)
 	end
 end
 

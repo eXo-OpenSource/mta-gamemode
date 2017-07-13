@@ -14,7 +14,8 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_Name = name
-	self.m_Players = players
+	self.m_Players = players[1]
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -179,6 +180,7 @@ function Faction:addPlayer(playerId, rank)
 
 	rank = rank or 0
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
@@ -192,7 +194,7 @@ function Faction:addPlayer(playerId, rank)
 		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   	self:getActivity(true)
 end
@@ -203,6 +205,7 @@ function Faction:removePlayer(playerId)
 	end
 
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
@@ -217,7 +220,7 @@ function Faction:removePlayer(playerId)
 		end
 	end
 	unbindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
 function Faction:invitePlayer(player)
@@ -242,7 +245,6 @@ function Faction:isPlayerMember(playerId)
 
 	return self.m_Players[playerId] ~= nil
 end
-
 
 function Faction:getPlayerRank(playerId)
 	if type(playerId) == "userdata" then
@@ -273,6 +275,19 @@ function Faction:setPlayerRank(playerId, rank)
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
+function Faction:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Faction:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
 function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
@@ -293,7 +308,9 @@ end
 
 function Faction:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
-	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
+	local loan = loanEnabled and tonumber(self.m_RankLoans[tostring(rank)]) or 0
+
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
 	self:takeMoney(loan, "Lohn von "..player:getName())
@@ -341,10 +358,10 @@ function Faction:getPlayers(getIDsOnly)
 	self:getActivity()
 
 	for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end

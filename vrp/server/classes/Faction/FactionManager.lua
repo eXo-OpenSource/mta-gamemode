@@ -14,10 +14,8 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
-	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
-	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan" }
+
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -37,9 +35,7 @@ function FactionManager:constructor()
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
 	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
-
-
-
+	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
 	FactionState:new()
 	FactionRescue:new()
@@ -61,13 +57,14 @@ function FactionManager:loadFactions()
   	local st, count = getTickCount(), 0
   	local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
   	for k, row in pairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-		local players = {}
+		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
 		for i, factionRow in ipairs(result2) do
-		players[factionRow.Id] = factionRow.FactionRank
+			players[factionRow.Id] = factionRow.FactionRank
+			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -496,4 +493,26 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	faction2:changeDiplomacy(client, faction1, diplomacy)
 
 	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy)
+end
+
+function FactionManager:Event_ToggleLoan(playerId)
+	if not playerId then return end
+	local faction = client:getFaction()
+	if not faction then return end
+
+	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = faction:isPlayerLoanEnabled(playerId)
+	faction:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	faction:addLog(client, "Fraktion", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end

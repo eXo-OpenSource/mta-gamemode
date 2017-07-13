@@ -43,7 +43,8 @@ function GroupGUI:constructor()
 	--self.m_GroupMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabGroups)
 	--self.m_GroupMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabGroups)
 	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.55)
+	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
+	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.49)
 	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_GroupPlayersGrid:addColumn(_"Aktivität", 0.27)
 
@@ -51,6 +52,7 @@ function GroupGUI:constructor()
 	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
 	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
 	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
+	self.m_GroupToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabGroups)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -69,7 +71,7 @@ function GroupGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-
+	self.m_GroupToggleLoanButton.onLeftClick = bind(self.GroupToggleLoanButton_Click, self)
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -178,8 +180,15 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 
 		self.m_GroupPlayersGrid:clear()
 		for _, info in ipairs(players) do
-			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
+			local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+			local item = self.m_GroupPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+			item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 			item.Id = info.playerId
+
+			item.onLeftClick =
+				function()
+					self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+				end
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames
@@ -586,5 +595,12 @@ function GroupGUI:ShopLocateButton_Click()
 			delete(blip)
 		end
 		delete(this)
+	end
+end
+
+function GroupGUI:GroupToggleLoanButton_Click()
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupToggleLoan", root, selectedItem.Id)
 	end
 end

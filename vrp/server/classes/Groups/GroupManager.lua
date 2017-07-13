@@ -14,28 +14,11 @@ for i, v in pairs(GroupManager.GroupTypes) do
 end
 
 function GroupManager:constructor()
-	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
-	for k, row in ipairs(result) do
+	self:loadGroups()
 
-
-		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
-		local players = {}
-		for i, groupRow in ipairs(result2) do
-			players[groupRow.Id] = groupRow.GroupRank
-		end
-
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
-		GroupManager.Map[row.Id] = group
-		count = count + 1
-	end
-
-	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType",
-		"groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale"}
+	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -60,17 +43,34 @@ function GroupManager:constructor()
 	addEventHandler("groupBuyVehicle", root, bind(self.Event_BuyVehicle, self))
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
-
-
-
-
-
+	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
 end
 
 function GroupManager:destructor()
 	for k, v in pairs(GroupManager.Map) do
 		delete(v)
 	end
+end
+
+function GroupManager:loadGroups()
+	local st, count = getTickCount(), 0
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
+	for k, row in ipairs(result) do
+
+
+		local result2 = sql:queryFetch("SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
+		for i, groupRow in ipairs(result2) do
+			players[groupRow.Id] = groupRow.GroupRank
+			playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
+		end
+
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+		GroupManager.Map[row.Id] = group
+		count = count + 1
+	end
+
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
 end
 
 function GroupManager:loadFromId(Id)
@@ -670,4 +670,25 @@ function GroupManager:Event_ChangeType()
 	group:addLog(client, "Gang/Firma", "hat die "..oldType.." in eine "..newType.." umgewandelt!")
 	group:sendShortMessage(_("%s hat deine %s in eine %s umgewandelt!", client, client:getName(), oldType, newType))
 	self:sendInfosToClient(client)
+end
+
+function GroupManager:Event_ToggleLoan(playerId)
+	if not playerId then return end
+	local group = client:getGroup()
+	if not group then return end
+
+	if not group:isPlayerMember(client) or not group:isPlayerMember(playerId) then
+		return
+	end
+
+	if group:getPlayerRank(client) < GroupRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = group:isPlayerLoanEnabled(playerId)
+	group:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	group:addLog(client, "Gang/Firma", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end

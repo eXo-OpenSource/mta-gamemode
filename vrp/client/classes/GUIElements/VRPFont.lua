@@ -105,6 +105,8 @@ FontAwesomeSymbols = {
 	Comment = "",
 	Anchor = "",
 	Points = "",
+	Calender_Time = "",
+	Calender_Check = "",
 }
 
 Fonts = {
