@@ -59,7 +59,11 @@ function Faction:destructor()
 end
 
 function Faction:save()
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), self.m_Diplomacy and toJSON(self.m_Diplomacy) or {}, self.m_Id) then
+	local diplomacy = ""
+	if self.m_Diplomacy then
+		diplomacy = toJSON({["Status"] = self.m_Diplomacy, ["Requests"] = self.m_DiplomacyRequests})
+	end
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -514,25 +518,64 @@ function Faction:createBlip(img, posX, posY, streamDistance)
 end
 
 function Faction:loadDiplomacy()
-	if self.m_DiplomacyJSON then
-		self.m_Diplomacy = fromJSON(self.m_DiplomacyJSON)
+	if self.m_DiplomacyJSON and self.m_DiplomacyJSON ~= "" then
+		local dbTable = fromJSON(self.m_DiplomacyJSON)
+		if dbTable and dbTable["Status"] and dbTable["Requests"] then
+			self.m_Diplomacy = dbTable["Status"]
+			self.m_DiplomacyRequests = dbTable["Requests"]
+		else
+			self.m_DiplomacyJSON = nil
+			self:loadDiplomacy()
+		end
 	else
 		self.m_Diplomacy = {}
+		self.m_DiplomacyRequests = {}
 		for Id, faction in pairs(FactionManager:getSingleton():getAllFactions()) do
-			if faction:isEvilFaction() then
-				table.insert(self.m_Diplomacy, {faction:getId(), FACTION_DIPLOMACY.Neutral})
+			if faction:isEvilFaction() and faction ~= self then
+				self:changeDiplomacy(faction, FACTION_DIPLOMACY.Waffenstillstand)
 			end
 		end
 	end
 end
 
-function Faction:changeDiplomacy(player, targetFaction, diplomacy)
+function Faction:getDiplomacy(targetFaction)
+	local factionId
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if factionId == targetFaction:getId() then
+			return status
+		end
+	end
+end
+
+function Faction:changeDiplomacy(targetFaction, diplomacy, player)
 	local factionId
 	for index, data in pairs(self.m_Diplomacy) do
 		factionId, status = unpack(data)
 		if factionId == targetFaction:getId() then
 			self.m_Diplomacy[index] = {factionId, diplomacy}
-			self:sendShortMessage(("%s hat den Diplomatiestatus mit den %s zu '%s' geändert!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+			if player then
+				self:sendShortMessage(("%s hat den Diplomatiestatus mit den %s zu '%s' geändert!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+			end
+			return
 		end
+	end
+	table.insert(self.m_Diplomacy, {targetFaction:getId(), diplomacy})
+	outputDebugString(("Created Diplomacy for %s and %s - Status: %s"):format(self:getShortName(), targetFaction:getShortName(), FACTION_DIPLOMACY[diplomacy] or "Unknown"))
+end
+
+function Faction:createDiplomacyRequest(sourceFaction, targetFaction, diplomacy, player)
+	local request = {
+		["source"] = sourceFaction:getId(),
+		["target"] = targetFaction:getId(),
+		["status"] = diplomacy,
+		["player"] = player:getId(),
+		["timestamp"] = getRealTime().timestamp
+	}
+	table.insert(self.m_DiplomacyRequests, request)
+	if player and sourceFaction == self then
+		self:sendShortMessage(("%s hat der Fraktion %s eine %s-Anfrage gesendet!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+	elseif player and targetFaction == self then
+		targetFaction:sendShortMessage(("Die Fraktion %s hat euch eine %s-Anfrage gesendet!"):format(sourceFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
 	end
 end

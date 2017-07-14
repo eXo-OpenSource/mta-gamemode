@@ -479,7 +479,7 @@ end
 function FactionManager:Event_requestDiplomacy(factionId)
 	local faction = self:getFromId(factionId)
 	if faction and faction.m_Diplomacy then
-		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy)
+		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, client:getFaction().m_DiplomacyRequests)
 	else
 		client:sendError("Internal Error: Invalid Faction")
 	end
@@ -489,10 +489,15 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	local faction1 = client:getFaction()
 	local faction2 = self:getFromId(target)
 
-	faction1:changeDiplomacy(client, faction2, diplomacy)
-	faction2:changeDiplomacy(client, faction1, diplomacy)
+	if diplomacy < faction1:getDiplomacy(faction2) then
+		faction1:createDiplomacyRequest(faction1, faction2, diplomacy, client)
+		faction2:createDiplomacyRequest(faction1, faction2, diplomacy, client)
+	else
+		faction1:changeDiplomacy(faction2, diplomacy, client)
+		faction2:changeDiplomacy(faction1, diplomacy, client)
+	end
 
-	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy)
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
 end
 
 function FactionManager:Event_ToggleLoan(playerId)
