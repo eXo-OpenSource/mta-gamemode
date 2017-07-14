@@ -51,6 +51,11 @@ addEventHandler("vehicleSpawn", root,
 		local shop = VehicleSpawner.Map[spawnerId]
 		if not shop then return end
 
+		if (client:getPosition() - shop.m_Marker:getPosition()).length > 10 then
+			client:sendError(_("Du bist zu weit entfernt!", client))
+			return
+		end
+
 		if not shop.m_Vehicles[vehicleModel] then
 			-- Todo: Report possible attack
 			return
