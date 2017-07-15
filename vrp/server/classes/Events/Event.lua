@@ -18,7 +18,7 @@ function Event:virtual_constructor(Id)
 
 	local positions = self:getPositions()
 	local position = positions[math.random(1, #positions)]
-	self.m_EventBlip = Blip:new("Wheel.png", position.x, position.y)
+	self.m_EventBlip = Blip:new("Kart.png", position.x, position.y)
 
 	-- Create the start marker
 	self.m_StartMarker = Marker(position, "checkpoint", 10, 255, 0, 0, 100)

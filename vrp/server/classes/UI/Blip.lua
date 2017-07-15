@@ -8,7 +8,7 @@
 Blip = inherit(Object)
 Blip.Map = {}
 
-function Blip:constructor(imagePath, x, y, visibleTo, streamDistance)
+function Blip:constructor(imagePath, x, y, visibleTo, streamDistance, displayText, color)
 	self.m_ImagePath = imagePath
 	self.m_PosX, self.m_PosY = x, y
 	self.m_VisibleTo = visibleTo or root

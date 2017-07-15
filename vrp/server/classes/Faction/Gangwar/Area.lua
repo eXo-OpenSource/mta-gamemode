@@ -49,11 +49,11 @@ function Area:createRadar()
 	local areaHeight = math.abs(areaY - areaY2)
 	local factionColor = factionColors[self.m_Owner]
 	if factionColor then
-		 factionColor = setBytesInInt32(240,factionColor.r,factionColor.g,factionColor.b)
+		 factionColor = setBytesInInt32(150,factionColor.r,factionColor.g,factionColor.b)
 	else factionColor = GANGWAR_DUMP_COLOR
 	end
 	if self.m_IsAttacked then
-		factionColor = setBytesInInt32(255,220,0,0)
+		factionColor = setBytesInInt32(150,220,0,0)
 	end
 	self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
 end
@@ -82,7 +82,7 @@ function Area:attack( faction1, faction2)
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:delete()
-		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
+		self.m_BlipImage = Blip:new("Gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
 		self:createRadar()
 		self.m_RadarArea:setFlashing(true)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)

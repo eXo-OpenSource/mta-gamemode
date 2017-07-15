@@ -133,11 +133,11 @@ function HUDRadar:updateMapTexture()
 end
 
 function HUDRadar:makePath(fileName, isBlip)
+	if isBlip then return "files/images/Radar/Blips/"..fileName end
 	if self.m_DesignSet == RadarDesign.Monochrome then
-		local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
-		return path
+		return "files/images/Radar/Radar_Monochrome/"..fileName
 	elseif self.m_DesignSet == RadarDesign.GTA then
-		return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
+		return "files/images/Radar/Radar_GTA/"..fileName
 	end
 end
 

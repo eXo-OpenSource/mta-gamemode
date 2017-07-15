@@ -119,7 +119,8 @@ function CustomF11Map:draw()
 			if display then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)
-				dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, blip.m_ImagePath, 0)
+				local size = blip:getSize()
+				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, blip.m_ImagePath, 0)
 			end
 		end
 	end
@@ -128,7 +129,7 @@ function CustomF11Map:draw()
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
-	dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
+	dxDrawImage(mapPosX + mapX - 12, mapPosY + mapY - 12, 24, 24, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
 
 	--draw coordinate and zone info
 	if isCursorOverArea(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height) and getKeyState("lshift") then
