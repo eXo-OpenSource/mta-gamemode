@@ -22,3 +22,9 @@ FACTION_DIPLOMACY = {
 for i, v in pairs(FACTION_DIPLOMACY) do
 	FACTION_DIPLOMACY[v] = i
 end
+
+FACTION_DIPLOMACY_REQUEST = {
+	[1] = "Bündnis-Anfrage",
+	[2] = "Waffenstillstands-Anfrage",
+	[3] = "Kriegserklärung",
+}

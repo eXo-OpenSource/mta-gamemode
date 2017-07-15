@@ -257,19 +257,35 @@ function FactionGUI:loadDiplomacyTab()
 		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.43, self.m_TabDiplomacy)
 		self.m_DiplomacyGrid:addColumn(_"Fraktion", 1)
 
+
+
+
+		self.m_DiplomacyOutHead = GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.46, self.m_Height*0.08, _"Diplomatische Anfragen:", self.m_TabDiplomacy)
+		self.m_DiplomacyRequestGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.5, self.m_Height*0.3, self.m_TabDiplomacy)
+		self.m_DiplomacyRequestGrid:addColumn(_"Fraktion", 0.35)
+		self.m_DiplomacyRequestGrid:addColumn(_"Typ", 0.65)
+
+		self.m_DiplomacyRequestText = GUILabel:new(self.m_Width*0.54, self.m_Height*0.6, self.m_Width*0.44, self.m_Height*0.06, "", self.m_TabDiplomacy):setMultiline(true)
+
 		local item
 		for Id, faction in pairs(FactionManager.Map) do
 			if faction:isEvilFaction() then
 				item = self.m_DiplomacyGrid:addItem(faction:getShortName())
 				item.Id = faction:getId()
 				item.onLeftClick = function() triggerServerEvent("factionRequestDiplomacy", root, faction:getId()) end
+				if faction == localPlayer:getFaction() then
+					self.m_DiplomacyRequestGrid:onInternalSelectItem(item)
+				end
 			end
 		end
+
 		self.m_DiplomacyLoaded = true
 	end
+
+	triggerServerEvent("factionRequestDiplomacy", root, localPlayer:getFaction():getId())
 end
 
-function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
+function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
 	self.m_DiplomacySelected = sourceId
 
 	local factionId, status, currentDiplomacy, text, color, new, qText
@@ -334,6 +350,53 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy)
 			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
 			)
+		end
+	end
+
+
+	self.m_DiplomacyRequestGrid:clear()
+	self.m_DiplomacyRequestGrid:addItemNoClick("Eingehend", "")
+	for index, data in pairs(requests) do
+		if data["target"] == localPlayer:getFaction():getId() then
+			item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["source"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
+			item.onLeftClick = function()
+				self:onDiplomacyRequestItemSelect(index, data)
+			end
+		end
+	end
+	self.m_DiplomacyRequestGrid:addItemNoClick("Ausgehend", "")
+
+	for index, data in pairs(requests) do
+		if data["source"] == localPlayer:getFaction():getId() then
+			item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["target"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
+			item.onLeftClick = function()
+				self:onDiplomacyRequestItemSelect(index, data)
+			end
+		end
+	end
+end
+
+function FactionGUI:onDiplomacyRequestItemSelect(id, data)
+	self.m_DiplomacyRequestText:setText(_("%s der %s an die %s\nvom %s Uhr", FACTION_DIPLOMACY_REQUEST[data["status"]], FactionManager.Map[data["source"]]:getShortName(), FactionManager.Map[data["target"]]:getShortName(), getOpticalTimestamp(data["timestamp"])))
+	if self.m_DiplomacyRequestButtons then
+		for index, button in pairs(self.m_DiplomacyRequestButtons) do
+			delete(button)
+		end
+	end
+	self.m_DiplomacyRequestButtons = {}
+	if data["source"] == localPlayer:getFaction():getId() then
+		self.m_DiplomacyRequestButtons["Remove"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.32, self.m_Height*0.07, "Zurückziehen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Remove"].onLeftClick = function()
+			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "remove")
+		end
+	else
+		self.m_DiplomacyRequestButtons["Accept"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Annehmen", true, self.m_TabDiplomacy):setBarColor(Color.Green)
+		self.m_DiplomacyRequestButtons["Accept"].onLeftClick = function()
+			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "accept")
+		end
+		self.m_DiplomacyRequestButtons["Decline"] = VRPButton:new(self.m_Width*0.77, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Ablehnen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Decline"].onLeftClick = function()
+			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "decline")
 		end
 	end
 end

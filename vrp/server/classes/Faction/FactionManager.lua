@@ -14,7 +14,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -35,6 +35,7 @@ function FactionManager:constructor()
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
 	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
+	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
 	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
 	FactionState:new()
@@ -486,6 +487,11 @@ function FactionManager:Event_requestDiplomacy(factionId)
 end
 
 function FactionManager:Event_changeDiplomacy(target, diplomacy)
+	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
 	local faction1 = client:getFaction()
 	local faction2 = self:getFromId(target)
 
@@ -498,6 +504,40 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	end
 
 	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+end
+
+function FactionManager:Event_answerDiplomacyRequest(id, answer)
+	if not client:getFaction() or not client:getFaction().m_DiplomacyRequests[id] then
+		client:sendError(_("Die Anfrage ist nicht mehr verfügbar!", client))
+	end
+
+	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local request = client:getFaction().m_DiplomacyRequests[id]
+	local faction1 = self:getFromId(request["source"])
+	local faction2 = self:getFromId(request["target"])
+	if answer == "accept" then
+		faction1:changeDiplomacy(faction2, request["status"], client)
+		faction2:changeDiplomacy(faction1, request["status"], client)
+	elseif answer == "decline" then
+		faction1:sendShortMessage(("%s hat eure %s an die %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+	elseif answer == "remove" then
+		faction1:sendShortMessage(("%s hat eure %s an die %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+	end
+
+	for index, data in pairs(faction2.m_DiplomacyRequests) do
+		if data["source"] == request["source"] and data["target"] == request["target"] and data["status"] == request["status"] then
+			faction2.m_DiplomacyRequests[index] = nil
+		end
+	end
+	client:getFaction().m_DiplomacyRequests[id] = nil
+
+	client:triggerEvent("factionRetrieveDiplomacy", faction1:getId(), faction1.m_Diplomacy, faction1.m_DiplomacyRequests)
 end
 
 function FactionManager:Event_ToggleLoan(playerId)
