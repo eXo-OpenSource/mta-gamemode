@@ -541,7 +541,7 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 	local faction2 = self:getFromId(request["target"])
 	local diplomacy = request["status"]
 
-	if diplomacy == FACTION_DIPLOMACY["Verbündet"] then
+	if answer == "accept" and diplomacy == FACTION_DIPLOMACY["Verbündet"] then
 		if faction1:getAllianceFaction() then
 			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction1:getShortName(), faction1:getAllianceFaction():getShortName()))
 			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)

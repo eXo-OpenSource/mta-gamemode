@@ -570,6 +570,13 @@ function Faction:changeDiplomacy(targetFaction, diplomacy, player)
 			if player then
 				self:sendShortMessage(("%s hat den Diplomatiestatus mit den %s zu '%s' geändert!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
 			end
+			for index, data in pairs(self.m_DiplomacyRequests) do
+				if (data["target"] == self and data["source"] == targetFaction) or (data["source"] == self and data["target"] == targetFaction) then
+					self.m_DiplomacyRequests[index] = nil
+				end
+			end
+
+
 			return
 		end
 	end
