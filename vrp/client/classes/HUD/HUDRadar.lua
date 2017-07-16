@@ -11,16 +11,11 @@ addRemoteEvents{ "HUDRadar:showRadar", "HUDRadar:hideRadar" }
 function HUDRadar:constructor()
 	self.m_ImageSize = 1536, 1536 --3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
-	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-30
+	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - (self.m_Height - 20)*screenWidth/1600
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
-
-	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
-		CustomF11Map:getSingleton():enable()
-		setPlayerHudComponentVisible("radar", false)
-	else
-		CustomF11Map:getSingleton():disable()
-	end
+	self.m_StatusBarsEnabled = false
+	self:toggleStatusBars(core:get("HUD", "drawStatusBars", false))
 
 	self.m_Zoom = 1
 	self.m_Rotation = 0
@@ -28,11 +23,7 @@ function HUDRadar:constructor()
 	self.m_Areas = {}
 	self.m_Visible = false
 	self.m_InInterior = false
-	self.m_Enabled = core:get("HUD", "showRadar", true)
-	if self.m_DesignSet == RadarDesign.Default then
-		setPlayerHudComponentVisible("radar", self.m_Enabled)
-		self.m_DefaultBlips = {}
-	end
+
 
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
@@ -84,17 +75,24 @@ function HUDRadar:Event_colLeave(elem, dim)
 end
 
 function HUDRadar:hide()
-	self.m_Visible = false
+	if  self.m_GWRadar then
+		setPlayerHudComponentVisible("radar", false)
+	else
+		self.m_Visible = false
+	end
 
 	-- Recalc shortmessage positions
-	MessageBoxManager.onRadarToggle(false)
+	MessageBoxManager.onRadarPositionChange()
 end
 
 function HUDRadar:show()
-	self.m_Visible = true
-
+	if self.m_GWRadar then
+		setPlayerHudComponentVisible("radar", true)
+	else
+		self.m_Visible = true
+	end
 	-- Recalc shortmessage positions
-	MessageBoxManager.onRadarToggle(true)
+	MessageBoxManager.onRadarPositionChange()
 end
 
 function HUDRadar:updateMapTexture()
@@ -142,14 +140,7 @@ function HUDRadar:makePath(fileName, isBlip)
 end
 
 function HUDRadar:setDesignSet(design)
-	if design == RadarDesign.Monochrome or design == RadarDesign.GTA then
-		CustomF11Map:getSingleton():enable()
-	else
-		CustomF11Map:getSingleton():disable()
-	end
-
 	if design ~= RadarDesign.Default then
-		setPlayerHudComponentVisible("radar",false)
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
 		self:updateMapTexture()
@@ -160,8 +151,20 @@ function HUDRadar:setDesignSet(design)
 	else
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
-		setPlayerHudComponentVisible("radar",true)
 	end
+	MessageBoxManager.onRadarPositionChange()
+end
+
+function HUDRadar:updateRadarType(gwMode)
+	if not self.m_Enabled then
+		setPlayerHudComponentVisible("radar", false)
+		return 
+	end
+
+	self.m_GWRadar = gwMode
+	setPlayerHudComponentVisible("radar", gwMode)
+	self.m_Visible = not gwMode
+	MessageBoxManager.onRadarPositionChange()
 end
 
 function HUDRadar:getDesignSet()
@@ -170,23 +173,27 @@ end
 
 function HUDRadar:setEnabled(state)
 	self.m_Enabled = state
-	if self.m_DesignSet == RadarDesign.Default then
-		setPlayerHudComponentVisible("radar", state)
+	self:updateRadarType(core:get("HUD", "GWRadar", false))
+	if self.m_NorthBlip then
+		self.m_NorthBlip:delete()
+		self.m_NorthBlip = nil
 	end
+	if state then
+		self.m_NorthBlip = Blip:new("North.png", 0, 0, 12000)
+	end
+	MessageBoxManager.onRadarPositionChange()
 end
 
 function HUDRadar:isEnabled()
 	return self.m_Enabled
 end
 
-function HUDRadar:restore(clearedRenderTargets)
-	if clearedRenderTargets then
-		self:updateMapTexture()
-	end
+function HUDRadar:restore()
+	self:updateMapTexture()
 end
 
 function HUDRadar:update()
-	if self.m_DesignSet == RadarDesign.Default or not self.m_Visible or isPlayerMapVisible() then
+	if self.m_DesignSet == RadarDesign.Default or not self.m_Visible then
 		return
 	end
 
@@ -203,29 +210,31 @@ function HUDRadar:update()
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
 		self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
 	end
+
+	if self.m_NorthBlip then
+		self.m_NorthBlip:setPosition(localPlayer.position.x, localPlayer.position.y + 10000, 0) -- update north blip position so it always stays north
+	end
 end
 
 function HUDRadar:draw()
-	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default or isPlayerMapVisible() then
+	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default then
 		return
 	end
 
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
-		if MessageBoxManager.Mode == true then -- Todo: find better way to do this
-			MessageBoxManager.onRadarToggle(false)
-		end
-		return
-	else
-		if MessageBoxManager.Mode == false then -- Todo: find better way to do this
-			MessageBoxManager.onRadarToggle(true)
-		end
+		MessageBoxManager.onRadarPositionChange()
+		self.m_UpdateMessageBoxes = true
+		return 
+	elseif self.m_UpdateMessageBoxes == true then -- Todo: find better way to do this
+		self.m_UpdateMessageBoxes = false
+		MessageBoxManager.onRadarPositionChange()
 	end
 
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Radar") end
 	-- Draw the rectangle (the border)
-	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
+	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height, tocolor(0, 0, 0))
 
 	-- Draw the map
 	local posX, posY, posZ = getElementPosition(localPlayer)
@@ -257,28 +266,32 @@ function HUDRadar:draw()
 
 	-- Draw renderTarget
 	if isNotInInterior then
-		dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
+		dxDrawImageSection(self.m_PosX + 3, self.m_PosY + 3, self.m_Width - 6, self.m_Height - 6, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
 	else
 		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
 	end
 
 	-- Draw health bar (at the bottom)
-	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
-	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
+	if self.m_StatusBarsEnabled then
+		dxDrawRectangle(self.m_PosX, self.m_PosY+self.m_Height, self.m_Width, self.m_Height/20 + 3,tocolor(0, 0, 0, 255))
 
-	-- Draw armor bar
-	if isInWater then
-		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
-		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4 * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
-	else
-		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/2-3, self.m_Height/20, tocolor(63, 105, 202))
-		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, (self.m_Width/2-3) * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
-	end
+		dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height, self.m_Width/2 - 3, self.m_Height/20, tocolor(71, 86, 75))
+		dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height, (self.m_Width/2 - 3) * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
 
-	-- Draw oxygen bar
-	if isInWater then
-		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
-		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+		-- Draw armor bar
+		if isInWater then
+			dxDrawRectangle(self.m_PosX+self.m_Width/2+3, self.m_PosY+self.m_Height, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
+			dxDrawRectangle(self.m_PosX+self.m_Width/2+3, self.m_PosY+self.m_Height, self.m_Width/4 * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
+		else
+			dxDrawRectangle(self.m_PosX+self.m_Width/2+3, self.m_PosY+self.m_Height, self.m_Width/2-6, self.m_Height/20, tocolor(63, 105, 202))
+			dxDrawRectangle(self.m_PosX+self.m_Width/2+3, self.m_PosY+self.m_Height, (self.m_Width/2-6) * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
+		end
+
+		-- Draw oxygen bar
+		if isInWater then
+			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, self.m_Width/4-9, self.m_Height/20, tocolor(65, 56, 15))
+			dxDrawRectangle(self.m_PosX+self.m_Width*3/4+6, self.m_PosY+self.m_Height, (self.m_Width/4-9) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+		end
 	end
 
 	if isNotInInterior and core:get("HUD", "drawBlips", true) then
@@ -287,14 +300,15 @@ function HUDRadar:draw()
 
 	-- Draw region name (above health bar)
 	if core:get("HUD", "drawZone", true) then
-		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
-		dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_PosY+self.m_Height+3,
+		dxDrawRectangle(self.m_PosX, self.m_PosY+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
+		dxDrawText(getZoneName(localPlayer.position), self.m_PosX + self.m_Width/2, self.m_PosY+self.m_Height-self.m_Height/20, nil, nil,
 			Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
 	end
 
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
-	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
+	dxDrawImage(self.m_PosX+self.m_Width/2 - size/2, self.m_PosY+self.m_Height/2 - size/2, size, size, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Radar") end
 end
 
@@ -370,7 +384,7 @@ function HUDRadar:drawBlips()
 				local screenX, screenY = mapCenterX + x, mapCenterY + y
 
 				-- Finally, draw
-				local blipSize = blip:getSize()
+				local blipSize = blip:getSize() * Blip.getScaleMultiplier()
 				local imagePath = blip:getImagePath()
 
 				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
@@ -447,6 +461,31 @@ end
 
 function HUDRadar:getZoom()
 	return self.m_Zoom
+end
+
+function HUDRadar:getPosition()
+	if self.m_GWRadar then -- appropriate distance to default radar
+		return self.m_PosX, screenHeight - 300*screenWidth/1600
+	elseif not self.m_Enabled or not self.m_Visible then -- bottom
+		return self.m_PosX, screenHeight
+	else -- position of radar
+		return self.m_PosX, self.m_PosY
+	end
+end
+
+function HUDRadar:getWidth()
+	return self.m_Width
+end
+
+function HUDRadar:toggleStatusBars(state)
+	if state == nil or state == self.m_StatusBarsEnabled then return end
+	self.m_StatusBarsEnabled = state
+	if state then
+		self.m_PosY = self.m_PosY - self.m_Height/20
+	else
+		self.m_PosY = self.m_PosY + self.m_Height/20
+	end
+	MessageBoxManager.onRadarPositionChange()
 end
 
 function HUDRadar:syncBlips()

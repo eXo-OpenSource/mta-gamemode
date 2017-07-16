@@ -82,56 +82,9 @@ WeaponIcons = {
 }
 for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
 
-RadarDesign = {Monochrome = 1, GTA = 2, Default = 3}
+RadarDesign = {Monochrome = 1, GTA = 2}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 
-BlipConversion =
-{
-	["AmmuNation.png"] = 6,
-	["Bank.png"] = 52,
-	["CarShop.png"] = 55,
-	["Carshop.png"] = 55,
-	["Marker.png"] = 0,
-	["TreasureSeeker.png"] = 9,
-	["Roadsweeper.png"] = 38,
-	["Casino.png"] = 25,
-	["Farmer.png"] = 40,
-	["DrivingSchool.png"] = 36,
-	["Garage.png"] = 53,
-	["ForkLift.png"] = 11,
-	["Gardener.png"] = 62,
-	["Pizza.png"] = 29,
-	["Logistician.png"] = 51,
-	["PayNSpray.png"] = 63,
-	["Shop.png"] = 17,
-	["TuningGarage.png"] = 27,
-	["Skinshop.png"] = 45,
-	["Zombie.png"] = 37,
-	["Waypoint.png"] = 41,
-	["Waypoint_ept.png"] = 41,
-	["Kart.png"] = 35,
-	["Police.png"] = 30,
-	["Mechanic.png"] = 48,
-	["Trashman.png"] = 42,
-	["Fire.png"] = 20,
-	["NeedHelp.png"] = 0,
-	["Moneybag.png"] = 52,
-	["Stadthalle.png"] = 36,
-	["House.png"] = 32,
-	["Zombie.png"] = 23,
-	["SniperGame.png"] = 47,
-	["Train.png"] = 56,
-	["RoadSweeper.png"] = 11,
-	["Lumberjack.png"] = 11,
-	["Trashman.png"] = 11,
-	["Fishing.png"] = 37,
-	["Locate.png"] = 0,
-	["HeliTransport.png"] = 5,
-	["Bar.png"] = 49,
-	["RedSaw.png"] = 0,
-	["Horse.png"] = 35,
-
-}
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4, 
 		[1] = "vRoleplay", [2] = "eXo", [3] = "Default", [4] = "Chart",}
 

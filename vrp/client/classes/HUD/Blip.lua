@@ -8,7 +8,6 @@
 Blip = inherit(Object)
 Blip.ServerBlips = {}
 Blip.Blips = {}
-Blip.DefaultBlips = {}
 Blip.AttachedBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, color2, defaultSize, defaultColor) --quick workaround
@@ -19,7 +18,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, colo
 	self.m_WorldY = worldY
 	self.m_WorldZ = false
 	self.m_Alpha = 255
-	self.m_Size = 24
+	self.m_Size = Blip.getDefaultSize()
 	self.m_StreamDistance = streamDistance or 100
 	self.m_DefaultSize = defaultSize or 2
 	self.m_DefaultColor = defaultColor or {255,0,0,255}
@@ -33,13 +32,6 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, colo
 
 	Blip.Blips[self.m_ID] = self
 
-	local m_String = BlipConversion[imagePath]
-	if m_String and type(m_String) == "number" then
-		Blip.DefaultBlips[self.m_ID] = createBlip(worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
-	else
-		outputDebug("Missing Standard Blip for "..imagePath)
-	end
-
 	HUDRadar:syncBlips()
 end
 
@@ -49,18 +41,11 @@ function Blip:destructor()
 		self:detach()
 		Blip.Blips[self.m_ID] = nil
 
-		if Blip.DefaultBlips[self.m_ID] then
-		  destroyElement(Blip.DefaultBlips[self.m_ID] )
-		end
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
 			self:detach()
 			Blip.Blips[index] = nil
-			if isElement(Blip.DefaultBlips[index] ) then
-				destroyElement( Blip.DefaultBlips[index] )
-				Blip.DefaultBlips[index] = nil
-			end
 		end
 	end
 	HUDRadar:syncBlips()
@@ -142,12 +127,10 @@ end
 function Blip:attachTo(element)
   if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
   Blip.AttachedBlips[self] = element
-  if isElement(Blip.DefaultBlips[self.m_ID] ) then
-	Blip.DefaultBlips[self.m_ID] = nil
-	local r,g,b,a = unpack(self.m_DefaultColor)
-	if isElement(Blip.DefaultBlips[self.m_ID]) then destroyElement(Blip.DefaultBlips[self.m_ID]) end
-	Blip.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
-  end
+end
+
+function Blip:attach(element)
+  return self:attachTo(element)
 end
 
 function Blip:getAttachedElement()
@@ -156,11 +139,24 @@ end
 
 function Blip:detach()
 	if Blip.AttachedBlips[self] then
-	  	Blip.AttachedBlips[self] = nil
-		if isElement(Blip.DefaultBlips[self.m_ID]) then
-			detachElements(Blip.DefaultBlips[self.m_ID])
-		end
+		Blip.AttachedBlips[self] = nil
 	end
+end
+
+function Blip.getDefaultSize()
+	return 24
+end
+
+function Blip.setScaleMultiplier(scale) 
+	Blip.ms_ScaleMultiplier = scale + 0.5
+	core:set("HUD","blipScale",scale + 0.5)
+end
+
+function Blip.getScaleMultiplier() 
+	if not Blip.ms_ScaleMultiplier then
+		Blip.ms_ScaleMultiplier = core:get("HUD","blipScale", 1)
+	end
+	return Blip.ms_ScaleMultiplier
 end
 
 addEvent("blipCreate", true)

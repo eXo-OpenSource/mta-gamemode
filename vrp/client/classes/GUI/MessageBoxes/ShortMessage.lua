@@ -20,15 +20,8 @@ function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, m
 end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
-	local x, y, w
-	if MessageBoxManager.Mode then
-		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
-		if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
-			y = screenHeight - screenHeight*0.365
-		end
-	else
-		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
-	end
+	local x, y = HUDRadar:getSingleton():getPosition()
+	local w = HUDRadar:getSingleton():getWidth()
 
 	-- Title Bar
 	local hasTitleBar = title ~= nil
@@ -57,7 +50,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	h = h + 4
 
 	-- Calculate y position
-	y = y - h - 20
+	y = y - h - x
 
 	-- Instantiate GUIElement
 	GUIElement.constructor(self, x, y, w, h)

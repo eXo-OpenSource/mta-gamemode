@@ -22,18 +22,11 @@ function HUDUI:constructor()
 
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
 		setPlayerHudComponentVisible("all", true)
-		--showPlayerHudComponent("radar", false)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	else
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 
 	self.m_RenderHandler = bind(self.draw,self)
@@ -86,18 +79,11 @@ function HUDUI:setUIMode(uiMode)
 	local enabled = core:get("HUD", "showRadar")
 	if uiMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
-		--showPlayerHudComponent("radar", false)
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	elseif self.m_UIMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 	self.m_ChartAnims = {} -- unload chart ui animations
 	self.m_UIMode = uiMode
@@ -111,17 +97,10 @@ function HUDUI:setEnabled(state)
 		if not state then
 			setPlayerHudComponentVisible("all", false)
 			setPlayerHudComponentVisible("crosshair", true)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		else
 			setPlayerHudComponentVisible("all", true)
-			--showPlayerHudComponent("radar", false)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		end
 	end
 end

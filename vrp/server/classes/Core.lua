@@ -184,8 +184,6 @@ function Core:constructor()
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
 
-		Blip:new("North.png", 0, 6000, root, 12000)
-
 		if GIT_BRANCH == "release/production" then
 			GlobalTimer:getSingleton():registerEvent(function()
 				outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)

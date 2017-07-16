@@ -21,6 +21,7 @@ function CustomF11Map:constructor()
 	self.m_ClickOverlay:setVisible(false)
 	self.m_ClickOverlay.onLeftDoubleClick = bind(self.Doubleclick_ClickOverlay, self)
 	self.m_ClickOverlay.onRightClick = bind(self.Rightclick_ClickOverlay, self)
+	self:enable()
 end
 
 function CustomF11Map:destructor()
@@ -51,8 +52,12 @@ function CustomF11Map:toggle()
 	self.m_ClickOverlay:setVisible(self.m_Visible)
 
 	if self.m_Visible then
+		HUDRadar:getSingleton():hide()
+		HUDUI:getSingleton():hide()
 		addEventHandler("onClientRender", root, self.m_RenderFunc)
 	else
+		HUDRadar:getSingleton():show()
+		HUDUI:getSingleton():show()
 		removeEventHandler("onClientRender", root, self.m_RenderFunc)
 	end
 end
@@ -119,8 +124,8 @@ function CustomF11Map:draw()
 			if display then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)
-				local size = blip:getSize()
-				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, blip.m_ImagePath, 0)
+				local size = blip:getSize() * Blip.getScaleMultiplier()
+				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, blip.m_ImagePath, 0, 0, 0, blip:getColor())
 			end
 		end
 	end
@@ -129,7 +134,8 @@ function CustomF11Map:draw()
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
-	dxDrawImage(mapPosX + mapX - 12, mapPosY + mapY - 12, 24, 24, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
+	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
+	dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
 
 	--draw coordinate and zone info
 	if isCursorOverArea(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height) and getKeyState("lshift") then

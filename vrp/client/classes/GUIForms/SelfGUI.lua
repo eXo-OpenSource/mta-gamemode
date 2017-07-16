@@ -819,7 +819,6 @@ function SelfGUI:onSettingChange(setting)
 
 		local function updateDesignOptions(index)
 			self.m_LifeArmor:setVisible(false)
-			self.m_LabelHUDScale1:setVisible(false)
 			self.m_HUDScale:setVisible(false)
 			self.m_ChartMargin:setVisible(false)
 			self.m_ChartBlue:setVisible(false)
@@ -829,10 +828,8 @@ function SelfGUI:onSettingChange(setting)
 			if index == UIStyle.vRoleplay then
 				self.m_LifeArmor:setVisible(true)
 			elseif index == UIStyle.eXo then
-				self.m_LabelHUDScale1:setVisible(true)
 				self.m_HUDScale:setVisible(true)
 			elseif index == UIStyle.Chart then 
-				self.m_LabelHUDScale1:setVisible(true)
 				self.m_HUDScale:setVisible(true)
 				self.m_ChartMargin:setVisible(true)
 				self.m_ChartBlue:setVisible(true)
@@ -893,6 +890,8 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
 		self.m_HUDScale:setColor(Color.LightBlue)
+		self.m_HUDScale:setText(_"HUD-Skalierung")
+
 		local oldScale = 0.75
 		self.m_HUDScale.onScroll = function() 
 			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2); 
@@ -902,44 +901,64 @@ function SelfGUI:onSettingChange(setting)
 				core:set("HUD","scaleScroll",scale*0.75)
 			end 
 		end
-		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
-		
+	
 		updateDesignOptions(core:get("HUD", "UIStyle")) --only show items which are relevant for current UI
 
 	elseif setting == "Radar" then
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", self.m_SettingBG)
+
+		local function updateDesignOptions(disable)
+			local enabled = core:get("HUD", "showRadar", true) and not core:get("HUD", "GWRadar", false)
+			self.m_BarsEnabled:setEnabled(enabled)
+			self.m_ZoneName:setEnabled(enabled)
+			if disable then
+				self.m_RadarGWCheckBox:setEnabled(core:get("HUD", "showRadar", false))
+			end
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar, Übersichtskarte", self.m_SettingBG)
 		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		for i, v in ipairs(RadarDesign) do
 			self.m_RadarChange:addItem(v)
 		end
+		self.m_RadarChange.onChange = function(text, index)
+			HUDRadar:getSingleton():setDesignSet(index)
+		end
+		local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
+		self.m_RadarChange.onChange("", currentRadarIndex)
+		self.m_RadarChange:setIndex(currentRadarIndex, true)
+		--0.09
+		--0.06
 
-		self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren", self.m_SettingBG)
-		self.m_RadarCheckBox:setFont(VRPFont(25))
-		self.m_RadarCheckBox:setFontSize(1)
+		self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_RadarCheckBox:setChecked(core:get("HUD", "showRadar", true))
 		self.m_RadarCheckBox.onChange = function (state)
 			core:set("HUD", "showRadar", state)
 			HUDRadar:getSingleton():setEnabled(state)
+			updateDesignOptions(true)
 		end
 
-		self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen", self.m_SettingBG)
-		self.m_BlipCheckBox:setFont(VRPFont(25))
-		self.m_BlipCheckBox:setFontSize(1)
-		self.m_BlipCheckBox:setChecked(core:get("HUD", "drawBlips", true))
-		self.m_BlipCheckBox.onChange = function (state)
-			core:set("HUD", "drawBlips", state)
+		self.m_RadarGWCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.5, self.m_Height*0.04, _"Standard-Radar (für Gangwar)", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_RadarGWCheckBox:setChecked(core:get("HUD", "GWRadar", false))
+		self.m_RadarGWCheckBox.onChange = function (state)
+			core:set("HUD", "GWRadar", state)
+			HUDRadar:getSingleton():updateRadarType(state)
+			updateDesignOptions()
 		end
 
-		self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Radarareas anzeigen", self.m_SettingBG)
-		self.m_GangAreaCheckBox:setFont(VRPFont(25))
-		self.m_GangAreaCheckBox:setFontSize(1)
-		self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
-		self.m_GangAreaCheckBox.onChange = function (state)
-			core:set("HUD", "drawGangAreas", state)
-			HUDRadar:getSingleton():updateMapTexture()
+		self.m_BlipScale = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_BlipScale:setScrollPosition( core:get("HUD","blipScale", 1) - 0.5)
+		self.m_BlipScale:setColor(Color.LightBlue)
+		self.m_BlipScale:setText(_"Blipgröße")
+		local oldScale = 0.5
+		self.m_BlipScale.onScroll = function() 
+			local scale = math.round(self.m_BlipScale:getScrollPosition(), 2)
+			if scale ~= oldScale then
+				Blip.setScaleMultiplier(scale) 
+				oldScale = scale
+			end 
 		end
 
-		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
 		self.m_ZoneName:setFont(VRPFont(25))
 		self.m_ZoneName:setFontSize(1)
 		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
@@ -947,21 +966,15 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "drawZone", state)
 		end
 
-		self.m_RadarChange.onChange = function(text, index)
-			HUDRadar:getSingleton():setDesignSet(index)
-			if index == RadarDesign.Monochrome or index == RadarDesign.GTA then
-				self.m_BlipCheckBox:setVisible(true)
-				self.m_GangAreaCheckBox:setVisible(true)
-				self.m_ZoneName:setVisible(true)
-			else
-				self.m_BlipCheckBox:setVisible(false)
-				self.m_GangAreaCheckBox:setVisible(false)
-				self.m_ZoneName:setVisible(false)
-			end
+		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
+		self.m_BarsEnabled:setFont(VRPFont(25))
+		self.m_BarsEnabled:setFontSize(1)
+		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", true))
+		self.m_BarsEnabled.onChange = function (state)
+			core:set("HUD", "drawStatusBars", state)
+			HUDRadar:getSingleton():toggleStatusBars(state)
 		end
-		local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
-		self.m_RadarChange.onChange("", currentRadarIndex)
-		self.m_RadarChange:setIndex(currentRadarIndex, true)
+		updateDesignOptions(not core:get("HUD", "showRadar", true))
 	elseif setting == "Spawn" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn", self.m_SettingBG)
 
