@@ -351,6 +351,7 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
 			)
 		end
+		self:onDiplomacyRequestItemSelect()
 	end
 
 
@@ -377,6 +378,15 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
 end
 
 function FactionGUI:onDiplomacyRequestItemSelect(id, data)
+	if not id then
+		self.m_DiplomacyRequestText:setText("")
+		if self.m_DiplomacyRequestButtons then
+			for index, button in pairs(self.m_DiplomacyRequestButtons) do
+				delete(button)
+			end
+		end
+		return
+	end
 	self.m_DiplomacyRequestText:setText(_("%s der %s an die %s\nvom %s Uhr", FACTION_DIPLOMACY_REQUEST[data["status"]], FactionManager.Map[data["source"]]:getShortName(), FactionManager.Map[data["target"]]:getShortName(), getOpticalTimestamp(data["timestamp"])))
 	if self.m_DiplomacyRequestButtons then
 		for index, button in pairs(self.m_DiplomacyRequestButtons) do

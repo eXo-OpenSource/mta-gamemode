@@ -539,7 +539,7 @@ function Faction:loadDiplomacy()
 end
 
 function Faction:getDiplomacy(targetFaction)
-	local factionId
+	local factionId, status
 	for index, data in pairs(self.m_Diplomacy) do
 		factionId, status = unpack(data)
 		if factionId == targetFaction:getId() then
@@ -548,8 +548,21 @@ function Faction:getDiplomacy(targetFaction)
 	end
 end
 
+function Faction:getAllianceFaction()
+	local factionId, status
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if status == FACTION_DIPLOMACY["Verbündet"] then
+			if FactionManager:getSingleton():getFromId(factionId) then
+				return FactionManager:getSingleton():getFromId(factionId)
+			end
+		end
+	end
+	return false
+end
+
 function Faction:changeDiplomacy(targetFaction, diplomacy, player)
-	local factionId
+	local factionId, status
 	for index, data in pairs(self.m_Diplomacy) do
 		factionId, status = unpack(data)
 		if factionId == targetFaction:getId() then
