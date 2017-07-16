@@ -565,6 +565,8 @@ function Faction:changeDiplomacy(targetFaction, diplomacy, player)
 end
 
 function Faction:createDiplomacyRequest(sourceFaction, targetFaction, diplomacy, player)
+
+
 	local request = {
 		["source"] = sourceFaction:getId(),
 		["target"] = targetFaction:getId(),

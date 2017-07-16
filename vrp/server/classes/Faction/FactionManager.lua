@@ -496,6 +496,13 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	local faction2 = self:getFromId(target)
 
 	if diplomacy < faction1:getDiplomacy(faction2) then
+		for index, data in pairs(faction1.m_DiplomacyRequests) do
+			if data["target"] == faction2:getId() then
+				client:sendError(_("Es läuft aktuell bereits eine Anfrage an diese Fraktion! Ziehe die andere Anfrage erst zurück!", client))
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+				return
+			end
+		end
 		faction1:createDiplomacyRequest(faction1, faction2, diplomacy, client)
 		faction2:createDiplomacyRequest(faction1, faction2, diplomacy, client)
 	else
@@ -523,11 +530,11 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 		faction1:changeDiplomacy(faction2, request["status"], client)
 		faction2:changeDiplomacy(faction1, request["status"], client)
 	elseif answer == "decline" then
-		faction1:sendShortMessage(("%s hat eure %s an die %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
-		faction2:sendShortMessage(("%s hat die %s der %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+		faction1:sendShortMessage(("%s hat eure %s an die %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[request["status"]], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[request["status"]], faction1:getShortName()))
 	elseif answer == "remove" then
-		faction1:sendShortMessage(("%s hat eure %s an die %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
-		faction2:sendShortMessage(("%s hat die %s der %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+		faction1:sendShortMessage(("%s hat eure %s an die %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[request["status"]], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[request["status"]], faction1:getShortName()))
 	end
 
 	for index, data in pairs(faction2.m_DiplomacyRequests) do
@@ -537,7 +544,7 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 	end
 	client:getFaction().m_DiplomacyRequests[id] = nil
 
-	client:triggerEvent("factionRetrieveDiplomacy", faction1:getId(), faction1.m_Diplomacy, faction1.m_DiplomacyRequests)
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, client:getFaction().m_DiplomacyRequests)
 end
 
 function FactionManager:Event_ToggleLoan(playerId)
