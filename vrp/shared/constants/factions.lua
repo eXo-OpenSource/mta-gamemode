@@ -28,3 +28,5 @@ FACTION_DIPLOMACY_REQUEST = {
 	[2] = "Waffenstillstands-Anfrage",
 	[3] = "Kriegserklärung",
 }
+
+FACTION_WAR_KILL_BONUS = 250

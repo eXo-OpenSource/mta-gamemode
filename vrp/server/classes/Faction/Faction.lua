@@ -415,6 +415,20 @@ function Faction:sendChatMessage(sourcePlayer, message)
 	--end
 end
 
+function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
+	local playerId = sourcePlayer:getId()
+	local receivedPlayers = {}
+	local r,g,b = 20, 140, 0
+	local text = ("BND %s %s: %s"):format(alliance:getShortName(), getPlayerName(sourcePlayer), message)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b)
+		if player ~= sourcePlayer then
+			receivedPlayers[#receivedPlayers+1] = player
+		end
+	end
+	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
+end
+
 function Faction:respawnVehicles( isAdmin )
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then

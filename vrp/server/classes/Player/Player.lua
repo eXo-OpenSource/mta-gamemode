@@ -683,6 +683,18 @@ function Player.staticFactionChatHandler(self, command, ...)
 	end
 end
 
+function Player.staticFactionAllianceChatHandler(self, command, ...)
+	if self.m_Faction then
+		local bndFaction = self.m_Faction:getAllianceFaction()
+		if bndFaction then
+			self.m_Faction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+			bndFaction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+		else
+			self:sendError(_("Eure Allianz hat kein Bündnis!", self))
+		end
+	end
+end
+
 function Player.staticCompanyChatHandler(self, command, ...)
 	if self.m_Company then
 		self.m_Company:sendChatMessage(self,table.concat({...}, " "))
@@ -694,6 +706,7 @@ function Player.staticStateFactionChatHandler(self, command, ...)
 		FactionState:getSingleton():sendStateChatMessage(self,table.concat({...}, " "))
 	end
 end
+
 
 function Player:reportCrime(crimeType)
 	--JobPolice:getSingleton():reportCrime(self, crimeType)

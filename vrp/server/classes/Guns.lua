@@ -96,11 +96,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			end
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
-			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
-			if not target:getData("isInDeathMatch") then
-				target:setReviveWeapons()
-			end
-			target:kill(attacker, weapon, bodypart)
+			self:killPlayer(target, attacker, weapon, bodypart)
 		end
 	else
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -109,6 +105,25 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 			local realLoss = basicDamage*multiplier
 			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+		end
+	end
+end
+
+function Guns:killPlayer(target, attacker, weapon, bodypart)
+	StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
+	if not target:getData("isInDeathMatch") then
+		target:setReviveWeapons()
+	end
+	target:kill(attacker, weapon, bodypart)
+	if target:getFaction() and target:getFaction():isEvilFaction() and attacker:getFaction() and attacker:getFaction():isEvilFaction() then
+		local attackerFaction = attacker:getFaction()
+		local targetFaction = target:getFaction()
+		if not attacker:isInGangwar() then
+			if attackerFaction:getDiplomacy(targetFaction) == FACTION_DIPLOMACY["im Krieg"] then
+				local bonus = targetFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or targetFaction:getMoney()
+				targetFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+				attackerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+			end
 		end
 	end
 end
@@ -192,22 +207,14 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setArmor(0)
 
 			if health - loss <= 0 then
-				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
-				if not player:getData("isInDeathMatch") then
-					player:setReviveWeapons()
-				end
-				player:kill(attacker, weapon, bodypart)
+				self:killPlayer(player, attacker, weapon, bodypart)
 			else
 				player:setHealth(health-loss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
-			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
-			if not player:getData("isInDeathMatch") then
-				player:setReviveWeapons()
-			end
-			player:kill(attacker, weapon, bodypart)
+			self:killPlayer(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
 		end
