@@ -589,8 +589,6 @@ function Faction:changeDiplomacy(targetFaction, diplomacy, player)
 					self.m_DiplomacyRequests[index] = nil
 				end
 			end
-
-
 			return
 		end
 	end
@@ -599,8 +597,6 @@ function Faction:changeDiplomacy(targetFaction, diplomacy, player)
 end
 
 function Faction:createDiplomacyRequest(sourceFaction, targetFaction, diplomacy, player)
-
-
 	local request = {
 		["source"] = sourceFaction:getId(),
 		["target"] = targetFaction:getId(),

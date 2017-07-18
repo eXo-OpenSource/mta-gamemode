@@ -29,32 +29,39 @@ end
 
 function ItemFood:use(player)
 	local ItemSettings = ItemFood.Settings[self:getName()]
-
-	local item = createObject(ItemSettings["Model"], 0, 0, 0)
-	item:setDimension(player:getDimension())
-	item:setInterior(player:getInterior())
-
-	if ItemSettings["ModelScale"] then item:setScale(ItemSettings["ModelScale"]) end
-	if ItemSettings["Attach"] then
-		exports.bone_attach:attachElementToBone(item, player, unpack(ItemSettings["Attach"]))
-	else
-		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
-	end
+	local block, animation, time = unpack(ItemSettings["Animation"])
 
 	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
-	if ItemSettings["CustomEvent"] then
-		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
-	end
+	if not player.vehicle then
+		if ItemSettings["CustomEvent"] then
+			triggerClientEvent(ItemSettings["CustomEvent"], player, item)
+		end
 
-	local block, animation, time = unpack(ItemSettings["Animation"])
-	player:setAnimation(block, animation, time, true, false, false)
-	setTimer(function()
-		item:destroy()
-		if not isElement(player) or getElementType(player) ~= "player" then return false end
-		player:setHealth(player:getHealth()+ItemSettings["Health"])
-		player:setAnimation()
-	end, time, 1)
+		local item = createObject(ItemSettings["Model"], 0, 0, 0)
+		item:setDimension(player:getDimension())
+		item:setInterior(player:getInterior())
+
+		if ItemSettings["ModelScale"] then item:setScale(ItemSettings["ModelScale"]) end
+		if ItemSettings["Attach"] then
+			exports.bone_attach:attachElementToBone(item, player, unpack(ItemSettings["Attach"]))
+		else
+			exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
+		end
+
+
+		player:setAnimation(block, animation, time, true, false, false)
+		setTimer(function()
+			item:destroy()
+			if not isElement(player) or getElementType(player) ~= "player" then return false end
+			player:setHealth(player:getHealth()+ItemSettings["Health"])
+			player:setAnimation()
+		end, time, 1)
+	else
+		setTimer(function()
+			player:setHealth(player:getHealth()+ItemSettings["Health"])
+		end, time, 1)
+	end
 
 end
