@@ -320,6 +320,9 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 	elseif resultType == CALL_RESULT_REPLACE then
 		self.m_ResultLabel:setText(_"Aufgelegt")
 		self.m_ResultLabel:setColor(Color.Red)
+		if self.m_RingSound and isElement(self.m_RingSound) then
+			destroyElement(self.m_RingSound)
+		end
 		setTimer(
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then
