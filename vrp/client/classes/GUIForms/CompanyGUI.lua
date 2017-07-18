@@ -43,6 +43,9 @@ function CompanyGUI:constructor()
 	if localPlayer:getCompany():getId() == 3 then -- San News
 		self.m_SanNewsToggleMsg = VRPButton:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.3, self.m_Height*0.07, _"/sannews de/aktivieren", true, tabAllgemein)
 		self.m_SanNewsToggleMsg.onLeftClick = bind(self.SanNewsToggleMessage, self)
+
+		self.m_SanNewsStartStreetrace = VRPButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", true, tabAllgemein)
+		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
 	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")

@@ -19,7 +19,7 @@ function EventManager:constructor()
 	--self:addEvent(DMRaceEvent)
 
 	-- Start timer that opens every 30min a random event
-	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
+	--setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
 
 	addEventHandler("eventJoin", root, bind(self.Event_eventJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.Event_playerQuit, self))

@@ -18,12 +18,12 @@ function SanNews:constructor()
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
-	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage"}
+	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage", "sanNewsStartStreetrace"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
 	addEventHandler("sanNewsStopInterview", root, bind(self.Event_stopInterview, self))
 	addEventHandler("sanNewsAdvertisement", root, bind(self.Event_advertisement, self))
 	addEventHandler("sanNewsToggleMessage", root, bind(self.Event_toggleMessage, self))
-
+	addEventHandler("sanNewsStartStreetrace", root, bind(self.Event_startStreetrace, self))
 
 	addCommandHandler("news", bind(self.Event_news, self))
 	addCommandHandler("sannews", bind(self.Event_sanNewsMessage, self), false, false)
@@ -193,6 +193,10 @@ function SanNews:Event_toggleMessage()
 		self.m_SanNewsMessageEnabled = true
 		self:sendShortMessage(("%s hat /sannews aktiviert!"):format(client:getName()))
 	end
+end
+
+function SanNews:Event_startStreetrace()
+	EventManager:getSingleton():openRandomEvent()
 end
 
 function SanNews:Event_sanNewsMessage(player, cmd, ...)
