@@ -565,9 +565,9 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 		faction2:sendShortMessage(("%s hat die %s der %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
 	end
 
-	for index, data in pairs(faction2.m_DiplomacyRequests) do
+	for index, data in pairs(faction1.m_DiplomacyRequests) do
 		if data["source"] == request["source"] and data["target"] == request["target"] and data["status"] == request["status"] then
-			faction2.m_DiplomacyRequests[index] = nil
+			faction1.m_DiplomacyRequests[index] = nil
 		end
 	end
 	client:getFaction().m_DiplomacyRequests[id] = nil
