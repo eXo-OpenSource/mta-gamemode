@@ -212,7 +212,7 @@ addEventHandler("onClientVehicleDamage", root,
 		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
 		if source.isBroken and source:isBroken() then return cancelEvent() end
 		--calculate vehicle armor
-		if weapon and source.getBulletArmorLevel then
+		if not tId and weapon and source.getBulletArmorLevel then
 			cancelEvent()
 			local newLoss = loss / source:getBulletArmorLevel()
 			source:setHealth(math.max(0, source:getHealth()-newLoss))
@@ -232,12 +232,17 @@ addEventHandler("onClientVehicleDamage", root,
 				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
 			end
 		end
+
 	end
 )
 
+<<<<<<< HEAD
 addEventHandler("onClientVehicleCollision", root, function()
 	if source:getData("disableCollisionCheck") then return end
 
+=======
+addEventHandler("onClientVehicleCollision", root, function(theHitElement,force)
+>>>>>>> hotfix/vehicle-wheels
 	if totalLossVehicleTypes[source:getVehicleType()] then
 		local rx, ry, rz = getElementRotation(source)
 		source:setDamageProof(rx > 160 and rx < 200) -- to disable burning
