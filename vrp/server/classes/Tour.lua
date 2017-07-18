@@ -120,7 +120,7 @@ Tour.Data = {
 	[7] = {
 		["Title"] = "Fahrzeug verschwunden",
 		["Description"] = "Kommen wir nun zum Unternehmen Mechanic & Tow. Fahre zum Abschlepphof!",
-		["Success"] = "Hier können abgeschleppte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
+		["Success"] = "Hier können abgeschleppte oder explodierte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
 		["Position"] = Vector3(925.55, -1221.33, 15.98),
 		["Money"] = 500
 	},

@@ -401,7 +401,7 @@ function Player:spawn()
 							self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
 						end
 					else
-						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug ist am Abschlepphof oder ist nicht mehr vorhanden")
 					end
 				end
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
