@@ -214,7 +214,9 @@ end
 
 
 function Shop:addBlip(blip)
-	return Blip:new(blip, self.m_Position.x, self.m_Position.y,root, 600)
+	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600, {200, 100, 0})
+	b:setDisplayText(self.m_TypeDataName, Blip.Category.Shop)
+	return b
 end
 
 function Shop:giveMoney(amount, reason)
