@@ -14,6 +14,8 @@ LOAN_MINING = 29*2 -- Per Stone
 LOAN_DOZER = 59*2 -- Per Stone
 LOAN_DUMPER = 79*2 -- Per Stone
 
+MAX_STONES_IN_DUMPER = 10
+
 function JobGravel:constructor()
 	Job.constructor(self)
 
@@ -76,6 +78,7 @@ function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
+	player.gravelLoaded = false
 	player.m_LastJobAction = getRealTime().timestamp
 	setTimer(function()
 		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
@@ -164,8 +167,6 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
-	else
-		player.gravelLoaded = false
 	end
 end
 
@@ -344,7 +345,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								player:sendError(_("Das Lager ist leer! Es können keine weiteren Steine aufgeladen werden", player))
 								if sourceTimer and isTimer(sourceTimer) then killTimer(sourceTimer) end
 							end
-						end, 1500, 10, pos, source.Track, hitElement)
+						end, 1500, MAX_STONES_IN_DUMPER, pos, source.Track, hitElement)
 
 						setTimer(function(marker)
 							marker.isBusy = false
@@ -379,6 +380,7 @@ end
 
 function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
+	if amount > MAX_STONES_IN_DUMPER then amount = MAX_STONES_IN_DUMPER end
 	local loan = amount*LOAN_DUMPER
 	local duration = getRealTime().timestamp - player.m_LastJobAction
 	local points = math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR)
