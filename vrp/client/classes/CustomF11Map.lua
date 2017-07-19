@@ -22,7 +22,7 @@ function CustomF11Map:constructor()
 	self.m_ClickOverlay.onLeftDoubleClick = bind(self.Doubleclick_ClickOverlay, self)
 	self.m_ClickOverlay.onRightClick = bind(self.Rightclick_ClickOverlay, self)
 
-	self.m_BlipList = GUIGridList:new(self.m_PosX + self.m_Width + self.m_PosX * 0.1, self.m_PosY + self.m_PosX * 0.1, self.m_PosX * 0.8, self.m_Height * 0.5)
+	self.m_BlipList = GUIGridList:new(self.m_PosX + self.m_Width + self.m_PosX * 0.1, self.m_PosY + self.m_PosX * 0.1, self.m_PosX * 0.8, self.m_Height - self.m_PosX * 0.2)
 	self.m_BlipList:addColumn("", 0.1)
 	self.m_BlipList:addColumn("Blip-Übersicht", 0.9)
 	self.m_BlipList:setVisible(false)
@@ -59,11 +59,13 @@ function CustomF11Map:toggle()
 	if self.m_Visible then
 		HUDRadar:getSingleton():hide()
 		HUDUI:getSingleton():hide()
+		HUDSpeedo:getSingleton():hide()
 		self:updateBlipList()
 		addEventHandler("onClientRender", root, self.m_RenderFunc)
 	else
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
+		HUDSpeedo:getSingleton():show()
 		removeEventHandler("onClientRender", root, self.m_RenderFunc)
 	end
 end
@@ -82,13 +84,32 @@ end
 function CustomF11Map:updateBlipList()
 	if self.m_Visible then
 		self.m_BlipList:clear()
-		for catName, texts in pairs(Blip.DisplayTexts) do
-			self.m_BlipList:addItemNoClick("", catName)
-			for text, blips in pairs(texts) do
-				local blip = blips[1]
-				local item = self.m_BlipList:addItem(blip:getImagePath(), text..(#blips > 1 and " ("..(#blips)..")" or ""))
-				item:setColumnToImage(1, true, item.m_Height - 6)
-				item:setColumnColor(1, blip:getColor())
+		self.m_CurrentClickedBlip = nil
+		for i, cat in pairs(BLIP_CATEGORY_ORDER) do
+			local texts = Blip.DisplayTexts[cat]
+			if texts then
+				self.m_BlipList:addItemNoClick("", cat)
+				for text, blips in pairs(texts) do
+					local blip = blips[1]
+					local item = self.m_BlipList:addItem(blip:getImagePath(), text..(#blips > 1 and " ("..(#blips)..")" or ""))
+					local color = blip:getColor()
+					if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
+					item:setColumnToImage(1, true, item.m_Height - 6)
+					item:setColumnColor(1, color)
+					item.onLeftDoubleClick = function()
+						local closest, target = math.huge
+						for i, b in pairs(blips) do
+							if getDistanceBetweenPoints3D(localPlayer.position, b:getPosition(true)) < closest then
+								closest = getDistanceBetweenPoints3D(localPlayer.position, b:getPosition(true))
+								target = b
+							end
+						end
+						GPS:getSingleton():startNavigationTo(target:getPosition(true))
+					end	
+					item.onLeftClick = function()
+						self.m_CurrentClickedBlip = text
+					end	
+				end
 			end
 		end
 	end
@@ -147,7 +168,20 @@ function CustomF11Map:draw()
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)
 				local size = blip:getSize() * Blip.getScaleMultiplier()
-				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, blip.m_ImagePath, 0, 0, 0, blip:getColor())
+				if self.m_CurrentClickedBlip and self.m_CurrentClickedBlip == blip:getDisplayText() then size = size * 1.5 end
+				
+				local color = blip:getColor()
+				if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
+				
+				local imagePath = blip:getImagePath()
+				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
+					if math.abs(pz - blip:getZ()) > 3 then
+						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+						imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
+					end
+				end
+
+				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, imagePath, 0, 0, 0, color)
 			end
 		end
 	end

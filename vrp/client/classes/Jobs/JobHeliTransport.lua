@@ -8,7 +8,7 @@
 JobHeliTransport = inherit(Job)
 
 function JobHeliTransport:constructor()
-	Job.constructor(self, 16, 1786.09, -2271.62, 26.80, 180, "HeliTransport.png", "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
+	Job.constructor(self, 16, 1786.09, -2271.62, 26.80, 180, "HeliTransport.png", {120, 70, 0}, "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
 	self.m_Target = {}
 	self:setJobLevel(JOB_LEVEL_HELITRANSPORT)
 

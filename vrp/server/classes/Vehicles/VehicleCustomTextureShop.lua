@@ -32,7 +32,9 @@ function VehicleCustomTextureShop:constructor()
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
 
-        Blip:new("TuningGarage.png", position.x, position.y,root,600)
+        local blip = Blip:new("VehicleTexture.png", position.x, position.y,root,600)
+		blip:setDisplayText("Speziallackierungs-Shop", BLIP_CATEGORY.VehicleMaintenance)
+		blip:setOptionalColor({255,235,59})
     end
 
 	Player.getQuitHook():register(

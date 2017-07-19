@@ -13,7 +13,7 @@ addRemoteEvents{ "nextPizzaDelivery" }
 local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07
 local objID = 1582
 function JobPizza:constructor()
-	Job.constructor(self, 155, 2108.99, -1790.68, 13.55, 0, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
+	Job.constructor(self, 155, 2108.99, -1790.68, 13.55, 0, "Pizza.png", {170, 150, 100}, "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_PIZZA)
 
 	-- add job to help menu

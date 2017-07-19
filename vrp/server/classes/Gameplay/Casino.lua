@@ -27,7 +27,9 @@ function Casino:constructor()
 
 	-- Big Casino
 	InteriorEnterExit:new(Vector3(1471.36, -1178.09, 23.92), Vector3(2233.99, 1714.685, 1012.38), 180, 0, 1)
-	Blip:new("Casino.png", 1471.36, -1178.09,root,300)
+	self.m_Blip = Blip:new("Casino.png", 1471.36, -1178.09,root,300)
+	self.m_Blip:setDisplayText("Casino", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({156, 39, 176})
 
 	Slotmachine:new(2244.2177734375, 1634.9814453125, 1008.7, 0, 0, 307.98718261719,1)
 	Slotmachine:new(2228.0625, 1635.673828125, 1008.7, 0, 0, 47.892883300781,1)

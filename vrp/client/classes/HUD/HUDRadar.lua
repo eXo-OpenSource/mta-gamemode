@@ -395,7 +395,9 @@ function HUDRadar:drawBlips()
 				end
 				if fileExists(imagePath) then
 					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar", true) end
-					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
+					local color = blip:getColor()
+					if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
+					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, color)
 				else
 					outputDebugString("Blip not found: "..imagePath)
 				end

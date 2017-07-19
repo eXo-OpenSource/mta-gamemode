@@ -7,11 +7,7 @@
 -- ****************************************************************************
 Blip = inherit(Object)
 Blip.Map = {}
-Blip.Category = {
-	Default = "Allgemein",
-	Shop = "Shop",
-	Other = "Anderes",
-}
+
 
 
 
@@ -27,12 +23,13 @@ Blip.Category = {
 	element or {ele1, ele2}
 ]]
 
-function Blip:constructor(imagePath, x, y, visibleTo, streamDistance, color)
+function Blip:constructor(imagePath, x, y, visibleTo, streamDistance, color, optionalColor)
 	self.m_ImagePath = imagePath
 	self.m_PosX, self.m_PosY = x, y
 	self.m_VisibleTo = visibleTo or root
 	self.m_StreamDistance = streamDistance or 400
 	self.m_Color = color or {255, 255, 255}
+	self.m_OptionalColor = optionalColor or {255, 255, 255}
 
 	self.m_Id = #Blip.Map + 1
 	Blip.Map[self.m_Id] = self
@@ -55,6 +52,7 @@ function Blip:constructor(imagePath, x, y, visibleTo, streamDistance, color)
 			y 				= self.m_PosY,
 			streamDistance 	= self.m_StreamDistance,
 			color 			= self.m_Color,
+			optionalColor 	= self.m_OptionalColor,
 		}
 	self:updateClient("Create", data)
 end
@@ -99,11 +97,6 @@ function Blip:setStreamDistance(distance)
 	self:updateClient("Update", {streamDistance = distance})
 end
 
-function Blip:setColor(color)
-	self.m_Color = color
-	self:updateClient("Update", {color = color})
-end
-
 function Blip:setPosition(vPos)
 	self.m_PosX = vPos.x
 	self.m_PosY = vPos.y
@@ -114,6 +107,24 @@ end
 function Blip:setZ(z)
 	self.m_PosZ = z
 	self:updateClient("Update", {z = z})
+end
+
+function Blip:setColor(color)
+	self.m_Color = color
+	self:updateClient("Update", {color = self.m_Color})
+end
+
+function Blip:getColor()
+	return self.m_Color
+end
+
+function Blip:setOptionalColor(color)
+	self.m_OptionalColor = color
+	self:updateClient("Update", {optionalColor = self.m_OptionalColor})
+end
+
+function Blip:getOptionalColor()
+	return self.m_OptionalColor
 end
 
 function Blip:attach(element)
@@ -129,7 +140,7 @@ end
 function Blip:setDisplayText(text, category)
 	if self.m_DisplayText then return end
 	self.m_DisplayText = text
-	self.m_Category = category or Blip.Category.Default
+	self.m_Category = category or BLIP_CATEGORY.Default
 	self:updateClient("Update", {displayText = text, category = self.m_Category})
 end
 
@@ -155,6 +166,7 @@ function Blip.sendAllToClient(player)
 			z				= v.m_PosZ,
 			streamDistance 	= v.m_StreamDistance,
 			color 			= v.m_Color,
+			optionalColor 	= v.m_OptionalColor,
 			displayText 	= v.m_DisplayText,
 			category 		= v.m_Category,
 			attachedElement = v.m_AttachedTo,

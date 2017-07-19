@@ -958,7 +958,15 @@ function SelfGUI:onSettingChange(setting)
 			end 
 		end
 
-		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
+		self.m_ColoredBlips:setFont(VRPFont(25))
+		self.m_ColoredBlips:setFontSize(1)
+		self.m_ColoredBlips:setChecked(core:get("HUD", "coloredBlips", true))
+		self.m_ColoredBlips.onChange = function (state)
+			core:set("HUD", "coloredBlips", state)
+		end
+
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
 		self.m_ZoneName:setFont(VRPFont(25))
 		self.m_ZoneName:setFontSize(1)
 		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
@@ -966,7 +974,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "drawZone", state)
 		end
 
-		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
+		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
 		self.m_BarsEnabled:setFont(VRPFont(25))
 		self.m_BarsEnabled:setFontSize(1)
 		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", true))

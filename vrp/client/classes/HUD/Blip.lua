@@ -13,7 +13,7 @@ Blip.DisplayTexts = {}
 
 addRemoteEvents{"blipCreate", "blipUpdate", "blipDestroy", "blipsRetrieve"}
 
-function Blip:constructor(imagePath, worldX, worldY, streamDistance, color) --quick workaround
+function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, optionalColor)
 	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
@@ -24,6 +24,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color) --qu
 	self.m_StreamDistance = streamDistance or 100
 
 	self.m_Color = color and tocolor(unpack(color)) or tocolor(255, 255, 255)
+	self.m_OptionalColor = optionalColor and tocolor(unpack(optionalColor)) or tocolor(255, 255, 255)
 
 	Blip.Blips[self.m_ID] = self
 
@@ -39,7 +40,6 @@ function Blip:destructor()
 	end
 
 	if index then
-		outputDebug(index, self.m_DisplayText)
 		if self.m_DisplayText then --remove blip from display text list
 			table.removevalue(Blip.DisplayTexts[self.m_Category][self.m_DisplayText], self)
 			if #Blip.DisplayTexts[self.m_Category][self.m_DisplayText] == 0 then 
@@ -64,8 +64,8 @@ function Blip:setImagePath(path)
 	return self
 end
 
-function Blip:getPosition()
-	return self.m_WorldX, self.m_WorldY, self.m_WorldZ
+function Blip:getPosition(vec)
+	return vec and Vector3(self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0) or self.m_WorldX, self.m_WorldY, self.m_WorldZ
 end
 
 function Blip:setPosition(x, y, z)
@@ -116,6 +116,17 @@ function Blip:getColor()
 	return self.m_Color
 end
 
+function Blip:setOptionalColor(color)
+	self.m_OptionalColor = color and tocolor(unpack(color))
+
+	return self
+end
+
+function Blip:getOptionalColor()
+	return self.m_OptionalColor
+end
+
+
 function Blip:attachTo(element)
 	if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
 	Blip.AttachedBlips[self] = element
@@ -137,6 +148,7 @@ end
 
 function Blip:setDisplayText(text, category)
 	if text and not self.m_DisplayText then 
+		local category = category or BLIP_CATEGORY.Default
 		self.m_DisplayText = text
 		self.m_Category = category
 		
@@ -146,6 +158,10 @@ function Blip:setDisplayText(text, category)
 
 		CustomF11Map:getSingleton():updateBlipList()
 	end
+end
+
+function Blip:getDisplayText()
+	return self.m_DisplayText, self.m_Category
 end
 
 function Blip.getDefaultSize()
@@ -180,7 +196,7 @@ end
 
 function Blip.updateFromServer(id, data)
 	if not Blip.ServerBlips[id] then
-		Blip.ServerBlips[id] = Blip:new(data.icon, data.x, data.y, data.streamDistance, data.color)
+		Blip.ServerBlips[id] = Blip:new(data.icon, data.x, data.y, data.streamDistance, data.color, data.optionalColor)
 	end
 
 	if data.destroy then
@@ -192,6 +208,9 @@ function Blip.updateFromServer(id, data)
 		Blip.ServerBlips[id]:setPosition(data.x, data.y, data.z)
 	elseif data.z then
 		Blip.ServerBlips[id]:setZ(data.z)
+	end
+	if data.optionalColor then
+		Blip.ServerBlips[id]:setOptionalColor(data.optionalColor)
 	end
 	if data.color then
 		Blip.ServerBlips[id]:setColor(data.color)

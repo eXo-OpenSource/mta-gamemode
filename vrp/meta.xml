@@ -1107,6 +1107,8 @@
 	<vrpfile src="files/images/Radar/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar/Blips/Skinshop.png"/>
 	<vrpfile src="files/images/Radar/Blips/TuningGarage.png"/>
+	<vrpfile src="files/images/Radar/Blips/CarLot.png"/>
+	<vrpfile src="files/images/Radar/Blips/VehicleTexture.png"/>
 	<vrpfile src="files/images/Radar/Blips/Shop.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gangwar.png"/>
 	<vrpfile src="files/images/Radar/Blips/Fire.png"/>

@@ -44,7 +44,10 @@ function VehicleTuningShop:constructor()
         local position = info[1]
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
-        Blip:new("TuningGarage.png", position.x, position.y,root,600)
+        local blip = Blip:new("TuningGarage.png", position.x, position.y,root,600)
+        blip:setDisplayText("Tuninggarage"..(info[4] == "AirportPainter" and " (Flugzeuge)" or ""), BLIP_CATEGORY.VehicleMaintenance)
+        blip:setOptionalColor({3, 169, 244})
+
 		if info[4] and info[4] == "AirportPainter" then
 			createMarker(position.x, position.y, position.z-1.2, "cylinder", 6, 50, 200, 255)
 			colshape.Type = info[4]

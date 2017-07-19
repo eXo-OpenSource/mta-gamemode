@@ -187,10 +187,10 @@ HelpTextTitles = {
 		Trashman = "Job: Müllmann";
 		ServiceTechnician = "Job: Service-Techniker";
 		PizzaDelivery = "Job: Pizza-Lieferant";
-		HeliTransport = "Job: Helikopter-Pilot";
+		HeliTransport = "Job: Helikopterpilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
-		TreasureSeeker = "Job: Schatz Sucher";
-		Gravel = "Job: Kiesgruben Arbeiter";
+		TreasureSeeker = "Job: Schatzsucher";
+		Gravel = "Job: Kiesgruben-Arbeiter";
 	};
 	Gameplay = {
 		Beggar = "Gameplay: Bettler";
