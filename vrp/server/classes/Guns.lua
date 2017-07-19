@@ -115,14 +115,16 @@ function Guns:killPlayer(target, attacker, weapon, bodypart)
 		target:setReviveWeapons()
 	end
 	target:kill(attacker, weapon, bodypart)
-	if target:getFaction() and target:getFaction():isEvilFaction() and attacker:getFaction() and attacker:getFaction():isEvilFaction() then
-		local attackerFaction = attacker:getFaction()
-		local targetFaction = target:getFaction()
-		if not attacker:isInGangwar() then
-			if attackerFaction:getDiplomacy(targetFaction) == FACTION_DIPLOMACY["im Krieg"] then
-				local bonus = targetFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or targetFaction:getMoney()
-				targetFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
-				attackerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+	if not target:getData("isInDeathMatch") then
+		if target:getFaction() and target:getFaction():isEvilFaction() and attacker:getFaction() and attacker:getFaction():isEvilFaction() then
+			local attackerFaction = attacker:getFaction()
+			local targetFaction = target:getFaction()
+			if not attacker:isInGangwar() then
+				if attackerFaction:getDiplomacy(targetFaction) == FACTION_DIPLOMACY["im Krieg"] then
+					local bonus = targetFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or targetFaction:getMoney()
+					targetFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+					attackerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+				end
 			end
 		end
 	end
