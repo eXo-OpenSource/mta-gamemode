@@ -92,7 +92,8 @@ function GroupGUI:constructor()
 	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.4)
 	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.6)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
-	self.m_VehicleConvertToGroupButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur Firma/Gang hinzufügen", true, tabVehicles):setBarColor(Color.Green)
+	self.m_VehicleConvertToGroupButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"\nFahrzeug zur \nFirma/Gang hinzufügen", true, tabVehicles):setBarColor(Color.Green)
+	self.m_VehicleConvertToGroupButton.m_Label:setSize(self.m_Width*0.28, self.m_Height*0.07):setMultiline(true):setFontSize(0.45)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
@@ -175,6 +176,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupMoneyLabel:setText(toMoneyString(money))
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
+		self.m_VehicleConvertToGroupButton:setText(_("\nFahrzeug zur\n%s hinzufügen", type))
 
 		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
 
