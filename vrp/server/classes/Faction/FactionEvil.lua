@@ -203,6 +203,8 @@ function FactionEvil:Event_StartRaid(target)
 					end
 					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
 					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
+					client:meChat(true, _("überfällt %s!", client, target:getName()))
+
 					target:triggerEvent("CountdownStop",  15, "Überfallen in")
 					target:triggerEvent("Countdown", 15, "Überfallen in")
 					client:triggerEvent("Countdown", 15, "Überfallen in")
@@ -227,6 +229,7 @@ function FactionEvil:Event_SuccessRaid(target)
 	if money > 750 then money = 750 end
 	if money > 0 then
 		client:meChat(true,"überfällt "..target:getName().." erfolgreich!")
+		target:meChat(true, _("wurde erfolgreich von %s überfallen!", target, client:getName()))
 		target:takeMoney(money, "Überfall")
 		client:giveMoney(money, "Überfall")
 		client:triggerEvent("CountdownStop", "Überfallen in", 15)
@@ -239,6 +242,7 @@ end
 function FactionEvil:Event_FailedRaid(target)
 	target:sendSuccess(_("Du bist dem Überfall entkommen!", target))
 	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
+	target:meChat(true, _("ist aus dem Überfall von %s entkommen!", target, client:getName()))
 end
 
 function FactionEvil:loadDiplomacy()
