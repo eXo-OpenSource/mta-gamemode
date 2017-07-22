@@ -184,13 +184,18 @@ function FactionWTLoadGUI:deleteItemFromCart()
 end
 
 function FactionWTLoadGUI:addItemToCart(typ,weapon)
-	if getKeyState("lshift") then
+	if getKeyState("lctrl") or getKeyState("lshift") then
 		local index = "Waffe"
 		local index2 = "Waffe"
 		local indexPrice = "WaffenPreis"
 		if typ == "munition" then index = "Munition"; index2 = "Magazine"; indexPrice = "MagazinPreis" end
 
-		local max = self.m_DepotWeaponsMax[weapon][index2] - self.depot[weapon][index]
+		local max = self.m_DepotWeaponsMax[weapon][index2] - self.depot[weapon][index] - self.m_Cart[weapon][index]
+
+		if getKeyState("lshift") then
+			if max > 10 then max = 10 end
+		end
+
 		local pricePerUnit = self.m_DepotWeaponsMax[weapon][indexPrice]
 		local remainingBudget = self.m_MaxLoad - self.m_TotalCosts
 
