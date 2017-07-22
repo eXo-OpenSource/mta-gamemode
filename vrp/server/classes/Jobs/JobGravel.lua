@@ -108,13 +108,10 @@ function JobGravel:Event_onGravelDestroyHit()
 	end
 end
 
-function JobGravel:Event_gravelOnSync(posX, posY, posZ, rotX, rotY, rotZ, velX, velY, velZ)
+function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 	if getElementData(source, "syncer") == client then
 		source:setPosition(Vector3(posX, posY, posZ))
-		source:setRotation(Vector3(rotX, rotY, rotZ))
 		source:setVelocity(Vector3(velX, velY, velZ))
-	else
-		-- TODO: event faking?
 	end
 end
 

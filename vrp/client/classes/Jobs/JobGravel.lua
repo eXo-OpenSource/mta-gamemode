@@ -213,7 +213,7 @@ function JobGravel:onDozerCollide(gravel)
 				setElementData(gravel, "lastSync", getRealTime().timestamp, true)
 				gravel.m_LastPosition = gravel.position
 				
-				triggerServerEvent("gravelOnSync", gravel, gravel.position.x, gravel.position.y, gravel.position.z, gravel.rotation.x, gravel.rotation.y, gravel.rotation.z, gravel.velocity.x, gravel.velocity.y, gravel.velocity.z)
+				triggerServerEvent("gravelOnSync", gravel, gravel.position.x, gravel.position.y, gravel.position.z, gravel.velocity.x, gravel.velocity.y, gravel.velocity.z)
 			end
 		end
 	end
@@ -228,7 +228,7 @@ function JobGravel:syncGravel()
 						setElementData(v, "lastSync", getRealTime().timestamp, true)
 						v.m_LastPosition = v.position
 						
-						triggerServerEvent("gravelOnSync", v, v.position.x, v.position.y, v.position.z, v.rotation.x, v.rotation.y, v.rotation.z, v.velocity.x, v.velocity.y, v.velocity.z)
+						triggerServerEvent("gravelOnSync", v, v.position.x, v.position.y, v.position.z, v.velocity.x, v.velocity.y, v.velocity.z)
 					end
 				end
 			end
