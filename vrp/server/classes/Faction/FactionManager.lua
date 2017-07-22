@@ -510,6 +510,13 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 
 	if diplomacy < faction1:getDiplomacy(faction2) then
 		for index, data in pairs(faction1.m_DiplomacyRequests) do
+			if data["source"] == faction2:getId() and data["status"] == FACTION_DIPLOMACY["Verbündet"] then
+				client:sendError(_("Es läuft aktuell bereits eine Bündnis-Anfrage eurer Fraktion! Ziehe die andere Anfrage erst zurück!", client))
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+				return
+			end
+		end
+		for index, data in pairs(faction1.m_DiplomacyRequests) do
 			if data["target"] == faction2:getId() then
 				client:sendError(_("Es läuft aktuell bereits eine Anfrage an diese Fraktion! Ziehe die andere Anfrage erst zurück!", client))
 				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
