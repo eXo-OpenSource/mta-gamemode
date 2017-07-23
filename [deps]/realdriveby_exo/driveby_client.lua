@@ -132,7 +132,7 @@ functions.toggleDriveby = function()
 						toggleControl ( "vehicle_look_right",false )
 						toggleControl ( "vehicle_secondary_fire",false )
 						functions.toggleTurningKeys(vehicleID,false)
-						if settings.bikeHitboxFix and getVehicleType ( veh ) == "Bike" then
+						if settings.bikeHitboxFix and (getVehicleType ( veh ) == "Bike" or getVehicleType ( veh ) == "BMX" or getVehicleType ( veh ) == "Quad") then
 							triggerServerEvent ( "createPedForDrivebyFix", localPlayer )
 						end
 						addEventHandler ( "onClientPlayerVehicleExit",localPlayer,functions.removeKeyToggles )

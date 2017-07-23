@@ -444,6 +444,7 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
+	if state and VEHICLE_BIKES[self:getModel()] then return end -- disable total loss for bycicles
 	if state then
 		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
