@@ -771,7 +771,7 @@ local vehicles = {
 local _isVehicleOnGround = isVehicleOnGround
 function isVehicleOnGround(vehicle)
 	if isElement(vehicle) then
-		if vehicles[vehicle:getModel()] then
+		if vehicle:getVehicleType() == VehicleType.Plane or vehicles[vehicle:getModel()] then
 			return vehicle:getSpeed() == 0
 		elseif vehicle:getVehicleType() == VehicleType.Boat then
 			return vehicle:getSpeed() < 3

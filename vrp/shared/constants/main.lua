@@ -117,6 +117,7 @@ ADMIN_RANK_PERMISSION = {
 	["removeWarn"] = RANK.Administrator,
 	["pedMenu"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
+	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["moveWorldItem"] = RANK.Moderator,
 	["deleteWorldItem"] = RANK.Moderator,

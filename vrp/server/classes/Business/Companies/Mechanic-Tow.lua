@@ -31,6 +31,12 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
+	local occs = vehicle:getOccupants()
+	if occs then
+		for i, occ in pairs(occs) do
+			occ:removeFromVehicle()
+		end
+	end
 	vehicle:setPositionType(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()
