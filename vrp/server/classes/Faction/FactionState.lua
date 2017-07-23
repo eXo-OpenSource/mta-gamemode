@@ -17,6 +17,33 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
+	self.m_ArmySpecialVehicleBorder = {
+		x = -179.915,
+		y = 1614.156,
+		sizeX = 616.486,
+		sizeY = 610.996
+	}
+
+	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
+	
+	addEventHandler("onColShapeLeave", root, function(element) 
+		if element:getType() == "player" and element.vehicle then
+			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
+				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
+					local veh = element.vehicle
+					element:removeFromVehicle()
+					veh:respawn(true)		
+					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
+					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
+						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
+							v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
+						end
+					end
+				end
+			end
+		end
+	end)
+
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do
