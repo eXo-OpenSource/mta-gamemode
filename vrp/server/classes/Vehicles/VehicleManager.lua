@@ -172,15 +172,15 @@ function VehicleManager:Event_GetTuningList()
 end
 
 function VehicleManager:getFactionVehicles(factionId)
-	return self.m_FactionVehicles[factionId]
+	return self.m_FactionVehicles[factionId] or {}
 end
 
 function VehicleManager:getCompanyVehicles(companyId)
-	return self.m_CompanyVehicles[companyId]
+	return self.m_CompanyVehicles[companyId] or {}
 end
 
 function VehicleManager:getGroupVehicles(groupId)
-	return self.m_GroupVehicles[groupId]
+	return self.m_GroupVehicles[groupId] or {}
 end
 
 function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
@@ -520,7 +520,7 @@ function VehicleManager:Event_vehiclePark()
 			end
 
 			if not source:isOnGround() then
-				client:sendError(_("Das Fahrzeug kann nicht in der Luft geparkt werden!", client))
+				client:sendError(_("Das Fahrzeug muss zum Parken stillstehen!", client))
 				return
 			end
 

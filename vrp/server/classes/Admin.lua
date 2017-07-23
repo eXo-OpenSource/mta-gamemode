@@ -67,6 +67,7 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
+	addCommandHandler("cookie", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
@@ -275,7 +276,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" then
+                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
                             self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
                             return
                         else
@@ -294,13 +295,13 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         if cmd == "spect" or cmd == "unprison" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
-        elseif cmd == "rkick" or cmd == "permaban" then
+        elseif cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
             admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
             return
         else
             admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
             return
-        end
+        end		
 	end
 end
 
@@ -588,6 +589,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				end
 			else
       		  admin:sendError(_("Ungültiges Ziel!", admin))
+			end
+		elseif func == "cookie" then
+			local reason = reason:gsub("_", " ")
+			if target:getInventory():giveItem("Keks", 1) then
+				target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
+				self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+			else
+				admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
 			end
         end
     else
