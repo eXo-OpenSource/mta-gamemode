@@ -14,11 +14,8 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-<<<<<<< HEAD
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
-=======
-	addRemoteEvents{"getFactions", "factionFilePlayerReceived", "factionFileSearchPlayer", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer" }
->>>>>>> Added faction history
+
+	addRemoteEvents{"getFactions", "factionFilePlayerReceived", "factionFileSearchPlayer", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
