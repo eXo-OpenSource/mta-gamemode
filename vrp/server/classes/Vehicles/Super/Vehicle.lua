@@ -606,8 +606,10 @@ end
 
 function Vehicle:removeTexture(textureName)
 	if textureName then
-		delete(self.m_Texture[textureName])
-		return
+		if self.m_Texture and self.m_Texture[textureName] then
+			delete(self.m_Texture[textureName])
+			return
+		end
 	end
 
 	for i, v in pairs(self.m_Texture) do
