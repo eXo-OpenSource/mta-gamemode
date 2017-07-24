@@ -134,7 +134,7 @@ BlipConversion =
 	["Horse.png"] = 35,
 
 }
-UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4, 
+UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4,
 		[1] = "vRoleplay", [2] = "eXo", [3] = "Default", [4] = "Chart",}
 
 --for i, v in pairs(UIStyle) do UIStyle[v] = i end -- this doesn't work for some weird reason!
@@ -709,9 +709,9 @@ NOTIFICATION_TYPE_GAME     = 2
 
 TEXTURE_SYSTEM_HELP =
 {
-	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen, wenn ein entsprechendes Fahrzeug in deiner Nähe ist. Dies führt dazu, dass du nur die Texturen lädst, welche du auch benötigst.\nSinnvoll bei Graifkkarten mit wenig Videospeicher\n\nZum übernehmen bitte reconnecten!",
-	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!\n\nZum übernehmen bitte reconnecten!",
-	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.\n\nZum übernehmen bitte reconnecten!",
+	[1] = "In diesem Modus werden Fahrzeug-Texturen erst geladen, wenn ein entsprechendes Fahrzeug in deiner Nähe ist. Dies führt dazu, dass du nur die Texturen lädst, welche du auch benötigst.\nSinnvoll bei Graifkkarten mit wenig Videospeicher",
+	[2] = "In diesem Modus werden beim einloggen alle Fahrzeug-Texturen geladen.\nAchtung: Dies führt zu einem Standbild von mehreren Sekunden! Anschließend müssen jedoch keine Texturen mehr geladen werden.\nSinnvoll bei Grafikkarten mit viel Videospeicher!",
+	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.",
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3}

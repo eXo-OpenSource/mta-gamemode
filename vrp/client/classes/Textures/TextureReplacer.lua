@@ -101,9 +101,28 @@ function TextureReplacer:detach()
 	if not self.m_Shader or not isElement(self.m_Shader) then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader:destroy()
+	self.m_Texture:destroy()
 	if self.m_Shader then self.m_Shader = nil end
 	if self.m_Texture then self.m_Texture = nil end
 	return TextureReplacer.Status.SUCCESS
+end
+
+function TextureReplacer:setLoadingMode(loadingMode)
+	if loadingMode == self.m_LoadingMode then return false end
+	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+		removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+		removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	end
+
+	if loadingMode == TEXTURE_LOADING_MODE.STREAM then
+		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+		self:addToLoadingQeue()
+	elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
+		self.m_Active = false
+	end
+	self.m_LoadingMode = loadingMode
 end
 
 -- Cache methods
@@ -200,5 +219,13 @@ function TextureReplacer:loadNext()
 		TextureReplacer.Queue.m_ShortMessage:anyChange()
 
 		return TextureReplacer.Queue:pop_back(1):load()
+	end
+end
+
+--// Static Helper
+function TextureReplacer.changeLoadingMode(loadingMode)
+	outputDebug("Setting TextureReplace loading mode to TEXTURE_LOADING_MODE"..tostring(TEXTURE_LOADING_MODE[loadingMode]))
+	for i, instance in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
+		instance:setLoadingMode(loadingMode)
 	end
 end
