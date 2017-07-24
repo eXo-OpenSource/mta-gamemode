@@ -8,11 +8,10 @@ end
 
 function PublicTransport:setBusDisplayText(vehicle, text)
 	if not vehicle.Bus_TexReplace then
-		vehicle.Bus_TexReplace = TextureReplace:new("coach92decals128", "files/images/Textures/CoachTexture.png", true, 256, 256)
-		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end, false)
+		vehicle.Bus_TexReplace = FileTextureReplacer:new(vehicle, "files/images/Textures/CoachTexture.png", "coach92decals128")
 	end
 
-	dxSetRenderTarget(vehicle.Bus_TexReplace:getTexture(), true)
+	dxSetRenderTarget(vehicle.Bus_TexReplace.m_Texture, true)
 	dxDrawText("Nächster Halt:\n"..text, 5*2, 90*2, 123*2, 125*2, Color.Red, 1, VRPFont(35), "left", "top", false, true)
 	dxSetRenderTarget(nil)
 end

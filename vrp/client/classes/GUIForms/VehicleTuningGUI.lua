@@ -413,7 +413,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "Texture" then
-			--Disabled
+			--[[Disabled
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
@@ -439,6 +439,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                     end
                 end
             )
+			Disabled --]]
             return
         end
 		self:resetUpgrades()
