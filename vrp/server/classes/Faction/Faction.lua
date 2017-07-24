@@ -566,6 +566,7 @@ end
 
 function Faction:getAllianceFaction()
 	local factionId, status
+	if not self.m_Diplomacy then return false end
 	for index, data in pairs(self.m_Diplomacy) do
 		factionId, status = unpack(data)
 		if status == FACTION_DIPLOMACY["Verbündet"] then
@@ -578,6 +579,8 @@ function Faction:getAllianceFaction()
 end
 
 function Faction:checkAlliancePermission(targetFaction, permission)
+	if not self.m_Diplomacy then return false end
+
 	if self:getAllianceFaction() == targetFaction then
 		if table.find(self.m_DiplomacyPermissions, permission) then
 			return true
