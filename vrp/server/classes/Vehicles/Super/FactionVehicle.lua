@@ -29,7 +29,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			self:setHealth(health)
 		end
 	end
-	if color and fromJSON(color) then	
+	if color and fromJSON(color) then
 		setVehicleColor(self, fromJSON(color))
 	elseif factionCarColors[self.m_Faction:getId()] then
 		local color = factionCarColors[self.m_Faction:getId()]
@@ -135,7 +135,9 @@ function FactionVehicle:onEnter(player, seat)
 				setElementPosition(player,x,y,z)
 				return false
 			end
-		elseif player:getFaction() == self.m_Faction then
+		elseif player:getFaction() and player:getFaction() == self.m_Faction then
+			return true
+		elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
 			return true
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
@@ -168,7 +170,7 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", 
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
 		sql:getPrefix(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 

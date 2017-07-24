@@ -257,15 +257,29 @@ function FactionGUI:loadDiplomacyTab()
 		self.m_DiplomacyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.43, self.m_TabDiplomacy)
 		self.m_DiplomacyGrid:addColumn(_"Fraktion", 1)
 
-
-
-
 		self.m_DiplomacyOutHead = GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.46, self.m_Height*0.08, _"Diplomatische Anfragen:", self.m_TabDiplomacy)
 		self.m_DiplomacyRequestGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.5, self.m_Height*0.3, self.m_TabDiplomacy)
 		self.m_DiplomacyRequestGrid:addColumn(_"Fraktion", 0.35)
 		self.m_DiplomacyRequestGrid:addColumn(_"Typ", 0.65)
 
 		self.m_DiplomacyRequestText = GUILabel:new(self.m_Width*0.54, self.m_Height*0.6, self.m_Width*0.44, self.m_Height*0.06, "", self.m_TabDiplomacy):setMultiline(true)
+
+		self.m_DiplomacyPermissionLabels = {
+			["vehicles"] = GUILabel:new(self.m_Width*0.34, self.m_Height*0.39, self.m_Width*0.44, self.m_Height*0.05, "", self.m_TabDiplomacy),
+			["weapons"] = GUILabel:new(self.m_Width*0.34, self.m_Height*0.44, self.m_Width*0.44, self.m_Height*0.05, "", self.m_TabDiplomacy)
+		}
+		self.m_DiplomacyPermissionChangeLabels = {
+			["vehicles"] = GUILabel:new(self.m_Width*0.75, self.m_Height*0.39, self.m_Width*0.23, self.m_Height*0.05, "", self.m_TabDiplomacy),
+			["weapons"] = GUILabel:new(self.m_Width*0.75, self.m_Height*0.44, self.m_Width*0.23, self.m_Height*0.05, "", self.m_TabDiplomacy)
+		}
+		for index, label in pairs(self.m_DiplomacyPermissionChangeLabels) do
+			label:setColor(Color.LightBlue)
+			label.onHover = function () label:setColor(Color.White) end
+			label.onUnhover = function () label:setColor(Color.LightBlue) end
+			label.onLeftClick = function()
+				triggerServerEvent("factionChangePermission", root, index)
+			end
+		end
 
 		local item
 		for Id, faction in pairs(FactionManager.Map) do
@@ -285,7 +299,7 @@ function FactionGUI:loadDiplomacyTab()
 	triggerServerEvent("factionRequestDiplomacy", root, localPlayer:getFaction():getId())
 end
 
-function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
+function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, permissions, requests)
 	self.m_DiplomacySelected = sourceId
 
 	local factionId, status, currentDiplomacy, text, color, new, qText
@@ -308,6 +322,11 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
 			self.m_DiplomacyLabels[factionId] = GUILabel:new(self.m_Width*0.34, y, self.m_Width*0.5, self.m_Height*0.06, text, self.m_TabDiplomacy)
 			self.m_DiplomacyLabels[factionId]:setColor(FactionGUI.DiplomacyColors[status])
 			y = y + self.m_Height*0.06
+
+
+			self.m_DiplomacyPermissionLabels["vehicles"]:setText(_("BND darf %sFahrzeuge verwenden", table.find(permissions, "vehicles") and "" or "keine "))
+			self.m_DiplomacyPermissionLabels["weapons"]:setText(_("BND darf %sWaffen nehmen", table.find(permissions, "weapons") and "" or "keine "))
+
 			if factionId == localPlayer:getFaction():getId() then
 				currentDiplomacy = status
 			end
@@ -338,19 +357,31 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, requests)
 		qText = {}
 		new = {}
 		text, color, new[1], qText[1] = unpack(btnData[currentDiplomacy][1])
-		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.33, self.m_Height*0.41, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.13, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
 		self.m_DiplomacyButtons[1].onLeftClick = function()
 			QuestionBox:new(_(qText[1], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[1]) end
 			)
 		end
 		text, color, new[2], qText[2] = unpack(btnData[currentDiplomacy][2])
-		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.41, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.21, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
 		self.m_DiplomacyButtons[2].onLeftClick = function()
 			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
 			)
 		end
+
+		if sourceId == localPlayer:getFaction():getId() then
+			for index, label in pairs(self.m_DiplomacyPermissionChangeLabels) do
+				label:setText(_"(ändern)")
+			end
+		else
+			for index, label in pairs(self.m_DiplomacyPermissionChangeLabels) do
+				label:setText("")
+			end
+		end
+
+
 		self:onDiplomacyRequestItemSelect()
 	end
 

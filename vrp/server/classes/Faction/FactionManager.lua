@@ -14,7 +14,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -36,6 +36,7 @@ function FactionManager:constructor()
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
 	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
 	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
+	addEventHandler("factionChangePermission", root, bind(self.Event_changePermission, self))
 	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
 	FactionState:new()
@@ -480,7 +481,7 @@ end
 function FactionManager:Event_requestDiplomacy(factionId)
 	local faction = self:getFromId(factionId)
 	if faction and faction.m_Diplomacy then
-		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, client:getFaction().m_DiplomacyRequests)
+		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, faction.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
 	else
 		client:sendError("Internal Error: Invalid Faction")
 	end
@@ -498,12 +499,12 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 	if diplomacy == FACTION_DIPLOMACY["Verbündet"] then
 		if faction1:getAllianceFaction() then
 			client:sendError(_("Ihr habt bereits ein Bündnis mit der %s!", client, faction1:getAllianceFaction():getShortName()))
-			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 			return
 		end
 		if faction2:getAllianceFaction() then
 			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction2:getShortName(), faction2:getAllianceFaction():getShortName()))
-			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 			return
 		end
 	end
@@ -512,11 +513,11 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 		for index, data in pairs(faction1.m_DiplomacyRequests) do
 			if data["source"] == faction1:getId() and data["status"] == FACTION_DIPLOMACY["Verbündet"] then
 				client:sendError(_("Es läuft aktuell bereits eine Bündnis-Anfrage eurer Fraktion! Ziehe die andere Anfrage erst zurück!", client))
-				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 				return
 			elseif data["target"] == faction2:getId() then
 				client:sendError(_("Es läuft aktuell bereits eine Anfrage an diese Fraktion! Ziehe die andere Anfrage erst zurück!", client))
-				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 				return
 			end
 		end
@@ -528,7 +529,7 @@ function FactionManager:Event_changeDiplomacy(target, diplomacy)
 		faction2:changeDiplomacy(faction1, diplomacy, client)
 	end
 
-	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 end
 
 function FactionManager:Event_answerDiplomacyRequest(id, answer)
@@ -549,12 +550,12 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 	if answer == "accept" and diplomacy == FACTION_DIPLOMACY["Verbündet"] then
 		if faction1:getAllianceFaction() then
 			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction1:getShortName(), faction1:getAllianceFaction():getShortName()))
-			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 			return
 		end
 		if faction2:getAllianceFaction() then
 			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction2:getShortName(), faction2:getAllianceFaction():getShortName()))
-			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction1.m_DiplomacyRequests)
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
 			return
 		end
 	end
@@ -577,7 +578,23 @@ function FactionManager:Event_answerDiplomacyRequest(id, answer)
 	end
 	client:getFaction().m_DiplomacyRequests[id] = nil
 
-	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, client:getFaction().m_DiplomacyRequests)
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
+end
+
+function FactionManager:Event_changePermission(permission)
+	local faction = client:getFaction()
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+	if table.find(faction.m_DiplomacyPermissions, permission) then
+		table.remove(faction.m_DiplomacyPermissions, table.find(faction.m_DiplomacyPermissions, permission))
+		faction:sendShortMessage(("Euer Bündnispartner darf nun keine %s mehr nehmen!"):format(permission == "vehicles" and "Fahrzeuge" or "Waffen"))
+	else
+		table.insert(faction.m_DiplomacyPermissions, permission)
+		faction:sendShortMessage(("Euer Bündnispartner darf nun eure %s nehmen!"):format(permission == "vehicles" and "Fahrzeuge" or "Waffen"))
+	end
+	client:triggerEvent("factionRetrieveDiplomacy", faction:getId(), faction.m_Diplomacy, faction.m_DiplomacyPermissions, faction.m_DiplomacyRequests)
 end
 
 function FactionManager:Event_ToggleLoan(playerId)

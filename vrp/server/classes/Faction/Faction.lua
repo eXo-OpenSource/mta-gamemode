@@ -61,7 +61,7 @@ end
 function Faction:save()
 	local diplomacy = ""
 	if self.m_Diplomacy then
-		diplomacy = toJSON({["Status"] = self.m_Diplomacy, ["Requests"] = self.m_DiplomacyRequests})
+		diplomacy = toJSON({["Status"] = self.m_Diplomacy, ["Requests"] = self.m_DiplomacyRequests, ["Permissions"] = self.m_DiplomacyPermissions or {}})
 	end
 	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
@@ -534,9 +534,10 @@ end
 function Faction:loadDiplomacy()
 	if self.m_DiplomacyJSON and self.m_DiplomacyJSON ~= "" then
 		local dbTable = fromJSON(self.m_DiplomacyJSON)
-		if dbTable and dbTable["Status"] and dbTable["Requests"] then
+		if dbTable and dbTable["Status"] and dbTable["Requests"] and dbTable["Permissions"] then
 			self.m_Diplomacy = dbTable["Status"]
 			self.m_DiplomacyRequests = dbTable["Requests"]
+			self.m_DiplomacyPermissions = dbTable["Permissions"]
 		else
 			self.m_DiplomacyJSON = nil
 			self:loadDiplomacy()
@@ -544,6 +545,7 @@ function Faction:loadDiplomacy()
 	else
 		self.m_Diplomacy = {}
 		self.m_DiplomacyRequests = {}
+		self.m_DiplomacyPermissions = {}
 		for Id, faction in pairs(FactionManager:getSingleton():getAllFactions()) do
 			if faction:isEvilFaction() and faction ~= self then
 				self:changeDiplomacy(faction, FACTION_DIPLOMACY.Waffenstillstand)
@@ -570,6 +572,15 @@ function Faction:getAllianceFaction()
 			if FactionManager:getSingleton():getFromId(factionId) then
 				return FactionManager:getSingleton():getFromId(factionId)
 			end
+		end
+	end
+	return false
+end
+
+function Faction:checkAlliancePermission(targetFaction, permission)
+	if self:getAllianceFaction() == targetFaction then
+		if tabel.find(self.m_DiplomacyPermissions, permission) then
+			return true
 		end
 	end
 	return false
