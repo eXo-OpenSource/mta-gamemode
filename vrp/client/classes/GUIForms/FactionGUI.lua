@@ -317,9 +317,6 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, permissions, re
 	self.m_DiplomacyLabels = {}
 	self.m_DiplomacyLabels["Current"] = GUILabel:new(self.m_Width*0.34, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.08, _("Diplomatie der %s", FactionManager:getSingleton():getFromId(sourceId):getShortName()), self.m_TabDiplomacy)
 
-	outputChatBox("Selected: "..self.m_DiplomacySelected)
-	outputChatBox("Player: "..localPlayer:getFaction():getId())
-
 	if self.m_DiplomacySelected == localPlayer:getFaction():getId() then
 		for index, label in pairs(self.m_DiplomacyPermissionChangeLabels) do
 			label:setText(_"(ändern)")
