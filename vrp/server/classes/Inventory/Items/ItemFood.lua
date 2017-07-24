@@ -35,18 +35,16 @@ function ItemFood:use(player)
 	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
-	if not player.vehicle then
-		if ItemSettings["CustomEvent"] then
-			triggerClientEvent(ItemSettings["CustomEvent"], player, item)
-		end
-		
-		local block, animation, time = unpack(ItemSettings["Animation"])
-		player:setAnimation(block, animation, time, true, false, false)
-		setTimer(function()
-			item:destroy()
-			if not isElement(player) or getElementType(player) ~= "player" then return false end
-			player:setHealth(player:getHealth()+ItemSettings["Health"])
-			player:setAnimation()
-		end, time, 1)
+	if ItemSettings["CustomEvent"] then
+		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
 	end
+
+	local block, animation, time = unpack(ItemSettings["Animation"])
+	if not player.vehicle then player:setAnimation(block, animation, time, true, false, false) end
+	setTimer(function()
+		item:destroy()
+		if not isElement(player) or getElementType(player) ~= "player" then return false end
+		player:setHealth(player:getHealth()+ItemSettings["Health"])
+		player:setAnimation()
+	end, time, 1)
 end

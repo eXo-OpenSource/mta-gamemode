@@ -605,6 +605,7 @@ function Vehicle:setTexture(texturePath, textureName, force, isPreview, player)
 end
 
 function Vehicle:removeTexture(textureName)
+	if not self.m_Texture then return false end
 	if textureName then
 		if self.m_Texture and self.m_Texture[textureName] then
 			delete(self.m_Texture[textureName])
