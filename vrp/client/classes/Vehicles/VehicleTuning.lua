@@ -53,7 +53,7 @@ function VehicleTuning:setTexture(texture)
 		if self.m_Texture then delete(self.m_Texture) end
 		TextureReplacer.deleteFromElement(self.m_Vehicle)
 		if texture and texture:len() > 3 then
-			if string.find(texture, "http") then
+			if string.find(texture, "https://") or string.find(texture, "http://") then
 				self.m_Texture =  HTTPTextureReplacer:new(self.m_Vehicle, texture, self.m_Vehicle:getTextureName())
 			else
 				self.m_Texture =  FileTextureReplacer:new(self.m_Vehicle, texture, self.m_Vehicle:getTextureName())

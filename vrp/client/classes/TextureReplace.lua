@@ -319,7 +319,7 @@ addEventHandler("changeElementTexture", root,
 				delete(TextureReplace.ServerElements[vehData.vehicle][vehData.textureName])
 			end
 			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
-			if string.find(vehData.texturePath, "http") then
+			if string.find(texture, "https://") or string.find(texture, "http://") then
 				TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
 			else
 				TextureReplace.ServerElements[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
