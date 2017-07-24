@@ -57,7 +57,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self:setLocked(false)
 
 	local a, r, g, b
-	if color and color > 0 then
+	if tonumber(color) and color > 0 then
 		a, r, g, b = getBytesInInt32(color)
 	else
 		local companyId = self.m_Company:getId()

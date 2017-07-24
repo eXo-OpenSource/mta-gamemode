@@ -234,27 +234,29 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
 		end
 	end
-	local facSource = source:getFaction()
-	if k_ then
-		if facSource then
-			if facSource.m_Id ~= 4 then
-				if facSource:isStateFaction() and source:isFactionDuty()  then
-					local facKiller = k_:getFaction()
-					if facKiller then
-						if not facKiller:isStateFaction() then
-							k_:givePoints(15)
+	if not source:getData("isInDeathMatch") then
+		local facSource = source:getFaction()
+		if k_ then
+			if facSource then
+				if facSource.m_Id ~= 4 then
+					if facSource:isStateFaction() and source:isFactionDuty()  then
+						local facKiller = k_:getFaction()
+						if facKiller then
+							if not facKiller:isStateFaction() then
+								k_:givePoints(15)
+							end
 						end
 					end
 				end
 			end
-		end
-		if facSource then
-			if facSource.m_Id ~= 4 then
-				if not facSource:isStateFaction() and not source:isFactionDuty()  then
-					local facKiller = k_:getFaction()
-					if facKiller then
-						if facKiller:isStateFaction() then
-							k_:givePoints(15)
+			if facSource then
+				if facSource.m_Id ~= 4 then
+					if not facSource:isStateFaction() and not source:isFactionDuty()  then
+						local facKiller = k_:getFaction()
+						if facKiller then
+							if facKiller:isStateFaction() then
+								k_:givePoints(15)
+							end
 						end
 					end
 				end
