@@ -14,7 +14,11 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
+<<<<<<< HEAD
 	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
+=======
+	addRemoteEvents{"getFactions", "factionFilePlayerReceived", "factionFileSearchPlayer", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer" }
+>>>>>>> Added faction history
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -38,6 +42,8 @@ function FactionManager:constructor()
 	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
 	addEventHandler("factionChangePermission", root, bind(self.Event_changePermission, self))
 	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
+	addEventHandler("factionFileSearchPlayer", root, bind(self.Event_FileSearchPlayer, self))
+	addEventHandler("factionFilePlayerReceived", root, bind(self.Event_FilePlayer, self))
 
 	FactionState:new()
 	FactionRescue:new()
@@ -214,7 +220,7 @@ function FactionManager:Event_factionAddPlayer(player)
 	end
 end
 
-function FactionManager:Event_factionDeleteMember(playerId)
+function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, reasonExternaly)
 	if not playerId then return end
 	local faction = client:getFaction()
 	if not faction then return end
@@ -235,6 +241,15 @@ function FactionManager:Event_factionDeleteMember(playerId)
 		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
 		return
 	end
+
+	if reasonExternaly == "" then
+		client:sendError(_("Externer Grund für den Rauswurf muss ausgefüllt werden!", client))
+		return
+	end
+	
+	sql:queryExec("UPDATE ??_faction_history SET LeaveDate = NOW(), InternalReason = ?, ExternalReason = ? WHERE UserId = ? AND Faction = ? AND LeaveDate IS NULL ORDER BY Id DESC",
+        sql:getPrefix(), reasonInternaly, reasonExternaly, playerId, faction.m_Id)
+
 	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geworfen!")
 
 	faction:removePlayer(playerId)
@@ -256,6 +271,10 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			if faction:isEvilFaction() then
 				faction:changeSkin(client)
 			end
+
+			sql:queryExec("INSERT INTO ??_faction_history (UserId, Faction, JoinDate) VALUES (?, ?, NOW())",
+        		sql:getPrefix(), client.m_Id, faction.m_Id)
+			
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
@@ -618,3 +637,70 @@ function FactionManager:Event_ToggleLoan(playerId)
 
 	faction:addLog(client, "Fraktion", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
+
+function FactionManager:Event_FileSearchPlayer(name)
+	local faction = client:getFaction()
+	if not faction then return end
+	if not name then return end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	if not client.m_LastFileRequest or client.m_LastFileRequest > getTickCount() - 500 then
+        local resultPlayers = {}
+        local result = sql:queryFetch("SELECT Id, Name FROM ??_account WHERE Name LIKE ?;", sql:getPrefix(), ("%%%s%%"):format(name))
+        for i, row in pairs(result) do
+            resultPlayers[row.Id] = row.Name
+        end
+        client:triggerEvent("factionReceiveSearchedPlayers", resultPlayers)
+	else
+		client:sendError(_("Bitte versuchen sie es erneut!", client))
+	end
+end
+
+
+function FactionManager:Event_FilePlayer(userId)
+	local faction = client:getFaction()
+	if not faction then return end
+	if not userId then return end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	if not client.m_LastFileRequest or client.m_LastFileRequest > getTickCount() - 500 then
+        local playerFile = {}
+        local result = sql:queryFetch("SELECT Id, Faction, DATE_FORMAT(JoinDate, '%d.%m.%Y') AS JoinDate,  DATE_FORMAT(LeaveDate, '%d.%m.%Y') AS LeaveDate, InternalReason, ExternalReason FROM ??_faction_history WHERE UserId LIKE ?;", sql:getPrefix(), userId)
+        for i, row in pairs(result) do
+            playerFile[row.Id] = {
+				Faction = FactionManager:getSingleton().Map[row.Faction].m_Name, -- This will break!! I'm sure!
+				JoinDate = row.JoinDate,
+				LeaveDate = row.LeaveDate,
+				ExternalReason = row.ExternalReason
+			}
+
+			if faction.m_Id == row.Faction then
+				playerFile[row.Id].InternalReason = row.InternalReason
+			end
+        end
+        client:triggerEvent("factionFilePlayerReceived", playerFile)
+	else
+		client:sendError(_("Bitte versuchen sie es erneut!", client))
+	end
+end
+
+--[[
+	CREATE TABLE vrp_faction_history
+(
+    Id INT PRIMARY KEY AUTO_INCREMENT,
+    UserId INT,
+    Faction INT,
+    JoinDate DATE,
+    LeaveDate DATE,
+    InternalReason VARCHAR(128),
+    ExternalReason VARCHAR(128)
+);
+]]

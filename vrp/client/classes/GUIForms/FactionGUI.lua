@@ -60,6 +60,7 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
 	self.m_FactionToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
+	self.m_FactionPlayerFileButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, tabMitglieder)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -70,6 +71,7 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
 	self.m_FactionToggleLoanButton.onLeftClick = bind(self.FactionToggleLoanButton_Click, self)
+	self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
@@ -563,7 +565,8 @@ end
 function FactionGUI:FactionRemovePlayerButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("factionDeleteMember", root, selectedItem.Id)
+		self:close()
+		FactionGUIUnvinite:new(selectedItem.Id)
 	else
 		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
 	end
@@ -590,6 +593,11 @@ function FactionGUI:FactionToggleLoanButton_Click()
 	end
 end
 
+function FactionGUI:FactionPlayerFileButton_Click()
+	self:close()
+	FactionGUIPlayerFile:new()
+end
+
 function FactionGUI:FactionRespawnVehicles()
 	triggerServerEvent("factionRespawnVehicles", root)
 end
@@ -604,3 +612,102 @@ function FactionGUI:ShowLogs()
 	triggerServerEvent("factionRequestLog", root)
 end
 
+FactionGUIUnvinite = inherit(GUIForm)
+
+function FactionGUIUnvinite:constructor(playerId)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.22/2, screenWidth*0.4, screenHeight*0.22)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Spieler rauswerfen", true, true, self)
+	-- GUILabel:new(self.m_Width*0.01, self.m_Height*0.22, self.m_Width*0.98, self.m_Height*0.5, text, self.m_Window):setFont(VRPFont(self.m_Height*0.17))
+	self.m_ReasonInternalyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.09, _"Interner Grund für den Rauswurf", self.m_Window):setFont(VRPFont(self.m_Height*0.14))
+	self.m_ReasonInternaly = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.96, self.m_Height*0.14, self.m_Window):setMaxLength(128)
+	
+	self.m_ReasonExternalyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.96, self.m_Height*0.09, _"Externer Grund für den Rauswurf", self.m_Window):setFont(VRPFont(self.m_Height*0.14))
+	self.m_ReasonExternaly = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.96, self.m_Height*0.14, self.m_Window):setMaxLength(128)
+
+	self.m_YesButton = GUIButton:new(self.m_Width*0.13, self.m_Height*0.75, self.m_Width*0.29, self.m_Height*0.18, _"Rauswerfen", self.m_Window):setBackgroundColor(Color.Red)
+	self.m_NoButton = GUIButton:new(self.m_Width*0.58, self.m_Height*0.75, self.m_Width*0.29, self.m_Height*0.18, _"Abbrechen", self.m_Window)--:setBackgroundColor(Color.Red)
+
+	self.m_YesButton.onLeftClick = function() 
+		if self.m_ReasonExternaly.m_Text == "" then
+			ErrorBox:new(_"Externer Grund für den Rauswurf muss ausgefüllt werden!")
+			return
+		end
+		triggerServerEvent("factionDeleteMember", root, playerId, self.m_ReasonInternaly.m_Text, self.m_ReasonExternaly.m_Text)
+		delete(self) 
+	end
+
+	self.m_NoButton.onLeftClick = function() delete(self) end
+end
+
+
+FactionGUIPlayerFile = inherit(GUIForm)
+
+function FactionGUIPlayerFile:constructor()
+	GUIForm.constructor(self, screenWidth/2-600/2, screenHeight/2-410/2, 600, 410)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Spielerakte", true, true, self)
+
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton.onLeftClick = function() self:close() FactionGUI:getSingleton():show() Cursor:show() end
+
+	GUILabel:new(10, 35, 200, 20, "Suche:", self.m_Window)
+	self.m_SeachText = GUIEdit:new(10, 55, 170, 30, self.m_Window)
+	self.m_SeachButton = GUIButton:new(180, 55, 30, 30, FontAwesomeSymbols.Search, self.m_Window):setFont(FontAwesome(15))
+	self.m_SeachButton.onLeftClick = function ()
+		if #self.m_SeachText:getText() >= 3 then
+			triggerServerEvent("factionFileSearchPlayer", localPlayer, self.m_SeachText:getText())
+		else
+			ErrorBox:new(_"Bitte gib mindestens 3 Zeichen ein!")
+		end
+	end
+
+	self.m_PlayersGrid = GUIGridList:new(10, 95, 200, 300, self.m_Window)
+	self.m_PlayersGrid:addColumn(_"Spieler", 1)
+
+	self.m_FilePlayerGrid = GUIGridList:new(220, 55, 370, 340, self.m_Window)
+	self.m_FilePlayerGrid:addColumn(_"Fraktion", 0.48)
+	self.m_FilePlayerGrid:addColumn(_"Beitritt", 0.26)
+	self.m_FilePlayerGrid:addColumn(_"Austritt", 0.26)
+
+	addRemoteEvents{"factionReceiveSearchedPlayers", "factionFilePlayerReceived"}
+	addEventHandler("factionReceiveSearchedPlayers", root, bind(self.Event_ReceiveSearchedPlayers, self))
+	addEventHandler("factionFilePlayerReceived", root, bind(self.Event_OnFilePlayerReceived, self))
+end
+
+function FactionGUIPlayerFile:Event_ReceiveSearchedPlayers(resultPlayers)
+	self.m_PlayersGrid:clear()
+	for index, pname in pairs(resultPlayers) do
+		local item = self.m_PlayersGrid:addItem(pname)
+		item.name = pname
+		item.onLeftClick = function ()
+			self:Event_OnFilePlayerReceived() -- Reset
+			triggerServerEvent("factionFilePlayerReceived", root, index, pname)
+		end
+	end
+end
+
+function FactionGUIPlayerFile:Event_OnFilePlayerReceived(infos)
+	self.m_FilePlayerGrid:clear()
+	if not infos then return end
+
+	for index, info in pairs(infos) do
+		local item = self.m_FilePlayerGrid:addItem(info.Faction, info.JoinDate, info.LeaveDate)
+		item.onLeftClick = function ()
+			local text = "Fraktion: " .. info.Faction .. "\n"
+			text = text .. "Beitritt: " .. info.JoinDate .. "\n"
+			text = text .."Austritt: " .. info.LeaveDate .. "\n"
+			text = text .."Extener Grund: " .. info.ExternalReason
+			
+			if info.InternalReason then
+				text = text .. "\n" .. "Interner Grund: " .. info.InternalReason
+			end
+
+			ShortMessage:new(text, "Spielerakte")
+		end
+	end
+end
+
+function FactionGUIPlayerFile:destructor()
+	GUIForm.destructor(self)
+end
