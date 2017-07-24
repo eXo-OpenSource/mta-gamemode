@@ -579,7 +579,7 @@ end
 
 function Faction:checkAlliancePermission(targetFaction, permission)
 	if self:getAllianceFaction() == targetFaction then
-		if tabel.find(self.m_DiplomacyPermissions, permission) then
+		if table.find(self.m_DiplomacyPermissions, permission) then
 			return true
 		end
 	end
