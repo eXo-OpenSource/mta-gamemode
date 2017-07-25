@@ -256,6 +256,7 @@
 	<script src="server/classes/Faction/FactionRescue.lua" type="server"/>
 	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
+	<script src="server/classes/HistoryPlayer.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/AttackSession.lua" type="server"/>
@@ -562,6 +563,7 @@
 	<script src="client/classes/GUIForms/ItemShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChangerBox.lua" type="client"/>
+	<script src="client/classes/GUIForms/ChangerBoxWithCheck.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolMenuGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolTheoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolStudentGUI.lua" type="client"/>
@@ -584,6 +586,8 @@
 	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HistoryPlayerGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HistoryUninviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWeaponShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWTLoadGUI.lua" type="client"/>

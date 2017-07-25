@@ -67,6 +67,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 310, 210, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("pedMenu", "Ped-Menü", 340, 350, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("playerHistory", "Spielerakten", 340, 390, 210, 30, Color.Blue, tabAllgemein)
 
 
 	--Column 3
@@ -432,18 +433,30 @@ function AdminGUI:onButtonClick(func)
 				end)
 	elseif func == "setCompany" then
 		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-		ChangerBox:new(_"Unternehmen setzten",
-				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
-				function (companyId)
-					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
+		ChangerBoxWithCheck:new(_"Unternehmen setzten",
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, "History?",
+				function (companyId, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external) 
+							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
+					end
 				end)
 	elseif func == "setFaction" then
 		local factionTable = FactionManager:getSingleton():getFactionNames()
 		factionTable[0] = "Keine Fraktion"
-		ChangerBox:new(_"Fraktion setzten",
-				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
-				function (factionId)
-					triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+		ChangerBoxWithCheck:new(_"Fraktion setzten",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, "History?",
+				function (factionId, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external) 
+							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+					end
 				end)
 	elseif func == "respawnCompany" then
 		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
@@ -525,6 +538,9 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "pedMenu" then
 		self:close()
 		AdminPedGUI:getSingleton():open()
+	elseif func == "playerHistory" then
+		self:close()
+		HistoryPlayerGUI:new(AdminGUI)
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()

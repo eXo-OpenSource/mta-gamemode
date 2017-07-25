@@ -49,6 +49,7 @@ function CompanyGUI:constructor()
 	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
+	self.m_tabMitglieder = tabMitglieder
 	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
 	self.m_CompanyPlayersGrid:addColumn(_"", 0.06)
 	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.44)
@@ -143,6 +144,8 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
+		self.m_CompanyPlayerFileButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder)
+		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
 		self.m_LeaderTab = true
 	end
 end
@@ -256,10 +259,19 @@ function CompanyGUI:CompanyAddPlayerButton_Click()
 	)
 end
 
+function CompanyGUI:CompanyPlayerFileButton_Click()
+	self:close()
+	HistoryPlayerGUI:new(CompanyGUI)
+end
+
+
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("companyDeleteMember", root, selectedItem.Id)
+	
+		HistoryUninviteGUI:new(function(internal, external) 
+			triggerServerEvent("companyDeleteMember", root, selectedItem.Id, internal, external)
+		end)
 	else
 		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
 	end

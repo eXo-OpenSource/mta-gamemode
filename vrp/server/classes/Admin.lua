@@ -929,16 +929,25 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
-        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+        if targetPlayer:getFaction() then
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, targetPlayer:getFaction().m_Id, "faction", internal, external)
+			end
+			targetPlayer:getFaction():removePlayer(targetPlayer) 
+		end
 
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
     		if faction then
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+				end
+
     			faction:addPlayer(targetPlayer,6)
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
@@ -949,14 +958,24 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, internal, external)
 	if client:getRank() >= RANK.Supporter then
-        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
+
+        if targetPlayer:getCompany() then
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, targetPlayer:getCompany().m_Id, "company", internal, external)
+			end
+			targetPlayer:getCompany():removePlayer(targetPlayer) 
+		end
+
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
     		if company then
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+				end
     			company:addPlayer(targetPlayer,5)
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else

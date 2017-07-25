@@ -180,7 +180,7 @@ function CompanyManager:Event_companyAddPlayer(player)
 	end
 end
 
-function CompanyManager:Event_companyDeleteMember(playerId)
+function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, reasonExternaly)
 	if not playerId then return end
 	local company = client:getCompany()
 	if not company then return end
@@ -203,6 +203,9 @@ function CompanyManager:Event_companyDeleteMember(playerId)
 	end
 
 	company:removePlayer(playerId)
+
+	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, company.m_Id, "company", reasonInternaly, reasonExternaly)
+
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 
 	self:sendInfosToClient(client)
@@ -221,6 +224,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 
 			company:sendMessage(_("#008888Unternehmen: #FFFFFF%s ist soeben dem Unternehmen beigetreten!", client, getPlayerName(client)),200,200,200,true)
 			company:addLog(client, "Unternehmen", "ist dem Unternehmen beigetreten!")
+			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, company:hasInvitation(client), company.m_Id, "company")
 
 			self:sendInfosToClient(client)
 		else

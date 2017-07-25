@@ -222,8 +222,8 @@ function Faction:removePlayer(playerId)
 			player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 			self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
 		end
+		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
@@ -231,7 +231,7 @@ function Faction:invitePlayer(player)
   client:sendShortMessage(("Du hast %s erfolgreich in die Fraktion eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("factionInvitationRetrieve", self:getId(), self:getName())
 
-	self.m_Invitations[player] = true
+	self.m_Invitations[player] = client.m_Id
 end
 
 function Faction:removeInvitation(player)
