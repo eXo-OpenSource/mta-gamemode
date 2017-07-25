@@ -35,7 +35,7 @@ function VehicleGarages:createEntrance(info, Id)
 	if not info.hideblip then
 		local blip = Blip:new("Garage.png", enterX, enterY,root,600)
 		blip:setDisplayText("Garage", BLIP_CATEGORY.VehicleMaintenance)
-		blip:setOptionalColor({0, 188, 212})
+		blip:setOptionalColor({108, 124, 139})
 	end
 
 	addEventHandler("onColShapeHit", entranceShape, bind(self.EntranceShape_Hit, self))

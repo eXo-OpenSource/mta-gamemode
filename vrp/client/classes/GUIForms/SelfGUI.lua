@@ -923,7 +923,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_RadarChange.onChange = function(text, index)
 			HUDRadar:getSingleton():setDesignSet(index)
 		end
-		local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
+		local currentRadarIndex = core:get("HUD", "RadarDesign") or 1
 		self.m_RadarChange.onChange("", currentRadarIndex)
 		self.m_RadarChange:setIndex(currentRadarIndex, true)
 		--0.09
@@ -977,7 +977,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
 		self.m_BarsEnabled:setFont(VRPFont(25))
 		self.m_BarsEnabled:setFontSize(1)
-		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", true))
+		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", false))
 		self.m_BarsEnabled.onChange = function (state)
 			core:set("HUD", "drawStatusBars", state)
 			HUDRadar:getSingleton():toggleStatusBars(state)

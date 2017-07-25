@@ -4,7 +4,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y, root, 600)
 	self.m_Blip:setDisplayText("Pay'N'Spray Autoreparatur", BLIP_CATEGORY.VehicleMaintenance)
-	self.m_Blip:setOptionalColor({76, 175, 80})
+	self.m_Blip:setOptionalColor({67, 121, 98})
 	if garageId then
 		setGarageOpen(garageId, true)
 	elseif isElement(self.m_CustomDoor) then

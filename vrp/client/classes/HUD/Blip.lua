@@ -164,6 +164,20 @@ function Blip:getDisplayText()
 	return self.m_DisplayText, self.m_Category
 end
 
+function Blip:getSaveName()
+	if not self.m_SaveName then
+		if not self.m_DisplayText then
+			self.m_SaveName = self.m_RawImagePath:gsub("[^a-zA-Z0-9]", "")
+		else 
+			self.m_SaveName = self.m_DisplayText:gsub("[^a-zA-Z0-9]", "")
+		end
+		if tonumber(self.m_SaveName) then -- numbers can't be a name in config.xml
+			self.m_SaveName = "Blip"..(self.m_SaveName)
+		end
+	end
+	return self.m_SaveName
+end
+
 function Blip.getDefaultSize()
 	return 24
 end

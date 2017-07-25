@@ -93,9 +93,11 @@ function CustomF11Map:updateBlipList()
 					local blip = blips[1]
 					local item = self.m_BlipList:addItem(blip:getImagePath(), text..(#blips > 1 and " ("..(#blips)..")" or ""))
 					local color = blip:getColor()
+					local saveName = blip:getSaveName()
 					if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
 					item:setColumnToImage(1, true, item.m_Height - 6)
-					item:setColumnColor(1, color)
+					item:setColumnColor(1, core:get("BlipVisibility", saveName, true) and color or Color.Clear)
+					item:setColor(core:get("BlipVisibility", saveName, true) and Color.White or Color.LightGrey)
 					item.onLeftDoubleClick = function()
 						local closest, target = math.huge
 						for i, b in pairs(blips) do
@@ -109,6 +111,13 @@ function CustomF11Map:updateBlipList()
 					item.onLeftClick = function()
 						self.m_CurrentClickedBlip = text
 					end	
+					item.onRightClick = function()
+						core:set("BlipVisibility", saveName, not core:get("BlipVisibility", saveName, true))
+						item:setColumnColor(1, core:get("BlipVisibility", saveName, true) and color or Color.Clear)
+						item:setColor(core:get("BlipVisibility", saveName, true) and Color.White or Color.LightGrey)
+					end	
+
+					core:get("HUD", "coloredBlips", true)
 				end
 			end
 		end
@@ -154,6 +163,10 @@ function CustomF11Map:draw()
 			local display = true
 			local posX, posY = blip:getPosition()
 
+			if blip:getSaveName() and not core:get("BlipVisibility", blip:getSaveName(), true) then
+				display = false
+			end
+
 			if Blip.AttachedBlips[blip] then
 				if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
 				local int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
@@ -163,7 +176,6 @@ function CustomF11Map:draw()
 					display = false
 				end
 			end
-
 			if display then
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)

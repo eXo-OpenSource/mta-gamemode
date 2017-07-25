@@ -198,7 +198,7 @@ function HUDRadar:update()
 	end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
-	if vehicle and getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter"
+	if vehicle and getVehicleType(vehicle) ~= VehicleType.Plane and getVehicleType(vehicle) ~= VehicleType.Helicopter
 	and (getControlState("vehicle_look_behind") or getControlState("vehicle_look_left") or getControlState("vehicle_look_right")) then
 
 		local element = vehicle or localPlayer
@@ -299,7 +299,7 @@ function HUDRadar:draw()
 	end
 
 	-- Draw region name (above health bar)
-	if core:get("HUD", "drawZone", true) then
+	if core:get("HUD", "drawZone", false) then
 		dxDrawRectangle(self.m_PosX, self.m_PosY+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
 		dxDrawText(getZoneName(localPlayer.position), self.m_PosX + self.m_Width/2, self.m_PosY+self.m_Height-self.m_Height/20, nil, nil,
 			Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
@@ -350,6 +350,10 @@ function HUDRadar:drawBlips()
 			else
 				display = false
 			end
+		end
+
+		if blip:getSaveName() and not core:get("BlipVisibility", blip:getSaveName(), true) then
+			display = false
 		end
 
 		if blipX and display then -- TODO: hotfix for #236
