@@ -92,7 +92,7 @@ function DeathmatchManager:constructor()
 				player.deathmatchLobby:respawnPlayer(player, true, killer, weapon)
 				return true
 			end
-			if killer.deathmatchLobby then
+			if killer and killer.deathmatchLobby then
 				killer:givePoints(1)
 			end
 		end
