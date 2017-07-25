@@ -76,6 +76,7 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
+	["playerHistory"] = RANK.Supporter,
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
 	["freeze"] = RANK.Supporter,
