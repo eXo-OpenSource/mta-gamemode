@@ -229,3 +229,39 @@ function TextureReplacer.changeLoadingMode(loadingMode)
 		instance:setLoadingMode(loadingMode)
 	end
 end
+
+-- Events
+addEvent("changeElementTexture", true)
+addEventHandler("changeElementTexture", root,
+	function(vehicles)
+		for i, vehData in pairs(vehicles) do
+			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] then
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] = {}
+			end
+
+			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] then
+				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName])
+			end
+			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
+			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+			else
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+			end
+		end
+	end
+)
+
+addEvent("removeElementTexture", true)
+addEventHandler("removeElementTexture", root,
+	function(textureName)
+		if TextureReplacer.Map.SERVER_ELEMENTS[source] and TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] then
+			delete(TextureReplacer.Map.SERVER_ELEMENTS[source][textureName])
+			TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] = nil
+		end
+
+		if table.size(TextureReplacer.Map.SERVER_ELEMENTS[source]) <= 0 then
+			TextureReplacer.Map.SERVER_ELEMENTS[source] = nil
+		end
+	end
+)

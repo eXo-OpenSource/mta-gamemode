@@ -421,7 +421,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 {"None", _"Line", _"DiagonalRally", _"RallyStripes", _"ZebraStripes"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture > 1 then
 						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
 						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
@@ -433,7 +433,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 end,
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture ~= 1 then
                         self.m_PreviewShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     end

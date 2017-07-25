@@ -93,9 +93,4 @@ function VehicleTuning:loadTuningsFromVehicle()
 	self:saveGTATuning()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
-	if TextureReplace.Map[self.m_Vehicle] then
-		self.m_Tuning["Texture"] = TextureReplace.Map[self.m_Vehicle].m_TexturePath
-	else
-		self.m_Tuning["Texture"] = ""
-	end
 end
