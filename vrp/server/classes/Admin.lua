@@ -933,10 +933,11 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
         if targetPlayer:getFaction() then
+			local faction = targetPlayer:getFaction()
 			if external or internal then
-				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, targetPlayer:getFaction().m_Id, "faction", internal, external)
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
-			targetPlayer:getFaction():removePlayer(targetPlayer) 
+			faction:removePlayer(targetPlayer) 
 		end
 
         if Id == 0 then
@@ -946,6 +947,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
     		if faction then
 				if external or internal then
 					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, 6, faction.m_Id, "faction")
 				end
 
     			faction:addPlayer(targetPlayer,6)
@@ -962,10 +964,11 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
         if targetPlayer:getCompany() then
+			local company = targetPlayer:getCompany()
 			if external or internal then
-				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, targetPlayer:getCompany().m_Id, "company", internal, external)
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
 			end
-			targetPlayer:getCompany():removePlayer(targetPlayer) 
+			company:removePlayer(targetPlayer) 
 		end
 
         if Id == 0 then
@@ -975,6 +978,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, internal, external)
     		if company then
 				if external or internal then
 					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, 5, company.m_Id, "company")
 				end
     			company:addPlayer(targetPlayer,5)
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))

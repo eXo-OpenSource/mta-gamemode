@@ -63,8 +63,10 @@ function HistoryPlayerGUI:Event_OnPlayerHistoryReceived(infos)
 			local text = (info.ElementType == "faction" and "Fraktion" or  "Unternehmen") ..": " .. info.ElementName .. "\n"
 			text = text .. "Beitritt: " .. info.JoinDate .. "\n"
 			text = text .. "Invited von: " .. info.Inviter .. "\n"
+			text = text .. "höchster erreichter Rang: " .. info.HighestRank .. "\n"
 			text = text .."Austritt: " .. info.LeaveDate .. "\n"
 			text = text .. "Uninvited von: " .. info.Uninviter .. "\n"
+			text = text .. "Rang beim Uninvite: " .. info.UninviteRank .. "\n"
 			text = text .."Extener Grund: " .. info.ExternalReason
 
 			if info.InternalReason then

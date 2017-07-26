@@ -18,21 +18,35 @@ function HistoryPlayer:destructor()
 
 end
 
-function HistoryPlayer:addLeaveEntry(playerId, uninviterId, elementId, elementType, internal, external)
-    local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), userId, elementId, elementType)
+function HistoryPlayer:addLeaveEntry(playerId, uninviterId, elementId, elementType, uninviteRank, internal, external)
+    local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
 	
     if not result or #result == 0 then
-	sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
-        sql:getPrefix(), playerId, uninviterId, elementId, elementType, internal, external)
+        sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
+            sql:getPrefix(), playerId, uninviterId, elementId, elementType, uninviteRank, uninviteRank, internal, external)
     else
-        sql:queryExec("UPDATE ??_player_history SET LeaveDate = NOW(), InternalReason = ?, ExternalReason = ?, UninviterId = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
-            sql:getPrefix(), internal, external, uninviterId, playerId, elementId, elementType)
+        sql:queryExec("UPDATE ??_player_history SET LeaveDate = NOW(), InternalReason = ?, ExternalReason = ?, UninviterId = ?, UninviteRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
+            sql:getPrefix(), internal, external, uninviterId, uninviteRank, playerId, elementId, elementType)
     end
 end
 
 function HistoryPlayer:addJoinEntry(playerId, inviterId, elementId, elementType)
 	sql:queryExec("INSERT INTO ??_player_history (UserId, InviterId, ElementId, ElementType, JoinDate) VALUES (?, ?, ?, ?, NOW())",
         sql:getPrefix(), playerId, inviterId, elementId, elementType)
+end
+
+function HistoryPlayer:setHighestRank(playerId, rank, elementId, elementType)
+    local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
+
+    if not result or #result == 0 then
+        sql:queryExec("INSERT INTO ??_player_history (UserId, ElementId, ElementType, HighestRank, JoinDate, InviterId) VALUES (?, ?, ?, ?, NOW(), 0)",
+            sql:getPrefix(), playerId, elementId, elementType, rank)
+    else
+        if rank > result[1].Rank then
+            sql:queryExec("UPDATE ??_player_history SET HighestRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
+                sql:getPrefix(), rank, playerId, elementId, elementType)
+        end
+    end
 end
 
 function HistoryPlayer:Event_SearchPlayerHistory(name)
@@ -70,7 +84,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 
 	if not client.m_LastFileRequest or client.m_LastFileRequest > getTickCount() - 500 then
         local playerFile = {}
-        local result = sql:queryFetch("SELECT Id, InviterId, UninviterId, ElementType, ElementId, DATE_FORMAT(JoinDate, '%d.%m.%Y') AS JoinDate, DATE_FORMAT(LeaveDate, '%d.%m.%Y') AS LeaveDate, InternalReason, ExternalReason FROM ??_player_history WHERE UserId = ?;", sql:getPrefix(), userId)
+        local result = sql:queryFetch("SELECT Id, InviterId, HighestRank, UninviteRank, UninviterId, ElementType, ElementId, DATE_FORMAT(JoinDate, '%d.%m.%Y') AS JoinDate, DATE_FORMAT(LeaveDate, '%d.%m.%Y') AS LeaveDate, InternalReason, ExternalReason FROM ??_player_history WHERE UserId = ?;", sql:getPrefix(), userId)
         for i, row in pairs(result) do
 
             playerFile[row.Id] = {
@@ -78,7 +92,9 @@ function HistoryPlayer:Event_PlayerHistory(userId)
                 ElementId = row.ElementId,
 				JoinDate = row.JoinDate and row.JoinDate or "",
 				LeaveDate = row.LeaveDate and row.LeaveDate or "",
-				ExternalReason = row.ExternalReason and row.ExternalReason or ""
+				ExternalReason = row.ExternalReason and row.ExternalReason or "",
+				HighestRank = row.HighestRank,
+				UninviteRank = row.UninviteRank
 			}
            
             if row.InviterId == 0 then
@@ -113,6 +129,7 @@ end
 
 
 --[[
+DROP TABLE vrp_player_history;
 CREATE TABLE vrp_player_history
 (
     Id INT PRIMARY KEY AUTO_INCREMENT,
@@ -123,6 +140,8 @@ CREATE TABLE vrp_player_history
     ElementId INT,
     InternalReason VARCHAR(128),
     ExternalReason VARCHAR(128),
+    HighestRank INT(1) DEFAULT 0,
+    UninviteRank INT(1) DEFAULT 0,
     JoinDate DATE,
     LeaveDate DATE
 );

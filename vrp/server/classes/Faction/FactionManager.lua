@@ -242,7 +242,7 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 		return
 	end
 	
-	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, faction.m_Id, "faction", reasonInternaly, reasonExternaly)
+	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
 
 	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geworfen!")
 
@@ -338,6 +338,7 @@ function FactionManager:Event_factionRankUp(playerId)
 			if playerRank < FactionRank.Leader then
 				if playerRank < faction:getPlayerRank(client) then
 					faction:setPlayerRank(playerId, playerRank + 1)
+					HistoryPlayer:getSingleton():setHighestRank(playerId, (playerRank + 1), faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
 					if isOffline then
 						delete(player)
@@ -382,6 +383,7 @@ function FactionManager:Event_factionRankDown(playerId)
 			if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
 				if faction:getPlayerRank(playerId) <= faction:getPlayerRank(client) then
 					faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
+					HistoryPlayer:getSingleton():setHighestRank(playerId, playerRank, faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 					if isOffline then
 						delete(player)

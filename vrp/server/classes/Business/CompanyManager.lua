@@ -204,7 +204,7 @@ function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, rea
 
 	company:removePlayer(playerId)
 
-	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, company.m_Id, "company", reasonInternaly, reasonExternaly)
+	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, company.m_Id, "company", company:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
 
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 
@@ -268,6 +268,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 	if company:getPlayerRank(playerId) < CompanyRank.Leader then
 		if company:getPlayerRank(playerId) < company:getPlayerRank(client) then
 			company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
+			HistoryPlayer:getSingleton():setHighestRank(playerId, company:getPlayerRank(playerId), company.m_Id, "company")
 			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
@@ -300,6 +301,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
 		if company:getPlayerRank(playerId) <= company:getPlayerRank(client) then
+			HistoryPlayer:getSingleton():setHighestRank(playerId, company:getPlayerRank(playerId), company.m_Id, "company")
 			company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
 			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
 			local player = DatabasePlayer.getFromId(playerId)
