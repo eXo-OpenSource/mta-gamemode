@@ -98,7 +98,8 @@ end
 
 function JobGravel:Event_onRockSync(data)
 	for k, v in pairs(data) do
-		-- Event_onRockSync
+		v.element:setPosition(v.position)
+		v.element:setVelocity(v.velocity)
 	end
 end
 
