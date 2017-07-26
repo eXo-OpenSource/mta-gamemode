@@ -163,7 +163,7 @@ function PolicePanel:loadPlayers()
 	self.m_PlayersGrid:clear()
 	self.m_Players = {}
 
-	for i = 0, 6 do
+	for i = 0, MAX_WANTED_LEVEL do
 		for Id, player in pairs(Element.getAllByType("player")) do
 			if player:getWanteds() == i then
 				if not self.m_Players[i] then self.m_Players[i] = {} end
@@ -178,7 +178,7 @@ function PolicePanel:loadPlayers()
 		end
 	end
 
-	for i = 6, 0, -1 do
+	for i = MAX_WANTED_LEVEL, 0, -1 do
 		if self.m_Players[i] then
 			self.m_PlayersGrid:addItemNoClick(("%s Wanteds"):format(i), "")
 
