@@ -93,7 +93,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 				JoinDate = row.JoinDate and row.JoinDate or "",
 				LeaveDate = row.LeaveDate and row.LeaveDate or "",
 				ExternalReason = row.ExternalReason and row.ExternalReason or "",
-				     = row.HighestRank,
+				HighestRank = row.HighestRank,
 				UninviteRank = row.UninviteRank
 			}
            
