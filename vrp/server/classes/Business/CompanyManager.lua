@@ -313,27 +313,6 @@ function CompanyManager:Event_companyRankDown(playerId)
 	end
 end
 
-function CompanyManager:Event_openCompanyWeaponShopGUI()
-	local company = client:getCompany()
-	if company then
-		client:triggerEvent("showCompanyWeaponShopGUI")
-	end
-end
-
-function CompanyManager:Event_receiveCompanyWeaponShopInfos()
-	local company = client:getCompany()
-	local depot = company.m_Depot
-	local playerId = client:getId()
-	local rank = company.m_Players[playerId]
-	triggerClientEvent(client,"updateCompanyWeaponShopGUI",client,company.m_ValidWeapons, company.m_WeaponDepotInfo, depot:getWeaponTable(id), company:getRankWeapons(rank))
-end
-
-function CompanyManager:Event_companyWeaponShopBuy(weaponTable)
-	local company = client:getCompany()
-	local depot = company.m_Depot
-	depot:takeWeaponsFromDepot(client,weaponTable)
-end
-
 function CompanyManager:Event_companyRespawnVehicles()
 	if client:getCompany() then
 		local company = client:getCompany()
