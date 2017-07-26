@@ -195,7 +195,7 @@ end
 function FactionState:Event_OnConfirmSelfArrest()
 	local bailcosts = 0
 	local wantedLevel = client:getWanteds()
-	local jailTime = wantedLevel * 5
+	local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 	local factionBonus = JAIL_COSTS[wantedLevel]
 	bailcosts = BAIL_PRICES[wantedLevel]
 	client:setJailTime(jailTime)
@@ -983,7 +983,7 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
-function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus)
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus, offline)
 	if player:getWanteds() == 0 then return end
 	local policeman = police or client
 	if not force then
@@ -992,7 +992,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 				if player:getWanteds() > 0 then
 					local bailcosts = 0
 					local wantedLevel = player:getWanteds()
-					local jailTime = wantedLevel * 5
+					local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 					local factionBonus = JAIL_COSTS[wantedLevel]
 
 					if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -1002,7 +1002,12 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					if bail then
 						bailcosts = BAIL_PRICES[wantedLevel]
 						player:setJailBail(bailcosts)
+						jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 					end
+					if offline then
+						jailTime = wantedLevel * JAIL_TIME_PER_WANTED_OFFLINE
+					end
+
 
 					if policeman.vehicle and player.vehicle then
 						self:Command_tie(policeman, "tie", player:getName(), false, true)
@@ -1057,7 +1062,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 	else
 		local bailcosts = 0
 		local wantedLevel = player:getWanteds()
-		local jailTime = wantedLevel * 5
+		local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 		local factionBonus = JAIL_COSTS[wantedLevel]
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			factionBonus = JAIL_COSTS[wantedLevel]/2
@@ -1065,6 +1070,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if bail then
 			bailcosts = BAIL_PRICES[wantedLevel]
 			player:setJailBail(bailcosts)
+			jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 		end
 		if policeman then
 			if policeman.vehicle and player.vehicle then
@@ -1400,8 +1406,8 @@ function FactionState:checkLogout(player)
 	col:destroy()
 	for index, cop in pairs(colPlayers) do
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
-			self:Event_JailPlayer(player, false, false, cop)
-			player:addOfflineMessage( "Sie wurden offline eingesperrt!", 1)
+			self:Event_JailPlayer(player, false, false, cop, false, false, true)
+			player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Kanstzeit ist dadurch länger!", 1)
 			return
 		end
 	end
