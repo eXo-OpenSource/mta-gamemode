@@ -10,7 +10,7 @@ function PublicTransport:constructor()
 	addEventHandler("publicTransportSetTargetTell", root, bind(self.Event_sendTargetTellMessage, self))
 
 	VehicleBarrier:new(Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), 0).onBarrierHit = bind(self.onBarrierHit, self)
-
+	
 	self:addBusStops()
 end
 

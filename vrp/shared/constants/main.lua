@@ -54,6 +54,27 @@ JOB_LEVEL_GRAVEL = 6
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+BLIP_CATEGORY = {
+	Default = "Allgemein",
+	Shop = "Shops",
+	Job = "Arbeitsstellen",
+	Faction = "Fraktions-Basen",
+	Company = "Unternehmenssitze",
+	VehicleMaintenance = "Fahrzeug-Unterhaltung",
+	Leisure = "Freizeit",
+	Other = "Anderes",
+}
+
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
+BLIP_CATEGORY_ORDER = {
+	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
+}
+
 --USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"

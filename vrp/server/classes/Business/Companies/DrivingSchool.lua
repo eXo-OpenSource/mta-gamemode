@@ -64,6 +64,11 @@ function DrivingSchool:constructor()
     local safe = createObject(2332, -2032.70, -113.70, 1036.20)
     safe:setInterior(3)
 	self:setSafe(safe)
+
+	local id = self:getId()
+	local blip = Blip:new("DrivingSchool.png", 1364.14, -1669.10, root, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
+
 	self.m_CurrentLessions = {}
     addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory","drivingSchoolRequestSpeechBubble", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker", "requestAutomaticTestPedBubble"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))

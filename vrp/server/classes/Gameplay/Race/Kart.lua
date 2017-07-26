@@ -23,7 +23,10 @@ local lapPrice = 20
 local lapPackDiscount = 4
 
 function Kart:constructor()
-	self.m_Blip = Blip:new("Wheel.png", 1300.59, 140.70)
+	self.m_Blip = Blip:new("Kart.png", 1300.59, 140.70)
+	self.m_Blip:setDisplayText("Kartbahn", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({0, 200, 50})
+
 
 	self.m_Polygon = createColPolygon(1269, 66, 1269.32, 66.64, 1347.71, 31.07, 1382.18, 41.35, 1413.99, 117.01, 1314.21, 163.72)
 	self.m_Timers = {}

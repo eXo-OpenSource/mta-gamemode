@@ -151,6 +151,7 @@ function Company:addPlayer(playerId, rank)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(self)
+		player:reloadBlips()
 	end
 
 	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
@@ -172,6 +173,7 @@ function Company:removePlayer(playerId)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(nil)
+		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end

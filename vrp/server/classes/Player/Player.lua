@@ -259,7 +259,7 @@ function Player:loadCharacterInfo()
 	for k,v in ipairs( props ) do
 		self:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
 		x,y,z = getElementPosition( v.m_Pickup )
-		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
+		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id, self:getGroup():getType())
 	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
@@ -723,6 +723,16 @@ end
 
 function Player:isCompanyDuty()
   return self.m_CompanyDuty
+end
+
+function Player:setFactionDuty(state)
+	self.m_FactionDuty = state
+	self:reloadBlips()
+end
+
+function Player:setCompanyDuty(state)
+	self.m_CompanyDuty = state
+	self:reloadBlips()
 end
 
 function Player:setJobDutySkin(skin)
@@ -1236,6 +1246,10 @@ end
 
 function Player:setModel( skin )
 	setElementModel( self, skin or 0)
+end
+
+function Player:reloadBlips()
+	return Blip.sendAllToClient(self)
 end
 
 function Player:endPrison()

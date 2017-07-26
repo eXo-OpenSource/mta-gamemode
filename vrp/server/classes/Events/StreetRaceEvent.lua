@@ -34,7 +34,9 @@ function StreetRaceEvent:onStart()
 				pos, randomIndex = self.getRandomPosition()
 			until randomIndex ~= self.m_StartIndex
 
-			self.m_DestinationBlip = Blip:new("Waypoint.png", pos.x, pos.y,root,9999)
+			self.m_DestinationBlip = Blip:new("Marker.png", pos.x, pos.y,root,9999)
+			self.m_DestinationBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
+			self.m_DestinationBlip:setDisplayText("Ziel")
 			self.m_ColShape = createColSphere(pos, 20)
 			addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 

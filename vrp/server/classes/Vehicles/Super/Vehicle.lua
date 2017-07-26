@@ -507,7 +507,7 @@ end
 function Vehicle:countdownDestroyAbort(player)
 	if not player then player = self.m_CountdownDestroyPlayer end
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
-		player:triggerEvent("CountdownStop", "Fahrzeug")
+		if isElement(player) then player:triggerEvent("CountdownStop", "Fahrzeug") end
 		killTimer(self.m_CountdownDestroyTimer)
 	end
 	self.m_CountdownDestroyPlayer = nil

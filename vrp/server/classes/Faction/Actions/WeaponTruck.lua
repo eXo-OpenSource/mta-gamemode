@@ -63,14 +63,19 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
-		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true, true)
+		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true)
 	elseif self.m_Type == "state" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-			self:addDestinationMarker(faction:getId(), "evil", false, false)
+			self:addDestinationMarker(faction:getId(), "evil", false)
 		end
 	end
+
+	local factionId = self.m_StartFaction:getId()
+	local dest = factionWTDestination[factionId]
+	self.m_DestinationBlips[factionId] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
+
 
 	self.m_BoxesCount = 8
 
@@ -98,7 +103,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	self:spawnBoxes()
 	self:createLoadMarker()
-	self:addDestinationMarker(1, "state", true) -- State
+	self:addDestinationMarker(1, "state") -- State
 
 end
 
@@ -318,7 +323,7 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	end
 end
 
-function WeaponTruck:addDestinationMarker(factionId, type, blip, isEvil)
+function WeaponTruck:addDestinationMarker(factionId, type, isEvil)
 	local markerId = #self.m_DestinationMarkers+1
 	local color = factionColors[factionId]
 	local destination = factionWTDestination[factionId]
@@ -327,19 +332,6 @@ function WeaponTruck:addDestinationMarker(factionId, type, blip, isEvil)
 	self.m_DestinationMarkers[markerId].factionId = factionId
 
 	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
-
-	if blip then
-		local facObj = FactionManager:getSingleton():getFromId(factionId)
-		if facObj then
-			local blipId = #self.m_DestinationBlips+1
-			if isEvil then
-				self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction",facObj}, 9999)
-			else 
-				self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
-			end
-		end
-	end
-
 end
 
 function WeaponTruck:Event_OnWeaponTruckExit(player,seat)

@@ -25,7 +25,7 @@ function NoDm:constructor()
 		if koords[3] and koords[3] > 0 then
 			colshape:setInterior(koords[3])
 		else
-			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
+			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 150})
 		end
 		self:addZone(colshape)
 	end

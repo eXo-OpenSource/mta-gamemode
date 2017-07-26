@@ -13,7 +13,7 @@ addRemoteEvents{ "nextPizzaDelivery" }
 local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07
 local objID = 1582
 function JobPizza:constructor()
-	Job.constructor(self, 155, 2108.99, -1790.68, 13.55, 0, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
+	Job.constructor(self, 155, 2108.99, -1790.68, 13.55, 0, "Pizza.png", {170, 150, 100}, "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_PIZZA)
 
 	-- add job to help menu
@@ -63,7 +63,10 @@ function JobPizza:nextDeliver( )
 	GPS:getSingleton():startNavigationTo(Vector3(x, y, z))
 	self.m_DeliverDistance = math.floor( getDistanceBetweenPoints2D( px, py, x, y) )
 	addEventHandler("onClientMarkerHit",self.m_PizzaJobMarker,bind( JobPizza.onMarkerHit, self))
-	self.m_PizzaJobBlip = Blip:new("Waypoint.png",x , y,9999)
+	self.m_PizzaJobBlip = Blip:new("Marker.png",x , y,9999)
+	self.m_PizzaJobBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
+	self.m_PizzaJobBlip:setDisplayText("Pizza-Lieferadresse")
+
 	self.m_PizzaTick = getTickCount()
 end
 
@@ -91,7 +94,9 @@ function JobPizza:pickupDeliver( )
 	self:throwPizza()
 	self.m_PizzaPickupMarker = createMarker( PickupX, PickupY, PickupZ , "checkpoint", 2, 200, 200, 0, 255)
 	GPS:getSingleton():startNavigationTo(Vector3(PickupX, PickupY, PickupZ))
-	self.m_PizzaJobBlip = Blip:new("Waypoint.png",PickupX , PickupY,9999)
+	self.m_PizzaJobBlip = Blip:new("Marker.png", PickupX, PickupY, 9999)
+	self.m_PizzaJobBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
+	self.m_PizzaJobBlip:setDisplayText("Pizza-Stack")
 	addEventHandler("onClientMarkerHit",self.m_PizzaPickupMarker,bind( JobPizza.onNextDeliver, self))
 end
 

@@ -346,7 +346,7 @@ function PolicePanel:locateElement(element, locationOf)
 		self:stopLocating()
 
 		local pos = element:getPosition()
-		ElementLocateBlip = Blip:new("Locate.png", pos.x, pos.y, 9999)
+		ElementLocateBlip = Blip:new("Marker.png", pos.x, pos.y, 9999)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))

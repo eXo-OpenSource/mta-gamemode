@@ -182,8 +182,8 @@ end
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlips[player:getId()] = Blip:new("Waypoint.png", x, y, player, 4000)
-		self.m_DeliveryBlips[player:getId()]:setStreamDistance(4000)
+		self.m_DeliveryBlips[player:getId()] = Blip:new("Marker.png", x, y, player, 4000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DeliveryBlips[player:getId()]:setDisplayText("Kisten-Abgabe")
 	else
 		delete(self.m_DeliveryBlips[player:getId()])
 	end

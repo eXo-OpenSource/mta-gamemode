@@ -9,7 +9,7 @@ JobTreasureSeeker = inherit(Job)
 JobTreasureSeeker.Rope = {}
 
 function JobTreasureSeeker:constructor()
-	Job.constructor(self, 1, 714.30, -1703.26, 2.43, 270, "TreasureSeeker.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.TreasureSeeker):gsub("Job: ", ""), _(HelpTexts.Jobs.TreasureSeeker), self.onInfo)
+	Job.constructor(self, 1, 714.30, -1703.26, 2.43, 270, "TreasureSeeker.png", {150, 110, 50}, "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.TreasureSeeker):gsub("Job: ", ""), _(HelpTexts.Jobs.TreasureSeeker), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_TREASURESEEKER)
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.TreasureSeeker):gsub("Job: ", ""), "jobs.treasureseeker")

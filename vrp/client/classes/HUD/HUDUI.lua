@@ -10,7 +10,7 @@ HUDUI = inherit(Singleton)
 function HUDUI:constructor()
 	self.m_IsVisible = false
 	self.m_Font = VRPFont(70)
-	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.vRoleplay)
+	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.Chart)
 	self.m_Enabled = core:get("HUD", "showUI", true)
 	self.m_RedDot = core:get("HUD", "reddot", false)
 	self.m_Scale = core:get("HUD", "hudScale", 1)
@@ -23,18 +23,11 @@ function HUDUI:constructor()
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
 		setPlayerHudComponentVisible("all", true)
 		setPlayerHudComponentVisible("wanted", false)
-		--showPlayerHudComponent("radar", false)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	else
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 
 	self.m_RenderHandler = bind(self.draw,self)
@@ -91,18 +84,11 @@ function HUDUI:setUIMode(uiMode)
 	if uiMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", true)
 		setPlayerHudComponentVisible("wanted", false)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
-		--showPlayerHudComponent("radar", false)
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	elseif self.m_UIMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 	self.m_ChartAnims = {} -- unload chart ui animations
 	self.m_UIMode = uiMode
@@ -116,17 +102,10 @@ function HUDUI:setEnabled(state)
 		if not state then
 			setPlayerHudComponentVisible("all", false)
 			setPlayerHudComponentVisible("crosshair", true)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		else
 			setPlayerHudComponentVisible("all", true)
-			--showPlayerHudComponent("radar", false)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		end
 	end
 end

@@ -191,7 +191,7 @@ function Faction:addPlayer(playerId, rank)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
 		end
-
+		player:reloadBlips()
 		player:giveAchievement(68) -- Parteiisch
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
@@ -217,10 +217,12 @@ function Faction:removePlayer(playerId)
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:setDefaultSkin()
-			player.m_FactionDuty = false
+			player:setFactionDuty(false)
 			player:setPublicSync("Faction:Duty",false)
 			player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 			self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
+		else
+			player:reloadBlips()
 		end
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
@@ -370,12 +372,12 @@ function Faction:getPlayers(getIDsOnly)
 	return temp
 end
 
-function Faction:getOnlinePlayers(afkCheck)
+function Faction:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			if not afkCheck or not player.m_isAFK then
+			if (not afkCheck or not player.m_isAFK) and (not dutyCheck or player:isFactionDuty()) then
 				players[#players + 1] = player
 			end
 		end
@@ -392,6 +394,24 @@ end
 function Faction:sendShortMessage(text, ...)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		player:sendShortMessage(_(text, player), self:getName(), {11, 102, 8}, ...)
+	end
+end
+
+function Faction:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local fType = self:getType()
+		local blip = Blip:new(fType == "State" and "Alarm.png" or fType == "Evil" and "Gangwar.png" or fType == "Rescue" and "Fire.png",
+			pos[1], pos[2], {faction = self:getId(), duty = (not withOffDuty)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:destroy()
+		end, 30000, 1)
 	end
 end
 

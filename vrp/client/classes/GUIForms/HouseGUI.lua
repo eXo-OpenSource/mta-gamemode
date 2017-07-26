@@ -256,6 +256,8 @@ addEventHandler("addHouseBlip", root,
 	function(id, x, y)
 		if not HouseGUI.Blips[id] then
 			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
+			HouseGUI.Blips[id]:setDisplayText("Haus")
+			HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
 		end
 	end
 )

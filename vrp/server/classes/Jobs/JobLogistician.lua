@@ -93,8 +93,8 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 	end
 	player:startNavigationTo(pos)
 
-	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player,9999)
-	blip:setStreamDistance(10000)
+	local blip = Blip:new("Marker.png", pos.x, pos.y, player,9999, BLIP_COLOR_CONSTANTS.Red)
+		blip:setDisplayText("Container-Abgabepunkt")
 	player:setData("Logistician:Blip", blip)
 
 	player:setData("Logistician:TargetMarker", targetMarker)

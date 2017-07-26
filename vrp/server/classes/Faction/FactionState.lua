@@ -215,7 +215,8 @@ function FactionState:loadLSPD(factionId)
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
 
-	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
+	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
 
@@ -237,12 +238,15 @@ function FactionState:loadLSPD(factionId)
 
 
 	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
-	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
 function FactionState:loadFBI(factionId)
 	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
+
+	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 226.80, 128.50, 1010.20)
 	safe:setInterior(10)
@@ -277,6 +281,9 @@ end
 function FactionState:loadArmy(factionId)
 	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
 	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
+
+	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
@@ -319,8 +326,8 @@ function FactionState:createTakeItemsPickup(pos)
 	end)
 end
 
-function FactionState:countPlayers()
-	local count = #self:getOnlinePlayers()
+function FactionState:countPlayers(afkCheck, dutyCheck)
+	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
 	return count
 end
 
@@ -491,11 +498,11 @@ function FactionState:Event_CuffSuccess( target )
 	end
 end
 
-function FactionState:getOnlinePlayers()
+function FactionState:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = self:getFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
-		for index, value in pairs(faction:getOnlinePlayers()) do
+		for index, value in pairs(faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 			table.insert(players, value)
 		end
 	end
@@ -699,11 +706,19 @@ function FactionState:sendShortMessage(text, ...)
 	end
 end
 
-function FactionState:sendWarning(text, header, withOffDuty, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		if player:isFactionDuty() or withOffDuty then
-			player:sendWarning(_(text, player, ...), 30000, header)
+function FactionState:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Alarm.png", pos[1], pos[2], {factionType = "State", duty = (withOffDuty and nil or true)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
 		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 
@@ -935,16 +950,28 @@ end
 
 function FactionState:Command_needhelp(player)
 	local faction = player:getFaction()
+	local player = player
 	if faction and faction:isStateFaction() then
 		if player:isFactionDuty() then
 			if player:getInterior() == 0 and player:getDimension() == 0 then
+				if player.m_ActiveNeedHelp then return false end
+				player.m_ActiveNeedHelp = true
 				local rankName = faction:getRankName(faction:getPlayerRank(player))
-				local zoneName = getZoneName(player:getPosition()).."/"..getZoneName(player:getPosition(), true)
-				for k, onlineplayer in pairs(self:getOnlinePlayers()) do
-					onlineplayer:sendMessage(_("%s %s benötigt Unterstützung! Ort: %s", onlineplayer, rankName, player:getName(), zoneName), 50, 200, 255)
-					onlineplayer:sendMessage(_("Begib dich dort hin! Der Ort wird auf der Karte markiert!", onlineplayer), 50, 200, 255)
-					onlineplayer:triggerEvent("stateFactionNeedHelp", player)
+				local color = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+				local blip = Blip:new("Marker.png", player.position.x, player.position.y, {factionType = "State", duty = true}, 9999, color)
+					blip:setDisplayText(player.name)
+					blip:attach(player)
+
+				for k, onlinePlayer in pairs(self:getOnlinePlayers(true, true)) do
+					onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
 				end
+
+				setTimer(function()
+					blip:delete()
+					if isElement(player) then
+						player.m_ActiveNeedHelp = false
+					end
+				end, 20000, 1)
 			else
 				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
 			end
@@ -953,15 +980,6 @@ function FactionState:Command_needhelp(player)
 		end
 	else
 		player:sendError(_("Du bist in keiner Staatsfraktion!", player))
-	end
-end
-
-function FactionState:showRobbedHouseBlip( suspect, housepickup)
-	local zoneName = getZoneName(housepickup:getPosition())
-	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
-		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
-		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
-		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
 	end
 end
 
@@ -1249,7 +1267,7 @@ function FactionState:Event_toggleDuty(wasted)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
-				client.m_FactionDuty = false
+				client:setFactionDuty(false)
 				takeAllWeapons(client)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
@@ -1267,7 +1285,7 @@ function FactionState:Event_toggleDuty(wasted)
 					return false
 				end
 				faction:changeSkin(client)
-				client.m_FactionDuty = true
+				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
 				takeAllWeapons(client)
