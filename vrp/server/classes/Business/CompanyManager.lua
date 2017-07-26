@@ -202,9 +202,9 @@ function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, rea
 		return
 	end
 
-	company:removePlayer(playerId)
-
 	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, company.m_Id, "company", company:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
+
+	company:removePlayer(playerId)
 
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 

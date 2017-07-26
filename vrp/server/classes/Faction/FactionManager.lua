@@ -384,7 +384,7 @@ function FactionManager:Event_factionRankDown(playerId)
 			if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
 				if faction:getPlayerRank(playerId) <= faction:getPlayerRank(client) then
 					faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
-					HistoryPlayer:getSingleton():setHighestRank(playerId, playerRank, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(playerId, faction:getPlayerRank(playerId) + 1, faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 					if isOffline then
 						delete(player)
