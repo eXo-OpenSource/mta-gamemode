@@ -114,7 +114,7 @@ function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 		source.m_Position = Vector3(posX, posY, posZ)
 		source.m_Velocity = Vector3(velX, velY, velZ)
 		
-		for k, v in ipairs(self.m_Col:getElementsWithin()) do
+		for k, v in ipairs(self.m_Col:getElementsWithin("player")) do
 			if v ~= client then
 				v:triggerEvent("gravelOnSync", {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
 			end
