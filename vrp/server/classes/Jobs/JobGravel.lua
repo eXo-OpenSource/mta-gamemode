@@ -51,6 +51,7 @@ function JobGravel:constructor()
 
 	self.m_Col = createColSphere(592.54, 868.73, -42.497, 300)
 	addEventHandler("onColShapeLeave", self.m_Col , bind(self.onGravelJobLeave, self))
+	addEventHandler("onColShapeHit", self.m_Col , bind(self.onGravelJobEnter, self))
 
 	self.m_TimedPulse = TimedPulse:new(60000)
 	self.m_TimedPulse:registerHandler(bind(self.destroyUnusedGravel, self))
@@ -110,8 +111,30 @@ end
 
 function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 	if getElementData(source, "syncer") == client then
-		source:setPosition(Vector3(posX, posY, posZ))
-		source:setVelocity(Vector3(velX, velY, velZ))
+		source.m_Position = Vector3(posX, posY, posZ)
+		source.m_Velocity = Vector3(velX, velY, velZ)
+		
+		for k, v in ipairs(self.m_Col:getElementsWithin()) do
+			if v ~= client then
+				v:triggerEvent("gravelOnSync", v, {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
+			end
+		end
+		--[[source:setPosition()
+		source:setVelocity(Vector3(velX, velY, velZ))]]
+	end
+end
+
+function JobGravel:onGravelJobEnter(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		local gravel = {}
+
+		for k, v in pairs(self.m_Gravel) do
+			if v.mined then
+				table.insert(gravel, {element = v, position = v.m_Position, velocity = v.m_Velocity})
+			end
+		end
+
+		hitElement:triggerEvent("gravelOnSync", hitElement, gravel)
 	end
 end
 

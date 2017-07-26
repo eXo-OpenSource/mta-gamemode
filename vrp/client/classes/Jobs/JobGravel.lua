@@ -8,7 +8,7 @@
 
 JobGravel = inherit(Job)
 
-addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission"}
+addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission", "gravelOnSync"}
 
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
@@ -22,6 +22,7 @@ function JobGravel:constructor()
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
 	self.Event_onDebugRender = bind(self.onDebugRender, self)
 	addEventHandler("gravelDisableCollission", root, bind(self.Event_disableGravelCollission, self))
+	addEventHandler("gravelOnSync", root, bind(self.Event_onRockSync, self))
 
 end
 
@@ -92,6 +93,12 @@ function JobGravel:start()
 
 	if getDevelopmentMode() then
 		addEventHandler("onClientRender", root, self.Event_onDebugRender)
+	end
+end
+
+function JobGravel:Event_onRockSync(data)
+	for k, v in pairs(data) do
+		-- Event_onRockSync
 	end
 end
 
