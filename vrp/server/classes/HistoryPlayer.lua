@@ -22,7 +22,7 @@ function HistoryPlayer:addLeaveEntry(playerId, uninviterId, elementId, elementTy
     local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
 	
     if not result or #result == 0 then
-        sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
+        sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
             sql:getPrefix(), playerId, uninviterId, elementId, elementType, uninviteRank, uninviteRank, internal, external)
     else
         sql:queryExec("UPDATE ??_player_history SET LeaveDate = NOW(), InternalReason = ?, ExternalReason = ?, UninviterId = ?, UninviteRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
@@ -93,7 +93,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 				JoinDate = row.JoinDate and row.JoinDate or "",
 				LeaveDate = row.LeaveDate and row.LeaveDate or "",
 				ExternalReason = row.ExternalReason and row.ExternalReason or "",
-				HighestRank = row.HighestRank,
+				     = row.HighestRank,
 				UninviteRank = row.UninviteRank
 			}
            
