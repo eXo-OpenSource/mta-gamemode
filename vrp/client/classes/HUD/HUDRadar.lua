@@ -119,7 +119,7 @@ function HUDRadar:updateMapTexture(checkForDesign)
 	if checkForDesign or not self.m_MapImagePath then
 		self.m_MapImagePath = self:makePath("Radar.jpg", false, checkForDesign)
 	end
-	dxDrawRectangle(0, 0, self.m_ImageSize, self.m_ImageSize, tocolor(108, 137, 171)) -- water
+	dxDrawRectangle(0, 0, self.m_ImageSize, self.m_ImageSize, self.m_WaterColor) -- water
 	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self.m_MapImagePath)
 
 	if checkForDesign then

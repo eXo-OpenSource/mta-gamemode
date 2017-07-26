@@ -941,7 +941,7 @@ function Player:payDay()
 	end
 
 	--noob bonus
-	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME * 60 then
 		income = income + PAYDAY_NOOB_BONUS
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end

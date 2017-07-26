@@ -824,7 +824,9 @@ function SelfGUI:onSettingChange(setting)
 			self.m_ChartBlue:setVisible(false)
 			self.m_ChartLabels:setVisible(false)
 			self.m_ChartPoints:setVisible(false)
-				self.m_ChartZone:setVisible(false)
+			self.m_ChartZone:setVisible(false)
+			self.m_ChartSkin:setVisible(false)
+			self.m_ChartHours:setVisible(false)
 			if index == UIStyle.vRoleplay then
 				self.m_LifeArmor:setVisible(true)
 			elseif index == UIStyle.eXo then
@@ -836,6 +838,8 @@ function SelfGUI:onSettingChange(setting)
 				self.m_ChartLabels:setVisible(true)
 				self.m_ChartPoints:setVisible(true)
 				self.m_ChartZone:setVisible(true)
+				self.m_ChartSkin:setVisible(true)
+				self.m_ChartHours:setVisible(true)
 			end
 		end
 
@@ -883,9 +887,9 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
 		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
 
-		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
-		self.m_ChartPoints:setChecked(core:get("HUD", "chartPlaytimeVisible", false))
-		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPlaytimeVisible", state) end
+		self.m_ChartHours = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartHours:setChecked(core:get("HUD", "chartPlaytimeVisible", false))
+		self.m_ChartHours.onChange = function (state) core:set("HUD", "chartPlaytimeVisible", state) end
 
 		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
