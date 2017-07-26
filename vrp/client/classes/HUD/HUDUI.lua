@@ -212,7 +212,7 @@ function HUDUI:drawVRP()
 
 	-- Wantedlevel
 	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.105*screenHeight,tocolor(0,0,0,150))
-	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
+	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, localPlayer:getWanteds() > 0 and Color.Yellow or Color.White)
 	dxDrawText     (localPlayer:getWanteds(),screenWidth-0.05*screenWidth,0.16*screenHeight+(0.09*screenHeight/2),screenWidth-0.05*screenWidth+0.05*screenWidth,0,Color.White,0.5,self.m_Font, "center")
 
 	self:drawTimeRect()

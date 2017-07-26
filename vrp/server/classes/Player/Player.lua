@@ -989,7 +989,7 @@ function Player:payDay()
 
 	if self:getWanteds() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
-		self:takeWantedLevel(1)
+		self:takeWanteds(1)
 	end
 
 	if self:getSTVO() > 0 then

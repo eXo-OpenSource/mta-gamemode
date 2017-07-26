@@ -157,7 +157,6 @@ function DatabasePlayer:load()
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
 
 	if self:isActive() then
-		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 
 		-- Generate Session Id
@@ -578,10 +577,10 @@ function DatabasePlayer:takeBankMoney(amount, reason)
 	return false
 end
 
-function DatabasePlayer:giveWantedLevel(level)
+function DatabasePlayer:giveWanteds(level)
 	local newLevel = self.m_WantedLevel + level
-	if newLevel > 6 then
-		newLevel = 6
+	if newLevel > MAX_WANTED_LEVEL then
+		newLevel = MAX_WANTED_LEVEL
 	end
 	self:setWanteds(newLevel)
 
@@ -590,7 +589,7 @@ function DatabasePlayer:giveWantedLevel(level)
 	end
 end
 
-function DatabasePlayer:takeWantedLevel(level)
+function DatabasePlayer:takeWanteds(level)
 	local newLevel = self.m_WantedLevel - level
 	if newLevel < 0 then
 		newLevel = 0

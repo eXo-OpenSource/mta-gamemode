@@ -795,7 +795,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
-						target:giveWantedLevel(amount)
+						target:giveWanteds(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
@@ -1412,7 +1412,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:giveWantedLevel(amount)
+			target:giveWanteds(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
@@ -1425,7 +1425,7 @@ function FactionState:Event_clearWanteds(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:takeWantedLevel(6)
+			target:takeWanteds(6)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." alle Wanteds erlassen!")
