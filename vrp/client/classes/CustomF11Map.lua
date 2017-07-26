@@ -130,10 +130,10 @@ function CustomF11Map:draw()
 	local mapPosX, mapPosY = self.m_PosX, self.m_PosY
 
 	-- Draw map
-	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():makePath("Radar.jpg"), 0, 0, 0, tocolor(255, 255, 255, 200))
+	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():getImagePath(false, true), 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
 	local routeRenderTarget = HUDRadar:getSingleton():getRouteRenderTarget()
 	if routeRenderTarget then
-		dxDrawImage(mapPosX, mapPosY, height, height, routeRenderTarget, 0, 0, 0, tocolor(255, 255, 255, 200))
+		dxDrawImage(mapPosX, mapPosY, height, height, routeRenderTarget, 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
 	end
 
 	-- Draw GPS info
@@ -149,9 +149,9 @@ function CustomF11Map:draw()
 
 			if v.flashing then
 				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, Color.Red)
-				dxDrawRectangle(mapPosX + mapX + 2, mapPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, 165))
+				dxDrawRectangle(mapPosX + mapX + 2, mapPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
 			else
-				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, 165))
+				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
 			end
 		end
 	end
@@ -189,7 +189,7 @@ function CustomF11Map:draw()
 				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
 					if math.abs(pz - blip:getZ()) > 3 then
 						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
-						imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
+						imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
 					end
 				end
 
@@ -203,7 +203,7 @@ function CustomF11Map:draw()
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
 	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
-	dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
+	dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, HUDRadar:getSingleton():getImagePath("LocalPlayer.png"), -rotZ)
 
 	--draw coordinate and zone info
 	if isCursorOverArea(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height) and getKeyState("lshift") then

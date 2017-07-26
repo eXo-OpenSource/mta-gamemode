@@ -214,14 +214,15 @@ function Faction:removePlayer(playerId)
 	if player then
 		player:setFaction(nil)
 		player:giveAchievement(67)
-		player:reloadBlips()
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:setDefaultSkin()
-			player.m_FactionDuty = false
+			player:setFactionDuty(false)
 			player:setPublicSync("Faction:Duty",false)
 			player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 			self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
+		else
+			player:reloadBlips()
 		end
 	end
 	unbindKey(player, "y", "down", "chatbox", "Fraktion")

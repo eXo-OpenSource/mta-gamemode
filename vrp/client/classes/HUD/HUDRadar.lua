@@ -27,7 +27,7 @@ function HUDRadar:constructor()
 
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
-	self:updateMapTexture()
+	self:updateMapTexture(true)
 
 	-- Settings
 	if core:get("HUD", "showRadar", nil) == nil then
@@ -95,9 +95,15 @@ function HUDRadar:show()
 	MessageBoxManager.onRadarPositionChange()
 end
 
-function HUDRadar:updateMapTexture()
+function HUDRadar:updateMapTexture(checkForDesign)
 	if self.m_DesignSet == RadarDesign.Default then
 		return
+	end
+
+	if self.m_DesignSet == RadarDesign.GTA then
+		self.m_WaterColor = tocolor(108, 137, 171)
+	else
+		self.m_WaterColor = tocolor(121, 170, 213)
 	end
 
 	-- Recreate map texture
@@ -105,12 +111,23 @@ function HUDRadar:updateMapTexture()
 		destroyElement(self.m_Texture)
 	end
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
-	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
+	dxSetTextureEdge(self.m_Texture, "border", self.m_WaterColor)
 
 	dxSetRenderTarget(self.m_Texture)
 
 	-- Draw actual map texture
-	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
+	if checkForDesign or not self.m_MapImagePath then
+		self.m_MapImagePath = self:makePath("Radar.jpg", false, checkForDesign)
+	end
+	dxDrawRectangle(0, 0, self.m_ImageSize, self.m_ImageSize, tocolor(108, 137, 171)) -- water
+	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self.m_MapImagePath)
+
+	if checkForDesign then
+		for k, blip in pairs(self.m_Blips) do
+			blip:updateDesignSet()
+		end
+		self.m_ImagePaths = {} -- recreate them at runtime
+	end
 
 	-- Draw radar areas
 	if core:get("HUD", "drawGangAreas", true) then
@@ -130,12 +147,29 @@ function HUDRadar:updateMapTexture()
 	dxSetRenderTarget(nil)
 end
 
+function HUDRadar:getImagePath(file, isMap)
+	if isMap then return self.m_MapImagePath end
+	if not self.m_ImagePaths[file] then 
+		self.m_ImagePaths[file] = self:makePath(file, true)
+	end
+	return self.m_ImagePaths[file]
+end
+
 function HUDRadar:makePath(fileName, isBlip)
-	if isBlip then return "files/images/Radar/Blips/"..fileName end
-	if self.m_DesignSet == RadarDesign.Monochrome then
-		return "files/images/Radar/Radar_Monochrome/"..fileName
-	elseif self.m_DesignSet == RadarDesign.GTA then
-		return "files/images/Radar/Radar_GTA/"..fileName
+
+	if isBlip then 
+		if fileExists("_custom/files/images/Radar/Blips/"..fileName) then
+			return "_custom/files/images/Radar/Blips/"..fileName
+		end
+		return "files/images/Radar/Blips/"..fileName
+	else
+		local designSet = (self.m_DesignSet == RadarDesign.Monochrome) and "Radar_Monochrome" or "Radar_GTA"
+		if fileExists("_custom/files/images/Radar/"..designSet.."/Radar.png") then
+			return "_custom/files/images/Radar/"..designSet.."/Radar.png"
+		elseif fileExists("_custom/files/images/Radar/"..designSet.."/Radar.jpg") then
+			return "_custom/files/images/Radar/"..designSet.."/Radar.jpg"
+		end
+		return "files/images/Radar/"..designSet.."/Radar.jpg"
 	end
 end
 
@@ -143,11 +177,7 @@ function HUDRadar:setDesignSet(design)
 	if design ~= RadarDesign.Default then
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
-		self:updateMapTexture()
-
-		for k, blip in pairs(self.m_Blips) do
-			blip:updateDesignSet()
-		end
+		self:updateMapTexture(true)
 	else
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
@@ -308,7 +338,7 @@ function HUDRadar:draw()
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
-	dxDrawImage(self.m_PosX+self.m_Width/2 - size/2, self.m_PosY+self.m_Height/2 - size/2, size, size, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	dxDrawImage(self.m_PosX+self.m_Width/2 - size/2, self.m_PosY+self.m_Height/2 - size/2, size, size, self:getImagePath("LocalPlayer.png"), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Radar") end
 end
 
@@ -394,7 +424,7 @@ function HUDRadar:drawBlips()
 				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
 					if math.abs(pz - blip:getZ()) > 3 then
 						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
-						imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
+						imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
 					end
 				end
 				if fileExists(imagePath) then

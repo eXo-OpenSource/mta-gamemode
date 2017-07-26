@@ -190,7 +190,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
-				client.m_FactionDuty = false
+				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
@@ -205,7 +205,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				if type == "fire" then
 					giveWeapon(client, 42, 2000, true)
 				end
-				client.m_FactionDuty = true
+				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",true)
 				client:setPublicSync("Rescue:Type",type)
@@ -213,7 +213,6 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:getInventory():giveItem("Warnkegel", 10)
 				self:Event_changeSkin(client)
 			end
-			client:reloadBlips()
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end

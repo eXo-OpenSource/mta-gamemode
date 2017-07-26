@@ -712,6 +712,16 @@ function Player:isCompanyDuty()
   return self.m_CompanyDuty
 end
 
+function Player:setFactionDuty(state)
+	self.m_FactionDuty = state
+	self:reloadBlips()
+end
+
+function Player:setCompanyDuty(state)
+	self.m_CompanyDuty = state
+	self:reloadBlips()
+end
+
 function Player:setJobDutySkin(skin)
 	if skin ~= nil then
 		self.m_JobDutySkin = skin

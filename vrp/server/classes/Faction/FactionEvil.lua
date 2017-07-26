@@ -23,7 +23,7 @@ function FactionEvil:constructor()
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
 			self:createInterior(Id, faction)
-			local blip = Blip:new("Evil.png", evilFactionInteriorEnter[Id].x, evilFactionInteriorEnter[Id].y, {faction = Id, factionType = "State"}, 400, {factionColors[Id].r, factionColors[Id].g, factionColors[Id].b})
+			local blip = Blip:new("Evil.png", evilFactionInteriorEnter[Id].x, evilFactionInteriorEnter[Id].y, {faction = Id, factionType = "State", duty = true}, 400, {factionColors[Id].r, factionColors[Id].g, factionColors[Id].b})
 				blip:setDisplayText(faction:getName(), BLIP_CATEGORY.Faction)
 		end
 	end

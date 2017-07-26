@@ -16,7 +16,7 @@ addRemoteEvents{"blipCreate", "blipUpdate", "blipDestroy", "blipsRetrieve"}
 function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, optionalColor)
 	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
-	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
+	self:updateDesignSet()
 	self.m_WorldX = worldX
 	self.m_WorldY = worldY
 	self.m_WorldZ = false
@@ -57,11 +57,8 @@ function Blip:getImagePath()
 	return self.m_ImagePath
 end
 
-function Blip:setImagePath(path)
-	self.m_RawImagePath = path
-	self:updateDesignSet()
-
-	return self
+function Blip:updateDesignSet()
+	self.m_ImagePath = HUDRadar:getSingleton():makePath(self.m_RawImagePath, true, true)
 end
 
 function Blip:getPosition(vec)
@@ -100,10 +97,6 @@ function Blip:setStreamDistance(distance)
 	self.m_StreamDistance = distance
 
 	return self
-end
-
-function Blip:updateDesignSet()
-	self.m_ImagePath = HUDRadar:getSingleton():makePath(self.m_RawImagePath, true)
 end
 
 function Blip:setColor(color)

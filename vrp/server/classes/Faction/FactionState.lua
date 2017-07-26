@@ -218,7 +218,7 @@ function FactionState:loadFBI(factionId)
 	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
-	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 226.80, 128.50, 1010.20)
@@ -255,7 +255,7 @@ function FactionState:loadArmy(factionId)
 	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
 	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
 
-	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
@@ -684,7 +684,7 @@ function FactionState:sendWarning(text, header, withOffDuty, pos, ...)
 		player:sendWarning(_(text, player, ...), 30000, header)
 	end
 	if pos and pos[1] and pos[2] then
-		local blip = Blip:new("Alarm.png", pos[1], pos[2], {factionType = "State", duty = (not withOffDuty)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+		local blip = Blip:new("Alarm.png", pos[1], pos[2], {factionType = "State", duty = (withOffDuty and nil or true)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
 			blip:setDisplayText(header)
 		if pos[3] then
 			blip:setZ(pos[3])
@@ -1240,7 +1240,7 @@ function FactionState:Event_toggleDuty(wasted)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
-				client.m_FactionDuty = false
+				client:setFactionDuty(false)
 				takeAllWeapons(client)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
@@ -1258,7 +1258,7 @@ function FactionState:Event_toggleDuty(wasted)
 					return false
 				end
 				faction:changeSkin(client)
-				client.m_FactionDuty = true
+				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
 				takeAllWeapons(client)
@@ -1273,7 +1273,6 @@ function FactionState:Event_toggleDuty(wasted)
 				client:triggerEvent("showFactionWeaponShopGUI")
 				faction:updateStateFactionDutyGUI(client)
 			end
-			client:reloadBlips()
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end

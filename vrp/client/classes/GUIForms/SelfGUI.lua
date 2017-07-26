@@ -982,6 +982,20 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "drawStatusBars", state)
 			HUDRadar:getSingleton():toggleStatusBars(state)
 		end
+
+		self.m_MapOpacity = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_MapOpacity:setScrollPosition(core:get("HUD","mapOpacity", 0.7))
+		self.m_MapOpacity:setColor(Color.LightBlue)
+		self.m_MapOpacity:setText(_"Karten-Transparenz")
+		local oldScale = 0.7
+		self.m_MapOpacity.onScroll = function() 
+			local scale = math.round(self.m_MapOpacity:getScrollPosition(), 2)
+			if scale ~= oldScale then
+				oldScale = scale
+				core:set("HUD","mapOpacity", scale)
+			end 
+		end
+
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
 	elseif setting == "Spawn" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Spawn", self.m_SettingBG)
