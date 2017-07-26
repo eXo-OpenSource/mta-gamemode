@@ -116,7 +116,7 @@ function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 		
 		for k, v in ipairs(self.m_Col:getElementsWithin()) do
 			if v ~= client then
-				v:triggerEvent("gravelOnSync", v, {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
+				v:triggerEvent("gravelOnSync", {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
 			end
 		end
 		--[[source:setPosition()
@@ -134,7 +134,7 @@ function JobGravel:onGravelJobEnter(hitElement, dim)
 			end
 		end
 
-		hitElement:triggerEvent("gravelOnSync", hitElement, gravel)
+		hitElement:triggerEvent("gravelOnSync", gravel)
 	end
 end
 
