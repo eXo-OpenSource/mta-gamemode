@@ -848,7 +848,7 @@ function SelfGUI:onSettingChange(setting)
 			HUDUI:getSingleton():setUIMode(index)
 			updateDesignOptions(index)
 		end
-		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
+		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.Chart), true)
 
 		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
 		self.m_LifeArmor:setFont(VRPFont(25))
@@ -902,7 +902,7 @@ function SelfGUI:onSettingChange(setting)
 			end 
 		end
 	
-		updateDesignOptions(core:get("HUD", "UIStyle")) --only show items which are relevant for current UI
+		updateDesignOptions(core:get("HUD", "UIStyle", UIStyle.Chart)) --only show items which are relevant for current UI
 
 	elseif setting == "Radar" then
 

@@ -82,7 +82,7 @@ function Area:attack( faction1, faction2)
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:delete()
-		self.m_BlipImage = Blip:new("Gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
+		self.m_BlipImage = Blip:new("Gangwar.png", self.m_Position[1], self.m_Position[2], {faction = {faction1:getId(), faction2:getId()}}, 9999)
 		self:createRadar()
 		self.m_RadarArea:setFlashing(true)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)

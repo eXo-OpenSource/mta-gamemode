@@ -63,6 +63,12 @@ BLIP_CATEGORY = {
 	Other = "Anderes",
 }
 
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
 BLIP_CATEGORY_ORDER = {
 	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
 }

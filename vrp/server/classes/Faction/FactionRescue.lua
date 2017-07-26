@@ -59,6 +59,9 @@ function FactionRescue:constructor()
 		end
 	)
 
+	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400, {factionColors[4].r, factionColors[4].g, factionColors[4].b})
+	blip:setDisplayText(self.m_Faction:getName(), BLIP_CATEGORY.Faction)
+
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
@@ -95,21 +98,29 @@ function FactionRescue:countPlayers()
 	return #self.m_Faction:getOnlinePlayers()
 end
 
-function FactionRescue:getOnlinePlayers()
+function FactionRescue:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 
-	for index, value in pairs(self.m_Faction:getOnlinePlayers()) do
+	for index, value in pairs(self.m_Faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 		table.insert(players, value)
 	end
 
 	return players
 end
 
-function FactionRescue:sendWarning(text, header, withOffDuty, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		if player:isFactionDuty() or withOffDuty then
-			player:sendWarning(_(text, player, ...), 30000, header)
+function FactionRescue:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Fire.png", pos[1], pos[2], root, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
 		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 
@@ -202,6 +213,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:getInventory():giveItem("Warnkegel", 10)
 				self:Event_changeSkin(client)
 			end
+			client:reloadBlips()
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end

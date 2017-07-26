@@ -231,7 +231,8 @@ function BeggarPed:acceptTransport(player)
 				setElementVisibleTo(player.beggarTransportMarker, root, false)
 				setElementVisibleTo(player.beggarTransportMarker, player, true)
 
-				player.beggarTransportBlip = Blip:new("Waypoint.png", pos.x, pos.y, player, 9999)
+				player.beggarTransportBlip = Blip:new("Marker.png", pos.x, pos.y, player, 9999, BLIP_COLOR_CONSTANTS.Red)
+				player.beggarTransportBlip:setDisplayText(("Ziel von %s"):format(self.m_Name))
 				if self.m_ColShape then self.m_ColShape:destroy() end
 
 				self.m_onTransportExitBind = bind(self.onTransportExit, self)

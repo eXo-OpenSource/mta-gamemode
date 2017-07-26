@@ -46,8 +46,8 @@ function JobHeliTransport:createTarget(type)
 
 	self.m_Target["type"] = type
 	self.m_Target["marker"] = createMarker(pos, "corona", 3, 0, 0, 255, 255)
-	self.m_Target["blip"] = Blip:new("Marker.png", pos.x, pos.y,9999)
-	self.m_Target["blip"]:setStreamDistance(10000)
+	self.m_Target["blip"] = Blip:new("Marker.png", pos.x, pos.y, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_Target["blip"]:setDisplayText("Paket-Abgabe")
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
 		if hitElement == localPlayer and dim then
 			if self.m_Target["type"] == "pickup" then

@@ -262,6 +262,10 @@ addEventHandler("blipDestroy", root,
 
 addEventHandler("blipsRetrieve", root,
 	function(data)
+		for id, v in pairs(Blip.ServerBlips) do -- delete old blips in case the list gets refreshed
+			v:delete()
+			Blip.ServerBlips[id] = nil
+		end
 		for id, v in pairs(data) do
 			Blip.updateFromServer(id, v)
 		end

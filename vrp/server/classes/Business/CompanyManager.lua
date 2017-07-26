@@ -398,6 +398,7 @@ function CompanyManager:Event_toggleDuty(wasted)
 					company:start(client)
 				end
 			end
+			client:reloadBlips()
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end

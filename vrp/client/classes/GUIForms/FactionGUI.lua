@@ -357,7 +357,7 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_NextAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.4, self.m_Height*0.06,_("Nächster Angriff: %s", getOpticalTimestamp(item.lastAttack+(GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))), self.m_tabGangwar)
 			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.35, self.m_Width*0.62, self.m_Height*0.55, self.m_tabGangwar)
 			self.m_Map:setPosition(item.posX, item.posY)
-			self.m_Map:addBlip("Waypoint.png", item.posX, item.posY)
+			self.m_Map:addBlip("Marker.png", item.posX, item.posY)
 		end
 	end
 end

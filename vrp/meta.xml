@@ -1083,6 +1083,8 @@
 	<vrpfile src="files/images/Radar/Radar_Monochrome/Radar.jpg"/>
 
 	<!-- Blips -->
+	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
+	<vrpfile src="files/images/Radar/Blips/Evil.png"/>
 	<vrpfile src="files/images/Radar/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar/Blips/Logistician.png"/>
 	<vrpfile src="files/images/Radar/Blips/Trashman.png"/>
@@ -1097,12 +1099,8 @@
 	<vrpfile src="files/images/Radar/Blips/PayNSpray.png"/>
 	<vrpfile src="files/images/Radar/Blips/Garage.png"/>
 	<vrpfile src="files/images/Radar/Blips/Kart.png"/>
-	<vrpfile src="files/images/Radar/Blips/Waypoint.png"/>
-	<vrpfile src="files/images/Radar/Blips/Waypoint_ept.png"/>
-	<vrpfile src="files/images/Radar/Blips/SmallPoint.png"/>
 	<vrpfile src="files/images/Radar/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Radar/Blips/CarShop.png"/>
-	<vrpfile src="files/images/Radar/Blips/RedSaw.png"/>
 	<vrpfile src="files/images/Radar/Blips/Mechanic.png"/>
 	<vrpfile src="files/images/Radar/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar/Blips/Skinshop.png"/>
@@ -1115,11 +1113,9 @@
 	<vrpfile src="files/images/Radar/Blips/Train.png"/>
 	<vrpfile src="files/images/Radar/Blips/MoneyBag.png"/>
 	<vrpfile src="files/images/Radar/Blips/PoliceRob.png"/>
-	<vrpfile src="files/images/Radar/Blips/Locate.png"/>
 	<vrpfile src="files/images/Radar/Blips/Casino.png"/>
-	<vrpfile src="files/images/Radar/Blips/Zombie.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gardener.png"/>
-	<vrpfile src="files/images/Radar/Blips/NeedHelp.png"/>
+	<vrpfile src="files/images/Radar/Blips/Rescue.png"/>
 	<vrpfile src="files/images/Radar/Blips/Stadthalle.png"/>
 	<vrpfile src="files/images/Radar/Blips/House.png"/>
 	<vrpfile src="files/images/Radar/Blips/SniperGame.png"/>

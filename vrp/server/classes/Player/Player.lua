@@ -1225,6 +1225,10 @@ function Player:setModel( skin )
 	setElementModel( self, skin or 0)
 end
 
+function Player:reloadBlips()
+	return Blip.sendAllToClient(self)
+end
+
 function Player:endPrison()
 	if isElement(self) then
 		self:setPosition(Vector3(1478.87, -1726.17, 13.55))

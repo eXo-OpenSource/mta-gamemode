@@ -23,6 +23,8 @@ function FactionEvil:constructor()
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
 			self:createInterior(Id, faction)
+			local blip = Blip:new("Evil.png", evilFactionInteriorEnter[Id].x, evilFactionInteriorEnter[Id].y, {faction = Id, factionType = "State"}, 400, {factionColors[Id].r, factionColors[Id].g, factionColors[Id].b})
+				blip:setDisplayText(faction:getName(), BLIP_CATEGORY.Faction)
 		end
 	end
 	nextframe(function()
@@ -98,12 +100,12 @@ function FactionEvil:getFactions()
 	return returnFactions
 end
 
-function FactionEvil:getOnlinePlayers()
+function FactionEvil:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
 		if faction:isEvilFaction() then
-			for index, value in pairs(faction:getOnlinePlayers()) do
+			for index, value in pairs(faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 				table.insert(players, value)
 			end
 		end
@@ -111,8 +113,8 @@ function FactionEvil:getOnlinePlayers()
 	return players
 end
 
-function FactionEvil:countPlayers()
-	local count = #self:getOnlinePlayers()
+function FactionEvil:countPlayers(afkCheck, dutyCheck)
+	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
 	return count
 end
 
@@ -123,9 +125,19 @@ function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	end
 end
 
-function FactionEvil:sendWarning(text, header, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
+function FactionEvil:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
 		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Gangwar.png", pos[1], pos[2], {factionType = "Evil", duty = (not withOffDuty)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 

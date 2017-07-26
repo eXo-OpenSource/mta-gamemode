@@ -13,7 +13,6 @@ function ZombieSurvival.initalize()
 	local zombiePed = createPed(162, -31.64, 1377.67, 9.17, 90)
 	zombiePed:setFrozen(true)
 	local zombieMarker = createMarker(-34.24, 1377.80, 8.8, "cylinder", 1, 255, 0, 0, 125)
-	Blip:new("Zombie.png", -34.24, 1377.80)
 	local zombieColShape = createColSphere(-31.64, 1377.67, 9.17, 25)
 	addEventHandler("onColShapeHit", zombieColShape, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then

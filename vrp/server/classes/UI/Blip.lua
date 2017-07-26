@@ -38,10 +38,12 @@ function Blip:constructor(imagePath, x, y, visibleTo, streamDistance, color, opt
 		for i,v in pairs(self.m_VisibleTo) do
 			if isElement(v) then break end -- don't do anything if its a table full of players
 			if type(v) == "table" then -- multiple ids ( faction = {1,2})
-				for __, id in pairs(self.m_VisibleTo[v]) do self.m_VisibleTo[v][id] = true end
+				local new = {}
+				for __, id in pairs(self.m_VisibleTo[i]) do new[id] = true end
+				self.m_VisibleTo[i] = new
 			else -- single id (faction = 1)
-				local id = self.m_VisibleTo[v]
-				self.m_VisibleTo[v] = {[id] = true}
+				local id = self.m_VisibleTo[i]
+				self.m_VisibleTo[i] = {[id] = true}
 			end
 		end
 	end
@@ -65,18 +67,22 @@ end
 function Blip:isVisibleForPlayer(player)
 	if self.m_VisibleTo == root then return true end
 	if self.m_VisibleTo == player then return true end
+	if isElement(self.m_VisibleTo) then return false end -- visibleTo is an element which is not the player, so skip it
 
 	local fac = player:getFaction()
 	if fac then
 		if self.m_VisibleTo["faction"] and self.m_VisibleTo["faction"][fac:getId()] then
+			if self.m_VisibleTo["duty"] and not player:isFactionDuty() then return false end
 			return true
 		elseif self.m_VisibleTo["factionType"] and self.m_VisibleTo["factionType"][fac:getType()] then
+			if self.m_VisibleTo["duty"] and not player:isFactionDuty() then return false end
 			return true
 		end
 	end
 
 	local comp = player:getCompany()
 	if comp and self.m_VisibleTo["company"] and self.m_VisibleTo["company"][comp:getId()] then
+		if self.m_VisibleTo["duty"] and not player:isCompanyDuty() then return false end
 		return true
 	end
 
@@ -150,7 +156,7 @@ function Blip:updateClient(type, data)
 	else
 		for i,player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 			if self:isVisibleForPlayer(player) then
-				player:triggerEvent("blip"..type, root, self.m_Id, data)
+				player:triggerEvent("blip"..type, self.m_Id, data)
 			end
 		end
 	end
@@ -159,18 +165,20 @@ end
 function Blip.sendAllToClient(player)
 	local data = {}
 	for k, v in pairs(Blip.Map) do
-		data[v.m_Id] = {
-			icon 			= v.m_ImagePath,
-			x 				= v.m_PosX,
-			y 				= v.m_PosY,
-			z				= v.m_PosZ,
-			streamDistance 	= v.m_StreamDistance,
-			color 			= v.m_Color,
-			optionalColor 	= v.m_OptionalColor,
-			displayText 	= v.m_DisplayText,
-			category 		= v.m_Category,
-			attachedElement = v.m_AttachedTo,
-		}
+		if v:isVisibleForPlayer(player) then
+			data[v.m_Id] = {
+				icon 			= v.m_ImagePath,
+				x 				= v.m_PosX,
+				y 				= v.m_PosY,
+				z				= v.m_PosZ,
+				streamDistance 	= v.m_StreamDistance,
+				color 			= v.m_Color,
+				optionalColor 	= v.m_OptionalColor,
+				displayText 	= v.m_DisplayText,
+				category 		= v.m_Category,
+				attachedElement = v.m_AttachedTo,
+			}
+		end
 	end
 	player:triggerEvent("blipsRetrieve", data)
 end

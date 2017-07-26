@@ -161,11 +161,8 @@ function BankRobbery:startRobGeneral(player)
 	end
 
 	for markerIndex, destination in pairs(self.ms_FinishMarker) do
-		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", self.m_RobFaction}, 1000)
-		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(1)}, 1000)
-		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(2)}, 1000)
-		self.m_Blip[#self.m_Blip+1] = Blip:new("Waypoint.png", destination.x, destination.y, {"faction", FactionManager:getSingleton():getFromId(3)}, 1000)
-
+		self.m_Blip[#self.m_Blip+1] = Blip:new("Marker.png", destination.x, destination.y, {faction = self.m_RobFaction:getId(), factionType = "State"}, 1000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_Blip[#self.m_Blip]:setDisplayText("Bankraub-Abgabe")
 		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end

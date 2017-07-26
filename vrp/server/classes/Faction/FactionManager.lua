@@ -215,6 +215,7 @@ end
 function FactionManager:Event_factionDeleteMember(playerId)
 	if not playerId then return end
 	local faction = client:getFaction()
+	local pElement = PlayerManager:getSingleton():getPlayerFromId(playerId) 
 	if not faction then return end
 
 	if client:getId() == playerId then

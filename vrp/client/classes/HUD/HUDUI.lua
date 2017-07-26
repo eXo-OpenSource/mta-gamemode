@@ -10,7 +10,7 @@ HUDUI = inherit(Singleton)
 function HUDUI:constructor()
 	self.m_IsVisible = false
 	self.m_Font = VRPFont(70)
-	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.vRoleplay)
+	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.Chart)
 	self.m_Enabled = core:get("HUD", "showUI", true)
 	self.m_RedDot = core:get("HUD", "reddot", false)
 	self.m_Scale = core:get("HUD", "hudScale", 1)
