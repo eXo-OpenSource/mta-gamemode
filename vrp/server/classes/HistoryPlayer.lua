@@ -42,7 +42,7 @@ function HistoryPlayer:setHighestRank(playerId, rank, elementId, elementType)
         sql:queryExec("INSERT INTO ??_player_history (UserId, ElementId, ElementType, HighestRank, JoinDate, InviterId) VALUES (?, ?, ?, ?, NOW(), 0)",
             sql:getPrefix(), playerId, elementId, elementType, rank)
     else
-        if rank > result[1].HighestRank then
+        if not result[1].HighestRank or rank > result[1].HighestRank then
             sql:queryExec("UPDATE ??_player_history SET HighestRank = ? WHERE UserId = ? AND ElementId = ? AND ElementType = ? AND LeaveDate IS NULL ORDER BY Id DESC",
                 sql:getPrefix(), rank, playerId, elementId, elementType)
         end
@@ -77,7 +77,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 	local company = client:getCompany()
 	if not userId then return end
 
-	if not ( (faction and faction:getPlayerRank(client) > FactionRank.Manager) or (company and company:getPlayerRank(client) > FactionRank.Manager) or (client:getRank() >= RANK.Supporter) ) then
+	if not ( (faction and faction:getPlayerRank(client) >= FactionRank.Manager) or (company and company:getPlayerRank(client) >= CompanyRank.Manager) or (client:getRank() >= RANK.Supporter) ) then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
@@ -90,6 +90,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
             playerFile[row.Id] = {
 				ElementType = row.ElementType,
                 ElementId = row.ElementId,
+                ElementName = "Unknown",
 				JoinDate = row.JoinDate and row.JoinDate or "",
 				LeaveDate = row.LeaveDate and row.LeaveDate or "",
 				ExternalReason = row.ExternalReason and row.ExternalReason or "",
@@ -112,7 +113,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
             if row.ElementType == "faction" then
                 playerFile[row.Id].ElementName = FactionManager:getSingleton().Map[row.ElementId].m_Name_Short -- This will break!! I'm sure!
             elseif row.ElementType == "company" then
-                playerFile[row.Id].ElementName = CompanyManager:getSingleton().Map[row.ElementId].m_Name_Short -- This will break!! I'm sure!
+                playerFile[row.Id].ElementName = CompanyManager:getSingleton().Map[row.ElementId].m_ShortName -- This will break!! I'm sure!
             end
 
 			if (faction and row.ElementType == "faction" and faction.m_Id == row.ElementId) or (company and row.ElementType == "company" and company.m_Id == row.ElementId) or (client:getRank() >= RANK.Supporter) then
