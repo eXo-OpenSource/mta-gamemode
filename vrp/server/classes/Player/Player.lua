@@ -371,7 +371,7 @@ function Player:spawn()
 		self:setMoney(0)
 		self:setXP(0)
 		self:setKarma(0)
-		self:setWantedLevel(0)
+		self:setWanteds(0)
 		self:setJobLevel(0)
 		self:setWeaponLevel(0)
 		self:setVehicleLevel(0)
@@ -977,7 +977,7 @@ function Player:payDay()
 	self:addPaydayText("total", "Total", total)
 
 
-	if self:getWantedLevel() > 0 then
+	if self:getWanteds() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
 		self:takeWantedLevel(1)
 	end

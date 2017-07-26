@@ -437,7 +437,7 @@ function PlayerManager:playerQuit()
 			end
 		end
 	end
-	if source:getWantedLevel() > 0 then
+	if source:getWanteds() > 0 then
 		FactionState:getSingleton():checkLogout(source)
 	end
 	if source.elevator then
@@ -497,7 +497,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
 				if killer:isFactionDuty() and not client:isFactionDuty() then
-					local wantedLevel = client:getWantedLevel()
+					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
 						local jailTime = wantedLevel * 5
 						local factionBonus = JAIL_COSTS[wantedLevel]

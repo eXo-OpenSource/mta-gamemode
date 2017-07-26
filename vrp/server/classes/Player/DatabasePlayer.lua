@@ -110,7 +110,7 @@ function DatabasePlayer:load()
 	else
 		self.m_SpawnWithFactionSkin = false
 	end
-	self:setWantedLevel(row.WantedLevel, true)
+	self:setWanteds(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
 
 	if not row.BankAccount or row.BankAccount == 0 then
@@ -202,14 +202,14 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-		
+
 		local row = sql:queryFetchSingle("SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
-		
+
 		if not row then
-			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(), 
+			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(),
 			self.m_LoginTime, self:getId(), self.m_LoginTime, self:getPlayTime() - self.m_StartTime)
 		else
-			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(), 
+			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(),
 			self:getPlayTime() - self.m_StartTime, row.Id)
 		end
 
@@ -244,7 +244,7 @@ function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
 function DatabasePlayer:getJobLevel()	return self.m_JobLevel	end
 function DatabasePlayer:getBankAccount() return self.m_BankAccount end
 function DatabasePlayer:getBankMoney()	return self.m_BankAccount:getMoney() end
-function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
+function DatabasePlayer:getWanteds()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
 function DatabasePlayer:getAccount()	return self.m_Account	end
 function DatabasePlayer:getLocale()		return self.m_Locale	end
@@ -364,12 +364,12 @@ function DatabasePlayer:getWarns()
 	return self.m_Warns
 end
 
-function DatabasePlayer:setWantedLevel(level, disableAchievement)
-	if level > 6 then level = 6 end
+function DatabasePlayer:setWanteds(level, disableAchievement)
+	if level > MAX_WANTED_LEVEL then level = MAX_WANTED_LEVEL end
 	if level < 0 then level = 0 end
 	if not disableAchievement then
 		-- give Achievement
-		if level == 6 then
+		if level == MAX_WANTED_LEVEL then
 			self:giveAchievement(46)
 		elseif level > 0 then
 			self:giveAchievement(45)
@@ -380,8 +380,12 @@ function DatabasePlayer:setWantedLevel(level, disableAchievement)
 	self.m_WantedLevel = level
 	if self:isActive() then
 		self:setPublicSync("Wanteds", level)
-		setPlayerWantedLevel(self, level)
+		--setPlayerWantedLevel(self, level)
 	end
+end
+
+function DatabasePlayer:getWanteds()
+	return self.m_WantedLevel
 end
 
 function DatabasePlayer:setCompany(company)
@@ -579,7 +583,7 @@ function DatabasePlayer:giveWantedLevel(level)
 	if newLevel > 6 then
 		newLevel = 6
 	end
-	self:setWantedLevel(newLevel)
+	self:setWanteds(newLevel)
 
 	if self:isActive() then
 		self.m_LastGotWantedLevelTime = getTickCount()
@@ -591,7 +595,7 @@ function DatabasePlayer:takeWantedLevel(level)
 	if newLevel < 0 then
 		newLevel = 0
 	end
-	self:setWantedLevel(newLevel)
+	self:setWanteds(newLevel)
 end
 
 function DatabasePlayer:setJob(job)
@@ -765,7 +769,7 @@ function DatabasePlayer:setJailNewTime()
 				else
 					self.m_JailTime = 0
 					self.m_Bail = 0
-					self:setWantedLevel(0)
+					self:setWanteds(0)
 				end
 			end
 		end

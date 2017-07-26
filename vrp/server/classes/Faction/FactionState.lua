@@ -26,14 +26,14 @@ function FactionState:constructor()
 	}
 
 	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
-	
-	addEventHandler("onColShapeLeave", root, function(element) 
+
+	addEventHandler("onColShapeLeave", root, function(element)
 		if element:getType() == "player" and element.vehicle then
 			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
 				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
 					local veh = element.vehicle
 					element:removeFromVehicle()
-					veh:respawn(true)		
+					veh:respawn(true)
 					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
 					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
 						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
@@ -184,7 +184,7 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
 			if getElementType(hE) == "player" then
-				if hE:getWantedLevel() > 0 then
+				if hE:getWanteds() > 0 then
 					hE:triggerEvent("playerSelfArrest")
 				end
 			end
@@ -194,12 +194,12 @@ end
 
 function FactionState:Event_OnConfirmSelfArrest()
 	local bailcosts = 0
-	local wantedLevel = client:getWantedLevel()
+	local wantedLevel = client:getWanteds()
 	local jailTime = wantedLevel * 5
 	local factionBonus = JAIL_COSTS[wantedLevel]
 	bailcosts = BAIL_PRICES[wantedLevel]
 	client:setJailTime(jailTime)
-	client:setWantedLevel(0)
+	client:setWanteds(0)
 	client:moveToJail(CUTSCENE)
 	self:uncuffPlayer( client)
 	client:clearCrimes()
@@ -334,7 +334,7 @@ function FactionState:Command_ticket(source, cmd, target)
 				if not faction:isStateFaction() then return end
 				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
 					if source ~= targetPlayer then
-						if targetPlayer:getWantedLevel() == 1 then
+						if targetPlayer:getWanteds() == 1 then
 							if targetPlayer:getMoney() >= TICKET_PRICE then
 								source.m_CurrentTicket = targetPlayer
 								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
@@ -362,13 +362,13 @@ end
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
 		if client:getMoney() >= TICKET_PRICE then
-			if client:getWantedLevel() == 1 then
+			if client:getWanteds() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
 					cop:getFaction():giveMoney(TICKET_PRICE, "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
-				client:setWantedLevel(0)
+				client:setWanteds(0)
 				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
 			end
 		end
@@ -775,7 +775,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 			end
 		end
 		amount = tonumber(amount)
-		if ( amount and amount >= 1 and amount <= 6 )  then
+		if amount and amount >= 1 and amount <= MAX_WANTED_LEVEL  then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
@@ -794,7 +794,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 				end
 			end
 		else
-			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!", player))
+			player:sendError(_("Die Anzahl muss zwischen 1 und %s liegen!", player, MAX_WANTED_LEVEL))
 		end
 	else
 		player:sendError(_("Du bist nicht im Dienst!", player))
@@ -966,14 +966,14 @@ function FactionState:showRobbedHouseBlip( suspect, housepickup)
 end
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus)
-	if player:getWantedLevel() == 0 then return end
+	if player:getWanteds() == 0 then return end
 	local policeman = police or client
 	if not force then
 		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
 			if policeman:isFactionDuty() then
-				if player:getWantedLevel() > 0 then
+				if player:getWanteds() > 0 then
 					local bailcosts = 0
-					local wantedLevel = player:getWantedLevel()
+					local wantedLevel = player:getWanteds()
 					local jailTime = wantedLevel * 5
 					local factionBonus = JAIL_COSTS[wantedLevel]
 
@@ -1006,7 +1006,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 
 					player:giveKarma(-wantedLevel)
 					player:setJailTime(jailTime)
-					player:setWantedLevel(0)
+					player:setWanteds(0)
 					player:moveToJail(CUTSCENE)
 					self:uncuffPlayer( player)
 					player:clearCrimes()
@@ -1038,7 +1038,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		end
 	else
 		local bailcosts = 0
-		local wantedLevel = player:getWantedLevel()
+		local wantedLevel = player:getWanteds()
 		local jailTime = wantedLevel * 5
 		local factionBonus = JAIL_COSTS[wantedLevel]
 		if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -1068,7 +1068,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		end
 		player:giveKarma(-wantedLevel)
 		player:setJailTime(jailTime)
-		player:setWantedLevel(0)
+		player:setWanteds(0)
 		player:moveToJail(CUTSCENE)
 		self:uncuffPlayer( player)
 		player:clearCrimes()
@@ -1198,7 +1198,7 @@ function FactionState:freePlayer(player)
 	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
-	player:setWantedLevel(0)
+	player:setWanteds(0)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
