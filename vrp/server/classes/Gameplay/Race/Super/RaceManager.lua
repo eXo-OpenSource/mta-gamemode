@@ -14,8 +14,10 @@ function RaceManager:constructor()
 
 	fetchRemote(RaceManager.RES_PATH .. "list.php", bind(RaceManager.fetchMaps, self))
 
-	self:registerMode(RaceDD)
-	self:registerMode(RaceDM)
+	self:registerMode(RaceDD, "DD")
+	self:registerMode(RaceDM, "DM")
+
+	addEventHandler("onVehicleStartExit", root, bind(RaceManager.onVehicleStartExit, self))
 end
 
 function RaceManager:fetchMaps(data, errno)
@@ -34,11 +36,38 @@ function RaceManager:fetchMaps(data, errno)
 	end
 end
 
-function RaceManager:registerMode(mode)
-	assert(type(mode) == "table", "Invalid mode @ RaceManager:registerMode")
-	table.insert(self.m_RegisteredModes, mode)
+function RaceManager:onVehicleStartExit(player)
+	if self:isPlayerInMode(player) then
+		outputChatBox("onVehicleStartExit : cancelEvent")
+		cancelEvent()
+	end
 end
 
+---
+-- Modes
+--
+function RaceManager:registerMode(mode, name)
+	assert(type(mode) == "table", "Invalid mode @ RaceManager:registerMode")
+	self.m_RegisteredModes[name] = mode:new()
+end
+
+function RaceManager:getMode(name)
+	return self.m_RegisteredModes[name]
+end
+
+function RaceManager:isPlayerInMode(player)
+	for _, mode in pairs(self.m_RegisteredModes) do
+		if mode:isPlayer(player) then
+			return true
+		end
+	end
+
+	return false
+end
+
+---
+-- Maps
+--
 function RaceManager:getRandomMap(mode)
 	if self.m_Maps[mode] then
 		return self.m_Maps[mode][math.random(1, #self.m_Maps[mode])]
@@ -145,9 +174,23 @@ function RaceManager:createMap(map)
 				end
 			end
 
+			map.created = true
 			outputChatBox("Created Map in " .. getTickCount() - st)
 		end
 	)()
+end
+
+function RaceManager:loadMap(map, dimension)
+	if not map.created then
+		outputChatBox("Create Map")
+		self:createMap(map)
+	end
+
+	map.instance = MapParser:new(("files/maps/temporary/%s/%s"):format(map.name, map.mapSrc))
+	if map.instance then
+		map.instance:create(dimension)
+		return map
+	end
 end
 
 function RaceManager:fetch(callback, file)
