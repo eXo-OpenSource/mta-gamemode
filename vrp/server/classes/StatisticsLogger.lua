@@ -340,8 +340,8 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 end
 
 function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
-    local userId = 0
-	local userId2 = 0
+	local userId1, userId2 = 0, 0
+
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
 	if item and price then
@@ -364,4 +364,35 @@ function StatisticsLogger:addFishTradeLogs(PlayerId, ReceivingId, FishName, Fish
 		sqlLogs:queryExec("INSERT INTO ??_fishTrade (PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 			PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator)
 	end
+end
+
+function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
+	local userId1, userId2 = 0, 0
+
+	if isElement(player) then userId1 = player:getId() else userId1 = player or 0 end
+	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
+
+	local vehicleId = vehicle:getId() or 0
+	local trunkContent = {}
+	if vehicle.getTrunk and vehicle:getTrunk() then
+		local trunk = vehicle:getTrunk()
+		trunkContent = {
+			["Id"] = trunk.m_Id,
+			["Items"] = trunk.m_ItemSlot,
+			["Weapons"] = trunk.m_WeaponSlot
+		}
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_vehicleTrade (SellerId, BuyerId, VehicleId, Trunk, Price, TradeType, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId1, userId2, vehicleId, toJSON(trunkContent), price, tradeType)
+end
+
+function StatisticsLogger:addRaidLog(attacker, target, success, money)
+	local userId1, userId2, faction = 0, 0, 0
+
+	if isElement(attacker) then userId1 = attacker:getId() faction = attacker:getFaction():getId() else userId1 = attacker or 0 end
+	if isElement(target) then userId2 = target:getId() else userId2 = target or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_Raid (Attacker, Target, Money, Success, Position, Faction, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId, userId2, money, success, self:getZone(target), faction)
 end

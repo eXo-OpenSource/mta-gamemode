@@ -246,6 +246,7 @@ function FactionEvil:Event_SuccessRaid(target)
 		client:giveMoney(money, "Überfall")
 		client:triggerEvent("CountdownStop", "Überfallen in", 15)
 		target:triggerEvent("CountdownStop", "Überfallen in", 15)
+		StatisticsLogger:getSingleton():addRaidLog(client, target, 1, money)
 	else
 		client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 	end
@@ -255,6 +256,7 @@ function FactionEvil:Event_FailedRaid(target)
 	target:sendSuccess(_("Du bist dem Überfall entkommen!", target))
 	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
 	target:meChat(true, _("ist aus dem Überfall von %s entkommen!", target, client:getName()))
+	StatisticsLogger:getSingleton():addRaidLog(client, target, 0, 0)
 end
 
 function FactionEvil:loadDiplomacy()

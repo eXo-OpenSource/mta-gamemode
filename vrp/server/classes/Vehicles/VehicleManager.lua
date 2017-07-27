@@ -977,6 +977,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	end
 
 	local price = getPrice(veh:getModel()) or 0
+	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
+
 	if price then
 		veh:purge()
 		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")

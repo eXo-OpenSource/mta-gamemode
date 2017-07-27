@@ -234,6 +234,7 @@ function GroupVehicle:buy(player)
 			triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
 			if status then
+				StatisticsLogger:getSingleton():addVehicleTradeLog(newVeh, player, 0, price, "group")
 				player:takeMoney(price, "Firmen-Fahrzeug Kauf")
 				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
 				group:sendShortMessage(_("%s hat ein Fahrzeug für %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
