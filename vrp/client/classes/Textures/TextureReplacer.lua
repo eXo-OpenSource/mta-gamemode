@@ -179,7 +179,7 @@ function TextureReplacer.addRef(instance)
 end
 
 function TextureReplacer.removeRef(instance)
-	outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
+	--outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
 	TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName] = nil
 end
 
