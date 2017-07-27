@@ -8,7 +8,7 @@ function HTTPTextureReplacer:constructor(element, fileName, textureName, options
 	TextureReplacer.constructor(self, element, textureName, options)
 
 	self.m_FileName = fileName:find(HTTPTextureReplacer.BasePath) and fileName:gsub(HTTPTextureReplacer.BasePath, "") or fileName
-	outputChatBox("HTTP: "..self.m_FileName)
+	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
 
 	if isElementStreamedIn(self.m_Element) then
