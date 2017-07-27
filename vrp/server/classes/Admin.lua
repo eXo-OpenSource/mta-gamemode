@@ -929,7 +929,7 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
         if targetPlayer:getFaction() then
@@ -947,10 +947,10 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
     		if faction then
 				if external or internal then
 					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
-					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, 6, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
 				end
 
-    			faction:addPlayer(targetPlayer,6)
+    			faction:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -960,7 +960,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, internal, external)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, internal, external)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
         if targetPlayer:getCompany() then
@@ -978,9 +978,9 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, internal, external)
     		if company then
 				if external or internal then
 					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
-					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, 5, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
 				end
-    			company:addPlayer(targetPlayer,5)
+    			company:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))

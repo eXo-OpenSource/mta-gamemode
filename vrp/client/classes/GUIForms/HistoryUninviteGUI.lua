@@ -15,7 +15,7 @@ function HistoryUninviteGUI:constructor(callBack)
 	self.m_ReasonInternalyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.09, _"Interner Grund für den Rauswurf", self.m_Window):setFont(VRPFont(self.m_Height*0.14))
 	self.m_ReasonInternaly = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.96, self.m_Height*0.14, self.m_Window):setMaxLength(128)
 
-	self.m_ReasonExternalyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.96, self.m_Height*0.09, _"Externer Grund für den Rauswurf", self.m_Window):setFont(VRPFont(self.m_Height*0.14))
+	self.m_ReasonExternalyLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.96, self.m_Height*0.09, _"Öffentlicher Grund für den Rauswurf", self.m_Window):setFont(VRPFont(self.m_Height*0.14))
 	self.m_ReasonExternaly = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.96, self.m_Height*0.14, self.m_Window):setMaxLength(128)
 
 	self.m_YesButton = GUIButton:new(self.m_Width*0.13, self.m_Height*0.75, self.m_Width*0.29, self.m_Height*0.18, _"Rauswerfen", self.m_Window):setBackgroundColor(Color.Red)
@@ -23,7 +23,7 @@ function HistoryUninviteGUI:constructor(callBack)
 
 	self.m_YesButton.onLeftClick = function()
 		if self.m_ReasonExternaly.m_Text == "" then
-			ErrorBox:new(_"Externer Grund für den Rauswurf muss ausgefüllt werden!")
+			ErrorBox:new(_"Öffentlicher Grund für den Rauswurf muss ausgefüllt werden!")
 			return
 		end
         

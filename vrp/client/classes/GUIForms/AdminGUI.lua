@@ -434,28 +434,28 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "setCompany" then
 		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
 		ChangerBoxWithCheck:new(_"Unternehmen setzten",
-				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, "History?",
-				function (companyId, state)
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, {0, 1, 2, 3, 4, 5}, "In Fraktionsverlauf vermerken?",
+				function (companyId, rank, state)
 					if state then
 						HistoryUninviteGUI:new(function(internal, external) 
-							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, internal, external)
+							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank, internal, external)
 						end)
 					else
-						triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
+						triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank)
 					end
 				end)
 	elseif func == "setFaction" then
 		local factionTable = FactionManager:getSingleton():getFactionNames()
 		factionTable[0] = "Keine Fraktion"
 		ChangerBoxWithCheck:new(_"Fraktion setzten",
-				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, "History?",
-				function (factionId, state)
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, {0, 1, 2, 3, 4, 5, 6}, "In Fraktionsverlauf vermerken?",
+				function (factionId, rank, state)
 					if state then
 						HistoryUninviteGUI:new(function(internal, external) 
-							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, internal, external)
+							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank, internal, external)
 						end)
 					else
-						triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+						triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank)
 					end
 				end)
 	elseif func == "respawnCompany" then

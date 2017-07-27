@@ -67,7 +67,7 @@ function HistoryPlayerGUI:Event_OnPlayerHistoryReceived(infos)
 			text = text .."Austritt: " .. info.LeaveDate .. "\n"
 			text = text .. "Uninvited von: " .. info.Uninviter .. "\n"
 			text = text .. "Rang beim Uninvite: " .. info.UninviteRank .. "\n"
-			text = text .."Extener Grund: " .. info.ExternalReason
+			text = text .."Öffentlicher Grund: " .. info.ExternalReason
 
 			if info.InternalReason then
 				text = text .. "\n" .. "Interner Grund: " .. info.InternalReason
