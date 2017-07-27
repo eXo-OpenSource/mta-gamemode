@@ -62,7 +62,6 @@ deploy_job_develop:
   stage: deploy
   script:
     #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
@@ -83,6 +82,7 @@ deploy_job_testing:
 deploy_job_production:
   stage: deploy
   script:
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production
