@@ -36,6 +36,10 @@ function GUIScrollableArea:destructor()
 	GUIElement.destructor(self)
 end
 
+function GUIScrollableArea:setScrollBarStartPosition(baseHeight)
+	self:createScrollbars(true, true, baseHeight)
+end
+
 function GUIScrollableArea:draw(incache)
 	if self.m_Visible == false then
 		return
@@ -140,6 +144,7 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 	end
 
 	if verticalScrollbar then
+		if self.m_VerticalScrollbar then delete(self.m_VerticalScrollbar) end
 		self.m_VerticalScrollbar = GUIVerticalScrollbar:new(self.m_PosX + self.m_Width - 4, space or 0, 4, self.m_Height, self.m_Parent)
 		self.m_VerticalScrollbar.m_ScrollHandler =
 			function(scrollPosition)

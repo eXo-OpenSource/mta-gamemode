@@ -121,7 +121,7 @@ function CompanyManager:Event_companyDeposit(amount)
 
 	client:takeMoney(amount, "Unternehmen-Einlage")
 	company:giveMoney(amount, "Unternehmen-Einlage")
-    company:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
+    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
     company:refreshBankAccountGUI(client)
 
@@ -145,7 +145,7 @@ function CompanyManager:Event_companyWithdraw(amount)
 
 	company:takeMoney(amount, "Unternehmen-Auslage")
 	client:giveMoney(amount, "Unternehmen-Auslage")
-    company:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 	self:sendInfosToClient(client)
     company:refreshBankAccountGUI(client)
 end

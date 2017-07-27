@@ -21,6 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1257] = function(element, clickInfo) BusRouteInformationGUI:getSingleton(element):show() end;
 
 	}
 
@@ -37,6 +38,8 @@ function ClickHandler:constructor()
 
 	addEventHandler("onClientCursorMove", root,
 		function(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
+			if not self.m_Rendered then return false end -- only update if client rendered a new frame (hack to get the args from onClientCursorMove but every onClientRender)
+			self.m_Rendered = false
 			-- Do not draw if cursor is not visible and is not on top of any GUI element
 			if not isCursorShowing() or GUIElement.getHoveredElement() then
 				self.m_DrawCursor = false
@@ -65,6 +68,7 @@ function ClickHandler:constructor()
 
 	addEventHandler("onClientRender", root,
 		function()
+			self.m_Rendered = true
 			if self.m_DrawCursor then
 				local cx, cy = getCursorPosition()
 

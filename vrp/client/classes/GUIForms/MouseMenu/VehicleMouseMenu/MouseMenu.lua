@@ -87,6 +87,30 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
 		end
+		if element:getModel() == 437 then -- Coach
+			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+					self:addItem(_"Busfahrer >>>",
+						function()
+							if self:getElement() then
+								delete(self)
+								ClickHandler:getSingleton():addMouseMenu(BusLineMouseMenu:new(posX, posY, element), element)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Arrows)
+				end
+			end -- don't use elseif as it will prevent the bus driver from seeing the UI 
+			if element:getData("EPT_bus_duty") then
+				self:addItem(_"Fahrplan anzeigen",
+					function()
+						if self:getElement() then
+							delete(self)
+							BusRouteInformationGUI:getSingleton(element)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Document)
+			end
+		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			if getElementData(element, "StateVehicle") then
 				self:addItem(_("Items >>>"),

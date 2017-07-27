@@ -58,12 +58,11 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
 	local a, r, g, b
-	if tonumber(color) and tonumber(color) > 0 then
-		a, r, g, b = getBytesInInt32(color)
-	else
+
 		local companyId = self.m_Company:getId()
 		r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
-	end
+
+	setVehicleColor(self, r, g, b, r, g, b)
 
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
@@ -223,6 +222,12 @@ function CompanyVehicle:respawn(force)
 	if self:getOccupants() then -- For Trailers
 		for _, player in pairs(self:getOccupants()) do
 			return false
+		end
+	end
+
+	if self:getCompany():getId() == 4 then -- Public Transport
+		if self:getCompany():isBusOnTour(self) then
+			self:getCompany():stopBusTour(self)
 		end
 	end
 
