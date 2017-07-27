@@ -111,9 +111,6 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
 
-	self.m_AdButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
-	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
-
 	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
@@ -122,7 +119,7 @@ function SelfGUI:constructor()
 
 	self.m_AchievementButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", true, tabGeneral)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)
-	
+
 	self.m_ObjectOverviewButton = VRPButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"platzierte Objekte", true, tabGeneral)
 	self.m_ObjectOverviewButton.onLeftClick = function()
 		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getPrivateSync("Id"), "player")
@@ -479,12 +476,6 @@ function SelfGUI:AchievementButton_Click()
 	AchievementGUI:getSingleton():open()
 end
 
-function SelfGUI:AdButton_Click()
-	self:close()
-	AdvertisementBox:getSingleton():open()
-end
-
-
 function SelfGUI:KeyBindsButton_Click()
 	self:close()
 	KeyBindings:getSingleton():open()
@@ -831,7 +822,7 @@ function SelfGUI:onSettingChange(setting)
 				self.m_LifeArmor:setVisible(true)
 			elseif index == UIStyle.eXo then
 				self.m_HUDScale:setVisible(true)
-			elseif index == UIStyle.Chart then 
+			elseif index == UIStyle.Chart then
 				self.m_HUDScale:setVisible(true)
 				self.m_ChartMargin:setVisible(true)
 				self.m_ChartBlue:setVisible(true)
@@ -878,11 +869,11 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
-		
+
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
 		self.m_ChartLabels.onChange = function (state) core:set("HUD", "chartLabels", state) end
-		
+
 		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Punkte / Level", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
 		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
@@ -897,15 +888,15 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HUDScale:setText(_"HUD-Skalierung")
 
 		local oldScale = 0.75
-		self.m_HUDScale.onScroll = function() 
-			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2); 
+		self.m_HUDScale.onScroll = function()
+			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2);
 			if scale ~= oldScale then
-				HUDUI:getSingleton():setScale( scale ); 
+				HUDUI:getSingleton():setScale( scale );
 				oldScale = scale
 				core:set("HUD","scaleScroll",scale*0.75)
-			end 
+			end
 		end
-	
+
 		updateDesignOptions(core:get("HUD", "UIStyle", UIStyle.Chart)) --only show items which are relevant for current UI
 
 	elseif setting == "Radar" then
@@ -954,12 +945,12 @@ function SelfGUI:onSettingChange(setting)
 		self.m_BlipScale:setColor(Color.LightBlue)
 		self.m_BlipScale:setText(_"Blipgröße")
 		local oldScale = 0.5
-		self.m_BlipScale.onScroll = function() 
+		self.m_BlipScale.onScroll = function()
 			local scale = math.round(self.m_BlipScale:getScrollPosition(), 2)
 			if scale ~= oldScale then
-				Blip.setScaleMultiplier(scale) 
+				Blip.setScaleMultiplier(scale)
 				oldScale = scale
-			end 
+			end
 		end
 
 		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
@@ -992,12 +983,12 @@ function SelfGUI:onSettingChange(setting)
 		self.m_MapOpacity:setColor(Color.LightBlue)
 		self.m_MapOpacity:setText(_"Karten-Transparenz")
 		local oldScale = 0.7
-		self.m_MapOpacity.onScroll = function() 
+		self.m_MapOpacity.onScroll = function()
 			local scale = math.round(self.m_MapOpacity:getScrollPosition(), 2)
 			if scale ~= oldScale then
 				oldScale = scale
 				core:set("HUD","mapOpacity", scale)
-			end 
+			end
 		end
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))

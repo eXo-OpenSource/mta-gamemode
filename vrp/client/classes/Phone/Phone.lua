@@ -27,12 +27,13 @@ function Phone:constructor()
 	self.m_AppDashboard = self:registerApp(AppDashboard)
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
-	--self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppAmmunation)
 	self:registerApp(AppBank)
 	self:registerApp(PhoneApp.makeWebApp("Snake",  "IconSnake.png", ("https://exo-reallife.de/ingame/vRPphone/webApps/snake/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppNavigator)
 	self:registerApp(AppEPT)
+	self:registerApp(AppSanNews)
+
 
 	-- Add GUI elements
 	self.m_PhoneImage = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)

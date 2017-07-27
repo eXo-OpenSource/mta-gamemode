@@ -606,7 +606,6 @@
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
-	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
@@ -687,6 +686,8 @@
 	<script src="client/classes/Phone/Apps/AppAmmunation.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppBank.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNavigator.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppSanNews.lua" type="client"/>
+
 
 	<!-- Companies -->
 	<script src="client/classes/Business/Company.lua" type="client"/>
@@ -959,7 +960,7 @@
 
 	<vrpfile src="files/images/CutsceneAssets/cutscene_bobberbar_info.png" />
 	<vrpfile src="files/images/CutsceneAssets/cutscene_power_info.png" />
-	
+
 	<vrpfile src="files/images/Company/EPT/Bus.png" />
 
 	<vrpfile src="files/images/Radio/radio_bg.png"/>
