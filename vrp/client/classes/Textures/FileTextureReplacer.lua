@@ -5,7 +5,8 @@ FileTextureReplacer.ClientPath = "files/images/Textures/%s"
 function FileTextureReplacer:constructor(element, fileName, textureName, options)
 	TextureReplacer.constructor(self, element, textureName, options)
 
-	self.m_FileName = fileName
+	self.m_FileName = fileName:find("files/images/Textures/") and fileName:gsub("files/images/Textures/", "") or fileName
+
 	if isElementStreamedIn(self.m_Element) then
 		self:load()
 	end

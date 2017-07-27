@@ -69,7 +69,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
-			end)
+			end, false)
 
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
@@ -80,7 +80,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			function()
 				self.m_CurrentPlants[player] = 0
 				self:updatePrivateData(player)
-			end)
+			end, false)
 	end
 
 
@@ -129,9 +129,9 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton!",player,255,0,0)
+			player:sendError(_("Du hast schon %d Getreide auf deinem Walton!", player, self.m_CurrentPlants[player]))
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
@@ -158,7 +158,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 				end,3500,1,hitElement
 			)
 		else
-			player:sendMessage(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON  ,self.m_CurrentPlantsFarm),255,0,0)
+			player:sendError(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON, self.m_CurrentPlantsFarm))
 		end
 	end
 end
@@ -182,8 +182,8 @@ end
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlips[player:getId()] = Blip:new("Waypoint.png", x, y, player, 4000)
-		self.m_DeliveryBlips[player:getId()]:setStreamDistance(4000)
+		self.m_DeliveryBlips[player:getId()] = Blip:new("Marker.png", x, y, player, 4000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DeliveryBlips[player:getId()]:setDisplayText("Kisten-Abgabe")
 	else
 		delete(self.m_DeliveryBlips[player:getId()])
 	end
@@ -228,9 +228,9 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp

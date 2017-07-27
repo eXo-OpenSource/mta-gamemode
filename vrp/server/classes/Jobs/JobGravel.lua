@@ -14,6 +14,8 @@ LOAN_MINING = 29*2 -- Per Stone
 LOAN_DOZER = 59*2 -- Per Stone
 LOAN_DUMPER = 79*2 -- Per Stone
 
+MAX_STONES_IN_DUMPER = 10
+
 function JobGravel:constructor()
 	Job.constructor(self)
 
@@ -49,23 +51,25 @@ function JobGravel:constructor()
 
 	self.m_Col = createColSphere(592.54, 868.73, -42.497, 300)
 	addEventHandler("onColShapeLeave", self.m_Col , bind(self.onGravelJobLeave, self))
+	addEventHandler("onColShapeHit", self.m_Col , bind(self.onGravelJobEnter, self))
 
 	self.m_TimedPulse = TimedPulse:new(60000)
 	self.m_TimedPulse:registerHandler(bind(self.destroyUnusedGravel, self))
 
-	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe", "gravelOnDestroy"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe", "gravelOnDestroy", "gravelOnSync"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
 	addEventHandler("gravelOnDestroy", root, bind(self.Event_onGravelDestroyHit, self))
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
 	addEventHandler("gravelOnDozerHit", root, bind(self.Event_onDozerHit, self))
 	addEventHandler("gravelTogglePickaxe", root, bind(self.Event_togglePickaxe, self))
+	addEventHandler("gravelOnSync", root, bind(self.Event_gravelOnSync, self))
 
 end
 
 function JobGravel:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_GRAVEL) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_GRAVEL), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_GRAVEL))
 		return false
 	end
 	return true
@@ -75,6 +79,7 @@ function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
+	player.gravelLoaded = false
 	player.m_LastJobAction = getRealTime().timestamp
 	setTimer(function()
 		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
@@ -101,6 +106,35 @@ function JobGravel:Event_onGravelDestroyHit()
 			end
 			source:destroy()
 		end
+	end
+end
+
+function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
+	if getElementData(source, "syncer") == client then
+		source.m_Position = Vector3(posX, posY, posZ)
+		source.m_Velocity = Vector3(velX, velY, velZ)
+		
+		for k, v in ipairs(self.m_Col:getElementsWithin("player")) do
+			if v ~= client then
+				v:triggerEvent("gravelOnSync", {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
+			end
+		end
+		--[[source:setPosition()
+		source:setVelocity(Vector3(velX, velY, velZ))]]
+	end
+end
+
+function JobGravel:onGravelJobEnter(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		local gravel = {}
+
+		for k, v in pairs(self.m_Gravel) do
+			if v.mined then
+				table.insert(gravel, {element = v, position = v.m_Position, velocity = v.m_Velocity})
+			end
+		end
+
+		hitElement:triggerEvent("gravelOnSync", gravel)
 	end
 end
 
@@ -153,8 +187,6 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
-	else
-		player.gravelLoaded = false
 	end
 end
 
@@ -183,6 +215,8 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
 		gravel.mined = true
+		gravel:setData("mined", true, true)
+		setElementData(gravel, "syncer", client)
 		gravel.LastHit = getRealTime().timestamp
 		client:triggerEvent("gravelDisableCollission", gravel)
 		gravel:setScale(0)
@@ -331,7 +365,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								player:sendError(_("Das Lager ist leer! Es können keine weiteren Steine aufgeladen werden", player))
 								if sourceTimer and isTimer(sourceTimer) then killTimer(sourceTimer) end
 							end
-						end, 1500, 10, pos, source.Track, hitElement)
+						end, 1500, MAX_STONES_IN_DUMPER, pos, source.Track, hitElement)
 
 						setTimer(function(marker)
 							marker.isBusy = false
@@ -366,6 +400,7 @@ end
 
 function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
+	if amount > MAX_STONES_IN_DUMPER then amount = MAX_STONES_IN_DUMPER end
 	local loan = amount*LOAN_DUMPER
 	local duration = getRealTime().timestamp - player.m_LastJobAction
 	local points = math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR)

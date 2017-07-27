@@ -38,9 +38,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
-	addEventHandler("onClientRender",root,bind(self.renderPostMortemInfo, self))
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
-	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
 	addEventHandler("playSound", root, bind(self.Event_PlaySound, self))
@@ -88,10 +86,6 @@ end
 function LocalPlayer:Event_onGetTime( realtime )
 	setTime(realtime.hour, realtime.minute)
 	setMinuteDuration(60000)
-end
-
-function LocalPlayer:checkWeaponAim()
-
 end
 
 function LocalPlayer:fadeOutScope()
@@ -446,63 +440,49 @@ function LocalPlayer:toggleAFK(state, teleport)
 	end
 end
 
-function LocalPlayer:renderPostMortemInfo()
-	local peds = getElementsByType("ped", root, true)
-	local isMortem,x,y,z, name
-	local px, py, pz, tx, ty, tz, dist
-	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do
-		isMortem = getElementData(ped, "NPC:isDyingPed")
-		if isMortem then
-			x,y,z = getPedBonePosition(ped, 8)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
-			if dist then
-				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z)
-						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
-						if x and y then
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
-						end
-					end
-				end
-			end
-		end
-	end
-	if self.m_MortemWeaponPickup then
-		if getKeyState("lalt") and getKeyState("m") then
-			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
-			self.m_MortemWeaponPickup = false
-		end
-	end
-end
-
 
 function LocalPlayer:renderPedNameTags()
-	local peds = getElementsByType("ped", root, true)
-	local nameTag,x,y,z, textWidth
-	local px, py, pz, tx, ty, tz, dist
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/PedNameTag") end
+
+	local nameTag, mortemTag, x, y, z
+	local px, py, pz, tx, ty, tz
 	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do
+
+	for k, ped in pairs(getElementsByType("ped", root, true)) do
+		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag") end
 		nameTag = getElementData(ped, "Ped:fakeNameTag")
-		if nameTag then
-			textWidth = dxGetTextWidth(nameTag, 1,"default-bold")
-			x,y,z = getPedBonePosition(ped, 3)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
-			if dist then
+		mortemTag = getElementData(ped, "NPC:isDyingPed")
+		if mortemTag then mortemTag = getElementData(ped,"NPC:namePed") or "Unbekannt" end
+
+		if nameTag or mortemTag then
+			x,y,z = getPedBonePosition(ped, 8)
+			if getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z+1)
+						x,y = getScreenFromWorldPosition(x,y,z+0.5)
 						if x and y then
-							dxDrawText(nameTag, x-textWidth/2,y+1,x+textWidth/2,y+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText(nameTag, x-textWidth/2,y,x+textWidth/2,y,tocolor(200,200,200,255),1,"default-bold")
+							if nameTag then 
+								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(200, 200, 200, 255), 1, "default-bold", "center", "center")
+							elseif mortemTag then 
+								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 1, "default-bold", "center", "center")
+							end
 						end
 					end
 				end
 			end
 		end
+		if self.m_MortemWeaponPickup then -- better solution would be key-binds, but this is easy and safe
+			if getKeyState("lalt") and getKeyState("m") then
+				triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
+				self.m_MortemWeaponPickup = false
+			end
+		end
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/PedNameTag") end
 end
 
 function LocalPlayer:Event_OnTryPickup( pickup )
@@ -555,7 +535,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			function()
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx, vy, 0.3)
 					end
@@ -566,7 +546,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			function()
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
 					end
@@ -614,9 +594,9 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			end
 		)]]
 
-		if rank >= RANK.Servermanager then
+		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
-				if self:getRank() >= RANK.Servermanager then
+				if self:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end

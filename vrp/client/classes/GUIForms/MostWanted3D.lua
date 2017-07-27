@@ -20,7 +20,7 @@ function MostWanted:generateUrl()
 	local i = 1
 	for Id, player in pairs(Element.getAllByType("player")) do
 		if i < 8 then
-			if player:getWanteds() >= 4 then
+			if player:getWanteds() >= 8 then
 				url = url..("&name[%d]=%s&wanteds[%d]=%d&skin[%d]=%d"):format(i, player:getName(), i, player:getWanteds(), i, player:getModel())
 				i = i+1
 			end

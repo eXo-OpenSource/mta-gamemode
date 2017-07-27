@@ -6,16 +6,7 @@
 -- *
 -- ****************************************************************************
 ItemBarricade = inherit(Item)
-addRemoteEvents{"worldItemToggleConeLight"}
-
-
-function ItemBarricade:constructor( )
-
-end
-
-function ItemBarricade:destructor()
-
-end
+addRemoteEvents{"worldItemToggleBlinkingLight"}
 
 function ItemBarricade:use(player)
 	if player:isFactionDuty() then
@@ -28,12 +19,11 @@ function ItemBarricade:use(player)
 				addEventHandler("onClientBreakItem", self.m_WorldItem.m_Object, function()
 					source.m_Super:onDelete()
 				end)
-				if self:getModelId() == 1238 then
-					addEventHandler("worldItemToggleConeLight", self.m_WorldItem.m_Object, function()
-						self:toggleConeLight(source, client)
+				if self:getModelId() == 1238 then --Cone 
+					addEventHandler("worldItemToggleBlinkingLight", self.m_WorldItem.m_Object, function()
+						self:toggleBlinkingLight(source, client)
 					end)
 				end
-
 				player:getInventory():removeItem(self:getName(), 1)
 			end
 		)
@@ -43,14 +33,31 @@ function ItemBarricade:use(player)
 	end
 end
 
-function ItemBarricade:toggleConeLight(object, player)
+
+function ItemBarricade:blink()
+	local obj = self.m_WorldItem.m_Object
+	if obj then
+		local data = ItemBarricade.BlinkItems[self:getModelId()]
+		if data.activeObjects[obj] then
+			if data.activeObjects[obj] == 0 then
+
+			else
+
+			end
+		end
+	end 
+
+end
+
+function ItemBarricade:toggleBlinkingLight(object, player)
 	if not (object.m_LightTimer and isTimer(object.m_LightTimer)) then
+		object.m_Marker = createMarker(object.position, "corona", 0.3, 200, 100, 0, 255)
+		object.m_Marker:attach(object, 0, 0, 0.5)
 		object.m_LightTimer = setTimer(function()
 			if object.m_MarkerVisible then
-				object.m_Marker:destroy()
+				object.m_Marker:setColor(200, 100, 0, 0)
 			else
-				object.m_Marker = createMarker(object.position, "corona", 0.3, 200, 100, 0, 255)
-				object.m_Marker:attach(object, 0, 0, 0.5)
+				object.m_Marker:setColor(200, 100, 0, 255)
 			end
 			object.m_MarkerVisible = not object.m_MarkerVisible
 		end, 500, 0)
@@ -68,6 +75,6 @@ end
 
 function ItemBarricade:removeFromWorld(player, worlditem, object)
 	if object.m_LightTimer then
-		self:toggleConeLight(object, player)
+		self:toggleBlinkingLight(object, player)
 	end
 end

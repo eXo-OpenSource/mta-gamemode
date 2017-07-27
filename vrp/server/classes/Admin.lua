@@ -67,6 +67,7 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
+	addCommandHandler("cookie", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
@@ -275,7 +276,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" then
+                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
                             self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
                             return
                         else
@@ -294,13 +295,13 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         if cmd == "spect" or cmd == "unprison" or cmd == "freeze" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
-        elseif cmd == "rkick" or cmd == "permaban" then
+        elseif cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
             admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
             return
         else
             admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
             return
-        end
+        end		
 	end
 end
 
@@ -600,6 +601,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			else
       		  admin:sendError(_("Ungültiges Ziel!", admin))
 			end
+		elseif func == "cookie" then
+			local reason = reason:gsub("_", " ")
+			if target:getInventory():giveItem("Keks", 1) then
+				target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
+				self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+			else
+				admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
+			end
         end
     else
         admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
@@ -703,9 +712,11 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b)
+function Admin:sendMessage(msg,r,g,b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(msg, key, r,g,b)
+		if key:getRank() >= (minRank or 1) then
+			outputChatBox(msg, key, r,g,b)
+		end
 	end
 end
 
@@ -918,17 +929,28 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
-        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+        if targetPlayer:getFaction() then
+			local faction = targetPlayer:getFaction()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
+			end
+			faction:removePlayer(targetPlayer) 
+		end
 
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
     		if faction then
-    			faction:addPlayer(targetPlayer,6)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
+				end
+
+    			faction:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -938,15 +960,27 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
-        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
+
+        if targetPlayer:getCompany() then
+			local company = targetPlayer:getCompany()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
+			end
+			company:removePlayer(targetPlayer) 
+		end
+
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
     		if company then
-    			company:addPlayer(targetPlayer,5)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
+				end
+    			company:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -1141,7 +1175,7 @@ function Admin:reloadHelpText(player)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
@@ -1149,7 +1183,7 @@ function Admin:runString(player, cmd, ...)
 end
 
 function Admin:runPlayerString(player, cmd, target, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local tPlayer
 		local sendResponse
 		if target ~= "root" then

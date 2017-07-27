@@ -444,6 +444,7 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
+	if state and VEHICLE_BIKES[self:getModel()] then return end -- disable total loss for bycicles
 	if state then
 		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
@@ -506,7 +507,7 @@ end
 function Vehicle:countdownDestroyAbort(player)
 	if not player then player = self.m_CountdownDestroyPlayer end
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
-		player:triggerEvent("CountdownStop", "Fahrzeug")
+		if isElement(player) then player:triggerEvent("CountdownStop", "Fahrzeug") end
 		killTimer(self.m_CountdownDestroyTimer)
 	end
 	self.m_CountdownDestroyPlayer = nil
@@ -594,19 +595,18 @@ function Vehicle:setTexture(texturePath, textureName, force, isPreview, player)
 			self.m_Texture[textureName] = nil
 		end
 
-		local isHttp = string.find(texturePath,"http://")
-		if isHttp == nil then
-			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, player)
-		else
-			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, true, isPreview, player)
-		end
+		self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, player)
+
 	end
 end
 
 function Vehicle:removeTexture(textureName)
+	if not self.m_Texture then return false end
 	if textureName then
-		delete(self.m_Texture[textureName])
-		return
+		if self.m_Texture and self.m_Texture[textureName] then
+			delete(self.m_Texture[textureName])
+			return
+		end
 	end
 
 	for i, v in pairs(self.m_Texture) do

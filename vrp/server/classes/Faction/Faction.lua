@@ -10,11 +10,12 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType)
+function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_Name = name
-	self.m_Players = players
+	self.m_Players = players[1]
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
@@ -24,7 +25,6 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
 	self.m_Blips = {}
-
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
 
 	self.m_Vehicles = {}
@@ -43,7 +43,9 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
-	self.m_VehicleTexture = factionVehicleShaders[Id] or false
+	self.m_VehicleTexture = false
+
+	self.m_DiplomacyJSON = diplomacy
 
 	self:getActivity()
 end
@@ -57,7 +59,11 @@ function Faction:destructor()
 end
 
 function Faction:save()
-	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), self.m_Id) then
+	local diplomacy = ""
+	if self.m_Diplomacy then
+		diplomacy = toJSON({["Status"] = self.m_Diplomacy, ["Requests"] = self.m_DiplomacyRequests, ["Permissions"] = self.m_DiplomacyPermissions or {}})
+	end
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
 	end
@@ -178,21 +184,22 @@ function Faction:addPlayer(playerId, rank)
 
 	rank = rank or 0
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
 		end
-
+		player:reloadBlips()
 		player:giveAchievement(68) -- Parteiisch
 		if self.m_Name_Short == "SAPD" then
 			player:giveAchievement(9) -- Gutes blaues Männchen
 		end
 	end
 	bindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
-  
+	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ?, FactionLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+
   	self:getActivity(true)
 end
 
@@ -202,6 +209,7 @@ function Faction:removePlayer(playerId)
 	end
 
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
@@ -209,21 +217,23 @@ function Faction:removePlayer(playerId)
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:setDefaultSkin()
-			player.m_FactionDuty = false
+			player:setFactionDuty(false)
 			player:setPublicSync("Faction:Duty",false)
 			player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 			self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
+		else
+			player:reloadBlips()
 		end
+		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
-	unbindKey(player, "y", "down", "chatbox", "Fraktion")
-	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
 function Faction:invitePlayer(player)
   client:sendShortMessage(("Du hast %s erfolgreich in die Fraktion eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("factionInvitationRetrieve", self:getId(), self:getName())
 
-	self.m_Invitations[player] = true
+	self.m_Invitations[player] = client.m_Id
 end
 
 function Faction:removeInvitation(player)
@@ -241,7 +251,6 @@ function Faction:isPlayerMember(playerId)
 
 	return self.m_Players[playerId] ~= nil
 end
-
 
 function Faction:getPlayerRank(playerId)
 	if type(playerId) == "userdata" then
@@ -272,6 +281,19 @@ function Faction:setPlayerRank(playerId, rank)
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
+function Faction:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Faction:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET FactionLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
 function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
@@ -292,7 +314,9 @@ end
 
 function Faction:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
-	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
+	local loan = loanEnabled and tonumber(self.m_RankLoans[tostring(rank)]) or 0
+
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
 	self:takeMoney(loan, "Lohn von "..player:getName())
@@ -318,10 +342,10 @@ function Faction:getActivity(force)
 	self.m_LastActivityUpdate = getRealTime().timestamp
 
 	for playerId, rank in pairs(self.m_Players) do
-		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(NOW()) - 7 AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end
@@ -336,24 +360,24 @@ function Faction:getPlayers(getIDsOnly)
 	end
 
 	local temp = {}
-	
+
 	self:getActivity()
 
 	for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end
 
-function Faction:getOnlinePlayers(afkCheck)
+function Faction:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			if not afkCheck or not player.m_isAFK then
+			if (not afkCheck or not player.m_isAFK) and (not dutyCheck or player:isFactionDuty()) then
 				players[#players + 1] = player
 			end
 		end
@@ -373,6 +397,24 @@ function Faction:sendShortMessage(text, ...)
 	end
 end
 
+function Faction:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local fType = self:getType()
+		local blip = Blip:new(fType == "State" and "Alarm.png" or fType == "Evil" and "Gangwar.png" or fType == "Rescue" and "Fire.png",
+			pos[1], pos[2], {faction = self:getId(), duty = (not withOffDuty)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:destroy()
+		end, 30000, 1)
+	end
+end
+
 function Faction:sendChatMessage(sourcePlayer, message)
 	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
 		local playerId = sourcePlayer:getId()
@@ -384,13 +426,27 @@ function Faction:sendChatMessage(sourcePlayer, message)
 		for k, player in ipairs(self:getOnlinePlayers()) do
 			player:sendMessage(text, r, g, b)
 			if player ~= sourcePlayer then
-	            receivedPlayers[#receivedPlayers+1] = player:getName()
+	            receivedPlayers[#receivedPlayers+1] = player
 	        end
 		end
-		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "faction:"..self.m_Id, message, toJSON(receivedPlayers))
+		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "faction:"..self.m_Id, message, receivedPlayers)
 	--else
 	--	sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
 	--end
+end
+
+function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
+	local playerId = sourcePlayer:getId()
+	local receivedPlayers = {}
+	local r,g,b = 20, 140, 0
+	local text = ("BND %s %s: %s"):format(alliance:getShortName(), getPlayerName(sourcePlayer), message)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b)
+		if player ~= sourcePlayer then
+			receivedPlayers[#receivedPlayers+1] = player
+		end
+	end
+	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "factionBnd:"..self.m_Id, message, receivedPlayers)
 end
 
 function Faction:respawnVehicles( isAdmin )
@@ -412,6 +468,9 @@ function Faction:respawnVehicles( isAdmin )
 			vehicles = vehicles + 1
 			if not vehicle:respawn(true) then
 				fails = fails + 1
+			else
+				vehicle:setInterior(0)
+				vehicle:setDimension(0)
 			end
 			self.m_LastRespawn = getRealTime().timestamp
 		end
@@ -490,4 +549,99 @@ end
 
 function Faction:createBlip(img, posX, posY, streamDistance)
 	self.m_Blips[#self.m_Blips+1] = Blip:new(img, posX, posY, self:getOnlinePlayers(), streamDistance)
+end
+
+function Faction:loadDiplomacy()
+	if self.m_DiplomacyJSON and self.m_DiplomacyJSON ~= "" then
+		local dbTable = fromJSON(self.m_DiplomacyJSON)
+		if dbTable and dbTable["Status"] and dbTable["Requests"] and dbTable["Permissions"] then
+			self.m_Diplomacy = dbTable["Status"]
+			self.m_DiplomacyRequests = dbTable["Requests"]
+			self.m_DiplomacyPermissions = dbTable["Permissions"]
+		else
+			self.m_DiplomacyJSON = nil
+			self:loadDiplomacy()
+		end
+	else
+		self.m_Diplomacy = {}
+		self.m_DiplomacyRequests = {}
+		self.m_DiplomacyPermissions = {}
+		for Id, faction in pairs(FactionManager:getSingleton():getAllFactions()) do
+			if faction:isEvilFaction() and faction ~= self then
+				self:changeDiplomacy(faction, FACTION_DIPLOMACY.Waffenstillstand)
+			end
+		end
+	end
+end
+
+function Faction:getDiplomacy(targetFaction)
+	local factionId, status
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if factionId == targetFaction:getId() then
+			return status
+		end
+	end
+end
+
+function Faction:getAllianceFaction()
+	local factionId, status
+	if not self.m_Diplomacy then return false end
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if status == FACTION_DIPLOMACY["Verbündet"] then
+			if FactionManager:getSingleton():getFromId(factionId) then
+				return FactionManager:getSingleton():getFromId(factionId)
+			end
+		end
+	end
+	return false
+end
+
+function Faction:checkAlliancePermission(targetFaction, permission)
+	if not self.m_Diplomacy then return false end
+
+	if self:getAllianceFaction() == targetFaction then
+		if table.find(self.m_DiplomacyPermissions, permission) then
+			return true
+		end
+	end
+	return false
+end
+
+function Faction:changeDiplomacy(targetFaction, diplomacy, player)
+	local factionId, status
+	for index, data in pairs(self.m_Diplomacy) do
+		factionId, status = unpack(data)
+		if factionId == targetFaction:getId() then
+			self.m_Diplomacy[index] = {factionId, diplomacy}
+			if player then
+				self:sendShortMessage(("%s hat den Diplomatiestatus mit den %s zu '%s' geändert!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+			end
+			for index, data in pairs(self.m_DiplomacyRequests) do
+				if (data["target"] == self and data["source"] == targetFaction) or (data["source"] == self and data["target"] == targetFaction) then
+					self.m_DiplomacyRequests[index] = nil
+				end
+			end
+			return
+		end
+	end
+	table.insert(self.m_Diplomacy, {targetFaction:getId(), diplomacy})
+	outputDebugString(("Created Diplomacy for %s and %s - Status: %s"):format(self:getShortName(), targetFaction:getShortName(), FACTION_DIPLOMACY[diplomacy] or "Unknown"))
+end
+
+function Faction:createDiplomacyRequest(sourceFaction, targetFaction, diplomacy, player)
+	local request = {
+		["source"] = sourceFaction:getId(),
+		["target"] = targetFaction:getId(),
+		["status"] = diplomacy,
+		["player"] = player:getId(),
+		["timestamp"] = getRealTime().timestamp
+	}
+	table.insert(self.m_DiplomacyRequests, request)
+	if player and sourceFaction == self then
+		self:sendShortMessage(("%s hat der Fraktion %s eine %s-Anfrage gesendet!"):format(player:getName(), targetFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+	elseif player and targetFaction == self then
+		targetFaction:sendShortMessage(("Die Fraktion %s hat euch eine %s-Anfrage gesendet!"):format(sourceFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
+	end
 end

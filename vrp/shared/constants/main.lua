@@ -1,4 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
+PROJECT_VERSION = "1.3"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -10,6 +11,8 @@ MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
 MAX_FISHING_LEVEL = 10
+
+MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
@@ -51,6 +54,27 @@ JOB_LEVEL_GRAVEL = 6
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+BLIP_CATEGORY = {
+	Default = "Allgemein",
+	Shop = "Shops",
+	Job = "Arbeitsstellen",
+	Faction = "Fraktions-Basen",
+	Company = "Unternehmenssitze",
+	VehicleMaintenance = "Fahrzeug-Unterhaltung",
+	Leisure = "Freizeit",
+	Other = "Anderes",
+}
+
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
+BLIP_CATEGORY_ORDER = {
+	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
+}
+
 --USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
@@ -75,6 +99,7 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
+	["playerHistory"] = RANK.Supporter,
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
 	["freeze"] = RANK.Supporter,
@@ -114,12 +139,16 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
+	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["moveWorldItem"] = RANK.Moderator,
 	["deleteWorldItem"] = RANK.Moderator,
 	["showWorldItemInformation"] = RANK.Supporter,
 	["editHouse"] = RANK.Administrator,
+	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
+	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
 }
 
 GroupRank = {
@@ -581,15 +610,17 @@ VRP_RADIO = {
 	{"User Track Player", 12}
 }
 
-BeggarTypes = {
+BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
 	Transport = 3;
     Weed = 4;
-	Ecstasy = 5;
+	Heroin = 5;
 }
+
+BeggarTypeNames = {}
 for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
+	BeggarTypeNames[v] = i
 end
 
 HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)

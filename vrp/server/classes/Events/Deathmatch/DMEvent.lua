@@ -45,7 +45,7 @@ function Deathmatch:constructor ()
 		end
 	end)
 
-	self.m_Blip = Blip:new("1vs1.png", self.Position.x, self.Position.y, root, 400)
+	--self.m_Blip = Blip:new("1vs1.png", self.Position.x, self.Position.y, root, 400)
 	self.m_Matches = {}
 
 	addRemoteEvents{"Deathmatch.newMatch", "Deathmatch.addPlayertoMatch", "Deathmatch.removePlayerfromMatch", "Deathmatch.setMatchStatus"}

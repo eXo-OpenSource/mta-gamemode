@@ -1,18 +1,20 @@
 BeggarPed = inherit(Object)
 
-function BeggarPed:new(position, rotation, ...)
+function BeggarPed:new(id, position, rotation, ...)
     local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z)
-    enew(ped, self, ...)
+    enew(ped, self, id, ...)
 	addEventHandler("onPedWasted", ped, bind(self.Event_onPedWasted, ped))
 
     return ped
 end
 
-function BeggarPed:constructor(Id)
-	self.m_Id = Id
+function BeggarPed:constructor(id, roles)
+	self.m_Id = id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = createColSphere(self:getPosition(), 10)
-	self.m_Type = math.random(1, 4)
+	self.m_Type = #roles > 0 and Randomizer:getRandomTableValue(roles) or math.random(1, #BeggarTypeNames)
+	self.m_RoleName = BeggarTypeNames[self.m_Type]
+
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -171,6 +173,39 @@ function BeggarPed:giveItem(player, item)
 	end
 end
 
+function BeggarPed:buyItem(player, item)
+	if self.m_Despawning then return end
+	if not BeggarItemBuy[item] then return end
+
+	if not player.vehicle then
+		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
+		if player:getInventory():getFreePlacesForItem(item) >= BeggarItemBuy[item]["amount"] then
+			local price = BeggarItemBuy[item]["amount"] * BeggarItemBuy[item]["pricePerAmount"]
+			if player:getMoney() >= price then
+				local karma = 5
+				player:takeMoney(price)
+				player:giveKarma(-karma)
+				player:sendShortMessage(_("-%s Karma", player, math.floor(karma)))
+				player:givePoints(5)
+				player:getInventory():giveItem(item, BeggarItemBuy[item]["amount"])
+				self:sendMessage(player, BeggarPhraseTypes.Thanks)
+				player:meChat(true, ("erhält von %s eine Tüte!"):format(self.m_Name))
+				setTimer(
+					function ()
+						self:despawn()
+					end, 50, 1
+				)
+			else
+				player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, price, item))
+			end
+		else
+			player:sendError(_("In deinem Inventar ist nicht genug Platz für %d %s!", player, BeggarItemBuy[item]["amount"], item))
+		end
+	else
+		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
+	end
+end
+
 function BeggarPed:acceptTransport(player)
 	if self.m_Despawning then return end
 	if player.vehicle and player.vehicleSeat == 0 then
@@ -186,7 +221,7 @@ function BeggarPed:acceptTransport(player)
 			if not veh:getOccupant(seat) then
 				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)
 				self:warpIntoVehicle(veh, seat)
-				
+
 				player:meChat(true, ("bittet %s in sein Fahrzeug"):format(self.m_Name))
 				self:sendMessage(player, BeggarPhraseTypes.Destination, getZoneName(pos.x, pos.y, pos.z))
 				player.beggarTransportVehicle = veh
@@ -196,7 +231,8 @@ function BeggarPed:acceptTransport(player)
 				setElementVisibleTo(player.beggarTransportMarker, root, false)
 				setElementVisibleTo(player.beggarTransportMarker, player, true)
 
-				player.beggarTransportBlip = Blip:new("Waypoint.png", pos.x, pos.y, player, 9999)
+				player.beggarTransportBlip = Blip:new("Marker.png", pos.x, pos.y, player, 9999, BLIP_COLOR_CONSTANTS.Red)
+				player.beggarTransportBlip:setDisplayText(("Ziel von %s"):format(self.m_Name))
 				if self.m_ColShape then self.m_ColShape:destroy() end
 
 				self.m_onTransportExitBind = bind(self.onTransportExit, self)
@@ -277,7 +313,7 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 		self:despawn()
 
 		-- Give Wanteds
-		killer:giveWantedLevel(3)
+		killer:giveWanteds(3)
 		killer:sendMessage("Verbrechen begangen: Mord, 3 Wanteds", 255, 255, 0)
 	end
 end

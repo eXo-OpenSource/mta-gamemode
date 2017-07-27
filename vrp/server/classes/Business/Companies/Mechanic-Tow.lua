@@ -18,6 +18,14 @@ function MechanicTow:constructor()
 		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
 	end
 
+	local blip = Blip:new("CarLot.png", 913.83, -1234.65, root, 400)
+		blip:setOptionalColor({150, 150, 150})
+		blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
+
+	local id = self:getId()
+	local blip = Blip:new("House.png", 857.594, -1182.628, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
@@ -31,6 +39,12 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
+	local occs = vehicle:getOccupants()
+	if occs then
+		for i, occ in pairs(occs) do
+			occ:removeFromVehicle()
+		end
+	end
 	vehicle:setPositionType(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()

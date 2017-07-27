@@ -129,7 +129,7 @@ function GroupPropertyManager:BuyProperty( Id )
 				for key, player in ipairs( newOwner:getOnlinePlayers() ) do
 					player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
 					x,y,z = getElementPosition( property.m_Pickup )
-					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
+					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id,newOwner.m_Type)
 				end
 				StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
 			else

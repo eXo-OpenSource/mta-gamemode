@@ -11,11 +11,39 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
-	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD Zellen
+	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD garare
+	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
+	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+
+	self.m_ArmySpecialVehicleBorder = {
+		x = -179.915,
+		y = 1614.156,
+		sizeX = 616.486,
+		sizeY = 610.996
+	}
+
+	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
+
+	addEventHandler("onColShapeLeave", root, function(element)
+		if element:getType() == "player" and element.vehicle then
+			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
+				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
+					local veh = element.vehicle
+					element:removeFromVehicle()
+					veh:respawn(true)
+					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
+					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
+						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
+							v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
+						end
+					end
+				end
+			end
+		end
+	end)
 
 	self.m_Bugs = {}
 
@@ -38,7 +66,7 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
-			
+
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1563.98,-1614.40, 12.5)) --LSPD
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1552.93,-1614.40, 12.5))
 			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2295.80, 2460.90, 2.30)) -- LVT
@@ -156,7 +184,7 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
 			if getElementType(hE) == "player" then
-				if hE:getWantedLevel() > 0 then
+				if hE:getWanteds() > 0 then
 					hE:triggerEvent("playerSelfArrest")
 				end
 			end
@@ -166,12 +194,12 @@ end
 
 function FactionState:Event_OnConfirmSelfArrest()
 	local bailcosts = 0
-	local wantedLevel = client:getWantedLevel()
-	local jailTime = wantedLevel * 5
+	local wantedLevel = client:getWanteds()
+	local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 	local factionBonus = JAIL_COSTS[wantedLevel]
 	bailcosts = BAIL_PRICES[wantedLevel]
 	client:setJailTime(jailTime)
-	client:setWantedLevel(0)
+	client:setWanteds(0)
 	client:moveToJail(CUTSCENE)
 	self:uncuffPlayer( client)
 	client:clearCrimes()
@@ -187,7 +215,8 @@ function FactionState:loadLSPD(factionId)
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
 
-	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
+	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
 
@@ -209,12 +238,15 @@ function FactionState:loadLSPD(factionId)
 
 
 	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
-	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
 function FactionState:loadFBI(factionId)
 	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
+
+	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 226.80, 128.50, 1010.20)
 	safe:setInterior(10)
@@ -227,7 +259,7 @@ function FactionState:loadFBI(factionId)
 	elevator:addStation("Parkplatz", Vector3(1219.147, -1811.706, 16.594), 180)
 
 	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
-																						
+
 	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
 	gateLeft.onGateHit = bind(self.onBarrierGateHit, self)
 	gateLeft:addGate(988, Vector3(1216.5, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1221.9004, -1841.9004, 13.4))
@@ -236,12 +268,22 @@ function FactionState:loadFBI(factionId)
 	gateRight.onGateHit = bind(self.onBarrierGateHit, self)
 	gateRight:addGate(988, Vector3(1272.9004, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1277.9004, -1841.9004, 13.4))
 
+	for i,v in pairs(gateLeft:getGateObjects()) do
+		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
+	end
+	for i,v in pairs(gateRight:getGateObjects()) do
+		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
+	end
+
 	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(238.3, 114.9, 1010.207), 0, 0, 10, 23) -- main entrance
 end
 
 function FactionState:loadArmy(factionId)
 	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
 	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
+
+	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
@@ -284,8 +326,8 @@ function FactionState:createTakeItemsPickup(pos)
 	end)
 end
 
-function FactionState:countPlayers()
-	local count = #self:getOnlinePlayers()
+function FactionState:countPlayers(afkCheck, dutyCheck)
+	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
 	return count
 end
 
@@ -299,7 +341,7 @@ function FactionState:Command_ticket(source, cmd, target)
 				if not faction:isStateFaction() then return end
 				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
 					if source ~= targetPlayer then
-						if targetPlayer:getWantedLevel() == 1 then
+						if targetPlayer:getWanteds() == 1 then
 							if targetPlayer:getMoney() >= TICKET_PRICE then
 								source.m_CurrentTicket = targetPlayer
 								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
@@ -327,13 +369,13 @@ end
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
 		if client:getMoney() >= TICKET_PRICE then
-			if client:getWantedLevel() == 1 then
+			if client:getWanteds() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
 					cop:getFaction():giveMoney(TICKET_PRICE, "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
-				client:setWantedLevel(0)
+				client:setWanteds(0)
 				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
 			end
 		end
@@ -456,11 +498,11 @@ function FactionState:Event_CuffSuccess( target )
 	end
 end
 
-function FactionState:getOnlinePlayers()
+function FactionState:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = self:getFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
-		for index, value in pairs(faction:getOnlinePlayers()) do
+		for index, value in pairs(faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 			table.insert(players, value)
 		end
 	end
@@ -664,11 +706,19 @@ function FactionState:sendShortMessage(text, ...)
 	end
 end
 
-function FactionState:sendWarning(text, header, withOffDuty, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		if player:isFactionDuty() or withOffDuty then
-			player:sendWarning(_(text, player, ...), 30000, header)
+function FactionState:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Alarm.png", pos[1], pos[2], {factionType = "State", duty = (withOffDuty and nil or true)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
 		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 
@@ -690,10 +740,10 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 		for k, player in pairs(self:getOnlinePlayers()) do
 			player:sendMessage(text, r, g, b)
 			if player ~= sourcePlayer then
-				receivedPlayers[#receivedPlayers+1] = player:getName()
+				receivedPlayers[#receivedPlayers+1] = player
 			end
 		end
-		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, toJSON(receivedPlayers))
+		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, receivedPlayers)
 	end
 end
 
@@ -708,10 +758,12 @@ function FactionState:outputMegaphone(player, ...)
 				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
 				for index = 1,#playersToSend do
 					playersToSend[index]:sendMessage(text, 255, 255, 0)
-					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+					if playersToSend[index] ~= player then
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
+					end
 				end
 
-				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, toJSON(receivedPlayers))
+				StatisticsLogger:getSingleton():addChatLog(player, "chat", text, receivedPlayers)
 				FactionState:getSingleton():addBugLog(player, "(Megafon)", text)
 				return true
 			else
@@ -738,12 +790,12 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 			end
 		end
 		amount = tonumber(amount)
-		if ( amount and amount >= 1 and amount <= 6 )  then
+		if amount and amount >= 1 and amount <= MAX_WANTED_LEVEL  then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
-						target:giveWantedLevel(amount)
+						target:giveWanteds(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
@@ -757,7 +809,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 				end
 			end
 		else
-			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!", player))
+			player:sendError(_("Die Anzahl muss zwischen 1 und %s liegen!", player, MAX_WANTED_LEVEL))
 		end
 	else
 		player:sendError(_("Du bist nicht im Dienst!", player))
@@ -898,16 +950,28 @@ end
 
 function FactionState:Command_needhelp(player)
 	local faction = player:getFaction()
+	local player = player
 	if faction and faction:isStateFaction() then
 		if player:isFactionDuty() then
 			if player:getInterior() == 0 and player:getDimension() == 0 then
+				if player.m_ActiveNeedHelp then return false end
+				player.m_ActiveNeedHelp = true
 				local rankName = faction:getRankName(faction:getPlayerRank(player))
-				local zoneName = getZoneName(player:getPosition()).."/"..getZoneName(player:getPosition(), true)
-				for k, onlineplayer in pairs(self:getOnlinePlayers()) do
-					onlineplayer:sendMessage(_("%s %s benötigt Unterstützung! Ort: %s", onlineplayer, rankName, player:getName(), zoneName), 50, 200, 255)
-					onlineplayer:sendMessage(_("Begib dich dort hin! Der Ort wird auf der Karte markiert!", onlineplayer), 50, 200, 255)
-					onlineplayer:triggerEvent("stateFactionNeedHelp", player)
+				local color = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+				local blip = Blip:new("Marker.png", player.position.x, player.position.y, {factionType = "State", duty = true}, 9999, color)
+					blip:setDisplayText(player.name)
+					blip:attach(player)
+
+				for k, onlinePlayer in pairs(self:getOnlinePlayers(true, true)) do
+					onlinePlayer:sendShortMessage(_("%s %s benötigt Unterstützung!", onlinePlayer, rankName, player:getName()), "Unterstützungseinheit erforderlich", color, 20000)
 				end
+
+				setTimer(function()
+					blip:delete()
+					if isElement(player) then
+						player.m_ActiveNeedHelp = false
+					end
+				end, 20000, 1)
 			else
 				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
 			end
@@ -919,25 +983,16 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
-function FactionState:showRobbedHouseBlip( suspect, housepickup)
-	local zoneName = getZoneName(housepickup:getPosition())
-	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
-		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
-		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
-		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
-	end
-end
-
-function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus)
-	if player:getWantedLevel() == 0 then return end
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus, offline)
+	if player:getWanteds() == 0 then return end
 	local policeman = police or client
 	if not force then
 		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
 			if policeman:isFactionDuty() then
-				if player:getWantedLevel() > 0 then
+				if player:getWanteds() > 0 then
 					local bailcosts = 0
-					local wantedLevel = player:getWantedLevel()
-					local jailTime = wantedLevel * 5
+					local wantedLevel = player:getWanteds()
+					local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 					local factionBonus = JAIL_COSTS[wantedLevel]
 
 					if player:getFaction() and player:getFaction():isEvilFaction() then
@@ -947,7 +1002,12 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					if bail then
 						bailcosts = BAIL_PRICES[wantedLevel]
 						player:setJailBail(bailcosts)
+						jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 					end
+					if offline then
+						jailTime = wantedLevel * JAIL_TIME_PER_WANTED_OFFLINE
+					end
+
 
 					if policeman.vehicle and player.vehicle then
 						self:Command_tie(policeman, "tie", player:getName(), false, true)
@@ -969,7 +1029,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 
 					player:giveKarma(-wantedLevel)
 					player:setJailTime(jailTime)
-					player:setWantedLevel(0)
+					player:setWanteds(0)
 					player:moveToJail(CUTSCENE)
 					self:uncuffPlayer( player)
 					player:clearCrimes()
@@ -1001,8 +1061,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		end
 	else
 		local bailcosts = 0
-		local wantedLevel = player:getWantedLevel()
-		local jailTime = wantedLevel * 5
+		local wantedLevel = player:getWanteds()
+		local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
 		local factionBonus = JAIL_COSTS[wantedLevel]
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			factionBonus = JAIL_COSTS[wantedLevel]/2
@@ -1010,6 +1070,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if bail then
 			bailcosts = BAIL_PRICES[wantedLevel]
 			player:setJailBail(bailcosts)
+			jailTime = wantedLevel * JAIL_TIME_PER_WANTED_BAIL
 		end
 		if policeman then
 			if policeman.vehicle and player.vehicle then
@@ -1031,7 +1092,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		end
 		player:giveKarma(-wantedLevel)
 		player:setJailTime(jailTime)
-		player:setWantedLevel(0)
+		player:setWanteds(0)
 		player:moveToJail(CUTSCENE)
 		self:uncuffPlayer( player)
 		player:clearCrimes()
@@ -1068,9 +1129,11 @@ function FactionState:Event_onPlayerExitVehicle(vehicle, seat)
 		if source.m_SpeedCol then
 			if isElement(source.m_SpeedCol) then
 				delete(source.m_SpeedCol)
+				setElementData(source, "speedCamEnabled", false)
 			end
 			if isElement(source.m_SpeedCol) then
 				destroyElement(source.m_SpeedCol)
+				setElementData(source, "speedCamEnabled", false)
 			end
 			source.m_SpeedCol = false
 		end
@@ -1159,7 +1222,7 @@ function FactionState:freePlayer(player)
 	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
-	player:setWantedLevel(0)
+	player:setWanteds(0)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
@@ -1210,12 +1273,13 @@ function FactionState:Event_toggleDuty(wasted)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
-				client.m_FactionDuty = false
+				client:setFactionDuty(false)
 				takeAllWeapons(client)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
 				client:setPublicSync("Faction:Duty",false)
 				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():removeAllItem("Barrikade")
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
@@ -1227,7 +1291,7 @@ function FactionState:Event_toggleDuty(wasted)
 					return false
 				end
 				faction:changeSkin(client)
-				client.m_FactionDuty = true
+				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
 				takeAllWeapons(client)
@@ -1342,8 +1406,8 @@ function FactionState:checkLogout(player)
 	col:destroy()
 	for index, cop in pairs(colPlayers) do
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
-			self:Event_JailPlayer(player, false, false, cop)
-			player:addOfflineMessage( "Sie wurden offline eingesperrt!", 1)
+			self:Event_JailPlayer(player, false, false, cop, false, false, true)
+			player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Kanstzeit ist dadurch länger!", 1)
 			return
 		end
 	end
@@ -1354,7 +1418,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:giveWantedLevel(amount)
+			target:giveWanteds(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
@@ -1367,7 +1431,7 @@ function FactionState:Event_clearWanteds(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:takeWantedLevel(6)
+			target:takeWanteds(6)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." alle Wanteds erlassen!")
@@ -1592,23 +1656,17 @@ end
 function FactionState:addBugLog(player, func, msg)
 	self:refreshBugs()
 	if not self:isBugActive() then return end
-	local colSize = CHAT_TALK_RANGE
+	local range = CHAT_TALK_RANGE
 
 	if func == "flüstert" then
-		colSize = CHAT_WHISPER_RANGE
+		range = CHAT_WHISPER_RANGE
 	elseif func == "schreit" then
-		colSize = CHAT_SCREAM_RANGE
+		range = CHAT_SCREAM_RANGE
 	end
 
-	local col = createColSphere(player:getPosition(), colSize)
-	local elements = col:getElementsWithin()
-	col:destroy()
-
-	for i=1, #elements do
-		if elements[i] and isElement(elements[i]) and elements[i].BugId then
-			local id = elements[i].BugId
-
-			if self.m_Bugs[id] then
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			if (player:getPosition() - bugData["element"]:getPosition()).length < range then
 				if getTickCount() - self.m_Bugs[id]["lastMessage"] >= 300000 then
 					self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
 				end
@@ -1619,6 +1677,7 @@ function FactionState:addBugLog(player, func, msg)
 			end
 		end
 	end
+
 end
 
 function FactionState:Event_loadBugs()

@@ -163,7 +163,7 @@ function PolicePanel:loadPlayers()
 	self.m_PlayersGrid:clear()
 	self.m_Players = {}
 
-	for i = 0, 6 do
+	for i = 0, MAX_WANTED_LEVEL do
 		for Id, player in pairs(Element.getAllByType("player")) do
 			if player:getWanteds() == i then
 				if not self.m_Players[i] then self.m_Players[i] = {} end
@@ -178,7 +178,7 @@ function PolicePanel:loadPlayers()
 		end
 	end
 
-	for i = 6, 0, -1 do
+	for i = MAX_WANTED_LEVEL, 0, -1 do
 		if self.m_Players[i] then
 			self.m_PlayersGrid:addItemNoClick(("%s Wanteds"):format(i), "")
 
@@ -346,7 +346,7 @@ function PolicePanel:locateElement(element, locationOf)
 		self:stopLocating()
 
 		local pos = element:getPosition()
-		ElementLocateBlip = Blip:new("Locate.png", pos.x, pos.y, 9999)
+		ElementLocateBlip = Blip:new("Marker.png", pos.x, pos.y, 9999)
 		ElementLocateBlip:attachTo(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
@@ -409,7 +409,7 @@ function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
 	if item then
 		local player = item.player
-		GiveWantedSTVOBox:new(player, 1, 6, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
+		GiveWantedSTVOBox:new(player, 1, MAX_WANTED_LEVEL, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end

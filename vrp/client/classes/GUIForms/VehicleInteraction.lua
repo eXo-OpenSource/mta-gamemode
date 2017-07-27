@@ -43,6 +43,7 @@ function VehicleInteraction:constructor()
 end
 
 function VehicleInteraction:render()
+    if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
 	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = getPedTarget(localPlayer)
     if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
@@ -89,6 +90,7 @@ function VehicleInteraction:render()
 	        end
 		end
     end
+    if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/VehicleInteraction", 1, 1) end
 end
 
 function VehicleInteraction:drawTextBox(text, count)

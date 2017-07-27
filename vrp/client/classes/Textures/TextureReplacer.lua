@@ -28,7 +28,7 @@ function TextureReplacer:constructor(element, textureName, options)
 	self.m_OnElementStreamIn  = bind(self.onStramIn, self)
 	self.m_OnElementStreamOut = bind(self.onStramOut, self)
 
-	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory)
+	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory, false)
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
@@ -101,9 +101,28 @@ function TextureReplacer:detach()
 	if not self.m_Shader or not isElement(self.m_Shader) then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader:destroy()
+	self.m_Texture:destroy()
 	if self.m_Shader then self.m_Shader = nil end
 	if self.m_Texture then self.m_Texture = nil end
 	return TextureReplacer.Status.SUCCESS
+end
+
+function TextureReplacer:setLoadingMode(loadingMode)
+	if loadingMode == self.m_LoadingMode then return false end
+	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+		removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+		removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	end
+
+	if loadingMode == TEXTURE_LOADING_MODE.STREAM then
+		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+		self:addToLoadingQeue()
+	elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
+		self.m_Active = false
+	end
+	self.m_LoadingMode = loadingMode
 end
 
 -- Cache methods
@@ -160,7 +179,7 @@ function TextureReplacer.addRef(instance)
 end
 
 function TextureReplacer.removeRef(instance)
-	outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
+	--outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
 	TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName] = nil
 end
 
@@ -202,3 +221,47 @@ function TextureReplacer:loadNext()
 		return TextureReplacer.Queue:pop_back(1):load()
 	end
 end
+
+--// Static Helper
+function TextureReplacer.changeLoadingMode(loadingMode)
+	outputDebug("Setting TextureReplace loading mode to TEXTURE_LOADING_MODE"..tostring(TEXTURE_LOADING_MODE[loadingMode]))
+	for i, instance in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
+		instance:setLoadingMode(loadingMode)
+	end
+end
+
+-- Events
+addEvent("changeElementTexture", true)
+addEventHandler("changeElementTexture", root,
+	function(vehicles)
+		for i, vehData in pairs(vehicles) do
+			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] then
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] = {}
+			end
+
+			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] then
+				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName])
+			end
+			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
+			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+			else
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+			end
+		end
+	end
+)
+
+addEvent("removeElementTexture", true)
+addEventHandler("removeElementTexture", root,
+	function(textureName)
+		if TextureReplacer.Map.SERVER_ELEMENTS[source] and TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] then
+			delete(TextureReplacer.Map.SERVER_ELEMENTS[source][textureName])
+			TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] = nil
+		end
+
+		if table.size(TextureReplacer.Map.SERVER_ELEMENTS[source]) <= 0 then
+			TextureReplacer.Map.SERVER_ELEMENTS[source] = nil
+		end
+	end
+)

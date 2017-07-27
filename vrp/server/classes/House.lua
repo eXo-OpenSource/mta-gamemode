@@ -440,10 +440,10 @@ function House:tryToCatchRobbers( player )
 				end
 				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
-					player:setWantedLevel(player:getWantedLevel() + 3)
+					player:setWanteds(player:getWanteds() + 3)
 					group.m_RobReported = true
-					outputChatBox("Ein Nachbar rief die Polizei an, beeil dich!", player, 200,100,100)
-					FactionState:getSingleton():showRobbedHouseBlip(player, self.m_Pickup)
+					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))
+					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
 				end
 			end
 		end

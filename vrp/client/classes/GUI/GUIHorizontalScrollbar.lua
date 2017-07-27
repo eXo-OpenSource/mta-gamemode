@@ -54,6 +54,10 @@ function GUIHorizontalScrollbar:Event_onClientCursorMove(_, _, cursorX, cursorY)
 	end
 end
 
+function GUIHorizontalScrollbar:setText(text)
+	self.m_Text = text
+end
+
 function GUIHorizontalScrollbar:drawThis()
 	-- Draw scroll bar (rectangle)
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/scrollbar_horz.png")
@@ -62,4 +66,9 @@ function GUIHorizontalScrollbar:drawThis()
 	-- Draw scrollbar element
 	--dxDrawImage(self.m_AbsoluteX + GUI_SCROLLBAR_ELEMENT_MARGIN + self.m_ScrollPosition * self.m_Width, self.m_AbsoluteY + GUI_SCROLLBAR_ELEMENT_MARGIN, 49, self.m_Height - 2*GUI_SCROLLBAR_ELEMENT_MARGIN, "files/images/GUI/scrollbar_horz_element.png")
 	dxDrawRectangle(self.m_AbsoluteX + GUI_SCROLLBAR_ELEMENT_MARGIN + self.m_ScrollPosition * self.m_Width, self.m_AbsoluteY + GUI_SCROLLBAR_ELEMENT_MARGIN, 49, self.m_Height - 2*GUI_SCROLLBAR_ELEMENT_MARGIN, self.m_Color)
+
+	if self.m_Text then
+		dxDrawText(self.m_Text, self.m_AbsoluteX + self.m_Width / 2, self.m_AbsoluteY + self.m_Height / 2, nil, nil, Color.White, 1, VRPFont(self.m_Height), "center", "center")
+	end
+
 end

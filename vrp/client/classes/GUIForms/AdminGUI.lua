@@ -65,7 +65,9 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
-	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 270, 250, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 310, 210, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("pedMenu", "Ped-Menü", 340, 350, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("playerHistory", "Spielerakten", 340, 390, 210, 30, Color.Blue, tabAllgemein)
 
 
 	--Column 3
@@ -431,18 +433,30 @@ function AdminGUI:onButtonClick(func)
 				end)
 	elseif func == "setCompany" then
 		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-		ChangerBox:new(_"Unternehmen setzten",
-				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
-				function (companyId)
-					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
+		ChangerBoxWithCheck:new(_"Unternehmen setzten",
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, {0, 1, 2, 3, 4, 5}, "In Fraktionsverlauf vermerken?",
+				function (companyId, rank, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external) 
+							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank)
+					end
 				end)
 	elseif func == "setFaction" then
 		local factionTable = FactionManager:getSingleton():getFactionNames()
 		factionTable[0] = "Keine Fraktion"
-		ChangerBox:new(_"Fraktion setzten",
-				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
-				function (factionId)
-					triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+		ChangerBoxWithCheck:new(_"Fraktion setzten",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, {0, 1, 2, 3, 4, 5, 6}, "In Fraktionsverlauf vermerken?",
+				function (factionId, rank, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external) 
+							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank)
+					end
 				end)
 	elseif func == "respawnCompany" then
 		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
@@ -521,6 +535,12 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "eventMenu" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
+	elseif func == "pedMenu" then
+		self:close()
+		AdminPedGUI:getSingleton():open()
+	elseif func == "playerHistory" then
+		self:close()
+		HistoryPlayerGUI:new(AdminGUI)
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
@@ -532,7 +552,7 @@ function AdminGUI:onButtonClick(func)
 			local pos = {x, y, z}
 			triggerServerEvent("adminTriggerFunction", root, func, pos)
 		else
-			ErrorBox("Ungültige Koordinaten-Angabe")
+			ErrorBox:new("Ungültige Koordinaten-Angabe")
 		end
 	elseif func == "nickchange" then
 		InputBox:new(_("Spieler %s umbenennen", self.m_SelectedPlayer:getName()),

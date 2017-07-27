@@ -27,6 +27,7 @@ function TreasureRadar:constructor()
 end
 
 function TreasureRadar:render()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/TreasureRadar") end
 	if localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getModel() == 453 then
 		local now = getTickCount()
 		if now - self.m_Angle >= 50 then
@@ -48,6 +49,7 @@ function TreasureRadar:render()
 		-- Draw blips
 		local localX, localY = getElementPosition(localPlayer)
 		for k, blip in pairs(self.m_Blips) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/TreasureRadar") end
 			if isElement(blip) then
 				local blipX, blipY = getElementPosition(blip)
 				local angle = math.deg(math.atan2(blipY - localY, blipX - localX))
@@ -56,6 +58,7 @@ function TreasureRadar:render()
 				local x = math.cos(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
 				local y = math.sin(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
 
+				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/TreasureRadar", true) end
 				dxDrawImage(centerX - 8 + x, centerY - 8 + y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, Color.White)
 			else
 				self.m_Blips[k] = nil
@@ -65,6 +68,7 @@ function TreasureRadar:render()
 		local rot = getPedRotation(localPlayer)
 		dxDrawImage(centerX-8, centerY-8, 16, 16, "files/images/Radar_Monochrome/Blips/LocalPlayer.png", self.m_Rotation - rot)
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/TreasureRadar") end
 end
 
 function TreasureRadar:preRender()

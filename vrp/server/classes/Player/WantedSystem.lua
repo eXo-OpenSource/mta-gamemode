@@ -34,7 +34,7 @@ function WantedSystem:updateWantedLevels()
 	local tick = getTickCount()
 	for k, player in pairs(getElementsByType("player")) do
 		if player:getLastGotWantedLevelTime()+20*60*1000 >= tick then
-			player:takeWantedLevel(1)
+			player:takeWanteds(1)
 		end
 	end
 end

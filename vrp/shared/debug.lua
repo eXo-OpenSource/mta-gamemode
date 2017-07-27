@@ -6,7 +6,10 @@
 -- *
 -- ****************************************************************************
 DEBUG = GIT_BRANCH ~= "release/production"
-DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
+if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
+	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
+	DEBUG_AUTOLOGIN = true -- logs the player in automatically if they saved their pw
+end
 
 if triggerClientEvent and DEBUG_LOAD_SAVE then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
@@ -102,6 +105,35 @@ function tableToString(tab)
 	return result
 end
 
+
+local runStringSavedVars = {}
+
+local function prepareRunStringVars(runPlayer)
+	runStringSavedVars.me = me
+	runStringSavedVars.my = my
+	runStringSavedVars.player = player
+	runStringSavedVars.cprint = cprint
+
+	me = runPlayer
+	my = runPlayer
+	player = function(target)
+		return PlayerManager:getSingleton():getPlayerFromPartOfName(target,runPlayer)
+	end 
+	cprint = function(var)
+		outputConsole(inspect(var), runPlayer)
+	end
+end
+
+
+local function restoreRunStringVars()
+	me = runStringSavedVars.me
+	my = runStringSavedVars.my
+	cprint = runStringSavedVars.cprint
+	player = runStringSavedVars.player
+
+	runStringSavedVars = {}
+end
+
 -- Hacked in from runcode
 function runString(commandstring, source, suppress)
 	local sourceName, output, outputPlayer
@@ -110,7 +142,7 @@ function runString(commandstring, source, suppress)
 		output = function (msg)
 			if not suppress then
 				if SERVER then
-					Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+					Admin:getSingleton():sendMessage(msg, 255, 51, 51, ADMIN_RANK_PERMISSION["seeRunString"])
 				else
 					outputChatBox(msg, 255, 51, 51)
 				end
@@ -120,7 +152,7 @@ function runString(commandstring, source, suppress)
 	else
 		sourceName = "Console"
 		output = function (msg)
-			Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+			Admin:getSingleton():sendMessage(msg, 255, 51, 51, ADMIN_RANK_PERMISSION["seeRunString"])
 		end
 		outputPlayer = nil
 
@@ -128,12 +160,12 @@ function runString(commandstring, source, suppress)
 	output(sourceName.." executed command: "..commandstring, outputPlayer)
 	local notReturned
 	--First we test with return
-	local runConstants = sourceName ~= "Console" and "local me = getPlayerFromName('"..sourceName.."') local gPFN = getPlayerFromName local my = me" or ""
-	local commandFunction,errorMsg = loadstring(runConstants.." return "..commandstring)
+	prepareRunStringVars(outputPlayer)
+	local commandFunction,errorMsg = loadstring("return "..commandstring)
 	if errorMsg then
 		--It failed.  Lets try without "return"
 		notReturned = true
-		commandFunction, errorMsg = loadstring(runConstants.." "..commandstring)
+		commandFunction, errorMsg = loadstring(commandstring)
 	end
 	if errorMsg then
 		--It still failed.  Print the error message and stop the function
@@ -171,6 +203,8 @@ function runString(commandstring, source, suppress)
 		output("Command executed!", outputPlayer)
 		return
 	end
+
+	restoreRunStringVars()
 end
 
 --[[

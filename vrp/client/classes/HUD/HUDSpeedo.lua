@@ -68,6 +68,7 @@ function HUDSpeedo:setIndicatorAlpha(direction, alpha)
 end
 
 function HUDSpeedo:draw()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Speedo") end
 	if not isPedInVehicle(localPlayer) then
 		self:hide()
 		return
@@ -145,6 +146,7 @@ function HUDSpeedo:draw()
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 	--dxSetBlendMode("blend")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
 end
 
 function HUDSpeedo:allOccupantsBuckeled()
@@ -161,17 +163,17 @@ end
 
 function HUDSpeedo:playSeatbeltAlarm(state)
 	if state then
-		if not self.m_SeatbeltSoundEnabled then
+		if not localPlayer.m_SeatbeltSoundEnabled then
 			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") and not VEHICLE_BIKES[localPlayer.vehicle:getModel()] then
 				if core:get("Vehicles", "seatbeltWarning", true) then
-					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
-					self.m_SeatbeltSoundEnabled = true
+					localPlayer.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+					localPlayer.m_SeatbeltSoundEnabled = true
 				end
 			end
 		end
 	else
-		if isElement(self.m_SeatbeltSound) then stopSound(self.m_SeatbeltSound) end
-		self.m_SeatbeltSoundEnabled = false
+		if isElement(localPlayer.m_SeatbeltSound) then stopSound(localPlayer.m_SeatbeltSound) end
+		localPlayer.m_SeatbeltSoundEnabled = false
 	end
 end
 

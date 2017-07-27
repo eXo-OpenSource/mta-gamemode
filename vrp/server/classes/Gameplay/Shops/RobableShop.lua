@@ -10,7 +10,8 @@ RobableShop = inherit(Object)
 addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
-local ROBSHOP_PAUSE = DEBUG and 0 or 30*60 --in Sec
+local ROBSHOP_PAUSE = 30*60 --in Sec
+local ROBSHOP_LAST_ROB = 0
 
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
@@ -44,8 +45,8 @@ function RobableShop:Ped_Targetted(ped, attacker)
 	if attacker:getGroup() then
 		if attacker:getGroup():getType() == "Gang" then
 			if not attacker:isFactionDuty() then
-				if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE) then
-					attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(self.m_LastRob+ROBSHOP_PAUSE)))
+				if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
+					attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
 					return false
 				end
 
@@ -54,6 +55,7 @@ function RobableShop:Ped_Targetted(ped, attacker)
 					return false
 				end
 				self.m_LastRob = getRealTime().timestamp
+				ROBSHOP_LAST_ROB = getRealTime().timestamp
 				local shop = ped.Shop
 				self.m_Shop = shop
 				if shop:getMoney() >= 250 then
@@ -76,12 +78,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	shop.m_Marker.m_Disable = true
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
-	local zone1, zone2 = getZoneName(shop.m_Position), getZoneName(shop.m_Position, true)
-	if zone1 then
-		FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall\nPosition: %s/%s", "neuer Einsatz", true, shop:getName(), zone1, zone2)
-	else
-		FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall", "neuer Einsatz", true, shop:getName())
-	end
+	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
 	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm
@@ -91,7 +88,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
 	attacker:giveKarma(-5)
-	attacker:giveWantedLevel(3)
+	attacker:giveWanteds(3)
 	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
 
 	self.m_Attacker = attacker
@@ -100,15 +97,15 @@ function RobableShop:startRob(shop, attacker, ped)
 	self.m_Bag.Money = 0
 	addEventHandler("onElementClicked", self.m_Bag, bind(self.onBagClick, self))
 
-	self:giveBag(attacker)
-
 	local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
 	local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
 
 	self.m_Gang = attacker:getGroup()
 	self.m_Gang:attachPlayerMarkers()
-	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y, root, 2000)
-	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, root, 2000)
+	self.m_EvilBlip = Blip:new("Marker.png", evilPos.x, evilPos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
+	self.m_EvilBlip:setDisplayText("Beute-Abgabepunkt")
+	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Yellow)
+	self.m_StateBlip:setDisplayText("Beute-Abgabe (Staat)")
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
 	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
@@ -121,6 +118,7 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
 
+	self:giveBag(attacker)
 
 	self.m_TargetTimer = setTimer(function()
 		if isElement(attacker) then
@@ -225,7 +223,8 @@ function RobableShop:giveBag(player)
 	self.m_Bag:setDimension(player:getDimension())
 	player:attachPlayerObject(self.m_Bag, true)
 	if self.m_BagBlip then delete(self.m_BagBlip) end
-	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
+	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, {85, 58, 38})
+	self.m_BagBlip:setDisplayText("Shopraub-Beute")
 	self.m_BagBlip:attach(self.m_Bag)
 
 	self.m_onDamageFunc = bind(self.onDamage, self)
@@ -278,7 +277,9 @@ end
 function RobableShop:checkBagAllowed(player)
 	if not isElement(player) or getElementType(player) ~= "player" then return false end
 	if player:getGroup() == self.m_Gang or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
-		return true
+		if not player:isDead() then
+			return true
+		end
 	end
 	return false
 end

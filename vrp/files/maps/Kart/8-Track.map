@@ -76,7 +76,7 @@
     <spawnpoint id="spawnpoint (2)" alpha="255" interior="0" posX="1311" posY="102.9" posZ="20.6" rotX="0" rotY="0" rotZ="301.998"></spawnpoint>
     <spawnpoint id="spawnpoint (3)" alpha="255" interior="0" posX="1312.2" posY="100.9" posZ="20.6" rotX="0" rotY="0" rotZ="301.998"></spawnpoint>
     <spawnpoint id="spawnpoint (4)" alpha="255" interior="0" posX="1313.3" posY="99.1" posZ="20.6" rotX="0" rotY="0" rotZ="301.998"></spawnpoint>
-    <info id="info (1)" Mapname="8-Track sponsored by Cluckin bell" Author="[eXo]Stumpy" model="64" posX="1308.3" posY="112.8" posZ="21.2" rotX="0" rotY="0" rotZ="302"></info>
+    <info id="info (1)" Mapname="8-Track sponsored by Cluckin bell" Author="[eXo]Stumpy" model="64" posX="1308.3" posY="112.8" posZ="21.2" rotX="0" rotY="0" rotZ="302" Respawn="true"></info>
     <startmarker id="startmarker (1)" posX="1309.8" posY="113.8" posZ="20.4" rotX="0" rotY="0" rotZ="0"></startmarker>
     <checkpoint id="checkpoint (1)" size="6" posX="1302.5" posY="90" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
     <checkpoint id="checkpoint (2)" size="6" posX="1285.2002" posY="71.20019" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>

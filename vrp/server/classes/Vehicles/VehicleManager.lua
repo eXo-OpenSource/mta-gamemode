@@ -172,15 +172,15 @@ function VehicleManager:Event_GetTuningList()
 end
 
 function VehicleManager:getFactionVehicles(factionId)
-	return self.m_FactionVehicles[factionId]
+	return self.m_FactionVehicles[factionId] or {}
 end
 
 function VehicleManager:getCompanyVehicles(companyId)
-	return self.m_CompanyVehicles[companyId]
+	return self.m_CompanyVehicles[companyId] or {}
 end
 
 function VehicleManager:getGroupVehicles(groupId)
-	return self.m_GroupVehicles[groupId]
+	return self.m_GroupVehicles[groupId] or {}
 end
 
 function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
@@ -256,7 +256,7 @@ function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
@@ -267,7 +267,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal))
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
@@ -479,7 +479,7 @@ function VehicleManager:loadGroupVehicles(group)
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
@@ -520,7 +520,7 @@ function VehicleManager:Event_vehiclePark()
 			end
 
 			if not source:isOnGround() then
-				client:sendError(_("Das Fahrzeug kann nicht in der Luft geparkt werden!", client))
+				client:sendError(_("Das Fahrzeug muss zum Parken stillstehen!", client))
 				return
 			end
 
@@ -794,7 +794,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
 		return
 	end
 
@@ -861,7 +861,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	end
 
  	if source:getPositionType() == VehiclePositionType.Mechanic then
- 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+ 		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
  		return
  	end
 
@@ -977,6 +977,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	end
 
 	local price = getPrice(veh:getModel()) or 0
+	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
+
 	if price then
 		veh:purge()
 		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")

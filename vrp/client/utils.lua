@@ -5,6 +5,33 @@
 -- *  PURPOSE:     Clientside utility functions
 -- *
 -- ****************************************************************************
+
+
+
+local _addEventHandler = addEventHandler
+local _removeEventHandler = removeEventHandler
+
+addedEventHandlers = {
+	["onClientRender"] 		= {},
+	["onClientPreRender"] 	= {},
+	["onClientHUDRender"] 	= {},
+}
+function addEventHandler(eventName, attached, func, prop, priority)
+	if addedEventHandlers[eventName] then
+		local info = debug.getinfo(2, "Sl")
+		addedEventHandlers[eventName][func] = {info.short_src, info.currentline}
+	end
+	return _addEventHandler(eventName, attached, func, prop, priority)
+end
+
+function removeEventHandler(eventName, attached, func)
+	if addedEventHandlers[eventName] then
+		if addedEventHandlers[eventName][func] then addedEventHandlers[eventName][func] = nil end
+	end
+	return _removeEventHandler(eventName, attached, func)
+end
+
+
 function updateCameraMatrix(x, y, z, lx, ly, lz, r, fov)
 	local _x, _y, _z, _lx, _ly, _lz, _r, _fov = getCameraMatrix()
 	setCameraMatrix(x or _x, y or _y, z or _z, lx or _lx, ly or _ly, lz or _lz, r or _r, fov or _fov)

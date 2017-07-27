@@ -92,6 +92,7 @@ function deathScreen.onDeath(killer, gui)
 end
 
 function deathScreen.runDeathAnim()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/deathScreen") end
 	local now = getTickCount()
 	local elapsedTime = now - deathScreen.sCount
 	local duration = deathScreen.eCount  - deathScreen.sCount
@@ -110,6 +111,7 @@ function deathScreen.runDeathAnim()
 
 	dxDrawText("Wasted",screenWidth*0,screenHeight*0.4,screenWidth*1,screenHeight*0.7,tocolor(255,0,0,255),screenWidth/screenHeight*2,"pricedown","center","center")
 	dxDrawText(deathScreen.killerName,screenWidth*0,screenHeight*0.525,screenWidth*1,screenHeight*0.7,tocolor(255,255,255,255),screenWidth/screenHeight*1,"pricedown","center","center")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/deathScreen", 1, 1) end
 end
 addEvent("deathmatchStartDeathScreen", true)
 addEventHandler("deathmatchStartDeathScreen", root, deathScreen.onDeath)
