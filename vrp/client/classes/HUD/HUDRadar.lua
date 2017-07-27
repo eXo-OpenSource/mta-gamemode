@@ -11,7 +11,7 @@ addRemoteEvents{ "HUDRadar:showRadar", "HUDRadar:hideRadar" }
 function HUDRadar:constructor()
 	self.m_ImageSize = 1536, 1536 --3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
-	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - (self.m_Height - 20)*screenWidth/1600
+	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - (self.m_Height + 20)*screenWidth/1600
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	self.m_StatusBarsEnabled = false
@@ -149,15 +149,14 @@ end
 
 function HUDRadar:getImagePath(file, isMap)
 	if isMap then return self.m_MapImagePath end
-	if not self.m_ImagePaths[file] then 
+	if not self.m_ImagePaths[file] then
 		self.m_ImagePaths[file] = self:makePath(file, true)
 	end
 	return self.m_ImagePaths[file]
 end
 
 function HUDRadar:makePath(fileName, isBlip)
-
-	if isBlip then 
+	if isBlip then
 		if fileExists("_custom/files/images/Radar/Blips/"..fileName) then
 			return "_custom/files/images/Radar/Blips/"..fileName
 		end
@@ -188,7 +187,7 @@ end
 function HUDRadar:updateRadarType(gwMode)
 	if not self.m_Enabled then
 		setPlayerHudComponentVisible("radar", false)
-		return 
+		return
 	end
 
 	self.m_GWRadar = gwMode
@@ -256,7 +255,7 @@ function HUDRadar:draw()
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
 		MessageBoxManager.onRadarPositionChange()
 		self.m_UpdateMessageBoxes = true
-		return 
+		return
 	elseif self.m_UpdateMessageBoxes == true then -- Todo: find better way to do this
 		self.m_UpdateMessageBoxes = false
 		MessageBoxManager.onRadarPositionChange()
