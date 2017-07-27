@@ -16,7 +16,7 @@ local readFuncs = {
 	end;
 	spawnpoint = function(attributes)
 		return {type = "spawnpoint", model = tonumber(attributes.vehicle), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ) or tonumber(attributes.rotation)}
 	end;
 	racepickup = function(attr)
 		return {type = "racepickup", pickuptype = attr.type, x = tonumber(attr.posX), y = tonumber(attr.posY), z = tonumber(attr.posZ),
