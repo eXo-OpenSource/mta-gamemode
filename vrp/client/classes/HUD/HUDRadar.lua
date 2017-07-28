@@ -11,7 +11,7 @@ addRemoteEvents{ "HUDRadar:showRadar", "HUDRadar:hideRadar" }
 function HUDRadar:constructor()
 	self.m_ImageSize = 1536, 1536 --3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
-	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - (self.m_Height + 20)*screenWidth/1600
+	self.m_PosX, self.m_PosY = 20*screenWidth/1600, screenHeight - self.m_Height - 20*screenWidth/1600
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	self.m_StatusBarsEnabled = false

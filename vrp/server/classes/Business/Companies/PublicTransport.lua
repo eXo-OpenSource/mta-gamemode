@@ -133,6 +133,7 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			player:triggerEvent("showTaxoMeter")
 		elseif veh:getModel() == 437 then
 			veh:setVariant(0, 0)
+			veh:setData("EPT_Bus", true, true)
 			veh:setHandling("handlingFlags", 18874448)
 			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
 			if self:isBusOnTour(player.vehicle) then

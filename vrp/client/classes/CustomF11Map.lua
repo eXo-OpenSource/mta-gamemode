@@ -12,17 +12,21 @@ function CustomF11Map:constructor()
 	self.m_Visible = false
 	self.m_Enabled = false
 
-	self.m_PosX = screenWidth/2 - screenHeight/2
-	self.m_PosY = 0
-	self.m_Width = screenHeight
+	self.m_CenterPosX = screenWidth/2  -- point on screen where the world center point is
+	self.m_CenterPosY = screenHeight/2
 	self.m_Height = screenHeight
+	self.m_Zoom = 1
 
-	self.m_ClickOverlay = GUIElement:new(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height)
+	self.m_ClickOverlay = GUIElement:new(0, 0, screenWidth, screenHeight)
 	self.m_ClickOverlay:setVisible(false)
 	self.m_ClickOverlay.onLeftDoubleClick = bind(self.Doubleclick_ClickOverlay, self)
 	self.m_ClickOverlay.onRightClick = bind(self.Rightclick_ClickOverlay, self)
+	self.m_ClickOverlay.onMouseWheelUp = bind(self.zoom, self, true)
+	self.m_ClickOverlay.onMouseWheelDown = bind(self.zoom, self, false)
+	self.m_ClickOverlay.onLeftClickDown = bind(self.move, self, true)
+	self.m_ClickOverlay.onLeftClick = bind(self.move, self, false)
 
-	self.m_BlipList = GUIGridList:new(self.m_PosX + self.m_Width + self.m_PosX * 0.1, self.m_PosY + self.m_PosX * 0.1, self.m_PosX * 0.8, self.m_Height - self.m_PosX * 0.2)
+	self.m_BlipList = GUIGridList:new(screenWidth - self.m_Height * 0.3, 0, self.m_Height * 0.3, self.m_Height)
 	self.m_BlipList:addColumn("", 0.1)
 	self.m_BlipList:addColumn("Blip-Übersicht", 0.9)
 	self.m_BlipList:setVisible(false)
@@ -51,7 +55,7 @@ end
 
 function CustomF11Map:toggle()
 	if not self.m_Enabled then return end
-
+	if isPedDead(localPlayer) then return end
 	self.m_Visible = not self.m_Visible
 	self.m_ClickOverlay:setVisible(self.m_Visible)
 	self.m_BlipList:setVisible(self.m_Visible)
@@ -61,7 +65,7 @@ function CustomF11Map:toggle()
 		HUDUI:getSingleton():hide()
 		HUDSpeedo:getSingleton():hide()
 		self:updateBlipList()
-		addEventHandler("onClientRender", root, self.m_RenderFunc)
+		addEventHandler("onClientRender", root, self.m_RenderFunc, false, "high")
 	else
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
@@ -126,9 +130,15 @@ end
 
 function CustomF11Map:draw()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/F11Map") end
-	local height = self.m_Height
-	local mapPosX, mapPosY = self.m_PosX, self.m_PosY
-
+	local height = self.m_Height * self.m_Zoom
+	local centerPosX, centerPosY = self.m_CenterPosX, self.m_CenterPosY
+	if self.m_Moving then
+		local mapX, mapY = self:cursorToMapPosition()
+		centerPosX = centerPosX + (mapX - self.m_MoveStartCursorMap[1])
+		centerPosY = centerPosY + (mapY - self.m_MoveStartCursorMap[2])
+	end
+	
+	local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2 
 	-- Draw map
 	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():getImagePath(false, true), 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
 	local routeRenderTarget = HUDRadar:getSingleton():getRouteRenderTarget()
@@ -137,7 +147,7 @@ function CustomF11Map:draw()
 	end
 
 	-- Draw GPS info
-	dxDrawRectangle(self.m_PosX, 0, self.m_Width, 25, tocolor(0, 0, 0, 140))
+	dxDrawRectangle(mapPosX, 0, height, 25, tocolor(0, 0, 0, 140))
 	dxDrawText("Doppelklick auf die Karte, um die Zielposition des GPS zu setzen. Rechtsklick, um die Navigation zu beenden.", screenWidth/2, 5, nil, nil, Color.White, 1, "default-bold", "center")
 
 	-- Draw gang areas
@@ -148,10 +158,10 @@ function CustomF11Map:draw()
 			local r, g, b = fromcolor(v.color)
 
 			if v.flashing then
-				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, Color.Red)
-				dxDrawRectangle(mapPosX + mapX + 2, mapPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
+				dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, Color.Red)
+				dxDrawRectangle(centerPosX + mapX + 2, centerPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
 			else
-				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
+				dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
 			end
 		end
 	end
@@ -192,8 +202,7 @@ function CustomF11Map:draw()
 						imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
 					end
 				end
-
-				dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, imagePath, 0, 0, 0, color)
+				dxDrawImage(centerPosX + mapX - size/2, centerPosY + mapY - size/2, size, size, imagePath, 0, 0, 0, color)
 			end
 		end
 	end
@@ -203,48 +212,62 @@ function CustomF11Map:draw()
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
 	local size = Blip.getDefaultSize() * Blip.getScaleMultiplier()
-	dxDrawImage(mapPosX + mapX - size/2, mapPosY + mapY - size/2, size, size, HUDRadar:getSingleton():getImagePath("LocalPlayer.png"), -rotZ)
+	dxDrawImage(centerPosX + mapX - size/2, centerPosY + mapY - size/2, size, size, HUDRadar:getSingleton():getImagePath("LocalPlayer.png"), -rotZ)
 
 	--draw coordinate and zone info
-	if isCursorOverArea(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height) and getKeyState("lshift") then
+	if isCursorOverArea(mapPosX, mapPosY, height, height) and getKeyState("lshift") then
 		local cursorX, cursorY = getCursorPosition()
-			cursorX = cursorX * screenWidth cursorY = cursorY * screenHeight
-		local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
-		local mapX, mapY = cursorX - overlayX, cursorY - overlayY
+		cursorX, cursorY = cursorX * screenWidth, cursorY * screenHeight
+		local mapX, mapY = self:cursorToMapPosition()
+		
 		local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
 		local text = getOpticalZoneName(worldX, worldY)
 		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["gotocords"] then
 			text = ("%s\nX:%s  Y:%s"):format(getOpticalZoneName(worldX, worldY), math.floor(worldX), math.floor(worldY))
 		end
-		--dxDrawRectangle(cx, cy, self.m_Width, 25, tocolor(0, 0, 0, 140))
 		dxDrawText(text, cursorX + 1, cursorY + 1, cursorX + 1, cursorY + 1, Color.Black, 1, "default-bold", "center", "bottom")
 		dxDrawText(text, cursorX, cursorY, cursorX, cursorY, Color.White, 1, "default-bold", "center", "bottom")
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/F11Map") end
 end
 
-function CustomF11Map:worldToMapPosition(worldX, worldY)
-	local mapX = worldX / ( 6000/self.m_Width) + self.m_Width/2
-	local mapY = worldY / (-6000/self.m_Height) + self.m_Height/2
+function CustomF11Map:setWorldCenterPosition(worldX, worldY)
+	local mapX, mapY = self:worldToMapPosition(worldX, worldY)
+	self.m_CenterPosX = screenWidth/2 - mapX -- point on screen where the world center point is
+	self.m_CenterPosY = screenHeight/2 - mapY
+end
 
+function CustomF11Map:setMapCenterPosition(mapX, mapY)
+	self.m_CenterPosX = screenWidth/2 - mapX -- point on screen where the world center point is
+	self.m_CenterPosY = screenHeight/2 - mapY
+end
+
+
+function CustomF11Map:worldToMapPosition(worldX, worldY)
+	local mapX = worldX / ( 6000/self.m_Height/self.m_Zoom)
+	local mapY = worldY / (-6000/self.m_Height/self.m_Zoom)
+	
 	return mapX, mapY
 end
 
 function CustomF11Map:mapToWorldPosition(mapX, mapY)
-	local worldX = (mapX - self.m_Width/2) * 6000/self.m_Width
-	local worldY = (mapY - self.m_Height/2) * -6000/self.m_Height
+	local worldX = mapX * 6000/self.m_Height/self.m_Zoom
+	local worldY = mapY * -6000/self.m_Height/self.m_Zoom
 
 	return worldX, worldY
 end
 
+function CustomF11Map:cursorToMapPosition(cx, cy)
+	if isCursorShowing() then
+		local cx, cy = getCursorPosition()
+		cx, cy = cx * screenWidth, cy * screenHeight
+		return cx - self.m_CenterPosX, cy - self.m_CenterPosY
+	end
+end
+
 function CustomF11Map:Doubleclick_ClickOverlay(element, cursorX, cursorY)
-	-- Get position on map
-	local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
-	local mapX, mapY = cursorX - overlayX, cursorY - overlayY
-
-	-- Calculate world position
+	local mapX, mapY = self:cursorToMapPosition()
 	local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
-
 	-- Start navigation to that point
 	GPS:getSingleton():startNavigationTo(Vector3(worldX, worldY, 0))
 end
@@ -252,10 +275,11 @@ end
 function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)
 	if getKeyState("lshift") and localPlayer:getRank() >= ADMIN_RANK_PERMISSION["gotocords"] then
 		fadeCamera(false)
+		local cursorX, cursorY = getCursorPosition()
+		cursorX, cursorY = cursorX * screenWidth, cursorY * screenHeight
+		local mapX, mapY = self:cursorToMapPosition(cursorX, cursorY)
+		local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
 		setTimer(function()
-			local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
-			local mapX, mapY = cursorX - overlayX, cursorY - overlayY
-			local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
 			local teleportElement = localPlayer.vehicle and localPlayer.vehicle or localPlayer
 			teleportElement:setFrozen(true)
 			teleportElement:setPosition(worldX, worldY, 0)
@@ -275,5 +299,31 @@ function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)
 		end, 2000, 1)	
 	else
 		GPS:getSingleton():stopNavigation()
+	end
+end
+
+function CustomF11Map:zoom(zoomIn)
+	if self.m_Moving then return false end -- otherwise this causes trouble with the map center
+	local oldMapCenterX = screenWidth/2 - self.m_CenterPosX -- this saves the world position at the map center to re-center the map 
+	local oldMapCenterY = screenHeight/2 - self.m_CenterPosY
+	local oldWorldPosX, oldWorldPosY = self:mapToWorldPosition(oldMapCenterX, oldMapCenterY)
+	self.m_Zoom = math.clamp(1, self.m_Zoom + (zoomIn and 0.05 or -0.05), 2)
+	self.m_Height = screenHeight * self.m_Zoom
+	self:setWorldCenterPosition(oldWorldPosX, oldWorldPosY)
+end
+
+function CustomF11Map:move(start)
+	if start and not self.m_Moving then
+		self.m_MoveStartCursorMap = {self:cursorToMapPosition()}
+		self.m_Moving = true
+	elseif not start and self.m_Moving then
+
+		--[[
+			self.m_CenterPosX = screenWidth/2 - mapX -- point on screen where the world center point is
+			self.m_CenterPosY = screenHeight/2 - mapY
+		]]
+		local mapX, mapY = self:cursorToMapPosition()
+		self:setMapCenterPosition((screenWidth/2 - self.m_CenterPosX) + (self.m_MoveStartCursorMap[1] - mapX), (screenHeight/2 - self.m_CenterPosY) + (self.m_MoveStartCursorMap[2] - mapY))
+		self.m_Moving = false
 	end
 end

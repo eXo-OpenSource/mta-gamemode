@@ -89,7 +89,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if element:getModel() == 437 then -- Coach
 			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
-				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("EPT_Bus") then
 					self:addItem(_"Busfahrer >>>",
 						function()
 							if self:getElement() then
