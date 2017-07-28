@@ -27,16 +27,16 @@ function TextureReplacer:constructor(element, textureName, options)
 	self.m_LoadingMode = core:get("Other", "TextureMode", 1)
 	self.m_Active      = true
 
-	self.m_OnElementDestory   = bind(delete, self)
-	self.m_OnElementStreamIn  = bind(self.onStramIn, self)
-	self.m_OnElementStreamOut = bind(self.onStramOut, self)
+	self.m_OnElementDestroy   = bind(delete, self)
+	self.m_OnElementStreamIn  = bind(self.onStreamIn, self)
+	self.m_OnElementStreamOut = bind(self.onStreamOut, self)
 
-	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory, false)
+	addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestroy, false)
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 		if isElementStreamedIn(self.m_Element) then
-			self:onStramIn()
+			self:onStreamIn()
 		end
 	elseif self.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
 		table.insert(TextureReplacer.Backlog, self)
@@ -65,14 +65,14 @@ function TextureReplacer:destructor()
 	end
 end
 
-function TextureReplacer:onStramIn()
+function TextureReplacer:onStreamIn()
 	if not self.m_Active then return false end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		self:addToLoadingQeue()
 	end
 end
 
-function TextureReplacer:onStramOut()
+function TextureReplacer:onStreamOut()
 	if not self.m_Active then return false end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		self:unload()
@@ -91,16 +91,7 @@ function TextureReplacer:attach()
 	end
 
 	self.m_Shader:setValue("gTexture", self.m_Texture)
-	local status = self.m_Shader:applyToWorldTexture(self.m_TextureName, self.m_Element)
-
-	-- process next texture
-	if DEBUG then
-		nextframe(TextureReplacer.loadNext)
-	else
-		setTimer(TextureReplacer.loadNext, 250, 1)
-	end
-
-	return status and TextureReplacer.Status.SUCCESS or TextureReplacer.Status.FAILURE
+	return self.m_Shader:applyToWorldTexture(self.m_TextureName, self.m_Element) and TextureReplacer.Status.SUCCESS or TextureReplacer.Status.FAILURE
 end
 
 function TextureReplacer:detach()
@@ -128,7 +119,7 @@ function TextureReplacer:setLoadingMode(loadingMode)
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 		if isElementStreamedIn(self.m_Element) then
-			self:onStramIn()
+			self:onStreamIn()
 		end
 	elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
 		self:addToLoadingQeue()
@@ -215,40 +206,39 @@ end
 
 --// Queue
 function TextureReplacer:addToLoadingQeue()
-	TextureReplacer.Queue:push_back(self)
-	TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
-	if not TextureReplacer.Queue:locked() then
-		TextureReplacer.Queue:lock()
+	if TextureReplacer.Queue:empty() then
+		TextureReplacer.Queue:push_back(self)
+		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 
 		TextureReplacer.Queue.m_CurrentLoaded = 0
-		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, math.huge)
+		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, -1)
 
-		TextureReplacer.loadNext()
+		local thread = Thread:new(TextureReplacer.loadTextures, THREAD_PRIORITY_HIGH)
+		nextframe(function() thread:start() end)
+	else
+		TextureReplacer.Queue:push_back(self)
+		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 	end
 end
 
-function TextureReplacer.loadNext()
-	if TextureReplacer.Queue:empty() then
-		TextureReplacer.Queue:unlock()
-
-		if TextureReplacer.Queue.m_ShortMessage then
-			TextureReplacer.Queue.m_Count = 0
-			delete(TextureReplacer.Queue.m_ShortMessage)
+function TextureReplacer.loadTextures()
+	while (not TextureReplacer.Queue:empty()) do
+		local instance = TextureReplacer.Queue:pop_back(1)
+		local status = instance:load()
+		if stauts == TextureReplacer.Status.FAILURE or status == TextureReplacer.Status.DENIED then
+			ErrorBox:new(_("Folgende Custom-Textur konnte nicht geladen werden: {%s, %s}", instance.m_FileName, inspect(instance.m_Element)))
 		end
-	else
+
 		TextureReplacer.Queue.m_CurrentLoaded = TextureReplacer.Queue.m_CurrentLoaded + 1
-		TextureReplacer.Queue.m_ShortMessage.m_Text = _("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: %d / %d Textur(en)", TextureReplacer.Queue.m_CurrentLoaded, TextureReplacer.Queue.m_Count)
+		TextureReplacer.Queue.m_ShortMessage.m_Text = _("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: %s / %s Textur(en)", TextureReplacer.Queue.m_CurrentLoaded, TextureReplacer.Queue.m_Count)
 		TextureReplacer.Queue.m_ShortMessage:anyChange()
 
-		local status = TextureReplacer.Queue:pop_back(1):load()
-		if status == TextureReplacer.Status.FAILURE or status == TextureReplacer.Status.DENIED then
-			if DEBUG then
-				nextframe(TextureReplacer.loadNext)
-			else
-				setTimer(TextureReplacer.loadNext, 250, 1)
-			end
-		end
+		Thread.pause()
 	end
+
+	TextureReplacer.Queue.m_CurrentLoaded = 0
+	TextureReplacer.Queue.m_Count = 0
+	delete(TextureReplacer.Queue.m_ShortMessage)
 end
 
 --// Static Helper
