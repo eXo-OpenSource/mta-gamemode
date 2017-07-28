@@ -43,8 +43,10 @@ build_docker_job:
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
     - sudo docker logout
-  except:
-    - /^bugfix\/.*$/
+  only:
+    - master
+    - release/pre-production
+    - release/production
 
 # Deploy jobs
 deploy_job_bugfixes:
@@ -99,8 +101,10 @@ clean_env_job_docker:
     #- '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest' # Keep master image to use the cache
     #- sudo docker rmi exo-rl-mta
     - '(IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES) || echo' # Remove dangling images
-  except:
-    - /^bugfix\/.*$/
+  only:
+    - master
+    - release/pre-production
+    - release/production
   when: always
 
 clear_cache:
