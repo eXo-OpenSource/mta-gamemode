@@ -7,8 +7,10 @@ TextureReplacer.Map = {
 TextureReplacer.Status = {
 	SUCCESS = 1,
 	FAILURE = 2,
-	DELAYED = 3
+	DELAYED = 3,
+	DENIED = 4
 }
+TextureReplacer.Backlog = {}
 TextureReplacer.Queue = Queue:new()
 
 -- abstract methods
@@ -18,6 +20,7 @@ TextureReplacer.unload = pure_virtual
 -- normal methods
 function TextureReplacer:constructor(element, textureName, options)
 	assert(isElement(element), "Bad Argument @ TextureReplacer:constructor #1")
+	assert(textureName and textureName:len() > 0, "Bad Argument @ TextureReplacer:constructor #2")
 
 	self.m_Element     = element
 	self.m_TextureName = textureName
@@ -32,8 +35,11 @@ function TextureReplacer:constructor(element, textureName, options)
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+		if isElementStreamedIn(self.m_Element) then
+			self:onStramIn()
+		end
 	elseif self.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-		self:addToLoadingQeue()
+		table.insert(TextureReplacer.Backlog, self)
 	elseif self.m_LoadingMode == TEXTURE_LOADING_MODE.NONE then
 		self.m_Active = false
 	end
@@ -69,13 +75,13 @@ end
 function TextureReplacer:onStramOut()
 	if not self.m_Active then return false end
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
-		outputDebug("TextureReplacer:onStreamOut")
-		outputDebug("TextureReplacer:onStreamOut:Result("..self:unload()..")")
+		self:unload()
 	end
 end
 
 function TextureReplacer:attach()
-	if not self.m_Texture then return TextureReplacer.Status.FAILURE end
+	if not self.m_Active then return TextureReplacer.Status.DENIED end
+	if not self.m_Texture and not isElement(self.m_Texture) then return TextureReplacer.Status.FAILURE end
 	if self.m_Shader then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader = DxShader("files/shader/texreplace.fx")
@@ -89,19 +95,20 @@ function TextureReplacer:attach()
 
 	-- process next texture
 	if DEBUG then
-		nextframe(self.loadNext, self)
+		nextframe(TextureReplacer.loadNext)
 	else
-		setTimer(self.loadNext, 250, 1, self)
+		setTimer(TextureReplacer.loadNext, 250, 1)
 	end
 
 	return status and TextureReplacer.Status.SUCCESS or TextureReplacer.Status.FAILURE
 end
 
 function TextureReplacer:detach()
+	if not self.m_Active then return TextureReplacer.Status.DENIED end
 	if not self.m_Shader or not isElement(self.m_Shader) then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader:destroy()
-	self.m_Texture:destroy()
+	if self.m_Texture and isElement(self.m_Texture) then self.m_Texture:destroy() end
 	if self.m_Shader then self.m_Shader = nil end
 	if self.m_Texture then self.m_Texture = nil end
 	return TextureReplacer.Status.SUCCESS
@@ -109,6 +116,9 @@ end
 
 function TextureReplacer:setLoadingMode(loadingMode)
 	if loadingMode == self.m_LoadingMode then return false end
+	self.m_Active = true
+	self:unload()
+
 	if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 		removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
@@ -117,6 +127,9 @@ function TextureReplacer:setLoadingMode(loadingMode)
 	if loadingMode == TEXTURE_LOADING_MODE.STREAM then
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+		if isElementStreamedIn(self.m_Element) then
+			self:onStramIn()
+		end
 	elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
 		self:addToLoadingQeue()
 	elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
@@ -147,7 +160,8 @@ function TextureReplacer.removeCached(path)
 	if TextureReplacer.Map.TEXTURE_CACHE[path] then
 		TextureReplacer.Map.TEXTURE_CACHE[path].counter = TextureReplacer.Map.TEXTURE_CACHE[path].counter - 1
 		if TextureReplacer.Map.TEXTURE_CACHE[path].counter <= 0 then
-			TextureReplacer.Map.TEXTURE_CACHE[path].texture:destroy()
+			local texture = TextureReplacer.Map.TEXTURE_CACHE[path].texture
+			if texture and isElement(texture) then texture:destroy() end
 			TextureReplacer.Map.TEXTURE_CACHE[path] = nil
 		end
 
@@ -180,7 +194,15 @@ end
 
 function TextureReplacer.removeRef(instance)
 	--outputConsole(inspect(TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName]))
-	TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName] = nil
+
+	--TextureReplacer.Map.SHARED_ELEMENTS[instance.m_Element][instance.m_TextureName] = nil
+	for i, tab in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
+		for j, inst in pairs(tab) do
+			if instance == inst then
+				TextureReplacer.Map.SHARED_ELEMENTS[i][j] = nil
+			end
+		end
+	end
 end
 
 function TextureReplacer.deleteFromElement(element)
@@ -201,11 +223,11 @@ function TextureReplacer:addToLoadingQeue()
 		TextureReplacer.Queue.m_CurrentLoaded = 0
 		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, math.huge)
 
-		self:loadNext()
+		TextureReplacer.loadNext()
 	end
 end
 
-function TextureReplacer:loadNext()
+function TextureReplacer.loadNext()
 	if TextureReplacer.Queue:empty() then
 		TextureReplacer.Queue:unlock()
 
@@ -218,15 +240,29 @@ function TextureReplacer:loadNext()
 		TextureReplacer.Queue.m_ShortMessage.m_Text = _("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: %d / %d Textur(en)", TextureReplacer.Queue.m_CurrentLoaded, TextureReplacer.Queue.m_Count)
 		TextureReplacer.Queue.m_ShortMessage:anyChange()
 
-		return TextureReplacer.Queue:pop_back(1):load()
+		local status = TextureReplacer.Queue:pop_back(1):load()
+		if status == TextureReplacer.Status.FAILURE or status == TextureReplacer.Status.DENIED then
+			TextureReplacer.loadNext()
+		end
 	end
 end
 
 --// Static Helper
 function TextureReplacer.changeLoadingMode(loadingMode)
-	outputDebug("Setting TextureReplace loading mode to TEXTURE_LOADING_MODE"..tostring(TEXTURE_LOADING_MODE[loadingMode]))
-	for i, instance in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
-		instance:setLoadingMode(loadingMode)
+	for textureName, tab in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
+		for i, instance in pairs(tab) do
+			if instanceof(instance, TextureReplacer, false) then
+				instance:setLoadingMode(loadingMode)
+			else
+				outputDebug("Found invalid SHARED_ELEMENT Instance! ("..tostring(textureName)..":"..tostring(i)..")")
+			end
+		end
+	end
+end
+
+function TextureReplacer.loadBacklog()
+	for i, instance in pairs(TextureReplacer.Backlog) do
+		instance:addToLoadingQeue()
 	end
 end
 

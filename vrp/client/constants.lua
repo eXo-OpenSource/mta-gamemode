@@ -85,7 +85,7 @@ for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v en
 RadarDesign = {Monochrome = 1, GTA = 2}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 
-UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4, 
+UIStyle = {vRoleplay = 1, eXo = 2, Default = 3, Chart = 4,
 		[1] = "vRoleplay", [2] = "eXo", [3] = "Default", [4] = "Chart",}
 
 --for i, v in pairs(UIStyle) do UIStyle[v] = i end -- this doesn't work for some weird reason!
@@ -665,5 +665,4 @@ TEXTURE_SYSTEM_HELP =
 	[3] = "Alle optionalen Texturen (Custom-Texturen, etc.) sind ausgeschaltet und werden nicht geladen.",
 }
 
-TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3}
-for i, v in pairs(TEXTURE_LOADING_MODE) do TEXTURE_LOADING_MODE[v] = i end
+TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}

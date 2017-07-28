@@ -5,9 +5,10 @@ HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
+	assert(fileName and fileName:len() > 0, "Bad Argument @ HTTPTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
 
-	self.m_FileName = fileName:find(HTTPTextureReplacer.BasePath) and fileName:gsub(HTTPTextureReplacer.BasePath, "") or fileName
+	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
 	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
 
