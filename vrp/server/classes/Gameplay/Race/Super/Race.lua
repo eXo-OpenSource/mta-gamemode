@@ -112,8 +112,10 @@ function Race:loadMap()
 		local vehicle = TemporaryVehicle.create(spawnpoint.model, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.rz)
 		player:warpIntoVehicle(vehicle)
 		vehicle:setEngineState(true)
+		vehicle:setDimension(self.m_Dimension)
 		vehicle.m_DisableToggleEngine = true
-		vehicle:setDamageProof(true)
+		vehicle:setData("disableCollisionCheck", true, true)
+		vehicle:setData("disableDamageCheck", true, true)
 	end
 end
 
