@@ -242,7 +242,11 @@ function TextureReplacer.loadNext()
 
 		local status = TextureReplacer.Queue:pop_back(1):load()
 		if status == TextureReplacer.Status.FAILURE or status == TextureReplacer.Status.DENIED then
-			nextframe(TextureReplacer.loadNext)
+			if DEBUG then
+				nextframe(TextureReplacer.loadNext)
+			else
+				setTimer(TextureReplacer.loadNext, 250, 1)
+			end
 		end
 	end
 end
