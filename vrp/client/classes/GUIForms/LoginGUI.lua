@@ -118,6 +118,7 @@ forum.exo-reallife.de!
 
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
 		if self.m_RegisterEditPass:getText() == self.m_RegisterEditPass2:getText() then
+			self.m_RegisterRegisterButton:setEnabled(false)
 			triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
 		else triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 		end
@@ -311,7 +312,8 @@ addEvent("registerfailed", true)
 addEventHandler("registerfailed", root,
 	function(text)
 		LoginGUI:getSingleton().m_RegisterErrorBox:show()
-		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)
+		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)	
+		LoginGUI:getSingleton().m_RegisterRegisterButton:setEnabled(true)
 	end
 )
 
