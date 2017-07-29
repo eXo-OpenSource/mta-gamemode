@@ -116,7 +116,7 @@ function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 		
 		for k, v in ipairs(self.m_Col:getElementsWithin("player")) do
 			if v ~= client then
-				v:triggerEvent("gravelOnSync", {{element = source, position = source.m_Position, velocity = source.m_Velocity}})
+				v:triggerEvent("gravelOnSync", {{element = source, posX = source.m_Position.x, posY = source.m_Position.y, posZ = source.m_Position.z, velX = source.m_Velocity.x, velY = source.m_Velocity.y, velZ = source.m_Velocity.z}})
 			end
 		end
 		--[[source:setPosition()
@@ -130,7 +130,7 @@ function JobGravel:onGravelJobEnter(hitElement, dim)
 
 		for k, v in pairs(self.m_Gravel) do
 			if v.mined then
-				table.insert(gravel, {element = v, position = v.m_Position, velocity = v.m_Velocity})
+				table.insert(gravel, {element = v, posX = v.m_Position.x, posY = v.m_Position.y, posZ = v.m_Position.z, velX = v.m_Velocity.x, velY = v.m_Velocity.y, velZ = v.m_Velocity.z})
 			end
 		end
 
