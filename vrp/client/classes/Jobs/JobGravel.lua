@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 
+JOB_GRAVEL_MIN_SYNC_DISTANCE = 3
+
 JobGravel = inherit(Job)
 
 addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission", "gravelOnSync"}
@@ -101,8 +103,10 @@ end
 
 function JobGravel:Event_onRockSync(data)
 	for k, v in pairs(data) do
-		v.element:setPosition(v.posX, v.posY, v.posZ)
-		v.element:setVelocity(v.velX, v.velY, v.velZ)
+		if getDistanceBetweenPoints3D(v.position.x, v.position.y, v.position.z, v.posX, v.posY, v.posZ) > JOB_GRAVEL_MIN_SYNC_DISTANCE then
+			v.element:setPosition(v.posX, v.posY, v.posZ)
+			v.element:setVelocity(v.velX, v.velY, v.velZ)
+		end
 	end
 end
 
