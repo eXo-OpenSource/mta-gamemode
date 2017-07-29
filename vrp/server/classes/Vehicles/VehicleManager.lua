@@ -45,7 +45,6 @@ function VehicleManager:constructor()
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
-	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 
 
@@ -145,20 +144,6 @@ function VehicleManager:destructor()
 		end
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
-end
-
-function VehicleManager:Event_OnElementDestroy()
-	if getElementType(source) == "vehicle" then
-		local occs = getVehicleOccupants( source )
-		if occs then
-			for seat, player in pairs(occs) do
-				if player then
-					player.m_SeatBelt = false
-					setElementData(player,"isBuckeled", false)
-				end
-			end
-		end
-	end
 end
 
 function VehicleManager:Event_OnRadioChange( vehicle, radio)

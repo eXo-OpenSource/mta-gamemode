@@ -29,6 +29,7 @@ function attachElementToBone(element,ped,bone,x,y,z,rx,ry,rz)
 	if script_serverside then
 		triggerClientEvent("boneAttach_attach",root,element,ped,bone,x,y,z,rx,ry,rz)
 	end
+	addEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy",element,forgetDestroyedElements)
 	return true
 end
 
@@ -39,6 +40,9 @@ function detachElementFromBone(element)
 	if setElementCollisionsEnabled then
 		setElementCollisionsEnabled(element,true)
 	end
+	
+	removeEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy",element,forgetDestroyedElements)
+
 	if script_serverside then
 		triggerClientEvent("boneAttach_detach",root,element)
 	end
@@ -99,7 +103,6 @@ function forgetDestroyedElements()
 	if not attached_ped[source] then return end
 	clearAttachmentData(source)
 end
-addEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy",root,forgetDestroyedElements)
 
 function forgetNonExistingPeds()
 	local checkedcount = 0

@@ -57,6 +57,16 @@ function Vehicle:virtual_destructor()
 	if self.m_Magnet then
 		self.m_Magnet:destroy()
 	end
+
+	local occs = getVehicleOccupants(self)
+	if occs then
+		for seat, player in pairs(occs) do
+			if player then
+				player.m_SeatBelt = false
+				setElementData(player, "isBuckeled", false)
+			end
+		end
+	end
 end
 
 function Vehicle:setOwner(owner)
