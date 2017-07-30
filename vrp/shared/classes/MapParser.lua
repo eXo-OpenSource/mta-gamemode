@@ -71,12 +71,16 @@ local createFuncs = {
 			model = 2837
 			func = function(vehicle) vehicle:fix() end
 		end
+
+		local colsphere = createColSphere(info.x, info.y, info.z, 3.5)
 		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
-		addEventHandler(SERVER and "onPickupHit" or "onClientPickupHit", pickup, function(player)
-			local vehicle = getPedOccupiedVehicle(player)
+		addEventHandler(SERVER and "onColShapeHit" or "onClientColShapeHit", colsphere, function(hitElement)
+			if getElementType(hitElement) ~= "player" then return end
+			local vehicle = getPedOccupiedVehicle(hitElement)
 			if vehicle then func(vehicle) end
 		end)
 		if info.pickuptype == "vehiclechange" then pickup.targetModel = info.model end
+		setElementParent(colsphere, pickup)
 		return pickup
 	end;
 }
