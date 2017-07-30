@@ -22,6 +22,7 @@ Race.STATES = {
 }
 
 function Race:virtual_constructor()
+	self.m_Vehicles = {}
 	self.m_Players = {}
 	self.m_Ranks = {}
 	self.m_State = "NoMap"
@@ -100,28 +101,48 @@ function Race:checkState()
 end
 
 function Race:loadMap()
+	local st = getTickCount()
+
 	self.m_CurrentMap = RaceManager:getSingleton():loadMap(self.m_NextMap, self.m_Dimension)
-	self.m_Spawnpoints = self.m_CurrentMap.instance:getElementsByType("spawnpoint")
+	self.m_Spawnpoints = self.m_CurrentMap.instance:getElementsByTypeFromData("spawnpoint")
 	self.m_NextMap = nil
 
 	outputChatBox("Available spawnpoints: " .. tostring(#self.m_Spawnpoints))
 
 	-- Set up players
 	for _, player in pairs(self.m_Players) do
+		--player:triggerEvent("RaceManager:sendMap", self.m_CurrentMap.instance.m_MapData, self.m_Dimension)
+		triggerLatentClientEvent(player, "RaceManager:sendMap", 8388608, resourceRoot, self.m_CurrentMap.instance.m_MapData, self.m_Dimension)
+
+
 		local spawnpoint = self:getRandomSpawnpoint()
 		local vehicle = TemporaryVehicle.create(spawnpoint.model, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.rz)
 		player:warpIntoVehicle(vehicle)
 		vehicle:setEngineState(true)
+		vehicle:setFrozen(true)
 		vehicle:setDimension(self.m_Dimension)
 		vehicle.m_DisableToggleEngine = true
 		vehicle:setData("disableCollisionCheck", true, true)
 		vehicle:setData("disableDamageCheck", true, true)
+
+		table.insert(self.m_Vehicles, vehicle)
 	end
+
+	outputChatBox("Race:loadMap() took " .. getTickCount() - st)
 end
 
 function Race:unloadMap()
+	local st = getTickCount()
+
 	delete(self.m_CurrentMap.instance)
 	self.m_CurrentMap = nil
+
+	for _, vehicle in pairs(self.m_Vehicles) do
+		vehicle:destroy()
+	end
+	self.m_Vehicles = {}
+
+	outputChatBox("Race:unloadMap() took " .. getTickCount() - st)
 end
 
 function Race:getRandomSpawnpoint()

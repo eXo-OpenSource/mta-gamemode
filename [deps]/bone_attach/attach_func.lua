@@ -23,7 +23,7 @@ function attachElementToBone(element,ped,bone,x,y,z,rx,ry,rz)
 	attached_rz[element] = rz
 	if getElementData(element, "boneattach:setCollision") then
 		setElementCollisionsEnabled(element,true)
-	else 
+	else
 		setElementCollisionsEnabled(element,false)
 	end
 	if script_serverside then
@@ -117,8 +117,8 @@ function forgetNonExistingPeds()
 end
 
 clearing_nonexisting_peds = coroutine.create(forgetNonExistingPeds)
-setTimer(function()	
-	if coroutine.status(clearing_nonexisting_peds) == "suspended" then 
-		coroutine.resume(clearing_nonexisting_peds) 
+setTimer(function()
+	if coroutine.status(clearing_nonexisting_peds) == "suspended" then
+		coroutine.resume(clearing_nonexisting_peds)
 	end
 end,1000,0)

@@ -188,7 +188,7 @@ function RaceManager:loadMap(map, dimension)
 
 	map.instance = MapParser:new(("files/maps/temporary/%s/%s"):format(map.name, map.mapSrc))
 	if map.instance then
-		map.instance:create(dimension)
+	--	map.instance:create(dimension)
 		return map
 	end
 end

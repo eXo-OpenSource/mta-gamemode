@@ -72,7 +72,7 @@ local createFuncs = {
 			func = function(vehicle) vehicle:fix() end
 		end
 		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
-		addEventHandler("onPickupHit", pickup, function(player)
+		addEventHandler(SERVER and "onPickupHit" or "onClientPickupHit", pickup, function(player)
 			local vehicle = getPedOccupiedVehicle(player)
 			if vehicle then func(vehicle) end
 		end)
@@ -81,12 +81,13 @@ local createFuncs = {
 	end;
 }
 
-function MapParser:constructor(path)
+function MapParser:constructor(path, skip)
 	self.m_MapData = {}
 	self.m_Maps = {}
 
-	local xmlRoot = xmlLoadFile(path)
+	if skip then return end
 
+	local xmlRoot = xmlLoadFile(path)
 	local infoNode = xmlRoot:findChild("info", 0)
 	if infoNode then
 		self.m_Mapname = infoNode:getAttribute("Mapname")
@@ -150,6 +151,17 @@ function MapParser:getElementsByType(elementType, mapIndex)
 	for k, element in pairs(self.m_Maps[mapIndex or 1]) do
 		if element.type == elementType or (element._type and element._type == elementType) then
 			table.insert(elements, element)
+		end
+	end
+
+	return elements
+end
+
+function MapParser:getElementsByTypeFromData(elementType)
+	local elements = {}
+	for _, info in pairs(self.m_MapData) do
+		if info.type == elementType then
+			table.insert(elements, info)
 		end
 	end
 
