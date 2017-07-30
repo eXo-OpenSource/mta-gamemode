@@ -132,10 +132,10 @@ function CustomF11Map:draw()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/F11Map") end
 	local height = self.m_Height * self.m_Zoom
 	local centerPosX, centerPosY = self.m_CenterPosX, self.m_CenterPosY
-	
+
 	if self.m_Moving then
 		local mapX, mapY = self:cursorToMapPosition()
-		if mapX then
+		if mapX and self.m_ClickOverlay == GUIElement.getHoveredElement() then
 			centerPosX = centerPosX + (mapX - self.m_MoveStartCursorMap[1])
 			centerPosY = centerPosY + (mapY - self.m_MoveStartCursorMap[2])
 			centerPosX, centerPosY = self:snapMapToScreenBounds(centerPosX, centerPosY, height) --snap moving
@@ -198,7 +198,8 @@ function CustomF11Map:draw()
 				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/F11Map", true) end
 				local mapX, mapY = self:worldToMapPosition(posX, posY)
 				local size = blip:getSize() * Blip.getScaleMultiplier()
-				if self.m_CurrentClickedBlip and self.m_CurrentClickedBlip == blip:getDisplayText() then size = size * 1.5 end
+				local isMouseOverBlip = isCursorOverArea(centerPosX + mapX - size/2, centerPosY + mapY - size/2, size, size) and not self.m_BlipToolTipShowing
+				if (self.m_CurrentClickedBlip and self.m_CurrentClickedBlip == blip:getDisplayText()) or isMouseOverBlip then size = size * 1.5 end
 				
 				local color = blip:getColor()
 				if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
@@ -211,8 +212,16 @@ function CustomF11Map:draw()
 					end
 				end
 				dxDrawImage(centerPosX + mapX - size/2, centerPosY + mapY - size/2, size, size, imagePath, 0, 0, 0, color)
+				if isMouseOverBlip and blip:getDisplayText() then
+					self.m_BlipToolTipShowing = {blip, centerPosX + mapX, centerPosY + mapY - size/2}
+				end
 			end
 		end
+		if self.m_BlipToolTipShowing then --always draw tooltips on top of other blips
+			blip, x, y = unpack(self.m_BlipToolTipShowing)
+			dxDrawToolTip(x, y, blip:getDisplayText())
+		end
+		self.m_BlipToolTipShowing = nil
 	end
 
 	-- Draw local player blip
@@ -265,20 +274,17 @@ function CustomF11Map:mapToWorldPosition(mapX, mapY)
 	return worldX, worldY
 end
 
-function CustomF11Map:cursorToMapPosition(cx, cy)
+function CustomF11Map:cursorToMapPosition(fallback)
 	if isCursorShowing() then
 		local cx, cy = getCursorPosition()
 		cx, cy = cx * screenWidth, cy * screenHeight
 		return cx - self.m_CenterPosX, cy - self.m_CenterPosY
+	elseif fallback then -- take the screen center
+		return screenWidth/2 - self.m_CenterPosX, screenHeight/2 - self.m_CenterPosY
 	end
 end
 
 function CustomF11Map:snapMapToScreenBounds(centerX, centerY, height, withUpdate)
-	--[[
-		local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2 
-		-- Draw map
-		dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():getImagePath(false, true), 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
-	]]
 	local offsX = screenWidth/2 - screenHeight/2
 	if centerX - height/2 > offsX then
 		centerX = offsX + height/2
@@ -345,16 +351,11 @@ function CustomF11Map:zoom(zoomIn)
 end
 
 function CustomF11Map:move(start)
-	if start and not self.m_Moving then
+	if start and not self.m_Moving and self.m_ClickOverlay == GUIElement.getHoveredElement() then
 		self.m_MoveStartCursorMap = {self:cursorToMapPosition()}
 		self.m_Moving = true
 	elseif not start and self.m_Moving then
-
-		--[[
-			self.m_CenterPosX = screenWidth/2 - mapX -- point on screen where the world center point is
-			self.m_CenterPosY = screenHeight/2 - mapY
-		]]
-		local mapX, mapY = self:cursorToMapPosition()
+		local mapX, mapY = self:cursorToMapPosition(true)
 		self:setMapCenterPosition((screenWidth/2 - self.m_CenterPosX) + (self.m_MoveStartCursorMap[1] - mapX), (screenHeight/2 - self.m_CenterPosY) + (self.m_MoveStartCursorMap[2] - mapY))
 		self.m_Moving = false
 	end
