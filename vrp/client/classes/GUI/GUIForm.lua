@@ -97,7 +97,7 @@ end
 function GUIForm:fadeIn(time)
 	if not time then time = 1000 end
 	self:setVisible(true)
-	for k, v in pairs(self:getChildrenRecursive()) do
+	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
 				Animation.FadeAlpha:new(v, 750, 0, v:getAlpha() or 255)
@@ -108,7 +108,7 @@ end
 
 function GUIForm:fadeOut(time)
 	if not time then time = 1000 end
-	for k, v in pairs(self:getChildrenRecursive()) do
+	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
 				Animation.FadeAlpha:new(v, 750, v:getAlpha() or 255, 0)
@@ -128,7 +128,7 @@ function GUIForm:bind(key, fn)
 	bindKey(key, "down", handler)
 end
 
-function GUIForm:unbind(key, fn)
+function GUIForm:unbind(key)
 	if not self.m_KeyBinds[key] then
 		return
 	end
@@ -137,7 +137,7 @@ function GUIForm:unbind(key, fn)
 end
 
 function GUIForm.closeAll()
-	for id, form in pairs(GUIForm.Map) do
+	for _, form in pairs(GUIForm.Map) do
 		if form then
 			form:close(false)
 		end
