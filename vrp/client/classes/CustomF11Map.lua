@@ -132,10 +132,18 @@ function CustomF11Map:draw()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/F11Map") end
 	local height = self.m_Height * self.m_Zoom
 	local centerPosX, centerPosY = self.m_CenterPosX, self.m_CenterPosY
+	
 	if self.m_Moving then
 		local mapX, mapY = self:cursorToMapPosition()
-		centerPosX = centerPosX + (mapX - self.m_MoveStartCursorMap[1])
-		centerPosY = centerPosY + (mapY - self.m_MoveStartCursorMap[2])
+		if mapX then
+			centerPosX = centerPosX + (mapX - self.m_MoveStartCursorMap[1])
+			centerPosY = centerPosY + (mapY - self.m_MoveStartCursorMap[2])
+			centerPosX, centerPosY = self:snapMapToScreenBounds(centerPosX, centerPosY, height) --snap moving
+		else
+			self:move() -- stop moving when user hides his cursor
+		end
+	else
+		centerPosX, centerPosY = self:snapMapToScreenBounds(centerPosX, centerPosY, height, true) --snap actual map to prevent move bugs
 	end
 	
 	local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2 
@@ -147,8 +155,8 @@ function CustomF11Map:draw()
 	end
 
 	-- Draw GPS info
-	dxDrawRectangle(mapPosX, 0, height, 25, tocolor(0, 0, 0, 140))
-	dxDrawText("Doppelklick auf die Karte, um die Zielposition des GPS zu setzen. Rechtsklick, um die Navigation zu beenden.", screenWidth/2, 5, nil, nil, Color.White, 1, "default-bold", "center")
+	dxDrawRectangle(0, 0, screenWidth, 30, tocolor(0, 0, 0, 140))
+	dxDrawText(_"Informationen zur Bedienung der Karte findest du im F1-Hilfemenü", screenWidth/2, 15, nil, nil, Color.White, 1, VRPFont(25), "center", "center")
 
 	-- Draw gang areas
 	if core:get("HUD", "drawGangAreas", true) then
@@ -263,6 +271,30 @@ function CustomF11Map:cursorToMapPosition(cx, cy)
 		cx, cy = cx * screenWidth, cy * screenHeight
 		return cx - self.m_CenterPosX, cy - self.m_CenterPosY
 	end
+end
+
+function CustomF11Map:snapMapToScreenBounds(centerX, centerY, height, withUpdate)
+	--[[
+		local mapPosX, mapPosY = centerPosX - height /2, centerPosY - height /2 
+		-- Draw map
+		dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():getImagePath(false, true), 0, 0, 0, tocolor(255, 255, 255, core:get("HUD","mapOpacity", 0.7)*255))
+	]]
+	local offsX = screenWidth/2 - screenHeight/2
+	if centerX - height/2 > offsX then
+		centerX = offsX + height/2
+	elseif centerX + height/2 < screenWidth - offsX then
+		centerX = screenWidth - height/2 - offsX
+	end
+	if centerY - height/2 > 0 then 
+		centerY = height/2 
+	elseif centerY + height/2 < screenHeight then
+		centerY = screenHeight - height/2 
+	end
+	if withUpdate then
+		self.m_CenterPosX = centerX
+		self.m_CenterPosY = centerY
+	end
+	return centerX, centerY
 end
 
 function CustomF11Map:Doubleclick_ClickOverlay(element, cursorX, cursorY)

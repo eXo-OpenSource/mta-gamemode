@@ -152,13 +152,15 @@ end
 
 function Blip:updateClient(type, data)
 	if self.m_VisibleTo == root then
-		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "blip"..type, root, self.m_Id, data)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "blip"..type, resourceRoot, self.m_Id, data)
 	else
+		local players = {}
 		for i,player in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 			if self:isVisibleForPlayer(player) then
-				player:triggerEvent("blip"..type, self.m_Id, data)
+				table.insert(players, player)
 			end
 		end
+		triggerClientEvent(players, "blip"..type, resourceRoot, self.m_Id, data)
 	end
 end
 
