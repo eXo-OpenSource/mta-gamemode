@@ -152,9 +152,22 @@ function GUIForm:isBackgroundBlurred()
 	return false
 end
 
+GUIForm.AllowedKeys = {
+	["^[F0-9]*$"] = true, 	-- F1 - F12
+	["tab"] = true, 		-- kwt
+	["enter"] = true, 		-- kwt
+	["b"] = true, 			-- Toggle cursor on/off
+	["m"] = true, 			-- Turn music on/off in download screen
+	["pgup"] = true, 		-- scroll chatbox/debugscript
+	["pgdn"] = true			-- scroll chatbox/debugscript
+}
+
 GUIForm.keysEnabled = true
 GUIForm.onClientKey =
 	function(button)
-		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") or button:match("b") or button:match("m") then return end
+		for keys in pairs(GUIForm.AllowedKeys) do
+			if button:match(keys) then return end
+		end
+
 		cancelEvent()
 	end
