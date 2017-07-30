@@ -7,6 +7,7 @@
 -- ****************************************************************************
 RaceManager = inherit(Singleton)
 RaceManager.RES_PATH = "http://pewx.de/res/maps/"
+addRemoteEvents{"RaceManager:onPlayerReady", "RaceMananger:requestKillPlayer"}
 
 function RaceManager:constructor()
 	self.m_RegisteredModes = {}
@@ -17,6 +18,8 @@ function RaceManager:constructor()
 	self:registerMode(RaceDD, "DD")
 	self:registerMode(RaceDM, "DM")
 
+	addEventHandler("RaceManager:onPlayerReady", root, bind(RaceManager.onPlayerReady, self))
+	addEventHandler("RaceManager:requestKillPlayer", root, bind(RaceManager.requestKillPlayer, self))
 	addEventHandler("onVehicleStartExit", root, bind(RaceManager.onVehicleStartExit, self))
 end
 
@@ -37,10 +40,23 @@ function RaceManager:fetchMaps(data, errno)
 end
 
 function RaceManager:onVehicleStartExit(player)
-	if self:isPlayerInMode(player) then
-		outputChatBox("onVehicleStartExit : cancelEvent")
+	local mode = self:isPlayerInMode(player)
+	if mode then
 		cancelEvent()
+		mode:killPlayer(player)
 	end
+end
+
+function RaceManager:onPlayerReady()
+	local mode = self:isPlayerInMode(client)
+	if mode then
+		client.race_ready = true
+	end
+end
+
+function RaceManager:requestKillPlayer()
+	local mode = self:isPlayerInMode(client)
+	if mode then mode:killPlayer(client) end
 end
 
 ---
@@ -58,7 +74,7 @@ end
 function RaceManager:isPlayerInMode(player)
 	for _, mode in pairs(self.m_RegisteredModes) do
 		if mode:isPlayer(player) then
-			return true
+			return mode
 		end
 	end
 
@@ -188,11 +204,14 @@ function RaceManager:loadMap(map, dimension)
 
 	map.instance = MapParser:new(("files/maps/temporary/%s/%s"):format(map.name, map.mapSrc))
 	if map.instance then
-	--	map.instance:create(dimension)
+		--map.instance:create(dimension)
 		return map
 	end
 end
 
+---
+-- Async
+--
 function RaceManager:fetch(callback, file)
 	return fetchRemote(file, {username = "maps", password = "RT6QSAaw"},
 		function(responseData, errno)

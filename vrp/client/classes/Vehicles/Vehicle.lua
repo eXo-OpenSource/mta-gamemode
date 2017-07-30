@@ -209,7 +209,7 @@ local totalLossVehicleTypes = {
 
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		if source:getData("disableDamageCheck") then outputChatBox("Return") return end
+		if source:getData("disableDamageCheck") then return end
 		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
 		if source.isBroken and source:isBroken() then return cancelEvent() end
 		--calculate vehicle armor
@@ -238,7 +238,7 @@ addEventHandler("onClientVehicleDamage", root,
 )
 
 addEventHandler("onClientVehicleCollision", root, function()
-	if source:getData("disableCollisionCheck") then outputChatBox("Return") return end
+	if source:getData("disableCollisionCheck") then return end
 	if totalLossVehicleTypes[source:getVehicleType()] then
 		local rx, ry, rz = getElementRotation(source)
 		source:setDamageProof(rx > 160 and rx < 200) -- to disable burning

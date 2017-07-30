@@ -24,8 +24,10 @@ Race.STATES = {
 function Race:virtual_constructor()
 	self.m_Vehicles = {}
 	self.m_Players = {}
-	self.m_Ranks = {}
+	self.m_AlivePlayers = {}
 	self.m_State = "NoMap"
+
+	self.m_PlayersReadyTimer = bind(Race.checkPlayersReady, self)
 end
 
 function Race:virtual_destructor()
@@ -58,13 +60,18 @@ function Race:join(player)
 end
 
 function Race:quit(player)
-	for i, p in pairs(self.m_Players) do
-		if p == player then
-			table.remove(self.m_Players, i)
-			self:sendShortMessage(_("%s leaved!", player, player:getName()))
-			self:checkState()
-			return true
+	local key = self:isPlayer(player)
+	if key then
+		table.remove(self.m_Players, key)
+
+		player:triggerEvent("RaceManager:destroyMap")
+		self:sendShortMessage(_("%s leaved!", player, player:getName()))
+
+		if #self.m_Players == 0 then
+			self:unloadMap()
+			self:setState("NoMap")
 		end
+		return true
 	end
 
 	return false
@@ -82,6 +89,23 @@ function Race:isPlayer(player)
 	end
 end
 
+function Race:checkPlayersReady()
+	local playersReady = {}
+	for _, player in pairs(self.m_Players) do
+		if player.race_ready then
+			table.insert(playersReady, player)
+		end
+	end
+
+	if #self.m_Players == #playersReady then
+		outputChatBox("All players are ready. goto pregridcountdown")
+		return self:setState("GridCountdown")
+	end
+
+	outputChatBox("Waiting for players..")
+	setTimer(self.m_PlayersReadyTimer, 2000, 1)
+end
+
 function Race:setState(newState)
 	outputChatBox("Set State: " .. tostring(newState))
 
@@ -90,15 +114,23 @@ function Race:setState(newState)
 		if self.m_NextMap then
 			self:loadMap()
 		end
+	elseif self.m_State == "PreGridCountdown" then
+		setTimer(self.m_PlayersReadyTimer, 2000, 1)
+	elseif self.m_State == "GridCountdown" then
+		-- Todo: Countdown // Timer = Workaround
+		setTimer(
+			function()
+				self:setState("Running")
+
+				for _, player in pairs(self.m_Players) do
+					self.m_AlivePlayers[player] = true
+					player.raceVehicle:setFrozen(false)
+				end
+			end, 4000, 1
+		)
 	end
 end
 
-function Race:checkState()
-	if #self.m_Players == 0 then
-		self:unloadMap()
-		self:setState("NoMap")
-	end
-end
 
 function Race:loadMap()
 	local st = getTickCount()
@@ -114,7 +146,6 @@ function Race:loadMap()
 		--player:triggerEvent("RaceManager:sendMap", self.m_CurrentMap.instance.m_MapData, self.m_Dimension)
 		triggerLatentClientEvent(player, "RaceManager:sendMap", 8388608, resourceRoot, self.m_CurrentMap.instance.m_MapData, self.m_Dimension)
 
-
 		local spawnpoint = self:getRandomSpawnpoint()
 		local vehicle = TemporaryVehicle.create(spawnpoint.model, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.rz)
 		player:warpIntoVehicle(vehicle)
@@ -125,10 +156,15 @@ function Race:loadMap()
 		vehicle:setData("disableCollisionCheck", true, true)
 		vehicle:setData("disableDamageCheck", true, true)
 
+		vehicle.player = player
+		player.raceVehicle = vehicle
+
 		table.insert(self.m_Vehicles, vehicle)
 	end
 
 	outputChatBox("Race:loadMap() took " .. getTickCount() - st)
+
+	self:setState("PreGridCountdown")
 end
 
 function Race:unloadMap()
@@ -136,6 +172,10 @@ function Race:unloadMap()
 
 	delete(self.m_CurrentMap.instance)
 	self.m_CurrentMap = nil
+
+	for _, player in pairs(self.m_Players) do
+		player:triggerEvent("RaceManager:destroyMap")
+	end
 
 	for _, vehicle in pairs(self.m_Vehicles) do
 		vehicle:destroy()

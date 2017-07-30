@@ -16,3 +16,11 @@ end
 
 function RaceDD:destructor()
 end
+
+function RaceDD:killPlayer(player)
+	self.m_AlivePlayers[player] = nil
+
+	if table.size(self.m_AlivePlayers) == 1 then
+		self:setState("SomeoneWon")
+	end
+end

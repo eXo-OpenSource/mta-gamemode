@@ -16,3 +16,11 @@ end
 
 function RaceDM:destructor()
 end
+
+function RaceDM:killPlayer(player)
+	self.m_AlivePlayers[player] = nil
+
+	if table.size(self.m_AlivePlayers) == 0 then
+		self:setState("PostFinish")
+	end
+end
