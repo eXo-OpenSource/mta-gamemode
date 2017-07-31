@@ -133,6 +133,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 	Ban.checkBan(player, true)
 
 	if player:getTutorialStage() == 1 then
+		Admin:getSingleton():sendNewPlayerMessage(player)
 		player:createCharacter()
 	end
 	player:loadCharacter()

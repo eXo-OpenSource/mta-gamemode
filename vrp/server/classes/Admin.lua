@@ -301,7 +301,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         else
             admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
             return
-        end		
+        end
 	end
 end
 
@@ -937,7 +937,7 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 			if external or internal then
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
-			faction:removePlayer(targetPlayer) 
+			faction:removePlayer(targetPlayer)
 		end
 
         if Id == 0 then
@@ -968,7 +968,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, ext
 			if external or internal then
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
 			end
-			company:removePlayer(targetPlayer) 
+			company:removePlayer(targetPlayer)
 		end
 
         if Id == 0 then
@@ -1246,4 +1246,8 @@ function Admin:Event_OnAcceptOverlapCheck()
 	else
 		source:sendError("Erst ab Administrator!")
 	end
+end
+
+function Admin:sendNewPlayerMessage(player)
+	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
 end
