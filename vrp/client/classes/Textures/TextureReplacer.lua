@@ -81,7 +81,7 @@ end
 
 function TextureReplacer:attach()
 	if not self.m_Active then return TextureReplacer.Status.DENIED end
-	if not self.m_Texture and not isElement(self.m_Texture) then return TextureReplacer.Status.FAILURE end
+	if not self.m_Texture or not isElement(self.m_Texture) then return TextureReplacer.Status.FAILURE end
 	if self.m_Shader then return TextureReplacer.Status.FAILURE end
 
 	self.m_Shader = DxShader("files/shader/texreplace.fx")
