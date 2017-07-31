@@ -57,7 +57,7 @@ function TextureReplacer:destructor()
 
 	-- Remove events
 	if isElement(self.m_Element) then -- does the element still exist?
-		removeEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory)
+		removeEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestroy)
 		if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
 			removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 			removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
