@@ -34,12 +34,22 @@ function VehicleInteraction:constructor()
 	bindKey(self.m_actionButton, "down", bind(self.action, self))
 	bindKey(self.m_lockButton, "down", bind(self.lock, self))
 
-	addEventHandler("onDoorOpened", root, bind(self.onDoorOpened, self))
-	addEventHandler("onDoorClosed", root, bind(self.onDoorClosed, self))
-	addEventHandler("onClientRender", root, bind(self.render, self))
+	self.m_DoorOpenedBind = bind(self.onDoorOpened, self)
+	self.m_DoorClosedBind = bind(self.onDoorClosed, self)
+	self.m_RenderBind = bind(self.render, self)
+
+	addEventHandler("onDoorOpened", root, self.m_DoorOpenedBind)
+	addEventHandler("onDoorClosed", root, self.m_DoorClosedBind)
+	addEventHandler("onClientRender", root, self.m_RenderBind)
 
 	-- Font
 	GUIFontContainer.constructor(self, "", 1, VRPFont(16))
+end
+
+function VehicleInteraction:destructor()
+	removeEventHandler("onDoorOpened", root, self.m_DoorOpenedBind)
+	removeEventHandler("onDoorClosed", root, self.m_DoorClosedBind)
+	removeEventHandler("onClientRender", root, self.m_RenderBind)
 end
 
 function VehicleInteraction:render()
