@@ -62,7 +62,17 @@ function Blip:updateDesignSet()
 end
 
 function Blip:getPosition(vec)
-	return vec and Vector3(self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0) or self.m_WorldX, self.m_WorldY, self.m_WorldZ
+	local x, y, z
+	if self:getAttachedElement() then
+		x, y, z = getElementPosition(self:getAttachedElement())
+	else
+		x, y, z = self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0
+	end
+	if vec then
+		x = Vector3(x, y, z)
+		y, z = nil, nil
+	end
+	return x, y, z
 end
 
 function Blip:setPosition(x, y, z)

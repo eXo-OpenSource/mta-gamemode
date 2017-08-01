@@ -194,7 +194,7 @@ function PublicTransport:startTaxiDrive(veh, customer)
 	self.m_TaxiCustomer[customer]["price"] = 0
 	self.m_TaxiCustomer[customer]["timer"] = setTimer(self.m_TaxoMeter, 1000, 0, customer)
 	customer:triggerEvent("showTaxoMeter")
-
+	customer:triggerEvent("showPublicTransportTaxiGUI")
 	--triggerClientEvent(self.m_TaxiCustomer[customer]["driver"], "showTaxoMeter", self.m_TaxiCustomer[customer]["driver"])
 end
 
@@ -272,7 +272,7 @@ function PublicTransport:Event_OnTaxiDriverModeChange(customer, withTaxometer)
 end
 
 function PublicTransport:Event_setTargetFromMap(posX, posY)
-	if self.m_TaxiCustomer[client]["driver"] then
+	if self.m_TaxiCustomer[client] and self.m_TaxiCustomer[client]["driver"] then
 		local driver = self.m_TaxiCustomer[client]["driver"]
 		driver:sendInfo(_("Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s", driver, client:getName(), getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
 		client:sendInfo(_("Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s", client, getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))

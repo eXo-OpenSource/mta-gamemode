@@ -69,7 +69,7 @@ end
 
 function HUDSpeedo:draw()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Speedo") end
-	if not isPedInVehicle(localPlayer) then
+	if not isPedInVehicle(localPlayer) or localPlayer.vehicleSeat ~= 0 then
 		self:hide()
 		return
 	end

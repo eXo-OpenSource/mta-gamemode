@@ -53,23 +53,37 @@ function CustomF11Map:enable()
 	self.m_Enabled = true
 end
 
+function CustomF11Map:setCustomClickCallback(func)
+	outputDebug(func)
+	if not self.m_CustomCallback then
+		self.m_CustomCallback = func
+		if not self.m_Visible then
+			self:toggle()
+		end
+		showCursor(true)
+	end
+end
+
 function CustomF11Map:toggle()
 	if not self.m_Enabled then return end
 	if isPedDead(localPlayer) then return end
-	self.m_Visible = not self.m_Visible
-	self.m_ClickOverlay:setVisible(self.m_Visible)
-	self.m_BlipList:setVisible(self.m_Visible)
 
-	if self.m_Visible then
+	if not self.m_Visible then
+		self.m_Visible = true
 		HUDRadar:getSingleton():hide()
 		HUDUI:getSingleton():hide()
 		HUDSpeedo:getSingleton():hide()
 		self:updateBlipList()
 		addEventHandler("onClientRender", root, self.m_RenderFunc, false, "high")
-	else
+		self.m_ClickOverlay:setVisible(true)
+		self.m_BlipList:setVisible(true)
+	elseif not self.m_CustomCallback then
+		self.m_Visible = false
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		HUDSpeedo:getSingleton():show()
+		self.m_ClickOverlay:setVisible(false)
+		self.m_BlipList:setVisible(false)
 		removeEventHandler("onClientRender", root, self.m_RenderFunc)
 	end
 end
@@ -306,8 +320,15 @@ end
 function CustomF11Map:Doubleclick_ClickOverlay(element, cursorX, cursorY)
 	local mapX, mapY = self:cursorToMapPosition()
 	local worldX, worldY = self:mapToWorldPosition(mapX, mapY)
-	-- Start navigation to that point
-	GPS:getSingleton():startNavigationTo(Vector3(worldX, worldY, 0))
+	if self.m_CustomCallback then
+		if self.m_CustomCallback(worldX, worldY) then
+			self.m_CustomCallback = nil
+			self:toggle()
+		end
+	else
+		-- Start navigation to that point
+		GPS:getSingleton():startNavigationTo(Vector3(worldX, worldY, 0))
+	end
 end
 
 function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)

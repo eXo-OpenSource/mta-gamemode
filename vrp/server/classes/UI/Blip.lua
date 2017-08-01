@@ -110,6 +110,20 @@ function Blip:setPosition(vPos)
 	self:updateClient("Update", {x = vPos.x, y = vPos.y, z = vPos.z})
 end
 
+function Blip:getPosition(vec)
+	local x, y, z
+	if self:getAttachedElement() then
+		x, y, z = getElementPosition(self:getAttachedElement())
+	else
+		x, y, z = self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0
+	end
+	if vec then
+		x = Vector3(x, y, z)
+		y, z = nil, nil
+	end
+	return x, y, z
+end
+
 function Blip:setZ(z)
 	self.m_PosZ = z
 	self:updateClient("Update", {z = z})
@@ -136,6 +150,10 @@ end
 function Blip:attach(element)
 	self.m_AttachedTo = element
 	self:updateClient("Update", {attachedElement = element})
+end
+
+function Blip:getAttachedElement()
+	return Blip.AttachedBlips[self]
 end
 
 function Blip:detach()

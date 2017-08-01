@@ -12,7 +12,7 @@ addRemoteEvents{"showPublicTransportTaxiGUI"}
 function PublicTransportTaxiGUI:constructor(driver, player)
 	GUIButtonMenu.constructor(self, "eXo Public Transport")
 	if driver then
-		self:addItem(_"Taxometer aktivieren",Color.Green ,
+		self:addItem(_"Taxometer aktivieren", Color.Green,
 			function()
 				triggerServerEvent("publicTransportStartTaxi", localPlayer, player, true)
 				self:delete()
@@ -25,21 +25,16 @@ function PublicTransportTaxiGUI:constructor(driver, player)
 			end
 		)
 	else
-		self:addItem(_"Ziel auf Karte markieren",Color.Green ,
+		self:addItem(_"Ziel auf Karte markieren", Color.Green,
 			function()
-				if MapGUI:isInstantiated() then
-					delete(MapGUI:getSingleton())
-				else
-					MapGUI:getSingleton(
-						function(posX, posY, posZ)
-							triggerServerEvent("publicTransportSetTargetMap", localPlayer, posX, posY)
-						end
-					)
-				end
+				CustomF11Map:getSingleton():setCustomClickCallback(function(posX, posY)
+					triggerServerEvent("publicTransportSetTargetMap", localPlayer, posX, posY)
+					return true
+				end)
 				self:delete()
 			end
 		)
-		self:addItem(_"Ziel dem Fahrer mitteilen",Color.Green ,
+		self:addItem(_"Ziel dem Fahrer mitteilen", Color.Green,
 			function()
 				triggerServerEvent("publicTransportSetTargetTell", localPlayer)
 				self:delete()
