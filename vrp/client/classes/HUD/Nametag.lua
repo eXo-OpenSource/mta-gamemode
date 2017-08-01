@@ -57,8 +57,8 @@ function Nametag:draw()
 						end
 						if wanteds > 0 then
 							dxDrawImage(scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, fontHeight*2.2, fontHeight*2.2, "files/images/Nametag/wanted.png", 0, 0, 0, tocolor(200, 150, 0, 255*alpha))
-							dxDrawText(wanteds, (scx - textWidth/2 - fontHeight ) + 1, scy, nil, nil, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
-							dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							dxDrawText(wanteds, (scx - textWidth/2 - fontHeight ), scy, scx - textWidth/2 - fontHeight*2 + fontHeight*2.2, scy - fontHeight*1.1 + fontHeight*2.2, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							--dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 1.5*size, Nametag.font, "center", "center")
 							scx = scx + fontHeight
 						end
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
