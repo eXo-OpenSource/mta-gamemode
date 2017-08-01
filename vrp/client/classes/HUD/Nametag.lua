@@ -57,7 +57,8 @@ function Nametag:draw()
 						end
 						if wanteds > 0 then
 							dxDrawImage(scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, fontHeight*2, fontHeight*2, "files/images/Nametag/wanted.png", 0, 0, 0, tocolor(200, 150, 0, 255*alpha))
-							dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 2*size, Nametag.font, "center", "center")
+							dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							dxDrawText(wanteds, (scx - textWidth/2 - fontHeight ) + 1, scy, nil, nil, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
 							scx = scx + fontHeight
 						end
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
@@ -129,7 +130,8 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 end
 
 function Nametag:getColorFromHP(hp, armor)
-	armor = armor*2.55
+	armor = armor*3.5
+	if armor >= 255 then armor = 255 end
 	if hp <= 0 then
 		return 0, 0, 0
 	else
