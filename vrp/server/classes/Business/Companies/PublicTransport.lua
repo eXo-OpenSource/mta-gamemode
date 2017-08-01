@@ -140,7 +140,7 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			veh:setHandling("handlingFlags", 18874448)
 			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
 			if self:isBusOnTour(player.vehicle) then
-				self:startBusTour_Driver(player, player.vehicle.Bus_NextStop)
+				self:startBusTour_Driver(player, player.vehicle.Bus_NextStop, vehicle.Bus_Line)
 			else
 				triggerClientEvent("busReachNextStop", root, player.vehicle, "Ausser Dienst", false)
 			end
@@ -208,6 +208,7 @@ function PublicTransport:endTaxiDrive(customer)
 		driver:giveMoney(price, "Public Transport Taxi")
 		if price > 0 then 
 			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
+			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
@@ -409,7 +410,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
 			player:givePoints(math.round(5 * (dist/1000))) --5 / km
 			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
-			self:addLog(player, "Kasse", ("hat %s in die Kasse gelegt (Busfahrt Linie %d)!"):format(toMoneyString(math.round(30 * (dist/1000))), line))
+			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(30 * (dist/1000)))))
 		end
 		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))
 
