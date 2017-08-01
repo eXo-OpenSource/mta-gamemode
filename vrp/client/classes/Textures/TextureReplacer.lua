@@ -211,6 +211,7 @@ function TextureReplacer:addToLoadingQeue()
 		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 
 		TextureReplacer.Queue.m_CurrentLoaded = 0
+		if TextureReplacer.Queue.m_ShortMessage then delete(TextureReplacer.Queue.m_ShortMessage) end
 		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, -1)
 
 		local thread = Thread:new(TextureReplacer.loadTextures, THREAD_PRIORITY_HIGH)
