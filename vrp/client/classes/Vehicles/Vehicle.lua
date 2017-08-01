@@ -187,7 +187,7 @@ setTimer(
 
 			-- Send current mileage every minute to the server
 			counter = counter + 1
-			if counter >= 60 or vehicle:getModel() == 420 or vehicle:getModel() == 438 then
+			if counter >= 60 or vehicle:getData("EPT_Taxi") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
 				end

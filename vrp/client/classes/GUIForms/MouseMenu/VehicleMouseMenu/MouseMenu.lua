@@ -87,9 +87,23 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				):setIcon(FontAwesomeSymbols.Arrows)
 			end
 		end
-		if element:getModel() == 437 then -- Coach
+		if element:getData("EPT_Taxi") and element:getModel() == 420 or element:getModel() == 438 then -- Taxis
 			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
-				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 and localPlayer.vehicle:getData("EPT_Bus") then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+					self:addItem(_"Taxileuchte bedienen",
+						function()
+							if self:getElement() then
+								delete(self)
+								triggerServerEvent("publicTransportSwitchTaxiLight", self:getElement())
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Lightbulb)
+				end
+			end
+		end
+		if element:getData("EPT_Bus") then -- Coach
+			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
 					self:addItem(_"Busfahrer >>>",
 						function()
 							if self:getElement() then

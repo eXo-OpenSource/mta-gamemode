@@ -17,7 +17,9 @@ function PublicTransport:constructor()
 	self.m_ActiveBusVehicles = {}
 	self.m_TaxoMeter = bind(self.updateTaxometer, self)
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
-	addRemoteEvents{"publicTransportSetTargetMap", "publicTransportSetTargetTell", "publicTransportChangeBusDutyState"}
+	addRemoteEvents{"publicTransportStartTaxi", "publicTransportSetTargetMap", "publicTransportSetTargetTell", "publicTransportChangeBusDutyState", "publicTransportSwitchTaxiLight"}
+	addEventHandler("publicTransportStartTaxi", root, bind(self.Event_OnTaxiDriverModeChange, self))
+	addEventHandler("publicTransportSwitchTaxiLight", root, bind(self.Event_OnTaxiLightChange, self))
 	addEventHandler("publicTransportSetTargetMap", root, bind(self.Event_setTargetFromMap, self))
 	addEventHandler("publicTransportSetTargetTell", root, bind(self.Event_sendTargetTellMessage, self))
 	addEventHandler("publicTransportChangeBusDutyState", root, bind(self.Event_changeBusDutyState, self))
@@ -129,8 +131,9 @@ end
 
 function PublicTransport:onVehiceEnter(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() == 420 or veh:getModel() == 438 then
+		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			player:triggerEvent("showTaxoMeter")
+			veh:setData("EPT_Taxi", true, true)
 		elseif veh:getModel() == 437 then
 			veh:setVariant(0, 0)
 			veh:setData("EPT_Bus", true, true)
@@ -143,16 +146,16 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			end
 		end
 	else
-		if veh:getModel() == 420 or veh:getModel() == 438 then
-			self:startTaxiDrive(veh, player)
-			player:triggerEvent("showPublicTransportTaxiGUI")
+		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
+			veh.controller.m_TaxiData = veh
+			veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
 		end
 	end
 end
 
 function PublicTransport:onVehiceStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
-		if veh:getModel() == 420 or veh:getModel() == 438 then
+		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			cancelEvent()
 			player:sendError(_("Es sitzt kein Fahrer im Taxi.", player))
 		elseif veh:getModel() == 437 then
@@ -167,8 +170,12 @@ end
 
 function PublicTransport:onVehiceExit(veh, player, seat)
 	if seat == 0 then
-		if veh:getModel() == 420 or veh:getModel() == 438 then
+		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			player:triggerEvent("hideTaxoMeter")
+			if veh:getModel() == 420 or veh:getModel() == 438 then
+				veh:setTaxiLightOn(false)
+			end
+			player.m_TaxiData = nil
 		elseif veh:getModel() == 437 then
 			self:stopBusTour_Driver(player)
 		end
@@ -199,6 +206,9 @@ function PublicTransport:endTaxiDrive(customer)
 		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
 		driver:giveMoney(price, "Public Transport Taxi")
+		if price > 0 then 
+			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
+		end
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
@@ -215,10 +225,10 @@ function PublicTransport:updateTaxometer(customer)
 		self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
 		customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
-		if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] then
-			customer:sendError(_("Du hast kein Geld mehr dabei! Du wurdest aus dem Taxi geschmissen!", customer, price))
-			customer:removeFromVehicle()
-			self:endTaxiDrive(customer)
+		if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] and not self.m_TaxiCustomer[customer]["moneyWarningSent"] then
+			self.m_TaxiCustomer[customer]["moneyWarningSent"] = true
+			customer:sendWarning(_("Du hast nicht mehr genügend Geld dabei!", customer, price))
+			self.m_TaxiCustomer[customer]["driver"]:sendWarning(_("Der Spieler hat nicht mehr genügend Geld dabei!", customer, price))
 		end
 		self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
 	else
@@ -250,6 +260,16 @@ function PublicTransport:Event_onPlayerQuit()
 	end
 end
 
+function PublicTransport:Event_OnTaxiDriverModeChange(customer, withTaxometer)
+	if not client.m_TaxiData or client.m_TaxiData ~= client.vehicle then return client:sendError(_("Du musst im Taxi sitzen!", client)) end
+	if not customer.vehicle or customer.vehicle ~= client.m_TaxiData then return client:sendError(_("Der Spieler sitzt nicht mehr im Taxi!", client)) end
+	if withTaxometer then
+		self:startTaxiDrive(client.m_TaxiData, customer)
+	else
+		customer:sendInfo(_("%s lässt dich gratis mitfahren.", customer, client.name))
+	end
+end
+
 function PublicTransport:Event_setTargetFromMap(posX, posY)
 	if self.m_TaxiCustomer[client]["driver"] then
 		local driver = self.m_TaxiCustomer[client]["driver"]
@@ -269,6 +289,10 @@ function PublicTransport:Event_sendTargetTellMessage(posX, posY)
 	end
 end
 
+function PublicTransport:Event_OnTaxiLightChange()
+	if not client.vehicle then return false end
+	client.vehicle:setTaxiLightOn(not client.vehicle:isTaxiLightOn())
+end
 
 function PublicTransport:Event_changeBusDutyState(state, arg) -- from clientside mouse menu
 	if state == "dutyLine" then

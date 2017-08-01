@@ -233,6 +233,7 @@ function CompanyVehicle:respawn(force)
 
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
+	self:setTaxiLightOn(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)
 	self:fix()
