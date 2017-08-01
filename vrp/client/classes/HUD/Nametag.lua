@@ -37,7 +37,7 @@ function Nametag:draw()
 			setPlayerNametagShowing(player, false)
 			local pX, pY, pZ = getElementPosition(player)
 			local phX, phY, phZ = player:getBonePosition(8)
-			local bDistance = getDistanceBetweenPoints3D(lpX, lpY, lpZ, pX, pY, pZ)
+			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
 			if (bDistance <= maxDistance) then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
@@ -45,7 +45,7 @@ function Nametag:draw()
 					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
 					if bLineOfSight then
 						local drawName = getPlayerName(player)
-						local faction = player:getFaction()
+						local wanteds = player:getWanteds()
 						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
 						local alpha = math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
 						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
@@ -55,9 +55,10 @@ function Nametag:draw()
 						if self:drawIcons(player, scx, scy, fontHeight, alpha) then
 							scy = scy - fontHeight
 						end
-						if faction then
-							dxDrawImage(scx - textWidth/2 - fontHeight*1.1,scy - fontHeight/2, fontHeight, fontHeight, "files/images/Nametag/"..faction:getShortName()..".png", 0, 0, 0, tocolor(255, 255, 255, 255*alpha))
-							scx = scx + fontHeight*1.1
+						if wanteds > 0 then
+							dxDrawImage(scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, fontHeight*2, fontHeight*2, "files/images/Nametag/wanted.png", 0, 0, 0, tocolor(200, 150, 0, 255*alpha))
+							dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 2*size, Nametag.font, "center", "center")
+							scx = scx + fontHeight
 						end
 						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
 						dxDrawText(player:getName(), scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
@@ -99,11 +100,8 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	if getElementData(player,"writing") == true then
 		icons[#icons+1] = "chat.png"
 	end
-	if (player:getPublicSync("Rank") or 0) > 0 then
-		icons[#icons+1] = "admin.png"
-	end
-	if player:getWanteds() > 0 then
-		icons[#icons+1] = "w"..player:getWanteds()..".png"
+	if player:getFaction() then
+		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
 	local bHasBigGun = false
 	if not getElementData(player, "CanWeaponBeConcealed") then

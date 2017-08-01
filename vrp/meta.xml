@@ -1169,12 +1169,7 @@
 	<vrpfile src="files/images/Nametag/Ballas.png"/>
 	<vrpfile src="files/images/Nametag/Outlaws.png"/>
 	<vrpfile src="files/images/Nametag/Rescue.png"/>
-	<vrpfile src="files/images/Nametag/w1.png"/>
-	<vrpfile src="files/images/Nametag/w2.png"/>
-	<vrpfile src="files/images/Nametag/w3.png"/>
-	<vrpfile src="files/images/Nametag/w4.png"/>
-	<vrpfile src="files/images/Nametag/w5.png"/>
-	<vrpfile src="files/images/Nametag/w6.png"/>
+	<vrpfile src="files/images/Nametag/wanted.png"/>
 	<vrpfile src="files/images/Nametag/chat.png"/>
 	<vrpfile src="files/images/Nametag/admin.png"/>
 	<vrpfile src="files/images/Nametag/armor.png"/>
