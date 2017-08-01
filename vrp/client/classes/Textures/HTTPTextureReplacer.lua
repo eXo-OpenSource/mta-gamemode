@@ -5,7 +5,7 @@ HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
-	assert(fileName and fileName:len() > 0 and filename.find(HTTPTextureReplacer.BasePath), "Bad Argument @ HTTPTextureReplacer:constructor #2")
+	assert(fileName and fileName:len() > 0 and fileName.find(HTTPTextureReplacer.BasePath), "Bad Argument @ HTTPTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
 
 	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
