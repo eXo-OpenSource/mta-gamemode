@@ -21,7 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		[1257] = function(element, clickInfo) BusRouteInformationGUI:getSingleton(element):show() end;
+		[1257] = function(element, clickInfo) BusRouteInformationGUI:getSingleton(element):open() end;
 
 	}
 

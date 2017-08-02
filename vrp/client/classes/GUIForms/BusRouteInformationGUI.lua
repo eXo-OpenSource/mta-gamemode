@@ -12,14 +12,10 @@ inherit(Singleton, BusRouteInformationGUI)
 
 function BusRouteInformationGUI:constructor(element)
 	--main
-    --[[if not element then return self:close() end -- close if there is no element bound
-    if not element:getData("EPT_bus_station") then -- close if element has no route
+    if not element:getData("EPT_bus_station") or not element then -- close if element has no route
         ErrorBox:new(_"An dieser Bushaltestelle halten leider keine Busse")
-        nextframe(function()
-            self:close()
-        end)
         return
-    end]]
+    end
 
     local header = "Busfahrplan"
 
@@ -38,9 +34,8 @@ function BusRouteInformationGUI:constructor(element)
     self.m_Width = 350
 	self.m_Height = 451
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
-
-
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _(header), true, true, self)
+    self.m_Window:deleteOnClose(true)
     local baseHeight = 31 -- header  + line
     if #self.m_Lines > 1 then
         self.m_Line1Btn = VRPButton:new(5, baseHeight + 5, self.m_Width/2-7.5, 30, "Linie 1", true, self)

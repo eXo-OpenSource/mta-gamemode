@@ -13,21 +13,25 @@ end
 
 
 function PublicTransport:setBusDisplayText(vehicle, text, line)
-	--[[if not vehicle.Bus_TexReplace then
-		vehicle.Bus_TexReplace = FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
-		vehicle.Bus_TexReplace:setTextureToRenderTarget(256, 256, false)
+	if not vehicle.Bus_TexReplace then
+		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true) FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
+		vehicle.m_BusShader = DxShader("files/shader/texreplace.fx")
+		vehicle.m_BusShader:setValue("gTexture", vehicle.Bus_TexReplace)
+		vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
 
-		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end)
+		addEventHandler("onClientElementDestroy", vehicle, function() 
+			delete(vehicle.Bus_TexReplace) 
+			delete(vehicle.m_BusShader)
+		end)
 	end
-
-	dxSetRenderTarget(vehicle.Bus_TexReplace:getTexture(), true)
+	dxSetRenderTarget(vehicle.Bus_TexReplace, true)
 	dxDrawRectangle(0, 80, 256, 60, Color.Grey)
 	dxDrawText(text, 0, 80, 256, 110, Color.Yellow, 1, VRPFont(25, Fonts.Digital), "center", "center", false, true)
 	if line then
 		dxDrawText("Linie "..line, 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "left", "center", false, true)
 	end
 	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
-	dxSetRenderTarget(nil)]]
+	dxSetRenderTarget(nil)
 end
 
 function PublicTransport:busStopStreamIn(obj)
@@ -113,11 +117,6 @@ function PublicTransport:setActiveBusVehicles(tblVehs)
 end
 
 function PublicTransport:registerBusStopObjects()
-	--[[
-		local object = createObject(1257, x, y, z, rx, ry, rz)
-			object:setData("EPT_bus_station", stationName, true)
-			object:setData("EPT_bus_station_lines", lines, true)
-	]]
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
 			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)

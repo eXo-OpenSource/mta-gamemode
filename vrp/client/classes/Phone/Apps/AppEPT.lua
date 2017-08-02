@@ -19,7 +19,7 @@ function AppEPT:onOpen(form)
 	self.m_Tabs = {}
 	self.m_Tabs["Info"] = self.m_TabPanel:addTab(_"Information", FontAwesomeSymbols.Info)
 	self.m_HeaderInfo = GUILabel:new(10, 10, form.m_Width-20, 50, _"Public Transport", self.m_Tabs["Info"]) -- 3
-	self.m_LabelInfo = GUILabel:new(10, 60, form.m_Width-20, 30, _"Herzlich Willkommen bei eXo Public Transport!\nIn dieser App sehen Sie alle aktiven Taxis und unseren aktuellen Busfahrplan. Möch-\nten Sie unseren Limousinen-\nservice in Anspruch nehmen order uns für Events mieten? Zögern Sie nicht und rufen Sie uns an - Ihr Weg ist unser Ziel!", self.m_Tabs["Info"])
+	self.m_LabelInfo = GUILabel:new(10, 60, form.m_Width-20, 30, _"Herzlich Willkommen bei eXo Public Transport!\nIn dieser App sehen Sie alle aktiven Taxis und unseren aktuellen Busfahrplan. Möch-\nten Sie unseren Limousinen-\nservice in Anspruch nehmen oder uns für Events mieten? Zögern Sie nicht und rufen Sie uns an - Ihr Weg ist unser Ziel!", self.m_Tabs["Info"])
 	self.m_CallEPT = GUIButton:new(50, form.m_Height-90, form.m_Width - 60, 30, "EPT anrufen!", self.m_Tabs["Info"]):setBackgroundColor(Color.Green)
 	self.m_CallEPT.onLeftClick = bind(self.CallEPT, self)
 
