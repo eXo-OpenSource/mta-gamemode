@@ -555,6 +555,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lctrl", "down",
 			function()
+				if not DEBUG then return false end
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) and localPlayer.vehicle then
 					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
 					self.m_AircarsEnabled = true

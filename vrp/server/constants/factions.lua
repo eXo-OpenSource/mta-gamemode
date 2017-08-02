@@ -45,14 +45,15 @@ FACTION_MIN_RANK_KARMA = {
 
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
-[0] = "Cadet",
-[1] = "Officer",
-[2] = "Detective",
+[0] = "Officer",
+[1] = "Detective",
+[2] = "Sergeant",
 [3] = "Lieutenant",
 [4] = "Captain",
 [5] = "Deputy",
-[6] = "Chief"
+[6] = "Chief of Police"
 }
+
 factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
@@ -64,8 +65,8 @@ factionSpawnpoint[1] = {Vector3(1558.92, -1684.04, 16.20, 0, 0), 0, 0}
 factionRankNames[2] = {
 [0] = "Probationary Agent",
 [1] = "Special Agent",
-[2] = "Senior Special Agent",
-[3] = "Supervisory Special Agent",
+[2] = "Sen. Special Agent",
+[3] = "Sup. Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
 [6] = "FBI-Director"
