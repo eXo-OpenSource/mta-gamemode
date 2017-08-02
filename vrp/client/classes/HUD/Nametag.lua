@@ -57,7 +57,7 @@ function Nametag:draw()
 						end
 						if wanteds > 0 then
 							dxDrawImage(scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, fontHeight*2.2, fontHeight*2.2, "files/images/Nametag/wanted.png", 0, 0, 0, tocolor(200, 150, 0, 255*alpha))
-							dxDrawText(wanteds, scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, scx - textWidth/2 - fontHeight*2 + fontHeight*2.2, scy - fontHeight*1.1+ fontHeight*2.2, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							dxDrawText(wanteds, scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, ( scx - textWidth/2 - fontHeight*2 )+ fontHeight*2.2, (scy - fontHeight*1.1)+ fontHeight*2.4, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
 							--dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 1.5*size, Nametag.font, "center", "center")
 							scx = scx + fontHeight
 						end
