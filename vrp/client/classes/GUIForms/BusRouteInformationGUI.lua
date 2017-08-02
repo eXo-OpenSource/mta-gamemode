@@ -8,7 +8,6 @@
 
 
 BusRouteInformationGUI = inherit(GUIForm)
-inherit(Singleton, BusRouteInformationGUI)
 
 function BusRouteInformationGUI:constructor(element)
 	--main

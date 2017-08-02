@@ -1222,6 +1222,7 @@
 	<vrpfile src="files/images/Textures/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
+	<vrpfile src="files/images/Textures/EPTBusStop.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>

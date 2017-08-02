@@ -119,7 +119,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					function()
 						if self:getElement() then
 							delete(self)
-							BusRouteInformationGUI:getSingleton(element)
+							BusRouteInformationGUI:new(element)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Document)
