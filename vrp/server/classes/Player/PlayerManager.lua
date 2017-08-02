@@ -666,7 +666,7 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
-		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 50, 200, 255)
+		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 220, 220, 220)
 		if playersToSend[index] ~= source then
 			receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 		end
