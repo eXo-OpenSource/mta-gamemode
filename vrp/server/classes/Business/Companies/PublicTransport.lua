@@ -139,10 +139,10 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 			veh:setData("EPT_Bus", true, true)
 			veh:setHandling("handlingFlags", 18874448)
 			veh:setHandling("maxVelocity", 120) -- ca. 130 km/h
-			if self:isBusOnTour(player.vehicle) then
-				self:startBusTour_Driver(player, player.vehicle.Bus_NextStop, vehicle.Bus_Line)
+			if self:isBusOnTour(veh) then
+				self:startBusTour_Driver(player, veh.Bus_NextStop, veh.Bus_Line)
 			else
-				triggerClientEvent("busReachNextStop", root, player.vehicle, "Ausser Dienst", false)
+				triggerClientEvent("busReachNextStop", root, veh, "Ausser Dienst", false)
 			end
 		end
 	else
@@ -296,6 +296,7 @@ function PublicTransport:Event_OnTaxiLightChange()
 end
 
 function PublicTransport:Event_changeBusDutyState(state, arg) -- from clientside mouse menu
+	if not client.vehicle then return end
 	if state == "dutyLine" then
 		self:startBusTour(client.vehicle, client, arg)
 	elseif state == "dutySpecial" then

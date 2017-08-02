@@ -11,6 +11,9 @@ function BusRoutePlan:constructor(x, y, w, h, scrollBarOffset, parent)
 	GUIScrollableArea.constructor(self, x, y, w, h, 0, 0, true, false, parent, scrollBarOffset) --gets resized later on
     self.m_BusGUIElements = {}
     self.m_BusStationNames = {}
+    self.m_UpdatePlanTimer = setTimer(function()
+		self:updateBusPositions()
+	end, 1000, 0)
 end
 
 function BusRoutePlan:setLine(line, highlightStationName)
@@ -24,6 +27,14 @@ function BusRoutePlan:setLine(line, highlightStationName)
     end
 end
 
+function BusRoutePlan:setBackgroundDisabled(state)
+    self.m_BGDisabled = state
+end
+
+function BusRoutePlan:setCompactView(state)
+    self.m_Compact = state
+end
+
 function BusRoutePlan:updateList(color)
     self:clear()
     self.m_BusStationNames = {}
@@ -31,17 +42,18 @@ function BusRoutePlan:updateList(color)
         delete(v)
     end
 
-    GUIRectangle:new(0, 0, self.m_Width, self.m_DocumentHeight, tocolor(0, 0, 0, 150), self) --bg
-    GUILabel:new(5, 0, self.m_Width-10, 30, "Linie "..self.m_Line.." ("..(EPTBusData.lineData.lineDisplayData[self.m_Line].displayName)..")", self)
+    if not self.m_BGDisabled then GUIRectangle:new(0, 0, self.m_Width, self.m_DocumentHeight, tocolor(0, 0, 0, 150), self) end --bg
+    local header = self.m_Compact and EPTBusData.lineData.lineDisplayData[self.m_Line].displayName or "Linie "..self.m_Line.." ("..(EPTBusData.lineData.lineDisplayData[self.m_Line].displayName)..")"
+    GUILabel:new(5, 0, self.m_Width-10, 30, _(header), self)
     GUIRectangle:new(0, 28, self.m_Width, 2, color, self) --underline
 
     for i, v in ipairs(EPTBusData.lineData.line[self.m_Line]) do -- draw Line
-        GUIImage:new(25, 30*i + 7.5, 15, 15, "files/images/GUI/FullCircle.png", self):setColor(color) --dot
-        GUILabel:new(65, 30*i, self.m_Width-40, 30, v.name, self):setColor(v.name == self.m_HighlightStationName and color or Color.White) --station name
+        GUIImage:new(self.m_Compact and 5 or 25, 30*i + 7.5, 15, 15, "files/images/GUI/FullCircle.png", self):setColor(color) --dot
+        GUILabel:new(self.m_Compact and 30 or 65, 30*i, self.m_Width-40, 30, v.name, self):setColor(v.name == self.m_HighlightStationName and color or Color.White) --station name
 
         self.m_BusStationNames[v.name] = {30*i + 7.5, normaliseVector(v.position)}
     end
-    GUIRectangle:new(30, 40, 5, self.m_DocumentHeight-60, color, self) --line
+    GUIRectangle:new(self.m_Compact and 10 or 30, 40, 5, self.m_DocumentHeight-60, color, self) --line
 end
 
 function BusRoutePlan:updateBusPositions()
@@ -58,10 +70,17 @@ function BusRoutePlan:updateBusPositions()
                 local distToNext = getDistanceBetweenPoints3D(self.m_BusStationNames[name2][2], vehicle.position)
                 local prog = distToLast / (distToLast + distToNext)
                 local diff = self.m_BusStationNames[name1][1] - self.m_BusStationNames[name2][1]
-                self.m_BusGUIElements[vehicle] = GUIImage:new(20, baseY - 5 + self.m_BusStationNames[name1][1] - diff * prog, 25, 25, "files/images/Company/EPT/Bus.png", self):setColor(Color.White) --dot
+                self.m_BusGUIElements[vehicle] = GUIImage:new(self.m_Compact and 0 or 20, baseY - 5 + self.m_BusStationNames[name1][1] - diff * prog, 25, 25, "files/images/Company/EPT/Bus.png", self):setColor(Color.White) --dot
             end
         end
     end
+end
+
+function BusRoutePlan:destructor()
+    if isTimer(self.m_UpdatePlanTimer) then
+        killTimer(self.m_UpdatePlanTimer)
+    end
+    GUIScrollableArea.destructor(self)
 end
 
 

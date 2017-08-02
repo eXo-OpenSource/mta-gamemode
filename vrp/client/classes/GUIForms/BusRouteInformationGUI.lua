@@ -59,15 +59,5 @@ function BusRouteInformationGUI:constructor(element)
     if self.m_Line then
         self.m_BusRoute = BusRoutePlan:new(0, baseHeight, self.m_Width, self.m_Height - baseHeight, baseHeight, self)
         self.m_BusRoute:setLine(self.m_Line, self.m_StationName)
-        self.m_UpdatePlanTimer = setTimer(function()
-            self.m_BusRoute:updateBusPositions()
-        end, 1000, 0)
     end    
-end
-
-function BusRouteInformationGUI:destructor()
-    if self.m_UpdatePlanTimer and isTimer(self.m_UpdatePlanTimer) then
-        killTimer(self.m_UpdatePlanTimer)
-    end
-    GUIForm.destructor(self)
 end

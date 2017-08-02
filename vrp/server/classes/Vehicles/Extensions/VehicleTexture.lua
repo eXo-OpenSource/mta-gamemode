@@ -26,7 +26,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pl
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
 				if not isPreview then
-					VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
+					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
 				else
 					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
 				end
@@ -65,7 +65,7 @@ function VehicleTexture:destructor()
 end
 
 function VehicleTexture.sendToClient(target, ...)
-	triggerClientEvent(target, "changeElementTexture", target, ...)
+	triggerClientEvent(target == root and PlayerManager:getSingleton():getReadyPlayers() or target, "changeElementTexture", target, ...)
 end
 
 function VehicleTexture.requestTextures(target)

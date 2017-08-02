@@ -90,6 +90,7 @@ FontAwesomeSymbols = {
 	Medikit = "",
 	IDCard = "",
 	Document = "",
+	Taxi = "",
 	Bolt = "",
 	Speedo = "",
 	Long_Down = "",
