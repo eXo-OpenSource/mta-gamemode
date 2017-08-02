@@ -41,7 +41,6 @@ function Player:constructor()
 	self.m_LastJobAction = 0
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
-	self:toggleControlsWhileObjectAttached(true)
 end
 
 function Player:destructor()
@@ -203,7 +202,7 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
-
+	self:toggleControlsWhileObjectAttached(true)
 	triggerEvent("characterInitialized", self)
 end
 
