@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 
 # Prerequisites
 RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip
