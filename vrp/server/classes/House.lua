@@ -486,6 +486,10 @@ function House:buyHouse(player)
 end
 
 function House:refreshInteriorMarker()
+	if not HOUSE_INTERIOR_TABLE[self.m_InteriorID] then
+		outputDebugString(("Error: Invalid InteriorId (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+		delete(self)
+	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
 	local int, ix, iy, iz  = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
