@@ -228,12 +228,12 @@ function HUDRadar:update()
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and getVehicleType(vehicle) ~= VehicleType.Plane and getVehicleType(vehicle) ~= VehicleType.Helicopter
-	and (getControlState("vehicle_look_behind") or getControlState("vehicle_look_left") or getControlState("vehicle_look_right")) then
+	and (getPedControlState("vehicle_look_behind") or getPedControlState("vehicle_look_left") or getPedControlState("vehicle_look_right")) then
 
 		local element = vehicle or localPlayer
 		local _, _, rotation = getElementRotation(element)
 		self.m_Rotation = rotation
-	elseif getControlState("look_behind") then
+	elseif getPedControlState("look_behind") then
 		self.m_Rotation = -getPedRotation(localPlayer)
 	else
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
