@@ -1431,7 +1431,7 @@ function FactionState:Event_clearWanteds(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:takeWanteds(6)
+			target:takeWanteds(MAX_WANTED_LEVEL)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			faction:addLog(client, "Wanteds", "hat "..target:getName().." alle Wanteds erlassen!")
