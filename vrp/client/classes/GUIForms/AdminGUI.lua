@@ -173,16 +173,6 @@ function AdminGUI:constructor(money)
 		WebBrowser:new(url)
 	end
 
-	local tabDev = self.m_TabPanel:addTab(_"DevPanel")
-	local devPanelUrl = "http://exo-reallife.de/dev"
-	self.m_DevPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, devPanelUrl, true, tabDev)
-	self.m_FullScreenDev = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabDev):setFont(FontAwesome(15))
-	self.m_FullScreenDev.onLeftClick = function ()
-		self:close()
-		local url = self.m_DevPanel:getUnderlyingBrowser():getURL()
-		WebBrowser:new(url)
-	end
-
 	addEventHandler("adminReceiveSeachedPlayers", root,
 		function(resultPlayers)
 			self:insertSearchResult(resultPlayers)
@@ -437,7 +427,7 @@ function AdminGUI:onButtonClick(func)
 				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, {0, 1, 2, 3, 4, 5}, "In Fraktionsverlauf vermerken?",
 				function (companyId, rank, state)
 					if state then
-						HistoryUninviteGUI:new(function(internal, external) 
+						HistoryUninviteGUI:new(function(internal, external)
 							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank, internal, external)
 						end)
 					else
@@ -451,7 +441,7 @@ function AdminGUI:onButtonClick(func)
 				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, {0, 1, 2, 3, 4, 5, 6}, "In Fraktionsverlauf vermerken?",
 				function (factionId, rank, state)
 					if state then
-						HistoryUninviteGUI:new(function(internal, external) 
+						HistoryUninviteGUI:new(function(internal, external)
 							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank, internal, external)
 						end)
 					else
