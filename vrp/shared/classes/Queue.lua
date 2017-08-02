@@ -9,14 +9,15 @@ Queue = inherit(Object)
 
 function Queue:constructor()
 	self.m_Queue = {}
-	self.m_Locked = false
 end
 
-function Queue:push_back(element)
+function Queue:push(element)
 	table.insert(self.m_Queue, element)
 end
 
-function Queue:pop_back(index)
+function Queue:pop(index)
+	index = index or 1
+
 	local element = self.m_Queue[index]
 	table.remove(self.m_Queue, index)
 	return element
@@ -26,18 +27,10 @@ function Queue:empty()
 	return self:size() == 0
 end
 
-function Queue:lock()
-	self.m_Locked = true
-end
-
-function Queue:unlock()
-	self.m_Locked = false
-end
-
-function Queue:locked()
-	return self.m_Locked
-end
-
 function Queue:size()
 	return #self.m_Queue
+end
+
+function Queue:clear()
+	self.m_Queue = {}
 end

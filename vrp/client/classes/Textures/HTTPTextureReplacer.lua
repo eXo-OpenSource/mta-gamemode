@@ -23,7 +23,7 @@ end
 
 function HTTPTextureReplacer:load()
 	if not fileExists(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName)) then
-		self:addToQeue()
+		self:addToQueue()
 		return TextureReplacer.Status.DELAYED
 	else
 		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
@@ -59,17 +59,13 @@ function HTTPTextureReplacer:downloadTexture()
 end
 
 function HTTPTextureReplacer:processNext()
-	if HTTPTextureReplacer.Queue:empty() then
-		HTTPTextureReplacer.Queue:unlock()
-	else
-		HTTPTextureReplacer.Queue:pop_back(1):downloadTexture()
+	if not HTTPTextureReplacer.Queue:empty() then
+		HTTPTextureReplacer.Queue:pop():downloadTexture()
 	end
 end
 
-function HTTPTextureReplacer:addToQeue()
-	HTTPTextureReplacer.Queue:push_back(self)
-	if not HTTPTextureReplacer.Queue:locked() then
-		HTTPTextureReplacer.Queue:lock()
-		self:processNext()
-	end
+function HTTPTextureReplacer:addToQueue()
+	HTTPTextureReplacer.Queue:push(self)
+
+	self:processNext()
 end

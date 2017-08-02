@@ -207,24 +207,24 @@ end
 --// Queue
 function TextureReplacer:addToLoadingQeue()
 	if TextureReplacer.Queue:empty() then
-		TextureReplacer.Queue:push_back(self)
+		TextureReplacer.Queue:push(self)
 		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 
 		TextureReplacer.Queue.m_CurrentLoaded = 0
 		if TextureReplacer.Queue.m_ShortMessage then delete(TextureReplacer.Queue.m_ShortMessage) end
 		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, -1)
 
-		local thread = Thread:new(TextureReplacer.loadTextures, THREAD_PRIORITY_HIGH)
+		local thread = Thread:new(TextureReplacer.loadTextures, 75)
 		nextframe(function() thread:start() end)
 	else
-		TextureReplacer.Queue:push_back(self)
+		TextureReplacer.Queue:push(self)
 		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 	end
 end
 
 function TextureReplacer.loadTextures()
 	while (not TextureReplacer.Queue:empty()) do
-		local instance = TextureReplacer.Queue:pop_back(1)
+		local instance = TextureReplacer.Queue:pop()
 		local status = instance:load()
 		if stauts == TextureReplacer.Status.FAILURE or status == TextureReplacer.Status.DENIED then
 			ErrorBox:new(_("Folgende Custom-Textur konnte nicht geladen werden: {%s, %s}", instance.m_FileName, inspect(instance.m_Element)))
@@ -244,6 +244,9 @@ end
 
 --// Static Helper
 function TextureReplacer.changeLoadingMode(loadingMode)
+	-- clear queue to cancel current loading requests
+	TextureReplacer.Queue:clear()
+
 	for textureName, tab in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
 		for i, instance in pairs(tab) do
 			if instanceof(instance, TextureReplacer, false) then

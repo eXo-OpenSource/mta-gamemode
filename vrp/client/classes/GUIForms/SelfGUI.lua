@@ -1055,7 +1055,6 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange.onChange = function(text, index)
 			core:set("Other", "TextureMode", index)
 			self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[index]))
-			outputDebug(index)
 			nextframe(function () TextureReplacer.changeLoadingMode(index) end)
 		end
 
