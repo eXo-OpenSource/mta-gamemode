@@ -19,14 +19,14 @@ function LoginGUI:constructor()
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[
-eXo 1.2 - 16.06.2017
+eXo 1.3 - 03.08.2017
 
 einige Neuerungen:
-- Spawnauswahl
-- automat. Firmen-
-  Fahrzeugverkauf
-- neue Objektplatzierung
-- endlich wieder Magnet-Helis
+- neues Textursystem 
+- EPT-Überarbeitung
+- Erhöhung der Wantedanzahl
+- Diplomatiesystem
+- Designänderungen
 - ...und noch viel mehr!
 
 Einen ausführlichen Change-
