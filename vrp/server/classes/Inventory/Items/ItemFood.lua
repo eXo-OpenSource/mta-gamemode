@@ -30,17 +30,7 @@ end
 
 function ItemFood:use(player)
 	local ItemSettings = ItemFood.Settings[self:getName()]
-
-	local item = createObject(ItemSettings["Model"], 0, 0, 0)
-	item:setDimension(player:getDimension())
-	item:setInterior(player:getInterior())
-
-	if ItemSettings["ModelScale"] then item:setScale(ItemSettings["ModelScale"]) end
-	if ItemSettings["Attach"] then
-		exports.bone_attach:attachElementToBone(item, player, unpack(ItemSettings["Attach"]))
-	else
-		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
-	end
+	local block, animation, time = unpack(ItemSettings["Animation"])
 
 	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())

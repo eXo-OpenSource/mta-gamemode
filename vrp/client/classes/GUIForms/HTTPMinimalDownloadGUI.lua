@@ -59,7 +59,7 @@ end
 
 function HTTPMinimalDownloadGUI:markAsFailed(reason)
 	self.m_Failed = true
-	self:updateText(("Download-Error: %s\n(%s)"):format(reason, self.m_File))
+	self:updateText(("Download of Texture %s failed!\n(%s)"):format(self.m_File, reason))
 	self:setColorRGB(125, 0, 0, 200)
 end
 

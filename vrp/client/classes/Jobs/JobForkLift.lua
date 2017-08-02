@@ -8,7 +8,7 @@
 JobForkLift = inherit(Job)
 
 function JobForkLift:constructor()
-	Job.constructor(self, 16, 91.70, -221.12, 1.6, 0, "ForkLift.png", "files/images/Jobs/HeaderForkLift.png", _(HelpTextTitles.Jobs.ForkLift):gsub("Job: ", ""), _(HelpTexts.Jobs.ForkLift))
+	Job.constructor(self, 16, 91.70, -221.12, 1.6, 0, "ForkLift.png", {190, 160, 4}, "files/images/Jobs/HeaderForkLift.png", _(HelpTextTitles.Jobs.ForkLift):gsub("Job: ", ""), _(HelpTexts.Jobs.ForkLift))
 	self:setJobLevel(JOB_LEVEL_FORKLIFT)
 
 	-- add job to help menu

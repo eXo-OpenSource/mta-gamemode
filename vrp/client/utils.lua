@@ -5,6 +5,33 @@
 -- *  PURPOSE:     Clientside utility functions
 -- *
 -- ****************************************************************************
+
+
+
+local _addEventHandler = addEventHandler
+local _removeEventHandler = removeEventHandler
+
+addedEventHandlers = {
+	["onClientRender"] 		= {},
+	["onClientPreRender"] 	= {},
+	["onClientHUDRender"] 	= {},
+}
+--[[function addEventHandler(eventName, attached, func, prop, priority)
+	if addedEventHandlers[eventName] then
+		local info = debug.getinfo(2, "Sl")
+		addedEventHandlers[eventName][func] = {info.short_src, info.currentline}
+	end
+	return _addEventHandler(eventName, attached, func, prop, priority)
+end
+
+function removeEventHandler(eventName, attached, func)
+	if addedEventHandlers[eventName] then
+		if addedEventHandlers[eventName][func] then addedEventHandlers[eventName][func] = nil end
+	end
+	return _removeEventHandler(eventName, attached, func)
+end]]
+
+
 function updateCameraMatrix(x, y, z, lx, ly, lz, r, fov)
 	local _x, _y, _z, _lx, _ly, _lz, _r, _fov = getCameraMatrix()
 	setCameraMatrix(x or _x, y or _y, z or _z, lx or _lx, ly or _ly, lz or _lz, r or _r, fov or _fov)
@@ -71,6 +98,15 @@ end
 function dxDrawImage3D(x,y,z,w,h,m,c,r,...)
 	local lx, ly, lz = x+w, y+h, (z+tonumber(r or 0)) or z
 	return dxDrawMaterialLine3D(x,y,z, lx, ly, lz, m, h, c or tocolor(255,255,255,255), ...)
+end
+
+
+function dxDrawToolTip(x, y, text)
+	local f = VRPFont(30)
+	local h = fontHeight(f, 1)/2
+	local w = fontWidth(text, f, 1)+30
+	dxDrawRectangle(x-w/2, y-h, w, h, tocolor(0, 0, 0, 150))
+	dxDrawText(text, x, y-h/2, nil, nil, Color.White, 1, f, "center", "center")
 end
 
 function getFreeSkinDimension()

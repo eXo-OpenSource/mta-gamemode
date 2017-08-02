@@ -23,8 +23,14 @@ function FactionEvil:constructor()
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
 			self:createInterior(Id, faction)
+			local blip = Blip:new("Evil.png", evilFactionInteriorEnter[Id].x, evilFactionInteriorEnter[Id].y, {faction = Id, factionType = "State", duty = true}, 400, {factionColors[Id].r, factionColors[Id].g, factionColors[Id].b})
+				blip:setDisplayText(faction:getName(), BLIP_CATEGORY.Faction)
 		end
 	end
+	nextframe(function()
+		self:loadDiplomacy()
+	end)
+
 
 	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
@@ -94,12 +100,12 @@ function FactionEvil:getFactions()
 	return returnFactions
 end
 
-function FactionEvil:getOnlinePlayers()
+function FactionEvil:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
 		if faction:isEvilFaction() then
-			for index, value in pairs(faction:getOnlinePlayers()) do
+			for index, value in pairs(faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 				table.insert(players, value)
 			end
 		end
@@ -107,8 +113,8 @@ function FactionEvil:getOnlinePlayers()
 	return players
 end
 
-function FactionEvil:countPlayers()
-	local count = #self:getOnlinePlayers()
+function FactionEvil:countPlayers(afkCheck, dutyCheck)
+	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
 	return count
 end
 
@@ -119,15 +125,25 @@ function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	end
 end
 
-function FactionEvil:sendWarning(text, header, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
+function FactionEvil:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
 		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Gangwar.png", pos[1], pos[2], {factionType = "Evil", duty = (not withOffDuty)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
-		if player:getFaction() and player:getFaction() == source.Faction then
+		if player:getFaction() and (player:getFaction() == source.Faction or source.Faction:checkAlliancePermission(player:getFaction(), "weapons")) then
 			setPedArmor(player,100)
 			player:sendInfo(_("Du hast dir eine neue Schutzweste geholt!",player))
 			player.m_WeaponStoragePosition = player.position
@@ -199,6 +215,8 @@ function FactionEvil:Event_StartRaid(target)
 					end
 					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
 					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
+					client:meChat(true, _("überfällt %s!", client, target:getName()))
+
 					target:triggerEvent("CountdownStop",  15, "Überfallen in")
 					target:triggerEvent("Countdown", 15, "Überfallen in")
 					client:triggerEvent("Countdown", 15, "Überfallen in")
@@ -223,10 +241,12 @@ function FactionEvil:Event_SuccessRaid(target)
 	if money > 750 then money = 750 end
 	if money > 0 then
 		client:meChat(true,"überfällt "..target:getName().." erfolgreich!")
+		target:meChat(true, _("wurde erfolgreich von %s überfallen!", target, client:getName()))
 		target:takeMoney(money, "Überfall")
 		client:giveMoney(money, "Überfall")
 		client:triggerEvent("CountdownStop", "Überfallen in", 15)
 		target:triggerEvent("CountdownStop", "Überfallen in", 15)
+		StatisticsLogger:getSingleton():addRaidLog(client, target, 1, money)
 	else
 		client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 	end
@@ -235,8 +255,18 @@ end
 function FactionEvil:Event_FailedRaid(target)
 	target:sendSuccess(_("Du bist dem Überfall entkommen!", target))
 	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
+	target:meChat(true, _("ist aus dem Überfall von %s entkommen!", target, client:getName()))
+	StatisticsLogger:getSingleton():addRaidLog(client, target, 0, 0)
 end
 
+function FactionEvil:loadDiplomacy()
+	local evilFactions = self:getFactions()
+	for Id, faction in pairs(evilFactions) do
+		if faction:isEvilFaction() then
+			faction:loadDiplomacy()
+		end
+	end
+end
 
 
 

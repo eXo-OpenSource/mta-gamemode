@@ -12,6 +12,7 @@ vrp_assets
 *.iml
 
 .vscode
+.vs
 
 artifacts.tar.gz
 assets.tar.gz

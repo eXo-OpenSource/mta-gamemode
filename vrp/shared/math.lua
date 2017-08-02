@@ -62,3 +62,8 @@ end
 function math.clamp(low,value,high)
     return math.max(low,math.min(value,high))
 end
+
+function math.percent(value, max)
+	if not max then max = 100 end
+	return math.clamp(0, value/max*100, 100)
+end

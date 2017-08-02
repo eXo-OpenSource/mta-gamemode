@@ -16,6 +16,7 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 20
 GANGWAR_CENTER_HOLD_RANGE = 15
+GANGWAR_ATTACK_HOUR = 19
 GANGWAR_MIN_PLAYERS = 3 --// Default 3
 GANGWAR_ATTACK_PAUSE = 1 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
@@ -248,8 +249,8 @@ function Gangwar:attackArea( player )
 				if areaOwner ~= id then
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
-					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG then
-						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG then
+					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
+						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
 							local activeGangwar = self:getCurrentGangwar()
 							local acFaction1,  acFaction2
 							if not activeGangwar then

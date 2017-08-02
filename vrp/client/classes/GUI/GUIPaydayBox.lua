@@ -126,6 +126,7 @@ end
 
 
 function GUIPaydayBox:renderMoney()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/PaydayBoxMoney") end
 	if self.m_FloatingMoneyMap then
 		local time = getTickCount()
 		if time - self.m_MoneySpawnStart > self.m_MoneyFadeTime then
@@ -144,8 +145,10 @@ function GUIPaydayBox:renderMoney()
 				dxDrawText("-", x, y, x, y, tocolor(200, 20, 40, 255 - 255 * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime), size/10,
 					"default-bold", "center", "center", false, false, false, false, true, swingAspect * -(30*size_multiplicator))
 			end
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/PaydayBoxMoney", true) end
 		end
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/PaydayBoxMoney") end
 end
 
 addEvent("paydayBox", true)

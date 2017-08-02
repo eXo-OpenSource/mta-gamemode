@@ -29,7 +29,7 @@ function Vehicle:constructor()
 		self.m_SpecialSmokeEnabled = false
 	end
 
-	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setControlState("handbrake", true) end end)
+	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
 end
 
 function Vehicle:getFuel()
@@ -135,7 +135,7 @@ addEventHandler("vehicleHandbrake", root,
 							end
 
 							if getElementData(vehicle, "Handbrake") then
-								setControlState("handbrake", true)
+								setPedControlState("handbrake", true)
 							end
 						end, 1000, 0, vehicle)
 				end
@@ -187,7 +187,7 @@ setTimer(
 
 			-- Send current mileage every minute to the server
 			counter = counter + 1
-			if counter >= 60 or vehicle:getModel() == 420 or vehicle:getModel() == 438 then
+			if counter >= 60 or vehicle:getData("EPT_Taxi") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
 				end
@@ -236,10 +236,11 @@ addEventHandler("onClientVehicleDamage", root,
 	end
 )
 
-addEventHandler("onClientVehicleCollision", root, function(theHitElement,force)
+addEventHandler("onClientVehicleCollision", root, function()
+	if source:getData("disableCollisionCheck") then return end
 	if totalLossVehicleTypes[source:getVehicleType()] then
-		local rx,ry,rz = getElementRotation(source)
-		source:setDamageProof((rx > 160 and rx < 200)) -- to disable burning
+		local rx, ry, rz = getElementRotation(source)
+		source:setDamageProof(rx > 160 and rx < 200) -- to disable burning
 		if source:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then -- Crashfix
 			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		end
@@ -303,22 +304,36 @@ end)
 
 
 local renderLeviathanRope = {}
+
+
 addEventHandler("onClientElementStreamIn", root,
 	function()
 		if getElementType(source) == "vehicle" then
 			if source:getModel() == 417 then
 				renderLeviathanRope[source] = true
 			elseif source:getModel() == 544 then
+				setVehicleComponentVisible(source, "misc_a", false)
+				setVehicleComponentVisible(source, "misc_b", false)
+				setVehicleComponentVisible(source, "misc_c", false)
 				triggerEvent("rescueLadderUpdateCollision", source, false)
 			end
+			GroupSaleVehicles.VehiclestreamedIn(source)
+			Indicator:getSingleton():onVehicleStreamedIn(source)
+			Neon.VehiclestreamedIn(source)
 		end
 	end
 )
+
 
 addEventHandler("onClientElementStreamOut", root,
 	function()
 		if renderLeviathanRope[source] then
 			renderLeviathanRope[source] = nil
+		end
+		if getElementType(source) == "vehicle" then
+			GroupSaleVehicles.VehiclestreamedOut(source)
+			Indicator:getSingleton():onVehicleStreamedOut(source)
+			Neon.VehiclestreamedOut(source)
 		end
 	end
 )
@@ -326,14 +341,31 @@ addEventHandler("onClientElementStreamOut", root,
 
 addEventHandler("onClientRender", root,
 	function()
+		if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/VehicleRopes") end
 		for vehicle in pairs(renderLeviathanRope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
 			if not isElement(vehicle) then renderLeviathanRope[vehicle] = nil break end
 
 			local magnet = getElementData(vehicle, "Magnet")
 			if magnet then
+				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
 				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
 			end
 		end
+		for engine, magnet in pairs(JobTreasureSeeker.Rope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
+			if isElement(engine) and isElement(magnet) then
+				if isElementStreamedIn(engine) then
+					local pos1 = engine:getPosition()
+					local pos2 = magnet:getPosition()
+					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
+					dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
+				end
+			else
+				JobTreasureSeeker.Rope[engine] = nil
+			end
+		end
+		if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/VehicleRopes") end
 	end
 )
 

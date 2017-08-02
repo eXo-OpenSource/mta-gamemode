@@ -1,4 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
+PROJECT_VERSION = "1.3"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -10,6 +11,8 @@ MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
 MAX_FISHING_LEVEL = 10
+
+MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
@@ -51,6 +54,27 @@ JOB_LEVEL_GRAVEL = 6
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+BLIP_CATEGORY = {
+	Default = "Allgemein",
+	Shop = "Shops",
+	Job = "Arbeitsstellen",
+	Faction = "Fraktions-Basen",
+	Company = "Unternehmenssitze",
+	VehicleMaintenance = "Fahrzeug-Unterhaltung",
+	Leisure = "Freizeit",
+	Other = "Anderes",
+}
+
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
+BLIP_CATEGORY_ORDER = {
+	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
+}
+
 --USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
@@ -75,8 +99,10 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
+	["playerHistory"] = RANK.Supporter,
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
+	["freeze"] = RANK.Supporter,
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
@@ -113,12 +139,16 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["moveWorldItem"] = RANK.Moderator,
 	["deleteWorldItem"] = RANK.Moderator,
 	["showWorldItemInformation"] = RANK.Supporter,
+	["editHouse"] = RANK.Administrator,
+	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
+	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
 }
 
 GroupRank = {
@@ -580,15 +610,17 @@ VRP_RADIO = {
 	{"User Track Player", 12}
 }
 
-BeggarTypes = {
+BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
 	Transport = 3;
     Weed = 4;
-	Ecstasy = 5;
+	Heroin = 5;
 }
+
+BeggarTypeNames = {}
 for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
+	BeggarTypeNames[v] = i
 end
 
 HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
@@ -673,4 +705,29 @@ CAR_COLORS_FROM_ID =
 	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
 	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
 	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
+}
+
+HOUSE_INTERIOR_TABLE = {
+	[1] = {1, 223.27027893066, 1287.4304199219, 1081.9130859375};
+	[2] = {5, 2233.8625488281, -1113.7662353516, 1050.8828125};
+	[3] = {8, 2365.224609375, -1135.1401367188, 1050.875};
+	[4] = {11, 2282.9448242188, -1139.9676513672, 1050.8984375};
+	[5] = {6, 2196.373046875, -1204.3984375, 1049.0234375};
+	[6] = {10, 2270.2353515625, -1210.4715576172, 1047.5625};
+	[7] = {6, 2309.1716308594, -1212.6801757813, 1049.0234375};
+	[8] = {1, 2217.1474609375, -1076.2725830078, 1050.484375};
+	[9] = {2, 2237.5483398438, -1081.1091308594, 1049.0234375};
+	[10] = {9, 2318.0712890625, -1026.2338867188, 1050.2109375};
+	[11] = {4, 260.99948120117, 1284.8186035156, 1080.2578125};
+	[12] = {5, 140.2495880127, 1366.5075683594, 1083.859375};
+	[13] = {9, 82.978126525879, 1322.5451660156, 1083.8662109375};
+	[14] = {15, -284.0530090332, 1471.0965576172, 1084.375};
+	[15] = {4, -260.75534057617, 1456.6932373047, 1084.3671875};
+	[16] = {8, -42.373157501221, 1405.9846191406, 1084.4296875};
+	[17] = {2, 2454.717041, -1700.871582, 1013.515197};
+	[18] = {1, 2527.654052, -1679.388305, 1015.515197};
+	[19] = {8, 2807.619873, -1171.899902, 1025.5234375};
+	[20] = {5, 318.564971, 1118.209960, 1083.5234375};
+	[21] = {12, 2324.419921, -1145.568359, 1050.5234375};
+	[22] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
 }

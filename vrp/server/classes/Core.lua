@@ -3,7 +3,10 @@ addEvent("Core.onClientInternalError", true)
 
 function Core:constructor()
 	outputServerLog("Initializing core...")
-
+	nextframe(function() --small hack to override the name meta-name
+		setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
+	end)
+	
 	-- Small hack to get the global core immediately
 	core = self
 	self.m_Failed = false
@@ -12,7 +15,7 @@ function Core:constructor()
 	if DEBUG then
 		Debugging:new()
 	end
-
+	
 	Config:new()
 
 	-- Update MySQL DB if this is not the testserver/releaseserver
@@ -114,6 +117,8 @@ function Core:constructor()
 		BoxManager:new()
 		Fishing:new()
 		InactivityManager:new()
+		HistoryPlayer:new()
+
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
 		Chair:new()
@@ -180,8 +185,6 @@ function Core:constructor()
 		if DEBUG then
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
-
-		Blip:new("North.png", 0, 6000, root, 12000)
 
 		if GIT_BRANCH == "release/production" then
 			GlobalTimer:getSingleton():registerEvent(function()

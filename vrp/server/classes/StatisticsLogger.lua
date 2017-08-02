@@ -51,6 +51,13 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
     return result
 end
 
+function StatisticsLogger:getGroupLogUserIDs(groupType, groupId)
+	local days = 7
+	local since = getRealTime().timestamp-days*24*60*60
+	local result = sqlLogs:queryFetch("SELECT DISTINCT UserId FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
+	return result
+end
+
 function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
     local userId = player
     local adminId = 0
@@ -65,15 +72,31 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
 
-    sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Date) VALUES (?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
+	local hearedOld = {}
+	for k, pl in ipairs(heared) do
+		hearedOld[k] = pl:getName()
+	end
+
+	local parameters = {sqlLogs:getPrefix(), userId, type, text, toJSON(hearedOld), self:getZone(player), player.position.x, player.position.y}
+
+	for k, pl in ipairs(heared) do
+		table.insert(parameters, sqlLogs:getPrefix())
+		table.insert(parameters, pl:getId())
+	end
+
+	local query = "INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, PosX, PosY, Date) VALUES (?, ?, ?, ?, ?, ?, ?, Now());"
+	query = query .. " SET @lastId = LAST_INSERT_ID();"
+	query = query .. string.rep(" INSERT INTO ??_ChatReceivers (MessageId, Receiver) VALUES (@lastId, ?);", #heared)
+
+    sqlLogs:queryExec(query,
+        unpack(parameters))
 end
 
 
 function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, distance, points, amount)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
-	
+
 	if not vehicle then vehicle = 0 end
 	if not distance then distance = 0 end
 	if not points then points = 0 end
@@ -86,7 +109,7 @@ end
 function StatisticsLogger:addVehicleLog(player, ownerId, ownerType, elementId, model, action)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
-	
+
 	if not ownerId then ownerId = 0 end
 	if not ownerType then ownerType = "" end
 	if not elementId then elementId = 0 end
@@ -317,8 +340,8 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 end
 
 function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
-    local userId = 0
-	local userId2 = 0
+	local userId1, userId2 = 0, 0
+
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
 	if item and price then
@@ -341,4 +364,35 @@ function StatisticsLogger:addFishTradeLogs(PlayerId, ReceivingId, FishName, Fish
 		sqlLogs:queryExec("INSERT INTO ??_fishTrade (PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 			PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator)
 	end
+end
+
+function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
+	local userId1, userId2 = 0, 0
+
+	if isElement(player) then userId1 = player:getId() else userId1 = player or 0 end
+	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
+
+	local vehicleId = vehicle:getId() or 0
+	local trunkContent = {}
+	if vehicle.getTrunk and vehicle:getTrunk() then
+		local trunk = vehicle:getTrunk()
+		trunkContent = {
+			["Id"] = trunk.m_Id,
+			["Items"] = trunk.m_ItemSlot,
+			["Weapons"] = trunk.m_WeaponSlot
+		}
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_vehicleTrade (SellerId, BuyerId, VehicleId, Trunk, Price, TradeType, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId1, userId2, vehicleId, toJSON(trunkContent), price, tradeType)
+end
+
+function StatisticsLogger:addRaidLog(attacker, target, success, money)
+	local userId1, userId2, faction = 0, 0, 0
+
+	if isElement(attacker) then userId1 = attacker:getId() faction = attacker:getFaction():getId() else userId1 = attacker or 0 end
+	if isElement(target) then userId2 = target:getId() else userId2 = target or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_Raid (Attacker, Target, Money, Success, Position, Faction, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId, userId2, money, success, self:getZone(target), faction)
 end

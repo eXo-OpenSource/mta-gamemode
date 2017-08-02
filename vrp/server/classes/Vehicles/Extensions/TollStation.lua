@@ -55,7 +55,7 @@ function TollStation:onBarrierHit(player)
 
 			local veh = player.vehicle
 			for seat, occupant in pairs(veh:getOccupants()) do
-				if occupant:getWantedLevel() > 0 then
+				if occupant:getWanteds() > 0 then
 					for i, faction in pairs(FactionState:getSingleton():getFactions()) do
 						faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung des Flüchtigen %s!"):format(self.m_Name, occupant:getName()), 10000)
 					end

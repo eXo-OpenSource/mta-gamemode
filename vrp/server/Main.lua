@@ -4,7 +4,7 @@ function Main.resourceStart()
 	-- Stop useless Resources
 	for i, v in pairs(RESOURCES_TO_STOP) do
 		local resource = Resource.getFromName(v)
-		if resource then
+		if resource and resource:getState() == "running" then
 			resource:stop()
 		end
 	end

@@ -34,14 +34,14 @@ function TrainManager:constructor()
         ["market station"]  	= true,
 		["verona beach"]		= true,
 		["vinewood"]			= true,
-		["cranberry station"]   = true, 
+		["cranberry station"]   = true,
         ["linden station"]      = true,
         ["sobell rail yards"]   = true,
         ["yellow bell station"] = true,
     }
 
 	-- Finally load the tracks
-	Thread:new(
+	Thread:newPromise(
 		function ()
 			self:loadTracks()
 			self:calculateNodeDistances()
@@ -123,7 +123,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 	local node = {index = nodeIndex, track = trackIndex, pos = pos}
 	self.m_Tracks[trackIndex][nodeIndex] = node
 
-	
+
 	--[[if DEBUG then
 		local marker = Marker.create(node.pos, "cylinder", 2)
 		marker:setColor(6, 163, 212, 150)
@@ -136,7 +136,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 
 		node.DEBUG = {Marker = marker}
 	end]]
-	
+
 	return node
 end
 

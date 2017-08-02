@@ -259,7 +259,7 @@ function Player:loadCharacterInfo()
 	for k,v in ipairs( props ) do
 		self:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
 		x,y,z = getElementPosition( v.m_Pickup )
-		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
+		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id, self:getGroup():getType())
 	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
@@ -371,7 +371,7 @@ function Player:spawn()
 		self:setMoney(0)
 		self:setXP(0)
 		self:setKarma(0)
-		self:setWantedLevel(0)
+		self:setWanteds(0)
 		self:setJobLevel(0)
 		self:setWeaponLevel(0)
 		self:setVehicleLevel(0)
@@ -401,7 +401,7 @@ function Player:spawn()
 							self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
 						end
 					else
-						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug ist am Abschlepphof oder ist nicht mehr vorhanden")
 					end
 				end
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
@@ -683,6 +683,18 @@ function Player.staticFactionChatHandler(self, command, ...)
 	end
 end
 
+function Player.staticFactionAllianceChatHandler(self, command, ...)
+	if self.m_Faction then
+		local bndFaction = self.m_Faction:getAllianceFaction()
+		if bndFaction then
+			self.m_Faction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+			bndFaction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+		else
+			self:sendError(_("Eure Allianz hat kein Bündnis!", self))
+		end
+	end
+end
+
 function Player.staticCompanyChatHandler(self, command, ...)
 	if self.m_Company then
 		self.m_Company:sendChatMessage(self,table.concat({...}, " "))
@@ -694,6 +706,7 @@ function Player.staticStateFactionChatHandler(self, command, ...)
 		FactionState:getSingleton():sendStateChatMessage(self,table.concat({...}, " "))
 	end
 end
+
 
 function Player:reportCrime(crimeType)
 	--JobPolice:getSingleton():reportCrime(self, crimeType)
@@ -710,6 +723,16 @@ end
 
 function Player:isCompanyDuty()
   return self.m_CompanyDuty
+end
+
+function Player:setFactionDuty(state)
+	self.m_FactionDuty = state
+	self:reloadBlips()
+end
+
+function Player:setCompanyDuty(state)
+	self.m_CompanyDuty = state
+	self:reloadBlips()
 end
 
 function Player:setJobDutySkin(skin)
@@ -918,7 +941,7 @@ function Player:payDay()
 	end
 
 	--noob bonus
-	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME * 60 then
 		income = income + PAYDAY_NOOB_BONUS
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end
@@ -964,9 +987,14 @@ function Player:payDay()
 	self:addPaydayText("total", "Total", total)
 
 
-	if self:getWantedLevel() > 0 then
+	if self:getWanteds() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
-		self:takeWantedLevel(1)
+		self:takeWanteds(1)
+	end
+
+	if self:getSTVO() > 0 then
+		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
+		self:setSTVO(self:getSTVO() - 1)
 	end
 
 	if total > 0 then
@@ -1220,17 +1248,23 @@ function Player:setModel( skin )
 	setElementModel( self, skin or 0)
 end
 
+function Player:reloadBlips()
+	return Blip.sendAllToClient(self)
+end
+
 function Player:endPrison()
-	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
-	setElementDimension(self,0)
-	setElementInterior(self, 0)
-	toggleControl(self, "fire", true)
-	toggleControl(self, "jump", true)
-	toggleControl(self, "aim_weapon", true)
-	self:triggerEvent("playerLeftPrison")
-	self:triggerEvent("checkNoDm")
-	self:setData("inAdminPrison",false,true)
-	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	if isElement(self) then
+		self:setPosition(Vector3(1478.87, -1726.17, 13.55))
+		setElementDimension(self,0)
+		setElementInterior(self, 0)
+		toggleControl(self, "fire", true)
+		toggleControl(self, "jump", true)
+		toggleControl(self, "aim_weapon", true)
+		self:triggerEvent("playerLeftPrison")
+		self:triggerEvent("checkNoDm")
+		self:setData("inAdminPrison",false,true)
+		self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	end
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
 	if self.m_JailTime > 0 then

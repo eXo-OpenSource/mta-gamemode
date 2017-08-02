@@ -38,6 +38,7 @@ function SniperGame.initalize()
 		local index = #MinigameManager.Current+1
 		MinigameManager.Current[index] = instance
 		MinigameManager.Current[index].Type = "SniperGame"
+		client.Minigame = MinigameManager.Current[index]
 	end)
 
 	addEventHandler("SniperGame:onPedDamage", root, function(ped, bodypart)

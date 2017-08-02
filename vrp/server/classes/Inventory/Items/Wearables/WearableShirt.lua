@@ -60,7 +60,7 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		player:meChat(true, "zieht "..objName.." an!")
 		setElementData(player,"CanWeaponBeConcealed",bIsConceal)
 		if bConcealOutput then
-			player:meChat(true, "versteckt einige Waffen in sein/e "..objName.." !")
+			player:meChat(true, "versteckt einige Waffen in seiner "..objName.." !")
 		end
 		if bIsConceal then
 			triggerEvent("WeaponAttach:concealWeapons", player)
@@ -98,7 +98,7 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 			triggerEvent("WeaponAttach:concealWeapons", player)
 		end
 		if bConcealOutput then
-			player:meChat(true, "versteckt einige Waffen in "..objName.."!")
+			player:meChat(true, "versteckt einige Waffen in seiner "..objName.."!")
 		end
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)

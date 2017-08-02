@@ -45,7 +45,6 @@ function VehicleManager:constructor()
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
-	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 
 
@@ -147,20 +146,6 @@ function VehicleManager:destructor()
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
-function VehicleManager:Event_OnElementDestroy()
-	if getElementType(source) == "vehicle" then
-		local occs = getVehicleOccupants( source )
-		if occs then
-			for seat, player in pairs(occs) do
-				if player then
-					player.m_SeatBelt = false
-					setElementData(player,"isBuckeled", false)
-				end
-			end
-		end
-	end
-end
-
 function VehicleManager:Event_OnRadioChange( vehicle, radio)
 	if vehicle and radio then
 
@@ -256,7 +241,7 @@ function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
@@ -267,8 +252,8 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, row.decal)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
+			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal))
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		end
@@ -794,7 +779,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
 		return
 	end
 
@@ -861,7 +846,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	end
 
  	if source:getPositionType() == VehiclePositionType.Mechanic then
- 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+ 		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
  		return
  	end
 
@@ -977,6 +962,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	end
 
 	local price = getPrice(veh:getModel()) or 0
+	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
+
 	if price then
 		veh:purge()
 		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")

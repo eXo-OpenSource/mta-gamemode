@@ -7,41 +7,30 @@
 -- ****************************************************************************
 Queue = inherit(Object)
 
-function Queue:constructor(interval, refillFunc, callbackFunc)
-	self.m_Interval = interval
-	self.m_RefillFunc = refillFunc
-	self.m_CallbackFunc = callbackFunc
-	self.m_Queue = refillFunc()
-	
-	self:checkState()
+function Queue:constructor()
+	self.m_Queue = {}
 end
 
-function Queue:processNext()
-	if #self.m_Queue == 0 then
-		self.m_Queue = self.m_RefillFunc()
-	end
-
-	local currentInstance = self:pop_back(1)
-	if currentInstance then
-		self.m_CallbackFunc(currentInstance)
-	end
-	
-	self:checkState()
+function Queue:push(element)
+	table.insert(self.m_Queue, element)
 end
 
-function Queue:checkState()
-	-- Restart the timer if necessary
-	setTimer(bind(Queue.processNext, self), #self.m_Queue > 0 and self.m_Interval/#self.m_Queue or self.m_Interval, 1)
-end
+function Queue:pop(index)
+	index = index or 1
 
-function Queue:push_back(callback)
-	table.insert(self.m_Queue, callback)
-	
-	self:checkState()
-end
-
-function Queue:pop_back(index)
-	local temp = self.m_Queue[index]
+	local element = self.m_Queue[index]
 	table.remove(self.m_Queue, index)
-	return temp
+	return element
+end
+
+function Queue:empty()
+	return self:size() == 0
+end
+
+function Queue:size()
+	return #self.m_Queue
+end
+
+function Queue:clear()
+	self.m_Queue = {}
 end

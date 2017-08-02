@@ -6,6 +6,7 @@ function MessageBoxManager.resortPositions ()
 	for i = #MessageBoxManager.Map, 1, -1 do
 		local obj = MessageBoxManager.Map[i]
 		local prevObj = MessageBoxManager.Map[i + 1]
+		local x, y = HUDRadar:getSingleton():getPosition()
 
 		if obj.m_Animation then
 			delete(obj.m_Animation)
@@ -26,11 +27,7 @@ function MessageBoxManager.resortPositions ()
 			end
 			obj.m_AlphaFaded = true
 		else
-			if MessageBoxManager.Mode then
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-			else
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 5 - obj.m_Height)
-			end
+			obj.m_Animation = Animation.Move:new(obj, 250, x, y - x - obj.m_Height)
 		end
 	end
 end
@@ -39,25 +36,24 @@ function MessageBoxManager.recalculatePositions()
 	for i = #MessageBoxManager.Map, 1, -1 do
 		local obj = MessageBoxManager.Map[i]
 		local prevObj = MessageBoxManager.Map[i + 1]
+		local x, y = HUDRadar:getSingleton():getPosition()
 
-		if obj.m_Amination then
-			delete(obj.m_Amination)
+		if obj.m_Animation then
+			delete(obj.m_Animation)
 		end
 
 		if prevObj then
 			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, prevObj.m_Animation.m_TY - obj.m_Height - 5)
 		else
-			if MessageBoxManager.Mode then
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-			else
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 5 - obj.m_Height)
-			end
+
+			obj.m_Animation = Animation.Move:new(obj, 250, x, y - x - obj.m_Height)
+		 --guielement, time, tx, ty, easing
 		end
 	end
 end
 
-function MessageBoxManager.onRadarToggle(bool)
-	MessageBoxManager.Mode = bool
+function MessageBoxManager.onRadarPositionChange()
+	MessageBoxManager.Mode = not MessageBoxManager.Mode
 	MessageBoxManager.recalculatePositions()
 end
 

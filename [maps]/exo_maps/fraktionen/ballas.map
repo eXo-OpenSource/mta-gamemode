@@ -46,4 +46,5 @@
     <object id="object (csrsfence02_lvs) (5)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="0" posX="2222.5" posY="-1468.5" posZ="24.5" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (csrsfence02_lvs) (6)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="0" posX="2269.6001" posY="-1398.7" posZ="24.5" rotX="0" rotY="0" rotZ="297.999"></object>
     <object id="object (sm_bevhiltree) (1)" breakable="true" interior="0" alpha="255" model="673" doublesided="false" scale="1" dimension="0" posX="2260" posY="-1425.8" posZ="23" rotX="0" rotY="0" rotZ="99.995"></object>
+	<removeWorldObject id="removeWorldObject (lamppost1) (1)" radius="6.011632" interior="0" model="1297" lodModel="0" posX="2228.4443" posY="-1455.0837" posZ="26.71112" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
 </map>

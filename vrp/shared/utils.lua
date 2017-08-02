@@ -339,7 +339,7 @@ function nextframe(fn, ...)
 end
 
 function toboolean(num)
-	return num ~= 0 and num ~= "0"
+	return num and num ~= 0 and num ~= "0" and num ~= "false"
 end
 
 function addRemoteEvents(eventList)
@@ -556,6 +556,12 @@ function toMoneyString(money)
 		return convertNumber(money).."$"
 	end
 	return tostring(money)
+end
+
+function getOpticalZoneName(x, y, z)
+	local zone1 = getZoneName(x, y, z or 0)
+	local zone2 = getZoneName(x, y, z or 0, true)
+	return zone1 ~= zone2 and ("%s, %s"):format(zone1, zone2) or zone1
 end
 
 function linear(t, b, c, d)

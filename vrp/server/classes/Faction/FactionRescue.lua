@@ -59,6 +59,9 @@ function FactionRescue:constructor()
 		end
 	)
 
+	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400, {factionColors[4].r, factionColors[4].g, factionColors[4].b})
+	blip:setDisplayText(self.m_Faction:getName(), BLIP_CATEGORY.Faction)
+
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
@@ -95,21 +98,29 @@ function FactionRescue:countPlayers()
 	return #self.m_Faction:getOnlinePlayers()
 end
 
-function FactionRescue:getOnlinePlayers()
+function FactionRescue:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 
-	for index, value in pairs(self.m_Faction:getOnlinePlayers()) do
+	for index, value in pairs(self.m_Faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 		table.insert(players, value)
 	end
 
 	return players
 end
 
-function FactionRescue:sendWarning(text, header, withOffDuty, ...)
-	for k, player in pairs(self:getOnlinePlayers()) do
-		if player:isFactionDuty() or withOffDuty then
-			player:sendWarning(_(text, player, ...), 30000, header)
+function FactionRescue:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Fire.png", pos[1], pos[2], root, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
 		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
 	end
 end
 
@@ -179,7 +190,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				client:setDefaultSkin()
-				client.m_FactionDuty = false
+				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
@@ -194,7 +205,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				if type == "fire" then
 					giveWeapon(client, 42, 2000, true)
 				end
-				client.m_FactionDuty = true
+				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",true)
 				client:setPublicSync("Rescue:Type",type)
@@ -221,7 +232,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 				else
 					self:getStretcher(client, vehicle)
 					setElementAlpha(client,255)
-					if client.ped_deadDouble then
+					if isElement(client.ped_deadDouble) then
 						destroyElement(client.ped_deadDouble)
 					end
 				end
@@ -249,7 +260,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
 	setElementAlpha(player,255)
-	if player.ped_deadDouble then
+	if isElement(player.ped_deadDouble) then
 		destroyElement(player.ped_deadDouble)
 	end
 	-- Move the Stretcher to the Player
@@ -266,7 +277,7 @@ function FactionRescue:getStretcher(player, vehicle)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
 			setElementAlpha(player,255)
-			if player.ped_deadDouble then
+			if isElement(player.ped_deadDouble) then
 				destroyElement(player.ped_deadDouble)
 			end
 		end, 3000, 1, player

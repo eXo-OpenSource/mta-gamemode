@@ -162,6 +162,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 				player:setHeadless(false)
 				player:setCameraTarget(player)
 				player:fadeCamera(true, 1)
+				player:setAlpha(255)
 				player:triggerEvent("CountdownStop", "Respawn in")
 				giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 			end
@@ -173,6 +174,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		player:setHealth(100)
 		player:setHeadless(false)
 		player:setArmor(0)
+		player:setAlpha(255)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	end
 end
@@ -189,6 +191,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setHeadless(false)
 		player:setHealth(100)
 		player:setArmor(0)
+		player:setAlpha(255)
 		player.deathmatchLobby = nil
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")

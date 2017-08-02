@@ -9,7 +9,7 @@ VehicleTuningGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleTuningShopEnter", "vehicleTuningShopExit"}
 
 
-function VehicleTuningGUI:constructor(vehicle)
+function VehicleTuningGUI:constructor(vehicle, specialType)
     GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
     -- Part selection form
@@ -59,6 +59,8 @@ function VehicleTuningGUI:constructor(vehicle)
 		self.m_BuyButton = GUIButton:new(width*0.65, height*0.9, width*0.35, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
         self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
     end
+
+	self.m_SpecialType = specialType or ""
 
     self.m_CartContent = {}
     self.m_Vehicle = vehicle
@@ -111,9 +113,11 @@ function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
     for id, data in ipairs(VehicleTuningGUI.SpecialTunings) do
         local partName, partData = unpack(data)
-        local item = self.m_PartsList:addItem(partName)
-        item.PartSlot = partData
-        item.onLeftClick = bind(self.PartItem_Click, self)
+		if self.m_SpecialType ~= "AirportPainter" or (partData == "Color1" or partData == "Color2") then
+        	local item = self.m_PartsList:addItem(partName)
+        	item.PartSlot = partData
+        	item.onLeftClick = bind(self.PartItem_Click, self)
+		end
     end
 
     -- Add upgrades
@@ -149,7 +153,8 @@ function VehicleTuningGUI:updateUpgradeList(slot)
 end
 
 function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
-    local targetPosition = self.CameraPositions[slot]
+	local slot = self.m_SpecialType == "AirportPainter" and "AirportPainter" or slot
+	local targetPosition = self.CameraPositions[slot]
     local targetLookAtPosition = self.m_Vehicle:getPosition()
     if type(targetPosition) == "table" then
         targetPosition, targetLookAtPosition = unpack(targetPosition)
@@ -408,7 +413,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "Texture" then
-			--Disabled
+			--[[Disabled
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
@@ -416,7 +421,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 {"None", _"Line", _"DiagonalRally", _"RallyStripes", _"ZebraStripes"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture > 1 then
 						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
 						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
@@ -428,12 +433,13 @@ function VehicleTuningGUI:PartItem_Click(item)
                 end,
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture ~= 1 then
                         self.m_PreviewShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     end
                 end
             )
+			Disabled --]]
             return
         end
 		self:resetUpgrades()
@@ -491,12 +497,12 @@ end
 
 local vehicleTuningShop = false
 addEventHandler("vehicleTuningShopEnter", root,
-    function(vehicle)
+    function(vehicle, specialType)
         if vehicleTuningShop then
             delete(vehicleTuningShop)
         end
 
-        vehicleTuningShop = VehicleTuningGUI:new(vehicle)
+        vehicleTuningShop = VehicleTuningGUI:new(vehicle, specialType)
 
         vehicle:setDimension(PRIVATE_DIMENSION_CLIENT)
         localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
@@ -545,6 +551,8 @@ VehicleTuningGUI.CameraPositions = {
     ["CustomHorn"] = Vector3(4.2, 2.1, 2.1),
     ["Neon"] = Vector3(4.2, 2.1, 2.1),
     ["NeonColor"] = Vector3(4.2, 2.1, 2.1),
+
+	["AirportPainter"] = Vector3(7, 7, 2.1),
 
 }
 

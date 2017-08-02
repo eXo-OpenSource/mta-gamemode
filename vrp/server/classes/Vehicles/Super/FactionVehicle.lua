@@ -11,8 +11,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_Position = self:getPosition()
-	self.m_Rotation = self:getRotation()
+	self.m_SpawnPos = self:getPosition()
+	self.m_SpawnRot = self:getRotation()
 	self.m_HandlingFactor = handlingFaktor
 	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
 	if #faction:getName() <= 29 then
@@ -29,22 +29,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			self:setHealth(health)
 		end
 	end
-	if color then
-		local a, r, g, b = getBytesInInt32(color)
-		if factionCarColors[self.m_Faction:getId()] then
-			if getElementModel(self) == 420 and faction.m_Id == 2 then
-				setVehicleColor(self, 255, 255, 0)
-			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
-				setVehicleColor(self, 255, 255, 255)
-			elseif getElementModel(self) == 407 or getElementModel(self) == 544 and faction.m_Id == 4 then -- Rescue Fire Trucks
-				setVehicleColor(self, 255, 0, 0, 255, 255, 255)
-			else
-				local color = factionCarColors[self.m_Faction:getId()]
-				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
-			end
-		else
-			setVehicleColor(self, r, g, b)
-		end
+	if color and fromJSON(color) then
+		setVehicleColor(self, fromJSON(color))
+	elseif factionCarColors[self.m_Faction:getId()] then
+		local color = factionCarColors[self.m_Faction:getId()]
+		setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
 	end
 
 	for k, v in pairs(tunings or {}) do
@@ -63,6 +52,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		table.insert(self.m_Faction.m_Vehicles, self)
 	end
 
+	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
 	self:setFrozen(true)
 	self.m_HandBrake = true
@@ -95,21 +85,18 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		end
 	end
 
-	if self.m_Faction.m_VehicleTexture then
-		if self.m_Faction.m_VehicleTexture[self:getModel()] and self.m_Faction.m_VehicleTexture[self:getModel()] then
-			local textureData = self.m_Faction.m_VehicleTexture[self:getModel()]
-			if textureData.shaderEnabled then
-				local texturePath, textureName = textureData.texturePath, textureData.textureName
-				if self.m_Decal then texturePath = self.m_Decal end
-				if texturePath and #texturePath > 3 then
-					self:setTexture(texturePath, textureName)
-				end
-			end
+	if decal then
+		for i, v in pairs(decal) do
+			self:setTexture(v, i)
 		end
 	end
 
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
+	end
+	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
+		self:setMaxHealth(1500, true)
+		self:setDoorsUndamageable(true)
 	end
 
 end
@@ -148,7 +135,9 @@ function FactionVehicle:onEnter(player, seat)
 				setElementPosition(player,x,y,z)
 				return false
 			end
-		elseif player:getFaction() == self.m_Faction then
+		elseif player:getFaction() and player:getFaction() == self.m_Faction then
+			return true
+		elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
 			return true
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
@@ -181,13 +170,8 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	local health = getElementHealth(self)
-	local r, g, b = getVehicleColor(self, true)
-	local color = setBytesInInt32(255, r, g, b) -- Format: argb
-	local tunings = getVehicleUpgrades(self) or {}
-
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Color = ? WHERE Id = ?", sql:getPrefix(),
-	self:getMileage(), color, self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
+		sql:getPrefix(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)
@@ -283,8 +267,8 @@ function FactionVehicle:respawn(force)
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
-	self:setPosition(self.m_Position)
-	self:setRotation(self.m_Rotation)
+	self:setPosition(self.m_SpawnPos)
+	self:setRotation(self.m_SpawnRot)
 	if self.m_VehELSObj then
 		self.m_VehELSObj:setBlink("off")
 	end

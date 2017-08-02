@@ -99,7 +99,7 @@ end
 
 function VehicleCustomTextureGUI:destructor(closedByServer)
     if not closedByServer then
-		TextureReplace.deleteFromElement(self.m_Vehicle)
+		TextureReplacer.deleteFromElement(self.m_Vehicle)
         triggerServerEvent("vehicleCustomTextureAbbort", localPlayer)
 		self.m_TuningOld:applyTuning()
     end
@@ -143,7 +143,7 @@ end
 
 function VehicleCustomTextureGUI:Texture_Click(item)
     if item.Url then
-		TextureReplace.deleteFromElement(self.m_Vehicle)
+		TextureReplacer.deleteFromElement(self.m_Vehicle)
 		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"), localPlayer)
 	end
 end

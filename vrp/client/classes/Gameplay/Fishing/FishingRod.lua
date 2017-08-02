@@ -81,10 +81,10 @@ end
 
 function FishingRod:handleClick(_, state)
 	if isCursorShowing() then return end
-	setControlState("fire", false)
+	setPedControlState("fire", false)
 	toggleControl("fire", false)
 	if localPlayer.vehicle then return end
-	
+
 	self.m_MouseDown = state == "down"
 
 	if self.m_isCasting and self.m_MouseDown then

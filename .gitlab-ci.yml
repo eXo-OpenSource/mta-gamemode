@@ -43,8 +43,10 @@ build_docker_job:
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
     - sudo docker logout
-  except:
-    - /^bugfix\/.*$/
+  only:
+    - master
+    - release/pre-production
+    - release/production
 
 # Deploy jobs
 deploy_job_bugfixes:
@@ -62,7 +64,6 @@ deploy_job_develop:
   stage: deploy
   script:
     #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
@@ -83,6 +84,7 @@ deploy_job_testing:
 deploy_job_production:
   stage: deploy
   script:
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production
@@ -99,8 +101,10 @@ clean_env_job_docker:
     #- '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest' # Keep master image to use the cache
     #- sudo docker rmi exo-rl-mta
     - '(IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES) || echo' # Remove dangling images
-  except:
-    - /^bugfix\/.*$/
+  only:
+    - master
+    - release/pre-production
+    - release/production
   when: always
 
 clear_cache:

@@ -29,10 +29,8 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
 	self.m_IsRob = bIsRob
-	local int, ix, iy, iz  = unpack(House.interiorTable[self.m_InteriorID])
-	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
-	self.m_HouseMarker:setDimension(self.m_Id)
-	self.m_HouseMarker:setInterior(int)
+
+	self:refreshInteriorMarker()
 
 	--self.m_ColShape = createColSphere(position, 1)
 
@@ -46,7 +44,6 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
 	--addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
-	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
 
 	self:updatePickup()
 end
@@ -303,7 +300,7 @@ function House:sellHouse(player)
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
-		
+
 		self:clearHouse()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
@@ -343,7 +340,7 @@ function House:enterHouse(player)
 		end
 	end
 
-	local int, x, y, z = unpack(House.interiorTable[self.m_InteriorID])
+	local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
 	if isRobberEntering  then
 		player:meChat(true, "betritt das Haus an der kaputten Tür vorbei!")
 		if player.m_LastRobHouse then
@@ -443,10 +440,10 @@ function House:tryToCatchRobbers( player )
 				end
 				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
-					player:setWantedLevel(player:getWantedLevel() + 3)
+					player:setWanteds(player:getWanteds() + 3)
 					group.m_RobReported = true
-					outputChatBox("Ein Nachbar rief die Polizei an, beeil dich!", player, 200,100,100)
-					FactionState:getSingleton():showRobbedHouseBlip(player, self.m_Pickup)
+					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))
+					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
 				end
 			end
 		end
@@ -488,37 +485,15 @@ function House:buyHouse(player)
 	end
 end
 
-House.interiorTable = {
-	[1] = {1, 223.27027893066, 1287.4304199219, 1081.9130859375};
-	[2] = {5, 2233.8625488281, -1113.7662353516, 1050.8828125};
-	[3] = {8, 2365.224609375, -1135.1401367188, 1050.875};
-	[4] = {11, 2282.9448242188, -1139.9676513672, 1050.8984375};
-	[5] = {6, 2196.373046875, -1204.3984375, 1049.0234375};
-	[6] = {10, 2270.2353515625, -1210.4715576172, 1047.5625};
-	[7] = {6, 2309.1716308594, -1212.6801757813, 1049.0234375};
-	[8] = {1, 2217.1474609375, -1076.2725830078, 1050.484375};
-	[9] = {2, 2237.5483398438, -1081.1091308594, 1049.0234375};
-	[10] = {9, 2318.0712890625, -1026.2338867188, 1050.2109375};
-	[11] = {4, 260.99948120117, 1284.8186035156, 1080.2578125};
-	[12] = {5, 140.2495880127, 1366.5075683594, 1083.859375};
-	[13] = {9, 82.978126525879, 1322.5451660156, 1083.8662109375};
-	[14] = {15, -284.0530090332, 1471.0965576172, 1084.375};
-	[15] = {4, -260.75534057617, 1456.6932373047, 1084.3671875};
-	[16] = {8, -42.373157501221, 1405.9846191406, 1084.4296875};
-	[17] = {0, -68.801879882813, 1351.6536865234, 1080.2109375};
-	[18] = {0, 2333.0395507813, -1076.3621826172, 1049.0234375};
-	[19] = {0, 271.884979, 306.631988, 999.148437};
-	[20] = {3, 291.282989, 310.031982, 999.148437};
-	[21] = {4, 302.180999, 300.72299, 999.148437};
-	[22] = {5, 322.197998, 302.497985, 999.148437};
-	[23] = {6, 346.870025, 309.259033, 999.148437};
-	[24] = {3, 513.882507, -11.269994, 1001.565307};
-	[25] = {2, 2454.717041, -1700.871582, 1013.515197};
-	[26] = {1, 2527.654052, -1679.388305, 1015.515197};
-	[27] = {5, 2350.339843, -1181.649902, 1027.0234375};
-	[28] = {8, 2807.619873, -1171.899902, 1025.5234375};
-	[29] = {5, 318.564971, 1118.209960, 1083.5234375};
-	[30] = {12, 2324.419921, -1145.568359, 1050.5234375};
-	[31] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
-	[32] = {0, -2170.5698242188, 358.4921875, 57.766414642334};
-}
+function House:refreshInteriorMarker()
+	if not HOUSE_INTERIOR_TABLE[self.m_InteriorID] then
+		outputDebugString(("Error: Invalid InteriorId (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+		delete(self)
+	end
+	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
+	local int, ix, iy, iz  = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
+	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
+	self.m_HouseMarker:setDimension(self.m_Id)
+	self.m_HouseMarker:setInterior(int)
+	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
+end

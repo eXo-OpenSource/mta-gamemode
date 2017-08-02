@@ -176,7 +176,7 @@ end
 function PhoneInteraction:requestEPTList()
 	local eptList = {}
 	for _, player in pairs(CompanyManager:getSingleton():getFromId(4):getOnlinePlayers()) do
-		if player:isCompanyDuty() and player.vehicle and player.vehicleSeat == 0 then
+		if player:isCompanyDuty() and player.vehicle and player.vehicle:getData("EPT_Taxi") and player.vehicleSeat == 0 then
 			table.insert(eptList, player)
 		end
 	end

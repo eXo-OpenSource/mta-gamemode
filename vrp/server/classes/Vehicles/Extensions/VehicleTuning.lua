@@ -18,7 +18,7 @@ function VehicleTuning:constructor(vehicle, tuningJSON, disableTextureForce)
 	end
 	VehicleTuning.Map[self.m_Vehicle] = self
 
-	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end)
+	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end, false)
 end
 
 function VehicleTuning:getJSON()
@@ -165,7 +165,7 @@ function VehicleTuning:setSpecial(special)
 			addEventHandler("onElementInteriorChange", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleExplode", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleRespawn", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker, false)
 		end
 	end
 end

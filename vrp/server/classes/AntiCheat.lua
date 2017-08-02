@@ -35,6 +35,8 @@ AntiCheat.AllowedDataChange = {
 	["W_A:w5"] = true,
 	["W_A:w6"] = true,
 	["W_A:alt_w5"] = true,
+	["syncer"] = true,
+	["lastSync"] = true,
 }
 
 function AntiCheat:constructor()

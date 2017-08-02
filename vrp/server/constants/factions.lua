@@ -43,55 +43,17 @@ FACTION_MIN_RANK_KARMA = {
 	[6] = 150;
 }
 
--- Vehicle Shaders
-factionVehicleShaders = {
-	-- SAPD
-	[1] = {
-		[560] = {shaderEnabled = true, textureName = "#emapsultanbody256", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
-
-	};
-
-	-- FBI
-	[2] = {
-		[528] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[601] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
-	};
-
-	-- Army
-	[3] = {
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		--[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[598] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
-		[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"};
-		[500] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Mesa
-		[433] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/MBT_Camo.png"}; -- Barracks
-	};
-
-	-- Rescue
-	[4] = {
-		[416] = {shaderEnabled = true, textureName = "ambulan92decal128", texturePath = "files/images/Textures/RescueTexture.png"};
-		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
-		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
-		[417] = {shaderEnabled = true, textureName = "leviathnbody8bit256", texturePath = "files/images/Textures/RescueTextureLeviathan.png"};
-	};
-}
-
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
-[0] = "Cadet",
-[1] = "Officer",
-[2] = "Detective",
-[3] = "Lieutnant",
+[0] = "Officer",
+[1] = "Detective",
+[2] = "Sergeant",
+[3] = "Lieutenant",
 [4] = "Captain",
 [5] = "Deputy",
-[6] = "Chief"
+[6] = "Chief of Police"
 }
+
 factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
@@ -103,8 +65,8 @@ factionSpawnpoint[1] = {Vector3(1558.92, -1684.04, 16.20, 0, 0), 0, 0}
 factionRankNames[2] = {
 [0] = "Probationary Agent",
 [1] = "Special Agent",
-[2] = "Senior Special Agent",
-[3] = "Supervisory Special Agent",
+[2] = "Sen. Special Agent",
+[3] = "Sup. Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
 [6] = "FBI-Director"
@@ -114,7 +76,7 @@ factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
 factionWeapons[2] = {[3]=true, [23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
 factionWTDestination[2] = Vector3(2741.90, -2405.60, 13.45)
-factionSpawnpoint[2] = {Vector3(228.00, 122.42, 1010.22), 23, 10}
+factionSpawnpoint[2] = {Vector3(228.00, 115.42, 1010.22), 23, 10}
 
 -- ID 3 = Army:
 factionRankNames[3] = {
@@ -145,7 +107,7 @@ factionRankNames[4] = {
 	[6] = "Commissioner"
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
-factionCarColors[4] = {["r"] = 255, ["g"] = 255, ["b"] = 255, ["r1"] = 178, ["g1"] = 35, ["b1"] = 33}
+factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1752.10, -1785.50, 13.57), 0, 0}
@@ -182,7 +144,7 @@ factionRankNames[6] = {
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
-factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)
 factionWTDestination[6] = Vector3( 1418.18, -1240.70, 13.38)
 factionSpawnpoint[6] = {Vector3(1423.37, -1341.78, 13.57), 0, 0}
@@ -284,7 +246,7 @@ factionWeaponDepotInfo = {
 	[25] = {["Waffe"] = 34, ["Magazine"] = 200, ["WaffenPreis"] = 170, ["MagazinPreis"] = 3}, -- Shotgun
 	[26] = {["Waffe"] = 16, ["Magazine"] = 60, ["WaffenPreis"] = 0, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun
 	[27] = {["Waffe"] = 16, ["Magazine"] = 32, ["WaffenPreis"] = 0, ["MagazinPreis"] = 60}, -- SPAZ-12 Combat Shotgun
-	[28] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Uzi
+	[28] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- Uzi
 	[29] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- MP5
 	[30] = {["Waffe"] = 40, ["Magazine"] = 90, ["WaffenPreis"] = 480, ["MagazinPreis"] = 75}, -- AK47
 	[31] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4

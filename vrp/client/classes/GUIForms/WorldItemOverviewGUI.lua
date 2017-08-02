@@ -26,7 +26,11 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_FilterApplied = false
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Objektübersicht - %s", sOwnerName), true, true, self)
-   
+	if type == "player" then
+		self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() delete(self) end)
+	elseif type == "faction" then
+		self.m_Window:addBackButton(function () FactionGUI:getSingleton():show() delete(self) end)
+	end
 	--object list
 	self.m_PlacedObjectsLabel = GUILabel:new(5, 30, self.m_Width, 30, "", self) --will be set on list loading
 	self.m_ObjectList = GUIGridList:new(5, 65, self.m_Width - 10, 200, self)
@@ -45,9 +49,9 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, self.m_OwnerId, self.m_OwnerType)
 	end
 	self:loadObjectsInList(tblObjects)
-	
+
 	--filter
-	GUILabel:new(5, 270, self.m_Width, 30, _"Filter", self) 
+	GUILabel:new(5, 270, self.m_Width, 30, _"Filter", self)
 	self.m_FilterEditName       = GUIEdit:new(5, 305, 120, 30, self):setFontSize(1)
 	self.m_FilterEditPosition   = GUIEdit:new(130, 305, 190, 30, self):setFontSize(1)
 	self.m_FilterEditPlacer     = GUIEdit:new(325, 305, 120, 30, self):setFontSize(1)
@@ -55,7 +59,7 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_FilterApplyButton    = GUIButton:new(self.m_Width-35, 305, 30, 30, " "..FontAwesomeSymbols.Check, self):setFont(FontAwesome(15)):setFontSize(1)
 	self.m_FilterApplyButton:setBackgroundColor(Color.LightBlue)
 	self.m_FilterApplyButton.onLeftClick = bind(WorldItemOverviewGUI.applyFilter, self)
-	
+
 	--options
 	GUILabel:new(5, 340, self.m_Width, 30, _"Optionen", self)
 	self.m_Changer = GUIChanger:new(5, 375, 250, 30, self)
@@ -82,9 +86,9 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 	for modelid, objects in pairs(tblObjects) do
 		for object in pairs(tblObjects[modelid]) do
 			self.m_ObjectList:addItem(
-				object:getData("Name"), 
-				getZoneName(object:getPosition()), 
-				object:getData("Placer"), 
+				object:getData("Name"),
+				getZoneName(object:getPosition()),
+				object:getData("Placer"),
 				getOpticalTimestamp(object:getData("PlacedTimestamp"))
 			).m_Id = i
 			table.insert(self.m_FullObjectList, {
@@ -125,15 +129,15 @@ function WorldItemOverviewGUI:applyFilter()
 	self.m_FilteredObjectList = {}
 	local i = 1
 	for _, v in ipairs(self.m_FullObjectList) do
-		local insert =  v.Name:lower():find(nameFilter) 
-						and v.Zone:lower():find(positionFilter) 
-						and v.Placer:lower():find(placerFilter) 
+		local insert =  v.Name:lower():find(nameFilter)
+						and v.Zone:lower():find(positionFilter)
+						and v.Placer:lower():find(placerFilter)
 						and v.Timestamp:lower():find(timeFilter)
 		if insert then
 			self.m_ObjectList:addItem(
-				v.Name, 
-				v.Zone, 
-				v.Placer, 
+				v.Name,
+				v.Zone,
+				v.Placer,
 				v.Timestamp
 			).m_Id = i
 			table.insert(self.m_FilteredObjectList, v)
@@ -179,12 +183,12 @@ function WorldItemOverviewGUI:Event_OnActionButtonClick(action)
 	if type == 1 then -- list
 		outputDebug(action.." list")
 		if action == WorldItemOverviewGUI.Action.Collect then
-			QuestionBox:new(_("Möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize), 
+			QuestionBox:new(_("Möchtest du wirklich %d Objekte aufheben? (dazu benötigst du den entsprechenden Platz im Inventar)", self.m_ListSize),
 			function()
 				triggerServerEvent("worldItemMassCollect", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
 			end)
 		elseif action == WorldItemOverviewGUI.Action.Delete then
-			QuestionBox:new(_("Möchtest du wirklich %d Objekte permanent löschen?", self.m_ListSize), 
+			QuestionBox:new(_("Möchtest du wirklich %d Objekte permanent löschen?", self.m_ListSize),
 			function()
 				triggerServerEvent("worldItemMassDelete", root, self:getObjectsInList(), true, self.m_OwnerId, self.m_OwnerType)
 			end)
@@ -213,7 +217,7 @@ addEventHandler("recieveWorldItemListOfOwner", root, function(sOwnerName, tblObj
 			ErrorBox:new(_"Bitte schließe erst das alte Objektübersichts-Fenster!")
 		end
 	else
-	 WorldItemOverviewGUI:new(sOwnerName, tblObjects, id, type)
+		WorldItemOverviewGUI:new(sOwnerName, tblObjects, id, type)
 	end
 end)
 

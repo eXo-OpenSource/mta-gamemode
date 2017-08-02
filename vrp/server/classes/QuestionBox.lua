@@ -18,6 +18,7 @@ end
 function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
 	local additionalParameters = {...}
 	local id = QuestionBox.Count+1
+	self.m_Id = id
 	QuestionBox.Map[id] = {
 		["player"] = player,
 		["target"] = target,
@@ -27,6 +28,12 @@ function QuestionBox:constructor(player, target, msg, yesEvent, noEvent, ...)
 		["object"] = self
 	}
 	target:triggerEvent("questionBox", id, msg)
+end
+
+function QuestionBox:destructor()
+	if QuestionBox.Map[self.m_Id] then
+		QuestionBox.Map[self.m_Id] = nil
+	end
 end
 
 function QuestionBox.Accept(id)

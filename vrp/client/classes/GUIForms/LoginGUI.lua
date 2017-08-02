@@ -19,14 +19,14 @@ function LoginGUI:constructor()
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[
-eXo 1.2 - 16.06.2017
+eXo 1.3 - 03.08.2017
 
 einige Neuerungen:
-- Spawnauswahl
-- automat. Firmen-
-  Fahrzeugverkauf
-- neue Objektplatzierung
-- endlich wieder Magnet-Helis
+- neues Textursystem 
+- EPT-Überarbeitung
+- Erhöhung der Wantedanzahl
+- Diplomatiesystem
+- Designänderungen
 - ...und noch viel mehr!
 
 Einen ausführlichen Change-
@@ -118,6 +118,7 @@ forum.exo-reallife.de!
 
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
 		if self.m_RegisterEditPass:getText() == self.m_RegisterEditPass2:getText() then
+			self.m_RegisterRegisterButton:setEnabled(false)
 			triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
 		else triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 		end
@@ -168,6 +169,10 @@ forum.exo-reallife.de!
 	)
 
 	self:showLogin()
+	nextframe(function()
+		if DEBUG_AUTOLOGIN then self.m_LoginLoginButton:onLeftClick() end
+	end)
+	
 
 	-- Show some help
 	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)
@@ -307,7 +312,8 @@ addEvent("registerfailed", true)
 addEventHandler("registerfailed", root,
 	function(text)
 		LoginGUI:getSingleton().m_RegisterErrorBox:show()
-		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)
+		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)	
+		LoginGUI:getSingleton().m_RegisterRegisterButton:setEnabled(true)
 	end
 )
 

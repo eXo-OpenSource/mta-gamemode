@@ -13,7 +13,6 @@ function ZombieSurvival.initalize()
 	local zombiePed = createPed(162, -31.64, 1377.67, 9.17, 90)
 	zombiePed:setFrozen(true)
 	local zombieMarker = createMarker(-34.24, 1377.80, 8.8, "cylinder", 1, 255, 0, 0, 125)
-	Blip:new("Zombie.png", -34.24, 1377.80)
 	local zombieColShape = createColSphere(-31.64, 1377.67, 9.17, 25)
 	addEventHandler("onColShapeHit", zombieColShape, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then
@@ -29,11 +28,12 @@ function ZombieSurvival.initalize()
 
 	addRemoteEvents{"startZombieSurvival"}
 	addEventHandler("startZombieSurvival", root, function()
-		local instance = ZombieSurvival:new()
-		instance:addPlayer(client)
+
 		local index = #MinigameManager.Current+1
-		MinigameManager.Current[index] = instance
+		MinigameManager.Current[index] = ZombieSurvival:new()
+		MinigameManager.Current[index]:addPlayer(client)
 		MinigameManager.Current[index].Type = "ZombieSurvival"
+		client.Minigame = MinigameManager.Current[index]
 	end)
 end
 
@@ -50,7 +50,7 @@ function ZombieSurvival:constructor()
 
 	self:addZombie()
 	self:loadMap()
-
+	outputDebugString("ZombieSurvival: Lobby erstellt - Dimension"..self.m_Dimension)
 	addEventHandler("onZombieWasted", root, bind(self.zombieWasted, self))
 end
 
@@ -73,6 +73,7 @@ function ZombieSurvival:destructor()
 	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
 	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
 	if isElement(self.m_Pickup) then self.m_Pickup:destroy() end
+	outputDebugString("ZombieSurvival: Lobby zerstört - Dimension"..self.m_Dimension)
 end
 
 function ZombieSurvival:zombieWasted(ped, player)
@@ -112,31 +113,45 @@ function ZombieSurvival:addPlayer(player)
 			source:setHealth(source:getHealth()-loss*15)
 		end
 	end)
-
+	outputDebugString("ZombieSurvival: Spieler "..player:getName().." hinzugefügt - Dimension"..self.m_Dimension)
 end
 
 function ZombieSurvival:removePlayer(player)
-	player:spawn()
-	source:fadeCamera(true, 1)
-	player:setHealth(100)
-	player:setDimension(0)
-	player:setInterior(0)
-	player:setPosition(-35.72, 1380.00, 9.42)
-	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
-
-	MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
-	self.m_ZombieKills[player] = false
+	player:triggerEvent("deathmatchStartDeathScreen", "Zombie", false)
+	fadeCamera(player, false, 2)
+	player:triggerEvent("Countdown", 10, "Respawn in")
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
-	if #self:getPlayers() == 0 then
-		delete(self)
-	end
+	setTimer(function(score)
+		if player and isElement(player) then
+			local skin = player:getModel()
+			spawnPlayer(player, -35.72, 1380.00, 9.42, 0, skin, 0, 0)
+			player:setHealth(100)
+			player:setArmor(0)
+			player:setHeadless(false)
+			player:setCameraTarget(player)
+			player:fadeCamera(true, 1)
+			player:setAlpha(255)
+			player:triggerEvent("CountdownStop", "Respawn in")
+			player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, score))
+			MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), score)
+		end
+	end, 10000, 1, self.m_ZombieKills[player])
+	
+	self.m_ZombieKills[player] = nil
+	
+	--if #self:getPlayers() == 0 then
+	--	delete(self)
+	--end
 
 	-- Check for Freaks Achievement
 	if MinigameManager:getSingleton():checkForFreaks(player) then
 		player:giveAchievement(22)
 	end
+
+	outputDebugString("ZombieSurvival: Spieler "..player:getName().." entfernt - Dimension"..self.m_Dimension)
+	delete(player.Minigame) -- SP only
 end
 
 function ZombieSurvival:getRandomPlayer()

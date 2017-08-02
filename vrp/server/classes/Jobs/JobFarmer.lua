@@ -6,9 +6,9 @@ local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 58*2.5 --// default 10
+local MONEY_PER_PLANT = 58*1.8 --// default 10
 local MONEY_PLANT_HARVESTER = 10*2
-local MONEY_PLANT_TRACTOR = 8*2
+local MONEY_PLANT_TRACTOR = 8*1.6
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -69,7 +69,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
-			end)
+			end, false)
 
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
@@ -80,7 +80,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			function()
 				self.m_CurrentPlants[player] = 0
 				self:updatePrivateData(player)
-			end)
+			end, false)
 	end
 
 
@@ -182,8 +182,8 @@ end
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlips[player:getId()] = Blip:new("Waypoint.png", x, y, player, 4000)
-		self.m_DeliveryBlips[player:getId()]:setStreamDistance(4000)
+		self.m_DeliveryBlips[player:getId()] = Blip:new("Marker.png", x, y, player, 4000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DeliveryBlips[player:getId()]:setDisplayText("Kisten-Abgabe")
 	else
 		delete(self.m_DeliveryBlips[player:getId()])
 	end

@@ -292,7 +292,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" or cmd == "unprison" then
+        if cmd == "spect" or cmd == "unprison" or cmd == "freeze" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
         elseif cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
@@ -301,7 +301,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         else
             admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
             return
-        end		
+        end
 	end
 end
 
@@ -320,6 +320,17 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:goToPlayer(admin, func, target:getName())
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
+		elseif func == "freeze" then
+            if target:isFrozen() then
+				target:setFrozen(false)
+				self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+			else
+				if target.vehicle then target:removeFromVehicle() end
+				target:setFrozen(true)
+				self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+			end
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
 			outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
@@ -701,9 +712,11 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b)
+function Admin:sendMessage(msg,r,g,b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(msg, key, r,g,b)
+		if key:getRank() >= (minRank or 1) then
+			outputChatBox(msg, key, r,g,b)
+		end
 	end
 end
 
@@ -847,7 +860,7 @@ local tpTable = {
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
         --["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
-        ["fbi"] =           {["pos"] = Vector3(1534.83, -1440.72, 13.16),  	["typ"] = "Fraktionen"},
+        ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
@@ -916,17 +929,28 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
-        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+        if targetPlayer:getFaction() then
+			local faction = targetPlayer:getFaction()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
+			end
+			faction:removePlayer(targetPlayer)
+		end
 
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
     		if faction then
-    			faction:addPlayer(targetPlayer,6)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
+				end
+
+    			faction:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -936,15 +960,27 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
-        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
+
+        if targetPlayer:getCompany() then
+			local company = targetPlayer:getCompany()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
+			end
+			company:removePlayer(targetPlayer)
+		end
+
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
     		if company then
-    			company:addPlayer(targetPlayer,5)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
+				end
+    			company:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -1139,7 +1175,7 @@ function Admin:reloadHelpText(player)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
@@ -1147,7 +1183,7 @@ function Admin:runString(player, cmd, ...)
 end
 
 function Admin:runPlayerString(player, cmd, target, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local tPlayer
 		local sendResponse
 		if target ~= "root" then
@@ -1210,4 +1246,8 @@ function Admin:Event_OnAcceptOverlapCheck()
 	else
 		source:sendError("Erst ab Administrator!")
 	end
+end
+
+function Admin:sendNewPlayerMessage(player)
+	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
 end

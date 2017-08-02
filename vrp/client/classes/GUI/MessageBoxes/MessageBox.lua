@@ -10,7 +10,8 @@ inherit(GUIFontContainer, MessageBox)
 MessageBox.MessageBoxes = {}
 
 function MessageBox:constructor(text, timeout)
-	DxElement.constructor(self, screenWidth/2-340/2, screenHeight, 340, 110)
+	local x = HUDRadar:getSingleton():getPosition()
+	DxElement.constructor(self, x, screenHeight, HUDRadar:getSingleton():getWidth(), 110)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(28))
 
 	if timeout and type(timeout) == "number" then
@@ -54,6 +55,7 @@ function MessageBox.resortPositions ()
 	for i = #MessageBox.MessageBoxes, 1, -1 do
 		local obj = MessageBox.MessageBoxes[i]
 		local prevObj = MessageBox.MessageBoxes[i + 1]
+		local x, y = HUDRadar:getSingleton():getPosition()
 
 		if obj.m_Animation then
 			delete(obj.m_Animation)
@@ -62,7 +64,7 @@ function MessageBox.resortPositions ()
 		if prevObj then
 			obj.m_Animation = Animation.Move:new(obj, 1000, obj.m_AbsoluteX, prevObj.m_Animation.m_TY - obj.m_Height - 5)
 		else
-			obj.m_Animation = Animation.Move:new(obj, 1000, obj.m_AbsoluteX, screenHeight - 130)
+			obj.m_Animation = Animation.Move:new(obj, 1000, obj.m_AbsoluteX, y - x)
 		end
 	end
 end

@@ -8,35 +8,36 @@
 Group = inherit(Object)
 
 function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
-  self.m_Id = Id
-  self.m_Players = players or {}
+	self.m_Id = Id
+	self.m_Players = players[1] or {}
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
-  self.m_Name = name
-  self.m_Money = money or 0
-  self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
-  self.m_Invitations = {}
-  self.m_Karma = karma or 0
-  self.m_LastNameChange = lastNameChange or 0
-  self.m_VehiclesCanBeModified = vehicleTuning or false
-  self.m_Type = type
-  self.m_Shops = {} -- shops automatically add the reference
-  self.m_Markers = {}
-  self.m_MarkersAttached = false
+	self.m_Name = name
+	self.m_Money = money or 0
+	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
+	self.m_Invitations = {}
+	self.m_Karma = karma or 0
+	self.m_LastNameChange = lastNameChange or 0
+	self.m_VehiclesCanBeModified = vehicleTuning or false
+	self.m_Type = type
+	self.m_Shops = {} -- shops automatically add the reference
+	self.m_Markers = {}
+	self.m_MarkersAttached = false
 
-  self.m_VehiclesSpawned = false
+	self.m_VehiclesSpawned = false
 
-  local saveRanks = false
-  if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
-  if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
-  self.m_RankNames = fromJSON(rankNames)
-  self.m_RankLoans = fromJSON(rankLoans)
-  if saveRanks == true then
-    self:saveRankSettings()
-  end
+	local saveRanks = false
+	if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
+	if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
+	self.m_RankNames = fromJSON(rankNames)
+	self.m_RankLoans = fromJSON(rankLoans)
+	if saveRanks == true then
+	self:saveRankSettings()
+	end
 
-  self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
-  self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
+	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
 	self:getActivity()
 end
@@ -45,48 +46,62 @@ function Group:destructor()
 end
 
 function Group.create(name, type)
-  if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
-    local group = Group:new(sql:lastInsertId(), name, GroupManager.GroupTypes[type])
+	if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
+		local group = Group:new(sql:lastInsertId(), name, GroupManager.GroupTypes[type])
 
-    -- Add refernece
-    GroupManager:getSingleton():addRef(group)
+		-- Add refernece
+		GroupManager:getSingleton():addRef(group)
 
-    return group
-  end
-  return false
+		return group
+	end
+	return false
 end
 
 function Group:purge()
-  if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
-    -- Remove all players
-	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
-		if v.m_OwnerID == self.m_Id then
-			v.m_Owner = false
+	if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+		-- Remove all players
+		for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+			if v.m_OwnerID == self.m_Id then
+				v.m_Owner = false
+			end
 		end
+		for playerId in pairs(self.m_Players) do
+			self:removePlayer(playerId)
+		end
+
+		-- Remove reference
+		GroupManager:getSingleton():removeRef(self)
+
+		-- Free owned gangareas
+		-- GangAreaManager:getSingleton():freeAreas()
+
+		-- TODO: Should we also free the number?
+
+		return true
 	end
-    for playerId in pairs(self.m_Players) do
-      self:removePlayer(playerId)
-    end
-
-    -- Remove reference
-    GroupManager:getSingleton():removeRef(self)
-
-    -- Free owned gangareas
-    -- GangAreaManager:getSingleton():freeAreas()
-
-    -- TODO: Should we also free the number?
-
-    return true
-  end
-  return false
+	return false
 end
 
 function Group:getId()
-  return self.m_Id
+	return self.m_Id
 end
 
 function Group:getType()
-  return self.m_Type
+	return self.m_Type
+end
+
+function Group:setType(type, player)
+	if type == "Firma" or type == "Gang" then
+		self.m_Type = type
+		for i, player in pairs(self:getOnlinePlayers()) do
+			player:setPublicSync("GroupType", self:getType())
+		end
+		for k, vehicle in pairs(self:getVehicles() or {}) do
+			setElementData(vehicle, "GroupType", self:getType())
+		end
+	else
+		player:sendError(_("Invalid Group Type", player))
+	end
 end
 
 function Group:onPlayerJoin(player)
@@ -103,11 +118,11 @@ function Group:onPlayerJoin(player)
 end
 
 function Group:getVehicles()
-  return VehicleManager:getSingleton():getGroupVehicles(self.m_Id)
+	return VehicleManager:getSingleton():getGroupVehicles(self.m_Id)
 end
 
 function Group:canVehiclesBeModified()
-  return self.m_VehiclesCanBeModified
+	return self.m_VehiclesCanBeModified
 end
 
 function Group:setName(name)
@@ -126,43 +141,47 @@ function Group:setName(name)
 
 	for k, vehicle in pairs(self:getVehicles() or {}) do
 		setElementData(vehicle, "OwnerName", name)
+		setElementData(vehicle, "GroupType", self:getType())
+
 	end
 
 	return true
 end
 
 function Group:saveRankSettings()
-  if not sql:queryExec("UPDATE ??_groups SET RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
-    return false
-  end
-  return true
+	if not sql:queryExec("UPDATE ??_groups SET RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
+		return false
+	end
+	return true
 end
 
 function Group:getName()
-  return self.m_Name
+	return self.m_Name
 end
 
 function Group:getKarma()
-  return self.m_Karma
+	return self.m_Karma
 end
 
 function Group:setKarma(karma)
-  self.m_Karma = karma
+	self.m_Karma = karma
 
-  sql:queryExec("UPDATE ??_groups SET Karma = ? WHERE Id = ?", sql:getPrefix(), self.m_Karma, self.m_Id)
+	sql:queryExec("UPDATE ??_groups SET Karma = ? WHERE Id = ?", sql:getPrefix(), self.m_Karma, self.m_Id)
 end
 
 function Group:setRankName(rank,name)
-  self.m_RankNames[tostring(rank)] = name
+	self.m_RankNames[tostring(rank)] = name
 end
 
 function Group:setRankLoan(rank, amount)
-  self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
+	self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
 end
 
 function Group:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
-	local loan = tonumber(self.m_RankLoans[tostring(rank)]) or 0
+	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
+	local loan = loanEnabled and tonumber(self.m_RankLoans[tostring(rank)]) or 0
+
 	if self:getMoney() < loan then loan = self:getMoney() end
 	if loan < 0 then loan = 0 end
 	self:takeMoney(loan, "Payday-Auszahlung")
@@ -170,64 +189,69 @@ function Group:paydayPlayer(player)
 end
 
 function Group:giveKarma(karma)
-  self:setKarma(self:getKarma() + karma)
+	self:setKarma(self:getKarma() + karma)
 end
 
 function Group:getKarma()
-  return self.m_Karma
+	return self.m_Karma
 end
 
 function Group:isEvil()
-  return self:getKarma() < 0
+	return self:getKarma() < 0
 end
 
 function Group:addPlayer(playerId, rank)
-  if type(playerId) == "userdata" then
-    playerId = playerId:getId()
-  end
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
 
-  rank = rank or GroupRank.Normal
-  self.m_Players[playerId] = rank
-  local player = Player.getFromId(playerId)
-  if player then
-    player:setGroup(self)
-	if self.m_Type == "Gang" then
-		player:giveAchievement(8)
-	elseif self.m_Type == "Firma" then
-		player:giveAchievement(28)
-  	end
-  end
+	rank = rank or GroupRank.Normal
+	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
+	local player = Player.getFromId(playerId)
+	if player then
+		player:setGroup(self)
+		player:reloadBlips()
+		if self.m_Type == "Gang" then
+			player:giveAchievement(8)
+		elseif self.m_Type == "Firma" then
+			player:giveAchievement(28)
+		end
+	end
 
-  sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
-  local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
-  local x,y,z
-  for k,v in ipairs( props ) do
-	player:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
-	x,y,z = getElementPosition( v.m_Pickup )
-	player:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
-  end
+	sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ?, GroupLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
+	local x,y,z
+	for k,v in ipairs( props ) do
+		player:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
+		x,y,z = getElementPosition( v.m_Pickup )
+		player:triggerEvent("createGroupBlip", x, y, z, v.m_Id, self.m_Type)
+	end
 
-  self:getActivity(true)
+	self:getActivity(true)
 end
 
 function Group:removePlayer(playerId)
-  if type(playerId) == "userdata" then
-    playerId = playerId:getId()
-  end
-  self.m_Players[playerId] = nil
-  local player = Player.getFromId(playerId)
-  local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
-  for k,v in ipairs( props ) do
-	player:triggerEvent("destroyGroupBlip",v.m_Id)
-	player:triggerEvent("forceGroupPropertyClose")
-  end
-  if player then
-    player:setGroup(nil)
-	player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
-	self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
-  end
-  sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
-  self:removePlayerMarker(player)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
+	local player = Player.getFromId(playerId)
+	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
+	for k,v in ipairs( props ) do
+		player:triggerEvent("destroyGroupBlip",v.m_Id)
+		player:triggerEvent("forceGroupPropertyClose")
+	end
+	if player then
+		player:setGroup(nil)
+		player:reloadBlips()
+		player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
+		self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
+	end
+	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0, GroupLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	self:removePlayerMarker(player)
 end
 
 function Group:invitePlayer(player)
@@ -235,72 +259,84 @@ function Group:invitePlayer(player)
 
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 
-  self.m_Invitations[player] = true
-
+  self.m_Invitations[player] = client.m_Id
 end
 
 function Group:removeInvitation(player)
-  self.m_Invitations[player] = nil
+	self.m_Invitations[player] = nil
 end
 
 function Group:hasInvitation(player)
-  return self.m_Invitations[player]
+	return self.m_Invitations[player]
 end
 
 function Group:isPlayerMember(playerId)
-  if type(playerId) == "userdata" then
-    playerId = playerId:getId()
-  end
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
 
-  return self.m_Players[playerId] ~= nil
+	return self.m_Players[playerId] ~= nil
 end
 
 function Group:getPlayerRank(playerId)
-  if type(playerId) == "userdata" then
-    playerId = playerId:getId()
-  end
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
 
-  return self.m_Players[playerId]
+	return self.m_Players[playerId]
 end
 
 function Group:setPlayerRank(playerId, rank)
-  if type(playerId) == "userdata" then
-    playerId = playerId:getId()
-  end
-  self.m_Players[playerId] = rank
-  sql:queryExec("UPDATE ??_character SET GroupRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
-  local player = Player.getFromId(playerId)
-  if player then
-	if player.m_LastPropertyPickup then
-		if rank < 1 then
-			player:triggerEvent("forceGroupPropertyClose")
-		else
-			if player:getData("insideGroupInterior") then
-				player:triggerEvent("setPropGUIActive", player.m_LastPropertyPickup)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+	self.m_Players[playerId] = rank
+	sql:queryExec("UPDATE ??_character SET GroupRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
+	local player = Player.getFromId(playerId)
+	if player then
+		if player.m_LastPropertyPickup then
+			if rank < 1 then
+				player:triggerEvent("forceGroupPropertyClose")
+			else
+				if player:getData("insideGroupInterior") then
+					player:triggerEvent("setPropGUIActive", player.m_LastPropertyPickup)
+				end
 			end
 		end
 	end
-  end
+end
+
+function Group:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Group:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET GroupLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
 end
 
 function Group:getMoney()
-  return self.m_Money
+	return self.m_Money
 end
 
 function Group:giveMoney(amount, reason)
-  self:setMoney(self.m_Money + amount)
-  StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
+	self:setMoney(self.m_Money + amount)
+	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
 end
 
 function Group:takeMoney(amount, reason)
-  self:setMoney(self.m_Money - amount)
-  StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
+	self:setMoney(self.m_Money - amount)
+	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
 end
 
 function Group:setMoney(amount)
-  self.m_Money = amount
+	self.m_Money = amount
 
-  sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
+	sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
 
 function Group:getActivity(force)
@@ -311,9 +347,9 @@ function Group:getActivity(force)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end
@@ -323,20 +359,30 @@ function Group:getActivity(force)
 end
 
 function Group:getPlayers(getIDsOnly)
-  if getIDsOnly then
-    return self.m_Players
-  end
+	if getIDsOnly then
+	return self.m_Players
+	end
 
 	self:getActivity()
 
-  local temp = {}
-  for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+	local temp = {}
+	for playerId, rank in pairs(self.m_Players) do
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-    temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
-  end
-  return temp
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
+	end
+	return temp
+end
+
+function Group:getPlayerNamesFromLog(getIDsOnly)
+	local userIDs = StatisticsLogger:getSingleton():getGroupLogUserIDs("group", self.m_Id) or {}
+	local temp = {}
+
+	for _, row in pairs(userIDs) do
+		temp[row.UserId] = {name = Account.getNameFromId(row.UserId)}
+	end
+	return temp
 end
 
 function Group:getOnlinePlayers()
@@ -359,35 +405,35 @@ function Group:sendChatMessage(sourcePlayer, message)
     for k, player in ipairs(self:getOnlinePlayers()) do
         player:sendMessage(text, 0, 255, 150)
         if player ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = player:getName()
+            receivedPlayers[#receivedPlayers+1] = player
         end
     end
-    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, toJSON(receivedPlayers))
+    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, receivedPlayers)
 end
 
 function Group:sendMessage(text, r, g, b, ...)
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    player:sendMessage(text, r, g, b, ...)
-  end
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
 end
 
 function Group:sendShortMessage(text, ...)
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    player:sendShortMessage(("%s"):format(text), self:getName(),...)
-  end
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(("%s"):format(text), self:getName(),...)
+	end
 end
 
 function Group:distributeMoney(amount)
-  local moneyForFund = amount * self.m_ProfitProportion
-  self:giveMoney(moneyForFund, "Gang/Firma")
+	local moneyForFund = amount * self.m_ProfitProportion
+	self:giveMoney(moneyForFund, "Gang/Firma")
 
-  local moneyForPlayers = amount - moneyForFund
-  local onlinePlayers = self:getOnlinePlayers()
-  local amountPerPlayer = math.floor(moneyForPlayers / #onlinePlayers)
+	local moneyForPlayers = amount - moneyForFund
+	local onlinePlayers = self:getOnlinePlayers()
+	local amountPerPlayer = math.floor(moneyForPlayers / #onlinePlayers)
 
-  for k, player in pairs(onlinePlayers) do
-    player:giveMoney(amountPerPlayer, "Gang/Firma")
-  end
+	for k, player in pairs(onlinePlayers) do
+		player:giveMoney(amountPerPlayer, "Gang/Firma")
+	end
 end
 
 function Group:attachPlayerMarkers()
@@ -405,14 +451,14 @@ function Group:attachPlayerMarkers()
 end
 
 function Group:attachPlayerMarker(player)
-  if not self.m_Markers then self.m_Markers = {} end
-  self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
-  self.m_Markers[player]:setDimension(player:getDimension())
-  self.m_Markers[player]:setInterior(player:getInterior())
-  self.m_Markers[player]:attach(player,0,0,1.5)
-  self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
-  addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-  addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	if not self.m_Markers then self.m_Markers = {} end
+	self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+	self.m_Markers[player]:setDimension(player:getDimension())
+	self.m_Markers[player]:setInterior(player:getInterior())
+	self.m_Markers[player]:attach(player,0,0,1.5)
+	self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+	addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+	addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
 end
 
 function Group:removePlayerMarkers()
@@ -445,19 +491,19 @@ function Group:refreshAttachedMarker(dimInt)
 end
 
 function Group:phoneCall(caller)
-  if #self:getOnlinePlayers() > 0 then
-    for k, player in ipairs(self:getOnlinePlayers()) do
-      if not player:getPhonePartner() then
-		if player ~= caller then
-			player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
-			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+	if #self:getOnlinePlayers() > 0 then
+		for k, player in ipairs(self:getOnlinePlayers()) do
+			if not player:getPhonePartner() then
+				if player ~= caller then
+					player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
+					bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+				end
+			end
 		end
-      end
-    end
-  else
-    caller:sendShortMessage(_("Es ist aktuell kein Spieler der %s online!", caller, self:getType()))
-    caller:triggerEvent("callBusy", caller)
-  end
+	else
+		caller:sendShortMessage(_("Es ist aktuell kein Spieler der %s online!", caller, self:getType()))
+		caller:triggerEvent("callBusy", caller)
+	end
 end
 
 function Group:phoneCallAbbort(caller)
@@ -500,11 +546,11 @@ function Group:refreshBankGui(player)
 end
 
 function Group:addLog(player, category, text)
-  StatisticsLogger:getSingleton():addGroupLog(player, "group", self, category, text)
+	StatisticsLogger:getSingleton():addGroupLog(player, "group", self, category, text)
 end
 
 function Group:getLog()
-  return StatisticsLogger:getSingleton():getGroupLogs("group", self.m_Id)
+	return StatisticsLogger:getSingleton():getGroupLogs("group", self.m_Id)
 end
 
 function Group:addShop(instance)

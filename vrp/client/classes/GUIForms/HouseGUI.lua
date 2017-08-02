@@ -57,6 +57,14 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Lock.onLeftClick = bind(self.lockHouse,self)
 	self.m_Lock:setVisible(false)
 
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION.editHouse then
+		self.m_EditHouse = GUIButton:new(columnWidth/2+5, 90, columnWidth/2-15, 35, _("Haus editieren"), self)
+		self.m_EditHouse:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
+		self.m_EditHouse.onLeftClick = function()
+			HouseEditGUI:new()
+		end
+	end
+
 	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self):setVisible(false)
 	self.m_Rob:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rob.onLeftClick = bind(self.tryRob,self)
@@ -71,6 +79,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))
+
 
 
 	--self.m_Break:setVisible(isValidRob)
@@ -140,6 +149,11 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 		self.m_Leave:setVisible(false)
 		self.m_Enter:setVisible(true)
 	end
+end
+
+function HouseGUI:destructor()
+	delete(HouseEditGUI:getSingleton())
+	GUIForm.destructor(self)
 end
 
 function HouseGUI:deposit()
@@ -242,6 +256,8 @@ addEventHandler("addHouseBlip", root,
 	function(id, x, y)
 		if not HouseGUI.Blips[id] then
 			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
+			HouseGUI.Blips[id]:setDisplayText("Haus")
+			HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
 		end
 	end
 )

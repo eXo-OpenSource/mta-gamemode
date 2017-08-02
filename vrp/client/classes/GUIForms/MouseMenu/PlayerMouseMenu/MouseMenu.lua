@@ -86,7 +86,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	end
 
 	if localPlayer:getRank() >= RANK.Supporter then
-		self:addItem(_"Admin: Kick",
+		self:addItem(_"Admin: kicken",
 			function()
 				if self:getElement() then
 					InputBox:new(_("Spieler %s kicken", self:getElement():getName()),
@@ -98,6 +98,13 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 								ErrorBox:new("Kein Grund angegeben!")
 							end
 						end)
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Star)
+		self:addItem(_"Admin: ent/freezen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("adminTriggerFunction", localPlayer, "freeze", self:getElement())
 				end
 			end
 		):setIcon(FontAwesomeSymbols.Star)

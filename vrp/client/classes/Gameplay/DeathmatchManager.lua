@@ -10,12 +10,12 @@ DeathmatchManager = inherit(Singleton)
 
 function DeathmatchManager:constructor()
 	-- Zombie Survival
-	createObject ( 3863, -32.4, 1377.8, 9.3, 0, 0, 274 )
-	self:addSign(Vector3(-33.5, 1374.9, 8.2), 274, "files/images/Textures/ZombieSurvival.png")
+	--createObject ( 3863, -32.4, 1377.8, 9.3, 0, 0, 274 )
+	--self:addSign(Vector3(-33.5, 1374.9, 8.2), 274, "files/images/Textures/ZombieSurvival.png")
 
 	-- Sniper Game
-	createObject ( 3863, -531.09998, 1972.7, 60.8, 0, 0, 156 )
-	self:addSign(Vector3(-534.09998, 1975.4, 59.5), 142, "files/images/Textures/SniperGame.png")
+	--createObject ( 3863, -531.09998, 1972.7, 60.8, 0, 0, 156 )
+	--self:addSign(Vector3(-534.09998, 1975.4, 59.5), 142, "files/images/Textures/SniperGame.png")
 
 end
 
@@ -58,9 +58,12 @@ function deathScreen.onDeath(killer, gui)
 		playSound("files/audio/wasted.mp3")
 		deathScreen.sCount = getTickCount()
 		deathScreen.eCount = deathScreen.sCount + 1000
-		if killer and killer ~= localPlayer then
-				deathScreen.killerName = getPlayerName(killer).." pulverized you"
-			else deathScreen.killerName = "Suicide..."
+		if killer and killer ~= localPlayer and killer ~= "Zombie" then
+			deathScreen.killerName = getPlayerName(killer).." pulverized you"
+		elseif killer == "Zombie" then
+			deathScreen.killerName = "Zombie-Kill"
+		else
+			deathScreen.killerName = "Suicide..."
 		end
 
 		addEventHandler("onClientRender",root,deathScreen.runDeathAnim)
@@ -89,6 +92,7 @@ function deathScreen.onDeath(killer, gui)
 end
 
 function deathScreen.runDeathAnim()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/deathScreen") end
 	local now = getTickCount()
 	local elapsedTime = now - deathScreen.sCount
 	local duration = deathScreen.eCount  - deathScreen.sCount
@@ -107,6 +111,7 @@ function deathScreen.runDeathAnim()
 
 	dxDrawText("Wasted",screenWidth*0,screenHeight*0.4,screenWidth*1,screenHeight*0.7,tocolor(255,0,0,255),screenWidth/screenHeight*2,"pricedown","center","center")
 	dxDrawText(deathScreen.killerName,screenWidth*0,screenHeight*0.525,screenWidth*1,screenHeight*0.7,tocolor(255,255,255,255),screenWidth/screenHeight*1,"pricedown","center","center")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/deathScreen", 1, 1) end
 end
 addEvent("deathmatchStartDeathScreen", true)
 addEventHandler("deathmatchStartDeathScreen", root, deathScreen.onDeath)

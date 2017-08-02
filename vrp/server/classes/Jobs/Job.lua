@@ -44,7 +44,7 @@ function Job:registerJobVehicle(player, vehicle, countdown, stopJobOnDestroy)
 
 	if stopJobOnDestroy then
 		addEventHandler("onVehicleExplode", vehicle, self.m_OnJobVehicleDestroyBind)
-		addEventHandler("onElementDestroy", vehicle, self.m_OnJobVehicleDestroyBind)
+		addEventHandler("onElementDestroy", vehicle, self.m_OnJobVehicleDestroyBind, false)
 	end
 end
 

@@ -14,10 +14,9 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit",
-	"factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",
-	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",
-	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction"}
+
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
+
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -35,6 +34,11 @@ function FactionManager:constructor()
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
+	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
+	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
+	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
+	addEventHandler("factionChangePermission", root, bind(self.Event_changePermission, self))
+	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
 	FactionState:new()
 	FactionRescue:new()
@@ -53,20 +57,22 @@ function FactionManager:destructor()
 end
 
 function FactionManager:loadFactions()
-  local st, count = getTickCount(), 0
-  local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
-  for k, row in pairs(result) do
-    local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-    local players = {}
-    for i, factionRow in ipairs(result2) do
-      players[factionRow.Id] = factionRow.FactionRank
-    end
+  	local st, count = getTickCount(), 0
+  	local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
+  	for k, row in pairs(result) do
+		local result2 = sql:queryFetch("SELECT Id, FactionRank, FactionLoanEnabled FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
+		for i, factionRow in ipairs(result2) do
+			players[factionRow.Id] = factionRow.FactionRank
+			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
+		end
 
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type)
-    FactionManager.Map[row.Id] = instance
-	count = count + 1
-  end
-  if DEBUG_LOAD_SAVE then outputServerLog(("Created %s factions in %sms"):format(count, getTickCount()-st)) end
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		FactionManager.Map[row.Id] = instance
+		count = count + 1
+	end
+
+  	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s factions in %sms"):format(count, getTickCount()-st)) end
 end
 
 function FactionManager:getAllFactions()
@@ -141,7 +147,7 @@ function FactionManager:Event_factionDeposit(amount)
 
 	client:takeMoney(amount, "Fraktion-Einlage")
 	faction:giveMoney(amount, "Fraktion-Einlage")
-	faction:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
+	faction:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 	faction:refreshBankAccountGUI(client)
 end
@@ -163,7 +169,7 @@ function FactionManager:Event_factionWithdraw(amount)
 	end
 
 	faction:takeMoney(amount, "Fraktion-Auslage")
-	faction:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+	faction:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 	client:giveMoney(amount, "Fraktion-Auslage")
 	self:sendInfosToClient(client)
 	faction:refreshBankAccountGUI(client)
@@ -209,9 +215,10 @@ function FactionManager:Event_factionAddPlayer(player)
 	end
 end
 
-function FactionManager:Event_factionDeleteMember(playerId)
+function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, reasonExternaly)
 	if not playerId then return end
 	local faction = client:getFaction()
+	local pElement = PlayerManager:getSingleton():getPlayerFromId(playerId) 
 	if not faction then return end
 
 	if client:getId() == playerId then
@@ -230,6 +237,14 @@ function FactionManager:Event_factionDeleteMember(playerId)
 		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
 		return
 	end
+
+	if reasonExternaly == "" then
+		client:sendError(_("Externer Grund für den Rauswurf muss ausgefüllt werden!", client))
+		return
+	end
+	
+	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
+
 	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geworfen!")
 
 	faction:removePlayer(playerId)
@@ -251,6 +266,9 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			if faction:isEvilFaction() then
 				faction:changeSkin(client)
 			end
+
+			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
+			
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
@@ -321,6 +339,7 @@ function FactionManager:Event_factionRankUp(playerId)
 			if playerRank < FactionRank.Leader then
 				if playerRank < faction:getPlayerRank(client) then
 					faction:setPlayerRank(playerId, playerRank + 1)
+					HistoryPlayer:getSingleton():setHighestRank(playerId, (playerRank + 1), faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
 					if isOffline then
 						delete(player)
@@ -365,6 +384,7 @@ function FactionManager:Event_factionRankDown(playerId)
 			if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
 				if faction:getPlayerRank(playerId) <= faction:getPlayerRank(client) then
 					faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
+					HistoryPlayer:getSingleton():setHighestRank(playerId, faction:getPlayerRank(playerId) + 1, faction.m_Id, "faction")
 					faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 					if isOffline then
 						delete(player)
@@ -407,6 +427,7 @@ end
 function FactionManager:Event_factionRespawnVehicles()
 	if client:getFaction() then
 		local faction = client:getFaction()
+
 		if faction:getPlayerRank(client) >= FactionRank.Rank4 or (faction:getPlayerRank(client) >= FactionRank.Rank3 and faction:getId() == 3) then
 			faction:respawnVehicles()
 		else
@@ -470,4 +491,145 @@ function FactionManager:Event_serviceMarkerPerformAction(type)
 	else
 		client:sendError(_("Du bist zu weit entfernt!", client))
 	end
+end
+
+function FactionManager:Event_requestDiplomacy(factionId)
+	local faction = self:getFromId(factionId)
+	if faction and faction.m_Diplomacy then
+		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, faction.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
+	else
+		client:sendError("Internal Error: Invalid Faction")
+	end
+end
+
+function FactionManager:Event_changeDiplomacy(target, diplomacy)
+	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local faction1 = client:getFaction()
+	local faction2 = self:getFromId(target)
+
+	if diplomacy == FACTION_DIPLOMACY["Verbündet"] then
+		if faction1:getAllianceFaction() then
+			client:sendError(_("Ihr habt bereits ein Bündnis mit der %s!", client, faction1:getAllianceFaction():getShortName()))
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+			return
+		end
+		if faction2:getAllianceFaction() then
+			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction2:getShortName(), faction2:getAllianceFaction():getShortName()))
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+			return
+		end
+	end
+
+	if diplomacy < faction1:getDiplomacy(faction2) then
+		for index, data in pairs(faction1.m_DiplomacyRequests) do
+			if data["source"] == faction1:getId() and data["status"] == FACTION_DIPLOMACY["Verbündet"] then
+				client:sendError(_("Es läuft aktuell bereits eine Bündnis-Anfrage eurer Fraktion! Ziehe die andere Anfrage erst zurück!", client))
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+				return
+			elseif data["target"] == faction2:getId() then
+				client:sendError(_("Es läuft aktuell bereits eine Anfrage an diese Fraktion! Ziehe die andere Anfrage erst zurück!", client))
+				client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+				return
+			end
+		end
+
+		faction1:createDiplomacyRequest(faction1, faction2, diplomacy, client)
+		faction2:createDiplomacyRequest(faction1, faction2, diplomacy, client)
+	else
+		faction1:changeDiplomacy(faction2, diplomacy, client)
+		faction2:changeDiplomacy(faction1, diplomacy, client)
+	end
+
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+end
+
+function FactionManager:Event_answerDiplomacyRequest(id, answer)
+	if not client:getFaction() or not client:getFaction().m_DiplomacyRequests[id] then
+		client:sendError(_("Die Anfrage ist nicht mehr verfügbar!", client))
+	end
+
+	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local request = client:getFaction().m_DiplomacyRequests[id]
+	local faction1 = self:getFromId(request["source"])
+	local faction2 = self:getFromId(request["target"])
+	local diplomacy = request["status"]
+
+	if answer == "accept" and diplomacy == FACTION_DIPLOMACY["Verbündet"] then
+		if faction1:getAllianceFaction() then
+			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction1:getShortName(), faction1:getAllianceFaction():getShortName()))
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+			return
+		end
+		if faction2:getAllianceFaction() then
+			client:sendError(_("Die Fraktion %s hat bereits ein Bündnis mit der %s!", client, faction2:getShortName(), faction2:getAllianceFaction():getShortName()))
+			client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, faction1.m_DiplomacyRequests)
+			return
+		end
+	end
+
+	if answer == "accept" then
+		faction1:changeDiplomacy(faction2, diplomacy, client)
+		faction2:changeDiplomacy(faction1, diplomacy, client)
+	elseif answer == "decline" then
+		faction1:sendShortMessage(("%s hat eure %s an die %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s abgelehnt!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+	elseif answer == "remove" then
+		faction1:sendShortMessage(("%s hat eure %s an die %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction2:getShortName()))
+		faction2:sendShortMessage(("%s hat die %s der %s zurückgezogen!"):format(client:getName(), FACTION_DIPLOMACY_REQUEST[diplomacy], faction1:getShortName()))
+	end
+
+	for index, data in pairs(faction1.m_DiplomacyRequests) do
+		if data["source"] == request["source"] and data["target"] == request["target"] and data["status"] == request["status"] then
+			faction1.m_DiplomacyRequests[index] = nil
+		end
+	end
+	client:getFaction().m_DiplomacyRequests[id] = nil
+
+	client:triggerEvent("factionRetrieveDiplomacy", faction2:getId(), faction2.m_Diplomacy, faction2.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
+end
+
+function FactionManager:Event_changePermission(permission)
+	local faction = client:getFaction()
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+	if table.find(faction.m_DiplomacyPermissions, permission) then
+		table.remove(faction.m_DiplomacyPermissions, table.find(faction.m_DiplomacyPermissions, permission))
+		faction:sendShortMessage(("Euer Bündnispartner darf nun keine %s mehr nehmen!"):format(permission == "vehicles" and "Fahrzeuge" or "Waffen"))
+	else
+		table.insert(faction.m_DiplomacyPermissions, permission)
+		faction:sendShortMessage(("Euer Bündnispartner darf nun eure %s nehmen!"):format(permission == "vehicles" and "Fahrzeuge" or "Waffen"))
+	end
+	client:triggerEvent("factionRetrieveDiplomacy", faction:getId(), faction.m_Diplomacy, faction.m_DiplomacyPermissions, faction.m_DiplomacyRequests)
+end
+
+function FactionManager:Event_ToggleLoan(playerId)
+	if not playerId then return end
+	local faction = client:getFaction()
+	if not faction then return end
+
+	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if faction:getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = faction:isPlayerLoanEnabled(playerId)
+	faction:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	faction:addLog(client, "Fraktion", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
