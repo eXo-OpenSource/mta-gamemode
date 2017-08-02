@@ -92,8 +92,8 @@ function Admin:constructor()
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
 	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
-
-
+	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
+	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -120,6 +120,26 @@ function Admin:constructor()
 		end)
 	end
 
+end
+
+function Admin:Event_OnSuperManStartRequest() 
+	if client:getRank() >= RANK.Moderator then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then 
+				exports["superman"]:startSuperMan(client) 
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStopRequest()
+	if client:getRank() >= RANK.Moderator then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then
+				exports["superman"]:stopSuperMan(client) 
+			end
+		end
+	end
 end
 
 function Admin:destructor()
@@ -675,6 +695,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(260)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", true)
+		end
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
 		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
@@ -685,6 +708,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(player:getPublicSync("Admin:OldSkin"))
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", false)
+		end
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
 		self:toggleJetPack(player)
