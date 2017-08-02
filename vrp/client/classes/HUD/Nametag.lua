@@ -17,7 +17,7 @@ function Nametag:constructor()
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
 
-	addEventHandler("onClientRender", root, self.m_Draw)
+	addEventHandler("onClientRender", root, self.m_Draw, true, "high")
 	setPedTargetingMarkerEnabled(false)
 end
 
@@ -106,20 +106,20 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	end
 	local bHasBigGun = false
 	if not getElementData(player, "CanWeaponBeConcealed") then
-		for i = 3,7 do 
+		for i = 3,7 do
 			bHasBigGun = getPedWeapon(player,i)
 			if bHasBigGun ~= 0 then
 				bHasBigGun = true
 				break;
-			else 
+			else
 				bHasBigGun = false
 			end
 		end
 	end
-	if bHasBigGun then 
+	if bHasBigGun then
 		icons[#icons+1] = "gun.png"
 	end
-	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then 
+	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then
 		icons[#icons+1] = "seatbelt.png"
 	end
 	for index, icon in pairs(icons) do
