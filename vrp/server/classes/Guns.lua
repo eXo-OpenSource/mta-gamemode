@@ -96,7 +96,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			end
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
-			self:killPlayer(target, attacker, weapon, bodypart)
+			self:killPed(target, attacker, weapon, bodypart)
 		end
 	else
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -109,7 +109,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	end
 end
 
-function Guns:killPlayer(target, attacker, weapon, bodypart)
+function Guns:killPed(target, attacker, weapon, bodypart)
 	StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
 	if not target:getData("isInDeathMatch") then
 		target:setReviveWeapons()
@@ -209,14 +209,14 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setArmor(0)
 
 			if health - loss <= 0 then
-				self:killPlayer(player, attacker, weapon, bodypart)
+				self:killPed(player, attacker, weapon, bodypart)
 			else
 				player:setHealth(health-loss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
-			self:killPlayer(player, attacker, weapon, bodypart)
+			self:killPed(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
 		end

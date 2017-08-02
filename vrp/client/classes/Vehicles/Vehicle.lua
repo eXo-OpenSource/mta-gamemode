@@ -29,7 +29,7 @@ function Vehicle:constructor()
 		self.m_SpecialSmokeEnabled = false
 	end
 
-	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setControlState("handbrake", true) end end)
+	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
 end
 
 function Vehicle:getFuel()
@@ -135,7 +135,7 @@ addEventHandler("vehicleHandbrake", root,
 							end
 
 							if getElementData(vehicle, "Handbrake") then
-								setControlState("handbrake", true)
+								setPedControlState("handbrake", true)
 							end
 						end, 1000, 0, vehicle)
 				end

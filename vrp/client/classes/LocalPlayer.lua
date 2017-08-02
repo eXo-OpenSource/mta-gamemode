@@ -141,7 +141,7 @@ function LocalPlayer:Event_RenderAlcohol()
 	if alc then
 		if alc >= 2 then
 			toggleControl("sprint",false)
-			setControlState("walk",true)
+			setPedControlState("walk",true)
 		end
 	end
 end
@@ -274,7 +274,7 @@ function LocalPlayer:Event_playerWasted()
 				-- stop moving
 				removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 				fadeCamera(true, 0.5)
-				
+
 				-- now death gui
 				DeathGUI:new(self:getPublicSync("DeathTime"),
 					function()
@@ -461,11 +461,11 @@ function LocalPlayer:renderPedNameTags()
 					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z+0.5)
 						if x and y then
-							if nameTag then 
+							if nameTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
 								dxDrawText(nameTag, x, y, nil, nil, tocolor(200, 200, 200, 255), 1, "default-bold", "center", "center")
-							elseif mortemTag then 
+							elseif mortemTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
 								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 1, "default-bold", "center", "center")
@@ -559,7 +559,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
 					self.m_AircarsEnabled = true
 					ShortMessage:new(_("Fahrzeug-Flugmodus %s.", isWorldSpecialPropertyEnabled("aircars") and "aktiviert" or "deaktiviert"))
-				elseif self.m_AircarsEnabled then 
+				elseif self.m_AircarsEnabled then
 					setWorldSpecialPropertyEnabled("aircars", false)
 					self.m_AircarsEnabled = false
 					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
@@ -569,7 +569,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		self:setPublicSyncChangeHandler("supportMode", function(state)
 			if not state then
-				if self.m_AircarsEnabled then 
+				if self.m_AircarsEnabled then
 					setWorldSpecialPropertyEnabled("aircars", false)
 					self.m_AircarsEnabled = false
 					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
@@ -616,7 +616,7 @@ function LocalPlayer:Event_RunString(codeString, sendResponse)
 		if source == localPlayer then
 			triggerServerEvent("onClientRunStringResult", source, tostring(result))
 		end
-	end 
+	end
 
 	outputDebug("Running server string: "..tostring(codeString))
 end

@@ -326,16 +326,16 @@ end
 function Guns:crounch(btn, state)
 	if state == "down" then
 		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
-			setControlState ( "crouch", true )
+			setPedControlState ( "crouch", true )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
 			end
-			self.m_LastCrouchTimers[1] = setTimer ( setControlState, 100, 1, "crouch", false )
+			self.m_LastCrouchTimers[1] = setTimer ( setPedControlState, 100, 1, "crouch", false )
 		end
 	else
 		if getTickCount() - self.m_LastShot <= 700 then
-			setControlState ( "crouch", false )
+			setPedControlState ( "crouch", false )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
@@ -353,7 +353,7 @@ end
 function Guns:stopFastDeagle(weapon)
 	if weapon == 24 then
 		self.m_LastShot = getTickCount()
-		setControlState ( "crouch", false )
+		setPedControlState ( "crouch", false )
 		if isPedDucked ( localPlayer ) then
 			toggleControl ( "crouch", false )
 			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
