@@ -605,95 +605,83 @@ end
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
-		reason = "Beschuss/Waffennutzung"
-		amount = 2
-	elseif string.lower(reason) == "db" then
-		reason = "Drogenbesitz (>= 10 Gramm)"
-		amount = 1
-	elseif string.lower(reason) == "db2" then
-		reason = "Drogenbesitz (>= 50 Gramm)"
-		amount = 2
-	elseif string.lower(reason) == "db3" then
-		reason = "Drogenbesitz (>= 150 Gramm)"
-		amount = 3
-	elseif string.lower(reason) == "br" then
-		reason = "Banküberfall"
-		amount = 5
-	elseif string.lower(reason) == "mt" then
-		reason = "Mats-Truck"
-		amount = 4
-	elseif string.lower(reason) == "wt" then
-		reason = "Waffen-Truck"
-		amount = 4
-	elseif string.lower(reason) == "dt" then
-		reason = "Drogen-Truck"
-		amount = 4
-	elseif string.lower(reason) == "gt" then
-		reason = "Geldtruck-Überfall"
-		amount = 4
-	elseif string.lower(reason) == "kh" then
-		reason = "Knasthack/Knastausbruch"
-		amount = 6
-	elseif string.lower(reason) == "swt" then
-		reason = "Staatswaffentruck-Überfall"
-		amount = 5
-	elseif string.lower(reason) == "illad" then
-		reason = "Illegale Werbung"
-		amount = 1
-	elseif string.lower(reason) == "kpv" then
-		reason = "Körperverletzung"
-		amount = 1
-	elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
-		reason = "Einbruch-in-die-PD-Garage"
-		amount = 6
-	elseif string.lower(reason) == "wd" then
-		reason = "Waffen-Drohung"
-		amount = 2
-	elseif string.lower(reason) == "bh" then
-		reason = "Beihilfe einer Straftat"
-		amount = false
-	elseif string.lower(reason) == "vw" then
-		reason = "Verweigerung-zur-Durchsuchung"
-		amount = 2
-	elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
-		reason = "Beamtenbeleidigung"
-		amount = 1
-	elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
-		reason = "Flucht aus Kontrolle"
-		amount = 2
-	elseif string.lower(reason) == "kt" then
-		reason = "Koks-Truck"
-		amount = 4
-	elseif string.lower(reason) == "zt" then
-		reason = "Überfall auf Zeugenschutz"
-		amount = 4
-	elseif string.lower(reason) == "bv" then
-		reason = "Befehlsverweigerung"
-		amount = 1
-	elseif string.lower(reason) == "sb" then
-		reason = "Sachbeschädigung"
-		amount = 1
-	elseif string.lower(reason) == "rts" then
-		reason = "Shop-Überfall"
-		amount = 3
-	elseif string.lower(reason) == "haus" then
-		reason = "Hauseinbruch"
-		amount = 3
-	elseif string.lower(reason) == "eöä" then
-		reason = "Erregung öffentlichen Ärgernisses"
-		amount = 1
-	elseif string.lower(reason) == "vd" then
-		reason = "versuchter Diebstahl"
-		amount = 1
-	elseif string.lower(reason) == "fof" then
-		reason = "Fahren ohne Führerschein"
-		amount = 1
-	elseif string.lower(reason) == "gn" then
-		reason = "Geiselnahme"
-		amount = 6
-	elseif  string.lower(reason) == "stellen" then
-		reason = "Stellenflucht"
-		amount = 6
+        reason = "Beschuss/Waffennutzung"
+        amount = 3
+    elseif string.lower(reason) == "db" then
+        reason = "Drogenbesitz (>= 10 Gramm)"
+        amount = 1
+    elseif string.lower(reason) == "db2" then
+        reason = "Drogenbesitz (>= 50 Gramm)"
+        amount = 2
+    elseif string.lower(reason) == "db3" then
+        reason = "Drogenbesitz (>= 150 Gramm)"
+        amount = 3
+    elseif string.lower(reason) == "br" then
+        reason = "Banküberfall"
+        amount = 6
+	 elseif string.lower(reason) == "mord" then
+        reason = "Mord"
+        amount = 4
+    elseif string.lower(reason) == "wt" then
+        reason = "Waffen-Truck"
+        amount = 5
+    elseif string.lower(reason) == "dt" then
+        reason = "Drogen-Truck"
+        amount = 5
+    elseif string.lower(reason) == "swt" then
+        reason = "Staatswaffentruck-Überfall"
+        amount = 6
+    elseif string.lower(reason) == "illad" then
+        reason = "Illegale Werbung"
+        amount = 1
+    elseif string.lower(reason) == "kpv" then
+        reason = "Körperverletzung"
+        amount = 2
+    elseif string.lower(reason) == "garage" or string.lower(reason) == "pdgarage" then
+        reason = "Einbruch-in-die-PD-Garage"
+        amount = 3
+    elseif string.lower(reason) == "wd" then
+        reason = "Waffen-Drohung"
+        amount = 2
+    elseif string.lower(reason) == "bh" then
+        reason = "Beihilfe einer Straftat"
+        amount = false
+    elseif string.lower(reason) == "vw" then
+        reason = "Verweigerung-zur-Durchsuchung"
+        amount = 2
+    elseif string.lower(reason) == "bb" or string.lower(reason) == "beleidigung" then
+        reason = "Beamtenbeleidigung"
+        amount = 1
+    elseif string.lower(reason) == "flucht" or string.lower(reason) == "fvvk" or string.lower(reason) == "vk" then
+        reason = "Flucht aus Kontrolle"
+        amount = 2
+    elseif string.lower(reason) == "bv" then
+        reason = "Befehlsverweigerung"
+        amount = 1
+    elseif string.lower(reason) == "sb" then
+        reason = "Sachbeschädigung"
+        amount = 1
+    elseif string.lower(reason) == "rts" then
+        reason = "Shop-Überfall"
+        amount = 3
+    elseif string.lower(reason) == "haus" then
+        reason = "Hauseinbruch"
+        amount = 3
+    elseif string.lower(reason) == "eöä" then
+        reason = "Erregung öffentlichen Ärgernisses"
+        amount = 1
+    elseif string.lower(reason) == "vd" then
+        reason = "versuchter Diebstahl"
+        amount = 1
+    elseif string.lower(reason) == "fof" then
+        reason = "Fahren ohne Führerschein"
+        amount = 1
+    elseif string.lower(reason) == "gn" then
+        reason = "Geiselnahme"
+        amount = 6
+    elseif  string.lower(reason) == "stellen" then
+        reason = "Stellenflucht"
+        amount = 12
 	end
 	return reason, amount
 end
