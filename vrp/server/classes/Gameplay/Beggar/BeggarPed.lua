@@ -313,8 +313,8 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 		self:despawn()
 
 		-- Give Wanteds
-		killer:giveWanteds(3)
-		killer:sendMessage("Verbrechen begangen: Mord, 3 Wanteds", 255, 255, 0)
+		killer:giveWanteds(4)
+		killer:sendMessage("Verbrechen begangen: Mord, 4 Wanteds", 255, 255, 0)
 	end
 end
 
