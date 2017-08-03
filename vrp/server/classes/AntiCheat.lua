@@ -37,6 +37,7 @@ AntiCheat.AllowedDataChange = {
 	["W_A:alt_w5"] = true,
 	["syncer"] = true,
 	["lastSync"] = true,
+	["superman:flying"] = true,
 }
 
 function AntiCheat:constructor()
