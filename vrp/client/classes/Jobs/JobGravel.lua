@@ -103,7 +103,7 @@ end
 
 function JobGravel:Event_onRockSync(data)
 	for k, v in pairs(data) do
-		if getDistanceBetweenPoints3D(v.position.x, v.position.y, v.position.z, v.posX, v.posY, v.posZ) > JOB_GRAVEL_MIN_SYNC_DISTANCE then
+		if getDistanceBetweenPoints3D(v.element.position.x, v.element.position.y, v.element.position.z, v.posX, v.posY, v.posZ) > JOB_GRAVEL_MIN_SYNC_DISTANCE then
 			v.element:setPosition(v.posX, v.posY, v.posZ)
 			v.element:setVelocity(v.velX, v.velY, v.velZ)
 		end
