@@ -94,6 +94,19 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
 	end
+	
+	if (self:getModel() == 432 or self:getModel() == 520 or self:getModel() == 425) and self.m_Faction:isStateFaction() then
+		addEventHandler("onVehicleStartEnter", self, function(player, seat)
+			if seat == 0 then
+				if not self:isWithinColShape(FactionState:getSingleton().m_ArmySepcialVehicleCol) then
+					if player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
+						cancelEvent()
+					end
+				end 
+			end
+		end)
+	end
+
 	if self:getModel() == 427 or self:getModel() == 528 or self:getModel() == 601 then -- Enforcer, FBI Truck and SWAT tank
 		self:setMaxHealth(1500, true)
 		self:setDoorsUndamageable(true)
