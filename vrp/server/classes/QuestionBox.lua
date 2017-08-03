@@ -37,6 +37,10 @@ function QuestionBox:destructor()
 end
 
 function QuestionBox.Accept(id)
+	if not QuestionBox.Map[id] then
+		client:sendError(_("Die Anfrage ist abgelaufen und kann daher nicht mehr akzeptiert werden!", client))
+		return
+	end
 	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["yesEvent"] then
 		triggerEvent(QuestionBox.Map[id]["yesEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
 		delete(QuestionBox.Map[id]["object"])
@@ -44,6 +48,10 @@ function QuestionBox.Accept(id)
 end
 
 function QuestionBox.Discard(id)
+	if not QuestionBox.Map[id] then
+		client:sendError(_("Die Anfrage ist abgelaufen und kann daher nicht mehr abgelehnt werden!", client))
+		return
+	end
 	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["noEvent"] then
 		triggerEvent(QuestionBox.Map[id]["noEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
 		delete(QuestionBox.Map[id]["object"])
