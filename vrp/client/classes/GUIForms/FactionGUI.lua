@@ -391,22 +391,24 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, permissions, re
 
 
 	self.m_DiplomacyRequestGrid:clear()
-	self.m_DiplomacyRequestGrid:addItemNoClick("Eingehend", "")
-	for index, data in pairs(requests) do
-		if data["target"] == localPlayer:getFaction():getId() then
-			item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["source"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
-			item.onLeftClick = function()
-				self:onDiplomacyRequestItemSelect(index, data)
+	if requests then
+		self.m_DiplomacyRequestGrid:addItemNoClick("Eingehend", "")
+		for index, data in pairs(requests) do
+			if data["target"] == localPlayer:getFaction():getId() then
+				item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["source"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
+				item.onLeftClick = function()
+					self:onDiplomacyRequestItemSelect(index, data)
+				end
 			end
 		end
-	end
-	self.m_DiplomacyRequestGrid:addItemNoClick("Ausgehend", "")
+		self.m_DiplomacyRequestGrid:addItemNoClick("Ausgehend", "")
 
-	for index, data in pairs(requests) do
-		if data["source"] == localPlayer:getFaction():getId() then
-			item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["target"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
-			item.onLeftClick = function()
-				self:onDiplomacyRequestItemSelect(index, data)
+		for index, data in pairs(requests) do
+			if data["source"] == localPlayer:getFaction():getId() then
+				item = self.m_DiplomacyRequestGrid:addItem(FactionManager.Map[data["target"]]:getShortName(), FACTION_DIPLOMACY_REQUEST[data["status"]])
+				item.onLeftClick = function()
+					self:onDiplomacyRequestItemSelect(index, data)
+				end
 			end
 		end
 	end
@@ -568,8 +570,8 @@ function FactionGUI:FactionRemovePlayerButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		self:close()
-		
-		HistoryUninviteGUI:new(function(internal, external) 
+
+		HistoryUninviteGUI:new(function(internal, external)
 			triggerServerEvent("factionDeleteMember", root, selectedItem.Id, internal, external)
 		end)
 	else

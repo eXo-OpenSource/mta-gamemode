@@ -218,7 +218,7 @@ end
 function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, reasonExternaly)
 	if not playerId then return end
 	local faction = client:getFaction()
-	local pElement = PlayerManager:getSingleton():getPlayerFromId(playerId) 
+	local pElement = PlayerManager:getSingleton():getPlayerFromId(playerId)
 	if not faction then return end
 
 	if client:getId() == playerId then
@@ -242,7 +242,7 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 		client:sendError(_("Externer Grund für den Rauswurf muss ausgefüllt werden!", client))
 		return
 	end
-	
+
 	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
 
 	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geworfen!")
@@ -268,7 +268,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			end
 
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
-			
+
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
@@ -497,8 +497,6 @@ function FactionManager:Event_requestDiplomacy(factionId)
 	local faction = self:getFromId(factionId)
 	if faction and faction.m_Diplomacy then
 		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, faction.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
-	else
-		client:sendError("Internal Error: Invalid Faction")
 	end
 end
 
