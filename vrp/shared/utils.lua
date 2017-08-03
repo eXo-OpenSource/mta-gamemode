@@ -41,11 +41,15 @@ function enumFields(name)
 end
 
 function table.size(tab)
-	local i = 0
-	for _ in pairs(tab) do
-		i = i + 1
+	if tab then
+		if type(tab) == "table" then
+			local i = 0
+			for _ in pairs(tab) do
+				i = i + 1
+			end
+			return i
+		end
 	end
-	return i
 end
 
 function table.find(tab, value)
