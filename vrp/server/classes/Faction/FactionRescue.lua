@@ -59,7 +59,8 @@ function FactionRescue:constructor()
 		end
 	)
 
-	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400, {factionColors[4].r, factionColors[4].g, factionColors[4].b})
+	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400)
+	blip:setOptionalColor({factionColors[4].r, factionColors[4].g, factionColors[4].b})
 	blip:setDisplayText(self.m_Faction:getName(), BLIP_CATEGORY.Faction)
 
 	-- Events
@@ -114,7 +115,7 @@ function FactionRescue:sendWarning(text, header, withOffDuty, pos, ...)
 	end
 	if pos and pos.x then pos = {pos.x, pos.y, pos.z} end -- serialiseVector conversion
 	if pos and pos[1] and pos[2] then
-		local blip = Blip:new("Fire.png", pos[1], pos[2], root, 4000, BLIP_COLOR_CONSTANTS.Orange)
+		local blip = Blip:new("Fire.png", pos[1], pos[2], {factionType = "Rescue"}, 4000, BLIP_COLOR_CONSTANTS.Orange)
 			blip:setDisplayText(header)
 		if pos[3] then
 			blip:setZ(pos[3])

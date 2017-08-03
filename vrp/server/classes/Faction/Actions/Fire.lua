@@ -14,13 +14,15 @@ function Fire:constructor(fireTable)
 	self.m_FireTable = fireTable["table"]
 	self.m_Message = fireTable["message"]
 
-	self.m_Blip = Blip:new("Fire.png", self.m_Position.x, self.m_Position.y, {factionType = "Rescue"}, 9999)
-	self.m_Blip:setColor(BLIP_COLOR_CONSTANTS.Orange)
+	self.m_Blip = Blip:new("Fire.png", self.m_Position.x, self.m_Position.y, root, 400)
+	self.m_Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
+	self.m_Blip:setDisplayText("Verkehrsbehinderung")
 
 	self.m_DestroyFireFunc = bind(self.destroyFire, self)
 
 	PlayerManager:getSingleton():breakingNews(self.m_Message, self.m_PositionName)
-	FactionRescue:getSingleton():sendWarning(self.m_Message, "Brand-Meldung", true, false, self.m_PositionName)
+	FactionRescue:getSingleton():sendWarning(self.m_Message, "Brand-Meldung", true, self.m_Position, self.m_PositionName)
+	FactionState:getSingleton():sendWarning(self.m_Message, "Absperrung erforderlich", false, self.m_Position, self.m_PositionName)
 
 	addRemoteEvents{"requestFireDeletion"}
 	addEventHandler("requestFireDeletion", root, self.m_DestroyFireFunc)
