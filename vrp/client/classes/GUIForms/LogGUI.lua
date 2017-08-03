@@ -5,6 +5,7 @@ function LogGUI:constructor(parent, log, players)
 	if not parent then
 		GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 		self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Logs", true, true, self)
+		self.m_Window:deleteOnClose(true)
 		parent = self.m_Window
 		yOffset = 40
 	end
