@@ -43,8 +43,8 @@ local TAKEOFF_FLIGHT_DELAY = 750
 local SMOKING_SPEED = 1000
 local GROUND_ZERO_TOLERANCE = 0.18
 local LANDING_DISTANCE = 3.2
-local FLIGHT_ANIMLIB = "dam_jump"
-local FLIGHT_ANIMATION = "dam_dive_loop"
+local FLIGHT_ANIMLIB = "swim"
+local FLIGHT_ANIMATION = "Swim_Dive_Under"
 local FLIGHT_ANIM_LOOP = false
 local IDLE_ANIMLIB = "cop_ambient"
 local IDLE_ANIMATION = "Coplook_loop"
@@ -603,7 +603,7 @@ function Superman:processMovingFlight(player, Velocity)
 
   -- Apply the calculated rotation
   setPedRotation(player, Rotation.z)
-  setElementRotation(player, Rotation.x-40, Rotation.y, Rotation.z)
+  setElementRotation(player, Rotation.x, Rotation.y, Rotation.z)
 
   -- Save the current velocity
   self.previousVelocity[player] = Velocity
