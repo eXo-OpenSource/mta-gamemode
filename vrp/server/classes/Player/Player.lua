@@ -21,8 +21,7 @@ addEventHandler("introFinished", root, function()
 end)
 
 function Player:constructor()
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-	setElementFrozen(self, true)
+
 	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
@@ -104,6 +103,8 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
+	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	setElementFrozen(self, true)
 	--[[setTimer(function()
 
 	end, 500, 1)]]
