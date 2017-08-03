@@ -147,8 +147,10 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 		end
 	else
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
-			veh.controller.m_TaxiData = veh
-			veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
+			if veh.controller then
+				veh.controller.m_TaxiData = veh
+				veh.controller:triggerEvent("showPublicTransportTaxiGUI", true, player)
+			end
 		end
 	end
 end
