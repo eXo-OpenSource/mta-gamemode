@@ -146,6 +146,7 @@ function CustomF11Map:draw()
 	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/F11Map") end
 	local height = self.m_Height * self.m_Zoom
 	local centerPosX, centerPosY = self.m_CenterPosX, self.m_CenterPosY
+	local px, py, pz = getElementPosition(localPlayer)
 
 	if self.m_Moving then
 		local mapX, mapY = self:cursorToMapPosition()

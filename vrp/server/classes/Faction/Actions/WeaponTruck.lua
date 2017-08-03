@@ -74,8 +74,14 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	local factionId = self.m_StartFaction:getId()
 	local dest = factionWTDestination[factionId]
-	self.m_DestinationBlips[factionId] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
 
+	if self.m_Type == "evil" then 
+		self.m_DestinationBlips[factionId] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DestinationBlips[factionId]:setDisplayText("Waffentruck-Abgabepunkt")
+	else
+		self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DestinationBlips["State"]:setDisplayText("Waffentruck-Abgabepunkt")
+	end
 
 	self.m_BoxesCount = 8
 

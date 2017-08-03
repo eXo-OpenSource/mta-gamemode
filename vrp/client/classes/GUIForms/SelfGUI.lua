@@ -681,7 +681,7 @@ function SelfGUI:VehicleLocateButton_Click()
 
 		if not isVehicleBlown(item.VehicleElement) then
 			local x, y, z = getElementPosition(item.VehicleElement)
-			local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+			local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 			blip:setZ(z)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 				ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Klicke hier um das Blip auf der Map zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue, -1, false, false, Vector2(x, y), {{path="Marker.png", pos=Vector2(x, y)}})

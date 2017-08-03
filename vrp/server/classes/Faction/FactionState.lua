@@ -698,6 +698,7 @@ function FactionState:sendWarning(text, header, withOffDuty, pos, ...)
 	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
 		player:sendWarning(_(text, player, ...), 30000, header)
 	end
+	if pos and pos.x then pos = {pos.x, pos.y, pos.z} end -- serialiseVector conversion
 	if pos and pos[1] and pos[2] then
 		local blip = Blip:new("Alarm.png", pos[1], pos[2], {factionType = "State", duty = (withOffDuty and nil or true)}, 4000, BLIP_COLOR_CONSTANTS.Orange)
 			blip:setDisplayText(header)
