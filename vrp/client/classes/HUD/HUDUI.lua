@@ -32,7 +32,7 @@ function HUDUI:constructor()
 
 	self.m_RenderHandler = bind(self.draw,self)
 
-	addEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler, false, "high")
 end
 
 function HUDUI:show()
@@ -45,7 +45,7 @@ end
 
 function HUDUI:refreshHandler()
 	removeEventHandler("onClientRender",root,self.m_RenderHandler)
-	addEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler, false, "high")
 end
 
 function HUDUI:draw()

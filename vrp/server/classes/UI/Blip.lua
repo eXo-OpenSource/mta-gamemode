@@ -65,10 +65,11 @@ function Blip:destructor()
 end
 
 function Blip:isVisibleForPlayer(player)
+	if not self.m_VisibleTo then return false end
 	if self.m_VisibleTo == root then return true end
 	if self.m_VisibleTo == player then return true end
 	if isElement(self.m_VisibleTo) then return false end -- visibleTo is an element which is not the player, so skip it
-	if type(self.m_VisibleTo) == "userdata" then return self:delete() end -- delete blips who were visible to a player which does no longer exist
+	if not isElement(player) then return false end -- blips who were visible to a player which does no longer exist
 
 	local fac = player:getFaction()
 	if fac then
@@ -91,12 +92,10 @@ function Blip:isVisibleForPlayer(player)
 	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
 		return true
 	end
-	
-	if self.m_VisibleTo then 
-		if type(self.m_VisibleTo) == "table" then
-			for i,v in pairs(self.m_VisibleTo) do
-				if v == player then return true end -- visibleTo is a table full of players
-			end
+	 
+	if type(self.m_VisibleTo) == "table" then
+		for i,v in pairs(self.m_VisibleTo) do
+			if v == player then return true end -- visibleTo is a table full of players
 		end
 	end
 
