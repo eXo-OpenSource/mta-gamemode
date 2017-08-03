@@ -41,15 +41,17 @@ function enumFields(name)
 end
 
 function table.size(tab)
-	if tab then
-		if type(tab) == "table" then
-			local i = 0
-			for _ in pairs(tab) do
-				i = i + 1
-			end
-			return i
-		end
+	if not tab or not type(tab) == "table" then
+		outputDebugString("Bad Argument #1 in function table.size. See Console for more details")
+		outputConsole(debug.traceback())
+		return false
 	end
+
+	local i = 0
+	for _ in pairs(tab) do
+		i = i + 1
+	end
+	return i
 end
 
 function table.find(tab, value)
