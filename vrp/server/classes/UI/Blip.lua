@@ -91,9 +91,13 @@ function Blip:isVisibleForPlayer(player)
 	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
 		return true
 	end
-
-	for i,v in pairs(self.m_VisibleTo) do
-		if v == player then return true end -- visibleTo is a table full of players
+	
+	if self.m_VisibleTo then 
+		if type(self.m_VisibleTo) == "table" then
+			for i,v in pairs(self.m_VisibleTo) do
+				if v == player then return true end -- visibleTo is a table full of players
+			end
+		end
 	end
 
 	return false
