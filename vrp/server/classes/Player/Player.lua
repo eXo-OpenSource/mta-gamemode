@@ -618,11 +618,13 @@ end
 
 function Player:Event_onPlayerReviveWeaponHit( player )
 	if player then
-		local weapon = source:getData("weaponId")
-		local ammo = source:getData("ammoInWeapon")
-		if weapon and ammo then
-			player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
-			player:triggerEvent("onTryPickupWeapon", source)
+		if source then
+			local weapon = source:getData("weaponId")
+			local ammo = source:getData("ammoInWeapon")
+			if weapon and ammo then
+				player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
+				player:triggerEvent("onTryPickupWeapon", source)
+			end
 		end
 	end
 end
