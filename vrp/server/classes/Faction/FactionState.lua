@@ -28,20 +28,16 @@ function FactionState:constructor()
 	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
 
 	addEventHandler("onColShapeLeave", root, function(element)
-		if element then
-			if isElement(element) then
-				if element:getType() == "player" and element.vehicle then
-					if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
-						if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
-							local veh = element.vehicle
-							element:removeFromVehicle()
-							veh:respawn(true)
-							FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
-							for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
-								if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
-									v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
-								end
-							end
+		if element and isElement(element) and element:getType() == "player" and element.vehicle then
+			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
+				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
+					local veh = element.vehicle
+					element:removeFromVehicle()
+					veh:respawn(true)
+					FactionManager:getSingleton().Map[3]:addLog(element, "Spezial-Fahrzeuge", "hat das Fahrzeug " .. veh:getName() .. " entwendet!")
+					for _, v in pairs(FactionManager:getSingleton().Map[3]:getOnlinePlayers()) do
+						if FactionManager:getSingleton().Map[3]:getPlayerRank(v) ~= 0 then
+							v:sendMessage(element:getName() .. " hat das Fahrzeug " .. veh:getName() .. " entwendet!", 193, 44, 44)
 						end
 					end
 				end
