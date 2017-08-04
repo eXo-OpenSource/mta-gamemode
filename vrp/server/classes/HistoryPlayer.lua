@@ -93,7 +93,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
                 ElementName = "Unknown",
 				JoinDate = row.JoinDate and row.JoinDate or "",
 				LeaveDate = row.LeaveDate and row.LeaveDate or "",
-				ExternalReason = row.ExternalReason and row.ExternalReason or "",
+				ExternalReason = row.ExternalReason and utf8.escape(row.ExternalReason) or "",
 				HighestRank = row.HighestRank and row.HighestRank or 0,
 				UninviteRank = row.UninviteRank and row.UninviteRank or 0
 			}
@@ -117,7 +117,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
             end
 
 			if (faction and row.ElementType == "faction" and faction.m_Id == row.ElementId) or (company and row.ElementType == "company" and company.m_Id == row.ElementId) or (client:getRank() >= RANK.Supporter) then
-				playerFile[row.Id].InternalReason = row.InternalReason
+				playerFile[row.Id].InternalReason = row.InternalReason and row.InternalReason or utf8.escape(row.InternalReason)
 			end
         end
         
