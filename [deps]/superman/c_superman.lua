@@ -54,15 +54,16 @@ local localPlayer = getLocalPlayer()
 local serverGravity = getGravity()
 
 local function isPlayerFlying(player)
-  local data = getElementData(player, "superman:flying")
+  local data = getElementData(player, "superman:flying") and isSupermanEnabled
   if not data or data == false then return false
   else return true end
 end
 
 local function setPlayerFlying(player, state)
-  if state == true then state = true
-  else state = false end
-
+  if state and isSupermanEnabled then 
+	state = true 
+  else state = false
+  end
   setElementData(player, "superman:flying", state)
 end
 
@@ -157,6 +158,7 @@ end
 function Superman_Toggle( bool ) 
 	isSupermanEnabled = bool
 	if not bool then 
+	   setElementData(localPlayer, "superman:flying", false)
 	  setGravity(serverGravity)
 	  Superman_restorePlayer(localPlayer)
 	end
@@ -200,9 +202,16 @@ end
 
 -- Used for sync-purposes rather than flying
 function Superman_onDataChange(dataName, oldValue)
-  if dataName == "superman:flying" and isElement(source) and getElementType(source) == "player" and
-     oldValue ~= getElementData(source, dataName) and oldValue == true and getElementData(source, dataName) == false then
-     Superman_restorePlayer(source)
+
+  if dataName == "superman:flying" then 
+	if isElement(source) and getElementType(source) == "player" and oldValue ~= getElementData(source, dataName) and oldValue == true and getElementData(source, dataName) == false then
+		Superman_restorePlayer(source)
+	end
+	if oldValue == false and source == localPlayer and getElementData(source,dataName) then 
+		if not isSupermanEnabled then 
+			cancelEvent()
+		end
+	end
   end
 end
 
