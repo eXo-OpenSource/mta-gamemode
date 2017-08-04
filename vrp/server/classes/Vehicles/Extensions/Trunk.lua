@@ -109,7 +109,7 @@ function Trunk:addItem(player, item, amount, value)
 				self:refreshClient(player)
 				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "insert", "item", item, amount, index)
 				return
-			elseabb
+			else
 				player:sendError(_("Du hast nicht genug %s!", player, item))
 			end
 		end
