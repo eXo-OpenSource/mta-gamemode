@@ -405,3 +405,8 @@ function StatisticsLogger:addRaidLog(attacker, target, success, money)
 	sqlLogs:queryExec("INSERT INTO ??_Raid (Attacker, Target, Money, Success, Position, Faction, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 			userId, userId2, money, success, self:getZone(target), faction)
 end
+
+function StatisticsLogger:addGangwarLog(area, attacker, owner, starttimestamp, endtimestamp, winner)
+	sqlLogs:queryExec("INSERT INTO ??_Gangwar (Gebiet, Angreifer, Besitzer, StartZeit, EndZeit, Gewinner) VALUES (?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			area, attacker, owner, starttimestamp, endtimestamp, winner)
+end
