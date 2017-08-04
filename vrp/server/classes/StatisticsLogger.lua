@@ -22,7 +22,10 @@ function StatisticsLogger:destructor()
 end
 
 function StatisticsLogger:getZone(player)
-	return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	if player then 
+		return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	end
+	return "unknown"
 end
 
 function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
