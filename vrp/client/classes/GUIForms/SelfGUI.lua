@@ -1207,13 +1207,14 @@ function SelfGUI:onSettingChange(setting)
 		end
 
 
-		self.m_UIAltKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.35, self.m_Height*0.04, _"Ak-47/M4 auf dem Rücken", self.m_SettingBG)
+		self.m_UIAltKarabiner = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.35, self.m_Height*0.04, _"Ak-47/M4 im Holster", self.m_SettingBG)
 		self.m_UIAltKarabiner:setFont(VRPFont(25))
 		self.m_UIAltKarabiner:setFontSize(1)
-		self.m_UIAltKarabiner:setChecked(core:get("W_ATTACH", "alt_w5", true))
-		setElementData(localPlayer,"W_A:alt_w5", core:get("W_ATTACH", "alt_w5", true))
+		self.m_UIAltKarabiner:setChecked(core:get("W_ATTACH", "alt_w5holst", false))
+		setElementData(localPlayer,"W_A:alt_w5", core:get("W_ATTACH", "alt_w5holst", false))
+		if core:get("W_ATTACH", "alt_w5holst", false) then triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5) end
 		self.m_UIAltKarabiner.onChange = function (state)
-			core:set("W_ATTACH",  "alt_w5", state)
+			core:set("W_ATTACH",  "alt_w5holst", state)
 			setElementData(localPlayer,"W_A:alt_w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
