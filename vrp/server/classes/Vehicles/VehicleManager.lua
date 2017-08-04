@@ -559,7 +559,7 @@ end
 
 function VehicleManager:Event_OnVehicleCrash(loss)
 	if not source then return end
-	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter then
+	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter or source:getVehicleType() == VehicleType.Bike then
 		return false
 	end
 	local occupants = getVehicleOccupants(source)
@@ -593,7 +593,7 @@ function VehicleManager:Event_OnVehicleCrash(loss)
 						if not player.m_SeatBelt then
 							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+							setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
 							setTimer(setPedAnimation, 5000,1, player, nil)
 						elseif player.m_SeatBelt == source then
 							if not player.m_lastInjuryMe then
@@ -603,11 +603,6 @@ function VehicleManager:Event_OnVehicleCrash(loss)
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 								player.m_lastInjuryMe = tickCount
 							end
-						else
-							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
-							setTimer(setPedAnimation, 5000,1, player, nil)
 						end
 					end
 					player:triggerEvent("clientBloodScreen")
