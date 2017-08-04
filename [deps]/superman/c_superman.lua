@@ -25,13 +25,10 @@
 -- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 -- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-local Superman = {}
-
-
-
 -- Settings
+
 local ZERO_TOLERANCE = 0.00001
-local MAX_ANGLE_SPEED = 6 -- In degrees per frame
+local MAX_ANGLE_SPEED = 6
 local MAX_SPEED = 1.0
 local EXTRA_SPEED_FACTOR = 1.95
 local LOW_SPEED_FACTOR = 0.40
@@ -51,17 +48,11 @@ local IDLE_ANIMATION = "Coplook_loop"
 local IDLE_ANIM_LOOP = true
 local MAX_Y_ROTATION = 70
 local ROTATION_Y_SPEED = 3.8
-
--- Static global variables
 local thisResource = getThisResource()
 local rootElement = getRootElement()
 local localPlayer = getLocalPlayer()
 local serverGravity = getGravity()
 
-
---
--- Utility functions
---
 local function isPlayerFlying(player)
   local data = getElementData(player, "superman:flying")
   if not data or data == false then return false
@@ -78,58 +69,25 @@ end
 local function iterateFlyingPlayers()
   local current = 1
   local allPlayers = getElementsByType("player")
-
   return function()
     local player
-    
     repeat
       player = allPlayers[current]
       current = current + 1
     until not player or (isPlayerFlying(player) and isElementStreamedIn(player))
-
     return player
   end
 end
 
-function Superman:restorePlayer(player)
+local function Superman_restorePlayer(player)
   setPlayerFlying(player, false)
   setPedAnimation(player, false)
   setElementVelocity(player, 0, 0, 0)
   setElementRotation(player, 0, 0, 0)
   --setPedRotation(player, getPedRotation(player))
   setElementCollisionsEnabled(player, true)
-  self:destroySmokeGenerators(player)
-  self.rotations[player] = nil
-  self.previousVelocity[player] = nil
-end
-
-function Superman:createSmokeGenerator(player)
-  local generator = createObject(2780, getElementPosition(player))
-  setElementCollisionsEnabled(generator, false)
-  setObjectScale(generator, 0)
-  return generator
-end
-
-function Superman:createSmokeGenerators(player)
-  if not self.smokeGenerators[player] then
-    local smokeGenerators = {}
-
-    smokeGenerators[1] = self:createSmokeGenerator(player)
-    attachElements(smokeGenerators[1], player, 0.75, -0.2, -0.4, -40, 0, 60)
-    smokeGenerators[2] = self:createSmokeGenerator(player)
-    attachElements(smokeGenerators[2], player, -0.75, -0.2, -0.4, -40, 0, -60)
-
-    self.smokeGenerators[player] = smokeGenerators
-  end
-end
-
-function Superman:destroySmokeGenerators(player)
-  if self.smokeGenerators[player] then
-    for k, v in ipairs(self.smokeGenerators[player]) do
-      destroyElement(v)
-    end
-    self.smokeGenerators[player] = nil
-  end
+  rotations[player] = nil
+  previousVelocity[player] = nil
 end
 
 function angleDiff(angle1, angle2)
@@ -171,176 +129,113 @@ local function getVector2DAngle(vec)
   return angle
 end
 
---
--- Initialization and shutdown functions
---
-function Superman.Start()
-  local self = Superman
-
-  -- Register events
-  addEventHandler("onClientResourceStop", getResourceRootElement(thisResource), Superman.Stop, false)
-  addEventHandler("onPlayerJoin", rootElement, Superman.onJoin)
-  addEventHandler("onPlayerQuit", rootElement, Superman.onQuit)
-  addEventHandler("onClientRender", rootElement, Superman.processControls)
-  addEventHandler("onClientRender", rootElement, Superman.processFlight)
-  addEventHandler("onClientPlayerDamage", localPlayer, Superman.onDamage, false)
-  addEventHandler("onClientElementDataChange", rootElement, Superman.onDataChange)
-  addEventHandler("onClientElementStreamIn", rootElement, Superman.onStreamIn)
-  addEventHandler("onClientElementStreamOut", rootElement, Superman.onStreamOut)
+function Superman_Start()
   addEvent("superman:toggle", true)
-  addEventHandler("superman:toggle", localPlayer, Superman.Toggle)
-  -- Bind keys
-  --bindKey("jump", "down", Superman.onJump)
-
-  -- Register commands
-  addCommandHandler("superman", Superman.cmdSuperman)
-
-  -- Initializate attributes
-  self.smokeGenerators = {}
-  self.rotations = {}
-  self.previousVelocity = {}
+  -- Register events
+  addEventHandler("onClientResourceStop", getResourceRootElement(thisResource), Superman_Stop, false)
+  addEventHandler("onPlayerJoin", rootElement, Superman_onJoin)
+  addEventHandler("onPlayerQuit", rootElement, Superman_onQuit)
+  addEventHandler("onClientRender", rootElement, Superman_processControls)
+  addEventHandler("onClientRender", rootElement, Superman_processFlight)
+  addEventHandler("onClientPlayerDamage", localPlayer, Superman_onDamage, false)
+  addEventHandler("onClientElementDataChange", rootElement, Superman_onDataChange)
+  addEventHandler("onClientElementStreamOut", rootElement, Superman_onStreamOut)
+  addEventHandler("superman:toggle", localPlayer, Superman_Toggle)
+  bindKey("lctrl","up", Superman_endFlightKey)
+  rotations = {}
+  previousVelocity = {}
 end
-addEventHandler("onClientResourceStart", getResourceRootElement(thisResource), Superman.Start, false)
+addEventHandler("onClientResourceStart", getResourceRootElement(thisResource), Superman_Start, false)
 
-function Superman.Toggle( bool ) 
-	isSupermanEnabled = bool
-	if not bool then 
-		Superman.Stop()
+function Superman_endFlightKey() 
+	if isSupermanEnabled then 
+		setGravity(serverGravity)
+		Superman_restorePlayer(localPlayer)
 	end
 end
 
-function Superman.Stop()
-  local self = Superman
+function Superman_Toggle( bool ) 
+	isSupermanEnabled = bool
+	if not bool then 
+	  setGravity(serverGravity)
+	  Superman_restorePlayer(localPlayer)
+	end
+end
 
+function Superman_Stop()
   setGravity(serverGravity)
-
   -- Restore all players animations, collisions, etc
   for player in iterateFlyingPlayers() do
-    self:restorePlayer(player)
+    Superman_restorePlayer(player)
   end
 end
 
-
-
---
--- Join/Quit
---
-function Superman.onJoin(player)
+function Superman_onJoin(player)
   local self = Superman
   local player = player or source
 
   setPlayerFlying(player, false)
 end
 
-function Superman.onQuit(reason, player)
-  local self = Superman
+function Superman_onQuit(reason, player)
   local player = player or source
 
   if isPlayerFlying(player) then
-    self:restorePlayer(player)
+    Superman_restorePlayer(player)
   end
 end
 
-
---
--- onDamage: superman is invulnerable
---
-function Superman.onDamage()
-  local self = Superman
-
+function Superman_onDamage()
   if isPlayerFlying(localPlayer) then
     cancelEvent()
   end
 end
 
-
---
--- onStreamIn: Reset rotation attribute for player
---
-function Superman.onStreamIn()
-  local self = Superman
-end
-
-function Superman.onStreamOut()
-  local self = Superman
-
+function Superman_onStreamOut()
   if source and isElement(source) and getElementType(source) == "player" and isPlayerFlying(source) then
-    self.rotations[source] = nil
-    self.previousVelocity[source] = nil
+    rotations[source] = nil
+    previousVelocity[source] = nil
   end
 end
 
---
--- onDataChange: Check if somebody who is out of stream stops being superman
---
-function Superman.onDataChange(dataName, oldValue)
-  local self = Superman
-
+-- Used for sync-purposes rather than flying
+function Superman_onDataChange(dataName, oldValue)
   if dataName == "superman:flying" and isElement(source) and getElementType(source) == "player" and
      oldValue ~= getElementData(source, dataName) and oldValue == true and getElementData(source, dataName) == false then
-    self:restorePlayer(source)
+     Superman_restorePlayer(source)
   end
 end
 
---
--- onJump: Combo to start flight without any command
---
-function Superman.onJump(key, keyState)
+function Superman_onJump(key, keyState)
   if not isSupermanEnabled then return end 
-  local self = Superman
-
   local task = getPedSimplestTask(localPlayer)
   if not isPlayerFlying(localPlayer) then
     if task == "TASK_SIMPLE_IN_AIR" then
       setElementVelocity(localPlayer, 0, 0, TAKEOFF_VELOCITY)
-      setTimer(Superman.startFlight, 100, 1)
+      setTimer(Superman_startFlight, 100, 1)
     end
   end
 end
 
---
--- Commands
---
-function Superman.cmdSuperman()
-  if not isSupermanEnabled then return end 
-  local self = Superman
-
-  if isPedInVehicle(localPlayer) or isPlayerFlying(localPlayer) then return end
-  setElementVelocity(localPlayer, 0, 0, TAKEOFF_VELOCITY)
-  setTimer(Superman.startFlight, TAKEOFF_FLIGHT_DELAY, 1)
-end
-
-function Superman.startFlight()
-  local self = Superman
-
+function Superman_startFlight()
   if isPlayerFlying(localPlayer) then return end
-
   triggerServerEvent("superman:start", rootElement)
   setPlayerFlying(localPlayer, true)
   setElementVelocity(localPlayer, 0, 0, 0)
-  self.currentSpeed = 0
-  self.extraVelocity = { x = 0, y = 0, z = 0 }
+  currentSpeed = 0
+  extraVelocity = { x = 0, y = 0, z = 0 }
 end
 
-
---
--- Controls processing
---
 local jump, oldJump = false, false
-function Superman.processControls()
-  local self = Superman
-
-  -- vG custom
+function Superman_processControls()
   if not isPlayerFlying(localPlayer) then
     jump, oldJump = getControlState("jump"), jump
     if isSupermanEnabled and not oldJump and jump then 
-      Superman.onJump()
+      Superman_onJump()
     end
     return
   end
-  -- if not isPlayerFlying(localPlayer) then return end
 
-  -- Calculate the requested movement direction
   local Direction = Vector3D:new(0, 0, 0)
   if getControlState("forwards") then
     Direction.y = 1
@@ -377,22 +272,22 @@ function Superman.processControls()
   local DirectionModule = Direction:Module()
 
   -- Check if we must change the gravity
-  if DirectionModule == 0 and self.currentSpeed ~= 0 then
+  if DirectionModule == 0 and currentSpeed ~= 0 then
     setGravity(0)
   else
     setGravity(serverGravity)
   end
 
   -- Calculate the new current speed
-  if self.currentSpeed ~= 0 and (DirectionModule == 0 or self.currentSpeed > maxSpeed) then
+  if currentSpeed ~= 0 and (DirectionModule == 0 or currentSpeed > maxSpeed) then
     -- deccelerate
-    self.currentSpeed = ( self.currentSpeed or 0 )- acceleration
-    if self.currentSpeed < 0 then self.currentSpeed = 0 end
+    currentSpeed = ( currentSpeed or 0 )- acceleration
+    if currentSpeed < 0 then currentSpeed = 0 end
 
-  elseif DirectionModule ~= 0 and self.currentSpeed < maxSpeed then
+  elseif DirectionModule ~= 0 and currentSpeed < maxSpeed then
     -- accelerate
-    self.currentSpeed = self.currentSpeed + acceleration
-    if self.currentSpeed > maxSpeed then self.currentSpeed = maxSpeed end
+    currentSpeed = currentSpeed + acceleration
+    if currentSpeed > maxSpeed then currentSpeed = maxSpeed end
 
   end
 
@@ -402,21 +297,21 @@ function Superman.processControls()
                              SightDirection.x * Direction.x + SightDirection.y * Direction.y,
                              SightDirection.z * Direction.y)
     -- Save the last movement direction for when player releases all direction keys
-    self.lastDirection = Direction
+    lastDirection = Direction
   else
     -- Player is not specifying any direction, use last known direction or the current velocity
-    if self.lastDirection then
-      Direction = self.lastDirection
-      if self.currentSpeed == 0 then self.lastDirection = nil end
+    if lastDirection then
+      Direction = lastDirection
+      if currentSpeed == 0 then lastDirection = nil end
     else
       Direction = Vector3D:new(getElementVelocity(localPlayer))
     end
   end
   Direction:Normalize()
-  Direction = Direction:Mul(self.currentSpeed)
+  Direction = Direction:Mul(currentSpeed)
 
   -- Applicate a smooth direction change, if moving
-  if self.currentSpeed > 0 then
+  if currentSpeed > 0 then
     local VelocityDirection = Vector3D:new(getElementVelocity(localPlayer))
     VelocityDirection:Normalize()
 
@@ -449,31 +344,24 @@ function Superman.processControls()
   end
 
   if Direction:Module() == 0 then
-	self.extraVelocity = { x = 0, y = 0, z = 0 }
+	extraVelocity = { x = 0, y = 0, z = 0 }
   end
   
   -- Set the new velocity
-  setElementVelocity(localPlayer, Direction.x + self.extraVelocity.x,
-                                  Direction.y + self.extraVelocity.y,
-								  Direction.z + self.extraVelocity.z)
+  setElementVelocity(localPlayer, Direction.x + extraVelocity.x,
+                                  Direction.y + extraVelocity.y,
+								  Direction.z + extraVelocity.z)
 
-  if self.extraVelocity.z > 0 then
-    self.extraVelocity.z = self.extraVelocity.z - 1
-	if self.extraVelocity.z < 0 then self.extraVelocity.z = 0 end
-  elseif self.extraVelocity.z < 0 then
-	self.extraVelocity.z = self.extraVelocity.z + 1
-	if self.extraVelocity.z > 0 then self.extraVelocity.z = 0 end
+  if extraVelocity.z > 0 then
+    extraVelocity.z = extraVelocity.z - 1
+	if extraVelocity.z < 0 then extraVelocity.z = 0 end
+  elseif extraVelocity.z < 0 then
+	extraVelocity.z = extraVelocity.z + 1
+	if extraVelocity.z > 0 then extraVelocity.z = 0 end
   end
 end
 
-
-
---
--- Players flight processing
---
-function Superman.processFlight()
-  local self = Superman
-
+function Superman_processFlight()
   for player in iterateFlyingPlayers() do
     local Velocity = Vector3D:new(getElementVelocity(player))
     local distanceToBase = getElementDistanceFromCentreOfMassToBaseOfModel(player)
@@ -489,22 +377,22 @@ function Superman.processFlight()
     end
 
     if distanceToGround and distanceToGround < GROUND_ZERO_TOLERANCE then
-      self:restorePlayer(player)
+      Superman_restorePlayer(player)
       if player == localPlayer then
       	setGravity(serverGravity)
         triggerServerEvent("superman:stop", getRootElement())
       end
     elseif distanceToGround and distanceToGround < LANDING_DISTANCE then
-      self:processLanding(player, Velocity, distanceToGround)
+      Superman_processLanding(player, Velocity, distanceToGround)
     elseif Velocity:Module() < ZERO_TOLERANCE then
-      self:processIdleFlight(player)
+      Superman_processIdleFlight(player)
     else
-      self:processMovingFlight(player, Velocity)
+      Superman_processMovingFlight(player, Velocity)
     end
   end
 end
 
-function Superman:processIdleFlight(player)
+function Superman_processIdleFlight(player)
   -- Set the proper animation on the player
   local animLib, animName = getPedAnimation(player)
   if animLib ~= IDLE_ANIMLIB or animName ~= IDLE_ANIMATION then
@@ -537,7 +425,7 @@ function Superman:processIdleFlight(player)
   end
 end
 
-function Superman:processMovingFlight(player, Velocity)
+function Superman_processMovingFlight(player, Velocity)
   -- Set the proper animation on the player
   local animLib, animName = getPedAnimation(player)
   if animLib ~= FLIGHT_ANIMLIB or animName ~= FLIGHT_ANIMATION then
@@ -567,10 +455,10 @@ function Superman:processMovingFlight(player, Velocity)
   Rotation.x = Rotation.x - 40
 
   -- Calculate the Y rotation for barrel rotations
-  if not self.rotations[player] then self.rotations[player] = 0 end
-  if not self.previousVelocity[player] then self.previousVelocity[player] = Vector3D:new(0, 0, 0) end
+  if not rotations[player] then rotations[player] = 0 end
+  if not previousVelocity[player] then previousVelocity[player] = Vector3D:new(0, 0, 0) end
   
-  local previousAngle = getVector2DAngle(self.previousVelocity[player])
+  local previousAngle = getVector2DAngle(previousVelocity[player])
   local currentAngle = getVector2DAngle(Velocity)
   local diff = angleDiff(currentAngle, previousAngle)
   if isnan(diff) then
@@ -578,45 +466,39 @@ function Superman:processMovingFlight(player, Velocity)
   end
   local calculatedYRotation = -diff * MAX_Y_ROTATION / MAX_ANGLE_SPEED
 
-  if calculatedYRotation > self.rotations[player] then
-    if calculatedYRotation - self.rotations[player] > ROTATION_Y_SPEED then
-      self.rotations[player] = self.rotations[player] + ROTATION_Y_SPEED
+  if calculatedYRotation > rotations[player] then
+    if calculatedYRotation - rotations[player] > ROTATION_Y_SPEED then
+      rotations[player] = rotations[player] + ROTATION_Y_SPEED
     else
-      self.rotations[player] = calculatedYRotation
+      rotations[player] = calculatedYRotation
     end
   else
-    if self.rotations[player] - calculatedYRotation > ROTATION_Y_SPEED then
-      self.rotations[player] = self.rotations[player] - ROTATION_Y_SPEED
+    if rotations[player] - calculatedYRotation > ROTATION_Y_SPEED then
+      rotations[player] = rotations[player] - ROTATION_Y_SPEED
     else
-      self.rotations[player] = calculatedYRotation
+      rotations[player] = calculatedYRotation
     end
   end
 
-  if self.rotations[player] > MAX_Y_ROTATION then
-    self.rotations[player] = MAX_Y_ROTATION
-  elseif self.rotations[player] < -MAX_Y_ROTATION then
-    self.rotations[player] = -MAX_Y_ROTATION
-  elseif math.abs(self.rotations[player]) < ZERO_TOLERANCE then
-    self.rotations[player] = 0
+  if rotations[player] > MAX_Y_ROTATION then
+    rotations[player] = MAX_Y_ROTATION
+  elseif rotations[player] < -MAX_Y_ROTATION then
+    rotations[player] = -MAX_Y_ROTATION
+  elseif math.abs(rotations[player]) < ZERO_TOLERANCE then
+    rotations[player] = 0
   end
-  Rotation.y = self.rotations[player]
+  Rotation.y = rotations[player]
 
   -- Apply the calculated rotation
   setPedRotation(player, Rotation.z)
   setElementRotation(player, Rotation.x, Rotation.y, Rotation.z)
 
   -- Save the current velocity
-  self.previousVelocity[player] = Velocity
+  previousVelocity[player] = Velocity
 
-  -- If the speed is over the given value, create the smoke generators
-  if Velocity:Module() > (SMOKING_SPEED - ZERO_TOLERANCE) and not isElementInWater(player) then
-    self:createSmokeGenerators(player)
-  else
-    self:destroySmokeGenerators(player)
-  end
 end
 
-function Superman:processLanding(player, Velocity, distanceToGround)
+function Superman_processLanding(player, Velocity, distanceToGround)
   -- Set the proper animation on the player
   local animLib, animName = getPedAnimation(player)
   if animLib ~= FLIGHT_ANIMLIB or animName ~= FLIGHT_ANIMATION then
@@ -628,14 +510,6 @@ function Superman:processLanding(player, Velocity, distanceToGround)
   else
     setElementCollisionsEnabled(player, false)
   end
-
-  -- If the speed is over the given value, create the smoke generators
-  if Velocity:Module() > (SMOKING_SPEED - ZERO_TOLERANCE) and not isElementInWater(player) then
-    self:createSmokeGenerators(player)
-  else
-    self:destroySmokeGenerators(player)
-  end
-
   -- Calculate the player rotation depending on their velocity and distance to ground
   local Rotation = Vector3D:new(0, 0, 0)
   if Velocity.x == 0 and Velocity.y == 0 then
@@ -657,11 +531,6 @@ function Superman:processLanding(player, Velocity, distanceToGround)
   setElementRotation(player, Rotation.x, Rotation.y, Rotation.z)
 end
 
-
-
---
--- Vectors
---
 Vector3D = {
   new = function(self, _x, _y, _z)
     local newVector = { x = _x or 0.0, y = _y or 0.0, z = _z or 0.0 }
