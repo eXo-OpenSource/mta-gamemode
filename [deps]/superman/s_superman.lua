@@ -35,13 +35,6 @@ local thisResource = getThisResource()
 addEvent("superman:start", true)
 addEvent("superman:stop", true)
 
---
--- Start/stop functions
---
-function Superman.Start()
-end
-addEventHandler("onResourceStart", getResourceRootElement(thisResource), Superman.Start, false)
-
 function Superman.clientStart( client )
   setElementData(client, "superman:flying", true)
   setElementData(client, "forcedanimation", true)
