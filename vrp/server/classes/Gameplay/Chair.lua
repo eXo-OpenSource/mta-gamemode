@@ -32,6 +32,8 @@ Chair.Map = {
 	[1721] = {seats = 1, offsetPosition = Vector3(0, .7, .1), rotationOffset = 0},
 	[2309] = {seats = 1, offsetPosition = Vector3(-0.05, .7, .1), rotationOffset = 0},
 	[1704] = {seats = 1, offsetPosition = Vector3(0.5, -0.6, .2), rotationOffset = 180},
+	[1714] = {seats = 1, offsetPosition = Vector3(0, -0.6, .2), rotationOffset = 180},
+
 }
 
 function Chair:constructor()
