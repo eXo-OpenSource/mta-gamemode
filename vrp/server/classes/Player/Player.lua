@@ -418,12 +418,12 @@ function Player:spawn()
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
 				if self:getFaction() then
 					local position = factionSpawnpoint[self:getFaction():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
 				if self:getCompany() then
 					local position = companySpawnpoint[self:getCompany():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
 			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)

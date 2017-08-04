@@ -86,7 +86,7 @@ companySkins[4] = {[61]=true, [147]=true, [240]=true, [253]=true,[255]=true, [27
 companyDutyMarker[4] = Vector3(1234.52, -63.90, 1011.32)
 companyDutyMarkerInterior[4] = 12
 companyDutyMarkerDimension[4] = 4
-companySpawnpoint[4] = {Vector3(1228.25, -60.51, 1011.33), 4, 12}
+companySpawnpoint[4] = {Vector3(1228.25, -60.51, 1011.33), 12, 4}
 
 CompanyStaticId = {
 	DRIVINGSCHOOL = 1,
