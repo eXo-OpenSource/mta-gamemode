@@ -37,13 +37,9 @@ Chair.Map = {
 }
 
 function Chair:constructor()
-	addEventHandler("onPlayerChairSitDown", root, bind(Chair.trySitDown, self))
-
-	if DEBUG then
-		pew = createObject(1811, 1517.51, -1660.52, 13.16)
-	end
-
 	self.m_Chairs = {}
+
+	addEventHandler("onPlayerChairSitDown", root, bind(Chair.trySitDown, self))
 end
 
 function Chair:removePlayer(objectId, player)
