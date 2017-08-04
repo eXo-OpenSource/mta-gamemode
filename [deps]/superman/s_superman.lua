@@ -25,34 +25,18 @@
 -- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 -- NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-local Superman = {}
 
--- Static global values
 local rootElement = getRootElement()
 local thisResource = getThisResource()
-
--- Resource events
 addEvent("superman:start", true)
 addEvent("superman:stop", true)
 
---
--- Start/stop functions
---
-function Superman.Start()
-  --addEventHandler("superman:start", rootElement, Superman.clientStart)
-  --addEventHandler("superman:stop", rootElement, Superman.clientStop)
-end
-addEventHandler("onResourceStart", getResourceRootElement(thisResource), Superman.Start, false)
-
-function Superman.clientStart( client )
+function startSuperMan ( client )
   setElementData(client, "superman:flying", true)
   setElementData(client, "forcedanimation", true)
 end
 
-function Superman.clientStop( client )
+function stopSuperMan( client )
   removeElementData(client, "superman:flying")
   removeElementData(client, "forcedanimation")
 end
-
-startSuperMan = Superman.clientStart
-stopSuperMan = Superman.clientStop

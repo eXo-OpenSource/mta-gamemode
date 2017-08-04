@@ -149,6 +149,7 @@ ADMIN_RANK_PERMISSION = {
 	["editHouse"] = RANK.Administrator,
 	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
 	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
+	["supermanFly"] = RANK.Moderator -- flying supporter
 }
 
 GroupRank = {

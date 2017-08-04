@@ -123,7 +123,7 @@ function Admin:constructor()
 end
 
 function Admin:Event_OnSuperManStartRequest() 
-	if client:getRank() >= RANK.Moderator then
+	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then 
 				exports["superman"]:startSuperMan(client) 
