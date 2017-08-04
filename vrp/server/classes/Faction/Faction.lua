@@ -422,6 +422,7 @@ function Faction:sendChatMessage(sourcePlayer, message)
 		local rankName = self.m_RankNames[rank]
 		local receivedPlayers = {}
 		local r,g,b = self.m_Color["r"],self.m_Color["g"],self.m_Color["b"]
+		message = message:gsub("%%", "%%%%")
 		local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 		for k, player in ipairs(self:getOnlinePlayers()) do
 			player:sendMessage(text, r, g, b)
@@ -522,7 +523,7 @@ function Faction:phoneTakeOff(player, key, state, caller)
 			end
 		end
 	end
-end	
+end
 
 function Faction:addLog(player, category, text)
 	StatisticsLogger:getSingleton():addGroupLog(player, "faction", self, category, text)
