@@ -109,10 +109,8 @@ function AmmuNationManager:createOrder(player, weaponTable)
 			if hitElement:getType() == "player" and not hitElement:getOccupiedVehicle() then
 				self:giveWeaponsFromOrder(hitElement, weaponTable)
 				StatisticsLogger:getSingleton():addAmmunationLog(hitElement, "Pickup", toJSON(weaponTable), 0)
-				if source then
-					if isElement(source) then 
-						destroyElement(source)
-					end
+				if source and isElement(source) then 
+					destroyElement(source)
 				end
 			end
 		end)
