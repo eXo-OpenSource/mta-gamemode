@@ -39,8 +39,6 @@ addEvent("superman:stop", true)
 -- Start/stop functions
 --
 function Superman.Start()
-  --addEventHandler("superman:start", rootElement, Superman.clientStart)
-  --addEventHandler("superman:stop", rootElement, Superman.clientStop)
 end
 addEventHandler("onResourceStart", getResourceRootElement(thisResource), Superman.Start, false)
 
