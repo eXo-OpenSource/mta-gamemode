@@ -62,7 +62,7 @@ function createModel(player, weapon, state, slot)
 			if weapon == 30 or weapon == 31 then
 				alternativeSlot4 = getElementData(player,"W_A:alt_w5")
 			end
-			if alternativeSlot4 then
+			if not alternativeSlot4 then
 				bone = alternativeTable[weapon][1]
 				x = alternativeTable[weapon][2]
 				y = alternativeTable[weapon][3]

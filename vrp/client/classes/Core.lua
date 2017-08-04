@@ -216,6 +216,7 @@ function Core:afterLogin()
 			object:setBreakable(false)
 		end
 	end
+
 end
 
 function Core:destructor()
