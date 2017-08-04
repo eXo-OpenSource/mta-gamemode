@@ -1215,6 +1215,7 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 end
 
 function Player:detachPlayerObject(object, collisionNextFrame)
+	if not self:isLoggedIn() then return end
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		object:detach(self)
