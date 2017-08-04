@@ -501,7 +501,7 @@ end
 
 function Faction:phoneTakeOff(player, key, state, caller)
 	if player and caller then
-		if instanceof(caller, Player) and instanceof(player, Player) then -- if this is not possible it means that any of those two players has been excommunicated from the classlib
+		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
 			if player.m_PhoneOn == false then
 				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
 				return
