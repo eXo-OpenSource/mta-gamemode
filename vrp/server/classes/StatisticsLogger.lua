@@ -366,6 +366,15 @@ function StatisticsLogger:addFishTradeLogs(PlayerId, ReceivingId, FishName, Fish
 	end
 end
 
+function StatisticsLogger:addVehicleTrunkLog(trunk, player, action, itemType, item, itemAmount, slot)
+	local userId = 0
+
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_VehicleTrunk (UserId, Trunk, Action, ItemType, Item, Amount, Slot) VALUES (?, ?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			userId, trunk, action, itemType, item, itemAmount, slot)
+end
+
 function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
 	local userId1, userId2 = 0, 0
 

@@ -107,8 +107,9 @@ function Trunk:addItem(player, item, amount, value)
 				slot["Value"] = value
 				player:sendInfo(_("Du hast %d %s in den Kofferraum (Slot %d) gelegt!", player, amount, item, index))
 				self:refreshClient(player)
+				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "insert", "item", item, amount, index)
 				return
-			else
+			elseabb
 				player:sendError(_("Du hast nicht genug %s!", player, item))
 			end
 		end
@@ -129,6 +130,7 @@ function Trunk:takeItem(player, slot)
 					self.m_ItemSlot[slot]["Value"] = ""
 					player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
 					self:refreshClient(player)
+					StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
 					return
 				else
 					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
@@ -164,6 +166,7 @@ function Trunk:takeWeapon(player, slot)
 						player:giveWeapon(weaponId, amount)
 						player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
 						self:refreshClient(player)
+						StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "weapon", weaponId, amount, slot)
 						return
 					else
 						player:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", player))
@@ -201,6 +204,7 @@ function Trunk:addWeapon(player, weaponId, muni)
 					slot["Amount"] = muni
 					player:sendInfo(_("Du hast eine/n %s mit %d Schuss in den Kofferraum (Slot %d) gelegt!", player, WEAPON_NAMES[weaponId], muni, index))
 					self:refreshClient(player)
+					StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "insert", "weapon", weaponId, muni, index)
 					return
 				else
 					player:sendInfo(_("Du hast nicht genug %s Munition!", player, WEAPON_NAMES[weaponId]))
