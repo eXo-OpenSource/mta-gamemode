@@ -656,7 +656,7 @@ function LocalPlayer:getWorldObject()
 end
 
 function LocalPlayer:Event_onClientPlayerSpawn()
-	NoDm:getSingleton():checkNoDm()
+
 
 	local col = createColSphere(localPlayer.position, 3)
 
@@ -686,7 +686,10 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 	)]]
 	local weaponAttachCheck = core:get("W_ATTACH", "alt_w5holst", false)
 	setElementData(localPlayer,"W_A:alt_w5", weaponAttachCheck)
-	triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5) 
+	triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
+	nextframe(function()
+		NoDm:getSingleton():checkNoDm()
+	end)
 end
 
 function LocalPlayer:startAnimation(_, ...)
