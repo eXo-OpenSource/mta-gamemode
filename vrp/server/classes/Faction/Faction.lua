@@ -500,25 +500,29 @@ function Faction:phoneCallAbbort(caller)
 end
 
 function Faction:phoneTakeOff(player, key, state, caller)
-	if player.m_PhoneOn == false then
-		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
-		return
-	end
-	if player:getPhonePartner() then
-		player:sendError(_("Du telefonierst bereits!", player))
-		return
-	end
-	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	caller:triggerEvent("callAnswer", player, voiceCall)
-	player:triggerEvent("callAnswer", caller, voiceCall)
-	caller:setPhonePartner(player)
-	player:setPhonePartner(caller)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+	if player and caller then
+		if instanceof(caller, Player) and instanceof(player, Player) then -- if this is not possible it means that any of those two players has been excommunicated from the classlib
+			if player.m_PhoneOn == false then
+				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+				return
+			end
+			if player:getPhonePartner() then
+				player:sendError(_("Du telefonierst bereits!", player))
+				return
+			end
+			self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+			caller:triggerEvent("callAnswer", player, voiceCall)
+			player:triggerEvent("callAnswer", caller, voiceCall)
+			caller:setPhonePartner(player)
+			player:setPhonePartner(caller)
+			for k, player in ipairs(self:getOnlinePlayers()) do
+				if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+					unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+				end
+			end
 		end
 	end
-end
+end	
 
 function Faction:addLog(player, category, text)
 	StatisticsLogger:getSingleton():addGroupLog(player, "faction", self, category, text)
