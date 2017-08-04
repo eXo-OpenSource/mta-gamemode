@@ -42,6 +42,7 @@ function BoxManager:constructor()
 				player:triggerEvent("abortDeathGUI", true)
 				self:onWasted(player)
 				self:respawnPlayer(player, killer)
+				player:setAlpha(255)
 				return true
 			end
 		end
@@ -196,6 +197,7 @@ function BoxManager:respawnPlayer(player, killer)
 	player:triggerEvent("deathmatchStartDeathScreen", killer or player, false)
 	fadeCamera(player, false, 2)
 	player:triggerEvent("Countdown", 5, "Respawn in")
+	player:setAlpha(255)
 	setTimer(function()
 		spawnPlayer(player, Vector3(765.34, 5.67, 1000.72), 0, 0, 5, 0)
 		player:setDefaultSkin()
