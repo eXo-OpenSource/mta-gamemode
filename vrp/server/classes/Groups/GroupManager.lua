@@ -82,7 +82,6 @@ function GroupManager:loadFromId(Id)
 			for i, groupRow in ipairs(result2) do
 				players[groupRow.Id] = groupRow.GroupRank
 			end
-
 			GroupManager.Map[row.Id] = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		end
 	end
