@@ -83,7 +83,9 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
                 return
             end
         else
-            hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+            --hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+			hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+			return
         end
 
 		if not vehicle.m_Tunings then

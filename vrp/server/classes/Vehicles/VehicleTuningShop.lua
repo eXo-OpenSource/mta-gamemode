@@ -139,7 +139,9 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
                 return
             end
         else
-            hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+            --hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+			hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+			return
         end
 
         -- Remove occupants
