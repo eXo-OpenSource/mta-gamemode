@@ -120,6 +120,7 @@ function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
+	if not vehicle.m_Tunings then vehicle.m_Tunings = VehicleTuning:new(vehicle) end
 	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
 	vehicle.OldColor1 = vehicle.m_Tunings:getTuning("Color1")
 	vehicle.OldColor2 = vehicle.m_Tunings:getTuning("Color2")
@@ -166,6 +167,7 @@ end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
    	local veh = client:getOccupiedVehicle()
+	if not veh.m_Tunings then veh.m_Tunings = VehicleTuning:new(veh) end
 	veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
 	veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
 	local oldCount = 0
@@ -182,6 +184,7 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 end
 
 function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, player)
+	if not source.m_Tunings then source.m_Tunings = VehicleTuning:new(source) end
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
 	self:setTexture(source, url, nil, false, true, player)
