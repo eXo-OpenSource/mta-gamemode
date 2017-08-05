@@ -15,7 +15,6 @@ function CircuitBreaker:constructor(callbackEvent)
 	self.m_CallBackEvent = callbackEvent
 
 	--Render targets
-	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
 	self.m_RT_lineBG = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- First Line Background
 	self.m_RT_lineBG2 = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- Seccond Line Background
@@ -366,16 +365,6 @@ end
 
 function CircuitBreaker:updateRenderTarget()
 	---
-	-- Update background render target
-	---
-	self.m_RT_background:setAsTarget()
-
-	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(0, 0, 0,100)) -- 323232
-	dxDrawRectangle(0, 0, screenWidth, self.m_HeaderHeight, tocolor(0, 0, 0, 170))
-
-	dxSetRenderTarget()
-
-	---
 	-- Update PCB render target
 	---
 
@@ -384,9 +373,11 @@ function CircuitBreaker:updateRenderTarget()
 	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.m_Textures.input)
 	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.m_Textures.output)
 
+	dxSetBlendMode("add")
 	for _, v in pairs(self.m_Levels[self.m_Level]) do
 		dxDrawImage(unpack(v))
 	end
+	dxSetBlendMode("blend")
 
 	dxSetRenderTarget()
 
