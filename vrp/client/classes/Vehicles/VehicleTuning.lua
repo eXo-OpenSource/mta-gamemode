@@ -22,7 +22,7 @@ function VehicleTuning:getTunings()
 end
 
 function VehicleTuning:applyTuning()
-	if self.m_Vehicle then
+	if self.m_Vehicle and isElement(self.m_Vehicle) and self.m_Vehicle.upgrades then
 		local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
 		local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
 		self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
