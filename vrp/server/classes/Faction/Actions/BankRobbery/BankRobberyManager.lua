@@ -21,7 +21,6 @@ function BankRobberyManager:constructor()
 	addEventHandler("bankRobberyLoadBag", root, bind(self.Event_LoadBag, self))
 	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
-
 end
 
 function BankRobberyManager:startRob(bank)
@@ -44,7 +43,7 @@ function BankRobberyManager:stopRob()
 	end
 	if self.m_OpenVaulTimer then
 		if isTimer(self.m_OpenVaulTimer) then
-			stopTimer(self.m_OpenVaulTimer)
+			killTimer(self.m_OpenVaulTimer)
 			if self.m_RobFaction then
 				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do
 					pl:triggerEvent("CountdownStop","Safe offen:")
