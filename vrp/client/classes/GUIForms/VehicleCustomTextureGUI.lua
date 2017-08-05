@@ -118,10 +118,12 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
 end
 
 function VehicleCustomTextureGUI:rotateVehicle()
-	local rot = self.m_Vehicle:getRotation()
-	rot.z = rot.z+1
-	rot.z = rot.z > 360 and rot.z-360 or rot.z
-	self.m_Vehicle:setRotation(rot)
+	if self.m_Vehicle then
+		local rot = self.m_Vehicle:getRotation()
+		rot.z = rot.z+1
+		rot.z = rot.z > 360 and rot.z-360 or rot.z
+		self.m_Vehicle:setRotation(rot)
+	end
 end
 
 function VehicleCustomTextureGUI:initTextures(textures)
@@ -164,7 +166,7 @@ addEventHandler("vehicleCustomTextureShopEnter", root,
 )
 
 function VehicleCustomTextureGUI.Exit(closedByServer)
-	if vehicleTuningShop then
+	if vehicleTuningShop and vehicleTuningShop.m_Vehicle then
 		vehicleTuningShop.m_Vehicle:setDimension(0)
 		localPlayer:setDimension(0)
 
