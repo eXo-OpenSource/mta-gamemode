@@ -1246,9 +1246,9 @@ function FactionState:Event_FactionRearm()
 		client:setHealth(100)
 		client:setArmor(100)
 		local wStorage, aStorage
-		for i = 1,12 do 
+		for i = 1,12 do
 			wStorage, aStorage = Guns:getSingleton():getWeaponInStorage( client, i)
-			if wStorage then 
+			if wStorage then
 				Guns:getSingleton():setWeaponInStorage(client, wStorage, false)
 			end
 		end
