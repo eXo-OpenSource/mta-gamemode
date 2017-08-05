@@ -771,6 +771,23 @@ function Vehicle:getTuningList(player)
 	end
 end
 
+-- Not used but maybe useful?
+function Vehicle:isPlayerSurfOnCar(player)
+	local colShape1 = createColSphere(self.matrix:transformPosition(Vector3(0, 2, 3)), 2.6)
+	local colShape2 = createColSphere(self.matrix:transformPosition(Vector3(0, -2, 3)), 2.6)
+	local players = table.append(colShape1:getElementsWithin"player", colShape2:getElementsWithin"player")
+	colShape1:destroy()
+	colShape2:destroy()
+
+	for _, p in pairs(players) do
+		if p == player then
+			return true
+		end
+	end
+
+	return false
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
