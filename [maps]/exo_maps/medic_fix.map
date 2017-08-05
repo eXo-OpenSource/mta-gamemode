@@ -1,0 +1,17 @@
+<map edf:definitions="editor_main">
+    <object id="object (vgsSairportland07) (1)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1776.04" posY="-1731.89" posZ="4.91" rotX="0" rotY="0" rotZ="92.5"></object>
+    <object id="object (vgsSairportland07) (2)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1833.8101" posY="-1760.5601" posZ="5.26" rotX="0" rotY="0" rotZ="89.999"></object>
+    <object id="object (vgsSairportland07) (3)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1705.25" posY="-1708.1" posZ="5.26" rotX="0" rotY="0" rotZ="89.995"></object>
+    <object id="object (vgsSairportland07) (4)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1774.54" posY="-1722.26" posZ="-8.59" rotX="0" rotY="90.25" rotZ="93"></object>
+    <object id="object (vgsSairportland07) (5)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1736.84" posY="-1668.36" posZ="-9.62" rotX="0.749" rotY="90.044" rotZ="180.002"></object>
+    <object id="object (vgsSairportland07) (6)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1858.59" posY="-1746.0601" posZ="-7.95" rotX="0" rotY="90" rotZ="270.75"></object>
+    <object id="object (xref_garagedoor) (1)" breakable="true" interior="0" alpha="0" model="2885" doublesided="false" scale="1" dimension="0" posX="1768.64" posY="-1748.2" posZ="11.61" rotX="0" rotY="0" rotZ="2.5"></object>
+    <object id="object (xref_garagedoor) (4)" breakable="true" interior="0" alpha="0" model="2885" doublesided="false" scale="1" dimension="0" posX="1758.58" posY="-1748.73" posZ="11.61" rotX="0" rotY="0" rotZ="2.499"></object>
+    <object id="object (xref_garagedoor) (5)" breakable="true" interior="0" alpha="0" model="2885" doublesided="false" scale="1" dimension="0" posX="1749.6801" posY="-1748.66" posZ="11.73" rotX="0" rotY="0" rotZ="2.499"></object>
+    <object id="object (vgsSairportland07) (9)" breakable="true" interior="0" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1802.65" posY="-1669.4" posZ="-6.09" rotX="0.747" rotY="90.044" rotZ="0"></object>
+    <object id="object (chinaTgarageDoor) (4)" breakable="true" interior="0" alpha="0" model="2957" doublesided="false" scale="1" dimension="0" posX="1775.75" posY="-1747.27" posZ="9.72" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (3)" breakable="true" interior="0" alpha="0" model="2774" doublesided="false" scale="1" dimension="0" posX="1765.62" posY="-1743.34" posZ="-1.94" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (5)" breakable="true" interior="0" alpha="0" model="2774" doublesided="false" scale="1" dimension="0" posX="1749.3" posY="-1726.51" posZ="-1.94" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (6)" breakable="true" interior="0" alpha="0" model="2774" doublesided="false" scale="1" dimension="0" posX="1774.01" posY="-1726.54" posZ="-1.94" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (7)" breakable="true" interior="0" alpha="0" model="2774" doublesided="false" scale="1" dimension="0" posX="1790.1" posY="-1743.34" posZ="-1.94" rotX="0" rotY="0" rotZ="0"></object>
+</map>
