@@ -61,6 +61,7 @@ end
 
 function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
+	self:registerJobVehicle(player, vehicle, true, false)
 
 	if vehicleModel == 531 then
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
@@ -75,7 +76,6 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 			tractor:attachTrailer(source)
 		end)
 	elseif vehicleModel == 478 then --Walton
-		self:registerJobVehicle(player, vehicle, true, false)
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				self.m_CurrentPlants[player] = 0
