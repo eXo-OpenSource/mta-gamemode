@@ -99,7 +99,9 @@ end
 
 function VehicleCustomTextureGUI:destructor(closedByServer)
     if not closedByServer then
-		TextureReplacer.deleteFromElement(self.m_Vehicle)
+		if self.m_Vehicle and isElement(self.m_Vehicle) then
+			TextureReplacer.deleteFromElement(self.m_Vehicle)
+		end
         triggerServerEvent("vehicleCustomTextureAbbort", localPlayer)
 		self.m_TuningOld:applyTuning()
     end
@@ -110,7 +112,9 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
     if self.m_Music then
         self.m_Music:destroy()
     end
-    self.m_Vehicle:setOverrideLights(0)
+	if self.m_Vehicle and isElement(self.m_Vehicle) then
+		self.m_Vehicle:setOverrideLights(0)
+	end
     showChat(true)
 	RadioGUI:getSingleton():setVolume(self.m_CarRadioVolume)
 	HUDRadar:getSingleton():show()
@@ -118,7 +122,7 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
 end
 
 function VehicleCustomTextureGUI:rotateVehicle()
-	if self.m_Vehicle then
+	if self.m_Vehicle and isElement(self.m_Vehicle) then
 		local rot = self.m_Vehicle:getRotation()
 		rot.z = rot.z+1
 		rot.z = rot.z > 360 and rot.z-360 or rot.z
@@ -166,10 +170,9 @@ addEventHandler("vehicleCustomTextureShopEnter", root,
 )
 
 function VehicleCustomTextureGUI.Exit(closedByServer)
-	if vehicleTuningShop and vehicleTuningShop.m_Vehicle then
+	if vehicleTuningShop and vehicleTuningShop.m_Vehicle and isElement(vehicleTuningShop.m_Vehicle) then
 		vehicleTuningShop.m_Vehicle:setDimension(0)
 		localPlayer:setDimension(0)
-
 		delete(vehicleTuningShop, closedByServer)
 		vehicleTuningShop = false
 		localPlayer.m_inTuning = false
