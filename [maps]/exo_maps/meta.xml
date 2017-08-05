@@ -11,7 +11,7 @@
 
 	<map src="atm.map" />
 	<map src="CrackPalace.map" />
-
+	<map src="medic_fix.map" />
 	<!--<map src="fun/boxarena.map" />/-->
 
 	<map src="fraktionen/army.map" />

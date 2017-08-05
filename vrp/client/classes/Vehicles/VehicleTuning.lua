@@ -22,29 +22,31 @@ function VehicleTuning:getTunings()
 end
 
 function VehicleTuning:applyTuning()
-	local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
-	local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
-	self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
-	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
-	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
+	if self.m_Vehicle and isElement(self.m_Vehicle) and self.m_Vehicle.upgrades then
+		local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
+		local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
+		self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
+		local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
+		self.m_Vehicle:setHeadLightColor(rh, gh, bh)
+	
+		for _, v in pairs(self.m_Vehicle.upgrades) do
+			removeVehicleUpgrade(self.m_Vehicle, v)
+		end
 
-	for _, v in pairs(self.m_Vehicle.upgrades) do
-		removeVehicleUpgrade(self.m_Vehicle, v)
-	end
+		setElementData(self.m_Vehicle, "Neon", false)
+		setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
+		Neon.Vehicles[self.m_Vehicle] = nil
 
-	setElementData(self.m_Vehicle, "Neon", false)
-	setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-	Neon.Vehicles[self.m_Vehicle] = nil
+		for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
+			addVehicleUpgrade(self.m_Vehicle, v)
+		end
 
-	for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
-		addVehicleUpgrade(self.m_Vehicle, v)
-	end
+		self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"] == 1)
+		self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"])
 
-	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"] == 1)
-	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"])
-
-    if self.m_Tuning["Neon"] == 1 then
-		Neon.Vehicles[self.m_Vehicle] = true
+		if self.m_Tuning["Neon"] == 1 then
+			Neon.Vehicles[self.m_Vehicle] = true
+		end
 	end
 end
 
