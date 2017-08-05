@@ -35,13 +35,12 @@ function NonCollisionArea:constructor( col )
 		end
 	)
 	
-	addEventHandler("onVehicleEnter",root,
+	addEventHandler("onVehicleStartEnter",root,
 		function( player, seat ) 
 			if seat == 0 then 
 				if NonCollisionArea[source] then 
 					setElementCollisionsEnabled(source,true)
 					setElementAlpha(source, 255)
-					setElementFrozen(source,false)
 				end
 			end
 		end
