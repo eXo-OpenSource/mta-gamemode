@@ -12,7 +12,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 
 	self.m_Id = Id
 	self.m_Players = players[1] or {}
-	self.m_PlayerLoans = players[2]
+	self.m_PlayerLoans = players[2] or {}
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_Name = name
