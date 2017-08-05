@@ -19,6 +19,7 @@ function NonCollisionArea:constructor( col )
 					if not instanceof(hitElement,FactionVehicle) then 	
 						setElementAlpha(hitElement, 200)
 						setElementCollisionsEnabled(hitElement,false)
+						setElementFrozen(hitElement,true)
 					end
 				end
 				hitElement.m_CollisionArea = self 
