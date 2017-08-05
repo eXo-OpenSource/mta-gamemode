@@ -329,7 +329,16 @@ function CircuitBreaker:bindKeys()
 			end
 		end
 
+	self.fn_StopGame =
+		function()
+			if self.m_State == "done" then
+				if self.m_CallBackEvent then
+					triggerServerEvent(self.m_CallBackEvent, localPlayer)
+				end
+			end
 
+			delete(self)
+		end
 
 	bindKey("arrow_l", "down", self.fn_changeDirection)			bindKey("a", "down", self.fn_changeDirection)
 	bindKey("arrow_r", "down", self.fn_changeDirection)			bindKey("d", "down", self.fn_changeDirection)
@@ -338,10 +347,6 @@ function CircuitBreaker:bindKeys()
 
 	bindKey("enter", "down", self.fn_StartGame)
 	bindKey("space", "down", self.fn_StopGame)
-end
-
-function CircuitBreaker:fn_StopGame()
-	delete(CircuitBreaker:getSingleton())
 end
 
 function CircuitBreaker:changeDirection(key)
