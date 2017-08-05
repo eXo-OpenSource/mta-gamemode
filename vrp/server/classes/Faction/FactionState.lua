@@ -889,6 +889,7 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
 							if not target.isGrabbedInVehicle or (force and bool) then
 								target.isGrabbedInVehicle = true
+								target:setData("isTied", true, true)
 								toggleControl(target, "fire", false) -- this is not working sometimes >_>
 
 								if not vehicle.eventStartExit then
@@ -902,6 +903,7 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 								end
 							else
 								target.isGrabbedInVehicle = false
+								target:setData("isTied", false, true)
 								toggleControl(target, "fire", true)
 
 								-- only remove, when no grabbed players are in the vehicle
@@ -1243,6 +1245,13 @@ function FactionState:Event_FactionRearm()
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
 		client:setHealth(100)
 		client:setArmor(100)
+		local wStorage, aStorage
+		for i = 1,12 do 
+			wStorage, aStorage = Guns:getSingleton():getWeaponInStorage( client, i)
+			if wStorage then 
+				Guns:getSingleton():setWeaponInStorage(client, wStorage, false)
+			end
+		end
 		local inv = client:getInventory()
 		if inv then
 			inv:removeAllItem("Einsatzhelm")

@@ -63,15 +63,17 @@ function createModel(player, weapon, state, slot)
 				alternativeSlot4 = getElementData(player,"W_A:alt_w5")
 			end
 			if not alternativeSlot4 then
-				bone = alternativeTable[weapon][1]
-				x = alternativeTable[weapon][2]
-				y = alternativeTable[weapon][3]
-				z = alternativeTable[weapon][4]
-				rx = alternativeTable[weapon][5]
-				ry = alternativeTable[weapon][6]
-				rz = alternativeTable[weapon][7]
-				objectID = alternativeTable[weapon][8]
-				slotID = alternativeTable[weapon][9]
+				if alternativeTable[weapon] then
+					bone = alternativeTable[weapon][1]
+					x = alternativeTable[weapon][2]
+					y = alternativeTable[weapon][3]
+					z = alternativeTable[weapon][4]
+					rx = alternativeTable[weapon][5]
+					ry = alternativeTable[weapon][6]
+					rz = alternativeTable[weapon][7]
+					objectID = alternativeTable[weapon][8]
+					slotID = alternativeTable[weapon][9]
+				end
 			end
 			local bIsEnabled
 			if slotChecks[slot] and (Weapon ~= 32 and Weapon ~= 28) then

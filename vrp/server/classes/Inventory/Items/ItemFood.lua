@@ -29,6 +29,8 @@ function ItemFood:destructor()
 end
 
 function ItemFood:use(player)
+	if player.isTasered then return false end
+
 	local ItemSettings = ItemFood.Settings[self:getName()]
 	local block, animation, time = unpack(ItemSettings["Animation"])
 

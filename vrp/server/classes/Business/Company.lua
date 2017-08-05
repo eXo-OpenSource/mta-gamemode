@@ -201,6 +201,7 @@ function Company:sendChatMessage(sourcePlayer,message)
 	local rank = self.m_Players[playerId]
 	local rankName = self.m_RankNames[rank]
     local receivedPlayers = {}
+	message = message:gsub("%%", "%%%%")
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, 100, 150, 250)

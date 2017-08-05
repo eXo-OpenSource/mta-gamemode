@@ -40,12 +40,12 @@ addEventHandler("showDrivingSchoolMenu", root,
 
 
 function DrivingSchoolMenuGUI:callInstructor()
-	if localplayer.callInstructorCooldown and getTickCount() - localplayer.callInstructorCooldown < 60000 then
+	if localPlayer.callInstructorCooldown and getTickCount() - localPlayer.callInstructorCooldown < 60000 then
 		ErrorBox:new(_"Du hast bereits alle Fahrlerer gerufen. Bitte gedulde dich etwas.")
 		return
 	end
 
-	localplayer.callInstructorCooldown = getTickCount()
+	localPlayer.callInstructorCooldown = getTickCount()
 	triggerServerEvent("drivingSchoolMenu", localPlayer, "callInstructor")
 end
 

@@ -39,6 +39,22 @@ function AttackSession:destructor()
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
+function AttackSession:logSession(winner)
+	local attackEnd = getRealTime().timestamp
+	local attackStart = self.m_AreaObj.m_LastAttack or 0
+	local attackerFaction = self.m_Faction1
+	if attackerFaction then 
+		attackerFaction = attackerFaction.m_Name
+	end
+	local ownerFaction = self.m_Faction2 
+	if ownerFaction then 
+		ownerFaction = self.m_Faction2.m_Name
+	end
+	if winner then 
+		winner = winner.m_Name
+	end
+	StatisticsLogger:getSingleton():addGangwarLog(self.m_AreaObj.m_Name, attackerFaction, ownerFaction, attackStart, attackEnd, winner)
+end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
@@ -308,7 +324,7 @@ function AttackSession:attackLose() --// loose for team1
 
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet wurde verteidigt!",0,180,40,true)
-
+	self:logSession(self.m_Faction2)
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
 	if isTimer( self.m_BattleTime ) then
@@ -326,7 +342,7 @@ function AttackSession:attackWin() --// win for team1
 
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet ist verloren!",2000,0,0,true)
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff war erfolgreich!",0,180,40,true)
-
+	self:logSession(self.m_Faction1)
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
 	if isTimer( self.m_BattleTime ) then

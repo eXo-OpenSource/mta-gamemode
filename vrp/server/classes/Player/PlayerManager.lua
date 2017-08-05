@@ -789,6 +789,10 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		if client.texturePreviewActive then
 			client:triggerEvent("texturePreviewForceClose")
 		end
+
+		if client.sittingOn then
+			Chair:getSingleton():trySitDown()
+		end
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then

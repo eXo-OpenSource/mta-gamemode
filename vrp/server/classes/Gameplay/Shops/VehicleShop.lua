@@ -48,12 +48,12 @@ end
 function VehicleShop:onMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if hitElement.vehicle then hitElement:sendWarning("Bitte steige erst aus dem Fahrzeug aus!") return end
-		
+
 		local vehicles = {}
 		for model, vehicleData in pairs(self.m_VehicleList) do
 			vehicles[model] = {vehicleData.vehicle, vehicleData.price, vehicleData.level}
 		end
-		
+
 		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
 	end
 end
@@ -77,8 +77,11 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		if vehicle then
 			player:takeMoney(price, "Fahrzeug-Kauf")
 			self:giveMoney(price, "Fahrzeug-Verkauf")
-			warpPedIntoVehicle(player, vehicle)
-			player:triggerEvent("vehicleBought")
+
+			setTimer(function(player, vehicle)
+				player:warpIntoVehicle(vehicle)
+				player:triggerEvent("vehicleBought")
+			end, 100, 1, player, vehicle)
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end

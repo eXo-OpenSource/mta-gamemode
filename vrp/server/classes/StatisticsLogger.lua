@@ -22,7 +22,10 @@ function StatisticsLogger:destructor()
 end
 
 function StatisticsLogger:getZone(player)
-	return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	if player then 
+		return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	end
+	return "unknown"
 end
 
 function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
@@ -366,6 +369,15 @@ function StatisticsLogger:addFishTradeLogs(PlayerId, ReceivingId, FishName, Fish
 	end
 end
 
+function StatisticsLogger:addVehicleTrunkLog(trunk, player, action, itemType, item, itemAmount, slot)
+	local userId = 0
+
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_VehicleTrunk (UserId, Trunk, Action, ItemType, Item, Amount, Slot) VALUES (?, ?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			userId, trunk, action, itemType, item, itemAmount, slot)
+end
+
 function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
 	local userId1, userId2 = 0, 0
 
@@ -395,4 +407,9 @@ function StatisticsLogger:addRaidLog(attacker, target, success, money)
 
 	sqlLogs:queryExec("INSERT INTO ??_Raid (Attacker, Target, Money, Success, Position, Faction, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 			userId, userId2, money, success, self:getZone(target), faction)
+end
+
+function StatisticsLogger:addGangwarLog(area, attacker, owner, starttimestamp, endtimestamp, winner)
+	sqlLogs:queryExec("INSERT INTO ??_Gangwar (Gebiet, Angreifer, Besitzer, StartZeit, EndZeit, Gewinner) VALUES (?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			area, attacker, owner, starttimestamp, endtimestamp, winner)
 end

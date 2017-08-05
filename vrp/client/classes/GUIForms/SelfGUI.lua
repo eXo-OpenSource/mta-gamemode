@@ -443,6 +443,7 @@ function SelfGUI:JobQuitButton_Click()
 	self.m_JobNameLabel:setText("-")
 	self.m_JobQuitButton:setVisible(false)
 	localPlayer:giveAchievement(26)
+	GPS:getSingleton():stopNavigation()
 end
 
 function SelfGUI:CompanyMenuButton_Click()

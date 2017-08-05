@@ -42,11 +42,11 @@ function BankRobberyManager:stopRob()
 			end
 		end
 	end
-	if self.m_OpenVaulTimer then 
-		if isTimer(self.m_OpenVaulTimer) then 
+	if self.m_OpenVaulTimer then
+		if isTimer(self.m_OpenVaulTimer) then
 			stopTimer(self.m_OpenVaulTimer)
-			if self.m_RobFaction then 
-				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do 
+			if self.m_RobFaction then
+				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do
 					pl:triggerEvent("CountdownStop","Safe offen:")
 				end
 			end
@@ -80,15 +80,17 @@ end
 
 function BankRobberyManager:Event_onHackSuccessful()
 	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-		player:triggerEvent("forceCircuitBreakerClose")
-		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
-		player.m_InCircuitBreak = false
-		self.m_CircuitBreakerPlayers[player] = nil
+		if isElement(player) then
+			player:triggerEvent("forceCircuitBreakerClose")
+			player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
+			player.m_InCircuitBreak = false
+			self.m_CircuitBreakerPlayers[player] = nil
+		end
 	end
-	self.m_CircuitBreakerPlayers = {	}
+	self.m_CircuitBreakerPlayers = {}
 	client:giveKarma(-5)
 	local brobFaction = client:getFaction()
-	for k, player in ipairs(brobFaction:getOnlinePlayers()) do 
+	for k, player in ipairs(brobFaction:getOnlinePlayers()) do
 		player:triggerEvent("Countdown", (BANKROB_VAULT_OPEN_TIME/1000), "Safe offen:")
 	end
 	self.m_OpenVaulTimer = setTimer(bind(self.m_CurrentBank.openSafeDoor,self.m_CurrentBank), BANKROB_VAULT_OPEN_TIME, 1)

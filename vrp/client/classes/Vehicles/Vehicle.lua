@@ -229,7 +229,7 @@ addEventHandler("onClientVehicleDamage", root,
 		end
 		if getVehicleOccupant(source,0) == localPlayer then
 			if not weapon then
-				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
+				triggerServerEvent("onVehicleCrash", source, loss)
 			end
 		end
 

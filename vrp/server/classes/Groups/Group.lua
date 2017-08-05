@@ -8,6 +8,8 @@
 Group = inherit(Object)
 
 function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
+	if not players then players = {} end -- can happen due to Group.create using different constructor
+
 	self.m_Id = Id
 	self.m_Players = players[1] or {}
 	self.m_PlayerLoans = players[2]
@@ -401,6 +403,7 @@ function Group:sendChatMessage(sourcePlayer, message)
     local rank = self.m_Players[playerId]
     local rankName = self.m_RankNames[tostring(rank)]
     local receivedPlayers = {}
+	message = message:gsub("%%", "%%%%")
     local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
     for k, player in ipairs(self:getOnlinePlayers()) do
         player:sendMessage(text, 0, 255, 150)

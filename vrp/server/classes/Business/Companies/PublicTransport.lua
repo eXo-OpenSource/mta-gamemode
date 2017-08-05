@@ -341,8 +341,14 @@ function PublicTransport:stopBusTour(vehicle, player)
 	if player then
 		self:stopBusTour_Driver(player)
 	end
-	if  isElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle]) then
-		destroyElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle])
+	if vehicle.Bus_NextStop then
+		if self.m_BusStops[vehicle.Bus_NextStop] then
+			if self.m_BusStops[vehicle.Bus_NextStop].marker then
+				if isElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle]) then
+					destroyElement(self.m_BusStops[vehicle.Bus_NextStop].marker[vehicle])
+				end
+			end
+		end
 	end
 	for i,v in pairs(vehicle:getOccupants()) do
 		if v.vehicleSeat ~= 0 then

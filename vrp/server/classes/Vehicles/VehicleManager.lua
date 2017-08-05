@@ -557,15 +557,16 @@ function VehicleManager:syncVehicleInfo(player)
 	player:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(player), player:getGarageType(), player:getHangarType())
 end
 
-function VehicleManager:Event_OnVehicleCrash( veh, loss )
-	if veh:getVehicleType() == VehicleType.Plane or veh:getVehicleType() == VehicleType.Helicopter then
+function VehicleManager:Event_OnVehicleCrash(loss)
+	if not source then return end
+	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter or source:getVehicleType() == VehicleType.Bike then
 		return false
 	end
-	local occupants = getVehicleOccupants(veh)
-	local speedx, speedy, speedz = getElementVelocity ( veh )
+	local occupants = getVehicleOccupants(source)
+	local speedx, speedy, speedz = getElementVelocity(source)
 	local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
 	local tickCount = getTickCount()
-	if getPedOccupiedVehicle(source) == veh then
+	if client.vehicle == source then
 		if sForce >0.4 and loss*0.1 >= 2  then
 			for seat, player in pairs(occupants) do
 				if getElementType(player) == "player" then
@@ -592,9 +593,9 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 						if not player.m_SeatBelt then
 							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+							setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
 							setTimer(setPedAnimation, 5000,1, player, nil)
-						elseif player.m_SeatBelt == veh then
+						elseif player.m_SeatBelt == source then
 							if not player.m_lastInjuryMe then
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 								player.m_lastInjuryMe = tickCount
@@ -602,11 +603,6 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 								player.m_lastInjuryMe = tickCount
 							end
-						else
-							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
-							setTimer(setPedAnimation, 5000,1, player, nil)
 						end
 					end
 					player:triggerEvent("clientBloodScreen")
