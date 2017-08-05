@@ -6,11 +6,14 @@
 -- *
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
+addRemoteEvents{"startCircuitBreaker", "forceCircuitBreakerClose"}
 
-function CircuitBreaker:constructor()
+function CircuitBreaker:constructor(callbackEvent)
 	self.WIDTH, self.HEIGHT = 1080, 650
 	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
+	self.m_CallBackEvent = callbackEvent
+
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
@@ -22,7 +25,6 @@ function CircuitBreaker:constructor()
 	self:loadImages()
 	self:createGameplay()
 	self:updateRenderTarget()
-
 	self:bindKeys()
 
 	self.m_fnRender = bind(CircuitBreaker.onClientRender, self)
@@ -72,10 +74,6 @@ function CircuitBreaker:destructor()
 	end
 
 	if self.m_RT_endscreen then self.m_RT_endscreen:destroy() end
-end
-
-function CircuitBreaker:setCallBackEvent(callbackEvent)
-	self.m_CallBackEvent = callbackEvent
 end
 
 function CircuitBreaker:loadImages()
@@ -279,7 +277,6 @@ function CircuitBreaker:setState(state)
 		end
 	end
 
-
 	if state == "complete" then	--Todo: Call next level via 5 sec. timer?
 		self.m_State = "complete"
 		outputDebug("level complete")
@@ -462,7 +459,7 @@ function CircuitBreaker:onClientRender()
 
 	-- Render game
 	local scale = 0.8
-	local origWidth,origHeight = self.WIDTH, self.HEIGHT
+	local origWidth, origHeight = self.WIDTH, self.HEIGHT
 	local origHeader = self.m_HeaderHeight
 	local origSWidth, origSHeight = screenWidth, screenHeight
 	self.WIDTH = self.WIDTH *scale
@@ -517,6 +514,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 	if count > 3 then
 		return outputConsole("Zu wenig Videospeicher in MTA-Memory!")
 	end
+
 	local WIDTH, HEIGHT = width, height
 	local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
 	local line = 5
@@ -560,8 +558,9 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 			end
 		end
 	else
-		return self:createStructurGroup(width,height,count+1)
+		return self:createStructurGroup(width, height, count + 1)
 	end
+
 	dxSetRenderTarget()
 	return collideImage
 end
@@ -595,17 +594,22 @@ function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, heigh
 	end
 end
 
-addEvent("startCircuitBreaker", true)
 addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
-		delete(CircuitBreaker:getSingleton())
-        local instance = CircuitBreaker:new()
-		instance:setCallBackEvent(callbackEvent)
+		if CircuitBreaker:isInstantiated() then
+			outputChatBox("instantiated")
+			delete(CircuitBreaker:getSingleton())
+		end
+
+   		CircuitBreaker:new(callbackEvent)
     end
 )
 
-addEvent("forceCircuitBreakerClose", true)
-addEventHandler("forceCircuitBreakerClose", root, function()
-	CircuitBreaker:getSingleton():setState("idle")
-	delete(CircuitBreaker:getSingleton())
-end)
+addEventHandler("forceCircuitBreakerClose", root,
+	function()
+		if CircuitBreaker:isInstantiated() then
+			outputChatBox("instantiated")
+			delete(CircuitBreaker:getSingleton())
+		end
+	end
+)
