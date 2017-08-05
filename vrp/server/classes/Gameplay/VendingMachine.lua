@@ -50,8 +50,8 @@ function VendingMachine.Event_vendingRob()
 		client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
 
 		-- Give wage
-		client:giveWanteds(2)
-		client:sendMessage("Verbrechen begangen: Automaten-Raub, 1 Wanteds", 255, 255, 0)
+		client:giveWanteds(1)
+		client:sendMessage("Verbrechen begangen: Automaten-Raub, 1 Wanted", 255, 255, 0)
 		client:giveMoney(math.random(10, 100), "Automaten-Raub")
 		client:giveKarma(-1)
 
