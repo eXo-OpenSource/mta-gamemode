@@ -116,7 +116,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
                 playerFile[row.Id].ElementName = CompanyManager:getSingleton().Map[row.ElementId].m_ShortName -- This will break!! I'm sure!
             end
 
-			if (faction and row.ElementType == "faction" and faction.m_Id == row.ElementId) or (company and row.ElementType == "company" and company.m_Id == row.ElementId) or (client:getRank() >= RANK.Supporter) then
+			if ((faction and row.ElementType == "faction" and faction.m_Id == row.ElementId) or (company and row.ElementType == "company" and company.m_Id == row.ElementId) or (client:getRank() >= RANK.Supporter)) and type(row.InternalReason) == "string" then
 				playerFile[row.Id].InternalReason = row.InternalReason and row.InternalReason or utf8.escape(row.InternalReason)
 			end
         end
