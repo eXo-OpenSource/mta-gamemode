@@ -87,8 +87,8 @@
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
 	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
-
-
+	<script src="server/classes/NonCollisionArea.lua" type="server"/>
+	
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
 	<script src="server/classes/Super/Root.lua" type="server"/>
