@@ -107,7 +107,7 @@ end
 
 function GasStation:checkRender() 
 	for obj, k in pairs(self.m_StreamedObjects) do 
-		if obj.getPosition then 
+		if obj and isElement(obj) and obj.getPosition then 
 			if getDistanceBetweenPoints3D(obj:getPosition(), localPlayer:getPosition() ) <= 30 then 
 				return true
 			end
