@@ -1815,7 +1815,7 @@
 	<include resource="Water" />
 	<include resource="WetRoads" />
 	<include resource="Weapon_Attach" />
-
+	<include resource="superman" />
 	<!-- ACL Request -->
 	<aclrequest>
 		<right name="function.startResource" access="true" />
