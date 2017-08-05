@@ -80,10 +80,12 @@ end
 
 function BankRobberyManager:Event_onHackSuccessful()
 	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-		player:triggerEvent("forceCircuitBreakerClose")
-		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
-		player.m_InCircuitBreak = false
-		self.m_CircuitBreakerPlayers[player] = nil
+		if isElement(player) then
+			player:triggerEvent("forceCircuitBreakerClose")
+			player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
+			player.m_InCircuitBreak = false
+			self.m_CircuitBreakerPlayers[player] = nil
+		end
 	end
 	self.m_CircuitBreakerPlayers = {}
 	client:giveKarma(-5)
