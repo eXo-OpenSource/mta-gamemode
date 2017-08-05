@@ -186,6 +186,7 @@ function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
 		self:closeFor(client, veh)
 	else 
 		self:closeFor(client, false)
+		client:setDimension(0)
 	end
 end	
 
