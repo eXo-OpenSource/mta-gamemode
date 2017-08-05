@@ -1245,6 +1245,13 @@ function FactionState:Event_FactionRearm()
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
 		client:setHealth(100)
 		client:setArmor(100)
+		local wStorage, aStorage
+		for i = 1,12 do 
+			wStorage, aStorage = Guns:getSingleton():getWeaponInStorage( client, i)
+			if wStorage then 
+				Guns:getSingleton():setWeaponInStorage(client, wStorage, false)
+			end
+		end
 		local inv = client:getInventory()
 		if inv then
 			inv:removeAllItem("Einsatzhelm")
