@@ -650,8 +650,8 @@ function getVehicleInteractType(vehicle)
     local trucks = {433, 524, 455, 403, 443, 515, 514, 408}
 
     -- front doors
-    -- 407 and 544 firetrucks, 601 swat tank , 574 sweeper, 483 camper, 588 hotdog, 444 monstertruck, 583 tug
-    local special = {407, 544, 601, 573, 574, 483, 588, 444, 583}
+    -- 407 and 544 firetrucks, 601 swat tank , 574 sweeper, 483 camper, 588 hotdog, 444 monstertruck, 583 tug, 431 Bus, 437 Coach
+    local special = {407, 544, 601, 573, 574, 483, 588, 444, 583, 431, 437}
 
     -- stretch
     local stretch = {409}
@@ -664,7 +664,6 @@ function getVehicleInteractType(vehicle)
 		["Truck"] = trucks,
 		["Special"] = special,
 		["stretch"] = stretch
-		--["hotknife"] =
 	}
 
     for name, type in pairs(types) do
