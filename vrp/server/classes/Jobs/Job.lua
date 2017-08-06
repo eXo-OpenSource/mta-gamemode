@@ -9,7 +9,6 @@ Job = inherit(Singleton)
 function Job:constructor()
 	self.m_DontEndOnVehicleDestroy = false
 	self.m_OnJobVehicleDestroyBind = bind(self.onJobVehicleDestroy, self)
-
 end
 
 function Job:getId()

@@ -1,135 +1,107 @@
 JobFarmer = inherit(Job)
 
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
---local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
-local MONEY_PER_PLANT = 58*1.8 --// default 10
-local MONEY_PLANT_HARVESTER = 10*2
-local MONEY_PLANT_TRACTOR = 8*1.6
+local MONEY_PER_PLANT = 104
+local MONEY_PLANT_HARVESTER = 20
+local MONEY_PLANT_TRACTOR = 13
 
 function JobFarmer:constructor()
 	Job.constructor(self)
-	self.m_Plants = {}
 
-	local x,y,z,rotation = unpack ( VEHICLE_SPAWN )
+	local x, y, z, rotation = unpack (VEHICLE_SPAWN)
 	self.m_VehicleSpawner = VehicleSpawner:new(x,y,z, {"Tractor"; "Combine Harvester"; "Walton"}, rotation, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
+	self.m_Plants = {}
 	self.m_DeliveryBlips = {}
-
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
 
-	local x,y,z = unpack(STOREMARKERPOS)
-
-	self.m_Storemarker = self:createJobElement ( createMarker (x,y,z,"cylinder",3,0,125,0,125) )
-
+	local x, y, z = unpack(STOREMARKERPOS)
+	self.m_Storemarker = self:createJobElement (createMarker (x,y,z,"cylinder",3,0,125,0,125))
 	addEventHandler("onMarkerHit",self.m_Storemarker,bind(self.storeHit,self))
 
-
 	-- // this the delivery BLIP
-	x,y,z = unpack (PLANT_DELIVERY)
-
+	local x,y,z = unpack(PLANT_DELIVERY)
 	self.m_DeliveryMarker = self:createJobElement(createMarker(x,y,z,"corona",4))
-
 	addEventHandler ("onMarkerHit",self.m_DeliveryMarker,bind(self.deliveryHit,self))
 
 	for key, value in ipairs (JobFarmer.PlantPlaces) do
-		x,y,z = unpack(value)
+		local x,y,z = unpack(value)
 
-		addEventHandler("onColShapeHit",createColSphere (x,y,z,3),
-			function (hitElement)
+		addEventHandler("onColShapeHit", createColSphere(x,y,z,3),
+			function(hitElement)
 				if getElementType(hitElement) ~= "vehicle" then
 					return
 				end
 
 				local player = getVehicleOccupant(hitElement,0)
-
 				if player then
 					self:createPlant(player,source,hitElement)
 				end
 			end
 		)
 	end
-
 end
 
 function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
 	self:registerJobVehicle(player, vehicle, true, false)
 
-	if vehicleModel == 531 then
+	if vehicleModel == 531 then -- Tractor
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
 
-		addEventHandler("onElementDestroy", vehicle,
-			function()
-				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
-			end, false)
-
-		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
-			tractor:attachTrailer(source)
-		end)
-	elseif vehicleModel == 478 then --Walton
+		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor) tractor:attachTrailer(source)	end)
+		addEventHandler("onElementDestroy", vehicle, function() if source.trailer and isElement(source.trailer) then source.trailer:destroy() end end, false)
+	elseif vehicleModel == 478 then -- Walton
 		addEventHandler("onElementDestroy", vehicle,
 			function()
 				self.m_CurrentPlants[player] = 0
 				self:updatePrivateData(player)
-			end, false)
+			end, false
+		)
 	end
 
-
-
-	player.farmerVehicle = vehicle
-	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 and source:getModel() ~= 478 then
-			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-				local income = player:getData("Farmer.Income")
-				local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
-				vehPlayer.m_LastJobAction = getRealTime().timestamp
-				if vehicle:getModel() == 531 then
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
-				else
-					StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
+	addEventHandler("onVehicleExit", vehicle,
+		function(vehPlayer, seat)
+			if seat == 0 and source:getModel() ~= 478 then
+				if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
+					local income = player:getData("Farmer.Income")
+					local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
+					vehPlayer.m_LastJobAction = getRealTime().timestamp
+					if vehicle:getModel() == 531 then
+						StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
+					else
+						StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
+					end
+					vehPlayer:addBankMoney(income, "Farmer-Job")
+					vehPlayer:setData("Farmer.Income", 0)
+					vehPlayer:triggerEvent("Job.updateIncome", 0)
 				end
-				vehPlayer:addBankMoney( income, "Farmer-Job")
-				vehPlayer:setData("Farmer.Income", 0)
-				vehPlayer:triggerEvent("Job.updateIncome", 0)
-
-				addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-					vehPlayer:sendError("Du kannst nicht in dieses Jobfahrzeug!")
-					cancelEvent()
-				end)
 			end
-			vehicle:destroy()
-			self.m_CurrentPlants[vehPlayer] = 0
 		end
-	end)
+	)
 end
 
-function JobFarmer:onVehicleDestroy(vehicle)
-	if vehicle:getModel() == getVehicleModelFromName("Combine Harvester") and vehicle.ColShape then
-		vehicle.ColShape:destroy()
-	end
-end
-
-function JobFarmer:storeHit(hitElement,matchingDimension)
+function JobFarmer:storeHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and hitElement:getJob() == self then
 		hitElement:sendShortMessage(_("Hier kannst du den Walton beladen!",hitElement))
 	end
 	if getElementType(hitElement) ~= "vehicle" then
 		return
 	end
-	local player = getVehicleOccupant(hitElement,0)
+	local player = getVehicleOccupant(hitElement, 0)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
 		if self.m_CurrentPlants[player] ~= 0 then
 			player:sendError(_("Du hast schon %d Getreide auf deinem Walton!", player, self.m_CurrentPlants[player]))
 			return
@@ -152,10 +124,10 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 				end
 			end
 
-			setTimer (
+			setTimer(
 				function(element)
 					setElementFrozen(element,false)
-				end,3500,1,hitElement
+				end, 3500, 1, hitElement
 			)
 		else
 			player:sendError(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON, self.m_CurrentPlantsFarm))
@@ -177,7 +149,6 @@ function JobFarmer:start(player)
 	-- give Achievement
 	player:giveAchievement(20)
 end
-
 
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
@@ -209,7 +180,8 @@ function JobFarmer:stop(player)
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
-	if player.farmerVehicle and isElement(player.farmerVehicle) then player.farmerVehicle:destroy() end
+
+	self:destroyJobVehicle(player)
 end
 
 function JobFarmer:checkRequirements(player)
@@ -228,7 +200,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if player and player:getJob() ~= self then
 		return
 	end
-	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.farmerVehicle then
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") and hitElement == player.jobVehicle then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
 			player:sendSuccess(_("Du hast die Lieferung abgegeben, fahre nun zurück zur Farm.", player))
 			local income = self.m_CurrentPlants[player]*MONEY_PER_PLANT
@@ -251,13 +223,11 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 end
 
 function JobFarmer:createPlant (hitElement,createColShape,vehicle )
-
 	if hitElement:getJob() ~= self then
 		return
 	end
 
 	local x,y,z = getElementPosition(hitElement)
-
 	local vehicleID = getElementModel(vehicle)
 
 	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble then
