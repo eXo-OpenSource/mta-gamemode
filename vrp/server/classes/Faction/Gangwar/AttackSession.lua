@@ -219,7 +219,7 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 				self:disqualifyPlayer( player )
-				local basicDamage = WEAPON_DAMAGE[weapon]
+				local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, realLoss or 0 )

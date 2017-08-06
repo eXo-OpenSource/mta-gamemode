@@ -99,12 +99,14 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			self:killPed(target, attacker, weapon, bodypart)
 		end
 	else
-		if not target.m_SupMode and not attacker.m_SupMode then
-			target:triggerEvent("clientBloodScreen")
-			local basicDamage = WEAPON_DAMAGE[weapon]
-			local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-			local realLoss = basicDamage*multiplier
-			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+		if target and attacker and isElement(target) and isElement(attacker) then
+			if not target.m_SupMode and not attacker.m_SupMode then
+				target:triggerEvent("clientBloodScreen")
+				local basicDamage = WEAPON_DAMAGE[weapon]
+				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+				local realLoss = basicDamage*multiplier
+				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+			end
 		end
 	end
 end

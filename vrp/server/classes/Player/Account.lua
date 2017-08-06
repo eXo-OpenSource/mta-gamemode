@@ -123,24 +123,26 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
+	if player.getTutorialStage then 
+		-- Update last serial and last login
+		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+	
+		player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
-	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+		Warn.checkWarn(player, true)
+		Ban.checkBan(player, true)
+		tutorialStage = player:getTutorialStage() 
+		if player:getTutorialStage() == 1 then
+			Admin:getSingleton():sendNewPlayerMessage(player)
+			player:createCharacter()
+		end
+		player:loadCharacter()
+		player:spawn()
 
-	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
-
-	Warn.checkWarn(player, true)
-	Ban.checkBan(player, true)
-
-	if player:getTutorialStage() == 1 then
-		Admin:getSingleton():sendNewPlayerMessage(player)
-		player:createCharacter()
+		StatisticsLogger:addLogin( player, Username, "Login")
+		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+	else player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 	end
-	player:loadCharacter()
-	player:spawn()
-
-	StatisticsLogger:addLogin( player, Username, "Login")
-	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 
 addEvent("checkRegisterAllowed", true)
