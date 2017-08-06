@@ -133,20 +133,17 @@ function GUIEdit:onInternalLeftDoubleClick(absoluteX, absoluteY)
 	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
 
-	local sum, foundWord = 0, false
-	for word in string.gmatch(self.m_Text, "%w+") do
-		sum = sum + utfLen(word) + 1
-		if sum > index then
-			sum = sum - utfLen(word)
-			foundWord = word
+	local selectionStart, selectionEnd = 0, 0
+	for i = 0, #self.m_Text do
+		local result = string.find(self.m_Text, "%s", i) or (#self.m_Text +1)
+		if result > index then
+			selectionEnd = result - 1
 			break
 		end
+		selectionStart = result
 	end
 
-	if not foundWord then return end
-	local selectionStart, selectionEnd = string.find(self.m_Text, foundWord, sum)
-
-	self.m_SelectionStart = selectionStart - 1
+	self.m_SelectionStart = selectionStart
 	self.m_SelectionEnd = selectionEnd
 	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
 
