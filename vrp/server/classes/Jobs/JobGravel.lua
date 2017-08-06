@@ -125,26 +125,31 @@ function JobGravel:Event_gravelOnSync(posX, posY, posZ, velX, velY, velZ)
 end
 
 function JobGravel:onGravelJobEnter(hitElement, dim)
-	if hitElement:getType() == "player" and dim then
-		local gravel = {}
+	if hitElement and isElement(hitElement) then
+		if hitElement:getType() == "player" and dim then
+			local gravel = {}
 
-		for k, v in pairs(self.m_Gravel) do
-			if v.mined then
-				table.insert(gravel, {element = v, posX = v.m_Position.x, posY = v.m_Position.y, posZ = v.m_Position.z, velX = v.m_Velocity.x, velY = v.m_Velocity.y, velZ = v.m_Velocity.z})
+			for k, v in pairs(self.m_Gravel) do
+				if v.mined then
+					if v.m_Position then
+						table.insert(gravel, {element = v, posX = v.m_Position.x, posY = v.m_Position.y, posZ = v.m_Position.z, velX = v.m_Velocity.x, velY = v.m_Velocity.y, velZ = v.m_Velocity.z})
+					end
+				end
 			end
+			hitElement:triggerEvent("gravelOnSync", gravel)
 		end
-
-		hitElement:triggerEvent("gravelOnSync", gravel)
 	end
 end
 
 function JobGravel:onGravelJobLeave(hitElement, dim)
-	if hitElement:getType() == "player" and dim then
-		if hitElement:getJob() == self then
-			if hitElement.vehicle and hitElement.vehicle.jobPlayer then
-				hitElement:sendError(_("Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!", hitElement))
-				hitElement.vehicle:destroy()
-				JobManager:getSingleton():stopJobForPlayer(hitElement)
+	if hitElement and isElement(hitElement) then
+		if hitElement:getType() == "player" and dim then
+			if hitElement:getJob() == self then
+				if hitElement.vehicle and hitElement.vehicle.jobPlayer then
+					hitElement:sendError(_("Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!", hitElement))
+					hitElement.vehicle:destroy()
+					JobManager:getSingleton():stopJobForPlayer(hitElement)
+				end
 			end
 		end
 	end

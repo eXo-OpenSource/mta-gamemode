@@ -576,7 +576,7 @@ function GroupManager:Event_RemoveVehicle(veh)
 			group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." entfernt!")
 			self:sendInfosToClient(client)
 		else
-			client:sendError(_("Es ist ein Fehler aufgetreten!", client))
+			client:sendError(_("Maximaler Fahrzeug-Slot erreicht!", client))
 		end
 	end
 end
