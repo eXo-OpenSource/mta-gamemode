@@ -50,6 +50,22 @@ function JobFarmer:constructor()
 	end
 end
 
+function JobFarmer:giveMoney(player, vehicle)
+	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
+		local income = player:getData("Farmer.Income")
+		local duration = getRealTime().timestamp - player.m_LastJobAction
+		player.m_LastJobAction = getRealTime().timestamp
+		if vehicle:getModel() == 531 then
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.tractor", duration, income)
+		else
+			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
+		end
+		player:addBankMoney(income, "Farmer-Job")
+		player:setData("Farmer.Income", 0)
+		player:triggerEvent("Job.updateIncome", 0)
+	end
+end
+
 function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	player.m_LastJobAction = getRealTime().timestamp
 	self:registerJobVehicle(player, vehicle, true, false)
@@ -72,19 +88,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	addEventHandler("onVehicleExit", vehicle,
 		function(vehPlayer, seat)
 			if seat == 0 and source:getModel() ~= 478 then
-				if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-					local income = player:getData("Farmer.Income")
-					local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
-					vehPlayer.m_LastJobAction = getRealTime().timestamp
-					if vehicle:getModel() == 531 then
-						StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.tractor", duration, income)
-					else
-						StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer.combine", duration, income)
-					end
-					vehPlayer:addBankMoney(income, "Farmer-Job")
-					vehPlayer:setData("Farmer.Income", 0)
-					vehPlayer:triggerEvent("Job.updateIncome", 0)
-				end
+				self:giveMoney(vehPlayer, source)
 			end
 		end
 	)
@@ -171,16 +175,7 @@ function JobFarmer:stop(player)
 	self:setJobElementVisibility(player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
-	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
-		local income = player:getData("Farmer.Income")
-		local duration = getRealTime().timestamp - vehPlayer.m_LastJobAction
-		vehPlayer.m_LastJobAction = getRealTime().timestamp
-		StatisticsLogger:getSingleton():addJobLog(vehPlayer, "jobFarmer", duration, income)
-		player:addBankMoney(income, "Farmer-Job")
-		player:setData("Farmer.Income", 0)
-		player:triggerEvent("Job.updateIncome", 0)
-	end
-
+	self:giveMoney(player, player.jobVehicle)
 	self:destroyJobVehicle(player)
 end
 
