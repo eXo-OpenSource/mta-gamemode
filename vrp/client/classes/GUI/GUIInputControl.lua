@@ -111,6 +111,7 @@ addEventHandler("onClientPreRender", root,
 			local caretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
 
 			if oldCaretIndex ~= caretIndex then
+				GUIInputControl.ms_CurrentInputFocus.m_MarkedAll = false
 				GUIInputControl.ms_CurrentInputFocus:setCaretPosition(caretIndex)
 				oldCaretIndex = caretIndex
 			end
@@ -138,13 +139,18 @@ end
 
 addEventHandler("onClientKey", root,
 	function(button, pressed)
+		local current = GUIInputControl.ms_CurrentInputFocus
+		if not current then return end
+
 		if button == "tab" and pressed then
-			local current = GUIInputControl.ms_CurrentInputFocus
-			if current then
-				local element = getNextEditbox(current:getParent(), current)
-				if element then
-					GUIInputControl.setFocus(element, 0)
-				end
+			local element = getNextEditbox(current:getParent(), current)
+			if element then
+				GUIInputControl.setFocus(element, 0)
+			end
+		elseif button == "a" and pressed then
+			if getKeyState("lctrl") or getKeyState("rctrl") then
+				current.m_MarkedAll = true
+				current:anyChange()
 			end
 		end
 	end

@@ -34,7 +34,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
-		self.m_TitleBarAccentStripe = GUIRectangle:new(0, 28, self.m_Width, 2, Color.Accent, self)
+		self.m_TitleBarAccentStripe = GUIRectangle:new(0, 30, self.m_Width, 2, Color.Accent, self)
 
 		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
 			:setAlignX("center")
@@ -64,11 +64,6 @@ function GUIWindow:drawThis()
 
 	-- Draw background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Background)
-
-	-- Draw logo
-	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
-		dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height - 29 - 10, 62, 29, "files/images/GUI/logo.png")
-	end
 
 	dxSetBlendMode("blend")
 end

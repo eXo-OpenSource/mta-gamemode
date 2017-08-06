@@ -39,12 +39,17 @@ function GUIEdit:drawThis()
 		aliginX = "right"
 	end
 
+	if self.m_MarkedAll then
+		local textWidth = dxGetTextWidth(text, self:getFontSize(), self:getFont())
+		if textWidth > self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN then textWidth = self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN end
+		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + 6, textWidth, self.m_Height - 12, tocolor(0, 170, 255))
+	end
+
 	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
 				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
-				self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+				self.m_MarkedAll and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 
-	if self.m_DrawCursor then
-		local textBeforeCursor = utfSub(text, 0, self.m_Caret)
+	if self.m_DrawCursor and not self.m_MarkedAll then
 		if dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()) < self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN then
 			dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()), self.m_AbsoluteY + 6, 2, self.m_Height - 12, Color.Black)
 		end
@@ -63,6 +68,7 @@ end
 
 function GUIEdit:onInternalEditInput(caret)
 	self.m_Caret = caret
+	self.m_MarkedAll = false
 
 	if self.onChange then
 		self.onChange(self:getDrawnText())
@@ -74,6 +80,7 @@ function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
 	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
 	self:setCaretPosition(index)
+	self.m_MarkedAll = false
 
 	GUIInputControl.setFocus(self, index)
 end
@@ -83,6 +90,7 @@ function GUIEdit:onInternalFocus()
 end
 
 function GUIEdit:onInternalLooseFocus()
+	self.m_MarkedAll = false
 	self:setCursorDrawingEnabled(false)
 end
 
