@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUI edit class
 -- *
 -- ****************************************************************************
-
 GUIEdit = inherit(GUIElement)
 inherit(GUIFontContainer, GUIEdit)
 inherit(GUIColorable, GUIEdit)
@@ -19,9 +18,12 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 	GUIColorable.constructor(self, Color.DarkBlue)
 
+	self.m_OnCursorMove = bind(GUIEdit.onCursorMove, self)
 	self.m_MaxLength = math.huge
 	self.m_MaxValue =  math.huge
 	self.m_Caret = 0
+	self.m_StartIndex = 0
+	self.m_EndIndex = 0
 	self.m_DrawCursor = false
 end
 
@@ -45,9 +47,13 @@ function GUIEdit:drawThis()
 		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + 6, textWidth, self.m_Height - 12, tocolor(0, 170, 255))
 	end
 
+	if self.m_Selection then
+		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + self.m_SelectionOffset, self.m_AbsoluteY + 6, self.m_SelectionWidth, self.m_Height - 12, tocolor(0, 170, 255))
+	end
+
 	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
 				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
-				self.m_MarkedAll and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+				(self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 
 	if self.m_DrawCursor and not self.m_MarkedAll then
 		if dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()) < self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN then
@@ -70,9 +76,42 @@ function GUIEdit:onInternalEditInput(caret)
 	self.m_Caret = caret
 	self.m_MarkedAll = false
 
+	if self.m_Selection then
+		self.m_Selection = false
+		self.m_Text = utfSub(self.m_Text, 0, self.m_SelectionStart) .. utfSub(self.m_Text, self.m_SelectionEnd + 1, #self.m_Text)
+
+		GUIInputControl.skipChangedEvent = true
+		guiSetText(GUIInputControl.ms_Edit, self.m_Text)
+		guiEditSetCaretIndex(GUIInputControl.ms_Edit, self.m_SelectionStart + 1)
+		GUIInputControl.skipChangedEvent = false
+
+		self:anyChange()
+	end
+
 	if self.onChange then
 		self.onChange(self:getDrawnText())
 	end
+end
+
+function GUIEdit:onInternalLeftClickDown(absoluteX, absoluteY)
+	if GUIEdit.SelectionInProgress then return end
+	GUIEdit.SelectionInProgress = true
+
+	if self.m_LastClick and getTickCount() - self.m_LastClick.tick < 500 and (self.m_LastClick.position - Vector2(absoluteX, absoluteY)).length < 5 then
+		return self:onInternalLeftDoubleClick(absoluteX, absoluteY)
+	end
+	self.m_LastClick = {tick = getTickCount(), position = Vector2(absoluteX, absoluteY)}
+
+	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
+	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
+	local index = self:getIndexFromPixel(relativeX, relativeY)
+
+	self.m_StartIndex = index
+	self.m_EndIndex = index
+
+	GUIInputControl.setFocus(self, index)
+
+	addEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
@@ -81,15 +120,89 @@ function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
 	local index = self:getIndexFromPixel(relativeX, relativeY)
 	self:setCaretPosition(index)
 	self.m_MarkedAll = false
+	self.m_EndIndex = index
 
 	GUIInputControl.setFocus(self, index)
+
+	GUIEdit.SelectionInProgress = false
+	removeEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
+end
+
+function GUIEdit:onInternalLeftDoubleClick(absoluteX, absoluteY)
+	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
+	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
+	local index = self:getIndexFromPixel(relativeX, relativeY)
+
+	local sum, foundWord = 0, false
+	for word in string.gmatch(self.m_Text, "%w+") do
+		sum = sum + utfLen(word) + 1
+		if sum > index then
+			sum = sum - utfLen(word)
+			foundWord = word
+			break
+		end
+	end
+
+	if not foundWord then return end
+	local selectionStart, selectionEnd = string.find(self.m_Text, foundWord, sum)
+
+	self.m_SelectionStart = selectionStart - 1
+	self.m_SelectionEnd = selectionEnd
+	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
+
+	if self.m_Selection then
+		self.m_SelectedText = utfSub(self.m_Text, self.m_SelectionStart + 1, self.m_SelectionEnd)
+		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
+		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
+
+		GUIInputControl.skipChangedEvent = true
+		guiEditSetCaretIndex(GUIInputControl.ms_Edit, self.m_SelectionEnd)
+		GUIInputControl.skipChangedEvent = false
+
+		self:anyChange()
+	end
+end
+
+function GUIEdit:onCursorMove(_, _, absoluteX, absoluteY)
+	if not getKeyState("mouse1") then
+		GUIEdit.SelectionInProgress = false
+		removeEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
+		return
+	end
+
+	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
+	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
+	if relativeX < 0 then relativeX = 0 end
+
+	self.m_EndIndex = self:getIndexFromPixel(relativeX, relativeY)
+
+	self.m_Selection = self.m_StartIndex ~= self.m_EndIndex
+	if self.m_Selection then
+		local text = self:getDrawnText()
+		self.m_SelectionStart = self.m_StartIndex
+		self.m_SelectionEnd = self.m_EndIndex
+
+		if self.m_StartIndex > self.m_EndIndex then
+			self.m_SelectionStart = self.m_EndIndex
+			self.m_SelectionEnd = self.m_StartIndex
+		end
+
+		self.m_SelectedText = utfSub(text, self.m_SelectionStart + 1, self.m_SelectionEnd)
+		self.m_SelectionOffset = dxGetTextWidth(utfSub(text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
+		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
+	end
+
+	self:anyChange()
 end
 
 function GUIEdit:onInternalFocus()
+	GUIInputControl.ms_RecentlyInFocus = self
 	self:setCursorDrawingEnabled(true)
 end
 
 function GUIEdit:onInternalLooseFocus()
+	self.m_Selection = false
+	self.m_SelectedText = nil
 	self.m_MarkedAll = false
 	self:setCursorDrawingEnabled(false)
 end
@@ -99,10 +212,6 @@ function GUIEdit:setCaretPosition(pos)
 	self:anyChange()
 	return self
 end
-
---[[function GUIEdit:getSelectionRange()
-	return self.m_SelectionStart, self.m_Caret
-end]]
 
 function GUIEdit:getCaretPosition(pos)
 	return self.m_Caret

@@ -43,7 +43,8 @@ function StyleguideDemonstrationGUI:constructor()
 	GUIGridButton:new(12, 13, 4, 2, "Übernehmen\nZweizeiler", self)
 	GUIGridButton:new(16, 14, 4, 1, "Übernehmen", self)
 
-	GUIEdit:new(grid("x"), grid("y", 10), grid("d", 5), grid("d"), self):setText("Dies ist ein Edit!")
+	GUIEdit:new(grid("x"), grid("y", 10), grid("d", 8), grid("d"), self):setText("Dies sind die neuen Textboxen")
+	GUIEdit:new(grid("x"), grid("y", 11), grid("d", 8), grid("d"), self):setText("mit selektieren Funktion!")
 end
 
 function StyleguideDemonstrationGUI:destructor()

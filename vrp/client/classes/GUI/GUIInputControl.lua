@@ -140,17 +140,22 @@ end
 addEventHandler("onClientKey", root,
 	function(button, pressed)
 		local current = GUIInputControl.ms_CurrentInputFocus
-		if not current then return end
 
-		if button == "tab" and pressed then
+		if button == "tab" and pressed and current then
 			local element = getNextEditbox(current:getParent(), current)
 			if element then
 				GUIInputControl.setFocus(element, 0)
 			end
-		elseif button == "a" and pressed then
+		elseif button == "a" and pressed and current then
 			if getKeyState("lctrl") or getKeyState("rctrl") then
 				current.m_MarkedAll = true
 				current:anyChange()
+			end
+		elseif button == "c" and pressed and GUIInputControl.ms_RecentlyInFocus then
+			if getKeyState("lctrl") or getKeyState("rctrl") then
+				if GUIInputControl.ms_RecentlyInFocus.m_SelectedText then
+					setClipboard(GUIInputControl.ms_RecentlyInFocus.m_SelectedText)
+				end
 			end
 		end
 	end
