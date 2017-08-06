@@ -1,6 +1,0 @@
-<meta>
-	<info author="strobe" type="script" name="interior_fixes" />
-	<script src="server.lua" type="server" />
-	<script src="client.lua" type="client" />
-	<file src="interior1.xml" />
-</meta>

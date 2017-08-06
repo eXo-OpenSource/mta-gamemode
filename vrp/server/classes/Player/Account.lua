@@ -123,7 +123,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
-	if player.getTutorialStage then 
+	if player.getTutorialStage and instanceof(player, DatabasePlayer) then 
 		-- Update last serial and last login
 		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 	
