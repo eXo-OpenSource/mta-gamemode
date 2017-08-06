@@ -643,16 +643,16 @@ function GroupManager:Event_ChangeType()
 			client:sendError(_("Deine Firma besitzt noch Geschäfte! Bitte verkaufe diese erst!", client))
 			return
 		end
-		for _, vehicle in pairs(group:getVehicles() or {}) do
+
+		for key, vehicle in pairs(group:getVehicles() or {}) do
 			if vehicle.m_ForSale == true then
 				client:sendError(_("Du bietest noch Fahrzeuge zum Verkauf an! Beende diese erst!", client))
 				return
 			end
 		end
-
 	end
 
-	if #self:getPropsForPlayer(client) > 0 then
+	if #GroupPropertyManager:getSingleton():getPropsForPlayer(client) > 0 then
 		client:sendError(_("Deine %s besitzt noch eine Immobilie! Bitte verkaufe diese erst!", client, group:getType()))
 		return
 	end
