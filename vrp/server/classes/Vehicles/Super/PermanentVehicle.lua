@@ -9,6 +9,10 @@ PermanentVehicle = inherit(Vehicle)
 
 -- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
 function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
+		return false -- Apply vehilce limit
+	end
+
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local position = vehicle:getPosition()
