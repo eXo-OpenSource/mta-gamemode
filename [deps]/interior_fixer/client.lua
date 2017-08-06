@@ -24,7 +24,7 @@ function changeMapDim(dim)
 end
 
 function parseIntMap(int)
-	if int > 0 and last_int ~= int then
+	if int and int > 0 and last_int ~= int then
 		deleteObjects()
 		client.xmlRoot = xmlLoadFile(":"..resourceName.."/interior"..int..".xml")
 		if client.xmlRoot then
@@ -38,7 +38,7 @@ function parseIntMap(int)
 			last_int = int
 			createObjects()
 		end
-	elseif int == 0 then
+	elseif int and int == 0 then
 		deleteObjects()
 		last_int = 0
 	end
