@@ -88,7 +88,7 @@
 	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
-	
+
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
 	<script src="server/classes/Super/Root.lua" type="server"/>
@@ -1811,7 +1811,6 @@
 	<include resource="RoadShine" />
 	<include resource="SkyBox" />
 	<include resource="DoF" />
-	<include resource="interior_fixer" />
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
