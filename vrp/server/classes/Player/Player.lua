@@ -1239,9 +1239,11 @@ end
 function Player:getPlayerAttachedObject()
 	local model
 	for key, value in pairs (getAttachedElements(self)) do
-		model = value:getModel()
-		if PlayerAttachObjects[model] then
-			return value
+		if value and isElement(value) then
+			model = value:getModel()
+			if PlayerAttachObjects[model] then
+				return value
+			end
 		end
 	end
 	return false
