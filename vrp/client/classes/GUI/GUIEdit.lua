@@ -48,12 +48,14 @@ function GUIEdit:drawThis()
 	end
 
 	if self.m_Selection then
+		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + self.m_SelectionOffset, self.m_AbsoluteY + 6, self.m_SelectionWidth, self.m_Height - 12, tocolor(0, 170, 255))
-	end
 
-	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
-				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
-				(self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+		local textWidth = dxGetTextWidth(self.m_SelectedFirst, self:getFontSize(), self:getFont())
+		dxDrawText(self.m_SelectedText, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + textWidth, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, Color.White, self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+	else
+		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+	end
 
 	if self.m_DrawCursor and not self.m_MarkedAll then
 		if dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()) < self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN then
@@ -142,6 +144,7 @@ function GUIEdit:onInternalLeftDoubleClick(absoluteX, absoluteY)
 	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
 
 	if self.m_Selection then
+		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
 		self.m_SelectedText = utfSub(self.m_Text, self.m_SelectionStart + 1, self.m_SelectionEnd)
 		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
 		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
@@ -174,6 +177,7 @@ function GUIEdit:onCursorMove(_, _, absoluteX, absoluteY)
 			self.m_SelectionEnd = self.m_StartIndex
 		end
 
+		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
 		self.m_SelectedText = utfSub(text, self.m_SelectionStart + 1, self.m_SelectionEnd)
 		self.m_SelectionOffset = dxGetTextWidth(utfSub(text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
 		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
