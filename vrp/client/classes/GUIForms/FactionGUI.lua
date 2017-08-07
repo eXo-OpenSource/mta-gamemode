@@ -109,12 +109,9 @@ function FactionGUI:TabPanel_TabChanged(tabId)
 end
 
 function FactionGUI:Event_factionRetrieveLog(players, logs)
-	if not self.m_LogGUI then
-		self.m_LogGUI = LogGUI:new(nil, logs, players)
-		self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() self.m_LogGUI = nil end)
-	else
-		self.m_LogGUI:updateLog(players, logs)
-	end
+	if self.m_LogGUI then delete(self.m_LogGUI) end
+	self.m_LogGUI = LogGUI:new(nil, logs, players)
+	self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 end
 
 function FactionGUI:addLeaderTab()
