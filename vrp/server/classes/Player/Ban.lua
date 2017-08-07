@@ -69,7 +69,8 @@ end
 function Ban.checkSerial(serial, player, cancel, doNotSave)
 	-- Note: true = not banned
 	local id = player and player:getId() or "false"
-	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
+	sql:queryFetchSingle(Async.waitFor(), "SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
+	local row = Async.wait()
 	if row then
 		local duration = row.expires
 		if duration == 0 then
@@ -100,6 +101,8 @@ function Ban.checkOfflineBan(playerId)
 	end
 end
 
-addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial )
-	Ban.checkSerial(serial, source, true, true)
+addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial)
+	Async.create(function()
+		Ban.checkSerial(serial, source, true, true)
+	end)()
 end)
