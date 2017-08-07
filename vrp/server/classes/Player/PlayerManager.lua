@@ -827,6 +827,7 @@ function PlayerManager:Event_startAnimation(animation)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
+		addCommandHandler("stopanim", self.m_AnimationStopFunc)
 		client.lastAnimation = getTickCount()
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
@@ -836,6 +837,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
+	removeCommandHandler("stopanim")
 	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
