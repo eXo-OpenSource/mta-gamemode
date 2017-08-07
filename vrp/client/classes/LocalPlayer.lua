@@ -712,6 +712,18 @@ function LocalPlayer:startAnimation(_, ...)
 	end
 end
 
+function LocalPlayer:vehiclePickUp()
+	if self.vehicle then return end
+	
+	if self:getPrivateSync("isAttachedToVehicle") then
+		triggerServerEvent("attachPlayerToVehicle", self)
+		return
+	end
+	
+	if not self.contactElement then return end
+	triggerServerEvent("attachPlayerToVehicle", self)
+end
+
 addEvent("showModCheck", true)
 addEventHandler("showModCheck",localPlayer, function(tbl)
 	local w,h = guiGetScreenSize()
