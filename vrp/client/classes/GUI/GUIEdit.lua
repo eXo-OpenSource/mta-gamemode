@@ -75,18 +75,7 @@ end
 function GUIEdit:onInternalEditInput(caret)
 	self.m_Caret = caret
 	self.m_MarkedAll = false
-
-	if self.m_Selection then
-		self.m_Selection = false
-		self.m_Text = utfSub(self.m_Text, 0, self.m_SelectionStart) .. utfSub(self.m_Text, self.m_SelectionEnd + 1, #self.m_Text)
-
-		GUIInputControl.skipChangedEvent = true
-		guiSetText(GUIInputControl.ms_Edit, self.m_Text)
-		guiEditSetCaretIndex(GUIInputControl.ms_Edit, self.m_SelectionStart + 1)
-		GUIInputControl.skipChangedEvent = false
-
-		self:anyChange()
-	end
+	self.m_Selection = false
 
 	if self.onChange then
 		self.onChange(self:getDrawnText())

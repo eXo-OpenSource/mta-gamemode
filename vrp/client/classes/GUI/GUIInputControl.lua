@@ -60,6 +60,10 @@ function GUIInputControl.checkFocus(element)
 	end
 end
 
+function GUIInputControl.cutSelectedText(text, selectionStart, selectionEnd)
+
+end
+
 addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	function()
 		if GUIInputControl.skipChangedEvent then return end
@@ -68,9 +72,13 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 		if currentEdit then
 			local text = guiGetText(source)
 
+			if currentEdit.m_Selection then
+				text = ("%s%s"):format(utfSub(text, 0, currentEdit.m_SelectionStart), utfSub(text, currentEdit.m_SelectionEnd + 1, #text))
+			end
+			
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
-					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
+					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then						
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else
