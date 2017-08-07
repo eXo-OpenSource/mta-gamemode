@@ -73,12 +73,16 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 			local text = guiGetText(source)
 
 			if currentEdit.m_Selection then
+				GUIInputControl.skipChangedEvent = true
 				text = ("%s%s"):format(utfSub(text, 0, currentEdit.m_SelectionStart), utfSub(text, currentEdit.m_SelectionEnd + 1, #text))
+				guiSetText(source, text)
+				guiEditSetCaretIndex(GUIInputControl.ms_Edit, currentEdit.m_SelectionStart + 1)
+				GUIInputControl.skipChangedEvent = false
 			end
-			
+
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
-					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then						
+					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else

@@ -93,7 +93,11 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		end
 
 		-- Check whether the focus changed
-		GUIInputControl.checkFocus(self)
+
+		if not GUIInputControl.SelectionInProgress then
+			GUIInputControl.checkFocus(self)
+			return
+		end
 	end
 	if mouse2 and not self.m_RActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onRightClickDown			then self:onRightClickDown(cx, cy)			end

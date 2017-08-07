@@ -83,8 +83,8 @@ function GUIEdit:onInternalEditInput(caret)
 end
 
 function GUIEdit:onInternalLeftClickDown(absoluteX, absoluteY)
-	if GUIEdit.SelectionInProgress then return end
-	GUIEdit.SelectionInProgress = true
+	if GUIInputControl.SelectionInProgress then return end
+	GUIInputControl.SelectionInProgress = true
 
 	if self.m_LastClick and getTickCount() - self.m_LastClick.tick < 500 and (self.m_LastClick.position - Vector2(absoluteX, absoluteY)).length < 5 then
 		return self:onInternalLeftDoubleClick(absoluteX, absoluteY)
@@ -107,13 +107,18 @@ function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
 	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
 	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
+
+	if self.m_Selection then
+		index = self.m_SelectionEnd
+	end
+
 	self:setCaretPosition(index)
 	self.m_MarkedAll = false
 	self.m_EndIndex = index
 
 	GUIInputControl.setFocus(self, index)
 
-	GUIEdit.SelectionInProgress = false
+	GUIInputControl.SelectionInProgress = false
 	removeEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
 end
 
@@ -141,17 +146,13 @@ function GUIEdit:onInternalLeftDoubleClick(absoluteX, absoluteY)
 		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
 		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
 
-		GUIInputControl.skipChangedEvent = true
-		guiEditSetCaretIndex(GUIInputControl.ms_Edit, self.m_SelectionEnd)
-		GUIInputControl.skipChangedEvent = false
-
 		self:anyChange()
 	end
 end
 
 function GUIEdit:onCursorMove(_, _, absoluteX, absoluteY)
 	if not getKeyState("mouse1") then
-		GUIEdit.SelectionInProgress = false
+		GUIInputControl.SelectionInProgress = false
 		removeEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
 		return
 	end
