@@ -107,7 +107,7 @@ end
 function FactionManager:Event_factionRequestLog()
 	local faction = client:getFaction()
 	if faction then
-		client:triggerEvent("factionRetrieveLog", faction:getPlayers(), faction:getLog())
+		triggerLatentClientEvent(client, "factionRetrieveLog", 50000, false, client, faction:getPlayers(), faction:getLog())
 	end
 end
 
