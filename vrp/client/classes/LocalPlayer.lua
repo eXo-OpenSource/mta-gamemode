@@ -712,6 +712,20 @@ function LocalPlayer:startAnimation(_, ...)
 	end
 end
 
+function LocalPlayer:vehiclePickUp()
+	if self.vehicle then return end
+
+	if self:getPrivateSync("isAttachedToVehicle") then
+		triggerServerEvent("attachPlayerToVehicle", self)
+		return
+	end
+
+	if not self.contactElement or self.contactElement:getType() ~= "vehicle" then return end
+	if self.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[self.contactElement:getModel()] then
+		triggerServerEvent("attachPlayerToVehicle", self)
+	end
+end
+
 addEvent("showModCheck", true)
 addEventHandler("showModCheck",localPlayer, function(tbl)
 	local w,h = guiGetScreenSize()

@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -56,6 +56,7 @@ function PlayerManager:constructor()
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
@@ -1041,5 +1042,42 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 	else
 		client:setSpawnLocation(locationId)
 		client:sendInfo("Spawnpunkt wurde geändert.")
+	end
+end
+
+function PlayerManager:Event_AttachToVehicle()
+	if client:getPrivateSync("isAttachedToVehicle") then
+		client:setPrivateSync("isAttachedToVehicle", false)
+		client:detach()
+		return
+	end
+
+	if not client.contactElement or client.contactElement:getType() ~= "vehicle" then return end
+	if client.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[client.contactElement:getModel()] then
+		local px, py, pz = getElementPosition(client)
+		local vx, vy, vz = getElementPosition(client.contactElement)
+		local sx = px - vx
+		local sy = py - vy
+		local sz = pz - vz
+
+		local rotpX = 0
+		local rotpY = 0
+		local rotpZ = getPlayerRotation(client)
+
+		local rotvX, rotvY, rotvZ = getVehicleRotation(client.contactElement)
+
+		local t, p, f = math.rad(client.contactElement.rotation.x), math.rad(client.contactElement.rotation.y), math.rad(client.contactElement.rotation.z)
+		local ct, st, cp, sp, cf, sf = math.cos(t), math.sin(t), math.cos(p), math.sin(p), math.cos(f), math.sin(f)
+
+		local z = ct*cp*sz + (sf*st*cp + cf*sp)*sx + (-cf*st*cp + sf*sp)*sy
+		local x = -ct*sp*sz + (-sf*st*sp + cf*cp)*sx + (cf*st*sp + sf*cp)*sy
+		local y = st*sz - sf*ct*sx + cf*ct*sy
+
+		local rotX = rotpX - rotvX
+		local rotY = rotpY - rotvY
+		local rotZ = rotpZ - rotvZ
+
+		client:attach(client.contactElement, x, y, z, rotX, rotY, rotZ)
+		client:setPrivateSync("isAttachedToVehicle", client.contactElement)
 	end
 end
