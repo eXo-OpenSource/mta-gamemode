@@ -49,11 +49,11 @@ function TextureReplacer:constructor(element, textureName, options)
 end
 
 function TextureReplacer:destructor()
-	-- Remove Map ref
-	TextureReplacer.removeRef(self)
-
 	-- Unload texture
 	self:unload()
+
+	-- Remove Map ref
+	TextureReplacer.removeRef(self)
 
 	-- Remove events
 	if isElement(self.m_Element) then -- does the element still exist?
@@ -262,6 +262,7 @@ function TextureReplacer.loadBacklog()
 	for i, instance in pairs(TextureReplacer.Backlog) do
 		instance:addToLoadingQeue()
 	end
+	TextureReplacer.Backlog = {}
 end
 
 -- Events
@@ -283,6 +284,9 @@ addEventHandler("changeElementTexture", root,
 				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
 			end
 		end
+
+		-- force loading of new textures (in permanent mode)
+		TextureReplacer.loadBacklog()
 	end
 )
 

@@ -11,10 +11,6 @@ function HTTPTextureReplacer:constructor(element, fileName, textureName, options
 	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
 	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
-
-	if isElementStreamedIn(self.m_Element) then
-		self:load()
-	end
 end
 
 function HTTPTextureReplacer:destructor()
