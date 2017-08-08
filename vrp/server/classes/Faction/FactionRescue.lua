@@ -56,7 +56,7 @@ function FactionRescue:constructor()
 
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1724.65, -1754.29, 13.55, 0, 0, 0)
+			local safe = createObject(2332, 1724.65, -1754.29, 15.55, 0, 0, 180)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 
 			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1798, -1739.7, 5)) --Unity garage
