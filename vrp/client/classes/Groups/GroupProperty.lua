@@ -145,7 +145,7 @@ GroupPropertyEntryMessageGUI = inherit(GUIForm)
 inherit(Singleton, GroupPropertyEntryMessageGUI)
 
 function GroupPropertyEntryMessageGUI:constructor(text)
-	self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, nil):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
+	self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, self):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
 	Animation.FadeAlpha:new(self.m_Message, 1000, 0, 255)
 	setTimer(function()
 		delete(self)
