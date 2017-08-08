@@ -19,7 +19,7 @@ GUIGridRadioButton = inherit(GUIRadioButton)
 GUIGridRectangle = inherit(GUIRectangle)
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)	GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) self:setBarEnabled(true) return self end
-function GUIGridChanger:constructor(posX, posY, width, height, parent) GUIChanger.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) self:setVRPFontSize(25) return self end
+function GUIGridChanger:constructor(posX, posY, width, height, parent) return GUIChanger.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridCheckbox:constructor(posX, posY, width, height, text, parent) GUICheckbox.constructor(self, grid("x", posX), grid("y", posY) + 5, grid("d", width), grid("d", height) - 10, text, parent) self:setFont(VRPFont(25)):setFontSize(1) return self end
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridCombobox:constructor(posX, posY, width, height, parent) return GUICombobox.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end

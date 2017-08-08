@@ -34,7 +34,10 @@ function StyleguideDemonstrationGUI:constructor()
 	GUIGridLabel:new(7, 6, 4, 2, _"Mehrzeiliger\nInfotext", self):setFont(VRPFont(25)):setAlignY("center")
 
 	GUIGridCheckbox:new(1, 4, 4, 1, "GUIGridCheckbox", self)
-	GUIGridChanger:new(1, 5, 6, 1, self):addItem("GUIGridChanger")
+	local changer = GUIGridChanger:new(1, 5, 6, 1, self)
+	changer:addItem("No Pew")
+	changer:addItem("Pew")
+	changer:addItem("Pew Pew Pew")
 
 	GUIGridButton:new(8, 14, 4, 1, "Übernehmen p.", self):setBarEnabled(false)
 	GUIGridButton:new(12, 13, 4, 2, "Übernehmen\nZweizeiler", self)
