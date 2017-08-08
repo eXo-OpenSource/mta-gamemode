@@ -24,7 +24,7 @@ function GroupPropertyMessageGUI:constructor( superClass )
 end
 
 function GroupPropertyMessageGUI:destructor()
-	self.m_Window:delete()
+	GUIForm.destructor(self)
 end
 
 function GroupPropertyMessageGUI:AcceptButton_message()
