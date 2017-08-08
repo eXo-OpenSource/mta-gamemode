@@ -42,7 +42,7 @@ function HorseBetGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.8, self.m_Height*0.06, _"Möglicher Gewinn: 3-facher Einsatz!", self.m_Window)
 
-	self.m_BetButton = VRPButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.078, self.m_Width*0.3, self.m_Height*0.07, _"Wette platzieren", true, self.m_Window)
+	self.m_BetButton = GUIButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.078, self.m_Width*0.3, self.m_Height*0.07, _"Wette platzieren", self.m_Window):setBarEnabled(true)
 	self.m_BetButton.onLeftClick = bind(self.PlaceBet, self)
 end
 

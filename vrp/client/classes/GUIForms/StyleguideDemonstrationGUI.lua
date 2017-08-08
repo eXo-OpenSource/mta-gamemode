@@ -19,7 +19,7 @@ function StyleguideDemonstrationGUI:constructor()
 	GUIGridLabel:new(1, 1, 5, 1, _"Zwischenüberschrift", self)
 	GUIGridLabel:new(1, 2, 5, 1, _"Infotext / Label", self):setFont(VRPFont(25)):setAlignY("center")
 
-	VRPButton:new(grid("x"), grid("y", 3), grid("d", 3), grid("d"), "1331", true, self)
+	GUIGridButton:new(1, 3, 3, 1, "1331", self)
 
 	GUIGridLabel:new(11, 1, 9, 1, "Eine super tolle Liste!", self)
 	GUIGridGridList:new(11, 2, 9, 10, self):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.Primary)

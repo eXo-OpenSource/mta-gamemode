@@ -15,7 +15,7 @@ function InputBox:constructor(title, text, callback, integerOnly)
 	self.m_EditBox = GUIEdit:new(self.m_Width*0.01, self.m_Height*0.4, self.m_Width*0.98, self.m_Height*0.2, self.m_Window)
 	if integerOnly then	self.m_EditBox:setNumeric(true, true) end
 
-	self.m_SubmitButton = VRPButton:new(self.m_Width*0.01, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(self.m_Width*0.01, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 
 	if callback then
 		self.m_SubmitButton.onLeftClick = function() if callback then callback(self.m_EditBox:getText()) end delete(self) end

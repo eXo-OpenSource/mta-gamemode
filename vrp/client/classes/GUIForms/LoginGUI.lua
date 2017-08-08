@@ -45,7 +45,7 @@ forum.exo-reallife.de!
 	self.m_LoginErrorBox:hide()
 	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.061, "Fehler: Irgendwas stimmt nicht!", self.m_LoginErrorBox):setAlign("center", "center")
 
-	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
+	self.m_LoginLoginButton	= GUIButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", self.m_LoginTab):setBarEnabled(true)
 	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_LoginTab)
 
 	self.m_LoginEditPass:setMasked("*")
@@ -72,7 +72,7 @@ forum.exo-reallife.de!
 	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_RegisterErrorBox):setAlign("center", "center")
 
 
-	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
+	self.m_RegisterRegisterButton	= GUIButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", self.m_RegisterTab):setBarEnabled(true)
 	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_RegisterTab)
 
 	self.m_RegisterEditPass:setMasked("*")
@@ -171,7 +171,7 @@ forum.exo-reallife.de!
 	nextframe(function()
 		if DEBUG_AUTOLOGIN then self.m_LoginLoginButton:onLeftClick() end
 	end)
-	
+
 
 	-- Show some help
 	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)

@@ -25,14 +25,14 @@ function BankGUI:constructor()
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabWithdraw)
 	self.m_WithdrawAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabWithdraw)
 	self.m_WithdrawAmountEdit:setNumeric(true, true)
-	self.m_WithdrawButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", true, self.m_TabWithdraw)
+	self.m_WithdrawButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", self.m_TabWithdraw):setBarEnabled(true)
 	self.m_WithdrawButton.onLeftClick = bind(self.WithdrawButton_Click, self)
 
 	self.m_TabDeposit = self.m_TabPanel:addTab(_"Einzahlen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabDeposit)
 	self.m_DepositAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabDeposit)
 	self.m_DepositAmountEdit:setNumeric(true, true)
-	self.m_DepositButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", true, self.m_TabDeposit)
+	self.m_DepositButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", self.m_TabDeposit):setBarEnabled(true)
 	self.m_DepositButton.onLeftClick = bind(self.DepositButton_Click, self)
 
 	self.m_TabTransfer = self.m_TabPanel:addTab(_"Überweisen")
@@ -41,14 +41,14 @@ function BankGUI:constructor()
 	GUILabel:new(tabWidth*0.03, tabHeight*0.28, tabWidth*0.2, tabHeight*0.15, _"Betrag:", self.m_TabTransfer)
 	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
 	self.m_TransferAmountEdit:setNumeric(true, true)
-	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
+	self.m_TransferButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", self.m_TabTransfer):setBarEnabled(true)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
 	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.LightBlue)
 
 	local donate = {}
-	donate["San News"] = VRPButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", true, self.m_TabTransfer):setBarColor(Color.Green)
-	donate["eXo Event-Team"] = VRPButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"eXo Event-Team", true, self.m_TabTransfer):setBarColor(Color.Yellow)
+	donate["San News"] = GUIButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Green):setBarEnabled(true)
+	donate["eXo Event-Team"] = GUIButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Yellow):setBarEnabled(true)
 
 	for index, btn in pairs(donate) do
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end

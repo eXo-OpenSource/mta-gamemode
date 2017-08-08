@@ -7,7 +7,7 @@ function LogGUI:constructor(parent, log, players)
 	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02, parent.m_Width*0.25, parent.m_Height*0.07, parent)
 	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
 	self.m_Search = GUIEdit:new(parent.m_Width*0.55, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.07, parent)
-	self.m_SearchButton = VRPButton:new(parent.m_Width*0.78, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.07, _"Suchen", true, parent)
+	self.m_SearchButton = GUIButton:new(parent.m_Width*0.78, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.07, _"Suchen", parent):setBarEnabled(true)
 	self.m_SearchButton.onLeftClick = function() self:setSearch() end
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
 	self.m_Categories = {}

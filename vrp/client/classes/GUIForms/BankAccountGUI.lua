@@ -29,14 +29,14 @@ function BankAccountGUI:constructor(name, depositEvent, withdrawEvent, additiona
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabWithdraw)
 	self.m_WithdrawAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabWithdraw)
 	self.m_WithdrawAmountEdit:setNumeric(true, true)
-	self.m_WithdrawButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", true, self.m_TabWithdraw)
+	self.m_WithdrawButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", self.m_TabWithdraw):setBarEnabled(true)
 	self.m_WithdrawButton.onLeftClick = bind(self.WithdrawButton_Click, self)
 
 	self.m_TabDeposit = self.m_TabPanel:addTab(_"Einzahlen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabDeposit)
 	self.m_DepositAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabDeposit)
 	self.m_DepositAmountEdit:setNumeric(true, true)
-	self.m_DepositButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", true, self.m_TabDeposit)
+	self.m_DepositButton = GUIButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", self.m_TabDeposit):setBarEnabled(true)
 	self.m_DepositButton.onLeftClick = bind(self.DepositButton_Click, self)
 
 	addEventHandler("bankAccountGUIRefresh", root, function(amount)

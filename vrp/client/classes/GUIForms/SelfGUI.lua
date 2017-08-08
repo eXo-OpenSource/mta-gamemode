@@ -50,7 +50,7 @@ function SelfGUI:constructor()
 
 
 	if localPlayer:getRank() > 0 then
-		self.m_AdminButton = VRPButton:new(self.m_Width-self.m_Width*0.29, self.m_Height*0.02, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton = GUIButton:new(self.m_Width-self.m_Width*0.29, self.m_Height*0.02, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", tabGeneral):setBackgroundColor(Color.Red):setBarEnabled(true)
 		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 	end
 
@@ -111,24 +111,24 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
 
-	self.m_AdButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
+	self.m_AdButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", tabGeneral):setBarEnabled(true)
 	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
 
-	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral)
+	self.m_TicketButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", tabGeneral):setBarEnabled(true)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
-	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral)
+	self.m_WarnButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", tabGeneral):setBarEnabled(true)
 	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
 
-	self.m_AchievementButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", true, tabGeneral)
+	self.m_AchievementButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", tabGeneral):setBarEnabled(true)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)
-	
-	self.m_ObjectOverviewButton = VRPButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"platzierte Objekte", true, tabGeneral)
+
+	self.m_ObjectOverviewButton = GUIButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"platzierte Objekte", tabGeneral):setBarEnabled(true)
 	self.m_ObjectOverviewButton.onLeftClick = function()
 		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getPrivateSync("Id"), "player")
 		self:close()
 	end
-	self.m_ShortMessageLog = VRPButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", true, tabGeneral)
+	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBarEnabled(true)
 	self.m_ShortMessageLog.onLeftClick = function()
 		ShortMessageLogGUI:getSingleton():open()
 		self:close()
@@ -159,11 +159,11 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.81, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
 	--self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.LightBlue) end
-	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
-	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", true, tabVehicles)
+	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
+	self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
  	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.LightBlue)
- 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", true, tabVehicles)
- 	self.m_VehicleWorldRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", true, tabVehicles)
+ 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
+ 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
@@ -831,7 +831,7 @@ function SelfGUI:onSettingChange(setting)
 			elseif index == UIStyle.eXo then
 				self.m_LabelHUDScale1:setVisible(true)
 				self.m_HUDScale:setVisible(true)
-			elseif index == UIStyle.Chart then 
+			elseif index == UIStyle.Chart then
 				self.m_LabelHUDScale1:setVisible(true)
 				self.m_HUDScale:setVisible(true)
 				self.m_ChartMargin:setVisible(true)
@@ -877,11 +877,11 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
-		
+
 		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
 		self.m_ChartLabels.onChange = function (state) core:set("HUD", "chartLabels", state) end
-		
+
 		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Punkte / Level", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
 		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
@@ -894,16 +894,16 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
 		self.m_HUDScale:setColor(Color.LightBlue)
 		local oldScale = 0.75
-		self.m_HUDScale.onScroll = function() 
-			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2); 
+		self.m_HUDScale.onScroll = function()
+			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2);
 			if scale ~= oldScale then
-				HUDUI:getSingleton():setScale( scale ); 
+				HUDUI:getSingleton():setScale( scale );
 				oldScale = scale
 				core:set("HUD","scaleScroll",scale*0.75)
-			end 
+			end
 		end
 		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
-		
+
 		updateDesignOptions(core:get("HUD", "UIStyle")) --only show items which are relevant for current UI
 
 	elseif setting == "Radar" then

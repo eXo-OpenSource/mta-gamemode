@@ -19,7 +19,7 @@ function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisemen
 		self.m_VehicleGrid:addItem(getVehicleNameFromModel(k)).onLeftDoubleClick = bind(self.SpawnButton_Click, self)
 	end
 
-	self.m_SpawnButton = VRPButton:new(5, self.m_Height - (showEPTAdvertisement and 85 + 45 or 45), self.m_Width - 10, 40, _"Spawn", true, self.m_Window)
+	self.m_SpawnButton = GUIButton:new(5, self.m_Height - (showEPTAdvertisement and 85 + 45 or 45), self.m_Width - 10, 40, _"Spawn", self.m_Window):setBarEnabled(true)
 	self.m_SpawnButton.onLeftClick = bind(self.SpawnButton_Click, self)
 
 	if showEPTAdvertisement then
@@ -28,7 +28,7 @@ function VehicleSpawnGUI:constructor(spawnerId, vehicleList, showEPTAdvertisemen
 		--GUIImage:new(5, self.m_Height - 85, 80, 80, "...", self.m_Window) -- EPT Logo
 		GUILabel:new(5, self.m_Height - 85, self.m_Width - 10, 30, "Oder doch lieber ein Taxi?", self.m_Window)
 		GUILabel:new(5, self.m_Height - 85 + 25, self.m_Width - 10, 23, "Sicher, schnell und günstig in LS unterwegs; Rufe gleich das eXo Public Transport (EPT) an!", self.m_Window)
-		self.m_CallButton = VRPButton:new(self.m_Width - 130, self.m_Height - 30, 125, 25, "Verbinden", true, self.m_Window):setBarColor(Color.Orange)
+		self.m_CallButton = GUIButton:new(self.m_Width - 130, self.m_Height - 30, 125, 25, "Verbinden", self.m_Window):setBackgroundColor(Color.Orange):setBarEnabled(true)
 		self.m_CallButton.onLeftClick = bind(self.CallEPT_Click, self)
 	end
 end
@@ -83,7 +83,7 @@ function VehicleTuningItemGrid:constructor(title, itemList, acceptCallback, chan
 		end
 	end
 
-	self.m_SpawnButton = VRPButton:new(5, self.m_Height - 45, self.m_Width - 10, 40, _"Auswählen", true, self.m_Window)
+	self.m_SpawnButton = GUIButton:new(5, self.m_Height - 45, self.m_Width - 10, 40, _"Auswählen", self.m_Window):setBarEnabled(true)
 	self.m_SpawnButton.onLeftClick = bind(self.AcceptButton_Click, self)
 end
 

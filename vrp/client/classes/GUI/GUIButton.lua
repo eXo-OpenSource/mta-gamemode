@@ -14,7 +14,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUIButton:constructor", "number", "number", "number", "number", "string")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, height*0.05)
+	GUIFontContainer.constructor(self, text, 1, VRPFont(math.floor(height*.9)))
 
 	self.m_NormalColor = Color.White
 	self.m_HoverColor = Color.Black
@@ -49,7 +49,7 @@ end
 
 function GUIButton:onInternalHover()
 	if self.m_Enabled then
-		if not self.m_BarActivated then 
+		if not self.m_BarActivated then
 			self.m_Color = self.m_HoverColor
 		end
 		self.m_BackgroundColor = self.m_BackgroundHoverColor
