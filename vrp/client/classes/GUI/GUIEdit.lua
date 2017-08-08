@@ -15,7 +15,7 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	checkArgs("GUIEdit:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
+	GUIFontContainer.constructor(self, "", 1, VRPFont(height*.9))
 	GUIColorable.constructor(self, Color.DarkBlue)
 
 	self.m_OnCursorMove = bind(GUIEdit.onCursorMove, self)
