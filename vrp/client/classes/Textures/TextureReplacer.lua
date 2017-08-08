@@ -292,10 +292,10 @@ addEventHandler("removeElementTexture", root,
 		if TextureReplacer.Map.SERVER_ELEMENTS[source] and TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] then
 			delete(TextureReplacer.Map.SERVER_ELEMENTS[source][textureName])
 			TextureReplacer.Map.SERVER_ELEMENTS[source][textureName] = nil
-		end
 
-		if table.size(TextureReplacer.Map.SERVER_ELEMENTS[source]) <= 0 then
-			TextureReplacer.Map.SERVER_ELEMENTS[source] = nil
+			if table.size(TextureReplacer.Map.SERVER_ELEMENTS[source]) <= 0 then
+				TextureReplacer.Map.SERVER_ELEMENTS[source] = nil
+			end
 		end
 	end
 )

@@ -56,6 +56,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					):setIcon(FontAwesomeSymbols.Cart_Plus)
 				end
 			end
+			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
+				self:addItem(_"Musik abspielen",
+					function()
+						if self:getElement() then
+							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Music)
+			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
@@ -113,7 +122,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					):setIcon(FontAwesomeSymbols.Arrows)
 				end
-			end -- don't use elseif as it will prevent the bus driver from seeing the UI 
+			end -- don't use elseif as it will prevent the bus driver from seeing the UI
 			if element:getData("EPT_bus_duty") then
 				self:addItem(_"Fahrplan anzeigen",
 					function()
@@ -172,16 +181,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Wrench)
-			end
-
-			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
-				self:addItem(_"Musik abspielen",
-					function()
-						if self:getElement() then
-							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
-						end
-					end
-				):setIcon(FontAwesomeSymbols.Music)
 			end
 		end
 
