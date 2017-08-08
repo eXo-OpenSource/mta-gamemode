@@ -159,7 +159,7 @@ function ScoreboardGUI:addPlayerCount(name, value, valueAFK, color)
 			self.m_PlayerCountLabels[name]:setColor(color)
 		end
 	end
-	
+
 	if valueAFK ~= 0 then
 		self.m_PlayerCountLabels[name]:setText(("%s: %d (%d AFK)"):format(name, value, valueAFK))
 	else

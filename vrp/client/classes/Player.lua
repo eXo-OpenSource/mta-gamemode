@@ -163,6 +163,15 @@ function Player:getMatchID ()
 	)
 end
 
+function Player:getSurfingCar()
+	local result = {processLineOfSight(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -1.5)), false, true, false, false, false, false, false, false, localPlayer, false, true)}
+	return result[5]
+end
+
+function Player:isSurfOnCar(vehicle)
+	return self:getSurfingCar() == vehicle
+end
+
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
 addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
 addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

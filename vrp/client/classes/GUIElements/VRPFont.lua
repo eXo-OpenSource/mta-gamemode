@@ -108,6 +108,7 @@ FontAwesomeSymbols = {
 	Points = "",
 	Calender_Time = "",
 	Calender_Check = "",
+	Desktop = "",
 }
 
 Fonts = {

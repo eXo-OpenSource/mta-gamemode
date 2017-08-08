@@ -59,11 +59,12 @@ function FactionManager:factionEvilStartRaid(target)
 end
 
 function FactionManager:endEvilFactionRaid()
-	if localPlayer.m_evilRaidTarget then
-		if getDistanceBetweenPoints3D( localPlayer.m_evilRaidTarget:getPosition(), localPlayer:getPosition()) <= 5 then
-			triggerServerEvent("factionEvilSuccessRaid", localPlayer,localPlayer.m_evilRaidTarget)
+	local target = localPlayer.m_evilRaidTarget
+	if target then
+		if getDistanceBetweenPoints3D(target:getPosition(), localPlayer:getPosition()) <= 5 and not (target.vehicle and localPlayer:isSurfOnCar(target.vehicle)) then
+			triggerServerEvent("factionEvilSuccessRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		else
-			triggerServerEvent("factionEvilFailedRaid", localPlayer,localPlayer.m_evilRaidTarget)
+			triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		end
 	end
 end
