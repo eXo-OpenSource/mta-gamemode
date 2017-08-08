@@ -10,13 +10,6 @@ inherit(GUIColorable, GUIMemo)
 inherit(GUIFontContainer, GUIMemo)
 inherit(GUIScrollableArea, GUIMemo)
 
---- Creates a new GUI multi line edit box instance
--- @param posX The X-position (relative to parent)
--- @param posY The Y-position (relative to parent)
--- @param width The width of the box
--- @param height The height of the box
--- @param text Predefined text
--- @param (parent) Optional parent
 function GUIMemo:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUIMemo:constructor", "number", "number", "number", "number", "string")
 

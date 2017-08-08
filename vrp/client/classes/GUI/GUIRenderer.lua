@@ -60,7 +60,7 @@ function GUIRenderer.process3DMouse()
 	local sw, sh = guiGetScreenSize()
 	cx = cx*sw
 	cy = cy*sh
-	
+
 	-- Retrieve mouse states
 	local mouse1, mouse2 = getKeyState("mouse1"), getKeyState("mouse2")
 
