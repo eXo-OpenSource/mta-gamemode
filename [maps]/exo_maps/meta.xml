@@ -80,4 +80,7 @@
 
 	<map src="minigamescafe.map" dimension="2" />
 	<map src="tokyotown.map" dimension="0" />
+	
+	<!--xxking-->
+	<map src="Heliport-Immo.map" dimension="0" />
 </meta>

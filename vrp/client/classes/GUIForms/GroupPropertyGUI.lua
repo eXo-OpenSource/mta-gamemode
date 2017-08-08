@@ -127,12 +127,7 @@ function GroupPropertyGUI:setGroupDoorState( b )
 	end
 end
 
-function GroupPropertyGUI:destroyMessage()
-	if self.m_Message then
-		self.m_Message:delete()
-		self.m_MessageDisplayed = false
-	end
-end
+
 
 function GroupPropertyGUI:setMessage( text )
 	if #text < 20 and #text > 1 then

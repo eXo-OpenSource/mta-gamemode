@@ -129,9 +129,26 @@ end
 
 function GroupProperty:showEntryMessage( text )
 	if not self.m_MessageDisplayed then
-		self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, nil):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
-		Animation.FadeAlpha:constructor(self.m_Message, 1000, 0, 255)
-		setTimer(bind( GroupPropertyGUI.destroyMessage,self),2500,1)
+		self.m_Message = GroupPropertyEntryMessageGUI:new(text)
 		self.m_MessageDisplayed = true
 	end
+end
+
+function GroupProperty:destroyMessage()
+	if self.m_Message then
+		delete(self.m_Message)
+		self.m_MessageDisplayed = false
+	end
+end
+
+GroupPropertyEntryMessageGUI = inherit(GUIForm)
+inherit(Singleton, GroupPropertyEntryMessageGUI)
+
+function GroupPropertyEntryMessageGUI:constructor(text)
+	GUIForm.constructor(self, 0,0,w*0.9,h*0.9)
+	self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, self):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
+	Animation.FadeAlpha:new(self.m_Message, 1000, 0, 255)
+	setTimer(function()
+		delete(self)
+	end, 2500, 1)
 end
