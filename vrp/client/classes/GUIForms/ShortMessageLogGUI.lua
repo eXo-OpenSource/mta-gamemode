@@ -27,6 +27,7 @@ function ShortMessageLogGUI:constructor()
 end
 
 function ShortMessageLogGUI:clear()
+	ShortMessageLogGUI.m_Log = {}
 	self.m_LogGrid:clear()
 	outputChatBox("[ShortMessage] Log wurde geleert!", 200,200,0);
 end

@@ -559,7 +559,7 @@ end
 
 function toMoneyString(money)
 	if tonumber(money) then
-		return convertNumber(money).."$"
+		return convertNumber(math.floor(money)).."$"
 	end
 	return tostring(money)
 end
