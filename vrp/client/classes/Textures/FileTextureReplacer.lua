@@ -7,10 +7,6 @@ function FileTextureReplacer:constructor(element, fileName, textureName, options
 	TextureReplacer.constructor(self, element, textureName, options)
 
 	self.m_FileName = fileName:gsub("files/images/Textures/", "")
-
-	if isElementStreamedIn(self.m_Element) then
-		self:load()
-	end
 end
 
 function FileTextureReplacer:destructor()
