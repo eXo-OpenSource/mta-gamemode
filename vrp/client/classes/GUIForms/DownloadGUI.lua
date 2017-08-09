@@ -11,7 +11,6 @@ function DownloadGUI:constructor()
 	end
 	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
-	self.m_CurrentState = GUILabel:new(0, screenHeight/2 - 150/2 + 110, screenWidth, 30, "", self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(30)):setColor(Color.Red)
 
 	fadeCamera(false)
 end
@@ -28,7 +27,7 @@ function DownloadGUI:onProgress(p, fullSize)
 end
 
 function DownloadGUI:setStateText(text)
-	self.m_CurrentState:setText(text)
+	self.m_ProgressBar:setText(text)
 end
 
 function DownloadGUI:onComplete()
