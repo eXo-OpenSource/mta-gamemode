@@ -42,7 +42,7 @@ end
 
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Primary)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.PrimaryNoClick)
 	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "center", "center")
 	dxSetBlendMode("blend")
 end

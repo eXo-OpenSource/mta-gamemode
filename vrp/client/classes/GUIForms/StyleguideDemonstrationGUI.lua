@@ -22,7 +22,7 @@ function StyleguideDemonstrationGUI:constructor()
 
 
 	GUIGridLabel:new(11, 1, 9, 1, "Eine super tolle Liste!", self):setHeader("sub")
-	GUIGridGridList:new(11, 2, 9, 10, self):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.Primary)
+	GUIGridGridList:new(11, 2, 9, 10, self):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.PrimaryNoClick)
 
 	self.m_ListRefreshButton = GUIGridButton:new(19, 2, 1, 1, FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
 	self.m_ListRefreshButton:setBackgroundColor(Color.Accent)
