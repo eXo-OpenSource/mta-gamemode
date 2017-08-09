@@ -1,8 +1,7 @@
 TextureReplacer = inherit(Object)
 TextureReplacer.Map = {
 	SERVER_ELEMENTS = {},
-	SHARED_ELEMENTS = {},
-	TEXTURE_CACHE = {}
+	SHARED_ELEMENTS = {}
 }
 TextureReplacer.Status = {
 	SUCCESS = 1,
@@ -127,53 +126,6 @@ function TextureReplacer:setLoadingMode(loadingMode)
 		self.m_Active = false
 	end
 	self.m_LoadingMode = loadingMode
-end
-
--- Cache methods
-function TextureReplacer.getCached(path)
-	if not TextureReplacer.Map.TEXTURE_CACHE[path] then
-		local pixels = path
-		if path:find(".pixels") then
-			pixels = TextureReplacer.getPixels(path) -- if we dont have a pixels file use normal load
-		end
-		TextureReplacer.Map.TEXTURE_CACHE[path] = {
-			texture = DxTexture(pixels),
-			counter = 0,
-			tick    = getTickCount(),
-		}
-	end
-
-	TextureReplacer.Map.TEXTURE_CACHE[path].counter = TextureReplacer.Map.TEXTURE_CACHE[path].counter + 1
-	return TextureReplacer.Map.TEXTURE_CACHE[path].texture
-end
-
-function TextureReplacer.removeCached(path)
-	if TextureReplacer.Map.TEXTURE_CACHE[path] then
-		TextureReplacer.Map.TEXTURE_CACHE[path].counter = TextureReplacer.Map.TEXTURE_CACHE[path].counter - 1
-		if TextureReplacer.Map.TEXTURE_CACHE[path].counter <= 0 then
-			local texture = TextureReplacer.Map.TEXTURE_CACHE[path].texture
-			if texture and isElement(texture) then texture:destroy() end
-			TextureReplacer.Map.TEXTURE_CACHE[path] = nil
-		end
-
-		return true
-	end
-
-	return false
-end
-
--- // Helper
-function TextureReplacer.getPixels(path)
-	local pixels = false
-	if fileExists(path) then
-		local file = fileOpen(path)
-		if file then
-			pixels = fileRead(file, fileGetSize(file))
-			fileClose(file)
-		end
-	end
-
-	return pixels
 end
 
 function TextureReplacer.addRef(instance)
