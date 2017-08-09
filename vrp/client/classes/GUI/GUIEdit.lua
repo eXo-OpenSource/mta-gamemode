@@ -78,6 +78,7 @@ function GUIEdit:onInternalEditInput(caret)
 	self.m_Caret = caret
 	self.m_MarkedAll = false
 	self.m_Selection = false
+	self.m_SelectionRenderOnly = false
 
 	if self.onChange then
 		self.onChange(self:getDrawnText())
@@ -141,16 +142,8 @@ function GUIEdit:onInternalLeftDoubleClick(absoluteX, absoluteY)
 
 	self.m_SelectionStart = selectionStart
 	self.m_SelectionEnd = selectionEnd
-	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
 
-	if self.m_Selection then
-		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
-		self.m_SelectedText = utfSub(self.m_Text, self.m_SelectionStart + 1, self.m_SelectionEnd)
-		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
-		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
-
-		self:anyChange()
-	end
+	self:onInternalUpdateSelection()
 end
 
 function GUIEdit:onCursorMove(_, _, absoluteX, absoluteY)
@@ -165,25 +158,7 @@ function GUIEdit:onCursorMove(_, _, absoluteX, absoluteY)
 	if relativeX < 0 then relativeX = 0 end
 
 	self.m_EndIndex = self:getIndexFromPixel(relativeX, relativeY)
-
-	self.m_Selection = self.m_StartIndex ~= self.m_EndIndex
-	if self.m_Selection then
-		local text = self:getDrawnText()
-		self.m_SelectionStart = self.m_StartIndex
-		self.m_SelectionEnd = self.m_EndIndex
-
-		if self.m_StartIndex > self.m_EndIndex then
-			self.m_SelectionStart = self.m_EndIndex
-			self.m_SelectionEnd = self.m_StartIndex
-		end
-
-		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
-		self.m_SelectedText = utfSub(text, self.m_SelectionStart + 1, self.m_SelectionEnd)
-		self.m_SelectionOffset = dxGetTextWidth(utfSub(text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
-		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
-	end
-
-	self:anyChange()
+	self:onInternalUpdateSelection(true)
 end
 
 function GUIEdit:onInternalFocus()
@@ -193,18 +168,48 @@ end
 
 function GUIEdit:onInternalLooseFocus()
 	self.m_Selection = false
+	self.m_SelectionRenderOnly = false
 	self.m_SelectedText = nil
 	self.m_MarkedAll = false
 	self:setCursorDrawingEnabled(false)
 end
 
+function GUIEdit:onInternalUpdateSelection(checkIndex)
+	if checkIndex then
+		self.m_SelectionStart = self.m_StartIndex
+		self.m_SelectionEnd = self.m_EndIndex
+
+		if self.m_StartIndex > self.m_EndIndex then
+			self.m_SelectionStart = self.m_EndIndex
+			self.m_SelectionEnd = self.m_StartIndex
+		end
+	end
+
+	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
+	if self.m_Selection then
+		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
+		self.m_SelectedText = utfSub(self.m_Text, self.m_SelectionStart + 1, self.m_SelectionEnd)
+		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
+		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
+	end
+
+	self:anyChange()
+end
+
 function GUIEdit:setCaretPosition(pos)
+	if getKeyState("lshift") or getKeyState("rshift") then
+		self.m_StartIndex = pos
+		self.m_EndIndex = self.m_Caret
+		self.m_SelectionRenderOnly = true
+		self:onInternalUpdateSelection(true)
+	end
+
 	self.m_Caret = math.min(math.max(pos, 0), utfLen(self:getDrawnText())+1)
 	self:anyChange()
 	return self
 end
 
-function GUIEdit:getCaretPosition(pos)
+function GUIEdit:getCaretPosition()
 	return self.m_Caret
 end
 

@@ -60,10 +60,6 @@ function GUIInputControl.checkFocus(element)
 	end
 end
 
-function GUIInputControl.cutSelectedText(text, selectionStart, selectionEnd)
-
-end
-
 addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	function()
 		if GUIInputControl.skipChangedEvent then return end
@@ -72,7 +68,7 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 		if currentEdit then
 			local text = guiGetText(source)
 
-			if currentEdit.m_Selection then
+			if currentEdit.m_Selection and not currentEdit.m_SelectionRenderOnly then
 				GUIInputControl.skipChangedEvent = true
 				text = ("%s%s"):format(utfSub(text, 0, currentEdit.m_SelectionStart), utfSub(text, currentEdit.m_SelectionEnd + 1, #text))
 				guiSetText(source, text)
@@ -161,6 +157,12 @@ addEventHandler("onClientKey", root,
 		elseif button == "a" and pressed and current then
 			if getKeyState("lctrl") or getKeyState("rctrl") then
 				current.m_MarkedAll = true
+				current:anyChange()
+			end
+		elseif (button == "arrow_l" or button == "arrow_r" or button == "home" or button == "end") and pressed and current then
+			if not getKeyState("lshift") or not getKeyState("rshift") then
+				current.m_MarkedAll = false
+				current.m_Selection = false
 				current:anyChange()
 			end
 		elseif button == "c" and pressed and GUIInputControl.ms_RecentlyInFocus then
