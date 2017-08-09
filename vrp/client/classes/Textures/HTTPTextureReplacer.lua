@@ -22,13 +22,13 @@ function HTTPTextureReplacer:load()
 		self:addToQueue()
 		return TextureReplacer.Status.DELAYED
 	else
-		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+		self.m_Texture = TextureCache.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 		return self:attach()
 	end
 end
 
 function HTTPTextureReplacer:unload()
-	local a = TextureReplacer.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+	local a = TextureCache.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
 end

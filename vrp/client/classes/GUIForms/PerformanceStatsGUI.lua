@@ -41,7 +41,7 @@ function PerformanceStatsGUI:constructor()
 	end
 
 	self.m_TabCache = self.m_TabPanel:addTab(_"Cache")
-	self:addField(self.m_TabCache, "CacheTextureReplace", function() return tostring(table.size(TextureReplacer.Map.TEXTURE_CACHE)) end)
+	self:addField(self.m_TabCache, "CacheTextureReplace", function() return tostring(table.size(TextureCache.Map)) end)
 	self.m_TabCache.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.96, self.m_Height*0.73, self.m_TabCache)
 	self.m_TabCache.m_Gridlist:addColumn("Name", 0.85)
 	self.m_TabCache.m_Gridlist:addColumn("Count", 0.15)
@@ -61,8 +61,15 @@ function PerformanceStatsGUI:refresh()
 
 	if self.m_TabCache.m_Gridlist then
 		self.m_TabCache.m_Gridlist:clear()
-		for path, data in pairs(TextureReplacer.Map.TEXTURE_CACHE) do
-			self.m_TabCache.m_Gridlist:addItem(path:gsub("files/images/Textures", ""), data.counter)
+		for path, data in pairs(TextureCache.Map) do
+			local item = self.m_TabCache.m_Gridlist:addItem(path:gsub("files/images/Textures", ""), data:getUsage())
+			item.onLeftDoubleClick = function()
+				local text = _"Folgende Elemente benutzen diese Textur:"
+				for i, instance in pairs(data.m_Instances) do
+					text = ("%s\n#%d %s"):format(text, i, inspect(instance.m_Element))
+				end
+				ShortMessage:new(text, _("Textur Info (%s)", path:gsub("files/images/Textures", "")), Color.Red, 10000)
+			end
 		end
 	end
 end

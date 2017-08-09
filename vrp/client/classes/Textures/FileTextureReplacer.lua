@@ -16,14 +16,14 @@ end
 function FileTextureReplacer:load()
 	if not self.m_FileName then return delete(self) end
 
-	self.m_Texture = TextureReplacer.getCached(FileTextureReplacer.ClientPath:format(self.m_FileName))
+	self.m_Texture = TextureCache.getCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
 	return self:attach()
 end
 
 function FileTextureReplacer:unload()
 	if not self.m_FileName then return delete(self) end
 
-	local a = TextureReplacer.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName))
+	local a = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
 end
