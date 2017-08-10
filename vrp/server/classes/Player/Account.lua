@@ -141,6 +141,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			outputServerLog(msg)
 			outputDebugString(msg)
 			outputConsole(debug.traceback())
+			player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 		end
 		player:loadCharacter()
 		player:spawn()
