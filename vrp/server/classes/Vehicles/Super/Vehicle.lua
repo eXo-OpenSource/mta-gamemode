@@ -697,6 +697,10 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
 		end
 	else
+		if not self.m_Magnet and not isElement(self.m_Magnet) then
+			client:sendError("Internal Error: Magnet Objekt nicht gefunden! Bitte bei einem Scripter melden!")
+			return
+		end
 		local colShape = createColSphere(self.m_Magnet.matrix:transformPosition(Vector3(0, 0, -0.5)), 2)
 		local vehicles = getElementsWithinColShape(colShape, "vehicle")
 		colShape:destroy()

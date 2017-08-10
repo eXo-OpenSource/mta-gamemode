@@ -123,25 +123,32 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
-	if player.getTutorialStage and instanceof(player, DatabasePlayer) then 
+	if player.getTutorialStage and instanceof(player, DatabasePlayer) then
 		-- Update last serial and last login
 		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
-	
+
 		player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
 		Warn.checkWarn(player, true)
 		Ban.checkBan(player, true)
-		tutorialStage = player:getTutorialStage() 
-		if player:getTutorialStage() == 1 then
-			Admin:getSingleton():sendNewPlayerMessage(player)
-			player:createCharacter()
+		if player.getTutorialStage then
+			if player:getTutorialStage() == 1 then
+				Admin:getSingleton():sendNewPlayerMessage(player)
+				player:createCharacter()
+			end
+		else
+			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(player:getName())
+			outputServerLog(msg)
+			outputDebugString(msg)
+			outputConsole(debug.traceback())
 		end
 		player:loadCharacter()
 		player:spawn()
 
 		StatisticsLogger:addLogin( player, Username, "Login")
 		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
-	else player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
+	else
+		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 	end
 end
 
