@@ -72,8 +72,7 @@
 		converter.setOption('strikethrough', true);
 		converter.setOption('parseImgDimensions', true);
 		converter.setOption('simpleLineBreaks', true);
-        html      = converter.makeHtml(text);
-        document.getElementById("content").innerHTML = html;
+        document.getElementById("content").innerHTML = converter.makeHtml(text);;
     });
 })();
 </script>
