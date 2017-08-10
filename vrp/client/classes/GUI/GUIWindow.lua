@@ -31,6 +31,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 			end
 		end
 		self.m_TitlebarDummy.onLeftClick = function()
+			outputDebug("window moving stopped")
 			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
@@ -80,6 +81,21 @@ end
 function GUIWindow:setTitleBarText (text)
 	self.m_TitleLabel:setText(text)
 	return self
+end
+
+function GUIWindow:addTabPanel(tabs)
+	if not self.m_TabPanel then
+		self.m_TitleBarAccentStripe:hide()
+		self.m_TabPanel = GUITabPanel:new(0, 30, self.m_Width, self.m_Height-30, self)
+
+		local tabElements = {}
+		for i,v in pairs(tabs) do
+			outputDebug(v)
+			tabElements[v] = self.m_TabPanel:addTab(v, true)
+		end
+		self.m_TabPanel:resizeTabs()
+		return tabElements, self.m_TabPanel
+	end
 end
 
 --- Closes the window

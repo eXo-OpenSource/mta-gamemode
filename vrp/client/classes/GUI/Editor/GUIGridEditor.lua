@@ -23,11 +23,14 @@ GUIGridEditor.ms_ValidGUIClassData = {
         defaultArgs = {"Fenster", true, true},
     },
     {
-        displayName = "Tab-Menü",
+        displayName = "Tab",
         class       = GUITabPanel,
         varName     = "tabPanel",
-        rootAble    = true, 
-        defaultArgs = {"Fenster", true, true},
+    },
+    {
+        displayName = "Tab-Menü",
+        class       = GUITabControl,
+        varName     = "tabControl",
     },
 }
 
@@ -59,21 +62,39 @@ function GUIGridEditor:isEditable(guiEle)
     return guiEle.m_Editable
 end
 
-function GUIGridEditor:registerEditable(class, guiEle)
+function GUIGridEditor:registerEditable(class, guiEle, noCounterInc)
     guiEle.m_Editable   = true
     guiEle.m_SuperClass = class
     guiEle.m_Name       = GUIGridEditor.CLASS_TO_NAME[class]..self.m_UniqueCounter
-   
-    self.m_UniqueCounter = self.m_UniqueCounter + 1
+    
+    for i,v in pairs(guiEle:getChildren()) do
+        self:registerEditable(class, v, true)
+    end
+
+    if not noCounterInc then 
+        self.m_UniqueCounter = self.m_UniqueCounter + 1
+    end
 end
 
 function GUIGridEditor:createRootGUIElement(class, posX, posY)
     if not self.m_PreviewElement then
-        outputDebug(posX, posY)
-        self.m_PreviewElement = GUIEditorPreview:new(posX, posY, 300, 300) -- create a form as the root of the editor
-        if class ~= GUIForm then
-            local guiEle = self.m_PreviewElement:setRootElement(class, 0, 0, 300, 300, unpack(GUIGridEditor.ms_DefaultElementArgs[class] or {})) -- add a window or tab menu
-            self:registerEditable(class, guiEle)
+        if class == "tabWindow" then
+            self.m_PreviewElement = GUIEditorPreview:new(posX, posY, 500, 500) -- create a form as the root of the editor
+           
+            local guiEle = self.m_PreviewElement:setRootElement(GUIWindow, 0, 0, 500, 500, unpack(GUIGridEditor.ms_DefaultElementArgs[GUIWindow] or {}))
+            self:registerEditable(GUIWindow, guiEle)
+
+            local tabs, tabControl = guiEle:addTabPanel({"Tab 1", "Tab 2", "Toxsi stinkt"})
+            self:registerEditable(GUITabControl, tabControl)
+            for i,v in pairs(tabs) do
+                self:registerEditable(GUITabPanel, v)
+            end
+        else
+            self.m_PreviewElement = GUIEditorPreview:new(posX, posY, 500, 500)
+            if class ~= GUIForm then
+                local guiEle = self.m_PreviewElement:setRootElement(class, 0, 0, 500, 500, unpack(GUIGridEditor.ms_DefaultElementArgs[class] or {})) -- add a window or tab menu
+                self:registerEditable(class, guiEle)
+            end
         end
     else
         ErrorBox:new(_"Du kannst nur ein Fenster zugleich bearbeiten!")

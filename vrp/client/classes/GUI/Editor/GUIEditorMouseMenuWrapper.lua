@@ -21,8 +21,7 @@ end
 function GUIEditorMouseMenuWrapper:onMouseClick(btn, state, mouseX, mouseY)
     local hElement = GUIElement.getHoveredElement()
     if btn == "left" and state == "up" then
-        outputDebug(tostring(hElement), tostring(self.m_ActiveMouseMenu))
-        if self.m_ActiveMouseMenu and hElement ~= self.m_ActiveMouseMenu then
+        if self.m_MouseMenuLoaded and (not hElement or hElement.m_Parent ~= self.m_ActiveMouseMenu) then
             self.m_ActiveMouseMenu:delete()
             self.m_ActiveMouseMenu = nil
         end
@@ -37,7 +36,6 @@ function GUIEditorMouseMenu:constructor(posX, posY)
     local hElement = GUIElement.getHoveredElement()
     if hElement then -- create element-specific content
         if GUIGridEditor:getSingleton():isEditable(hElement) then
-            outputDebug("clicked element", hElement.m_Name)
             self:createElementSpecificItems(hElement)
         end
     else -- create root context box
@@ -57,18 +55,30 @@ end
 function GUIEditorMouseMenu:createElementSpecificItems(ele)
     self:clearItems()
     self:addItem(ele.m_Name)
+    self:addItem(_"Name ändern",
+    function()
+        delete(self)
+        GUIGridEditor:getSingleton():createRootGUIElement(class, posX, posY)
+    end
+    )
 end
 
 function GUIEditorMouseMenu:createRootElements(posX, posY)
     self:clearItems()
     for displayName, class in pairs(GUIGridEditor.ms_ValidGUIForms) do
         self:addItem(_(displayName),
+            function()
+                delete(self)
+                GUIGridEditor:getSingleton():createRootGUIElement(class, posX, posY)
+            end
+        )
+    end
+    self:addItem(_"Tab-Fenster",
         function()
             delete(self)
-            GUIGridEditor:getSingleton():createRootGUIElement(class, posX, posY)
+            GUIGridEditor:getSingleton():createRootGUIElement("tabWindow", posX, posY)
         end
-        )--:setIcon(FontAwesomeSymbols.Cart_Plus)
-    end
+    )
 end
 
 function GUIEditorMouseMenu:createElementSelection()

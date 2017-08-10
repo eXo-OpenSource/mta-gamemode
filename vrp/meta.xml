@@ -1851,13 +1851,13 @@
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 
-	<!-- Includes 
+	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
 	<include resource="reload"/>
 	<include resource="helicopterrope" />
 	<include resource="heligrab" />
-	 Shaders 
+	<!-- Shaders -->
 	<include resource="Bloom" />
 	<include resource="Contrast" />
 	<include resource="Detail" />
