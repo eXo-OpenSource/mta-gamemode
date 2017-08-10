@@ -29,3 +29,37 @@
     };
   });
 }));
+
+
+(function (extension) {
+  'use strict';
+
+    extension(showdown);
+
+}(function (showdown) {
+  'use strict';
+
+  showdown.extension('blip', function() {
+    'use strict';
+
+    return {
+      type: 'lang',
+      filter: function (text, converter, options) {
+
+
+        while (true) {
+          var reg = /\[@\[blip\]\(([a-zA-Z0-9_]{0,})\)\]/;
+
+          var match = reg.exec(text)
+          
+          if(match === null)
+            break;
+
+          var style = "display:inline; width:20px; height:20px;";
+          text = text.replace(match[0], "<sub><img style='"+style+"' src='http://mta/local/files/Images/Radar/Blips/"+match[1]+".png' /></sub>");
+        }
+        return text;
+      }
+    };
+  });
+}));
