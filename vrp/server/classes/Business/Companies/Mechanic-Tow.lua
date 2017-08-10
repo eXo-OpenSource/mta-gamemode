@@ -1,5 +1,5 @@
 MechanicTow = inherit(Company)
-addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicTakeVehicle", "mechanicOpenTakeGUI"}
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeVehicle", "mechanicOpenTakeGUI"}
 
 function MechanicTow:constructor()
 	self:createTowLot()
@@ -29,6 +29,7 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
+	addEventHandler("mechanicDetachFuelTank", root, bind(self.Event_mechanicDetachFuelTank, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
 end
@@ -206,9 +207,9 @@ function MechanicTow:onLeaveTowLot( hElement )
 end
 
 function MechanicTow:onAttachVehicleToTow(towTruck)
-	local driver = getVehicleOccupant( towTruck )
+	local driver = getVehicleOccupant(towTruck)
 	if driver then
-		if towTruck.getCompany and towTruck:getCompany() == self then
+		if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
 			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
 				source:toggleRespawn(false)
 			else
@@ -221,7 +222,7 @@ end
 function MechanicTow:onDetachVehicleFromTow( towTruck )
 	source:toggleRespawn(true)
 
-	local driver = getVehicleOccupant( towTruck )
+	local driver = getVehicleOccupant(towTruck)
 	if driver and driver.m_InTowLot then
 		if towTruck.getCompany and towTruck:getCompany() == self then
 			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
@@ -233,6 +234,20 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 				driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
 		end
+	end
+end
+
+function MechanicTow:Event_mechanicDetachFuelTank(vehicle)
+	if client:getCompany() ~= self then
+		return
+	end
+	if not client:isCompanyDuty() then
+		client:sendError(_("Du bist nicht im Dienst!", client))
+		return
+	end
+
+	if vehicle.getCompany and vehicle:getCompany() == self then
+		vehicle:detachTrailer()
 	end
 end
 

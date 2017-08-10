@@ -58,9 +58,7 @@ function GasStation:onStart(shopId)
 				if getKeyState("space") then
 					triggerServerEvent("gasStationFill", root, shopId, getKeyState("lshift"))
 				end
-			end,
-			1000,
-			0
+			end, 1000, 0
 		)
 	end
 end
@@ -95,7 +93,7 @@ function GasStation:onStreamOut()
 end
 
 function GasStation:gasRender()
-	local rendering = self:checkRender() 
+	local rendering = self:checkRender()
 	if rendering then
 		dxSetRenderTarget(self.m_RenderTarget)
 		self:renderBackground()
@@ -105,10 +103,10 @@ function GasStation:gasRender()
 	end
 end
 
-function GasStation:checkRender() 
-	for obj, k in pairs(self.m_StreamedObjects) do 
-		if obj and isElement(obj) and obj.getPosition then 
-			if getDistanceBetweenPoints3D(obj:getPosition(), localPlayer:getPosition() ) <= 30 then 
+function GasStation:checkRender()
+	for obj, k in pairs(self.m_StreamedObjects) do
+		if obj and isElement(obj) and obj.getPosition then
+			if getDistanceBetweenPoints3D(obj:getPosition(), localPlayer:getPosition() ) <= 30 then
 				return true
 			end
 		end

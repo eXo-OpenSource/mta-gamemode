@@ -980,6 +980,7 @@
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
+	<vrpfile src="files/images/Speedo/fuel_needle_trailer.png"/>
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>
 	<vrpfile src="files/images/Speedo/indicator_right.png"/>
 
