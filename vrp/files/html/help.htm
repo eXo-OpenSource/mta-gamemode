@@ -1,7 +1,7 @@
 <html>
 <head>
     <style>
-    
+
     @font-face {
         font-family: ekMukta;
         src: url('http://mta/local/files/fonts/EkMukta.ttf')
@@ -66,9 +66,13 @@
 <script>
 (function() {
     mtatools.registerEvent("onTextChange", function(text) {
-        var converter = new showdown.Converter({ extensions: ['button'] }),
-            html      = converter.makeHtml(text);
-        document.getElementById("content").innerHTML = html;
+        var converter = new showdown.Converter({ extensions: ['button', 'blip'] });
+		converter.setOption('tables', true);
+		converter.setOption('tablesHeaderId', true);
+		converter.setOption('strikethrough', true);
+		converter.setOption('parseImgDimensions', true);
+		converter.setOption('simpleLineBreaks', true);
+        document.getElementById("content").innerHTML = converter.makeHtml(text);;
     });
 })();
 </script>
