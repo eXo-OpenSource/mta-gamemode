@@ -63,9 +63,16 @@ function MechanicTow:renderFuelHose()
 					local worldVehicle = localPlayer:getWorldVehicle()
 					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle then
 						localPlayer.lastWorldVehicle = worldVehicle
-						InfoBox:new("Drücke die linke Maustaste um das Fahrzeug zu betanken!")
+
+						if not VehicleFuel:isInstantiated() then
+							VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill)
+						end
 					elseif not worldVehicle then
 						localPlayer.lastWorldVehicle = nil
+
+						if VehicleFuel:isInstantiated() then
+							delete(VehicleFuel:getSingleton())
+						end
 					end
 
 					if (vehicle.position - element.position).length > 10 then
@@ -80,26 +87,24 @@ function MechanicTow:renderFuelHose()
 	end
 end
 
-function MechanicTow:requestFill()
-	if isCursorShowing() then return end
-
-	if localPlayer.lastWorldVehicle then
-		if not localPlayer.lastWorldVehicle.controller then
-			ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
-			return
-		end
-
-
-
-		--InfoBox:new("Dem Spieler wurde dein Service angeboten..")
-		--triggerServerEvent("mechanicVehicleRequestFill", localPlayer, localPlayer.lastWorldVehicle)
+function MechanicTow:requestFill(vehicle, fuel)
+	if VehicleFuel:isInstantiated() then
+		delete(VehicleFuel:getSingleton())
 	end
+
+	if not vehicle.controller then
+		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
+	--	return
+	end
+
+	InfoBox:new("Dem Spieler wurde dein Service angeboten..")
+	triggerServerEvent("mechanicVehicleRequestFill", localPlayer, vehicle, fuel)
 end
 
 function MechanicTow:fuelTankStart(vehicle)
 	FuelTankGUI:new(vehicle)
 
-	bindKey("mouse1", "down", self.m_RequestFill)
+	--bindKey("mouse1", "down", self.m_RequestFill)
 end
 
 function MechanicTow:fuelTankStop()
