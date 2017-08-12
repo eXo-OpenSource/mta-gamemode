@@ -1,4 +1,5 @@
 MechanicTow = inherit(Singleton)
+addRemoteEvents{"mechanicFuelTankStart", "mechanicFuelTankStop"}
 
 function MechanicTow:constructor()
 	self.m_Ped = createPed(50, 913.83, -1234.65, 16.98)
@@ -37,8 +38,12 @@ function MechanicTow:constructor()
 	SpeakBubble3D:new(self.m_BugPed, _"Ich kann Wanzen aufspüren", _"Klicke mich an!")
 
 	self.m_RenderFuelHoles = {}
+	self.m_RequestFill = bind(MechanicTow.requestFill, self)
+
 	addEventHandler("onClientElementStreamIn", root, bind(MechanicTow.onObjectStreamIn, self))
 	addEventHandler("onClientRender", root, bind(MechanicTow.renderFuelHose, self))
+	addEventHandler("mechanicFuelTankStart", root, bind(MechanicTow.fuelTankStart, self))
+	addEventHandler("mechanicFuelTankStop", root, bind(MechanicTow.fuelTankStop, self))
 end
 
 function MechanicTow:onObjectStreamIn()
@@ -55,8 +60,12 @@ function MechanicTow:renderFuelHose()
 				dxDrawLine3D(vehicle.position, element.position, Color.Black, 5)
 
 				if localPlayer:getPrivateSync("hasFuelNozzle") then
-					if localPlayer:getWorldVehicle() then
-						self:drawTextBox("Halte die linke Maustaste gedrückt um das Fahrzeug zu betanken!", 2)
+					local worldVehicle = localPlayer:getWorldVehicle()
+					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle then
+						localPlayer.lastWorldVehicle = worldVehicle
+						InfoBox:new("Drücke die linke Maustaste um das Fahrzeug zu betanken!")
+					elseif not worldVehicle then
+						localPlayer.lastWorldVehicle = nil
 					end
 
 					if (vehicle.position - element.position).length > 10 then
@@ -71,9 +80,30 @@ function MechanicTow:renderFuelHose()
 	end
 end
 
-function MechanicTow:drawTextBox(text, count)
-	local width, height = dxGetTextWidth(text, 1, "default") + 10, 16
-	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
-	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
-	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, "default", "center", "center", false, false, false, true, false)
+function MechanicTow:requestFill()
+	if isCursorShowing() then return end
+
+	if localPlayer.lastWorldVehicle then
+		if not localPlayer.lastWorldVehicle.controller then
+			ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
+			return
+		end
+
+		InfoBox:new("Dem Spieler wurde dein Server angeboten..")
+		triggerServerEvent("mechanicVehicleRequestFill", localPlayer, localPlayer.lastWorldVehicle)
+	end
+end
+
+function MechanicTow:fuelTankStart(vehicle)
+	FuelTankGUI:new(vehicle)
+
+	bindKey("mouse1", "down", self.m_RequestFill)
+end
+
+function MechanicTow:fuelTankStop()
+	if FuelTankGUI:isInstantiated() then
+		delete(FuelTankGUI:getSingleton())
+	end
+
+	unbindKey("mouse1", "down", self.m_RequestFill)
 end
