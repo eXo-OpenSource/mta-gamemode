@@ -47,7 +47,7 @@ function MechanicTow:constructor()
 end
 
 function MechanicTow:onObjectStreamIn()
-	if source:getModel() == 1826 then
+	if source:getModel() == 1909 then
 		self.m_RenderFuelHoles[source] = true
 	end
 end
@@ -57,7 +57,7 @@ function MechanicTow:renderFuelHose()
 		if isElement(element) then
 			local vehicle = element:getData("attachedToVehicle")
 			if vehicle then
-				dxDrawLine3D(vehicle.position, element.position, Color.Black, 5)
+				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if localPlayer:getPrivateSync("hasFuelNozzle") then
 					local worldVehicle = localPlayer:getWorldVehicle()
@@ -89,8 +89,10 @@ function MechanicTow:requestFill()
 			return
 		end
 
-		InfoBox:new("Dem Spieler wurde dein Server angeboten..")
-		triggerServerEvent("mechanicVehicleRequestFill", localPlayer, localPlayer.lastWorldVehicle)
+
+
+		--InfoBox:new("Dem Spieler wurde dein Service angeboten..")
+		--triggerServerEvent("mechanicVehicleRequestFill", localPlayer, localPlayer.lastWorldVehicle)
 	end
 end
 

@@ -9,7 +9,7 @@ CustomModelManager = inherit(Singleton)
 
 function CustomModelManager:constructor()
 	self.m_DFFMap = {}
-	self.m_COLMap = {} 
+	self.m_COLMap = {}
 	self.m_TXDMap = {}
 	--self:loadImportDFF("files/models/dead_tree_18.dff", 846)
 
@@ -74,6 +74,10 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/fence.txd", 1866)
 	self:loadImportDFF("files/models/fence.dff", 1866)
 
+	-- fuel nozzle
+	self:loadImportCOL("files/models/fuelnozzle.col", 1909)
+	self:loadImportTXD("files/models/fuelnozzle.txd", 1909)
+	self:loadImportDFF("files/models/fuelnozzle.dff", 1909)
 
 	--other objects
 	-- Blitzer

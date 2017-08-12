@@ -26,6 +26,9 @@ function MechanicTow:constructor()
 	local blip = Blip:new("House.png", 857.594, -1182.628, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
 	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
 
+	self.m_FillAccept = bind(MechanicTow.FillAccept, self)
+	self.m_FillDecline = bind(MechanicTow.FillDecline, self)
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
@@ -267,14 +270,14 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 		if isElement(client.fuelNozzle) then
 			toggleControl(client, "fire", true)
 			client:setPrivateSync("hasFuelNozzle", false)
-			client:triggerEvent("closeFuelTankGUI")
+			client:triggerEvent("mechanicFuelTankStop")
 			client.fuelNozzle:destroy()
 			return
 		end
 
-		client.fuelNozzle = createObject(1826, client.position)
+		client.fuelNozzle = createObject(1909, client.position)
 		client.fuelNozzle:setData("attachedToVehicle", vehicle, true)
-		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
 		client:setPrivateSync("hasFuelNozzle", true)
 		client:triggerEvent("mechanicFuelTankStart", vehicle)
@@ -293,7 +296,18 @@ function MechanicTow:Event_mechanicRejectFuelNozzle()
 end
 
 function MechanicTow:Event_mechanicVehicleRequestFill(vehicle)
-	outputChatBox("fill lol")
+	if vehicle and vehicle.controller then
+		local driver = vehicle.controller
+		QuestionBox:new(client, driver,  _("%s möchte dein Fahrzeug tanken. Dies kostet dich 500$", driver, client:getName()), self.m_FillAccept, self.m_FillDecline)
+	end
+end
+
+function MechanicTow:FillAccept()
+	outputChatBox("Accept!")
+end
+
+function MechanicTow:FillDecline()
+	outputChatBox("Decline!")
 end
 
 MechanicTow.SpawnPositions = {
