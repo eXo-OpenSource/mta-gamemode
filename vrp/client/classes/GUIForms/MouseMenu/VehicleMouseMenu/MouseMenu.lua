@@ -237,7 +237,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
-		--if localPlayer:getPublicSync("CompanyId") == 2 and localPlayer:getPublicSync("Company:Duty") == true then
+		--if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
 			if element:getHealth() < 950 then
 				self:addItem(_"Mechaniker: Reparieren",
 					function()

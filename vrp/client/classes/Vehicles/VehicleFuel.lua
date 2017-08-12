@@ -18,7 +18,6 @@ function VehicleFuel:constructor(vehicle, confirmCallback)
 
 	self.m_HandleClick = bind(VehicleFuel.handleClick, self)
 	self.m_Confirm = bind(VehicleFuel.confirm, self)
-	--self.m_Render = bind(VehicleFuel.render, self)
 
 	local pos = vehicle:getPosition()
 	pos.z = pos.z + 1.5
@@ -27,13 +26,11 @@ function VehicleFuel:constructor(vehicle, confirmCallback)
 
 	bindKey("mouse1", "both", self.m_HandleClick)
 	bindKey("space", "down", self.m_Confirm)
-	--addEventHandler("onClientRender", root, self.m_Render)
 end
 
 function VehicleFuel:virtual_destructor()
 	unbindKey("space", "down", self.m_Confirm)
 	unbindKey("mouse1", "both", self.m_HandleClick)
-	--removeEventHandler("onClientRender", root, self.m_Render)
 end
 
 function VehicleFuel:confirm()
@@ -64,13 +61,7 @@ function VehicleFuel:onStreamIn(surface)
 	self.m_Surface = surface
 end
 
-
 function VehicleFuel:updateRenderTarget()
 	self.m_Needle.m_Rotation = self.m_Fuel
 	self.m_Surface:anyChange()
-	--local left = screenWidth - 133
-	--local top = screenHeight - 133
-
-	--dxDrawImage(left, top, 128, 128, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
-	--dxDrawImage(left, top, 128, 128, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 end

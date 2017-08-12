@@ -129,13 +129,13 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
 	if source:getMoney() >= price then
 		vehicle:fix()
-		source:takeMoney(price, "Mech&Tow")
+		source:takeMoney(price, "Mech&Tow Reperatur")
 
 		if vehicle.PendingMechanic then
 			if source ~= vehicle.PendingMechanic then
 				self.m_PendingQuestions[vehicle.PendingMechanic] = getRealTime().timestamp
 
-				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech & Tow Reparatur")
+				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech&Tow Reparatur")
 				vehicle.PendingMechanic:givePoints(2)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
@@ -160,7 +160,7 @@ end
 
 function MechanicTow:Event_mechanicTakeVehicle()
 	if client:getMoney() >= 500 then
-		client:takeMoney(500, "Mech&Tow")
+		client:takeMoney(500, "Mech&Tow freikauf")
 		self:giveMoney(500, "Fahrzeug freikauf")
 		source:fix()
 
@@ -295,19 +295,38 @@ function MechanicTow:Event_mechanicRejectFuelNozzle()
 	end
 end
 
-function MechanicTow:Event_mechanicVehicleRequestFill(vehicle)
+function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 	if vehicle and vehicle.controller then
 		local driver = vehicle.controller
-		QuestionBox:new(client, driver,  _("%s möchte dein Fahrzeug tanken. Dies kostet dich 500$", driver, client:getName()), self.m_FillAccept, self.m_FillDecline)
+		local fuel = math.floor(fuel)
+
+		outputChatBox(vehicle:getFuel() + fuel)
+
+		if vehicle:getFuel() + fuel > 100 then
+			fuel = 100 - vehicle:getFuel()
+		end
+
+		local price = math.floor(fuel * 5)
+
+		QuestionBox:new(client, driver,  _("%s möchte dein Fahrzeug tanken.\nLiter: %s\nPreis: %s", driver, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, driver, vehicle, fuel, price)
 	end
 end
 
-function MechanicTow:FillAccept()
-	outputChatBox("Accept!")
+function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
+	if target:getMoney() >= price then
+		target:takeMoney(price, "Mech&Tow tanken")
+		vehicle:setFuel(vehicle:getFuel() + fuel)
+
+		player:giveMoney(math.floor(price*0.3), "Mech&Tow tanken")
+		self:giveMoney(math.floor(price*0.7), "Tanken")
+	else
+		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
+		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
+	end
 end
 
-function MechanicTow:FillDecline()
-	outputChatBox("Decline!")
+function MechanicTow:FillDecline(player)
+	player:sendError(_("Der Spieler möchte deinen Service nicht nutzen.", player))
 end
 
 MechanicTow.SpawnPositions = {
