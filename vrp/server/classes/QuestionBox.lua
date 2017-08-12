@@ -41,8 +41,15 @@ function QuestionBox.Accept(id)
 		client:sendError(_("Die Anfrage ist abgelaufen und kann daher nicht mehr akzeptiert werden!", client))
 		return
 	end
-	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["yesEvent"] then
-		triggerEvent(QuestionBox.Map[id]["yesEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
+
+	local yesEvent = QuestionBox.Map[id]["yesEvent"]
+	if QuestionBox.Map[id]["target"] == client and yesEvent then
+		if type(yesEvent) == "function" then
+			yesEvent(unpack(QuestionBox.Map[id]["additionalParameters"]))
+		else
+			triggerEvent(QuestionBox.Map[id]["yesEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
+		end
+
 		delete(QuestionBox.Map[id]["object"])
 	end
 end
@@ -52,8 +59,15 @@ function QuestionBox.Discard(id)
 		client:sendError(_("Die Anfrage ist abgelaufen und kann daher nicht mehr abgelehnt werden!", client))
 		return
 	end
-	if QuestionBox.Map[id]["target"] == client and QuestionBox.Map[id]["noEvent"] then
-		triggerEvent(QuestionBox.Map[id]["noEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
+
+	local noEvent = QuestionBox.Map[id]["noEvent"]
+	if QuestionBox.Map[id]["target"] == client and noEvent then
+		if type(noEvent) == "function" then
+			noEvent(unpack(QuestionBox.Map[id]["additionalParameters"]))
+		else
+			triggerEvent(QuestionBox.Map[id]["noEvent"], client, unpack(QuestionBox.Map[id]["additionalParameters"]))
+		end
+
 		delete(QuestionBox.Map[id]["object"])
 	end
 end
