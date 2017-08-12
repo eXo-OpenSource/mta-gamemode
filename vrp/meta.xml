@@ -644,6 +644,7 @@
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>

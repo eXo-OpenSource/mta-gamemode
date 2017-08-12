@@ -79,7 +79,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	end
 
 	if self:getModel() == 611 then -- Fuel tank
-		self.m_Fuel = 0
+		self.m_Fuel = 100 -- Todo: Reset to 0 in production
 	end
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))

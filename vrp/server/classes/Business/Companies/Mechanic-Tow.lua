@@ -1,5 +1,5 @@
 MechanicTow = inherit(Company)
-addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeVehicle", "mechanicOpenTakeGUI"}
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI"}
 
 function MechanicTow:constructor()
 	self:createTowLot()
@@ -30,6 +30,8 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
 	addEventHandler("mechanicDetachFuelTank", root, bind(self.Event_mechanicDetachFuelTank, self))
+	addEventHandler("mechanicTakeFuelNozzle", root, bind(self.Event_mechanicTakeFuelNozzle, self))
+	addEventHandler("mechanicRejectFuelNozzle", root, bind(self.Event_mechanicRejectFuelNozzle, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
 end
@@ -248,6 +250,44 @@ function MechanicTow:Event_mechanicDetachFuelTank(vehicle)
 
 	if vehicle.getCompany and vehicle:getCompany() == self then
 		vehicle:detachTrailer()
+	end
+end
+
+function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
+	if client:getCompany() ~= self then
+		return
+	end
+	if not client:isCompanyDuty() then
+		client:sendError(_("Du bist nicht im Dienst!", client))
+		--return TODO: REMOVE WHEN DONE
+	end
+
+	if vehicle.getCompany and vehicle:getCompany() == self then
+		if isElement(client.fuelNozzle) then
+			toggleControl(client, "fire", true)
+			client:setPrivateSync("hasFuelNozzle", false)
+			client:triggerEvent("closeFuelTankGUI")
+			client.fuelNozzle:destroy()
+			return
+		end
+
+		client.fuelNozzle = createObject(1826, client.position)
+		client.fuelNozzle:setData("attachedToVehicle", vehicle, true)
+		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+
+		client:setPrivateSync("hasFuelNozzle", true)
+		client:triggerEvent("showFuelTankGUI", vehicle)
+		toggleControl(client, "fire", false)
+	end
+end
+
+function MechanicTow:Event_mechanicRejectFuelNozzle()
+	if isElement(client.fuelNozzle) then
+		toggleControl(client, "fire", true)
+		client:setPrivateSync("hasFuelNozzle", false)
+		client:triggerEvent("closeFuelTankGUI")
+		client.fuelNozzle:destroy()
+		return
 	end
 end
 

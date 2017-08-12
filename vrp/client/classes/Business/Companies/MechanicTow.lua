@@ -35,4 +35,45 @@ function MechanicTow:constructor()
 	self.m_BugPed:setFrozen(true)
 
 	SpeakBubble3D:new(self.m_BugPed, _"Ich kann Wanzen aufspüren", _"Klicke mich an!")
+
+	self.m_RenderFuelHoles = {}
+	addEventHandler("onClientElementStreamIn", root, bind(MechanicTow.onObjectStreamIn, self))
+	addEventHandler("onClientRender", root, bind(MechanicTow.renderFuelHose, self))
+end
+
+function MechanicTow:onObjectStreamIn()
+	if source:getModel() == 1826 then
+		self.m_RenderFuelHoles[source] = true
+	end
+end
+
+function MechanicTow:renderFuelHose()
+	for element in pairs(self.m_RenderFuelHoles) do
+		if isElement(element) then
+			local vehicle = element:getData("attachedToVehicle")
+			if vehicle then
+				dxDrawLine3D(vehicle.position, element.position, Color.Black, 5)
+
+				if localPlayer:getPrivateSync("hasFuelNozzle") then
+					if localPlayer:getWorldVehicle() then
+						self:drawTextBox("Halte die linke Maustaste gedrückt um das Fahrzeug zu betanken!", 2)
+					end
+
+					if (vehicle.position - element.position).length > 10 then
+						self.m_RenderFuelHoles[element] = nil
+						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+					end
+				end
+			end
+		else
+			self.m_RenderFuelHoles[element] = nil
+		end
+	end
+end
+
+function MechanicTow:drawTextBox(text, count)
+	local width, height = dxGetTextWidth(text, 1, "default") + 10, 16
+	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
+	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
+	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, "default", "center", "center", false, false, false, true, false)
 end
