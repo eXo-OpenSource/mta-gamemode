@@ -7,6 +7,7 @@
 -- ****************************************************************************
 FuelTankGUI = inherit(GUIForm3D)
 inherit(Singleton, FuelTankGUI)
+addRemoteEvents{"showFuelTankGUI", "closeFuelTankGUI"}
 
 function FuelTankGUI:constructor(element)
 	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
@@ -22,3 +23,17 @@ function FuelTankGUI:onStreamIn(surface)
 	GUIProgressBar:new(5, 35, 190, 30, window):setProgress(12)
 	GUILabel:new(5, 35, 190, 30, "60 / 500 Liter", window):setAlign("center", "center")
 end
+
+addEventHandler("showFuelTankGUI", root,
+	function(...)
+		FuelTankGUI:new(...)
+	end
+)
+
+addEventHandler("closeFuelTankGUI", root,
+	function()
+		if FuelTankGUI:isInstantiated() then
+			delete(FuelTankGUI:getSingleton())
+		end
+	end
+)

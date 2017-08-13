@@ -746,3 +746,10 @@ VEHICLE_PICKUP = {
 	[543] = true,
 	[605] = true,
 }
+
+CompanyStaticId = {
+	DRIVINGSCHOOL = 1,
+	MECHANIC = 2,
+	SANNEWS = 3,
+	EPT = 4,
+}

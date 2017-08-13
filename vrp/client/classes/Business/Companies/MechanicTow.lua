@@ -1,5 +1,4 @@
 MechanicTow = inherit(Singleton)
-addRemoteEvents{"mechanicFuelTankStart", "mechanicFuelTankStop"}
 
 function MechanicTow:constructor()
 	self.m_Ped = createPed(50, 913.83, -1234.65, 16.98)
@@ -42,8 +41,6 @@ function MechanicTow:constructor()
 
 	addEventHandler("onClientElementStreamIn", root, bind(MechanicTow.onObjectStreamIn, self))
 	addEventHandler("onClientRender", root, bind(MechanicTow.renderFuelHose, self))
-	addEventHandler("mechanicFuelTankStart", root, bind(MechanicTow.fuelTankStart, self))
-	addEventHandler("mechanicFuelTankStop", root, bind(MechanicTow.fuelTankStop, self))
 end
 
 function MechanicTow:onObjectStreamIn()
@@ -56,7 +53,7 @@ function MechanicTow:renderFuelHose()
 	for element in pairs(self.m_RenderFuelHoles) do
 		if isElement(element) then
 			local vehicle = element:getData("attachedToVehicle")
-			if vehicle then
+			if isElement(vehicle) then
 				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if localPlayer:getPrivateSync("hasFuelNozzle") then
@@ -80,6 +77,11 @@ function MechanicTow:renderFuelHose()
 						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
 					end
 				end
+			else
+				self.m_RenderFuelHoles[element] = nil
+				if localPlayer:getPrivateSync("hasFuelNozzle") then
+					triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+				end
 			end
 		else
 			self.m_RenderFuelHoles[element] = nil
@@ -94,23 +96,8 @@ function MechanicTow:requestFill(vehicle, fuel)
 
 	if not vehicle.controller then
 		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
-	--	return
+		return
 	end
 
-	InfoBox:new("Dem Spieler wurde dein Service angeboten..")
 	triggerServerEvent("mechanicVehicleRequestFill", localPlayer, vehicle, fuel)
-end
-
-function MechanicTow:fuelTankStart(vehicle)
-	FuelTankGUI:new(vehicle)
-
-	--bindKey("mouse1", "down", self.m_RequestFill)
-end
-
-function MechanicTow:fuelTankStop()
-	if FuelTankGUI:isInstantiated() then
-		delete(FuelTankGUI:getSingleton())
-	end
-
-	unbindKey("mouse1", "down", self.m_RequestFill)
 end

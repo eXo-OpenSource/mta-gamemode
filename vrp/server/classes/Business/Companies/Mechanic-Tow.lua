@@ -43,7 +43,6 @@ function MechanicTow:constructor()
 end
 
 function MechanicTow:destuctor()
-
 end
 
 function MechanicTow:onPlayerQuit(player)
@@ -278,7 +277,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 		if isElement(client.fuelNozzle) then
 			toggleControl(client, "fire", true)
 			client:setPrivateSync("hasFuelNozzle", false)
-			client:triggerEvent("mechanicFuelTankStop")
+			client:triggerEvent("closeFuelTankGUI")
 			client.fuelNozzle:destroy()
 			return
 		end
@@ -288,7 +287,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
 		client:setPrivateSync("hasFuelNozzle", true)
-		client:triggerEvent("mechanicFuelTankStart", vehicle)
+		client:triggerEvent("showFuelTankGUI", vehicle)
 		toggleControl(client, "fire", false)
 	end
 end
@@ -297,30 +296,39 @@ function MechanicTow:Event_mechanicRejectFuelNozzle()
 	if isElement(client.fuelNozzle) then
 		toggleControl(client, "fire", true)
 		client:setPrivateSync("hasFuelNozzle", false)
-		client:triggerEvent("mechanicFuelTankStop")
+		client:triggerEvent("closeFuelTankGUI")
 		client.fuelNozzle:destroy()
 		return
 	end
 end
 
 function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
-	if vehicle and vehicle.controller then
-		local driver = vehicle.controller
-		local fuel = math.floor(fuel)
+	if client:getCompany() ~= self then return end
+	if not client:isCompanyDuty() then client:sendError(_("Du bist nicht im Dienst!", client)) return end
+	if not vehicle then return end
+	if not vehicle.controller then return end
 
-		outputChatBox(vehicle:getFuel() + fuel)
-
-		if vehicle:getFuel() + fuel > 100 then
-			fuel = 100 - vehicle:getFuel()
-		end
-
-		local price = math.floor(fuel * 5)
-
-		QuestionBox:new(client, driver,  _("%s möchte dein Fahrzeug tanken.\nLiter: %s\nPreis: %s", driver, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, driver, vehicle, fuel, price)
+	if vehicle.controller.fillRequest then
+		client:sendError("Der Spieler hat bereits eine Anfrage bekommen")
+		return
 	end
+
+	local fuel = vehicle:getFuel() + fuel > 100 and math.floor(100 - vehicle:getFuel()) or math.floor(fuel)
+	local price = math.floor(fuel * 5)
+
+	if fuel == 0 then
+		client:sendError("Das Fahrzeug ist bereits vollgetankt!")
+		return
+	end
+
+	QuestionBox:new(client, vehicle.controller,  _("%s möchte dein Fahrzeug tanken. %s Liter zum Preis von %s$", vehicle.controller, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, vehicle.controller, vehicle, fuel, price)
+	client:sendInfo("Dem Spieler wurde dein Service angeboten..")
+	vehicle.controller.fillRequest = true
 end
 
 function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
+	target.fillRequest = false
+
 	if target:getMoney() >= price then
 		target:takeMoney(price, "Mech&Tow tanken")
 		vehicle:setFuel(vehicle:getFuel() + fuel)
@@ -333,7 +341,8 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	end
 end
 
-function MechanicTow:FillDecline(player)
+function MechanicTow:FillDecline(player, target)
+	target.fillRequest = false
 	player:sendError(_("Der Spieler möchte deinen Service nicht nutzen.", player))
 end
 

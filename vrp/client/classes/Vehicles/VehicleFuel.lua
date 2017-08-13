@@ -48,7 +48,7 @@ function VehicleFuel:handleClick(_, state)
 	self.m_MouseDown = state == "down"
 
 	if self.m_MouseDown then
-		self.m_FuelProgress:startAnimation(10000 - self.m_Fuel*100, "Linear", 100)
+		self.m_FuelProgress:startAnimation(15000 - self.m_Fuel*150, "Linear", 100)
 	else
 		self.m_FuelProgress:stopAnimation()
 	end
@@ -62,6 +62,7 @@ function VehicleFuel:onStreamIn(surface)
 end
 
 function VehicleFuel:updateRenderTarget()
+	if not self.m_Needle then return end
 	self.m_Needle.m_Rotation = self.m_Fuel
 	self.m_Surface:anyChange()
 end
