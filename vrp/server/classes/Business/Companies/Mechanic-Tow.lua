@@ -38,10 +38,18 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicVehicleRequestFill", root, bind(self.Event_mechanicVehicleRequestFill, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
+
+	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 end
 
 function MechanicTow:destuctor()
 
+end
+
+function MechanicTow:onPlayerQuit(player)
+	if isElement(player.fuelNozzle) then
+		player.fuelNozzle:destroy()
+	end
 end
 
 function MechanicTow:respawnVehicle(vehicle)
