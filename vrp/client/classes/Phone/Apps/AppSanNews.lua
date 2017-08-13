@@ -24,7 +24,7 @@ function AppSanNews:onOpen(form)
 	self.m_Tabs = {}
 	self.m_Tabs["News"] = self.m_TabPanel:addTab(_"Nachrichten", FontAwesomeSymbols.Newspaper)
 	local tab = self.m_Tabs["News"]
-	self.m_NewsBrowser = GUIWebView:new(0, 0, tab.m_Width, tab.m_Height-30, "https://exo-reallife.de/ingame/sannews/index.php", true, self.m_Tabs["News"])
+	self.m_NewsBrowser = GUIWebView:new(0, 0, tab.m_Width, tab.m_Height-30, "https://exo-reallife.de/ingame/vRPphone/apps/messages/index.php?player=%s&sessionID=%s", true, self.m_Tabs["News"])
 
 
 	self.m_Tabs["Advertisment"] = self.m_TabPanel:addTab(_"Werbung", FontAwesomeSymbols.Advertisement)
