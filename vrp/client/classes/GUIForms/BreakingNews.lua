@@ -16,7 +16,7 @@ function BreakingNews:constructor(text, title, color, titleColor)
 	self.m_NewsOffset = 0
 	self.m_News = {text}
 	if color and type(color) == "table" then color = tocolor(unpack(color)) end
-	self.m_Color = color or Color.Red
+	self.m_Color = color or tocolor(unpack(color))
 	if titleColor and type(titleColor) == "table" then titleColor = tocolor(unpack(titleColor)) end
 	self.m_TitleColor = titleColor or Color.White
 	self.m_Title = title or "Breaking News"
@@ -88,8 +88,9 @@ function BreakingNews:updateRenderTarget()
 
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, self.m_Color)
 	dxDrawRectangle(self.m_HeaderWidth, 2, self.m_Width-self.m_HeaderWidth-2, self.m_Height-4, Color.White)
-	dxDrawImage(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color)
-	dxDrawText(self.m_Title, 0, 0, self.m_HeaderWidth, self.m_Height, self.m_TitleColor, 1, VRPFont(self.m_Height*0.7), "center", "center")
+	--dxDrawImage(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color)
+	dxDrawImageSection(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, 1, 0, 30, 120, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color) -- image section cause of render issues
+	dxDrawText(self.m_Title, 0, 0, self.m_HeaderWidth, self.m_Height, self.m_TitleColor, 1, VRPFont(self.m_Height*0.7, nil, true), "center", "center")
 
 	for i, news in ipairs(self.m_News) do
 		local offset = (i-1)*self.m_Height - self.m_NewsOffset
