@@ -1036,9 +1036,7 @@
 	<vrpfile src="files/images/Other/thunder.png"/>
 	<vrpfile src="files/images/Other/arrow.png"/>
 	<vrpfile src="files/images/Other/arrow_ta.png"/>
-	<vrpfile src="files/images/Other/BreakingNews.png"/>
-	<vrpfile src="files/images/Other/BreakingNewsBG.png"/>
-	<vrpfile src="files/images/Other/BreakingNewsEnd.png"/>
+	<vrpfile src="files/images/Other/BreakingNewsArrow.png"/>
 	<vrpfile src="files/images/Other/TaxoMeter.png"/>
 	<vrpfile src="files/images/Other/Circle.png"/>
 	<vrpfile src="files/images/Other/nodm.png"/>
