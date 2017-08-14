@@ -286,10 +286,11 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 
 		client.fuelNozzle = createObject(1909, client.position)
 		client.fuelNozzle:setData("attachedToVehicle", vehicle, true)
+		client.fuelNozzle.vehicle = vehicle
 		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
-		client:setPrivateSync("hasFuelNozzle", true)
-		client:triggerEvent("showFuelTankGUI", vehicle)
+		client:setPrivateSync("hasFuelNozzle", vehicle)
+		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel())
 		toggleControl(client, "fire", false)
 	end
 end
@@ -323,6 +324,12 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 		return
 	end
 
+	local fuelTank = client:getPrivateSync("hasFuelNozzle")
+	if fuel > fuelTank:getFuel()*5 then
+		client:sendError("Im Tankanhänger ist nicht genügend Benzin!")
+		return
+	end
+
 	QuestionBox:new(client, vehicle.controller,  _("%s möchte dein Fahrzeug tanken. %s Liter zum Preis von %s$", vehicle.controller, client:getName(), fuel, price), self.m_FillAccept, self.m_FillDecline, client, vehicle.controller, vehicle, fuel, price)
 	client:sendInfo("Dem Spieler wurde dein Service angeboten..")
 	vehicle.controller.fillRequest = true
@@ -331,12 +338,21 @@ end
 function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
+	local fuelTank = player:getPrivateSync("hasFuelNozzle")
+	if fuel > fuelTank:getFuel()*5 then
+		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
+		return
+	end
+
 	if target:getMoney() >= price then
 		target:takeMoney(price, "Mech&Tow tanken")
 		vehicle:setFuel(vehicle:getFuel() + fuel)
 
 		player:giveMoney(math.floor(price*0.3), "Mech&Tow tanken")
 		self:giveMoney(math.floor(price*0.7), "Tanken")
+
+		fuelTank:setFuel(fuelTank:getFuel() - fuel/5)
+		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())
 	else
 		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
 		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))

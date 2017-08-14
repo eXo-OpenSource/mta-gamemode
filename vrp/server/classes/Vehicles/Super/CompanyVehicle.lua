@@ -57,10 +57,8 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self:setLocked(false)
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
-	local a, r, g, b
-
-		local companyId = self.m_Company:getId()
-		r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+	local companyId = self.m_Company:getId()
+	local r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
 
 	setVehicleColor(self, r, g, b, r, g, b)
 
@@ -79,7 +77,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	end
 
 	if self:getModel() == 611 then -- Fuel tank
-		self.m_Fuel = 100 -- Todo: Reset to 0 in production
+		self.m_Fuel = 0
 	end
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))

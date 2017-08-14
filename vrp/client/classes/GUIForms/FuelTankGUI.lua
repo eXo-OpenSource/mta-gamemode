@@ -7,11 +7,12 @@
 -- ****************************************************************************
 FuelTankGUI = inherit(GUIForm3D)
 inherit(Singleton, FuelTankGUI)
-addRemoteEvents{"showFuelTankGUI", "closeFuelTankGUI"}
+addRemoteEvents{"showFuelTankGUI", "closeFuelTankGUI", "updateFuelTankGUI"}
 
-function FuelTankGUI:constructor(element)
+function FuelTankGUI:constructor(element, fuel)
 	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
 
+	self.m_Fuel = fuel or 0
 	local pos = element:getPosition()
 	pos.z = pos.z + 1.5
 
@@ -20,8 +21,14 @@ end
 
 function FuelTankGUI:onStreamIn(surface)
 	local window = GUIWindow:new(0, 0, 200, 70, "Tankwagen", true, false, surface)
-	GUIProgressBar:new(5, 35, 190, 30, window):setProgress(12)
-	GUILabel:new(5, 35, 190, 30, "60 / 500 Liter", window):setAlign("center", "center")
+	self.m_ProgressBar = GUIProgressBar:new(5, 35, 190, 30, window):setProgress(self.m_Fuel)
+	self.m_Label = GUILabel:new(5, 35, 190, 30, self.m_Fuel*5 .. " / 500 Liter", window):setAlign("center", "center"):setColor(Color.Black)
+end
+
+function FuelTankGUI:updateFuel(fuel)
+	self.m_Fuel = fuel
+	self.m_ProgressBar:setProgress(self.m_Fuel)
+	self.m_Label:setText(math.floor(self.m_Fuel*5) .. " / 500 Liter")
 end
 
 addEventHandler("showFuelTankGUI", root,
@@ -34,6 +41,14 @@ addEventHandler("closeFuelTankGUI", root,
 	function()
 		if FuelTankGUI:isInstantiated() then
 			delete(FuelTankGUI:getSingleton())
+		end
+	end
+)
+
+addEventHandler("updateFuelTankGUI", root,
+	function(fuel)
+		if FuelTankGUI:isInstantiated() then
+			FuelTankGUI:getSingleton():updateFuel(fuel)
 		end
 	end
 )
