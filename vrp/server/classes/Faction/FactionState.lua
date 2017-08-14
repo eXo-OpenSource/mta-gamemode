@@ -82,7 +82,7 @@ function FactionState:constructor()
 	addRemoteEvents{
 	"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer", "playerSelfArrestConfirm",
 	"factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
-	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
+	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket", "factionStateStartAlcoholTest",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
@@ -109,6 +109,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateClearWanteds", root, bind(self.Event_clearWanteds, self))
 	addEventHandler("factionStateGrabPlayer", root, bind(self.Event_grabPlayer, self))
 	addEventHandler("factionStateFriskPlayer", root, bind(self.Event_friskPlayer, self))
+	addEventHandler("factionStateStartAlcoholTest", root, bind(self.Event_alcoholTest, self))
 	addEventHandler("factionStateShowLicenses", root, bind(self.Event_showLicenses, self))
 	addEventHandler("factionStateTakeDrugs", root, bind(self.Event_takeDrugs, self))
 	addEventHandler("factionStateTakeWeapons", root, bind(self.Event_takeWeapons, self))
@@ -133,6 +134,8 @@ function FactionState:constructor()
 	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
 	addEventHandler("State:acceptEvidenceDestroy", root, bind(self.Event_acceptEvidenceDestroy,self))
 	addEventHandler("State:declineEvidenceDestroy", root, bind(self.Event_declineEvidenceDestroy,self))
+
+
 
 	-- Prepare the Area51
 	--[[self:createDefendActors( --these are no longer wanted (as MBT is there now)
@@ -1495,6 +1498,26 @@ function FactionState:Event_friskPlayer(target)
 			end
 
 			client:triggerEvent("showFriskGUI", target, targetWeapons, targetDrugs)
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	end
+end
+
+function FactionState:Event_alcoholTest(target)
+local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			if (target.vehicle or client.vehicle) and client.vehicle ~= target.vehicle then
+				client:sendError(_("Du kannst den Spieler nicht in einem Fahrzeug auf Alkohol testen!", target))
+				return
+			end
+			client:meChat(true, ("führt einen Alkoholtest an %s durch!"):format(target:getName()))
+			target:meChat(true, "pustet in das Röhrchen des Alkohol-Schnelltesters...")
+			setTimer(function(player, target)
+				player:sendInfo(_("Du hast einen Alkoholtest an %s durchgeführt!\nErgebnis: %d Promille", player, target:getName(), target.m_AlcoholLevel))
+				target:sendInfo(_("%s hat einen Alkoholtest an dir durchgeführt!\nErgebnis: %d Promille", target, player:getName(), target.m_AlcoholLevel))
+			end, 2000, 1, client, target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
