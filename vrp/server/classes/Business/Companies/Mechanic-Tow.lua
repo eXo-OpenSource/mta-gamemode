@@ -270,7 +270,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 	end
 	if not client:isCompanyDuty() then
 		client:sendError(_("Du bist nicht im Dienst!", client))
-		--return TODO: REMOVE WHEN DONE
+		--return
 	end
 
 	if vehicle.getCompany and vehicle:getCompany() == self then
@@ -281,6 +281,8 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 			client.fuelNozzle:destroy()
 			return
 		end
+
+		if not vehicle.towingVehicle then return end
 
 		client.fuelNozzle = createObject(1909, client.position)
 		client.fuelNozzle:setData("attachedToVehicle", vehicle, true)
@@ -314,7 +316,7 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 	end
 
 	local fuel = vehicle:getFuel() + fuel > 100 and math.floor(100 - vehicle:getFuel()) or math.floor(fuel)
-	local price = math.floor(fuel * 5)
+	local price = math.floor(fuel * 1.5)
 
 	if fuel == 0 then
 		client:sendError("Das Fahrzeug ist bereits vollgetankt!")

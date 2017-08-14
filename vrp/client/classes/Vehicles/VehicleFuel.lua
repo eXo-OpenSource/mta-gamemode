@@ -63,6 +63,6 @@ end
 
 function VehicleFuel:updateRenderTarget()
 	if not self.m_Needle then return end
-	self.m_Needle.m_Rotation = self.m_Fuel
+	self.m_Needle.m_Rotation = self.m_Fuel*180/100
 	self.m_Surface:anyChange()
 end

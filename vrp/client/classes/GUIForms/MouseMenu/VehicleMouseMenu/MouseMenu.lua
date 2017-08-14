@@ -237,7 +237,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
-		if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
+		--if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
 			if element:getHealth() < 950 then
 				self:addItem(_"Mechaniker: Reparieren",
 					function()
@@ -257,7 +257,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)
 			end
-			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 then -- fuel tank
+			--if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 then -- fuel tank
 				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasFuelNozzle") and "einhängen" or "nehmen"),
 					function()
 						if self:getElement() then
@@ -272,8 +272,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)
-			end
-		end
+			--end
+		--end
 	end
 	if localPlayer:getRank() >= RANK.Supporter then
 		self:addItem(_"Admin >>>",
