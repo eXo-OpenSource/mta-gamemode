@@ -111,9 +111,6 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
 
-	self.m_AdButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
-	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
-
 	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
@@ -475,12 +472,6 @@ function SelfGUI:AchievementButton_Click()
 	self:close()
 	AchievementGUI:getSingleton():open()
 end
-
-function SelfGUI:AdButton_Click()
-	self:close()
-	AdvertisementBox:getSingleton():open()
-end
-
 
 function SelfGUI:KeyBindsButton_Click()
 	self:close()

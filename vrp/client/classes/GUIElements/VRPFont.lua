@@ -109,6 +109,8 @@ FontAwesomeSymbols = {
 	Calender_Time = "",
 	Calender_Check = "",
 	Desktop = "",
+	Newspaper = "",
+	Advertisement = ""
 }
 
 Fonts = {

@@ -38,6 +38,7 @@ Color = {
 	HUD_Orange_D= {245,127,23},
 	HUD_Lime_D	= {130,119,23},
 	HUD_Brown_D	= {62,39,35},
+	AD_LightBlue = {0, 125, 125},
 }
 
 AdminColor = {
