@@ -745,6 +745,7 @@ VEHICLE_PICKUP = {
 	[535] = true,
 	[543] = true,
 	[605] = true,
+	[600] = true,
 }
 
 CompanyStaticId = {
