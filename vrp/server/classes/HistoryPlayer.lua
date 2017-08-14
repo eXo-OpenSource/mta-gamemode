@@ -20,7 +20,7 @@ end
 
 function HistoryPlayer:addLeaveEntry(playerId, uninviterId, elementId, elementType, uninviteRank, internal, external)
     local result = sql:queryFetch("SELECT * FROM ??_player_history WHERE UserId = ? AND ElementId = ? AND ElementType = ?;", sql:getPrefix(), playerId, elementId, elementType)
-	
+
     if not result or #result == 0 then
         sql:queryExec("INSERT INTO ??_player_history (UserId, UninviterId, ElementId, ElementType, UninviteRank, HighestRank, InternalReason, ExternalReason, JoinDate, LeaveDate, InviterId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), 0)",
             sql:getPrefix(), playerId, uninviterId, elementId, elementType, uninviteRank, uninviteRank, internal, external)
@@ -54,7 +54,7 @@ function HistoryPlayer:Event_SearchPlayerHistory(name)
 	local company = client:getCompany()
 	if not name then return end
 
-    if not ( (faction and faction:getPlayerRank(client) > FactionRank.Manager) or (company and company:getPlayerRank(client) > FactionRank.Manager) or (client:getRank() >= RANK.Supporter) ) then
+    if not ((faction and faction:getPlayerRank(client) > FactionRank.Manager) or (company and company:getPlayerRank(client) > CompanyRank.Manager) or (client:getRank() >= RANK.Supporter)) then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
@@ -97,13 +97,13 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 				HighestRank = row.HighestRank and row.HighestRank or 0,
 				UninviteRank = row.UninviteRank and row.UninviteRank or 0
 			}
-           
+
             if row.InviterId == 0 then
                 playerFile[row.Id].Inviter = "keinem"
             else
                 playerFile[row.Id].Inviter = Account.getNameFromId(row.InviterId)
             end
-           
+
             if row.UninviterId == 0 then
                 playerFile[row.Id].Uninviter = "keinem"
             else
@@ -120,7 +120,7 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 				playerFile[row.Id].InternalReason = row.InternalReason and row.InternalReason or utf8.escape(row.InternalReason)
 			end
         end
-        
+
         client:triggerEvent("historyPlayerReceived", playerFile)
 	else
 		client:sendError(_("Bitte versuchen sie es erneut!", client))
