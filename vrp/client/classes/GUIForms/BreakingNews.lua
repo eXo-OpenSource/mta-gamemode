@@ -69,7 +69,11 @@ function BreakingNews:scrollDone()
 	end
 end
 
-function BreakingNews:addNews(text)
+function BreakingNews:addNews(text, title, ...)
+	if self.m_Title ~= title then
+		delete(self)
+		BreakingNews:new(text, title, ...)
+	end
 	table.insert(self.m_News, text)
 
 	if self.m_ScrollEnabled then
