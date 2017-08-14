@@ -644,6 +644,7 @@
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -739,6 +740,8 @@
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
+
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -980,6 +983,7 @@
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
+	<vrpfile src="files/images/Speedo/fuel_needle_trailer.png"/>
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>
 	<vrpfile src="files/images/Speedo/indicator_right.png"/>
 
@@ -1689,6 +1693,9 @@
 	<vrpfile src="files/models/fence.txd" />
 	<vrpfile src="files/models/fence.dff" />
 	<vrpfile src="files/models/fence.col" />
+	<vrpfile src="files/models/fuelnozzle.txd"/>
+	<vrpfile src="files/models/fuelnozzle.dff"/>
+	<vrpfile src="files/models/fuelnozzle.col"/>
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />

@@ -669,6 +669,19 @@ function LocalPlayer:getWorldObject()
 	return false
 end
 
+function LocalPlayer:getWorldVehicle()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, true, false, false, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		end
+	end
+
+	return false
+end
+
 function LocalPlayer:Event_onClientPlayerSpawn()
 
 

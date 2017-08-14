@@ -32,10 +32,6 @@ function Vehicle:constructor()
 	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
 end
 
-function Vehicle:getFuel()
-	return 100
-end
-
 function Vehicle:getMaxHealth()
 	return self:getData("customMaxHealth") or 1000
 end

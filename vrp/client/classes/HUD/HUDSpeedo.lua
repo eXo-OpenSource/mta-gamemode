@@ -47,6 +47,12 @@ function HUDSpeedo:constructor()
 			self.m_Fuel = fuel
 		end
 	)
+	addEvent("vehicleTrailerFuelSync", true)
+	addEventHandler("vehicleTrailerFuelSync", root,
+		function(fuel)
+			self.m_TrailerFuel = fuel
+		end
+	)
 	addEvent("playSeatbeltAlarm", true)
 	addEventHandler("playSeatbeltAlarm", root,
 		function(state)
@@ -77,11 +83,10 @@ function HUDSpeedo:draw()
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if not vehicle then  -- death in veh fix
 		self:hide()
-		return 
-	end 
+		return
+	end
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
-	if not vehicle:getFuel() then return end
 	local speed = vehicle:getSpeed()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 	local mileage = localPlayer:getPrivateSync("vehicleMileage")
@@ -145,6 +150,10 @@ function HUDSpeedo:draw()
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
+
+	if localPlayer.vehicle.towedByVehicle and self.m_TrailerFuel then
+		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100)
+	end
 	--dxSetBlendMode("blend")
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
 end

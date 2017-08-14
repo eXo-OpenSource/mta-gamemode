@@ -7,13 +7,14 @@
 -- ****************************************************************************
 CacheArea3D = inherit(CacheArea)
 
-function CacheArea3D:constructor(startPos, endPos, normal, saheight, resx, resy, containsGUIElements)
+function CacheArea3D:constructor(startPos, endPos, normal, saheight, resx, resy, containsGUIElements, follow)
 	self.m_3DStart = startPos
 	self.m_3DEnd = endPos
 
 	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd).length
 	self.m_3DHeight= saheight
 	self.m_Normal = normal
+	self.m_Follow = follow
 
 	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
 
@@ -50,7 +51,7 @@ function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
 	-- Calculate direction vectors
 	local dirX = mid - self.m_SecPos
 	local dirY = mid - self.m_3DStart
-	
+
 	-- Calculate corners
 	--[[
 		A------C
@@ -67,7 +68,7 @@ function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
 	local AC = C - A
 	local AB = B - A
 	local AP = P - A
-	
+
 	-- Translate world coordinates to plane coordinates
 	local x = AP:dot(AC / AC.length)
 	local y = AP:dot(AB / AB.length)
@@ -142,7 +143,7 @@ function CacheArea3D:drawCached()
 	dxDrawMaterialLine3D(self.m_3DStart.x, self.m_3DStart.y, self.m_3DStart.z,
 						self.m_3DEnd.x, self.m_3DEnd.y, self.m_3DEnd.z,
 						self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255),
-						face.x, face.y, face.z)
+						self.m_Follow and localPlayer.position or Vector3(face.x, face.y, face.z))
 
 	return true
 end

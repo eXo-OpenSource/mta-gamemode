@@ -31,7 +31,7 @@ function PublicTransport:constructor()
 	InteriorEnterExit:constructor(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 4) --parking lot
 	InteriorEnterExit:constructor(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
 
-	
+
 	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
 	safe:setInterior(12)
 	safe:setDimension(4)
@@ -103,7 +103,7 @@ function PublicTransport:Event_PlayerRequestBusData()
 					local prevName = self.m_BusStops[id-1].name
 					local nextName = self.m_BusStops[id+1].name
 					if prevName == nextName then -- end station found
-						if not endStationFound then 
+						if not endStationFound then
 							endStationFound = true -- start collecting stations
 						else
 							quitNextStation = true -- don't quit here, but collect the second end station
@@ -116,8 +116,8 @@ function PublicTransport:Event_PlayerRequestBusData()
 						position = serialiseVector(self.m_BusStops[id].object.position)
 					})
 				end
-				if quitNextStation then 
-					break 
+				if quitNextStation then
+					break
 				end
 			end
 		end
@@ -208,7 +208,7 @@ function PublicTransport:endTaxiDrive(customer)
 		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
 		driver:giveMoney(price, "Public Transport Taxi")
-		if price > 0 then 
+		if price > 0 then
 			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
@@ -321,7 +321,7 @@ function PublicTransport:stopBusTour_Driver(player) --also gets triggered when p
 	player:setPublicSync("EPT:BusDuty", false)
 end
 
-function PublicTransport:startBusTour_Driver(player, nextStation, line) 
+function PublicTransport:startBusTour_Driver(player, nextStation, line)
 	if player.Bus_Blip then
 		delete(player.Bus_Blip)
 	end
@@ -333,7 +333,7 @@ end
 
 
 function PublicTransport:isBusOnTour(vehicle)
-	return vehicle and (vehicle.Bus_OnDuty and true or false) 
+	return vehicle and (vehicle.Bus_OnDuty and true or false)
 end
 
 function PublicTransport:stopBusTour(vehicle, player)
@@ -384,7 +384,7 @@ function PublicTransport:startBusTour(vehicle, player, line)
 		vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, unpack(PublicTransport.ms_BusLineData[line].color))
 		triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][1]].name, false, line)
 		player:giveAchievement(17)
-		self:startBusTour_Driver(player, self.m_Lines[line][1], line) 
+		self:startBusTour_Driver(player, self.m_Lines[line][1], line)
 		self.m_ActiveBusVehicles[vehicle] = line
 	else
 		vehicle.Bus_OnDuty = true
@@ -414,7 +414,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		end
 
 		-- Give the player some money and switch to the next bus stop
-		if lastId then 
+		if lastId then
 			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position)
 			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
 			player:givePoints(math.round(5 * (dist/1000))) --5 / km

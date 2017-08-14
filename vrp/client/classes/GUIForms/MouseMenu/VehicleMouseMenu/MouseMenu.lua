@@ -237,21 +237,38 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
-
-		if localPlayer:getPublicSync("CompanyId") == 2 and localPlayer:getPublicSync("Company:Duty") == true then
-			self:addItem(_"Mechaniker: Reparieren",
-				function()
-					if self:getElement() then
-						triggerServerEvent("mechanicRepair", self:getElement())
+		if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
+			if element:getHealth() < 950 then
+				self:addItem(_"Mechaniker: Reparieren",
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicRepair", self:getElement())
+						end
 					end
-				end
-			):setIcon(FontAwesomeSymbols.Wrench)
-			if getElementData(element, "Handbrake") == true then
+				):setIcon(FontAwesomeSymbols.Wrench)
+			end
+			if getElementData(element, "Handbrake") == true and element:getModel() ~= 611 then
 				self:addItem(_"Mechaniker: Handbremse lösen",
 					function()
 						if self:getElement() then
 							triggerServerEvent("vehicleToggleHandbrake", self:getElement())
 							delete(self)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Cogs)
+			end
+			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 then -- fuel tank
+				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasFuelNozzle") and "einhängen" or "nehmen"),
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicTakeFuelNozzle", localPlayer, element)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Cogs)
+				self:addItem(_"Mechaniker: Entkoppeln",
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicDetachFuelTank", localPlayer, element.towingVehicle)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)

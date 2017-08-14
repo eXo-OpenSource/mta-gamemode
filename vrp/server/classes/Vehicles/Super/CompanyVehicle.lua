@@ -78,6 +78,10 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
+	if self:getModel() == 611 then -- Fuel tank
+		self.m_Fuel = 100 -- Todo: Reset to 0 in production
+	end
+
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
@@ -189,7 +193,7 @@ function CompanyVehicle:hasKey(player)
   if self:isPermanent() then
     if player:getCompany() == self:getCompany() then
       return true
-    elseif self:getCompany():getId() == CompanyStaticId.DRIVINGSCHOOL then 
+    elseif self:getCompany():getId() == CompanyStaticId.DRIVINGSCHOOL then
 		return player:getPublicSync("inDrivingLession") == true
 	end
   end
