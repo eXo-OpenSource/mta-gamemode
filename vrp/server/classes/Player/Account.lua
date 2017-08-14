@@ -172,7 +172,7 @@ function Account.register(player, username, password, email)
 
 	-- Some sanity checks on the username
 	-- Require at least 1 letter and a length of 3
-	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 then
+	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 or #username > 22 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname.", player))
 		return false
 	end
