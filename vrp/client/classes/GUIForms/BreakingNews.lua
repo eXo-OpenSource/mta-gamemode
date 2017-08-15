@@ -16,11 +16,11 @@ function BreakingNews:constructor(text, title, color, titleColor)
 	self.m_NewsOffset = 0
 	self.m_News = {text}
 	if color and type(color) == "table" then color = tocolor(unpack(color)) end
-	self.m_Color = color or tocolor(unpack(color))
+	self.m_Color = color or Color.LightRed
 	if titleColor and type(titleColor) == "table" then titleColor = tocolor(unpack(titleColor)) end
 	self.m_TitleColor = titleColor or Color.White
 	self.m_Title = title or "Breaking News"
-	self.m_HeaderWidth = math.floor(dxGetTextWidth(self.m_Title, 1, VRPFont(self.m_Height*0.7))+self.m_Height/2)
+	self.m_HeaderWidth = math.floor(dxGetTextWidth(self.m_Title, 1, VRPFont(self.m_Height*0.7, nil, true))+self.m_Height/2)
 
 	self:updateRenderTarget()
 
@@ -38,6 +38,10 @@ function BreakingNews:constructor(text, title, color, titleColor)
 end
 
 function BreakingNews:destructor()
+	self.m_NewsAnimation:stopAnimation()
+	self.m_AnimationFade:stopAnimation()
+	if isTimer(self.m_CheckAnimation) then killTimer(self.m_CheckAnimation) end
+	if isTimer(self.m_DestroyTimer) then killTimer(self.m_DestroyTimer) end
 	removeEventHandler("onClientRender", root, self.m_Render)
 end
 
@@ -71,7 +75,7 @@ end
 
 function BreakingNews:addNews(text, title, ...)
 	if self.m_Title ~= title then
-		delete(self)
+		delete(BreakingNews:getSingleton())
 		BreakingNews:new(text, title, ...)
 	end
 	table.insert(self.m_News, text)
@@ -80,6 +84,10 @@ function BreakingNews:addNews(text, title, ...)
 		self.m_ScrollEnabled = false
 		self.m_NewsAnimation:startAnimation(1300, "InOutQuad", self.m_NewsOffset + self.m_Height)
 	end
+
+	if isTimer(self.m_DestroyTimer) then
+		self.m_DestroyTimer:reset()
+	end
 end
 
 function BreakingNews:updateRenderTarget()
@@ -87,7 +95,7 @@ function BreakingNews:updateRenderTarget()
 	dxSetBlendMode("modulate_add")
 
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, self.m_Color)
-	dxDrawRectangle(self.m_HeaderWidth, 2, self.m_Width-self.m_HeaderWidth-2, self.m_Height-4, Color.White)
+	dxDrawRectangle(self.m_HeaderWidth, 2, self.m_Width-self.m_HeaderWidth-2, math.floor(self.m_Height-4), Color.White)
 	--dxDrawImage(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color)
 	dxDrawImageSection(self.m_HeaderWidth, 0, math.floor(self.m_Height/4), self.m_Height, 1, 0, 30, 120, "files/images/Other/BreakingNewsArrow.png", 0, 0, 0, self.m_Color) -- image section cause of render issues
 	dxDrawText(self.m_Title, 0, 0, self.m_HeaderWidth, self.m_Height, self.m_TitleColor, 1, VRPFont(self.m_Height*0.7, nil, true), "center", "center")
