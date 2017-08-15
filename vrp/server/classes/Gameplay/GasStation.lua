@@ -14,10 +14,10 @@ function GasStation:constructor(stations, accessible, name)
 	self.m_Name = name
 
 	for _, station in pairs(stations) do
-		local position, rotation = unpack(station)
+		local position, rotation, maxHoses = unpack(station)
 		local object = createObject(1676, position, 0,0, rotation)
 
-		table.insert(self.m_Stations, object)
+		self.m_Stations[object] = {maxHoses = maxHoses, players = {}}
 		GasStation.Map[object] = self
 
 		if self.m_Name then
@@ -57,17 +57,32 @@ function GasStation:takeFuelNozzle(player, element)
 		return
 	end
 
+	if table.size(self.m_Stations[element].players) >= self.m_Stations[element].maxHoses then
+		player:sendError("Diese Zapfsäule ist bereits belegt!")
+		return
+	end
+
 	player.gs_fuelNozzle = createObject(1909, player.position)
+	player.gs_fuelNozzle:setData("attachedGasStation", element, true)
+	player.gs_fuelNozzle:setData("attachedPlayer", player, true)
+	client:setPrivateSync("hasGasStationFuelNozzle", true)
+	player.gs_usingFuelStation = element
+
 	exports.bone_attach:attachElementToBone(player.gs_fuelNozzle, player, 12, -0.03, 0.02, 0.05, 180, 320, 0)
-	player:setPrivateSync("hasGasStationFuelNozzle", element)
 	toggleControl(player, "fire", false)
+
+	self.m_Stations[element].players[player] = true
+end
+
+function GasStation:rejectFuelNozzle(player, element)
+	self.m_Stations[element].players[player] = nil
 end
 
 ----------------------------------------------
 
 GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
-addRemoteEvents{"gasStationTakeFuelNozzle"}
+addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle"}
 
 function GasStationManager:constructor()
 	for _, station in pairs(GAS_STATIONS) do
@@ -81,6 +96,7 @@ function GasStationManager:constructor()
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 
 	addEventHandler("gasStationTakeFuelNozzle", root, bind(GasStationManager.takeFuelNozzle, self))
+	addEventHandler("gasStationRejectFuelNozzle", root, bind(GasStationManager.rejectFuelNozzle, self))
 end
 
 function GasStationManager:destructor()
@@ -96,12 +112,30 @@ function GasStationManager:takeFuelNozzle(element)
 	if GasStation.Map[element] then
 		if isElement(client.gs_fuelNozzle) then
 			client:setPrivateSync("hasGasStationFuelNozzle", false)
+			client.gs_usingFuelStation = nil
 			toggleControl(client, "fire", true)
 			client.gs_fuelNozzle:destroy()
+
+			GasStation.Map[element]:rejectFuelNozzle(client, element)
 			return
 		end
 
 		GasStation.Map[element]:takeFuelNozzle(client, element)
+	end
+end
+
+function GasStationManager:rejectFuelNozzle()
+	local element = client.gs_usingFuelStation
+
+	if GasStation.Map[element] then
+		if isElement(client.gs_fuelNozzle) then
+			client:setPrivateSync("hasGasStationFuelNozzle", false)
+			client.gs_usingFuelStation = nil
+			toggleControl(client, "fire", true)
+			client.gs_fuelNozzle:destroy()
+
+			GasStation.Map[element]:rejectFuelNozzle(client, element)
+		end
 	end
 end
 
@@ -110,8 +144,8 @@ GAS_STATIONS = {
 	[1] = {
 		name = "Idlewood",
 		stations = {
-			{Vector3(1941.7, -1776.6, 14.17), 90},
-			{Vector3(1941.7, -1769.4, 14.17), 90},
+			{Vector3(1941.7, -1776.6, 14.17), 90, 2},
+			{Vector3(1941.7, -1769.4, 14.17), 90, 1},
 			},
 		accessible =  {0, 0},
 	},

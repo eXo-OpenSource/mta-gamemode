@@ -8,6 +8,58 @@
 GasStation = inherit(Singleton)
 
 function GasStation:constructor()
+	self.m_RenderFuelHoles = {}
+
+	addEventHandler("onClientElementStreamIn", root, bind(GasStation.onObjectStreamIn, self))
+	addEventHandler("onClientRender", root, bind(GasStation.renderFuelHose, self))
+end
+
+function GasStation:onObjectStreamIn()
+	if source:getModel() == 1909 then
+		self.m_RenderFuelHoles[source] = true
+	end
+end
+
+function GasStation:renderFuelHose()
+	for element in pairs(self.m_RenderFuelHoles) do
+		if isElement(element) then
+			local station = element:getData("attachedGasStation")
+			if isElement(station) then
+				dxDrawLine3D(station.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+
+				if element:getData("attachedPlayer") == localPlayer then
+					local worldVehicle = localPlayer:getWorldVehicle()
+					if worldVehicle and worldVehicle ~= localPlayer.lastWorldVehicle then
+						localPlayer.lastWorldVehicle = worldVehicle
+
+						if not VehicleFuel:isInstantiated() then
+							VehicleFuel:new(localPlayer.lastWorldVehicle)
+						end
+					elseif not worldVehicle then
+						localPlayer.lastWorldVehicle = nil
+
+						if VehicleFuel:isInstantiated() then
+							delete(VehicleFuel:getSingleton())
+						end
+					end
+
+					if localPlayer.vehicle or (station.position - element.position).length > 10 then
+						self.m_RenderFuelHoles[element] = nil
+						triggerServerEvent("gasStationRejectFuelNozzle", localPlayer)
+					end
+				end
+			end
+		else
+			self.m_RenderFuelHoles[element] = nil
+		end
+	end
+end
+
+
+--[[
+GasStation = inherit(Singleton)
+
+function GasStation:constructor()
 	self.m_FillTimer = false
 
 	self.m_Amount = 0
@@ -148,3 +200,4 @@ function GasStation:renderDisplay()
 	self:dxDrawBoxText( "KOSTEN / $" , px_,py+height,width_,py_-(py+height)+(height*0.1),tocolor(0,0,0,255),self.m_Size-0.4,self.m_Font,"left","bottom")
 	self:dxDrawBoxText( self.m_Price , px_,py_,width_,height_,tocolor(0,150,0,255), self.m_Size, self.m_Font,"center","center")
 end
+]]
