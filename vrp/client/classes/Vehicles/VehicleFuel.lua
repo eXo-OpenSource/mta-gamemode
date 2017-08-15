@@ -7,6 +7,7 @@
 -- ****************************************************************************
 VehicleFuel = inherit(GUIForm3D)
 inherit(Singleton, VehicleFuel)
+addRemoteEvents{"forceCloseVehicleFuel"}
 
 function VehicleFuel:constructor(vehicle, confirmCallback)
 	self.m_Fuel = 0
@@ -48,9 +49,14 @@ function VehicleFuel:handleClick(_, state)
 	self.m_MouseDown = state == "down"
 
 	if self.m_MouseDown then
+		if localPlayer:getWorldVehicle() ~= self.m_Vehicle then return end
+		if self.m_Vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
+
 		self.m_FuelProgress:startAnimation(15000 - self.m_Fuel*150, "Linear", 100)
+		toggleAllControls(false, true, false)
 	else
 		self.m_FuelProgress:stopAnimation()
+		toggleAllControls(true, true, false)
 	end
 end
 
@@ -66,3 +72,10 @@ function VehicleFuel:updateRenderTarget()
 	self.m_Needle.m_Rotation = self.m_Fuel*180/100
 	self.m_Surface:anyChange()
 end
+
+function VehicleFuel.forceClose()
+	if VehicleFuel:isInstantiated() then
+		delete(VehicleFuel:getSingleton())
+	end
+end
+addEventHandler("forceCloseVehicleFuel", root, VehicleFuel.forceClose)

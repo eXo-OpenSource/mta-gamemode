@@ -195,6 +195,7 @@
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
+	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
