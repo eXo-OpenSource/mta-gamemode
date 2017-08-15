@@ -15,7 +15,7 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 	--self:addItem(_("Besitzer: %s", name))
 	self:addItem(_("Tankstelle: %s", name)):setTextColor(Color.LightBlue)
 
-	self:addItem(_("Zapfpistole %s (Benzin)", localPlayer:getPrivateSync("hasFuelNozzle") and "einhängen" or "nehmen"),
+	self:addItem(_("Zapfpistole %s (Benzin)", localPlayer:getPrivateSync("hasGasStationFuelNozzle") and "einhängen" or "nehmen"),
 		function()
 			triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element)
 		end

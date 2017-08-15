@@ -59,7 +59,7 @@ function GasStation:takeFuelNozzle(player, element)
 
 	player.gs_fuelNozzle = createObject(1909, player.position)
 	exports.bone_attach:attachElementToBone(player.gs_fuelNozzle, player, 12, -0.03, 0.02, 0.05, 180, 320, 0)
-	player:setPrivateSync("hasFuelNozzle", element)
+	player:setPrivateSync("hasGasStationFuelNozzle", element)
 	toggleControl(player, "fire", false)
 end
 
@@ -95,7 +95,7 @@ end
 function GasStationManager:takeFuelNozzle(element)
 	if GasStation.Map[element] then
 		if isElement(client.gs_fuelNozzle) then
-			client:setPrivateSync("hasFuelNozzle", false)
+			client:setPrivateSync("hasGasStationFuelNozzle", false)
 			toggleControl(client, "fire", true)
 			client.gs_fuelNozzle:destroy()
 			return
