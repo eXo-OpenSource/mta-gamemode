@@ -86,7 +86,7 @@ SHOP_TYPES = {
 		["Marker"] = Vector3(-23.37, -55.63, 1002.6),
 		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
 		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
-		["Class"] = GasStation
+		["Class"] = GasStationShop
 	},
 	[14] = {
 		["Name"] = "Bank",
@@ -144,7 +144,7 @@ SHOP_TYPES = {
 	[20] = {
 		["Name"] = "Tankstelle ohne Shop",
 		["Interior"] = {0, Vector3(0, 0, 0)},
-		["Class"] = GasStation
+		["Class"] = GasStationShop
 	}
 }
 
@@ -253,7 +253,8 @@ SHOP_BAR_STRIP = {
 
 SHOP_BAR_STRIP_ANIMATIONS = {"STR_Loop_A", "STR_Loop_A", "STR_Loop_C"}
 
-SHOP_FUEL = {
+SHOP_FUEL = {}
+--[[SHOP_FUEL = {
 	["Tankstelle Temple"] = {
 		["Marker"] = Vector3(1007.8759155273, -940.43975830078, 41.18),
 		["FuelStation"] = {1007.2157, -936.54523, 42.9, 8}
@@ -334,7 +335,7 @@ SHOP_FUEL = {
 		["Marker"] = Vector3(1605.76, -2456.51, 12.7),
 		["FuelStation"] = { 1606.10, -2445.5, 14.1, 0}
 	}
-}
+}]]
 
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}
 ROBABLE_SHOP_EVIL_TARGETS = {

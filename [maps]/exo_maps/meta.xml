@@ -12,7 +12,7 @@
 	<map src="atm.map" />
 	<map src="CrackPalace.map" />
 	<map src="medic_fix.map" />
-	<map src="interior_fixes.map" /> 
+	<map src="interior_fixes.map" />
 	<!--<map src="fun/boxarena.map" />/-->
 
 	<map src="fraktionen/army.map" />
@@ -44,7 +44,7 @@
 
 	<map src="gangwar/KLM-GW.map" />
 	<map src="gangwar/Raffi-GW.map" />
-	
+
 	<!--map src="jobs/cartransport.map" /-->
 	<map src="jobs/gaertnerei.map" />
 	<map src="jobs/gabelstapler.map" />
@@ -80,7 +80,7 @@
 
 	<map src="minigamescafe.map" dimension="2" />
 	<map src="tokyotown.map" dimension="0" />
-	
+
 	<!--xxking-->
 	<map src="Heliport-Immo.map" dimension="0" />
 </meta>

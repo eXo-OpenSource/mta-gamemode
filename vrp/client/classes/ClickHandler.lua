@@ -21,8 +21,8 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1676] = function(element, clickInfo) if element:getData("Name") then self:addMouseMenu(GasStationMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end end;
 		[1257] = function(element, clickInfo) BusRouteInformationGUI:new(element) end;
-
 	}
 
 	self.m_ClickInfo = false
