@@ -56,7 +56,8 @@
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-
+	
+	<map src="ammunation.map" />
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />

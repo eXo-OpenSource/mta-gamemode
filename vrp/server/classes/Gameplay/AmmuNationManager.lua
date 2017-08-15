@@ -9,14 +9,14 @@ AmmuNationManager = inherit(Singleton)
 addRemoteEvents{"onPlayerWeaponBuy", "onPlayerMagazineBuy", "onAmmunationAppOrder"}
 
 AmmuNationManager.DATA = {
-	[1] = {
+	--[[[1] = {
 		NAME = "Los Santos Main",
 		ENTER =
 		{
 			{1368.23376,-1279.83606,13.54688}
 		},
 		DIMENSION = Interiors.AmmuNation1
-	},
+	},]]
 	[2] = {
 		NAME = "Los Santos East",
 		ENTER = {
@@ -109,7 +109,7 @@ function AmmuNationManager:createOrder(player, weaponTable)
 			if hitElement:getType() == "player" and not hitElement:getOccupiedVehicle() then
 				self:giveWeaponsFromOrder(hitElement, weaponTable)
 				StatisticsLogger:getSingleton():addAmmunationLog(hitElement, "Pickup", toJSON(weaponTable), 0)
-				if source and isElement(source) then 
+				if source and isElement(source) then
 					destroyElement(source)
 				end
 			end
