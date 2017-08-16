@@ -570,10 +570,10 @@ for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
 
-MEDIC_TIME = 60000
-DEATH_TIME = 36000
-DEATH_TIME_PREMIUM = 21000
-DEATH_TIME_ADMIN = 11000
+MEDIC_TIME = 180000
+DEATH_TIME = 30000
+DEATH_TIME_PREMIUM = 0
+DEATH_TIME_ADMIN = 0
 
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
