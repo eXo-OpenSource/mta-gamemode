@@ -27,6 +27,7 @@ function ItemManager:constructor()
 		["Zigarette"] = ItemFood,
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
+		["Apfel"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
 
@@ -36,7 +37,8 @@ function ItemManager:constructor()
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
 		["Köder"] = ItemFishing,
-		["Weed-Samen"] = PlantWeed,
+		["Weed-Samen"] = Plant,
+		["Apfelbaum-Samen"] = Plant,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,

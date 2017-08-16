@@ -61,13 +61,13 @@ function ItemManager:loadEffectItems( )
   self.m_Items["Heroin"] = DrugsHeroin:new();
   self.m_Items["Shrooms"] = DrugsShroom:new();
   self.m_Items["Kokain"] = DrugsCocaine:new();
-  self.m_Items["Weed-Samen"] = PlantWeed:new();
-  
+  self.m_Items["Weed-Samen"] = Plant:new();
+
   ItemDestructable:new();
 end
 
 function ItemManager:initWearables()
-	  WearableHelmet:new() 
+	  WearableHelmet:new()
 end
 
 

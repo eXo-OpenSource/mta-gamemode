@@ -129,7 +129,7 @@ function Core:ready()
 	Townhall:new()
 	PremiumArea:new()
 
-	PlantWeed.initalize()
+	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
 	GroupSaleVehicles.initalize()

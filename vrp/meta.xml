@@ -134,6 +134,7 @@
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 
 	<!-- Wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -146,7 +147,6 @@
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsCocaine.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Drugs/PlantWeed.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
@@ -444,11 +444,11 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
+	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
-	<script src="client/classes/Inventory/PlantWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
@@ -1325,6 +1325,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pommes.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Apfel.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Snack.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Bier.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Suessigkeiten.png" />
