@@ -23,6 +23,7 @@ end
 function AutomaticQueue:start(priority, async)
 	local handle = bind(AutomaticQueue.perform, self)
 	if async then
+		self.m_Async = true
 		return Async.create(handle)
 	end
 
@@ -33,5 +34,8 @@ end
 function AutomaticQueue:perform()
 	while (not self:empty()) do
 		self:pop():trigger()
+		if not self.m_Async then
+			Thread.pause()
+		end
 	end
 end
