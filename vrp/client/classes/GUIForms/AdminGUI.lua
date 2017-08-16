@@ -14,7 +14,7 @@ for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
 
-addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
+addRemoteEvents{"showAdminMenu", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
 
 function AdminGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
