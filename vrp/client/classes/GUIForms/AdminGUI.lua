@@ -581,13 +581,6 @@ addEventHandler("showAdminMenu", root,
 	end
 )
 
-addEventHandler("announceText", root,
-	function(message)
-		AdminGUI.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, false,true)
-		playSound("files/audio/announcment.mp3")
-	end
-)
-
 AdminInputBox = inherit(GUIForm)
 
 function AdminInputBox:constructor(title, durationText, callback)

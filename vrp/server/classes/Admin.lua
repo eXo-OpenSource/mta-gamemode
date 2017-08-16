@@ -122,11 +122,11 @@ function Admin:constructor()
 
 end
 
-function Admin:Event_OnSuperManStartRequest() 
+function Admin:Event_OnSuperManStartRequest()
 	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
-			if exports["superman"] then 
-				exports["superman"]:startSuperMan(client) 
+			if exports["superman"] then
+				exports["superman"]:startSuperMan(client)
 			end
 		end
 	end
@@ -136,7 +136,7 @@ function Admin:Event_OnSuperManStopRequest()
 	if client:getRank() >= RANK.Moderator then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
-				exports["superman"]:stopSuperMan(client) 
+				exports["superman"]:stopSuperMan(client)
 			end
 		end
 	end
@@ -443,7 +443,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
             local text = target
-            triggerClientEvent("announceText", admin, text)
+            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
