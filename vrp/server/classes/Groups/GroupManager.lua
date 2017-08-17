@@ -671,7 +671,7 @@ function GroupManager:Event_ChangeType()
 	self:sendInfosToClient(client)
 
 	local typeInt = GroupManager.GroupTypes[newType]
-	if not sql:queryExec("UPDATE ??_groups SET Type = ?, WHERE Id = ?", sql:getPrefix(), typeInt, self.m_Id) then
+	if not sql:queryExec("UPDATE ??_groups SET Type = ?, WHERE Id = ?", sql:getPrefix(), typeInt, group.m_Id) then
 
 end
 
