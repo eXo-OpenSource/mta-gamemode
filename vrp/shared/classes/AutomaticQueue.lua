@@ -20,8 +20,8 @@ function AutomaticQueue:push(object)
 	Queue.push(self, object)
 end
 
-function AutomaticQueue:start(priority, async)
-	local handle = bind(AutomaticQueue.perform, self)
+function AutomaticQueue:prepare(priority, async)
+	local handle = bind(AutomaticQueue.run, self)
 	if async then
 		self.m_Async = true
 		return Async.create(handle)
@@ -31,11 +31,12 @@ function AutomaticQueue:start(priority, async)
 	return thread.start
 end
 
-function AutomaticQueue:perform()
+function AutomaticQueue:run()
 	while (not self:empty()) do
 		self:pop():trigger()
 		if not self.m_Async then
 			Thread.pause()
 		end
 	end
+	self:clear()
 end
