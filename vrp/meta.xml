@@ -29,6 +29,7 @@
 	<script src="shared/classes/Log.lua" type="shared"/>
 	<script src="shared/classes/POParser.lua" type="shared"/>
 	<script src="shared/classes/Queue.lua" type="shared"/>
+	<script src="shared/classes/AutomaticQueue.lua" type="shared"/>
 	<script src="shared/classes/TimedPulse.lua" type="shared"/>
 	<script src="shared/classes/TranslationManager.lua"  type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
