@@ -669,6 +669,10 @@ function GroupManager:Event_ChangeType()
 	group:addLog(client, "Gang/Firma", "hat die "..oldType.." in eine "..newType.." umgewandelt!")
 	group:sendShortMessage(_("%s hat deine %s in eine %s umgewandelt!", client, client:getName(), oldType, newType))
 	self:sendInfosToClient(client)
+
+	local typeInt = GroupManager.GroupTypes[newType]
+	if not sql:queryExec("UPDATE ??_groups SET Type = ?, WHERE Id = ?", sql:getPrefix(), typeInt, self.m_Id) then
+
 end
 
 function GroupManager:Event_ToggleLoan(playerId)
