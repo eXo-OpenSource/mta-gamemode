@@ -135,7 +135,7 @@ function ShopManager:onGasStationFill(shopId, drawFromBank)
 		if (drawFromBank and client:getBankMoney() or client:getMoney()) >= 10 then
 			if vehicle:getFuel() <= 100-10 then
 				vehicle:setFuel(vehicle:getFuel() + 10)
-				if drawFromBank then 
+				if drawFromBank then
 					client:takeBankMoney(10, "Tanken")
 				else
 					client:takeMoney(10, "Tanken")
@@ -146,7 +146,7 @@ function ShopManager:onGasStationFill(shopId, drawFromBank)
 				client:sendError(_("Dein Tank ist bereits voll", client))
 			end
 		else
-			if drawFromBank then 
+			if drawFromBank then
 				client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto!", client))
 			else
 				client:sendError(_("Du hast nicht genügend Geld auf der Hand!", client))
@@ -172,13 +172,14 @@ function ShopManager:buyItem(shopId, item, amount)
 		end
 
 		if client:getMoney() >= shop.m_Items[item]*amount then
-			if client:getInventory():giveItem(item, amount) then
-				if item == "Kanne" then
-					client:getInventory():setSpecialItemData(item, 10)
-				elseif item == "Mautpass" then
-					local validity = getRealTime().timestamp + 7*24*60*60
-					client:getInventory():setSpecialItemData(item, validity)
-				end
+			local value
+			if item == "Kanne" then
+				value = 10
+			elseif item == "Mautpass" then
+				value = getRealTime().timestamp + 7*24*60*60
+			end
+
+			if client:getInventory():giveItem(item, amount, value) then
 				client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
