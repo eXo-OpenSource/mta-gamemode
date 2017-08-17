@@ -16,7 +16,7 @@ function AutomaticQueue:destructor()
 end
 
 function AutomaticQueue:push(object)
-	assert(object.trigger, "No trigger method found!")
+	assert(object.trigger, "Non supported object")
 	Queue.push(self, object)
 end
 
