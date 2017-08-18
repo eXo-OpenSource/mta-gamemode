@@ -219,6 +219,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 	end
 
+	-- check furniture
+	if instanceof(element, Furniture, true) then
+
+	end
+
 	return false
 end
 

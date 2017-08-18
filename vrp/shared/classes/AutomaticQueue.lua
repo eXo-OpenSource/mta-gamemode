@@ -28,14 +28,16 @@ function AutomaticQueue:prepare(priority, async)
 	end
 
 	local thread = Thread:new(handle, priority or THREAD_PRIORITY_HIGH)
-	return thread.start
+	return function(...) return thread:start(...) end
 end
 
 function AutomaticQueue:run()
 	while (not self:empty()) do
 		self:pop():trigger()
 		if not self.m_Async then
-			Thread.pause()
+			if self:size() % 100 == 0 then
+				Thread.pause()
+			end
 		end
 	end
 	self:clear()
