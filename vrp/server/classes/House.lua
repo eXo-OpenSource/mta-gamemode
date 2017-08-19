@@ -19,7 +19,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_CurrentRobber = false
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
-	self.m_Price = price
+	self.m_Price = pricehas
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
@@ -32,6 +32,12 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_IsRob = bIsRob
 
 	self:refreshInteriorMarker()
+
+	self.m_HasGTAInterior = false
+	if not self.m_HasGTAInterior then
+		self.m_IndoorFurniture = IndoorFurnitureCollection:new(self, fromJSON(furnitures))
+		--self.m_OutdoorFurniture = FurnitureCollection:new()
+	end
 
 	--self.m_ColShape = createColSphere(position, 1)
 
