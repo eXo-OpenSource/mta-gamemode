@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Houses/Furniture/IndoorFurnitureCollection.lua
+-- *  PURPOSE:     IndoorFurnitureCollection class
+-- *
+-- ****************************************************************************
 IndoorFurnitureCollection = inherit(FurnitureCollection)
 
 function IndoorFurnitureCollection:constructor()

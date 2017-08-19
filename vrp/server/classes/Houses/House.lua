@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/House.lua
+-- *  FILE:        server/classes/Houses/House.lua
 -- *  PURPOSE:     Serverside house class
 -- *
 -- ****************************************************************************
@@ -19,7 +19,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_CurrentRobber = false
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
-	self.m_Price = pricehas
+	self.m_Price = price
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position

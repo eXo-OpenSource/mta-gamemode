@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Houses/Furniture/FurnitureCollection.lua
+-- *  PURPOSE:     Abstract FurnitureCollection class
+-- *
+-- ****************************************************************************
 FurnitureCollection = inherit(Object)
 FurnitureCollection.constructor = pure_virtual
 FurnitureCollection.destructor = pure_virtual

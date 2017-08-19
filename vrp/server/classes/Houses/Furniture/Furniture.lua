@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Houses/Furniture/Furniture.lua
+-- *  PURPOSE:     Furnitures base class
+-- *
+-- ****************************************************************************
 Furniture = inherit(Object)
 
 function Furniture:constructor(owner, model, position, rotation, dimension, interior)
