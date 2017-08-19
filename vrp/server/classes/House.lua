@@ -31,14 +31,6 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Money = money or 0
 	self.m_IsRob = bIsRob
 
-	-- Furniture
-	self.m_HasGTAInterior = false
-	if not self.m_HasGTAInterior then
-		self.m_InsideFurniture = {}
-		self.m_OutsideFurniture = {}
-	end
-	-- Furniture
-
 	self:refreshInteriorMarker()
 
 	--self.m_ColShape = createColSphere(position, 1)
@@ -506,16 +498,4 @@ function House:refreshInteriorMarker()
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
-end
-
-function House:loadFurniture(player)
-	if not self.m_HasGTAInterior then
-		player:triggerEvent("FurnitureManager:load", self.m_Id, self.m_InsideFurniture)
-	end
-end
-
-function House:unloadFurniture(player)
-	if not self.m_HasGTAInterior then
-		player:triggerEvent("FurnitureManager:unload", self.m_Id)
-	end
 end
