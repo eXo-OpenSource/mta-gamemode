@@ -1091,12 +1091,14 @@ end
 function VehicleManager:Event_vehicleBreak()
 	if not source.isBroken or not source:isBroken() then
 		self:checkVehicle(source)
-		outputDebug("Vehicle has been broken by "..client:getName())
-		if source.controller then
-			source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
+		if not VEHICLE_BIKES[source:getModel()] then
+			outputDebug("Vehicle has been broken by "..client:getName())
+			if source.controller then
+				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
+			end
+			-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+			source:setBroken(true)
 		end
-		-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
-		source:setBroken(true)
 	end
 end
 
