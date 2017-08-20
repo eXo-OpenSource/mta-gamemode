@@ -92,7 +92,7 @@ function Blip:isVisibleForPlayer(player)
 	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
 		return true
 	end
-	 
+
 	if type(self.m_VisibleTo) == "table" then
 		for i,v in pairs(self.m_VisibleTo) do
 			if v == player then return true end -- visibleTo is a table full of players
@@ -170,6 +170,8 @@ function Blip:setDisplayText(text, category)
 	self.m_DisplayText = text
 	self.m_Category = category or BLIP_CATEGORY.Default
 	self:updateClient("Update", {displayText = text, category = self.m_Category})
+
+	return self
 end
 
 function Blip:updateClient(type, data)

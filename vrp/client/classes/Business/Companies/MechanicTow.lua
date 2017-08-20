@@ -62,7 +62,7 @@ function MechanicTow:renderFuelHose()
 						localPlayer.lastWorldVehicle = worldVehicle
 
 						if not VehicleFuel:isInstantiated() then
-							VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill)
+							VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
 						end
 					elseif not worldVehicle then
 						localPlayer.lastWorldVehicle = nil

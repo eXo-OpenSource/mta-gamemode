@@ -9,10 +9,11 @@ VehicleFuel = inherit(GUIForm3D)
 inherit(Singleton, VehicleFuel)
 addRemoteEvents{"forceCloseVehicleFuel"}
 
-function VehicleFuel:constructor(vehicle, confirmCallback)
+function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gasStation)
 	self.m_Fuel = 0
 	self.m_MouseDown = false
 	self.m_Vehicle = vehicle
+	self.m_GasStation = gasStation
 	self.m_ConfirmCallback = confirmCallback
 
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
@@ -23,20 +24,21 @@ function VehicleFuel:constructor(vehicle, confirmCallback)
 	local pos = vehicle:getPosition()
 	pos.z = pos.z + 1.5
 	GUIForm3D.constructor(self, pos, vehicle:getRotation(), Vector2(1, 0.34), Vector2(200,70), 30, true)
-	ShortMessage:new("Linke Maustaste gedrückt halten zum tanken\nLeertaste zum übernehmen", "Fahrzeug befüllen", {230, 100, 0})
+	ShortMessage:new(_("Linke Maustaste gedrückt halten zum tanken%s", confirmWithSpace and "\nLeertaste zum übernehmen" or ""), "Fahrzeug befüllen", {230, 100, 0})
 
 	bindKey("mouse1", "both", self.m_HandleClick)
-	bindKey("space", "down", self.m_Confirm)
+	if confirmWithSpace then bindKey("space", "down", self.m_Confirm) end
 end
 
 function VehicleFuel:virtual_destructor()
+	self:confirm()
 	unbindKey("space", "down", self.m_Confirm)
 	unbindKey("mouse1", "both", self.m_HandleClick)
 end
 
 function VehicleFuel:confirm()
 	if self.m_Fuel > 0 then
-		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self.m_Fuel) end
+		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self.m_Fuel, self.m_GasStation) end
 	end
 end
 

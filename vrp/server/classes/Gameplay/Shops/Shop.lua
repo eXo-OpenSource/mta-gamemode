@@ -125,6 +125,15 @@ function Shop:onItemMarkerHit(hitElement, dim)
 	end
 end
 
+function Shop:onGasStationMarkerHit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if not self.m_Marker.m_Disable then
+			hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
+			triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
+		end
+	end
+end
+
 function Shop:getName()
 	return self.m_Name
 end
@@ -215,7 +224,7 @@ end
 
 function Shop:addBlip(blip)
 	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600)
-	if blip == "Bar.png" then 
+	if blip == "Bar.png" then
 		b:setDisplayText("Bar / Club", BLIP_CATEGORY.Leisure)
 		b:setOptionalColor({245, 160, 199})
 	else

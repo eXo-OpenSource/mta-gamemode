@@ -33,6 +33,14 @@ function GasStation:addShopRef(shop)
 	self.m_Shop = shop
 end
 
+function GasStation:getShop()
+	return self.m_Shop
+end
+
+function GasStation:getName()
+	return self.m_Name
+end
+
 function GasStation:hasPlayerAccess(player)
 	if self.m_Accessible[1] == 0 then return true end
 

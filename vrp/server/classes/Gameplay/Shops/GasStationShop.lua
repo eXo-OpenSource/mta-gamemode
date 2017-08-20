@@ -14,37 +14,15 @@ function GasStationShop:constructor(id, name, position, rotation, typeData, dime
 	self.m_Items = SHOP_ITEMS[typeData["Name"]]
 
 	if self.m_Marker then
-		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onItemMarkerHit, self))
+		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onGasStationMarkerHit, self))
 	end
 
 	if GasStationManager.Shops[self.m_Name] then
 		GasStationManager.Shops[self.m_Name]:addShopRef(self)
+		self.m_GasBlip = Blip:new("Fuelstation.png", position.x, position.y, root, 300):setDisplayText("Tankstelle", BLIP_CATEGORY.VehicleMaintenance):setOptionalColor({0, 150, 136})
 	else
 		--outputDebugString("Shoperror: Gas-Station Data for "..self.m_Id.." not found!")
 	end
-
-	--[[if SHOP_FUEL[self.m_Name] then
-		local pos = SHOP_FUEL[self.m_Name]["Marker"]
-		self.m_GasBlip = Blip:new("Fuelstation.png", pos.x, pos.y, root, 300)
-		self.m_GasBlip:setDisplayText("Tankstelle", BLIP_CATEGORY.VehicleMaintenance)
-		self.m_GasBlip:setOptionalColor({0, 150, 136})
-		self.m_FillMarker = createMarker(pos, "cylinder", 5, 255, 255, 0, 100)
-		addEventHandler("onMarkerHit", self.m_FillMarker, bind(self.onFillMarkerHit, self))
-		addEventHandler("onMarkerLeave", self.m_FillMarker, bind(self.onFillMarkerLeave, self))
-
-		local x, y, z, rot = unpack(SHOP_FUEL[self.m_Name]["FuelStation"])
-		--self.m_GasStation = createObject(1676, x, y, z,0,0, rot)
-		--self.m_GasStation:setData("clickable", true, true)
-
-		--self.m_GasStation:setCollisionsEnabled(false)
-	else
-		outputDebugString("Shoperror: Gas-Station Data for "..self.m_Id.." not found!")
-	end]]
-
-end
-
-function GasStationShop:getFuelStation()
-	return self.m_GasStation
 end
 
 function GasStationShop:onFillMarkerHit(hitElement, matchingDimension)

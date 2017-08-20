@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 GasStation = inherit(Singleton)
+addRemoteEvents{"gasStationReset"}
 
 function GasStation:constructor()
 	self.m_RenderFuelHoles = {}
@@ -24,6 +25,26 @@ function GasStation:constructor()
 	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[1])
 	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[2])
 
+	self.m_FilledDone =
+		function(vehicle, fuel, station)
+			GasStation.PendingTransaction = {station = station, vehicle = vehicle, fuel = math.round(fuel) }
+			InfoBox:new("Gehe in die Tankstelle um zu bezahlen!")
+			--triggerServerEvent("gasStationStartTransaction", localPlayer, vehicle, fuel, station)
+		end
+
+	self.m_Reset =
+		function()
+			GasStation.PendingTransaction = nil
+			if GasStationShopGUI:isInstantiated() then
+				local gasStationGUI = GasStationShopGUI:getSingleton()
+				gasStationGUI.m_Fuel:setText("-")
+				gasStationGUI.m_Price:setText("-")
+				gasStationGUI.m_Confirm:setVisible(false)
+				gasStationGUI.m_Cancel:setVisible(false)
+			end
+		end
+
+	addEventHandler("gasStationReset", root, self.m_Reset)
 	addEventHandler("onClientElementStreamIn", root, bind(GasStation.onObjectStreamIn, self))
 	addEventHandler("onClientElementStreamOut",root ,bind(GasStation.onObjectStreamOut, self))
 	addEventHandler("onClientRender", root, bind(GasStation.renderGasStation, self))
@@ -61,7 +82,7 @@ function GasStation:renderGasStation()
 						localPlayer.lastWorldVehicle = worldVehicle
 
 						VehicleFuel.forceClose()
-						VehicleFuel:new(localPlayer.lastWorldVehicle)
+						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_FilledDone, false, station)
 					end
 
 					if localPlayer.vehicle or (station.position - element.position).length > 10 then
@@ -84,10 +105,6 @@ function GasStation:renderGasStation()
 	dxSetShaderValue(self.m_Shader, "gTexture", self.m_RenderTarget)
 end
 
-function GasStation:dxDrawBoxText(text , x, y , w , h , ...)
-	dxDrawText( text , x , y , x + w , y + h , ... )
-end
-
 function GasStation:renderBackground()
 	dxDrawRectangle(0, 0, 512, 512, tocolor(80, 80, 80))
 	dxDrawRectangle(50, 80, 412, 60, Color.Green)
@@ -99,7 +116,7 @@ end
 function GasStation:renderDisplay()
 	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") then
 		self.m_Amount = VehicleFuel:isInstantiated() and math.round(VehicleFuel:getSingleton().m_Fuel, 2) or 0
-		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * 1.5, 2) or 0
+		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * 2, 2) or 0
 	else
 		self.m_Amount = "-"
 		self.m_Price = "-"
