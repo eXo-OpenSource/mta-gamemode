@@ -94,9 +94,9 @@
 	<script src="server/classes/Super/NPC.lua" type="server"/>
 
 	<!-- Houses -->
-	<script src="server/classes/Houses/Furniture/Furniture.lua"/>
-	<script src="server/classes/Houses/Furniture/FurnitureCollection.lua"/>
-	<script src="server/classes/Houses/Furniture/IndoorFurnitureCollection.lua"/>
+	<script src="server/classes/Houses/Furniture/Furniture.lua" type="server"/>
+	<script src="server/classes/Houses/Furniture/FurnitureCollection.lua" type="server"/>
+	<script src="server/classes/Houses/Furniture/IndoorFurnitureCollection.lua" type="server"/>
 	<script src="server/classes/Houses/House.lua" type="server"/>
 	<script src="server/classes/Houses/HouseManager.lua" type="server"/>
 
