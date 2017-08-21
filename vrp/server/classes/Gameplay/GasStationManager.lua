@@ -80,7 +80,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 				client:takeMoney(price, "Tanken")
 				vehicle:setFuel(vehicle:getFuel() + fuel)
 
-				client:sendInfo(_("Tankstelle %s bedankt sich für deinen Einkauf!", client, station:getName()))
+				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
 				client:triggerEvent("gasStationReset")
 
 				if station:getShop() then
@@ -95,7 +95,49 @@ end
 
 -- accessible: {type, id} || type: 0 = all, 1 = faction, 2 = company || id = faction or company id (0 == state faction)
 GAS_STATIONS = {
-	[1] = {
+	{
+		name = "Tankstelle Temple",
+		stations = {
+			{Vector3(1000.23, -937.42, 42.86), 8, 2},
+			{Vector3(1006.91, -936.43, 42.86), 8, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "San Fierro Downtown",
+		stations = {
+			{Vector3(-1676.68, 419.11, 7.90), 223, 2},
+			{Vector3(-1681.68, 413.94, 7.90), 223, 2},
+			{Vector3(-1675.17, 407.36, 7.90), 223, 2},
+			{Vector3(-1669.84, 412.59, 7.90), 223, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "San Fierro Juniper Hill",
+		stations = {
+			{Vector3(-2410.8994, 972, 46), 90, 2},
+			{Vector3(-2410.8994, 979, 46), 90, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Angle Pine",
+		stations = {
+			{Vector3(-2246.67, -2559.59, 32.6), 243, 1},
+			{Vector3(-2241.68, -2562.21, 32.6), 243, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Tankstelle Dillimore",
+		stations = {
+			{Vector3(655.68, -569.92, 16.6), 90, 2},
+			{Vector3(655.68, -559.91, 16.6), 90, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
 		name = "Idlewood",
 		stations = {
 			{Vector3(1941.7, -1776.6, 14.17), 90, 2},
@@ -105,3 +147,21 @@ GAS_STATIONS = {
 	},
 }
 
+--[[
+
+Shop: Gas-Station Data for 60: Tankstelle Dillimore not found!
+Shop: Gas-Station Data for 61: Tankstelle Flint County not found!
+Shop: Gas-Station Data for 62: Red Sands West not found!
+Shop: Gas-Station Data for 63: Spinybed not found!
+Shop: Gas-Station Data for 64: Las Venturas 2 not found!
+Shop: Gas-Station Data for 65: Valle Ocultado not found!
+Shop: Gas-Station Data for 66: Tierra Roboda 2 not found!
+Shop: Gas-Station Data for 68: Fort Carson not found!
+Shop: Gas-Station Data for 69: Whetstone not found!
+Shop: Gas-Station Data for 70: Last Venturas East not found!
+Shop: Gas-Station Data for 71: The Emerald Isle not found!
+Shop: Gas-Station Data for 72: Montegomery not found!
+Shop: Gas-Station Data for 73: Bone County not found!
+Shop: Gas-Station Data for 74: Tierra Roboda 1 not found!
+
+ ]]
