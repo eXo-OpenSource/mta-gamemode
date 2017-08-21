@@ -67,13 +67,8 @@ function ItemManager:constructor()
 	}
 
 	self.m_Properties = {
-	["Barrikade"] = {true}, --// breakable,
-	["Warnkegel"] = {true}, --// breakable,
-}
-	self.m_SpecialItems = {
-		["Mautpass"] = true,
-		["Kanne"] = true,
-		["Donutbox"] = true
+		["Barrikade"] = {true}, --// breakable,
+		["Warnkegel"] = {true}, --// breakable,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

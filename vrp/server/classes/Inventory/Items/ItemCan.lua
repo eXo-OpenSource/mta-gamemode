@@ -20,7 +20,7 @@ end
 function ItemCan:use( player, itemId, bag, place, itemName )
 	if not player:getPublicSync("ItemCanEnabled") then
 		if isElement(self.m_Cans[player]) then self.m_Cans[player]:destroy() end
-		local fillstate = player:getInventory():getSpecialItemData(itemName) or 0
+		local fillstate = tonumber(player:getInventory():getItemValueByBag(bag, place)) or 0
 		self.m_Cans[player] = createObject(1902, 0, 0, 0)
 		self.m_Cans[player]:setScale(0.5)
 		exports.bone_attach:attachElementToBone(self.m_Cans[player], player, 12, 0, 0, 0.5, 180, 0, 0)
@@ -38,13 +38,10 @@ end
 function ItemCan:action(player, key, state)
 	if state == "down" then
 		local itemName = "Kanne"
-		local fillstate = 0
-		if player:getInventory():getSpecialItemData(itemName) then
-			fillstate = tonumber(player:getInventory():getSpecialItemData(itemName))
-		end
+		local fillstate = tonumber(player:getInventory():getItemValueByName(itemName)) or 0
 		if fillstate < 1 then
 			if isElementInWater( player ) then
-				player:getInventory():setSpecialItemData(itemName, 10)
+				player:getInventory():setItemValueByName(itemName, 10)
 				player:triggerEvent("itemCanRefresh", 10)
 				player:sendInfo("Kanne aufgefüllt!")
 			else
@@ -53,7 +50,7 @@ function ItemCan:action(player, key, state)
 		else
 			local plant = player:getData("Plant:Current")
 			if plant then
-				player:getInventory():setSpecialItemData(itemName, fillstate-1)
+				player:getInventory():setItemValueByName(itemName, fillstate-1)
 				player:triggerEvent("itemCanRefresh", fillstate-1)
 				plant:waterPlant(player)
 			else
