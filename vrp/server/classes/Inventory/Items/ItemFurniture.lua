@@ -12,7 +12,7 @@ function ItemFurniture:use(player, itemId, bag, place, itemName)
 		local result = self:startObjectPlacing(player,
 			function(item, position, rotation)
 				if item ~= self or not position then return end
-				player.m_CurrentHouse:createInsideFurniture(item, item:getModelId(), position, rotation)
+				player.m_CurrentHouse:createInsideFurniture(item, position, rotation)
 
 				player:getInventory():removeItemFromPlace(bag, place, 1)
 			end

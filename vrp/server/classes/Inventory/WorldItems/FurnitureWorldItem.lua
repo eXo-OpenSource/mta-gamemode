@@ -10,17 +10,21 @@ function FurnitureWorldItem:hasPlayerPermissionTo(player, action)
 end
 
 function FurnitureWorldItem:onCollect(...)
+	local result = WorldItem.onCollect(self, ...)
 	if self.m_FurnitureInstance:isInside() then
 		self.m_FurnitureInstance.m_Owner:removeInsideFurniture(self.m_Object)
 	end
-	return WorldItem.onCollect(self, ...)
+
+	return result
 end
 
 function FurnitureWorldItem:onDelete(...)
+	local result = WorldItem.onDelete(self, ...)
 	if self.m_FurnitureInstance:isInside() then
 		self.m_FurnitureInstance.m_Owner:removeInsideFurniture(self.m_Object)
 	end
-	return WorldItem.onDelete(self, ...)
+
+	return result
 end
 
 function FurnitureWorldItem:onMove(...)

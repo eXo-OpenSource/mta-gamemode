@@ -79,6 +79,6 @@ end
 
 function FurnitureCollection:loadList(furnitures)
 	for i, objectData in ipairs(furnitures) do
-		self:addByData(ItemManager:getSingleton():getInstance(objectData.item), objectData.model, objectData.position, objectData.rotation, objectData.dimension, objectData.interior)
+		self:addByData(ItemManager:getSingleton():getInstance(objectData.item), objectData.model, Vector3(unpack(objectData.position)), objectData.rotation, objectData.dimension, objectData.interior)
 	end
 end

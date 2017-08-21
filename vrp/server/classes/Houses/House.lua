@@ -36,12 +36,16 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_HasGTAInterior = false
 	if not self.m_HasGTAInterior then
 		self.m_IndoorFurniture = IndoorFurnitureCollection:new(self, {
-
+			{
+				item      = "Trashcan",
+				position  = {138.642, 1371.949, 1083.805},
+				rotation  = 0,
+				dimension = self.m_Id,
+				interior  = HOUSE_INTERIOR_TABLE[self.m_InteriorID][1],
+			}
 		})
 		--self.m_OutdoorFurniture = FurnitureCollection:new()
 	end
-
-	--self.m_ColShape = createColSphere(position, 1)
 
 	if owner == false then
 		self.m_Keys = {}
@@ -523,9 +527,9 @@ function House:refreshInteriorMarker()
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
 end
 
-function House:createInsideFurniture(item, model, position, rotation)
+function House:createInsideFurniture(item, position, rotation)
 	if not self.m_HasGTAInterior then
-		self.m_IndoorFurniture:addByData(item, model, position, rotation, self.m_Id, HOUSE_INTERIOR_TABLE[self.m_InteriorID][1], true)
+		self.m_IndoorFurniture:addByData(item, item:getModelId(), position, rotation, self.m_Id, HOUSE_INTERIOR_TABLE[self.m_InteriorID][1], true)
 	end
 end
 
