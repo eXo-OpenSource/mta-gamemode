@@ -18,6 +18,8 @@ function ObjectPlacer:constructor(model, callback, hideObject)
 
 	self.m_hideObject = hideObject
 	self.m_Object:setCollisionsEnabled(false)
+	self.m_Object:setDimension(localPlayer:getDimension())
+	self.m_Object:setInterior(localPlayer:getInterior())
 	self.m_Callback = callback
 
 	if self.m_hideObject then

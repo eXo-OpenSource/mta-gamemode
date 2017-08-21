@@ -30,7 +30,7 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
 	self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
 	self.m_Object:setData("Name", self.m_ItemName or "Unknown", true)
-	self.m_Object:setData("Placer", player:getName() or "Unknown", true)
+	self.m_Object:setData("Placer", (player and player.getName and player:getName()) or "Unknown", true)
 	self.m_Object:setData("PlacedTimestamp", getRealTime().timestamp, true)
 
 	-- Add an entry to the map
@@ -41,18 +41,6 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 		WorldItem.Map[owner][self.m_ModelId] = {}
 	end
 	WorldItem.Map[owner][self.m_ModelId][self.m_Object] = self
-end
-
-function WorldItem:attach(ele, offsetPos, offsetRot)
-	if isElement(ele) then
-		self.m_AttachedElements[ele] = self
-		ele:attach(self.m_Object, offsetPos or Vector3(0, 0, 0), offsetRot or Vector3(0, 0, 0))
-		if getElementType(ele) == "object" then
-			setElementData(ele, "worlditem_attachment", self.m_Object)
-		end
-		return ele
-	end
-	return false
 end
 
 function WorldItem:virtual_destructor()
@@ -69,14 +57,26 @@ function WorldItem:virtual_destructor()
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
-function WorldItem:onCollect(player, resendList, id, type)
-	if self:getMovingPlayer() then 
-		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
-		return false 
+function WorldItem:attach(ele, offsetPos, offsetRot)
+	if isElement(ele) then
+		self.m_AttachedElements[ele] = self
+		ele:attach(self.m_Object, offsetPos or Vector3(0, 0, 0), offsetRot or Vector3(0, 0, 0))
+		if getElementType(ele) == "object" then
+			setElementData(ele, "worlditem_attachment", self.m_Object)
+		end
+		return ele
 	end
-	if not isElement(self:getObject()) then 
-		player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
-		return false 
+	return false
+end
+
+function WorldItem:onCollect(player, resendList, id, type)
+	if self:getMovingPlayer() then
+		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName()))
+		return false
+	end
+	if not isElement(self:getObject()) then
+		player:sendError(_("Dieses Objekt existiert nicht mehr.", player))
+		return false
 	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Collect) then
 		return false
@@ -96,9 +96,9 @@ end
 
 function WorldItem:onDelete(player, resendList, id, type)
 	if player then
-		if not isElement(self:getObject()) then 
-			player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
-			return false 
+		if not isElement(self:getObject()) then
+			player:sendError(_("Dieses Objekt existiert nicht mehr.", player))
+			return false
 		end
 		if not self:hasPlayerPermissionTo(player, WorldItem.Action.Delete) then
 			return false
@@ -112,14 +112,14 @@ function WorldItem:onDelete(player, resendList, id, type)
 	delete(self)
 end
 
-function WorldItem:onMove(player)
-	if self:getMovingPlayer() then 
-		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
-		return false 
+function WorldItem:onMove(player, callback)
+	if self:getMovingPlayer() then
+		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName()))
+		return false
 	end
-	if not isElement(self:getObject()) then 
-		player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
-		return false 
+	if not isElement(self:getObject()) then
+		player:sendError(_("Dieses Objekt existiert nicht mehr.", player))
+		return false
 	end
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Move) then
 		return false
@@ -128,13 +128,16 @@ function WorldItem:onMove(player)
 	addEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
 	self.m_Item:startObjectPlacing(player,
 		function(item, position, rotation)
-			if not isElement(self:getObject()) then 
-				player:sendError(_("Dieses Objekt existiert nicht mehr.", player)) 
-				return false 
+			if not isElement(self:getObject()) then
+				player:sendError(_("Dieses Objekt existiert nicht mehr.", player))
+				return false
 			end
 			if position then -- item moved
 				self.m_Object:setPosition(position)
 				self.m_Object:setRotation(0, 0, rotation)
+			end
+			if callback then
+				callback(position, rotation)
 			end
 			self.m_CurrentMovingPlayer = nil
 			removeEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
@@ -189,7 +192,7 @@ end
 function WorldItem.sendItemListToPlayer(id, type, player)
 	local owner
 	if type == "player" then
-		owner = DatabasePlayer.getFromId(id)	
+		owner = DatabasePlayer.getFromId(id)
 	elseif type == "faction" then
 		owner = FactionManager:getSingleton():getFromId(id)
 	end
@@ -251,7 +254,7 @@ addEventHandler("worldItemMassDelete", root,
 )
 
 
-addEventHandler("requestWorldItemListOfOwner", root, 
+addEventHandler("requestWorldItemListOfOwner", root,
 	function(id, type)
 		WorldItem.sendItemListToPlayer(id, type, client)
 	end

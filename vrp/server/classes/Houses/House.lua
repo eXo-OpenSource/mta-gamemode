@@ -35,7 +35,9 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self.m_HasGTAInterior = false
 	if not self.m_HasGTAInterior then
-		self.m_IndoorFurniture = IndoorFurnitureCollection:new(self, fromJSON(furnitures))
+		self.m_IndoorFurniture = IndoorFurnitureCollection:new(self, {
+
+		})
 		--self.m_OutdoorFurniture = FurnitureCollection:new()
 	end
 
@@ -365,12 +367,23 @@ function House:enterHouse(player)
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
 
-	player:setPosition(x, y, z)
-	setElementDimension(player, self.m_Id)
-	setElementInterior(player,int)
-	player.m_CurrentHouse = self
-	self.m_PlayersInterior[player] = true
-
+	if not self.m_HasGTAInterior then
+		self.m_IndoorFurniture:increment()
+		player:triggerEvent("setFurnitureEnabled", false)
+		nextframe(function()
+			player:setPosition(x, y, z)
+			setElementDimension(player, self.m_Id)
+			setElementInterior(player,int)
+			player.m_CurrentHouse = self
+			self.m_PlayersInterior[player] = true
+		end)
+	else
+		player:setPosition(x, y, z)
+		setElementDimension(player, self.m_Id)
+		setElementInterior(player,int)
+		player.m_CurrentHouse = self
+		self.m_PlayersInterior[player] = true
+	end
 	return true
 end
 
@@ -403,6 +416,10 @@ function House:leaveHouse(player)
 	player.m_CurrentHouse = false
 	if self.m_CurrentRobber == player then
 		player:triggerEvent("CountdownStop", "Haus-Raub")
+	end
+	if not self.m_HasGTAInterior then
+		self.m_IndoorFurniture:decrement()
+		player:triggerEvent("setFurnitureEnabled", true)
 	end
 end
 
@@ -504,4 +521,16 @@ function House:refreshInteriorMarker()
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
+end
+
+function House:createInsideFurniture(item, model, position, rotation)
+	if not self.m_HasGTAInterior then
+		self.m_IndoorFurniture:addByData(item, model, position, rotation, self.m_Id, HOUSE_INTERIOR_TABLE[self.m_InteriorID][1], true)
+	end
+end
+
+function House:removeInsideFurniture(object)
+	if not self.m_HasGTAInterior then
+		self.m_IndoorFurniture:removeByObject(object)
+	end
 end

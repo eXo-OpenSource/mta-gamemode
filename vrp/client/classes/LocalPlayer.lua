@@ -755,3 +755,12 @@ addEventHandler("showModCheck",localPlayer, function(tbl)
 		end
 	end)
 end)
+
+addEvent("setFurnitureEnabled", true)
+addEventHandler("setFurnitureEnabled", localPlayer,
+	function(bool)
+		for i = 0, 4, 1 do
+			setInteriorFurnitureEnabled(i, bool)
+		end
+	end
+)

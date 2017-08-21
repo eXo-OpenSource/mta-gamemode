@@ -65,8 +65,6 @@
 	<script src="server/classes/Player/Warn.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
-	<script src="server/classes/House.lua" type="server"/>
-	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
 	<script src="server/classes/Karma.lua" type="server"/>
@@ -95,6 +93,13 @@
 	<script src="server/classes/Super/Root.lua" type="server"/>
 	<script src="server/classes/Super/NPC.lua" type="server"/>
 
+	<!-- Houses -->
+	<script src="server/classes/Houses/Furniture/Furniture.lua"/>
+	<script src="server/classes/Houses/Furniture/FurnitureCollection.lua"/>
+	<script src="server/classes/Houses/Furniture/IndoorFurnitureCollection.lua"/>
+	<script src="server/classes/Houses/House.lua" type="server"/>
+	<script src="server/classes/Houses/HouseManager.lua" type="server"/>
+
 	<!-- Player -->
 	<script src="server/classes/Player/Account.lua" type="server"/>
 	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
@@ -108,6 +113,7 @@
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/FurnitureWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -135,6 +141,7 @@
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFurniture.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 
 	<!-- Wearables -->

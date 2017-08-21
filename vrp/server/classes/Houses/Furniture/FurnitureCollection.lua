@@ -11,12 +11,17 @@ FurnitureCollection.destructor = pure_virtual
 
 function FurnitureCollection:virtual_constructor(house, furnitures)
 	self.m_House = house
-	self.m_Furnitures = self.loadList(self.m_House, furnitures)
+	self.m_Furnitures = {}
 	self.m_LoadingQueue = AutomaticQueue:new()
+
+	self:loadList(furnitures)
 end
 
 function FurnitureCollection:virtual_destructor()
-
+	for i, furniture in pairs(self.m_Furnitures) do
+		self:remove(furniture)
+		delete(furniture)
+	end
 end
 
 function FurnitureCollection:load()
@@ -24,10 +29,11 @@ function FurnitureCollection:load()
 
 	local trigger = self.m_LoadingQueue:prepare(THREAD_PRIORITY_HIGHEST)
 	for i, furniture in ipairs(self.m_Furnitures) do
+		outputDebug(furniture)
 		furniture.trigger = function(self, ...) return self:load(...) end
 		self.m_LoadingQueue:push(furniture)
 	end
-	pcall(trigger)
+	trigger()
 end
 
 function FurnitureCollection:unload()
@@ -37,7 +43,7 @@ function FurnitureCollection:unload()
 end
 
 function FurnitureCollection:findByObject(object)
-	for i, furniture in pars(self.m_Furnitures) do
+	for i, furniture in pairs(self.m_Furnitures) do
 		if furniture:getObject() == object then
 			return furniture
 		end
@@ -49,6 +55,7 @@ function FurnitureCollection:remove(furniture)
 	local idx = table.find(self.m_Furnitures, furniture)
 	if idx then
 		table.remove(self.m_Furnitures, idx)
+		delete(furniture)
 		return true
 	end
 	return false
@@ -58,19 +65,20 @@ function FurnitureCollection:removeByObject(object)
 	return self:remove(self:findByObject(object))
 end
 
-function FurnitureCollection:add(furniture)
+function FurnitureCollection:add(furniture, load)
 	table.insert(self.m_Furnitures, furniture)
+	if load then
+		furniture:load()
+	end
 	return true
 end
 
-function FurnitureCollection:addByData(model, position, rotation, dimension, interior)
-	return self:add(Furniture:new(self.m_House, model, position, rotation, dimension, interior))
+function FurnitureCollection:addByData(item, model, position, rotation, dimension, interior, load)
+	return self:add(Furniture:new(self.m_House, item, model, position, rotation, dimension, interior), load)
 end
 
-function FurnitureCollection.loadList(house, furnitures)
-	local tab = {}
+function FurnitureCollection:loadList(furnitures)
 	for i, objectData in ipairs(furnitures) do
-		tab[i] = Furniture:new(house, objectData.model, objectData.position, objectData.rotation, objectData.dimension, objectData.interior)
+		self:addByData(ItemManager:getSingleton():getInstance(objectData.item), objectData.model, objectData.position, objectData.rotation, objectData.dimension, objectData.interior)
 	end
-	return tab
 end

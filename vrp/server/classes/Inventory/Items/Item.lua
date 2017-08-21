@@ -68,7 +68,7 @@ addEventHandler("itemPlaced", root,
 				placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
 			else
 				client:sendShortMessage(_("Vorgang abgebrochen.", client), nil, nil, 1000)
-				placingInfo.callback(placingInfo.item, false) 
+				placingInfo.callback(placingInfo.item, false)
 			end
 			client.m_PlacingInfo = nil
 		end

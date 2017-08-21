@@ -24,7 +24,8 @@ end
 
 function IndoorFurnitureCollection:decrement()
 	self.m_Counter = self.m_Counter - 1
-	if self.m_Counter == 0 then
+	if self.m_Counter <= 0 then
 		self:unload()
+		self.m_Counter = 0
 	end
 end
