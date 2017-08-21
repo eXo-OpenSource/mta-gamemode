@@ -138,6 +138,69 @@ GAS_STATIONS = {
 		accessible =  {0, 0},
 	},
 	{
+		name = "Tankstelle Flint County",
+		stations = {
+			{Vector3(-85.41, -1165.00, 2.9), 65, 2},
+			{Vector3(-90.01, -1175.99, 2.81), 65, 2},
+			{Vector3(-92.22, -1162.38, 3), 65, 2},
+			{Vector3(-96.84, -1173.24, 3), 65, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "The Emerald Isle",
+		stations = {
+			{Vector3(2196.89, 2480, 11.5), 90, 2},
+			{Vector3(2196.89, 2475, 11.5), 90, 2},
+			{Vector3(2196.89, 2469.8, 11.5), 90, 2},
+			{Vector3(2207.69, 2469.8, 11.5), 90, 2},
+			{Vector3(2207.69, 2475, 11.5), 90, 2},
+			{Vector3(2207.69, 2480, 11.5), 90, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Red Sands West",
+		stations = {
+			{Vector3(1596.2, 2193.7, 11.5), 0, 2},
+			{Vector3(1596.1, 2204.5, 11.5), 0, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Spinybed",
+		stations = {
+			{Vector3(2147.64, 2753.28, 11.4), 0, 2},
+			{Vector3(2147.63, 2742.5, 11.4), 0, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Las Venturas 2",
+		stations = {
+			{Vector3(2114.80, 925.53, 11.45), 0, 2},
+			{Vector3(2114.8999, 914.72, 11.45), 0, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Valle Ocultado",
+		stations = {
+			{Vector3(-740.41, 2753.35, 47.7), 90, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Tierra Roboda 2",
+		stations = {
+			{Vector3(-1328.1, 2680.2, 51), 354, 1},
+			{Vector3(-1328.84, 2674.84, 51), 354, 1},
+			{Vector3(-1327.72, 2685.76, 51), 354, 1},
+			{Vector3(-1329.68, 2669.25, 51), 354, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
 		name = "Idlewood",
 		stations = {
 			{Vector3(1941.7, -1776.6, 14.17), 90, 2},
@@ -145,23 +208,61 @@ GAS_STATIONS = {
 		},
 		accessible =  {0, 0},
 	},
+	{
+		name = "Fort Carson",
+		stations = {
+			{Vector3(68.1, 1221.3, 19.6), 252, 1},
+			{Vector3(73.80, 1219.45, 19.6), 252, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Whetstone",
+		stations = {
+			{Vector3(-1611.35, -2720.47, 49.4), 324, 1},
+			{Vector3(-1607.80, -2716.16, 49.4), 324, 1},
+			{Vector3(-1604.70, -2711.75, 49.4), 324, 1},
+			{Vector3(-1601.41, -2707.17, 49.4), 324, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Last Venturas East",
+		stations = {
+			{Vector3(2639.9, 1100.9, 11.5), 0, 2},
+			{Vector3(2639.9, 1111.83, 11.5), 0, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Montegomery",
+		stations = {
+			{Vector3(1379.81, 460.5, 20.8), 155.5, 2},
+			{Vector3(1384.36, 458.6, 20.8), 155.5, 2},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Bone County",
+		stations = {
+			{Vector3(624.06, 1677.63, 7.7), 35.5, 1},
+			{Vector3(620.85, 1682.64, 7.7), 35.5, 1},
+			{Vector3(617.42, 1687.44, 7.7), 35.5, 1},
+			{Vector3(613.90, 1692.40, 7.7), 35.5, 1},
+			{Vector3(610.33, 1697.42, 7.7), 35.5, 1},
+			{Vector3(606.91, 1702.24, 7.7), 35.5, 1},
+			{Vector3(603.53, 1707, 7.7), 35.5, 1},
+		},
+		accessible =  {0, 0},
+	},
+	{
+		name = "Tierra Roboda 1",
+		stations = {
+			{Vector3(-1465.5, 1868.2, 33.3), 3.24, 1},
+			{Vector3(-1464.78, 1860.43, 33.3), 3.24, 1},
+			{Vector3(-1477.91, 1859.74, 33.3), 3.24, 1},
+			{Vector3(-1478.72, 1867.25, 33.3), 3.24, 1},
+		},
+		accessible =  {0, 0},
+	},
 }
-
---[[
-
-Shop: Gas-Station Data for 60: Tankstelle Dillimore not found!
-Shop: Gas-Station Data for 61: Tankstelle Flint County not found!
-Shop: Gas-Station Data for 62: Red Sands West not found!
-Shop: Gas-Station Data for 63: Spinybed not found!
-Shop: Gas-Station Data for 64: Las Venturas 2 not found!
-Shop: Gas-Station Data for 65: Valle Ocultado not found!
-Shop: Gas-Station Data for 66: Tierra Roboda 2 not found!
-Shop: Gas-Station Data for 68: Fort Carson not found!
-Shop: Gas-Station Data for 69: Whetstone not found!
-Shop: Gas-Station Data for 70: Last Venturas East not found!
-Shop: Gas-Station Data for 71: The Emerald Isle not found!
-Shop: Gas-Station Data for 72: Montegomery not found!
-Shop: Gas-Station Data for 73: Bone County not found!
-Shop: Gas-Station Data for 74: Tierra Roboda 1 not found!
-
- ]]
