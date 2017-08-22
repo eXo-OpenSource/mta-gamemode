@@ -242,6 +242,7 @@
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/StateEvidenceTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>

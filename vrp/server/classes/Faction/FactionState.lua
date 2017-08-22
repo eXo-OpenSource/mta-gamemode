@@ -86,7 +86,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:declineEvidenceDestroy","State:onRequestEvidenceDestroy"
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -131,9 +131,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
-	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
-	addEventHandler("State:acceptEvidenceDestroy", root, bind(self.Event_acceptEvidenceDestroy,self))
-	addEventHandler("State:declineEvidenceDestroy", root, bind(self.Event_declineEvidenceDestroy,self))
+	addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 
 
 
@@ -1780,18 +1778,7 @@ function FactionState:showEvidenceStorage(player)
 	end
 end
 
-function FactionState:Event_onRequestEvidenceDestroy()
-	if client then
-		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-			if client:getFaction():getPlayerRank(client) >= 5 then
-				local text = _("Möchtest du wirklich den Inhalt der Asservatenkammer zur Zerstörung freigeben?", client)
-				QuestionBox:new(client, client, text, "State:acceptEvidenceDestroy", "State:declineEvidenceDestroy", client)
-			end
-		end
-	end
-end
-
-function FactionState:Event_acceptEvidenceDestroy(client)
+function FactionState:Event_startEvidenceTruck()
 	if client then
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 			if client:getFaction():getPlayerRank(client) >= 5 then
@@ -1837,20 +1824,20 @@ function FactionState:Event_acceptEvidenceDestroy(client)
 						end
 					end
 					if totalMoney > 0 then
-						FactionManager:getSingleton():getFromId(1):giveMoney(totalMoney, "Asservatenvernichtung")
+						StateEvidenceTruck:new(client, totalMoney)
+						PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+						self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
+						sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+						self.m_EvidenceRoomItems = {}
+						triggerClientEvent(root,"State:clearEvidenceItems", root)
+						self.m_LastStorageEmptied = getTickCount()
+					else
+						client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 					end
-					FactionState:sendShortMessage(client:getName().." hat die Asservatenkammer zur Leerung freigeben!",10000)
-					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-					self.m_EvidenceRoomItems = {}
-					triggerClientEvent(root,"State:clearEvidenceItems", root)
-					self.m_LastStorageEmptied = getTickCount()
 				end
 			end
 		end
 	end
-end
-
-function FactionState:Event_declineEvidenceDestroy()
 end
 
 function FactionState:Event_bugAction(action, id)
