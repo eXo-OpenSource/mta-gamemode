@@ -20,7 +20,8 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList"}
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList",
+		"vehicleLoadObject", "vehicleDeloadObject"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -46,8 +47,8 @@ function VehicleManager:constructor()
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
-
-
+	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
+	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -1127,5 +1128,83 @@ function VehicleManager:Event_TrailerAttach(truck)
 		if truck.controller then
 			truck.controller:triggerEvent("vehicleTrailerFuelSync", source:getFuel())
 		end
+	end
+end
+
+function VehicleManager:Event_LoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "keinen Geldsack"
+	end
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					local playerObject = client:getPlayerAttachedObject()
+					if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
+						if playerObject then
+							local count = #getAttachedElements(veh)
+							client:detachPlayerObject(playerObject)
+							playerObject:attach(veh, vehicleObjects[veh.model][count+1])
+							if object.LoadHook then
+								object.LoadHook(client, object)
+							end
+						else
+							client:sendError(_("Du hast %s dabei!", client, name))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
+					end
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
+	end
+end
+
+function VehicleManager:Event_DeLoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "kein Geldsack"
+	end
+
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					for key, object in pairs (getAttachedElements(veh)) do
+						if object.model == model then
+							object:detach(self.m_Truck)
+							client:attachPlayerObject(object)
+							if object.DeloadHook then
+								object.DeloadHook(client, object)
+							end
+							return
+						end
+					end
+					client:sendError(_("Es befindet sich %s im Truck!", client, name))
+					return
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
 end
