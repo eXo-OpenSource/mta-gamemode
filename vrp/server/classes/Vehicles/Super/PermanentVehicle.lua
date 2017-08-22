@@ -102,13 +102,6 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
-	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
-		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
-		if row and row.Special > 0 then
-			self.m_Tunings:saveTuning("Special", row.Special)
-			self.m_Tunings:applyTuning()
-		end
-	end
 	self.m_HasBeenUsed = 0
 end
 

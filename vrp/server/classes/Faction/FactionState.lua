@@ -1827,10 +1827,11 @@ function FactionState:Event_startEvidenceTruck()
 						StateEvidenceTruck:new(client, totalMoney)
 						PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 						self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-						sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-						self.m_EvidenceRoomItems = {}
-						triggerClientEvent(root,"State:clearEvidenceItems", root)
-						self.m_LastStorageEmptied = getTickCount()
+						-- Todo Remove This:
+						--sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+						--self.m_EvidenceRoomItems = {}
+						--triggerClientEvent(root,"State:clearEvidenceItems", root)
+						--self.m_LastStorageEmptied = getTickCount()
 					else
 						client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 					end
