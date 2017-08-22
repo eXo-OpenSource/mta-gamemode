@@ -1782,20 +1782,7 @@ function FactionState:Event_startEvidenceTruck()
 	if client then
 		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 			if client:getFaction():getPlayerRank(client) >= 5 then
-				local now = getTickCount()
-				local continue
-				if not self.m_LastStorageEmptied then
-					self.m_LastStorageEmptied = now
-					continue = true
-				else
-					if now - self.m_LastStorageEmptied >= (1000*60*120) then
-						continue = true
-					else
-						client:sendShortMessage("Die Asservatenkammer kann nur alle zwei Stunden geleert werden!","Asservatenkammer",{200, 20, 0})
-						continue = false
-					end
-				end
-				if continue then
+				if ActionsCheck:getSingleton():isActionAllowed(client) then
 					local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
 					local totalMoney = 0
 					for i = 1, #self.m_EvidenceRoomItems do
@@ -1822,8 +1809,8 @@ function FactionState:Event_startEvidenceTruck()
 								end
 							end
 						end
-					end
 					if totalMoney > 0 then
+						ActionsCheck:getSingleton():setAction("Geldtransport")
 						StateEvidenceTruck:new(client, totalMoney)
 						PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 						self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
