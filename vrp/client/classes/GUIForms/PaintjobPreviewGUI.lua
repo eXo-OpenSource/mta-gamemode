@@ -40,7 +40,7 @@ function PaintjobPreviewGUI:Event_onCheckedVehicle( vehicle )
 		if veh then
 			if isHttp then
 				if isPng or isJpg then
-					fetchRemote(url, self.m_CallBackEvent, veh)
+					fetchRemote(url, self.m_CallBackEvent, {veh})
 				end
 			end
 		end
