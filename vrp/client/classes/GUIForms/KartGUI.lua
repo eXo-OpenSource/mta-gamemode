@@ -109,8 +109,9 @@ function KartGUI:virtual_destructor()
 	removeEventHandler("receiveKartDatas", root, self.m_fnReceiveToptimes)
 end
 
-function KartGUI:receiveToptimes(mapname, mapauthor, toptimes)
+function KartGUI:receiveToptimes(mapname, mapauthor, toptimes, mapID)
 	self.m_Toptimes = toptimes
+	self.m_MapID = mapID
 
 	self.m_MapNameLabel:setText(mapname)
 	self.m_AuthorLabel:setText(mapauthor)
@@ -119,14 +120,20 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes)
 
 	self.m_GridList:clear()
 	for k, v in ipairs(self.m_Toptimes) do
-		local item = self.m_GridList:addItem(("%d."):format(k), timeMsToTimeText(v.time), v.name)
+		local item = self.m_GridList:addItem(("%d."):format(k), timeMsToTimeText(v.time), v.name)--:setClickable(false):setColor(Color.White)
+		item.playerId = v.PlayerID
+
+		if v.name == localPlayer:getName() then
+			item:setColor(Color.LightRed)
+		end
+
 		item.onLeftDoubleClick =
-		function()
+		function(item)
 			if not Kart.LastRequest then
 				Kart.LastRequest = true
 				self.m_DisableGhost:setVisible(true)
 
-				triggerServerEvent("requestKartGhost", localPlayer, k)
+				fetchRemote(("https://exo-reallife.de/ingame/kart/getGhost.php?playerId=%s&mapId=%s"):format(item.playerId, self.m_MapID), Kart.receiveGhostDriver)
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
 			end
