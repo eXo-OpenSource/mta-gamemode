@@ -10,7 +10,7 @@ AppSanNews = inherit(PhoneApp)
 local ColorTable = {
 	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
-	["Hell-Blau"] = Color.AD_LightBlue,
+	["Blau-Grün"] = Color.AD_LightBlue,
 	["Red"] = Color.Red,
 }
 
