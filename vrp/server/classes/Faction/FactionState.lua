@@ -1782,7 +1782,7 @@ function FactionState:Event_startEvidenceTruck()
 	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
 		if client:getFaction():getPlayerRank(client) >= 5 then
 			if ActionsCheck:getSingleton():isActionAllowed(client) then
-				local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
+				local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
 				local totalMoney = 0
 				for i = 1, #self.m_EvidenceRoomItems do
 					evObj = self.m_EvidenceRoomItems[i]
@@ -1813,7 +1813,6 @@ function FactionState:Event_startEvidenceTruck()
 					--sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
 					--self.m_EvidenceRoomItems = {}
 					--triggerClientEvent(root,"State:clearEvidenceItems", root)
-					--self.m_LastStorageEmptied = getTickCount()
 				else
 					client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 				end
