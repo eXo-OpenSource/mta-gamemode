@@ -314,7 +314,7 @@ function BankRobbery:addMoneyToBag(player, money)
 	end
 	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
-	newBag.DeloadHook = self.deloadBag
+	newBag.DeloadHook = bind(self.deloadBag, self)
 	table.insert(self.m_MoneyBags, newBag)
 	newBag:setData("Money", money, true)
 	newBag:setData("MoneyBag", true, true)
@@ -330,7 +330,7 @@ function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	end
 end
 
-function BankRobbery:deloadBag(player, bag)
+function BankRobbery:deloadBag(player, veh, bag)
 	if player:getFaction():isStateFaction() and player:isFactionDuty() then
 		player:detachPlayerObject(player:getPlayerAttachedObject())
 		self:statePeopleClickBag(player, object)

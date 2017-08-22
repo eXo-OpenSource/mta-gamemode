@@ -1142,14 +1142,14 @@ function VehicleManager:Event_LoadObject(veh, type)
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
 				if not client.vehicle then
-					local playerObject = client:getPlayerAttachedObject()
+					local object = client:getPlayerAttachedObject()
 					if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
-						if playerObject then
+						if object then
 							local count = #getAttachedElements(veh)
-							client:detachPlayerObject(playerObject)
-							playerObject:attach(veh, vehicleObjects[veh.model][count+1])
+							client:detachPlayerObject(object)
+							object:attach(veh, vehicleObjects[veh.model][count+1])
 							if object.LoadHook then
-								object.LoadHook(client, object)
+								object.LoadHook(client, veh, object)
 							end
 						else
 							client:sendError(_("Du hast %s dabei!", client, name))
@@ -1188,7 +1188,7 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 							object:detach(self.m_Truck)
 							client:attachPlayerObject(object)
 							if object.DeloadHook then
-								object.DeloadHook(client, object)
+								object.DeloadHook(client, veh, object)
 							end
 							return
 						end

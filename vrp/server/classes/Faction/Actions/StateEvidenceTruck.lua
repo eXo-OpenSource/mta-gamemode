@@ -7,8 +7,7 @@
 -- ****************************************************************************
 
 StateEvidenceTruck = inherit(Singleton)
-StateEvidenceTruck.LoadTime = 30*1000 -- in ms
-StateEvidenceTruck.Time = 10*60*1000 -- in ms
+StateEvidenceTruck.Time = 20*60*1000 -- in ms
 StateEvidenceTruck.spawnPos = Vector3(1591.18, -1685.65, 6.02)
 StateEvidenceTruck.spawnRot = Vector3(0, 0, 0)
 StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 18.3)
@@ -28,7 +27,6 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Truck:setRepairAllowed(false)
 	self.m_Truck:toggleRespawn(false)
 	self.m_Truck:setAlwaysDamageable(true)
-	self.m_Truck:setData("DeloadBagEvent", "", true)
 	self.m_Truck.m_DisableToggleHandbrake = true
 	self.m_Timer = setTimer(bind(self.timeUp, self), StateEvidenceTruck.Time, 1)
 
@@ -100,6 +98,14 @@ function StateEvidenceTruck:spawnMoneyBags()
 		self.m_MoneyBag[i].money = money
 		self.m_MoneyBag[i]:setData("Money", money, true)
 		self.m_MoneyBag[i]:setData("MoneyBag", true, true)
+		self.m_MoneyBag[i].LoadHook = bind(self.loadBag, self)
+	end
+end
+
+function StateEvidenceTruck:loadBag(player, veh, bag)
+	if #getAttachedElements(self.m_Truck) >= #StateEvidenceTruck.MoneyBagSpawns then
+		self.m_Truck:setFrozen(false)
+		FactionState:getSingleton():sendShortMessage("Der Geldtransporter wurde fertig beladen!")
 	end
 end
 
