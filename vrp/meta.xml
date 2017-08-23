@@ -160,7 +160,6 @@
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
-	<script src="server/classes/Gameplay/Race/MovementRecorder.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
