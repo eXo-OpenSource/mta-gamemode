@@ -183,7 +183,10 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 end
 
 function HTTPProvider:fetch(callback, file)
-    return fetchRemote(("%s/%s"):format(self.ms_URL, file), HTTP_CONNECT_ATTEMPTS,
+    local options = {
+		["connectionAttempts"] = HTTP_CONNECT_ATTEMPTS
+	}
+	return fetchRemote(("%s/%s"):format(self.ms_URL, file), options,
         function(responseData, errno)
             callback(responseData, errno)
         end

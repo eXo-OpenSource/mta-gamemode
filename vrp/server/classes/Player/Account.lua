@@ -258,7 +258,11 @@ function Account.createForumAccount(player, username, password, email)
 end
 
 function Account.asyncCallAPI(func, postData)
-	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), 1, Async.waitFor(), postData, false)
+	local options = {
+		["connectionAttempts"] = 1,
+		["postData"] = postData
+	}
+	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), options, Async.waitFor())
 	return Async.wait()
 end
 
