@@ -123,6 +123,7 @@ function Kart.receiveGhostDriver(record)
 	Kart.LastRequest = false
 
 	local unparsed = fromJSON(record)
+	if not unparsed then WarningBox:new("Für diesen Spieler ist kein Geist verfügbar!") return false end
 	Kart.record = table.setIndexToInteger(unparsed)
 
 	for _, v in pairs(Kart.record) do
@@ -138,8 +139,6 @@ end
 function Kart.uploadGhostDriver()
 	if not Kart.requestedRecord then return end
 
-	outputChatBox("Upload kart ghost")
-
 	local options = {
 		["postData"] =  ("secret=%s&playerId=%d&mapId=%d&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), Kart.MapId, toJSON(Kart.requestedRecord))
 	}
@@ -147,6 +146,7 @@ function Kart.uploadGhostDriver()
 	fetchRemote("https://exo-reallife.de/ingame/kart/addGhost.php", options,
 		function(responseData, responseInfo)
 			Kart.requestedRecord = false
+			--outputConsole(inspect({data = responseData, info = responseInfo}))
 		end
 	)
 end
@@ -154,8 +154,6 @@ end
 addEventHandler("KartRequestGhostDriver", root,
 	function()
 		local record = Kart:getSingleton().m_LastGhost
-
-		outputChatBox("We wanna dat kart ghost yay")
 
 		if record then
 			for _, v in pairs(record) do
