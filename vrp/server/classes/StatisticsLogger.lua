@@ -22,7 +22,7 @@ function StatisticsLogger:destructor()
 end
 
 function StatisticsLogger:getZone(player)
-	if player then 
+	if player then
 		return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
 	end
 	return "unknown"
@@ -192,7 +192,7 @@ function StatisticsLogger:addTextLog(logname, text)
 	fileClose(file)
 end
 
-function StatisticsLogger:addDrugPlantLog( player, type )
+function StatisticsLogger:addPlantLog(player, type)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_DrugPlants (UserId, Type, Date ) VALUES(?, ?,  NOW())",
         sqlLogs:getPrefix(), userId, type)

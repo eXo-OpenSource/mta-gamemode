@@ -224,14 +224,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			if #self:getAttachedElement(1550, element) > 0 then
 				self:addItem(_"Geldsack abladen",
 					function()
-						triggerServerEvent("bankRobberyDeloadBag", self:getElement(), element)
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "moneyBag")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(1550, localPlayer) > 0 then
 				self:addItem(_"Geldsack aufladen",
 					function()
-						triggerServerEvent("bankRobberyLoadBag", self:getElement(), element)
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "moneyBag")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Up)
 			end

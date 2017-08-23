@@ -86,7 +86,7 @@ function FactionState:constructor()
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
 	"factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug",
-	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:acceptEvidenceDestroy", "State:declineEvidenceDestroy","State:onRequestEvidenceDestroy"
+	"factionStateGiveSTVO", "factionStateSetSTVO", "SpeedCam:onStartClick","State:startEvidenceTruck"
 	}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
@@ -131,9 +131,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
-	addEventHandler("State:onRequestEvidenceDestroy", root, bind(self.Event_onRequestEvidenceDestroy,self))
-	addEventHandler("State:acceptEvidenceDestroy", root, bind(self.Event_acceptEvidenceDestroy,self))
-	addEventHandler("State:declineEvidenceDestroy", root, bind(self.Event_declineEvidenceDestroy,self))
+	addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 
 
 
@@ -1780,77 +1778,47 @@ function FactionState:showEvidenceStorage(player)
 	end
 end
 
-function FactionState:Event_onRequestEvidenceDestroy()
-	if client then
-		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-			if client:getFaction():getPlayerRank(client) >= 5 then
-				local text = _("Möchtest du wirklich den Inhalt der Asservatenkammer zur Zerstörung freigeben?", client)
-				QuestionBox:new(client, client, text, "State:acceptEvidenceDestroy", "State:declineEvidenceDestroy", client)
-			end
-		end
-	end
-end
-
-function FactionState:Event_acceptEvidenceDestroy(client)
-	if client then
-		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-			if client:getFaction():getPlayerRank(client) >= 5 then
-				local now = getTickCount()
-				local continue
-				if not self.m_LastStorageEmptied then
-					self.m_LastStorageEmptied = now
-					continue = true
-				else
-					if now - self.m_LastStorageEmptied >= (1000*60*120) then
-						continue = true
-					else
-						client:sendShortMessage("Die Asservatenkammer kann nur alle zwei Stunden geleert werden!","Asservatenkammer",{200, 20, 0})
-						continue = false
-					end
-				end
-				if continue then
-					local evObj, type_, weapon, weaponAmmo, weaponMoney, ammoMoney
-					local totalMoney = 0
-					for i = 1, #self.m_EvidenceRoomItems do
-						evObj = self.m_EvidenceRoomItems[i]
-						if evObj then
-							type_ = evObj[1]
-							if type_ then
-								if type_ == "Waffe" then
-									weapon = evObj[2]
-									weaponAmmo = evObj[3]
-									if weapon then
-										weapon = tonumber(weapon)
-										if AmmuNationInfo[weapon] then
-											weaponMoney  = AmmuNationInfo[weapon].Weapon
-											ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
-										else
-											weaponMoney = 500
-											ammoMoney = 0
-										end
-										if weaponMoney and ammoMoney then
-											totalMoney = totalMoney + (weaponMoney + ammoMoney)
-										end
-									end
-								end
+function FactionState:Event_startEvidenceTruck()
+	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
+		if client:getFaction():getPlayerRank(client) >= 5 then
+			if ActionsCheck:getSingleton():isActionAllowed(client) then
+				local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
+				local totalMoney = 0
+				for i = 1, #self.m_EvidenceRoomItems do
+					evObj = self.m_EvidenceRoomItems[i]
+					if evObj and evObj[1] and evObj[1] == "Waffe" then
+						weapon = evObj[2]
+						weaponAmmo = evObj[3]
+						if weapon then
+							weapon = tonumber(weapon)
+							if AmmuNationInfo[weapon] then
+								weaponMoney  = AmmuNationInfo[weapon].Weapon
+								ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
+							else
+								weaponMoney = 500
+								ammoMoney = 0
+							end
+							if weaponMoney and ammoMoney then
+								totalMoney = totalMoney + (weaponMoney + ammoMoney)
 							end
 						end
 					end
-					if totalMoney > 0 then
-						FactionManager:getSingleton():getFromId(1):giveMoney(totalMoney, "Asservatenvernichtung")
-					end
-					FactionState:sendShortMessage(client:getName().." hat die Asservatenkammer zur Leerung freigeben!",10000)
-					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-					self.m_EvidenceRoomItems = {}
-					triggerClientEvent(root,"State:clearEvidenceItems", root)
-					self.m_LastStorageEmptied = getTickCount()
+				end
+				if totalMoney > 0 then
+					ActionsCheck:getSingleton():setAction("Geldtransport")
+					StateEvidenceTruck:new(client, totalMoney)
+					PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+					self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
+					-- Todo Remove This:
+					--sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+					--self.m_EvidenceRoomItems = {}
+					--triggerClientEvent(root,"State:clearEvidenceItems", root)
+				else
+					client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 				end
 			end
 		end
 	end
-end
-
-function FactionState:Event_declineEvidenceDestroy()
 end
 
 function FactionState:Event_bugAction(action, id)

@@ -981,7 +981,7 @@ function Player:payDay()
 
 	outgoing = outgoing_vehicles + outgoing_house
 
-	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
+	--FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome", "", income)

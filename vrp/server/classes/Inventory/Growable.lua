@@ -41,18 +41,22 @@ function Growable:destructor()
 end
 
 
-function Growable:checkGrow()
+function Growable:checkGrow(force)
 	local ts = getRealTime().timestamp
 	local nextGrow = self.m_LastGrown+60*60
 	if self.m_Size < self.ms_MaxSize then
-		if ts > nextGrow then
+		if ts > nextGrow or force then
 			local grow = self.ms_GrowPerHour
-			if self.m_LastWatered > ts+self.ms_HoursWatered*60*60 then
+			local watered = ""
+			if self.m_LastWatered + self.ms_HoursWatered*60*60 - ts > 0 then
 				grow = self.ms_GrowPerHourWatered
+				watered = "(watered)"
 			else
 				self.m_Object:setData("Plant:Hydration", false, true)
+				watered = "(not watered)"
 			end
-			self.m_Size = self.m_Size+grow
+			if force then outputDebugString(("Grow Plant %s +%d %s"):format(self.m_Type, grow, watered)) end
+			self.m_Size = self.m_Size + grow
 			if self.m_Size > self.ms_MaxSize then self.m_Size = self.ms_MaxSize end
 			self.m_LastGrown = ts
 			self:refreshObjectSize()
@@ -112,7 +116,7 @@ function Growable:waterPlant(player)
 		setTimer(function()
 			player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 		end, 2000 ,1)
-		player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
+		player:triggerEvent("Plant:onWaterPlant", self:getObject())
 		self:getObject():setData("Plant:Hydration", true, true)
 		self:onColShapeLeave(player, true)
 		self:onColShapeHit(player, true)

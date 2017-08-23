@@ -44,35 +44,37 @@ end
 
 function Fire:create(pos)
 	local ped = createPed(0, pos)
+	local id = #self.m_FirePeds+1
 	ped:setFrozen(true)
 	ped:setAlpha(0)
-	self.m_FirePeds[ped] = true
+	self.m_FirePeds[id] = ped
+	ped.Id = id
 	triggerClientEvent("createFire", ped)
 end
 
 function Fire:getRemainingAmount()
 	local count = 0
-	for ped, bool in pairs(self.m_FirePeds) do
-		if bool == true and isElement(ped) then count = count + 1 end
+	for index, ped in pairs(self.m_FirePeds) do
+		if ped and isElement(ped) then count = count + 1 end
 	end
 	return count
 end
 
 function Fire:syncFires(player)
-	for ped, bool in pairs(self.m_FirePeds) do
-		if bool == true and isElement(ped) then
+	for index, ped in pairs(self.m_FirePeds) do
+		if ped and isElement(ped) then
 			triggerClientEvent(player, "createFire", ped)
 		end
 	end
 end
 
 function Fire:destroyFire(ped)
-	if self.m_FirePeds[ped] then
+	if ped.Id then
 		triggerClientEvent("destroyFire", resourceRoot, ped)
 		if isElement(ped) then
 			destroyElement(ped)
 		end
-		table.remove(self.m_FirePeds, table.find(self.m_FirePeds, ped))
+		self.m_FirePeds[ped.Id] = nil
 		local remainingFires = self:getRemainingAmount()
 		if client then
 			client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))

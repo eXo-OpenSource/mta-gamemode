@@ -140,6 +140,10 @@ function Company:takeMoney(amount, reason)
     return self.m_BankAccount:takeMoney(amount, reason)
 end
 
+function Company:getPhoneNumber()
+	return self.m_PhoneNumber:getNumber()
+end
+
 function Company:addPlayer(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()

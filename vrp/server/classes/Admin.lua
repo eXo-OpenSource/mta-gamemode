@@ -75,7 +75,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult", "adminObjectPlaced"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -94,6 +94,8 @@ function Admin:constructor()
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
 	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
 	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
+	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
+
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -111,6 +113,8 @@ function Admin:constructor()
 	end, 10000, 0)
 
 	if DEBUG then
+		addCommandHandler("placeObject", bind(self.placeObject, self))
+
 		addEventHandler("onDebugMessage", root, function(message, level, file, line)
 			for player, rank in pairs(self.m_OnlineAdmins) do
 				if rank >= RANK.Supporter then
@@ -122,11 +126,11 @@ function Admin:constructor()
 
 end
 
-function Admin:Event_OnSuperManStartRequest() 
+function Admin:Event_OnSuperManStartRequest()
 	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
-			if exports["superman"] then 
-				exports["superman"]:startSuperMan(client) 
+			if exports["superman"] then
+				exports["superman"]:startSuperMan(client)
 			end
 		end
 	end
@@ -136,7 +140,7 @@ function Admin:Event_OnSuperManStopRequest()
 	if client:getRank() >= RANK.Moderator then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
-				exports["superman"]:stopSuperMan(client) 
+				exports["superman"]:stopSuperMan(client)
 			end
 		end
 	end
@@ -443,7 +447,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
             local text = target
-            triggerClientEvent("announceText", admin, text)
+            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
@@ -1276,4 +1280,31 @@ end
 
 function Admin:sendNewPlayerMessage(player)
 	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
+end
+
+function Admin:placeObject(player, cmd, model)
+	if player:getRank() < RANK.Administrator then
+		return
+	end
+
+	if model and tonumber(model) then
+		player:triggerEvent("objectPlacerStart", tonumber(model), "adminObjectPlaced", false, true)
+		player.m_PlacingInfo = {["model"] = model}
+		return true
+	else
+		player:sendError(_("Syntax: /placeObject [Model-ID]", player))
+	end
+end
+
+function Admin:Event_ObjectPlaced(x, y, z, rotation)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	outputChatBox(("Position: %.2f, %.2f, %.2f"):format(x, y, z))
+	outputChatBox(("Rotation: 0, 0, %.2f"):format(rotation))
+
+	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
+	client.m_PlacingInfo = nil
+	return
 end

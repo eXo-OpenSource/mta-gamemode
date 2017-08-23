@@ -123,7 +123,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	self.m_TargetTimer = setTimer(function()
 		if isElement(attacker) then
 			if attacker:getTarget() == ped then
-				local rnd = math.random(5, 10)
+				local rnd = math.random(10, 25)
 				if shop:getMoney() >= rnd then
 					if not self.m_Bag.Money then self.m_Bag.Money = 0 end
 					shop:takeMoney(rnd, "Raub")

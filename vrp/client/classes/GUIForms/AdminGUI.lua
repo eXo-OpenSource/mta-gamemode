@@ -14,7 +14,7 @@ for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
 
-addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
+addRemoteEvents{"showAdminMenu", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
 
 function AdminGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
@@ -578,13 +578,6 @@ addEventHandler("showAdminMenu", root,
 	function(...)
 		--if AdminGUI:getSingleton() then delete(AdminGUI:getSingleton()) end
 		AdminGUI:getSingleton(...):show()
-	end
-)
-
-addEventHandler("announceText", root,
-	function(message)
-		AdminGUI.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, false,true)
-		playSound("files/audio/announcment.mp3")
 	end
 )
 

@@ -10,7 +10,7 @@ AppSanNews = inherit(PhoneApp)
 local ColorTable = {
 	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
-	["Hell-Blau"] = Color.AD_LightBlue,
+	["Blau-Grün"] = Color.AD_LightBlue,
 	["Red"] = Color.Red,
 }
 
@@ -53,6 +53,12 @@ function AppSanNews:onOpen(form)
 	self.m_SenderNameChanger:addItem(localPlayer:getName())
 	if localPlayer:getGroupName() and localPlayer:getGroupName() ~= "" then
 		self.m_SenderNameChanger:addItem(localPlayer:getGroupName())
+	end
+	if localPlayer:getFaction() then
+		self.m_SenderNameChanger:addItem(localPlayer:getFaction():getShortName())
+	end
+	if localPlayer:getCompany() then
+		self.m_SenderNameChanger:addItem(localPlayer:getCompany():getShortName())
 	end
 
 	self.m_InfoRect = GUIRectangle:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.13, Color.Red, self.m_Tabs["Advertisment"])
@@ -134,6 +140,12 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 				triggerServerEvent("callStart", root, player, false)
 			elseif sender.referenz == "group" then
 				Phone:getSingleton():getAppByClass(AppCall):openInCall("group", sender.name, CALL_RESULT_CALLING, false)
+				triggerServerEvent("callStartSpecial", root, sender.number)
+			elseif sender.referenz == "faction" then
+				Phone:getSingleton():getAppByClass(AppCall):openInCall("faction", sender.name, CALL_RESULT_CALLING, false)
+				triggerServerEvent("callStartSpecial", root, sender.number)
+			elseif sender.referenz == "company" then
+				Phone:getSingleton():getAppByClass(AppCall):openInCall("company", sender.name, CALL_RESULT_CALLING, false)
 				triggerServerEvent("callStartSpecial", root, sender.number)
 			end
 		else

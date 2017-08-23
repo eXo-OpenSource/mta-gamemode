@@ -151,7 +151,8 @@ SHOP_TYPES = {
 SHOP_ITEMS = {
 	["Gärtnerei"] = {
 		["Weed-Samen"] = 20,
-		["Kanne"] = 500
+		["Kanne"] = 500,
+		["Apfelbaum-Samen"] = 40,
 	};
 	["24/7"] = {
 		["Radio"] = 2000,

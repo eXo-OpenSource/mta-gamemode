@@ -133,6 +133,10 @@ function Faction:getDepot()
 	return self.m_Depot
 end
 
+function Faction:getPhoneNumber()
+	return self.m_PhoneNumber:getNumber()
+end
+
 function Faction:getRandomSkin()
 	local i = 1
 	local skins = {}
