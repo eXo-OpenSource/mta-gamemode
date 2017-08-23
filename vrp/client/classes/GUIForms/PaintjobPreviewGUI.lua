@@ -47,9 +47,9 @@ function PaintjobPreviewGUI:Event_onCheckedVehicle( vehicle )
 	end
 end
 
-function PaintjobPreviewGUI:Event_OnCallBackDownload( rData, errno, vehicle)
+function PaintjobPreviewGUI:Event_OnCallBackDownload( rData, responseInfo, vehicle)
 	if vehicle then
-		if errno == 0 then
+		if responseInfo["success"] == true then
 			if rData then
 				if self.m_PreviewPixels then
 					destroyElement(self.m_PreviewPixels)
