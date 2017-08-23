@@ -36,8 +36,8 @@ function Account.login(player, username, password, pwhash)
 				end
 			else
 				local param = {["userId"] = row2.userID; ["password"] = password;}
-				local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-				if errno == 0 then
+				local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+				if responseInfo["success"] == true then
 					local returnData = fromJSON(data)
 					if not returnData then outputConsole(data, player) return end
 					if returnData.error then
@@ -52,7 +52,7 @@ function Account.login(player, username, password, pwhash)
 						return
 					end
 				else
-					outputDebugString("Error@FetchRemote: "..errno)
+					outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 				end
 			end
 		end
@@ -82,8 +82,8 @@ function Account.login(player, username, password, pwhash)
 		end
 	else
 		local param = {["userId"] = ForumID; ["password"] = password;}
-		local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-		if errno == 0 then
+		local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+		if responseInfo["success"] == true then
 			local returnData = fromJSON(data)
 			if not returnData then outputConsole(data, player) return end
 			if returnData.error then
@@ -96,7 +96,7 @@ function Account.login(player, username, password, pwhash)
 				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
 			end
 		else
-			outputDebugString("Error@FetchRemote: "..errno)
+			outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 		end
 	end
 end
@@ -123,7 +123,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
-	if player.getTutorialStage and instanceof(player, DatabasePlayer) then
+	if player.getTutorialStage and instanceof(player, Player) then
 		-- Update last serial and last login
 		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
@@ -239,8 +239,8 @@ addEventHandler("accountguest", root, function() Async.create(Account.guest)(cli
 function Account.createForumAccount(player, username, password, email)
 	if not password then return end
 	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
-	local data, errno = Account.asyncCallAPI("createAccount", toJSON(param))
-	if errno == 0 then
+	local data, responseInfo = Account.asyncCallAPI("createAccount", toJSON(param))
+	if responseInfo["success"] == true then
 		local returnData = fromJSON(data)
 		if not returnData then outputConsole(data, player) return end
 		if returnData.error then
@@ -253,7 +253,7 @@ function Account.createForumAccount(player, username, password, email)
 			player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
 		end
 	else
-		outputDebugString("Error@FetchRemote: "..errno)
+		outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 	end
 end
 

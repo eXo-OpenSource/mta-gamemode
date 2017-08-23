@@ -29,11 +29,11 @@ function MusicAPI:performSearch()
 				["connectionAttempts"] = 1
 			}
 			fetchRemote(self.m_URL, options,
-				function (responseData, errno)
-					if errno == 0 then
+				function (responseData, responseInfo)
+					if responseInfo["success"] == true then
 						fullfill(responseData)
 					else
-						reject(errno)
+						reject(responseInfo["statusCode"])
 					end
 				end
 			)

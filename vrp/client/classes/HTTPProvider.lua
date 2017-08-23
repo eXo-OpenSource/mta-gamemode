@@ -21,10 +21,10 @@ function HTTPProvider:start(force)
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
 		outputDebug(self.ms_URL.."index.xml")
-		local responseData, errno = self:fetchAsync("index.xml")
-		if errno ~= 0 then
-			outputDebug(errno)
-			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+		local responseData, responseInfo = self:fetchAsync("index.xml")
+		if not responseInfo["success"] == true then
+			outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 			return false
 		end
 
@@ -75,10 +75,10 @@ function HTTPProvider:start(force)
 			for i, v in ipairs(files) do
 				self.ms_GUIInstance:setStatus("current file", v.path)
 				outputDebug(v.path)
-				local responseData, errno = self:fetchAsync(v.path)
-				if errno ~= 0 then
-					outputDebug(errno)
-					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+				local responseData, responseInfo = self:fetchAsync(v.path)
+				if not responseInfo["success"] == true then
+					outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 					return false
 				end
 
@@ -137,10 +137,10 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 		self.ms_GUIInstance:setStatus("file count", 1)
 		self.ms_GUIInstance:setStatus("current file", fileName)
 		outputDebug(fileName)
-		local responseData, errno = self:fetchAsync(fileName)
-		if errno ~= 0 then
-			outputDebug(errno)
-			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+		local responseData, responseInfo = self:fetchAsync(fileName)
+		if not responseInfo["success"] == true then
+			outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 			return false
 		end
 
@@ -187,8 +187,8 @@ function HTTPProvider:fetch(callback, file)
 		["connectionAttempts"] = HTTP_CONNECT_ATTEMPTS
 	}
 	return fetchRemote(("%s/%s"):format(self.ms_URL, file), options,
-        function(responseData, errno)
-            callback(responseData, errno)
+        function(responseData, responseInfo)
+            callback(responseData, responseInfo)
         end
     )
 end
