@@ -190,8 +190,6 @@
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuNation.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuNationManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
@@ -215,6 +213,7 @@
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/Ammunation.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>

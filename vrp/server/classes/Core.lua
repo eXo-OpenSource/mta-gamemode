@@ -6,7 +6,7 @@ function Core:constructor()
 	nextframe(function() --small hack to override the name meta-name
 		setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
 	end)
-	
+
 	-- Small hack to get the global core immediately
 	core = self
 	self.m_Failed = false
@@ -15,7 +15,7 @@ function Core:constructor()
 	if DEBUG then
 		Debugging:new()
 	end
-	
+
 	Config:new()
 
 	-- Update MySQL DB if this is not the testserver/releaseserver
@@ -73,7 +73,7 @@ function Core:constructor()
 		GroupManager:new()
 		GroupPropertyManager:new()
 		HouseManager:new()
-		AmmuNationManager:new()
+		--AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
 		AdminEventManager:new()

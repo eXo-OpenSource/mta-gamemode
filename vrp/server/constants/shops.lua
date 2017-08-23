@@ -145,6 +145,13 @@ SHOP_TYPES = {
 		["Name"] = "Tankstelle ohne Shop",
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = GasStation
+	},
+	[21] = {
+		["Name"] = "Ammunation Central",
+		["Marker"] = Vector3(1380.34, -1278, 12.6),
+		["Ped"] = {158, Vector3(1380.34, -1280.79, 13.54), 0},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = Ammunation
 	}
 }
 

@@ -8,6 +8,127 @@
 AmmuNationGUI = inherit(GUIForm)
 inherit(Singleton, AmmuNationGUI)
 
+addRemoteEvents{"showAmmunationMenu", "refreshAmmunationMenu"}
+
+AmmuNationGUI.WeaponPosition = Vector3(1380.47, -1279.32, 13.7)
+
+local weaponModels = {
+	[30] = 355,
+	[31] = 356,
+	[29] = 353,
+	[22] = 346,
+	[24] = 348,
+	[25] = 349,
+	[33] = 357,
+	[1] = 331,
+	[0] = 1242
+}
+
+function AmmuNationGUI:constructor()
+	GUIForm.constructor(self, 10, screenHeight/2-350/2, 300, screenHeight/2-10)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammunation", true, true, self)
+
+	self.m_WeaponList = GUIGridList:new(5, 35, self.m_Width-10, 270, self)
+	self.m_WeaponList:addColumn(_"Name", 0.75)
+	self.m_WeaponList:addColumn(_"Preis", 0.25)
+	self.m_Buy = GUIButton:new(5, 315, self.m_Width-10, 30, "Kaufen", self):setBackgroundColor(Color.Green)
+	self.m_Buy.onLeftClick = function() self:buy() end
+
+	self.m_RotateBind = bind(self.rotateObject, self)
+	addEventHandler("refreshAmmunationMenu", root, bind(self.refreshShopMenu, self))
+	addEventHandler("onClientRender", root, self.m_RotateBind)
+end
+
+function AmmuNationGUI:onHide()
+	if isElement(self.m_Object) then self.m_Object:destroy() end
+	if self.m_CamaraMatrix then
+		setCameraTarget(localPlayer)
+		self.m_CamaraMatrix = false
+	end
+	removeEventHandler("onClientRender", root, self.m_RotateBind)
+end
+
+function AmmuNationGUI:rotateObject()
+	if self.m_Object and isElement(self.m_Object) then
+		local rot = self.m_Object:getRotation()
+		self.m_Object:setRotation(rot.x, rot.y, rot.z+1)
+	end
+end
+
+function AmmuNationGUI:refreshShopMenu(shopId, weapons, magazines)
+	self.m_Shop = shopId
+	local item
+	self.m_WeaponList:clear()
+	self.m_WeaponList:addItemNoClick("Waffen", "")
+	for weaponId, price in pairs(weapons) do
+		item = self.m_WeaponList:addItem(WEAPON_NAMES[weaponId], tostring(price).."$")
+		item.Id = weaponId
+		item.Type = "Weapon"
+		item.onLeftClick = function()
+			self:onSelectWeapon(weaponId)
+		end
+	end
+	self.m_WeaponList:addItemNoClick("Munition", "")
+	for weaponId, data in pairs(magazines) do
+		item = self.m_WeaponList:addItem(WEAPON_NAMES[weaponId], tostring(data.price.."$"))
+		item.Id = name
+		item.Type = "Magazine"
+		item.onLeftClick = function()
+			self:onSelectMagazine(name)
+		end
+	end
+end
+
+function AmmuNationGUI:buy()
+	local item = self.m_WeaponList:getSelectedItem()
+	triggerServerEvent("ammunationBuyItem", resourceRoot, self.m_Shop, item.Type, item.Id)
+end
+
+function AmmuNationGUI:onSelectWeapon(weaponId)
+	if isElement(self.m_Object) then self.m_Object:destroy() end
+	self.m_Object = createObject(weaponModels[weaponId], AmmuNationGUI.WeaponPosition, table["Rot"])
+	self.m_Object:setInterior(localPlayer:getInterior())
+	self.m_Object:setDimension(localPlayer:getDimension())
+
+	--[[
+	local typeTable = {
+		["CluckinBell"] = CLUCKIN_BELL,
+		["PizzaStack"] =  PIZZA_STACK,
+		["BurgerShot"] =  BURGER_SHOT,
+		["RustyBrown"] = RUSTY_BROWN
+	}
+	local table = typeTable[type]
+	setCameraMatrix(table["CameraMatrixPos"], table["CameraMatrixLookAt"], 0, 70)
+	self.m_CamaraMatrix = true
+	if isElement(self.m_Object) then self.m_Object:destroy() end
+	self.m_Object = createObject(table["Objects"][menu], table["Pos"], table["Rot"])
+	self.m_Object:setInterior(localPlayer:getInterior())
+	self.m_Object:setDimension(localPlayer:getDimension())
+	]]
+end
+
+function AmmuNationGUI:onSelectMagazine(item)
+	if self.m_CamaraMatrix then
+		setCameraTarget(localPlayer)
+		self.m_CamaraMatrix = false
+	end
+end
+
+addEventHandler("showAmmunationMenu", root,
+		function()
+			if AmmuNationGUI:isInstantiated() then delete(AmmuNationGUI:getSingleton()) end
+			AmmuNationGUI:getSingleton():new()
+		end
+	)
+
+addEventHandler("shopCloseGUI", root,
+		function()
+			if AmmuNationGUI:isInstantiated() then delete(AmmuNationGUI:getSingleton()) end
+		end
+	)
+
+
+--[[
 function AmmuNationGUI:constructor()
 	self.m_Selection = 1
 	self.m_CameraInstance = false
@@ -167,131 +288,4 @@ AmmuNationGUI.INFO = {
 		ID = 0
 	},
 }
---[[AmmuNation = inherit(Singleton)
-
-addRemoteEvents{"AmmuNationReciveDimension"}
-
-local POSITION          = Vector3(0,0,3)
-local WEAPON_POSITION   = Vector3(0,3,4)
-local WEAPON_DIFF       = 50
-local DIFF              = 1
-local DEFAULTSECTION    = 1 -- Pistols
-local DEFAULTWEAPON     = 1 -- RND
-local DEFAULTCHANGETIME = 500 -- VALUES IN MS
-
--- DEBUG/TEST CATEGORIES
-
-function table.wipe(t) t = {} end
-
-AmmuNation.SECTION = {
-    [1] =
-    {
-    NAME = "Halb- und Vollautomatische Gewehre";
-    SUB =   {
-            [1] = 31, -- M4
-            [2] = 30, -- AK-47
-            [3] = 33, -- Country Rifle
-            [4] = 34, -- Sniper ( Scoped Version )
-            };
-    };
-    [2] =
-    {
-    NAME = "Pistolen";
-    SUB =   {
-            [1] = 22, -- Pistol
-            [2] = 23, -- Silenced Pistol
-            [3] = 24, -- Desert Eagle
-            };
-    };
-
-}
-
-function AmmuNation:constructor()
-    POSITION.z = POSITION.z - DIFF
-    self.m_Marker = createMarker(POSITION.x,POSITION.y,POSITION.z,"cylinder",1.2,255,255,255,255)
-    self.m_Section = DEFAULTSECTION
-    self.m_Weapon = DEFAULTWEAPON
-    self.m_WeaponElements = {}
-    self.m_Progress = 0
-    self.m_Changing = false
-    self.m_IsShopping = false
-    self.m_Coroutine = false
-
-    addEventHandler("AmmuNationReciveDimension", root, bind(self.SetDimension,self))
-    addEventHandler("onClientKey",               root, bind(self.OnClientKey, self))
-    addEventHandler("onClientMarkerHit",         root, bind(self.OnMarkerHit, self))
-
-
-    self:Setup()
-end
-
-function AmmuNation:OnMarkerHit(hitElement)
-    if hitElement ~= localPlayer then return end
-    self.m_IsShopping = true
-    setElementFrozen(localPlayer,true)
-end
-
-
-function AmmuNation:SetDimension (dim)
-    self.m_Marker:SetDimension(math.abs(dim))
-end
-
-function AmmuNation:OnDraw()
-    self.m_Progress = self.m_Progress + 0.01
-
-    if self.m_Changing then
-        for key, value in ipairs(self.m_WeaponElements) do
-            local typ = self.m_Movement == "l" and "-" or "+"
-            local fixPos = WEAPON_POSITION.y+((self.m_Weapon-2)+(key-1)*WEAPON_DIFF)
-            local pos = fixPos+(self.m_Progress*tonumber(typ..WEAPON_DIFF))
-            local x,y,z = getElementPosition(value)
-            setElementPosition(value,x,pos,z)
-        end
-    end
-
-    if self.m_Progress >= 1 then
-        removeEventHandler("onClientRender", root, bind(self.OnDraw,self))
-        self.m_Changing = false
-    end
-end
-
-function AmmuNation:Setup()
-    -- ToDo
-      for i = 1, #AmmuNation.SECTION[self.m_Section].SUB do
-        self.m_WeaponElements[i] = createObject(353,WEAPON_POSITION.x,WEAPON_POSITION.y+WEAPON_DIFF*(i-1),WEAPON_POSITION.z)
-      end
-end
-
-function AmmuNation:WipeAndChange(kind)
-    if kind == "section" then
-      table.foreach(self.m_WeaponElements,function(_,v) v:destroy() end)
-      table.wipe(self.m_WeaponElements)
-      for i = 1, #AmmuNation.SECTION[self.m_Section] do
-        self.m_WeaponElements[i] = createObject(353,WEAPON_POSITION.x,WEAPON_POSITION.y+WEAPON_DIFF*(i-1),WEAPON_POSITION.z)
-      end
-    end
-
-    if kind == "weapon" then
-        self.m_Progress = 0
-        addEventHandler("onClientRender", root, bind(self.OnDraw,self))
-    end
-end
-
-function AmmuNation:OnClientKey(sKey)
-    if self.m_Changing or not self.m_IsShopping then return end
-    local key = sKey:lower()
-    if key == "arrow_d" or key == "arrow_u" then
-        local inc = key == "arrow_d" and -1 or 1
-        self.m_Weapon = DEFAULTWEAPON
-        self.m_Section = math.max(math.min(self.m_Section+inc,#AmmuNation.SECTION),1)
-        self.m_Changing = true
-        self:WipeAndChange("section")
-    elseif key == "arrow_r" or key == "arrow_l" then
-        local inc = key == "arrow_l" and -1 or 1
-        self.m_Weapon = math.max(math.min(self.m_Weapon,#AmmuNation.SECTION[self.m_Section]),1)
-        self.m_Changing = true
-        self.m_Movement = split(key,"_")[2]
-        self:WipeAndChange("weapon")
-    elseif key == "space" then
-    end
-end]]
+]]
