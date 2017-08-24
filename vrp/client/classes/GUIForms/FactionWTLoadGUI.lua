@@ -41,7 +41,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
-	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Mit Shift-Klick auf den Button kannst du direkt die maximal Menge aufladen."), self.m_Window)
+	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Strg + Klick: Alles aufladen\nShift + Klick: 10 aufladen"), self.m_Window)
 	self.m_Sum = GUILabel:new(645,390, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
