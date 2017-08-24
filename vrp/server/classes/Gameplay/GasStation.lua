@@ -42,7 +42,7 @@ function GasStation:getName()
 end
 
 function GasStation:hasPlayerAccess(player)
-	if self.m_Accessible[1] == 0 then return true end
+	if self:isUserFuelStation() then return true end
 
 	if self.m_Accessible[1] == 1 then
 		if self.m_Accessible[2] == 0 and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
@@ -57,6 +57,22 @@ function GasStation:hasPlayerAccess(player)
 			return true
 		end
 	end
+end
+
+function GasStation:isUserFuelStation()
+	return self.m_Accessible[1] == 0
+end
+
+function GasStation:isFactionFuelStation()
+	return self.m_Accessible[1] == 1
+end
+
+function GasStation:isCompanyFuelStation()
+	return self.m_Accessible[1] == 2
+end
+
+function GasStation:getAccessibleId()
+	return self.m_Accessible[2]
 end
 
 function GasStation:takeFuelNozzle(player, element)
@@ -90,4 +106,8 @@ function GasStation:rejectFuelNozzle(player, element)
 	player.gs_usingFuelStation = nil
 	player.gs_fuelNozzle:destroy()
 	toggleControl(player, "fire", true)
+
+	if not self:isUserFuelStation() then
+		client:triggerEvent("gasStationNonInteriorRequest")
+	end
 end

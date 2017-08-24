@@ -69,25 +69,52 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 	if station then
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
 			local fuel = vehicle:getFuel() + fuel > 100 and math.floor(100 - vehicle:getFuel()) or math.floor(fuel)
-			local price = math.floor(fuel * 2)
+			local price = math.floor(fuel * FUEL_PRICE_MULTIPLICATOR)
 
 			if fuel == 0 then
 				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
 				return
 			end
 
-			if client:getMoney() >= price then
-				client:takeMoney(price, "Tanken")
-				vehicle:setFuel(vehicle:getFuel() + fuel)
+			if station:isUserFuelStation() then
+				if client:getMoney() >= price then
+					client:takeMoney(price, "Tanken")
+					vehicle:setFuel(vehicle:getFuel() + fuel)
 
-				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-				client:triggerEvent("gasStationReset")
+					client:triggerEvent("gasStationReset")
 
-				if station:getShop() then
-					station:getShop():giveMoney(price/2, "Betankung")
+					if station:getShop() then
+						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
+						station:getShop():giveMoney(price/2, "Betankung")
+					end
+				else
+					client:sendError("Du hast nicht genügend Geld dabei!")
 				end
-			else
-				client:sendError("Du hast nicht genügend Geld dabei!")
+			elseif station:isFactionFuelStation() then
+				if not instanceof(vehicle, FactionVehicle, true) then client:sendWarning("Dieses Fahrzeug darf hier nicht getankt werden!") return end
+
+				local faction = client:getFaction()
+				if faction and faction:getId() == station:getAccessibleId() then
+					if faction:getMoney() >= price then
+						faction:takeMoney(price, "Tanken")
+						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
+						vehicle:setFuel(vehicle:getFuel() + fuel)
+
+						client:triggerEvent("gasStationReset")
+					end
+				end
+			elseif station:isCompanyFuelStation() then
+				if not instanceof(vehicle, CompanyVehicle, true) then client:sendWarning("Dieses Fahrzeug darf hier nicht getankt werden!") return end
+
+				local company = client:getCompany()
+				if company and company:getId() == station:getAccessibleId() then
+					if company:getMoney() >= price then
+						company:takeMoney(price, "Tanken")
+						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
+						vehicle:setFuel(vehicle:getFuel() + fuel)
+						client:triggerEvent("gasStationReset")
+					end
+				end
 			end
 		end
 	end
@@ -265,4 +292,20 @@ GAS_STATIONS = {
 		},
 		accessible =  {0, 0},
 	},
+	{
+		name = "LS-Airport Tankstelle",
+		stations = {
+			{Vector3(1606.10, -2445.5, 14.1), 0, 1}
+		},
+		accessible = {0, 0},
+	},
+	-- Company fuelstations
+	{
+		name = "M&T",
+		stations = {
+			{Vector3(877, -1184.6, 17.8), 90, 1},
+		},
+		accessible =  {2, CompanyStaticId.MECHANIC},
+	},
+	-- Faction fuelstations
 }

@@ -36,7 +36,7 @@ function GasStationShopGUI:constructor(callback, name)
 		local station = GasStation.PendingTransaction.station
 
 		self.m_Fuel:setText(fuel .. " L")
-		self.m_Price:setText(fuel * 2 .. " $")
+		self.m_Price:setText(fuel * FUEL_PRICE_MULTIPLICATOR .. " $")
 
 		self.m_Confirm = GUIButton:new(5, 240, 230, 25, "Bezahlen", tabFuelStation):setBackgroundColor(Color.Green)
 		self.m_Cancel = GUIButton:new(240, 240, 230, 25, "Abbrechen", tabFuelStation):setBackgroundColor(Color.Red)

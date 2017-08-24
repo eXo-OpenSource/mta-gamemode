@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 GasStation = inherit(Singleton)
-addRemoteEvents{"gasStationReset"}
+addRemoteEvents{"gasStationReset", "gasStationNonInteriorRequest"}
 
 function GasStation:constructor()
 	self.m_RenderFuelHoles = {}
@@ -45,6 +45,7 @@ function GasStation:constructor()
 		end
 
 	addEventHandler("gasStationReset", root, self.m_Reset)
+	addEventHandler("gasStationNonInteriorRequest", root, bind(GasStation.nonInteriorRequest, self))
 	addEventHandler("onClientElementStreamIn", root, bind(GasStation.onObjectStreamIn, self))
 	addEventHandler("onClientElementStreamOut",root ,bind(GasStation.onObjectStreamOut, self))
 	addEventHandler("onClientRender", root, bind(GasStation.renderGasStation, self))
@@ -67,6 +68,21 @@ function GasStation:onObjectStreamOut()
 		self.m_RenderGasStations[source] = nil
 		return
 	end
+end
+
+function GasStation:nonInteriorRequest()
+	local vehicle = GasStation.PendingTransaction.vehicle
+	local fuel = GasStation.PendingTransaction.fuel
+	local station = GasStation.PendingTransaction.station
+
+	QuestionBox:new(("Möchtest du %s Liter auftanken? Dies kostet %s$ und geht von der Kasse ab."):format(fuel, fuel * FUEL_PRICE_MULTIPLICATOR),
+		function()
+			triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station)
+		end,
+		function()
+			GasStation.PendingTransaction = nil
+		end
+	)
 end
 
 function GasStation:renderGasStation()
@@ -116,7 +132,7 @@ end
 function GasStation:renderDisplay()
 	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") then
 		self.m_Amount = VehicleFuel:isInstantiated() and math.round(VehicleFuel:getSingleton().m_Fuel, 2) or 0
-		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * 2, 2) or 0
+		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * FUEL_PRICE_MULTIPLICATOR, 2) or 0
 	else
 		self.m_Amount = "-"
 		self.m_Price = "-"
