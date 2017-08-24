@@ -14,7 +14,7 @@ function ShopManager:constructor()
 	self:loadVehicleShops()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection"
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -29,9 +29,10 @@ function ShopManager:constructor()
 	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
 	addEventHandler("shopBuyClothes", root, bind(self.buyClothes, self))
 
+	addEventHandler("ammunationBuyItem", root, bind(self.buyWeapon, self))
+	addEventHandler("onAmmunationAppOrder",root, bind(self.onAmmunationAppOrder, self))
+
 	addEventHandler("shopOnTattooSelection", root, bind(self.onTattooSelection, self))
-
-
 
 	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
@@ -230,6 +231,49 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 	end
 end
 
+function ShopManager:buyWeapon(shopId, itemType, weaponId, amount)
+	if not itemType then return end
+	if not weaponId then return end
+	local shop = self:getFromId(shopId)
+	if shop then
+		if MIN_WEAPON_LEVELS[weaponId] <= client:getWeaponLevel() then
+			local price
+			if itemType == "Weapon" or itemType == "Vest" then
+				price = shop.m_Weapons[weaponId]
+				amount = 1
+			elseif itemType == "Magazine" then
+				if not hasPedThisWeaponInSlots(client, weaponId) then
+					client:sendError(_("Du hast nicht die passende Waffe für diese Munition!", client))
+					return false
+				end
+				price = shop.m_Magazines[weaponId].price*amount
+			end
+			if client:getMoney() >= price then
+				local weaponAmount = shop.m_Magazines[weaponId] and shop.m_Magazines[weaponId].amount*amount or 1
+
+				if itemType == "Vest" then
+					client:setArmor(100)
+				else
+					client:giveWeapon(weaponId, weaponAmount)
+					reloadPedWeapon(client)
+				end
+
+				StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = weaponAmount}), price)
+				client:takeMoney(price, "Ammunation-Einkauf")
+				shop:giveMoney(price, "Kunden-Einkauf")
+			else
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
+				return
+			end
+		else
+			client:sendError(_("Dein Waffenlevel ist zu niedrig!",client))
+		end
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+end
+
 function ShopManager:onTattooSelection(shopId, typeId)
 local shop = self:getFromId(shopId)
 	if shop then
@@ -373,5 +417,106 @@ function ShopManager:openBankGui(shopId)
 		shop:openBankGui(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:getPlayerWeapons(player)
+	local playerWeapons = {}
+	for i=1, 12 do
+		if getPedWeapon(player,i) > 0 then
+			playerWeapons[getPedWeapon(player,i)] = true
+		end
+	end
+	return playerWeapons
+end
+
+function ShopManager:onAmmunationAppOrder(weaponTable)
+	if client:getInterior() > 0 or client:getDimension() > 0 or client.m_JailTime > 0 then
+		client:sendError(_("Du kannst hier nicht bestellen!",client))
+		return
+	end
+
+	local totalAmount = 0
+	local canBuyWeapons = true
+	for weaponID,v in pairs(weaponTable) do
+		for typ,amount in pairs(weaponTable[weaponID]) do
+			if amount > 0 then
+				if typ == "Waffe" then
+					totalAmount = totalAmount + AmmuNationInfo[weaponID].Weapon * amount
+				elseif typ == "Munition" then
+					totalAmount = totalAmount + AmmuNationInfo[weaponID].Magazine.price * amount
+				end
+				if client:getWeaponLevel() < MIN_WEAPON_LEVELS[weaponID] then
+					canBuyWeapons = false
+				end
+			end
+		end
+	end
+	if canBuyWeapons then
+		if client:getBankMoney() >= totalAmount then
+			if totalAmount > 0 then
+				client:takeBankMoney(totalAmount, "AmmuNation Bestellung")
+				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
+				self:createOrder(client, weaponTable)
+			else
+				client:sendError(_("Du hast keine Artikel im Warenkorb!",client))
+			end
+		else
+			client:sendError(_("Du hast nicht ausreichend Geld auf deinem Bankkonto! (%d$)",client, totalAmount))
+		end
+	else
+		-- Possible Cheat attempt?
+		client:sendError(_("An Internal Error occured!", client))
+	end
+end
+
+function ShopManager:createOrder(player, weaponTable)
+	local x, y, z = getElementPosition ( player )
+	y = y - 2
+	x = x - 2
+	local dropObject = createObject ( 2903, x, y, z+6.3+15 )
+	moveObject(dropObject, 9000, x, y, z+6.3 )
+	setTimer(destroyElement, 10000, 1, dropObject )
+	setTimer(function(x, y, z, weaponTable)
+		local pickup = createPickup(x, y, z, 3, 1210)
+		addEventHandler("onPickupHit", pickup, function(hitElement)
+			if hitElement:getType() == "player" and not hitElement:getOccupiedVehicle() then
+				self:giveWeaponsFromOrder(hitElement, weaponTable)
+				StatisticsLogger:getSingleton():addAmmunationLog(hitElement, "Pickup", toJSON(weaponTable), 0)
+				if source and isElement(source) then
+					destroyElement(source)
+				end
+			end
+		end)
+	end, 10000, 1, x, y, z, weaponTable)
+
+end
+
+function ShopManager:giveWeaponsFromOrder(player, weaponTable)
+	local playerWeapons = self:getPlayerWeapons(player)
+	outputChatBox("Du hast folgende Waffen und Magazine erhalten:",player,255,255,255)
+	for weaponID,v in pairs(weaponTable) do
+		for typ,amount in pairs(weaponTable[weaponID]) do
+			if amount > 0 then
+				local mag = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
+				if typ == "Waffe" then
+					if weaponID > 0 then
+						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
+						giveWeapon(player, weaponID, mag)
+					else
+						outputChatBox("1 Schutzweste",player,255,125,0)
+						player:setArmor(100)
+					end
+				elseif typ == "Munition" then
+					playerWeapons = self:getPlayerWeapons(player)
+					if playerWeapons[weaponID] then
+						giveWeapon(player,weaponID,amount*mag)
+						outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
+					else
+						outputChatBox("Du hast keine "..WEAPON_NAMES[weaponID].." für ein Magazin!",player,255,0,0)
+					end
+				end
+			end
+		end
 	end
 end
