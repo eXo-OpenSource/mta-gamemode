@@ -36,7 +36,7 @@ function AppSanNews:onOpen(form)
 
 	GUILabel:new(tab.m_Width*0.02, tab.m_Height*0.32, tab.m_Width*0.48, tab.m_Height*0.07, "Farbe:", self.m_Tabs["Advertisment"])
 	self.m_ColorChanger = GUIChanger:new(tab.m_Width*0.4, tab.m_Height*0.32, tab.m_Width*0.58, tab.m_Height*0.07, self.m_Tabs["Advertisment"])
-	for key, name in pairs(AD_COLORS) do
+	for name, color in pairs(ColorTable) do
 		self.m_ColorChanger:addItem(name)
 	end
 	self.m_ColorChanger.onChange = function () self:calcCosts() end

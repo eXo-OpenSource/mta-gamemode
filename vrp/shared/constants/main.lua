@@ -454,8 +454,6 @@ AD_COST = 30
 AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
-AD_COLORS = {"Orange", "Grün", "Hell-Blau"}
-
 AD_DURATIONS = {
 	["20 Sekunden"] = 20,
 	["30 Sekunden"] = 30,
