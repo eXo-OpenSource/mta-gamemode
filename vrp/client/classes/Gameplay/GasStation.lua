@@ -59,6 +59,7 @@ function GasStation:onObjectStreamIn()
 
 	if source:getModel() == 1676 then
 		self.m_RenderGasStations[source] = true
+		source:setBreakable(false)
 		return
 	end
 end
