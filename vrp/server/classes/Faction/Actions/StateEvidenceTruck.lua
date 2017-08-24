@@ -172,7 +172,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 		hitElement:sendInfo(_("Geldtransporter erfolgreich abgegeben!",hitElement))
 		self:Event_OnTruckExit(hitElement,0)
 		if faction:isEvilFaction() then
-			faction:getSingleton():giveKarmaToOnlineMembers(-10, "Geld-Transport gestohlen!")
+			faction:giveKarmaToOnlineMembers(-10, "Geld-Transport gestohlen!")
 			PlayerManager:getSingleton():breakingNews("Der Geldtransport wurde von der Fraktion %s gestohlen!", faction:getName())
 		else
 			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Geld-Transport abgegeben!")
