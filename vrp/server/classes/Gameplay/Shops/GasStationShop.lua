@@ -24,15 +24,3 @@ function GasStationShop:constructor(id, name, position, rotation, typeData, dime
 		outputConsole(("Shop: Gas-Station Data for %s: %s not found!"):format(tostring(self.m_Id), tostring(self.m_Name)))
 	end
 end
-
-function GasStationShop:onFillMarkerHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
-		hitElement:triggerEvent("gasStationStart", self.m_Id)
-	end
-end
-
-function GasStationShop:onFillMarkerLeave(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension then
-		hitElement:triggerEvent("gasStationReset")
-	end
-end
