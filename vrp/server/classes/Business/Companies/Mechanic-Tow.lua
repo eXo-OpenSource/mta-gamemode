@@ -147,7 +147,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
-				self:giveMoney(math.floor(price*0.7), "Reparatur")
+				self:giveMoney(math.floor(price*0.7), "Reparatur", true)
 			else
 				source:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", source))
 			end
@@ -167,8 +167,8 @@ end
 
 function MechanicTow:Event_mechanicTakeVehicle()
 	if client:getMoney() >= 500 then
-		client:takeMoney(500, "Mech&Tow freikauf")
-		self:giveMoney(500, "Fahrzeug freikauf")
+		client:takeMoney(500, "Mech&Tow")
+		self:giveMoney(500, "Fahrzeug freikauf", true)
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone

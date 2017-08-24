@@ -130,14 +130,14 @@ function Company:getMoney(...)
   return self.m_BankAccount:getMoney(...)
 end
 
-function Company:giveMoney(amount, reason)
+function Company:giveMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, amount, reason or "Unbekannt")
-    return self.m_BankAccount:addMoney(amount, reason)
+    return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Company:takeMoney(amount, reason)
+function Company:takeMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, -amount, reason or "Unbekannt")
-    return self.m_BankAccount:takeMoney(amount, reason)
+    return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
 
 function Company:getPhoneNumber()

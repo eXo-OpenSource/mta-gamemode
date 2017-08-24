@@ -162,7 +162,7 @@ function RobableShop:m_onExpire()
 
 	local money = self.m_Bag.Money or 0
 	local stateMoney = math.floor(money/3)
-	FactionManager:getSingleton():getFromId(1):giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3")
+	FactionManager:getSingleton():getFromId(1):giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3", true)
 	self.m_Shop:giveMoney(stateMoney*2, "Shop Raub Sicherstellung 2/3")
 	self.m_Bag:destroy()
 

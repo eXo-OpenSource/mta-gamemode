@@ -76,27 +76,25 @@ function Growable:harvest(player)
 	if not player.vehicle then
 	--if player:getId() == self.m_OwnerId or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 		local amount = self.m_Size*self.ms_ItemPerSize
-		if amount > 0 then
-			if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-				player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
-				player:getFaction():giveMoney(amount*5, "Drogen-Asservation")
+		if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+			player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
+			player:getFaction():giveMoney(amount*5, "Drogen-Asservation")
+			player:triggerEvent("hidePlantGUI")
+			self.m_Size = 0
+			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
+			delete(self)
+		elseif amount > 0 then
+			if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
+				player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
+				player:getInventory():giveItem(self.ms_Item, amount)
 				player:triggerEvent("hidePlantGUI")
 				self.m_Size = 0
 				sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
-				StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
+				StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 0)
 				delete(self)
 			else
-				if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
-					player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
-					player:getInventory():giveItem(self.ms_Item, amount)
-					player:triggerEvent("hidePlantGUI")
-					self.m_Size = 0
-					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
-					StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 0)
-					delete(self)
-				else
-					player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
-				end
+				player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
 			end
 		else
 			player:sendError(_("Die Pflanze ist noch nicht gewachsen!", player))

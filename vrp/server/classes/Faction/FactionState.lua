@@ -1103,7 +1103,7 @@ function FactionState:Command_bail(player)
 				if money >= player.m_Bail then
 
 					player:takeBankMoney(player.m_Bail, "Kaution")
-					FactionManager:getSingleton():getFromId(1):giveMoney(player.m_Bail, "Kaution")
+					FactionManager:getSingleton():getFromId(1):giveMoney(player.m_Bail, "Kaution", true)
 
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0

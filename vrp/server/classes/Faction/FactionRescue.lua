@@ -203,15 +203,15 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
-				takeWeapon(client,42)
+				takeAllWeapons(client)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				takeWeapon(client,42)
+				takeAllWeapons(client)
 				if type == "fire" then
-					giveWeapon(client, 42, 2000, true)
+					giveWeapon(client, 42, 10000, true)
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))

@@ -208,8 +208,8 @@ function PublicTransport:endTaxiDrive(customer)
 		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
 		driver:giveMoney(price, "Public Transport Taxi")
-		if price > 0 then
-			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
+		if price > 0 then 
+			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()), true)
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
@@ -325,10 +325,14 @@ function PublicTransport:startBusTour_Driver(player, nextStation, line)
 	if player.Bus_Blip then
 		delete(player.Bus_Blip)
 	end
-	local x, y, z = getElementPosition(self.m_BusStops[nextStation].object)
-	player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
-	player.Bus_Blip:setDisplayText("Bushaltestelle")
-	player:setPublicSync("EPT:BusDuty", true)
+	if not nextStation or not self.m_BusStops[nextStation] then
+		player:sendShortMessage(_("Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), dann melde dies bitte im Bugtracker"))
+	else
+		local x, y, z = getElementPosition(self.m_BusStops[nextStation].object)
+		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
+		player.Bus_Blip:setDisplayText("Bushaltestelle")
+		player:setPublicSync("EPT:BusDuty", true)
+	end
 end
 
 
@@ -418,7 +422,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position)
 			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
 			player:givePoints(math.round(5 * (dist/1000))) --5 / km
-			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
+			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
 			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(30 * (dist/1000)))))
 		end
 		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))

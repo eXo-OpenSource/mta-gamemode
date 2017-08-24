@@ -171,14 +171,14 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["car"], "Fahrprüfung")
-		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]))
+		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]), true)
 	else
 		if source:getMoney() < DrivingSchool.LicenseCosts["bike"] then
 			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["bike"].."$ )!", source))
 			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["bike"], "Fahrprüfung")
-		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]))
+		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]), true)
 	end
 	outputChatBox("Steige in das Fahrzeug vor dir ein!", source, 200,200,0)
 	addEventHandler("onVehicleStartEnter",veh,function(player, seat)
@@ -483,7 +483,7 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
+                        self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), true)
 						instructor:giveMoney(math.floor(costs*0.15), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
