@@ -299,6 +299,13 @@ GAS_STATIONS = {
 		},
 		accessible = {0, 0},
 	},
+	{
+		name = "Tankstelle Ocean Docks",
+		stations = {
+			{Vector3(2370.29, -2557.2, 2.5), 90, 1}
+		},
+		accessible = {0, 0},
+	},
 	-- Company fuelstations
 	{
 		name = "M&T",
