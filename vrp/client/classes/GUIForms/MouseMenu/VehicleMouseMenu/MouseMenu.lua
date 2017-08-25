@@ -172,16 +172,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Key)
-
-			if getVehicleInteractType(element) == "Special" then
-				self:addItem(_"Repairkit: reparieren",
-					function()
-						if self:getElement() then
-							triggerServerEvent("onMouseMenuRepairkit", self:getElement())
-						end
-					end
-				):setIcon(FontAwesomeSymbols.Wrench)
-			end
 		end
 
 		if element:getVehicleType() ~= VehicleType.Trailer then

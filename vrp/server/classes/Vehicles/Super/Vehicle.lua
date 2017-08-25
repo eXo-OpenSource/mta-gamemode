@@ -109,8 +109,8 @@ function Vehicle:hasKey(player)
 	end
 end
 
-function Vehicle:playLockEffect()
-	triggerClientEvent("vehicleCarlock", self)
+function Vehicle:playLockEffect(locked)
+	triggerClientEvent("vehicleCarlock", self, locked)
 	setVehicleOverrideLights(self, 2)
 	setTimer(setVehicleOverrideLights, 500, 1, self, 1)
 	setTimer(setVehicleOverrideLights, 1000, 1, self, 2)

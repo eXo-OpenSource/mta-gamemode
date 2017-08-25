@@ -100,6 +100,17 @@ function dxDrawImage3D(x,y,z,w,h,m,c,r,...)
 	return dxDrawMaterialLine3D(x,y,z, lx, ly, lz, m, h, c or tocolor(255,255,255,255), ...)
 end
 
+function dxDrawText3D(text, x, y, z)
+	local x, y, z = x, y, z
+	if x and type(x) == "table" then -- Vector conversion
+		x, y, z = x.x, x.y, x.z
+	end
+	local scx,scy = getScreenFromWorldPosition(x, y, z)
+	if scx and scy then
+		dxDrawText("[Debug] "..text, scx, scy, nil, nil, Color.White, 1, "default-bold", "center", "center")
+	end		
+end
+
 
 function dxDrawToolTip(x, y, text)
 	local f = VRPFont(30)
