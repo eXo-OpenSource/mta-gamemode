@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        server/classes/Gameplay/GasStationManager.lua
+-- *  PURPOSE:     Gas Station Manager
 -- *
 -- ****************************************************************************
 GasStationManager = inherit(Singleton)
@@ -13,7 +13,7 @@ function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -298,6 +298,7 @@ GAS_STATIONS = {
 			{Vector3(1606.10, -2445.5, 14.1), 0, 1}
 		},
 		accessible = {0, 0},
+		nonInterior = true,
 	},
 	{
 		name = "Tankstelle Ocean Docks",
@@ -305,6 +306,7 @@ GAS_STATIONS = {
 			{Vector3(2370.29, -2557.2, 2.5), 90, 1}
 		},
 		accessible = {0, 0},
+		nonInterior = true,
 	},
 	-- Company fuelstations
 	{
@@ -313,6 +315,7 @@ GAS_STATIONS = {
 			{Vector3(877, -1184.6, 17.8), 90, 1},
 		},
 		accessible =  {2, CompanyStaticId.MECHANIC},
+		nonInterior = true,
 	},
 	-- Faction fuelstations
 }

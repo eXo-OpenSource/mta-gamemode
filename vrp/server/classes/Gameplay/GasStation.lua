@@ -1,17 +1,18 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        server/classes/Gameplay/GasStation.lua
+-- *  PURPOSE:     Gas stations
 -- *
 -- ****************************************************************************
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name)
+function GasStation:constructor(stations, accessible, name, nonInterior)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
+	self.m_NonInterior = nonInterior
 
 	for _, station in pairs(stations) do
 		local position, rotation, maxHoses = unpack(station)
@@ -44,7 +45,7 @@ end
 function GasStation:hasPlayerAccess(player)
 	if self:isUserFuelStation() then return true end
 
-	if self.m_Accessible[1] == 1 then
+	if self:isFactionFuelStation() then
 		if self.m_Accessible[2] == 0 and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 			return true
 		end
@@ -52,7 +53,7 @@ function GasStation:hasPlayerAccess(player)
 		if player:getFaction() and player:getFaction():getId() == self.m_Accessible[2] and (player:getFaction():isEvilFaction() or player:isFactionDuty()) then
 			return true
 		end
-	elseif self.m_Accessible[1] == 2 then
+	elseif self:isCompanyFuelStation() then
 		if player:getCompany() and player:getCompany():getId() == self.m_Accessible[2] and player:isCompanyDuty() then
 			return true
 		end
@@ -107,7 +108,7 @@ function GasStation:rejectFuelNozzle(player, element)
 	player.gs_fuelNozzle:destroy()
 	toggleControl(player, "fire", true)
 
-	if not self:isUserFuelStation() then
+	if self.m_NonInterior then
 		client:triggerEvent("gasStationNonInteriorRequest")
 	end
 end

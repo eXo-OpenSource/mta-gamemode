@@ -76,7 +76,7 @@ function GasStation:nonInteriorRequest()
 	local fuel = GasStation.PendingTransaction.fuel
 	local station = GasStation.PendingTransaction.station
 
-	QuestionBox:new(("Möchtest du %s Liter auftanken? Dies kostet %s$ und geht von der Kasse ab."):format(fuel, fuel * FUEL_PRICE_MULTIPLICATOR),
+	QuestionBox:new(("Möchtest du %s Liter für %s$ auftanken?"):format(fuel, fuel * FUEL_PRICE_MULTIPLICATOR),
 		function()
 			triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station)
 		end,
