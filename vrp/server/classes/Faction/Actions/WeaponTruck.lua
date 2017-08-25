@@ -75,7 +75,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	local factionId = self.m_StartFaction:getId()
 	local dest = factionWTDestination[factionId]
 
-	if self.m_Type == "evil" then 
+	if self.m_Type == "evil" then
 		self.m_DestinationBlips[factionId] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
 		self.m_DestinationBlips[factionId]:setDisplayText("Waffentruck-Abgabepunkt")
 	else
@@ -136,7 +136,7 @@ function WeaponTruck:destructor()
 			if value:isAttached() and isElement(value:getAttachedTo()) and value:getAttachedTo():getType() == "player" then
 				value:getAttachedTo():detachPlayerObject(value)
 			end
-		 	value:destroy() 
+		 	value:destroy()
 		end
 	end
 end
@@ -150,7 +150,7 @@ function WeaponTruck:timeUp()
 		FactionEvil:getSingleton():giveKarmaToOnlineMembers(-10, "Staats-Waffentruck verhindert!")
 	end
 
-	self:delete()
+	delete(self)
 end
 
 -- Marker methodes/events

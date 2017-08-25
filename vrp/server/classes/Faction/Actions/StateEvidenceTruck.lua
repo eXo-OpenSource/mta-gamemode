@@ -87,7 +87,7 @@ end
 function StateEvidenceTruck:timeUp()
 	PlayerManager:getSingleton():breakingNews("Der Geldtransport ist fehlgeschlagen! (Zeit abgelaufen)")
 	FactionEvil:getSingleton():giveKarmaToOnlineMembers(-10, "Geldtransport verhindert!")
-	self:delete()
+	delete(self)
 end
 
 function StateEvidenceTruck:spawnMoneyBags()
