@@ -74,6 +74,12 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/ammunation.dff", 4552)
 	self:loadImportCOL("files/models/ammunation_int.col", 18049)
 	self:loadImportDFF("files/models/ammunation_int.dff", 18049)
+
+	self:loadImportCOL("files/models/ammunation2.col", 5106)
+	self:loadImportDFF("files/models/ammunation2.dff", 5106)
+	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
+	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
+
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
 	self:loadImportTXD("files/models/fence.txd", 1866)

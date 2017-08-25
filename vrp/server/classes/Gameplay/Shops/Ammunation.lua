@@ -10,6 +10,8 @@ Ammunation = inherit(Shop)
 function Ammunation:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
+	self.m_TypeName = typeData["Name"]
+
 	self.m_Weapons = {}
 	self.m_Magazines = {}
 	self:loadWeapons()
@@ -32,7 +34,7 @@ function Ammunation:onAmmunationMarkerHit(hitElement, dim)
 		if self.m_Marker then
 			if not self.m_Marker.m_Disable then
 				hitElement:triggerEvent("showAmmunationMenu")
-				triggerClientEvent(hitElement, "refreshAmmunationMenu", hitElement, self.m_Id, self.m_Weapons, self.m_Magazines)
+				triggerClientEvent(hitElement, "refreshAmmunationMenu", hitElement, self.m_Id, self.m_TypeName, self.m_Weapons, self.m_Magazines)
 			end
 		end
 	end

@@ -10,8 +10,17 @@ inherit(Singleton, AmmuNationGUI)
 
 addRemoteEvents{"showAmmunationMenu", "refreshAmmunationMenu"}
 
-AmmuNationGUI.WeaponPosition = Vector3(1380.47, -1279.32, 13.7)
-AmmuNationGUI.CameraMatrix = {Vector3(1375.70, -1279.30, 15.90), Vector3(1380.47, -1279.32, 14)}
+AmmuNationGUI.Data = {
+	["Ammunation Central"] = {
+		WeaponPosition = Vector3(1380.47, -1279.32, 13.7),
+		CameraMatrix = {Vector3(1375.70, -1279.30, 15.90), Vector3(1380.47, -1279.32, 14)}
+	},
+	["Ammunation South"] = {
+		WeaponPosition = Vector3(2380.06, -1985.14, 13.7),
+		CameraMatrix = {Vector3(2375.70, -1985.14, 15.90), Vector3(2380.06, -1985.14, 14)}
+	},
+}
+
 local weaponModels = {
 	[30] = 355,
 	[31] = 356,
@@ -59,8 +68,9 @@ function AmmuNationGUI:rotateObject()
 	end
 end
 
-function AmmuNationGUI:refreshShopMenu(shopId, weapons, magazines)
+function AmmuNationGUI:refreshShopMenu(shopId, typeName, weapons, magazines)
 	self.m_Shop = shopId
+	self.m_Name = typeName
 	local item
 	self.m_WeaponList:clear()
 
@@ -101,26 +111,26 @@ end
 function AmmuNationGUI:onSelectWeapon(weaponId)
 	local rot = Vector3(0,0,0)
 	if isElement(self.m_Object) then rot = self.m_Object:getRotation() self.m_Object:destroy() end
-	self.m_Object = createObject(weaponModels[weaponId], AmmuNationGUI.WeaponPosition, rot)
+	self.m_Object = createObject(weaponModels[weaponId], AmmuNationGUI.Data[self.m_Name].WeaponPosition, rot)
 	self.m_Object:setInterior(localPlayer:getInterior())
 	self.m_Object:setDimension(localPlayer:getDimension())
 	self.m_AmountLabel:setVisible(false)
 	self.m_Amount:setVisible(false)
 	self.m_Amount:setText("1")
 
-	setCameraMatrix(AmmuNationGUI.CameraMatrix[1], AmmuNationGUI.CameraMatrix[2], 0, 70)
+	setCameraMatrix(AmmuNationGUI.Data[self.m_Name].CameraMatrix[1], AmmuNationGUI.Data[self.m_Name].CameraMatrix[2], 0, 70)
 end
 
 function AmmuNationGUI:onSelectMagazine(weaponId)
 	local rot = Vector3(0,0,0)
 	if isElement(self.m_Object) then rot = self.m_Object:getRotation() self.m_Object:destroy() end
-	self.m_Object = createObject(2061, AmmuNationGUI.WeaponPosition, rot)
+	self.m_Object = createObject(2061, AmmuNationGUI.Data[self.m_Name].WeaponPosition, rot)
 	self.m_Object:setInterior(localPlayer:getInterior())
 	self.m_Object:setDimension(localPlayer:getDimension())
 	self.m_AmountLabel:setVisible(true)
 	self.m_Amount:setVisible(true)
 
-	setCameraMatrix(AmmuNationGUI.CameraMatrix[1], AmmuNationGUI.CameraMatrix[2], 0, 70)
+	setCameraMatrix(AmmuNationGUI.Data[self.m_Name].CameraMatrix[1], AmmuNationGUI.Data[self.m_Name].CameraMatrix[2], 0, 70)
 end
 
 addEventHandler("showAmmunationMenu", root,

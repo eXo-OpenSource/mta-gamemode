@@ -152,7 +152,16 @@ SHOP_TYPES = {
 		["Ped"] = {158, Vector3(1380.34, -1280.79, 13.54), 0},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = Ammunation
+	},
+	[22] = {
+		["Name"] = "Ammunation South",
+		["Marker"] = Vector3(2379.96, -1986.57, 12.6),
+		["Ped"] = {158, Vector3(2379.84, -1984.17, 13.56), 180},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = Ammunation
 	}
+
+
 }
 
 SHOP_ITEMS = {
