@@ -5,6 +5,7 @@ function PublicTransport:constructor()
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
 	self.m_ActiveBusVehicles = {}
 	self.m_ActiveLines = {}
+	self.m_StreamedInBusObjects = {}
 
 	self.m_Event_BusStopStreamIn = bind(PublicTransport.busStopStreamIn, self)
 	self.m_Event_BusStopStreamOut = bind(PublicTransport.busStopStreamOut, self)
@@ -13,16 +14,18 @@ end
 
 
 function PublicTransport:setBusDisplayText(vehicle, text, line)
-	if not vehicle.Bus_TexReplace then
+	if not isElement(vehicle.Bus_TexReplace) then
+		outputDebug("no texture")
 		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true) FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
-		vehicle.m_BusShader = DxShader("files/shader/texreplace.fx")
+		vehicle.m_BusShader = DxShader("files/shader/texreplace.fx", 10)
 		vehicle.m_BusShader:setValue("gTexture", vehicle.Bus_TexReplace)
 		vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
-
+		outputDebug(vehicle.Bus_TexReplace, vehicle.m_BusShader)
 		addEventHandler("onClientElementDestroy", vehicle, function() 
 			delete(vehicle.Bus_TexReplace) 
 			delete(vehicle.m_BusShader)
-		end)
+			vehicle.Bus_TexReplace = nil
+		end, false)
 	end
 	dxSetRenderTarget(vehicle.Bus_TexReplace, true)
 	dxDrawRectangle(0, 80, 256, 60, Color.Grey)
@@ -32,6 +35,9 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	end
 	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
 	dxSetRenderTarget(nil)
+	outputDebug(vehicle.Bus_TexReplace, vehicle.m_BusShader)
+	vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
+
 end
 
 function PublicTransport:busStopStreamIn(obj)
@@ -39,6 +45,7 @@ function PublicTransport:busStopStreamIn(obj)
 	if obj then source = obj end
 	if not source.m_BusCol then
 		source.m_BusCol = createColSphere(source.position, 3)
+		self.m_StreamedInBusObjects[source] = source:getData("EPT_bus_station")
 		addEventHandler("onClientColShapeHit", source.m_BusCol, function(hit, dim)
 			if not dim then return end
 			if hit ~= localPlayer or localPlayer.vehicle then return end
@@ -51,6 +58,7 @@ function PublicTransport:busStopStreamOut()
 	if source.m_BusCol then	
 		source.m_BusCol:destroy()
 		source.m_BusCol = nil
+		self.m_StreamedInBusObjects[source] = nil
 	end
 end
 
@@ -81,6 +89,13 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 				playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..text.."&client=tw-ob")
 			end, 2000, 1)	
 		end, 5000, 1)
+	else
+		for stopObj, name in pairs(self.m_StreamedInBusObjects) do -- output message at next stop
+			if name == nextStopName then
+				ShortMessage:new(_("Ein Bus der Linie %d (%s) kommt in Kürze an der Haltestelle %s an.", line, EPTBusData.lineData.lineDisplayData[line].displayName, nextStopName), _"Public Transport", {230, 170, 0})
+				break
+			end
+		end
 	end
 end
 
@@ -125,6 +140,12 @@ function PublicTransport:registerBusStopObjects()
 			if v:getData("object"):isStreamedIn() then
 				self:busStopStreamIn(v:getData("object"))
 			end
+			setElementData(v:getData("object"), "clickable", true, false)
+			v:getData("object"):setData("onClickEvent",
+				function()
+					BusRouteInformationGUI:new(v:getData("object"))
+				end
+			)
 		end
 	end
 end
@@ -137,7 +158,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 
 	 self:addItem(_"Anzeigetafel ändern"):setTextColor(Color.Red)
 
-	self:addItem(_"Linie 1 bedienen",
+	self:addItem(_"Linie 1 nach Blueberry bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1)
@@ -145,10 +166,26 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 bedienen",
+	self:addItem(_"Linie 1 nach Downtown bedienen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1, true)
+			end
+		end
+	)
+
+	self:addItem(_"Linie 2 nach Montgomery bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2)
+			end
+		end
+	)
+
+	self:addItem(_"Linie 2 nach East LS bedienen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2, true)
 			end
 		end
 	)
