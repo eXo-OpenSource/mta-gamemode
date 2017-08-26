@@ -77,7 +77,7 @@ end
 
 function TCars:destructor()
 	localPlayer:setFrozen(false)
-	toggleAllControls(true)
+	toggleAllControls(true, true, false)
 	self:saveHighscore()
 
 	if self.m_BackgroundMusic then self.m_BackgroundMusic:destroy() end

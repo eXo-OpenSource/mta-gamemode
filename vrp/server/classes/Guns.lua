@@ -50,7 +50,7 @@ function Guns:Event_onTaser(target)
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
-	toggleAllControls(target,false)
+	toggleAllControls(target,false, true, false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
 	target.isTasered = true
 	setElementData(target, "isTasered", true)
@@ -58,7 +58,7 @@ function Guns:Event_onTaser(target)
 		setElementData(target, "isTasered", false)
 		target:setAnimation()
 		target:setFrozen(false)
-		toggleAllControls(target,true)
+		toggleAllControls(target,true, true, false)
 		target.isTasered = false
 	end, 15000, 1, target )
 end

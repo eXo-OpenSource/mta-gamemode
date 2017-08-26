@@ -37,7 +37,7 @@ function FishingRod:constructor(fishingRod)
 end
 
 function FishingRod:destructor()
-	toggleAllControls(true)
+	toggleAllControls(true, true, false)
 	unbindKey("mouse1", "both", self.m_HandleClick)
 	removeEventHandler("onClientRender", root, self.m_Render)
 	if isTimer(self.m_nibblingTimer) then killTimer(self.m_nibblingTimer) end
@@ -68,7 +68,7 @@ end
 
 function FishingRod:reset()
 	localPlayer:setAnimation()
-	toggleAllControls(true)
+	toggleAllControls(true, true, false)
 	toggleControl("fire", false)
 
 	self.m_isCasting = true
@@ -106,7 +106,7 @@ function FishingRod:handleClick(_, state)
 		self.m_isCasting = true
 		self.Sound:play("caught")
 
-		toggleAllControls(true)
+		toggleAllControls(true, true, false)
 		toggleControl("fire", false)
 	elseif self.m_isNibbling and self.m_MouseDown then
 		if getTickCount() - self.m_nibblingTime <= self.m_maxTimeToNibble then
@@ -150,7 +150,7 @@ function FishingRod:cast()
 	local distance = 10*self.m_PowerProgress
 
 	if self:checkWater(distance) then
-		toggleAllControls(false)
+		toggleAllControls(false, true, false)
 
 		local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
 		targetPosition.z = 0
