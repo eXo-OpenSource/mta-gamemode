@@ -137,9 +137,9 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 				player:createCharacter()
 			end
 		else
-			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(player:getName())
+			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
 			outputServerLog(msg)
-			outputDebugString(msg)
+			outputDebugString(msg, 1)
 			outputConsole(debug.traceback())
 			player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 		end

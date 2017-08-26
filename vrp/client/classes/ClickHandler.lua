@@ -21,8 +21,6 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		[1257] = function(element, clickInfo) BusRouteInformationGUI:new(element) end;
-
 	}
 
 	self.m_ClickInfo = false
@@ -175,6 +173,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 					elseif getElementType(element) == "object" then
 						if getElementData(element, "bankPC") then
 							self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						elseif element:getData("onClickEvent") then
+							element:getData("onClickEvent")()
 						end
 					end
 
