@@ -92,7 +92,7 @@ addEventHandler("onDebugMessage", root,
 		if GIT_BRANCH == "release/production" and level <= 2 then
 			-- get trace back of type {filepath, line} (adapted from traceback())
 			local trace = {}
-			local traceLevel = 2
+			local traceLevel = 1
 			while true do
 				local info = debug.getinfo(traceLevel, "Sl")
 				if not info then break end
