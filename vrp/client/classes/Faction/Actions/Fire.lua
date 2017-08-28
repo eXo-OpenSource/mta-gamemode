@@ -1,47 +1,45 @@
---//
---||  PROJECT:  fireElements
---||  AUTHOR:   MasterM
---||  DATE:     October 2015
---\\
+Fire = inherit(Singleton)
+Fire.Settings = {
+	["tickNoise"] = false,
+	["smoke"] = true,
+	["smokeRenderDistance"] = 100,
+	["fireRenderDistance"] = 50,
+	["extinguishTime"] = 10,
+	["extraEffects"] = true,
+}
+
+Fire.EffectFromFireSize = {
+	[1] = "fire",
+	[2] = "fire_med",
+	[3] = "fire_large",
+}
+
+function Fire:constructor()
+	self.m_Fires = {}
+
+	addRemoteEvents{"fireElements:onClientRecieveFires", "fireElements:onFireCreate", "fireElements:onFireDestroy", "fireElements:onFireChangeSize"}
+
+	addEventHandler("fireElements:onFireCreate", resourceRoot, bind(self.createFireElement, self))
+	addEventHandler("fireElements:onFireDestroy", resourceRoot, bind(self.destroyFireElement, self))
+	addEventHandler("fireElements:onFireChangeSize", resourceRoot, bind(self.changeFireSize, self))
+	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
 
 
-addEvent("fireElements:onFireCreate", true)
-addEvent("fireElements:onFireDestroy", true)
-addEvent("fireElements:onFireChangeSize", true)
+	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(fireTable)
+		for ped, size in pairs(fireTable) do
+			self:createFireElement(size, ped)
+		end
+	end)
+	triggerServerEvent("fireElements:onClientRequestsFires", root)
+end
 
---//
---||  useful
---\\
-
-local function destroyElementIfExists(uElement)
+function Fire:destroyElementIfExists(uElement)
 	if isElement(uElement) then
 		destroyElement(uElement)
 		return true
 	end
 	return false
 end
-
-
---//
---||  settings
---\\
-
-local setting_tickNoise = false -- tick sound at extinguishing
-local setting_smoke = true -- smoke effect at extinguishing
-local setting_smokeRenderDistance = 100 -- until which distance the smoke at extinguishing renders
-local setting_fireRenderDistance = 50 -- until which distance a small fire renders (x2 for medium, x3 for large)
-local setting_extinguishTime = 10 -- not an actual time, but 1/setting chance of fire extinguishing
-local setting_extraEffects = true -- create tiny explosions on fire updates (also controls black spots on the ground)
-
-local tblEffectFromFireSize = { -- effect names for different fire sizes
-	[1] = "fire",
-	[2] = "fire_med",
-	[3] = "fire_large",
-
-}
-
-local tblFires = {} -- all active fires
-
 
 --//
 --||  destroyFireElement (local)
@@ -50,13 +48,13 @@ local tblFires = {} -- all active fires
 --||  	returns: success of the function
 --\\
 
-local function destroyFireElement(uElement)
-	if tblFires[uElement] then
-		destroyElementIfExists(tblFires[uElement].uEffect)
-		destroyElementIfExists(tblFires[uElement].uBurningCol)
-		local uSmoke = tblFires[uElement].uSmokeEffect
-		if isElement(uSmoke) then setTimer(destroyElementIfExists, 5000, 1, uSmoke) end -- allow smoke to disappear
-		tblFires[uElement] = nil
+function Fire:destroyFireElement(uElement)
+	if self.m_Fires[uElement] then
+		self:destroyElementIfExists(self.m_Fires[uElement].uEffect)
+		self:destroyElementIfExists(self.m_Fires[uElement].uBurningCol)
+		local uSmoke = self.m_Fires[uElement].uSmokeEffect
+		if isElement(uSmoke) then setTimer(bind(self.destroyElementIfExists, self), 5000, 1, uSmoke) end -- allow smoke to disappear
+		self.m_Fires[uElement] = nil
 		return true
 	end
 	return false
@@ -69,19 +67,19 @@ end
 --||  		uFire		= the fire element
 --\\
 
-local function handleSmoke(uFire)
-	if setting_smoke then
+function Fire:handleSmoke(uFire)
+	if Fire.Settings["smoke"] then
 		local iX, iY, iZ	= getElementPosition(localPlayer)
 		local iFX, iFY, iFZ = getElementPosition(uFire)
-		if getDistanceBetweenPoints3D(iX, iY, iZ, iFX, iFY, iFZ) < setting_smokeRenderDistance then
-			if tblFires[uFire] and not tblFires[uFire].iSmokeEffectTime or getTickCount()-tblFires[uFire].iSmokeEffectTime > 2000 then
-				destroyElementIfExists(tblFires[uFire].uSmokeEffect)
+		if getDistanceBetweenPoints3D(iX, iY, iZ, iFX, iFY, iFZ) < Fire.Settings["smokeRenderDistance"] then
+			if self.m_Fires[uFire] and not self.m_Fires[uFire].iSmokeEffectTime or getTickCount()-self.m_Fires[uFire].iSmokeEffectTime > 2000 then
+				self:destroyElementIfExists(self.m_Fires[uFire].uSmokeEffect)
 				local iX, iY, iZ = getElementPosition(uFire)
 				local effect = createEffect("explosion_door", iX, iY, iZ)
 					setEffectSpeed(effect, 0.5)
-					setEffectDensity(effect, tblFires[uFire].iSize/3*2)
-				tblFires[uFire].iSmokeEffectTime = getTickCount()
-				tblFires[uFire].uSmokeEffect = effect
+					setEffectDensity(effect, self.m_Fires[uFire].iSize/3*2)
+				self.m_Fires[uFire].iSmokeEffectTime = getTickCount()
+				self.m_Fires[uFire].uSmokeEffect = effect
 			end
 		end
 	end
@@ -94,11 +92,11 @@ end
 --||  		uAttacker, iWeap	= event parameters
 --\\
 
-local function handlePedDamage(uAttacker, iWeap)
-	if tblFires[source] then
+function Fire:handlePedDamage(uAttacker, iWeap)
+	if self.m_Fires[source] then
 		if iWeap == 42 then -- extinguisher
-			if setting_tickNoise and uAttacker == localPlayer then playSoundFrontEnd(37) end
-			handleSmoke(source)
+			if Fire.Settings["tickNoise"] and uAttacker == localPlayer then playSoundFrontEnd(37) end
+			self:handleSmoke(source)
 			if getElementHealth(source) <= (50) and uAttacker == localPlayer then
 				triggerServerEvent("fireElements:requestFireDeletion", source)
 			end
@@ -114,19 +112,18 @@ end
 --||  		uPed		= event parameter
 --\\
 
-local function handlePedWaterCannon(uPed)
+function Fire:handlePedWaterCannon(uPed)
 cancelEvent()
-	if tblFires[uPed] then
+	if self.m_Fires[uPed] then
 		if getElementModel(source) == 407 then -- fire truck
-		handleSmoke(uPed)
-			if setting_tickNoise and getVehicleController(source) == localPlayer then playSoundFrontEnd(37) end
-			if math.random(1, setting_extinguishTime) == 1 and getVehicleController(source) == localPlayer then
+		self:handleSmoke(uPed)
+			if Fire.Settings["tickNoise"] and getVehicleController(source) == localPlayer then playSoundFrontEnd(37) end
+			if math.random(1, Fire.Settings["extinguishTime"]) == 1 and getVehicleController(source) == localPlayer then
 				triggerServerEvent("fireElements:requestFireDeletion", uPed)
 			end
 		end
 	end
 end
-addEventHandler("onClientPedHitByWaterCannon", root, handlePedWaterCannon)
 
 
 --//
@@ -135,7 +132,7 @@ addEventHandler("onClientPedHitByWaterCannon", root, handlePedWaterCannon)
 --||  		uHitElement,bDim	= event parameter
 --\\
 
-local function burnPlayer(uHitElement, bDim)
+function Fire:burnPlayer(uHitElement, bDim)
 	if not bDim then return end
 	if getElementType(uHitElement) == "player" then
 		setPedOnFire(uHitElement, true)
@@ -149,16 +146,16 @@ end
 --||  		iSize			= the new size of the fire
 --\\
 
-local function changeFireSize(iSize)
-	if tblFires[source] then
-		tblFires[source].iSize = iSize
-		destroyElementIfExists(tblFires[source].uEffect)
-		destroyElementIfExists(tblFires[source].uBurningCol)
+function Fire:changeFireSize(iSize)
+	if self.m_Fires[source] then
+		self.m_Fires[source].iSize = iSize
+		self:destroyElementIfExists(self.m_Fires[source].uEffect)
+		self:destroyElementIfExists(self.m_Fires[source].uBurningCol)
 		local iX, iY, iZ = getElementPosition(source)
-		tblFires[source].uEffect = createEffect(tblEffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, setting_fireRenderDistance)
-		tblFires[source].uBurningCol = createColSphere(iX, iY, iZ + (tblFires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
-		addEventHandler("onClientColShapeHit", tblFires[source].uBurningCol, burnPlayer)
-		checkForFireGroundInfo(source)
+		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
+		self.m_Fires[source].uBurningCol = createColSphere(iX, iY, iZ + (self.m_Fires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
+		addEventHandler("onClientColShapeHit", self.m_Fires[source].uBurningCol, bind(self.burnPlayer, self))
+		self:checkForFireGroundInfo(source)
 	end
 end
 
@@ -169,9 +166,9 @@ end
 --||  		uFire			= the fire
 --\\
 
-function getFireSize(uFire)
-	if tblFires[uFire] then
-		return tblFires[uFire].iSize
+function Fire:getFireSize(uFire)
+	if self.m_Fires[uFire] then
+		return self.m_Fires[uFire].iSize
 	end
 end
 
@@ -182,18 +179,18 @@ end
 --||  		uFire			= the fire
 --\\
 
-function checkForFireGroundInfo(uFire)
-	if  tblFires[uFire] then
+function Fire:checkForFireGroundInfo(uFire)
+	if  self.m_Fires[uFire] then
 		local iX, iY, iZ = getElementPosition(uFire)
-		if setting_extraEffects then
+		if Fire.Settings["extraEffects"] then
 			createExplosion (iX, iY, iZ-2, 12, false, 0, false)
 		end
-		if not tblFires[uFire].bCorrectPlaced and isElementStreamedIn(uFire) then
+		if not self.m_Fires[uFire].bCorrectPlaced and isElementStreamedIn(uFire) then
 			local iNewZ = getGroundPosition(iX, iY, iZ + 100)
 			setElementPosition(uFire, iX, iY, iNewZ)
-			setElementPosition(tblFires[uFire].uEffect, iX, iY, iNewZ)
-			setElementPosition(tblFires[uFire].uBurningCol, iX, iY, iNewZ+1)
-			tblFires[uFire].bCorrectPlaced = true
+			setElementPosition(self.m_Fires[uFire].uEffect, iX, iY, iNewZ)
+			setElementPosition(self.m_Fires[uFire].uBurningCol, iX, iY, iNewZ+1)
+			self.m_Fires[uFire].bCorrectPlaced = true
 		end
 	end
 end
@@ -206,55 +203,25 @@ end
 --||  		uPed			= the ped element synced by the server
 --\\
 
-local function createFireElement(iSize, uPed)
+function Fire:createFireElement(iSize, uPed)
 	if not uPed then uPed = source end
 	local iX, iY, iZ = getElementPosition(uPed)
-	tblFires[uPed] = {}
-	tblFires[uPed].iSize = iSize
-	tblFires[uPed].uEffect = createEffect(tblEffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, setting_fireRenderDistance)
-	tblFires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
+	self.m_Fires[uPed] = {}
+	self.m_Fires[uPed].iSize = iSize
+	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
+	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollidableWith (uPed, localPlayer, false)
 	for index,vehicle in ipairs(getElementsByType("vehicle")) do
 		setElementCollidableWith(vehicle, uPed, false)
 	end
-	checkForFireGroundInfo(uPed)
-	addEventHandler("onClientPedDamage", uPed, handlePedDamage)
-	addEventHandler("onClientColShapeHit", tblFires[uPed].uBurningCol, burnPlayer)
+	self:checkForFireGroundInfo(uPed)
+	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))
+	addEventHandler("onClientColShapeHit", self.m_Fires[uPed].uBurningCol, bind(self.burnPlayer, self))
 	addEventHandler("onClientElementStreamIn", uPed, function()
 		setTimer(function() -- allow the client to let the element fully stream in as this process is apparently asynchronous
 			if isElement(uPed) and isElementStreamedIn(uPed) then
-				checkForFireGroundInfo(uPed)
+				self:checkForFireGroundInfo(uPed)
 			end
 		end, 500, 1)
 	end)
 end
-
-
-
---//
---||  events
---\\
-
-addEventHandler("fireElements:onFireCreate", resourceRoot, createFireElement)
-addEventHandler("fireElements:onFireDestroy", resourceRoot, destroyFireElement)
-addEventHandler("fireElements:onFireChangeSize", resourceRoot, changeFireSize)
-
-
---//
---||  sync (get all created fires when client connects to the server)
---\\
-
-addEventHandler("onClientResourceStart", resourceRoot, function()
-	addEvent("fireElements:onClientRecieveFires", true)
-	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(tblFires)
-		for i,v in pairs(tblFires) do
-			createFireElement(v.iSize, i)
-		end
-	end)
-	triggerServerEvent("fireElements:onClientRequestsFires", root)
-end)
-
-
---setPedTargetingMarkerEnabled(false) --uncomment this to prevent green aim arrows in fires
---setDevelopmentMode(true) -- debug to show colshapes etc
--- hdug

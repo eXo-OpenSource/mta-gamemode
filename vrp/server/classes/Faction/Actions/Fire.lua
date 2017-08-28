@@ -116,7 +116,11 @@ end)
 
 addEvent("fireElements:onClientRequestsFires", true)
 addEventHandler("fireElements:onClientRequestsFires", resourceRoot, function()
-	triggerClientEvent(client, "fireElements:onClientRecieveFires", resourceRoot, Fire.Map)
+	local fires = {}
+	for ped, fire in pairs(Fire.Map) do
+		fires[ped] = fire.m_iSize
+	end
+	triggerClientEvent(client, "fireElements:onClientRecieveFires", resourceRoot, fires)
 end)
 
 
