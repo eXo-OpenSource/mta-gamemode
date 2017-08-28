@@ -96,6 +96,7 @@ end )
 
 functions.toggleDriveby = function()
 	if getElementData(localPlayer, "isTied") then return end
+	if isCursorShowing() then return end
 	if isPedInVehicle( localPlayer ) then
 		local veh = getPedOccupiedVehicle ( localPlayer )
 		local vehicleID = getElementModel ( veh )

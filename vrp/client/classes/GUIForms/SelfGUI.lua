@@ -651,7 +651,9 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 end
 
 function SelfGUI:VehicleGarageUpgradeButton_Click()
-	triggerServerEvent("vehicleUpgradeGarage", root)
+	QuestionBox:new(_("Bitte bestätige %s deiner Garage. Das Geld wird von deinem Konto abgebucht.", localPlayer.m_GarageType == 0 and "den Kauf" or "das Upgrade"), function()
+		triggerServerEvent("vehicleUpgradeGarage", root)
+	end)
 end
 
 function SelfGUI:VehicleHangarButton_Click()
