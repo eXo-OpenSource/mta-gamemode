@@ -77,7 +77,16 @@ end
 
 function FireManager:startFire(id)
 	if self.m_CurrentFire then delete(self.m_CurrentFire) self.m_CurrentFire = nil end
-	self.m_CurrentFire = Fire:new(self.m_Fires[id])
+	local fireTable = self.m_Fires[id]
+	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable.width, fireTable.height)
+	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].x, root, 400)
+	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
+	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
+
+	local posName = getZoneName(fireTable["position"]).."/"..getZoneName(fireTable["position"], true)
+	PlayerManager:getSingleton():breakingNews(fireTable["message"], posName)
+	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable["position"], posName)
+	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable["position"], posName)
 end
 
 function FireManager:receiveFires()
