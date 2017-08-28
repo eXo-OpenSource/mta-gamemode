@@ -11,6 +11,8 @@ function CutscenePlayer:playCutscene(name, finishcallback, dim)
 	localPlayer:setDimension(dim or PRIVATE_DIMENSION_CLIENT)
 	localPlayer:setFrozen(true)
 
+	local savedWeather = getWeather()
+
 	self.m_Cutscene = Cutscene:new(self.m_CutsceneList[name], dim)
 	self.m_Cutscene.onFinish =
 		function(cutscene)
@@ -27,6 +29,9 @@ function CutscenePlayer:playCutscene(name, finishcallback, dim)
 			HUDRadar:getSingleton():show()
 			HUDUI:getSingleton():show()
 			showChat(true)
+			local realtime = getRealTime()
+			setTime(realtime.hour, realtime.minute)
+			setWeather(savedWeather)
 		end;
 
 	self.m_Cutscene:play()

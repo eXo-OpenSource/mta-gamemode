@@ -205,18 +205,18 @@ function FactionEvil:Event_StartRaid(target)
 				end
 				if math.floor(target:getPlayTime()/60) < 10 then
 					client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
-					return
+					--return
 				end
-				if target:getMoney() > 0 then
 
+				if target:getMoney() > 0 then
 					local targetName = target:getName()
 					if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
 						client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
-						return
+						--return
 					end
 					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
 					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
-					client:meChat(true, _("überfällt %s!", client, target:getName()))
+					client:meChat(true, _("überfällt %s!", client, targetName))
 
 					target:triggerEvent("CountdownStop",  15, "Überfallen in")
 					target:triggerEvent("Countdown", 15, "Überfallen in")

@@ -16,6 +16,7 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
+	self.FPS = {startTick = getTickCount(), counter = 0, frames = 0 }
 
 	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
 	self.m_AFKCheckCount = 0
@@ -38,6 +39,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
+	addEventHandler("onClientPreRender", root, bind(LocalPlayer.calcFPS, self))
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
@@ -483,6 +485,18 @@ function LocalPlayer:renderPedNameTags()
 		end
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/PedNameTag") end
+end
+
+function LocalPlayer:calcFPS()
+	if getTickCount() - self.FPS.startTick >= 1000 then
+		if self.FPS.frames ~= self.FPS.counter then
+			self.FPS.frames = self.FPS.counter
+		end
+		self.FPS.counter = 0
+		self.FPS.startTick = getTickCount()
+	else
+		self.FPS.counter = self.FPS.counter + 1
+	end
 end
 
 function LocalPlayer:Event_OnTryPickup( pickup )

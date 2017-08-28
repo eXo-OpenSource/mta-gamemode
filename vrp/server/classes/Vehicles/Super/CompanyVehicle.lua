@@ -57,12 +57,14 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self:setLocked(false)
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
-	local a, r, g, b
-
+	if color and fromJSON(color) then	
+		setVehicleColor(self, fromJSON(color))
+	else
 		local companyId = self.m_Company:getId()
-		r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+		local r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+		setVehicleColor(self, r, g, b, r, g, b)
+	end
 
-	setVehicleColor(self, r, g, b, r, g, b)
 
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)

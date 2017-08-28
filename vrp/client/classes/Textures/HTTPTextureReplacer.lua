@@ -11,10 +11,6 @@ function HTTPTextureReplacer:constructor(element, fileName, textureName, options
 	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
 	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
-
-	if isElementStreamedIn(self.m_Element) then
-		self:load()
-	end
 end
 
 function HTTPTextureReplacer:destructor()
@@ -26,13 +22,13 @@ function HTTPTextureReplacer:load()
 		self:addToQueue()
 		return TextureReplacer.Status.DELAYED
 	else
-		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+		self.m_Texture = TextureCache.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 		return self:attach()
 	end
 end
 
 function HTTPTextureReplacer:unload()
-	local a = TextureReplacer.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+	local a = TextureCache.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
 end

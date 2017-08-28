@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.4" client="1.5.4"/>
+	<min_mta_version server="1.5.4-9.11342" client="1.5.4-9.11342"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -160,7 +160,6 @@
 
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
-	<script src="server/classes/Gameplay/Race/MovementRecorder.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
@@ -359,6 +358,8 @@
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/Sound.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
+	<script src="client/classes/Textures/Cache/CachedTexture.lua" type="client"/>
+	<script src="client/classes/Textures/Cache/TextureCache.lua" type="client"/>
 	<script src="client/classes/Textures/TextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/HTTPTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>

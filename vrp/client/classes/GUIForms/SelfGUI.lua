@@ -660,7 +660,9 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 end
 
 function SelfGUI:VehicleGarageUpgradeButton_Click()
-	triggerServerEvent("vehicleUpgradeGarage", root)
+	QuestionBox:new(_("Bitte bestätige %s deiner Garage. Das Geld wird von deinem Konto abgebucht.", localPlayer.m_GarageType == 0 and "den Kauf" or "das Upgrade"), function()
+		triggerServerEvent("vehicleUpgradeGarage", root)
+	end)
 end
 
 function SelfGUI:VehicleHangarButton_Click()
@@ -812,7 +814,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "paydayBox_relative", state)
 		end
 
-		GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Design", self.m_SettingBG)
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Design", self.m_SettingBG)
 
 		local function updateDesignOptions(index)
 			self.m_LifeArmor:setVisible(false)
@@ -824,6 +826,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_ChartZone:setVisible(false)
 			self.m_ChartSkin:setVisible(false)
 			self.m_ChartHours:setVisible(false)
+			self.m_ChartFPS:setVisible(false)
 			if index == UIStyle.vRoleplay then
 				self.m_LifeArmor:setVisible(true)
 			elseif index == UIStyle.eXo then
@@ -837,10 +840,11 @@ function SelfGUI:onSettingChange(setting)
 				self.m_ChartZone:setVisible(true)
 				self.m_ChartSkin:setVisible(true)
 				self.m_ChartHours:setVisible(true)
+				self.m_ChartFPS:setVisible(true)
 			end
 		end
 
-		self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG) --0.53
+		self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG) --0.53
 		for i, v in ipairs(UIStyle) do
 			self.m_UIChange:addItem(v)
 		end
@@ -851,7 +855,7 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.Chart), true)
 
-		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
+		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
 		self.m_LifeArmor:setFont(VRPFont(25))
 		self.m_LifeArmor:setFontSize(1)
 		self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
@@ -860,35 +864,39 @@ function SelfGUI:onSettingChange(setting)
 			HUDUI:getSingleton():toggleDefaultHealthArmor(state)
 		end
 
-		self.m_ChartMargin = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Abstand zwischen Balken", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartMargin = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Abstand zwischen Balken", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartMargin:setChecked(core:get("HUD", "chartMargin", true))
 		self.m_ChartMargin.onChange = function (state) core:set("HUD", "chartMargin", state) end
 
-		self.m_ChartZone = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.20, self.m_Height*0.04, _"Zone-Name", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartZone = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.20, self.m_Height*0.04, _"Zone-Name", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartZone:setChecked(core:get("HUD", "chartZoneVisible", true))
 		self.m_ChartZone.onChange = function (state) core:set("HUD", "chartZoneVisible", state) end
 
-		self.m_ChartSkin = GUICheckbox:new(self.m_Width*0.22, self.m_Height*0.76, self.m_Width*0.15, self.m_Height*0.04, _"Passbild", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartSkin = GUICheckbox:new(self.m_Width*0.22, self.m_Height*0.73, self.m_Width*0.15, self.m_Height*0.04, _"Passbild", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartSkin:setChecked(core:get("HUD", "chartSkinVisible", false))
 		self.m_ChartSkin.onChange = function (state) core:set("HUD", "chartSkinVisible", state) end
 
-		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartBlue = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.35, self.m_Height*0.04, _"blaues Farbschema", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartBlue:setChecked(core:get("HUD", "chartColorBlue", false))
 		self.m_ChartBlue.onChange = function (state) core:set("HUD", "chartColorBlue", state) end
 
-		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartLabels = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.67, self.m_Width*0.35, self.m_Height*0.04, _"Beschriftungen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartLabels:setChecked(core:get("HUD", "chartLabels", true))
 		self.m_ChartLabels.onChange = function (state) core:set("HUD", "chartLabels", state) end
 
-		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.76, self.m_Width*0.35, self.m_Height*0.04, _"Punkte / Level", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartPoints = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.73, self.m_Width*0.35, self.m_Height*0.04, _"Punkte / Level", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartPoints:setChecked(core:get("HUD", "chartPointLevelVisible", true))
 		self.m_ChartPoints.onChange = function (state) core:set("HUD", "chartPointLevelVisible", state) end
 
-		self.m_ChartHours = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartHours = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.79, self.m_Width*0.35, self.m_Height*0.04, _"Spielstunden", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_ChartHours:setChecked(core:get("HUD", "chartPlaytimeVisible", false))
 		self.m_ChartHours.onChange = function (state) core:set("HUD", "chartPlaytimeVisible", state) end
 
-		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.6, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
+		self.m_ChartFPS = GUICheckbox:new(self.m_Width*0.4, self.m_Height*0.85, self.m_Width*0.35, self.m_Height*0.04, _"FPS Anzeigen", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_ChartFPS:setChecked(core:get("HUD", "chartFPSVisible", true))
+		self.m_ChartFPS.onChange = function (state) core:set("HUD", "chartFPSVisible", state) end
+
+		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.57, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
 		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
 		self.m_HUDScale:setColor(Color.LightBlue)
 		self.m_HUDScale:setText(_"HUD-Skalierung")
