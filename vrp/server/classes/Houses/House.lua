@@ -42,9 +42,21 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 				rotation  = 0,
 				dimension = self.m_Id,
 				interior  = HOUSE_INTERIOR_TABLE[self.m_InteriorID][1],
+				data      = {},
 			}
 		})
-		--self.m_OutdoorFurniture = FurnitureCollection:new()
+		--[[
+		self.m_OutdoorFurniture = OutdoorFurnitureCollection:new(self, {
+			{
+				item      = "Trashcan",
+				position  = {610.635, -1478.917, 14.649},
+				rotation  = 0,
+				dimension = 0,
+				interior  = 0,
+				data      = {},
+			}
+		})
+		--]]
 	end
 
 	if owner == false then
@@ -64,11 +76,16 @@ end
 function House:updatePickup()
 	if 	self.m_Pickup then self.m_Pickup:destroy() end
 	self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and ARROW_FOR_SALE or ARROW_PICKUP), 10, math.huge)
+	self.m_Pickup.m_Super = self
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 
 function House:getOwner()
 	return self.m_Owner
+end
+
+function House:getName() -- returns the name of the owner
+	return Account.getNameFromId(self:getOwner())
 end
 
 function House:toggleLockState( player )
@@ -307,14 +324,18 @@ end
 
 function House:sellHouse(player)
 	if player:getId() == self.m_Owner then
-		-- destroy blip
-		player:triggerEvent("removeHouseBlip", self.m_Id)
+		if #self.m_IndoorFurniture.m_Furnitures == 0 --[[and #self.m_OutdoorFurniture.m_Furnitures == 0--]] then
+			-- destroy blip
+			player:triggerEvent("removeHouseBlip", self.m_Id)
 
-		local price = math.floor(self.m_Price*0.75)
-		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
-		player:giveMoney(price, "Haus-Verkauf")
+			local price = math.floor(self.m_Price*0.75)
+			player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
+			player:giveMoney(price, "Haus-Verkauf")
 
-		self:clearHouse()
+			self:clearHouse()
+		else
+			player:sendError(_("Bitte entferne zuerst alle Möbel! (Verkaufen mit Möbeln ist WIP)", player))
+		end
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
@@ -529,7 +550,7 @@ end
 
 function House:createInsideFurniture(item, position, rotation)
 	if not self.m_HasGTAInterior then
-		self.m_IndoorFurniture:addByData(item, item:getModelId(), position, rotation, self.m_Id, HOUSE_INTERIOR_TABLE[self.m_InteriorID][1], true)
+		self.m_IndoorFurniture:addByData(item, item:getModelId(), position, rotation, self.m_Id, HOUSE_INTERIOR_TABLE[self.m_InteriorID][1], {}, true)
 	end
 end
 
@@ -538,3 +559,17 @@ function House:removeInsideFurniture(object)
 		self.m_IndoorFurniture:removeByObject(object)
 	end
 end
+
+--[[
+function House:createOutsideFurniture(item, position, rotation)
+	if not self.m_HasGTAInterior then
+		self.m_OutdoorFurniture:addByData(item, item:getModelId(), position, rotation, 0, 0, {}, true)
+	end
+end
+
+function House:createOutsideFurniture(object)
+	if not self.m_HasGTAInterior then
+		self.m_OutdoorFurniture:removeByObject(object)
+	end
+end
+--]]

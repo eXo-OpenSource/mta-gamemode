@@ -7,22 +7,24 @@
 -- ****************************************************************************
 Furniture = inherit(Object)
 
-function Furniture:constructor(owner, item, model, position, rotation, dimension, interior)
+function Furniture:constructor(owner, item, model, position, rotation, dimension, interior, data)
 	self.m_WorldItem = false
 	self.m_Owner = owner
-	self.m_OwnerName = Account.getNameFromId(self.m_Owner.m_Owner)
 	self.m_Model = model
 	self.m_Position = position
 	self.m_Rotation = rotation
 	self.m_Dimension = dimension
 	self.m_Interior = interior
 	self.m_Item = item
+	--self.m_DataHolder = ItemHolder:new(data)
 end
 
 function Furniture:destructor()
+	--[[ gets called automatically
 	if self.m_WorldItem then
 		delete(self.m_WorldItem)
 	end
+	--]]
 end
 
 function Furniture:isInside()
@@ -31,7 +33,7 @@ end
 
 function Furniture:load()
 	if self.m_WorldItem then return false end
-	self.m_WorldItem = FurnitureWorldItem:new(self.m_Item, self.m_Owner, self.m_Position, self.m_Rotation, false, {getName = function() return self.m_OwnerName end})
+	self.m_WorldItem = FurnitureWorldItem:new(self.m_Item, self.m_Owner, self.m_Position, self.m_Rotation, false, {getName = function() return self.m_Owner:getName() end})
 	self.m_WorldItem:setFurnitureInstance(self)
 
 	local object = self.m_WorldItem:getObject()

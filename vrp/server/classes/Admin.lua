@@ -244,11 +244,13 @@ function Admin:Event_getPlayerInfo(Id, name)
 end
 
 function Admin:Event_respawnFactionVehicles(Id)
-    local faction = FactionManager:getSingleton():getFromId(Id)
-    if faction then
-        faction:respawnVehicles( client )
-        client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
-    end
+	if client:getRank() >= ADMIN_RANK_PERMISSION["respawnFaction"] then
+		local faction = FactionManager:getSingleton():getFromId(Id)
+		if faction then
+			faction:respawnVehicles(client)
+			client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
+		end
+	end
 end
 
 function Admin:Event_respawnCompanyVehicles(Id)

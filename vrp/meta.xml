@@ -97,6 +97,7 @@
 	<script src="server/classes/Houses/Furniture/Furniture.lua" type="server"/>
 	<script src="server/classes/Houses/Furniture/FurnitureCollection.lua" type="server"/>
 	<script src="server/classes/Houses/Furniture/IndoorFurnitureCollection.lua" type="server"/>
+	<script src="server/classes/Houses/Furniture/OutdoorFurnitureCollection.lua" type="server"/>
 	<script src="server/classes/Houses/House.lua" type="server"/>
 	<script src="server/classes/Houses/HouseManager.lua" type="server"/>
 

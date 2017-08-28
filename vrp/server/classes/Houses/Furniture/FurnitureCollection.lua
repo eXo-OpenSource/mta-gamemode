@@ -73,12 +73,12 @@ function FurnitureCollection:add(furniture, load)
 	return true
 end
 
-function FurnitureCollection:addByData(item, model, position, rotation, dimension, interior, load)
-	return self:add(Furniture:new(self.m_House, item, model, position, rotation, dimension, interior), load)
+function FurnitureCollection:addByData(item, model, position, rotation, dimension, interior, data, load)
+	return self:add(Furniture:new(self.m_House, item, model, position, rotation, dimension, interior, data), load)
 end
 
 function FurnitureCollection:loadList(furnitures)
 	for i, objectData in ipairs(furnitures) do
-		self:addByData(ItemManager:getSingleton():getInstance(objectData.item), objectData.model, Vector3(unpack(objectData.position)), objectData.rotation, objectData.dimension, objectData.interior)
+		self:addByData(ItemManager:getSingleton():getInstance(objectData.item), objectData.model, Vector3(unpack(objectData.position)), objectData.rotation, objectData.dimension, objectData.interior, objectData.data)
 	end
 end

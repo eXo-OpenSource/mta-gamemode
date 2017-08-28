@@ -754,3 +754,13 @@ CompanyStaticId = {
 	SANNEWS = 3,
 	EPT = 4,
 }
+
+ITEM_HOLDER_TYPE = {
+	WEAPON = 1,
+	GEN_ITEMS = 2,
+	MONEY = 3,
+}
+for name, value in pairs(ITEM_HOLDER_TYPE) do
+	_G[("ITEM_HOLDER_TYPE_%s"):format(name)] = value
+end
+ITEM_HOLDER_TYPE = nil

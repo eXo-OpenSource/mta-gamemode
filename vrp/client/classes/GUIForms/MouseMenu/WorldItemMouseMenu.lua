@@ -12,7 +12,7 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1)
 
     self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
-	
+
 	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
 
 	self:addModelSpecificItems(element)
@@ -87,15 +87,27 @@ function WorldItemMouseMenu:addModelSpecificItems(element)
 			self:addItem(_("Einnahmen: %d$", element:getData("earning"))):setTextColor(Color.LightBlue)
 		end
 	end
-end
 
+	--if element:getData("itemHolder") then
+		if self:hasPermissionTo("", element, true) then
+			self:addItem(_"Inventar öffnen",
+				function()
+					if self:getElement() then
+						delete(self)
+
+					end
+				end
+			):setIcon(FontAwesomeSymbols.Folder)
+		end
+	--end
+end
 
 function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
 	local superUserName = element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer")
 	local lpSuperUser = (localPlayer:getName() == superUserName or (localPlayer:getFaction() and localPlayer:getFaction():getShortName() == superUserName))
 	if ADMIN_RANK_PERMISSION[action] then --specified action
 		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then --if allowed
-			return true 
+			return true
 		end
 
 		return ownerPriority and lpSuperUser --just return it if owner can peform admin funcs (e.g. move)
@@ -108,10 +120,10 @@ function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
 		end
 	else
 		if ADMIN_RANK_PERMISSION[action] then
-			if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then 
-				return true 
-			else 
-				return false 
+			if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then
+				return true
+			else
+				return false
 			end
 		end
 	end

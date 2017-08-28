@@ -11,10 +11,6 @@ function IndoorFurnitureCollection:constructor()
 	self.m_Counter = 0
 end
 
-function IndoorFurnitureCollection:destructor()
-
-end
-
 function IndoorFurnitureCollection:increment()
 	if self.m_Counter == 0 then
 		self:load()

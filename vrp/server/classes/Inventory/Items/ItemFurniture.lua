@@ -8,8 +8,8 @@
 ItemFurniture = inherit(Item)
 
 function ItemFurniture:use(player, itemId, bag, place, itemName)
-	local currentHouse = player.m_CurrentHouse
-	if currentHouse ~= nil then
+	local currentHouse = self:getHouse(player)
+	if instanceof(currentHouse, House) then
 		if currentHouse:isValidToEnter(player) and currentHouse.m_HasGTAInterior == false then
 			local result = self:startObjectPlacing(player,
 				function(item, position, rotation)
@@ -23,4 +23,21 @@ function ItemFurniture:use(player, itemId, bag, place, itemName)
 	end
 
 	player:sendError(_("Du kannst hier kein(e) %s platzieren!", player, self:getName()))
+end
+
+function ItemFurniture:getHouse(player)
+	if player.m_CurrentHouse then
+		return player.m_CurrentHouse
+	end
+
+	local houses = HouseManager:getSingleton():getPlayerRentedHouses(player)
+	local nearest = {math.huge, false}
+	for index, house in pairs(houses) do
+		local distance = getDistanceBetweenPoints3D(house.m_Pickup:getPosition(), player:getPosition())
+		if distance < nearest[1] then
+			nearest = {distance, house}
+		end
+	end
+
+	return nearest[2]
 end
