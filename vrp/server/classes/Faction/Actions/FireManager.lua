@@ -10,19 +10,6 @@ FireManager = inherit(Singleton)
 local FIRE_TIME_MIN = 45 -- in minutes
 local FIRE_TIME_MAX = 90 -- in minutes
 
-local FIRE_MESSAGES = {
-	[1] = "Der Los Santos Airport steht in Flammen! Position: %s",
-	[2] = "Das Los Santos Police Department steht in Flammen! Position: %s",
-	[3] = "Ein Großbrand am Ammunation in Los Santos wurde gemeldet! Position: %s!",
-	[4] = "Ein Wohnhaus in %s brennt!",
-	[5] = "Ein verheerender Brand beim Burger Shot North wurde gemeldet! Position: %s",
-	[6] = "Der Überwachungsturm des Bademeisters am %s steht in Flammen!",
-	[7] = "Mehrere Wohnwagen stehen in Flammen! Position %s",
-	[8] = "Die Brandmeldeanlage eines 24/7 Shops meldet Feuer! Position: %s",
-	[9] = "Die Palomino Creek - Bank steht in Flammen!",
-	[10] = "Mehrere Mülleimer stehen in Flammen! Position: %s"
-}
-
 function FireManager:constructor()
 	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*60*1000
 	self.m_StartFirePulse = TimedPulse:new(rnd)
