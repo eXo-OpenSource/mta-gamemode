@@ -121,7 +121,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 		return
 	end
 
-	if delete == true then
+	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
 		self:removeItemFromPlace(bag, place, 1)
 	end
 
