@@ -86,13 +86,13 @@ function Inventory:loadItem(id)
 	self:syncClient()
 end
 
-function Inventory:useItem(itemId, bag, itemName, place, delete)
+function Inventory:useItem(itemId, bag, itemName, place)
 	if self:getItemAmount(itemName) <= 0 then
 		client:sendError(_("Inventar Fehler: Kein Item", client))
 		return
 	end
 
-	if delete == true then
+	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
 		self:removeItemFromPlace(bag, place, 1)
 	end
 
