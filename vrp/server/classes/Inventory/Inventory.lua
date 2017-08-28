@@ -43,7 +43,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 				end
 			end
 		else
-			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
+			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 		end
 	end
 
@@ -80,7 +80,7 @@ function Inventory:loadItem(id)
 			self.m_Items[id]["Value"] = row["Value"]
 			self.m_Bag[row["Tasche"]][place] = id
 		else
-			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
+			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 		end
 	end
 	self:syncClient()
