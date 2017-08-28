@@ -246,7 +246,6 @@
 	<script src="server/classes/Faction/Actions/FireRoot.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>

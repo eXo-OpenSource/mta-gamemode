@@ -39,11 +39,13 @@ function FireManager:constructor()
 end
 
 function FireManager:loadFirePlaces()
-	for index, value in ipairs(FireMap) do
-		self.m_Fires[index] = {
-			["message"] = FIRE_MESSAGES[index],
-			["position"] = value[1],
-			["table"] = value
+	local result = sql:queryFetch("SELECT * FROM ??_fires", sql:getPrefix())
+	for i, row in pairs(result) do
+		self.m_Fires[row.Id] = {
+			["message"] = row.Message,
+			["position"] = Vector3(row.PosX, row.PosY, row.PosZ),
+			["width"] = row.Width,
+			["height"] = row.Height
 		}
 	end
 end
@@ -78,7 +80,7 @@ end
 function FireManager:startFire(id)
 	if self.m_CurrentFire then delete(self.m_CurrentFire) self.m_CurrentFire = nil end
 	local fireTable = self.m_Fires[id]
-	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable.width or 20, fireTable.height or 20)
+	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable["width"] or 20, fireTable["height"] or 20)
 	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].y, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
