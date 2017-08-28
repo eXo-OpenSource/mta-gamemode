@@ -159,7 +159,7 @@ function PublicTransport:onVehiceStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			cancelEvent()
-			player:sendError(_("Es sitzt kein Fahrer im Taxi.", player))
+			player:sendError(_("Es sitzt kein %s.", player, veh:getModel() == 487 and "Pilot im Helikopter" or "Fahrer im Taxi"))
 		elseif veh:getModel() == 437 then
 			cancelEvent()
 			player:sendError(_("Es sitzt kein Fahrer im Bus.", player))
