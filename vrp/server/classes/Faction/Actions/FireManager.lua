@@ -78,8 +78,8 @@ end
 function FireManager:startFire(id)
 	if self.m_CurrentFire then delete(self.m_CurrentFire) self.m_CurrentFire = nil end
 	local fireTable = self.m_Fires[id]
-	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable.width, fireTable.height)
-	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].x, root, 400)
+	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable.width or 20, fireTable.height or 20)
+	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].y, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
 

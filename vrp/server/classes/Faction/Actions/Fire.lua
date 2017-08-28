@@ -5,89 +5,125 @@
 -- *  PURPOSE:     Fire class
 -- *
 -- ****************************************************************************
-Fire = inherit(Singleton)
+Fire = inherit(Object)
+Fire.Map = {}
+Fire.PedMap = {}
+Fire.PlayerMap = {}
+Fire.Settings = {
+	["DecayTime"] = 10000
+}
 
-function Fire:constructor(fireTable)
-	self.m_Position = fireTable["position"]
-	self.m_PositionName = getZoneName(self.m_Position).."/"..getZoneName(self.m_Position,true)
-	self.m_FirePeds = {}
-	self.m_FireTable = fireTable["table"]
-	self.m_Message = fireTable["message"]
+function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoot_v)
+	if tonumber(iX) and tonumber(iY) and tonumber(iZ) and tonumber(iSize) and iSize >= 1 and iSize <= 3 then
+		self.m_Ped = createPed(0, iX, iY, iZ, 0, false)
+			setElementFrozen(self.m_Ped, true)
+			setElementAlpha(self.m_Ped, 0)
+		self.m_iSize = iSize
+		self.m_uFireRoot = uFireRoot
+		self.m_iRoot_i = iRoot_i
+		self.m_iRoot_v = iRoot_v
+		self:setFireDecaying(bDecaying)
+		triggerClientEvent("fireElements:onFireCreate", self.m_Ped, iSize)
 
-	self.m_Blip = Blip:new("Fire.png", self.m_Position.x, self.m_Position.y, root, 400)
-	self.m_Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
-	self.m_Blip:setDisplayText("Verkehrsbehinderung")
-
-	self.m_DestroyFireFunc = bind(self.destroyFire, self)
-
-	PlayerManager:getSingleton():breakingNews(self.m_Message, self.m_PositionName)
-	FactionRescue:getSingleton():sendWarning(self.m_Message, "Brand-Meldung", true, self.m_Position, self.m_PositionName)
-	FactionState:getSingleton():sendWarning(self.m_Message, "Absperrung erforderlich", false, self.m_Position, self.m_PositionName)
-
-	addRemoteEvents{"requestFireDeletion"}
-	addEventHandler("requestFireDeletion", root, self.m_DestroyFireFunc)
-
-	for index, pos in pairs(self.m_FireTable) do
-		self:create(pos)
+		addEventHandler("fireElements:requestFireDeletion", self.m_Ped, function() delete(self) end)
+		Fire.Map[self.m_Ped] = self
+		return self
 	end
+	return false
 end
 
 function Fire:destructor()
-	for ped, bool in pairs(self.m_FirePeds) do
-		if bool == true and isElement(ped) then
-			self:destroyFire(ped)
-		end
+	triggerClientEvent("fireElements:onFireDestroy", resourceRoot, self.m_Ped) -- uElement cannot be the triggered source element because it's destroyed lol
+	if self.uFireRoot then
+		self.m_uFireRoot:updateFire(self.m_iRoot_i, self.m_iRoot_v, 0, true)
 	end
-	delete(self.m_Blip)
-end
-
-
-function Fire:create(pos)
-	local ped = createPed(0, pos)
-	local id = #self.m_FirePeds+1
-	ped:setFrozen(true)
-	ped:setAlpha(0)
-	self.m_FirePeds[id] = ped
-	ped.Id = id
-	triggerClientEvent("createFire", ped)
-end
-
-function Fire:getRemainingAmount()
-	local count = 0
-	for index, ped in pairs(self.m_FirePeds) do
-		if ped and isElement(ped) then count = count + 1 end
+	if isElement(self.m_Ped) then
+		triggerEvent("fireElements:onFireExtinguish", self.m_Ped, self.m_Extinguisher, self.m_iSize)
+		destroyElement(self.m_Ped)
 	end
-	return count
-end
-
-function Fire:syncFires(player)
-	for index, ped in pairs(self.m_FirePeds) do
-		if ped and isElement(ped) then
-			triggerClientEvent(player, "createFire", ped)
-		end
+	if isTimer(self.m_uDecayTimer) then
+		killTimer(self.m_uDecayTimer)
 	end
+
+	return true
 end
 
-function Fire:destroyFire(ped)
-	if ped.Id then
-		triggerClientEvent("destroyFire", resourceRoot, ped)
-		if isElement(ped) then
-			destroyElement(ped)
-		end
-		self.m_FirePeds[ped.Id] = nil
-		local remainingFires = self:getRemainingAmount()
-		if client then
-			client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))
-		end
-		if remainingFires <= 0 then
-			if client then
-				PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName)
-				FactionRescue:getSingleton().m_Faction:giveMoney(#self.m_FireTable * 100, "Brand gelöscht")
-			end
-
-			delete(self)
+function Fire:decreaseFireSize()
+	if self.m_iSize > 1 then
+		self.m_iSize = self.m_iSize -1
+		setElementHealth(self.m_Ped, 100) -- renew fire
+		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, self.m_iSize)
+		if self.m_uFireRoot then
+			self.m_uFireRoot:updateFire(self.m_.iRoot_i, self.m_.iRoot_v, self.m_.iSize, true)
 		end
 		return true
 	end
 	return false
 end
+
+function Fire:setFireSize(iSize)
+	if self.m_Ped and isElement(self.m_Ped) then
+		self.m_iSize = iSize
+		setElementHealth(self.m_Ped, 100) -- renew fire
+		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, iSize)
+		--dont update the fire root because this may cause an endless loop
+		return true
+	end
+	return false
+end
+
+function Fire:setFireDecaying(bDecaying)
+	if isTimer(self.m_uDecayTimer) then
+		killTimer(self.m_uDecayTimer)
+	end
+
+	if bDecaying then
+		self.m_uDecayTimer = setTimer(function()
+			if self.iSize > 1 then
+				self:decreaseFireSize()
+			else
+				self:destroyFireElement()
+			end
+		end, Fire.Settings["DecayTime"]+math.random(-500,500), self.m_iSize)
+	end
+	return true
+end
+
+function Fire:setExtinguisher(player)
+	self.m_Extinguisher = player
+end
+
+addEvent("fireElements:requestFireDeletion", true)
+addEvent("fireElements:onFireExtinguish")
+
+addEventHandler("fireElements:requestFireDeletion", resourceRoot, function()
+	local iCx, iCy, iCz = getElementPosition(client)
+	local iCx, iCy, iCz = getElementPosition(source)
+	local iDist = 5
+	if isPedInVehicle(client) then iDist = 10 end
+	if getDistanceBetweenPoints3D(iCx, iCy, iCz, iCx, iCy, iCz) <= iDist then
+		if not Fire.PlayerMap[client] or getTickCount()-Fire.PlayerMap[client] > 50 then
+			if Fire.Map[self.m_Ped].iSize > 1 then
+				Fire.Map[self.m_Ped]:decreaseFireSize()
+			else
+				Fire.Map[self.m_Ped]:setExtinguisher(client)
+				delete(Fire.Map[self.m_Ped])
+			end
+			Fire.PlayerMap[client] = getTickCount()
+		end
+	end
+end)
+
+addEvent("fireElements:onClientRequestsFires", true)
+addEventHandler("fireElements:onClientRequestsFires", resourceRoot, function()
+	triggerClientEvent(client, "fireElements:onClientRecieveFires", resourceRoot, Fire.Map)
+end)
+
+
+setTimer(function()
+    --local uRoot = createFireRoot(-33, 50, 30, 22)
+    local uRoot = FireRoot:new(2056, -1738, 15, 15)
+    setTimer(function()
+		delete(uRoot)
+	end, 15 * 60000, 1, uRoot)
+end, 50, 1)
