@@ -50,18 +50,7 @@ function FireManager:startRandomFire(source)
 		source:sendError(_("Du bist nicht berechtigt!", source))
 		return
 	end
-	--PlayerManager:getSingleton():breakingNews(_("!", player))
-	local rnd = math.random(1, #self.m_Fires)
-	if rnd == 9 then
-		if ActionsCheck:getSingleton().m_CurrentAction ~= "Banküberfall" then
-			self:startFire(rnd)
-		else
-			if source then
-				source:sendError("Feuer könnte den Bankrob stören!")
-			end
-		end
-	else self:startFire(rnd)
-	end
+	self:startFire(rnd)
 end
 
 function FireManager:startFire(id)

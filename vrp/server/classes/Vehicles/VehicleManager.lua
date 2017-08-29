@@ -1097,7 +1097,10 @@ function VehicleManager:Event_vehicleBreak()
 			if source.controller then
 				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
 			end
-			-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+			if (math.random(1, 10) == 1) then
+				FactionRescue:getSingleton():addVehicleFire(source)
+			end
+
 			source:setBroken(true)
 		end
 	end

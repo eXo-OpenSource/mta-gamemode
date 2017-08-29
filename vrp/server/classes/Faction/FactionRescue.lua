@@ -15,13 +15,14 @@ addRemoteEvents{
 function FactionRescue:constructor()
 	self.m_CollisionShape = createColCuboid(1700.82, -1802.14, 12, 1811.63- 1700.82, (1802.14 - 1742.56 )+ 17, 10) -- "medic base"
 	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape)
-	
+
 	self.m_CollisionShape2 = createColCuboid( 1642.64, -1722.31, 13.55, 1674.79 - 1642.64, 1722.31 -1691.8, 30) -- "parkhaus westlich von der medic base"
 	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape2)
 	-- Duty Pickup
 	self:createDutyPickup(1721.06, -1752.76, 13.55, 0) -- Base
 	self:createDutyPickup(1760.72, -1744.20, 6, 0) -- Garage
 
+	self.m_VehicleFires = {}
 
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
@@ -578,8 +579,8 @@ function FactionRescue:toggleLadder(veh, player, force)
 		if veh.LadderTimer and isTimer(veh.LadderTimer) then
 			killTimer(veh.LadderTimer)
 		end
-		if player then 
-			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
+		if player then
+			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player))
 			self:disableLadderBinds(player)
 			triggerClientEvent(player, "rescueLadderFixCamera", veh)
 		end
@@ -657,9 +658,23 @@ function FactionRescue:moveLadder(veh)
 		end
 	end
 
-	if veh.controller then 
+	if veh.controller then
 		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
 	else --fallback, timer gets killed automatically in most cases
 		killTimer(sourceTimer)
 	end
+end
+
+function FactionRescue:addVehicleFire(veh)
+	local pos = veh:getPosition()
+	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
+	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
+	self.m_VehicleFires[veh] = FireRoot:new(pos.x-3, pos.y-3, 6, 6)
+	self.m_VehicleFires[veh].Blip = Blip:new("Fire.png", pos.x, pos.y, root, 200)
+	self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
+	self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
+
+	self.m_VehicleFires[veh]:addOnFinishHook(function(zone)
+		self.m_Faction:sendShortMessage(("Fahrzeugbrand an Position %s gelöscht!"):format(zone))
+	end, zone)
 end

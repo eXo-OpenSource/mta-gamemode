@@ -122,12 +122,3 @@ addEventHandler("fireElements:onClientRequestsFires", resourceRoot, function()
 	end
 	triggerClientEvent(client, "fireElements:onClientRecieveFires", resourceRoot, fires)
 end)
-
-
-setTimer(function()
-    --local uRoot = createFireRoot(-33, 50, 30, 22)
-    local uRoot = FireRoot:new(2056, -1738, 15, 15)
-    setTimer(function()
-		delete(uRoot)
-	end, 15 * 60000, 1, uRoot)
-end, 50, 1)

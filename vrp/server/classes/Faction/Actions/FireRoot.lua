@@ -64,7 +64,16 @@ function FireRoot:destructor()
     if isElement(self.m_uRadarArea) then destroyElement(self.m_uRadarArea) end
     destroyElement(self.m_Root)
 
+	if self.m_onFinishHook then
+		self.m_onFinishHook[1](unpack(self.m_onFinishHook[2]))
+	end
+
     FireRoot.Map[self] = nil
+end
+
+function FireRoot:addOnFinishHook(callback, ...)
+	local additionalParameters = {...}
+	self.m_onFinishHook = {callback, additionalParameters}
 end
 
 function FireRoot:update()
