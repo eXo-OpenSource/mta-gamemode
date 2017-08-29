@@ -79,7 +79,7 @@ function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
 	local groundPosition = vehicle and getGroundPosition(vehicle.position)
 
-	triggerServerEvent("clientMagnetGrabVehicle", localPlayer, groundPosition)
+	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
 
 addEventHandler("vehicleEngineStart", root,

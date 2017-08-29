@@ -69,9 +69,10 @@ function BeggarPed:rob(player)
 	if not player.vehicle then
 		-- Give wage
 		local money = math.random(1, 5)
-		player:giveMoney(money, "Bettler-Raub")
-		player:giveKarma(-math.ceil(money/2))
-		player:sendShortMessage(_("-%s Karma", player, math.ceil(money/2)))
+		player:giveCombinedReward("Bettler-Raub", {
+			money = money,
+			karma = -math.ceil(money/2),
+		})
 		self:sendMessage(player, BeggarPhraseTypes.Rob)
 		player:meChat(true, ("packt %s und entreißt ihm %s"):format(self.m_Name, money == 1 and "einen Schein" or "ein paar Scheine"))
 		-- give Achievement
@@ -91,11 +92,12 @@ function BeggarPed:giveMoney(player, money)
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
 		if player:getMoney() >= money then
 			-- give wage
-			player:takeMoney(money, "Bettler")
 			local karma = math.min(money, 5)
-			player:giveKarma(karma)
-			player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
-			player:givePoints(1)
+			player:giveCombinedReward("Bettler-Geschenk", {
+				money = -money,
+				karma = karma,
+				points = 1,
+			})
 			player:meChat(true, ("übergibt %s %s"):format(self.m_Name, money == 1 and "einen Schein" or "ein paar Scheine"))
 			self:sendMessage(player, BeggarPhraseTypes.Thanks)
 
@@ -127,10 +129,11 @@ function BeggarPed:sellWeed(player, amount)
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
 		if player:getInventory():getItemAmount("Weed") >= amount then
 			player:getInventory():removeItem("Weed", amount)
-			player:giveKarma(- math.ceil(amount/50))
-			player:sendShortMessage(_("-%s Karma", player, math.ceil(amount/50)))
-			player:giveMoney(amount*15, "Bettler-Drogenhandel")
-			player:givePoints(math.ceil(20 * amount/200))
+			player:giveCombinedReward("Bettler-Handel", {
+				money = amount*15,
+				karma = -math.ceil(amount/50),
+				points = math.ceil(20 * amount/200),
+			})
 			player:meChat(true, ("übergibt %s %s"):format(self.m_Name, amount > 100 and "eine große Tüte" or "eine Tüte"))
 			self:sendMessage(player, BeggarPhraseTypes.Thanks)
 			-- Despawn the Beggar
@@ -154,10 +157,10 @@ function BeggarPed:giveItem(player, item)
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
 		if player:getInventory():getItemAmount(item) >= 1 then
 			player:getInventory():removeItem(item, 1)
-			local karma = 5
-			player:giveKarma(karma)
-			player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
-			player:givePoints(5)
+			player:giveCombinedReward("Bettler-Handel", {
+				karma = 5,
+				points = 5,
+			})
 			self:sendMessage(player, BeggarPhraseTypes.Thanks)
 			player:meChat(true, ("übergibt %s eine Tüte"):format(self.m_Name))
 			setTimer(
@@ -183,10 +186,11 @@ function BeggarPed:buyItem(player, item)
 			local price = BeggarItemBuy[item]["amount"] * BeggarItemBuy[item]["pricePerAmount"]
 			if player:getMoney() >= price then
 				local karma = 5
-				player:takeMoney(price)
-				player:giveKarma(-karma)
-				player:sendShortMessage(_("-%s Karma", player, math.floor(karma)))
-				player:givePoints(5)
+				player:giveCombinedReward("Bettler-Handel", {
+					money = -price,
+					karma = -5,
+					points = 5,
+				})
 				player:getInventory():giveItem(item, BeggarItemBuy[item]["amount"])
 				self:sendMessage(player, BeggarPhraseTypes.Thanks)
 				player:meChat(true, ("erhält von %s eine Tüte!"):format(self.m_Name))
@@ -246,10 +250,10 @@ function BeggarPed:acceptTransport(player)
 						local player = hitElement
 						if player.vehicle and veh:getOccupant(seat) == self then
 							local distance = getDistanceBetweenPoints3D(player.beggarTransportStartPos, player.position)/1000
-							local karma = math.ceil(5*distance)
-							player:giveKarma(karma)
-							player:sendShortMessage(_("+%s Karma", player, karma))
-							player:givePoints(math.ceil(7*distance))
+							player:giveCombinedReward("Bettler-Transport", {
+								karma = math.ceil(5*distance),
+								points = math.ceil(7*distance),
+							})
 							player:meChat(true, ("lässt %s aus seinem Fahrzeug"):format(self.m_Name))
 							self:sendMessage(player, BeggarPhraseTypes.Thanks)
 							self:deleteTransport(player)
