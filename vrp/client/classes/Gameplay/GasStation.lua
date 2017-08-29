@@ -72,6 +72,8 @@ function GasStation:onObjectStreamOut()
 end
 
 function GasStation:nonInteriorRequest()
+	if not GasStation.PendingTransaction then return end
+
 	local vehicle = GasStation.PendingTransaction.vehicle
 	local fuel = GasStation.PendingTransaction.fuel
 	local station = GasStation.PendingTransaction.station
