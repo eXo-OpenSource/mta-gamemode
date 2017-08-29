@@ -40,5 +40,6 @@
     <object id="object (kmb_container_yel) (11)" breakable="true" interior="0" alpha="255" model="2935" doublesided="false" scale="1" dimension="0" posX="-2067.8" posY="1429.9" posZ="7.6" rotX="0" rotY="0" rotZ="267.995"></object>
     <object id="object (kmb_container_blue) (12)" breakable="true" interior="0" alpha="255" model="2932" doublesided="false" scale="1" dimension="0" posX="-2064.3999" posY="1420.8" posZ="7.6" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (kmb_container_red) (13)" breakable="true" interior="0" alpha="255" model="2934" doublesided="false" scale="1" dimension="0" posX="-2064.3994" posY="1420.9004" posZ="10.5" rotX="0" rotY="0" rotZ="0"></object>
+    <vehicle id="vehicle (DFT-30) (1)" paintjob="3" interior="0" alpha="255" model="578" plate="GP7V EGZ" dimension="0" posX="-2080.3" posY="1393.8" posZ="7.9" rotX="0" rotY="0" rotZ="180" color="245,245,245,245,245,245,0,0,0,0,0,0"></vehicle>
     <removeWorldObject id="removeWorldObject (Freightcrane1) (1)" radius="16.442955" interior="0" model="3474" lodModel="0" posX="1591.3203" posY="2368.4609" posZ="16.74219" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
 </map>

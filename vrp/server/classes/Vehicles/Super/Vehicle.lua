@@ -7,6 +7,8 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 
+addRemoteEvents{"clientMagnetGrabVehicle"}
+
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -38,8 +40,11 @@ function Vehicle:virtual_constructor()
 
 	if self:getModel() == 417 then
 		self:addMagnet()
+		self.m_MagnetVehicleCheck = bind(Vehicle.magnetVehicleCheck, self)
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
+
+		addEventHandler("clientMagnetGrabVehicle", root, self.m_MagnetVehicleCheck)
 	end
 end
 
@@ -693,7 +698,7 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 		end
 	else
 		if not self.m_Magnet and not isElement(self.m_Magnet) then
-			client:sendError("INTERNAL ERROR: Funktioniert immer noch nicht...")
+			client:sendError("Internal Error: Magnet Objekt nicht gefunden! Bitte bei einem Scripter melden!")
 			return
 		end
 		local colShape = createColSphere(self.m_Magnet.matrix:transformPosition(Vector3(0, 0, -0.5)), 2)

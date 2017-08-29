@@ -17,7 +17,11 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
+		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList",
+		"vehicleLoadObject", "vehicleDeloadObject"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -45,7 +49,6 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
-	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -155,10 +158,6 @@ end
 
 function VehicleManager:Event_GetTuningList()
 	source:getTuningList(client)
-end
-
-function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
-	source:magnetVehicleCheck(groundPosition)
 end
 
 function VehicleManager:getFactionVehicles(factionId)

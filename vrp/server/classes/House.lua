@@ -336,7 +336,7 @@ function House:enterHouse(player)
 	local isRobberEntering = false
 
 	if self.m_RobGroup then
-		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) then
+		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
 			isRobberEntering = true
 		end
 	end

@@ -764,6 +764,18 @@ function Player:setDefaultSkin()
 	end
 end
 
+function Player:setKarma(karma)
+	if karma < 0 and self.m_Karma >= 0 then
+		self:giveAchievement(1)
+	end
+	if karma >= 0 and self.m_Karma < 0 then
+		self:giveAchievement(2)
+	end
+
+	DatabasePlayer.setKarma(self, karma)
+	self:setPublicSync("Karma", self.m_Karma)
+end
+
 function Player:setXP(xp)
 	DatabasePlayer.setXP(self, xp)
 	self:setPublicSync("XP", xp)
@@ -1036,24 +1048,10 @@ function Player:addCrime(crimeType)
 end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
-	if not money or money < 1 then return false end
 	local success = DatabasePlayer.giveMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
-		end
-		self:triggerEvent("playerCashChange", bNoSound)
-	end
-	return success
-end
-
-function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
-	if not money or money < 1 then return false end
-	local success = DatabasePlayer.takeMoney(self, money, reason)
-	if success then
-		local money = math.abs(money)
-		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s%s"):format("-"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", bNoSound)
 	end
@@ -1061,7 +1059,6 @@ function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
-	if not money or money < 1 then return false end
 	local success = DatabasePlayer.addBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1073,7 +1070,6 @@ function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:takeBankMoney(money, reason, bNoSound, silent) -- Overriden
-	if not money or money < 1 then return false end
 	local success = DatabasePlayer.takeBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1113,103 +1109,12 @@ function Player.getChatHook()
 	return Player.ms_ChatHook
 end
 
-function Player:setKarma(karma)
-	if karma < 0 and self.m_Karma >= 0 then
-		self:giveAchievement(1)
-	end
-	if karma >= 0 and self.m_Karma < 0 then
-		self:giveAchievement(2)
-	end
+function Player:givePoints(p) -- Overriden
+	DatabasePlayer.givePoints(self, p)
 
-	DatabasePlayer.setKarma(self, karma)
-end
-
-function Player:giveKarma(karma, reason, bNoSound, silent)
-	if not karma or karma < 1 then return false end
-	local oldKarma = self.m_Karma
-	local success = DatabasePlayer.giveKarma(self, karma, reason)
-	if success then
-		if karma < 0 and self.m_Karma >= 0 then
-			self:giveAchievement(1)
-		end
-		if karma ~= 0 and not silent then
-			self:sendShortMessage(("%s Karma%s"):format("+"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-		end
+	if p ~= 0 then
+		self:sendShortMessage((p >= 0 and "+"..p or p).._(" Punkte", self))
 	end
-	return success
-end
-
-function Player:takeKarma(karma, reason, bNoSound, silent)
-	if not karma or karma < 1 then return false end
-	local oldKarma = self.m_Karma
-	local success = DatabasePlayer.takeKarma(self, karma, reason)
-	if success then
-		if oldKarma >= 0 and self.m_Karma < 0 then
-			self:giveAchievement(2)
-		end
-		if karma ~= 0 and not silent then
-			self:sendShortMessage(("%s Karma%s"):format("-"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-		end
-	end
-	return success
-end
-
-function Player:givePoints(p, reason, bNoSound, silent) -- Overriden
-	DatabasePlayer.givePoints(self, p, reason)
-	if p ~= 0 and not silent then
-		self:sendShortMessage(("%s Punkte%s"):format("+"..p, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-	end
-end
-
-function Player:takePoints(p, reason, bNoSound, silent) -- Overriden
-	DatabasePlayer.takePoints(self, p, reason)
-	if p ~= 0 and not silent then
-		self:sendShortMessage(("%s Punkte%s"):format("-"..p , reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
-	end
-end
-
-function Player:giveCombinedReward(name, tblReward)
-	local smText = ""
-	for name, amount in pairs(tblReward) do
-		amount = tonumber(amount)
-		if amount then
-			amount = math.round(amount)
-			if name == "money" then
-				if amount > 0 then
-					self:giveMoney(amount, name, false, true)
-					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeMoney(math.abs(amount), name, false, true)
-					smText = smText .. ("%s\n"):format(toMoneyString(amount))
-				end
-			elseif name == "bankMoney" then
-				if amount > 0 then
-					self:addBankMoney(amount, name, false, true)
-					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeBankMoney(math.abs(amount), name, false, true)
-					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
-				end
-			elseif name == "points" then
-				if amount > 0 then
-					self:givePoints(amount, name, false, true)
-					smText = smText .. ("+%s Punkte\n"):format(amount)
-				elseif amount < 0 then
-					self:takePoints(math.abs(amount), name, false, true)
-					smText = smText .. ("%s Punkte\n"):format(amount)
-				end
-			elseif name == "karma" then
-				if amount > 0 then
-					self:giveKarma(amount, name, false, true)
-					smText = smText .. ("+%s Karma\n"):format(amount)
-				elseif amount < 0 then
-					self:takeKarma(math.abs(amount), name, false, true)
-					smText = smText .. ("%s Karma\n"):format(amount)
-				end
-			end
-		end
-	end
-	self:sendShortMessage(smText:sub(0, #smText-1), name, {0, 94, 255}, 10000)
 end
 
 function Player:setUniqueInterior(uniqueInteriorId)
