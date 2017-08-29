@@ -40,6 +40,20 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 		teleporter:addEnterEvent(bind(self.onEnter, self))
 		teleporter:addExitEvent(bind(self.onExit, self))
+	else
+		if self.m_BuyAble then
+			self.m_Colshape = createColSphere(self.m_Position, 3)
+			addEventHandler("onColShapeHit", self.m_Colshape, function(hitElement, dim)
+				if hitElement:getType() == "player" and dim then
+					self:onEnter(hitElement)
+				end
+			end)
+			addEventHandler("onColShapeLeave", self.m_Colshape, function(hitElement, dim)
+				if hitElement:getType() == "player" and dim then
+					self:onExit(hitElement)
+				end
+			end)
+		end
 	end
 
 	if typeData["Ped"] then
@@ -215,7 +229,7 @@ end
 
 function Shop:addBlip(blip)
 	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600)
-	if blip == "Bar.png" then 
+	if blip == "Bar.png" then
 		b:setDisplayText("Bar / Club", BLIP_CATEGORY.Leisure)
 		b:setOptionalColor({245, 160, 199})
 	else
