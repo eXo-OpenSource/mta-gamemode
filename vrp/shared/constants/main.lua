@@ -755,5 +755,18 @@ CompanyStaticId = {
 	EPT = 4,
 }
 
+FactionStaticId = {
+	SAPD = 1,
+	FBI = 2,
+	MBT = 3,
+	RESCUE = 4,
+	LCN = 5,
+	YAKUZZA = 6,
+	GROVE = 7,
+	BALLAS = 8,
+	OUTLAWS = 9,
+	VATOS = 10
+}
+
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
