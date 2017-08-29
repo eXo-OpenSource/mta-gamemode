@@ -12,7 +12,7 @@ ShopManager.VehicleShopsMap = {}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder"
 	}
@@ -38,8 +38,6 @@ function ShopManager:constructor()
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
 	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
 	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
-
-	addEventHandler("gasStationFill", root, bind(self.onGasStationFill, self))
 
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
@@ -120,42 +118,6 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 		end
 	else
 		client:sendError(_("Internal Error! Menu not found!", client))
-	end
-end
-
-function ShopManager:onGasStationFill(shopId, drawFromBank)
-	local shop = self:getFromId(shopId)
-	if not shop then
-		client:sendError(_("Internal Error! Shop not found!", client))
-		return
-	end
-
-	local vehicle = getPedOccupiedVehicle(client)
-	if not vehicle then return end
-	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
-		if (drawFromBank and client:getBankMoney() or client:getMoney()) >= 10 then
-			if vehicle:getFuel() <= 100-10 then
-				vehicle:setFuel(vehicle:getFuel() + 10)
-				if drawFromBank then
-					client:takeBankMoney(10, "Tanken")
-				else
-					client:takeMoney(10, "Tanken")
-				end
-				client:triggerEvent("gasStationUpdate", 10, 10)
-				shop:giveMoney(5, "Betankung")
-			else
-				client:sendError(_("Dein Tank ist bereits voll", client))
-			end
-		else
-			if drawFromBank then
-				client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto!", client))
-			else
-				client:sendError(_("Du hast nicht genügend Geld auf der Hand!", client))
-			end
-		end
-	else
-		client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
-		return
 	end
 end
 

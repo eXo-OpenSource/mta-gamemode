@@ -46,8 +46,8 @@ function MechanicTow:destuctor()
 end
 
 function MechanicTow:onPlayerQuit(player)
-	if isElement(player.fuelNozzle) then
-		player.fuelNozzle:destroy()
+	if isElement(player.mechanic_fuelNozzle) then
+		player.mechanic_fuelNozzle:destroy()
 	end
 end
 
@@ -274,33 +274,33 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 	end
 
 	if vehicle.getCompany and vehicle:getCompany() == self then
-		if isElement(client.fuelNozzle) then
+		if isElement(client.mechanic_fuelNozzle) then
 			toggleControl(client, "fire", true)
-			client:setPrivateSync("hasFuelNozzle", false)
+			client:setPrivateSync("hasMechanicFuelNozzle", false)
 			client:triggerEvent("closeFuelTankGUI")
-			client.fuelNozzle:destroy()
+			client.mechanic_fuelNozzle:destroy()
 			return
 		end
 
 		if not vehicle.towingVehicle then return end
 
-		client.fuelNozzle = createObject(1909, client.position)
-		client.fuelNozzle:setData("attachedToVehicle", vehicle, true)
-		client.fuelNozzle.vehicle = vehicle
-		exports.bone_attach:attachElementToBone(client.fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
+		client.mechanic_fuelNozzle = createObject(1909, client.position)
+		client.mechanic_fuelNozzle:setData("attachedToVehicle", vehicle, true)
+		client.mechanic_fuelNozzle.vehicle = vehicle
+		exports.bone_attach:attachElementToBone(client.mechanic_fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
-		client:setPrivateSync("hasFuelNozzle", vehicle)
+		client:setPrivateSync("hasMechanicFuelNozzle", vehicle)
 		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel())
 		toggleControl(client, "fire", false)
 	end
 end
 
 function MechanicTow:Event_mechanicRejectFuelNozzle()
-	if isElement(client.fuelNozzle) then
+	if isElement(client.mechanic_fuelNozzle) then
 		toggleControl(client, "fire", true)
-		client:setPrivateSync("hasFuelNozzle", false)
+		client:setPrivateSync("hasMechanicFuelNozzle", false)
 		client:triggerEvent("closeFuelTankGUI")
-		client.fuelNozzle:destroy()
+		client.mechanic_fuelNozzle:destroy()
 		return
 	end
 end
@@ -324,7 +324,7 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 		return
 	end
 
-	local fuelTank = client:getPrivateSync("hasFuelNozzle")
+	local fuelTank = client:getPrivateSync("hasMechanicFuelNozzle")
 	if fuel > fuelTank:getFuel()*5 then
 		client:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
@@ -338,7 +338,7 @@ end
 function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
-	local fuelTank = player:getPrivateSync("hasFuelNozzle")
+	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
 	if fuel > fuelTank:getFuel()*5 then
 		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return

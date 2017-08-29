@@ -15,7 +15,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionVehicleServiceMarkerPerformAction", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -33,7 +33,6 @@ function FactionManager:constructor()
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
-	addEventHandler("factionVehicleServiceMarkerPerformAction", root, bind(self.Event_serviceMarkerPerformAction, self))
 	addEventHandler("factionRequestDiplomacy", root, bind(self.Event_requestDiplomacy, self))
 	addEventHandler("factionChangeDiplomacy", root, bind(self.Event_changeDiplomacy, self))
 	addEventHandler("factionDiplomacyAnswer", root, bind(self.Event_answerDiplomacyRequest, self))
@@ -43,11 +42,6 @@ function FactionManager:constructor()
 	FactionState:new()
 	FactionRescue:new()
 	FactionEvil:new(self.EvilFactions)
-
-	self.m_ServiceMarkerErrorTexts = { --valid faction types for vehicle service markers
-		["State"] = {"Nur für Fahrzeuge des Staates!", "Nur für Staatsfraktionisten im Dienst!"},
-		["Rescue"] = {"Nur für Fahrzeuge des Medical Centers!", "Nur für Mitglieder des Rettungsdienstes im Dienst!"},
-	}
 end
 
 function FactionManager:destructor()
@@ -439,57 +433,6 @@ end
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(FactionManager.Map) do
 		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
-	end
-end
-
-function FactionManager:checkPermissionForVehicleServiceMarker(player, type)
-	if player.vehicle and player.vehicleSeat == 0 then
-		if player:getFaction() and player:getFaction():getType() == type and player:isFactionDuty() then
-			if player.vehicle:getFaction() and player.vehicle:getFaction():getType() == type then
-				return true
-			else
-				player:sendError(_(self.m_ServiceMarkerErrorTexts[type][1], player))
-			end
-		else
-			player:sendError(_(self.m_ServiceMarkerErrorTexts[type][2], player))
-		end
-	end
-	return false
-end
-
-function FactionManager:createVehicleServiceMarker(type, pos, size)
-	if not self.m_ServiceMarkerErrorTexts[type] then return outputDebug("invalid faction type") end
-	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
-	addEventHandler("onMarkerHit", marker ,
-		function(hitElement, dim)
-			if hitElement:getType() == "player" and dim then
-				if self:checkPermissionForVehicleServiceMarker(hitElement, type) then
-					hitElement.factionVehicleServiceMarker = source
-					hitElement.vehicle:toggleHandBrake(hitElement, true)
-					hitElement:triggerEvent("showFactionVehicleServiceGUI")
-				end
-			end
-		end
-	)
-end
-
-function FactionManager:Event_serviceMarkerPerformAction(type)
-	if client.factionVehicleServiceMarker and getDistanceBetweenPoints3D(client:getPosition(), client.factionVehicleServiceMarker:getPosition()) <= 3 then
-		local costs
-		if type == "fill" then
-			costs = math.floor((100-client.vehicle:getFuel())*5)
-			if costs == 0 then client:sendInfo(_("Dein Fahrzeugtank ist noch voll.", client)) end
-			client.vehicle:setFuel(100)
-			client:getFaction():takeMoney(costs, "Fahrzeug-Betankung", true)
-		elseif type == "repair" then
-			costs = math.floor((1000-client.vehicle:getHealth()))
-			if costs == 0 then client:sendInfo(_("Dein Fahrzeug benötigt keine Reparaturen.", client)) end
-			client.vehicle:fix()
-			client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur", true)
-		end
-		client.vehicle:toggleHandBrake(client, false)
-	else
-		client:sendError(_("Du bist zu weit entfernt!", client))
 	end
 end
 
