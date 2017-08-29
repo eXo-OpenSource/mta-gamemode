@@ -7,13 +7,13 @@
 -- ****************************************************************************
 GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
-addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction"}
+addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
 
 function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -26,6 +26,7 @@ function GasStationManager:constructor()
 	addEventHandler("gasStationRejectFuelNozzle", root, bind(GasStationManager.rejectFuelNozzle, self))
 	--addEventHandler("gasStationStartTransaction", root, bind(GasStationManager.startTransaction, self))
 	addEventHandler("gasStationConfirmTransaction", root, bind(GasStationManager.confirmTransaction, self))
+	addEventHandler("gasStationRepairVehicle", root, bind(GasStationManager.serviceStationRepairVehicle, self))
 end
 
 function GasStationManager:destructor()
@@ -93,8 +94,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 			elseif station:isFactionFuelStation() then
 				if not instanceof(vehicle, FactionVehicle, true) then client:sendWarning("Dieses Fahrzeug darf hier nicht getankt werden!") return end
 
-				local faction = client:getFaction()
-				if faction and faction:getId() == station:getAccessibleId() then
+				if station:hasPlayerAccess(client) then
+					local faction = client:getFaction()
 					if faction:getMoney() >= price then
 						faction:takeMoney(price, "Tanken")
 						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
@@ -106,8 +107,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 			elseif station:isCompanyFuelStation() then
 				if not instanceof(vehicle, CompanyVehicle, true) then client:sendWarning("Dieses Fahrzeug darf hier nicht getankt werden!") return end
 
-				local company = client:getCompany()
-				if company and company:getId() == station:getAccessibleId() then
+				if station:hasPlayerAccess(client) then
+					local company = client:getCompany()
 					if company:getMoney() >= price then
 						company:takeMoney(price, "Tanken")
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
@@ -117,6 +118,24 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 				end
 			end
 		end
+	end
+end
+
+function GasStationManager:serviceStationRepairVehicle(element)
+	if GasStation.Map[element] and GasStation.Map[element]:hasPlayerAccess(client) then
+		if (client.vehicle.position - element.position).length > 10 then
+			client:sendError(_("Du bist zu weit entfernt!", client))
+			return
+		end
+
+		local price = math.floor(1000 - client.vehicle:getHealth()) * SERVICE_REPAIR_PRICE_MULTIPLICATOR
+		if price == 0 then
+			client:sendError("Das Fahrzeug hat keinen erheblichen Schaden!")
+			return
+		end
+
+		client.vehicle:fix()
+		client:getFaction():takeMoney(price, "Fahrzeug-Reparatur")
 	end
 end
 
@@ -318,4 +337,29 @@ GAS_STATIONS = {
 		nonInterior = true,
 	},
 	-- Faction fuelstations
+	{
+		name = "Staat Service Station",
+		stations = {
+			{Vector3(1564.10, -1616.77, 13.96), 0, 1}, -- LSPD #1
+			{Vector3(1552.89, -1616.77, 13.96), 0, 1}, -- LSPD #2
+			{Vector3(2292.8, 2461, 4), 90, 1}, -- LVT
+			{Vector3(127, 1908, 19.3), 90, 1}, -- Area
+			{Vector3(-1622.8, 664.8, -4.5), 0, 1}, -- SFPD
+			{Vector3(-1526, 458.1, 7.6), 90, 1}, -- SF Army
+			{Vector3(1209.800, -1824.200, 14.075), 90, 1}, -- FBI
+		},
+		accessible =  {1, 0},
+		nonInterior = true,
+		serviceStation = true,
+	},
+	{
+		name = "Rescue Service Station",
+		stations = {
+			{Vector3(1798.14, -1743.11, 6.8), 180, 1}, -- Rescue #1
+			{Vector3(1713.32, -1780.45, 14.08), 0, 1}, -- Rescue #2
+		},
+		accessible =  {1, FactionStaticId.RESCUE},
+		nonInterior = true,
+		serviceStation = true,
+	},
 }

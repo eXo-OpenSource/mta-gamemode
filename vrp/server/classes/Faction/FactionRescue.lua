@@ -15,7 +15,7 @@ addRemoteEvents{
 function FactionRescue:constructor()
 	self.m_CollisionShape = createColCuboid(1700.82, -1802.14, 12, 1811.63- 1700.82, (1802.14 - 1742.56 )+ 17, 10) -- "medic base"
 	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape)
-	
+
 	self.m_CollisionShape2 = createColCuboid( 1642.64, -1722.31, 13.55, 1674.79 - 1642.64, 1722.31 -1691.8, 30) -- "parkhaus westlich von der medic base"
 	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape2)
 	-- Duty Pickup
@@ -54,14 +54,11 @@ function FactionRescue:constructor()
 	self.m_MoveLadderBind = bind(self.moveLadder, self)
 
 
-	nextframe( -- Todo workaround
+	nextframe(
 		function ()
 			local safe = createObject(2332, 1724.8, -1754.29, 15.25, 0, 0, 180)
 			setElementDoubleSided(safe,true)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
-
-			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1798, -1739.7, 5)) --Unity garage
-			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1713.385, -1774.8, 12.5)) --Unity side
 		end
 	)
 
@@ -578,8 +575,8 @@ function FactionRescue:toggleLadder(veh, player, force)
 		if veh.LadderTimer and isTimer(veh.LadderTimer) then
 			killTimer(veh.LadderTimer)
 		end
-		if player then 
-			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
+		if player then
+			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player))
 			self:disableLadderBinds(player)
 			triggerClientEvent(player, "rescueLadderFixCamera", veh)
 		end
@@ -657,7 +654,7 @@ function FactionRescue:moveLadder(veh)
 		end
 	end
 
-	if veh.controller then 
+	if veh.controller then
 		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
 	else --fallback, timer gets killed automatically in most cases
 		killTimer(sourceTimer)

@@ -66,16 +66,6 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
-
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1563.98,-1614.40, 12.5)) --LSPD
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1552.93,-1614.40, 12.5))
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2295.80, 2460.90, 2.30)) -- LVT
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(124.90, 1908.10, 17.9)) -- Area
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1623.30, 662.30, -5.80)) -- SF PD
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1528.10, 458.10, 6.20)) -- SF Army
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(-1609.10,286.10,6.20), 5) -- SF Army Flug
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
-			FactionManager:getSingleton():createVehicleServiceMarker("State", Vector3(1210.2,-1827.4,12.5)) -- FBI
 		end
 	)
 

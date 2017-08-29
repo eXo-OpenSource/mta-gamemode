@@ -24,5 +24,15 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 	--self:addItem(_"Zapfpistole nehmen (Diesel)", function() end):setIcon(FontAwesomeSymbols.Fire)
 	--self:addItem(_"Ladekabel nehmen (Elektro)", function() end):setIcon(FontAwesomeSymbols.Bolt)
 
+	if element:getData("isServiceStation") and localPlayer.vehicle then
+		self:addItem(_"Service: Fahrzeug reparieren",
+			function()
+				if localPlayer.vehicle and localPlayer.vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
+
+				triggerServerEvent("gasStationRepairVehicle", localPlayer, element)
+			end
+		):setIcon(FontAwesomeSymbols.Wrench)
+	end
+
 	self:adjustWidth()
 end

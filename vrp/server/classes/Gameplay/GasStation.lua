@@ -8,11 +8,12 @@
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name, nonInterior)
+function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
 	self.m_NonInterior = nonInterior
+	self.m_ServiceStation = serviceStation
 
 	for _, station in pairs(stations) do
 		local position, rotation, maxHoses = unpack(station)
@@ -23,6 +24,10 @@ function GasStation:constructor(stations, accessible, name, nonInterior)
 
 		if self.m_Name then
 			object:setData("Name", self.m_Name, true)
+		end
+
+		if self.m_ServiceStation then
+			object:setData("isServiceStation", true, true)
 		end
 	end
 end
