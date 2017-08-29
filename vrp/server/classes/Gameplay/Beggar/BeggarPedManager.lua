@@ -1,7 +1,7 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
 addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "buyBeggarItem",
-"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn"}
+"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn", "adminPedDelete"}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -22,7 +22,9 @@ function BeggarPedManager:constructor()
 	addEventHandler("adminPedPlaced", root, bind(self.Event_pedPlaced, self))
 	addEventHandler("adminPedChangeRole", root, bind(self.Event_changeRole, self))
 	addEventHandler("adminPedSpawn", root, bind(self.Event_adminPedSpawn, self))
+	addEventHandler("adminPedDelete", root, bind(self.Event_adminPedDelete, self))
 	addEventHandler("buyBeggarItem", root, bind(self.Event_buyBeggarItem, self))
+
 
 end
 
@@ -181,10 +183,14 @@ function BeggarPedManager:Event_changeRole(pedId, func, roleId)
 
 	if self.m_Positions[pedId] then
 		if func == "add" then
+			if table.find(self.m_Positions[pedId]["Roles"], roleId) then
+				client:sendError(_("Dieser Ped hat diese Rolle bereits zugewiesen!", client))
+				return
+			end
 			table.insert(self.m_Positions[pedId]["Roles"], roleId)
 			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s zugewiesen!", client, pedId, BeggarTypeNames[roleId]))
 		elseif func == "rem" then
-			table.remove(self.m_Positions[pedId]["Roles"], table.find(roleId))
+			table.remove(self.m_Positions[pedId]["Roles"], table.find(self.m_Positions[pedId]["Roles"], roleId))
 			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s entfernt!", client, pedId, BeggarTypeNames[roleId]))
 		end
 		self:savePedRoles(pedId)
@@ -199,6 +205,11 @@ function BeggarPedManager:savePedRoles(pedId)
 end
 
 function BeggarPedManager:Event_adminPedSpawn(pedId)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
 	if BeggarPedManager.Map[pedId] then
 		delete(BeggarPedManager.Map[pedId])
 		client:sendInfo(_("Ped mit ID %d despawnt!", client, pedId))
@@ -209,5 +220,19 @@ function BeggarPedManager:Event_adminPedSpawn(pedId)
 			client:sendInfo(_("Ped mit ID %d gespawnt!", client, pedId))
 		end
 	end
+	self:adminSendData(client)
+end
+
+function BeggarPedManager:Event_adminPedDelete(pedId)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
+	if BeggarPedManager.Map[pedId] then delete(BeggarPedManager.Map[pedId]) end
+	client:sendInfo(_("Ped-Position mit ID %d gelöscht!", client, pedId))
+	sql:queryExec("DELETE FROM ??_npc WHERE Id = ?", sql:getPrefix(), pedId)
+	self.m_Positions[pedId] = nil
+
 	self:adminSendData(client)
 end

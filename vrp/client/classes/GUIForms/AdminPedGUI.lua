@@ -31,7 +31,7 @@ function AdminPedGUI:constructor(money)
 	self.m_PedGrid:addColumn(_"gespawnt", 0.15)
 
 
-	self.m_SpawnPed = GUIButton:new(10, 360, 180, 30, "ausgewählen Ped spawnen",  self):setFontSize(1):setBackgroundColor(Color.Green)
+	self.m_SpawnPed = GUIButton:new(10, 360, 200, 30, "ausgewählen Ped spawnen",  self):setFontSize(1):setBackgroundColor(Color.Green)
 	self.m_SpawnPed.onLeftClick = function()
 		if not self.m_SelectedPedId then
 			ErrorBox:new(_"Kein Ped ausgewählt!")
@@ -39,6 +39,14 @@ function AdminPedGUI:constructor(money)
 		triggerServerEvent("adminPedSpawn", localPlayer, self.m_SelectedPedId)
 	end
 	self.m_SpawnPed:setVisible(false)
+	self.m_DeletePosition = GUIButton:new(10, 395, 200, 30, "ausgewählen Ped Position löschen",  self):setFontSize(1):setBackgroundColor(Color.Red)
+	self.m_DeletePosition:setVisible(false)
+	self.m_DeletePosition.onLeftClick = function()
+		if not self.m_SelectedPedId then
+			ErrorBox:new(_"Kein Ped ausgewählt!")
+		end
+		triggerServerEvent("adminPedDelete", localPlayer, self.m_SelectedPedId)
+	end
 
 	self.m_CreatePed = GUIButton:new(10, 500, 180, 30, "neuen Ped plazieren",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
 	self.m_CreatePed.onLeftClick = function() delete(self) triggerServerEvent("adminCreatePed", localPlayer) end
@@ -127,9 +135,18 @@ end
 
 function AdminPedGUI:onSelectPed(id)
 	local data = self.m_PedData[id]
+	self.m_PedRolesGrid:clear()
+
+	if not data then
+		self.m_SelectedPedId = nil
+		self.m_SpawnPed:setVisible(false)
+		self.m_DeletePosition:setVisible(false)
+		return
+	end
+
 	self.m_SelectedPedId = id
 	self.m_SpawnPed:setVisible(true)
-
+	self.m_DeletePosition:setVisible(true)
 	if data["Spawned"] then
 		self.m_SpawnPed:setText("ausgewählen Ped despawnen")
 		self.m_SpawnPed:setBackgroundColor(Color.Red)
@@ -138,9 +155,6 @@ function AdminPedGUI:onSelectPed(id)
 		self.m_SpawnPed:setBackgroundColor(Color.Green)
 	end
 
-
-
-	self.m_PedRolesGrid:clear()
 	for index, roleId in pairs(data["Roles"]) do
 		item = self.m_PedRolesGrid:addItem(self.m_RoleNames[roleId])
 		item.id = roleId
