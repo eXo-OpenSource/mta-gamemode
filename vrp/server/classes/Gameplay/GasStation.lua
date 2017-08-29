@@ -77,8 +77,8 @@ function GasStation:isCompanyFuelStation()
 	return self.m_Accessible[1] == 2
 end
 
-function GasStation:getAccessibleId()
-	return self.m_Accessible[2]
+function GasStation:isServiceStation()
+	return self.m_ServiceStation
 end
 
 function GasStation:takeFuelNozzle(player, element)

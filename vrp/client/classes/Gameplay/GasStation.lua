@@ -75,8 +75,9 @@ function GasStation:nonInteriorRequest()
 	local vehicle = GasStation.PendingTransaction.vehicle
 	local fuel = GasStation.PendingTransaction.fuel
 	local station = GasStation.PendingTransaction.station
+	local price = math.floor(fuel * (station:getData("isServiceStation") and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR))
 
-	QuestionBox:new(("Möchtest du %s Liter für %s$ auftanken?"):format(fuel, fuel * FUEL_PRICE_MULTIPLICATOR),
+	QuestionBox:new(("Möchtest du %s Liter für %s$ auftanken?"):format(fuel, price),
 		function()
 			triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station)
 		end,
@@ -94,6 +95,8 @@ function GasStation:renderGasStation()
 				dxDrawLine3D(station.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if element:getData("attachedPlayer") == localPlayer then
+					localPlayer.usingGasStation = station
+
 					local worldVehicle = localPlayer:getWorldVehicle()
 					if worldVehicle and worldVehicle ~= localPlayer.lastWorldVehicle then
 						localPlayer.lastWorldVehicle = worldVehicle
@@ -104,6 +107,7 @@ function GasStation:renderGasStation()
 
 					if localPlayer.vehicle or (station.position - element.position).length > 10 then
 						localPlayer.lastWorldVehicle = nil
+						localPlayer.usingGasStation = nil
 						self.m_RenderFuelHoles[element] = nil
 						triggerServerEvent("gasStationRejectFuelNozzle", localPlayer)
 					end
@@ -112,6 +116,7 @@ function GasStation:renderGasStation()
 		else
 			self.m_RenderFuelHoles[element] = nil
 			localPlayer.lastWorldVehicle = nil
+			localPlayer.usingGasStation = nil
 		end
 	end
 
@@ -131,9 +136,9 @@ function GasStation:renderBackground()
 end
 
 function GasStation:renderDisplay()
-	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") then
+	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") and localPlayer.usingGasStation then
 		self.m_Amount = VehicleFuel:isInstantiated() and math.round(VehicleFuel:getSingleton().m_Fuel, 2) or 0
-		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * FUEL_PRICE_MULTIPLICATOR, 2) or 0
+		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * (localPlayer.usingGasStation:getData("isServiceStation") and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR), 2) or 0
 	else
 		self.m_Amount = "-"
 		self.m_Price = "-"
