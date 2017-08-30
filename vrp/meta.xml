@@ -1847,10 +1847,12 @@
 		<right name="function.createResource" access="true" />
 		<right name="function.ModifyOtherObjects" access="true" />
 		<right name="function.addAccount" access="true" />
+		<right name="function.removeAccount" access="true" />
 		<right name="function.aclCreateGroup" access="true" />
 		<right name="function.aclCreate" access="true" />
 		<right name="function.aclGroupAddACL" access="true" />
 		<right name="function.aclSetRight" access="true" />
 		<right name="function.aclGroupAddObject" access="true" />
+		<right name="function.aclGroupRemoveObject" access="true" />
 	</aclrequest>
 </meta>
