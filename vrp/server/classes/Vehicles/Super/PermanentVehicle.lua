@@ -203,7 +203,7 @@ function PermanentVehicle:respawn(garageOnly)
   local owner = Player.getFromId(self.m_Owner)
   if owner and isElement(owner) then
     -- Is the vehicle allowed to spawn in the garage
-    if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat then
+    if vehicle:getModel() == 539 or (vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat) then
       -- Does the player have a garage
       if owner:getGarageType() > 0 then
         -- Is there a slot available?
