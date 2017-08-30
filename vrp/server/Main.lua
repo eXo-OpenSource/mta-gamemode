@@ -33,7 +33,7 @@ local function sendSlackMessage(msg, level, stackTrace)
 		for id = #stackTrace, 1, -1 do
 			local data = stackTrace[id]
 			data[1] = data[1]:gsub("@", "") -- for some reason msgs start with an @ which we don't need
-			formattedStackTrace =
+			formattedStackTrace = 
 			formattedStackTrace .. ("<https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d|%s:%d>\n"):format(GIT_BRANCH or "master", data[1], data[2], data[1], data[2])
 		end
 		local json = toJSON({
