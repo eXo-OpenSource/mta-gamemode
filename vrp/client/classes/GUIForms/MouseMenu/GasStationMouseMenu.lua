@@ -17,6 +17,7 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 
 	self:addItem(_("Zapfpistole %s (Benzin)", localPlayer:getPrivateSync("hasGasStationFuelNozzle") and "einhängen" or "nehmen"),
 		function()
+			if localPlayer.vehicle then return end
 			triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element)
 		end
 	):setIcon(FontAwesomeSymbols.Fire)
