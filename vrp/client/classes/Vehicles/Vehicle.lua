@@ -70,6 +70,10 @@ function Vehicle:getMileage()
 	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
 end
 
+function Vehicle:getFuel()
+	return self:getData("fuel")
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)

@@ -54,6 +54,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
+	self:setFuel(self.m_Fuel or 100)
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -94,7 +95,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
 	end
-	
+
 	if (self:getModel() == 432 or self:getModel() == 520 or self:getModel() == 425) and self.m_Faction:isStateFaction() then
 		addEventHandler("onVehicleStartEnter", self, function(player, seat)
 			if seat == 0 then
@@ -102,7 +103,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 					if player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
 						cancelEvent()
 					end
-				end 
+				end
 			end
 		end)
 	end

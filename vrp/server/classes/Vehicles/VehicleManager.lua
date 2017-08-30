@@ -91,10 +91,6 @@ function VehicleManager:constructor()
 				self:checkVehicle(source)
 
 				setVehicleEngineState(source, source:getEngineState())
-				player:triggerEvent("vehicleFuelSync", source:getFuel())
-				if source.towedByVehicle then
-					player:triggerEvent("vehicleTrailerFuelSync", source.towedByVehicle:getFuel())
-				end
 			end
 		end
 	)
@@ -1125,10 +1121,6 @@ function VehicleManager:Event_TrailerAttach(truck)
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
-
-		if truck.controller then
-			truck.controller:triggerEvent("vehicleTrailerFuelSync", source:getFuel())
-		end
 	end
 end
 

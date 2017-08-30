@@ -57,7 +57,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self:setLocked(false)
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
-	if color and fromJSON(color) then	
+	if color and fromJSON(color) then
 		setVehicleColor(self, fromJSON(color))
 	else
 		local companyId = self.m_Company:getId()
@@ -80,8 +80,9 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
+	self:setFuel(self.m_Fuel or 100)
 	if self:getModel() == 611 then -- Fuel tank
-		self.m_Fuel = 0
+		self:setFuel(0)
 	end
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))

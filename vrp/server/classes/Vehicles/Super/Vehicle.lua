@@ -412,15 +412,11 @@ end
 
 function Vehicle:setFuel(fuel)
 	self.m_Fuel = fuel
+	self:setData("fuel", self.m_Fuel, true)
 
 	-- Switch engine off in case of an empty fuel tank
 	if self.m_Fuel <= 0 then
 		self:setEngineState(false)
-	else
-		local driver = getVehicleOccupant(self, 0)
-		if driver then
-			driver:triggerEvent("vehicleFuelSync", fuel)
-		end
 	end
 end
 
