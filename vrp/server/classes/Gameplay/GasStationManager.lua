@@ -34,7 +34,10 @@ end
 
 function GasStationManager:onPlayerQuit(player)
 	if isElement(player.gs_fuelNozzle) then
-		player.gs_fuelNozzle:destroy()
+		local element = player.gs_fuelNozzle:getData("attachedGasStation")
+		if GasStation.Map[element] then
+			GasStation.Map[element]:rejectFuelNozzle(player, element)
+		end
 	end
 end
 
@@ -124,7 +127,7 @@ end
 function GasStationManager:serviceStationRepairVehicle(element)
 	if GasStation.Map[element] and GasStation.Map[element]:hasPlayerAccess(client) then
 		if not client.vehicle then return end
-		
+
 		if (client.vehicle.position - element.position).length > 10 then
 			client:sendError(_("Du bist zu weit entfernt!", client))
 			return
