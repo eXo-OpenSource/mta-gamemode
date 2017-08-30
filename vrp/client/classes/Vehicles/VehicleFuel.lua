@@ -11,8 +11,9 @@ addRemoteEvents{"forceCloseVehicleFuel"}
 
 function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gasStation)
 	self.m_Fuel = 0
-	self.m_MouseDown = false
+	self.m_FuelOffset = vehicle:getFuel()
 	self.m_Vehicle = vehicle
+	self.m_MouseDown = false
 	self.m_GasStation = gasStation
 	self.m_ConfirmCallback = confirmCallback
 	self.m_ConfirmWithSpace = confirmWithSpace
@@ -55,7 +56,7 @@ function VehicleFuel:handleClick(_, state)
 		if localPlayer:getWorldVehicle() ~= self.m_Vehicle then return end
 		if self.m_Vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
 
-		self.m_FuelProgress:startAnimation(15000 - self.m_Fuel*150, "Linear", 100)
+		self.m_FuelProgress:startAnimation(15000 - (self.m_Fuel + self.m_FuelOffset) *150, "Linear", 100 - self.m_FuelOffset)
 		toggleAllControls(false, true, false)
 	else
 		self.m_FuelProgress:stopAnimation()
@@ -66,13 +67,13 @@ end
 function VehicleFuel:onStreamIn(surface)
 	GUIImage:new(0, 0, 128, 128, "files/images/Speedo/fuel.png", surface)
 	self.m_Needle = GUIImage:new(0, 0, 128, 128, "files/images/Speedo/fuel_needle.png", surface)
-	self.m_Needle.m_Rotation = self.m_Fuel
+	self.m_Needle.m_Rotation = (self.m_Fuel + self.m_FuelOffset)*180/100
 	self.m_Surface = surface
 end
 
 function VehicleFuel:updateRenderTarget()
 	if not self.m_Needle then return end
-	self.m_Needle.m_Rotation = self.m_Fuel*180/100
+	self.m_Needle.m_Rotation = (self.m_Fuel + self.m_FuelOffset)*180/100
 	self.m_Surface:anyChange()
 end
 
