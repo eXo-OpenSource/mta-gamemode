@@ -15,6 +15,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	self.m_Vehicle = vehicle
 	self.m_GasStation = gasStation
 	self.m_ConfirmCallback = confirmCallback
+	self.m_ConfirmWithSpace = confirmWithSpace
 
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
 
@@ -31,7 +32,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 end
 
 function VehicleFuel:virtual_destructor()
-	self:confirm()
+	if not self.m_ConfirmWithSpace then self:confirm() end
 	unbindKey("space", "down", self.m_Confirm)
 	unbindKey("mouse1", "both", self.m_HandleClick)
 end

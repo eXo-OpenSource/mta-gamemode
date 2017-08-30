@@ -278,6 +278,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 			toggleControl(client, "fire", true)
 			client:setPrivateSync("hasMechanicFuelNozzle", false)
 			client:triggerEvent("closeFuelTankGUI")
+			client:triggerEvent("forceCloseVehicleFuel")
 			client.mechanic_fuelNozzle:destroy()
 			return
 		end
@@ -300,6 +301,7 @@ function MechanicTow:Event_mechanicRejectFuelNozzle()
 		toggleControl(client, "fire", true)
 		client:setPrivateSync("hasMechanicFuelNozzle", false)
 		client:triggerEvent("closeFuelTankGUI")
+		client:triggerEvent("forceCloseVehicleFuel")
 		client.mechanic_fuelNozzle:destroy()
 		return
 	end

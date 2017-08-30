@@ -247,7 +247,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)
 			end
-			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 then -- fuel tank
+			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 and not localPlayer:getPrivateSync("hasGasStationFuelNozzle") then -- fuel tank
 				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasMechanicFuelNozzle") and "einhängen" or "nehmen"),
 					function()
 						if self:getElement() then

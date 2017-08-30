@@ -61,15 +61,8 @@ function MechanicTow:renderFuelHose()
 					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle then
 						localPlayer.lastWorldVehicle = worldVehicle
 
-						if not VehicleFuel:isInstantiated() then
-							VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
-						end
-					elseif not worldVehicle then
-						localPlayer.lastWorldVehicle = nil
-
-						if VehicleFuel:isInstantiated() then
-							delete(VehicleFuel:getSingleton())
-						end
+						VehicleFuel.forceClose()
+						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
 					end
 
 					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
@@ -90,10 +83,6 @@ function MechanicTow:renderFuelHose()
 end
 
 function MechanicTow:requestFill(vehicle, fuel)
-	if VehicleFuel:isInstantiated() then
-		delete(VehicleFuel:getSingleton())
-	end
-
 	if not vehicle.controller then
 		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
 		return
