@@ -309,6 +309,7 @@ function AttackSession:checkPlayersInCenter( )
 	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
 	for key, player in ipairs( pTable ) do
 		dim2 = getElementDimension( player )
+		int2 = getElementInterior( player )
 		if dim == dim2 and int == int2 then
 			if not isPedDead( player ) then
 				faction = player.m_Faction
