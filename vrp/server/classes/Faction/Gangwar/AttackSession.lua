@@ -223,6 +223,7 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, realLoss or 0 )
+				self:onPlayerLeaveCenter( player ) -- check if the player at the attack-flag died
 			end
 			if killer.kills then 
 				killer.kills = killer.kills + 1
@@ -303,11 +304,17 @@ end
 function AttackSession:checkPlayersInCenter( )
 	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
 	local faction
+	local dim = getElementDimension( self.m_AreaObj )
+	local dim2, int2
+	local int = getElementInterior( self.m_AreaObj )
 	for key, player in ipairs( pTable ) do
-		if not isPedDead( player ) then
-			faction = player.m_Faction
-			if faction == self.m_Faction1 then
-				return true
+		dim2 = getElementDimension( player )
+		if dim == dim2 and int == int2 then
+			if not isPedDead( player ) then
+				faction = player.m_Faction
+				if faction == self.m_Faction1 then
+					return true
+				end
 			end
 		end
 	end
