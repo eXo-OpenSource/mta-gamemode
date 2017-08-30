@@ -304,9 +304,9 @@ end
 function AttackSession:checkPlayersInCenter( )
 	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
 	local faction
-	local dim = getElementDimension( self.m_AreaObj )
+	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
 	local dim2, int2
-	local int = getElementInterior( self.m_AreaObj )
+	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
 	for key, player in ipairs( pTable ) do
 		dim2 = getElementDimension( player )
 		if dim == dim2 and int == int2 then
