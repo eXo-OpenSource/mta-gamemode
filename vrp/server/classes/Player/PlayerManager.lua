@@ -1062,7 +1062,7 @@ function PlayerManager:Event_AttachToVehicle()
 
 		local rotpX = 0
 		local rotpY = 0
-		local rotpZ = getPlayerRotation(client)
+		local rotpZ = getPedRotation(client)
 
 		local rotvX, rotvY, rotvZ = getVehicleRotation(client.contactElement)
 

@@ -1837,6 +1837,7 @@
 	<include resource="WetRoads" />
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
+
 	<!-- ACL Request -->
 	<aclrequest>
 		<right name="function.startResource" access="true" />
@@ -1845,5 +1846,11 @@
 		<right name="function.fetchRemote" access="true" />
 		<right name="function.createResource" access="true" />
 		<right name="function.ModifyOtherObjects" access="true" />
+		<right name="function.addAccount" access="true" />
+		<right name="function.aclCreateGroup" access="true" />
+		<right name="function.aclCreate" access="true" />
+		<right name="function.aclGroupAddACL" access="true" />
+		<right name="function.aclSetRight" access="true" />
+		<right name="function.aclGroupAddObject" access="true" />
 	</aclrequest>
 </meta>

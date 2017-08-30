@@ -52,8 +52,8 @@ function TaskShootTarget:shootSingleBullet()
 			self.m_Actor:setAimTarget(self.m_Target:getPosition())
 
 			-- Activate fire control for a bit to simulate key presses
-			self.m_Actor:setControlState("aim_weapon", true)
-			self.m_Actor:setControlState("fire", true)
+			self.m_Actor:setPedControlState("aim_weapon", true)
+			self.m_Actor:setPedControlState("fire", true)
 		else
 			self:stopShooting()
 		end
@@ -76,8 +76,8 @@ function TaskShootTarget:stopShooting()
 		self.m_ShootTimer = false
 	end
 
-	self.m_Actor:setControlState("fire", false)
-	self.m_Actor:setControlState("aim_weapon", false)
+	self.m_Actor:setPedControlState("fire", false)
+	self.m_Actor:setPedControlState("aim_weapon", false)
 end
 
 function TaskShootTarget:update()
