@@ -602,6 +602,10 @@ end
 
 function GroupManager:Event_SetVehicleForSale(amount)
 	local group = client:getGroup()
+	if source:getOccupant(0) then
+		client:sendError(_("Es sitzt jemand im Fahrzeug!", client))
+		return
+	end
 	if group and group == source:getGroup() and tonumber(amount) > 0 and tonumber(amount) <= 5000000 then
 		if group:getPlayerRank(client) < GroupRank.Manager then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
