@@ -118,21 +118,25 @@ end
 function GrowableManager:getClientCheck(seed, bool, z_pos )
 	if bool then
 		if client:isOnGround() then
-			if not client.vehicle then
-				local plantName = self:getPlantNameFromSeed(seed)
-				if plantName then
-					local pos = client:getPosition()
-					client:giveAchievement(61)
-					client:getInventory():removeItem(seed, 1)
-					GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
+			if not client:isInWater() then
+				if not client.vehicle then
+					local plantName = self:getPlantNameFromSeed(seed)
+					if plantName then
+						local pos = client:getPosition()
+						client:giveAchievement(61)
+						client:getInventory():removeItem(seed, 1)
+						GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
+					else
+						client:sendError(_"Internal Error: Invalid Plant")
+					end
 				else
-					client:sendError("Internal Error: Invalid Plant")
+					client:sendError(_"Du sitzt in einem Fahrzeug!")
 				end
 			else
-				client:sendError("Du sitzt in einem Fahrzeug!")
+				client:sendError(_"Du bist im Wasser! Hier kannst du nichts pflanzen!")
 			end
 		else
-			client:sendError("Du bist nicht am Boden!")
+			client:sendError(_"Du bist nicht am Boden!")
 		end
 	else
 		client:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")
