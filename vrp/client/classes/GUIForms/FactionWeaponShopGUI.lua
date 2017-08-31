@@ -16,6 +16,8 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_Window:deleteOnClose(true)
 	self.m_Cart = {}
 
+	self.m_WeaponArea = GUIScrollableArea:new(25, 35, 465, 400, 465, 0, true, false, self.m_Window, 35)
+
 	self.m_WeaponsImage = {}
 	self.m_WeaponsName = {}
 	self.m_WeaponsMenge = {}
@@ -26,14 +28,14 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
 
-	GUILabel:new(400,220, 320, 35, "Warenkorb:", self.m_Window)
-	self.m_CartGrid = GUIGridList:new(400, 250, 320, 180, self.m_Window)
-	self.m_CartGrid:addColumn(_"Ware", 0.6)
-	self.m_CartGrid:addColumn(_"Anzahl", 0.4)
-	self.m_del = GUIButton:new(400, 430, 155, 20,_"Entfernen", self.m_Window)
+	GUILabel:new(500, 35, 230, 35, "Warenkorb:", self.m_Window)
+	self.m_CartGrid = GUIGridList:new(500, 70, 210, 350, self.m_Window)
+	self.m_CartGrid:addColumn(_"Ware", 0.7)
+	self.m_CartGrid:addColumn(_"Anzahl", 0.3)
+	self.m_del = GUIButton:new(500, 425, 100, 25,_"Entfernen", self.m_Window)
 	self.m_del:setBackgroundColor(Color.Red)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
-	self.m_buy = GUIButton:new(570, 430, 155, 20,_"Bestätigen", self.m_Window)
+	self.m_buy = GUIButton:new(610, 425, 100, 25,_"Bestätigen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
 
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
@@ -62,25 +64,26 @@ function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, dep
 			self:addWeaponToGUI(k,depotWeapons[k]["Waffe"],depotWeapons[k]["Munition"])
 		end
 	end
+	self.m_WeaponArea:resize(465, 155+self.m_WaffenColumn*200)
 	self.rankWeapons = rankWeapons
 	self.depot = depotWeapons
 	self:updateButtons()
 end
 
 function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
-	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_Window)
+	self.m_WeaponsName[weaponID] = GUILabel:new(self.m_WaffenRow*120, self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_WeaponArea)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
-	self.m_WeaponsImage[weaponID] = GUIImage:new(45+self.m_WaffenRow*120, 70+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_Window)
-	self.m_WeaponsMenge[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 135+self.m_WaffenColumn*200, 100, 20, "Waffenlager: "..Waffen, self.m_Window)
+	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_WeaponArea)
+	self.m_WeaponsMenge[weaponID] = GUILabel:new(self.m_WaffenRow*120, 100+self.m_WaffenColumn*200, 100, 20, "Waffenlager: "..Waffen, self.m_WeaponArea)
 	self.m_WeaponsMenge[weaponID]:setAlignX("center")
-	self.m_WeaponsMunition[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 150+self.m_WaffenColumn*200, 100, 20, "Magazine: "..Munition, self.m_Window)
+	self.m_WeaponsMunition[weaponID] = GUILabel:new(self.m_WaffenRow*120, 115+self.m_WaffenColumn*200, 100, 20, "Magazine: "..Munition, self.m_WeaponArea)
 	self.m_WeaponsMunition[weaponID]:setAlignX("center")
-	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(25+self.m_WaffenRow*120, 170+self.m_WaffenColumn*200, 100, 20,"+ Waffe", self)
+	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(self.m_WaffenRow*120, 135+self.m_WaffenColumn*200, 100, 20,"+ Waffe", self.m_WeaponArea)
 	self.m_WeaponsBuyGun[weaponID]:setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_WeaponsBuyGun[weaponID].onLeftClick = bind(self.addItemToCart,self,"weapon",weaponID)
 
 	if weaponID >=22 and weaponID <= 43 then
-		self.m_WeaponsBuyMunition[weaponID] = GUIButton:new(25+self.m_WaffenRow*120, 195+self.m_WaffenColumn*200, 100, 20,"+ Magazin", self)
+		self.m_WeaponsBuyMunition[weaponID] = GUIButton:new(self.m_WaffenRow*120, 160+self.m_WaffenColumn*200, 100, 20,"+ Magazin", self.m_WeaponArea)
 		self.m_WeaponsBuyMunition[weaponID]:setBackgroundColor(Color.Blue):setFontSize(1)
 		self.m_WeaponsBuyMunition[weaponID].onLeftClick = bind(self.addItemToCart,self,"munition",weaponID)
 		if not self.m_playerWeapons[weaponID] then
@@ -96,12 +99,14 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 
-	if self.m_WaffenAnzahl == 6 or self.m_WaffenAnzahl == 9 then
+	if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 or self.m_WaffenAnzahl == 12 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
 		self.m_WaffenRow = self.m_WaffenRow+1
 	end
+
+
 
 end
 
