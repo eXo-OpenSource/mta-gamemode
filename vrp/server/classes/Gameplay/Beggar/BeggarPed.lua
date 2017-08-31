@@ -1,22 +1,29 @@
 BeggarPed = inherit(Object)
 
-function BeggarPed:new(id, position, rotation, ...)
-    local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z)
-    enew(ped, self, id, ...)
-	addEventHandler("onPedWasted", ped, bind(self.Event_onPedWasted, ped))
-
-    return ped
+function BeggarPed:new(id, classId, position, rotation, ...)
+	local class = BeggarPedManager.Classes[classId]["Class"]
+	if class then
+		local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z)
+		enew(ped, class, id, classId, ...)
+		return ped
+	else
+		outputDebugString("Class for Beggar not found! "..classId)
+		return false
+	end
 end
 
-function BeggarPed:constructor(id, roles)
+BeggarPed.constructor = pure_virtual
+
+function BeggarPed:virtual_constructor(id, classId)
 	self.m_Id = id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = createColSphere(self:getPosition(), 10)
-	self.m_Type = #roles > 0 and Randomizer:getRandomTableValue(roles) or math.random(1, #BeggarTypeNames)
+	self.m_Type = classId
 	self.m_RoleName = BeggarTypeNames[self.m_Type]
 
 	self.m_LastRobTime = 0
 
+	addEventHandler("onPedWasted", self, bind(self.Event_onPedWasted, ped))
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
 
@@ -32,7 +39,7 @@ function BeggarPed:constructor(id, roles)
 	self:setData("BeggarType", self.m_Type, true)
 end
 
-function BeggarPed:destructor()
+function BeggarPed:virtual_destructor()
 	if self.m_ColShape and isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
 
 	-- Remove ref
@@ -86,224 +93,8 @@ function BeggarPed:rob(player)
 	end
 end
 
-function BeggarPed:giveMoney(player, money)
-	if self.m_Despawning then return end
-	if not player.vehicle then
-		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getMoney() >= money then
-			-- give wage
-			local karma = math.min(money, 5)
-			player:giveCombinedReward("Bettler-Geschenk", {
-				money = -money,
-				karma = karma,
-				points = 1,
-			})
-			player:meChat(true, ("übergibt %s %s"):format(self.m_Name, money == 1 and "einen Schein" or "ein paar Scheine"))
-			self:sendMessage(player, BeggarPhraseTypes.Thanks)
-
-			-- give Achievement
-			player:giveAchievement(56)
-			if self.m_Name == BeggarNames[19] then
-				player:giveAchievement(80)
-			elseif self.m_Name == BeggarNames[32] then
-				player:giveAchievement(81)
-			end
-
-			-- Despawn the Beggar
-			setTimer(
-				function ()
-					self:despawn()
-				end, 50, 1
-			)
-		else
-			player:sendError(_("Du hast nicht soviel Geld dabei!", player))
-		end
-	else
-		self:sendMessage(player, BeggarPhraseTypes.InVehicle)
-	end
-end
-
-function BeggarPed:sellWeed(player, amount)
-	if self.m_Despawning then return end
-	if not player.vehicle then
-		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventory():getItemAmount("Weed") >= amount then
-			player:getInventory():removeItem("Weed", amount)
-			player:giveCombinedReward("Bettler-Handel", {
-				money = amount*15,
-				karma = -math.ceil(amount/50),
-				points = math.ceil(20 * amount/200),
-			})
-			player:meChat(true, ("übergibt %s %s"):format(self.m_Name, amount > 100 and "eine große Tüte" or "eine Tüte"))
-			self:sendMessage(player, BeggarPhraseTypes.Thanks)
-			-- Despawn the Beggar
-			setTimer(
-				function ()
-					self:despawn()
-				end, 50, 1
-			)
-		else
-			player:sendError(_("Du hast nicht so viel Weed dabei!", player))
-		end
-	else
-		self:sendMessage(player, BeggarPhraseTypes.InVehicle)
-	end
-end
-
-
-function BeggarPed:giveItem(player, item)
-	if self.m_Despawning then return end
-	if not player.vehicle then
-		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventory():getItemAmount(item) >= 1 then
-			player:getInventory():removeItem(item, 1)
-			player:giveCombinedReward("Bettler-Handel", {
-				karma = 5,
-				points = 5,
-			})
-			self:sendMessage(player, BeggarPhraseTypes.Thanks)
-			player:meChat(true, ("übergibt %s eine Tüte"):format(self.m_Name))
-			setTimer(
-				function ()
-					self:despawn()
-				end, 50, 1
-			)
-		else
-			player:sendError(_("Du hast kein/en %s dabei!", player, item))
-		end
-	else
-		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
-	end
-end
-
-function BeggarPed:buyItem(player, item)
-	if self.m_Despawning then return end
-	if not BeggarItemBuy[item] then return end
-
-	if not player.vehicle then
-		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventory():getFreePlacesForItem(item) >= BeggarItemBuy[item]["amount"] then
-			local price = BeggarItemBuy[item]["amount"] * BeggarItemBuy[item]["pricePerAmount"]
-			if player:getMoney() >= price then
-				local karma = 5
-				player:giveCombinedReward("Bettler-Handel", {
-					money = -price,
-					karma = -5,
-					points = 5,
-				})
-				player:getInventory():giveItem(item, BeggarItemBuy[item]["amount"])
-				self:sendMessage(player, BeggarPhraseTypes.Thanks)
-				player:meChat(true, ("erhält von %s eine Tüte!"):format(self.m_Name))
-				setTimer(
-					function ()
-						self:despawn()
-					end, 50, 1
-				)
-			else
-				player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, price, item))
-			end
-		else
-			player:sendError(_("In deinem Inventar ist nicht genug Platz für %d %s!", player, BeggarItemBuy[item]["amount"], item))
-		end
-	else
-		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
-	end
-end
-
-function BeggarPed:acceptTransport(player)
-	if self.m_Despawning then return end
-	if player.vehicle and player.vehicleSeat == 0 then
-		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		local veh = player.vehicle
-
-		if not instanceof(veh, PermanentVehicle, true) then
-			self:sendMessage(player, BeggarPhraseTypes.Decline)
-			return
-		end
-
-		for seat = 1, veh.maxPassengers do
-			if not veh:getOccupant(seat) then
-				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)
-				self:warpIntoVehicle(veh, seat)
-
-				player:meChat(true, ("bittet %s in sein Fahrzeug"):format(self.m_Name))
-				self:sendMessage(player, BeggarPhraseTypes.Destination, getZoneName(pos.x, pos.y, pos.z))
-				player.beggarTransportVehicle = veh
-				player.beggarTransportStartPos = player.position
-				player.beggarTransportMarker = createMarker(pos, "cylinder", 2)
-				player.beggarTransportMarker.player = player
-				setElementVisibleTo(player.beggarTransportMarker, root, false)
-				setElementVisibleTo(player.beggarTransportMarker, player, true)
-
-				player.beggarTransportBlip = Blip:new("Marker.png", pos.x, pos.y, player, 9999, BLIP_COLOR_CONSTANTS.Red)
-				player.beggarTransportBlip:setDisplayText(("Ziel von %s"):format(self.m_Name))
-				if self.m_ColShape then self.m_ColShape:destroy() end
-
-				self.m_onTransportExitBind = bind(self.onTransportExit, self)
-				self.m_onTransportDestroyBind = bind(self.onTransportDestroy, self)
-
-				addEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
-				addEventHandler("onVehicleDestroy", veh, self.m_onTransportDestroyBind)
-
-				addEventHandler("onMarkerHit", player.beggarTransportMarker, function(hitElement, dim)
-					if hitElement:getType() == "player" and dim and source.player == hitElement then
-						local player = hitElement
-						if player.vehicle and veh:getOccupant(seat) == self then
-							local distance = getDistanceBetweenPoints3D(player.beggarTransportStartPos, player.position)/1000
-							player:giveCombinedReward("Bettler-Transport", {
-								karma = math.ceil(5*distance),
-								points = math.ceil(7*distance),
-							})
-							player:meChat(true, ("lässt %s aus seinem Fahrzeug"):format(self.m_Name))
-							self:sendMessage(player, BeggarPhraseTypes.Thanks)
-							self:deleteTransport(player)
-							return
-						else
-							player:sendError(_("Du hast den Bettler nicht dabei", player))
-
-						end
-					end
-				end)
-
-				return
-			end
-		end
-
-		player:sendError(_("Dein Fahrzeug hat keinen freien Sitzplatz!", player))
-		return
-
-	else
-		player:sendError(_("Du sitzt in keinem Fahrzeug!", player))
-	end
-end
-
-function BeggarPed:onTransportExit(exitPlayer)
-	if exitPlayer.beggarTransportMarker or exitPlayer == self then
-		exitPlayer:sendError(_("Bettler-Transport fehlgeschlagen", exitPlayer))
-		self:deleteTransport(exitPlayer)
-	end
-end
-
-function BeggarPed:onTransportDestroy()
-	local player = vehicle:getOccupant()
-	player:sendError(_("Bettler-Transport fehlgeschlagen", player))
-	self:deleteTransport(player)
-end
-
 function BeggarPed:sendMessage(player, type, arg)
     player:sendMessage(_("#FE8A00%s: #FFFFFF%s", player, self.m_Name, BeggarPedManager:getSingleton():getPhrase(self.m_Type, type, arg)))
-end
-
-function BeggarPed:deleteTransport(player)
-	local veh = player.beggarTransportVehicle
-	removeEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
-	removeEventHandler("onVehicleDestroy", veh, self.m_onTransportExitBind)
-
-	player.beggarTransportMarker:destroy()
-	delete(player.beggarTransportBlip)
-
-	self:removeFromVehicle()
-	setTimer(function() self:despawn() end, 50, 1)
 end
 
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)

@@ -196,6 +196,10 @@
 	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/TransportBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/MoneyBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/WeedBeggar.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
