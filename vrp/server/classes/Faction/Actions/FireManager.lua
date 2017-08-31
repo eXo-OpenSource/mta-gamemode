@@ -35,6 +35,7 @@ function FireManager:loadFirePlaces()
 			["name"] = row.Name,
 			["message"] = row.Message,
 			["position"] = Vector3(row.PosX, row.PosY, row.PosZ),
+			["positionTbl"] = {row.PosX, row.PosY, row.PosZ},
 			["width"] = row.Width,
 			["height"] = row.Height,
 			["creator"] = row.Creator,

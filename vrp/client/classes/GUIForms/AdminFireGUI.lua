@@ -22,7 +22,7 @@ function AdminFireGUI:constructor()
 	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() AdminGUI:getSingleton():show() Cursor:show() end
 
-	self.m_FireGrid = GUIGridList:new(10, 50, self.m_Width-20, 440, self.m_Window)
+	self.m_FireGrid = GUIGridList:new(10, 50, self.m_Width-20, 360, self.m_Window)
 	self.m_FireGrid:addColumn(_"ID", 0.02)
 	self.m_FireGrid:addColumn(_"Name", 0.2)
     self.m_FireGrid:addColumn(_"Ersteller", 0.15)
@@ -36,26 +36,43 @@ function AdminFireGUI:constructor()
 	
     self.m_ToggleFire.onLeftClick = function()
 		if not self.m_SelectedFireId then
-			ErrorBox:new(_"Kein Feuer ausgewählt!")
+			return ErrorBox:new(_"Kein Feuer ausgewählt!")
 		end
 		triggerServerEvent("adminToggleFire", localPlayer, self.m_SelectedFireId)
 	end
 
     self.m_EditFire.onLeftClick = function()
 		if not self.m_SelectedFireId then
-			ErrorBox:new(_"Kein Feuer ausgewählt!")
+			return ErrorBox:new(_"Kein Feuer ausgewählt!")
+		end
+		if self.m_CurrentFireEditing then
+			--TODO: save
+			outputDebug("saved")
+			self:onFireEdit()
+		else
+			outputDebug("editing")
+			self:onFireEdit(self.m_SelectedFireId)
 		end
 		--triggerServerEvent("adminToggleFire", localPlayer, self.m_SelectedFireId)
 	end
 
     self.m_DeleteFire.onLeftClick = function()
 		if not self.m_SelectedFireId then
-			ErrorBox:new(_"Kein Feuer ausgewählt!")
+			return ErrorBox:new(_"Kein Feuer ausgewählt!")
 		end
 		triggerServerEvent("adminDeleteFire", localPlayer, self.m_SelectedFireId)
 	end
 
+	-- fire edit functions
+	self.m_FirePosTR = GUIButton:new(80, 420, 60, 30, "oben r.",  self):setFontSize(1):setBackgroundColor(Color.Green)
+	self.m_FirePosBL = GUIButton:new(10, 460, 60, 30, "unten l.",  self):setFontSize(1):setBackgroundColor(Color.Green)
+	self.m_PosLbl = GUILabel:new(150, 420, 200, 70, "Position: 1337.50;45.34\nHöhe: 30, Breite: 30", self):setFont(VRPFont(25)):setFontSize(1)
+	self.m_NameEdit = GUIEdit:new(360, 420, 200, 30, self):setCaption("Name")
+	self.m_MessageEdit = GUIEdit:new(360, 460, 400, 30, self):setCaption("Nachricht")
+	self.m_ActiveCheck = GUICheckbox:new(570, 425, 200, 20, "aktiviert", self)
+
 	self:onSelectFire()
+	self:onFireEdit()
 
 	addEventHandler("adminFireReceiveData", root, bind(self.onReceiveData, self))
 end
@@ -66,6 +83,8 @@ function AdminFireGUI:onShow()
 end
 
 function AdminFireGUI:onHide()
+	self.m_SelectedFireId = nil
+	self.m_CurrentFireEditing = nil
 	SelfGUI:getSingleton():removeWindow(self)
 end
 
@@ -110,12 +129,32 @@ function AdminFireGUI:onSelectFire(id)
         self.m_EditFire:setVisible(false)
         self.m_DeleteFire:setVisible(false)
     end
+end
 
-	--[[if data["Spawned"] then
-		self.m_SpawnPed:setText("ausgewählen Ped despawnen")
-		self.m_SpawnPed:setBackgroundColor(Color.Red)
+function AdminFireGUI:onFireEdit(id)
+	if id then 
+		
+		self.m_EditFire:setText("Speichern")
+		local data = self.m_Fires[id]
+		self.m_PosLbl:setText(("Position: %s;%s\nGröße: %s;%s"):format(data.positionTbl[1], data.positionTbl[2], data.width, data.height))
+		self.m_NameEdit:setText(data.name)
+		self.m_MessageEdit:setText(data.message)
+		self.m_ActiveCheck:setChecked(data.enabled)
 	else
-		self.m_SpawnPed:setText("ausgewählen Ped spawnen")
-		self.m_SpawnPed:setBackgroundColor(Color.Green)
-	end]]
+
+		self.m_EditFire:setText("Feuer editieren")
+
+	end
+
+	self.m_FirePosTR:setVisible(id and true)
+	self.m_FirePosBL:setVisible(id and true)
+	self.m_PosLbl:setVisible(id and true)
+	self.m_NameEdit:setVisible(id and true)
+	self.m_MessageEdit:setVisible(id and true)
+	self.m_ActiveCheck:setVisible(id and true)
+	self.m_CreateFire:setEnabled(id and false or true)
+	self.m_ToggleFire:setEnabled(id and false or true)
+	self.m_DeleteFire:setEnabled(id and false or true)
+
+	self.m_CurrentFireEditing = id
 end

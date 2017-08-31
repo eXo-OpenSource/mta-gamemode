@@ -28,7 +28,7 @@ function AutomaticQueue:prepare(priority, async)
 	end
 
 	local thread = Thread:new(handle, priority or THREAD_PRIORITY_HIGH)
-	return thread.start
+	return function(...) return thread:start(...) end
 end
 
 function AutomaticQueue:run()

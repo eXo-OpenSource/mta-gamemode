@@ -177,8 +177,8 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 				end
 			else -- new fire or fire changes size
 				if not currentFire then
-					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-0.5, 0.5)
-					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-0.5, 0.5)
+					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-5, 5)/10
+					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-5, 5)/10
 					local uFe = Fire:new(iX, iY, 4, iNewSize, false, self, i, v)
 					self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive + 1
 					self.m_tblStatistics.iFiresTotal = self.m_tblStatistics.iFiresTotal + 1
