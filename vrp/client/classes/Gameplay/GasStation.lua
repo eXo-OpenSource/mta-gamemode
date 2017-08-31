@@ -94,7 +94,7 @@ function GasStation:renderGasStation()
 		if isElement(element) then
 			local station = element:getData("attachedGasStation")
 			if isElement(station) then
-				dxDrawLine3D(station.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+				dxDrawLine3D(station.matrix:transformPosition(Vector3(0, 0, 1.2)), element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
 				if element:getData("attachedPlayer") == localPlayer then
 					localPlayer.usingGasStation = station
