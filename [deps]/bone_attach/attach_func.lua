@@ -6,6 +6,7 @@ attached_z = {}
 attached_rx = {}
 attached_ry = {}
 attached_rz = {}
+attached_event = {}
 
 function attachElementToBone(element,ped,bone,x,y,z,rx,ry,rz)
 	if not (isElement(element) and isElement(ped)) then return false end
@@ -21,15 +22,20 @@ function attachElementToBone(element,ped,bone,x,y,z,rx,ry,rz)
 	attached_rx[element] = rx
 	attached_ry[element] = ry
 	attached_rz[element] = rz
+
 	if getElementData(element, "boneattach:setCollision") then
 		setElementCollisionsEnabled(element,true)
-	else 
+	else
 		setElementCollisionsEnabled(element,false)
 	end
 	if script_serverside then
 		triggerClientEvent("boneAttach_attach",root,element,ped,bone,x,y,z,rx,ry,rz)
 	end
-	addEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy",element,forgetDestroyedElements)
+
+	if not attached_event[element] then
+		attached_event[element] = true
+		addEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy", element, forgetDestroyedElements)
+	end
 	return true
 end
 
@@ -40,8 +46,9 @@ function detachElementFromBone(element)
 	if setElementCollisionsEnabled then
 		setElementCollisionsEnabled(element,true)
 	end
-	
-	removeEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy",element,forgetDestroyedElements)
+
+	attached_event[element] = nil
+	removeEventHandler(script_serverside and "onElementDestroy" or "onClientElementDestroy", element, forgetDestroyedElements)
 
 	if script_serverside then
 		triggerClientEvent("boneAttach_detach",root,element)
@@ -120,8 +127,8 @@ function forgetNonExistingPeds()
 end
 
 clearing_nonexisting_peds = coroutine.create(forgetNonExistingPeds)
-setTimer(function()	
-	if coroutine.status(clearing_nonexisting_peds) == "suspended" then 
-		coroutine.resume(clearing_nonexisting_peds) 
+setTimer(function()
+	if coroutine.status(clearing_nonexisting_peds) == "suspended" then
+		coroutine.resume(clearing_nonexisting_peds)
 	end
 end,1000,0)
