@@ -447,7 +447,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
             local text = target
-            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
+            triggerClientEvent("breakingNews", root, text, "Admin-Ankündigung", {255, 150, 0}, {0, 0, 0})
+			self:sendShortMessage(_("%s hat eine Admin-Ankündigung gesendet!", admin, client:getName()))
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end

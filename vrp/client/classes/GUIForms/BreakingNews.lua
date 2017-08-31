@@ -119,8 +119,10 @@ addEventHandler("breakingNews", root,
 	function(...)
 		if core:get("HUD", "breakingNewsBox", true) then
 			if BreakingNews:isInstantiated() then
+				outputDebug("addNews")
 				BreakingNews:getSingleton():addNews(...)
 			else
+				outputDebug("new")
 				BreakingNews:new(...)
 			end
 		end

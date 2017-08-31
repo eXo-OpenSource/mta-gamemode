@@ -140,6 +140,7 @@ ADMIN_RANK_PERMISSION = {
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
 	["pedMenu"] = RANK.Administrator,
+	["fireMenu"] = RANK.Servermanager,
 	["checkOverlappingVehicles"] = RANK.Administrator,
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view

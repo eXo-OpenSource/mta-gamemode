@@ -19,20 +19,26 @@ function FireManager:constructor()
 
 	self:loadFirePlaces()
 
-	addRemoteEvents{"receiveFires"}
+	addRemoteEvents{"receiveFires", "adminFireRequestData", "adminToggleFire", "adminCreateFire", "adminEditFire", "adminDeleteFire"}
 	addEventHandler("receiveFires", root, bind(self.receiveFires, self))
-
-	addCommandHandler("fire", bind(self.startRandomFire, self))
+	addEventHandler("adminFireRequestData", root, bind(self.Event_adminRequestData, self))
+	addEventHandler("adminToggleFire", root, bind(self.Event_toggleFire, self))
+	addEventHandler("adminCreateFire", root, bind(self.Event_createFire, self))
+	addEventHandler("adminEditFire", root, bind(self.Event_editFire, self))
+	addEventHandler("adminDeleteFire", root, bind(self.Event_deleteFire, self))
 end
 
 function FireManager:loadFirePlaces()
 	local result = sql:queryFetch("SELECT * FROM ??_fires", sql:getPrefix())
 	for i, row in pairs(result) do
 		self.m_Fires[row.Id] = {
+			["name"] = row.Name,
 			["message"] = row.Message,
 			["position"] = Vector3(row.PosX, row.PosY, row.PosZ),
 			["width"] = row.Width,
-			["height"] = row.Height
+			["height"] = row.Height,
+			["creator"] = row.Creator,
+			["enabled"] = row.Enabled == 1 and true or false,
 		}
 	end
 end
@@ -46,17 +52,15 @@ function FireManager:checkFire()
 end
 
 function FireManager:startRandomFire(source)
-	if source and source:getRank() < RANK.Moderator then
-		source:sendError(_("Du bist nicht berechtigt!", source))
-		return
-	end
+	--//TODO
 	self:startFire(rnd)
 end
 
 function FireManager:startFire(id)
-	if self.m_CurrentFire then delete(self.m_CurrentFire) self.m_CurrentFire = nil end
+	if self.m_CurrentFire then self:stopCurrentFire() end
 	local fireTable = self.m_Fires[id]
 	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable["width"] or 20, fireTable["height"] or 20)
+	self.m_CurrentFire.m_Id = id
 	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].y, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
@@ -67,8 +71,74 @@ function FireManager:startFire(id)
 	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable["position"], posName)
 end
 
+function FireManager:getCurrentFire()
+	return self.m_CurrentFire
+end
+
+function FireManager:stopCurrentFire()
+	outputDebug("stopping current fire")
+	delete(self.m_CurrentFire.Blip)
+	delete(self.m_CurrentFire)
+	self.m_CurrentFire = nil
+end
+
 function FireManager:receiveFires()
 	if self.m_CurrentFire then
 		self.m_CurrentFire:syncFires(client)
 	end
+end
+
+--Admin / Dev methods
+
+function FireManager:Event_adminRequestData()
+	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
+		return
+	end
+	self:sendAdminFireData(client)
+end
+
+function FireManager:sendAdminFireData(player)
+	player:triggerEvent("adminFireReceiveData", self.m_Fires, self.m_CurrentFire and self.m_CurrentFire.m_Id)
+end
+
+function FireManager:Event_toggleFire(id)
+	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
+		return
+	end
+	if self:getCurrentFire() then
+		if self:getCurrentFire().m_Id == id then
+			self:stopCurrentFire()
+		else 
+			self:startFire(id)
+		end
+	else
+		self:startFire(id)
+	end
+	self:sendAdminFireData(client)
+end
+
+function FireManager:Event_createFire()
+	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
+		return
+	end
+	self:sendAdminFireData(client)
+end
+
+function FireManager:Event_editFire()
+	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
+		return
+	end
+	self:sendAdminFireData(client)
+end
+
+function FireManager:Event_deleteFire()
+	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
+		return
+	end
+	self:sendAdminFireData(client)
 end

@@ -17,11 +17,11 @@ function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoo
 	if tonumber(iX) and tonumber(iY) and tonumber(iZ) and tonumber(iSize) and iSize >= 1 and iSize <= 3 then
 		self.m_Ped = createPed(0, iX, iY, iZ, 0, false)
 			setElementFrozen(self.m_Ped, true)
-			setElementAlpha(self.m_Ped, 0)
-		self.m_iSize = iSize
-		self.m_uFireRoot = uFireRoot
-		self.m_iRoot_i = iRoot_i
-		self.m_iRoot_v = iRoot_v
+			setElementAlpha(self.m_Ped, 0)	
+		self.m_Size = iSize
+		self.m_FireRoot = uFireRoot
+		self.m_Root_i = iRoot_i
+		self.m_Root_v = iRoot_v
 		self:setFireDecaying(bDecaying)
 		triggerClientEvent("fireElements:onFireCreate", self.m_Ped, iSize)
 
@@ -34,27 +34,27 @@ end
 
 function Fire:destructor()
 	triggerClientEvent("fireElements:onFireDestroy", resourceRoot, self.m_Ped) -- uElement cannot be the triggered source element because it's destroyed lol
-	if self.uFireRoot then
-		self.m_uFireRoot:updateFire(self.m_iRoot_i, self.m_iRoot_v, 0, true)
+	if self.m_FireRoot then
+		self.m_FireRoot:updateFire(self.m_Root_i, self.m_Root_v, 0, true)
 	end
 	if isElement(self.m_Ped) then
-		triggerEvent("fireElements:onFireExtinguish", self.m_Ped, self.m_Extinguisher, self.m_iSize)
+		triggerEvent("fireElements:onFireExtinguish", self.m_Ped, self.m_Extinguisher, self.m_Size)
 		destroyElement(self.m_Ped)
 	end
-	if isTimer(self.m_uDecayTimer) then
-		killTimer(self.m_uDecayTimer)
+	if isTimer(self.m_DecayTimer) then
+		killTimer(self.m_DecayTimer)
 	end
 
 	return true
 end
 
 function Fire:decreaseFireSize()
-	if self.m_iSize > 1 then
-		self.m_iSize = self.m_iSize -1
+	if self.m_Size > 1 then
+		self.m_Size = self.m_Size -1
 		setElementHealth(self.m_Ped, 100) -- renew fire
-		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, self.m_iSize)
-		if self.m_uFireRoot then
-			self.m_uFireRoot:updateFire(self.m_.iRoot_i, self.m_.iRoot_v, self.m_.iSize, true)
+		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, self.m_Size)
+		if self.m_FireRoot then
+			self.m_FireRoot:updateFire(self.m_Root_i, self.m_Root_v, self.m_Size, true)
 		end
 		return true
 	end
@@ -63,7 +63,7 @@ end
 
 function Fire:setFireSize(iSize)
 	if self.m_Ped and isElement(self.m_Ped) then
-		self.m_iSize = iSize
+		self.m_Size = iSize
 		setElementHealth(self.m_Ped, 100) -- renew fire
 		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, iSize)
 		--dont update the fire root because this may cause an endless loop
@@ -73,18 +73,18 @@ function Fire:setFireSize(iSize)
 end
 
 function Fire:setFireDecaying(bDecaying)
-	if isTimer(self.m_uDecayTimer) then
-		killTimer(self.m_uDecayTimer)
+	if isTimer(self.m_DecayTimer) then
+		killTimer(self.m_DecayTimer)
 	end
 
 	if bDecaying then
-		self.m_uDecayTimer = setTimer(function()
-			if self.iSize > 1 then
+		self.m_DecayTimer = setTimer(function()
+			if self.m_Size > 1 then
 				self:decreaseFireSize()
 			else
 				self:destroyFireElement()
 			end
-		end, Fire.Settings["DecayTime"]+math.random(-500,500), self.m_iSize)
+		end, Fire.Settings["DecayTime"]+math.random(-500,500), self.m_Size)
 	end
 	return true
 end
@@ -103,7 +103,7 @@ addEventHandler("fireElements:requestFireDeletion", resourceRoot, function()
 	if isPedInVehicle(client) then iDist = 10 end
 	if getDistanceBetweenPoints3D(iCx, iCy, iCz, iCx, iCy, iCz) <= iDist then
 		if not Fire.PlayerMap[client] or getTickCount()-Fire.PlayerMap[client] > 50 then
-			if Fire.Map[self.m_Ped].iSize > 1 then
+			if Fire.Map[self.m_Ped].m_Size > 1 then
 				Fire.Map[self.m_Ped]:decreaseFireSize()
 			else
 				Fire.Map[self.m_Ped]:setExtinguisher(client)
@@ -118,7 +118,7 @@ addEvent("fireElements:onClientRequestsFires", true)
 addEventHandler("fireElements:onClientRequestsFires", resourceRoot, function()
 	local fires = {}
 	for ped, fire in pairs(Fire.Map) do
-		fires[ped] = fire.m_iSize
+		fires[ped] = fire.m_Size
 	end
 	triggerClientEvent(client, "fireElements:onClientRecieveFires", resourceRoot, fires)
 end)

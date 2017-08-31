@@ -337,7 +337,7 @@ end
 function PlayerManager:breakingNews(text, ...)
 	for k, v in pairs(getElementsByType("player")) do
 		local textFinish = _(text, v, ...)
-		v:triggerEvent("breakingNews", textFinish)
+		v:triggerEvent("breakingNews", textFinish, "Breaking News")
 	end
 end
 

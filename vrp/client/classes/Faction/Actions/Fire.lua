@@ -4,7 +4,7 @@ Fire.Settings = {
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
 	["fireRenderDistance"] = 50,
-	["extinguishTime"] = 10,
+	["extinguishTime"] = 30,
 	["extraEffects"] = true,
 }
 
@@ -187,7 +187,7 @@ function Fire:checkForFireGroundInfo(uFire)
 		end
 		if not self.m_Fires[uFire].bCorrectPlaced and isElementStreamedIn(uFire) then
 			local iNewZ = getGroundPosition(iX, iY, iZ + 100)
-			setElementPosition(uFire, iX, iY, iNewZ)
+			setElementPosition(uFire, iX, iY, iNewZ+(self.m_Fires[uFire].iSize/3))
 			setElementPosition(self.m_Fires[uFire].uEffect, iX, iY, iNewZ)
 			setElementPosition(self.m_Fires[uFire].uBurningCol, iX, iY, iNewZ+1)
 			self.m_Fires[uFire].bCorrectPlaced = true
@@ -211,8 +211,11 @@ function Fire:createFireElement(iSize, uPed)
 	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollidableWith (uPed, localPlayer, false)
-	for index,vehicle in ipairs(getElementsByType("vehicle")) do
+	for index,vehicle in pairs(getElementsByType("vehicle")) do
 		setElementCollidableWith(vehicle, uPed, false)
+	end
+	for fire in pairs(self.m_Fires) do
+		setElementCollidableWith(fire, uPed, false)
 	end
 	self:checkForFireGroundInfo(uPed)
 	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))

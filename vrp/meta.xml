@@ -602,6 +602,7 @@
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminEventGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminPedGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AdminFireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
