@@ -1,7 +1,6 @@
 MoneyBeggar = inherit(BeggarPed)
 
 function MoneyBeggar:constructor()
-	outputChatBox("Money Beggar erstellt!")
 end
 
 function MoneyBeggar:giveMoney(player, money)
