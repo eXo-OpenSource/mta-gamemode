@@ -115,10 +115,19 @@ function GrowableManager:getPlantNameFromSeed(seed)
 	return false
 end
 
+function GrowableManager:isUnderWater()
+	local pos = localPlayer:getPosition()
+	local waterLevel = getWaterLevel(pos.x, pos.y, pos.z)
+	if waterLevel and pos.z-waterLevel < 0 then
+		return true
+	end
+	return false
+end
+
 function GrowableManager:getClientCheck(seed, bool, z_pos )
 	if bool then
 		if client:isOnGround() then
-			if not client:isInWater() then
+			if not client:isInWater() and not self:isUnderWater() then
 				if not client.vehicle then
 					local plantName = self:getPlantNameFromSeed(seed)
 					if plantName then
