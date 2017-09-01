@@ -90,6 +90,8 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/fuelnozzle.txd", 1909)
 	self:loadImportDFF("files/models/fuelnozzle.dff", 1909)
 
+	self:loadImportDFF("files/models/gasstation.dff", 1676)
+
 	--other objects
 	-- Blitzer
 	self:loadImportCOL("files/models/blitzer.col", 3902)
