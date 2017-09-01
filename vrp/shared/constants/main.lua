@@ -573,6 +573,11 @@ DEATH_TIME = 30000
 DEATH_TIME_PREMIUM = 0
 DEATH_TIME_ADMIN = 0
 
+if DEBUG then
+	MEDIC_TIME = 10000
+	DEATH_TIME = 0
+end
+
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
 	{"181.FM", "http://www.181.fm/winamp.pls?station=181-power&style=mp3&description=Power%20181%20(Top%2040)&file=181-power.pls"},
