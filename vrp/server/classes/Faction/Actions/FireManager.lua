@@ -128,12 +128,26 @@ function FireManager:Event_createFire()
 	self:sendAdminFireData(client)
 end
 
-function FireManager:Event_editFire()
+function FireManager:Event_editFire(id, tblArgs)
 	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
-	self:sendAdminFireData(client)
+	--update db
+	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ? WHERE Id = ?", sql:getPrefix(), 
+		tostring(tblArgs.name) or "name failed to save",
+		tostring(tblArgs.message) or "msg failed to save",
+		tblArgs.enabled and 1 or 0,
+		id
+	)
+
+	--update InGame fire cache 
+	self.m_Fires[id]["name"] = tblArgs.name
+	self.m_Fires[id]["message"] = tblArgs.message
+	self.m_Fires[id]["enabled"] = tblArgs.enabled
+
+	client:sendSuccess(_("Feuer %d gespeichert.", client, id))
+	self:sendAdminFireData(client) -- resend data (update client UI)
 end
 
 function FireManager:Event_deleteFire()

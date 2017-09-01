@@ -42,7 +42,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	}
 
 	if DEBUG then
-		self.m_DebugArea = RadarArea:constructor(iX, iY, iW, -iH, {200, 0, 0, 100})
+		self.m_DebugArea = RadarArea:new(iX, iY, iW, -iH, {200, 0, 0, 100})
 	end
 
     for index = 1, math.sqrt(iW*iH)/FireRoot.Settings["coords_per_fire"]/3 do
@@ -66,7 +66,9 @@ function FireRoot:destructor()
     for i, uEle in pairs(self.m_tblFireElements) do
         delete(uEle)
     end
+	outputDebug("fireroot destructor")
 	if self.m_DebugArea then 
+		outputDebug("m_DebugArea destructor")
 		self.m_DebugArea:delete()
 	end
     destroyElement(self.m_Root)
@@ -84,6 +86,7 @@ function FireRoot:addOnFinishHook(callback, ...)
 end
 
 function FireRoot:update()
+	local start = getTickCount()
 	local tblFiresToUpdate = {}
 	for sPos, iSize in spairs(self.m_tblFireSizes, function(t,a,b) return t[b] < t[a] end) do
 		local i,v = tonumber(split(sPos, ",")[1]), tonumber(split(sPos, ",")[2])
@@ -142,9 +145,11 @@ function FireRoot:update()
 			end
 		end
 	end
+	local deletes = 0
 	for i,v in pairs(tblFiresToUpdate) do
 		for ii,vv in pairs(v) do
 			self:updateFire(i, ii, vv)
+			if vv == 0 then deletes = deletes + 1 end
 		end
 	end
 	if self.m_tblStatistics.iFiresActive == 0 then
@@ -156,6 +161,7 @@ function FireRoot:update()
 			delete(self)
 		end
 	end
+	outputDebug("updated fire", getTickCount()-start.."ms", table.size(tblFiresToUpdate).." updates", deletes.." deletes")
 end
 
 function FireRoot:dump()

@@ -47,8 +47,13 @@ function AdminFireGUI:constructor()
 		end
 		if self.m_CurrentFireEditing then
 			--TODO: save
-			outputDebug("saved")
+			triggerServerEvent("adminEditFire", localPlayer, self.m_SelectedFireId, {
+				name = self.m_NameEdit:getText(),
+				message = self.m_MessageEdit:getText(),
+				enabled = self.m_ActiveCheck:isChecked(),
+			})
 			self:onFireEdit()
+
 		else
 			outputDebug("editing")
 			self:onFireEdit(self.m_SelectedFireId)
@@ -133,7 +138,9 @@ end
 
 function AdminFireGUI:onFireEdit(id)
 	if id then 
-		
+		self.m_CreateFire:setEnabled(false)
+		self.m_ToggleFire:setEnabled(false)
+		self.m_DeleteFire:setEnabled(false)
 		self.m_EditFire:setText("Speichern")
 		local data = self.m_Fires[id]
 		self.m_PosLbl:setText(("Position: %s;%s\nGröße: %s;%s"):format(data.positionTbl[1], data.positionTbl[2], data.width, data.height))
@@ -141,7 +148,9 @@ function AdminFireGUI:onFireEdit(id)
 		self.m_MessageEdit:setText(data.message)
 		self.m_ActiveCheck:setChecked(data.enabled)
 	else
-
+		self.m_CreateFire:setEnabled(true)
+		self.m_ToggleFire:setEnabled(true)
+		self.m_DeleteFire:setEnabled(true)
 		self.m_EditFire:setText("Feuer editieren")
 
 	end
@@ -152,9 +161,7 @@ function AdminFireGUI:onFireEdit(id)
 	self.m_NameEdit:setVisible(id and true)
 	self.m_MessageEdit:setVisible(id and true)
 	self.m_ActiveCheck:setVisible(id and true)
-	self.m_CreateFire:setEnabled(id and false or true)
-	self.m_ToggleFire:setEnabled(id and false or true)
-	self.m_DeleteFire:setEnabled(id and false or true)
+	
 
 	self.m_CurrentFireEditing = id
 end
