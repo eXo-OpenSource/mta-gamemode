@@ -27,7 +27,7 @@ function GasStation:constructor()
 
 	self.m_FilledDone =
 		function(vehicle, fuel, station)
-			GasStation.PendingTransaction = {station = station, vehicle = vehicle, fuel = math.round(fuel)}
+			GasStation.PendingTransaction = {station = station, vehicle = vehicle, fuel = fuel}
 			InfoBox:new("Gehe in die Tankstelle um zu bezahlen!")
 			--triggerServerEvent("gasStationStartTransaction", localPlayer, vehicle, fuel, station)
 		end

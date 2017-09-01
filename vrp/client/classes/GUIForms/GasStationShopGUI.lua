@@ -32,7 +32,7 @@ function GasStationShopGUI:constructor(callback, name)
 
 	if GasStation.PendingTransaction and GasStation.PendingTransaction.station:getData("Name") == name then
 		local vehicle = GasStation.PendingTransaction.vehicle
-		local fuel = GasStation.PendingTransaction.fuel
+		local fuel = math.round(GasStation.PendingTransaction.fuel)
 		local station = GasStation.PendingTransaction.station
 
 		self.m_Fuel:setText(fuel .. " L")

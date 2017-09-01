@@ -72,8 +72,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station)
 	local station = GasStation.Map[station]
 	if station then
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
-			local fuel = vehicle:getFuel() + fuel > 100 and math.floor(100 - vehicle:getFuel()) or math.floor(fuel)
-			local price = math.floor(fuel * (station:isServiceStation() and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR))
+			local fuel = vehicle:getFuel() + fuel > 100 and 100 - vehicle:getFuel() or fuel
+			local price = math.round(fuel * (station:isServiceStation() and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR))
 
 			if fuel == 0 then
 				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
