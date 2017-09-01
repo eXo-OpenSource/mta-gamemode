@@ -490,7 +490,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 	elseif hitElement:getPlayerAttachedObject() then
 		if self:getAttachedBoxes(hitElement) > 0 then
 			boxes = getAttachedElements(hitElement)
-			PlayerManager:getSingleton():breakingNews("%d von %d Waffenkisten wurden abgegeben!", self.m_BoxesCount-self:getRemainingBoxAmount()+1, self.m_BoxesCount)
+			PlayerManager:getSingleton():breakingNews("Waffenkiste %d von %d wurde bei der/den %s abgegeben!", self.m_BoxesCount-self:getRemainingBoxAmount()+1, self.m_BoxesCount, faction:getShortName())
 			hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 		end
