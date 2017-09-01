@@ -63,25 +63,20 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
-		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true)
 	elseif self.m_Type == "state" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
-		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-			self:addDestinationMarker(faction:getId(), "evil", false)
-		end
 	end
 
-	local factionId = self.m_StartFaction:getId()
-	local dest = factionWTDestination[factionId]
-
-	if self.m_Type == "evil" then
-		self.m_DestinationBlips[factionId] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
-		self.m_DestinationBlips[factionId]:setDisplayText("Waffentruck-Abgabepunkt")
-	else
-		self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
-		self.m_DestinationBlips["State"]:setDisplayText("Waffentruck-Abgabepunkt")
+	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
+		self:addDestinationMarker(faction:getId(), "evil", false)
+		self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
+		self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
 	end
+
+	self:addDestinationMarker(1, "state") -- State
+	self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_DestinationBlips["State"]:setDisplayText("Waffentruck-Abgabepunkt")
 
 	self.m_BoxesCount = 8
 
@@ -109,7 +104,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	self:spawnBoxes()
 	self:createLoadMarker()
-	self:addDestinationMarker(1, "state") -- State
+
 
 end
 
