@@ -1255,6 +1255,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 			toggleControl(self, "next_weapon", bool )
 			toggleControl(self, "previous_weapon", bool )
 			toggleControl(self, "enter_exit", bool )
+			toggleControl(self, "enter_passenger", bool )
 		end
 	else
 		toggleControl(self, "jump", bool )
@@ -1263,6 +1264,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
 		toggleControl(self, "enter_exit", bool )
+		toggleControl(self, "enter_passenger", bool )
 	end
 end
 
