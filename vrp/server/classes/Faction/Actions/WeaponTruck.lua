@@ -65,7 +65,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-			if self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
+			if self.m_StartFaction == faction or self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
 				dest = self:addDestinationMarker(faction, "evil")
 				self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = faction:getId()}, 9999, BLIP_COLOR_CONSTANTS.Red)
 				self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
