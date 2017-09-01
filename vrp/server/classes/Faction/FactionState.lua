@@ -236,7 +236,7 @@ function FactionState:loadFBI(factionId)
 	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
-	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 226.80, 128.50, 1010.20)
@@ -273,7 +273,7 @@ function FactionState:loadArmy(factionId)
 	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
 	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
 
-	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State", duty = true}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
+	local blip = Blip:new("Police.png", 134.53, 1929.06, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 0 )

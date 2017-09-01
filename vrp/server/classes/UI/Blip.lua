@@ -73,7 +73,7 @@ function Blip:isVisibleForPlayer(player)
 
 	local fac = player:getFaction()
 	if fac then
-		if self.m_VisibleTo["faction"] and self.m_VisibleTo["faction"][fac:getId()] then
+		if self.m_VisibleTo["faction"] and (self.m_VisibleTo["faction"][fac:getId()] or (fac:getAllianceFaction() and self.m_VisibleTo["faction"][fac:getAllianceFaction():getId()])) then
 			if self.m_VisibleTo["duty"] and (fac:getType() ~= "Evil" and not player:isFactionDuty()) then return false end -- duty check not for evil factions
 			return true
 		elseif self.m_VisibleTo["factionType"] and self.m_VisibleTo["factionType"][fac:getType()] then
