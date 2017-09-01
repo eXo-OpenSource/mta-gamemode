@@ -68,13 +68,16 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 	end
 
+	local dest
 	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-		self:addDestinationMarker(faction:getId(), "evil", false)
-		self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = factionId}, 9999, BLIP_COLOR_CONSTANTS.Red)
-		self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
+		if self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
+			dest = self:addDestinationMarker(faction, "evil")
+			self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = faction:getId()}, 9999, BLIP_COLOR_CONSTANTS.Red)
+			self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
+		end
 	end
 
-	self:addDestinationMarker(1, "state") -- State
+	dest = self:addDestinationMarker(FactionManager:getSingleton():getFromId(1), "state") -- State
 	self.m_DestinationBlips["State"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
 	self.m_DestinationBlips["State"]:setDisplayText("Waffentruck-Abgabepunkt")
 
@@ -324,15 +327,16 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	end
 end
 
-function WeaponTruck:addDestinationMarker(factionId, type, isEvil)
+function WeaponTruck:addDestinationMarker(faction, type)
 	local markerId = #self.m_DestinationMarkers+1
-	local color = factionColors[factionId]
-	local destination = factionWTDestination[factionId]
+	local color = factionColors[faction:getId()]
+	local destination = factionWTDestination[faction:getId()]
 	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8, color.r, color.g, color.b, 100)
 	self.m_DestinationMarkers[markerId].type = type
-	self.m_DestinationMarkers[markerId].factionId = factionId
+	self.m_DestinationMarkers[markerId].faction = faction
 
 	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
+	return destination
 end
 
 function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
@@ -432,17 +436,12 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if (hitElement.vehicle and #getAttachedElements(hitElement.vehicle) > 0 ) or hitElement:getPlayerAttachedObject() then
-					if faction:isEvilFaction() and source.type == "evil" and (source.factionId == faction:getId()) then
+					if faction:isEvilFaction() and source.type == "evil" and (source.faction == faction or source.faction == faction:getAllianceFaction()) then
 						self:onDestinationMarkerHit(hitElement)
 					elseif faction:isStateFaction() and source.type == "state" then
-						--if self.m_Type == "state" then
-							self:onDestinationMarkerHit(hitElement)
-						--else
-						--	self:onStateMarkerHit(hitElement)
-						--end
+						self:onDestinationMarkerHit(hitElement)
 					else
 						hitElement:sendError(_("Du kannst hier nicht abgeben!",hitElement))
-
 					end
 				end
 			end
@@ -451,7 +450,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 end
 
 function WeaponTruck:onDestinationMarkerHit(hitElement)
-	local faction = hitElement:getFaction()
+	local faction = source.faction
 	local boxes = {}
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
@@ -460,7 +459,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 		self:Event_OnWeaponTruckExit(hitElement,0)
 		if self.m_Type == "evil" then
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
-			PlayerManager:getSingleton():breakingNews("Der %s wurde erfolgreich abgegeben!", WEAPONTRUCK_NAME[self.m_Type])
+			PlayerManager:getSingleton():breakingNews("Der %s wurde erfolgreich bei der/den %s abgegeben!", WEAPONTRUCK_NAME[self.m_Type], faction:getShortName())
 		elseif self.m_Type == "state" then
 			if faction:isEvilFaction() then
 				PlayerManager:getSingleton():breakingNews("Der %s wurde von der Fraktion %s gestohlen!", WEAPONTRUCK_NAME[self.m_Type], faction:getName())
@@ -482,7 +481,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 		return
 	end
 
-	self:addWeaponsToDepot(hitElement, self:mergeBoxes(boxes))
+	self:addWeaponsToDepot(hitElement, faction, self:mergeBoxes(boxes))
 
 	for key, value in pairs (boxes) do
 		if value:getModel() == 2912 then
@@ -511,11 +510,10 @@ function WeaponTruck:mergeBoxes(boxes)
 	return mergeTable
 end
 
-function WeaponTruck:addWeaponsToDepot(player, weaponTable)
+function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 	local insertAmount
 	local shortMessage = {}
 	local money = 0
-	local faction = player:getFaction()
 	local depot = faction.m_Depot
 
 	local depotInfo = faction:isStateFaction() and factionWeaponDepotInfoState or factionWeaponDepotInfo
@@ -554,10 +552,10 @@ function WeaponTruck:addWeaponsToDepot(player, weaponTable)
 	end
 	--Remaining Weapons (if they do not fit or not allowed in Depot)
 	if faction:isStateFaction() then
+		local evidenceString = {}
 		for weaponID, v in pairs(weaponTable) do
-			if faction:isStateFaction() then
-				FactionState:getSingleton():addWeaponToEvidence(player, weaponID, weaponTable[weaponID]["Munition"] or 0, self.m_StartFaction:getId())
-			end
+			FactionState:getSingleton():addWeaponToEvidence(player, weaponID, weaponTable[weaponID]["Munition"] or 0, self.m_StartFaction:getId(), true)
+			evidenceString[#evidenceString+1] = WEAPON_NAMES[weaponID].." mit "..weaponTable[weaponID]["Munition"].." Magazin/e \n"
 		end
 	else
 		for weaponID, v in pairs(weaponTable) do
@@ -580,7 +578,14 @@ function WeaponTruck:addWeaponsToDepot(player, weaponTable)
 	for index, data in pairs(shortMessage) do
 		shortmessageString = shortmessageString..table.concat(data, ": ").."\n"
 	end
-	shortmessageString = shortmessageString..("Geld: %d$"):format(money)
+	if evidenceString then
+		shortmessageString = shortmessageString.."In die Asservatenkammer gelegt:\n"
+		shortmessageString = shortmessageString..table.concat(evidenceString)
+	end
+
+	if money > 0 then
+		shortmessageString = shortmessageString..("Geld: %d$"):format(money)
+	end
 	player:sendShortMessage(shortmessageString, "Waffentruck-Kiste", nil, 15000)
 
 	depot:save()

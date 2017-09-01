@@ -1743,7 +1743,7 @@ function FactionState:Event_attachBug()
 	end
 end
 
-function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
+function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID, noMessage)
 	if self.m_EvidenceRoomItems then
 		if #self.m_EvidenceRoomItems < STATEFACTION_EVIDENCE_MAXITEMS  then
 			local type_ = "Waffe"
@@ -1754,7 +1754,7 @@ function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID)
 			end
 			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
 				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
-			FactionState:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!")
+			if not noMessage then FactionState:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
 			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, Date}
 		end
 	end
