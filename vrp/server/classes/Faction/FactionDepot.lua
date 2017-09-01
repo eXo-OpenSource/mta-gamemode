@@ -215,23 +215,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 	self:save()
 end
 
-function Depot:addWeaponsToDepot(weaponTable)
-	for weaponID,v in pairs(weaponTable) do
-		for typ,amount in pairs(weaponTable[weaponID]) do
-			if amount > 0 then
-				if typ == "Waffe" then
-					self:addWeaponD(weaponID,amount)
-				elseif typ == "Munition" then
-					if weaponID == 25 then amount = amount * 6 end
-					if weaponID == 33 then amount = amount * 5 end
-					if weaponID == 34 then amount = amount * 4 end
-					self:addMagazineD(weaponID,amount)
-				end
-			end
-		end
-	end
-	self:save()
-end
+
 
 function Depot:addItem(player, item, amount)
 	for i=1, 6 do

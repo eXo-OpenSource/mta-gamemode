@@ -440,11 +440,11 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 					if faction:isEvilFaction() and source.type == "evil" and (source.factionId == faction:getId()) then
 						self:onDestinationMarkerHit(hitElement)
 					elseif faction:isStateFaction() and source.type == "state" then
-						if self.m_Type == "state" then
+						--if self.m_Type == "state" then
 							self:onDestinationMarkerHit(hitElement)
-						else
-							self:onStateMarkerHit(hitElement)
-						end
+						--else
+						--	self:onStateMarkerHit(hitElement)
+						--end
 					else
 						hitElement:sendError(_("Du kannst hier nicht abgeben!",hitElement))
 
@@ -457,7 +457,6 @@ end
 
 function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
-	local depot = faction.m_Depot
 	local boxes = {}
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
@@ -487,11 +486,11 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 		hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
 		return
 	end
-	outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
+
+	self:addWeaponsToDepot(hitElement, self:mergeBoxes(boxes))
+
 	for key, value in pairs (boxes) do
 		if value:getModel() == 2912 then
-			depot:addWeaponsToDepot(value.content)
-			self:outputBoxContent(hitElement, value)
 			value:destroy()
 		end
 	end
@@ -500,35 +499,94 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 	end
 end
 
-function WeaponTruck:onStateMarkerHit(hitElement)
-	local faction = hitElement:getFaction()
-	local boxes
-	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-		boxes = getAttachedElements(self.m_Truck)
-		PlayerManager:getSingleton():breakingNews("Der %s wurde sichergestellt!", WEAPONTRUCK_NAME[self.m_Type])
-		hitElement:sendInfo(_("Truck erfolgreich sichergestellt",hitElement))
-		self:Event_OnWeaponTruckExit(hitElement,0)
-	elseif hitElement:getPlayerAttachedObject() then
-		boxes = getAttachedElements(hitElement)
-		PlayerManager:getSingleton():breakingNews("%d von %d Waffenkisten wurden sichergestellt!", self.m_BoxesCount-self:getRemainingBoxAmount()+1, self.m_BoxesCount)
-		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
-		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
-	elseif hitElement:getOccupiedVehicle() then
-		hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
-		return
-	end
-	local sum = 0
+function WeaponTruck:mergeBoxes(boxes)
+	local weaponTable
+	local mergeTable = {}
 	for key, box in pairs (boxes) do
 		if box:getModel() == 2912 then
-			sum = sum + box.sum
-			box:destroy()
+			weaponTable = box.content
+			for weaponID, v in pairs(weaponTable) do
+				if not mergeTable[weaponID] then mergeTable[weaponID] = { ["Waffe"] = 0, ["Munition"] = 0 } end
+				for typ, amount in pairs(weaponTable[weaponID]) do
+					mergeTable[weaponID][typ] =  mergeTable[weaponID][typ] + amount
+				end
+			end
 		end
 	end
-	if sum > 0 then
-		hitElement:getFaction():giveMoney(sum, "Waffentruck Kisten")
+	return mergeTable
+end
+
+function WeaponTruck:addWeaponsToDepot(player, weaponTable)
+	local insertAmount
+	local shortMessage = {}
+	local money = 0
+	local faction = player:getFaction()
+	local depot = faction.m_Depot
+
+	local depotInfo = faction:isStateFaction() and factionWeaponDepotInfoState or factionWeaponDepotInfo
+	local allowedWeapons = factionWeapons[faction:getId()]
+
+	for weaponID, v in pairs(weaponTable) do
+		for typ, amount in pairs(weaponTable[weaponID]) do
+			insertAmount = 0
+			if amount > 0 then
+				if allowedWeapons[weaponID] then
+					if typ == "Waffe" then
+						if depotInfo[weaponID]["Waffe"] >= depot.m_Weapons[weaponID]["Waffe"] + amount then
+							insertAmount = amount
+						else
+							insertAmount = depotInfo[weaponID]["Waffe"] - depot.m_Weapons[weaponID]["Waffe"]
+						end
+						depot:addWeaponD(weaponID, insertAmount)
+						weaponTable[weaponID]["Waffe"] = weaponTable[weaponID]["Waffe"] - insertAmount
+						shortMessage[#shortMessage+1] = {WEAPON_NAMES[weaponID], insertAmount}
+					elseif typ == "Munition" then
+						if weaponID == 25 then amount = amount * 6 end
+						if weaponID == 33 then amount = amount * 5 end
+						if weaponID == 34 then amount = amount * 4 end
+						if depotInfo[weaponID]["Magazine"] >= depot.m_Weapons[weaponID]["Munition"] + amount then
+							insertAmount = amount
+						else
+							insertAmount = depotInfo[weaponID]["Magazine"] - depot.m_Weapons[weaponID]["Munition"]
+						end
+						depot:addMagazineD(weaponID,insertAmount)
+						weaponTable[weaponID]["Munition"] = weaponTable[weaponID]["Munition"] - insertAmount
+						shortMessage[#shortMessage+1] = {WEAPON_NAMES[weaponID].." Magazin/e", insertAmount}
+					end
+				end
+			end
+		end
+	end
+	--Remaining Weapons (if they do not fit or not allowed in Depot)
+	if faction:isStateFaction() then
+		for weaponID, v in pairs(weaponTable) do
+			if faction:isStateFaction() then
+				FactionState:getSingleton():addWeaponToEvidence(player, weaponID, weaponTable[weaponID]["Munition"] or 0, self.m_StartFaction:getId())
+			end
+		end
+	else
+		for weaponID, v in pairs(weaponTable) do
+			for typ, amount in pairs(weaponTable[weaponID]) do
+				if amount > 0 then
+					if typ == "Waffe" then
+						money = money + amount * factionWeaponDepotInfo[weaponID]["WaffenPreis"]
+					elseif typ == "Munition" then
+						money = money + amount * factionWeaponDepotInfo[weaponID]["MagazinPreis"]
+					end
+				end
+			end
+		end
+		if money > 0 then
+			faction:giveMoney(money, "Waffentruck Kisten")
+		end
 	end
 
-	if self:getRemainingBoxAmount() == 0 then
-		delete(self)
+	local shortmessageString = "Ins Depot gelegt:\n"
+	for index, data in pairs(shortMessage) do
+		shortmessageString = shortmessageString..table.concat(data, ": ").."\n"
 	end
+	shortmessageString = shortmessageString..("Geld: %d$"):format(money)
+	player:sendShortMessage(shortmessageString, "Waffentruck-Kiste", nil, 15000)
+
+	depot:save()
 end
