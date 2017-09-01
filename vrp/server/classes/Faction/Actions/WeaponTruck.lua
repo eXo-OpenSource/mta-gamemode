@@ -467,6 +467,11 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local boxes = {}
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+		hitElement:sendInfo(_("Bitte steig aus um die Kisten zu entladen!", hitElement))
+		return
+	end
+
+	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		boxes = getAttachedElements(self.m_Truck)
 		hitElement:sendInfo(_("Truck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 		self:Event_OnWeaponTruckExit(hitElement,0)
@@ -490,7 +495,8 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 		end
 	elseif hitElement:getOccupiedVehicle() then
-		hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
+		hitElement:sendInfo(_("Du musst die Kisten per Hand abladen!", hitElement))
+		--hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
 		return
 	end
 
