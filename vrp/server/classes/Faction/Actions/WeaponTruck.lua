@@ -60,17 +60,21 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	TollStation.openAll()
 
+	local dest
 	if self.m_Type == "evil" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
+		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
+			if self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
+				dest = self:addDestinationMarker(faction, "evil")
+				self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = faction:getId()}, 9999, BLIP_COLOR_CONSTANTS.Red)
+				self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
+			end
+		end
 	elseif self.m_Type == "state" then
 		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
-	end
-
-	local dest
-	for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-		if self.m_StartFaction:getDiplomacy(faction) == FACTION_DIPLOMACY["im Krieg"] then
+		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			dest = self:addDestinationMarker(faction, "evil")
 			self.m_DestinationBlips[faction:getId()] = Blip:new("Marker.png", dest.x, dest.y, {faction = faction:getId()}, 9999, BLIP_COLOR_CONSTANTS.Red)
 			self.m_DestinationBlips[faction:getId()]:setDisplayText("Waffentruck-Abgabepunkt")
