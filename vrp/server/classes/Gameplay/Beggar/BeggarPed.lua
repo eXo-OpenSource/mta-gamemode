@@ -23,7 +23,7 @@ function BeggarPed:virtual_constructor(id, classId)
 
 	self.m_LastRobTime = 0
 
-	addEventHandler("onPedWasted", self, bind(self.Event_onPedWasted, ped))
+	addEventHandler("onPedWasted", self, bind(self.Event_onPedWasted, self))
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
 
