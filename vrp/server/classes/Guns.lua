@@ -39,11 +39,10 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage","Guns:toggleWeapon"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-	addEventHandler("Guns:toggleWeapon", root, bind(self.Event_ToggleWeapon, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
@@ -156,29 +155,6 @@ end
 
 function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
 
-end
-
-function Guns:Event_ToggleWeapon( oldweapon )
-	if oldweapon then
-		if client then
-			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end
-			local slot = getSlotFromWeapon(oldweapon)
-			if client.m_WeaponStorage[slot] then
-				local weaponInStorage, ammoInStorage = unpack(client.m_WeaponStorage[slot])
-				if getSlotFromWeapon(weaponInStorage) == slot then
-					if weaponInStorage and ammoInStorage then
-						client.m_WeaponStorage[slot] = {oldweapon, getPedTotalAmmo(client,slot)}
-						giveWeapon(client, weaponInStorage, ammoInStorage, true)
-						if weaponInStorage == 23 then
-							client:meChat(true, "zieht seinen Taser.")
-							setTimer(setPedAnimation, 1000, 1, client, false)
-						end
-						setPedAnimation(client, "shop", "shp_gun_threat", 500, false, false, false)
-					end
-				end
-			end
-		end
-	end
 end
 
 function Guns:setWeaponInStorage(player, weapon, ammo)

@@ -57,7 +57,7 @@ factionRankNames[1] = {
 factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
-factionWeapons[1] = {[3]=true,[23]=true,[24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[1] = {[3]=true, [24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[1] = Vector3(2741.90, -2405.60, 13.45)
 factionSpawnpoint[1] = {Vector3(1558.92, -1684.04, 16.20, 0, 0), 0, 0}
 
@@ -74,7 +74,7 @@ factionRankNames[2] = {
 factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[3]=true, [23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[2] = {[3]=true, [24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[2] = Vector3(2741.90, -2405.60, 13.45)
 factionSpawnpoint[2] = {Vector3(1223.51, -1813.49, 16.59), 0, 0}
 
@@ -92,7 +92,7 @@ factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 --factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true}
-factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
+factionWeapons[3] = {[6]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 13.45)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
 
