@@ -16,9 +16,27 @@ function Guns:constructor()
 
 	for index,skill in pairs(weaponSkills) do
 		-- Taser:
-		setWeaponProperty (23, skill, "weapon_range", 10 )
-		setWeaponProperty (23, skill, "maximum_clip_ammo", 9999 )
-		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
+		setWeaponProperty(23, skill, "weapon_range", 10 )
+		setWeaponProperty(23, skill, "maximum_clip_ammo", 9999 )
+		setWeaponProperty(23, skill, "anim_loop_stop", 0 )
+		-- Deagle:
+		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "accuracy",1.5) -- GTA-Std: 1.25
+		-- Uzi:
+		setWeaponProperty(28, skill, "accuracy",1.1000000238419) -- GTA-Std: 1.1000000238419
+		-- MP5:
+		setWeaponProperty(29, skill, "accuracy",0.9) -- GTA-Std: 1.2000000476837
+		-- M4:
+		setWeaponProperty(31, skill, "accuracy",0.8) -- GTA-Std: 0.80000001192093
+		setWeaponProperty(31, skill, "weapon_range",105) -- GTA-Std: 90
+		-- Tec-9:
+		setWeaponProperty(32, skill, "weapon_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "target_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "accuracy",1.1999999523163) -- GTA-Std: 1.1000000238419
+		-- Rifle:
+		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
+		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
 
 	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage","Guns:toggleWeapon"}
