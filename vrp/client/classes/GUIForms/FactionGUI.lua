@@ -139,7 +139,7 @@ function FactionGUI:addLeaderTab()
 			self.m_SkinPreviewBrowser:setVisible(false)
 		end
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, self.m_TabLeader)
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.73, self.m_Height*0.8, self.m_Width*0.26, self.m_Height*0.07, _"Rang speichern", true, self.m_TabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
@@ -165,11 +165,13 @@ function FactionGUI:refreshLeaderTab()
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
 
-	for weaponID,v in pairs(self.m_ValidWeapons) do
+
+
+	for weaponID, v in pairs(self.m_ValidWeapons) do
 		if v == true then
-			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, WEAPON_NAMES[weaponID], self.m_TabLeader)
+			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, weaponID == 0 and "Spezial Waffen" or WEAPON_NAMES[weaponID], self.m_TabLeader)
 			self.m_WeaponsName[weaponID]:setAlignX("center")
-			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, WeaponIcons[weaponID], self.m_TabLeader)
+			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and WeaponIcons[22] or WeaponIcons[weaponID], self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID]:setFontSize(1)
 			self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
@@ -179,7 +181,6 @@ function FactionGUI:refreshLeaderTab()
 			else
 				self.m_WaffenRow = self.m_WaffenRow+1
 			end
-
 		end
 	end
 	self.m_FactionRangGrid:clear()
@@ -522,6 +523,9 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 				self.m_RankSkins = rankSkins
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
+				if localPlayer:getFaction():isEvilFaction() then
+					self.m_ValidWeapons[0] = true
+				end
 				self:addLeaderTab()
 			end
 		end

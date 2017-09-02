@@ -10,7 +10,7 @@ inherit(Singleton, FactionWeaponShopGUI)
 
 addRemoteEvents{"showFactionWeaponShopGUI","updateFactionWeaponShopGUI"}
 
-function FactionWeaponShopGUI:constructor(validWeapons)
+function FactionWeaponShopGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-370, screenHeight/2-230, 740, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop - "..localPlayer:getFaction():getShortName(), true, true, self)
 	self.m_Window:deleteOnClose(true)
@@ -58,12 +58,24 @@ function FactionWeaponShopGUI:onHide()
 end
 
 function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons, rankWeapons)
-	self.m_validWeapons = validWeapons
-	for k,v in pairs(self.m_validWeapons) do
+	self.m_ValidWeapons = validWeapons
+	self.m_SpecialWeapons = {}
+	self.m_GUIWeapons = {}
+
+	for k,v in pairs(self.m_ValidWeapons) do
 		if v == true then
-			self:addWeaponToGUI(k,depotWeapons[k]["Waffe"],depotWeapons[k]["Munition"])
+			self:addWeaponToGUI(k, depotWeapons[k]["Waffe"], depotWeapons[k]["Munition"])
 		end
 	end
+	if localPlayer:getFaction():isEvilFaction() then
+		for weaponId, data in pairs(depotWeapons) do
+			if not self.m_WeaponsName[weaponId] and (data["Waffe"] > 0 or data["Munition"] > 0)  then
+				self:addWeaponToGUI(weaponId, depotWeapons[weaponId]["Waffe"], depotWeapons[weaponId]["Munition"])
+				self.m_SpecialWeapons[weaponId] = true
+			end
+		end
+	end
+
 	self.m_WeaponArea:resize(465, 155+self.m_WaffenColumn*200)
 	self.rankWeapons = rankWeapons
 	self.depot = depotWeapons
@@ -71,6 +83,7 @@ function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, dep
 end
 
 function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
+	self.m_GUIWeapons[weaponID] = true
 	self.m_WeaponsName[weaponID] = GUILabel:new(self.m_WaffenRow*120, self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_WeaponArea)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
 	self.m_WeaponsImage[weaponID] = GUIImage:new(20+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_WeaponArea)
@@ -111,10 +124,10 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 end
 
 function FactionWeaponShopGUI:updateButtons()
-	for weaponID,v in pairs(self.m_validWeapons) do
+	for weaponID,v in pairs(self.m_GUIWeapons) do
 		if v == true then
 			local skip = false
-			if self.rankWeapons[tostring(weaponID)] == 1 then
+			if (self.rankWeapons[tostring(weaponID)] == 1) or (self.m_SpecialWeapons[weaponID] and  self.rankWeapons[tostring(0)] == 1) then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
@@ -225,7 +238,7 @@ function FactionWeaponShopGUI:factionWeaponShopBuy()
 end
 
 addEventHandler("showFactionWeaponShopGUI", root,
-		function(validWeapons)
-			FactionWeaponShopGUI:new(validWeapons)
+		function()
+			FactionWeaponShopGUI:new()
 		end
 	)

@@ -1233,7 +1233,7 @@ end
 function FactionState:Event_FactionRearm()
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
-		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
+		client:triggerEvent("showFactionWeaponShopGUI")
 		client:setHealth(100)
 		client:setArmor(100)
 		local wStorage, aStorage
