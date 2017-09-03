@@ -172,6 +172,7 @@
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -644,6 +645,7 @@
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -808,6 +810,7 @@
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
