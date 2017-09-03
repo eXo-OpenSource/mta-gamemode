@@ -13,11 +13,6 @@ addRemoteEvents{
 }
 
 function FactionRescue:constructor()
-	self.m_CollisionShape = createColCuboid(1700.82, -1802.14, 12, 1811.63- 1700.82, (1802.14 - 1742.56 )+ 17, 10) -- "medic base"
-	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape)
-	
-	self.m_CollisionShape2 = createColCuboid( 1642.64, -1722.31, 13.55, 1674.79 - 1642.64, 1722.31 -1691.8, 30) -- "parkhaus westlich von der medic base"
-	self.m_NonCollision = NonCollisionArea:new( self.m_CollisionShape2)
 	-- Duty Pickup
 	self:createDutyPickup(1721.06, -1752.76, 13.55, 0) -- Base
 	self:createDutyPickup(1760.72, -1744.20, 6, 0) -- Garage
