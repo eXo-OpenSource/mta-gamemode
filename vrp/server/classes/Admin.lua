@@ -75,11 +75,8 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-<<<<<<< HEAD
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult", "adminObjectPlaced"}
-=======
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminGangwarSetAreaOwner","adminGangwarResetArea"}
->>>>>>> hotfix/general
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
+
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -98,13 +95,9 @@ function Admin:constructor()
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
 	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
 	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
-<<<<<<< HEAD
 	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
-
-=======
 	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
->>>>>>> hotfix/general
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -135,9 +128,6 @@ function Admin:constructor()
 
 end
 
-<<<<<<< HEAD
-function Admin:Event_OnSuperManStartRequest()
-=======
 function Admin:Event_OnAdminGangwarReset( id, ts )
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
 		local area = Gangwar:getSingleton().m_Areas[id] 
@@ -186,7 +176,6 @@ function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
 end
 
 function Admin:Event_OnSuperManStartRequest() 
->>>>>>> hotfix/general
 	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
