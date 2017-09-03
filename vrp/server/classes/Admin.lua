@@ -156,7 +156,7 @@ function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
 			local area = Gangwar:getSingleton().m_Areas[id] 
 			if area then 
 				local faction = FactionManager:getSingleton():getFromId(faction)
-				area.m_Owner = faction
+				area.m_Owner = faction.m_Id
 				local now = getRealTime().timestamp
 				area.m_LastAttack = now
 				area:update()
