@@ -68,7 +68,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 310, 210, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("pedMenu", "Ped-Menü", 340, 350, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("playerHistory", "Spielerakten", 340, 390, 210, 30, Color.Blue, tabAllgemein)
-
+	self:addAdminButton("eventGangwarMenu", "Gangwar-Menü", 340, 430, 210, 30, Color.Blue, tabAllgemein)
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -531,6 +531,9 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "playerHistory" then
 		self:close()
 		HistoryPlayerGUI:new(AdminGUI)
+	elseif func == "eventGangwarMenu" then 
+		self:close() 
+		GangwarDebugGUI:new(AdminGUI)
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
