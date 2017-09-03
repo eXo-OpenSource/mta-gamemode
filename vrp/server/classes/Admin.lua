@@ -168,7 +168,7 @@ function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
 				area:createRadar()
 				client:sendInfo(_("Das Gebiet wurde umgesetzt!", client))
 				self:sendShortMessage(_("%s hat das Gebiet %s der Fraktion %s gesetzt!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name, faction:getShortName()))
-				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "Gebiet: " ..Gangwar:getSingleton().m_Areas[id].m_Name.." Fraktion: "..faction:getShortName().." !")
 				client:triggerEvent("gangwarRefresh")
 			end
 		end
