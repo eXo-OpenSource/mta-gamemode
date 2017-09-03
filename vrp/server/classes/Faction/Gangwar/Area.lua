@@ -42,6 +42,10 @@ function Area:getOwnerId()
 	return self.m_Owner
 end
 
+function Area:getId() 
+	return self.m_ID
+end
+
 function Area:createRadar()
 	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
 	local areaX2, areaY2 = self.m_PositionRadar[3],self.m_PositionRadar[4]
