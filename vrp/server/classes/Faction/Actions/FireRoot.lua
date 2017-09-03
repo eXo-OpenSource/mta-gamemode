@@ -9,8 +9,8 @@ FireRoot = inherit(Object)
 FireRoot.Map = {}
 FireRoot.Settings = {
 	["fire_update_time"] = 5000,
-	["max_dimension"] = 30,
-	["coords_per_fire"] = 2,
+	["max_dimension"] = 32,
+	["coords_per_fire"] = 4,
 }
 
 addEvent("fireElementKI:onFireRootDestroyed")
@@ -20,7 +20,6 @@ function FireRoot:constructor(iX, iY, iW, iH)
     iH = math.min(math.round(iH), FireRoot.Settings["max_dimension"] * FireRoot.Settings["coords_per_fire"])
    	self.m_Root = createElement("fire-root")
 	self.m_tblFires = {}
-	self.m_tblLastFireOfPlayer = {}
 
 	self.m_iX = iX
 	self.m_iY = iY 
@@ -28,7 +27,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	self.m_iH = iH
 	self.m_max_i = iW / FireRoot.Settings["coords_per_fire"]
 	self.m_max_v = iH / FireRoot.Settings["coords_per_fire"]
-	self.m_iStartTime = getTickCount()
+	self.m_Max_Fires = math.round((self.m_max_i * self.m_max_v) * 0.5) -- increase fire amount and fire size until there is this specific amount of fires loaded
 	self.m_UpdateBind = bind(self.update, self)
 	self.m_uUpdateTimer = setTimer(self.m_UpdateBind, FireRoot.Settings["fire_update_time"], 0, self.m_Root)
 	self.m_tblFireElements = {}
@@ -66,9 +65,7 @@ function FireRoot:destructor()
     for i, uEle in pairs(self.m_tblFireElements) do
         delete(uEle)
     end
-	outputDebug("fireroot destructor")
 	if self.m_DebugArea then 
-		outputDebug("m_DebugArea destructor")
 		self.m_DebugArea:delete()
 	end
     destroyElement(self.m_Root)
@@ -101,47 +98,62 @@ function FireRoot:update()
 			[(i-1)..","..(v)]   = (self:getFireSize(i-1, v)     or 0), --l
 		}
 
-		if iSize == 3 then --spawn new fires around size 3 fires
-			local iSizeSum = 0
-			for sSurroundPos, iSurroundSize in pairs(tblSurroundingFires) do
-				if iSurroundSize == 0 and math.random(1, 3) == 1 then -- spawn new fires
-					local ii, vv = tonumber(split(sSurroundPos, ",")[1]), tonumber(split(sSurroundPos, ",")[2])
-					if not tblFiresToUpdate[ii] then tblFiresToUpdate[ii] = {} end
-					tblFiresToUpdate[ii][vv] = 1
-				else
-					iSizeSum = iSizeSum + iSurroundSize
+		if iSize == 3 then
+			if not self:isFireDecaying() then --spawn new fires around size 3 fires
+				local iSizeSum = 0
+				for sSurroundPos, iSurroundSize in pairs(tblSurroundingFires) do
+					if iSurroundSize == 0 and math.random(1, 3) == 1 and not self:isFireLimitReached() then -- spawn new fires
+						local ii, vv = tonumber(split(sSurroundPos, ",")[1]), tonumber(split(sSurroundPos, ",")[2])
+						if not tblFiresToUpdate[ii] then tblFiresToUpdate[ii] = {} end
+						tblFiresToUpdate[ii][vv] = 1
+					else
+						iSizeSum = iSizeSum + iSurroundSize
+					end
 				end
-			end
-			if iSizeSum > 8 then -- let the big fire decay if there is every spot taken
-				if math.random(1,3) == 1 then
-					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
-					tblFiresToUpdate[i][v] = 0
-				else
-					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
-					tblFiresToUpdate[i][v] = 2
+				if iSizeSum > 8 then -- let the big fire decay if there is every spot taken
+					if math.random(1,3) == 1 or self:isFireLimitReached() then
+						if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+						tblFiresToUpdate[i][v] = 0
+					else
+						if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+						tblFiresToUpdate[i][v] = 2
+					end
 				end
+			elseif math.random(1, 20) == 1 then  -- let the fire decay
+				if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+				tblFiresToUpdate[i][v] = 2
 			end
 		elseif iSize == 2 then
-			local iSizeSum = 0
-			for sSurroundPos, iSurroundSize in pairs(tblSurroundingFires) do
-				iSizeSum = iSizeSum + iSurroundSize
-			end
-			if iSizeSum > 8 then -- let the big fire decay if there is every spot surrounding it taken
+			if not self:isFireDecaying() then
+				local iSizeSum = 0
+				for sSurroundPos, iSurroundSize in pairs(tblSurroundingFires) do
+					iSizeSum = iSizeSum + iSurroundSize
+				end
+				if iSizeSum > 8 then -- let the big fire decay if there is every spot surrounding it taken
+					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+					tblFiresToUpdate[i][v] = 1
+				elseif iSizeSum > 6 and math.random(1, 2) == 1 and not self:isFireLimitReached() then -- increase the size if there are more size 2 fires in its surrounding
+					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+					tblFiresToUpdate[i][v] = 3
+				end
+			elseif math.random(1, 20) == 1 then  -- let the fire decay
 				if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
 				tblFiresToUpdate[i][v] = 1
-			elseif iSizeSum > 6 and math.random(1, 2) == 1 then -- increase the size if there are more size 2 fires in its surrounding
-				if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
-				tblFiresToUpdate[i][v] = 3
 			end
 		elseif iSize == 1 then
-			for sSurroundPos, iSurroundSize in spairs(tblSurroundingFires, function(t,a,b) return t[b] > t[a] end) do -- merge two small fires into one medium fire
-				if iSurroundSize == 1 and math.random(1, 2) == 1 then
-					local ii, vv = tonumber(split(sSurroundPos, ",")[1]), tonumber(split(sSurroundPos, ",")[2])
-					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
-					tblFiresToUpdate[i][v] = 2
-					if not tblFiresToUpdate[ii] then tblFiresToUpdate[ii] = {} end
-					tblFiresToUpdate[ii][vv] = 0
+			if not self:isFireDecaying() then
+				for sSurroundPos, iSurroundSize in spairs(tblSurroundingFires, function(t,a,b) return t[b] > t[a] end) do -- merge two small fires into one medium fire
+					if iSurroundSize == 1 and math.random(1, 2) == 1 and not self:isFireLimitReached() then
+						local ii, vv = tonumber(split(sSurroundPos, ",")[1]), tonumber(split(sSurroundPos, ",")[2])
+						if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+						tblFiresToUpdate[i][v] = 2
+						if not tblFiresToUpdate[ii] then tblFiresToUpdate[ii] = {} end
+						tblFiresToUpdate[ii][vv] = 0
+					end
 				end
+			elseif math.random(1, 20) == 1 then  -- let the fire decay
+				if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
+				tblFiresToUpdate[i][v] = 0
 			end
 		end
 	end
@@ -161,7 +173,23 @@ function FireRoot:update()
 			delete(self)
 		end
 	end
+	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
+		PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
+		self:letFireDecay()
+	end
 	outputDebug("updated fire", getTickCount()-start.."ms", table.size(tblFiresToUpdate).." updates", deletes.." deletes")
+end
+
+function FireRoot:isFireLimitReached()
+	return self.m_Max_Fires < self.m_tblStatistics.iFiresActive
+end
+
+function FireRoot:letFireDecay()
+	self.m_FireDecayMode = true
+end
+
+function FireRoot:isFireDecaying()
+	return self.m_FireDecayMode
 end
 
 function FireRoot:dump()
@@ -180,16 +208,16 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 					if not bDontDestroyElement then delete(currentFire) end
 					currentFire = nil
 					self.m_tblFireSizes[i..","..v] = nil
+					self.m_tblFireElements[i..","..v] = nil
 				end
 			else -- new fire or fire changes size
 				if not currentFire then
-					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-5, 5)/10
-					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-5, 5)/10
-					local uFe = Fire:new(iX, iY, 4, iNewSize, false, self, i, v)
+					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-15, 15)/10
+					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-15, 15)/10
+					local fire = Fire:new(iX, iY, 4, iNewSize, false, self, i, v)
 					self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive + 1
 					self.m_tblStatistics.iFiresTotal = self.m_tblStatistics.iFiresTotal + 1
-
-					addEventHandler("fireElements:onFireExtinguish", uFe.m_Ped, function(uDestroyer)
+					fire:addExtinguishCallback(function(uDestroyer, iSize)
 						if isElement(uDestroyer) then
 							--outputDebugString(inspect(uDestroyer).." has destroyed fire "..inspect(source))
 							if not self.m_tblStatistics.tblFiresByPlayer[uDestroyer] then
@@ -202,7 +230,7 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 						self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive - 1
 					end)
 					if self.m_tblFireElements[i..","..v] then outputDebugString("fail!") end
-					self.m_tblFireElements[i..","..v] = uFe
+					self.m_tblFireElements[i..","..v] = fire
 				else
 					currentFire:setFireSize(iNewSize)
 				end

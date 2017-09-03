@@ -60,16 +60,16 @@ end
 function FireManager:startFire(id)
 	if self.m_CurrentFire then self:stopCurrentFire() end
 	local fireTable = self.m_Fires[id]
-	self.m_CurrentFire = FireRoot:new(fireTable["position"].x, fireTable["position"].y, fireTable["width"] or 20, fireTable["height"] or 20)
+	self.m_CurrentFire = FireRoot:new(fireTable.position.x, fireTable.position.y, fireTable["width"] or 20, fireTable["height"] or 20)
 	self.m_CurrentFire.m_Id = id
-	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable["position"].x, fireTable["position"].y, root, 400)
+	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable.position.x + fireTable.width/2, fireTable.position.y + fireTable.height/2, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
 
-	local posName = getZoneName(fireTable["position"]).."/"..getZoneName(fireTable["position"], true)
+	local posName = getZoneName(fireTable.position).."/"..getZoneName(fireTable.position, true)
 	PlayerManager:getSingleton():breakingNews(fireTable["message"], posName)
-	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable["position"], posName)
-	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable["position"], posName)
+	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0), posName)
+	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0), posName)
 end
 
 function FireManager:getCurrentFire()
@@ -77,7 +77,6 @@ function FireManager:getCurrentFire()
 end
 
 function FireManager:stopCurrentFire()
-	outputDebug("stopping current fire")
 	delete(self.m_CurrentFire.Blip)
 	delete(self.m_CurrentFire)
 	self.m_CurrentFire = nil
@@ -125,7 +124,24 @@ function FireManager:Event_createFire()
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
-	self:sendAdminFireData(client)
+
+	if sql:queryExec("INSERT INTO ??_fires (Name, Creator) VALUES(?, ?);", sql:getPrefix(), "neues Feuer",	client:getName()) then
+		self.m_Fires[sql:lastInsertId()] = {
+				["name"] = "neues Feuer",
+				["message"] = "",
+				["position"] = Vector3(0, 0, 4),
+				["positionTbl"] = {0, 0, 4},
+				["width"] = 10,
+				["height"] = 10,
+				["creator"] = client:getName(),
+				["enabled"] = false,
+			}
+
+		client:sendSuccess(_("Feuer mit der ID %d erstellt, du kannst es nun editieren.", client, sql:lastInsertId()))
+		self:sendAdminFireData(client)
+	else
+		client:sendError(_("Neues Feuer konnte nicht in die Datenbank eingefügt werden.", client))
+	end
 end
 
 function FireManager:Event_editFire(id, tblArgs)
@@ -134,26 +150,42 @@ function FireManager:Event_editFire(id, tblArgs)
 		return
 	end
 	--update db
-	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ? WHERE Id = ?", sql:getPrefix(), 
+	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ?, PosX = ?, PosY = ?, PosZ = ?, Width = ?, Height = ? WHERE Id = ?;", sql:getPrefix(), 
 		tostring(tblArgs.name) or "name failed to save",
 		tostring(tblArgs.message) or "msg failed to save",
 		tblArgs.enabled and 1 or 0,
+		tblArgs.position.x,
+		tblArgs.position.y,
+		tblArgs.position.z,
+		tblArgs.width,
+		tblArgs.height,
 		id
 	)
+
 
 	--update InGame fire cache 
 	self.m_Fires[id]["name"] = tblArgs.name
 	self.m_Fires[id]["message"] = tblArgs.message
 	self.m_Fires[id]["enabled"] = tblArgs.enabled
+	self.m_Fires[id]["position"] = normaliseVector(tblArgs.position)
+	self.m_Fires[id]["positionTbl"] = {tblArgs.position.x, tblArgs.position.y, tblArgs.position.z}
+	self.m_Fires[id]["width"] = tblArgs.width
+	self.m_Fires[id]["height"] = tblArgs.height
 
 	client:sendSuccess(_("Feuer %d gespeichert.", client, id))
 	self:sendAdminFireData(client) -- resend data (update client UI)
 end
 
-function FireManager:Event_deleteFire()
+function FireManager:Event_deleteFire(id)
 	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
+	sql:queryExec("DELETE FROM ??_fires  WHERE Id = ?;", sql:getPrefix(), id)
+	if self:getCurrentFire().m_Id == id then 
+		self:stopCurrentFire()
+	end
+	self.m_Fires[id] = nil
+	client:sendSuccess(_("Feuer %d gelöscht.", client, id))
 	self:sendAdminFireData(client)
 end

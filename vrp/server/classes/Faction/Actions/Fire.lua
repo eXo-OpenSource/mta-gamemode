@@ -23,9 +23,8 @@ function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoo
 		self.m_Root_i = iRoot_i
 		self.m_Root_v = iRoot_v
 		self:setFireDecaying(bDecaying)
+		self.m_ExtinguishCallbackMap = {}
 		triggerClientEvent("fireElements:onFireCreate", self.m_Ped, iSize)
-
-		addEventHandler("fireElements:requestFireDeletion", self.m_Ped, function() delete(self) end)
 		Fire.Map[self.m_Ped] = self
 		return self
 	end
@@ -34,11 +33,12 @@ end
 
 function Fire:destructor()
 	triggerClientEvent("fireElements:onFireDestroy", resourceRoot, self.m_Ped) -- uElement cannot be the triggered source element because it's destroyed lol
-	if self.m_FireRoot then
-		self.m_FireRoot:updateFire(self.m_Root_i, self.m_Root_v, 0, true)
-	end
 	if isElement(self.m_Ped) then
-		triggerEvent("fireElements:onFireExtinguish", self.m_Ped, self.m_Extinguisher, self.m_Size)
+		for i,v in pairs(self.m_ExtinguishCallbackMap) do
+			if type(v) == "function" then
+				v(self.m_Extinguisher, self.m_Size)
+			end
+		end
 		destroyElement(self.m_Ped)
 	end
 	if isTimer(self.m_DecayTimer) then
@@ -46,6 +46,10 @@ function Fire:destructor()
 	end
 
 	return true
+end
+
+function Fire:addExtinguishCallback(func)
+	table.insert(self.m_ExtinguishCallbackMap, func)
 end
 
 function Fire:decreaseFireSize()
@@ -94,20 +98,24 @@ function Fire:setExtinguisher(player)
 end
 
 addEvent("fireElements:requestFireDeletion", true)
-addEvent("fireElements:onFireExtinguish")
 
 addEventHandler("fireElements:requestFireDeletion", resourceRoot, function()
+	outputDebug("fire destroy request from", client)
 	local iCx, iCy, iCz = getElementPosition(client)
 	local iCx, iCy, iCz = getElementPosition(source)
 	local iDist = 5
 	if isPedInVehicle(client) then iDist = 10 end
 	if getDistanceBetweenPoints3D(iCx, iCy, iCz, iCx, iCy, iCz) <= iDist then
+		outputDebug("in distance")
 		if not Fire.PlayerMap[client] or getTickCount()-Fire.PlayerMap[client] > 50 then
-			if Fire.Map[self.m_Ped].m_Size > 1 then
-				Fire.Map[self.m_Ped]:decreaseFireSize()
+			outputDebug("in time")
+			if Fire.Map[source].m_Size > 1 then
+				outputDebug("decrease")
+				Fire.Map[source]:decreaseFireSize()
 			else
-				Fire.Map[self.m_Ped]:setExtinguisher(client)
-				delete(Fire.Map[self.m_Ped])
+				outputDebug("delete", client)
+				Fire.Map[source]:setExtinguisher(client)
+				delete(Fire.Map[source])
 			end
 			Fire.PlayerMap[client] = getTickCount()
 		end

@@ -23,7 +23,6 @@ function RadarArea:constructor(x, y, width, height, color)
 end
 
 function RadarArea:destructor()
-	outputDebug("deleted radar area")
 	RadarArea.Map[self.m_Id] = nil
 	triggerClientEvent("radarAreaDestroy", resourceRoot, self.m_Id)
 end

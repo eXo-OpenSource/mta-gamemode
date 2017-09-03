@@ -34,6 +34,10 @@ function AdminFireGUI:constructor()
 	self.m_EditFire = GUIButton:new(390, 500, 180, 30, "Feuer editieren",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
 	self.m_DeleteFire = GUIButton:new(580, 500, 180, 30, "Feuer löschen",  self):setFontSize(1):setBackgroundColor(Color.Orange)
 	
+	self.m_CreateFire.onLeftClick = function()
+		triggerServerEvent("adminCreateFire", localPlayer)
+	end
+
     self.m_ToggleFire.onLeftClick = function()
 		if not self.m_SelectedFireId then
 			return ErrorBox:new(_"Kein Feuer ausgewählt!")
@@ -51,12 +55,14 @@ function AdminFireGUI:constructor()
 				name = self.m_NameEdit:getText(),
 				message = self.m_MessageEdit:getText(),
 				enabled = self.m_ActiveCheck:isChecked(),
+				position = serialiseVector(self.m_EditSavedVars.pos_bl),
+				width = self.m_EditSavedVars.width,
+				height = self.m_EditSavedVars.height,
 			})
-			self:onFireEdit()
+			self:onEditFire()
 
 		else
-			outputDebug("editing")
-			self:onFireEdit(self.m_SelectedFireId)
+			self:onEditFire(self.m_SelectedFireId)
 		end
 		--triggerServerEvent("adminToggleFire", localPlayer, self.m_SelectedFireId)
 	end
@@ -65,19 +71,38 @@ function AdminFireGUI:constructor()
 		if not self.m_SelectedFireId then
 			return ErrorBox:new(_"Kein Feuer ausgewählt!")
 		end
-		triggerServerEvent("adminDeleteFire", localPlayer, self.m_SelectedFireId)
+		QuestionBox:new(_"Möchtest du das Feuer wirklich permanent löschen? Du kannst es auch deaktivieren, damit es nicht mehr zufällig ausbricht", function()
+			triggerServerEvent("adminDeleteFire", localPlayer, self.m_SelectedFireId)
+		end)
 	end
 
 	-- fire edit functions
-	self.m_FirePosTR = GUIButton:new(80, 420, 60, 30, "oben r.",  self):setFontSize(1):setBackgroundColor(Color.Green)
-	self.m_FirePosBL = GUIButton:new(10, 460, 60, 30, "unten l.",  self):setFontSize(1):setBackgroundColor(Color.Green)
+	self.m_FireSize = GUIButton:new(80, 420, 60, 30, "Größe",  self):setFontSize(1):setBackgroundColor(tocolor(255, 255, 0)):setColor(Color.Black)
+	self.m_FirePosBL = GUIButton:new(10, 460, 60, 30, "unten l.",  self):setFontSize(1):setBackgroundColor(tocolor(255, 0, 255))
 	self.m_PosLbl = GUILabel:new(150, 420, 200, 70, "Position: 1337.50;45.34\nHöhe: 30, Breite: 30", self):setFont(VRPFont(25)):setFontSize(1)
 	self.m_NameEdit = GUIEdit:new(360, 420, 200, 30, self):setCaption("Name")
 	self.m_MessageEdit = GUIEdit:new(360, 460, 400, 30, self):setCaption("Nachricht")
 	self.m_ActiveCheck = GUICheckbox:new(570, 425, 200, 20, "aktiviert", self)
 
+	self.m_FireSize.onLeftClick = function()
+		local x, y = localPlayer.position.x, localPlayer.position.y
+		local bl_x, bl_y = self.m_Fires[self.m_CurrentFireEditing].positionTbl[1], self.m_Fires[self.m_CurrentFireEditing].positionTbl[2]
+		if self.m_EditSavedVars.pos_bl then
+			bl_x, bl_y = self.m_EditSavedVars.pos_bl.x, self.m_EditSavedVars.pos_bl.y
+		end
+		self.m_EditSavedVars.width = x - bl_x
+		self.m_EditSavedVars.height = y - bl_y
+		self:updateEditBoundingBox()
+	end
+	self.m_FirePosBL.onLeftClick = function()
+		self.m_EditSavedVars.pos_bl = localPlayer.position
+		self:updateEditBoundingBox()
+	end
+
+	self.m_EditElements = {}
+	self.m_EditSavedVars = {}
 	self:onSelectFire()
-	self:onFireEdit()
+	self:onEditFire()
 
 	addEventHandler("adminFireReceiveData", root, bind(self.onReceiveData, self))
 end
@@ -88,9 +113,20 @@ function AdminFireGUI:onShow()
 end
 
 function AdminFireGUI:onHide()
-	self.m_SelectedFireId = nil
-	self.m_CurrentFireEditing = nil
+	self:onSelectFire()
+	self:onEditFire()
 	SelfGUI:getSingleton():removeWindow(self)
+end
+
+function AdminFireGUI:clearEditElements()
+	for i, ele in pairs(self.m_EditElements) do
+		if isElement(ele) then
+			ele:destroy()
+		else
+			ele:delete()
+		end
+	end
+	self.m_EditElements = {}
 end
 
 function AdminFireGUI:onReceiveData(fires, activeId)
@@ -100,6 +136,7 @@ function AdminFireGUI:onReceiveData(fires, activeId)
 
 	self.m_FireGrid:clear()
     self:onSelectFire()
+    self:onEditFire()
 	for id, fireData in pairs(fires) do
         local state = (id == activeId and "aktiv") or (fireData["enabled"] and "geladen") or "deaktiviert"
         local msg = fireData["message"]
@@ -110,15 +147,10 @@ function AdminFireGUI:onReceiveData(fires, activeId)
 			self:onSelectFire(id)
 		end
 	end
-
-	if self.m_SelectedFireId then
-		self:onSelectFire(self.m_SelectedFireId)
-	end
 end
 
 function AdminFireGUI:onSelectFire(id)
     if id then
-        local data = self.m_Fires[id]
         self.m_SelectedFireId = id
         self.m_ToggleFire:setVisible(true)
         self.m_EditFire:setVisible(true)
@@ -136,26 +168,39 @@ function AdminFireGUI:onSelectFire(id)
     end
 end
 
-function AdminFireGUI:onFireEdit(id)
+function AdminFireGUI:onEditFire(id)
 	if id then 
+		local data = self.m_Fires[id]
 		self.m_CreateFire:setEnabled(false)
 		self.m_ToggleFire:setEnabled(false)
 		self.m_DeleteFire:setEnabled(false)
+
+		self.m_EditElements["marker_bl"] = createMarker(data.positionTbl[1], data.positionTbl[2], data.positionTbl[3], "checkpoint", 1, 255, 0, 255, 100)
+		self.m_EditElements["marker_tr"] = createMarker(data.positionTbl[1] + data.width, data.positionTbl[2] + data.height, data.positionTbl[3], "checkpoint", 1, 255, 255, 0, 100)
+		self.m_EditElements["blip_bl"] = Blip:new("Marker.png", 0, 0, 9999, {255, 0, 255})
+		self.m_EditElements["blip_tr"] = Blip:new("Marker.png", 0, 0, 9999, {255, 255, 0})
+		self.m_EditElements["blip_bl"]:attach(self.m_EditElements["marker_bl"])
+		self.m_EditElements["blip_tr"]:attach(self.m_EditElements["marker_tr"])
+
 		self.m_EditFire:setText("Speichern")
 		local data = self.m_Fires[id]
 		self.m_PosLbl:setText(("Position: %s;%s\nGröße: %s;%s"):format(data.positionTbl[1], data.positionTbl[2], data.width, data.height))
 		self.m_NameEdit:setText(data.name)
 		self.m_MessageEdit:setText(data.message)
 		self.m_ActiveCheck:setChecked(data.enabled)
+
+		self.m_EditSavedVars.pos_bl = normaliseVector(data.positionTbl)
+		self.m_EditSavedVars.width = data.width
+		self.m_EditSavedVars.height = data.height
 	else
 		self.m_CreateFire:setEnabled(true)
 		self.m_ToggleFire:setEnabled(true)
 		self.m_DeleteFire:setEnabled(true)
 		self.m_EditFire:setText("Feuer editieren")
-
+		self:clearEditElements()
 	end
 
-	self.m_FirePosTR:setVisible(id and true)
+	self.m_FireSize:setVisible(id and true)
 	self.m_FirePosBL:setVisible(id and true)
 	self.m_PosLbl:setVisible(id and true)
 	self.m_NameEdit:setVisible(id and true)
@@ -164,4 +209,24 @@ function AdminFireGUI:onFireEdit(id)
 	
 
 	self.m_CurrentFireEditing = id
+end
+
+function AdminFireGUI:updateEditBoundingBox()
+	local bl = self.m_EditSavedVars.pos_bl
+	local w = math.round(self.m_EditSavedVars.width)
+	local h = math.round(self.m_EditSavedVars.height)
+	if w > 64 or h > 64 then
+		WarningBox:new(_"Das Areal ist zu groß. Es wurde automatisch auf max. 64x64 Koordinaten gesetzt.")
+	end
+	if w < 0 or h < 0 then
+		WarningBox:new(_"Der gelbe Marker muss die obere rechte Ecke des Feuers markieren (nach Norden orientiert).")
+	end
+	w = math.clamp(0, w, 64)
+	h = math.clamp(0, h, 64)
+	self.m_EditSavedVars.width = w
+	self.m_EditSavedVars.height = h
+
+	self.m_PosLbl:setText(("Position: %s;%s\nGröße: %s;%s"):format(bl.x, bl.y, w, h))
+	setElementPosition(self.m_EditElements["marker_bl"], bl.x, bl.y, bl.z)
+	setElementPosition(self.m_EditElements["marker_tr"], bl.x + w, bl.y + h, bl.z)
 end

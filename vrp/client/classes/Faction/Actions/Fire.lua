@@ -4,7 +4,7 @@ Fire.Settings = {
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
 	["fireRenderDistance"] = 50,
-	["extinguishTime"] = 30,
+	["extinguishTime"] = 1,
 	["extraEffects"] = true,
 }
 
