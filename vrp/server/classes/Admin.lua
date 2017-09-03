@@ -75,7 +75,11 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
+<<<<<<< HEAD
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult", "adminObjectPlaced"}
+=======
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminGangwarSetAreaOwner","adminGangwarResetArea"}
+>>>>>>> hotfix/general
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -94,8 +98,13 @@ function Admin:constructor()
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
 	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
 	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
+<<<<<<< HEAD
 	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
 
+=======
+	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
+	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
+>>>>>>> hotfix/general
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -126,7 +135,58 @@ function Admin:constructor()
 
 end
 
+<<<<<<< HEAD
 function Admin:Event_OnSuperManStartRequest()
+=======
+function Admin:Event_OnAdminGangwarReset( id, ts )
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		local area = Gangwar:getSingleton().m_Areas[id] 
+		if area then 
+			if not ts then ts = 0 end 
+			if ts < 0 then ts = 0 end
+			local time = getRealTime(ts)
+			local day = time.monthday
+			local month = time.month+1
+			local year = time.year+1900
+			local hour = time.hour
+			local minute = time.minute 
+			ts = ts - ( GANGWAR_ATTACK_PAUSE * UNIX_TIMESTAMP_24HRS )
+			if ts < 0 then ts = 0 end
+			area.m_LastAttack = ts
+			area:update()
+			area.m_RadarArea:delete()
+			area:createRadar()
+			self:sendShortMessage(_("%s hat die Attackier-Zeit des Gebietes %s geändert!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name))
+			client:sendInfo(_("Das Gebiet wird freigegeben am: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !", client))
+			client:triggerEvent("gangwarRefresh")
+			StatisticsLogger:getSingleton():addAdminAction( client, "GW-AttackTime", "Gebiet: "..Gangwar:getSingleton().m_Areas[id].m_Name.."; AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+		end
+	end
+end
+
+function Admin:Event_OnAdminGangwarChangeOwner( id, faction) 
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		if id and faction and id > 0 and faction > 0 then 
+			local area = Gangwar:getSingleton().m_Areas[id] 
+			if area then 
+				local faction = FactionManager:getSingleton():getFromId(faction)
+				area.m_Owner = faction
+				local now = getRealTime().timestamp
+				area.m_LastAttack = now
+				area:update()
+				area.m_RadarArea:delete()
+				area:createRadar()
+				client:sendInfo(_("Das Gebiet wurde umgesetzt!", client))
+				self:sendShortMessage(_("%s hat das Gebiet %s der Fraktion %s gesetzt!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name, faction:getShortName()))
+				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+				client:triggerEvent("gangwarRefresh")
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStartRequest() 
+>>>>>>> hotfix/general
 	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
