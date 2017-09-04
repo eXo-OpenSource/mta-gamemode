@@ -17,6 +17,12 @@ function FireManager:constructor()
 	self.m_CurrentFire = nil
 	self.m_Fires = {}
 
+	self.m_RandomFireStrings = { -- blablabla [...]
+		"steht in Flammen", 
+		"meldet einen Brand",
+		"ist in Flammen ausgebrochen"
+	}
+
 	self:loadFirePlaces()
 
 	addRemoteEvents{"receiveFires", "adminFireRequestData", "adminToggleFire", "adminCreateFire", "adminEditFire", "adminDeleteFire"}
@@ -61,6 +67,7 @@ function FireManager:startFire(id)
 	if self.m_CurrentFire then self:stopCurrentFire() end
 	local fireTable = self.m_Fires[id]
 	self.m_CurrentFire = FireRoot:new(fireTable.position.x, fireTable.position.y, fireTable["width"] or 20, fireTable["height"] or 20)
+	self.m_CurrentFire:setBaseZ(fireTable.position.z)
 	self.m_CurrentFire.m_Id = id
 	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable.position.x + fireTable.width/2, fireTable.position.y + fireTable.height/2, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
@@ -149,6 +156,9 @@ function FireManager:Event_editFire(id, tblArgs)
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
+	if tblArgs.generateMsg then
+		tblArgs.message = self:generateMessage(tblArgs.position, tblArgs.width, tblArgs.height)
+	end
 	--update db
 	sql:queryExec("UPDATE ??_fires SET Name = ?, Message = ?, Enabled = ?, PosX = ?, PosY = ?, PosZ = ?, Width = ?, Height = ? WHERE Id = ?;", sql:getPrefix(), 
 		tostring(tblArgs.name) or "name failed to save",
@@ -176,13 +186,29 @@ function FireManager:Event_editFire(id, tblArgs)
 	self:sendAdminFireData(client) -- resend data (update client UI)
 end
 
+
+function FireManager:generateMessage(position, width, height)
+	local tempArea = createColRectangle(position.x, position.y, width, height)
+	local zoneName = getZoneName(position.x, position.y, position.z)
+	for i, v in pairs(getElementsWithinColShape(tempArea, "pickup")) do
+		outputDebug(v)
+		if v.m_PickupType == "House" then -- TODO: add mmore types
+			return ("%s in %s %s"):format(
+				((zoneName == "Mulholland" or zoneName == "Richman") and ("Eine Villa" or "Ein Haus")),
+				zoneName, 
+				self.m_RandomFireStrings[math.random(1, #self.m_RandomFireStrings)])
+		end
+	end
+	return ""
+end
+
 function FireManager:Event_deleteFire(id)
 	if client:getRank() < ADMIN_RANK_PERMISSION["fireMenu"] then
 		client:sendError(_("Du darfst diese Funktion nicht nutzen!", client))
 		return
 	end
 	sql:queryExec("DELETE FROM ??_fires  WHERE Id = ?;", sql:getPrefix(), id)
-	if self:getCurrentFire().m_Id == id then 
+	if self:getCurrentFire() and self:getCurrentFire().m_Id == id then 
 		self:stopCurrentFire()
 	end
 	self.m_Fires[id] = nil

@@ -52,6 +52,7 @@ end
 function House:updatePickup()
 	if 	self.m_Pickup then self.m_Pickup:destroy() end
 	self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and ARROW_FOR_SALE or ARROW_PICKUP), 10, math.huge)
+	self.m_Pickup.m_PickupType = "House" --only used for fire message creation
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 

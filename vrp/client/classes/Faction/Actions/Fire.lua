@@ -17,6 +17,7 @@ Fire.EffectFromFireSize = {
 function Fire:constructor()
 	self.m_Fires = {}
 	self.m_LoadingQueue = AutomaticQueue:new()
+	self.m_FiresWaitingForColUpdate = {}
 
 	addRemoteEvents{"fireElements:onClientRecieveFires", "fireElements:onFireCreate", "fireElements:onFireDestroy", "fireElements:onFireChangeSize"}
 
@@ -189,7 +190,7 @@ end
 --\\
 
 function Fire:checkForFireGroundInfo(uFire)
-	if  self.m_Fires[uFire] then
+	if self.m_Fires[uFire] then
 		local iX, iY, iZ = getElementPosition(uFire)
 		if Fire.Settings["extraEffects"] then
 			createExplosion (iX, iY, iZ-2, 12, false, 0, false)
@@ -200,10 +201,17 @@ function Fire:checkForFireGroundInfo(uFire)
 			setElementPosition(self.m_Fires[uFire].uEffect, iX, iY, iNewZ)
 			setElementPosition(self.m_Fires[uFire].uBurningCol, iX, iY, iNewZ+1)
 			self.m_Fires[uFire].bCorrectPlaced = true
+
+			setElementCollisionsEnabled(uFire, true)
+			setElementCollidableWith (uFire, localPlayer, false)
+			for index, vehicle in pairs(getElementsByType("vehicle", root, true)) do
+				if uFire and isElement(uFire) and vehicle and isElement(vehicle) then
+					setElementCollidableWith(vehicle, uFire, false)
+				end
+			end
 		end
 	end
 end
-
 
 --//
 --||  createFireElement (local)
@@ -219,16 +227,7 @@ function Fire:createFireElement(iSize, uPed, inThread)
 	self.m_Fires[uPed].iSize = iSize
 	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ-5,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
-	setElementCollidableWith (uPed, localPlayer, false)
-
-	if inThread then
-		uPed.trigger = function(uPed) return Fire.updateCollision(uPed, true) end
-		self:addToQueue(uPed)
-	else
-		local thread = Thread:new(function() Fire.updateCollision(uPed) end, THREAD_PIORITY_HIGHEST)
-		thread:start()
-	end
-
+	setElementCollisionsEnabled(uPed, false) --temporary until stream in
 	self:checkForFireGroundInfo(uPed)
 	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))
 	addEventHandler("onClientColShapeHit", self.m_Fires[uPed].uBurningCol, bind(self.burnPlayer, self))
@@ -239,15 +238,4 @@ function Fire:createFireElement(iSize, uPed, inThread)
 			end
 		end, 500, 1)
 	end)
-end
-
-function Fire.updateCollision(uPed)
-	for index,vehicle in pairs(getElementsByType("vehicle")) do
-		if uPed and isElement(uPed) and vehicle and isElement(vehicle) then
-			setElementCollidableWith(vehicle, uPed, false)
-			if index%100 == 0 then
-				Thread.pause()
-			end
-		end
-	end
 end

@@ -100,20 +100,15 @@ end
 addEvent("fireElements:requestFireDeletion", true)
 
 addEventHandler("fireElements:requestFireDeletion", resourceRoot, function()
-	outputDebug("fire destroy request from", client)
 	local iCx, iCy, iCz = getElementPosition(client)
 	local iCx, iCy, iCz = getElementPosition(source)
 	local iDist = 5
 	if isPedInVehicle(client) then iDist = 10 end
 	if getDistanceBetweenPoints3D(iCx, iCy, iCz, iCx, iCy, iCz) <= iDist then
-		outputDebug("in distance")
 		if not Fire.PlayerMap[client] or getTickCount()-Fire.PlayerMap[client] > 50 then
-			outputDebug("in time")
 			if Fire.Map[source].m_Size > 1 then
-				outputDebug("decrease")
 				Fire.Map[source]:decreaseFireSize()
 			else
-				outputDebug("delete", client)
 				Fire.Map[source]:setExtinguisher(client)
 				delete(Fire.Map[source])
 			end

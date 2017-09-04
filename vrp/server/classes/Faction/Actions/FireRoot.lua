@@ -9,15 +9,14 @@ FireRoot = inherit(Object)
 FireRoot.Map = {}
 FireRoot.Settings = {
 	["fire_update_time"] = 5000,
-	["max_dimension"] = 32,
-	["coords_per_fire"] = 4,
+	["coords_per_fire"] = 3,
 }
 
 addEvent("fireElementKI:onFireRootDestroyed")
 
 function FireRoot:constructor(iX, iY, iW, iH)
-	iW = math.min(math.round(iW), FireRoot.Settings["max_dimension"] * FireRoot.Settings["coords_per_fire"])
-    iH = math.min(math.round(iH), FireRoot.Settings["max_dimension"] * FireRoot.Settings["coords_per_fire"])
+	iW = math.round(iW)
+    iH = math.round(iH)
    	self.m_Root = createElement("fire-root")
 	self.m_tblFires = {}
 
@@ -27,7 +26,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	self.m_iH = iH
 	self.m_max_i = iW / FireRoot.Settings["coords_per_fire"]
 	self.m_max_v = iH / FireRoot.Settings["coords_per_fire"]
-	self.m_Max_Fires = math.round((self.m_max_i * self.m_max_v) * 0.5) -- increase fire amount and fire size until there is this specific amount of fires loaded
+	self.m_Max_Fires = math.min(100, math.round((self.m_max_i * self.m_max_v) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
 	self.m_UpdateBind = bind(self.update, self)
 	self.m_uUpdateTimer = setTimer(self.m_UpdateBind, FireRoot.Settings["fire_update_time"], 0, self.m_Root)
 	self.m_tblFireElements = {}
@@ -57,6 +56,10 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	FireRoot.Map = self
 
     return self
+end
+
+function FireRoot:setBaseZ(z)
+	self.m_BaseZ = z
 end
 
 function FireRoot:destructor()
@@ -127,7 +130,13 @@ function FireRoot:update()
 			if not self:isFireDecaying() then
 				local iSizeSum = 0
 				for sSurroundPos, iSurroundSize in pairs(tblSurroundingFires) do
-					iSizeSum = iSizeSum + iSurroundSize
+					if iSurroundSize == 0 and math.random(1, 100) == 1 and not self:isFireLimitReached() then -- spawn new fires
+						local ii, vv = tonumber(split(sSurroundPos, ",")[1]), tonumber(split(sSurroundPos, ",")[2])
+						if not tblFiresToUpdate[ii] then tblFiresToUpdate[ii] = {} end
+						tblFiresToUpdate[ii][vv] = 1
+					else
+						iSizeSum = iSizeSum + iSurroundSize
+					end
 				end
 				if iSizeSum > 8 then -- let the big fire decay if there is every spot surrounding it taken
 					if not tblFiresToUpdate[i] then tblFiresToUpdate[i] = {} end
@@ -212,9 +221,9 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 				end
 			else -- new fire or fire changes size
 				if not currentFire then
-					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-15, 15)/10
-					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-15, 15)/10
-					local fire = Fire:new(iX, iY, 4, iNewSize, false, self, i, v)
+					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
+					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
+					local fire = Fire:new(iX, iY, self.m_BaseZ or 4, iNewSize, false, self, i, v)
 					self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive + 1
 					self.m_tblStatistics.iFiresTotal = self.m_tblStatistics.iFiresTotal + 1
 					fire:addExtinguishCallback(function(uDestroyer, iSize)
@@ -228,6 +237,8 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 							self.m_tblStatistics.iFiresDecayed = self.m_tblStatistics.iFiresDecayed + 1
 						end
 						self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive - 1
+						self.m_tblFireSizes[i..","..v] = nil
+						self.m_tblFireElements[i..","..v] = nil
 					end)
 					if self.m_tblFireElements[i..","..v] then outputDebugString("fail!") end
 					self.m_tblFireElements[i..","..v] = fire
