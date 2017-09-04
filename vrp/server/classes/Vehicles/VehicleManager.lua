@@ -1098,7 +1098,9 @@ function VehicleManager:Event_vehicleBreak()
 				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
 			end
 			if (math.random(1, 10) == 1) then
-				FactionRescue:getSingleton():addVehicleFire(source)
+				if FactionRescue:getSingleton():countPlayers() >= 3 then
+					FactionRescue:getSingleton():addVehicleFire(source)
+				end
 			end
 
 			source:setBroken(true)
