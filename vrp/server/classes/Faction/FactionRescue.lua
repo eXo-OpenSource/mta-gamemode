@@ -666,13 +666,34 @@ function FactionRescue:moveLadder(veh)
 end
 
 function FactionRescue:addVehicleFire(veh)
+	if not instanceof(veh, PermanentVehicle) then return end
+
 	local pos = veh:getPosition()
 	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
 	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
-	self.m_VehicleFires[veh] = FireRoot:new(pos.x-3, pos.y-3, 6, 6)
+	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 6, 6)
 	self.m_VehicleFires[veh].Blip = Blip:new("Fire.png", pos.x, pos.y, root, 200)
 	self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
+
+	CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein verbranntes Auto-Wrack muss abgeschleppt werden! Position: %s", "Auto-Wrack", true, pos, zone)
+
+	if veh.controller then
+		veh.controller:sendWarning(_("Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!", veh.controller))
+	end
+
+	local model = veh:getModel()
+	local pos, rot = veh:getPosition(), veh:getRotation()
+	local r1, g1, b1, r2, g2, b2 = veh:getColor()
+	setTimer(function(veh)
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(veh)
+		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z)
+		tempVehicle:setHealth(400)
+		tempVehicle:setColor(r1, g1, b1, r2, g2, b2)
+		tempVehicle:disableRespawn(true)
+		tempVehicle:setLocked(true)
+		tempVehicle.burned = true
+	end, 10000, 1, veh)
 
 	self.m_VehicleFires[veh]:addOnFinishHook(function(zone)
 		self.m_Faction:sendShortMessage(("Fahrzeugbrand an Position %s gelöscht!"):format(zone))
