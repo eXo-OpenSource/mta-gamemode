@@ -1201,3 +1201,27 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
 end
+
+function VehicleManager:onEnterPassengerPress(player)
+	local vehicleSpecialPassengers = {
+		[511] = {
+			Vector3(-0.2, -0.2, -0.1),
+			Vector3(0.2, -0.2, -0.1)
+		}
+	}
+	local col = createColSphere(player.position, 5)
+	for index, veh in pairs(col:getElementsWithin("vehicle")) do
+		if vehicleSpecialPassengers[veh:getModel()] then
+			if player.vehicle == veh then
+				player.vehicle = veh
+				player:setAnimation("PED", "SEAT_down", -1, false, false, false, true)
+				player:attach(veh, vehicleSpecialPassengers[veh:getModel()][1])
+				return
+			else
+				player.vehicle = nil
+				player:detach(veh)
+			end
+		end
+	end
+
+end

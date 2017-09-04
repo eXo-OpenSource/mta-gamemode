@@ -292,6 +292,10 @@ function Player:initialiseBinds()
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then if vehicle:hasKey(player) or player:getRank() >= RANK.Moderator then vehicle:toggleHandBrake(player) else player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player)) end end end)
 	--bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
+	bindKey(self, "h", "down", function(player)
+		VehicleManager:getSingleton():onEnterPassengerPress(player)
+	end)
+
 end
 
 function Player:buckleSeatBelt(vehicle)
