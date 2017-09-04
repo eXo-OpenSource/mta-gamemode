@@ -28,11 +28,20 @@ function Plant:constructor( )
 	addEventHandler("Plant:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
 end
 
+function Plant:isUnderWater()
+	local pos = localPlayer:getPosition()
+	local waterLevel = getWaterLevel(pos.x, pos.y, pos.z)
+	if waterLevel and pos.z-waterLevel < 0 then
+		return true
+	end
+	return false
+end
+
 function Plant:onUse(plant)
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
 	local hit, _, _, _, _, _, _, _, surface = processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz-0.5, true, false, false)
-	triggerServerEvent("plant:getClientCheck", localPlayer, plant, IsMatInMaterialType(surface), gz)
+	triggerServerEvent("plant:getClientCheck", localPlayer, plant, IsMatInMaterialType(surface), gz, self:isUnderWater())
 end
 
 function Plant:Render()
