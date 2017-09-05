@@ -12,6 +12,9 @@ function HorseRace:constructor()
 	self.m_CalcBind = bind(self.calc, self)
 
 	self.m_Blip = Blip:new("Horse.png", 1631.80, -1172.73)
+	self.m_Blip:setDisplayText("Pferderennen-Wettbüro", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({110, 70, 20})
+
 
 	InteriorEnterExit:new(Vector3(1631.80, -1172.73, 24.08), Vector3(834.65, 7.28, 1004.19), 0, 90, 3)
 

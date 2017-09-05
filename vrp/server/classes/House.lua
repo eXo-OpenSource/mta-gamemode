@@ -9,7 +9,8 @@ House = inherit(Object)
 
 local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
-
+local ARROW_PICKUP = 1318
+local ARROW_FOR_SALE = 1273
 function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
 	if owner == 0 then
 		owner = false
@@ -50,7 +51,7 @@ end
 
 function House:updatePickup()
 	if 	self.m_Pickup then self.m_Pickup:destroy() end
-	self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and 1273 or 1272), 10, math.huge)
+	self.m_Pickup = createPickup(self.m_Pos, 3, ((self.m_Owner == 0 or self.m_Owner == false) and ARROW_FOR_SALE or ARROW_PICKUP), 10, math.huge)
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 
@@ -335,7 +336,7 @@ function House:enterHouse(player)
 	local isRobberEntering = false
 
 	if self.m_RobGroup then
-		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
+		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self and self:isValidRob(player) then
 			isRobberEntering = true
 		end
 	end
@@ -440,10 +441,10 @@ function House:tryToCatchRobbers( player )
 				end
 				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
-					player:setWantedLevel(player:getWantedLevel() + 3)
+					player:setWanteds(player:getWanteds() + 3)
 					group.m_RobReported = true
-					outputChatBox("Ein Nachbar rief die Polizei an, beeil dich!", player, 200,100,100)
-					FactionState:getSingleton():showRobbedHouseBlip(player, self.m_Pickup)
+					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))
+					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
 				end
 			end
 		end
@@ -486,6 +487,11 @@ function House:buyHouse(player)
 end
 
 function House:refreshInteriorMarker()
+	if not HOUSE_INTERIOR_TABLE[self.m_InteriorID] then
+		outputDebugString(("Error: Invalid InteriorId (%d) for House Id: %d"):format(self.m_InteriorID, self.m_Id))
+		delete(self)
+		return
+	end
 	if self.m_HouseMarker and isElement(self.m_HouseMarker) then self.m_HouseMarker:destroy() end
 	local int, ix, iy, iz  = unpack(HOUSE_INTERIOR_TABLE[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)

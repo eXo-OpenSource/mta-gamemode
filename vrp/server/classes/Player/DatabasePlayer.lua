@@ -110,7 +110,7 @@ function DatabasePlayer:load()
 	else
 		self.m_SpawnWithFactionSkin = false
 	end
-	self:setWantedLevel(row.WantedLevel, true)
+	self:setWanteds(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
 
 	if not row.BankAccount or row.BankAccount == 0 then
@@ -157,7 +157,6 @@ function DatabasePlayer:load()
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
 
 	if self:isActive() then
-		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 
 		-- Generate Session Id
@@ -202,14 +201,14 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-		
+
 		local row = sql:queryFetchSingle("SELECT Id FROM ??_accountActivity WHERE UserID = ? AND SessionStart = ?;", sql:getPrefix(), self:getId(), self.m_LoginTime)
-		
+
 		if not row then
-			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(), 
+			sql:queryExec("INSERT INTO ??_accountActivity (Date, UserID, SessionStart, Duration) VALUES (FROM_UNIXTIME(?), ?, ?, ?);", sql:getPrefix(),
 			self.m_LoginTime, self:getId(), self.m_LoginTime, self:getPlayTime() - self.m_StartTime)
 		else
-			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(), 
+			sql:queryExec("UPDATE ??_accountActivity SET Duration = ? WHERE Id = ?;", sql:getPrefix(),
 			self:getPlayTime() - self.m_StartTime, row.Id)
 		end
 
@@ -244,7 +243,7 @@ function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
 function DatabasePlayer:getJobLevel()	return self.m_JobLevel	end
 function DatabasePlayer:getBankAccount() return self.m_BankAccount end
 function DatabasePlayer:getBankMoney()	return self.m_BankAccount:getMoney() end
-function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
+function DatabasePlayer:getWanteds()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
 function DatabasePlayer:getAccount()	return self.m_Account	end
 function DatabasePlayer:getLocale()		return self.m_Locale	end
@@ -364,12 +363,12 @@ function DatabasePlayer:getWarns()
 	return self.m_Warns
 end
 
-function DatabasePlayer:setWantedLevel(level, disableAchievement)
-	if level > 6 then level = 6 end
+function DatabasePlayer:setWanteds(level, disableAchievement)
+	if level > MAX_WANTED_LEVEL then level = MAX_WANTED_LEVEL end
 	if level < 0 then level = 0 end
 	if not disableAchievement then
 		-- give Achievement
-		if level == 6 then
+		if level == MAX_WANTED_LEVEL then
 			self:giveAchievement(46)
 		elseif level > 0 then
 			self:giveAchievement(45)
@@ -380,8 +379,12 @@ function DatabasePlayer:setWantedLevel(level, disableAchievement)
 	self.m_WantedLevel = level
 	if self:isActive() then
 		self:setPublicSync("Wanteds", level)
-		setPlayerWantedLevel(self, level)
+		--setPlayerWantedLevel(self, level)
 	end
+end
+
+function DatabasePlayer:getWanteds()
+	return self.m_WantedLevel
 end
 
 function DatabasePlayer:setCompany(company)
@@ -411,8 +414,7 @@ function DatabasePlayer:giveMoney(amount, reason)
 end
 
 function DatabasePlayer:takeMoney(amount, reason)
-	self:giveMoney(-amount, reason)
-	return true
+	return DatabasePlayer.giveMoney(self, -amount, reason)
 end
 
 function DatabasePlayer:setXP(xp)
@@ -423,7 +425,26 @@ function DatabasePlayer:getLevel()
 	return calculatePlayerLevel(self.m_XP)
 end
 
-function DatabasePlayer:setKarma(karma)
+function DatabasePlayer:giveKarma(value, reason) -- TODO: maybe log it?
+	self:setXP(self.m_XP + value)
+	self:setKarma(self.m_Karma + value)
+	if self:isActive() then 
+		self:setPrivateSync("KarmaLevel", self.m_Karma)
+		self:setPublicSync("Karma", self.m_Karma)
+	end
+
+	local group = self:getGroup()
+	if group then
+		group:giveKarma(value)
+	end
+	return true
+end
+
+function DatabasePlayer:takeKarma(value, reason)
+	DatabasePlayer.giveKarma(self, -value, reason)
+end
+
+function DatabasePlayer:setKarma(karma, reason)
 	self.m_Karma = karma
 	if self.m_Karma > MAX_KARMA_LEVEL then self.m_Karma = MAX_KARMA_LEVEL end
 	if self.m_Karma < -MAX_KARMA_LEVEL then self.m_Karma = -MAX_KARMA_LEVEL end
@@ -431,23 +452,13 @@ function DatabasePlayer:setKarma(karma)
 	if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
-function DatabasePlayer:giveKarma(value)
-	self:setXP(self.m_XP + value)
-	self:setKarma(self.m_Karma + value)
-
-	local group = self:getGroup()
-	if group then
-		group:giveKarma(value)
-	end
-end
-
-function DatabasePlayer:givePoints(p)
+function DatabasePlayer:givePoints(p, reason) -- TODO: maybe log this?
 	self.m_Points = self.m_Points + math.floor(p)
 	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
 end
 
-function DatabasePlayer:takePoints(p)
-	self:givePoints(-p)
+function DatabasePlayer:takePoints(p, reason)
+	DatabasePlayer.givePoints(self, -p, reason)
 end
 
 function DatabasePlayer:setPoints(p)
@@ -574,24 +585,24 @@ function DatabasePlayer:takeBankMoney(amount, reason)
 	return false
 end
 
-function DatabasePlayer:giveWantedLevel(level)
+function DatabasePlayer:giveWanteds(level)
 	local newLevel = self.m_WantedLevel + level
-	if newLevel > 6 then
-		newLevel = 6
+	if newLevel > MAX_WANTED_LEVEL then
+		newLevel = MAX_WANTED_LEVEL
 	end
-	self:setWantedLevel(newLevel)
+	self:setWanteds(newLevel)
 
 	if self:isActive() then
 		self.m_LastGotWantedLevelTime = getTickCount()
 	end
 end
 
-function DatabasePlayer:takeWantedLevel(level)
+function DatabasePlayer:takeWanteds(level)
 	local newLevel = self.m_WantedLevel - level
 	if newLevel < 0 then
 		newLevel = 0
 	end
-	self:setWantedLevel(newLevel)
+	self:setWanteds(newLevel)
 end
 
 function DatabasePlayer:setJob(job)
@@ -765,7 +776,7 @@ function DatabasePlayer:setJailNewTime()
 				else
 					self.m_JailTime = 0
 					self.m_Bail = 0
-					self:setWantedLevel(0)
+					self:setWanteds(0)
 				end
 			end
 		end

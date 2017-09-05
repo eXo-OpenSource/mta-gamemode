@@ -41,7 +41,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
-	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Mit Shift-Klick auf den Button kannst du direkt die maximal Menge aufladen."), self.m_Window)
+	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Strg + Klick: Alles aufladen\nShift + Klick: 10 aufladen"), self.m_Window)
 	self.m_Sum = GUILabel:new(645,390, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
@@ -184,13 +184,18 @@ function FactionWTLoadGUI:deleteItemFromCart()
 end
 
 function FactionWTLoadGUI:addItemToCart(typ,weapon)
-	if getKeyState("lshift") then
+	if getKeyState("lctrl") or getKeyState("lshift") then
 		local index = "Waffe"
 		local index2 = "Waffe"
 		local indexPrice = "WaffenPreis"
 		if typ == "munition" then index = "Munition"; index2 = "Magazine"; indexPrice = "MagazinPreis" end
 
-		local max = self.m_DepotWeaponsMax[weapon][index2] - self.depot[weapon][index]
+		local max = self.m_DepotWeaponsMax[weapon][index2] - self.depot[weapon][index] - self.m_Cart[weapon][index]
+
+		if getKeyState("lshift") then
+			if max > 10 then max = 10 end
+		end
+
 		local pricePerUnit = self.m_DepotWeaponsMax[weapon][indexPrice]
 		local remainingBudget = self.m_MaxLoad - self.m_TotalCosts
 

@@ -41,11 +41,10 @@ function PerformanceStatsGUI:constructor()
 	end
 
 	self.m_TabCache = self.m_TabPanel:addTab(_"Cache")
-	self:addField(self.m_TabCache, "CacheTextureReplace", function() return tostring(table.size(TextureReplace.Cache)) end)
+	self:addField(self.m_TabCache, "CacheTextureReplace", function() return tostring(table.size(TextureCache.Map)) end)
 	self.m_TabCache.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.96, self.m_Height*0.73, self.m_TabCache)
-	self.m_TabCache.m_Gridlist:addColumn("TexturePath", 0.65)
-	self.m_TabCache.m_Gridlist:addColumn("MemUsage", 0.20)
-	self.m_TabCache.m_Gridlist:addColumn("Usage", 0.15)
+	self.m_TabCache.m_Gridlist:addColumn("Name", 0.85)
+	self.m_TabCache.m_Gridlist:addColumn("Count", 0.15)
 
 	self.m_RefreshTimer = false
 	self:refresh()
@@ -53,6 +52,7 @@ function PerformanceStatsGUI:constructor()
 end
 
 function PerformanceStatsGUI:refresh()
+	if isCursorShowing() then return end
 	for parentId, parent in pairs(self.m_Fields) do
 		for k, v in ipairs(parent) do
 			v.label:setText(v.func())
@@ -61,8 +61,15 @@ function PerformanceStatsGUI:refresh()
 
 	if self.m_TabCache.m_Gridlist then
 		self.m_TabCache.m_Gridlist:clear()
-		for hash, data in pairs(TextureReplace.Cache) do
-			self.m_TabCache.m_Gridlist:addItem(data.path:sub(#data.path - 35, #data.path), ("%d MB"):format(data.memusage), data.counter)
+		for path, data in pairs(TextureCache.Map) do
+			local item = self.m_TabCache.m_Gridlist:addItem(path:gsub("files/images/Textures", ""), data:getUsage())
+			item.onLeftDoubleClick = function()
+				local text = _"Folgende Elemente benutzen diese Textur:"
+				for i, instance in pairs(data.m_Instances) do
+					text = ("%s\n#%d %s"):format(text, i, inspect(instance.m_Element))
+				end
+				ShortMessage:new(text, _("Textur Info (%s)", path:gsub("files/images/Textures", "")), Color.Red, 10000)
+			end
 		end
 	end
 end

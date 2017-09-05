@@ -17,10 +17,7 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
-		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -45,10 +42,10 @@ function VehicleManager:constructor()
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
-	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
-
-
+	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
+	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
+	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -94,7 +91,6 @@ function VehicleManager:constructor()
 				self:checkVehicle(source)
 
 				setVehicleEngineState(source, source:getEngineState())
-				player:triggerEvent("vehicleFuelSync", source:getFuel())
 			end
 		end
 	)
@@ -147,20 +143,6 @@ function VehicleManager:destructor()
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
-function VehicleManager:Event_OnElementDestroy()
-	if getElementType(source) == "vehicle" then
-		local occs = getVehicleOccupants( source )
-		if occs then
-			for seat, player in pairs(occs) do
-				if player then
-					player.m_SeatBelt = false
-					setElementData(player,"isBuckeled", false)
-				end
-			end
-		end
-	end
-end
-
 function VehicleManager:Event_OnRadioChange( vehicle, radio)
 	if vehicle and radio then
 
@@ -171,16 +153,20 @@ function VehicleManager:Event_GetTuningList()
 	source:getTuningList(client)
 end
 
+function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
+	source:magnetVehicleCheck(groundPosition)
+end
+
 function VehicleManager:getFactionVehicles(factionId)
-	return self.m_FactionVehicles[factionId]
+	return self.m_FactionVehicles[factionId] or {}
 end
 
 function VehicleManager:getCompanyVehicles(companyId)
-	return self.m_CompanyVehicles[companyId]
+	return self.m_CompanyVehicles[companyId] or {}
 end
 
 function VehicleManager:getGroupVehicles(groupId)
-	return self.m_GroupVehicles[groupId]
+	return self.m_GroupVehicles[groupId] or {}
 end
 
 function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
@@ -256,7 +242,7 @@ function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
@@ -267,7 +253,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal))
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
@@ -520,7 +506,7 @@ function VehicleManager:Event_vehiclePark()
 			end
 
 			if not source:isOnGround() then
-				client:sendError(_("Das Fahrzeug kann nicht in der Luft geparkt werden!", client))
+				client:sendError(_("Das Fahrzeug muss zum Parken stillstehen!", client))
 				return
 			end
 
@@ -572,15 +558,16 @@ function VehicleManager:syncVehicleInfo(player)
 	player:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(player), player:getGarageType(), player:getHangarType())
 end
 
-function VehicleManager:Event_OnVehicleCrash( veh, loss )
-	if veh:getVehicleType() == VehicleType.Plane or veh:getVehicleType() == VehicleType.Helicopter then
+function VehicleManager:Event_OnVehicleCrash(loss)
+	if not source then return end
+	if source:getVehicleType() == VehicleType.Plane or source:getVehicleType() == VehicleType.Helicopter or source:getVehicleType() == VehicleType.Bike then
 		return false
 	end
-	local occupants = getVehicleOccupants(veh)
-	local speedx, speedy, speedz = getElementVelocity ( veh )
+	local occupants = getVehicleOccupants(source)
+	local speedx, speedy, speedz = getElementVelocity(source)
 	local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
 	local tickCount = getTickCount()
-	if getPedOccupiedVehicle(source) == veh then
+	if client.vehicle == source then
 		if sForce >0.4 and loss*0.1 >= 2  then
 			for seat, player in pairs(occupants) do
 				if getElementType(player) == "player" then
@@ -607,9 +594,9 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 						if not player.m_SeatBelt then
 							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+							setPedAnimation(player, "crack", "crckdeth2", 5000, false, false, false)
 							setTimer(setPedAnimation, 5000,1, player, nil)
-						elseif player.m_SeatBelt == veh then
+						elseif player.m_SeatBelt == source then
 							if not player.m_lastInjuryMe then
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 								player.m_lastInjuryMe = tickCount
@@ -617,11 +604,6 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 								player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 								player.m_lastInjuryMe = tickCount
 							end
-						else
-							player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-							removePedFromVehicle(player)
-							setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
-							setTimer(setPedAnimation, 5000,1, player, nil)
 						end
 					end
 					player:triggerEvent("clientBloodScreen")
@@ -794,7 +776,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
 		return
 	end
 
@@ -861,7 +843,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	end
 
  	if source:getPositionType() == VehiclePositionType.Mechanic then
- 		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
+ 		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
  		return
  	end
 
@@ -977,6 +959,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 	end
 
 	local price = getPrice(veh:getModel()) or 0
+	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
+
 	if price then
 		veh:purge()
 		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
@@ -1105,12 +1089,14 @@ end
 function VehicleManager:Event_vehicleBreak()
 	if not source.isBroken or not source:isBroken() then
 		self:checkVehicle(source)
-		outputDebug("Vehicle has been broken by "..client:getName())
-		if source.controller then
-			source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
+		if not VEHICLE_BIKES[source:getModel()] then
+			outputDebug("Vehicle has been broken by "..client:getName())
+			if source.controller then
+				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
+			end
+			-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+			source:setBroken(true)
 		end
-		-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
-		source:setBroken(true)
 	end
 end
 
@@ -1135,5 +1121,83 @@ function VehicleManager:Event_TrailerAttach(truck)
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
+	end
+end
+
+function VehicleManager:Event_LoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "keinen Geldsack"
+	end
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					local object = client:getPlayerAttachedObject()
+					if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
+						if object then
+							local count = #getAttachedElements(veh)
+							client:detachPlayerObject(object)
+							object:attach(veh, vehicleObjects[veh.model][count+1])
+							if object.LoadHook then
+								object.LoadHook(client, veh, object)
+							end
+						else
+							client:sendError(_("Du hast %s dabei!", client, name))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
+					end
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
+	end
+end
+
+function VehicleManager:Event_DeLoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "kein Geldsack"
+	end
+
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					for key, object in pairs (getAttachedElements(veh)) do
+						if object.model == model then
+							object:detach(self.m_Truck)
+							client:attachPlayerObject(object)
+							if object.DeloadHook then
+								object.DeloadHook(client, veh, object)
+							end
+							return
+						end
+					end
+					client:sendError(_("Es befindet sich %s im Truck!", client, name))
+					return
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
 end

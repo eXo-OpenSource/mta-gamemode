@@ -42,8 +42,8 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 	self.m_Id = Id
 	self.m_Company = company
 	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_Position = self:getPosition()
-	self.m_Rotation = self:getRotation()
+	self.m_SpawnPos = self:getPosition()
+	self.m_SpawnRot = self:getRotation()
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -55,15 +55,16 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		end
 	end
 	self:setLocked(false)
+	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 
-	local a, r, g, b
-	if color and color > 0 then
-		a, r, g, b = getBytesInInt32(color)
+	if color and fromJSON(color) then
+		setVehicleColor(self, fromJSON(color))
 	else
 		local companyId = self.m_Company:getId()
-		r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+		local r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+		setVehicleColor(self, r, g, b, r, g, b)
 	end
-	setVehicleColor(self, r, g, b, r, g, b)
+
 
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
@@ -77,6 +78,11 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 
 	if self.m_Company.m_Vehicles then
 		table.insert(self.m_Company.m_Vehicles, self)
+	end
+
+	self:setFuel(self.m_Fuel or 100)
+	if self:getModel() == 611 then -- Fuel tank
+		self:setFuel(0)
 	end
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
@@ -181,15 +187,16 @@ end
 function CompanyVehicle:save()
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Company:getId(), toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Company:getId(), toJSON(tunings), self:getMileage(),
+		self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function CompanyVehicle:hasKey(player)
   if self:isPermanent() then
     if player:getCompany() == self:getCompany() then
       return true
-    elseif self:getCompany():getId() == CompanyStaticId.DRIVINGSCHOOL then 
+    elseif self:getCompany():getId() == CompanyStaticId.DRIVINGSCHOOL then
 		return player:getPublicSync("inDrivingLession") == true
 	end
   end
@@ -225,10 +232,17 @@ function CompanyVehicle:respawn(force)
 		end
 	end
 
+	if self:getCompany():getId() == 4 then -- Public Transport
+		if self:getCompany():isBusOnTour(self) then
+			self:getCompany():stopBusTour(self)
+		end
+	end
+
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
-	self:setPosition(self.m_Position)
-	self:setRotation(self.m_Rotation)
+	self:setTaxiLightOn(false)
+	self:setPosition(self.m_SpawnPos)
+	self:setRotation(self.m_SpawnRot)
 	self:fix()
 	self:setFrozen(true)
 	self.m_HandBrake = true

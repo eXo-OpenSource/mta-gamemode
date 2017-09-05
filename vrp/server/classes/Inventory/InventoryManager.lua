@@ -133,7 +133,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		client:sendError(_("Du bist zuweit von %s entfernt!", client, target.name))
 		return false
 	end
-
+	if not money then money = 0 end
 	local amount = math.abs(amount)
 	local money = math.abs(money)
 

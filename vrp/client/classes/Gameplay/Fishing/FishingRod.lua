@@ -37,7 +37,7 @@ function FishingRod:constructor(fishingRod)
 end
 
 function FishingRod:destructor()
-	toggleAllControls(true)
+	toggleAllControls(true, true, false)
 	unbindKey("mouse1", "both", self.m_HandleClick)
 	removeEventHandler("onClientRender", root, self.m_Render)
 	if isTimer(self.m_nibblingTimer) then killTimer(self.m_nibblingTimer) end
@@ -68,7 +68,7 @@ end
 
 function FishingRod:reset()
 	localPlayer:setAnimation()
-	toggleAllControls(true)
+	toggleAllControls(true, true, false)
 	toggleControl("fire", false)
 
 	self.m_isCasting = true
@@ -81,10 +81,10 @@ end
 
 function FishingRod:handleClick(_, state)
 	if isCursorShowing() then return end
-	setControlState("fire", false)
+	setPedControlState("fire", false)
 	toggleControl("fire", false)
 	if localPlayer.vehicle then return end
-	
+
 	self.m_MouseDown = state == "down"
 
 	if self.m_isCasting and self.m_MouseDown then
@@ -106,7 +106,7 @@ function FishingRod:handleClick(_, state)
 		self.m_isCasting = true
 		self.Sound:play("caught")
 
-		toggleAllControls(true)
+		toggleAllControls(true, true, false)
 		toggleControl("fire", false)
 	elseif self.m_isNibbling and self.m_MouseDown then
 		if getTickCount() - self.m_nibblingTime <= self.m_maxTimeToNibble then
@@ -150,7 +150,7 @@ function FishingRod:cast()
 	local distance = 10*self.m_PowerProgress
 
 	if self:checkWater(distance) then
-		toggleAllControls(false)
+		toggleAllControls(false, true, false)
 
 		local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
 		targetPosition.z = 0
@@ -176,7 +176,7 @@ function FishingRod:checkWater(distance)
 	targetPosition.z = -0.2
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
-	if not result[9] and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
+	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true) and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
 		return true
 	end
 	return false

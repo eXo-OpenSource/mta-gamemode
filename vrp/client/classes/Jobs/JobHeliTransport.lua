@@ -8,7 +8,7 @@
 JobHeliTransport = inherit(Job)
 
 function JobHeliTransport:constructor()
-	Job.constructor(self, 16, 1786.09, -2271.62, 26.80, 180, "HeliTransport.png", "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
+	Job.constructor(self, 16, 1786.09, -2271.62, 26.80, 180, "HeliTransport.png", {120, 70, 0}, "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
 	self.m_Target = {}
 	self:setJobLevel(JOB_LEVEL_HELITRANSPORT)
 
@@ -46,8 +46,8 @@ function JobHeliTransport:createTarget(type)
 
 	self.m_Target["type"] = type
 	self.m_Target["marker"] = createMarker(pos, "corona", 3, 0, 0, 255, 255)
-	self.m_Target["blip"] = Blip:new("Marker.png", pos.x, pos.y,9999)
-	self.m_Target["blip"]:setStreamDistance(10000)
+	self.m_Target["blip"] = Blip:new("Marker.png", pos.x, pos.y, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_Target["blip"]:setDisplayText("Paket-Abgabe")
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
 		if hitElement == localPlayer and dim then
 			if self.m_Target["type"] == "pickup" then

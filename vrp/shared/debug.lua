@@ -8,7 +8,7 @@
 DEBUG = GIT_BRANCH ~= "release/production"
 if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
 	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
-	DEBUG_AUTOLOGIN = true -- logs the player in automatically if they saved their pw
+	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
 end
 
 if triggerClientEvent and DEBUG_LOAD_SAVE then
@@ -108,21 +108,28 @@ end
 
 local runStringSavedVars = {}
 
-local function prepareRunStringVars(player)
+local function prepareRunStringVars(runPlayer)
 	runStringSavedVars.me = me
 	runStringSavedVars.my = my
-	runStringSavedVars.gPFN = gPFN
+	runStringSavedVars.player = player
+	runStringSavedVars.cprint = cprint
 
-	me = player
-	my = player
-	gPFN = getPlayerFromName	
+	me = runPlayer
+	my = runPlayer
+	player = function(target)
+		return PlayerManager:getSingleton():getPlayerFromPartOfName(target,runPlayer)
+	end 
+	cprint = function(var)
+		outputConsole(inspect(var), runPlayer)
+	end
 end
 
 
 local function restoreRunStringVars()
 	me = runStringSavedVars.me
 	my = runStringSavedVars.my
-	gPFN = runStringSavedVars.gPFN
+	cprint = runStringSavedVars.cprint
+	player = runStringSavedVars.player
 
 	runStringSavedVars = {}
 end

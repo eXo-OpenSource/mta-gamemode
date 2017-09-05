@@ -95,7 +95,7 @@ function BankPalomino:startRob(player)
 	self:startRobGeneral(player)
 
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
-	FactionState:getSingleton():sendWarning("Die Bank von Palomino Creek wird überfallen!", "neuer Einsatz", true)
+	FactionState:getSingleton():sendWarning("Die Bank von Palomino Creek wird überfallen!", "neuer Einsatz", true, {2318.43, 11.37, 26.48})
 
 	local pos = self.m_BankDoor:getPosition()
 	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)

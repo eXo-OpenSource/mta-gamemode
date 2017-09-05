@@ -73,7 +73,6 @@ function Core:constructor()
 		GroupManager:new()
 		GroupPropertyManager:new()
 		HouseManager:new()
-		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
 		AdminEventManager:new()
@@ -100,6 +99,7 @@ function Core:constructor()
 		ActionsCheck:new()
 		TrainManager:new()
 		FireManager:new()
+		GasStationManager:new()
 		ShopManager:new()
 		Jail:new()
 		VehicleInteraction:new()
@@ -117,6 +117,8 @@ function Core:constructor()
 		BoxManager:new()
 		Fishing:new()
 		InactivityManager:new()
+		HistoryPlayer:new()
+
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
 		Chair:new()
@@ -184,8 +186,6 @@ function Core:constructor()
 		if DEBUG then
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
-
-		Blip:new("North.png", 0, 6000, root, 12000)
 
 		if GIT_BRANCH == "release/production" then
 			GlobalTimer:getSingleton():registerEvent(function()

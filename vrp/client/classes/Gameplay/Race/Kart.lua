@@ -10,7 +10,7 @@ addRemoteEvents{"KartStart", "KartStop", "KartRequestGhostDriver", "KartReceiveG
 
 Kart.record = false
 
-function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
+function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnEnabled, mapId)
 	self.m_State = "Flying"
 	self.m_HittedCheckpoints = {}
 
@@ -18,25 +18,36 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
 	self.m_Checkpoints = checkpoints
 	self.m_Laps = 1
 	self.m_SelectedLaps = selectedLaps
+	self.m_RespawnEnabled = respawnEnabled
 
-	HUDRace:getSingleton():setSelectedLaps(self.m_SelectedLaps)
+	HUDKart:getSingleton():setSelectedLaps(self.m_SelectedLaps)
+	HUDKart:getSingleton().m_ShowRespawnLabel = respawnEnabled
 
 	self.m_onStartFinishMarkerHit = bind(Kart.startFinishMarkerHit, self)
 	self.m_onCheckpointHit = bind(Kart.checkpointHit, self)
+	self.m_Respawn = bind(Kart.respawnToLastCheckpoint, self)
 
 	self.m_GhostRecord = MovementRecorder:new(571)
 	self.m_GhostPlayback = MovementRecorder:new(571)
 	self.m_GhostPlayback.m_Record =  Kart.record or false
 
+	if self.m_RespawnEnabled then
+		bindKey("x", "down", self.m_Respawn)
+	end
 
 	for _, v in pairs(self.m_Checkpoints) do
 		addEventHandler("onClientMarkerHit", v, self.m_onCheckpointHit)
 	end
 
+	Kart.MapId = mapId
 	addEventHandler("onClientMarkerHit", self.m_StartFinishMarker, self.m_onStartFinishMarkerHit)
 end
 
 function Kart:destructor()
+	if self.m_RespawnEnabled then
+		unbindKey("x", "down", self.m_Respawn)
+	end
+
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onClientMarkerHit", v, self.m_onCheckpointHit)
 	end
@@ -68,8 +79,8 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 		self.m_StartTick = getTickCount()
 		self.m_HittedCheckpoints = {}
 
-		HUDRace:getSingleton():setStartTick(true)
-		HUDRace:getSingleton():setLaps(self.m_Laps)
+		HUDKart:getSingleton():setStartTick(true)
+		HUDKart:getSingleton():setLaps(self.m_Laps)
 
 		self.m_GhostRecord:stopRecording()
 		self.m_LastGhost = self.m_GhostRecord.m_Record
@@ -94,28 +105,54 @@ function Kart:checkpointHit(hitPlayer, matchingDimension)
 			end
 
 			table.insert(self.m_HittedCheckpoints, v)
+			self.m_LastCheckpoint = {position = localPlayer.vehicle.position, rotation = localPlayer.vehicle.rotation}
 		end
 	end
 end
 
-addEventHandler("KartReceiveGhostDriver", root,
-	function(record)
-		Kart.LastRequest = false
+function Kart:respawnToLastCheckpoint()
+	if self.m_RespawnEnabled and self.m_LastCheckpoint then
+		localPlayer.vehicle:setPosition(self.m_LastCheckpoint.position)
+		localPlayer.vehicle:setRotation(self.m_LastCheckpoint.rotation)
+		localPlayer.vehicle:setVelocity(0, 0, 0)
+		localPlayer.vehicle:setTurnVelocity(0, 0, 0)
+	end
+end
 
-		local unparsed = fromJSON(record)
-		Kart.record = table.setIndexToInteger(unparsed)
+function Kart.receiveGhostDriver(record)
+	Kart.LastRequest = false
 
-		for _, v in pairs(Kart.record) do
-			if type(v) == "table" then
-				v.position = Vector3(v.x, v.y, v.z)
-				v.rotation = Vector3(v.rx, v.ry, v.rz)
-			end
+	local unparsed = fromJSON(record)
+	if not unparsed then WarningBox:new("Für diesen Spieler ist kein Geist verfügbar!") return false end
+	Kart.record = table.setIndexToInteger(unparsed)
+
+	for _, v in pairs(Kart.record) do
+		if type(v) == "table" then
+			v.position = Vector3(v.x, v.y, v.z)
+			v.rotation = Vector3(v.rx, v.ry, v.rz)
 		end
 	end
-)
+
+	InfoBox:new("Geist übernommen!")
+end
+
+function Kart.uploadGhostDriver()
+	if not Kart.requestedRecord then return end
+
+	local options = {
+		["postData"] =  ("secret=%s&playerId=%d&mapId=%d&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), Kart.MapId, toJSON(Kart.requestedRecord))
+	}
+
+	fetchRemote("https://exo-reallife.de/ingame/kart/addGhost.php", options,
+		function(responseData, responseInfo)
+			Kart.requestedRecord = false
+			--outputConsole(inspect({data = responseData, info = responseInfo}))
+		end
+	)
+end
 
 addEventHandler("KartRequestGhostDriver", root,
-	function(lapTime)
+	function()
 		local record = Kart:getSingleton().m_LastGhost
 
 		if record then
@@ -128,8 +165,8 @@ addEventHandler("KartRequestGhostDriver", root,
 				end
 			end
 
-			record.duration = lapTime
-			triggerLatentServerEvent("sendKartGhost", 100000, false, root, record)
+			record.duration = getTickCount() - Kart:getSingleton().m_StartTick
+			Kart.requestedRecord = record
 		end
 	end
 )
@@ -144,6 +181,7 @@ addEventHandler("KartStop", root,
 	function()
 		if Kart:isInstantiated() then
 			delete(Kart:getSingleton())
+			Kart.uploadGhostDriver()
 		end
 	end
 )

@@ -32,7 +32,9 @@ function VehicleCustomTextureShop:constructor()
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
 
-        Blip:new("TuningGarage.png", position.x, position.y,root,600)
+        local blip = Blip:new("VehicleTexture.png", position.x, position.y,root,600)
+		blip:setDisplayText("Speziallackierungs-Shop", BLIP_CATEGORY.VehicleMaintenance)
+		blip:setOptionalColor({255,235,59})
     end
 
 	Player.getQuitHook():register(
@@ -81,7 +83,9 @@ function VehicleCustomTextureShop:EntryColShape_Hit(garageId, hitElement, matchi
                 return
             end
         else
-            hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+            --hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+			hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+			return
         end
 
 		if not vehicle.m_Tunings then
@@ -118,6 +122,7 @@ function VehicleCustomTextureShop:openFor(player, vehicle, garageId)
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
+	if not vehicle.m_Tunings then vehicle.m_Tunings = VehicleTuning:new(vehicle) end
 	vehicle.OldTexture = vehicle.m_Tunings:getTuning("Texture")
 	vehicle.OldColor1 = vehicle.m_Tunings:getTuning("Color1")
 	vehicle.OldColor2 = vehicle.m_Tunings:getTuning("Color2")
@@ -164,22 +169,29 @@ end
 
 function VehicleCustomTextureShop:Event_vehicleUpgradesAbort()
    	local veh = client:getOccupiedVehicle()
-	veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
-	veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
-	local oldCount = 0
-	for textureName, texturePath in pairs(veh.OldTexture) do
-		veh.m_Tunings:addTexture(texturePath, textureName)
-		oldCount = oldCount + 1
+	if veh then
+		if not veh.m_Tunings then veh.m_Tunings = VehicleTuning:new(veh) end
+		veh.m_Tunings:saveTuning("Color1", veh.OldColor1)
+		veh.m_Tunings:saveTuning("Color2", veh.OldColor2)
+		local oldCount = 0
+		for textureName, texturePath in pairs(veh.OldTexture) do
+			veh.m_Tunings:addTexture(texturePath, textureName)
+			oldCount = oldCount + 1
+		end
+		veh.m_Tunings:applyTuning()
+		local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or "vehiclegrunge256"
+		if oldCount == 0 then
+			veh:removeTexture(textureName)
+		end
+		self:closeFor(client, veh)
+	else 
+		self:closeFor(client, false)
+		client:setDimension(0)
 	end
-	veh.m_Tunings:applyTuning()
-	local textureName = VEHICLE_SPECIAL_TEXTURE[veh:getModel()] or "vehiclegrunge256"
-	if oldCount == 0 then
-		veh:removeTexture(textureName)
-	end
-	self:closeFor(client, veh)
-end
+end	
 
 function VehicleCustomTextureShop:Event_texturePreview(url, color1, color2, player)
+	if not source.m_Tunings then source.m_Tunings = VehicleTuning:new(source) end
 	source.m_Tunings:saveTuning("Color1", color1)
 	source.m_Tunings:saveTuning("Color2", color2)
 	self:setTexture(source, url, nil, false, true, player)

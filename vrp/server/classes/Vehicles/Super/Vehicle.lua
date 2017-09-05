@@ -7,8 +7,6 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 
-addRemoteEvents{"clientMagnetGrabVehicle"}
-
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -40,11 +38,8 @@ function Vehicle:virtual_constructor()
 
 	if self:getModel() == 417 then
 		self:addMagnet()
-		self.m_MagnetVehicleCheck = bind(Vehicle.magnetVehicleCheck, self)
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
-
-		addEventHandler("clientMagnetGrabVehicle", root, self.m_MagnetVehicleCheck)
 	end
 end
 
@@ -56,6 +51,16 @@ function Vehicle:virtual_destructor()
 
 	if self.m_Magnet then
 		self.m_Magnet:destroy()
+	end
+
+	local occs = getVehicleOccupants(self)
+	if occs then
+		for seat, player in pairs(occs) do
+			if player then
+				player.m_SeatBelt = false
+				setElementData(player, "isBuckeled", false)
+			end
+		end
 	end
 end
 
@@ -99,8 +104,8 @@ function Vehicle:hasKey(player)
 	end
 end
 
-function Vehicle:playLockEffect()
-	triggerClientEvent("vehicleCarlock", self)
+function Vehicle:playLockEffect(locked)
+	triggerClientEvent("vehicleCarlock", self, locked)
 	setVehicleOverrideLights(self, 2)
 	setTimer(setVehicleOverrideLights, 500, 1, self, 1)
 	setTimer(setVehicleOverrideLights, 1000, 1, self, 2)
@@ -407,15 +412,11 @@ end
 
 function Vehicle:setFuel(fuel)
 	self.m_Fuel = fuel
+	self:setData("fuel", self.m_Fuel, true)
 
 	-- Switch engine off in case of an empty fuel tank
 	if self.m_Fuel <= 0 then
 		self:setEngineState(false)
-	else
-		local driver = getVehicleOccupant(self, 0)
-		if driver then
-			driver:triggerEvent("vehicleFuelSync", fuel)
-		end
 	end
 end
 
@@ -444,6 +445,7 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
+	if state and VEHICLE_BIKES[self:getModel()] then return end -- disable total loss for bycicles
 	if state then
 		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
@@ -506,7 +508,7 @@ end
 function Vehicle:countdownDestroyAbort(player)
 	if not player then player = self.m_CountdownDestroyPlayer end
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
-		player:triggerEvent("CountdownStop", "Fahrzeug")
+		if isElement(player) then player:triggerEvent("CountdownStop", "Fahrzeug") end
 		killTimer(self.m_CountdownDestroyTimer)
 	end
 	self.m_CountdownDestroyPlayer = nil
@@ -594,19 +596,18 @@ function Vehicle:setTexture(texturePath, textureName, force, isPreview, player)
 			self.m_Texture[textureName] = nil
 		end
 
-		local isHttp = string.find(texturePath,"http://")
-		if isHttp == nil then
-			self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, player)
-		else
-			self.m_Texture[textureName] = VehicleTexture:new(self, ("files/images/Textures/Custom/%s"):format(texturePath:sub(35, #texturePath)), textureName, true, isPreview, player)
-		end
+		self.m_Texture[textureName] = VehicleTexture:new(self, texturePath, textureName, true, isPreview, player)
+
 	end
 end
 
 function Vehicle:removeTexture(textureName)
+	if not self.m_Texture then return false end
 	if textureName then
-		delete(self.m_Texture[textureName])
-		return
+		if self.m_Texture and self.m_Texture[textureName] then
+			delete(self.m_Texture[textureName])
+			return
+		end
 	end
 
 	for i, v in pairs(self.m_Texture) do
@@ -687,6 +688,10 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
 		end
 	else
+		if not self.m_Magnet and not isElement(self.m_Magnet) then
+			client:sendError("INTERNAL ERROR: Funktioniert immer noch nicht...")
+			return
+		end
 		local colShape = createColSphere(self.m_Magnet.matrix:transformPosition(Vector3(0, 0, -0.5)), 2)
 		local vehicles = getElementsWithinColShape(colShape, "vehicle")
 		colShape:destroy()
@@ -759,6 +764,23 @@ function Vehicle:getTuningList(player)
 	else
 		player:triggerEvent("vehicleReceiveTuningList", self, false)
 	end
+end
+
+-- Not used but maybe useful?
+function Vehicle:isPlayerSurfOnCar(player)
+	local colShape1 = createColSphere(self.matrix:transformPosition(Vector3(0, 2, 3)), 2.6)
+	local colShape2 = createColSphere(self.matrix:transformPosition(Vector3(0, -2, 3)), 2.6)
+	local players = table.append(colShape1:getElementsWithin"player", colShape2:getElementsWithin"player")
+	colShape1:destroy()
+	colShape2:destroy()
+
+	for _, p in pairs(players) do
+		if p == player then
+			return true
+		end
+	end
+
+	return false
 end
 
 -- Override it

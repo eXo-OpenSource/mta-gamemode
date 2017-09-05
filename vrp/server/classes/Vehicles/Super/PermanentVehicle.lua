@@ -9,6 +9,10 @@ PermanentVehicle = inherit(Vehicle)
 
 -- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
 function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
+		return false -- Apply vehilce limit
+	end
+
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local position = vehicle:getPosition()
@@ -98,13 +102,6 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
-	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
-		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
-		if row and row.Special > 0 then
-			self.m_Tunings:saveTuning("Special", row.Special)
-			self.m_Tunings:applyTuning()
-		end
-	end
 	self.m_HasBeenUsed = 0
 end
 
@@ -206,7 +203,7 @@ function PermanentVehicle:respawn(garageOnly)
   local owner = Player.getFromId(self.m_Owner)
   if owner and isElement(owner) then
     -- Is the vehicle allowed to spawn in the garage
-    if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat then
+    if vehicle:getModel() == 539 or (vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat) then
       -- Does the player have a garage
       if owner:getGarageType() > 0 then
         -- Is there a slot available?

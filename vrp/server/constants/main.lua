@@ -116,11 +116,17 @@ AFK_POSITIONS = {
 BAIL_PRICES =
 {
 	[1] = 1200,
-	[2] = 2000,
-	[3] = 2400,
-	[4] = 3000,
-	[5] = 3600,
-	[6] = 4500,
+	[2] = 1600,
+	[3] = 2000,
+	[4] = 2400,
+	[5] = 3000,
+	[6] = 3500,
+	[7] = 4000,
+	[8] = 5000,
+	[9] = 7000,
+	[10] = 8000,
+	[11] = 9000,
+	[12] = 10000,
 }
 
 JAIL_COSTS =
@@ -128,60 +134,24 @@ JAIL_COSTS =
 	[1] = 500,
 	[2] = 1000,
 	[3] = 1500,
-	[4] = 2500,
-	[5] = 3500,
-	[6] = 4500,
+	[4] = 2000,
+	[5] = 2500,
+	[6] = 3000,
+	[7] = 3500,
+	[8] = 4000,
+	[9] = 5000,
+	[10] = 6000,
+	[11] = 7000,
+	[12] = 8000,
 }
+
+JAIL_TIME_PER_WANTED_BAIL = 3
+JAIL_TIME_PER_WANTED_ARREST = 3
+JAIL_TIME_PER_WANTED_KILL = 4
+JAIL_TIME_PER_WANTED_OFFLINE = 5
+
 
 RESOURCES_TO_STOP = {
     "scoreboard";
     "helpmanager";
 }
-
-setWeaponProperty(24,"pro","target_range",45)
-setWeaponProperty(24,"poor","target_range",45)
-setWeaponProperty(24,"std","target_range",45)
-
-setWeaponProperty(24,"pro","weapon_range",45)
-setWeaponProperty(24,"poor","weapon_range",45)
-setWeaponProperty(24,"std","weapon_range",45)
-
-setWeaponProperty(24,"pro","accuracy",1.5)
-setWeaponProperty(24,"poor","accuracy",1.5)
-setWeaponProperty(24,"std","accuracy",1.5)
-
-setWeaponProperty(28,"poor", "accuracy",1.1000000238419)
-setWeaponProperty(28,"pro", "accuracy",1.1000000238419)
-setWeaponProperty(28,"std", "accuracy",1.1000000238419)
-
-setWeaponProperty(29,"pro","accuracy",0.9)
-setWeaponProperty(29,"poor","accuracy",0.9)
-setWeaponProperty(29,"std","accuracy",0.9)
-
-setWeaponProperty(31,"pro","accuracy",0.8)
-setWeaponProperty(31,"poor","accuracy",0.8)
-setWeaponProperty(31,"std","accuracy",0.8)
-
-setWeaponProperty(31,"pro","weapon_range",105)
-setWeaponProperty(31,"poor","weapon_range",105)
-setWeaponProperty(31,"std", "weapon_range",105)
-
-setWeaponProperty(32,"pro","weapon_range",50)
-setWeaponProperty(32,"poor","weapon_range",50)
-setWeaponProperty(32,"std", "weapon_range",50)
-
-setWeaponProperty(32,"pro","target_range",50)
-setWeaponProperty(32,"poor","target_range",50)
-setWeaponProperty(32,"std", "target_range",50)
-
-setWeaponProperty(32,"poor", "accuracy",1.1999999523163)
-setWeaponProperty(32,"pro", "accuracy",1.1999999523163)
-setWeaponProperty(32,"std", "accuracy",1.1999999523163)
-
-setWeaponProperty(33,"pro","weapon_range",160)
-setWeaponProperty(33,"poor","weapon_range",160)
-setWeaponProperty(33,"std","weapon_range",160)
-
-setWeaponProperty(33,"pro","target_range",160)
-setWeaponProperty(33,"poor","target_range",160)
-setWeaponProperty(33,"std","target_range",160)

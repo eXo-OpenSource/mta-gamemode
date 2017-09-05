@@ -12,38 +12,39 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins )
-  self.m_Id = Id
-  self.m_Name = Name
-  self.m_ShortName = ShortName
-  self.m_Creator = Creator
-  self.m_Players = players
+function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
+	self.m_Id = Id
+	self.m_Name = Name
+	self.m_ShortName = ShortName
+	self.m_Creator = Creator
+	self.m_Players = players[1]
+	self.m_PlayerLoans = players[2]
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
-  self.m_LastNameChange = lastNameChange or 0
-  self.m_Invitations = {}
-  self.m_Vehicles = {}
-  self.m_Level = 0
-  self.m_RankNames = companyRankNames[Id]
-  self.m_Skins = companySkins[Id]
-  -- Settings
-  self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
+	self.m_LastNameChange = lastNameChange or 0
+	self.m_Invitations = {}
+	self.m_Vehicles = {}
+	self.m_Level = 0
+	self.m_RankNames = companyRankNames[Id]
+	self.m_Skins = companySkins[Id]
+	-- Settings
+	self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
 
-  if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
-  if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
+	if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
+	if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
 
-  self.m_RankLoans = fromJSON(rankLoans)
-  self.m_RankSkins = fromJSON(rankSkins)
+	self.m_RankLoans = fromJSON(rankLoans)
+	self.m_RankSkins = fromJSON(rankSkins)
 
-  self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
+	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
 
-  sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
+	sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
-  self:createDutyMarker()
-  self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
-  self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+	self:createDutyMarker()
+	self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
+	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
-  self.m_VehicleTexture = companyVehicleShaders[Id] or false
+	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
 	self:getActivity()
 end
@@ -129,14 +130,18 @@ function Company:getMoney(...)
   return self.m_BankAccount:getMoney(...)
 end
 
-function Company:giveMoney(amount, reason)
+function Company:giveMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, amount, reason or "Unbekannt")
-    return self.m_BankAccount:addMoney(amount, reason)
+    return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Company:takeMoney(amount, reason)
+function Company:takeMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, -amount, reason or "Unbekannt")
-    return self.m_BankAccount:takeMoney(amount, reason)
+    return self.m_BankAccount:takeMoney(amount, reason, silent)
+end
+
+function Company:getPhoneNumber()
+	return self.m_PhoneNumber:getNumber()
 end
 
 function Company:addPlayer(playerId, rank)
@@ -146,16 +151,18 @@ function Company:addPlayer(playerId, rank)
 
 	rank = rank or 0
 	self.m_Players[playerId] = rank
+	self.m_PlayerLoans[playerId] = 1
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(self)
+		player:reloadBlips()
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = ?, CompanyRank = ?, CompanyLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 
   if self.onPlayerJoin then -- Only for Companies with own class
     self:onPlayerJoin(playerId, rank)
-  end  
+  end
 
   self:getActivity(true)
 end
@@ -166,18 +173,20 @@ function Company:removePlayer(playerId)
 	end
 
 	self.m_Players[playerId] = nil
+	self.m_PlayerLoans[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(nil)
+		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
 		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end
 
-	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0, CompanyLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 
-  if self.onPlayerLeft then -- Only for Companies with own class
-    self:onPlayerLeft(playerId)
-  end
+	if self.onPlayerLeft then -- Only for Companies with own class
+		self:onPlayerLeft(playerId)
+	end
 end
 
 function Company:getOnlinePlayers()
@@ -196,21 +205,22 @@ function Company:sendChatMessage(sourcePlayer,message)
 	local rank = self.m_Players[playerId]
 	local rankName = self.m_RankNames[rank]
     local receivedPlayers = {}
+	message = message:gsub("%%", "%%%%")
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, 100, 150, 250)
         if player ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = player:getName()
+            receivedPlayers[#receivedPlayers+1] = player
         end
 	end
-    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, toJSON(receivedPlayers))
+    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, receivedPlayers)
 end
 
 function Company:invitePlayer(player)
     client:sendShortMessage(("Du hast %s erfolgreich in dein Unternehmen eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("companyInvitationRetrieve", self:getId(), self:getName())
 
-	self.m_Invitations[player] = true
+	self.m_Invitations[player] = client.m_Id
 end
 
 function Company:removeInvitation(player)
@@ -246,6 +256,19 @@ function Company:setPlayerRank(playerId, rank)
 	sql:queryExec("UPDATE ??_character SET CompanyRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
+function Company:isPlayerLoanEnabled(playerId)
+	return self.m_PlayerLoans[playerId] == 1
+end
+
+function Company:setPlayerLoanEnabled(playerId, state)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_PlayerLoans[playerId] = state
+	sql:queryExec("UPDATE ??_character SET CompanyLoanEnabled = ? WHERE Id = ?", sql:getPrefix(), state, playerId)
+end
+
 function Company:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
@@ -254,9 +277,9 @@ function Company:getActivity(force)
 
 	for playerId, rank in pairs(self.m_Players) do
 		local row = sql:queryFetchSingle("SELECT FLOOR(SUM(Duration) / 60) AS Activity FROM ??_accountActivity WHERE UserID = ? AND Date BETWEEN DATE(DATE_SUB(NOW(), INTERVAL 1 WEEK)) AND DATE(NOW());", sql:getPrefix(), playerId)
-	
+
 		local activity = 0
-			
+
 		if row and row.Activity then
 			activity = row.Activity
 		end
@@ -269,15 +292,15 @@ function Company:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
 	end
-	
+
 	self:getActivity()
 
 	local temp = {}
 	for playerId, rank in pairs(self.m_Players) do
-		local activity = self.m_PlayerActivity[playerId]
-		if not activity then activity = 0 end
+		local loanEnabled = self.m_PlayerLoans[playerId]
+		local activity = self.m_PlayerActivity[playerId] or 0
 
-		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, activity = activity}
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank, loanEnabled = loanEnabled, activity = activity}
 	end
 	return temp
 end
@@ -333,7 +356,9 @@ end
 
 function Company:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
-	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
+	local loan = loanEnabled and tonumber(self.m_RankLoans[tostring(rank)]) or 0
+
 	if self:getMoney() < loan then loan = self:getMoney() end
 	if loan < 0 then loan = 0 end
 	self:takeMoney(loan, "Lohn von "..player:getName())
@@ -343,6 +368,7 @@ end
 function Company:createDutyMarker()
     	self.m_DutyPickup = createPickup(companyDutyMarker[self.m_Id], 3, 1275)
         if companyDutyMarkerInterior[self.m_Id] then self.m_DutyPickup:setInterior(companyDutyMarkerInterior[self.m_Id]) end
+        if companyDutyMarkerDimension[self.m_Id] then self.m_DutyPickup:setDimension(companyDutyMarkerDimension[self.m_Id]) end
     	addEventHandler("onPickupHit", self.m_DutyPickup,
     		function(hitElement)
     			if getElementType(hitElement) == "player" and not hitElement.vehicle then
@@ -369,6 +395,9 @@ function Company:respawnVehicles()
 				vehicles = vehicles + 1
 				if not vehicle:respawn() then
 					fails = fails + 1
+				else
+					vehicle:setInterior(0)
+					vehicle:setDimension(0)
 				end
 			end
 		end

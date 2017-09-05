@@ -39,14 +39,32 @@ function AttackSession:destructor()
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
+function AttackSession:logSession(winner)
+	local attackEnd = getRealTime().timestamp
+	local attackStart = self.m_AreaObj.m_LastAttack or 0
+	local attackerFaction = self.m_Faction1
+	if attackerFaction then
+		attackerFaction = attackerFaction.m_Name
+	end
+	local ownerFaction = self.m_Faction2
+	if ownerFaction then
+		ownerFaction = self.m_Faction2.m_Name
+	end
+	if winner then
+		winner = winner.m_Name
+	end
+	StatisticsLogger:getSingleton():addGangwarLog(self.m_AreaObj.m_Name, attackerFaction, ownerFaction, attackStart, attackEnd, winner)
+end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
 		v.kills = 0
+		v.m_IsDeadInGangwar = false
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
 		v.kills = 0
+		v.m_IsDeadInGangwar = false
 	end
 	self:synchronizeAllParticipants( )
 end
@@ -177,7 +195,7 @@ end
 
 function AttackSession:sessionCheck()
 	local factionCount1 = 0
-	local factionCount2 = 0
+	local factionCount2 = 0	
 	for k,v in ipairs( self.m_Participants ) do
 		if v.m_Faction == self.m_Faction1 then
 			factionCount1 = factionCount1 + 1
@@ -203,10 +221,12 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 				self:disqualifyPlayer( player )
-				local basicDamage = WEAPON_DAMAGE[weapon]
+				local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, realLoss or 0 )
+				self:onPlayerLeaveCenter( player ) -- check if the player at the attack-flag died
+				player.m_IsDeadInGangwar = true
 			end
 			if killer.kills then 
 				killer.kills = killer.kills + 1
@@ -237,6 +257,7 @@ end
 function AttackSession:setCenterCountdown()
 	self.endReason = 3
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFEure Gegner haben noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",0,200,0,true)
 	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
 	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
 end
@@ -287,11 +308,18 @@ end
 function AttackSession:checkPlayersInCenter( )
 	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
 	local faction
+	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
+	local dim2, int2
+	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
 	for key, player in ipairs( pTable ) do
-		if not isPedDead( player ) then
-			faction = player.m_Faction
-			if faction == self.m_Faction1 then
-				return true
+		dim2 = getElementDimension( player )
+		int2 = getElementInterior( player )
+		if dim == dim2 and int == int2 then
+			if not isPedDead( player ) and not player.m_IsDeadInGangwar then
+				faction = player.m_Faction
+				if faction == self.m_Faction1 then
+					return true
+				end
 			end
 		end
 	end
@@ -308,7 +336,7 @@ function AttackSession:attackLose() --// loose for team1
 
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet wurde verteidigt!",0,180,40,true)
-
+	self:logSession(self.m_Faction2)
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
 	if isTimer( self.m_BattleTime ) then
@@ -326,7 +354,7 @@ function AttackSession:attackWin() --// win for team1
 
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet ist verloren!",2000,0,0,true)
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff war erfolgreich!",0,180,40,true)
-
+	self:logSession(self.m_Faction1)
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
 	if isTimer( self.m_BattleTime ) then

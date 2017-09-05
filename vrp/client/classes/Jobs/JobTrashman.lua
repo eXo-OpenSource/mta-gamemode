@@ -8,7 +8,7 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 260, 2090.34, -2079.65, 13.5, 180, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
+	Job.constructor(self, 260, 2090.34, -2079.65, 13.5, 180, "Trashman.png", {100, 100, 100}, "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_TRASHMAN)
 
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")

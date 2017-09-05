@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
-local TREE_MONEY = 58*2
+local TREE_MONEY = 58*1.8
 local DUMP_POSITION = Vector3(-1969.8, -2432.6, 29.5)
 
 function JobLumberjack:constructor()
@@ -105,9 +105,9 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			return
 		end
 
-		removeEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		removeEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind, false)
 		removeEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
-		addEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		addEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind, false)
 		addEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 
 		local loadedTrees = 0

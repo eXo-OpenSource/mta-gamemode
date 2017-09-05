@@ -38,8 +38,8 @@ function Help:loadHelpTexts()
 			end
 
 			table.insert(data.childs,{
-				title = string.gsub(string.gsub(string.gsub(utf8.escape(value["Title"]), "\n\r", "\n"), "\r\n", "\n"), "\n", " \n\r"),
-				text = string.gsub(string.gsub(string.gsub(utf8.escape(value["Text"]), "\n\r", "\n"), "\r\n", "\n"), "\n", " \n\r")
+				title = value["Title"],
+				text = value["Text"]
 			})
 			count = count + 1
 		end

@@ -5,14 +5,12 @@ HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
+	assert(fileName and fileName:len() > 0 and fileName:find(HTTPTextureReplacer.BasePath), "Bad Argument @ HTTPTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
 
-	self.m_FileName = fileName
+	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
+	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
-
-	if isElementStreamedIn(self.m_Element) then
-		self:load()
-	end
 end
 
 function HTTPTextureReplacer:destructor()
@@ -21,16 +19,16 @@ end
 
 function HTTPTextureReplacer:load()
 	if not fileExists(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName)) then
-		self:addToQeue()
+		self:addToQueue()
 		return TextureReplacer.Status.DELAYED
 	else
-		self.m_Texture = TextureReplacer.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+		self.m_Texture = TextureCache.getCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 		return self:attach()
 	end
 end
 
 function HTTPTextureReplacer:unload()
-	local a = TextureReplacer.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName))
+	local a = TextureCache.removeCached(HTTPTextureReplacer.ClientPath:format(self.m_PixelFileName), self)
 	local b = self:detach()
 	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
 end
@@ -57,17 +55,13 @@ function HTTPTextureReplacer:downloadTexture()
 end
 
 function HTTPTextureReplacer:processNext()
-	if HTTPTextureReplacer.Queue:empty() then
-		HTTPTextureReplacer.Queue:unlock()
-	else
-		HTTPTextureReplacer.Queue:pop_back(1):downloadTexture()
+	if not HTTPTextureReplacer.Queue:empty() then
+		HTTPTextureReplacer.Queue:pop():downloadTexture()
 	end
 end
 
-function HTTPTextureReplacer:addToQeue()
-	HTTPTextureReplacer.Queue:push_back(self)
-	if not HTTPTextureReplacer.Queue:locked() then
-		HTTPTextureReplacer.Queue:lock()
-		self:processNext()
-	end
+function HTTPTextureReplacer:addToQueue()
+	HTTPTextureReplacer.Queue:push(self)
+
+	self:processNext()
 end

@@ -10,7 +10,7 @@ HUDUI = inherit(Singleton)
 function HUDUI:constructor()
 	self.m_IsVisible = false
 	self.m_Font = VRPFont(70)
-	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.vRoleplay)
+	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.Chart)
 	self.m_Enabled = core:get("HUD", "showUI", true)
 	self.m_RedDot = core:get("HUD", "reddot", false)
 	self.m_Scale = core:get("HUD", "hudScale", 1)
@@ -22,23 +22,17 @@ function HUDUI:constructor()
 
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
 		setPlayerHudComponentVisible("all", true)
-		--showPlayerHudComponent("radar", false)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		setPlayerHudComponentVisible("wanted", false)
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	else
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 
 	self.m_RenderHandler = bind(self.draw,self)
 
-	addEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler, false, "high")
 end
 
 function HUDUI:show()
@@ -51,16 +45,19 @@ end
 
 function HUDUI:refreshHandler()
 	removeEventHandler("onClientRender",root,self.m_RenderHandler)
-	addEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler, false, "high")
 end
+
 function HUDUI:draw()
 	if not self.m_Enabled then return end
 	if not self.m_IsVisible then return end
-
-	if self.m_UIMode == UIStyle.vRoleplay then
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD_general") end
+	if self.m_UIMode == UIStyle.Default then
 		self:drawDefault()
+	elseif self.m_UIMode == UIStyle.vRoleplay then
+		self:drawVRP()
 		if self.m_DefaultHealhArmor == true then
-			self:drawDefaultHealthArmor()
+			self:drawVRPHealthArmor()
 			self:drawKarmaBar(0.0325*screenHeight, 1.2)
 		else
 			self:drawKarmaBar(0.0425*screenHeight, 1.6)
@@ -69,8 +66,6 @@ function HUDUI:draw()
 		self:drawExo()
 	elseif self.m_UIMode == UIStyle.Chart then
 		self:drawChart()
-	elseif self.m_UIMode == UIStyle.Default then
-		return
 	end
 
 	if self.m_RedDot == true then
@@ -80,6 +75,7 @@ function HUDUI:draw()
 	if localPlayer:getPublicSync("AFK") == true then
 		self:drawAFK()
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD_general", 1, 1) end
 end
 
 function HUDUI:setUIMode(uiMode)
@@ -87,18 +83,12 @@ function HUDUI:setUIMode(uiMode)
 	local enabled = core:get("HUD", "showRadar")
 	if uiMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
-		--showPlayerHudComponent("radar", false)
+		setPlayerHudComponentVisible("wanted", false)
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	elseif self.m_UIMode == UIStyle.Default then
 		setPlayerHudComponentVisible("all", false)
 		setPlayerHudComponentVisible("crosshair", true)
-		if design == 3 then
-			setPlayerHudComponentVisible("radar",enabled)
-		else setPlayerHudComponentVisible("radar",false)
-		end
+		HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 	end
 	self.m_ChartAnims = {} -- unload chart ui animations
 	self.m_UIMode = uiMode
@@ -112,17 +102,10 @@ function HUDUI:setEnabled(state)
 		if not state then
 			setPlayerHudComponentVisible("all", false)
 			setPlayerHudComponentVisible("crosshair", true)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		else
 			setPlayerHudComponentVisible("all", true)
-			--showPlayerHudComponent("radar", false)
-			if design == 3 then
-				setPlayerHudComponentVisible("radar",enabled)
-			else setPlayerHudComponentVisible("radar",false)
-			end
+			HUDRadar:getSingleton():updateRadarType(core:get("HUD", "GWRadar", false))
 		end
 	end
 end
@@ -137,6 +120,17 @@ end
 
 function HUDUI:isEnabled()
 	return self.m_Enabled
+end
+
+function HUDUI:drawDefault()
+	dxSetAspectRatioAdjustmentEnabled(true)
+	if localPlayer:getWanteds() > 0 then
+		local width = math.floor(screenWidth / 5.8)
+		local height = math.floor(screenHeight / 25)
+		local x = math.floor(screenWidth * 0.78)
+		local y = math.floor(screenHeight * 0.22 )
+		dxDrawText(("%s Wanteds"):format(localPlayer:getWanteds()), x, y, x + width, y + height, Color.White, 1.3, "pricedown", "center", "center")
+	end
 end
 
 function HUDUI:drawLevelRect()
@@ -176,7 +170,7 @@ function HUDUI:drawTimeRect()
 
 end
 
-function HUDUI:drawDefault()
+function HUDUI:drawVRP()
 	local f = math.floor
 	dxDrawRectangle(screenWidth-0.195*screenWidth, 0.04*screenHeight, 0.195*screenWidth, 0.092*screenHeight,tocolor(0,0,0,150))
 	dxDrawText("$"..convertNumber(localPlayer:getMoney()), screenWidth-0.14*screenWidth, 0.04*screenHeight, screenWidth-screenWidth*0.007, 0.04*screenHeight+0.092*screenHeight, Color.White, 1, self.m_Font, "right", "center")
@@ -218,8 +212,8 @@ function HUDUI:drawDefault()
 
 	-- Wantedlevel
 	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.105*screenHeight,tocolor(0,0,0,150))
-	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
-	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-5,0.16*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
+	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, localPlayer:getWanteds() > 0 and Color.Yellow or Color.White)
+	dxDrawText     (localPlayer:getWanteds(),screenWidth-0.05*screenWidth,0.16*screenHeight+(0.09*screenHeight/2),screenWidth-0.05*screenWidth+0.05*screenWidth,0,Color.White,0.5,self.m_Font, "center")
 
 	self:drawTimeRect()
 	self:drawLevelRect()
@@ -249,7 +243,7 @@ function HUDUI:drawKarmaBar(height, fontSize)
 	end
 end
 
-function HUDUI:drawDefaultHealthArmor()
+function HUDUI:drawVRPHealthArmor()
 	local health = localPlayer:getHealth()
 	--local color = tocolor(0,150,50) -- Todo find better solution
 	local color = tocolor(255-(health+150)*(255/300), (health+150)*(255/300), -math.abs(health*(127/150))+127)
@@ -332,14 +326,6 @@ function HUDUI:drawExo()
 	--dxDrawText (getSpielzeit(),screenWidth-width*0.55-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
 	--dxDrawText (getLevel(),screenWidth-width*0.15-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
 
-	local wanted = localPlayer:getWantedLevel()
-	if wanted > 0 then dxDrawImage(screenWidth-width*0.146-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-	if wanted > 1 then dxDrawImage(screenWidth-width*0.256-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-	if wanted > 2 then dxDrawImage(screenWidth-width*0.36-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-	if wanted > 3 then dxDrawImage(screenWidth-width*0.47-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-	if wanted > 4 then dxDrawImage(screenWidth-width*0.58-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-	if wanted > 5 then dxDrawImage(screenWidth-width*0.69-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
-
 	local b_x = 100
 	local bar_x = hudStartX+ (((97/imageWidth))*width)
 	local bar_width = width * (201/imageWidth)
@@ -382,9 +368,9 @@ function HUDUI:drawExo()
 	if weaponSlot >= 2 then
 		dxDrawText ( iClip.."-"..tAmmo-iClip,hudStartX+width*0.5, height*0.125,width*0.5, height*0.28, tocolor ( 255,255,255,255 ), 1.1*width*0.0039, "sans","left","top" ) --Money
 	end
-	dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+	dxDrawText(math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
-	dxDrawText ( math.floor(localPlayer:getLevel() or 0) or 0,hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+	dxDrawText(localPlayer:getWanteds() or 0,hudStartX+width*0.89, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
 
 	--[[if getPedWeapon(localPlayer) > 9  then
@@ -407,7 +393,7 @@ function HUDUI:drawExo()
 end
 
 function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture and manage the underlying browser
-	if not self.m_SkinBrowser then 
+	if not self.m_SkinBrowser then
 		self.m_SkinBrowser = createBrowser(w, h, false, true)
 		self.m_SkinID = skinid
 		self.m_BrowserW = w
@@ -447,14 +433,14 @@ function HUDUI:drawChart()
 	local function getProgress(identifier, fadeOut, justGet)
 		if not justGet and not self.m_ChartAnims[identifier] then self.m_ChartAnims[identifier] = {0, getTickCount(), false} end
 		if justGet then return self.m_ChartAnims and self.m_ChartAnims[identifier] and self.m_ChartAnims[identifier][1] or 0 end -- little hack to get the progress without updating it
-		
+
 		local d = self.m_ChartAnims[identifier]
 		local prog = d[1]
 
 		if fadeOut ~= d[3] then d[2] = getTickCount() d[3] = fadeOut end -- reset Animation if fade status changes
 		if not fadeOut and d[1] < 1 then prog = (getTickCount() - d[2])/200 end
 		if fadeOut and d[1] > 0 then prog = 1 - (getTickCount() - d[2])/200 end
-		
+
 		prog = math.clamp(0, prog, 1)
 		d[1] = prog
 
@@ -465,7 +451,7 @@ function HUDUI:drawChart()
 		if not prog then prog = 0 end
 		dxDrawText(text, x + w/2, y + h/2, nil, nil, Color.changeAlphaPeriod(Color.White, prog), 1, icon and fontAwesome or font, "center", "center")
 	end
-	
+
 	local function drawCol(col, progress, color, text, icon, iconBgColor, identifier, fadeOut)
 		local prog = identifier and getProgress(identifier, fadeOut) or 0
 		if fadeOut and prog == 0 then return true end --don't draw if it isn't visible anyways
@@ -506,35 +492,36 @@ function HUDUI:drawChart()
 		healthColor = Color.changeAlphaPeriod(healthColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 	local oxygenColor = Color.HUD_Blue
-	if oxygen <= 50 then 
+	if oxygen <= 50 then
 		oxygenColor = Color.changeAlphaPeriod(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 
-	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0) 
+	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0)
 	drawCol(1, armor, Color.HUD_Grey, dsc and math.ceil(armor).."% Schutzweste" or math.ceil(armor), FontAwesomeSymbols.Shield, Color.HUD_Grey_D, "armor", armor == 0)
-	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100) 
+	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100)
 	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and karma.." Karma" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(localPlayer:getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
 	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(1, 0, Color.Clear, getZoneName(localPlayer.position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", localPlayer:getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
-	if core:get("HUD", "chartSkinVisible", false) or getProgress("skin", true, true) > 0 then 
+	if core:get("HUD", "chartSkinVisible", false) or getProgress("skin", true, true) > 0 then
 		local prog = getProgress("skin", not core:get("HUD", "chartSkinVisible", false))
-		
+
 		dxDrawRectangle(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, tocolor(0, 0, 0, 150*prog)) --skin
 		dxDrawImage(col2_x, border + (height + margin)*col2_i - margin * (1 - prog), col2_w, w_height, self:getSkinBrowserSave(localPlayer:getModel(), col2_w + margin_save*2, w_height), 0, 0, 0, tocolor(255, 255, 255, 255*prog))
-		
+
 		col2_i = col2_i + prog * 2
 	end
 	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(localPlayer), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
 	drawCol(2, 0, Color.Clear, ("%dh"):format(math.floor(localPlayer:getPlayTime()/60)), false, Color.Clear, "playtime", not core:get("HUD", "chartPlaytimeVisible", false))
-	drawCol(2, 0, Color.Clear, localPlayer:getWantedLevel(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWantedLevel() == 0)
+	drawCol(2, 0, Color.Clear, localPlayer:getWanteds(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", localPlayer:getWanteds() == 0)
 	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer.FPS.frames, FontAwesomeSymbols.Desktop, Color.Clear, "fps", not core:get("HUD", "chartFPSVisible", true))
 
 	--weapons
 	local weaponIconPath = WeaponIcons[localPlayer:getWeapon()]
@@ -544,7 +531,7 @@ function HUDUI:drawChart()
 
 		local ammo = ("%d - %d"):format(getPedAmmoInClip(localPlayer),getPedTotalAmmo(localPlayer) - getPedAmmoInClip(localPlayer))
 		local showAmmo = ammo ~= "0 - 1" -- do not show ammo for melee weapons
-		
+
 		dxDrawRectangle(col1_x, base_y, col1_w, w_height, tocolor(0, 0, 0, 150*prog)) --bg
 		dxDrawImage(col1_x + margin_save, base_y + margin_save, w_height - margin_save*2, w_height - margin_save*2, weaponIconPath, 0, 0, 0, tocolor(255, 255, 255, 255*prog))
 		dxDrawTextInCenter(WEAPON_NAMES[localPlayer:getWeapon()], col1_x + w_height, base_y, col1_w - w_height, showAmmo and w_height/2 or w_height, false, prog)

@@ -12,7 +12,6 @@ function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
 	self.m_Draw = bind(self.draw, self)
-	self.m_Fuel = 100
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
 
 	-- Add event handlers
@@ -41,12 +40,6 @@ function HUDSpeedo:constructor()
 			self:playSeatbeltAlarm(false)
 		end
 	)
-	addEvent("vehicleFuelSync", true)
-	addEventHandler("vehicleFuelSync", root,
-		function(fuel)
-			self.m_Fuel = fuel
-		end
-	)
 	addEvent("playSeatbeltAlarm", true)
 	addEventHandler("playSeatbeltAlarm", root,
 		function(state)
@@ -68,7 +61,8 @@ function HUDSpeedo:setIndicatorAlpha(direction, alpha)
 end
 
 function HUDSpeedo:draw()
-	if not isPedInVehicle(localPlayer) then
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Speedo") end
+	if not isPedInVehicle(localPlayer) or localPlayer.vehicleSeat ~= 0 then
 		self:hide()
 		return
 	end
@@ -76,14 +70,12 @@ function HUDSpeedo:draw()
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if not vehicle then  -- death in veh fix
 		self:hide()
-		return 
-	end 
+		return
+	end
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
-	if not vehicle:getFuel() then return end
 	local speed = vehicle:getSpeed()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
-	local mileage = localPlayer:getPrivateSync("vehicleMileage")
 
 	-- Set maximum
 	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
@@ -142,9 +134,16 @@ function HUDSpeedo:draw()
 	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 
 	-- draw the fuel-o-meter
+	self.m_Fuel = vehicle:getData("fuel")
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
+
+	if localPlayer.vehicle.towedByVehicle then
+		self.m_TrailerFuel = localPlayer.vehicle.towedByVehicle:getFuel()
+		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100)
+	end
 	--dxSetBlendMode("blend")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
 end
 
 function HUDSpeedo:allOccupantsBuckeled()
@@ -161,17 +160,17 @@ end
 
 function HUDSpeedo:playSeatbeltAlarm(state)
 	if state then
-		if not self.m_SeatbeltSoundEnabled then
+		if not localPlayer.m_SeatbeltSoundEnabled then
 			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") and not VEHICLE_BIKES[localPlayer.vehicle:getModel()] then
 				if core:get("Vehicles", "seatbeltWarning", true) then
-					self.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
-					self.m_SeatbeltSoundEnabled = true
+					localPlayer.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+					localPlayer.m_SeatbeltSoundEnabled = true
 				end
 			end
 		end
 	else
-		if isElement(self.m_SeatbeltSound) then stopSound(self.m_SeatbeltSound) end
-		self.m_SeatbeltSoundEnabled = false
+		if isElement(localPlayer.m_SeatbeltSound) then stopSound(localPlayer.m_SeatbeltSound) end
+		localPlayer.m_SeatbeltSoundEnabled = false
 	end
 end
 

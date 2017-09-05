@@ -45,18 +45,19 @@ FACTION_MIN_RANK_KARMA = {
 
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
-[0] = "Cadet",
-[1] = "Officer",
-[2] = "Detective",
+[0] = "Officer",
+[1] = "Detective",
+[2] = "Sergeant",
 [3] = "Lieutenant",
 [4] = "Captain",
 [5] = "Deputy",
-[6] = "Chief"
+[6] = "Chief of Police"
 }
+
 factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
-factionWeapons[1] = {[3]=true,[23]=true,[24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[1] = {[3]=true, [24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[1] = Vector3(2741.90, -2405.60, 13.45)
 factionSpawnpoint[1] = {Vector3(1558.92, -1684.04, 16.20, 0, 0), 0, 0}
 
@@ -64,8 +65,8 @@ factionSpawnpoint[1] = {Vector3(1558.92, -1684.04, 16.20, 0, 0), 0, 0}
 factionRankNames[2] = {
 [0] = "Probationary Agent",
 [1] = "Special Agent",
-[2] = "Senior Special Agent",
-[3] = "Supervisory Special Agent",
+[2] = "Sen. Special Agent",
+[3] = "Sup. Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
 [6] = "FBI-Director"
@@ -73,9 +74,9 @@ factionRankNames[2] = {
 factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[3]=true, [23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[2] = {[3]=true, [24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
 factionWTDestination[2] = Vector3(2741.90, -2405.60, 13.45)
-factionSpawnpoint[2] = {Vector3(228.00, 115.42, 1010.22), 23, 10}
+factionSpawnpoint[2] = {Vector3(1223.51, -1813.49, 16.59), 0, 0}
 
 -- ID 3 = Army:
 factionRankNames[3] = {
@@ -91,7 +92,7 @@ factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 --factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true}
-factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
+factionWeapons[3] = {[6]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 13.45)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
 
@@ -143,7 +144,7 @@ factionRankNames[6] = {
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
-factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)
 factionWTDestination[6] = Vector3( 1418.18, -1240.70, 13.38)
 factionSpawnpoint[6] = {Vector3(1423.37, -1341.78, 13.57), 0, 0}
@@ -224,28 +225,28 @@ factionSpawnpoint[10] = {Vector3(2863.06, -2155.06, 4.80), 0, 0}
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles
 	[2] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Golf Club
-	[3] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Nightstick
+	[3] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 50, ["MagazinPreis"] = 0}, -- Nightstick
 	[4] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Knife
-	[5] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Baseball Bat
+	[5] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 50, ["MagazinPreis"] = 0}, -- Baseball Bat
 	[6] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Shovel
-	[7] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Pool Cue
-	[8] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Katana
+	[7] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 50, ["MagazinPreis"] = 0}, -- Pool Cue
+	[8] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 250, ["MagazinPreis"] = 0}, -- Katana
 	[9] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Chainsaw
 	[10] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Long Purple Dildo
 	[11] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Short tan Dildo
 	[12] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Vibrator
 	[14] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Flowers
 	[15] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Cane
-	[16] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Grenade
-	[17] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Tear Gas
+	[16] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 200, ["MagazinPreis"] = 0}, -- Grenade
+	[17] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 150, ["MagazinPreis"] = 0}, -- Tear Gas
 	[18] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 80, ["MagazinPreis"] = 0}, -- Molotov Cocktails
 	[22] = {["Waffe"] = 30, ["Magazine"] = 50, ["WaffenPreis"] = 140, ["MagazinPreis"] = 20}, -- Pistol
 	[23] = {["Waffe"] = 10, ["Magazine"] = 40, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Taser
 	[24] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 550, ["MagazinPreis"] = 100}, -- Deagle
 	[25] = {["Waffe"] = 34, ["Magazine"] = 200, ["WaffenPreis"] = 170, ["MagazinPreis"] = 3}, -- Shotgun
-	[26] = {["Waffe"] = 16, ["Magazine"] = 60, ["WaffenPreis"] = 0, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun
-	[27] = {["Waffe"] = 16, ["Magazine"] = 32, ["WaffenPreis"] = 0, ["MagazinPreis"] = 60}, -- SPAZ-12 Combat Shotgun
-	[28] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Uzi
+	[26] = {["Waffe"] = 16, ["Magazine"] = 60, ["WaffenPreis"] = 200, ["MagazinPreis"] = 5}, -- Sawn-Off Shotgun
+	[27] = {["Waffe"] = 16, ["Magazine"] = 32, ["WaffenPreis"] = 300, ["MagazinPreis"] = 60}, -- SPAZ-12 Combat Shotgun
+	[28] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- Uzi
 	[29] = {["Waffe"] = 40, ["Magazine"] = 120, ["WaffenPreis"] = 180, ["MagazinPreis"] = 50}, -- MP5
 	[30] = {["Waffe"] = 40, ["Magazine"] = 90, ["WaffenPreis"] = 480, ["MagazinPreis"] = 75}, -- AK47
 	[31] = {["Waffe"] = 30, ["Magazine"] = 60, ["WaffenPreis"] = 540, ["MagazinPreis"] = 85}, -- M4
@@ -262,7 +263,7 @@ factionWeaponDepotInfo = {
 	[42] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Fire Extinguisher
 	[43] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Camera
 	[44] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Night-Vision Goggles
-	[45] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0}, -- Infrared Goggles
+	[45] = {["Waffe"] = 20, ["Magazine"] = 0, ["WaffenPreis"] = 200, ["MagazinPreis"] = 0}, -- Infrared Goggles
 	[46] = {["Waffe"] = 0, ["Magazine"] = 0, ["WaffenPreis"] = 0, ["MagazinPreis"] = 0} -- Parachute
 }
 

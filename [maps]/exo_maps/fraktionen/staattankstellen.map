@@ -1,8 +1,0 @@
-<map edf:definitions="editor_main">
-    <object id="sfpd zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="-1622.8000488281" posY="664.79998779297" posZ="-4.3000001907349" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="sfarmy zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="-1526" posY="458.10000610352" posZ="7.8000001907349" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="fbi zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="-2445" posY="513" posZ="30.5" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="Area Zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="127" posY="1908" posZ="19.299999237061" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="lspd zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="1600.3000488281" posY="-1637.1999511719" posZ="14.300000190735" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="lv zapf" doublesided="false" model="1676" interior="0" dimension="0" posX="2292.8000488281" posY="2461" posZ="4.0999999046326" rotX="0" rotY="0" rotZ="90"></object>
-</map>

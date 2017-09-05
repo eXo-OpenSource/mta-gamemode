@@ -36,8 +36,8 @@ function Account.login(player, username, password, pwhash)
 				end
 			else
 				local param = {["userId"] = row2.userID; ["password"] = password;}
-				local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-				if errno == 0 then
+				local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+				if responseInfo["success"] == true then
 					local returnData = fromJSON(data)
 					if not returnData then outputConsole(data, player) return end
 					if returnData.error then
@@ -52,7 +52,7 @@ function Account.login(player, username, password, pwhash)
 						return
 					end
 				else
-					outputDebugString("Error@FetchRemote: "..errno)
+					outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 				end
 			end
 		end
@@ -82,8 +82,8 @@ function Account.login(player, username, password, pwhash)
 		end
 	else
 		local param = {["userId"] = ForumID; ["password"] = password;}
-		local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-		if errno == 0 then
+		local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+		if responseInfo["success"] == true then
 			local returnData = fromJSON(data)
 			if not returnData then outputConsole(data, player) return end
 			if returnData.error then
@@ -96,7 +96,7 @@ function Account.login(player, username, password, pwhash)
 				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
 			end
 		else
-			outputDebugString("Error@FetchRemote: "..errno)
+			outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 		end
 	end
 end
@@ -123,23 +123,34 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
+	if player.getTutorialStage and instanceof(player, Player) then
+		-- Update last serial and last login
+		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
-	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+		player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
-	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
+		Warn.checkWarn(player, true)
+		Ban.checkBan(player, true)
+		if player.getTutorialStage then
+			if player:getTutorialStage() == 1 then
+				Admin:getSingleton():sendNewPlayerMessage(player)
+				player:createCharacter()
+			end
+		else
+			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
+			outputServerLog(msg)
+			outputDebugString(msg, 1)
+			outputConsole(debug.traceback())
+			player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
+		end
+		player:loadCharacter()
+		player:spawn()
 
-	Warn.checkWarn(player, true)
-	Ban.checkBan(player, true)
-
-	if player:getTutorialStage() == 1 then
-		player:createCharacter()
+		StatisticsLogger:addLogin( player, Username, "Login")
+		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+	else
+		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 	end
-	player:loadCharacter()
-	player:spawn()
-
-	StatisticsLogger:addLogin( player, Username, "Login")
-	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 
 addEvent("checkRegisterAllowed", true)
@@ -161,7 +172,7 @@ function Account.register(player, username, password, email)
 
 	-- Some sanity checks on the username
 	-- Require at least 1 letter and a length of 3
-	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 then
+	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 or #username > 22 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname.", player))
 		return false
 	end
@@ -228,8 +239,8 @@ addEventHandler("accountguest", root, function() Async.create(Account.guest)(cli
 function Account.createForumAccount(player, username, password, email)
 	if not password then return end
 	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
-	local data, errno = Account.asyncCallAPI("createAccount", toJSON(param))
-	if errno == 0 then
+	local data, responseInfo = Account.asyncCallAPI("createAccount", toJSON(param))
+	if responseInfo["success"] == true then
 		local returnData = fromJSON(data)
 		if not returnData then outputConsole(data, player) return end
 		if returnData.error then
@@ -242,12 +253,16 @@ function Account.createForumAccount(player, username, password, email)
 			player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
 		end
 	else
-		outputDebugString("Error@FetchRemote: "..errno)
+		outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 	end
 end
 
 function Account.asyncCallAPI(func, postData)
-	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), 1, Async.waitFor(), postData, false)
+	local options = {
+		["connectionAttempts"] = 1,
+		["postData"] = postData
+	}
+	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), options, Async.waitFor())
 	return Async.wait()
 end
 

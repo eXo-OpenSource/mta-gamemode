@@ -3,15 +3,12 @@ inherit(GUIFontContainer, ToastMessage)
 
 function ToastMessage:constructor(text, timeout, title)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(23))
-	local x, y, w, h
-	if MessageBoxManager.Mode then
-		x, y, w, h = 20, (screenHeight - screenHeight*0.265) - 20, 340*screenWidth/1600+6, 41
-	else
-		x, y, w, h = 20, screenHeight - 5, 340*screenWidth/1600+6, 41
-	end
+	local x, y = HUDRadar:getSingleton():getPosition()
+	local w = HUDRadar:getSingleton():getWidth()
+	local h = 41
 	local textHeight = textHeight(self.m_Text, w - 70, self.m_Font, self.m_FontSize)
 	h = h + textHeight
-	y = y - h
+	y = y - h - x
 
 	DxElement.constructor(self, x, y, w, h)
 

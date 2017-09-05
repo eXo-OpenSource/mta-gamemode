@@ -69,7 +69,10 @@ addEventHandler ( "createPedForDrivebyFix", root, function ( )
 		setElementCollisionsEnabled ( playerpeds[client], false )
 		setElementDimension ( playerpeds[client], getElementDimension ( client ) )
 		setElementInterior ( playerpeds[client], getElementInterior( client ) )
-		if getPedOccupiedVehicleSeat ( client ) == 0 then
+		if getVehicleType(veh) == "BMX" or getVehicleType(veh) == "Quad" then 
+			attachElements ( playerpeds[client], veh, 100, -0.4, 0.5 )
+			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, -0.4, 0.5 )
+		elseif getPedOccupiedVehicleSeat ( client ) == 0  then
 			attachElements ( playerpeds[client], veh, 100, 0.05, 0.5 )
 			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, 0.05, 0.5 )
 		else

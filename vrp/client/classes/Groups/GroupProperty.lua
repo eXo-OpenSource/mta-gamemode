@@ -114,27 +114,41 @@ function GroupProperty:isMouseOver( startX, startY, wi, he)
 	return false
 end
 
-function GroupProperty:createBlips( x, y, z, id)
-	self.m_BlipProperties[id] =  Blip:new("House.png", x, y, 500, false, tocolor(200,0,0,255))
+function GroupProperty:createBlips( x, y, z, id, groupType)
+	self.m_BlipProperties[id] =  Blip:new("House.png", x, y, 500, groupType == "Firma" and {50, 200, 255} or {178, 35, 33})
+	self.m_BlipProperties[id]:setDisplayText(groupType == "Firma" and "Firmensitz" or "Gangversteck")
 	self.m_BlipProperties[id]:setZ(z)
-	self.m_BlipProperties2[id] = createBlip(x,y,z,0,2,0,200,200,255,0,500)
-	self.m_MarkerProperties[id] = createMarker(x,y,z,"checkpoint",1,0,200,200,200)
 end
 
 function GroupProperty:destroyBlips( id )
 	if self.m_BlipProperties[id] then
 		delete(self.m_BlipProperties[id])
 	end
-	if self.m_MarkerProperties[id] then
-		destroyElement(self.m_MarkerProperties[id])
-	end
+
 end
 
 function GroupProperty:showEntryMessage( text )
 	if not self.m_MessageDisplayed then
-		self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, nil):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
-		Animation.FadeAlpha:constructor(self.m_Message, 1000, 0, 255)
-		setTimer(bind( GroupPropertyGUI.destroyMessage,self),2500,1)
+		self.m_Message = GroupPropertyEntryMessageGUI:new(text)
 		self.m_MessageDisplayed = true
 	end
+end
+
+function GroupProperty:destroyMessage()
+	if self.m_Message then
+		delete(self.m_Message)
+		self.m_MessageDisplayed = false
+	end
+end
+
+GroupPropertyEntryMessageGUI = inherit(GUIForm)
+inherit(Singleton, GroupPropertyEntryMessageGUI)
+
+function GroupPropertyEntryMessageGUI:constructor(text)
+	GUIForm.constructor(self, 0,0,w*0.9,h*0.9)
+	self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, self):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
+	Animation.FadeAlpha:new(self.m_Message, 1000, 0, 255)
+	setTimer(function()
+		delete(self)
+	end, 2500, 1)
 end

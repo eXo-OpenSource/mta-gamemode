@@ -91,16 +91,6 @@ addEventHandler("showBarGUI", root,
 	end
 )
 
-addEventHandler("showItemShopGUI", root,
-	function()
-		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
-		local callback = function(shop, itemName, amount)
-			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
-		end
-		ItemShopGUI:new(callback)
-	end
-)
-
 addEventHandler("showStateItemGUI", root,
 	function()
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end

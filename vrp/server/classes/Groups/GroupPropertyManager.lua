@@ -1,4 +1,6 @@
 GroupPropertyManager = inherit(Singleton)
+local PICKUP_ARROW = 1318
+local PICKUP_FOR_SALE = 1272
 addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText","requestImmoPanelClose","requestPropertyItemDepot"}
 function GroupPropertyManager:constructor( )
 	local st, count = getTickCount(), 0
@@ -125,11 +127,14 @@ function GroupPropertyManager:BuyProperty( Id )
 				property.m_Open = 1
 				newOwner:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
 				client:sendInfo("Du hast die Immobilie gekauft!")
+				if property.m_Pickup and isElement(property.m_Pickup) then 
+					setPickupType(property.m_Pickup, 3, PICKUP_ARROW)
+				end
 				client:triggerEvent("ForceClose")
 				for key, player in ipairs( newOwner:getOnlinePlayers() ) do
 					player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
 					x,y,z = getElementPosition( property.m_Pickup )
-					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
+					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id,newOwner.m_Type)
 				end
 				StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
 			else
@@ -166,6 +171,9 @@ function GroupPropertyManager:SellProperty(  )
 				property.m_OwnerID = false
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
 				property.m_Open = 1
+				if property.m_Pickup and isElement(property.m_Pickup) then 
+					setPickupType(property.m_Pickup, 3, PICKUP_FOR_SALE)
+				end
 				group:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
 				client:sendInfo("Sie haben die Immobilie verkauft! Das Geld befindet sich in der Firmen/Gangkasse!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do

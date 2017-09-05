@@ -1114,7 +1114,7 @@ addEventHandler ( "aPlayer", _root, function ( player, action, data, additional,
 			local vehicle = getPedOccupiedVehicle ( player )
 			if ( vehicle ) then
 				setElementModel(vehicle, data)
-				vehicle:fix()
+				fixVehicle(vehicle)
 			else
 				local x, y, z = getElementPosition ( player )
 				local r = getPedRotation ( player )
@@ -1219,12 +1219,14 @@ addEventHandler ( "aVehicle", _root, function ( player, action, data )
 		if ( vehicle ) then
 			local mdata = ""
 			if ( action == "repair" ) then
-				vehicle:fix()
-				local rx, ry, rz = getVehicleRotation ( vehicle )
-				if ( rx > 110 ) and ( rx < 250 ) then
-					local x, y, z = getElementPosition ( vehicle )
-					setVehicleRotation ( vehicle, rx + 180, ry, rz )
-					setElementPosition ( vehicle, x, y, z + 2 )
+				if vehicle then
+					fixVehicle(vehicle) -- we cant use vrps oop methods in another resource
+					local rx, ry, rz = getVehicleRotation ( vehicle )
+					if ( rx > 110 ) and ( rx < 250 ) then
+						local x, y, z = getElementPosition ( vehicle )
+						setVehicleRotation ( vehicle, rx + 180, ry, rz )
+						setElementPosition ( vehicle, x, y, z + 2 )
+					end
 				end
 			elseif ( action == "customize" ) then
 				if ( data[1] == "remove" ) then

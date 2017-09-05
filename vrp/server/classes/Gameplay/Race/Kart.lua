@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Kart = inherit(Singleton)
-addRemoteEvents{"startKartTimeRace", "requestKartDatas", "sendKartGhost", "requestKartGhost"}
+addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map",
@@ -16,13 +16,16 @@ Kart.Maps = {
 	"files/maps/Kart/CircleCourt.map",
 	--"files/maps/Kart/Funny Tubes.map",
 	"files/maps/Kart/CircleCourt.map",
+	"files/maps/Kart/pewxv1.map",
 }
 
-local lapPrice = 50
+local lapPrice = 20
 local lapPackDiscount = 4
 
 function Kart:constructor()
-	self.m_Blip = Blip:new("Wheel.png", 1300.59, 140.70)
+	self.m_Blip = Blip:new("Kart.png", 1300.59, 140.70)
+	self.m_Blip:setDisplayText("Kartbahn", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({0, 200, 50})
 
 	self.m_Polygon = createColPolygon(1269, 66, 1269.32, 66.64, 1347.71, 31.07, 1382.18, 41.35, 1413.99, 117.01, 1314.21, 163.72)
 	self.m_Timers = {}
@@ -30,7 +33,6 @@ function Kart:constructor()
 	self.m_Players = {}
 	self.m_MapIndex = {}
 	self.m_Maps = {}
-	self.m_GhostCache = {}
 
 	-- Create and validate map instances
 	for k, v in pairs(Kart.Maps) do
@@ -70,8 +72,6 @@ function Kart:constructor()
 	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 	addEventHandler("onColShapeHit", self.m_Polygon, bind(Kart.onKartZoneEnter, self))
 	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
-	addEventHandler("sendKartGhost", root, bind(Kart.clientSendRecord, self))
-	addEventHandler("requestKartGhost", root, bindAsync(Kart.clientRequestRecord, self))
 
 	GlobalTimer:getSingleton():registerEvent(bind(self.changeMap, self), "KartMapChange", nil, nil, 00)
 end
@@ -97,7 +97,6 @@ function Kart:loadMap(mapFileName)
 	self.m_Map:create()
 
 	self.m_Toptimes = Toptimes:new(mapFileName)
-	self.m_MovementRecorder = MovementRecorder:new(self.m_Toptimes:getMapID())
 
 	local startMarker = self.m_Map:getElementsByType("startmarker")[1]
 	local infoPed = self.m_Map:getElementsByType("infoPed")[1]
@@ -109,7 +108,8 @@ function Kart:loadMap(mapFileName)
 	self.m_Ped:setImmortal(true)
 	self.m_StartFinishMarker = self:getStartFinishMarker()
 
-	self.m_PlayRespawnPosition = self.m_Ped.matrix:transformPosition(Vector3(0, 5, 0))
+	self.m_PlayerRespawnPosition = self.m_Ped.matrix:transformPosition(Vector3(0, 5, 0))
+	self.m_MapRespawnEnabled = infoPed.respawn
 
 	for _, v in pairs(self.m_Checkpoints) do
 		addEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -126,8 +126,6 @@ function Kart:unloadMap()
 	if self.m_Ped then self.m_Ped:destroy() end
 
 	delete(self.m_Toptimes)
-	delete(self.m_MovementRecorder)
-	self.m_GhostCache = {}
 
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -138,6 +136,15 @@ function Kart:unloadMap()
 end
 
 function Kart:getStartFinishMarker()
+	-- Probably there exists a start/finish marker
+	for k, v in pairs(self.m_Checkpoints) do
+		if v.checkpointType == "start/finish" then
+			table.remove(self.m_Checkpoints, k)
+			return v
+		end
+	end
+
+	-- Otherwise calculate start/finish marker by nearest random spawnposition
 	local spawnpoint = self:getRandomSpawnpoint()
 	local spawnpointPosition = Vector3(spawnpoint.x, spawnpoint.y, spawnpoint.z)
 
@@ -210,11 +217,14 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 
 			if anyChange then
 				self:syncToptimes()
-				player:triggerEvent("KartRequestGhostDriver", lapTime)
 
 				local toptimeData, pos = self.m_Toptimes:getToptimeFromPlayer(player:getId())
-				if pos == 1 then
-					player:giveAchievement(59) -- Kart Pro
+				if pos <= 10 then
+					player:triggerEvent("KartRequestGhostDriver")
+
+					if pos == 1 then
+						player:giveAchievement(59) -- Kart Pro
+					end
 				end
 			end
 
@@ -276,7 +286,7 @@ function Kart:syncToptimes(forcePlayer)
 end
 
 function Kart:requestKartmapData()
-	client:triggerEvent("receiveKartDatas", self.m_Map:getMapName(), self.m_Map:getMapAuthor(), self.m_Toptimes.m_Toptimes)
+	client:triggerEvent("receiveKartDatas", self.m_Map:getMapName(), self.m_Map:getMapAuthor(), self.m_Toptimes.m_Toptimes, self.m_Toptimes:getMapID())
 end
 
 function Kart:startTimeRace(laps, index)
@@ -305,11 +315,12 @@ function Kart:startTimeRace(laps, index)
 	vehicle.m_DisableToggleEngine = true
 	vehicle:addCountdownDestroy(10)
 	vehicle:setDamageProof(true)
+	vehicle:setData("disableCollisionCheck", true, true)
 
 	vehicle.timeRacePlayer = client
 	client.kartVehicle = vehicle
 
-	addEventHandler("onElementDestroy", vehicle, self.m_OnKartDestroy)
+	addEventHandler("onElementDestroy", vehicle, self.m_OnKartDestroy, false)
 	addEventHandler("onVehicleStartEnter", vehicle, self.m_KartAccessHandler)
 	addEventHandler("onPlayerQuit", client, self.m_OnPlayerQuit)
 
@@ -320,7 +331,7 @@ function Kart:startTimeRace(laps, index)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, selectedLaps = selectedLaps, state = "Flying", checkpoints = {}, startTick = getTickCount()}
 	client:triggerEvent("showRaceHUD", true, true)
-	client:triggerEvent("KartStart", self.m_StartFinishMarker, self.m_Checkpoints, selectedLaps)
+	client:triggerEvent("KartStart", self.m_StartFinishMarker, self.m_Checkpoints, selectedLaps, self.m_MapRespawnEnabled, self.m_Toptimes:getMapID())
 	client:sendInfo("Vollende eine Einführungsrunde!")
 
 	self:syncToptimes(client)
@@ -337,7 +348,7 @@ function Kart:onTimeRaceDone(player, vehicle)
 			vehicle:destroy()
 			nextframe(
 				function()
-					player:setPosition(self.m_PlayRespawnPosition)
+					player:setPosition(self.m_PlayerRespawnPosition)
 				end
 			)
 		end, 3000, 1, player, vehicle
@@ -434,32 +445,4 @@ function Kart:onKartZoneLeave(leaveElement, matchingDimension)
 			return
 		end
 	end
-end
-
--- Ghostdriver handling
-function Kart:clientSendRecord(record)
-	local json = toJSON(record, true)
-	if json then
-		self.m_MovementRecorder:saveRecord(client, json)
-		self.m_GhostCache[client:getId()] = json
-	end
-end
-
-function Kart:clientRequestRecord(id)
-	local c = client
-	local playerID = self.m_Toptimes:getPlayerFromToptime(id)
-
-	if playerID then
-		local record = self.m_GhostCache[playerID] or self.m_MovementRecorder:getRecord(playerID)
-
-		if record then
-			self.m_GhostCache[playerID] = record
-
-			triggerLatentClientEvent(c, "KartReceiveGhostDriver", 8388608, resourceRoot, record)
-			c:sendInfo("Geist übernommen!")
-			return
-		end
-	end
-
-	c:sendError("Für den Spieler ist kein Geist gespeichert!")
 end

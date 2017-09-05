@@ -64,6 +64,11 @@ function DrivingSchool:constructor()
     local safe = createObject(2332, -2032.70, -113.70, 1036.20)
     safe:setInterior(3)
 	self:setSafe(safe)
+
+	local id = self:getId()
+	local blip = Blip:new("DrivingSchool.png", 1364.14, -1669.10, root, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
+
 	self.m_CurrentLessions = {}
     addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory","drivingSchoolRequestSpeechBubble", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker", "requestAutomaticTestPedBubble"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
@@ -166,14 +171,14 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["car"], "Fahrprüfung")
-		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]))
+		self:giveMoney(DrivingSchool.LicenseCosts["car"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["car"]), true)
 	else
 		if source:getMoney() < DrivingSchool.LicenseCosts["bike"] then
 			source:sendError(_("Du hast zu wenig Geld dabei ( mind. "..DrivingSchool.LicenseCosts["bike"].."$ )!", source))
 			return
 		end
 		source:takeMoney(DrivingSchool.LicenseCosts["bike"], "Fahrprüfung")
-		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]))
+		self:giveMoney(DrivingSchool.LicenseCosts["bike"], ("%s-Prüfung"):format(DrivingSchool.TypeNames["bike"]), true)
 	end
 	outputChatBox("Steige in das Fahrzeug vor dir ein!", source, 200,200,0)
 	addEventHandler("onVehicleStartEnter",veh,function(player, seat)
@@ -250,7 +255,7 @@ function DrivingSchool:onDrivingTestNPCStart( )
 			setTimer(fadeCamera,1500,1, player,true,0.5)
 
 		end
-	end)
+	end, false)
 	source:triggerEvent("DrivingLesson:setMarker",DrivingSchool.testRoute[veh.m_CurrentNode], veh)
 	DrivingSchool.m_LessonVehicles[source] = veh
 end
@@ -478,7 +483,7 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
+                        self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), true)
 						instructor:giveMoney(math.floor(costs*0.15), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
@@ -534,9 +539,11 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
         self:setPlayerLicense(target, type, true)
         target:sendInfo(_("Du hast die %s Prüfung erfolgreich bestanden und den Schein erhalten!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s erfolgreich beendet!",client, DrivingSchool.TypeNames[type], target.name))
-    else
+    	self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s erfolgreich beendet!"):format(DrivingSchool.TypeNames[type], target:getName()))
+	else
         target:sendError(_("Du hast die %s Prüfung nicht geschaft! Viel Glück beim nächsten Mal!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s abgebrochen!",client, DrivingSchool.TypeNames[type], target.name))
+		self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s abgebrochen!"):format(DrivingSchool.TypeNames[type], target:getName()))
     end
 
     target:triggerEvent("hideDrivingSchoolStudentGUI")

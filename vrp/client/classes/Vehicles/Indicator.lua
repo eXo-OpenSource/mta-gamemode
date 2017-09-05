@@ -499,28 +499,24 @@ function Indicator:addEvents()
 	* onClientElementStreamIn
 	Detects when a vehicle streams in, to check if we must draw the indicators.
 	--]]
-	addEventHandler('onClientElementStreamIn', root, function ()
-		if getElementType(source) == 'vehicle' then
-			-- Perform the indicator checks for the just streamed in vehicle.
-			self:performIndicatorChecks ( source )
-		end
-	end)
+    function Indicator:onVehicleStreamedIn(veh)
+        self:performIndicatorChecks (veh)
+    end
 
 	--[[
 	* onClientElementStreamOut
 	Detects when a vehicle streams out, to destroy its state.
 	--]]
-	addEventHandler('onClientElementStreamOut', root, function ()
-		if getElementType(source) == 'vehicle' then
-			-- Grab the current indicators state
-			local currentState = self.m_AllowedVehicles [ source ]
 
-			-- If it has a state, remove it.
-			if currentState then
-				self:destroyIndicatorState(currentState)
-				self.m_AllowedVehicles [ source ] = nil
-			end
-		end
-	end)
+    function Indicator:onVehicleStreamedOut(veh)
+        -- Grab the current indicators state
+        local currentState = self.m_AllowedVehicles [ source ]
+
+        -- If it has a state, remove it.
+        if currentState then
+            self:destroyIndicatorState(currentState)
+            self.m_AllowedVehicles [ source ] = nil
+        end
+    end
 
 end

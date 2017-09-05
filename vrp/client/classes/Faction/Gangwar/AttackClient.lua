@@ -97,10 +97,6 @@ function AttackClient:synchronizeLists( pParticipants, pDisqualified )
 	self.m_Disqualified = pDisqualified
 end
 
-function AttackClient:synchronizeTime( ) 
-
-end
-
 function AttackClient:getFactionParticipants( pFac )
 	local table_ = { }
 	for k, v in ipairs( self.m_Participants ) do 

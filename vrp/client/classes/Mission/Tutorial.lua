@@ -14,7 +14,7 @@ function Tutorial.stage1:constructor()
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, 340)
 				setCameraTarget(hitElement, hitElement)
-				toggleAllControls(false)
+				toggleAllControls(false, true, false)
 				setElementFrozen(hitElement, true)
 				CutscenePlayer:getSingleton():playCutscene("Tutorial.Stage1")
 			end

@@ -14,12 +14,10 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp","stateFactionShowRob", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder"}
+	addRemoteEvents{"loadClientFaction", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid","SpeedCam:showSpeeder"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
-	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
-	addEventHandler("stateFactionShowRob", root, bind(self.stateFactionShowRob, self))
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
 	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
@@ -61,11 +59,12 @@ function FactionManager:factionEvilStartRaid(target)
 end
 
 function FactionManager:endEvilFactionRaid()
-	if localPlayer.m_evilRaidTarget then
-		if getDistanceBetweenPoints3D( localPlayer.m_evilRaidTarget:getPosition(), localPlayer:getPosition()) <= 5 then
-			triggerServerEvent("factionEvilSuccessRaid", localPlayer,localPlayer.m_evilRaidTarget)
+	local target = localPlayer.m_evilRaidTarget
+	if target then
+		if getDistanceBetweenPoints3D(target:getPosition(), localPlayer:getPosition()) <= 5 and not (target.vehicle and localPlayer:isSurfOnCar(target.vehicle)) then
+			triggerServerEvent("factionEvilSuccessRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		else
-			triggerServerEvent("factionEvilFailedRaid", localPlayer,localPlayer.m_evilRaidTarget)
+			triggerServerEvent("factionEvilFailedRaid", localPlayer, localPlayer.m_evilRaidTarget)
 		end
 	end
 end
@@ -110,6 +109,7 @@ function FactionManager:Event_OnSpeederCatch( speed, vehicle)
 end
 
 function FactionManager:OnRenderSpeed()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/SpeedCamText") end
 	local now = getTickCount()
 	if now <= self.m_RemoveDraw then
 		if now >= self.m_DrawStart then
@@ -122,6 +122,7 @@ function FactionManager:OnRenderSpeed()
 					local colName = getColorNameFromVehicle(c1, c2)
 					local text = ("Radar: %s fährt %s km/h in %sem %s!"):format(occ and occ:getName() or "-", speed, colName, vName)
 
+					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/SpeedCamText", true) end
 					dxDrawText(text, 0, 1, w, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
 					dxDrawText(text, 1, 1, w+1, h*0.8+1, tocolor(0,0,0,255), 2, "default-bold", "center", "bottom")
 					dxDrawText(text, 0, 0, w, h*0.8, tocolor(0,150,0,255), 2, "default-bold" ,"center", "bottom")
@@ -180,6 +181,7 @@ function FactionManager:OnRenderSpeed()
 	else
 		removeEventHandler("onClientRender", root, self.m_DrawSpeed)
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/SpeedCamText") end
 end
 
 function FactionManager:stateFactionOfferTicket( cop )
@@ -194,32 +196,6 @@ function FactionManager:endStateFactionCuff( )
 			triggerServerEvent("stateFactionSuccessCuff", localPlayer,localPlayer.m_CuffTarget)
 		end
 	end
-end
-
-function FactionManager:stateFactionNeedHelp(player)
-	if self.m_NeedHelpBlip[player] then delete(self.m_NeedHelpBlip[player]) end
-	if not localPlayer:getPublicSync("Faction:Duty") then return end
-	local pos = player:getPosition()
-	self.m_NeedHelpBlip[player] = Blip:new("NeedHelp.png", pos.x, pos.y, 9999)
-	self.m_NeedHelpBlip[player]:attachTo(player)
-	self.m_NeedHelpBlip[player]:setStreamDistance(2000)
-
-	setTimer(function(player)
-		if self.m_NeedHelpBlip[player] then delete(self.m_NeedHelpBlip[player]) end
-	end, 20000, 1, player)
-end
-
-function FactionManager:stateFactionShowRob(pickup)
-	if self.m_NeedHelpBlip[pickup] then delete(self.m_NeedHelpBlip[pickup]) end
-	if not localPlayer:getPublicSync("Faction:Duty") then return end
-	local pos = pickup:getPosition()
-	self.m_NeedHelpBlip[pickup] = Blip:new("NeedHelp.png", pos.x, pos.y, 9999)
-	self.m_NeedHelpBlip[pickup]:attachTo(pickup)
-	self.m_NeedHelpBlip[pickup]:setStreamDistance(2000)
-
-	setTimer(function(pickup)
-		if self.m_NeedHelpBlip[pickup] then delete(self.m_NeedHelpBlip[pickup]) end
-	end, 270000, 1, pickup)
 end
 
 function FactionManager:getFromId(id)
