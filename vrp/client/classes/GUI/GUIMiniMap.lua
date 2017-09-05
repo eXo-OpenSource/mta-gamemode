@@ -7,17 +7,22 @@
 -- ****************************************************************************
 GUIMiniMap = inherit(GUIElement)
 inherit(GUIColorable, GUIMiniMap)
-
+local borderColor = { ["Radar_GTA"] = tocolor(108, 137, 171), ["Radar_Monochrome"] = tocolor(121, 170, 213) }
+local imageSize = { ["Radar_GTA"]  = 1536, ["Radar_Monochrome"] = 3072}
 function GUIMiniMap:constructor(posX, posY, width, height, parent)
 	self.m_PosX = 0
 	self.m_PosY = 0
-	self.m_ImageSize = 3072/2, 3072/2 --3072, 3072
-	self.m_Image = self:makePath("Radar.jpg", false)
+	local path, color, size = self:makePath("Radar.jpg", false)
+	self.m_ImageSize = size
+	self.m_Image = dxCreateTexture(path)
+	if self.m_Image then
+		dxSetTextureEdge(self.m_Image, "border", color or borderColor["Radar_GTA"])
+	else 
+		self.m_Image = path
+	end
 	self.m_Blips = {}
-
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, Color.White)
-	self:setPosition(0, 0)
 end
 
 function GUIMiniMap:drawThis()
@@ -33,7 +38,7 @@ function GUIMiniMap:drawThis()
 				self.m_Color
 			)
 			for index, blip in pairs(self.m_Blips) do
-				dxDrawImage(blip["posX"], blip["posY"], 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+				dxDrawImage(blip["posX"]-16, blip["posY"]-16, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
 			end
 		end
 
@@ -49,12 +54,6 @@ function GUIMiniMap:worldToMapPosition(posX, posY)
 	return mapX, mapY
 end
 
-function GUIMiniMap:worldToMiniMapPosition(posX, posY)
-	local mapX = (posX / ( 6000/self.m_ImageSize) + self.m_Width/2)
-	local mapY = (posY / (-6000/self.m_ImageSize) + self.m_Height/2)
-	return mapX, mapY
-end
-
 function GUIMiniMap:setPosition(posX, posY)
 	local posX, posY = self:worldToMapPosition(posX, posY)
 	self.m_MapX, self.m_MapY = posX - self.m_Width/2, posY - self.m_Height/2
@@ -63,21 +62,40 @@ function GUIMiniMap:setPosition(posX, posY)
 end
 
 function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
+	local x,y = self:worldToMapPosition(posX, posY)
+	if self:isWithinMapBound( x, y) then
+		local offX = x - self.m_MapX
+		local offY = y - self.m_MapY 
+		offX = self.m_AbsoluteX + offX 
+		offY = self.m_AbsoluteY + offY
+		self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] =  offX, ["posY"] =  offY}
+		self:anyChange()
+		return self
+	end
+end
 
-	outputDebug(posX..", "..posY)
-	outputDebug(self.m_MapX..", "..self.m_MapY)
-	self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] = posX, ["posY"] = posY}
-	self:anyChange()
-	return self
+function GUIMiniMap:isWithinMapBound( x, y )
+	if x >= self.m_MapX and x <= self.m_MapX + self.m_Width then 
+		if y >= self.m_MapY and y <= self.m_MapY + self.m_Height then 
+			return true
+		end
+	end
+	return false
 end
 
 function GUIMiniMap:makePath(fileName, isBlip)
-	-- if HUDRadar:getSingleton():getDesignSet() == RadarDesign.Monochrome then
-	-- 	local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
-	-- 	return path
-	--else
-	-- Monochrome causes problems
-	if true then -- HUDRadar:getSingleton():getDesignSet() == RadarDesign.GTA
-		return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
-	end
+    if isBlip then
+        if fileExists("_custom/files/images/Radar/Blips/"..fileName) then
+            return "_custom/files/images/Radar/Blips/"..fileName
+        end
+        return "files/images/Radar/Blips/"..fileName
+    else
+        local designSet = (HUDRadar:getSingleton().m_DesignSet == RadarDesign.Monochrome) and "Radar_Monochrome" or "Radar_GTA"
+        if fileExists("_custom/files/images/Radar/"..designSet.."/Radar.png") then
+            return "_custom/files/images/Radar/"..designSet.."/Radar.png", borderColor[designSet], imageSize[designSet]
+        elseif fileExists("_custom/files/images/Radar/"..designSet.."/Radar.jpg") then
+            return "_custom/files/images/Radar/"..designSet.."/Radar.jpg", borderColor[designSet], imageSize[designSet]
+        end
+        return "files/images/Radar/"..designSet.."/Radar.jpg", borderColor[designSet], imageSize[designSet]
+    end
 end
