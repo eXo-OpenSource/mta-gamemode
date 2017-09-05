@@ -8,8 +8,9 @@
 BindManager = inherit(Singleton)
 
 function BindManager:constructor()
-    addRemoteEvents{"bindTrigger"}
+    self:loadBinds()
 
+	addRemoteEvents{"bindTrigger"}
     addEventHandler("bindTrigger", root, bind(self.Event_OnBindTrigger, self))
 end
 
@@ -22,3 +23,9 @@ function BindManager:Event_OnBindTrigger(name, parameters)
      end
 end
 
+function BindManager:loadBinds()
+	local result = sql:queryFetch("SELECT * FROM ??_binds", sql:getPrefix())
+    for k, row in ipairs(result) do
+
+	end
+end

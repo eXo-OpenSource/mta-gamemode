@@ -169,6 +169,7 @@ function Core:afterLogin()
 	Indicator:new()
 	Tour:new()
 	Achievement:new()
+	BindManager:new()
 
 	if DEBUG then
 		Debugging:new()
