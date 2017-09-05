@@ -10,13 +10,19 @@ BindGUI.Modifiers = {
         ["rshift"] = "Shift rechts"
     }
 
+BindGUI.Headers = {
+	["faction"] = "Fraktion",
+	["company"] = "Unternehmen",
+	["group"] = "Firma/Gang"
+}
+
 function BindGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Binds", true, true, self)
 	self.m_Window:deleteOnClose(true)
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40, self.m_Width*0.96, self.m_Height*0.6, self)
-	self.m_Grid:setFont(VRPFont(20))
-	self.m_Grid:setItemHeight(20)
+	--self.m_Grid:setFont(VRPFont(20))
+	--self.m_Grid:setItemHeight(20)
 	self.m_Grid:addColumn("Funktion", 0.2)
 	self.m_Grid:addColumn("Text", 0.6)
 	self.m_Grid:addColumn("Tasten", 0.2)
@@ -47,17 +53,26 @@ function BindGUI:loadBinds()
 	self.m_Grid:addItemNoClick("Deine Binds", "", "")
 	self:loadLocalBinds()
 
-	self.m_Grid:addItemNoClick("Fraktions Binds", "", "")
 	triggerServerEvent("bindRequestPerOwner", localPlayer, "faction", localPlayer:getFaction():getId())
+	triggerServerEvent("bindRequestPerOwner", localPlayer, "company", localPlayer:getCompany():getId())
+	triggerServerEvent("bindRequestPerOwner", localPlayer, "group", localPlayer:getGroupId())
 end
 
 function BindGUI:loadLocalBinds()
+	local keys
 	local binds = BindManager:getSingleton():getBinds()
+
 	for index, data in pairs(binds) do
-		item = self.m_Grid:addItem(data.action.name, data.action.parameters, table.concat(data.keys, " + "))
+		if not data.keys or #data.keys == 0 then
+			keys = "-keine-"
+		elseif #data.keys == 1 then
+			keys = BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1]
+		else
+			keys = table.concat({BindGUI.Modifiers[data.keys[1]] and BindGUI.Modifiers[data.keys[1]] or data.keys[1], BindGUI.Modifiers[data.keys[2]] and BindGUI.Modifiers[data.keys[2]] or data.keys[2]}, " + ")
+		end
+		item = self.m_Grid:addItem(data.action.name, data.action.parameters, keys)
 		item.index = index
 		item.type = "local"
-		item:setFont(VRPFont(20))
 		item.onLeftClick = function() self:onBindSelect(item) end
 	end
 end
@@ -83,11 +98,12 @@ function BindGUI:copyBind()
 	end
 end
 
-function BindGUI:Event_onReceive(binds)
+function BindGUI:Event_onReceive(type, id, binds)
 	local item
+	self.m_Grid:addItemNoClick(BindGUI.Headers[type], "", "")
 	for id, data in pairs(binds) do
 		item = self.m_Grid:addItem(data["Func"], data["Message"], "-keine-")
-		item:setFont(VRPFont(20))
+		--item:setFont(VRPFont(20))
 
 		item.type = "server"
 		item.action =  data["Func"]

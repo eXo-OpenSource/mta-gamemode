@@ -33,7 +33,8 @@ function BindManager:destructor()
 end
 
 function BindManager:Event_OnClientKey(button, pressOrRelease)
-    self.m_PressedKeys[button] = pressOrRelease
+    if table.find(KeyBindings.DisallowedKeys, button:lower()) then return end
+	self.m_PressedKeys[button] = pressOrRelease
 
     if self:CheckForBind() then
         cancelEvent()
@@ -46,9 +47,9 @@ end
 
 function BindManager:changeKey(index, key1, key2)
 	if key2 then
-		self.m_Binds[index][keys] = {key1, key2}
+		self.m_Binds[index].keys = {key2, key1}
 	else
-		self.m_Binds[index][keys] = {key1}
+		self.m_Binds[index].keys = {key1}
 	end
 end
 

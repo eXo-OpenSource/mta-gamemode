@@ -37,10 +37,13 @@ function BindManager:loadBinds()
 		if not self.m_BindsPerOwner[row.OwnerType] then self.m_BindsPerOwner[row.OwnerType] = {} end
 		if not self.m_BindsPerOwner[row.OwnerType][row.Owner] then self.m_BindsPerOwner[row.OwnerType][row.Owner] = {} end
 		self.m_BindsPerOwner[row.OwnerType][row.Owner][row.Id] = self.m_Binds[row.Id]
+		i = i+1
 	end
 	outputDebugString(i.." Server-Binds geladen!")
 end
 
 function BindManager:Event_requestBindsPerOwner(ownerType, ownerId)
-	client:triggerEvent("bindReceive", self.m_BindsPerOwner[ownerType][ownerId])
+	if self.m_BindsPerOwner[ownerType] and self.m_BindsPerOwner[ownerType][ownerId] then
+		client:triggerEvent("bindReceive", ownerType, ownerId, self.m_BindsPerOwner[ownerType][ownerId])
+	end
 end
