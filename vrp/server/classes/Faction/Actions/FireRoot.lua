@@ -12,31 +12,29 @@ FireRoot.Settings = {
 	["coords_per_fire"] = 3,
 }
 
-addEvent("fireElementKI:onFireRootDestroyed")
 
 function FireRoot:constructor(iX, iY, iW, iH)
 	iW = math.round(iW)
     iH = math.round(iH)
    	self.m_Root = createElement("fire-root")
-	self.m_tblFires = {}
 
-	self.m_iX = iX
-	self.m_iY = iY 
-	self.m_iW = iW
-	self.m_iH = iH
-	self.m_max_i = iW / FireRoot.Settings["coords_per_fire"]
-	self.m_max_v = iH / FireRoot.Settings["coords_per_fire"]
-	self.m_Max_Fires = math.min(100, math.round((self.m_max_i * self.m_max_v) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
+	self.m_X = iX
+	self.m_Y = iY 
+	self.m_Width = iW
+	self.m_Height = iH
+	self.m_Max_I = iW / FireRoot.Settings["coords_per_fire"]
+	self.m_Max_V = iH / FireRoot.Settings["coords_per_fire"]
+	self.m_Max_Fires = math.min(100, math.round((self.m_Max_I * self.m_Max_V) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
 	self.m_UpdateBind = bind(self.update, self)
-	self.m_uUpdateTimer = setTimer(self.m_UpdateBind, FireRoot.Settings["fire_update_time"], 0, self.m_Root)
-	self.m_tblFireElements = {}
-	self.m_tblFireSizes = {}
-	self.m_tblStatistics = {
-		iStartTime = getTickCount(),
-		tblFiresByPlayer = {},
-		iFiresDecayed = 0,
-		iFiresActive = 0,
-		iFiresTotal = 0,
+	self.m_UpdateTimer = setTimer(self.m_UpdateBind, FireRoot.Settings["fire_update_time"], 0, self.m_Root)
+	self.m_FireMap = {}
+	self.m_FireSizeMap = {}
+	self.m_Statistics = {
+		startTime = getTickCount(),
+		firesByPlayer = {},
+		firesDecayed = 0,
+		firesActive = 0,
+		firesTotal = 0,
 	}
 
 	if DEBUG then
@@ -48,10 +46,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
         self:updateFire(i, v, 3)
     end
 
-	addEventHandler("fireElementKI:onFireRootDestroyed", self.m_Root, function(tblStatistics)
-        outputDebugString("fire root "..inspect(self.m_Root).." has been extinguished completely. Statistics:")
-        iprint(tblStatistics)
-    end)
+
 
 	FireRoot.Map = self
 
@@ -63,9 +58,8 @@ function FireRoot:setBaseZ(z)
 end
 
 function FireRoot:destructor()
-	triggerEvent("fireElementKI:onFireRootDestroyed", self.m_Root, self.m_tblStatistics)
-    if isTimer(self.m_uUpdateTimer) then killTimer(self.m_uUpdateTimer) end
-    for i, uEle in pairs(self.m_tblFireElements) do
+    if isTimer(self.m_UpdateTimer) then killTimer(self.m_UpdateTimer) end
+    for i, uEle in pairs(self.m_FireMap) do
         delete(uEle)
     end
 	if self.m_DebugArea then 
@@ -73,22 +67,27 @@ function FireRoot:destructor()
 	end
     destroyElement(self.m_Root)
 
-	if self.m_onFinishHook then
-		self.m_onFinishHook[1](unpack(self.m_onFinishHook[2]))
+	if self.m_OnFinishHook then
+		self.m_OnFinishHook(self.m_Statistics)
+		outputDebugString("fire root "..inspect(self.m_Root).." has been extinguished completely. Statistics:")
+        iprint(self.m_Statistics)
 	end
 
     FireRoot.Map[self] = nil
 end
 
-function FireRoot:addOnFinishHook(callback, ...)
-	local additionalParameters = {...}
-	self.m_onFinishHook = {callback, additionalParameters}
+function FireRoot:setOnUpdateHook(callback, ...)
+	self.m_OnUpdateHook = callback
+end
+
+function FireRoot:setOnFinishHook(callback)
+	self.m_OnFinishHook = callback
 end
 
 function FireRoot:update()
 	local start = getTickCount()
 	local tblFiresToUpdate = {}
-	for sPos, iSize in spairs(self.m_tblFireSizes, function(t,a,b) return t[b] < t[a] end) do
+	for sPos, iSize in spairs(self.m_FireSizeMap, function(t,a,b) return t[b] < t[a] end) do
 		local i,v = tonumber(split(sPos, ",")[1]), tonumber(split(sPos, ",")[2])
 		local tblSurroundingFires = {
 			[(i+1)..","..(v+1)] = (self:getFireSize(i+1, v+1)   or 0), --tr
@@ -173,24 +172,25 @@ function FireRoot:update()
 			if vv == 0 then deletes = deletes + 1 end
 		end
 	end
-	if self.m_tblStatistics.iFiresActive == 0 then
-		if FireManager:getSingleton():getCurrentFire() == self then -- properly notify manager
-			outputDebug("notified")
-			FireManager:getSingleton():stopCurrentFire()
-		else -- destruct if it was created outside of FireManager context
-			outputDebug("just destroyed")
-			delete(self)
-		end
+	if self.m_Statistics.firesActive == 0 then
+		delete(self)
 	end
 	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
 		PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
 	end
+	if self.m_OnUpdateHook then
+		self.m_OnUpdateHook(self.m_Statistics)
+	end
 	outputDebug("updated fire", getTickCount()-start.."ms", table.size(tblFiresToUpdate).." updates", deletes.." deletes")
 end
 
 function FireRoot:isFireLimitReached()
-	return self.m_Max_Fires < self.m_tblStatistics.iFiresActive
+	return self.m_Max_Fires < self.m_Statistics.firesActive
+end
+
+function FireRoot:getMaxFireCount()
+	return self.m_Max_Fires 
 end
 
 function FireRoot:letFireDecay()
@@ -203,56 +203,56 @@ end
 
 function FireRoot:dump()
 	local tab = {}
-	for i, v in  pairs(self.m_tblFireSizes) do
+	for i, v in  pairs(self.m_FireSizeMap) do
 		print(i, v)
 	end
 end
 
 function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
-	if (i >= 0 and i <= self.m_max_i) and (v >= 0 and v <= self.m_max_v) then
-		local currentFire = self.m_tblFireElements[i..","..v]
-		if iNewSize ~= self.m_tblFireSizes[i..","..v] then
+	if (i >= 0 and i <= self.m_Max_I) and (v >= 0 and v <= self.m_Max_V) then
+		local currentFire = self.m_FireMap[i..","..v]
+		if iNewSize ~= self.m_FireSizeMap[i..","..v] then
 			if iNewSize == 0 then -- fire will be deleted
 				if currentFire then
 					if not bDontDestroyElement then delete(currentFire) end
 					currentFire = nil
-					self.m_tblFireSizes[i..","..v] = nil
-					self.m_tblFireElements[i..","..v] = nil
+					self.m_FireSizeMap[i..","..v] = nil
+					self.m_FireMap[i..","..v] = nil
 				end
 			else -- new fire or fire changes size
 				if not currentFire then
-					local iX = self.m_iX + i*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
-					local iY = self.m_iY + v*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
+					local iX = self.m_X + i*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
+					local iY = self.m_Y + v*FireRoot.Settings["coords_per_fire"] + math.random(-10, 10)/10
 					local fire = Fire:new(iX, iY, self.m_BaseZ or 4, iNewSize, false, self, i, v)
-					self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive + 1
-					self.m_tblStatistics.iFiresTotal = self.m_tblStatistics.iFiresTotal + 1
+					self.m_Statistics.firesActive = self.m_Statistics.firesActive + 1
+					self.m_Statistics.firesTotal = self.m_Statistics.firesTotal + 1
 					fire:addExtinguishCallback(function(uDestroyer, iSize)
 						if isElement(uDestroyer) then
 							--outputDebugString(inspect(uDestroyer).." has destroyed fire "..inspect(source))
-							if not self.m_tblStatistics.tblFiresByPlayer[uDestroyer] then
-								self.m_tblStatistics.tblFiresByPlayer[uDestroyer] = 0
+							if not self.m_Statistics.firesByPlayer[uDestroyer] then
+								self.m_Statistics.firesByPlayer[uDestroyer] = 0
 							end
-							self.m_tblStatistics.tblFiresByPlayer[uDestroyer] = self.m_tblStatistics.tblFiresByPlayer[uDestroyer] + 1
+							self.m_Statistics.firesByPlayer[uDestroyer] = self.m_Statistics.firesByPlayer[uDestroyer] + 1
 						else
-							self.m_tblStatistics.iFiresDecayed = self.m_tblStatistics.iFiresDecayed + 1
+							self.m_Statistics.firesDecayed = self.m_Statistics.firesDecayed + 1
 						end
-						self.m_tblStatistics.iFiresActive = self.m_tblStatistics.iFiresActive - 1
-						self.m_tblFireSizes[i..","..v] = nil
-						self.m_tblFireElements[i..","..v] = nil
+						self.m_Statistics.firesActive = self.m_Statistics.firesActive - 1
+						self.m_FireSizeMap[i..","..v] = nil
+						self.m_FireMap[i..","..v] = nil
 					end)
-					if self.m_tblFireElements[i..","..v] then outputDebugString("fail!") end
-					self.m_tblFireElements[i..","..v] = fire
+					if self.m_FireMap[i..","..v] then outputDebugString("fail!") end
+					self.m_FireMap[i..","..v] = fire
 				else
 					currentFire:setFireSize(iNewSize)
 				end
-				self.m_tblFireSizes[i..","..v] = iNewSize
+				self.m_FireSizeMap[i..","..v] = iNewSize
 			end
 		end
 	end
 end
 
 function FireRoot:getFireSize(i, v)
-	if (i >= 0 and i <= self.m_max_i) and (v >= 0 and v <= self.m_max_v) then
-		return self.m_tblFireSizes[i..","..v] or 0
+	if (i >= 0 and i <= self.m_Max_I) and (v >= 0 and v <= self.m_Max_V) then
+		return self.m_FireSizeMap[i..","..v] or 0
 	end
 end

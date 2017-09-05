@@ -1143,6 +1143,7 @@
 	<vrpfile src="files/images/Radar/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar/Blips/North.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
+	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

@@ -27,6 +27,10 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, PICKUP_FOR_SALE, 0)
+
+	self.m_Pickup.m_PickupType = "GroupProperty" -- used for fire message geration
+	self.m_Pickup.m_PickupName = Name
+	
 	if self.m_OwnerID ~= 0 then setPickupType(self.m_Pickup, 3, PICKUP_ARROW) end
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)

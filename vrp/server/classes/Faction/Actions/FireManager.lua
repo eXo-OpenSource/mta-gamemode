@@ -9,6 +9,7 @@ FireManager = inherit(Singleton)
 
 local FIRE_TIME_MIN = 45 -- in minutes
 local FIRE_TIME_MAX = 90 -- in minutes
+local FIRE_DISTANCE_TO_PLAYER = 200 -- distance inside which the player counts as an active member to extinguish the current fire
 
 function FireManager:constructor()
 	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*60*1000
@@ -20,7 +21,8 @@ function FireManager:constructor()
 	self.m_RandomFireStrings = { -- blablabla [...]
 		"steht in Flammen", 
 		"meldet einen Brand",
-		"ist in Flammen ausgebrochen"
+		"ist in Flammen ausgebrochen",
+		"wurde wegen eines Rauchalarms geräumt",
 	}
 
 	self:loadFirePlaces()
@@ -69,24 +71,90 @@ function FireManager:startFire(id)
 	self.m_CurrentFire = FireRoot:new(fireTable.position.x, fireTable.position.y, fireTable["width"] or 20, fireTable["height"] or 20)
 	self.m_CurrentFire:setBaseZ(fireTable.position.z)
 	self.m_CurrentFire.m_Id = id
-	self.m_CurrentFire.Blip = Blip:new("Fire.png", fireTable.position.x + fireTable.width/2, fireTable.position.y + fireTable.height/2, root, 400)
+	self.m_CurrentFire.m_Name = self.m_Fires[id].name
+	self.m_CurrentFire.Blip = Blip:new("Warning.png", fireTable.position.x + fireTable.width/2, fireTable.position.y + fireTable.height/2, root, 400)
 	self.m_CurrentFire.Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 	self.m_CurrentFire.Blip:setDisplayText("Verkehrsbehinderung")
 
-	local posName = getZoneName(fireTable.position).."/"..getZoneName(fireTable.position, true)
-	PlayerManager:getSingleton():breakingNews(fireTable["message"], posName)
-	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0), posName)
-	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0), posName)
+	self.m_CurrentFire:setOnUpdateHook(bind(self.onUpdateHandler, self))
+
+	self.m_CurrentFire:setOnFinishHook(bind(self.stopCurrentFire, self, true))
+	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0))
+	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0))
+end
+
+function FireManager:onUpdateHandler(stats)
+	if (stats.firesActive >= 20) and (stats.firesActive > math.floor(self.m_CurrentFire:getMaxFireCount()/3)) then --filter too small and too new fires
+		if not self.m_NewsSent then --send initial overview
+			local activeRescue, acitveState = self:countUsersAtSight()
+			self:sendNews(self.m_Fires[self.m_CurrentFire.m_Id]["message"])
+			if activeRescue > 0 then
+				self:sendNews(("Es befinden sich bereits %d Rettungskräfte zur Brandbekämpfung vor Ort"):format(activeRescue))
+			else
+				self:sendNews("Zur Zeit sind noch keine Rettungskräfte eingetroffen")
+			end
+			if acitveState > 0 then
+				if activeRescue > 0 then
+					self:sendNews(("Zusätzlich sperren %d Polizei-Streifen die umliegenden Straßen ab"):format(acitveState))
+				else
+					self:sendNews(("Dennoch hat die Polizei %d Streifen zur Absperrung stationiert"):format(acitveState))
+				end
+			end
+		end
+	end
+end
+
+function FireManager:sendNews(text) -- adapted from PlayerManager
+	local fire = self.m_CurrentFire
+	local textFinish
+	if fire then
+		for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+			if self.m_NewsSent then
+				textFinish = _("%s-Brand: %s", v, fire.m_Name, text)
+			else
+				self.m_NewsSent = true
+				textFinish = _("%s", v, text)
+			end
+			v:triggerEvent("breakingNews", textFinish, "Verkehrsbehinderung")
+		end
+	end
+end
+
+function FireManager:countUsersAtSight(rescueOnly)
+	if not self.m_CurrentFire then return 0, 0 end
+	outputDebug("counting...")
+	local activeRescue, activeState = 0, 0
+	local centerPoint = self.m_CurrentFire.Blip:getPosition(true)
+
+	for i, v in pairs(FactionRescue:getSingleton():getOnlinePlayers(true, true)) do
+		outputDebug("found rescue", v)
+		if getDistanceBetweenPoints3D(v.position, centerPoint) <= FIRE_DISTANCE_TO_PLAYER then
+			activeRescue = activeRescue + 1
+			outputDebug("found rescue in sight", v)
+		end
+	end
+	if not rescueOnly then
+		for i, v in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
+			outputDebug("found pd", v)
+			if getDistanceBetweenPoints3D(v.position, centerPoint) <= FIRE_DISTANCE_TO_PLAYER then
+				activeState = activeState + 1
+				outputDebug("found pd in sight", v)
+			end
+		end
+	end
+
+	return activeRescue, activeState
 end
 
 function FireManager:getCurrentFire()
 	return self.m_CurrentFire
 end
 
-function FireManager:stopCurrentFire()
+function FireManager:stopCurrentFire(fireDeleted)
 	delete(self.m_CurrentFire.Blip)
-	delete(self.m_CurrentFire)
+	if not fireDeleted then delete(self.m_CurrentFire) end
 	self.m_CurrentFire = nil
+	self.m_NewsSent = nil
 end
 
 function FireManager:receiveFires()
@@ -192,14 +260,19 @@ function FireManager:generateMessage(position, width, height)
 	local zoneName = getZoneName(position.x, position.y, position.z)
 	for i, v in pairs(getElementsWithinColShape(tempArea, "pickup")) do
 		outputDebug(v)
-		if v.m_PickupType == "House" then -- TODO: add mmore types
+		if v.m_PickupType == "House" then -- TODO: add more types
 			return ("%s in %s %s"):format(
 				((zoneName == "Mulholland" or zoneName == "Richman") and ("Eine Villa" or "Ein Haus")),
 				zoneName, 
 				self.m_RandomFireStrings[math.random(1, #self.m_RandomFireStrings)])
+		elseif v.m_PickupType == "GroupProperty" then 
+			return ("Die Immobilie '%s' in %s %s"):format(
+				v.m_PickupName,
+				zoneName, 
+				self.m_RandomFireStrings[math.random(1, #self.m_RandomFireStrings)])
 		end
 	end
-	return ""
+	return "keine passenden Immobilien gefunden"
 end
 
 function FireManager:Event_deleteFire(id)

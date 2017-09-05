@@ -157,7 +157,7 @@ function Blip:attach(element)
 end
 
 function Blip:getAttachedElement()
-	return Blip.AttachedBlips[self]
+	return self.m_AttachedTo
 end
 
 function Blip:detach()
