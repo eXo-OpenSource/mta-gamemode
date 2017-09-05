@@ -68,6 +68,7 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
+	addCommandHandler("shrug",bind(self.Command_playerShrug, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
@@ -677,7 +678,12 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
 end
 
-
+function PlayerManager:Command_playerShrug(source, cmd)
+	source:meChat(true, "zuckt mit den Schultern ¯\\_(ツ)_/¯")
+	if source.isTasered then return	end
+	if source.vehicle then return end
+	setPedAnimation(source, "shop", "SHP_HandsUp_Scr", 400, false, false, true, false)
+end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end

@@ -6,8 +6,8 @@
 -- *
 -- ****************************************************************************
 GroupProperty = inherit(Object)
-local PICKUP_ARROW = 1318
-local PICKUP_FOR_SALE = 1272
+local PICKUP_SOLD = 1272
+local PICKUP_FOR_SALE = 1273
 function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
 
 	self.m_Id = Id
@@ -27,7 +27,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, PICKUP_FOR_SALE, 0)
-	if self.m_OwnerID ~= 0 then setPickupType(self.m_Pickup, 3, PICKUP_ARROW) end
+	if self.m_OwnerID ~= 0 then setPickupType(self.m_Pickup, 3, PICKUP_SOLD) end
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 

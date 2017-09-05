@@ -351,7 +351,7 @@ GAS_STATIONS = {
 			{Vector3(127, 1908, 19.3), 90, 1}, -- Area
 			{Vector3(-1622.8, 664.8, -4.5), 0, 1}, -- SFPD
 			{Vector3(-1526, 458.1, 7.6), 90, 1}, -- SF Army
-			{Vector3(1209.800, -1824.200, 14.075), 90, 1}, -- FBI
+			{Vector3(1209.800, -1824.200, 14.075), 0, 1}, -- FBI
 		},
 		accessible =  {1, 0},
 		nonInterior = true,

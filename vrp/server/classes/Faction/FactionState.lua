@@ -204,7 +204,7 @@ function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
-	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
+	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59))
 
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
@@ -295,7 +295,7 @@ function FactionState:loadArmy(factionId)
 end
 
 function FactionState:createTakeItemsPickup(pos)
-	local pickup = createPickup(pos, 3, 1239, 0)
+	local pickup = createPickup(pos, 3, 1238, 0)
 	addEventHandler("onPickupHit", pickup, function(hitElement)
 		if hitElement:getType() == "player" then
 			if hitElement.vehicle then
@@ -548,7 +548,7 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 end
 
 function FactionState:createArrestZone(x, y, z, int, dim)
-	local pickup = createPickup(x,y,z, 3, 1318)
+	local pickup = createPickup(x,y,z, 3, 2680)
 	local col = createColSphere(x,y,z, 4)
 	if int then
 		pickup:setInterior(int)
