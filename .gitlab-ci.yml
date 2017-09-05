@@ -20,6 +20,7 @@ build_app_job:
   stage: build
   script:
     - 'echo "GIT_VERSION=\"$(git rev-parse HEAD)\" ; GIT_BRANCH=\"$CI_BUILD_REF_NAME\"" >> vrp/buildinfo.lua'
+    - python3 tools/statistics.py
     - python3 build/lint.py
     - python3 build/buildscript.py $CI_BUILD_REF_NAME
     - python3 build/packAssets.py
