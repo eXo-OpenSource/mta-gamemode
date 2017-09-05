@@ -8,7 +8,7 @@
 GUIMiniMap = inherit(GUIElement)
 inherit(GUIColorable, GUIMiniMap)
 local borderColor = { ["Radar_GTA"] = tocolor(108, 137, 171), ["Radar_Monochrome"] = tocolor(121, 170, 213) }
-local imageSize = { ["Radar_GTA"]  = 1536, ["Radar_Monochrome"] = 3072}
+local imageSize = { ["Radar_GTA"]  = 1536, ["Radar_Monochrome"] = 1536}
 function GUIMiniMap:constructor(posX, posY, width, height, parent)
 	self.m_PosX = 0
 	self.m_PosY = 0
@@ -91,11 +91,12 @@ function GUIMiniMap:makePath(fileName, isBlip)
         return "files/images/Radar/Blips/"..fileName
     else
         local designSet = (HUDRadar:getSingleton().m_DesignSet == RadarDesign.Monochrome) and "Radar_Monochrome" or "Radar_GTA"
-        if fileExists("_custom/files/images/Radar/"..designSet.."/Radar.png") then
+		local fileSuffix = (HUDRadar:getSingleton().m_DesignSet == RadarDesign.Monochrome) and "-small" or ""
+        if fileExists("_custom/files/images/Radar/"..designSet.."/Radar"..fileSuffix..".png") then
             return "_custom/files/images/Radar/"..designSet.."/Radar.png", borderColor[designSet], imageSize[designSet]
-        elseif fileExists("_custom/files/images/Radar/"..designSet.."/Radar.jpg") then
-            return "_custom/files/images/Radar/"..designSet.."/Radar.jpg", borderColor[designSet], imageSize[designSet]
+        elseif fileExists("_custom/files/images/Radar/"..designSet.."/Radar"..fileSuffix..".jpg") then
+            return "_custom/files/images/Radar/"..designSet.."/Radar"..fileSuffix..".jpg", borderColor[designSet], imageSize[designSet]
         end
-        return "files/images/Radar/"..designSet.."/Radar.jpg", borderColor[designSet], imageSize[designSet]
+        return "files/images/Radar/"..designSet.."/Radar"..fileSuffix..".jpg", borderColor[designSet], imageSize[designSet]
     end
 end
