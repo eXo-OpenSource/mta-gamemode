@@ -76,7 +76,7 @@ function GUIChanger:setBackgroundColor(color)
 	return self
 end
 
-function GUIChanger:getSelectedItem(item)
+function GUIChanger:getSelectedItem()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
 end
 

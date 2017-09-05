@@ -8,7 +8,7 @@
 KeyBindings = inherit(GUIForm)
 inherit(Singleton, KeyBindings)
 
-KeyBindings.DisallowedKeys = {"mouse1", "mouse2", "mouse3", "mouse4", "escape", "arrow_l", "arrow_u", "arrow_r", "arrow_d"}
+KeyBindings.DisallowedKeys = {"mouse1", "mouse2", "mouse3", "mouse4", "mouse_wheel_up", "mouse_wheel_down", "escape", "arrow_l", "arrow_u", "arrow_r", "arrow_d"}
 
 function KeyBindings:constructor()
   GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)

@@ -6,53 +6,11 @@
 -- *
 -- ****************************************************************************
 BindManager = inherit(Singleton)
+BindManager.filePath = "binds.json"
+
 
 function BindManager:constructor()
-    self.m_Binds = {}
     self.m_PressedKeys = {}
-    
-
-    self.m_Modifiers = {
-        ["lalt"] = true,
-        ["ralt"] = true,
-        ["lctrl"] = true,
-        ["rctrl"] = true,
-        ["lshift"] = true,
-        ["rshift"] = true
-    }
-
-    table.insert(self.m_Binds, {
-        keys = {
-            "lctrl",
-            "g"
-        },
-        action = {
-            name = "say",
-            parameters = "This is sparta!"
-        }
-    })
-
-    table.insert(self.m_Binds, {
-        keys = {
-            "lctrl",
-            "1"
-        },
-        action = {
-            name = "s",
-            parameters = "Sie werden gesucht! Halten Sie sofort an, steigen Sie aus und nehmen Sie die Hände hinter den Kopf"
-        }
-    })
-
-    table.insert(self.m_Binds, {
-        keys = {
-            "lctrl",
-            "2"
-        },
-        action = {
-            name = "s",
-            parameters = "Letzte Warnung! Bleiben Sie sofort stehen oder wir wenden Gewalt an!"
-        }
-    })
 
     addEventHandler("onClientKey", root, bind(self.Event_OnClientKey, self))
     addEventHandler("onClientRender", root, function()
@@ -66,6 +24,12 @@ function BindManager:constructor()
 
         dxDrawText(table.concat(keys, " "), 100, 500)
     end)
+
+	self:loadLocalBinds()
+end
+
+function BindManager:destructor()
+	self:saveLocalBinds()
 end
 
 function BindManager:Event_OnClientKey(button, pressOrRelease)
@@ -76,30 +40,77 @@ function BindManager:Event_OnClientKey(button, pressOrRelease)
     end
 end
 
+function BindManager:getBinds()
+	return self.m_Binds
+end
+
+function BindManager:changeKey(index, key1, key2)
+	if key2 then
+		self.m_Binds[index][keys] = {key1, key2}
+	else
+		self.m_Binds[index][keys] = {key1}
+	end
+end
+
+function BindManager:addBind(action, parameters)
+	table.insert(self.m_Binds, {
+        keys = {
+        },
+        action = {
+            name = action,
+            parameters = parameters
+        }
+    })
+end
+
 function BindManager:CheckForBind()
     local bindTrigerred = false
 
     for k, v in pairs(self.m_Binds) do
-        local allKeysPressed = true
+       	if #v.keys > 0 then
+			local allKeysPressed = true
 
-        for _, key in pairs(v.keys) do
-            if not self.m_PressedKeys[key] then
-                allKeysPressed = false
-            end
-        end
 
-        if allKeysPressed then
-            bindTrigerred = true
+			for _, key in pairs(v.keys) do
+				if not self.m_PressedKeys[key] then
+					allKeysPressed = false
+				end
+			end
 
-            if v.action.name ~= "say" then
-                executeCommandHandler(v.action.name, v.action.parameters)
-            end
-            
-            triggerServerEvent("bindTrigger", localPlayer, v.action.name, v.action.parameters)
-        end
+			if allKeysPressed then
+				bindTrigerred = true
+
+				if v.action.name ~= "say" then
+					executeCommandHandler(v.action.name, v.action.parameters)
+				end
+
+				triggerServerEvent("bindTrigger", localPlayer, v.action.name, v.action.parameters)
+			end
+		end
     end
 
     return bindTrigerred
 end
 
+function BindManager:loadLocalBinds()
+	if not fileExists(BindManager.filePath) then
+		fileClose(fileCreate(BindManager.filePath))
+	end
 
+	local fileHandle = fileOpen(BindManager.filePath, true)
+	local text = fileRead(fileHandle, fileGetSize(fileHandle))
+    self.m_Binds = fromJSON(text)
+	fileClose(fileHandle)
+end
+
+function BindManager:saveLocalBinds()
+	if fileExists(BindManager.filePath) then
+		fileDelete(BindManager.filePath)
+	end
+	fileClose(fileCreate(BindManager.filePath))
+
+	local fileHandle = fileOpen(BindManager.filePath, false)
+
+	fileWrite(fileHandle, toJSON(self.m_Binds, false, "tabs"))
+	fileClose(fileHandle)
+end

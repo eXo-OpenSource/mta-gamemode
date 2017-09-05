@@ -223,6 +223,7 @@ end
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	delete(BindManager:getSingleton())
 	if CustomModelManager:isInstantiated() then
 		delete(CustomModelManager:getSingleton())
 	end
