@@ -3,6 +3,9 @@ image: git.heisi.at:5005/exo/mta-gamemode-build:latest
 services:
   - docker:dind
 
+variables:
+  DOCKER_DRIVER: overlay
+
 stages:
   - build
   - fast_deploy
