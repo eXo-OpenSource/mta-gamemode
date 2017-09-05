@@ -27,6 +27,7 @@ function BindGUI:constructor()
 	self.m_Grid:addColumn("Text", 0.6)
 	self.m_Grid:addColumn("Tasten", 0.2)
 
+
 	self.m_HelpButton = GUIChanger:new(self.m_Width*0.02, 40+self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.07, self.m_Window):setBackgroundColor(Color.LightBlue):setVisible(false)
 	for index, name in pairs(BindGUI.Modifiers) do
 		self.m_HelpButton:addItem(name)
@@ -35,8 +36,8 @@ function BindGUI:constructor()
 
 	self.m_CopyButton = GUIButton:new(self.m_Width*0.02, 40+self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.07, "Bind verwenden", self.m_Window):setFontSize(1.2):setBackgroundColor(Color.Green):setVisible(false)
   	self.m_CopyButton.onLeftClick = function () self:copyBind() end
-
-	self.m_SelectedButton = GUIButton:new(self.m_Width*0.29, 40+self.m_Height*0.7, self.m_Width*0.25, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
+	self.m_Plus = GUILabel:new(self.m_Width*0.27, 40+self.m_Height*0.7, self.m_Width*0.07, self.m_Height*0.07, " + ", self.m_Window)
+	self.m_SelectedButton = GUIButton:new(self.m_Width*0.3, 40+self.m_Height*0.7, self.m_Width*0.2, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
   	self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
 
 	self.m_onKeyBind = bind(self.onKeyPressed, self)
@@ -73,7 +74,7 @@ function BindGUI:loadLocalBinds()
 		item = self.m_Grid:addItem(data.action.name, data.action.parameters, keys)
 		item.index = index
 		item.type = "local"
-		item.onLeftClick = function() self:onBindSelect(item) end
+		item.onLeftClick = function() self:onBindSelect(item, index) end
 	end
 end
 
@@ -112,11 +113,26 @@ function BindGUI:Event_onReceive(type, id, binds)
 	end
 end
 
-function BindGUI:onBindSelect(item)
+function BindGUI:onBindSelect(item, index)
     if item.type == "local" then
 		self.m_HelpButton:setVisible(true)
 		self.m_SelectedButton:setVisible(true)
 		self.m_CopyButton:setVisible(false)
+		if BindManager:getSingleton().m_Binds[index] and BindManager:getSingleton().m_Binds[index].keys then
+			if BindManager:getSingleton().m_Binds[index].keys[1] then
+				local key1 = BindManager:getSingleton().m_Binds[index].keys[1]
+				if BindGUI.Modifiers[key1] then
+					self.m_HelpButton:setSelectedItem(BindGUI.Modifiers[key1])
+				else
+					self.m_SelectedButton:setText(key1:upper())
+				end
+			end
+			if BindManager:getSingleton().m_Binds[index].keys[2] then
+				local key2 = BindManager:getSingleton().m_Binds[index].keys[2]
+				self.m_SelectedButton:setText(key2:upper())
+			end
+		end
+
 	else
 		self.m_CopyButton:setVisible(true)
 		self.m_HelpButton:setVisible(false)
@@ -143,7 +159,7 @@ function BindGUI:changeKey(index, newKey)
 	self.m_SelectedButton:setText(newKey:upper())
 
 	local helper = table.find(BindGUI.Modifiers, self.m_HelpButton:getSelectedItem())
-	helper = (helper == 0 or false) and nil or helper
+	helper = helper == 0 and nil or helper
   	BindManager:getSingleton():changeKey(index, newKey, helper)
 	self:loadBinds()
 end

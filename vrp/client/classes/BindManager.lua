@@ -100,7 +100,7 @@ function BindManager:loadLocalBinds()
 
 	local fileHandle = fileOpen(BindManager.filePath, true)
 	local text = fileRead(fileHandle, fileGetSize(fileHandle))
-    self.m_Binds = fromJSON(text)
+	self.m_Binds = fromJSON(text) or {}
 	fileClose(fileHandle)
 end
 
