@@ -11,9 +11,9 @@ VRPButton = inherit(GUIRectangle)
 
 function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent)
 	checkArgs("VRPButton:constructor", "number", "number", "number", "number", "string")
-	
+
 	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(0x23, 0x23, 0x23, 230), parent)
-	
+
 	if barOnTop then
 		self.m_Bar = GUIRectangle:new(0, 0, width, height*0.075, tocolor(0x3F, 0x7F, 0xBF, 255), self)
 	else
@@ -21,14 +21,14 @@ function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent
 	end
 	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, self)
 		:setAlign("center", "center")
-		
+
 	self.m_Animation = false
 	self.m_BarAnimation = false
 	self.m_TextAnimation = false
 	self.m_IsDark = false
 	self.m_BarColor = tocolor(0x3F, 0x7F, 0xBF, 255)
 	self.m_Enabled = true
-	
+
 	self.onInternalHover = function() self.m_Bar:setColor(Color.White) end
 	self.onInternalUnhover = function() self.m_Bar:setColor(self.m_BarColor) end
 end
@@ -111,7 +111,7 @@ function VRPButton:anyChange()
 		self.m_Label.m_Height = self.m_Height
 		self.m_Bar.m_Height = self.m_Height * 0.075
 	end
-	
+
 	-- Propagate
 	DxElement.anyChange(self)
 end
@@ -124,7 +124,7 @@ function VRPButton:setEnabled(state)
 	else
 		self.m_Label:setColor(tocolor(100, 100, 100))
 	end
-	
+
 	--self:anyChange()
 end
 
@@ -137,4 +137,9 @@ function VRPButton:performChecks(...)
 	if self.m_Enabled then
 		GUIElement.performChecks(self, ...)
 	end
+end
+
+function VRPButton:setFontSize(size)
+	self.m_Label:setFontSize(size)
+	return self
 end

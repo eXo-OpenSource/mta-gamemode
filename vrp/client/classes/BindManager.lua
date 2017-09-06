@@ -46,11 +46,23 @@ function BindManager:getBinds()
 end
 
 function BindManager:changeKey(index, key1, key2)
-	if key2 then
-		self.m_Binds[index].keys = {key2, key1}
-	else
-		self.m_Binds[index].keys = {key1}
+	if index and self.m_Binds[index] then
+		if key2 then
+			self.m_Binds[index].keys = {key2, key1}
+		else
+			self.m_Binds[index].keys = {key1}
+		end
+		return true
 	end
+	return false
+end
+
+function BindManager:removeBind(index)
+	if index and self.m_Binds[index] then
+		self.m_Binds[index] = nil
+		return true
+	end
+	return false
 end
 
 function BindManager:addBind(action, parameters)
@@ -63,6 +75,19 @@ function BindManager:addBind(action, parameters)
         }
     })
 end
+
+
+function BindManager:editBind(index, action, parameters)
+	if index and self.m_Binds[index] then
+		self.m_Binds[index].action = {
+				name = action,
+				parameters = parameters
+			}
+		return true
+	end
+	return false
+end
+
 
 function BindManager:CheckForBind()
     local bindTrigerred = false
@@ -80,10 +105,6 @@ function BindManager:CheckForBind()
 
 			if allKeysPressed then
 				bindTrigerred = true
-
-				if v.action.name ~= "say" then
-					executeCommandHandler(v.action.name, v.action.parameters)
-				end
 
 				triggerServerEvent("bindTrigger", localPlayer, v.action.name, v.action.parameters)
 			end

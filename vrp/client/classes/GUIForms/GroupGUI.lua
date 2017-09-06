@@ -437,6 +437,15 @@ function GroupGUI:addLeaderTab()
 		self.m_TypeChange.onHover = function () self.m_TypeChange:setColor(Color.White) end
 		self.m_TypeChange.onUnhover = function () self.m_TypeChange:setColor(Color.LightBlue) end
 
+		self.m_BindButton = VRPButton:new(self.m_Width*0.45, self.m_Height*62, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", true, tabLeader)
+		self.m_BindButton.onLeftClick = function()
+			if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+			self:close()
+			self.m_BindManageGUI = BindManageGUI:new("group")
+			self.m_BindManageGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
+		end
+
+
 		self:refreshRankGrid()
 		self.m_LeaderTab = true
 	end

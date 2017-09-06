@@ -48,6 +48,14 @@ function CompanyGUI:constructor()
 		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
 	end
 
+	self.m_BindButton = VRPButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", true, tabAllgemein)
+	self.m_BindButton.onLeftClick = function()
+	if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+		self:close()
+		self.m_BindManageGUI = BindManageGUI:new("company")
+		self.m_BindManageGUI:addBackButton(function() CompanyGUI:getSingleton():show() end)
+	end
+
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
 	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
@@ -268,8 +276,8 @@ end
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-	
-		HistoryUninviteGUI:new(function(internal, external) 
+
+		HistoryUninviteGUI:new(function(internal, external)
 			triggerServerEvent("companyDeleteMember", root, selectedItem.Id, internal, external)
 		end)
 	else
