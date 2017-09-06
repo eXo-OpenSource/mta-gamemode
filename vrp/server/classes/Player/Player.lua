@@ -1216,6 +1216,18 @@ function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
 
+function Player:getLastChatMessage()
+	if not self.m_LastChatMsg then
+		self.m_LastChatMsg = {"", 0}
+	end
+	return unpack(self.m_LastChatMsg) -- message, timeSent
+end
+
+function Player:setLastChatMessage(msg)
+	self.m_LastChatMsg = {msg, getTickCount()}
+end
+
+
 function Player:getPlayersInChatRange( irange)
 	local range
 	if irange == 0 then

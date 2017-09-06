@@ -633,7 +633,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin:setInterior(0)
 			admin:setDimension(0)
 			admin:setPosition(x, y, z)
-			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
+			if admin.vehicle then
+				admin.vehicle:setInterior(0)
+				admin.vehicle:setDimension(0)
+				admin.vehicle:setPosition(x, y, z)
+			else
+				admin:setPosition(x, y, z)
+			end
+			self:sendShortMessage(_("%s hat sich nach %s geportet!", admin, admin:getName(), getZoneName(x, y, z)))
 			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
 		elseif func == "nickchange" or func == "offlineNickchange" then
 			local changeTarget = false

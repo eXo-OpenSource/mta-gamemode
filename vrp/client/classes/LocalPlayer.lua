@@ -561,23 +561,18 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
 					if vehicle and not isCursorShowing() then
-						local vx, vy, vz = getElementVelocity(vehicle)
-						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
+						vehicle:setVelocity((vehicle.matrix.forward*1.2)*math.clamp(0.2, vehicle.velocity.length, 5))
 					end
 				end
 			end
 		)
 		bindKey("lctrl", "down",
 			function()
-				if not DEBUG then return false end
-				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) and localPlayer.vehicle then
-					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
-					self.m_AircarsEnabled = true
-					ShortMessage:new(_("Fahrzeug-Flugmodus %s.", isWorldSpecialPropertyEnabled("aircars") and "aktiviert" or "deaktiviert"))
-				elseif self.m_AircarsEnabled then
-					setWorldSpecialPropertyEnabled("aircars", false)
-					self.m_AircarsEnabled = false
-					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
+					local vehicle = getPedOccupiedVehicle(self)
+					if vehicle and not isCursorShowing() then
+						vehicle:setVelocity((vehicle.matrix.forward*0.8)*math.clamp(0.2, vehicle.velocity.length, 5))
+					end
 				end
 			end
 		)

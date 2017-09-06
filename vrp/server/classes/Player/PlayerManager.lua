@@ -562,6 +562,13 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return 
+	end
+	source:setLastChatMessage(message)
+
 	if Player.getChatHook():call(source, message, messageType) then
 		cancelEvent()
 		return
@@ -624,6 +631,13 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
+	
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()
@@ -649,6 +663,13 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(0)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -665,6 +686,13 @@ end
 function PlayerManager:Command_playerOOC(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+	
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -679,7 +707,13 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 end
 
 function PlayerManager:Command_playerShrug(source, cmd)
-	source:meChat(true, "zuckt mit den Schultern ¯\\_(ツ)_/¯")
+	local text = "zuckt mit den Schultern ¯\\_(ツ)_/¯"
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+	source:meChat(true, text)
 	if source.isTasered then return	end
 	if source.vehicle then return end
 	setPedAnimation(source, "shop", "SHP_HandsUp_Scr", 400, false, false, true, false)

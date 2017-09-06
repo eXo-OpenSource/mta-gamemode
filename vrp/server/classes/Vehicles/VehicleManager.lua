@@ -702,7 +702,9 @@ function VehicleManager:Event_vehicleRepair()
 		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
 		return
 	end
-
+	local ownerName = source.controller == client and "sein" or (source.controller and source.controller:getName().."'s") or "ein"
+	StatisticsLogger:getSingleton():addAdminAction(player, "Vehicle-Repair", ownerName)
+	Admin:getSingleton():sendShortMessage(_("%s hat %s Fahrzeug repariert", client, client:getName(), ownerName))
 	source:fix()
 end
 

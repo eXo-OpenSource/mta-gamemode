@@ -343,16 +343,9 @@ function CustomF11Map:Rightclick_ClickOverlay(element, cursorX, cursorY)
 			local teleportElement = localPlayer.vehicle and localPlayer.vehicle or localPlayer
 			teleportElement:setFrozen(true)
 			teleportElement:setPosition(worldX, worldY, 0)
-			teleportElement:setInterior(0)
-			teleportElement:setDimension(0)
-			if not teleportElement.vehicle then
-				localPlayer:setInterior(0)
-				localPlayer:setDimension(0)
-			end
-
 			setTimer(function()
 				local z = getGroundPosition(worldX, worldY, 500)
-				teleportElement:setPosition(worldX, worldY, z + 2)
+				triggerServerEvent("adminTriggerFunction", root, "gotocords", {worldX, worldY, z+2})
 				fadeCamera(true)
 				teleportElement:setFrozen(false)
 			end, 250, 1)
