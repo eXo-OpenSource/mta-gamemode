@@ -35,16 +35,16 @@ function BindGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Binds", true, true, self)
 	self.m_Window:deleteOnClose(true)
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40, self.m_Width*0.96, self.m_Height*0.6, self)
-	--self.m_Grid:setFont(VRPFont(20))
-	--self.m_Grid:setItemHeight(20)
+
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.595, self)
 	self.m_Grid:addColumn("Funktion", 0.2)
 	self.m_Grid:addColumn("Text", 0.6)
 	self.m_Grid:addColumn("Tasten", 0.2)
 
 	self.m_Footer = {}
 
-	local addBindFunction = function()
+	self.m_AddBindButton = VRPButton:new(self.m_Width*0.63, 40, self.m_Width*0.35, self.m_Height*0.07, "neuen Bind hinzufügen", true, self.m_Window):setBarColor(Color.Green)
+  	self.m_AddBindButton.onLeftClick = function()
 		self:changeFooter("new")
 		self.m_NewText:setText("")
 		self.m_AddNewBindButton:setVisible(true)
@@ -52,12 +52,10 @@ function BindGUI:constructor()
 	end
 
 	--default Bind
-	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
-	self.m_AddBindButton1 = VRPButton:new(self.m_Width*0.73, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind hinzufügen", true, self.m_Footer["default"]):setBarColor(Color.Green)
-  	self.m_AddBindButton1.onLeftClick = function() addBindFunction() end
+	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 
 	--Local Bind
-	self.m_Footer["local"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
+	self.m_Footer["local"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Taste 1:", self.m_Footer["local"])
 	GUILabel:new(self.m_Width*0.30, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.06, "Taste 2:", self.m_Footer["local"])
@@ -72,20 +70,17 @@ function BindGUI:constructor()
   	self.m_SaveBindButton.onLeftClick = function () self:saveBind() end
 	self.m_DeleteBindButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, "Bind Löschen", true, self.m_Footer["local"]):setBarColor(Color.Red)
   	self.m_DeleteBindButton.onLeftClick = function () self:deleteBind() end
-	self.m_AddBindButton2 = VRPButton:new(self.m_Width*0.73, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind hinzufügen", true, self.m_Footer["local"]):setBarColor(Color.Green)
-  	self.m_AddBindButton2.onLeftClick = function() addBindFunction() end
-	self.m_ChangeBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind ändern", true, self.m_Footer["local"]):setBarColor(Color.Orange)
+	self.m_ChangeBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Bind ändern", true, self.m_Footer["local"]):setBarColor(Color.Orange)
   	self.m_ChangeBindButton.onLeftClick = function () self:editBind() end
 
 	--Remote Bind
-	self.m_Footer["remote"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
-	self.m_CopyButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, "Bind verwenden", true, self.m_Footer["remote"]):setBarColor(Color.Green)
+	self.m_Footer["remote"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
+	self.m_CopyButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.35, self.m_Height*0.07, "Diesen Bind verwenden", true, self.m_Footer["remote"]):setBarColor(Color.Green)
   	self.m_CopyButton.onLeftClick = function () self:copyBind() end
-	self.m_AddBindButton3 = VRPButton:new(self.m_Width*0.73, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind hinzufügen", true, self.m_Footer["remote"]):setBarColor(Color.Green)
-  	self.m_AddBindButton3.onLeftClick = function() addBindFunction() end
+
 
 	--New Bind
-	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
+	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Funktion:", self.m_Footer["new"])
 	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
 	for index, name in pairs(BindGUI.Functions) do
@@ -95,7 +90,7 @@ function BindGUI:constructor()
 	self.m_NewText = GUIEdit:new(self.m_Width*0.34, self.m_Height*0.07, self.m_Width*0.64, self.m_Height*0.07, self.m_Footer["new"])
 	self.m_AddNewBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Hinzufügen", true, self.m_Footer["new"]):setBarColor(Color.Green):setVisible(false)
   	self.m_AddNewBindButton.onLeftClick = function () self:editAddBind() end
-	self.m_EditBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Ändern", true, self.m_Footer["new"]):setBarColor(Color.Orange):setVisible(false)
+	self.m_EditBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", true, self.m_Footer["new"]):setBarColor(Color.Orange):setVisible(false)
   	self.m_EditBindButton.onLeftClick = function () self:editAddBind(self.m_SelectedBind) end
 
 	for index, footer in pairs(self.m_Footer) do
@@ -303,28 +298,25 @@ function BindManageGUI:constructor(ownerType)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Binds verwalten", true, true, self)
 	self.m_Window:deleteOnClose(true)
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40, self.m_Width*0.96, self.m_Height*0.6, self)
-	--self.m_Grid:setFont(VRPFont(20))
-	--self.m_Grid:setItemHeight(20)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.595, self)
 	self.m_Grid:addColumn("Funktion", 0.2)
 	self.m_Grid:addColumn("Text", 0.8)
 
-	self.m_Footer = {}
-
-	local addBindFunction = function()
+	self.m_AddBindButton = VRPButton:new(self.m_Width*0.63, 40, self.m_Width*0.35, self.m_Height*0.07, "neuen Bind hinzufügen", true, self.m_Window):setBarColor(Color.Green)
+  	self.m_AddBindButton.onLeftClick = function()
 		self:changeFooter("new")
 		self.m_NewText:setText("")
 		self.m_AddNewBindButton:setVisible(true)
 		self.m_EditBindButton:setVisible(false)
 	end
 
+	self.m_Footer = {}
+
 	--default Bind
-	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
-	self.m_AddBindButton1 = VRPButton:new(self.m_Width*0.73, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind hinzufügen", true, self.m_Footer["default"]):setBarColor(Color.Green)
-  	self.m_AddBindButton1.onLeftClick = function() addBindFunction() end
+	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 
 	--New Bind
-	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.6, self.m_Width, self.m_Height*0.4-40, self.m_Window)
+	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Funktion:", self.m_Footer["new"])
 	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
 	for index, name in pairs(BindGUI.Functions) do
@@ -336,9 +328,6 @@ function BindManageGUI:constructor(ownerType)
   	self.m_AddNewBindButton.onLeftClick = function () self:editAddBind() end
 	self.m_EditBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", true, self.m_Footer["new"]):setBarColor(Color.Orange):setVisible(false)
   	self.m_EditBindButton.onLeftClick = function () self:editAddBind(self.m_SelectedBind) end
-
-	self.m_AddBindButton2 = VRPButton:new(self.m_Width*0.73, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, "Bind hinzufügen", true, self.m_Footer["new"]):setBarColor(Color.Green)
-  	self.m_AddBindButton2.onLeftClick = function() addBindFunction() end
 
 	for index, footer in pairs(self.m_Footer) do
 		if index ~= "default" then
