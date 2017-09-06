@@ -131,6 +131,14 @@ function SelfGUI:constructor()
 		self:close()
 	end
 
+	self.m_BindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Binds", true, tabGeneral)
+	self.m_BindButton.onLeftClick = function()
+		if self.m_BindGUI then delete(self.m_BindGUI) end
+		self:close()
+		self.m_BindGUI = BindGUI:new()
+		self.m_BindGUI:addBackButton(function() SelfGUI:getSingleton():show() end)
+	end
+
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
 	self.m_TabStatistics = tabStatistics

@@ -148,6 +148,7 @@ function Core:constructor()
 		--SprayWallManager:new()
 		GroupHouseRob:new()
 
+		BindManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

@@ -48,6 +48,14 @@ function FactionGUI:constructor()
 	self.m_LogButton.onLeftClick = bind(self.ShowLogs, self)
 	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
 	self.m_ObjectListButton.onLeftClick = bind(self.ShowObjectList, self)
+	self.m_BindButton = VRPButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", true, tabAllgemein)
+	self.m_BindButton.onLeftClick = function()
+		if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+		self:close()
+		self.m_BindManageGUI = BindManageGUI:new("faction")
+		self.m_BindManageGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
+
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder

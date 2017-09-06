@@ -88,6 +88,7 @@
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
 	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
+	<script src="server/classes/BindManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
 
 	<!-- Super -->
@@ -389,6 +390,7 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
+	<script src="client/classes/BindManager.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -614,6 +616,7 @@
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/BindGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>

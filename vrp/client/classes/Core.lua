@@ -170,6 +170,7 @@ function Core:afterLogin()
 	Indicator:new()
 	Tour:new()
 	Achievement:new()
+	BindManager:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -222,6 +223,7 @@ end
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	delete(BindManager:getSingleton())
 	if CustomModelManager:isInstantiated() then
 		delete(CustomModelManager:getSingleton())
 	end
