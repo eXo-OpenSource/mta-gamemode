@@ -24,10 +24,12 @@ function TurtleRace.load()
 end
 
 function TurtleRace:constructor(turtles)
-	--local shader = dxCreateShader("files/shader/texreplace.fx")
-	--local texture = dxCreateTexture(DATEIPFAD_ZUM_BILD_MIT_ZAHL_DRAUF_UND_DEM_TURTLETOP_HINTERGRUND)
-	--dxSetShaderValue(shader, "gTexture", texture)
-	--engineApplyShaderToWorldTexture(shader, turtletop, OBJEKT_DAS_MIT_CREATEOBJECT_ERSTELLT_WURDE)
+	for _, turtle in pairs(turtles) do
+		local shader = dxCreateShader("files/shader/texreplace.fx")
+		local texture = dxCreateTexture(("files/images/Textures/Turtles/%s.png"):format(turtle.id))
+		dxSetShaderValue(shader, "gTexture", texture)
+		engineApplyShaderToWorldTexture(shader, "turtletop", turtle.object)
+	end
 
 	self.m_Turtles = turtles
 	--addEventHandler("onClientRender", root, bind(TurtleRace.interpolateTurtlePositions, self))
@@ -49,10 +51,10 @@ end
 
 addEventHandler("turtleRaceSyncTurtles", root,
 	function(turtles)
-		if not TurtleRace:getSingleton() then
+		if not TurtleRace:isInstantiated() then
 			TurtleRace:new(turtles)
 		end
 
-		TurtleRace:updatePosition(turtles)
+		TurtleRace:getSingleton():updatePosition(turtles)
 	end
 )
