@@ -13,7 +13,8 @@ function BindManager:constructor()
     self.m_PressedKeys = {}
 
     addEventHandler("onClientKey", root, bind(self.Event_OnClientKey, self))
-    addEventHandler("onClientRender", root, function()
+    --[[ DEBUG:
+	addEventHandler("onClientRender", root, function()
         local keys = {}
 
         for k, v in pairs(self.m_PressedKeys) do
@@ -24,7 +25,7 @@ function BindManager:constructor()
 
         dxDrawText(table.concat(keys, " "), 100, 500)
     end)
-
+	]]
 	self:loadLocalBinds()
 end
 

@@ -49,6 +49,7 @@ function BindGUI:constructor()
 		self.m_NewText:setText("")
 		self.m_AddNewBindButton:setVisible(true)
 		self.m_EditBindButton:setVisible(false)
+		self.m_DeleteBindButton:setVisible(false)
 	end
 
 	--default Bind
@@ -170,7 +171,7 @@ function BindGUI:Event_onReceive(type, id, binds)
 		item.type = "server"
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
-		item.onLeftClick = function() self:onBindSelect(item) end
+		item.onLeftClick = bind(self.onBindSelect, self, item)
 	end
 end
 
@@ -315,7 +316,7 @@ function BindManageGUI:constructor(ownerType)
 	--default Bind
 	self.m_Footer["default"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 
-	--New Bind
+	--New/Edit Bind
 	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Funktion:", self.m_Footer["new"])
 	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
@@ -328,6 +329,8 @@ function BindManageGUI:constructor(ownerType)
   	self.m_AddNewBindButton.onLeftClick = function () self:editAddBind() end
 	self.m_EditBindButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", true, self.m_Footer["new"]):setBarColor(Color.Orange):setVisible(false)
   	self.m_EditBindButton.onLeftClick = function () self:editAddBind(self.m_SelectedBind) end
+	self.m_DeleteBindButton = VRPButton:new(self.m_Width*0.29, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Löschen", true, self.m_Footer["new"]):setBarColor(Color.Red):setVisible(false)
+  	self.m_DeleteBindButton.onLeftClick = function () self:deleteBind() end
 
 	for index, footer in pairs(self.m_Footer) do
 		if index ~= "default" then
@@ -363,7 +366,7 @@ function BindManageGUI:Event_onReceive(type, id, binds)
 		item.action =  data["Func"]
 		item.parameter =  data["Message"]
 		item.id = id
-		item.onLeftClick = function() self:onBindSelect(item) end
+		item.onLeftClick = bind(self.onBindSelect, self, item)
 	end
 end
 
@@ -380,10 +383,18 @@ function BindManageGUI:editAddBind(item)
 	end
 end
 
-function BindManageGUI:onBindSelect(item, index)
+function BindManageGUI:deleteBind()
+	if self.m_SelectedBind and self.m_SelectedBind.id then
+		triggerServerEvent("bindDeleteServerBind", localPlayer, self.m_OwnerType, self.m_SelectedBind.id)
+	end
+	self:changeFooter("default")
+end
+
+function BindManageGUI:onBindSelect(item)
     self.m_SelectedBind = item
 	self:changeFooter("new")
 	self.m_FunctionChanger:setSelectedItem(BindGUI.Functions[item.action])
 	self.m_NewText:setText(item.parameter)
 	self.m_EditBindButton:setVisible(true)
+	self.m_DeleteBindButton:setVisible(true)
 end

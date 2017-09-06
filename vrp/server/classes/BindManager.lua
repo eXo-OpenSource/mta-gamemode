@@ -12,11 +12,13 @@ function BindManager:constructor()
 	self.m_BindsPerOwner = {}
 	self:loadBinds()
 
-	addRemoteEvents{"bindTrigger", "bindRequestPerOwner", "bindEditServerBind", "bindAddServerBind"}
+	addRemoteEvents{"bindTrigger", "bindRequestPerOwner", "bindEditServerBind", "bindAddServerBind", "bindDeleteServerBind"}
     addEventHandler("bindTrigger", root, bind(self.Event_OnBindTrigger, self))
     addEventHandler("bindRequestPerOwner", root, bind(self.Event_requestBindsPerOwner, self))
     addEventHandler("bindEditServerBind", root, bind(self.Event_editBind, self))
     addEventHandler("bindAddServerBind", root, bind(self.Event_addBind, self))
+    addEventHandler("bindDeleteServerBind", root, bind(self.Event_deleteBind, self))
+
 
 end
 
@@ -44,7 +46,7 @@ function BindManager:loadBinds(id)
 		self.m_BindsPerOwner[row.OwnerType][row.Owner][row.Id] = self.m_Binds[row.Id]
 		i = i+1
 	end
-	outputDebugString(i.." Server-Binds geladen!")
+	--outputDebugString(i.." Server-Binds geladen!")
 end
 
 function BindManager:Event_requestBindsPerOwner(ownerType)
@@ -102,6 +104,29 @@ function BindManager:Event_editBind(ownerType, id, func, message)
 		self.m_BindsPerOwner[ownerType][ownerId][id] = self.m_Binds[id]
 		sql:queryExec("UPDATE ??_binds SET Func = ?, Message = ?, Creator = ? WHERE Id = ?", sql:getPrefix(), func, message, client:getId(), id)
 		client:sendSuccess(_("Bind erfolgreich geändert!", client))
+	else
+		client:sendError(_("Bind nicht gefunden!", client))
+	end
+	client:triggerEvent("bindReceive", ownerType, ownerId, self.m_BindsPerOwner[ownerType][ownerId])
+end
+
+function BindManager:Event_deleteBind(ownerType, id)
+	if not self:isManager(client, ownerType) then
+		client:sendError(_("Du hast dafür keine Berechtigung! (Ab Co-Leader)", client))
+		return
+	end
+	id = tonumber(id)
+	local owner = self:getOwner(client, ownerType)
+	local ownerId = owner:getId()
+	if not owner or not ownerId then
+		client:sendError("Internal Error: Bind Owner not found")
+		return
+	end
+	if self.m_BindsPerOwner[ownerType][ownerId][id] and self.m_Binds[id] then
+		self.m_Binds[id] = nil
+		self.m_BindsPerOwner[ownerType][ownerId][id] = nil
+		sql:queryExec("DELETE FROM ??_binds WHERE Id = ?", sql:getPrefix(), id)
+		client:sendSuccess(_("Bind erfolgreich gelöscht!", client))
 	else
 		client:sendError(_("Bind nicht gefunden!", client))
 	end
