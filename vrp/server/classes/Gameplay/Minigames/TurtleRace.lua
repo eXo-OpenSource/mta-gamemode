@@ -19,16 +19,33 @@ TurtleRace.Positions = {
 
 addRemoteEvents{"TurtleRaceAddBet"}
 function TurtleRace:constructor()
-	self.m_Players = {}
-
 	self.m_ColShapeHit = bind(TurtleRace.onColShapeHit, self)
 
 	self.m_Blip = Blip:new("Horse.png", 318, -1820)
 	self.m_Blip:setDisplayText("Schildkröten Rennen", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({50, 170, 20})
+	
+	self.m_InfoMessage = bind(TurtleRace.infoMessage, self)
+	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 10, 00)
+	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 13, 00)
+	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 16, 00)
+	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 19, 00)
+	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.infoMessage2, self), "TurtleRaceInfo2", nil, 20, 05)
+	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.createGame, self), "TurtleRaceCreate", nil, 20, 30)
+	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.startGame, self), "TurtleRaceStart", nil, 21, 00)
 end
 
 function TurtleRace:destructor()
+end
+
+-- Todo: replace chatbox output with global shortmessage luLz
+function TurtleRace:infoMessage()
+	outputChatBox("[Turtle-Race] Um 21:00 Uhr findet das tägliche Schildkrötenrennen statt, du kannst am Strand", root, 50, 170, 20)
+	outputChatBox("auf eine Schildkröte Geld setzen und um 21:00 Uhr das rennen anschauen. Viel Glück!", root, 50, 170, 20)
+end
+
+function TurtleRace:infoMessage2()
+	outputChatBox("[Turtle-Race] Pferderennen vorbei? Um 21:00 Uhr startet das Schildkrötenrennen am Strand!", root, 50, 170, 20)
 end
 
 function TurtleRace:createGame()
@@ -67,6 +84,8 @@ function TurtleRace:destroyGame()
 
 	self.m_Turtles = nil
 	self.m_Map = nil
+	
+	removeEventHandler("onColShapeHit", self.m_ColShape, self.m_ColShapeHit)
 end
 
 function TurtleRace:startGame()
