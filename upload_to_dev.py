@@ -8,10 +8,10 @@ import requests
 ARTIFACTS_PATH = "artifacts.tar.gz"
 
 # Run linter and buildscript python script
+# (script doesnt work, cause of wrong encoding)
+#subprocess.call(["C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe", "echo 'GIT_VERSION=\"'$(git rev-parse HEAD)'\"; GIT_BRANCH=\"'$(git rev-parse --abbrev-ref HEAD)'\"' >> vrp/buildinfo.lua"])
 os.system("py -3 build/lint.py")
 os.system("py -3 build/buildscript.py")
-subprocess.call(["C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
-				"echo 'GIT_VERSION=\"'$(git rev-parse HEAD)'\"; GIT_BRANCH=\"'$(git rev-parse --abbrev-ref HEAD)'\"' >> vrp_build/buildinfo.lua"])
 
 # Clean previous artifacts
 if os.path.isfile(ARTIFACTS_PATH):
