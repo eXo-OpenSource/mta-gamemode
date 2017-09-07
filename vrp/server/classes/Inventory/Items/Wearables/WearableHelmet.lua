@@ -10,7 +10,7 @@ WearableHelmet = inherit( Item )
 WearableHelmet.objectTable =
 {
 	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm",true},
-	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm",true},
+	["Motorcross-Helm"] = {1924, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm",true},
 	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm",false},
 	["Einsatzhelm"] = {3911,0.1, 0.05, 0.95, 10, 180, "Einsatzhelm",false},
 	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske",true},
