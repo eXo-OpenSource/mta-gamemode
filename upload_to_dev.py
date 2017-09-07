@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 import os
 import tarfile
+import shutil
 import requests
 
 ARTIFACTS_PATH = "artifacts.tar.gz"
+
+# Run linter and buildscript python script
+os.system("py -3 build/lint.py")
+os.system("py -3 build/buildscript.py")
 
 # Clean previous artifacts
 if os.path.isfile(ARTIFACTS_PATH):
@@ -14,12 +19,8 @@ artifacts = tarfile.open(ARTIFACTS_PATH, "w:gz")
 
 # Add files (see build/make_archives.py)
 print("Packing files...")
-for name in ["[shader]", "[deps]", "[maps]", "vrp"]:
-	if name != "vrp":
-		artifacts.add(name)
-	else:
-		# Rename vrp to vrp_build
-		artifacts.add(name, arcname="vrp_build")
+for name in ["[shader]", "[deps]", "[maps]", "vrp_build"]:
+	artifacts.add(name)
 
 artifacts.close()
 
@@ -31,3 +32,4 @@ with open(ARTIFACTS_PATH, "rb") as f:
 # Delete archive
 print("Done! Cleaning up...")
 os.remove("artifacts.tar.gz")
+shutil.rmtree("vrp_build")
