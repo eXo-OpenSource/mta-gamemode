@@ -19,6 +19,7 @@ TurtleRace.Positions = {
 
 addRemoteEvents{"TurtleRaceAddBet"}
 function TurtleRace:constructor()
+	self.m_State = "None"
 	self.m_ColShapeHit = bind(TurtleRace.onColShapeHit, self)
 
 	self.m_Blip = Blip:new("Horse.png", 318, -1820)
@@ -49,6 +50,7 @@ function TurtleRace:infoMessage2()
 end
 
 function TurtleRace:createGame()
+	self.m_State = "Preparing"
 	self.m_ColShape = ColShape.Sphere(TurtleRace.MainPos, 250)
 	self.m_Turtles = {}
 
@@ -70,6 +72,7 @@ function TurtleRace:createGame()
 end
 
 function TurtleRace:destroyGame()
+	self.m_State = "None"
 	for _, turtle in pairs(self.m_Turtles) do
 		turtle.object:destroy()
 	end
@@ -89,6 +92,7 @@ function TurtleRace:destroyGame()
 end
 
 function TurtleRace:startGame()
+	self.m_State = "Running"
 	self:updateTurtlePositions()
 	self:syncTurtles()
 
@@ -114,8 +118,7 @@ function TurtleRace:updateTurtlePositions()
 				if isTimer(self.m_GameTimer) then killTimer(self.m_GameTimer) end
 				self.m_State = "Finished"
 				outputChatBox("WINNER: " .. tostring(turtle.id))
-				self:stopTurtleRace()
-				break
+				return
 			end
 		end
 
@@ -130,17 +133,15 @@ function TurtleRace:updateTurtlePositions()
 end
 
 function TurtleRace:syncTurtles()
-	if self.m_State == "Finished" then return end
-
 	local players = self.m_ColShape:getElementsWithin("player")
-	for _, player in pairs(players) do
-		player:triggerEvent("turtleRaceSyncTurtles", self.m_Turtles)
-	end
-end
-
-function TurtleRace:stopTurtleRace()
-	local players = self.m_ColShape:getElementsWithin("player")
-	for _, player in pairs(players) do
-		player:triggerEvent("turtleRaceStop")
+	
+	if self.m_State == "Running" then	
+		for _, player in pairs(players) do
+			player:triggerEvent("turtleRaceSyncTurtles", self.m_Turtles)
+		end
+	elseif self.m_State == "Finished" then
+		for _, player in pairs(players) do
+			player:triggerEvent("turtleRaceStop")
+		end
 	end
 end
