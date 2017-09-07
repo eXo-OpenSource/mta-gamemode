@@ -60,6 +60,7 @@ function AppBank:TransferButton_Click()
 	local amount = tonumber(self.m_TransferAmountEdit:getText())
 	local toCharName = self.m_TransferToEdit:getText()
 	if amount and amount > 0 then
+		self.m_TransferAmountEdit:setText("0")
 		triggerServerEvent("bankTransfer", root, toCharName, amount)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")

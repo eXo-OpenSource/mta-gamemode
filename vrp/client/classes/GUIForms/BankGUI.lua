@@ -97,6 +97,7 @@ function BankGUI:TransferButton_Click()
 	local toCharName = self.m_TransferToEdit:getText()
 	if amount and amount > 0 then
 		triggerServerEvent("bankTransfer", root, toCharName, amount)
+		self.m_TransferAmountEdit:setText("0")
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
 	end
