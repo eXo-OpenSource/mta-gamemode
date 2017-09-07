@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/bin/env python3
+
 import re
 import os
 from os.path import join

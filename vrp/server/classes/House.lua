@@ -11,7 +11,7 @@ local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 local PICKUP_SOLD = 1272
 local PICKUP_FOR_SALE = 1273
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
+function House:constructor(id, position, interiorID, keys, owner, ownerType, price, lastPrice, lockStatus, rentPrice, elements, money, bIsRob)
 	if owner == 0 then
 		owner = false
 	end
@@ -20,12 +20,14 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
 	self.m_Price = price
+	self.m_LastPrice = (lastPrice > 0 and lastPrice) or price
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
 	self.m_Keys = fromJSON(keys)
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner
+	self.m_OwnerType = ownerType or 0
 	self.m_Id = id
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
@@ -59,6 +61,30 @@ function House:getOwner()
 	return self.m_Owner
 end
 
+function House:getOwnerType()
+	return self.m_OwnerType
+end
+
+function House:isPlayerOwner(player)
+	if self.m_OwnerType == 0 then
+		return player:getId() == self.m_Owner
+	else
+		if player:getGroup() then
+			if player:getGroup():getId() == self.m_Owner then
+				return player:getGroup():getPlayerRank(player) >= 5
+			end
+		end
+	end
+end
+
+function House:getOwnerName()
+	if self.m_OwnerType == 0 then
+		return Account.getNameFromId(self.m_Owner)
+	else
+		return GroupManager:getSingleton():getFromId(self.m_Owner):getName()
+	end
+end
+
 function House:toggleLockState( player )
 	self.m_LockStatus = not self.m_LockStatus
 	local info = "aufgeschlossen"
@@ -77,14 +103,14 @@ function House:showGUI(player)
 			bIsGang = true
 		end
 	end
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		local tenants = {}
 		for playerId, timestamp in pairs(self.m_Keys) do
 			tenants[playerId] = Account.getNameFromId(playerId)
 		end
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false)
+		player:triggerEvent("showHouseMenu", self:getOwnerName(), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, false)
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, bIsGang)
+		player:triggerEvent("showHouseMenu", self:getOwnerName(), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, bIsGang)
 	end
 end
 
@@ -134,7 +160,7 @@ function House:onMarkerHit(hitElement, matchingDimension)
 end
 
 function House:isValidRob(player)
-	if self.m_Keys[player:getId()] or self.m_Owner == player:getId() or not player:getGroup() --[[ or not self.m_Owner]] then
+	if self.m_Keys[player:getId()] or self:isPlayerOwner(player) or not player:getGroup() --[[ or not self.m_Owner]] then
 		return false
 	end
 	return true
@@ -147,10 +173,11 @@ end
 end]]
 
 function House:isValidToEnter(player)
-	return self.m_Keys[player:getId()] or player:getId() == self.m_Owner
+	return self.m_Keys[player:getId()] or self:isPlayerOwner(player)
 end
 
 function House:rentHouse(player)
+	if self.m_OwnerType == 1 then player:sendError(_("Du darfst dich hier nicht einmieten!", player)) return end
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	if not self.m_Keys[player:getId()] then
 		if not self.m_Owner or self.m_Owner == 0 then
@@ -165,7 +192,7 @@ function House:rentHouse(player)
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
-			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
+			player:triggerEvent("addHouseBlip", self.m_Id, 0, self.m_Pos.x, self.m_Pos.y)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
 		end
@@ -193,7 +220,7 @@ end
 
 function House:setRent(player, rent)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		self.m_RentPrice = rent
 		if rent > 0 then
 			player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
@@ -212,7 +239,7 @@ end
 function House:deposit(player, amount)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		if player:getMoney() >= amount then
 			player:takeMoney(amount, "Hauskasse")
 			self.m_Money = self.m_Money + amount
@@ -228,7 +255,7 @@ end
 function House:withdraw(player, amount)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		if self.m_Money >= amount then
 			self.m_Money = self.m_Money - amount
 			player:giveMoney(amount, "Hauskasse")
@@ -243,7 +270,7 @@ end
 
 function House:removeTenant(player, id)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		if self.m_Keys[id] then
 			self.m_Keys[id] = nil
 			local name = Account.getNameFromId(id)
@@ -289,18 +316,22 @@ function House:save()
 	local houseID = self.m_Owner or 0
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
-	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, self.m_Id)
+	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, ownerType = ?, price = ?, lastPrice = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ? WHERE id = ?;", sql:getPrefix(),
+		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_OwnerType, self.m_Price, self.m_LastPrice, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, self.m_Id)
 end
 
 function House:sellHouse(player)
-	if player:getId() == self.m_Owner then
+	if self:isPlayerOwner(player) then
 		-- destroy blip
 		player:triggerEvent("removeHouseBlip", self.m_Id)
 
-		local price = math.floor(self.m_Price*0.75)
+		local price = math.floor(self.m_LastPrice*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
+
+		if self.m_OwnerType == 1 then
+			player:getGroup():removeHouse(self)
+		end
 
 		self:clearHouse()
 	else
@@ -310,6 +341,7 @@ end
 
 function House:clearHouse(player)
 	self.m_Owner = 0
+	self.m_OwnerType = 0
 	self.m_Keys = {}
 	self:updatePickup()
 	self:save()
@@ -324,7 +356,7 @@ function House:onPickupHit(hitElement)
 end
 
 function House:enterHouseTry(player)
-	if (self.m_Keys[player:getId()] or player:getId() == self.m_Owner or self.m_CurrentRobber == player) or not self.m_LockStatus then
+	if (self.m_Keys[player:getId()] or self:isPlayerOwner(player) or self.m_CurrentRobber == player) or not self.m_LockStatus then
 		self:enterHouse(player)
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))
@@ -455,11 +487,19 @@ function House:onPlayerFade()
 	self:removePlayerFromList(source)
 end
 
-function House:buyHouse(player)
+function House:buyHouse(player, asGroup)
 	if getDistanceBetweenPoints3D(self.m_Pos, player.position) >= 10 then player:sendError(_("Du bist zu weit entfernt!", player)) return end
-	if HouseManager:getSingleton():getPlayerHouse(player) then
-		player:sendWarning(_("Du hast bereits ein Haus!", player))
-		return
+	if asGroup and not player:getGroup() then return end
+	if asGroup then
+		if not player:getGroup():canBuyHouse() then
+			player:sendWarning(_("Firmenlimit erreicht!", player))
+			return
+		end
+	else
+		if HouseManager:getSingleton():getPlayerHouse(player) then
+			player:sendWarning(_("Du hast bereits ein Haus!", player))
+			return
+		end
 	end
 
 	if (self.m_Owner or 0) > 0 then
@@ -475,12 +515,17 @@ function House:buyHouse(player)
 		player:giveAchievement(34)
 
 		player:takeMoney(self.m_Price, "Haus-Kauf")
-		self.m_Owner = player:getId()
+		self.m_Owner = asGroup and player:getGroup():getId() or player:getId()
+		self.m_OwnerType = asGroup and 1 or 0
+		self.m_LastPrice = self.m_Price
+		if asGroup then
+			player:getGroup():addHouse(self)
+		end
 		self:updatePickup()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 		self:save()
 		-- create blip
-		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
+		player:triggerEvent("addHouseBlip", self.m_Id, self.m_OwnerType, self.m_Pos.x, self.m_Pos.y)
 	else
 		player:sendError(_("Du hast nicht genügend Geld!", player))
 	end
@@ -498,4 +543,13 @@ function House:refreshInteriorMarker()
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit, self))
+end
+
+function House:updatePrice(player, price)
+	if self.m_OwnerType == 0 then return end
+	if self:isPlayerOwner(player) then
+		if price >= (self.m_LastPrice - self.m_LastPrice*0.25) and price <= (self.m_LastPrice + self.m_LastPrice*0.25) then
+			self.m_Price = price
+		end
+	end
 end

@@ -13,7 +13,7 @@ addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBli
 
 function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
 	local columnWidth
-	if owner == localPlayer:getName() then
+	if owner == localPlayer:getName() or owner == localPlayer:getPublicSync("GroupName") then
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.35/2), screenHeight/2-(370/2), screenWidth*0.35, 370)
 		columnWidth = self.m_Width*0.5
 	else
@@ -84,7 +84,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 
 	--self.m_Break:setVisible(isValidRob)
 
-	if owner == localPlayer:getName() then
+	if owner == localPlayer:getName() or owner == localPlayer:getPublicSync("GroupName") then
 		GUILabel:new(10, 100, self.m_Width/2-30, 30, _"Mietpreis:" , self.m_Window)
 		self.m_RentPrice = GUIChanger:new(100, 100, self.m_Width*0.4-90, 30, self.m_Window)
 		self.m_SaveRent = GUIButton:new(105+self.m_Width*0.4-90, 100, 30, 30, FontAwesomeSymbols.Save, self.m_Window):setFont(FontAwesome(15))
@@ -253,11 +253,16 @@ addEventHandler("hideHouseMenu", root,
 )
 
 addEventHandler("addHouseBlip", root,
-	function(id, x, y)
+	function(id, type, x, y)
 		if not HouseGUI.Blips[id] then
 			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
-			HouseGUI.Blips[id]:setDisplayText("Haus")
-			HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
+			if type == 0 then
+				HouseGUI.Blips[id]:setDisplayText("Haus")
+				HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
+			else
+				HouseGUI.Blips[id]:setDisplayText("Firmen-Immobilie")
+				HouseGUI.Blips[id]:setOptionalColor({125, 0, 0})
+			end
 		end
 	end
 )

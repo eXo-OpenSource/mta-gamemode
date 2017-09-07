@@ -591,12 +591,16 @@ end
 function GroupManager:Event_GetShopInfo()
 	local group = client:getGroup()
 	if group then
-		local info = {}
+		local shops = {}
 		for i, shop in pairs(group:getShops()) do
-			table.insert(info, {id = shop:getId(), name = shop:getName(), money = shop:getMoney(), position = {shop.m_Position.x, shop.m_Position.y, shop.m_Position.z}, lastRob = shop.m_LastRob})
+			table.insert(shops, {id = shop:getId(), name = shop:getName(), money = shop:getMoney(), position = {shop.m_Position.x, shop.m_Position.y, shop.m_Position.z}, lastRob = shop.m_LastRob})
+		end
+		local houses = {}
+		for i, house in pairs(group:getHouses()) do
+			table.insert(houses, {id = house:getId(), position = serialiseVector(house.m_Pos), price = house.m_Price, interior = house.m_InteriorID, basePrice = house.m_LastPrice})
 		end
 
-		client:triggerEvent("groupRetriveBusinessInfo", info)
+		client:triggerEvent("groupRetriveBusinessInfo", shops, houses, group.m_HouseLimit)
 	end
 end
 

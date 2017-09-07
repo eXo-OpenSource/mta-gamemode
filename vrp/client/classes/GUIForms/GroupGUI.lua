@@ -99,29 +99,57 @@ function GroupGUI:constructor()
 
 
 
-	local tabBusiness = self.m_TabPanel:addTab(_"Geschäfte")
+	local tabBusiness = self.m_TabPanel:addTab(_"Immobilien")
 	self.m_TabBusiness = tabBusiness
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Geschäfte:", tabBusiness)
-	self.m_ShopsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.78, tabBusiness)
+	self.m_ShopsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.66, self.m_Height*0.365, tabBusiness)
 	self.m_ShopsGrid:addColumn(_"Name", 0.4)
 	self.m_ShopsGrid:addColumn(_"Standort", 0.4)
 	self.m_ShopsGrid:addColumn(_"Kasse", 0.2)
 	tabBusiness:setEnabled(false)
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.48, self.m_Width*0.25, self.m_Height*0.06, _"Häuser:", tabBusiness)
+	self.m_HousesCountLabel = GUILabel:new(self.m_Width*0.61, self.m_Height*0.48, self.m_Width*0.07, self.m_Height*0.06, _"(0/10)", tabBusiness)
+	self.m_HousesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.545, self.m_Width*0.66, self.m_Height*0.365, tabBusiness)
+	self.m_HousesGrid:addColumn(_"Standort", 0.535)
+	self.m_HousesGrid:addColumn(_"aktueller Preis", 0.275)
+	self.m_HousesGrid:addColumn(_"Interior", 0.19)
+
+	--[[
 	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.LightBlue, tabBusiness)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
 	self.m_ShopsMoneyLabel = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
+
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.LightBlue)
 	self.m_ShopsLocate = VRPButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", true, tabBusiness)
 	self.m_ShopsLocate.onLeftClick = bind(self.ShopLocateButton_Click, self)
+	--]]
 
-	GUILabel:new(self.m_Width*0.695, self.m_Height*0.3, self.m_Width*0.28, self.m_Height*0.06, _"Informationen:", tabBusiness):setColor(Color.LightBlue)
-	GUILabel:new(self.m_Width*0.695, self.m_Height*0.36, self.m_Width*0.28, self.m_Height*0.06, _"Name:", tabBusiness)
-	self.m_ShopsNameLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.42, self.m_Width*0.28, self.m_Height*0.06, "-", tabBusiness)
-	GUILabel:new(self.m_Width*0.695, self.m_Height*0.49, self.m_Width*0.28, self.m_Height*0.06, _"Standort:", tabBusiness)
-	self.m_ShopsPositionLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.55, self.m_Width*0.28, self.m_Height*0.06, "-", tabBusiness)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Informationen:", tabBusiness):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.135, self.m_Width*0.28, self.m_Height*0.06, _"Kasse:", tabBusiness)
+	self.m_ShopMoneyLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.185, self.m_Width*0.28, self.m_Height*0.06, _"-", tabBusiness)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.235, self.m_Width*0.28, self.m_Height*0.06, _"Letzter Raub:", tabBusiness)
+	self.m_ShopRobLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.285, self.m_Width*0.28, self.m_Height*0.06, _"-", tabBusiness)
+
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.545, self.m_Width*0.28, self.m_Height*0.06, _"Informationen:", tabBusiness):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.59, self.m_Width*0.28, self.m_Height*0.06, _"aktueller Preis ändern:", tabBusiness)
+	self.m_HouseUpdateEdit = GUIEdit:new(self.m_Width*0.715, self.m_Height*0.65, self.m_Width*0.26, self.m_Height*0.06, tabBusiness):setNumeric(true, true)
+	self.m_HouseUpdateButton = GUIButton:new(self.m_Width*0.925, self.m_Height*0.65, self.m_Width*0.05, self.m_Height*0.06, _"✓",  tabBusiness)
+	self.m_HouseUpdateButton:setBackgroundColor(Color.Orange)
+	self.m_HouseUpdateButton:setBackgroundHoverColor(Color.Green)
+	self.m_HouseUpdateButton:setHoverColor(Color.White)
+	self.m_HouseUpdateButton:setEnabled(false)
+	self.m_HouseUpdateButton.onLeftClick = bind(GroupGUI.HouseUpdateButton_Click, self)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.71, self.m_Width*0.28, self.m_Height*0.06, _"Mögliche Preisspanne:", tabBusiness)
+	self.m_HousePriceLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.76, self.m_Width*0.28, self.m_Height*0.06, _"-", tabBusiness)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.80, self.m_Width*0.28, self.m_Height*0.06, _"zuletzt gezahlter Wert:", tabBusiness)
+	self.m_HouseBasePriceLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.85, self.m_Width*0.28, self.m_Height*0.06, _"-", tabBusiness)
+
+	--self.m_HousePriceLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.21, self.m_Width*0.28, self.m_Height*0.06, "-", tabBusiness)
+	--[[
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.61, self.m_Width*0.28, self.m_Height*0.06, _"Letzter Raub:", tabBusiness)
 	self.m_ShopsRobLabel = GUILabel:new(self.m_Width*0.715, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.06, "-", tabBusiness)
+	--]]
 
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 	self.m_LeaderTab = false
@@ -565,47 +593,73 @@ function GroupGUI:VehicleLocateButton_Click()
 	end
 end
 
-function GroupGUI:Event_retriveBusinessInfo(info)
+function GroupGUI:Event_retriveBusinessInfo(shopInfo, houseInfo, houseLimit)
 	self.m_ShopsGrid:clear()
-	self.m_ShopsNameLabel:setText("-")
-	self.m_ShopsPositionLabel:setText("-")
-	self.m_ShopsRobLabel:setText("-")
+	self.m_HousesGrid:clear()
+	self.m_HousePriceLabel:setText("-")
+	self.m_HouseBasePriceLabel:setText("-")
+	self.m_ShopMoneyLabel:setText("-")
+	self.m_ShopRobLabel:setText("-")
+	self.m_HouseUpdateEdit:setText(0)
+	self.m_HouseUpdateButton:setEnabled(false)
 
-	local compMoney = 0
-	for i, shop in pairs(info) do
+	for i, shop in pairs(shopInfo or {}) do
 		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), toMoneyString(shop.money))
-		item.ShopId = shop.id
-		item.ShopName = shop.name
-		item.LastRob = shop.lastRob
-		item.Position = Vector3(shop.position)
 		item.onLeftClick = function(item)
-			self.m_ShopsNameLabel:setText(_(item.ShopName))
-			self.m_ShopsPositionLabel:setText(_(getZoneName(item.Position)))
-			self.m_ShopsRobLabel:setText(item.LastRob > 0 and getOpticalTimestamp(item.LastRob) or "-")
+			self.m_ShopMoneyLabel:setText(toMoneyString(shop.money))
+			self.m_ShopRobLabel:setText(getOpticalTimestamp(shop.lastRob))
 		end
-
-		compMoney = compMoney + shop.money
 	end
 
-	self.m_ShopsMoneyLabel:setText(toMoneyString(compMoney))
+	for i, house in pairs(houseInfo or {}) do
+		house.position = normaliseVector(house.position)
+		local item = self.m_HousesGrid:addItem(_("%s, %s", getZoneName(house.position), getZoneName(house.position, true)), toMoneyString(house.price), tostring(house.interior))
+		item.position = house.position
+		item.basePrice = house.basePrice
+		item.houseId = house.id
+		item.onLeftClick = function(item)
+			self.m_HouseUpdateButton:setEnabled(true)
+			self.m_HouseUpdateEdit:setText(house.price)
+			self.m_HousePriceLabel:setText(_("%s - %s", toMoneyString(house.basePrice - house.basePrice*0.25), toMoneyString(house.basePrice + house.basePrice*0.25)))
+			self.m_HouseBasePriceLabel:setText(_(toMoneyString(house.basePrice)))
+		end
+		item.onLeftDoubleClick = bind(GroupGUI.HouseLocateButton_Click, self)
+	end
+	self.m_HousesCountLabel:setText(_("(%d/%d)", #houseInfo, houseLimit))
 end
 
-function GroupGUI:ShopLocateButton_Click()
-	local item = self.m_ShopsGrid:getSelectedItem()
+function GroupGUI:HouseLocateButton_Click()
+	local item = self.m_HousesGrid:getSelectedItem()
 	if not item then
-		ErrorBox:new(_"Bitte wähle ein Geschäft aus!")
+		ErrorBox:new(_"Bitte wähle eine Immobilie aus!")
 		return
 	end
 
-	local x, y, z = item.Position.x, item.Position.y, item.Position.z
+	local x, y, z = item.position.x, item.position.y, item.position.z
 	local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 	blip:setZ(z)
-	ShortMessage:new(_("Das Geschäft befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), item.ShopName, Color.DarkLightBlue, -1)
+	ShortMessage:new(_("Die Immobilie befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), Color.DarkLightBlue, -1)
 	.m_Callback = function (this)
 		if blip then
 			delete(blip)
 		end
 		delete(this)
+	end
+end
+
+function GroupGUI:HouseUpdateButton_Click()
+	local item = self.m_HousesGrid:getSelectedItem()
+	if not item then
+		ErrorBox:new(_"Bitte wähle eine Immobilie aus!")
+		return
+	end
+
+	local newPrice = tonumber(self.m_HouseUpdateEdit:getText())
+	if newPrice >= (item.basePrice - item.basePrice*0.25) and newPrice <= (item.basePrice + item.basePrice*0.25) then
+		triggerServerEvent("houseUpdatePrice", localPlayer, item.houseId, newPrice)
+	else
+		ErrorBox:new(_"Bitte gib einen Preis innerhalb der Preisspanne ein!")
+		return
 	end
 end
 

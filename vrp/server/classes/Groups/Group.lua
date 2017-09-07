@@ -26,6 +26,8 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
 	self.m_MarkersAttached = false
+	self.m_HouseLimit = math.floor(table.size(self.m_Players)*1.2)
+	self.m_Houses = HouseManager:getSingleton():getGroupHouses(self)
 
 	self.m_VehiclesSpawned = false
 
@@ -587,4 +589,22 @@ function Group:checkDespawnVehicle()
 		VehicleManager:getSingleton():destroyGroupVehicles(self)
 		self.m_VehiclesSpawned = false
 	end
+end
+
+function Group:addHouse(house)
+	if not self.m_Houses[house:getId()] then
+		self.m_Houses[house:getId()] = house
+	end
+end
+
+function Group:removeHouse(house)
+	self.m_Houses[house:getId()] = nil
+end
+
+function Group:canBuyHouse()
+	return table.size(self.m_Houses) < self.m_HouseLimit
+end
+
+function Group:getHouses()
+	return self.m_Houses
 end
