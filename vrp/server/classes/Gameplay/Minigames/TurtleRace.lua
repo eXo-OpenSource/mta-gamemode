@@ -16,6 +16,11 @@ TurtleRace.Positions = {
 	[5] = Vector3(335, -1823, 3.2),
 	[6] = Vector3(330, -1823, 3.2),
 }
+TurtleRace.Fences = {
+	[1] = Vector3(351.5, -1825.5, 3.3),
+	[2] = Vector3(341.2, -1825.5, 3.3),
+	[3] = Vector3(330.5, -1825.5, 3.3),
+}
 
 addRemoteEvents{"TurtleRaceAddBet"}
 function TurtleRace:constructor()
@@ -32,8 +37,10 @@ function TurtleRace:constructor()
 	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 16, 00)
 	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 19, 00)
 	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.infoMessage2, self), "TurtleRaceInfo2", nil, 20, 05)
-	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.createGame, self), "TurtleRaceCreate", nil, 20, 30)
-	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.startGame, self), "TurtleRaceStart", nil, 21, 00)
+	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.setState, self), "TurtleRaceCreate", nil, 20, 30, "Preparing")
+	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.setState, self), "TurtleRaceStart", nil, 21, 00, "GridCountdown")
+
+	addEventHandler("TurtleRaceAddBet", root, bind(TurtleRace.addBet, self))
 end
 
 function TurtleRace:destructor()
@@ -50,9 +57,15 @@ function TurtleRace:infoMessage2()
 end
 
 function TurtleRace:createGame()
-	self.m_State = "Preparing"
 	self.m_ColShape = ColShape.Sphere(TurtleRace.MainPos, 250)
 	self.m_Turtles = {}
+	self.m_Fences = {}
+
+	for _, pos in pairs(TurtleRace.Fences) do
+		local fence = createObject(996, pos)
+		fence:setFrozen(true)
+		table.insert(self.m_Fences, fence)
+	end
 
 	for i, pos in ipairs(TurtleRace.Positions) do
 		local turtle = createObject(1609, pos, Vector3(0, 0, 180))
@@ -90,19 +103,6 @@ function TurtleRace:destroyGame()
 	self.m_Map = nil
 end
 
-function TurtleRace:startGame()
-	self.m_State = "Running"
-	self:updateTurtlePositions()
-	self:syncTurtles()
-
-	self.m_GameTimer = setTimer(
-		function()
-			self:updateTurtlePositions()
-			self:syncTurtles()
-		end, 1000, 0
-	)
-end
-
 function TurtleRace:onColShapeHit(hitElement, matchingDimension)
 	if getElementType(source) ~= "player" then return end
 	source:triggerEvent("turtleRaceInit", self.m_Turtles)
@@ -115,8 +115,7 @@ function TurtleRace:updateTurtlePositions()
 			turtle.object.position = Vector3(unpack(turtle.endPosition))
 			if turtle.object.position.y <= TurtleRace.FinishPos then
 				if isTimer(self.m_GameTimer) then killTimer(self.m_GameTimer) end
-				self.m_State = "Finished"
-				outputChatBox("WINNER: " .. tostring(turtle.id))
+				self:setState("Finished")
 				return
 			end
 		end
@@ -131,16 +130,71 @@ function TurtleRace:updateTurtlePositions()
 	end
 end
 
+function TurtleRace:setState(state)
+	self.m_State = state
+
+	if self.m_State == "Running" then
+		self:updateTurtlePositions()
+		self:syncTurtles()
+
+		self.m_GameTimer = setTimer(
+			function()
+				self:updateTurtlePositions()
+				self:syncTurtles()
+			end, 1000, 0
+		)
+	elseif self.m_State == "GridCountdown" then
+		local countdown = 3
+		setTimer(
+			function()
+				outputChatBox(countdown)
+				countdown = countdown - 1
+				if countdown == 0 then
+					outputChatBox("GO")
+					self:setState("Running")
+				elseif countdown == 2 then
+					for _, fence in pairs(self.m_Fences) do
+						fence:move(2000, fence.matrix:transformPosition(Vector3(0,0,-1)))
+					end
+				end
+			end, 1000, 3
+		)
+	elseif self.m_State == "Finished" then
+		local players = self.m_ColShape:getElementsWithin("player")
+		for _, player in pairs(players) do
+			player:triggerEvent("turtleRaceStop")
+		end
+
+		setTimer(
+			function()
+				self:setState("None")
+			end, 60000, 1
+		)
+	elseif self.m_State == "Preparing" then
+		self:createGame()
+	elseif self.m_State == "None" then
+		self:destroyGame()
+	end
+end
+
 function TurtleRace:syncTurtles()
 	local players = self.m_ColShape:getElementsWithin("player")
-
 	if self.m_State == "Running" then
 		for _, player in pairs(players) do
 			player:triggerEvent("turtleRaceSyncTurtles", self.m_Turtles)
 		end
-	elseif self.m_State == "Finished" then
-		for _, player in pairs(players) do
-			player:triggerEvent("turtleRaceStop")
-		end
 	end
+end
+
+function TurtleRace:addBet(turtleId, money)
+	if not turtleId or not money then return end
+	if self.m_State ~= "None" and self.m_State ~= "Preparing" then client:sendWarning("Du kannst zum aktuellen Zeitpunkt keine Wette setzen!") return end
+	if client:getMoney() < money then client:sendError("Du hast nicht genug Geld dabei!") return end
+
+	local row = sql:queryFetchSingle("SELECT * FROM ??_turtle_bets WHERE UserId = ?;", sql:getPrefix(), client:getId())
+	if row then client:sendError("Du hast bereits eine Wette am laufen!") return end
+
+	client:takeMoney(money, "Turtle-Race")
+	client:sendShortMessage(_("Du hast %s auf Schildkröte %s gesetzt!", client, money, turtleId), _("Schildkrötenrennen", client), {50, 170, 20})
+	sql:queryExec("INSERT INTO ??_turtle_bets (UserId, Bet, TurtleId) VALUES (?, ?, ?)", sql:getPrefix(), client:getId(), money, turtleId)
 end
