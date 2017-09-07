@@ -221,6 +221,10 @@ function Group:addPlayer(playerId, rank)
 		elseif self.m_Type == "Firma" then
 			player:giveAchievement(28)
 		end
+
+		for i, house in pairs(self.m_Houses) do
+			player:triggerEvent("addHouseBlip", house.m_Id, house.m_OwnerType, house.m_Pos.x, house.m_Pos.y)
+		end
 	end
 
 	sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ?, GroupLoanEnabled = 1 WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
@@ -253,6 +257,10 @@ function Group:removePlayer(playerId)
 		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
 		self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
+
+		for i, house in pairs(self.m_Houses) do
+			player:triggerEvent("removeHouseBlip", house.m_Id)
+		end
 	end
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0, GroupLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 	self:removePlayerMarker(player)
@@ -594,11 +602,21 @@ end
 function Group:addHouse(house)
 	if not self.m_Houses[house:getId()] then
 		self.m_Houses[house:getId()] = house
+
+		for i, player in pairs(self:getOnlinePlayers()) do
+			player:triggerEvent("addHouseBlip", house.m_Id, house.m_OwnerType, house.m_Pos.x, house.m_Pos.y)
+		end
 	end
 end
 
 function Group:removeHouse(house)
-	self.m_Houses[house:getId()] = nil
+	if self.m_Houses[house:getId()] then
+		self.m_Houses[house:getId()] = nil
+
+		for i, player in pairs(self:getOnlinePlayers()) do
+			player:triggerEvent("removeHouseBlip", house.m_Id)
+		end
+	end
 end
 
 function Group:canBuyHouse()

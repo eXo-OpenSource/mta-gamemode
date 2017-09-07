@@ -23,7 +23,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["ownerType"], value["price"], value["lastPrice"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["ownerType"], value["price"], value["lastPrice"], value["serverPrice"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
 		count = count + 1
 	end
 
