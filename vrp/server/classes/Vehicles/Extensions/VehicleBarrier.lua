@@ -39,7 +39,7 @@ end
 function VehicleBarrier:toggleBarrier(player)
     if self.m_Closed then
         local rot = self.m_Barrier:getRotation()
-        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, 0-rot.y, 0), "Linear")
+        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, 0-rot.y, 0), "InOutQuad")
         self.m_Closed = false
 
         self.m_Timer = setTimer(bind(self.Event_onColShapeHit, self, player, true, true), self.m_Timeout or 10000, 1)
@@ -47,7 +47,7 @@ function VehicleBarrier:toggleBarrier(player)
     else
         setTimer(function() -- Cause of long vehicles (trucks and bus)
             local rot = self.m_Barrier:getRotation()
-            self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InQuad")
+            self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InOutQuad")
             self.m_Closed = true
             --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
         end, 2000, 1)
@@ -57,7 +57,7 @@ end
 function VehicleBarrier:open()
     if self.m_Closed then
         local rot = self.m_Barrier:getRotation()
-        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, 0-rot.y, 0), "Linear")
+        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, 0-rot.y, 0), "InOutQuad")
         self.m_Closed = false
     end
 end
@@ -65,7 +65,7 @@ end
 function VehicleBarrier:close()
     if not self.m_Closed then
         local rot = self.m_Barrier:getRotation()
-        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InQuad")
+        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InOutQuad")
         self.m_Closed = true
     end
 end

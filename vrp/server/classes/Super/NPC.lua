@@ -30,6 +30,6 @@ function NPC:toggleWanteds(state)
 end
 
 function NPC:onWasted(ammo, killer, weapon, bodypart, stealth)
-	killer:giveWantedLevel(3)
+	killer:giveWanteds(3)
 	killer:sendMessage("Verbrechen begangen: Mord, 3 Wanteds", 255, 255, 0)
 end

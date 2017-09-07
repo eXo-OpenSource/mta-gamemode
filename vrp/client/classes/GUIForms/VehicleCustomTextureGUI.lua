@@ -99,7 +99,9 @@ end
 
 function VehicleCustomTextureGUI:destructor(closedByServer)
     if not closedByServer then
-		TextureReplace.deleteFromElement(self.m_Vehicle)
+		if self.m_Vehicle and isElement(self.m_Vehicle) then
+			TextureReplacer.deleteFromElement(self.m_Vehicle)
+		end
         triggerServerEvent("vehicleCustomTextureAbbort", localPlayer)
 		self.m_TuningOld:applyTuning()
     end
@@ -110,7 +112,9 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
     if self.m_Music then
         self.m_Music:destroy()
     end
-    self.m_Vehicle:setOverrideLights(0)
+	if self.m_Vehicle and isElement(self.m_Vehicle) then
+		self.m_Vehicle:setOverrideLights(0)
+	end
     showChat(true)
 	RadioGUI:getSingleton():setVolume(self.m_CarRadioVolume)
 	HUDRadar:getSingleton():show()
@@ -118,10 +122,12 @@ function VehicleCustomTextureGUI:destructor(closedByServer)
 end
 
 function VehicleCustomTextureGUI:rotateVehicle()
-	local rot = self.m_Vehicle:getRotation()
-	rot.z = rot.z+1
-	rot.z = rot.z > 360 and rot.z-360 or rot.z
-	self.m_Vehicle:setRotation(rot)
+	if self.m_Vehicle and isElement(self.m_Vehicle) then
+		local rot = self.m_Vehicle:getRotation()
+		rot.z = rot.z+1
+		rot.z = rot.z > 360 and rot.z-360 or rot.z
+		self.m_Vehicle:setRotation(rot)
+	end
 end
 
 function VehicleCustomTextureGUI:initTextures(textures)
@@ -143,7 +149,7 @@ end
 
 function VehicleCustomTextureGUI:Texture_Click(item)
     if item.Url then
-		TextureReplace.deleteFromElement(self.m_Vehicle)
+		TextureReplacer.deleteFromElement(self.m_Vehicle)
 		triggerServerEvent("vehicleCustomTextureLoadPreview", self.m_Vehicle, item.Url, self.m_Tuning:getTuning("Color1"), self.m_Tuning:getTuning("Color2"), localPlayer)
 	end
 end
@@ -164,10 +170,9 @@ addEventHandler("vehicleCustomTextureShopEnter", root,
 )
 
 function VehicleCustomTextureGUI.Exit(closedByServer)
-	if vehicleTuningShop then
+	if vehicleTuningShop and vehicleTuningShop.m_Vehicle and isElement(vehicleTuningShop.m_Vehicle) then
 		vehicleTuningShop.m_Vehicle:setDimension(0)
 		localPlayer:setDimension(0)
-
 		delete(vehicleTuningShop, closedByServer)
 		vehicleTuningShop = false
 		localPlayer.m_inTuning = false

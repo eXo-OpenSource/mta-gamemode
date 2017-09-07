@@ -6,12 +6,14 @@
 -- *
 -- ****************************************************************************
 
+JOB_GRAVEL_MIN_SYNC_DISTANCE = 3
+
 JobGravel = inherit(Job)
 
-addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission"}
+addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission", "gravelOnSync"}
 
 function JobGravel:constructor()
-	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
+	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", {190, 160, 4}, "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
 	-- add job to help menu
@@ -20,7 +22,9 @@ function JobGravel:constructor()
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
+	self.Event_onDebugRender = bind(self.onDebugRender, self)
 	addEventHandler("gravelDisableCollission", root, bind(self.Event_disableGravelCollission, self))
+	addEventHandler("gravelOnSync", root, bind(self.Event_onRockSync, self))
 
 end
 
@@ -39,7 +43,10 @@ function JobGravel:start()
 
 	self.m_DumperDeliverCol = createColSphere(824.22, 919.35, 13.35, 10)
 	self.m_DumperDeliverMarker = createMarker(824.22, 919.35, 13.35, "cylinder", 8, 255, 125, 0, 100)
-	self.m_DumperDeliverBlip = Blip:new("Waypoint.png", 824.22, 919.35, 999)
+	self.m_DumperDeliverBlip = Blip:new("Marker.png", 824.22, 919.35, 999)
+	self.m_DumperDeliverBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
+	self.m_DumperDeliverBlip:setDisplayText("Dumper-Abgabe")
+
 	addEventHandler("onClientColShapeHit", self.m_DumperDeliverCol, bind(self.onDumperDeliverColHit, self))
 
 	for index, col in pairs(self.m_GravelDeliverCol) do
@@ -81,8 +88,26 @@ function JobGravel:start()
 
 		addEventHandler("onClientColShapeHit", vehicle.col1, bind(self.onDozerColHit, self))
 		addEventHandler("onClientColShapeHit", vehicle.col2, bind(self.onDozerColHit, self))
+		addEventHandler("onClientVehicleCollision", vehicle, bind(self.onDozerCollide, self))
+
 		setTimer(bind(self.dozerCheckCleanup, self), 500, 1)
 	end)
+
+	if self.m_Timer then self.m_Timer:destroy() end
+	self.m_Timer = setTimer(bind(self.syncGravel, self), 1000, 0)
+
+	if getDevelopmentMode() then
+		addEventHandler("onClientRender", root, self.Event_onDebugRender)
+	end
+end
+
+function JobGravel:Event_onRockSync(data)
+	for k, v in pairs(data) do
+		if getDistanceBetweenPoints3D(v.element.position.x, v.element.position.y, v.element.position.z, v.posX, v.posY, v.posZ) > JOB_GRAVEL_MIN_SYNC_DISTANCE then
+			v.element:setPosition(v.posX, v.posY, v.posZ)
+			v.element:setVelocity(v.velX, v.velY, v.velZ)
+		end
+	end
 end
 
 function JobGravel:onGravelDestroyHit(hitElement)
@@ -155,6 +180,8 @@ function JobGravel:stop()
 
 	removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
 
+	if self.m_Timer and isElement(self.m_Timer) then self.m_Timer:destroy() end
+	removeEventHandler("onClientRender", root, self.Event_onDebugRender)
 	-- delete infopanels
 	delete(self.m_GravelImage)
 
@@ -175,7 +202,10 @@ function JobGravel:generateRocks()
 		local x, y, z, rot = unpack(data["rock"])
 		self.m_Rocks[index] = createObject(900, x, y, z, 0, 0, rot)
 		self.m_RockCols[index] = createColSphere(data["col"], 6)
-		self.m_RockCols[index].Blip = Blip:new("SmallPoint.png", data["col"].x, data["col"].y)
+		self.m_RockCols[index].Blip = Blip:new("Marker.png", data["col"].x, data["col"].y)
+		self.m_RockCols[index].Blip:setColor(BLIP_COLOR_CONSTANTS.Yellow)
+		self.m_RockCols[index].Blip:setSize(Blip.getDefaultSize()/2)
+		self.m_RockCols[index].Blip:setDisplayText("Stein")
 		self.m_RockCols[index].Rock = self.m_Rocks[index]
 		self.m_RockCols[index].Times = math.random(4, 10)
 		addEventHandler("onClientColShapeHit", self.m_RockCols[index], self.m_OnRockColHitBind)
@@ -187,6 +217,68 @@ end
 function JobGravel:onDozerColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
 		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
+	end
+end
+
+function JobGravel:onDozerCollide(gravel)
+	if gravel and gravel:getModel() == 2936 then
+		if getElementData(gravel, "mined") then
+			if getElementData(gravel, "syncer") ~= localPlayer then
+				setElementData(gravel, "syncer", localPlayer, true)
+			end
+
+			if not getElementData(gravel, "lastSync") or getElementData(gravel, "lastSync") < getRealTime().timestamp then
+				setElementData(gravel, "lastSync", getRealTime().timestamp, true)
+				gravel.m_LastPosition = gravel.position
+				
+				triggerServerEvent("gravelOnSync", gravel, gravel.position.x, gravel.position.y, gravel.position.z, gravel.velocity.x, gravel.velocity.y, gravel.velocity.z)
+			end
+		end
+	end
+end
+
+function JobGravel:syncGravel()
+	for k, v in ipairs(getElementsByType("object", root, true)) do
+		if v:getModel() == 2936 then
+			if getElementData(v, "mined") and getElementData(v, "syncer") == localPlayer then
+				if not getElementData(v, "lastSync") or getElementData(v, "lastSync") < getRealTime().timestamp then
+					if not v.m_LastPosition or not (v.position.x == v.m_LastPosition.x and v.position.y == v.m_LastPosition.y and v.position.z == v.m_LastPosition.z) then 
+						setElementData(v, "lastSync", getRealTime().timestamp, true)
+						v.m_LastPosition = v.position
+						
+						triggerServerEvent("gravelOnSync", v, v.position.x, v.position.y, v.position.z, v.velocity.x, v.velocity.y, v.velocity.z)
+					end
+				end
+			end
+		end
+	end
+end
+
+function JobGravel:onDebugRender()
+	for k, v in ipairs(getElementsByType("object", root, true)) do
+		if v:getModel() == 2936 then
+			if v:getData("mined") then
+				local vX, vY = getScreenFromWorldPosition(v.position, 0, false)
+				if vX and vY then
+					local syncer = "none"
+					local lastSync = 0
+					local moved = not v.m_LastPosition or not (v.position.x == v.m_LastPosition.x and v.position.y == v.m_LastPosition.y and v.position.z == v.m_LastPosition.z)
+
+					if getElementData(v, "syncer") then syncer = getElementData(v, "syncer"):getName() end
+					if getElementData(v, "lastSync") then lastSync = getElementData(v, "lastSync") end
+
+		
+					local text = "Syncer: "..syncer 
+					text = text .. "\nLastSync: " .. lastSync 
+					text = text .. "\nMoved: " .. tostring(moved)
+					text = text .. "\nCurPos: " .. tostring(v.position)
+					text = text .. "\nLstPos: " .. tostring(v.m_LastPosition) 
+
+					dxDrawText(text, vX - 1, vY - 1, nil, nil, tocolor(0, 0, 0, 255))
+					dxDrawText(text, vX, vY)
+				end
+			end
+		end
 	end
 end
 

@@ -33,3 +33,6 @@ removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
 removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
 removeWorldModel(4215, 77, 1777.8, -1773.9, 12.5)
 --FACTION REMOVALS ENDE
+
+--Tree at 0,0,0
+removeWorldModel(672, 11, -35.71, 18.10, 3.47)

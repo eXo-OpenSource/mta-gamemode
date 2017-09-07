@@ -13,25 +13,25 @@ function JobLogistician:constructor()
 	Job.constructor(self)
 
 	-- Create Cranes
-	self.m_Cranes = {
+		self.m_Cranes = {
 		["LS-Docks"] = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6),
 		["Fleischberg"] = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30),
 		["Las Venturas"] = Crane:new(1607.5, 2300.1, 16.40, 1607.5, 2371.20, 16.40),
-		["San Fierro"] = Crane:new(-2078, 1360.40, 13, -2078, 1425.40, 13),
+		["San Fierro"] = Crane:new(-1748.382, 104.676, 9.474, -1748.382, 149.426, 9.474),
 	}
 
 	self.m_Markers = {
 		["LS-Docks"] = self:createCraneMarker(self.m_Cranes["LS-Docks"], Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0),
 		["Fleischberg"] = self:createCraneMarker(self.m_Cranes["Fleischberg"], Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180),
 		["Las Venturas"] = self:createCraneMarker(self.m_Cranes["Las Venturas"], Vector3(1607.5, 2300.10, 9.8), Vector3(1607.5, 2299.10, 11.4), 180),
-		["San Fierro"] = self:createCraneMarker(self.m_Cranes["San Fierro"], Vector3(-2078, 1360.40, 6.4), Vector3(-2078, 1358.40, 7.8), 180),
+		["San Fierro"] = self:createCraneMarker(self.m_Cranes["San Fierro"], Vector3(-1748.382, 104.676, 2.7), Vector3(-1748.38, 103.41, 4.34), 180),
 	}
 
 	self.m_VehicleSpawners = {
 		["LS-Docks"] = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self)),
 		["Fleischberg"] = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self)),
 		["Las Venturas"] = VehicleSpawner:new(1595.93, 2294.12, 9.8, {"DFT-30"}, 220, bind(Job.requireVehicle, self)),
-		["San Fierro"] = VehicleSpawner:new(-2067.19, 1341, 6.1, {"DFT-30"}, 180, bind(Job.requireVehicle, self)),
+		["San Fierro"] = VehicleSpawner:new(-1738.31, 87.00, 2.52, {"DFT-30"}, 150, bind(Job.requireVehicle, self)),
 
 	}
 
@@ -93,8 +93,8 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 	end
 	player:startNavigationTo(pos)
 
-	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player,9999)
-	blip:setStreamDistance(10000)
+	local blip = Blip:new("Marker.png", pos.x, pos.y, player,9999, BLIP_COLOR_CONSTANTS.Red)
+		blip:setDisplayText("Container-Abgabepunkt")
 	player:setData("Logistician:Blip", blip)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
@@ -136,6 +136,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						function()
 							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 							hitElement.m_LastJobAction = getRealTime().timestamp
+							outputDebug(getDistanceBetweenPoints3D(hitElement:getData("Logistician:LastCrane").m_Object:getPosition(), crane.m_Object:getPosition()))
 							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
 							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
@@ -197,7 +198,7 @@ function Crane:dropContainer(vehicle, player, callback)
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	self.m_Timer = setTimer(function()
@@ -214,7 +215,7 @@ function Crane:dropContainer(vehicle, player, callback)
 			detachElements(container)
 			attachElements(container, self.m_Tow, 0, 0, -4.1, 0, 0)
 			vehicle:setFrozen(false)
-			toggleAllControls(player, true)
+			toggleAllControls(player, true, true, false)
 
 			-- Roll up the tow
 			self:rollTowUp(
@@ -262,7 +263,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	self.m_Container = container
 
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
@@ -297,7 +298,7 @@ function Crane:loadContainer(vehicle, player, callback)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
 											self.m_Container = nil
 											vehicle:setFrozen(false)
-											toggleAllControls(player, true)
+											toggleAllControls(player, true, true, false)
 
 											-- Roll up the tow a last time
 											self:rollTowUp(

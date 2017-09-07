@@ -11,96 +11,66 @@ Nametag.font = "default-bold"
 Nametag.fontSize = 2
 addEvent("reciveNametagBuffs", true)
 local maxDistance = 50
-local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck, distanceDiff, alpha
-local fontHeight
 
 function Nametag:constructor()
 	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
-	self.m_StreamIn = bind(self.Event_StreamIn, self)
-	self.m_StreamOut = bind(self.Event_StreamOut, self)
 
-	addEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
-	addEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
-	addEventHandler("onClientRender", root, self.m_Draw)
-	local pTable = getElementsByType("player",root)
-	for k, p in ipairs( pTable ) do
-		if p ~= localPlayer then
-			if isElementStreamedIn(p) then
-				self.m_Stream[p] = true
-			end
-		end
-	end
+	addEventHandler("onClientRender", root, self.m_Draw, true, "high")
+	setPedTargetingMarkerEnabled(false)
 end
 
 function Nametag:destructor()
-	removeEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
-	removeEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
 	removeEventHandler("onClientRender", root, self.m_Draw)
-end
-
-function Nametag:Event_StreamIn()
-	if source ~= localPlayer then
-		if getElementType(source) == "player" then
-			self.m_Stream[source] = true
-			setPlayerNametagShowing(source, false)
-		end
-	end
-end
-
-function Nametag:Event_StreamOut()
-	if source ~= localPlayer then
-		if getElementType(source) == "player" then
-			self.m_Stream[source] = nil
-		end
-	end
+	setPedTargetingMarkerEnabled(true)
 end
 
 function Nametag:draw()
-	cx,cy,cz = getCameraMatrix()
-	bRifleCheck = self:_weaponCheck()
-	for player, _ in pairs( self.m_Stream ) do
-		if isElement(player) then
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/Nametag") end
+	local cx,cy,cz = getCameraMatrix()
+	local bRifleCheck = self:_weaponCheck()
+	local lpX, lpY, lpZ = getElementPosition(localPlayer)
+	for _, player in pairs(getElementsByType("player", root, true)) do
+		if player ~= localPlayer then
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag") end
 			setPlayerNametagShowing(player, false)
-			bOnScreen = isElementOnScreen( player )
-			px,py,pz = getElementPosition(player)
-			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
-			if (bDistance <= maxDistance) or bRifleCheck == player then
-				distanceDiff = maxDistance - bDistance
-				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
-				if bLineOfSight or bRifleCheck == player then
-					scx,scy = getScreenFromWorldPosition( px, py, pz+1 )
-					if scx and scy then
-						drawName = getPlayerName(player)
-						fontSize =  1+ ( 10 - bDistance ) * 0.08
-						if fontSize <= 0.7 then
-							fontSize = 0.7
+			local pX, pY, pZ = getElementPosition(player)
+			local phX, phY, phZ = player:getBonePosition(8)
+			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
+			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
+			if (bDistance <= maxDistance) then
+				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
+				if scx and scy then
+					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
+					if bLineOfSight then
+						local drawName = getPlayerName(player)
+						local wanteds = player:getWanteds()
+						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
+						local alpha = math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
+						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
+						local textWidth = dxGetTextWidth(drawName, 1.5*size, Nametag.font)
+						local fontHeight = dxGetFontHeight(1.5*size,Nametag.font)
+
+						if self:drawIcons(player, scx, scy, fontHeight, alpha) then
+							scy = scy - fontHeight
 						end
-						if distanceDiff <= 10 then
-							alpha = distanceDiff*25
+						if wanteds > 0 then
+							dxDrawImage(scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, fontHeight*2.2, fontHeight*2.2, "files/images/Nametag/wanted.png", 0, 0, 0, tocolor(200, 150, 0, 255*alpha))
+							dxDrawText(wanteds, scx - textWidth/2 - fontHeight*2, scy - fontHeight*1.1, ( scx - textWidth/2 - fontHeight*2 )+ fontHeight*2.2, (scy - fontHeight*1.1)+ fontHeight*2.4, tocolor(0, 0, 0, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							--dxDrawText(wanteds, scx - textWidth/2 - fontHeight, scy, nil, nil, tocolor(255, 255, 255, 255*alpha), 1.5*size, Nametag.font, "center", "center")
+							scx = scx + fontHeight
 						end
-						if bRifleCheck == player then
-							fontSize = 1
-							alpha = 255
-						end
-						fontHeight = dxGetFontHeight(fontSize,Nametag.font)
-						textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
-						armor = getPedArmor(player)
-						health = getElementHealth(player)
-						r,g,b =  self:getColorFromHP(health)
-						dxDrawText( drawName, (scx- (textWidth*0.5)), (scy-fontHeight*2)+1, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(0,0,0, alpha) ,fontSize, Nametag.font, "center" )
-						dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r*0.9,g*0.9,b*0.9, alpha) ,fontSize, Nametag.font, "center" )
-						self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight, alpha)
-						alpha = 255
+						if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/Nametag", true) end
+						dxDrawText(player:getName(), scx + 1,scy + 1, nil, nil, tocolor(0, 0, 0, 255*alpha), 2*size, Nametag.font, "center", "center")
+						dxDrawText(player:getName(), scx,scy, nil, nil, tocolor(r, g, b, 255*alpha), 2*size, Nametag.font, "center", "center")
 					end
 				end
 			end
 		end
 	end
-	bRifleCheck = false
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/Nametag") end
 end
-
 
 function Nametag:_weaponCheck ( player )
 	if isPedAiming ( localPlayer ) and (getPedWeaponSlot ( localPlayer ) == 6 or getPedWeaponSlot ( localPlayer ) == 5)  then
@@ -120,7 +90,7 @@ function Nametag:_weaponCheck ( player )
 	return false
 end
 
-function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
+function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	if isChatBoxInputActive() then
 		setElementData(localPlayer, "writing", true)
 	else
@@ -128,54 +98,44 @@ function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
 	end
 
 	local icons = {}
-
-	if armor and player:getArmor() > 0 then
-		icons[#icons+1] = "armor.png"
-	end
 	if getElementData(player,"writing") == true then
 		icons[#icons+1] = "chat.png"
-	end
-	if (player:getPublicSync("Rank") or 0) > 0 then
-		icons[#icons+1] = "admin.png"
-	end
-	if player:getWanteds() > 0 then
-		icons[#icons+1] = "w"..player:getWanteds()..".png"
 	end
 	if player:getFaction() then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
-	if align == "center" then
-		startX = startX
-	end
 	local bHasBigGun = false
 	if not getElementData(player, "CanWeaponBeConcealed") then
-		for i = 3,7 do 
+		for i = 3,7 do
 			bHasBigGun = getPedWeapon(player,i)
 			if bHasBigGun ~= 0 then
 				bHasBigGun = true
 				break;
-			else 
+			else
 				bHasBigGun = false
 			end
 		end
 	end
-	if bHasBigGun then 
+	if bHasBigGun then
 		icons[#icons+1] = "gun.png"
 	end
-	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then 
+	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then
 		icons[#icons+1] = "seatbelt.png"
 	end
 	for index, icon in pairs(icons) do
-		dxDrawImage(startX+((index-1)*width*1.1), startY, width, width, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,alpha))
+		index = index - 1
+		dxDrawImage(center_x - (#icons * height*1.1)/2 + index * height*1.1, center_y, height, height, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,255*alpha))
 	end
+	return #icons > 0
 end
 
-function Nametag:getColorFromHP(hp)
+function Nametag:getColorFromHP(hp, armor)
+	armor = armor*2
+	if armor >= 255 then armor = 255 end
 	if hp <= 0 then
 		return 0, 0, 0
 	else
-		hp = math.abs ( hp - 0.01 )
-		return ( 100 - hp ) * 2.55 / 2, ( hp * 2.55 ), 0
+		return math.min(255, (( 100 - hp ) * 2.55 / 2) + armor), math.min(255, (( hp * 2.55 )) + armor), armor
 	end
 end
 
@@ -200,11 +160,3 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
-
-local function disableNametags()
-	local players = getElementsByType("player", root, true)
-	for index = 1, #players do
-		setPlayerNametagShowing(players[index],false)
-	end
-end
-setTimer(disableNametags, 10000,1)

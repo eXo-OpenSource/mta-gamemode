@@ -2,8 +2,6 @@ GroupSaleVehicles = {}
 
 function GroupSaleVehicles.initalize()
     GroupSaleVehicles.loadVehicles()
-    addEventHandler("onClientElementStreamIn", getRootElement(), GroupSaleVehicles.VehiclestreamedIn)
-    addEventHandler("onClientElementStreamOut", getRootElement(), GroupSaleVehicles.VehiclestreamedOut)
 
 	addEventHandler("onClientElementDataChange", getRootElement(),
 		function(dataName)
@@ -27,8 +25,7 @@ function GroupSaleVehicles.loadVehicles()
 	end
 end
 
-function GroupSaleVehicles.VehiclestreamedIn()
-	local veh = source
+function GroupSaleVehicles.VehiclestreamedIn(veh)
 	if getElementType(veh) == "vehicle" then
 		if getElementData(veh, "OwnerType") == "group" and getElementData(veh, "forSale") == true then
 			GroupSaleVehicles.loadSpeekBubble(veh)
@@ -37,7 +34,6 @@ function GroupSaleVehicles.VehiclestreamedIn()
 end
 
 function GroupSaleVehicles.VehiclestreamedOut(veh)
-	local veh = source
 	if getElementType(veh) == "vehicle" then
 		if getElementData(veh, "OwnerType") == "group" and getElementData(veh, "forSale") == true then
 			GroupSaleVehicles.destroySpeekBubble(veh)

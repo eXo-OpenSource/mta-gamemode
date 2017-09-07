@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.3"
+PROJECT_VERSION = "1.3.37"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -11,6 +11,8 @@ MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
 MAX_FISHING_LEVEL = 10
+
+MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
@@ -52,6 +54,27 @@ JOB_LEVEL_GRAVEL = 6
 
 JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+BLIP_CATEGORY = {
+	Default = "Allgemein",
+	Shop = "Shops",
+	Job = "Arbeitsstellen",
+	Faction = "Fraktions-Basen",
+	Company = "Unternehmenssitze",
+	VehicleMaintenance = "Fahrzeug-Unterhaltung",
+	Leisure = "Freizeit",
+	Other = "Anderes",
+}
+
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
+BLIP_CATEGORY_ORDER = {
+	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
+}
+
 --USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
@@ -76,6 +99,8 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
+	["playerHistory"] = RANK.Supporter,
+	["eventGangwarMenu"] = RANK.Administrator,
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
 	["freeze"] = RANK.Supporter,
@@ -115,7 +140,9 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
+	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
 	["moveWorldItem"] = RANK.Moderator,
 	["deleteWorldItem"] = RANK.Moderator,
@@ -123,6 +150,7 @@ ADMIN_RANK_PERMISSION = {
 	["editHouse"] = RANK.Administrator,
 	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
 	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
+	["supermanFly"] = RANK.Moderator -- flying supporter
 }
 
 GroupRank = {
@@ -427,8 +455,6 @@ AD_COST = 30
 AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
-AD_COLORS = {"Orange", "Grün", "Hell-Blau"}
-
 AD_DURATIONS = {
 	["20 Sekunden"] = 20,
 	["30 Sekunden"] = 30,
@@ -446,7 +472,7 @@ WEAPON_NAMES = {
 	[7] = "Billiard Queue",
 	[8] = "Katana",
 	[9] = "Kettensäge",
-	[10] = "Langer Pinker Dildo",
+	[10] = "Langer Dildo",
 	[11] = "Kurzer Dildo",
 	[12] = "Vibrator",
 	[14] = "Blumen",
@@ -458,8 +484,8 @@ WEAPON_NAMES = {
 	[23] = "Taser",
 	[24] = "Desert Eagle",
 	[25] = "Schrotflinte",
-	[26] = "Abgesägte Schrotflinte",
-	[27] = "SPAZ-12 Spezialwaffe",
+	[26] = "Abgesägte Schrot",
+	[27] = "SPAZ-12",
 	[28] = "Uzi",
 	[29] = "MP5",
 	[30] = "AK-47",
@@ -543,10 +569,15 @@ for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
 
-MEDIC_TIME = 60000
-DEATH_TIME = 36000
-DEATH_TIME_PREMIUM = 21000
-DEATH_TIME_ADMIN = 11000
+MEDIC_TIME = 180000
+DEATH_TIME = 30000
+DEATH_TIME_PREMIUM = 0
+DEATH_TIME_ADMIN = 0
+
+if DEBUG then
+	MEDIC_TIME = 10000
+	DEATH_TIME = 0
+end
 
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
@@ -584,15 +615,17 @@ VRP_RADIO = {
 	{"User Track Player", 12}
 }
 
-BeggarTypes = {
+BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
 	Transport = 3;
     Weed = 4;
-	Ecstasy = 5;
+	Heroin = 5;
 }
+
+BeggarTypeNames = {}
 for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
+	BeggarTypeNames[v] = i
 end
 
 HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
@@ -696,20 +729,50 @@ HOUSE_INTERIOR_TABLE = {
 	[14] = {15, -284.0530090332, 1471.0965576172, 1084.375};
 	[15] = {4, -260.75534057617, 1456.6932373047, 1084.3671875};
 	[16] = {8, -42.373157501221, 1405.9846191406, 1084.4296875};
-	[17] = {0, -68.801879882813, 1351.6536865234, 1080.2109375};
-	[18] = {0, 2333.0395507813, -1076.3621826172, 1049.0234375};
-	[19] = {0, 271.884979, 306.631988, 999.148437};
-	[20] = {3, 291.282989, 310.031982, 999.148437};
-	[21] = {4, 302.180999, 300.72299, 999.148437};
-	[22] = {5, 322.197998, 302.497985, 999.148437};
-	[23] = {6, 346.870025, 309.259033, 999.148437};
-	[24] = {3, 513.882507, -11.269994, 1001.565307};
-	[25] = {2, 2454.717041, -1700.871582, 1013.515197};
-	[26] = {1, 2527.654052, -1679.388305, 1015.515197};
-	[27] = {5, 2350.339843, -1181.649902, 1027.0234375};
-	[28] = {8, 2807.619873, -1171.899902, 1025.5234375};
-	[29] = {5, 318.564971, 1118.209960, 1083.5234375};
-	[30] = {12, 2324.419921, -1145.568359, 1050.5234375};
-	[31] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
-	[32] = {0, -2170.5698242188, 358.4921875, 57.766414642334};
+	[17] = {2, 2454.717041, -1700.871582, 1013.515197};
+	[18] = {1, 2527.654052, -1679.388305, 1015.515197};
+	[19] = {8, 2807.619873, -1171.899902, 1025.5234375};
+	[20] = {5, 318.564971, 1118.209960, 1083.5234375};
+	[21] = {12, 2324.419921, -1145.568359, 1050.5234375};
+	[22] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
 }
+
+VEHICLE_PICKUP = {
+	[422] = true,
+	[554] = true,
+	[433] = true,
+	[444] = true,
+	[556] = true,
+	[557] = true,
+	[478] = true,
+	[578] = true,
+	[535] = true,
+	[543] = true,
+	[605] = true,
+	[600] = true,
+}
+
+CompanyStaticId = {
+	DRIVINGSCHOOL = 1,
+	MECHANIC = 2,
+	SANNEWS = 3,
+	EPT = 4,
+}
+
+FactionStaticId = {
+	SAPD = 1,
+	FBI = 2,
+	MBT = 3,
+	RESCUE = 4,
+	LCN = 5,
+	YAKUZZA = 6,
+	GROVE = 7,
+	BALLAS = 8,
+	OUTLAWS = 9,
+	VATOS = 10
+}
+
+FUEL_PRICE_MULTIPLICATOR = 2
+MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+SERVICE_FUEL_PRICE_MULTIPLICATOR = 5
+SERVICE_REPAIR_PRICE_MULTIPLICATOR = 5

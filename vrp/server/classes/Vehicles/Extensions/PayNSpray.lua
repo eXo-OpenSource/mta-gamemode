@@ -3,6 +3,8 @@ PayNSpray = inherit(Object)
 function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y, root, 600)
+	self.m_Blip:setDisplayText("Pay'N'Spray Autoreparatur", BLIP_CATEGORY.VehicleMaintenance)
+	self.m_Blip:setOptionalColor({67, 121, 98})
 	if garageId then
 		setGarageOpen(garageId, true)
 	elseif isElement(self.m_CustomDoor) then
@@ -18,7 +20,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 				if not vehicle or getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 					return
 				end
-				if vehicle.m_IsAutoLesson then 
+				if vehicle.m_IsAutoLesson then
 					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
 				end
 				if vehicle:getHealth() > 999 then
@@ -44,6 +46,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()
+						if not isElement(hitElement) then return end
 						if hitElement:getBankMoney() >= costs then
 							vehicle:fix()
 							vehicle:setWheelStates(0, 0, 0, 0)
@@ -59,8 +62,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 						end
 						vehicle.m_DisableToggleHandbrake = nil
 					end,
-					3000,
-					1
+					3000, 1
 				)
 			end
 		end

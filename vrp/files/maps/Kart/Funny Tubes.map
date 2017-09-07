@@ -27,7 +27,7 @@
     <object id="object (arptpillar01_lvs) (18)" breakable="true" interior="0" collisions="true" alpha="255" model="3440" doublesided="false" scale="1" dimension="0" posX="1287.7" posY="66" posZ="23.3" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (DYN_ROADBARRIER_6) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="1459" doublesided="false" scale="1" dimension="0" posX="1323" posY="88" posZ="20.7" rotX="0" rotY="0" rotZ="334"></object>
     <object id="object (Vgs_guardhouse01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="8168" doublesided="false" scale="1" dimension="0" posX="1302.4" posY="125.1" posZ="21.7" rotX="0" rotY="0" rotZ="248.243"></object>
-    <info id="info (1)" Mapname="Funrace" Author="StiviK, Stumpy, Chris411" model="295" posX="1299.7998" posY="124.59961" posZ="21.2" rotX="0" rotY="0" rotZ="56.492"></info>
+    <info id="info (1)" Mapname="Funrace" Author="StiviK, Stumpy, Chris411" model="295" posX="1299.7998" posY="124.59961" posZ="21.2" rotX="0" rotY="0" rotZ="56.492" Respawn="true"></info>
     <startmarker id="startmarker (1)" posX="1298.7" posY="125.3" posZ="20.1" rotX="0" rotY="0" rotZ="0"></startmarker>
     <object id="object (sub_roadbarrier) (39)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="true" scale="1" dimension="0" posX="1336.2" posY="63.1" posZ="21.1" rotX="0" rotY="0" rotZ="115.724"></object>
     <object id="object (sub_roadbarrier) (40)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="true" scale="1" dimension="0" posX="1336.4" posY="54.7" posZ="21.1" rotX="0" rotY="0" rotZ="66.968"></object>

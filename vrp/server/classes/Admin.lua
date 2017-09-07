@@ -67,6 +67,7 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
+	addCommandHandler("cookie", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
@@ -74,7 +75,8 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
+
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -91,8 +93,11 @@ function Admin:constructor()
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
 	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
-
-
+	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
+	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
+	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
+	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
+	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -110,6 +115,8 @@ function Admin:constructor()
 	end, 10000, 0)
 
 	if DEBUG then
+		addCommandHandler("placeObject", bind(self.placeObject, self))
+
 		addEventHandler("onDebugMessage", root, function(message, level, file, line)
 			for player, rank in pairs(self.m_OnlineAdmins) do
 				if rank >= RANK.Supporter then
@@ -119,6 +126,73 @@ function Admin:constructor()
 		end)
 	end
 
+end
+
+function Admin:Event_OnAdminGangwarReset( id, ts )
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		local area = Gangwar:getSingleton().m_Areas[id] 
+		if area then 
+			if not ts then ts = 0 end 
+			if ts < 0 then ts = 0 end
+			local time = getRealTime(ts)
+			local day = time.monthday
+			local month = time.month+1
+			local year = time.year+1900
+			local hour = time.hour
+			local minute = time.minute 
+			ts = ts - ( GANGWAR_ATTACK_PAUSE * UNIX_TIMESTAMP_24HRS )
+			if ts < 0 then ts = 0 end
+			area.m_LastAttack = ts
+			area:update()
+			area.m_RadarArea:delete()
+			area:createRadar()
+			self:sendShortMessage(_("%s hat die Attackier-Zeit des Gebietes %s geändert!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name))
+			client:sendInfo(_("Das Gebiet wird freigegeben am: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !", client))
+			client:triggerEvent("gangwarRefresh")
+			StatisticsLogger:getSingleton():addAdminAction( client, "GW-AttackTime", "Gebiet: "..Gangwar:getSingleton().m_Areas[id].m_Name.."; AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+		end
+	end
+end
+
+function Admin:Event_OnAdminGangwarChangeOwner( id, faction) 
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		if id and faction and id > 0 and faction > 0 then 
+			local area = Gangwar:getSingleton().m_Areas[id] 
+			if area then 
+				local faction = FactionManager:getSingleton():getFromId(faction)
+				area.m_Owner = faction.m_Id
+				local now = getRealTime().timestamp
+				area.m_LastAttack = now
+				area:update()
+				area.m_RadarArea:delete()
+				area:createRadar()
+				client:sendInfo(_("Das Gebiet wurde umgesetzt!", client))
+				self:sendShortMessage(_("%s hat das Gebiet %s der Fraktion %s gesetzt!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name, faction:getShortName()))
+				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "Gebiet: " ..Gangwar:getSingleton().m_Areas[id].m_Name.." Fraktion: "..faction:getShortName().." !")
+				client:triggerEvent("gangwarRefresh")
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStartRequest() 
+	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then
+				exports["superman"]:startSuperMan(client)
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStopRequest()
+	if client:getRank() >= RANK.Moderator then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then
+				exports["superman"]:stopSuperMan(client)
+			end
+		end
+	end
 end
 
 function Admin:destructor()
@@ -275,7 +349,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" then
+                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
                             self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
                             return
                         else
@@ -294,7 +368,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         if cmd == "spect" or cmd == "unprison" or cmd == "freeze" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
-        elseif cmd == "rkick" or cmd == "permaban" then
+        elseif cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
             admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
             return
         else
@@ -422,7 +496,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
             local text = target
-            triggerClientEvent("announceText", admin, text)
+            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
@@ -559,7 +633,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin:setInterior(0)
 			admin:setDimension(0)
 			admin:setPosition(x, y, z)
-			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
+			if admin.vehicle then
+				admin.vehicle:setInterior(0)
+				admin.vehicle:setDimension(0)
+				admin.vehicle:setPosition(x, y, z)
+			else
+				admin:setPosition(x, y, z)
+			end
+			self:sendShortMessage(_("%s hat sich nach %s geportet!", admin, admin:getName(), getZoneName(x, y, z)))
 			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
 		elseif func == "nickchange" or func == "offlineNickchange" then
 			local changeTarget = false
@@ -599,6 +680,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				end
 			else
       		  admin:sendError(_("Ungültiges Ziel!", admin))
+			end
+		elseif func == "cookie" then
+			local reason = reason:gsub("_", " ")
+			if target:getInventory():giveItem("Keks", 1) then
+				target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
+				self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+			else
+				admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
 			end
         end
     else
@@ -666,6 +755,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(260)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", true)
+		end
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
 		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
@@ -676,6 +768,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(player:getPublicSync("Admin:OldSkin"))
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", false)
+		end
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
 		self:toggleJetPack(player)
@@ -920,17 +1015,28 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
-        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+        if targetPlayer:getFaction() then
+			local faction = targetPlayer:getFaction()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
+			end
+			faction:removePlayer(targetPlayer)
+		end
 
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
     		if faction then
-    			faction:addPlayer(targetPlayer,6)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
+				end
+
+    			faction:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -940,15 +1046,27 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
-        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
+
+        if targetPlayer:getCompany() then
+			local company = targetPlayer:getCompany()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
+			end
+			company:removePlayer(targetPlayer)
+		end
+
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
     		if company then
-    			company:addPlayer(targetPlayer,5)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
+				end
+    			company:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -1214,4 +1332,35 @@ function Admin:Event_OnAcceptOverlapCheck()
 	else
 		source:sendError("Erst ab Administrator!")
 	end
+end
+
+function Admin:sendNewPlayerMessage(player)
+	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
+end
+
+function Admin:placeObject(player, cmd, model)
+	if player:getRank() < RANK.Administrator then
+		return
+	end
+
+	if model and tonumber(model) then
+		player:triggerEvent("objectPlacerStart", tonumber(model), "adminObjectPlaced", false, true)
+		player.m_PlacingInfo = {["model"] = model}
+		return true
+	else
+		player:sendError(_("Syntax: /placeObject [Model-ID]", player))
+	end
+end
+
+function Admin:Event_ObjectPlaced(x, y, z, rotation)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	outputChatBox(("Position: %.2f, %.2f, %.2f"):format(x, y, z))
+	outputChatBox(("Rotation: 0, 0, %.2f"):format(rotation))
+
+	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
+	client.m_PlacingInfo = nil
+	return
 end

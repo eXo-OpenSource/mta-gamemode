@@ -1,4 +1,4 @@
-﻿-- ****************************************************************************
+-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIElements/VRPFont.lua
@@ -8,15 +8,15 @@
 
 -- This rescales our font to look good on a certain pixel height
 local VRPFonts = {}
-function VRPFont(height, font)
-	local fontsize = math.floor(height/1.6)
+function VRPFont(height, font, bold)
+	local fontsize = math.floor(height/1.6) + (bold and 10000 or 0)
 	font = font or Fonts.EkMukta
 
 	if not VRPFonts[font] then
 		VRPFonts[font] = {}
 	end
 	if not VRPFonts[font][fontsize] then
-		VRPFonts[font][fontsize] = dxCreateFont(font, fontsize)
+		VRPFonts[font][fontsize] = dxCreateFont(font, fontsize - (bold and 10000 or 0), bold)
 	end
 
 	return VRPFonts[font][fontsize]
@@ -81,6 +81,8 @@ FontAwesomeSymbols = {
 	Arrows = "",
 	Double_Up = "",
 	Double_Down = "",
+	Double_Left = "",
+	Double_Right = "",
 	Music = "",
 	Random = "",
 	Handshake = "",
@@ -88,6 +90,7 @@ FontAwesomeSymbols = {
 	Medikit = "",
 	IDCard = "",
 	Document = "",
+	Taxi = "",
 	Bolt = "",
 	Speedo = "",
 	Long_Down = "",
@@ -103,6 +106,12 @@ FontAwesomeSymbols = {
 	Comment = "",
 	Anchor = "",
 	Points = "",
+	Calender_Time = "",
+	Calender_Check = "",
+	Desktop = "",
+	Newspaper = "",
+	Advertisement = "",
+	Fire = "",
 }
 
 Fonts = {

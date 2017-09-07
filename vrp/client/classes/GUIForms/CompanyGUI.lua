@@ -43,17 +43,32 @@ function CompanyGUI:constructor()
 	if localPlayer:getCompany():getId() == 3 then -- San News
 		self.m_SanNewsToggleMsg = GUIButton:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.3, self.m_Height*0.07, _"/sannews de/aktivieren", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsToggleMsg.onLeftClick = bind(self.SanNewsToggleMessage, self)
+
+		self.m_SanNewsStartStreetrace = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", tabAllgemein):setBarEnabled(true)
+		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
+	end
+
+	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
+	self.m_BindButton.onLeftClick = function()
+	if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+		self:close()
+		self.m_BindManageGUI = BindManageGUI:new("company")
+		self.m_BindManageGUI:addBackButton(function() CompanyGUI:getSingleton():show() end)
 	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
+	self.m_tabMitglieder = tabMitglieder
 	self.m_CompanyPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.5, self.m_Height*0.8, tabMitglieder)
-	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.5)
+	self.m_CompanyPlayersGrid:addColumn(_"", 0.06)
+	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_CompanyPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_CompanyPlayersGrid:addColumn(_"Aktivität", 0.27)
 	self.m_CompanyAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_CompanyRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
 	self.m_CompanyRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
 	self.m_CompanyRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
+
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_CompanyQuitButton.onLeftClick = bind(self.CompanyQuitButton_Click, self)
@@ -63,13 +78,13 @@ function CompanyGUI:constructor()
 	self.m_CompanyRemovePlayerButton.onLeftClick = bind(self.CompanyRemovePlayerButton_Click, self)
 	self.m_CompanyRankUpButton.onLeftClick = bind(self.CompanyRankUpButton_Click, self)
 	self.m_CompanyRankDownButton.onLeftClick = bind(self.CompanyRankDownButton_Click, self)
+	self.m_CompanyToggleLoanButton.onLeftClick = bind(self.CompanyToggleLoanButton_Click, self)
 
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 
 	addRemoteEvents{"companyRetrieveInfo", "companyRetrieveLog"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
 	addEventHandler("companyRetrieveLog", root, bind(self.Event_companyRetrieveLog, self))
-
 end
 
 function CompanyGUI:destructor()
@@ -137,6 +152,8 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
+		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
 		self.m_LeaderTab = true
 	end
 end
@@ -176,8 +193,15 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 
 			self.m_CompanyPlayersGrid:clear()
 			for _, info in ipairs(players) do
-				local item = self.m_CompanyPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
+				local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+				local item = self.m_CompanyPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+				item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 				item.Id = info.playerId
+
+				item.onLeftClick =
+					function()
+						self.m_CompanyToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+					end
 			end
 
 			if rank >= CompanyRank.Manager then
@@ -243,10 +267,19 @@ function CompanyGUI:CompanyAddPlayerButton_Click()
 	)
 end
 
+function CompanyGUI:CompanyPlayerFileButton_Click()
+	self:close()
+	HistoryPlayerGUI:new(CompanyGUI)
+end
+
+
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("companyDeleteMember", root, selectedItem.Id)
+
+		HistoryUninviteGUI:new(function(internal, external)
+			triggerServerEvent("companyDeleteMember", root, selectedItem.Id, internal, external)
+		end)
 	else
 		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
 	end
@@ -263,6 +296,13 @@ function CompanyGUI:CompanyRankDownButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("companyRankDown", root, selectedItem.Id)
+	end
+end
+
+function CompanyGUI:CompanyToggleLoanButton_Click()
+	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("companyToggleLoan", root, selectedItem.Id)
 	end
 end
 

@@ -1,22 +1,26 @@
+image: git.heisi.at:5005/exo/mta-gamemode-build:latest
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+
 stages:
-  - setup_env
   - build
   - fast_deploy
   - build_docker
   - deploy
-  - clean_env
 
-# Setup jobs
-env_setup_job:
-  stage: setup_env
-  script:
-   - sudo docker info
-   - sudo dpkg --add-architecture i386
-   - sudo apt-get update -qq
-   - sudo apt-get install -y -qq python3 git lua5.1 libc6:i386 libz1:i386 libstdc++6:i386
-
+before_script:
+  - docker info
+  
 # Build jobs
 build_app_job:
+  tags:
+    - linux
+    - dind
   stage: build
   script:
     - 'echo "GIT_VERSION=\"$(git rev-parse HEAD)\" ; GIT_BRANCH=\"$CI_BUILD_REF_NAME\"" >> vrp/buildinfo.lua'
@@ -24,7 +28,6 @@ build_app_job:
     - python3 build/buildscript.py $CI_BUILD_REF_NAME
     - python3 build/packAssets.py
     - ./build/make_archives.sh
-    - rm -rf vrp_assets
   artifacts:
     name: "$CI_BUILD_NAME"
     expire_in: 2 days
@@ -33,21 +36,28 @@ build_app_job:
       - assets.tar.gz
 
 build_docker_job:
+  tags:
+    - linux
+    - dind
   stage: build_docker
   script:
-    - cp /builddata/workerserver build/workerserver # Built by deploy-workerunit project
-    - cp /builddata/ml_gps.so build/ml_gps.so # Built by mta-module-gps project
-    - sudo docker build -t exo-rl-mta .
-    - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
-    - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
-    - sudo docker push $DOCKER_USER/exo-rl-mta
-    - sudo docker logout
-  except:
-    - /^bugfix\/.*$/
+    - wget -q -O build/workerserver https://do-not.press/exo/workerserver # Built by deploy-workerunit project
+    - wget -q -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
+    - docker build -t exo-rl-mta .
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
+    - '[ "$CI_BUILD_REF_NAME" == "master" ] && docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest'
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - master
+    - release/pre-production
+    - release/production
 
 # Deploy jobs
 deploy_job_bugfixes:
+  tags:
+    - linux
+    - dind
   stage: fast_deploy
   script:
     - curl -F "file=@artifacts.tar.gz" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:5002/upload
@@ -59,10 +69,12 @@ deploy_job_bugfixes:
     - /^bugfix\/.*$/
 
 deploy_job_develop:
+  tags:
+    - linux
+    - dind
   stage: deploy
   script:
     #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
@@ -71,6 +83,9 @@ deploy_job_develop:
     - master
 
 deploy_job_testing:
+  tags:
+    - linux
+    - dind
   stage: deploy
   script:
     - curl http://192.168.122.20:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
@@ -81,30 +96,16 @@ deploy_job_testing:
     - release/testing
 
 deploy_job_production:
+  tags:
+    - linux
+    - dind
   stage: deploy
   script:
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production
     url: http://mta.exo-reallife.de:5000/
   only:
     - release/production
-  when: manual
-
-# Cleanup jobs
-clean_env_job_docker:
-  stage: clean_env
-  script:
-    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
-    #- '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest' # Keep master image to use the cache
-    #- sudo docker rmi exo-rl-mta
-    - '(IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES) || echo' # Remove dangling images
-  except:
-    - /^bugfix\/.*$/
-  when: always
-
-clear_cache:
-  stage: clean_env
-  script:
-    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest exo-rl-mta # Remove cached images
   when: manual

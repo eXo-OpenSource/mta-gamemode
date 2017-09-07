@@ -16,16 +16,33 @@ function Guns:constructor()
 
 	for index,skill in pairs(weaponSkills) do
 		-- Taser:
-		setWeaponProperty (23, skill, "weapon_range", 10 )
-		setWeaponProperty (23, skill, "maximum_clip_ammo", 9999 )
-		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
+		setWeaponProperty(23, skill, "weapon_range", 10 )
+		setWeaponProperty(23, skill, "maximum_clip_ammo", 9999 )
+		setWeaponProperty(23, skill, "anim_loop_stop", 0 )
+		-- Deagle:
+		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		-- Uzi:
+		setWeaponProperty(28, skill, "accuracy",1.1000000238419) -- GTA-Std: 1.1000000238419
+		-- MP5:
+		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
+		-- M4:
+		setWeaponProperty(31, skill, "accuracy", 0.9) -- GTA-Std: 0.80000001192093
+		setWeaponProperty(31, skill, "weapon_range",105) -- GTA-Std: 90
+		-- Tec-9:
+		setWeaponProperty(32, skill, "weapon_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "target_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "accuracy",1.1999999523163) -- GTA-Std: 1.1000000238419
+		-- Rifle:
+		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
+		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage","Guns:toggleWeapon"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-	addEventHandler("Guns:toggleWeapon", root, bind(self.Event_ToggleWeapon, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
@@ -50,7 +67,7 @@ function Guns:Event_onTaser(target)
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
-	toggleAllControls(target,false)
+	toggleAllControls(target,false, true, false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
 	target.isTasered = true
 	setElementData(target, "isTasered", true)
@@ -58,7 +75,7 @@ function Guns:Event_onTaser(target)
 		setElementData(target, "isTasered", false)
 		target:setAnimation()
 		target:setFrozen(false)
-		toggleAllControls(target,true)
+		toggleAllControls(target,true, true, false)
 		target.isTasered = false
 	end, 15000, 1, target )
 end
@@ -96,19 +113,38 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			end
 			target:triggerEvent("clientBloodScreen")
 			target:setHeadless(true)
-			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
-			if not target:getData("isInDeathMatch") then
-				target:setReviveWeapons()
-			end
-			target:kill(attacker, weapon, bodypart)
+			self:killPed(target, attacker, weapon, bodypart)
 		end
 	else
-		if not target.m_SupMode and not attacker.m_SupMode then
-			target:triggerEvent("clientBloodScreen")
-			local basicDamage = WEAPON_DAMAGE[weapon]
-			local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-			local realLoss = basicDamage*multiplier
-			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+		if target and attacker and isElement(target) and isElement(attacker) then
+			if not target.m_SupMode and not attacker.m_SupMode then
+				target:triggerEvent("clientBloodScreen")
+				local basicDamage = WEAPON_DAMAGE[weapon]
+				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+				local realLoss = basicDamage*multiplier
+				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+			end
+		end
+	end
+end
+
+function Guns:killPed(target, attacker, weapon, bodypart)
+	StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
+	if not target:getData("isInDeathMatch") then
+		target:setReviveWeapons()
+	end
+	target:kill(attacker, weapon, bodypart)
+	if not target:getData("isInDeathMatch") then
+		if target:getFaction() and target:getFaction():isEvilFaction() and attacker:getFaction() and attacker:getFaction():isEvilFaction() then
+			local attackerFaction = attacker:getFaction()
+			local targetFaction = target:getFaction()
+			if not attacker:isInGangwar() then
+				if attackerFaction:getDiplomacy(targetFaction) == FACTION_DIPLOMACY["im Krieg"] then
+					local bonus = targetFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or targetFaction:getMoney()
+					targetFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+					attackerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+				end
+			end
 		end
 	end
 end
@@ -119,29 +155,6 @@ end
 
 function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
 
-end
-
-function Guns:Event_ToggleWeapon( oldweapon )
-	if oldweapon then
-		if client then
-			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end
-			local slot = getSlotFromWeapon(oldweapon)
-			if client.m_WeaponStorage[slot] then
-				local weaponInStorage, ammoInStorage = unpack(client.m_WeaponStorage[slot])
-				if getSlotFromWeapon(weaponInStorage) == slot then
-					if weaponInStorage and ammoInStorage then
-						client.m_WeaponStorage[slot] = {oldweapon, getPedTotalAmmo(client,slot)}
-						giveWeapon(client, weaponInStorage, ammoInStorage, true)
-						if weaponInStorage == 23 then
-							client:meChat(true, "zieht seinen Taser.")
-							setTimer(setPedAnimation, 1000, 1, client, false)
-						end
-						setPedAnimation(client, "shop", "shp_gun_threat", 500, false, false, false)
-					end
-				end
-			end
-		end
-	end
 end
 
 function Guns:setWeaponInStorage(player, weapon, ammo)
@@ -192,22 +205,14 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setArmor(0)
 
 			if health - loss <= 0 then
-				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
-				if not player:getData("isInDeathMatch") then
-					player:setReviveWeapons()
-				end
-				player:kill(attacker, weapon, bodypart)
+				self:killPed(player, attacker, weapon, bodypart)
 			else
 				player:setHealth(health-loss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
-			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
-			if not player:getData("isInDeathMatch") then
-				player:setReviveWeapons()
-			end
-			player:kill(attacker, weapon, bodypart)
+			self:killPed(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
 		end

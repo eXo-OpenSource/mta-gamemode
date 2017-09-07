@@ -22,7 +22,7 @@ function DrivingSchool:Event_onNextMarker( pos, vehicle )
 		end
 		self.m_CurrentVehicle = vehicle
 		self.m_CurrentMarker = createMarker(x,y,z-0.1, "checkpoint",3,200,200,0)
-		self.m_CurrentBlip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200,200,0,255))
+		self.m_CurrentBlip = Blip:new("Marker.png", x, y, 9999, {200,200,0})
 		addEventHandler("onClientMarkerHit", self.m_CurrentMarker ,function(hE, dim) 
 			if dim then
 				if hE.vehicle then

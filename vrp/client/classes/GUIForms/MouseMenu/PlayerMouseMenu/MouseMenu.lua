@@ -53,7 +53,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Group)
-		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() and element:getFaction() ~= localPlayer:getFaction() then
+		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() and element:getFaction() ~= localPlayer:getFaction() and not (element.vehicle and localPlayer:isSurfOnCar(element.vehicle)) then
 			self:addItem(_"Fraktion: Spieler überfallen",
 				function()
 					if self:getElement() then

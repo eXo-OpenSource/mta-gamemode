@@ -3,6 +3,7 @@ companyRankNames = {}
 companySkins = {}
 companyDutyMarker = {}
 companyDutyMarkerInterior = {}
+companyDutyMarkerDimension = {}
 companySpawnpoint = {}
 
 COMPANY_MAX_RANK_LOANS ={
@@ -74,20 +75,15 @@ companySpawnpoint[3] = {Vector3(735.97, -1338.20, 13.53), 0, 0}
 -- ID 4 = Public Transport:
 companyRankNames[4] = {
 [0] = "Polierer",
-[1] = "Taxi-Fahrer",
-[2] = "Kassier",
-[3] = "Bus-Fahrer",
+[1] = "Taxifahrer",
+[2] = "Kassierer",
+[3] = "Busfahrer",
 [4] = "Fahrzeugverwalter",
 [5] = "Transportmanager"
 }
 companyColors[4] = {["r"] = 255, ["g"] = 210, ["b"] = 0}
 companySkins[4] = {[61]=true, [147]=true, [240]=true, [253]=true,[255]=true, [275]=true}
-companyDutyMarker[4] = Vector3(1755.45, -1896.06, 13.56)
-companySpawnpoint[4] = {Vector3(1756.01, -1887.32, 13.56), 0, 0}
-
-CompanyStaticId = {
-	DRIVINGSCHOOL = 1,
-	MECHANIC = 2,
-	SANNEWS = 3,
-	EPT = 4,
-}
+companyDutyMarker[4] = Vector3(1234.52, -63.90, 1011.32)
+companyDutyMarkerInterior[4] = 12
+companyDutyMarkerDimension[4] = 4
+companySpawnpoint[4] = {Vector3(1228.25, -60.51, 1011.33), 12, 4}

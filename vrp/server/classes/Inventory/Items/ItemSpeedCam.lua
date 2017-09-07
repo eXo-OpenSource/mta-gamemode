@@ -39,6 +39,7 @@ function ItemSpeedCam:use(player)
 						ItemSpeedCam.Map[#ItemSpeedCam.Map+1] = object
 
 						object.col = worldItem:attach(createColSphere(position, 10))
+						object.col.object = object
 						self.m_func = bind(self.onColShapeHit, self)
 						addEventHandler("onColShapeHit", object.col, self.m_func )
 
@@ -84,7 +85,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 					end
 
 					player:takeBankMoney(costs, "Blitzer-Strafe", nil, true)
-					FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe")
+					FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe", true)
 					player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
 
 					player:giveAchievement(62)

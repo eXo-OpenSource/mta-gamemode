@@ -69,7 +69,7 @@ function Gate:Event_onColShapeHit(hitEle, matchingDimension)
         end
         if self.m_Closed then
             for index, gate in pairs(self.m_Gates) do
-				gate:move(6000, gate.openPos)
+				gate:move((gate.position - gate.openPos).length * 800, gate.openPos, 0, 0, 0, "InOutQuad")
 				triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3")
 			end
 
@@ -78,7 +78,7 @@ function Gate:Event_onColShapeHit(hitEle, matchingDimension)
             --outputDebug("Opening: "..(0-rot.y).." ["..rot.y.."; 0]")
         else
            for index, gate in pairs(self.m_Gates) do
-				gate:move(6000, gate.closedPos)
+				gate:move((gate.position - gate.closedPos).length * 800, gate.closedPos, 0, 0, 0, "InOutQuad")
 				triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3")
 			end
 
@@ -86,6 +86,10 @@ function Gate:Event_onColShapeHit(hitEle, matchingDimension)
             --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
          end
      end
+end
+
+function Gate:getGateObjects()
+    return self.m_Gates
 end
 
 function Gate:setGateScale(scale)

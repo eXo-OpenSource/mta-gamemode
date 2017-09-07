@@ -26,7 +26,11 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_FilterApplied = false
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Objektübersicht - %s", sOwnerName), true, true, self)
-
+	if type == "player" then
+		self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() delete(self) end)
+	elseif type == "faction" then
+		self.m_Window:addBackButton(function () FactionGUI:getSingleton():show() delete(self) end)
+	end
 	--object list
 	self.m_PlacedObjectsLabel = GUILabel:new(5, 30, self.m_Width, 30, "", self) --will be set on list loading
 	self.m_ObjectList = GUIGridList:new(5, 65, self.m_Width - 10, 200, self)
@@ -213,7 +217,7 @@ addEventHandler("recieveWorldItemListOfOwner", root, function(sOwnerName, tblObj
 			ErrorBox:new(_"Bitte schließe erst das alte Objektübersichts-Fenster!")
 		end
 	else
-	 WorldItemOverviewGUI:new(sOwnerName, tblObjects, id, type)
+		WorldItemOverviewGUI:new(sOwnerName, tblObjects, id, type)
 	end
 end)
 

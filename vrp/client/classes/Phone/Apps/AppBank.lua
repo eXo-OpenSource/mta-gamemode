@@ -44,6 +44,10 @@ function AppBank:onOpen(form)
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
 	end
 
+	self.m_Tabs["Statements"] = self.m_TabPanel:addTab(_"Kontoauszug", FontAwesomeSymbols.List)
+	local tab = self.m_Tabs["Statements"]
+	self.m_StatementsBrowser = GUIWebView:new(0, 0, tab.m_Width, tab.m_Height-10, ("https://exo-reallife.de/ingame/vRPphone/apps/bank/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, tab)
+
 	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
 	triggerServerEvent("bankMoneyBalanceRequest", root)
 end
@@ -56,6 +60,7 @@ function AppBank:TransferButton_Click()
 	local amount = tonumber(self.m_TransferAmountEdit:getText())
 	local toCharName = self.m_TransferToEdit:getText()
 	if amount and amount > 0 then
+		self.m_TransferAmountEdit:setText("0")
 		triggerServerEvent("bankTransfer", root, toCharName, amount)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")

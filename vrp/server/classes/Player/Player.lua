@@ -21,8 +21,7 @@ addEventHandler("introFinished", root, function()
 end)
 
 function Player:constructor()
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-	setElementFrozen(self, true)
+
 	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
@@ -41,7 +40,6 @@ function Player:constructor()
 	self.m_LastJobAction = 0
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
-	self:toggleControlsWhileObjectAttached(true)
 end
 
 function Player:destructor()
@@ -105,6 +103,8 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
+	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	setElementFrozen(self, true)
 	--[[setTimer(function()
 
 	end, 500, 1)]]
@@ -203,7 +203,7 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
-
+	self:toggleControlsWhileObjectAttached(true)
 	triggerEvent("characterInitialized", self)
 end
 
@@ -259,7 +259,7 @@ function Player:loadCharacterInfo()
 	for k,v in ipairs( props ) do
 		self:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
 		x,y,z = getElementPosition( v.m_Pickup )
-		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
+		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id, self:getGroup():getType())
 	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
@@ -371,7 +371,7 @@ function Player:spawn()
 		self:setMoney(0)
 		self:setXP(0)
 		self:setKarma(0)
-		self:setWantedLevel(0)
+		self:setWanteds(0)
 		self:setJobLevel(0)
 		self:setWeaponLevel(0)
 		self:setVehicleLevel(0)
@@ -401,7 +401,7 @@ function Player:spawn()
 							self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
 						end
 					else
-						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug wurde abgeschleppt oder ist nicht mehr vorhanden")
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug ist am Abschlepphof oder ist nicht mehr vorhanden")
 					end
 				end
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
@@ -418,12 +418,12 @@ function Player:spawn()
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
 				if self:getFaction() then
 					local position = factionSpawnpoint[self:getFaction():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
 				if self:getCompany() then
 					local position = companySpawnpoint[self:getCompany():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[3], position[2])
+					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
 			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
@@ -618,11 +618,13 @@ end
 
 function Player:Event_onPlayerReviveWeaponHit( player )
 	if player then
-		local weapon = source:getData("weaponId")
-		local ammo = source:getData("ammoInWeapon")
-		if weapon and ammo then
-			player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
-			player:triggerEvent("onTryPickupWeapon", source)
+		if source then
+			local weapon = source:getData("weaponId")
+			local ammo = source:getData("ammoInWeapon")
+			if weapon and ammo then
+				player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
+				player:triggerEvent("onTryPickupWeapon", source)
+			end
 		end
 	end
 end
@@ -683,6 +685,18 @@ function Player.staticFactionChatHandler(self, command, ...)
 	end
 end
 
+function Player.staticFactionAllianceChatHandler(self, command, ...)
+	if self.m_Faction then
+		local bndFaction = self.m_Faction:getAllianceFaction()
+		if bndFaction then
+			self.m_Faction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+			bndFaction:sendBndChatMessage(self, table.concat({...}, " "), bndFaction)
+		else
+			self:sendError(_("Eure Allianz hat kein Bündnis!", self))
+		end
+	end
+end
+
 function Player.staticCompanyChatHandler(self, command, ...)
 	if self.m_Company then
 		self.m_Company:sendChatMessage(self,table.concat({...}, " "))
@@ -694,6 +708,7 @@ function Player.staticStateFactionChatHandler(self, command, ...)
 		FactionState:getSingleton():sendStateChatMessage(self,table.concat({...}, " "))
 	end
 end
+
 
 function Player:reportCrime(crimeType)
 	--JobPolice:getSingleton():reportCrime(self, crimeType)
@@ -710,6 +725,16 @@ end
 
 function Player:isCompanyDuty()
   return self.m_CompanyDuty
+end
+
+function Player:setFactionDuty(state)
+	self.m_FactionDuty = state
+	self:reloadBlips()
+end
+
+function Player:setCompanyDuty(state)
+	self.m_CompanyDuty = state
+	self:reloadBlips()
 end
 
 function Player:setJobDutySkin(skin)
@@ -737,18 +762,6 @@ function Player:setDefaultSkin()
 	else
 		setElementModel( self, self.m_AltSkin or self.m_Skin or 0)
 	end
-end
-
-function Player:setKarma(karma)
-	if karma < 0 and self.m_Karma >= 0 then
-		self:giveAchievement(1)
-	end
-	if karma >= 0 and self.m_Karma < 0 then
-		self:giveAchievement(2)
-	end
-
-	DatabasePlayer.setKarma(self, karma)
-	self:setPublicSync("Karma", self.m_Karma)
 end
 
 function Player:setXP(xp)
@@ -918,7 +931,7 @@ function Player:payDay()
 	end
 
 	--noob bonus
-	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME then
+	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME * 60 then
 		income = income + PAYDAY_NOOB_BONUS
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end
@@ -956,7 +969,7 @@ function Player:payDay()
 
 	outgoing = outgoing_vehicles + outgoing_house
 
-	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
+	--FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome", "", income)
@@ -964,9 +977,14 @@ function Player:payDay()
 	self:addPaydayText("total", "Total", total)
 
 
-	if self:getWantedLevel() > 0 then
+	if self:getWanteds() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein Wanted erlassen!", self))
-		self:takeWantedLevel(1)
+		self:takeWanteds(1)
+	end
+
+	if self:getSTVO() > 0 then
+		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
+		self:setSTVO(self:getSTVO() - 1)
 	end
 
 	if total > 0 then
@@ -1018,10 +1036,24 @@ function Player:addCrime(crimeType)
 end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.giveMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
+	end
+	return success
+end
+
+function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
+	local success = DatabasePlayer.takeMoney(self, money, reason)
+	if success then
+		local money = math.abs(money)
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s%s"):format("-"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", bNoSound)
 	end
@@ -1029,6 +1061,7 @@ function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.addBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1040,6 +1073,7 @@ function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:takeBankMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.takeBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1079,17 +1113,120 @@ function Player.getChatHook()
 	return Player.ms_ChatHook
 end
 
-function Player:givePoints(p) -- Overriden
-	DatabasePlayer.givePoints(self, p)
-
-	if p ~= 0 then
-		self:sendShortMessage((p >= 0 and "+"..p or p).._(" Punkte", self))
+function Player:setKarma(karma)
+	if karma < 0 and self.m_Karma >= 0 then
+		self:giveAchievement(1)
 	end
+	if karma >= 0 and self.m_Karma < 0 then
+		self:giveAchievement(2)
+	end
+
+	DatabasePlayer.setKarma(self, karma)
+end
+
+function Player:giveKarma(karma, reason, bNoSound, silent)
+	if not karma or karma < 1 then return false end
+	local oldKarma = self.m_Karma
+	local success = DatabasePlayer.giveKarma(self, karma, reason)
+	if success then
+		if karma < 0 and self.m_Karma >= 0 then
+			self:giveAchievement(1)
+		end
+		if karma ~= 0 and not silent then
+			self:sendShortMessage(("%s Karma%s"):format("+"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+		end
+	end
+	return success
+end
+
+function Player:takeKarma(karma, reason, bNoSound, silent)
+	if not karma or karma < 1 then return false end
+	local oldKarma = self.m_Karma
+	local success = DatabasePlayer.takeKarma(self, karma, reason)
+	if success then
+		if oldKarma >= 0 and self.m_Karma < 0 then
+			self:giveAchievement(2)
+		end
+		if karma ~= 0 and not silent then
+			self:sendShortMessage(("%s Karma%s"):format("-"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+		end
+	end
+	return success
+end
+
+function Player:givePoints(p, reason, bNoSound, silent) -- Overriden
+	DatabasePlayer.givePoints(self, p, reason)
+	if p ~= 0 and not silent then
+		self:sendShortMessage(("%s Punkte%s"):format("+"..p, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+	end
+end
+
+function Player:takePoints(p, reason, bNoSound, silent) -- Overriden
+	DatabasePlayer.takePoints(self, p, reason)
+	if p ~= 0 and not silent then
+		self:sendShortMessage(("%s Punkte%s"):format("-"..p , reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+	end
+end
+
+function Player:giveCombinedReward(name, tblReward)
+	local smText = ""
+	for name, amount in pairs(tblReward) do
+		amount = tonumber(amount)
+		if amount then
+			amount = math.round(amount)
+			if name == "money" then
+				if amount > 0 then
+					self:giveMoney(amount, name, false, true)
+					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
+				elseif amount < 0 then
+					self:takeMoney(math.abs(amount), name, false, true)
+					smText = smText .. ("%s\n"):format(toMoneyString(amount))
+				end
+			elseif name == "bankMoney" then
+				if amount > 0 then
+					self:addBankMoney(amount, name, false, true)
+					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
+				elseif amount < 0 then
+					self:takeBankMoney(math.abs(amount), name, false, true)
+					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
+				end
+			elseif name == "points" then
+				if amount > 0 then
+					self:givePoints(amount, name, false, true)
+					smText = smText .. ("+%s Punkte\n"):format(amount)
+				elseif amount < 0 then
+					self:takePoints(math.abs(amount), name, false, true)
+					smText = smText .. ("%s Punkte\n"):format(amount)
+				end
+			elseif name == "karma" then
+				if amount > 0 then
+					self:giveKarma(amount, name, false, true)
+					smText = smText .. ("+%s Karma\n"):format(amount)
+				elseif amount < 0 then
+					self:takeKarma(math.abs(amount), name, false, true)
+					smText = smText .. ("%s Karma\n"):format(amount)
+				end
+			end
+		end
+	end
+	self:sendShortMessage(smText:sub(0, #smText-1), name, {0, 94, 255}, 10000)
 end
 
 function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
+
+function Player:getLastChatMessage()
+	if not self.m_LastChatMsg then
+		self.m_LastChatMsg = {"", 0}
+	end
+	return unpack(self.m_LastChatMsg) -- message, timeSent
+end
+
+function Player:setLastChatMessage(msg)
+	self.m_LastChatMsg = {msg, getTickCount()}
+end
+
 
 function Player:getPlayersInChatRange( irange)
 	local range
@@ -1130,6 +1267,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 			toggleControl(self, "next_weapon", bool )
 			toggleControl(self, "previous_weapon", bool )
 			toggleControl(self, "enter_exit", bool )
+			toggleControl(self, "enter_passenger", bool )
 		end
 	else
 		toggleControl(self, "jump", bool )
@@ -1138,6 +1276,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
 		toggleControl(self, "enter_exit", bool )
+		toggleControl(self, "enter_passenger", bool )
 	end
 end
 
@@ -1185,6 +1324,7 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 end
 
 function Player:detachPlayerObject(object, collisionNextFrame)
+	if not self:isLoggedIn() then return end
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		object:detach(self)
@@ -1208,9 +1348,11 @@ end
 function Player:getPlayerAttachedObject()
 	local model
 	for key, value in pairs (getAttachedElements(self)) do
-		model = value:getModel()
-		if PlayerAttachObjects[model] then
-			return value
+		if value and isElement(value) then
+			model = value:getModel()
+			if PlayerAttachObjects[model] then
+				return value
+			end
 		end
 	end
 	return false
@@ -1220,17 +1362,23 @@ function Player:setModel( skin )
 	setElementModel( self, skin or 0)
 end
 
+function Player:reloadBlips()
+	return Blip.sendAllToClient(self)
+end
+
 function Player:endPrison()
-	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
-	setElementDimension(self,0)
-	setElementInterior(self, 0)
-	toggleControl(self, "fire", true)
-	toggleControl(self, "jump", true)
-	toggleControl(self, "aim_weapon", true)
-	self:triggerEvent("playerLeftPrison")
-	self:triggerEvent("checkNoDm")
-	self:setData("inAdminPrison",false,true)
-	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	if isElement(self) then
+		self:setPosition(Vector3(1478.87, -1726.17, 13.55))
+		setElementDimension(self,0)
+		setElementInterior(self, 0)
+		toggleControl(self, "fire", true)
+		toggleControl(self, "jump", true)
+		toggleControl(self, "aim_weapon", true)
+		self:triggerEvent("playerLeftPrison")
+		self:triggerEvent("checkNoDm")
+		self:setData("inAdminPrison",false,true)
+		self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	end
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
 	if self.m_JailTime > 0 then

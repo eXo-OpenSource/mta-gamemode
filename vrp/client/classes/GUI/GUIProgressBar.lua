@@ -22,7 +22,7 @@ end
 
 function GUIProgressBar:setProgress(progress)
 	assert(progress >= 0 and progress <= 100, "Invalid range passed to GUIProgressbar.setProgress")
-	
+
 	self.m_Progress = progress
 	self:anyChange()
 	return self
@@ -48,7 +48,7 @@ end
 
 function GUIProgressBar:drawThis()
 	dxSetBlendMode("modulate_add")
-	
+
 	-- Draw background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 

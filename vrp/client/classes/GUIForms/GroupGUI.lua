@@ -36,21 +36,23 @@ function GroupGUI:constructor()
 	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupCreateLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.14, self.m_Width*0.5, self.m_Height*0.06, _"Du kannst in der Stadthalle eine neue Firma oder Gang gründen!", tabGroups):setMultiline(true)
 	self.m_GroupQuitButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.07, _"Verlassen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
-	self.m_GroupDeleteButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", true, tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_GroupDeleteButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
 	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
 	--self.m_GroupMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabGroups):setCaption(_"Betrag")
 	--self.m_GroupMoneyDepositButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", tabGroups):setBarEnabled(true)
 	--self.m_GroupMoneyWithdrawButton = GUIButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", tabGroups):setBarEnabled(true)
 	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.55)
+	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
+	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.49)
 	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_GroupPlayersGrid:addColumn(_"Aktivität", 0.27)
-
+	
 	self.m_GroupAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabGroups):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_GroupRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabGroups):setBackgroundColor(Color.Red):setBarEnabled(true)
 	self.m_GroupRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabGroups):setBarEnabled(true)
 	self.m_GroupRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabGroups):setBarEnabled(true)
+	self.m_GroupToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabGroups):setBarEnabled(true)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -69,7 +71,7 @@ function GroupGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-
+	self.m_GroupToggleLoanButton.onLeftClick = bind(self.GroupToggleLoanButton_Click, self)
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -90,7 +92,10 @@ function GroupGUI:constructor()
 	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.4)
 	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.6)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
-	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setBackgroundColor(Color.Green):setBarEnabled(true)
+
+
+	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"\nFahrzeug zur \nFirma/Gang hinzufügen", tabVehicles):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_VehicleConvertToGroupButton:setFont(VRPFont(25)):setFontSize(1)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
@@ -173,13 +178,21 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupMoneyLabel:setText(toMoneyString(money))
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
+		self.m_VehicleConvertToGroupButton:setText(_("\nFahrzeug zur\n%s hinzufügen", type))
 
 		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
 
 		self.m_GroupPlayersGrid:clear()
 		for _, info in ipairs(players) do
-			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank, tostring(info.activity).." h")
+			local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+			local item = self.m_GroupPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+			item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 			item.Id = info.playerId
+
+			item.onLeftClick =
+				function()
+					self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+				end
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames
@@ -426,6 +439,15 @@ function GroupGUI:addLeaderTab()
 		self.m_TypeChange.onHover = function () self.m_TypeChange:setColor(Color.White) end
 		self.m_TypeChange.onUnhover = function () self.m_TypeChange:setColor(Color.LightBlue) end
 
+		self.m_BindButton = GUIButton:new(self.m_Width*0.45, self.m_Height*62, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabLeader):setBarEnabled(true)
+		self.m_BindButton.onLeftClick = function()
+			if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+			self:close()
+			self.m_BindManageGUI = BindManageGUI:new("group")
+			self.m_BindManageGUI:addBackButton(function() GroupGUI:getSingleton():show() end)
+		end
+
+
 		self:refreshRankGrid()
 		self.m_LeaderTab = true
 	end
@@ -527,7 +549,7 @@ function GroupGUI:VehicleLocateButton_Click()
 
 	if item.PositionType == VehiclePositionType.World then
 		local x, y, z = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+		local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 		local marker = createMarker(x, y, z + 2, "arrow", .6, 60, 255, 130)
 		blip:setZ(z)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
@@ -578,7 +600,7 @@ function GroupGUI:ShopLocateButton_Click()
 	end
 
 	local x, y, z = item.Position.x, item.Position.y, item.Position.z
-	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+	local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 	blip:setZ(z)
 	ShortMessage:new(_("Das Geschäft befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), item.ShopName, Color.DarkLightBlue, -1)
 	.m_Callback = function (this)
@@ -586,5 +608,12 @@ function GroupGUI:ShopLocateButton_Click()
 			delete(blip)
 		end
 		delete(this)
+	end
+end
+
+function GroupGUI:GroupToggleLoanButton_Click()
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupToggleLoan", root, selectedItem.Id)
 	end
 end

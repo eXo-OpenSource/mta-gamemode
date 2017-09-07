@@ -30,17 +30,16 @@ Chair.Map = {
 	[2636] = {seats = 1, offsetPosition = Vector3(-.5), rotationOffset = 90},
 	[2356] = {seats = 1, offsetPosition = Vector3(-.1, .7, .1), rotationOffset = 0},
 	[1721] = {seats = 1, offsetPosition = Vector3(0, .7, .1), rotationOffset = 0},
-	[2309] = {seats = 1, offsetPosition = Vector3(-0.05, .7, .1), rotationOffset = 0}
+	[2309] = {seats = 1, offsetPosition = Vector3(-0.05, .7, .1), rotationOffset = 0},
+	[1704] = {seats = 1, offsetPosition = Vector3(0.5, -0.6, .2), rotationOffset = 180},
+	[1714] = {seats = 1, offsetPosition = Vector3(0, -0.6, .2), rotationOffset = 180},
+
 }
 
 function Chair:constructor()
-	addEventHandler("onPlayerChairSitDown", root, bind(Chair.trySitDown, self))
-
-	if DEBUG then
-		pew = createObject(1811, 1517.51, -1660.52, 13.16)
-	end
-
 	self.m_Chairs = {}
+
+	addEventHandler("onPlayerChairSitDown", root, bind(Chair.trySitDown, self))
 end
 
 function Chair:removePlayer(objectId, player)

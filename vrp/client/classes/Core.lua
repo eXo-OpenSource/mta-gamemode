@@ -129,11 +129,10 @@ function Core:ready()
 	Townhall:new()
 	PremiumArea:new()
 
-	PlantWeed.initalize()
+	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
 	GroupSaleVehicles.initalize()
-	TextureReplace.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
@@ -162,13 +161,16 @@ function Core:afterLogin()
 	KarmaBar:new()
 	HUDSpeedo:new()
 	Nametag:new()
-	HUDRadar:getSingleton():show()
+	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
 	HUDUI:getSingleton():show()
+	CustomF11Map:getSingleton():enable()
+	GPS:new()
 	Collectables:new()
 	KeyBinds:new()
 	Indicator:new()
 	Tour:new()
 	Achievement:new()
+	BindManager:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -197,8 +199,8 @@ function Core:afterLogin()
 	Fishing.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
+	TextureReplacer.loadBacklog()
 
-	HUDRadar:getSingleton():setEnabled(true)
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
@@ -208,18 +210,20 @@ function Core:afterLogin()
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
-	addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
+	--addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
 
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
 			object:setBreakable(false)
 		end
 	end
+
 end
 
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	delete(BindManager:getSingleton())
 	if CustomModelManager:isInstantiated() then
 		delete(CustomModelManager:getSingleton())
 	end

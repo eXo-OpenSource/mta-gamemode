@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -56,6 +56,7 @@ function PlayerManager:constructor()
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
@@ -67,6 +68,7 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
+	addCommandHandler("shrug",bind(self.Command_playerShrug, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
@@ -75,6 +77,8 @@ function PlayerManager:constructor()
 	addCommandHandler("u", Player.staticCompanyChatHandler)
 	addCommandHandler("Gruppe", Player.staticGroupChatHandler,false)
 	addCommandHandler("f", Player.staticGroupChatHandler)
+	addCommandHandler("b", Player.staticFactionAllianceChatHandler)
+	addCommandHandler("BündnisChat", Player.staticFactionAllianceChatHandler)
 
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
@@ -127,7 +131,7 @@ function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
-	if source.ped_deadDouble then
+	if isElement(source.ped_deadDouble) then
 		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
 		source:clearReviveWeapons()
@@ -235,27 +239,29 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
 		end
 	end
-	local facSource = source:getFaction()
-	if k_ then
-		if facSource then
-			if facSource.m_Id ~= 4 then
-				if facSource:isStateFaction() and source:isFactionDuty()  then
-					local facKiller = k_:getFaction()
-					if facKiller then
-						if not facKiller:isStateFaction() then
-							k_:givePoints(15)
+	if not source:getData("isInDeathMatch") then
+		local facSource = source:getFaction()
+		if k_ then
+			if facSource then
+				if facSource.m_Id ~= 4 then
+					if facSource:isStateFaction() and source:isFactionDuty()  then
+						local facKiller = k_:getFaction()
+						if facKiller then
+							if not facKiller:isStateFaction() then
+								k_:givePoints(15)
+							end
 						end
 					end
 				end
 			end
-		end
-		if facSource then
-			if facSource.m_Id ~= 4 then
-				if not facSource:isStateFaction() and not source:isFactionDuty()  then
-					local facKiller = k_:getFaction()
-					if facKiller then
-						if facKiller:isStateFaction() then
-							k_:givePoints(15)
+			if facSource then
+				if facSource.m_Id ~= 4 then
+					if not facSource:isStateFaction() and not source:isFactionDuty()  then
+						local facKiller = k_:getFaction()
+						if facKiller then
+							if facKiller:isStateFaction() then
+								k_:givePoints(15)
+							end
 						end
 					end
 				end
@@ -433,7 +439,7 @@ function PlayerManager:playerQuit()
 			end
 		end
 	end
-	if source:getWantedLevel() > 0 then
+	if source:getWanteds() > 0 then
 		FactionState:getSingleton():checkLogout(source)
 	end
 	if source.elevator then
@@ -493,9 +499,9 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
 				if killer:isFactionDuty() and not client:isFactionDuty() then
-					local wantedLevel = client:getWantedLevel()
+					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
-						local jailTime = wantedLevel * 5
+						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)
 						client:sendInfo(_("Du wurdest außer Gefecht gesetzt!", client))
@@ -556,6 +562,13 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return 
+	end
+	source:setLastChatMessage(message)
+
 	if Player.getChatHook():call(source, message, messageType) then
 		cancelEvent()
 		return
@@ -574,26 +587,26 @@ function PlayerManager:playerChat(message, messageType)
 			for index = 1, #playersToSend do
 				outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 				if playersToSend[index] ~= source then
-					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+					receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 				end
 			end
-			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, toJSON(receivedPlayers))
+			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, receivedPlayers)
 			FactionState:getSingleton():addBugLog(source, "sagt", message)
 		else
 			-- Send handy message
 			outputChatBox(_("%s (Handy) sagt: %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
 			outputChatBox(_("%s (Handy) sagt: %s", source, getPlayerName(source), message), source, 0, 255, 0)
-			StatisticsLogger:getSingleton():addChatLog(source, "phone", message, toJSON({phonePartner:getName()}))
+			StatisticsLogger:getSingleton():addChatLog(source, "phone", message, {phonePartner})
 			local receivedPlayers = {}
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
 					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 					--if not playersToSend[index] == source then
-						receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 					--end
 				end
 			end
-			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
+			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), receivedPlayers)
 			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
 
 			if phonePartner and phonePartner:getName() == "PewX" and (message:lower():find("pewpew") or message:lower():find("pew pew")) then
@@ -618,6 +631,13 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
+	
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()
@@ -628,11 +648,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
 		if playersToSend[index] ~= source then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]
         end
 	end
 	FactionState:getSingleton():addBugLog(source, "schreit", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "S", text, nil, playersToSend)
 end
 
@@ -643,36 +663,61 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(0)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
 		outputChatBox(("%s flüstert: %s"):format(getPlayerName(source), text), playersToSend[index], 140, 140, 140)
 		if playersToSend[index] ~= source then
-			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 		end
 	end
 	FactionState:getSingleton():addBugLog(source, "flüstert", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "W", text, nil, playersToSend)
 end
 
 function PlayerManager:Command_playerOOC(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+	
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
-		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 50, 200, 255)
+		outputChatBox(("(( OOC %s: %s ))"):format(getPlayerName(source), text), playersToSend[index], 220, 220, 220)
 		if playersToSend[index] ~= source then
-			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]
 		end
 	end
 	FactionState:getSingleton():addBugLog(source, "OOC", text)
-	StatisticsLogger:getSingleton():addChatLog(source, "ooc", text, toJSON(receivedPlayers))
+	StatisticsLogger:getSingleton():addChatLog(source, "ooc", text, receivedPlayers)
 	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
 end
 
-
+function PlayerManager:Command_playerShrug(source, cmd)
+	local text = "zuckt mit den Schultern ¯\\_(ツ)_/¯"
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return 
+	end
+	source:setLastChatMessage(text)
+	source:meChat(true, text)
+	if source.isTasered then return	end
+	if source.vehicle then return end
+	setPedAnimation(source, "shop", "SHP_HandsUp_Scr", 400, false, false, true, false)
+end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
@@ -785,6 +830,10 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		if client.texturePreviewActive then
 			client:triggerEvent("texturePreviewForceClose")
 		end
+
+		if client.sittingOn then
+			Chair:getSingleton():trySitDown()
+		end
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then
@@ -819,6 +868,7 @@ function PlayerManager:Event_startAnimation(animation)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
+		addCommandHandler("stopanim", self.m_AnimationStopFunc)
 		client.lastAnimation = getTickCount()
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
@@ -828,6 +878,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
+	removeCommandHandler("stopanim")
 	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
@@ -1031,5 +1082,42 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 	else
 		client:setSpawnLocation(locationId)
 		client:sendInfo("Spawnpunkt wurde geändert.")
+	end
+end
+
+function PlayerManager:Event_AttachToVehicle()
+	if client:getPrivateSync("isAttachedToVehicle") then
+		client:setPrivateSync("isAttachedToVehicle", false)
+		client:detach()
+		return
+	end
+
+	if not client.contactElement or client.contactElement:getType() ~= "vehicle" then return end
+	if client.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[client.contactElement:getModel()] then
+		local px, py, pz = getElementPosition(client)
+		local vx, vy, vz = getElementPosition(client.contactElement)
+		local sx = px - vx
+		local sy = py - vy
+		local sz = pz - vz
+
+		local rotpX = 0
+		local rotpY = 0
+		local rotpZ = getPlayerRotation(client)
+
+		local rotvX, rotvY, rotvZ = getVehicleRotation(client.contactElement)
+
+		local t, p, f = math.rad(client.contactElement.rotation.x), math.rad(client.contactElement.rotation.y), math.rad(client.contactElement.rotation.z)
+		local ct, st, cp, sp, cf, sf = math.cos(t), math.sin(t), math.cos(p), math.sin(p), math.cos(f), math.sin(f)
+
+		local z = ct*cp*sz + (sf*st*cp + cf*sp)*sx + (-cf*st*cp + sf*sp)*sy
+		local x = -ct*sp*sz + (-sf*st*sp + cf*cp)*sx + (cf*st*sp + sf*cp)*sy
+		local y = st*sz - sf*ct*sx + cf*ct*sy
+
+		local rotX = rotpX - rotvX
+		local rotY = rotpY - rotvY
+		local rotZ = rotpZ - rotvZ
+
+		client:attach(client.contactElement, x, y, z, rotX, rotY, rotZ)
+		client:setPrivateSync("isAttachedToVehicle", client.contactElement)
 	end
 end

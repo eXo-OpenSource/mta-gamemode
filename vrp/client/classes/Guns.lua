@@ -29,7 +29,6 @@ function Guns:constructor()
 	self.m_BloodAlpha = 0
 	self.m_BloodRender = bind(self.drawBloodScreen, self)
 
-	self.m_GunTraces = {}
 	engineImportTXD (engineLoadTXD ( "files/models/taser.txd" ), 347 )
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
 
@@ -44,9 +43,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
-	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
-	addEventHandler("onClientRender", root, bind(self.onRenderGunTraces, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
@@ -56,28 +53,6 @@ end
 
 function Guns:destructor()
 
-end
-
-function Guns:onRenderGunTraces()
-	local startP, endP, time, line
-	local now = getTickCount()
-	for i = 1,#self.m_GunTraces do
-		line = self.m_GunTraces[i]
-		if line then
-			startP, endP, time = line[1], line[2], line[3]
-			prog = (now - time) / ( (time+flyTime)-time )
-			startP = {interpolateBetween(startP[1],startP[2], startP[3], endP[1], endP[2], endP[3], prog, "Linear")}
-			if startP and endP and time then
-				if time + flyTime >= now then
-					dxDrawMaterialLine3D(startP[1], startP[2], startP[3], endP[1] ,endP[2], endP[3], tracer, 0.02, tocolor(200,200,200,220))
-				else
-					table.remove(self.m_GunTraces, i)
-				end
-			else
-				table.remove(self.m_GunTraces, i)
-			end
-		end
-	end
 end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
@@ -193,11 +168,6 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
 				end, 6000,1)
-			end
-		end
-		if getSlotFromWeapon(weapon) > 2 and getSlotFromWeapon(weapon) <= 5 then
-			if not NO_TRACERS[weapon] then
-				self.m_GunTraces[#self.m_GunTraces+1] = {{getPedWeaponMuzzlePosition ( source)}, {hitX, hitY, hitZ}, getTickCount()}
 			end
 		end
 	end
@@ -355,16 +325,16 @@ end
 function Guns:crounch(btn, state)
 	if state == "down" then
 		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
-			setControlState ( "crouch", true )
+			setPedControlState ( "crouch", true )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
 			end
-			self.m_LastCrouchTimers[1] = setTimer ( setControlState, 100, 1, "crouch", false )
+			self.m_LastCrouchTimers[1] = setTimer ( setPedControlState, 100, 1, "crouch", false )
 		end
 	else
 		if getTickCount() - self.m_LastShot <= 700 then
-			setControlState ( "crouch", false )
+			setPedControlState ( "crouch", false )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
@@ -382,7 +352,7 @@ end
 function Guns:stopFastDeagle(weapon)
 	if weapon == 24 then
 		self.m_LastShot = getTickCount()
-		setControlState ( "crouch", false )
+		setPedControlState ( "crouch", false )
 		if isPedDucked ( localPlayer ) then
 			toggleControl ( "crouch", false )
 			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
@@ -395,22 +365,5 @@ function Guns:toggleFastShot(bool)
 	if not self.m_AntiFastShotEnabled then
 		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
 		unbindKey ( "crouch", "both", crouch )
-	end
-end
-
-function Guns:checkSwitchWeapon(b, p)
-	if b == "x" and  not p and getKeyState("mouse2") then
-		local weapon = getPedWeapon(localPlayer)
-		local now = getTickCount()
-		if getElementData(localPlayer, "hasSecondWeapon") then
-			if self.m_LastWeaponToggle + 4000 <= now then
-				if TOGGLE_WEAPONS[weapon] then
-					self.m_LastWeaponToggle = getTickCount()
-					triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
-				end
-			else
-				outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
-			end
-		end
 	end
 end

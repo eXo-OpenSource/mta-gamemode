@@ -56,6 +56,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					):setIcon(FontAwesomeSymbols.Cart_Plus)
 				end
 			end
+			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
+				self:addItem(_"Musik abspielen",
+					function()
+						if self:getElement() then
+							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Music)
+			end
 			if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 				self:addItem(_"Respawnen / Parken >>>",
 					function()
@@ -85,6 +94,44 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Arrows)
+			end
+		end
+		if element:getData("EPT_Taxi") and element:getModel() == 420 or element:getModel() == 438 then -- Taxis
+			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+					self:addItem(_"Taxileuchte bedienen",
+						function()
+							if self:getElement() then
+								delete(self)
+								triggerServerEvent("publicTransportSwitchTaxiLight", self:getElement())
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Lightbulb)
+				end
+			end
+		end
+		if element:getData("EPT_Bus") then -- Coach
+			if localPlayer:getCompany() and localPlayer:getCompany():getId() == 4 and localPlayer:getPublicSync("Company:Duty") == true then
+				if localPlayer.vehicle == element and localPlayer.vehicleSeat == 0 then
+					self:addItem(_"Busfahrer >>>",
+						function()
+							if self:getElement() then
+								delete(self)
+								ClickHandler:getSingleton():addMouseMenu(BusLineMouseMenu:new(posX, posY, element), element)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Arrows)
+				end
+			end -- don't use elseif as it will prevent the bus driver from seeing the UI
+			if element:getData("EPT_bus_duty") then
+				self:addItem(_"Fahrplan anzeigen",
+					function()
+						if self:getElement() then
+							delete(self)
+							BusRouteInformationGUI:new(element)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Document)
 			end
 		end
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
@@ -125,26 +172,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Key)
-
-			if getVehicleInteractType(element) == "Special" then
-				self:addItem(_"Repairkit: reparieren",
-					function()
-						if self:getElement() then
-							triggerServerEvent("onMouseMenuRepairkit", self:getElement())
-						end
-					end
-				):setIcon(FontAwesomeSymbols.Wrench)
-			end
-
-			if getElementData(element, "Special") == VehicleSpecial.Soundvan then
-				self:addItem(_"Musik abspielen",
-					function()
-						if self:getElement() then
-							StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
-						end
-					end
-				):setIcon(FontAwesomeSymbols.Music)
-			end
 		end
 
 		if element:getVehicleType() ~= VehicleType.Trailer then
@@ -187,34 +214,51 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			if #self:getAttachedElement(1550, element) > 0 then
 				self:addItem(_"Geldsack abladen",
 					function()
-						triggerServerEvent("bankRobberyDeloadBag", self:getElement(), element)
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "moneyBag")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(1550, localPlayer) > 0 then
 				self:addItem(_"Geldsack aufladen",
 					function()
-						triggerServerEvent("bankRobberyLoadBag", self:getElement(), element)
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "moneyBag")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Up)
 			end
 		end
 
-
-		if localPlayer:getPublicSync("CompanyId") == 2 and localPlayer:getPublicSync("Company:Duty") == true then
-			self:addItem(_"Mechaniker: Reparieren",
-				function()
-					if self:getElement() then
-						triggerServerEvent("mechanicRepair", self:getElement())
+		if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
+			if element:getHealth() < 950 then
+				self:addItem(_"Mechaniker: Reparieren",
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicRepair", self:getElement())
+						end
 					end
-				end
-			):setIcon(FontAwesomeSymbols.Wrench)
-			if getElementData(element, "Handbrake") == true then
+				):setIcon(FontAwesomeSymbols.Wrench)
+			end
+			if getElementData(element, "Handbrake") == true and element:getModel() ~= 611 then
 				self:addItem(_"Mechaniker: Handbremse lösen",
 					function()
 						if self:getElement() then
 							triggerServerEvent("vehicleToggleHandbrake", self:getElement())
 							delete(self)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Cogs)
+			end
+			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 and not localPlayer:getPrivateSync("hasGasStationFuelNozzle") then -- fuel tank
+				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasMechanicFuelNozzle") and "einhängen" or "nehmen"),
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicTakeFuelNozzle", localPlayer, element)
+						end
+					end
+				):setIcon(FontAwesomeSymbols.Cogs)
+				self:addItem(_"Mechaniker: Entkoppeln",
+					function()
+						if self:getElement() then
+							triggerServerEvent("mechanicDetachFuelTank", localPlayer, element.towingVehicle)
 						end
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)

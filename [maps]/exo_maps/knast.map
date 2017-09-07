@@ -869,4 +869,6 @@
     <object id="object (CJ_SPORTS_WALL) (10)" breakable="true" interior="0" collisions="true" alpha="255" model="2395" doublesided="true" scale="1" dimension="0" posX="155.47687" posY="353.20975" posZ="7982.0581" rotX="0" rotY="0" rotZ="90.313"></object>
     <object id="object (chinaTgarageDoor) (128)" breakable="true" interior="0" collisions="true" alpha="255" model="2957" doublesided="false" scale="1" dimension="0" posX="176.37598" posY="362.26953" posZ="7985.0459" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (chinaTgarageDoor) (129)" breakable="true" interior="0" collisions="true" alpha="255" model="2957" doublesided="false" scale="1" dimension="0" posX="176.38251" posY="363.80469" posZ="7985.0454" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (chinaTgarageDoor) (129)" breakable="true" interior="0" collisions="true" alpha="255" model="974" doublesided="false" scale="1" dimension="0" posX="130.8" posY="352" posZ="7987.70" rotX="0" rotY="0" rotZ="90"></object>
+
 </map>

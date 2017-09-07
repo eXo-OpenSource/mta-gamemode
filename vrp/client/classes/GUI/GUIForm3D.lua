@@ -8,11 +8,12 @@
 GUIForm3D = inherit(Object)
 GUIForm3D.Map = {}
 
-function GUIForm3D:constructor(position, rotation, size, resolution, streamdistance)
+function GUIForm3D:constructor(position, rotation, size, resolution, streamdistance, follow)
 	-- Calculate Euler angles from plane normals (since Euler angles are easier to handle than line pos + normals)
 	self.m_StartPosition, self.m_EndPosition, self.m_Normal = math.getPlaneInfoFromEuler(position, rotation, size)
 	self.m_CacheArea = false
 	self.m_Resolution, self.m_Size = resolution, size
+	self.m_Follow = follow
 
 	-- Create streaming stuff
 	self.m_StreamArea = createColSphere(position, streamdistance or 150)
@@ -50,7 +51,7 @@ function GUIForm3D:StreamArea_Hit(hitElement, matchingDimension)
 
 	-- Dynamically create cache area
 	if not self.m_CacheArea then
-		self.m_CacheArea = CacheArea3D:new(self.m_StartPosition, self.m_EndPosition, self.m_Normal, self.m_Size.x, self.m_Resolution.x, self.m_Resolution.y, true)
+		self.m_CacheArea = CacheArea3D:new(self.m_StartPosition, self.m_EndPosition, self.m_Normal, self.m_Size.x, self.m_Resolution.x, self.m_Resolution.y, true, self.m_Follow)
 		self:onStreamIn(self.m_CacheArea)
 	end
 end

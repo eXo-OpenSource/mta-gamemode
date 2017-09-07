@@ -93,9 +93,11 @@ function GUIRenderer.process3DMouse()
 end
 
 function GUIRenderer.drawAll()
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/GUIRenderer") end
 	for i = 1, #GUIRenderer.cache do
 		GUIRenderer.cache[i]:draw()
 	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/GUIRenderer", #GUIRenderer.cache) end
 end
 
 function GUIRenderer.restore(clearedRenderTargets)

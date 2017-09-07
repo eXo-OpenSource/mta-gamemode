@@ -66,6 +66,7 @@ function CatchGame:onColShapeHit(hitElement, matchDimension)
 	if hitElement == self.m_CatchingPlayer then
 		self.m_LastHit = getTickCount()
 
+		hitElement:giveAchievement(100)
 		hitElement:sendInfo(("Du hast %s gefangen!"):format(self.m_PlayerEnemy[hitElement].name))
 		self.m_PlayerEnemy[hitElement]:sendInfo(("Du wurdest von %s gefangen!"):format(hitElement.name))
 

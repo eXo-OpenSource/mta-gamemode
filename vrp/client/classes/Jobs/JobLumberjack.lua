@@ -9,7 +9,7 @@ JobLumberjack = inherit(Job)
 addEvent("lumberjackTreesLoadUp", true)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 16, 1104.27, -298.06, 73.99, 90, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
+	Job.constructor(self, 16, 1104.27, -298.06, 73.99, 90, "Lumberjack.png", {80, 140, 30}, "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
 	self:setJobLevel(JOB_LEVEL_LUMBERJACK)
 
 	self.m_Trees = {}
@@ -30,7 +30,10 @@ function JobLumberjack:start()
 	for k, v in ipairs(JobLumberjack.Trees) do
 		local x, y, z, rotation = unpack(v)
 		local object = createObject(656, x, y, z, 0, 0, rotation)
-		object.Blip = Blip:new("SmallPoint.png", x, y)
+		object.Blip = Blip:new("Marker.png", x, y)
+		object.Blip:setColor(BLIP_COLOR_CONSTANTS.Yellow)
+		object.Blip:setSize(Blip.getDefaultSize()/2)
+		object.Blip:setDisplayText("Baum")
 		table.insert(self.m_Trees, object)
 		addEventHandler("onClientObjectDamage", object, func)
 	end
@@ -41,8 +44,8 @@ function JobLumberjack:start()
 		removeWorldModel(model, radius, x, y, z)
 	end
 
-	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
-	self.m_SawMillBlip:setStreamDistance(2000)
+	self.m_SawMillBlip = Blip:new("Marker.png", -1969.8, -2432.6, 9999, BLIP_COLOR_CONSTANTS.Red)
+	self.m_SawMillBlip:setDisplayText("Sägewerk")
 	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
 	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
@@ -100,7 +103,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 						-- Add tree to stack
 						if not self:addStackedTree() and (getTickCount() - self.m_LastStackInfoSent > 30000) then
 							self.m_LastStackInfoSent = getTickCount()
-							InfoBox:new(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge oder Punkt auf der Map)")
+							InfoBox:new(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk!")
 						end
 
 						-- "Respawn" the tree after a while

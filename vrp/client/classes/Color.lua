@@ -25,7 +25,7 @@ Color = {
 	BrownAlpha= {189, 109, 19, 180},
 	LightBlue = {50, 200, 255},
 	Orange    = {254, 138, 0},
-	LightRed  = {242, 0, 86},
+	LightRed  = {244, 73, 85},
 
 	HUD_Red		= {161,	47,	47},
 	HUD_Red_D	= {133,	28,	28},
@@ -49,6 +49,7 @@ Color = {
 	Error 		= {178,  35,  33}, -- green
 	Warning 	= {254, 138, 0}, -- green
 	
+	AD_LightBlue = {0, 125, 125},
 }
 
 function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
