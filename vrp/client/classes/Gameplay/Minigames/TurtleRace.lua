@@ -10,6 +10,9 @@ addRemoteEvents{"turtleRaceInit", "turtleRaceSyncTurtles", "turtleRaceStop"}
 
 function TurtleRace.load()
 	local ped = Ped.create(198, Vector3(318, -1820, 4.19), 270)
+	local turtleHat = createObject(1609, Vector3(318, -1820, 4.19))
+	turtleHat:setScale(0.15)
+	exports.bone_attach:attachElementToBone(turtleHat, ped, 1, -0.01, 0.01, 0.15, 10, 0)
 
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
@@ -24,8 +27,6 @@ function TurtleRace.load()
 end
 
 function TurtleRace:constructor(turtles)
-	outputChatBox("constructor")
-
 	for _, turtle in pairs(turtles) do
 		local shader = dxCreateShader("files/shader/texreplace.fx")
 		local texture = dxCreateTexture(("files/images/Textures/Turtles/%s.png"):format(turtle.id))
@@ -34,20 +35,23 @@ function TurtleRace:constructor(turtles)
 	end
 
 	self.m_Turtles = turtles
-	addEventHandler("onClientRender", root, bind(TurtleRace.interpolateTurtlePositions, self))
+	self.m_InterpolateTurtlePositions = bind(TurtleRace.interpolateTurtlePositions, self)
+	addEventHandler("onClientRender", root, self.m_InterpolateTurtlePositions)
 end
 
 function TurtleRace:destructor()
-	outputChatBox("Remove event")
-	removeEventHandler("onClientRender", root, bind(TurtleRace.interpolateTurtlePositions, self))
+	removeEventHandler("onClientRender", root, self.m_InterpolateTurtlePositions)
 end
 
 function TurtleRace:interpolateTurtlePositions()
 	for _, turtle in pairs(self.m_Turtles) do
 		if turtle.startTick then
 			local p = (getTickCount()-turtle.startTick)/(turtle.endTick-turtle.startTick)
-			local x, y, z = interpolateBetween(turtle.startPosition, turtle.endPosition, p, "Linear")
-			turtle.object:setPosition(x,y,z)
+			local position = Vector3(interpolateBetween(turtle.startPosition, turtle.endPosition, p, "Linear"))
+			local rotation =  Vector3(interpolateBetween(turtle.startRotation, turtle.endRotation, math.min(1, p*4), "Linear")) + Vector3(interpolateBetween(0, 0, -5, 0, 0, 10, p, "SineCurve"))
+
+			turtle.object:setPosition(position)
+			turtle.object:setRotation(rotation)
 		end
 	end
 end
@@ -59,6 +63,10 @@ function TurtleRace:updatePosition(turtles)
 
 		local x, y, z = unpack(v.endPosition)
 		v.endPosition = Vector3(x, y, getGroundPosition(x, y, z) + .1)
+
+		local diff = v.endPosition.x-v.startPosition.x
+		v.startRotation = v.object:getRotation()
+		v.endRotation = Vector3(0, 0, 180 + diff*40)
 
 		v.startTick = getTickCount()
 		v.endTick = v.startTick + v.duration

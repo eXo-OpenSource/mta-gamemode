@@ -25,7 +25,7 @@ function TurtleRace:constructor()
 	self.m_Blip = Blip:new("Horse.png", 318, -1820)
 	self.m_Blip:setDisplayText("Schildkröten Rennen", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({50, 170, 20})
-	
+
 	self.m_InfoMessage = bind(TurtleRace.infoMessage, self)
 	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 10, 00)
 	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 13, 00)
@@ -82,13 +82,12 @@ function TurtleRace:destroyGame()
 	end
 
 	if self.m_ColShape then
+		removeEventHandler("onColShapeHit", self.m_ColShape, self.m_ColShapeHit)
 		self.m_ColShape:destroy()
 	end
 
 	self.m_Turtles = nil
 	self.m_Map = nil
-	
-	removeEventHandler("onColShapeHit", self.m_ColShape, self.m_ColShapeHit)
 end
 
 function TurtleRace:startGame()
@@ -134,8 +133,8 @@ end
 
 function TurtleRace:syncTurtles()
 	local players = self.m_ColShape:getElementsWithin("player")
-	
-	if self.m_State == "Running" then	
+
+	if self.m_State == "Running" then
 		for _, player in pairs(players) do
 			player:triggerEvent("turtleRaceSyncTurtles", self.m_Turtles)
 		end
