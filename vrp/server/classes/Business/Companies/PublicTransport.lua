@@ -10,7 +10,7 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 	},
 }
 
-local TAXI_PRICE_PER_KM = 20
+local TAXI_PRICE_PER_KM = 30
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
@@ -191,6 +191,7 @@ function PublicTransport:startTaxiDrive(veh, customer, isFree)
 	self.m_TaxiCustomer[customer]["customer"] = customer
 	self.m_TaxiCustomer[customer]["vehicle"] = veh
 	self.m_TaxiCustomer[customer]["driver"] = veh:getOccupant(0)
+	self.m_TaxiCustomer[customer]["driverName"] = veh:getOccupant(0):getName()
 	self.m_TaxiCustomer[customer]["startMileage"] = veh:getMileage()
 	self.m_TaxiCustomer[customer]["diff"] = 0
 	self.m_TaxiCustomer[customer]["price"] = 0
@@ -204,17 +205,24 @@ end
 function PublicTransport:endTaxiDrive(customer)
 	if self.m_TaxiCustomer[customer] then
 		local driver = self.m_TaxiCustomer[customer]["driver"]
+		local driverName = self.m_TaxiCustomer[customer]["driverName"]
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
-		driver:giveMoney(price, "Public Transport Taxi")
+		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		if price > 0 then 
-			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
+			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
+				self:giveMoney(math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName())) -- prevent players from spawning afk money
+			end
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
-		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
-		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
+		
+		if isElement(driver) then 
+			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
+			driver:giveMoney(price, "Public Transport Taxi") 
+		end
+
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
 		if self.m_TaxiCustomer[customer]["blip"] then delete(self.m_TaxiCustomer[customer]["blip"]) end
 		self.m_TaxiCustomer[customer] = nil
@@ -224,7 +232,7 @@ function PublicTransport:endTaxiDrive(customer)
 end
 
 function PublicTransport:updateTaxometer(customer)
-	if self.m_TaxiCustomer[customer] and isElement(customer) then
+	if self.m_TaxiCustomer[customer] and isElement(customer) and self.m_TaxiCustomer[customer]["driver"] and isElement(self.m_TaxiCustomer[customer]["driver"]) then
 		self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
 		if not self.m_TaxiCustomer[customer]["isFree"] then
 			self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
@@ -253,7 +261,7 @@ function PublicTransport:updateDriverTaxometer(vehicle, driver)
 			end
 		end
 	end
-	if driver then
+	if isElement(driver) then
 		driver:triggerEvent("syncDriverTaxoMeter", customers)
 	end
 end

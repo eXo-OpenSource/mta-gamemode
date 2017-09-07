@@ -168,7 +168,7 @@ function GroupPropertyManager:SellProperty(  )
 			local group = client:getGroup()
 			if pOwner == group then
 				property.m_Owner = false
-				property.m_OwnerID = false
+				property.m_OwnerID = 0
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
 				property.m_Open = 1
 				if property.m_Pickup and isElement(property.m_Pickup) then 
