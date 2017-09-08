@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 TurtleRaceGUI = inherit(GUIForm)
-TurtleRaceGUI.Bets = {100, 1000, 5000, 10000, 50000, 100000, 500000}
+TurtleRaceGUI.Bets = {100, 1000, 5000, 10000, 50000, 100000}
 inherit(Singleton, TurtleRaceGUI)
 
 function TurtleRaceGUI:constructor()
@@ -41,7 +41,7 @@ function TurtleRaceGUI:constructor()
 		self.m_Bet:addItem(("%d$"):format(betAmount))
 	end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.8, self.m_Height*0.06, "Möglicher Gewinn: 3-facher Einsatz!", self.m_Window)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.8, self.m_Height*0.06, "Möglicher Gewinn: 6-facher Einsatz!", self.m_Window)
 
 	self.m_BetButton = VRPButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.078, self.m_Width*0.3, self.m_Height*0.07, "Wette platzieren", true, self.m_Window)
 	self.m_BetButton.onLeftClick = bind(self.placeBet, self)

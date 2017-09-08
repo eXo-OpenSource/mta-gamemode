@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 TurtleRace = inherit(Singleton)
-addRemoteEvents{"turtleRaceInit", "turtleRaceSyncTurtles", "turtleRaceStop"}
+addRemoteEvents{"turtleRaceInit", "turtleRaceSyncTurtles", "turtleRaceStop", "turtleRaceCountdown"}
 
 function TurtleRace.load()
 	local ped = Ped.create(198, Vector3(318, -1820, 4.19), 270)
@@ -98,5 +98,20 @@ addEventHandler("turtleRaceStop", root,
 		if TurtleRace:isInstantiated() then
 			delete(TurtleRace:getSingleton())
 		end
+	end
+)
+
+addEventHandler("turtleRaceCountdown", root,
+	function()
+		if not TurtleRace:isInstantiated() then return end
+
+		local shortMessage = ShortMessage:new(_"Das Schildkrötenrennen startet in 3 Sekunden!", _"Schildkrötenrennen", {50, 170, 20}, 3000)
+		local countdown = 3
+		setTimer(
+			function()
+				countdown = countdown - 1
+				shortMessage:setText(_("Das Schildkrötenrennen startet in %s Sekunden!", countdown))
+			end, 1000, 3
+		)
 	end
 )

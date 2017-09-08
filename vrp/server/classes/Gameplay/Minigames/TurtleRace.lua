@@ -87,24 +87,28 @@ function TurtleRace:createGame()
 end
 
 function TurtleRace:destroyGame()
-	self.m_State = "None"
-	for _, turtle in pairs(self.m_Turtles) do
-		turtle.object:destroy()
+	if self.m_Turtles then
+		for _, turtle in pairs(self.m_Turtles) do
+			turtle.object:destroy()
+		end
 	end
 
-	for _, fence in pairs(self.m_Fences) do
-		if isElement(fence) then fence:destroy() end
+	if self.m_Fences then
+		for _, fence in pairs(self.m_Fences) do
+			if isElement(fence) then fence:destroy() end
+		end
 	end
-	
+
 	if self.m_Map then
 		delete(self.m_Map)
 	end
-	
+
 	if self.m_ColShape then
 		removeEventHandler("onColShapeHit", self.m_ColShape, self.m_ColShapeHit)
 		self.m_ColShape:destroy()
 	end
 
+	self.m_State = "None"
 	self.m_Turtles = nil
 	self.m_Map = nil
 end
@@ -138,9 +142,8 @@ function TurtleRace:updateTurtlePositions()
 end
 
 function TurtleRace:setState(state)
-	self.m_State = state
-
-	if self.m_State == "Running" then
+	if state == "Running" and self.m_State == "GridCountdown" then
+		self.m_State = state
 		self:updateTurtlePositions()
 		self:syncTurtles()
 
@@ -150,45 +153,51 @@ function TurtleRace:setState(state)
 				self:syncTurtles()
 			end, 1000, 0
 		)
-	elseif self.m_State == "GridCountdown" then
+	elseif state == "GridCountdown" and self.m_State == "Preparing" then
+		self.m_State = state
+
+		local players = self.m_ColShape:getElementsWithin("player")
+		for _, player in pairs(players) do
+			player:triggerEvent("turtleRaceCountdown")
+		end
+
+		for _, fence in pairs(self.m_Fences) do
+			fence:move(3000, fence.matrix:transformPosition(Vector3(0, 0, -.655)))
+		end
+
 		local countdown = 3
 		setTimer(
 			function()
-				outputChatBox(countdown)
 				countdown = countdown - 1
-				if countdown == 0 then
-					outputChatBox("GO")
-					self:setState("Running")
-				elseif countdown == 2 then
-					for _, fence in pairs(self.m_Fences) do
-						fence:move(2000, fence.matrix:transformPosition(Vector3(0,0,-1)))
-					end
-				end
+				if countdown == 0 then self:setState("Running") end
 			end, 1000, 3
 		)
-	elseif self.m_State == "Finished" then
+	elseif state == "Finished" and self.m_State == "Running" then
+		self.m_State = state
 		local players = self.m_ColShape:getElementsWithin("player")
 		for _, player in pairs(players) do
 			player:triggerEvent("turtleRaceStop")
 		end
 
 		self:checkWinner()
-		
+
 		setTimer(
 			function()
 				self:setState("None")
-			end, 60000, 1
+			end, 30000, 1
 		)
-	elseif self.m_State == "Preparing" then
+	elseif state == "Preparing" and self.m_State == "None" then
+		self.m_State = state
 		self:createGame()
 	elseif self.m_State == "None" then
+		self.m_State = state
 		self:destroyGame()
 	end
 end
 
 function TurtleRace:syncTurtles()
-	local players = self.m_ColShape:getElementsWithin("player")
 	if self.m_State == "Running" then
+		local players = self.m_ColShape:getElementsWithin("player")
 		for _, player in pairs(players) do
 			player:triggerEvent("turtleRaceSyncTurtles", self.m_Turtles)
 		end
@@ -204,17 +213,17 @@ function TurtleRace:checkWinner()
 			if player then
 				if isOffline then player:load() end
 
-				local win = tonumber(row["Bet"])*3
-				player:giveMoney(win, "Pferde-Wetten")
+				local win = tonumber(row["Bet"]) * 6
+				player:giveMoney(win, "Schildkrötenrennen")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then
-					player:sendShortMessage(_("[Turtle-Race] Du hast auf die richtige Schildkröte (%s) gesetzt und %s$ gewonnen!", player, self.m_FinishedTurtle, win), _("Schildkrötenrennen", client), {50, 170, 20})
+					player:sendShortMessage(_("Du hast auf die richtige Schildkröte (%s) gesetzt und %s$ gewonnen!", player, self.m_FinishedTurtle, win), _("Schildkrötenrennen", player), {50, 170, 20})
 				end
 			end
 		else
 			if not isOffline then
-				player:sendShortMessage(_("[Turtle-Race] Du hast auf die falsche Schildkröte (%s) gesetzt und nichts gewonnen!", player, row["TurtleId"]), _("Schildkrötenrennen", client), {50, 170, 20})
+				player:sendShortMessage(_("Du hast auf die falsche Schildkröte (%s) gesetzt und nichts gewonnen!", player, row["TurtleId"]), _("Schildkrötenrennen", player), {50, 170, 20})
 			end
 		end
 
@@ -237,7 +246,7 @@ function TurtleRace:addBet(turtleId, money)
 	client:takeMoney(money, "Turtle-Race")
 	client:sendShortMessage(_("Du hast %s auf Schildkröte %s gesetzt!", client, money, turtleId), _("Schildkrötenrennen", client), {50, 170, 20})
 	sql:queryExec("INSERT INTO ??_turtle_bets (UserId, Bet, TurtleId) VALUES (?, ?, ?)", sql:getPrefix(), client:getId(), money, turtleId)
-	
+
 	self.m_Stats["Incoming"] = self.m_Stats["Incoming"] + money
 	self.m_Stats["Played"] = self.m_Stats["Played"] + 1
 end
