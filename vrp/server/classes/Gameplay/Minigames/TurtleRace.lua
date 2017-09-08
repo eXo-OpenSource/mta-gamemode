@@ -33,12 +33,11 @@ function TurtleRace:constructor()
 	self.m_Blip:setDisplayText("Schildkröten Rennen", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({50, 170, 20})
 
-	self.m_InfoMessage = bind(TurtleRace.infoMessage, self)
-	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 10, 00)
-	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 13, 00)
-	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 16, 00)
-	GlobalTimer:getSingleton():registerEvent(self.m_InfoMessage, "TurtleRaceInfo", nil, 19, 00)
-	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.infoMessage2, self), "TurtleRaceInfo2", nil, 20, 05)
+	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 10, 00)
+	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 13, 00)
+	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 16, 00)
+	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 19, 00)
+	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage2, "TurtleRaceInfo2", nil, 20, 05)
 	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.setState, self), "TurtleRaceCreate", nil, 20, 30, "Preparing")
 	GlobalTimer:getSingleton():registerEvent(bind(TurtleRace.setState, self), "TurtleRaceStart", nil, 21, 00, "GridCountdown")
 
@@ -48,14 +47,12 @@ end
 function TurtleRace:destructor()
 end
 
--- Todo: replace chatbox output with global shortmessage luLz
-function TurtleRace:infoMessage()
-	outputChatBox("[Turtle-Race] Um 21:00 Uhr findet das tägliche Schildkrötenrennen statt, du kannst am Strand", root, 50, 170, 20)
-	outputChatBox("auf eine Schildkröte Geld setzen und um 21:00 Uhr das rennen anschauen. Viel Glück!", root, 50, 170, 20)
+function TurtleRace.infoMessage()
+	PlayerManager:getSingleton():sendShortMessage("Um 21:00 Uhr findet das tägliche Schildkrötenrennen statt! Du kannst am Strand auf eine Schildkröte Geld setzen und das rennen vor Ort anschauen. Viel Glück!", "Schildkrötenrennen", {50, 170, 20})
 end
 
-function TurtleRace:infoMessage2()
-	outputChatBox("[Turtle-Race] Pferderennen vorbei? Um 21:00 Uhr startet das Schildkrötenrennen am Strand!", root, 50, 170, 20)
+function TurtleRace.infoMessage2()
+	PlayerManager:getSingleton():sendShortMessage("Pferderennen vorbei? Nichts gewonnen? Versuch dein Glück um 21:00 Uhr beim Schildkrötenrennen am Strand!", "Schildkrötenrennen", {50, 170, 20})
 end
 
 function TurtleRace:createGame()
