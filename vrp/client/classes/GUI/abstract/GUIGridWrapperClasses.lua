@@ -17,6 +17,9 @@ GUIGridMiniMap = inherit(GUIMiniMap)
 GUIGridProgressBar = inherit(GUIProgressBar)
 GUIGridRadioButton = inherit(GUIRadioButton)
 GUIGridRectangle = inherit(GUIRectangle)
+GUIGridSlider = inherit(GUISlider)
+
+
 
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridCombobox:constructor(posX, posY, width, height, parent) return GUICombobox.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -25,6 +28,7 @@ function GUIGridImage:constructor(posX, posY, width, height, path, parent) retur
 function GUIGridRadioButton:constructor(posX, posY, width, height, text, parent) return GUIRadioButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) end
 function GUIGridRectangle:constructor(posX, posY, width, height, color, parent) return GUIRectangle.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), color, parent) end
 function GUIGridProgressBar:constructor(posX, posY, width, height, parent) return GUIProgressBar.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
+function GUIGridSlider:constructor(posX, posY, width, height, parent) return GUISlider.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)	
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) 

@@ -46,6 +46,21 @@ function StyleguideDemonstrationGUI:constructor()
 	GUIGridProgressBar:new(1, 9, 8, 1, self):setProgress(13.37):setText("für den Fortschritt!"):setProgressTextEnabled(true)
 	GUIGridEdit:new(1, 10, 8, 1, self):setText("Dies sind die neuen Textboxen")
 	GUIGridEdit:new(1, 11, 8, 1, self):setText("mit selektieren Funktion!")
+	GUIGridLabel:new(1, 12, 4, 1, "Slider von 30 zu 40", self)
+	local coolSlider = GUIGridSlider:new(1, 13, 8, 1, self)
+	local label = GUIGridLabel:new(5, 12, 4, 1, "Slider-Value", self)
+	local label2 = GUIGridLabel:new(9, 12, 4, 1, "Slider-Value", self)
+
+	GUIGridSlider:new(1, 14, 1, 1, self)
+
+	coolSlider:setRange(30, 40)
+	coolSlider:setValue(35)
+	coolSlider.onUpdated = function(newValue)
+		label:setText("onUpdated: "..newValue)
+	end
+	coolSlider.onUpdate = function(newValue)
+		label2:setText("onUpdate: "..newValue)
+	end
 end
 
 function StyleguideDemonstrationGUI:destructor()

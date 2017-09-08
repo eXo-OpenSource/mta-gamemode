@@ -434,6 +434,7 @@
 	<script src="client/classes/GUI/GUIProgressBar.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
+	<script src="client/classes/GUI/GUISlider.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
