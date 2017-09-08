@@ -92,10 +92,14 @@ function TurtleRace:destroyGame()
 		turtle.object:destroy()
 	end
 
+	for _, fence in pairs(self.m_Fences) do
+		if isElement(fence) then fence:destroy() end
+	end
+	
 	if self.m_Map then
 		delete(self.m_Map)
 	end
-
+	
 	if self.m_ColShape then
 		removeEventHandler("onColShapeHit", self.m_ColShape, self.m_ColShapeHit)
 		self.m_ColShape:destroy()
