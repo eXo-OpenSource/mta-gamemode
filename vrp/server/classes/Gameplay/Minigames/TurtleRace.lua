@@ -24,6 +24,8 @@ TurtleRace.Fences = {
 
 addRemoteEvents{"TurtleRaceAddBet"}
 function TurtleRace:constructor()
+	self.m_Stats = StatisticsLogger:getSingleton():getGameStats("TurtleRace")
+
 	self.m_State = "None"
 	self.m_ColShapeHit = bind(TurtleRace.onColShapeHit, self)
 
@@ -115,6 +117,7 @@ function TurtleRace:updateTurtlePositions()
 			turtle.object.position = Vector3(unpack(turtle.endPosition))
 			if turtle.object.position.y <= TurtleRace.FinishPos then
 				if isTimer(self.m_GameTimer) then killTimer(self.m_GameTimer) end
+				self.m_FinishedTurtle = turtle.id
 				self:setState("Finished")
 				return
 			end
@@ -165,6 +168,8 @@ function TurtleRace:setState(state)
 			player:triggerEvent("turtleRaceStop")
 		end
 
+		self:checkWinner()
+		
 		setTimer(
 			function()
 				self:setState("None")
@@ -186,6 +191,37 @@ function TurtleRace:syncTurtles()
 	end
 end
 
+function TurtleRace:checkWinner()
+	local result = sql:queryFetch("SELECT * FROM ??_turtle_bets", sql:getPrefix())
+ 	for i, row in pairs(result) do
+		local player, isOffline = DatabasePlayer.get(row.UserId)
+
+		if row["TurtleId"] == self.m_FinishedTurtle then
+			if player then
+				if isOffline then player:load() end
+
+				local win = tonumber(row["Bet"])*3
+				player:giveMoney(win, "Pferde-Wetten")
+				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
+
+				if not isOffline then
+					player:sendShortMessage(_("[Turtle-Race] Du hast auf die richtige Schildkröte (%s) gesetzt und %s$ gewonnen!", player, self.m_FinishedTurtle, win), _("Schildkrötenrennen", client), {50, 170, 20})
+				end
+			end
+		else
+			if not isOffline then
+				player:sendShortMessage(_("[Turtle-Race] Du hast auf die falsche Schildkröte (%s) gesetzt und nichts gewonnen!", player, row["TurtleId"]), _("Schildkrötenrennen", client), {50, 170, 20})
+			end
+		end
+
+		if isOffline then
+			delete(player)
+		end
+	end
+
+	sql:queryExec("TRUNCATE TABLE ??_turtle_bets", sql:getPrefix())
+end
+
 function TurtleRace:addBet(turtleId, money)
 	if not turtleId or not money then return end
 	if self.m_State ~= "None" and self.m_State ~= "Preparing" then client:sendWarning("Du kannst zum aktuellen Zeitpunkt keine Wette setzen!") return end
@@ -197,4 +233,7 @@ function TurtleRace:addBet(turtleId, money)
 	client:takeMoney(money, "Turtle-Race")
 	client:sendShortMessage(_("Du hast %s auf Schildkröte %s gesetzt!", client, money, turtleId), _("Schildkrötenrennen", client), {50, 170, 20})
 	sql:queryExec("INSERT INTO ??_turtle_bets (UserId, Bet, TurtleId) VALUES (?, ?, ?)", sql:getPrefix(), client:getId(), money, turtleId)
+	
+	self.m_Stats["Incoming"] = self.m_Stats["Incoming"] + money
+	self.m_Stats["Played"] = self.m_Stats["Played"] + 1
 end
