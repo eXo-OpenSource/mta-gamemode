@@ -13,10 +13,21 @@ local HANDLE_WIDTH = 8
 function GUISlider:constructor(posX, posY, width, height, parent)
     GUIElement.constructor(self, posX, posY, width, height, parent)
 	self.m_CursorMoveHandler = bind(GUISlider.Event_onClientCursorMove, self)
-    self.m_RangeMin = 0
-    self.m_RangeMax = 1
-    self.m_Value = 0.5
-    self.m_RoundOffset = 3
+    self.m_RangeMin = 0 -- minimum value
+    self.m_RangeMax = 1 --max value
+    self.m_Value = 0.5 --current value
+    self.m_RoundOffset = 3 --value for math.round on actual value to prevent event spam 
+
+    --use a GUI element as a handle (this got implemented later on to prevent an ongoing onClientCursorMove just to handle hover events)
+    self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, self.m_Height, Color.Accent, self)
+    self.m_Handle.onHover = function()
+        self.m_Handle:setColor(Color.White)
+    end
+    self.m_Handle.onUnhover = function()
+        if not self.m_Scrolling then
+          self.m_Handle:setColor(Color.Accent)
+        end
+    end
 end
 
 function GUISlider:setRange(rangeMin, rangeMax)
@@ -102,6 +113,7 @@ function GUISlider:Event_onClientCursorMove(_, _, cursorX, cursorY)
             self:internalCheckForNewValue(cursorX - self.m_ScrollOffset, cursorY)
         else -- mouse is no longer pressed (this happens if it gets released outside of the gui elements)
             self:onInternalLeftClick(cursorX, cursorY)
+            self.m_Handle:setColor(Color.Accent)
         end
 	end
 end
@@ -113,5 +125,5 @@ function GUISlider:drawThis()
 	-- draw handle
 
     local offsetByValue = self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH)
-    dxDrawRectangle(self.m_AbsoluteX + offsetByValue, self.m_AbsoluteY, HANDLE_WIDTH, self.m_Height, Color.Accent)
+    self.m_Handle:setPosition(offsetByValue, 0) -- update the handle gui element
 end

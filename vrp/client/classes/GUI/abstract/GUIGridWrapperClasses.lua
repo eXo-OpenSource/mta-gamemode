@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 GUIGridButton = inherit(GUIButton)
+GUIGridIconButton = inherit(GUIButton)
 GUIGridChanger = inherit(GUIChanger)
 GUIGridCheckbox = inherit(GUICheckbox)
 GUIGridEdit = inherit(GUIEdit)
@@ -34,6 +35,13 @@ function GUIGridButton:constructor(posX, posY, width, height, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) 
     self:setBarEnabled(true) 
     self:setFont(VRPFont(25)):setFontSize(1)
+    return self 
+end
+
+function GUIGridIconButton:constructor(posX, posY, text, parent)	
+    GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", 1), grid("d", 1), text, parent) 
+    self:setFont(FontAwesome(15)):setFontSize(1)
+    self:setBackgroundColor(Color.Accent)
     return self 
 end
 

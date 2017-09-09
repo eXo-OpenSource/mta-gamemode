@@ -10,48 +10,55 @@ inherit(Singleton, StyleguideDemonstrationGUI)
 
 function StyleguideDemonstrationGUI:constructor()
 	--main
+
+	grid("offset", 50)
+
 	self.m_Width = grid("x", 20)
 	self.m_Height = grid("y", 15)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"StyleguideDemonstrationGUI", true, true, self)
+	self.m_Tabs = self.m_Window:addTabPanel({"Allgemein", "weiteres"})
 
-	GUIGridLabel:new(1, 1, 5, 1, _"Überschrift", self):setHeader()
-	GUIGridLabel:new(1, 2, 5, 1, _"Zwischenüberschrift", self):setHeader("sub")
-	GUIGridLabel:new(1, 3, 5, 1, _"Infotext / Label", self)
+	grid("offset", 0)
+
+	--Tab 1
+
+	GUIGridLabel:new(1, 1, 5, 1, _"Überschrift", self.m_Tabs[1]):setHeader()
+	GUIGridLabel:new(1, 2, 5, 1, _"Zwischenüberschrift", self.m_Tabs[1]):setHeader("sub")
+	GUIGridLabel:new(1, 3, 5, 1, _"Infotext / Label", self.m_Tabs[1])
 
 
-	GUIGridLabel:new(11, 1, 9, 1, "Eine super tolle Liste!", self):setHeader("sub")
-	GUIGridGridList:new(11, 2, 9, 10, self):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.PrimaryNoClick)
+	GUIGridLabel:new(11, 1, 9, 1, "Eine super tolle Liste!", self.m_Tabs[1]):setHeader("sub")
+	GUIGridGridList:new(11, 2, 9, 10, self.m_Tabs[1]):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.PrimaryNoClick)
 
-	self.m_ListRefreshButton = GUIGridButton:new(19, 2, 1, 1, FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
-	self.m_ListRefreshButton:setBackgroundColor(Color.Accent)
+	GUIGridIconButton:new(19, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1])
 
-	GUIGridButton:new(7, 2, 4, 1, _"Hinzufügen", self):setBackgroundColor(Color.Red)
-	GUIGridButton:new(7, 3, 4, 1, _"Entfernen", self):setBackgroundColor(Color.Green)
-	GUIGridButton:new(7, 4, 4, 1, _"Nach oben", self)
-	GUIGridButton:new(7, 5, 4, 1, _"Nach unten", self)
-	GUIGridLabel:new(7, 6, 4, 2, _"Mehrzeiliger\nInfotext", self)
+	GUIGridButton:new(7, 2, 4, 1, _"Hinzufügen", self.m_Tabs[1]):setBackgroundColor(Color.Red)
+	GUIGridButton:new(7, 3, 4, 1, _"Entfernen", self.m_Tabs[1]):setBackgroundColor(Color.Green)
+	GUIGridButton:new(7, 4, 4, 1, _"Nach oben", self.m_Tabs[1])
+	GUIGridButton:new(7, 5, 4, 1, _"Nach unten", self.m_Tabs[1])
+	GUIGridLabel:new(7, 6, 4, 2, _"Mehrzeiliger\nInfotext\nundso", self.m_Tabs[1])
 
-	GUIGridCheckbox:new(1, 4, 4, 1, "GUIGridCheckbox", self)
-	local changer = GUIGridChanger:new(1, 5, 6, 1, self)
+	GUIGridCheckbox:new(1, 4, 4, 1, "GUIGridCheckbox", self.m_Tabs[1])
+	local changer = GUIGridChanger:new(1, 5, 6, 1, self.m_Tabs[1])
 	changer:addItem("No Pew")
 	changer:addItem("Pew")
 	changer:addItem("Pew Pew Pew")
 
-	GUIGridButton:new(8, 14, 4, 1, "Übernehmen p.", self):setBarEnabled(false)
-	GUIGridButton:new(12, 13, 4, 2, "Übernehmen\nZweizeiler", self)
-	GUIGridButton:new(16, 14, 4, 1, "Übernehmen", self)
+	GUIGridButton:new(8, 14, 4, 1, "Übernehmen p.", self.m_Tabs[1]):setBarEnabled(false)
+	GUIGridButton:new(12, 13, 4, 2, "Übernehmen\nZweizeiler", self.m_Tabs[1])
+	GUIGridButton:new(16, 14, 4, 1, "Übernehmen", self.m_Tabs[1])
 
-	GUIGridProgressBar:new(1, 9, 8, 1, self):setProgress(13.37):setText("für den Fortschritt!"):setProgressTextEnabled(true)
-	GUIGridEdit:new(1, 10, 8, 1, self):setText("Dies sind die neuen Textboxen")
-	GUIGridEdit:new(1, 11, 8, 1, self):setText("mit selektieren Funktion!")
-	GUIGridLabel:new(1, 12, 4, 1, "Slider von 30 zu 40", self)
-	local coolSlider = GUIGridSlider:new(1, 13, 8, 1, self)
-	local label = GUIGridLabel:new(5, 12, 4, 1, "Slider-Value", self)
-	local label2 = GUIGridLabel:new(9, 12, 4, 1, "Slider-Value", self)
+	GUIGridProgressBar:new(1, 9, 8, 1, self.m_Tabs[1]):setProgress(13.37):setText("für den Fortschritt!"):setProgressTextEnabled(true)
+	GUIGridEdit:new(1, 10, 8, 1, self.m_Tabs[1]):setText("Dies sind die neuen Textboxen")
+	GUIGridEdit:new(1, 11, 8, 1, self.m_Tabs[1]):setText("mit selektieren Funktion!")
+	GUIGridLabel:new(1, 12, 4, 1, "Slider von 30 zu 40", self.m_Tabs[1])
+	local coolSlider = GUIGridSlider:new(1, 13, 8, 1, self.m_Tabs[1])
+	local label = GUIGridLabel:new(5, 12, 4, 1, "Slider-Value", self.m_Tabs[1])
+	local label2 = GUIGridLabel:new(9, 12, 4, 1, "Slider-Value", self.m_Tabs[1])
 
-	GUIGridSlider:new(1, 14, 1, 1, self)
+	GUIGridSlider:new(1, 14, 1, 1, self.m_Tabs[1])
 
 	coolSlider:setRange(30, 40)
 	coolSlider:setValue(35)
@@ -61,6 +68,8 @@ function StyleguideDemonstrationGUI:constructor()
 	coolSlider.onUpdate = function(newValue)
 		label2:setText("onUpdate: "..newValue)
 	end
+
+	--Tab 2
 end
 
 function StyleguideDemonstrationGUI:destructor()
