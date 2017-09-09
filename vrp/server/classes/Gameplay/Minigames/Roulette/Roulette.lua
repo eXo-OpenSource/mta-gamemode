@@ -5,7 +5,7 @@ function Roulette:constructor(player)
     self.m_Player:triggerEvent("rouletteOpen")
 end
 
-function Roulette:destructor(player)
+function Roulette:destructor()
     self.m_Player:triggerEvent("rouletteClose")
 end
 

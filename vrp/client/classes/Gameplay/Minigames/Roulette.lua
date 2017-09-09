@@ -46,7 +46,8 @@ function Roulette:constructor()
 end
 
 function Roulette:destructor()
-    removeEventHandler("rouletteStartSpin", root, self.m_StartSpinEvent)
+    GUIForm.destructor(self)
+	removeEventHandler("rouletteStartSpin", root, self.m_StartSpinEvent)
 end
 
 function Roulette:loadColors()
