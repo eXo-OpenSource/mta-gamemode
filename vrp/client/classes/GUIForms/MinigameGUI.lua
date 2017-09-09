@@ -39,6 +39,12 @@ MinigameGUI.Data = {
 		["image"] = "files/images/Minigames/2Cars.png",
 		["startFunction"] = function() TCars:new() end
 	},
+	["Roulette"] = {
+		["title"] = HelpTextTitles.Minigames.Roulette,
+		["description"] = HelpTexts.Minigames.Roulette,
+		["image"] = "files/images/Minigames/Roulette.png",
+		["startFunction"] = function() RouletteGUI:new() end
+	},
 }
 
 addRemoteEvents{"showMinigameGUI"}

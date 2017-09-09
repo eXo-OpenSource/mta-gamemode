@@ -32,6 +32,18 @@ function Casino:createGameMarker()
 	local marker_GoJump = createMarker(self.m_GoJumpMarker, "cylinder", 1, 255, 80, 0, 200)
 	local marker_SideSwipe = createMarker(self.m_SideSwipeMarker, "cylinder", 1, 255, 80, 0, 200)
 	local marker_2Cars = createMarker(self.m_2CarsMarker, "cylinder", 1, 255, 80, 0, 200)
+
+	local rouletteMarkers = {
+		createMarker(2230.30, 1615.95, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2242.00, 1615.95, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2230.40, 1618.25, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2242.00, 1618.25, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2230.30, 1596.13, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2230.30, 1590.56, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2242.00, 1596.13, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+		createMarker(2242.00, 1590.56, 1005.225, "cylinder", 1, 255, 80, 0, 200),
+
+	}
 	--local marker_BomberMan2D = createMarker(self.m_BomberMan2DMarker, "cylinder", 1, 255, 80, 0, 200)
 
 	marker_GoJump:setInterior(1)
@@ -65,4 +77,16 @@ function Casino:createGameMarker()
 			MinigameGUI:new("2Cars")
 		end
 	)
+
+	for index, marker in pairs(rouletteMarkers) do
+		marker:setInterior(1)
+		addEventHandler("onClientMarkerHit", marker,
+			function(hitElement)
+				if hitElement:getType() ~= "player" then return end
+				if hitElement ~= localPlayer then return end
+
+				MinigameGUI:new("Roulette")
+			end
+		)
+	end
 end

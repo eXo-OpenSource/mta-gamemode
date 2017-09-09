@@ -11,11 +11,14 @@
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 
 	<script src="shared/debug.lua" type="shared"/>
+
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
+	<script src="shared/constants/roulette.lua" type="shared"/>
+
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
@@ -657,6 +660,8 @@
 	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -820,8 +825,12 @@
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
 
 	<!-- serverside -->
+	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
@@ -1074,6 +1083,18 @@
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
 	<vrpfile src="files/images/Other/PewPew/hit.png"/>
 
+	<vrpfile src="files/images/Roulette/table.png" />
+	<vrpfile src="files/images/Roulette/circle.png" />
+	<vrpfile src="files/images/Roulette/arrow.png" />
+
+	<vrpfile src="files/images/Roulette/token_black.png" />
+	<vrpfile src="files/images/Roulette/token_blue.png" />
+	<vrpfile src="files/images/Roulette/token_gray.png" />
+	<vrpfile src="files/images/Roulette/token_green.png" />
+	<vrpfile src="files/images/Roulette/token_pink.png" />
+	<vrpfile src="files/images/Roulette/token_red.png" />
+	<vrpfile src="files/images/Roulette/token_yellow.png" />
+
 	<vrpfile src="files/images/Deathmatch/death_img.png"/>
 	<vrpfile src="files/images/Deathmatch/death_round.png"/>
 
@@ -1082,6 +1103,7 @@
 	<vrpfile src="files/images/Minigames/SideSwipe.png"/>
 	<vrpfile src="files/images/Minigames/GoJump.png"/>
 	<vrpfile src="files/images/Minigames/2Cars.png"/>
+	<vrpfile src="files/images/Minigames/Roulette.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
