@@ -197,6 +197,7 @@ function Core:afterLogin()
 
 	PlantGUI.load()
 	Fishing.load()
+	TurtleRace.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()

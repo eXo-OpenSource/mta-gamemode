@@ -177,6 +177,7 @@
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -661,6 +662,7 @@
 	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -826,6 +828,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
@@ -1177,6 +1180,7 @@
 	<vrpfile src="files/images/Radar/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar/Blips/North.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
+	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1283,6 +1287,13 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
+
+	<vrpfile src="files/images/Textures/Turtles/1.png"/>
+	<vrpfile src="files/images/Textures/Turtles/2.png"/>
+	<vrpfile src="files/images/Textures/Turtles/3.png"/>
+	<vrpfile src="files/images/Textures/Turtles/4.png"/>
+	<vrpfile src="files/images/Textures/Turtles/5.png"/>
+	<vrpfile src="files/images/Textures/Turtles/6.png"/>
 
 	<!-- Vehicle Textures -->
 	<vrpfile src="files/images/Textures/Special/1.png"/>
@@ -1462,6 +1473,10 @@
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
+
+	<!-- TurtleRace -->
+	<vrpfile src="files/images/TurtleRace/Turtle.png"/>
+	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
