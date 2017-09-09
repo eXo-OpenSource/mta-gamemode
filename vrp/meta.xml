@@ -1145,6 +1145,7 @@
 	<vrpfile src="files/images/Radar/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar/Blips/North.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
+	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1436,6 +1437,10 @@
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
+
+	<!-- HorseRace -->
+	<vrpfile src="files/images/TurtleRace/Turtle.png"/>
+	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>

@@ -29,7 +29,7 @@ function TurtleRace:constructor()
 	self.m_State = "None"
 	self.m_ColShapeHit = bind(TurtleRace.onColShapeHit, self)
 
-	self.m_Blip = Blip:new("Horse.png", 318, -1820)
+	self.m_Blip = Blip:new("Turtle.png", 318, -1820)
 	self.m_Blip:setDisplayText("Schildkröten Rennen", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({50, 170, 20})
 
@@ -48,11 +48,11 @@ function TurtleRace:destructor()
 end
 
 function TurtleRace.infoMessage()
-	PlayerManager:getSingleton():sendShortMessage("Um 21:00 Uhr findet das tägliche Schildkrötenrennen statt! Du kannst am Strand auf eine Schildkröte Geld setzen und das rennen vor Ort anschauen. Viel Glück!", "Schildkrötenrennen", {50, 170, 20})
+	PlayerManager:getSingleton():sendShortMessage("Um 21:00 Uhr findet das tägliche Schildkrötenrennen statt! Du kannst am Strand auf eine Schildkröte Geld setzen und das rennen vor Ort anschauen. Viel Glück!", "Schildkrötenrennen", {50, 170, 20}, 10000)
 end
 
 function TurtleRace.infoMessage2()
-	PlayerManager:getSingleton():sendShortMessage("Pferderennen vorbei? Nichts gewonnen? Versuch dein Glück um 21:00 Uhr beim Schildkrötenrennen am Strand!", "Schildkrötenrennen", {50, 170, 20})
+	PlayerManager:getSingleton():sendShortMessage("Pferderennen vorbei? Nichts gewonnen? Versuch dein Glück um 21:00 Uhr beim Schildkrötenrennen am Strand!", "Schildkrötenrennen", {50, 170, 20}, 10000)
 end
 
 function TurtleRace:createGame()
@@ -186,7 +186,7 @@ function TurtleRace:setState(state)
 	elseif state == "Preparing" and self.m_State == "None" then
 		self.m_State = state
 		self:createGame()
-	elseif self.m_State == "None" then
+	elseif state == "None" then
 		self.m_State = state
 		self:destroyGame()
 	end
