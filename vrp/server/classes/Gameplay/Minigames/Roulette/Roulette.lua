@@ -3,11 +3,11 @@ Roulette = inherit(Object)
 function Roulette:constructor(player)
     self.m_Player = player
     self.m_Player:triggerEvent("rouletteOpen")
-	self:setFrozen(player, true)
+	self.m_Player:setFrozen(true)
 end
 
 function Roulette:destructor()
-	self:setFrozen(player, false)
+	self.m_Player:setFrozen(false)
     self.m_Player:triggerEvent("rouletteClose")
 end
 
