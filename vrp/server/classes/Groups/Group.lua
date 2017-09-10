@@ -215,6 +215,7 @@ function Group:addPlayer(playerId, rank)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setGroup(self)
+		self.m_HouseLimit = math.floor(table.size(self.m_Players)*1.2)
 		player:reloadBlips()
 		if self.m_Type == "Gang" then
 			player:giveAchievement(8)
@@ -254,6 +255,7 @@ function Group:removePlayer(playerId)
 	end
 	if player then
 		player:setGroup(nil)
+		self.m_HouseLimit = math.floor(table.size(self.m_Players)*1.2)
 		player:reloadBlips()
 		player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
 		self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))

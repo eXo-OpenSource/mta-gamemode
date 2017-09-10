@@ -317,6 +317,7 @@ function GroupGUI:adjustGroupTab(rank)
 	self.m_GroupInvitationsDeclineButton:setVisible(false)
 
 	if rank then
+		self.m_LocalPlayerRank = rank
 		if rank == GroupRank.Leader then
 			self.m_GroupDeleteButton:setVisible(true)
 		else
@@ -618,7 +619,9 @@ function GroupGUI:Event_retriveBusinessInfo(shopInfo, houseInfo, houseLimit)
 		item.basePrice = house.basePrice
 		item.houseId = house.id
 		item.onLeftClick = function(item)
-			self.m_HouseUpdateButton:setEnabled(true)
+			if self.m_LocalPlayerRank >= 5 then
+				self.m_HouseUpdateButton:setEnabled(true)
+			end
 			self.m_HouseUpdateEdit:setText(house.price)
 			self.m_HousePriceLabel:setText(_("%s - %s", toMoneyString(house.basePrice - house.basePrice*0.25), toMoneyString(house.basePrice + house.basePrice*0.25)))
 			self.m_HouseBasePriceLabel:setText(_(toMoneyString(house.basePrice)))
@@ -655,10 +658,15 @@ function GroupGUI:HouseUpdateButton_Click()
 	end
 
 	local newPrice = tonumber(self.m_HouseUpdateEdit:getText())
-	if newPrice >= (item.basePrice - item.basePrice*0.25) and newPrice <= (item.basePrice + item.basePrice*0.25) then
-		triggerServerEvent("houseUpdatePrice", localPlayer, item.houseId, newPrice)
+	if self.m_LocalPlayerRank >= 5 then
+		if newPrice >= (item.basePrice - item.basePrice*0.25) and newPrice <= (item.basePrice + item.basePrice*0.25) then
+			triggerServerEvent("houseUpdatePrice", localPlayer, item.houseId, newPrice)
+		else
+			ErrorBox:new(_"Bitte gib einen Preis innerhalb der Preisspanne ein!")
+			return
+		end
 	else
-		ErrorBox:new(_"Bitte gib einen Preis innerhalb der Preisspanne ein!")
+		ErrorBox:new(_"idito")
 		return
 	end
 end

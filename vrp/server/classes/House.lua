@@ -350,7 +350,7 @@ function House:sellHouseToPlayer(vendor, customer, asGroup)
 
 		self:clearHouse()
 		if self:buyHouse(customer, asGroup) then
-			vendor:giveMoney(self.m_Money, "Haus-Verkauf")
+			vendor:giveMoney(self.m_Price, "Haus-Verkauf")
 
 			if oldOwnerType == 1 then
 				vendor:getGroup():removeHouse(self)

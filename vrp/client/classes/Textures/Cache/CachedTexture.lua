@@ -7,7 +7,9 @@ function CachedTexture:constructor(path)
 end
 
 function CachedTexture:destructor()
-	self.m_Texture:destroy()
+	if self.m_Texture then
+		self.m_Texture:destroy()
+	end
 end
 
 function CachedTexture:getTexture()
