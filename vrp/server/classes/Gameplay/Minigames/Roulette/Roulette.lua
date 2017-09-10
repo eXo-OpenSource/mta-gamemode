@@ -30,7 +30,7 @@ function Roulette:spin(bets)
 	end
 
 	self.m_Player:takeMoney(bet, "Roulette-Einsatz")
-
+	RouletteManager:getSingleton():setStats(-bet)
 	self.m_Random = math.random(0, 36)
 	self.m_Player:triggerEvent("rouletteStartSpin", self.m_Random)
 end
@@ -66,6 +66,7 @@ function Roulette:spinDone(clientNumber)
 	if win > 0 then
 		self.m_Player:sendShortMessage(_("Du hast %s gewonnen!", self.m_Player, toMoneyString(win)), "Roulette")
 		self.m_Player:giveMoney(win, "Roulette-Gewinn")
+		RouletteManager:getSingleton():setStats(win)
 	else
 		self.m_Player:sendShortMessage(_("Du hast nichts gewonnen!", self.m_Player), "Roulette")
 	end
