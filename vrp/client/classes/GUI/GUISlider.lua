@@ -20,7 +20,9 @@ function GUISlider:constructor(posX, posY, width, height, parent)
 	-- Clickdummy
 	self.m_RailClickDummy = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self)
 	self.m_RailClickDummy.onLeftClickDown =
-		function()
+		function(_, cx, cy)
+			self:internalCheckForNewValue(cx, cy)
+
 			if not self.m_Scrolling then
 				addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 				self.m_Scrolling = true
