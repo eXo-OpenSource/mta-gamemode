@@ -70,6 +70,13 @@ function StyleguideDemonstrationGUI:constructor()
 	end
 
 	--Tab 2
+	local labelToggle = GUIGridLabel:new(1, 1, 4, 1, "Switch..", self.m_Tabs[2])
+	local geilerToggler = GUIGridSwitch:new(1, 2, 3, 1, self.m_Tabs[2])
+
+	geilerToggler.onChange =
+		function(state)
+			labelToggle:setText("onChange: " .. tostring(state))
+		end
 end
 
 function StyleguideDemonstrationGUI:destructor()

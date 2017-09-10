@@ -442,6 +442,7 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
+	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 	<!-- Eastereggs -->
 	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
