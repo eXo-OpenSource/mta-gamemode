@@ -135,6 +135,7 @@ function PublicTransport:registerBusStopObjects()
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
 			v:getData("object").m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
+			v:getData("object"):setBreakable(false)
 			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
 			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
 			if v:getData("object"):isStreamedIn() then
