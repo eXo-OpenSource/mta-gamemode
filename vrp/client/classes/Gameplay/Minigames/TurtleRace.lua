@@ -36,11 +36,14 @@ function TurtleRace:constructor(turtles)
 
 	self.m_Turtles = turtles
 	self.m_InterpolateTurtlePositions = bind(TurtleRace.interpolateTurtlePositions, self)
+	self.m_OnTurtleGetRekt = bind(TurtleRace.onClientExplosion, self)
 	addEventHandler("onClientRender", root, self.m_InterpolateTurtlePositions)
+	addEventHandler("onClientExplosion", root, self.m_OnTurtleGetRekt)
 end
 
 function TurtleRace:destructor()
 	removeEventHandler("onClientRender", root, self.m_InterpolateTurtlePositions)
+	removeEventHandler("onClientExplosion", root, self.m_OnTurtleGetRekt)
 end
 
 function TurtleRace:interpolateTurtlePositions()
@@ -73,6 +76,14 @@ function TurtleRace:updatePosition(turtles)
 	end
 
 	self.m_Turtles = turtles
+end
+
+function TurtleRace:onClientExplosion(x, y, z)
+	for _, turtle in pairs(self.m_Turtles) do
+		if (turtle.object.position - Vector3(x, y, z)).length <= 10 then
+			cancelEvent()
+		end
+	end
 end
 
 addEventHandler("turtleRaceInit", root,
