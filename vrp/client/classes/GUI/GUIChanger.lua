@@ -19,37 +19,56 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_Items = {}
 	self.m_CurrentItem = 1
 
-	--self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_LeftButton = GUIButton:new(2, 2, self.m_Height-4, self.m_Height-4, FontAwesomeSymbols.Left, self):setFont(FontAwesome(15))
-	:setBackgroundColor(Color.Accent)
-	:setFontSize(1)
-	self.m_LeftButton.onHover = function()
-		self.m_Animation = Animation.Size:new(self.m_LeftButton, 50, self.m_Height, self.m_Height, "OutQuad")
-		self.m_Animation = Animation.Move:new(self.m_LeftButton, 50, 0, 0, "OutQuad")
-	end
-	self.m_LeftButton.onUnhover = function()
-		self.m_Animation = Animation.Size:new(self.m_LeftButton, 50, self.m_Height-4, self.m_Height-4, "OutQuad")
-		self.m_Animation = Animation.Move:new(self.m_LeftButton, 50, 2, 2, "OutQuad")
-	end
-
-
-	self.m_LeftButton.onLeftClick = function()
-		self.m_CurrentItem = self.m_CurrentItem - 1
-		if self.m_CurrentItem <= 0 then
-			self.m_CurrentItem = #self.m_Items
+	self.m_LeftButton = GUIRectangle:new(2, 2, self.m_Height - 4, self.m_Height - 4, Color.Accent, self)
+	self.m_LeftButton.onHover =
+		function()
+			self.m_LeftLabel:setColor(Color.Black)
+			self.m_LeftButton:setColor(Color.White)
+			Animation.Move:new(self.m_LeftButton, 150, 0, 0, "OutQuad")
+			Animation.Size:new(self.m_LeftButton, 150, self.m_Height, self.m_Height, "OutQuad")
 		end
-		self:setIndex(self.m_CurrentItem)
-	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(15))
-	:setBackgroundColor(Color.Accent)
-	:setFontSize(1)
-	self.m_RightButton.onLeftClick = function()
-		self.m_CurrentItem = self.m_CurrentItem + 1
-		if self.m_CurrentItem > #self.m_Items then
-			self.m_CurrentItem = 1
+	self.m_LeftButton.onUnhover =
+		function()
+			self.m_LeftLabel:setColor(Color.White)
+			self.m_LeftButton:setColor(Color.Accent)
+			Animation.Move:new(self.m_LeftButton, 150, 2, 2, "OutQuad")
+			Animation.Size:new(self.m_LeftButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
 		end
-		self:setIndex(self.m_CurrentItem)
-	end
+	self.m_LeftButton.onLeftClick =
+		function()
+			self.m_CurrentItem = self.m_CurrentItem - 1
+			if self.m_CurrentItem <= 0 then
+				self.m_CurrentItem = #self.m_Items
+			end
+			self:setIndex(self.m_CurrentItem)
+		end
+
+	self.m_RightButton = GUIRectangle:new(self.m_Width - self.m_Height + 2, 2, self.m_Height - 4, self.m_Height - 4, Color.Accent, self)
+	self.m_RightButton.onHover =
+		function()
+			self.m_RightLabel:setColor(Color.Black)
+			self.m_RightButton:setColor(Color.White)
+			Animation.Move:new(self.m_RightButton, 150, self.m_Width - self.m_Height, 0, "OutQuad")
+			Animation.Size:new(self.m_RightButton, 150, self.m_Height, self.m_Height, "OutQuad")
+		end
+	self.m_RightButton.onUnhover =
+		function()
+			self.m_RightLabel:setColor(Color.White)
+			self.m_RightButton:setColor(Color.Accent)
+			Animation.Move:new(self.m_RightButton, 150, self.m_Width - self.m_Height + 2, 2, "OutQuad")
+			Animation.Size:new(self.m_RightButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
+		end
+	self.m_RightButton.onLeftClick =
+		function()
+			self.m_CurrentItem = self.m_CurrentItem + 1
+			if self.m_CurrentItem > #self.m_Items then
+				self.m_CurrentItem = 1
+			end
+			self:setIndex(self.m_CurrentItem)
+		end
+
+	self.m_LeftLabel = GUILabel:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setFontSize(1):setAlign("center", "center")
+	self.m_RightLabel = GUILabel:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setFontSize(1):setAlign("center", "center")
 end
 
 function GUIChanger:drawThis()
