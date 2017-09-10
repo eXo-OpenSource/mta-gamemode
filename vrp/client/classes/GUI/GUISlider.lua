@@ -27,14 +27,23 @@ function GUISlider:constructor(posX, posY, width, height, parent)
 			if not self.m_Scrolling then
 				addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 				self.m_Scrolling = true
-				self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, self.m_Height, "OutQuad")
+                self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, self.m_Height, "OutQuad")
 			end
 		end
 
     --use a GUI element as a handle (this got implemented later on to prevent an ongoing onClientCursorMove just to handle hover events)
-    self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, RAIL_HEIGHT, Color.Accent, self)
-    self.m_Handle.onHover = function() self.m_Handle:setColor(Color.White) end
-    self.m_Handle.onUnhover = function() if not self.m_Scrolling then self.m_Handle:setColor(Color.Accent) end end
+    self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, HANDLE_WIDTH, Color.Accent, self)
+    self.m_Handle.onHover = function() 
+        self.m_Handle:setColor(Color.White)
+        self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, self.m_Height, "OutQuad")
+    end
+
+    self.m_Handle.onUnhover = function() 
+        if not self.m_Scrolling then 
+            self.m_Handle:setColor(Color.Accent)
+            self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, HANDLE_WIDTH, "OutQuad") 
+        end 
+    end
 end
 
 function GUISlider:setRange(rangeMin, rangeMax)
@@ -79,7 +88,8 @@ function GUISlider:Event_onClientCursorMove(_, _, cursorX, cursorY)
         if not getKeyState("mouse1") then
 			removeEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 			self.m_Scrolling = false
-			self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, RAIL_HEIGHT, "OutQuad")
+			self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, HANDLE_WIDTH, "OutQuad")
+            self.m_Handle:setColor(Color.Accent)
 		end
 	end
 end
