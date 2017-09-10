@@ -173,7 +173,7 @@ function TurtleRace:setState(state)
 		self.m_State = state
 		local players = self.m_ColShape:getElementsWithin("player")
 		for _, player in pairs(players) do
-			player:triggerEvent("turtleRaceStop")
+			player:triggerEvent("turtleRaceStop", self.m_FinishedTurtle)
 		end
 
 		self:checkWinner()

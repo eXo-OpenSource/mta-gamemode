@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 TurtleRace = inherit(Singleton)
+TurtleRace.Effects = {"explosion_fuel_car", "explosion_small", "explosion_medium"}
 addRemoteEvents{"turtleRaceInit", "turtleRaceSyncTurtles", "turtleRaceStop", "turtleRaceCountdown"}
 
 function TurtleRace.load()
@@ -86,6 +87,18 @@ function TurtleRace:onClientExplosion(x, y, z)
 	end
 end
 
+function TurtleRace:createTurtleEffects(wonTurtle)
+	for _, turtle in pairs(self.m_Turtles) do
+		if turtle.id == wonTurtle then
+			local effect = createEffect("smoke_flare", turtle.object.position, -90)
+			setTimer(destroyElement, 30000, 1, effect)
+		else
+			turtle.object:setAlpha(0)
+			createEffect(TurtleRace.Effects[math.random(1, 3)], turtle.object.position)
+		end
+	end
+end
+
 addEventHandler("turtleRaceInit", root,
 	function(turtles)
 		if not TurtleRace:isInstantiated() then
@@ -105,8 +118,9 @@ addEventHandler("turtleRaceSyncTurtles", root,
 )
 
 addEventHandler("turtleRaceStop", root,
-	function()
+	function(wonTurtle)
 		if TurtleRace:isInstantiated() then
+			TurtleRace:getSingleton():createTurtleEffects(wonTurtle)
 			delete(TurtleRace:getSingleton())
 		end
 	end
