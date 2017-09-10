@@ -475,6 +475,7 @@
 	<script src="client/classes/GUI/Animations/FadeColor.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/Move.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeAlpha.lua" type="client"/>
+	<script src="client/classes/GUI/Animations/Size.lua" type="client"/>
 
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/GUIPaydayBox.lua" type="client"/>
