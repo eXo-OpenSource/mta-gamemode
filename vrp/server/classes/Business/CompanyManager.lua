@@ -186,7 +186,7 @@ function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, rea
 	if not company then return end
 
 	if client:getId() == playerId then
-		client:sendError(_("Du kannst dich nicht selbst aus der Unternehmen werfen!", client))
+		client:sendError(_("Du kannst dich nicht selbst aus dem Unternehmen werfen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
