@@ -77,8 +77,9 @@ function GUIScrollableArea:draw(incache)
 	if GUI_DEBUG then
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
-
+	dxSetBlendMode("add")
 	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_PageTarget)
+	dxSetBlendMode("blend")
 end
 
 function GUIScrollableArea:clear()

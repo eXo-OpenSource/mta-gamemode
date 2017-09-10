@@ -20,9 +20,19 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_CurrentItem = 1
 
 	--self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(15))
+	self.m_LeftButton = GUIButton:new(2, 2, self.m_Height-4, self.m_Height-4, FontAwesomeSymbols.Left, self):setFont(FontAwesome(15))
 	:setBackgroundColor(Color.Accent)
 	:setFontSize(1)
+	self.m_LeftButton.onHover = function()
+		self.m_Animation = Animation.Size:new(self.m_LeftButton, 50, self.m_Height, self.m_Height, "OutQuad")
+		self.m_Animation = Animation.Move:new(self.m_LeftButton, 50, 0, 0, "OutQuad")
+	end
+	self.m_LeftButton.onUnhover = function()
+		self.m_Animation = Animation.Size:new(self.m_LeftButton, 50, self.m_Height-4, self.m_Height-4, "OutQuad")
+		self.m_Animation = Animation.Move:new(self.m_LeftButton, 50, 2, 2, "OutQuad")
+	end
+
+
 	self.m_LeftButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem - 1
 		if self.m_CurrentItem <= 0 then

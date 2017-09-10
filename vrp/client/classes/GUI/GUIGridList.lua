@@ -155,7 +155,9 @@ end
 function GUIGridList:drawThis()
 	-- Draw column header
 	if self.m_ColumnBGColor then
+		dxSetBlendMode("add")
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_ColumnBGColor)
+		dxSetBlendMode("blend")
 	end
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue)
 	local currentXPos = 0

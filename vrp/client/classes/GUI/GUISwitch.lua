@@ -10,7 +10,7 @@ inherit(GUIFontContainer, GUISwitch)
 
 function GUISwitch:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, "", 1, VRPFont(height, nil, true))
+	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 
 	-- Create a dummy button for animation
 	self.m_Button = GUIRectangle:new(2, 2, self.m_Width/2 - 4, self.m_Height -4, Color.Clear, self)
@@ -52,19 +52,16 @@ end
 function GUISwitch:drawThis()
 	dxSetBlendMode("modulate_add")
 
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Primary)
 
-	if self.m_Hovered then
-		dxDrawRectangle(self.m_AbsoluteX + 2, self.m_AbsoluteY + 2, self.m_Width - 4, self.m_Height - 4, tocolor(230, 230, 230))
-	end
 
 	local x, y = self.m_Button:getPosition()
 	local w, h = self.m_Button:getSize()
 	--dxDrawRectangle(self.m_AbsoluteX + x, self.m_AbsoluteY + y, w, h, self.m_Hovered and Color.LightGrey or Color.Accent) -- Alternate hover style
 	dxDrawRectangle(self.m_AbsoluteX + x, self.m_AbsoluteY + y, w, h, Color.Accent)
 
-	dxDrawText("An", self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height, self.m_State and Color.White or Color.LightGrey, self:getFontSize(), self:getFont(), "center", "center")
-	dxDrawText("Aus", self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_State and Color.LightGrey or Color.White, self:getFontSize(), self:getFont(), "center", "center")
+	dxDrawText("An", self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height, Color.White, self:getFontSize(), self:getFont(), "center", "center")
+	dxDrawText("Aus", self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, Color.White, self:getFontSize(), self:getFont(), "center", "center")
 
 	dxSetBlendMode("blend")
 end
