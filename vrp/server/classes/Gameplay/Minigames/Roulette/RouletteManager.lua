@@ -44,7 +44,11 @@ function RouletteManager:Event_cheatSpinRoulette(bets, target)
 	RouletteManager.Map[client]:cheatSpin(bets, target)
 end
 
-function RouletteManager:setStats(sum)
+function RouletteManager:setStats(sum, played)
+	if played then
+		self.m_Stats["Played"] = self.m_Stats["Played"]+1
+	end
+
 	if sum < 0 then
 		self.m_Stats["Incoming"] = self.m_Stats["Incoming"] + sum
 	elseif sum > 0 then
