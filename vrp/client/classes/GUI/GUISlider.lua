@@ -16,6 +16,7 @@ function GUISlider:constructor(posX, posY, width, height, parent)
     self.m_RangeMax = 1 --max value
     self.m_Value = 0.5 --current value
     self.m_RoundOffset = 3 --value for math.round on actual value to prevent event spam
+	self.m_AnimationDuration = 150
 
 	-- Clickdummy
 	self.m_RailClickDummy = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self)
@@ -26,11 +27,12 @@ function GUISlider:constructor(posX, posY, width, height, parent)
 			if not self.m_Scrolling then
 				addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 				self.m_Scrolling = true
+				self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, self.m_Height, "OutQuad")
 			end
 		end
 
     --use a GUI element as a handle (this got implemented later on to prevent an ongoing onClientCursorMove just to handle hover events)
-    self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, self.m_Height, Color.Accent, self)
+    self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, RAIL_HEIGHT, Color.Accent, self)
     self.m_Handle.onHover = function() self.m_Handle:setColor(Color.White) end
     self.m_Handle.onUnhover = function() if not self.m_Scrolling then self.m_Handle:setColor(Color.Accent) end end
 end
@@ -77,6 +79,7 @@ function GUISlider:Event_onClientCursorMove(_, _, cursorX, cursorY)
         if not getKeyState("mouse1") then
 			removeEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 			self.m_Scrolling = false
+			self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, RAIL_HEIGHT, "OutQuad")
 		end
 	end
 end
@@ -86,6 +89,7 @@ function GUISlider:drawThis()
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height/2 - RAIL_HEIGHT/2, self.m_Width, RAIL_HEIGHT, Color.PrimaryNoClick)
 
 	-- draw handle
+	local _, hY = self.m_Handle:getSize()
     local offsetByValue = self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH)
-    self.m_Handle:setPosition(offsetByValue, 0) -- update the handle gui element
+    self.m_Handle:setPosition(offsetByValue, self.m_Height/2 - hY/2) -- update the handle gui element
 end
