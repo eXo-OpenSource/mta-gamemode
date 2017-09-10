@@ -77,6 +77,25 @@ function StyleguideDemonstrationGUI:constructor()
 		function(state)
 			labelToggle:setText("onChange: " .. tostring(state))
 		end
+	local scrollArea = GUIGridScrollableArea:new(10, 1, 10, 10, 10, 20, true, false, self.m_Tabs[2], 1)
+	
+	GUIGridLabel:new(1, 1, 10, 1, _"irgendwelche Settings", scrollArea):setHeader()
+	for i = 1, 5 do
+		GUIGridLabel:new(1, i+1, 8, 1, "Setting "..i, scrollArea)
+		GUIGridCheckbox:new(9, i+1, 5, 1, "", scrollArea)
+	end
+
+	GUIGridLabel:new(1, 7, 4, 1, "Setting 6", scrollArea)
+	GUIGridChanger:new(5, 7, 5, 1, scrollArea)
+
+	GUIGridLabel:new(1, 8, 4, 1, "Setting 7", scrollArea)
+	GUIGridSlider:new(5, 8, 5, 1, scrollArea)
+	GUIGridButton:new(5, 9, 5, 1, "hi", scrollArea)
+
+	for i = 10, 15 do
+		GUIGridLabel:new(1, i+1, 8, 1, "Setting "..i, scrollArea)
+		GUIGridCheckbox:new(9, i+1, 5, 1, "", scrollArea)
+	end
 end
 
 function StyleguideDemonstrationGUI:destructor()

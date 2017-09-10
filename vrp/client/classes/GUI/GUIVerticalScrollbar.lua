@@ -58,6 +58,7 @@ end
 
 function GUIVerticalScrollbar:drawThis()
 	-- Draw scroller
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.PrimaryNoClick)
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height - self.m_ScrollerSize), self.m_Width, self.m_ScrollerSize)
 
 	-- Draw scroll bar (rectangle)
