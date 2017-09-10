@@ -84,7 +84,11 @@ function GroupProperty:destructor()
 		end
 	end
 	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_DepotId, self.m_Id)
-	self.m_Depot:save()
+	if self.m_Depot then
+		self.m_Depot:save()
+	else
+		outputDebugString("Save Depot for Group Property "..self.m_Id.." failed! (Not found)")
+	end
 end
 
 function GroupProperty:setDepotId(Id)
@@ -334,9 +338,9 @@ end
 --// SETTERS
 function GroupProperty:setOwner( id )
 	self.m_Owner = GroupManager.getFromId(OwnerId) or false
-	if self.m_Owner == false then 
+	if self.m_Owner == false then
 		setPickupType(self.m_Pickup, 3, PICKUP_FOR_SALE)
-	else 
+	else
 		setPickupType(self.m_Pickup, 3, PICKUP_ARROW)
 	end
 	return self.m_Owner

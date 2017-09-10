@@ -50,7 +50,7 @@ function RouletteManager:setStats(sum, played)
 	end
 
 	if sum < 0 then
-		self.m_Stats["Incoming"] = self.m_Stats["Incoming"] + sum
+		self.m_Stats["Incoming"] = self.m_Stats["Incoming"] + math.abs(sum)
 	elseif sum > 0 then
 		self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + sum
 	end
