@@ -595,7 +595,7 @@ function Group:payDay(vehicleAmount)
 	local interest = 0
 	local output = {}
 	if self.m_Money > 0 then
-		interest = self.m_Money > 300000 and math.floor(300000*1.0005) or math.floor(self.m_Money*1.005)
+		interest = self.m_Money > 300000 and math.floor(300000*0.0005) or math.floor(self.m_Money*0.0005)
 	end
 
 	outgoing["Fahrzeugsteuern"] = (vehicleAmount * 25)*-1
@@ -617,7 +617,7 @@ function Group:payDay(vehicleAmount)
 	for name, amount in pairs(outgoing) do
 		out = out+amount
 	end
-	sum = inc-out
+	sum = inc+out
 	table.insert(output, ("Gesamt: %d$"):format(sum))
 	if sum > 0 then
 		self:giveMoney(sum, "Payday")
