@@ -588,3 +588,41 @@ function Group:checkDespawnVehicle()
 		self.m_VehiclesSpawned = false
 	end
 end
+
+function Group:payDay(vehicleAmount)
+	local incoming = {}
+	local outgoing = {}
+	local interest = 0
+	local output = {}
+	if self.m_Money > 0 then
+		interest = self.m_Money > 300000 and math.floor(300000*1.0005) or math.floor(self.m_Money*1.005)
+	end
+
+	outgoing["Fahrzeugsteuern"] = (vehicleAmount * 25)*-1
+	incoming["Zinsen"] = interest
+	table.insert(output, ("%s-Payday:"):format(self.m_Type))
+	--table.insert(output, "Einkommen:\n")
+	for name, amount in pairs(incoming) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+	--table.insert(output, "\nAusgaben:\n")
+	for name, amount in pairs(outgoing) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+
+	local sum, inc, out = 0, 0, 0
+	for name, amount in pairs(incoming) do
+		inc = inc+amount
+	end
+	for name, amount in pairs(outgoing) do
+		out = out+amount
+	end
+	sum = inc-out
+	table.insert(output, ("Gesamt: %d$"):format(sum))
+	if sum > 0 then
+		self:giveMoney(sum, "Payday")
+	elseif sum < 0 then
+		self:takeMoney(sum, "Payday")
+	end
+	self:sendShortMessage(table.concat(output, "\n"))
+end

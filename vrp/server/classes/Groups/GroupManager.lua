@@ -16,6 +16,8 @@ end
 function GroupManager:constructor()
 	self:loadGroups()
 
+	GlobalTimer:getSingleton():registerEvent(bind(self.payDay, self), "Group Payday", nil, nil, 00) -- Every Hour
+
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
@@ -44,6 +46,7 @@ function GroupManager:constructor()
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
+
 end
 
 function GroupManager:destructor()
@@ -697,4 +700,13 @@ function GroupManager:Event_ToggleLoan(playerId)
 	self:sendInfosToClient(client)
 
 	group:addLog(client, "Gang/Firma", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
+end
+
+function GroupManager:payDay()
+	local result = sql:queryFetch("SELECT `Group` AS GroupId, Count(0) AS VehicleAmount FROM ??_group_vehicles GROUP BY `Group`", sql:getPrefix())
+	for k, row in ipairs(result) do
+		if GroupManager.Map[row.GroupId] and row.VehicleAmount and row.VehicleAmount > 0 then
+			GroupManager.Map[row.GroupId]:payDay(row.VehicleAmount)
+		end
+	end
 end
