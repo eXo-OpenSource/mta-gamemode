@@ -62,10 +62,12 @@ function GUIButton:onInternalHover(cx, cy)
 
 		local buttonX, buttonY = self:getPosition(true)
 		local posX = cx - buttonX
-
 		local diffToRight = self.m_Width - posX
 		local diffToLeft = self.m_Width - diffToRight
 		self.m_HoverPosX = posX
+
+		self.m_BarLeft:setSize(0, 2)
+		self.m_BarRight:setSize(0, 2)
 		self.m_BarLeft:setPosition(posX, 0)
 		self.m_BarRight:setPosition(posX, 0)
 
@@ -102,13 +104,11 @@ function GUIButton:setColor(color)
 end
 
 function GUIButton:setAlpha(alpha)
-
 	self.m_Alpha = alpha
 	local r,g,b,a = fromcolor(self.m_Color)
 	self.m_Color = tocolor(r, g, b, alpha)
 	local r1,g1,b1,a1 = fromcolor(self.m_BackgroundNormalColor)
 	self.m_BackgroundColor = tocolor(r1, g1, b1, alpha)
-
 
 	self:anyChange()
 	return self
