@@ -600,7 +600,7 @@ function Group:payDay(vehicleAmount)
 
 	outgoing["Fahrzeugsteuern"] = (vehicleAmount * 25)*-1
 	incoming["Zinsen"] = interest
-	table.insert(output, ("%s-Payday:"):format(self.m_Type))
+	table.insert(output, ("%s-Payday:"):format(self.m_Type == "Firma" and "Firmen" or self.m_Type))
 	--table.insert(output, "Einkommen:\n")
 	for name, amount in pairs(incoming) do
 		table.insert(output, ("%s: %d$"):format(name, amount))
