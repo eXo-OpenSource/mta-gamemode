@@ -48,7 +48,7 @@ Color = {
 	Success 	= {11,  102,   8}, -- green
 	Error 		= {178,  35,  33}, -- green
 	Warning 	= {254, 138, 0}, -- green
-	
+
 	AD_LightBlue = {0, 125, 125},
 }
 
