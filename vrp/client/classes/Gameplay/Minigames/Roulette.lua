@@ -314,14 +314,6 @@ function Roulette:createTokens()
     end
 end
 
-bindKey("m", "down", function()
-    if isCursorShowing() then
-        showCursor(false)
-    else
-        showCursor(true)
-    end
-end)
-
 addEventHandler("rouletteOpen", root, function()
     Roulette:new()
 end)
