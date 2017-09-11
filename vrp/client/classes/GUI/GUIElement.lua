@@ -78,8 +78,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 
 	-- Call on*Events (enabling)
 	if not self.m_Hover then
-		if self.onHover			then self:onHover()			end
-		if self.onInternalHover then self:onInternalHover() end
+		if self.onHover			then self:onHover(cx, cy)			end
+		if self.onInternalHover then self:onInternalHover(cx, cy) end
 		self.m_Hover = true
 	end
 	if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then

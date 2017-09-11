@@ -23,6 +23,10 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_Color = self.m_NormalColor
 	self.m_BackgroundColor = self.m_BackgroundNormalColor
 	self.m_Enabled = true
+
+	-- Create a dummy gui element for animation
+	self.m_BarLeft = GUIRectangle:new(0, 0, 0, 2, Color.White, self)
+	self.m_BarRight = GUIRectangle:new(0, 0, 0, 2, Color.White, self)
 end
 
 function GUIButton:drawThis()
@@ -47,21 +51,44 @@ function GUIButton:performChecks(...)
 	end
 end
 
-function GUIButton:onInternalHover()
+function GUIButton:onInternalHover(cx, cy)
 	if self.m_Enabled then
 		if not self.m_BarActivated then
 			self.m_Color = self.m_HoverColor
+			self.m_BackgroundColor = self.m_BackgroundHoverColor
+			self:anyChange()
+			return
 		end
-		self.m_BackgroundColor = self.m_BackgroundHoverColor
-		self:anyChange()
+
+		local buttonX, buttonY = self:getPosition(true)
+		local posX = cx - buttonX
+
+		local diffToRight = self.m_Width - posX
+		local diffToLeft = self.m_Width - diffToRight
+		self.m_HoverPosX = posX
+		self.m_BarLeft:setPosition(posX, 0)
+		self.m_BarRight:setPosition(posX, 0)
+
+		Animation.Move:new(self.m_BarLeft, 150, 0, 0, "OutQuad")
+		Animation.Size:new(self.m_BarLeft, 150, diffToLeft, 2, "OutQuad")
+		Animation.Size:new(self.m_BarRight, 150, diffToRight, 2, "OutQuad")
 	end
 end
 
 function GUIButton:onInternalUnhover()
 	if self.m_Enabled then
-		self.m_Color = self.m_NormalColor
-		self.m_BackgroundColor = self.m_BackgroundNormalColor
-		self:anyChange()
+		if not self.m_BarActivated then
+			self.m_Color = self.m_NormalColor
+			self.m_BackgroundColor = self.m_BackgroundNormalColor
+			self:anyChange()
+			return
+		end
+
+		if self.m_HoverPosX then
+			Animation.Move:new(self.m_BarLeft, 150, self.m_HoverPosX, 0, "OutQuad")
+			Animation.Size:new(self.m_BarLeft, 150, 0, 2, "OutQuad")
+			Animation.Size:new(self.m_BarRight, 150, 0, 2, "OutQuad")
+		end
 	end
 end
 
