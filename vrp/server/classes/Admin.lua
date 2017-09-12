@@ -731,7 +731,7 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 				end
 			end
 		)()
-	elseif func == "offlineWarn" then
+	elseif func == "addOfflineWarn" then
 		if not duration then return end
 		if not reason then return end
 		duration = tonumber(duration)
