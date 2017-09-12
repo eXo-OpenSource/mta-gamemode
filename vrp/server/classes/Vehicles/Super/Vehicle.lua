@@ -783,6 +783,10 @@ function Vehicle:isPlayerSurfOnCar(player)
 	return false
 end
 
+function Vehicle:isEmpty()
+	return self.occupants and table.size(self.occupants) == 0
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)

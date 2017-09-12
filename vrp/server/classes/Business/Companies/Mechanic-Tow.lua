@@ -1,5 +1,5 @@
 MechanicTow = inherit(Company)
-addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI", "mechanicVehicleRequestFill"}
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI", "mechanicVehicleRequestFill", "mechanicTowBike"}
 
 function MechanicTow:constructor()
 	self:createTowLot()
@@ -38,6 +38,7 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicVehicleRequestFill", root, bind(self.Event_mechanicVehicleRequestFill, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
+	addEventHandler("mechanicTowBike", root, bind(self.Event_mechanicTowBike, self))
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 end
@@ -198,25 +199,34 @@ function MechanicTow:createTowLot()
 	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
 end
 
-function MechanicTow:onEnterTowLot( hElement )
-	local bType = getElementType(hElement) == "player"
-	if bType then
-		local veh = getPedOccupiedVehicle( hElement )
-		if veh then
-			if hElement:getCompany() == self then
-				if instanceof(veh, CompanyVehicle) and veh:getCompany() == self then
-					if getElementModel( veh ) == 525 then
-						hElement.m_InTowLot = true
-						hElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hElement))
-					end
-				end
-			end
-		end
+function MechanicTow:onEnterTowLot(hitElement)
+	if getElementType(hitElement) ~= "player" then return end
+	if hitElement:getCompany() ~= self then return end
+	if not hitElement.vehicle or hitElement.vehicle:getCompany() ~= self or hitElement.vehicle:getModel() ~= 525 then return end
+
+	local towingBike = hitElement.vehicle:getData("towingBike")
+	if towingBike then
+		towingBike:toggleRespawn(true)
+		towingBike:setCollisionsEnabled(true)
+		towingBike:detach()
+		self:respawnVehicle(towingBike)
+
+		towingBike:setData("towedByVehicle", nil, true)
+		hitElement.vehicle:setData("towingBike", nil, true)
+
+		StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
+		self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+	end
+
+	hitElement.m_InTowLot = true
+	if not hitElement.vehicle.towedByVehicle then
+		hitElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hitElement))
 	end
 end
 
-function MechanicTow:onLeaveTowLot( hElement )
-	hElement.m_InTowLot = false
+function MechanicTow:onLeaveTowLot(hitElement)
+	if getElementType(hitElement) ~= "player" then return end
+	hitElement.m_InTowLot = false
 end
 
 function MechanicTow:onAttachVehicleToTow(towTruck)
@@ -244,7 +254,7 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 				StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
 				self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
 			else
-				driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
 		end
 	end
@@ -364,6 +374,40 @@ end
 function MechanicTow:FillDecline(player, target)
 	target.fillRequest = false
 	player:sendError(_("Der Spieler möchte deinen Service nicht nutzen.", player))
+end
+
+function MechanicTow:Event_mechanicTowBike(vehicle)
+	if client:getCompany() ~= self then return end
+	if not client:isCompanyDuty() then return end
+
+	if vehicle and vehicle:isEmpty() then
+		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+			vehicle:toggleRespawn(false)
+			client.vehicle:setData("towingBike", vehicle, true)
+			vehicle:setData("towedByVehicle", client.vehicle, true)
+
+			-- Following is all cause of the animation. Shit happens..
+			local object = createObject(1337, vehicle.position, vehicle.rotation)
+			object:setAlpha(0)
+			object:setCollisionsEnabled(false)
+
+			vehicle:setCollisionsEnabled(false)
+			vehicle:attach(object)
+
+			client.vehicle:setFrozen(true)
+			object:move(2500, client.vehicle.matrix:transformPosition(Vector3(0, -1.1, .8)), 0, 0, 90, "InOutQuad")
+
+			setTimer(
+				function(towTruck, bike, object)
+					object:destroy()
+					towTruck:setFrozen(false)
+					bike:attach(towTruck, 0, -1.1, .8, 0, 0, 90)
+				end, 2500, 1, client.vehicle, vehicle, object
+			)
+		else
+			client:sendWarning(_("Dieses %s kann nicht abgeschleppt werden!", client, vehicle:getVehicleType() == VehicleType.Bike and "Motorrad" or "Fahrrad"))
+		end
+	end
 end
 
 MechanicTow.SpawnPositions = {
