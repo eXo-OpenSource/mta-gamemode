@@ -84,23 +84,42 @@ function FireManager:startFire(id)
 end
 
 function FireManager:onUpdateHandler(stats)
-	if (stats.firesActive >= 20) and (stats.firesActive > math.floor(self.m_CurrentFire:getMaxFireCount()/3)) then --filter too small and too new fires
-		if not self.m_NewsSent then --send initial overview
-			local activeRescue, acitveState = self.m_CurrentFire:countUsersAtSight()
-			self:sendNews(self.m_Fires[self.m_CurrentFire.m_Id]["message"])
-			if activeRescue > 0 then
-				self:sendNews(("Es befinden sich bereits %d Rettungskräfte zur Brandbekämpfung vor Ort"):format(activeRescue))
-			else
-				self:sendNews("Zur Zeit sind noch keine Rettungskräfte eingetroffen")
-			end
-			if acitveState > 0 then
+	if self.m_CurrentFire then
+		local activeRescue, acitveState = self.m_CurrentFire:countUsersAtSight()
+		if (stats.firesActive >= 20) and (stats.firesActive > math.floor(self.m_CurrentFire:getMaxFireCount()/3)) and (getTickCount() - stats.startTime) > 1000*60*2 then --filter too small and too new fires
+			if not self.m_NewsSent then --send initial overview
+				self:sendNews(self.m_Fires[self.m_CurrentFire.m_Id]["message"])
+
 				if activeRescue > 0 then
-					self:sendNews(("Zusätzlich sperren %d Polizei-Streifen die umliegenden Straßen ab"):format(acitveState))
+					self:sendNews(("Es befinden sich bereits %d Rettungskräfte zur Brandbekämpfung vor Ort"):format(activeRescue))
 				else
-					self:sendNews(("Dennoch hat die Polizei %d Streifen zur Absperrung stationiert"):format(acitveState))
+					self:sendNews("Zur Zeit sind noch keine Rettungskräfte eingetroffen")
+				end
+				if acitveState > 0 then
+					if activeRescue > 0 then
+						self:sendNews(("Zusätzlich sperren %d Polizei-Streifen die umliegenden Straßen ab"):format(acitveState))
+					else
+						self:sendNews(("Dennoch hat die Polizei %d Streifen zur Absperrung stationiert"):format(acitveState))
+					end
 				end
 			end
 		end
+		if (getTickCount() - stats.startTime) > 1000*60*2 and math.random(0, 5) == 0 then
+			local size, lastSize = self.m_CurrentFire:getFireSpreadSize()
+			if size == lastSize then
+				self:sendNews(("Es brennen bereits %s m²"):format(size))
+			elseif size < lastSize then
+				if activeRescue == 0 then
+					self:sendNews(("Es sind nur noch %s m² mit Flammen bedeckt"):format(size))
+				else
+					self:sendNews(("Die Feuerwehr hat das Feuer eingedämmt, sodass nur noch %s m² brennen"):format(size))
+				end
+			else
+				self:sendNews(("Das Feuer breitet sich rasant aus, momentan erstreckt es sich bereits auf %s m²"):format(size))
+			end
+		end
+	else
+		self:sendNews(("Das Feuer wurde gelöscht und die Verkehrsbehinderung aufgehoben"):format(activeRescue))
 	end
 end
 

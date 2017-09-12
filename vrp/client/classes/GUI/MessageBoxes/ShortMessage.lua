@@ -121,6 +121,15 @@ function ShortMessage:destructor(force)
 	end
 end
 
+function ShortMessage:setText(text)
+	local success = GUIFontContainer.setText(self, text)
+	if success then
+		local h = textHeight(self.m_Text, self.m_Width - 8, self.m_Font, self.m_FontSize) + (self.m_TitleHeight or 0) + 4
+		GUIElement.setSize(self, self.m_Width, h)
+		MessageBoxManager.resortPositions()
+	end
+end
+
 function ShortMessage:drawThis()
 	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
 	local hasTitleBar = self.m_TitleHeight ~= nil

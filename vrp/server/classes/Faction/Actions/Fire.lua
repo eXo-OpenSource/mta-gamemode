@@ -24,6 +24,7 @@ function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoo
 		self.m_Root_v = iRoot_v
 		self:setFireDecaying(bDecaying)
 		self.m_ExtinguishCallbackMap = {}
+		self.m_SizeDecreaseCallbackMap = {}
 		triggerClientEvent("fireElements:onFireCreate", self.m_Ped, iSize)
 		Fire.Map[self.m_Ped] = self
 		return self
@@ -34,6 +35,11 @@ end
 function Fire:destructor()
 	triggerClientEvent("fireElements:onFireDestroy", resourceRoot, self.m_Ped) -- uElement cannot be the triggered source element because it's destroyed lol
 	if isElement(self.m_Ped) then
+		for i,v in pairs(self.m_SizeDecreaseCallbackMap) do
+			if type(v) == "function" then
+				v(self.m_Extinguisher)
+			end
+		end
 		for i,v in pairs(self.m_ExtinguishCallbackMap) do
 			if type(v) == "function" then
 				v(self.m_Extinguisher, self.m_Size)
@@ -52,13 +58,22 @@ function Fire:addExtinguishCallback(func)
 	table.insert(self.m_ExtinguishCallbackMap, func)
 end
 
-function Fire:decreaseFireSize()
+function Fire:addSizeDecreaseCallback(func)
+	table.insert(self.m_SizeDecreaseCallbackMap, func)
+end
+
+function Fire:decreaseFireSize(responsiblePlayer)
 	if self.m_Size > 1 then
 		self.m_Size = self.m_Size -1
 		setElementHealth(self.m_Ped, 100) -- renew fire
 		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, self.m_Size)
 		if self.m_FireRoot then
 			self.m_FireRoot:updateFire(self.m_Root_i, self.m_Root_v, self.m_Size, true)
+		end
+		for i,v in pairs(self.m_SizeDecreaseCallbackMap) do
+			if type(v) == "function" then
+				v(responsiblePlayer)
+			end
 		end
 		return true
 	end
@@ -107,7 +122,7 @@ addEventHandler("fireElements:requestFireDeletion", resourceRoot, function()
 	if getDistanceBetweenPoints3D(iCx, iCy, iCz, iCx, iCy, iCz) <= iDist then
 		if not Fire.PlayerMap[client] or getTickCount()-Fire.PlayerMap[client] > 50 then
 			if Fire.Map[source].m_Size > 1 then
-				Fire.Map[source]:decreaseFireSize()
+				Fire.Map[source]:decreaseFireSize(client)
 			else
 				Fire.Map[source]:setExtinguisher(client)
 				delete(Fire.Map[source])

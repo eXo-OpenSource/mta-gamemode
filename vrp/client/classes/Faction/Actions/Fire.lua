@@ -244,7 +244,7 @@ end
 function Fire:updateStatistics(tblStats, serverTick)
 	if not self.m_ShortmessageLoaded then
 		self.m_ShortmessageLoaded = true
-		self.m_StatisticShortMessage = ShortMessage:new("\n\n\n\n\n", "Brand", Color.Orange, 6000, nil, function()
+		self.m_StatisticShortMessage = ShortMessage:new("", "Brand", Color.Orange, 6000, nil, function()
 			self.m_ShortmessageLoaded = false
 		end)
 	end
@@ -255,9 +255,10 @@ function Fire:updateStatistics(tblStats, serverTick)
 		firesActive = 0,
 		firesTotal = 0,
 	]]
-	local t = ("Zeit seit Ausbruch: %s\ngelöscht: %s\nAktiv: %s\nTotal: %s"):format(string.duration((serverTick - tblStats.startTime)/1000), tblStats.firesDecayed, tblStats.firesActive, tblStats.firesTotal)
-	for i, v in pairs(tblStats.firesByPlayer) do
-		t = t.."\n"..getPlayerName(i).." - "..v
+	local t = ("Zeit seit Ausbruch: %s\nFlammen: %s aktiv, %s seit Ausbruch\n\nbeteiligte Einsatzkräfte:"):format(string.duration((serverTick - tblStats.startTime)/1000), tblStats.firesActive, tblStats.firesTotal)
+
+	for i, v in pairs(tblStats.pointsByPlayer) do
+		t = t.. ("\n %s - %s Punkte (%s Feuer gelöscht)"):format(i:getName(), v, tblStats.firesByPlayer[i] or 0)
 	end
 	self.m_StatisticShortMessage:setText(t)
 	self.m_StatisticShortMessage:resetTimeout()

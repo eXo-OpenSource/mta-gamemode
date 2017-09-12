@@ -32,7 +32,8 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	self.m_FireSizeMap = {}
 	self.m_Statistics = {
 		startTime = getTickCount(),
-		firesByPlayer = {},
+		firesByPlayer = {}, -- this saves the count of fire deletions
+		pointsByPlayer = {}, -- this saves the score specified by the amount of work per player
 		firesDecayed = 0,
 		firesActive = 0,
 		firesTotal = 0,
@@ -229,6 +230,7 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 					local fire = Fire:new(iX, iY, self.m_BaseZ or 4, iNewSize, false, self, i, v)
 					self.m_Statistics.firesActive = self.m_Statistics.firesActive + 1
 					self.m_Statistics.firesTotal = self.m_Statistics.firesTotal + 1
+					
 					fire:addExtinguishCallback(function(uDestroyer, iSize)
 						if isElement(uDestroyer) then
 							--outputDebugString(inspect(uDestroyer).." has destroyed fire "..inspect(source))
@@ -243,6 +245,18 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 						self.m_FireSizeMap[i..","..v] = nil
 						self.m_FireMap[i..","..v] = nil
 					end)
+					
+					fire:addSizeDecreaseCallback(function(player)
+						if isElement(player) then
+							local p = player.vehicle and 2 or 4 -- give more points if fire got deleted by "hand"
+							if self:isFireDecaying() then p = p/2 end -- give less points if fire is already decaying
+							if not self.m_Statistics.pointsByPlayer[player] then
+								self.m_Statistics.pointsByPlayer[player] = 0
+							end
+							self.m_Statistics.pointsByPlayer[player] = self.m_Statistics.pointsByPlayer[player] + p
+						end
+					end)
+
 					if self.m_FireMap[i..","..v] then outputDebugString("fail!") end
 					self.m_FireMap[i..","..v] = fire
 				else
@@ -287,4 +301,11 @@ function FireRoot:countUsersAtSight(rescueOnly)
 	end
 
 	return activeRescue, activeState
+end
+
+function FireRoot:getFireSpreadSize()
+	local size = self.m_Statistics.firesActive * (FireRoot.Settings.coords_per_fire/2)^2
+	local lastCheckedSize = self.m_LastSizeChecked or size
+	self.m_LastSizeChecked = size
+	return size, lastCheckedSize
 end
