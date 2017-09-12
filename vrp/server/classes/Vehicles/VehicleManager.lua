@@ -1097,7 +1097,7 @@ function VehicleManager:Event_vehicleBreak(weapon)
 			if source.controller then
 				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
 			end
-			local maxRnd = (weapon >= 22 and weapon <= 38) and 10 or 20
+			local maxRnd = (weapon and weapon >= 22 and weapon <= 38) and 10 or 20
 			if math.random(1, maxRnd) == 1 then
 				if FactionRescue:getSingleton():countPlayers() >= 3 then
 					FactionRescue:getSingleton():addVehicleFire(source)

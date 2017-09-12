@@ -86,7 +86,7 @@ end
 function FireManager:onUpdateHandler(stats)
 	if (stats.firesActive >= 20) and (stats.firesActive > math.floor(self.m_CurrentFire:getMaxFireCount()/3)) then --filter too small and too new fires
 		if not self.m_NewsSent then --send initial overview
-			local activeRescue, acitveState = self:countUsersAtSight()
+			local activeRescue, acitveState = self.m_CurrentFire:countUsersAtSight()
 			self:sendNews(self.m_Fires[self.m_CurrentFire.m_Id]["message"])
 			if activeRescue > 0 then
 				self:sendNews(("Es befinden sich bereits %d Rettungskräfte zur Brandbekämpfung vor Ort"):format(activeRescue))
@@ -120,31 +120,6 @@ function FireManager:sendNews(text) -- adapted from PlayerManager
 	end
 end
 
-function FireManager:countUsersAtSight(rescueOnly)
-	if not self.m_CurrentFire then return 0, 0 end
-	outputDebug("counting...")
-	local activeRescue, activeState = 0, 0
-	local centerPoint = self.m_CurrentFire.Blip:getPosition(true)
-
-	for i, v in pairs(FactionRescue:getSingleton():getOnlinePlayers(true, true)) do
-		outputDebug("found rescue", v)
-		if getDistanceBetweenPoints3D(v.position, centerPoint) <= FIRE_DISTANCE_TO_PLAYER then
-			activeRescue = activeRescue + 1
-			outputDebug("found rescue in sight", v)
-		end
-	end
-	if not rescueOnly then
-		for i, v in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
-			outputDebug("found pd", v)
-			if getDistanceBetweenPoints3D(v.position, centerPoint) <= FIRE_DISTANCE_TO_PLAYER then
-				activeState = activeState + 1
-				outputDebug("found pd in sight", v)
-			end
-		end
-	end
-
-	return activeRescue, activeState
-end
 
 function FireManager:getCurrentFire()
 	return self.m_CurrentFire

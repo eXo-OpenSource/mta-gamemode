@@ -22,6 +22,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	self.m_Y = iY 
 	self.m_Width = iW
 	self.m_Height = iH
+	self.m_CenterPoint = Vector3(iX + iW/2, iY + iH/2)
 	self.m_Max_I = iW / FireRoot.Settings["coords_per_fire"]
 	self.m_Max_V = iH / FireRoot.Settings["coords_per_fire"]
 	self.m_Max_Fires = math.min(100, math.round((self.m_Max_I * self.m_Max_V) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
@@ -55,6 +56,7 @@ end
 
 function FireRoot:setBaseZ(z)
 	self.m_BaseZ = z
+	self.m_CenterPoint.z = z
 end
 
 function FireRoot:destructor()
@@ -182,6 +184,7 @@ function FireRoot:update()
 	if self.m_OnUpdateHook then
 		self.m_OnUpdateHook(self.m_Statistics)
 	end
+	self:triggerStatistics()
 	outputDebug("updated fire", getTickCount()-start.."ms", table.size(tblFiresToUpdate).." updates", deletes.." deletes")
 end
 
@@ -255,4 +258,33 @@ function FireRoot:getFireSize(i, v)
 	if (i >= 0 and i <= self.m_Max_I) and (v >= 0 and v <= self.m_Max_V) then
 		return self.m_FireSizeMap[i..","..v] or 0
 	end
+end
+
+function FireRoot:triggerStatistics()
+	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount())
+end
+
+function FireRoot:countUsersAtSight(rescueOnly)
+	if not self.m_CurrentFire then return 0, 0 end
+	outputDebug("counting...")
+	local activeRescue, activeState = 0, 0
+
+	for i, v in pairs(FactionRescue:getSingleton():getOnlinePlayers(true, true)) do
+		outputDebug("found rescue", v)
+		if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FIRE_DISTANCE_TO_PLAYER then
+			activeRescue = activeRescue + 1
+			outputDebug("found rescue in sight", v)
+		end
+	end
+	if not rescueOnly then
+		for i, v in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
+			outputDebug("found pd", v)
+			if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FIRE_DISTANCE_TO_PLAYER then
+				activeState = activeState + 1
+				outputDebug("found pd in sight", v)
+			end
+		end
+	end
+
+	return activeRescue, activeState
 end

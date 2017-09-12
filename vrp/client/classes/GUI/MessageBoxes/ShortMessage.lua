@@ -143,6 +143,10 @@ function ShortMessage:drawThis()
 	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
+function ShortMessage:resetTimeout()
+	resetTimer(self.m_Timeout)
+end
+
 addEvent("shortMessageBox", true)
 addEventHandler("shortMessageBox", root,
 	function(text, title, tcolor, timeout, callback, onTimeout, ...)

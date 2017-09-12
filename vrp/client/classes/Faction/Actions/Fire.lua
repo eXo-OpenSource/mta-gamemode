@@ -19,12 +19,13 @@ function Fire:constructor()
 	self.m_LoadingQueue = AutomaticQueue:new()
 	self.m_FiresWaitingForColUpdate = {}
 
-	addRemoteEvents{"fireElements:onClientRecieveFires", "fireElements:onFireCreate", "fireElements:onFireDestroy", "fireElements:onFireChangeSize"}
+	addRemoteEvents{"fireElements:onClientRecieveFires", "fireElements:onFireCreate", "fireElements:onFireDestroy", "fireElements:onFireChangeSize", "refreshFireStatistics"}
 
 	addEventHandler("fireElements:onFireCreate", resourceRoot, bind(self.createFireElement, self))
 	addEventHandler("fireElements:onFireDestroy", resourceRoot, bind(self.destroyFireElement, self))
 	addEventHandler("fireElements:onFireChangeSize", resourceRoot, bind(self.changeFireSize, self))
 	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
+	addEventHandler("refreshFireStatistics", root, bind(self.updateStatistics, self))
 
 
 	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(fireTable)
@@ -238,4 +239,26 @@ function Fire:createFireElement(iSize, uPed, inThread)
 			end
 		end, 500, 1)
 	end)
+end
+
+function Fire:updateStatistics(tblStats, serverTick)
+	if not self.m_ShortmessageLoaded then
+		self.m_ShortmessageLoaded = true
+		self.m_StatisticShortMessage = ShortMessage:new("\n\n\n\n\n", "Brand", Color.Orange, 6000, nil, function()
+			self.m_ShortmessageLoaded = false
+		end)
+	end
+	--[[
+		startTime = getTickCount(),
+		firesByPlayer = {},
+		firesDecayed = 0,
+		firesActive = 0,
+		firesTotal = 0,
+	]]
+	local t = ("Zeit seit Ausbruch: %s\ngelöscht: %s\nAktiv: %s\nTotal: %s"):format(string.duration((serverTick - tblStats.startTime)/1000), tblStats.firesDecayed, tblStats.firesActive, tblStats.firesTotal)
+	for i, v in pairs(tblStats.firesByPlayer) do
+		t = t.."\n"..getPlayerName(i).." - "..v
+	end
+	self.m_StatisticShortMessage:setText(t)
+	self.m_StatisticShortMessage:resetTimeout()
 end

@@ -119,7 +119,7 @@ function Blip:getPosition(vec)
 	if self:getAttachedElement() then
 		x, y, z = getElementPosition(self:getAttachedElement())
 	else
-		x, y, z = self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0
+		x, y, z = self.m_PosX, self.m_PosY, self.m_PosZ or 0
 	end
 	if vec then
 		x = Vector3(x, y, z)
