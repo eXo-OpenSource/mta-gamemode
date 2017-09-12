@@ -115,7 +115,7 @@ function SelfGUI:constructor()
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
 	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral)
-	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
+	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer, "online") end
 
 	self.m_AchievementButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", true, tabGeneral)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)

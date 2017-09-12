@@ -73,7 +73,7 @@ function Admin:constructor()
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
 	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
-    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
+    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
 
@@ -81,6 +81,7 @@ function Admin:constructor()
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
+    addEventHandler("adminOfflinePlayerFunction", root, bind(self.Event_offlineFunction, self))
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
@@ -88,6 +89,8 @@ function Admin:constructor()
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
+    addEventHandler("adminGetOfflineWarns", root, bind(self.Event_getOfflineWarns, self))
+
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
@@ -130,16 +133,16 @@ end
 
 function Admin:Event_OnAdminGangwarReset( id, ts )
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
-		local area = Gangwar:getSingleton().m_Areas[id] 
-		if area then 
-			if not ts then ts = 0 end 
+		local area = Gangwar:getSingleton().m_Areas[id]
+		if area then
+			if not ts then ts = 0 end
 			if ts < 0 then ts = 0 end
 			local time = getRealTime(ts)
 			local day = time.monthday
 			local month = time.month+1
 			local year = time.year+1900
 			local hour = time.hour
-			local minute = time.minute 
+			local minute = time.minute
 			ts = ts - ( GANGWAR_ATTACK_PAUSE * UNIX_TIMESTAMP_24HRS )
 			if ts < 0 then ts = 0 end
 			area.m_LastAttack = ts
@@ -154,11 +157,11 @@ function Admin:Event_OnAdminGangwarReset( id, ts )
 	end
 end
 
-function Admin:Event_OnAdminGangwarChangeOwner( id, faction) 
+function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
-		if id and faction and id > 0 and faction > 0 then 
-			local area = Gangwar:getSingleton().m_Areas[id] 
-			if area then 
+		if id and faction and id > 0 and faction > 0 then
+			local area = Gangwar:getSingleton().m_Areas[id]
+			if area then
 				local faction = FactionManager:getSingleton():getFromId(faction)
 				area.m_Owner = faction.m_Id
 				local now = getRealTime().timestamp
@@ -175,7 +178,7 @@ function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
 	end
 end
 
-function Admin:Event_OnSuperManStartRequest() 
+function Admin:Event_OnSuperManStartRequest()
 	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
 		if client:getPublicSync("supportMode") then
 			if exports["superman"] then
@@ -310,6 +313,18 @@ function Admin:Event_respawnCompanyVehicles(Id)
         company:respawnVehicles()
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
     end
+end
+
+function Admin:Event_getOfflineWarns(target)
+	local id = Account.getIdFromName(target)
+
+	if id then
+		local result = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?", sql:getPrefix(), id)
+		for index, row in pairs(result) do
+			row.adminName = Account.getNameFromId(row.adminId)
+		end
+		client:triggerEvent("adminReceiveOfflineWarns", result)
+	end
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
@@ -557,48 +572,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 
 			admin:setFrozen(true)
 			if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
-        elseif func == "offlinePermaban" then
-			if not target then return end
-			if not reason or #reason == 0 then return end
-			self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
-			local targetId = Account.getIdFromName(target)
-			if targetId and targetId > 0 then
-				Ban.addBan(targetId, admin, reason)
-				self:addPunishLog(admin, targetId, func, reason, 0)
-				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
-				outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			else
-				admin:sendError(_("Spieler nicht gefunden!", admin))
-			end
-        elseif func == "offlineTimeban" then
-			if not target then return end
-            self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
-            local targetId = Account.getIdFromName(target)
-            if targetId and targetId > 0 then
-				if tonumber(duration) then
-					if type(reason) == "string" then
-						Ban.addBan(targetId, admin, reason, duration*60*60)
-						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
-						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
-						outputChatBox("Grund: "..reason,root, 200, 0, 0)
-					else admin:sendError("Keinen Grund angegeben!")
-					end
-				else admin:sendError("Keine Dauer angegeben!")
-				end
-            else
-                admin:sendError(_("Spieler nicht gefunden!", admin))
-            end
-        elseif func == "offlineUnban" then
-			if not target then return end
-            self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
-            local targetId = Account.getIdFromName(target)
-            if targetId and targetId > 0 then
-                self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
-				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
-            else
-                admin:sendError(_("Spieler nicht gefunden!", admin))
-            end
+
 		 elseif func == "eventMoneyDeposit" or func == "eventMoneyWithdraw" then
             local amount = tonumber(target)
             if amount and amount > 0 and reason then
@@ -642,7 +616,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			end
 			self:sendShortMessage(_("%s hat sich nach %s geportet!", admin, admin:getName(), getZoneName(x, y, z)))
 			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
-		elseif func == "nickchange" or func == "offlineNickchange" then
+		elseif func == "nickchange" then
 			local changeTarget = false
 			if target then
 				if isElement(target) and func == "nickchange" then
@@ -650,32 +624,6 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					changeTarget = target
 					if changeTarget:setNewNick(admin, reason) then
 						self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
-					end
-				elseif func == "offlineNickchange" then
-					local targetId = Account.getIdFromName(target)
-            		if targetId and targetId > 0 then
-						Async.create( -- player:load()/:save() needs a aynchronous execution
-							function ()
-								local changeTarget, isOffline = DatabasePlayer.get(targetId)
-								if changeTarget then
-									if isOffline then
-										changeTarget:load()
-										if changeTarget:setNewNick(admin, reason) then
-											self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
-											changeTarget:addOfflineMessage("Du wurdest vom Admin "..admin:getName().." von "..target.." zu "..reason.." umgenannt!",1)
-                       						delete(changeTarget)
-											return
-										end
-									else
-										admin:sendError(_("Der Spieler ist online!", admin))
-									end
-								else
-									admin:sendError(_("Spieler nicht gefunden!", admin))
-								end
-							end
-						)()
-					else
-					     admin:sendError(_("Spieler nicht gefunden!", admin))
 					end
 				end
 			else
@@ -693,6 +641,77 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
     else
         admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
     end
+end
+
+function Admin:Event_offlineFunction(func, target, reason, duration)
+	if not target then return end
+	local targetId = Account.getIdFromName(target)
+	if not targetId or targetId == 0 then
+		admin:sendError(_("Spieler nicht gefunden!", admin))
+		return
+	end
+	local admin = client
+
+	if func == "offlinePermaban" then
+		if not reason or #reason == 0 then return end
+		self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
+		Ban.addBan(targetId, admin, reason)
+		self:addPunishLog(admin, targetId, func, reason, 0)
+		outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+		outputChatBox("Grund: "..reason,root, 200, 0, 0)
+    elseif func == "offlineTimeban" then
+		self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
+		if tonumber(duration) then
+			if type(reason) == "string" then
+				Ban.addBan(targetId, admin, reason, duration*60*60)
+				self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+				outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			else
+				admin:sendError("Keinen Grund angegeben!")
+			end
+		else
+			admin:sendError("Keine Dauer angegeben!")
+		end
+    elseif func == "offlineUnban" then
+		self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
+		self:addPunishLog(admin, targetId, func, reason, 0)
+		sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+		outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
+	elseif func == "offlineNickchange" then
+		Async.create( -- player:load()/:save() needs a aynchronous execution
+			function ()
+				local changeTarget, isOffline = DatabasePlayer.get(targetId)
+				if changeTarget then
+					if isOffline then
+						changeTarget:load()
+						if changeTarget:setNewNick(admin, reason) then
+							self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
+							changeTarget:addOfflineMessage("Du wurdest vom Admin "..admin:getName().." von "..target.." zu "..reason.." umgenannt!",1)
+							delete(changeTarget)
+							return
+						end
+					else
+						admin:sendError(_("Der Spieler ist online!", admin))
+					end
+				else
+					admin:sendError(_("Spieler nicht gefunden!", admin))
+				end
+			end
+		)()
+	elseif func == "offlineWarn" then
+		if not duration then return end
+		if not reason then return end
+		duration = tonumber(duration)
+		self:sendShortMessage(_("%s hat %s offline verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target, duration, reason))
+		Warn.addWarn(targetId, admin, reason, duration*60*60*24)
+		self:addPunishLog(admin, targetId, func, reason, duration*60*60*24)
+	elseif func == "removeOfflineWarn" then
+		self:sendShortMessage(_("%s hat einen Warn von %s entfernt! (Offline)", admin, admin:getName(), target))
+		local id = reason
+		Warn.removeWarn(targetId, id)
+		self:addPunishLog(admin, targetId, func, "", 0)
+	end
 end
 
 function Admin:outputSpectatingChat(source, messageType, message, phonePartner, playerToSend)
