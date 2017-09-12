@@ -411,13 +411,13 @@ function AdminGUI:onPlayerButtonClick(func)
 		AdminVehicleGUI:new(self.m_SelectedPlayer, self, true)
 		self:close()
 	elseif func == "gethere" or func == "goto" or func == "spect" or func == "freeze" then
-		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
+		triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self.m_SelectedPlayer:getName()),
 				function (reason)
 					if reason then
-						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason)
 					else
 						ErrorBox:new("Kein Grund angegeben!")
 					end
@@ -428,7 +428,7 @@ function AdminGUI:onPlayerButtonClick(func)
 				_"Dauer in Minuten:",
 				function (reason, duration)
 					if reason and duration then
-						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason, duration)
 					else
 						ErrorBox:new("Kein Grund oder Dauer angegeben!")
 					end
@@ -437,7 +437,7 @@ function AdminGUI:onPlayerButtonClick(func)
 		QuestionBox:new(
 				_("Spieler %s aus dem Prison entlassen?", self.m_SelectedPlayer:getName()),
 				function ()
-					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
+					triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer)
 				end)
 	elseif func == "timeban" then
 		AdminInputBox:new(
@@ -445,7 +445,7 @@ function AdminGUI:onPlayerButtonClick(func)
 				_"Dauer in Stunden:",
 				function (reason, duration)
 					if reason and duration then
-						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason, duration)
 					else
 						ErrorBox:new("Kein Grund oder Dauer angegeben!")
 					end
@@ -458,7 +458,7 @@ function AdminGUI:onPlayerButtonClick(func)
 				_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", self.m_SelectedPlayer:getName()),
 				function (reason)
 					if reason then
-						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, reason)
 					end
 				end)
 	elseif func == "setCompany" then
@@ -493,7 +493,7 @@ function AdminGUI:onPlayerButtonClick(func)
 				_("Welchen Usernamen möchtest du dem Spieler %s geben?", self.m_SelectedPlayer:getName()),
 				function (newName)
 					if newName then
-						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, newName)
+						triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer, newName)
 					end
 				end)
 	end
@@ -706,7 +706,7 @@ function WarnManagement:removeWarn()
 		return
 	end
 	if self.m_Type == "online" then
-		triggerServerEvent("adminTriggerFunction", root, "removeWarn", self.m_Player, self.m_WarnGrid:getSelectedItem().Id)
+		triggerServerEvent("adminPlayerFunction", root, "removeWarn", self.m_Player, self.m_WarnGrid:getSelectedItem().Id)
 		setTimer(function()
 			self:loadWarns()
 		end	,500, 1)
@@ -723,7 +723,7 @@ function WarnManagement:addWarn()
 		function (reason, duration)
 			if reason and duration then
 				if self.m_Type == "online" then
-					triggerServerEvent("adminTriggerFunction", root, "addWarn", self.m_Player, reason, duration)
+					triggerServerEvent("adminPlayerFunction", root, "addWarn", self.m_Player, reason, duration)
 					setTimer(function()
 						self:loadWarns()
 					end	,500, 1)
