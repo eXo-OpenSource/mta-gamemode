@@ -156,6 +156,8 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(sender.name), ColorTable[color], AD_DURATIONS[duration]*1000, callSender)
 end)
 
+
+addEvent("closeAd")
 addEventHandler("closeAd", root, function()
 	if currentAd then
 		delete(currentAd)
