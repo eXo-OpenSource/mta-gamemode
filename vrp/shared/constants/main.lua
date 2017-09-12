@@ -118,6 +118,7 @@ ADMIN_RANK_PERMISSION = {
 	["rkick"] = RANK.Supporter,
 	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
+	["offlineUnPrison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,

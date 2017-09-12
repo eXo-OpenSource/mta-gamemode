@@ -140,23 +140,26 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 300, tabOffline)
 	self.m_PlayersOfflineGrid:addColumn(_"Spieler", 1)
-	self.m_PlayerOfflineNameLabel = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabOffline)
-	self.m_PlayerOfflineTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabOffline)
-	self.m_PlayerOfflineJobLabel = GUILabel:new(220, 60, 180, 20, _"Job: -", tabOffline)
-	self.m_PlayerOfflineMoneyLabel = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabOffline)
-	self.m_PlayerOfflineKarmaLabel = GUILabel:new(220, 110, 180, 20, _"Karma: -", tabOffline)
-	self.m_PlayerOfflineBankMoneyLabel = GUILabel:new(410, 85, 180, 20, _"Bank-Geld: -", tabOffline)
-	self.m_PlayerOfflineFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
-	self.m_PlayerOfflineCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
-	self.m_PlayerOfflineGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
-	self.m_PlayerOfflineBanLabel = GUILabel:new(410, 110, 180, 20, _"Gebannt: -", tabOffline)
+	self.m_PlayerOfflineLabel = {}
+	self.m_PlayerOfflineLabel["Name"] = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabOffline)
+	self.m_PlayerOfflineLabel["Playtime"] = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabOffline)
+	self.m_PlayerOfflineLabel["Job"] = GUILabel:new(220, 60, 180, 20, _"Job: -", tabOffline)
+	self.m_PlayerOfflineLabel["Money"] = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabOffline)
+	self.m_PlayerOfflineLabel["Karma"] = GUILabel:new(220, 110, 180, 20, _"Karma: -", tabOffline)
+	self.m_PlayerOfflineLabel["BankMoney"] = GUILabel:new(410, 85, 180, 20, _"Bank-Geld: -", tabOffline)
+	self.m_PlayerOfflineLabel["Faction"] = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
+	self.m_PlayerOfflineLabel["Company"] = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
+	self.m_PlayerOfflineLabel["Group"] = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
+	self.m_PlayerOfflineLabel["Ban"] = GUILabel:new(410, 110, 180, 20, _"Gebannt: -", tabOffline)
+	self.m_PlayerOfflineLabel["Prison"] = GUILabel:new(410, 135, 180, 20, _"Prison: -", tabOffline)
 
 	self:addAdminButton("offlineTimeban", "Timeban", self.onOfflineButtonClick, 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", self.onOfflineButtonClick, 410, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlineUnban", "Unban", self.onOfflineButtonClick, 220, 330, 180, 30, Color.Blue, tabOffline)
 	self:addAdminButton("offlineNickchange", "NickChange", self.onOfflineButtonClick, 410, 330, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlineWarn", "Warns verwalten", self.onOfflineButtonClick, 220, 370, 180, 30, Color.Orange, tabOffline)
-	--self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 410, 370, 180, 30, Color.Orange, tabOffline)
+	self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 220, 410, 180, 30, Color.Orange, tabOffline)
+	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
 
 	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
@@ -272,25 +275,27 @@ function AdminGUI:onOfflinePlayerInfo(info)
 			Money = false;
 			BankMoney = false;
 			Ban = true;
-			Kamra = false;
+			Karma = false;
+			PrisonTime = 0;
 		}
 	end
 
-	self.m_PlayerOfflineNameLabel:setText(_("Spieler: %s", info.Name or "-"))
+	self.m_PlayerOfflineLabel["Name"]:setText(_("Spieler: %s", info.Name or "-"))
 	local hours, minutes = math.floor(info.PlayTime/60), (info.PlayTime - math.floor(info.PlayTime/60)*60)
-	self.m_PlayerOfflineTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
-	self.m_PlayerOfflineFactionLabel:setText(_("Fraktion: %s", info.Faction or _"-"))
-	self.m_PlayerOfflineCompanyLabel:setText(_("Unternehmen: %s", info.Company or _"-"))
-	self.m_PlayerOfflineGroupLabel:setText(_("Gang/Firma: %s", info.Group or _"-"))
-	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
-	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
-	self.m_PlayerOfflineBankMoneyLabel:setText(_("Bank-Geld: %s$", info.BankMoney or "-"))
+	self.m_PlayerOfflineLabel["Playtime"]:setText(_("Spielzeit: %s:%s h", hours, minutes))
+	self.m_PlayerOfflineLabel["Faction"]:setText(_("Fraktion: %s", info.Faction or _"-"))
+	self.m_PlayerOfflineLabel["Company"]:setText(_("Unternehmen: %s", info.Company or _"-"))
+	self.m_PlayerOfflineLabel["Group"]:setText(_("Gang/Firma: %s", info.Group or _"-"))
+	self.m_PlayerOfflineLabel["Job"]:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
+	self.m_PlayerOfflineLabel["Money"]:setText(_("Geld: %s$", info.Money or "-"))
+	self.m_PlayerOfflineLabel["BankMoney"]:setText(_("Bank-Geld: %s$", info.BankMoney or "-"))
 	local banString = "Nein"
 	if info.Ban == true or tonumber(info.Warn) >= 3 then
 		banString = "Ja"
 	end
-	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s",  banString))
-	self.m_PlayerOfflineKarmaLabel:setText(_("Karma: %s", info.Karma or "-"))
+	self.m_PlayerOfflineLabel["Ban"]:setText(_("Gebannt: %s",  banString))
+	self.m_PlayerOfflineLabel["Karma"]:setText(_("Karma: %s", info.Karma or "-"))
+	self.m_PlayerOfflineLabel["Prison"]:setText(_("Prison: %s", math.floor(info.PrisonTime/60).."min" or "-"))
 
 end
 
@@ -395,6 +400,23 @@ function AdminGUI:onOfflineButtonClick(func)
 	elseif func == "offlineWarn" then
 		WarnManagement:new(selectedPlayer, "offline", self)
 		self:close()
+	elseif func == "offlinePrison" then
+		AdminInputBox:new(
+			_("Spieler %s offline ins Prison schicken", selectedPlayer),
+			_"Dauer in Minuten:",
+			function (reason, duration)
+				if reason and duration then
+					triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer, reason, duration)
+				else
+					ErrorBox:new("Kein Grund oder Dauer angegeben!")
+				end
+			end)
+	elseif func == "offlineUnPrison" then
+		QuestionBox:new(
+			_("Spieler %s offline aus dem Prison entlassen?", selectedPlayer),
+			function ()
+				triggerServerEvent("adminOfflinePlayerFunction", root, func, selectedPlayer)
+			end)
 	end
 end
 

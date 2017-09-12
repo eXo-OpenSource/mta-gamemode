@@ -289,6 +289,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Ban = Ban.checkOfflineBan(Id);
 						Warn = Warn.getAmount(Id);
 						Karma = player:getKarma();
+						PrisonTime = player.m_PrisonTime;
                     }
 
                     if isOffline then delete(player) end
@@ -743,6 +744,39 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 		local id = reason
 		Warn.removeWarn(targetId, id)
 		self:addPunishLog(admin, targetId, func, "", 0)
+	elseif func == "offlinePrison" then
+		if duration then
+			duration = tonumber(duration)
+			Async.create(
+			function ()
+				local targetPlayer, isOffline = DatabasePlayer.get(targetId)
+				if targetPlayer then
+					if isOffline then
+						targetPlayer:load()
+						self:sendShortMessage(_("%s hat %s für %d Minuten offline ins Prison gesteckt! Grund: %s", admin, admin:getName(), target, duration, reason))
+						self:addPunishLog(admin, targetId, func, reason, duration*60)
+						targetPlayer:setPrison(duration*60)
+						delete(targetPlayer)
+					end
+				end
+			end)()
+		end
+	elseif func == "offlineUnPrison" then
+		Async.create(
+		function ()
+			local targetPlayer, isOffline = DatabasePlayer.get(targetId)
+			if targetPlayer then
+				if isOffline then
+					targetPlayer:load()
+					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+					target:endPrison()
+					self:addPunishLog(admin, targetId, func)
+					delete(targetPlayer)
+				end
+			end
+		end)()
+	else
+        outputDebug("Event_offlineFunction Error - Function not found")
 	end
 end
 
