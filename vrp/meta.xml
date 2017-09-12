@@ -1660,8 +1660,6 @@
 	<vrpfile src="files/models/pickaxe.txd" />
 	<vrpfile src="files/models/pickaxe.dff" />
 	<vrpfile src="files/models/pickaxe.col" />
-	<vrpfile src="files/models/dozer.dff" />
-	<vrpfile src="files/models/dumper.dff" />
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
@@ -1717,6 +1715,8 @@
 	<vrpfile src="files/models/vehicles/dft30.dff"/>
 	<vrpfile src="files/models/vehicles/topfun.txd"/>
 	<vrpfile src="files/models/vehicles/topfun.dff"/>
+	<vrpfile src="files/models/vehicles/dozer.dff" />
+	<vrpfile src="files/models/vehicles/dumper.dff" />
 
 	<!-- Easter Event Start-->
 	<file src="files/models/easter_egg.txd" />

@@ -1024,6 +1024,14 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					player:moveToJail(CUTSCENE)
 					self:uncuffPlayer( player)
 					player:clearCrimes()
+					
+					local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+					local inv = player:getInventory()
+					for index, item in pairs(DrugItems) do
+						if inv:getItemAmount(item) > 0 then
+							inv:removeAllItem(item)
+						end
+					end
 
 					-- Pay some money to faction and karma, xp to the policeman
 					policeman:getFaction():giveMoney(factionBonus, "Arrest")
