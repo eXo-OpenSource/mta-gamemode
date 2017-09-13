@@ -1507,14 +1507,22 @@ function Player:createGunStorage()
 	end
 	
 	takeAllWeapons(self)
+	
+	self.m_GunStorage["health"] = self:getHealth()
+	self.m_GunStorage["armor"] = self:getArmor()
 end
 
-function Player:applyGunStorage()
+function Player:restoreFromGunStorage()
 	if not self.m_GunStorage then return false end
 	
 	for weapon, ammo in pairs(self.m_GunStorage) do
-		giveWeapon(self, weapon, ammo)
+		if type(weapon) == "number" then
+			giveWeapon(self, weapon, ammo)
+		end
 	end
+	
+	self:setHealth(self.m_GunStorage["health"])
+	self:setArmor(self.m_GunStorage["health"])
 	
 	self.m_GunStorage = nil
 end
