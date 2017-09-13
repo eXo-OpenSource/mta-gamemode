@@ -78,7 +78,7 @@ function FireManager:startFire(id)
 
 	self.m_CurrentFire:setOnUpdateHook(bind(self.onUpdateHandler, self))
 
-	self.m_CurrentFire:setOnFinishHook(bind(self.stopCurrentFire, self, true))
+	self.m_CurrentFire:setOnFinishHook(bind(self.stopCurrentFire, self))
 	FactionRescue:getSingleton():sendWarning(fireTable["message"], "Brand-Meldung", true, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0))
 	FactionState:getSingleton():sendWarning(fireTable["message"], "Absperrung erforderlich", false, fireTable.position + Vector3(fireTable.width/2, fireTable.height/2, 0))
 end
@@ -146,9 +146,16 @@ end
 
 function FireManager:stopCurrentFire(stats)
 	if stats then 
+		local moneyForFaction = 0
 		for player, score in pairs(stats.pointsByPlayer) do
-			--player:giveCombinedReward()
+			player:giveCombinedReward("Feuer gelöscht", {
+				bankMoney = score*4,
+				karma = math.round(score/21),
+				points = math.round(score/10),
+			})
+			moneyForFaction = moneyForFaction + score*4
 		end
+		FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction, "Feuer gelöscht")
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end

@@ -186,7 +186,7 @@ function FireRoot:update()
 		self.m_OnUpdateHook(self.m_Statistics)
 	end
 	self:triggerStatistics()
-	outputDebug("updated fire", getTickCount()-start.."ms", table.size(tblFiresToUpdate).." updates", deletes.." deletes")
+	outputDebug("updated fire", getTickCount()-start.."ms")
 end
 
 function FireRoot:isFireLimitReached()
@@ -277,7 +277,7 @@ function FireRoot:getFireSize(i, v)
 end
 
 function FireRoot:triggerStatistics()
-	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount(), math.sqrt(self.m_Width*self.m_Height)/4)
+	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount(), self.m_Width, self.m_Height)
 end
 
 function FireRoot:countUsersAtSight(rescueOnly)
