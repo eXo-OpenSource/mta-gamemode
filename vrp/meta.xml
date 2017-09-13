@@ -255,9 +255,9 @@
 	<script src="server/classes/Faction/Actions/StateEvidenceTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/FireRoot.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
@@ -616,6 +616,7 @@
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminEventGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminPedGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AdminFireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
@@ -1181,6 +1182,7 @@
 	<vrpfile src="files/images/Radar/Blips/North.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
 	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
+	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

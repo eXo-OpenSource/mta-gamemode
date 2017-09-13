@@ -225,7 +225,7 @@ addEventHandler("onClientVehicleDamage", root,
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
 					source.m_LastBroken = getTickCount()
-					triggerServerEvent("vehicleBreak", source)
+					triggerServerEvent("vehicleBreak", source, weapon)
 				end
 				setVehicleEngineState(source, false)
 				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)

@@ -336,9 +336,9 @@ function PlayerManager:startPaydayDebug(player)
 end
 
 function PlayerManager:breakingNews(text, ...)
-	for k, v in pairs(getElementsByType("player")) do
+	for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		local textFinish = _(text, v, ...)
-		v:triggerEvent("breakingNews", textFinish)
+		v:triggerEvent("breakingNews", textFinish, "Breaking News")
 	end
 end
 

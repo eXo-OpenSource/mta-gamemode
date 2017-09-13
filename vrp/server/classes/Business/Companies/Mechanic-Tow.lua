@@ -224,6 +224,23 @@ function MechanicTow:onEnterTowLot(hitElement)
 	end
 end
 
+function MechanicTow:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos.x then pos = {pos.x, pos.y, pos.z} end -- serialiseVector conversion
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Warning.png", pos[1], pos[2], {company = self:getId()}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
+	end
+end
+
 function MechanicTow:onLeaveTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
 	hitElement.m_InTowLot = false
@@ -233,7 +250,7 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant(towTruck)
 	if driver then
 		if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
 				source:toggleRespawn(false)
 			else
 				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
@@ -248,11 +265,17 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 	local driver = getVehicleOccupant(towTruck)
 	if driver and driver.m_InTowLot then
 		if towTruck.getCompany and towTruck:getCompany() == self then
-			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
-				self:respawnVehicle(source)
-				driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
-				StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
-				self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
+				if not source.burned then
+					self:respawnVehicle(source)
+					driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+					StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
+					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
+				else
+					source:destroy()
+					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
+					driver:giveMoney(200, "Fahrzeug-Wrack")
+				end
 			else
 				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end

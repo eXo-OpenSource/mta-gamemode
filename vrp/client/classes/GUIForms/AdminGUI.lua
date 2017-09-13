@@ -69,6 +69,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("pedMenu", "Ped-Menü", self.onGeneralButtonClick, 340, 350, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("playerHistory", "Spielerakten", self.onGeneralButtonClick, 340, 390, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("eventGangwarMenu", "Gangwar-Menü", self.onGeneralButtonClick, 340, 430, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("fireMenu", "Feuer-Menü", self.onGeneralButtonClick, 560, 430, 210, 30, Color.Blue, tabAllgemein)
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -577,6 +578,9 @@ function AdminGUI:onGeneralButtonClick(func)
 	elseif func == "eventGangwarMenu" then
 		self:close()
 		GangwarDebugGUI:new(AdminGUI)
+	elseif func == "fireMenu" then
+		self:close()
+		AdminFireGUI:getSingleton():open()
 	elseif func == "vehicleTexture" then
 		self:close()
 		TexturePreviewGUI:getSingleton():openAdmin()
