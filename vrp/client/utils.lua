@@ -16,10 +16,14 @@ addedEventHandlers = {
 	["onClientPreRender"] 	= {},
 	["onClientHUDRender"] 	= {},
 }
---[[function addEventHandler(eventName, attached, func, prop, priority)
+addedEventFuncUID = {}
+
+function addEventHandler(eventName, attached, func, prop, priority)
 	if addedEventHandlers[eventName] then
 		local info = debug.getinfo(2, "Sl")
-		addedEventHandlers[eventName][func] = {info.short_src, info.currentline}
+		local UID = getTickCount()+math.random(100, 200)
+		addedEventHandlers[eventName][func] = {UID, info.short_src, info.currentline}
+		addedEventFuncUID[UID] = func
 	end
 	return _addEventHandler(eventName, attached, func, prop, priority)
 end
@@ -29,7 +33,7 @@ function removeEventHandler(eventName, attached, func)
 		if addedEventHandlers[eventName][func] then addedEventHandlers[eventName][func] = nil end
 	end
 	return _removeEventHandler(eventName, attached, func)
-end]]
+end
 
 
 function updateCameraMatrix(x, y, z, lx, ly, lz, r, fov)

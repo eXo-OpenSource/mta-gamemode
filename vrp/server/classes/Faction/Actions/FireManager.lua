@@ -149,17 +149,19 @@ function FireManager:stopCurrentFire(stats)
 		local moneyForFaction = 0
 		for player, score in pairs(stats.pointsByPlayer) do
 			player:giveCombinedReward("Feuer gelöscht", {
-				bankMoney = score*4,
+				bankMoney = score*12,
 				karma = math.round(score/21),
 				points = math.round(score/10),
 			})
-			moneyForFaction = moneyForFaction + score*4
+			moneyForFaction = moneyForFaction + score*6
 		end
 		FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction, "Feuer gelöscht")
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end
-	delete(self.m_CurrentFire.Blip)
+	if self.m_CurrentFire then
+		delete(self.m_CurrentFire.Blip)
+	end
 	self.m_CurrentFire = nil
 	self.m_NewsSent = nil
 end

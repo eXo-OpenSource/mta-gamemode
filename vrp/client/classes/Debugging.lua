@@ -19,6 +19,7 @@ if DEBUG then
 		addCommandHandler("sp", bind(Debugging.setpos, self))
 		addCommandHandler("gui_debug", bind(Debugging.gui_debug, self))
 		addCommandHandler("cef_debug", bind(Debugging.cef_debug, self))
+		addCommandHandler("perf_debug", bind(Debugging.performance_debug, self))
 
 	end
 
@@ -66,5 +67,29 @@ if DEBUG then
 	function Debugging:cef_debug()
 		CEF_DEBUG = not CEF_DEBUG
 		setDevelopmentMode(true, CEF_DEBUG)
+	end
+
+	function Debugging:performance_debug(cmd, arg)
+		local arg = arg
+		if not self.m_PerformanceDebug then
+			self.m_PerformanceSM = ShortMessage:new("loading...", "Performance Stats", Color.LightBlue, 6000)
+			self.m_PerformanceTimer = setTimer(function()
+				local tfinish = ("lua timing for filter '%s'"):format(arg)
+				local __, f = getPerformanceStats("Lua timing", "d", arg)
+				for i, data in ipairs(f) do
+					if data[2] ~= "-" then
+						tfinish = tfinish .. ("\n%s - %s (%s s)"):format(data[2], data[1], data[3])
+					end
+				end
+				self.m_PerformanceSM:setText(tfinish)
+				self.m_PerformanceSM:resetTimeout()
+			
+			end, 5000, 0)
+		else
+			killTimer(self.m_PerformanceTimer)
+			self.m_PerformanceSM:delete()
+
+		end
+		self.m_PerformanceDebug = not self.m_PerformanceDebug
 	end
 end

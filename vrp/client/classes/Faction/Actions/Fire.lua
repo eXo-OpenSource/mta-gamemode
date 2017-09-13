@@ -4,7 +4,7 @@ Fire.Settings = {
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
 	["fireRenderDistance"] = 50,
-	["extinguishTime"] = 1,
+	["extinguishTime"] = 10,
 	["extraEffects"] = true,
 }
 
@@ -205,6 +205,7 @@ function Fire:checkForFireGroundInfo(uFire)
 
 			setElementCollisionsEnabled(uFire, true)
 			setElementCollidableWith (uFire, localPlayer, false)
+			uFire:setHealth(100)
 			for index, vehicle in pairs(getElementsByType("vehicle", root, true)) do
 				if uFire and isElement(uFire) and vehicle and isElement(vehicle) then
 					setElementCollidableWith(vehicle, uFire, false)
