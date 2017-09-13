@@ -1494,3 +1494,31 @@ function Player:addClothes(texture, model, typeId)
 
 	self.m_SkinData[typeId] = {texture = texture, model = model}
 end
+
+-- Temporary GunStorage
+function Player:createGunStorage()
+	self.m_GunStorage = {}
+	
+	for slot = 0, 11 do
+		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+		if ammo > 0 then
+			self.m_GunStorage[weapon] = ammo
+		end
+	end
+	
+	takeAllWeapons(self)
+end
+
+function Player:applyGunStorage()
+	if not self.m_GunStorage then return false end
+	
+	for weapon, ammo in pairs(self.m_GunStorage) do
+		giveWeapon(self, weapon, ammo)
+	end
+	
+	self.m_GunStorage = nil
+end
+
+function Player:hasGunStorage()
+	return type(self.m_GunStorage) == "table"
+end
