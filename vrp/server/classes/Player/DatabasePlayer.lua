@@ -428,7 +428,7 @@ end
 function DatabasePlayer:giveKarma(value, reason) -- TODO: maybe log it?
 	self:setXP(self.m_XP + value)
 	self:setKarma(self.m_Karma + value)
-	if self:isActive() then 
+	if self:isActive() then
 		self:setPrivateSync("KarmaLevel", self.m_Karma)
 		self:setPublicSync("Karma", self.m_Karma)
 	end
@@ -490,7 +490,7 @@ function DatabasePlayer:setWeaponLevel (level)
 	self.m_WeaponLevel = level
 	if self:isActive() then
 		self:setPrivateSync("WeaponLevel", self.m_WeaponLevel)
-		for _, stat in ipairs({ 69, 70, 71, 72, 74, 76, 77, 78}) do
+		for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 			if stat == 69 then
 				setPedStat(self, stat, self.m_WeaponLevel*90)
 			else

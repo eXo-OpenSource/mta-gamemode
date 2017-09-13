@@ -344,20 +344,24 @@ function Player:save()
 				weapons[#weapons + 1] = {weapon, ammo}
 			end
 		end
+
+		if self:hasTemporaryStorage() then
+			weapons = {}
+			for weapon, ammo in pairs(self.m_Storage.weapons) do
+				weapons[#weapons + 1] = {weapon, ammo}
+			end
+		end
+
 		local dimension = 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
-		local sSkin = getElementModel(self)
+		local sSkin = self:getModel()
 		if interior > 0 then dimension = self:getDimension() end
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
-
-		--if self:getInventory() then
-		--	self:getInventory():save()
-		--end
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 		DatabasePlayer.save(self)
 		outputServerLog("Saved Data for Player "..self:getName())
@@ -1495,38 +1499,50 @@ function Player:addClothes(texture, model, typeId)
 	self.m_SkinData[typeId] = {texture = texture, model = model}
 end
 
--- Temporary GunStorage
-function Player:createGunStorage()
-	self.m_GunStorage = {}
-	
+-- Temporary player storage
+local stats = {69, 70, 71, 72, 74, 76, 77, 78, 160, 229, 230}
+function Player:createStorage(storeSkills)
+	self.m_Storage = {
+		weapons = {},
+		stats = {},
+		health = self:getHealth(),
+		armor = self:getArmor(),
+	}
+
 	for slot = 0, 11 do
 		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
 		if ammo > 0 then
-			self.m_GunStorage[weapon] = ammo
+			self.m_Storage.weapons[weapon] = ammo
 		end
 	end
-	
+
 	takeAllWeapons(self)
-	
-	self.m_GunStorage["health"] = self:getHealth()
-	self.m_GunStorage["armor"] = self:getArmor()
-end
 
-function Player:restoreFromGunStorage()
-	if not self.m_GunStorage then return false end
-	
-	for weapon, ammo in pairs(self.m_GunStorage) do
-		if type(weapon) == "number" then
-			giveWeapon(self, weapon, ammo)
+	if storeSkills then
+		for _, stat in pairs(stats) do
+			self.m_Storage.stats[stat] = self:getStat(stat)
+			setPedStat(self, stat, 0)
 		end
 	end
-	
-	self:setHealth(self.m_GunStorage["health"])
-	self:setArmor(self.m_GunStorage["health"])
-	
-	self.m_GunStorage = nil
 end
 
-function Player:hasGunStorage()
-	return type(self.m_GunStorage) == "table"
+function Player:restoreStorage()
+	if not self.m_Storage then return false end
+
+	for weapon, ammo in pairs(self.m_Storage.weapons) do
+		giveWeapon(self, weapon, ammo)
+	end
+
+	for stat, value in pairs(self.m_Storage.stats) do
+		setPedStat(self, stat, value)
+	end
+
+	self:setHealth(self.m_Storage.health)
+	self:setArmor(self.m_Storage.armor)
+
+	self.m_Storage = nil
+end
+
+function Player:hasTemporaryStorage()
+	return type(self.m_Storage) == "table"
 end
