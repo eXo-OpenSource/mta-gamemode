@@ -1,5 +1,5 @@
 MechanicTow = inherit(Company)
-addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI", "mechanicVehicleRequestFill", "mechanicTowBike"}
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI", "mechanicVehicleRequestFill", "mechanicAttachBike", "mechanicDetachBike"}
 
 function MechanicTow:constructor()
 	self:createTowLot()
@@ -38,7 +38,8 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicVehicleRequestFill", root, bind(self.Event_mechanicVehicleRequestFill, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
-	addEventHandler("mechanicTowBike", root, bind(self.Event_mechanicTowBike, self))
+	addEventHandler("mechanicAttachBike", root, bind(self.Event_mechanicAttachBike, self))
+	addEventHandler("mechanicDetachBike", root, bind(self.Event_mechanicDetachBike, self))
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 end
@@ -399,9 +400,11 @@ function MechanicTow:FillDecline(player, target)
 	player:sendError(_("Der Spieler möchte deinen Service nicht nutzen.", player))
 end
 
-function MechanicTow:Event_mechanicTowBike(vehicle)
+function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client:getCompany() ~= self then return end
 	if not client:isCompanyDuty() then return end
+	if not client.vehicle then return end
+	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
@@ -418,18 +421,43 @@ function MechanicTow:Event_mechanicTowBike(vehicle)
 			vehicle:attach(object)
 
 			client.vehicle:setFrozen(true)
+			client.vehicle.m_DisableToggleHandbrake = true
 			object:move(2500, client.vehicle.matrix:transformPosition(Vector3(0, -1.1, .8)), 0, 0, 90, "InOutQuad")
 
-			setTimer(
+			client.vehicle.towTimer = setTimer(
 				function(towTruck, bike, object)
 					object:destroy()
 					towTruck:setFrozen(false)
+					towTruck.m_DisableToggleHandbrake = false
 					bike:attach(towTruck, 0, -1.1, .8, 0, 0, 90)
 				end, 2500, 1, client.vehicle, vehicle, object
 			)
 		else
 			client:sendWarning(_("Dieses %s kann nicht abgeschleppt werden!", client, vehicle:getVehicleType() == VehicleType.Bike and "Motorrad" or "Fahrrad"))
 		end
+	end
+end
+
+function MechanicTow:Event_mechanicDetachBike()
+	if client:getCompany() ~= self then return end
+	if not client:isCompanyDuty() then return end
+	if not client.vehicle then return end
+
+	if isTimer(client.vehicle.towTimer) then
+		client:sendWarning("Bitte warte einen Moment während das Fahrzeug aufgeladen wird!")
+		return
+	end
+
+	local towingBike = client.vehicle:getData("towingBike")
+	if towingBike then
+		towingBike:toggleRespawn(true)
+		towingBike:detach()
+		towingBike:setPosition(client.vehicle.matrix:transformPosition(Vector3(-2, 0, 0)))
+		towingBike:setRotation(client.vehicle.rotation)
+		towingBike:setCollisionsEnabled(true)
+
+		towingBike:setData("towedByVehicle", nil, true)
+		client.vehicle:setData("towingBike", nil, true)
 	end
 end
 

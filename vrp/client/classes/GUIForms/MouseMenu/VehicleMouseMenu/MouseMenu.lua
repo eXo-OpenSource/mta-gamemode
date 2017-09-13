@@ -248,11 +248,21 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 
 			if localPlayer.vehicle and localPlayer.vehicle:getData("OwnerName") == localPlayer:getCompany():getName() then
-				if element:getVehicleType() == VehicleType.Bike and element:isEmpty() then
+				if (element:getVehicleType() == VehicleType.Bike or VEHICLE_BIKES[element:getModel()]) and element:isEmpty() and not localPlayer.vehicle:getData("towingBike") then
 					self:addItem(_"Mechaniker: Motorrad aufladen",
 						function()
 							if self:getElement() then
-								triggerServerEvent("mechanicTowBike", localPlayer, self:getElement())
+								triggerServerEvent("mechanicAttachBike", localPlayer, self:getElement())
+								delete(self)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Cogs)
+				end
+				if element == localPlayer.vehicle and localPlayer.vehicle:getData("towingBike") then
+					self:addItem(_"Mechaniker: Motorrad abladen",
+						function()
+							if self:getElement() then
+								triggerServerEvent("mechanicDetachBike", localPlayer, self:getElement())
 								delete(self)
 							end
 						end
