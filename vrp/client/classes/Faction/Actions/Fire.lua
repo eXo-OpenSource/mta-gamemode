@@ -241,10 +241,10 @@ function Fire:createFireElement(iSize, uPed, inThread)
 	end)
 end
 
-function Fire:updateStatistics(tblStats, serverTick)
+function Fire:updateStatistics(tblStats, serverTick, estimatedTime)
 	if not self.m_ShortmessageLoaded then
 		self.m_ShortmessageLoaded = true
-		self.m_StatisticShortMessage = ShortMessage:new("", "Brand", Color.Orange, 6000, nil, function()
+		self.m_StatisticShortMessage = ShortMessage:new("", "Brand-Übersicht", Color.Orange, 6000, nil, function()
 			self.m_ShortmessageLoaded = false
 		end)
 	end
@@ -260,6 +260,7 @@ function Fire:updateStatistics(tblStats, serverTick)
 	for i, v in pairs(tblStats.pointsByPlayer) do
 		t = t.. ("\n %s - %s Punkte (%s Feuer gelöscht)"):format(i:getName(), v, tblStats.firesByPlayer[i] or 0)
 	end
+	t = t.. ("\n\ngeschätzte Lösch-Zeit (min): %s"):format(estimatedTime)
 	self.m_StatisticShortMessage:setText(t)
 	self.m_StatisticShortMessage:resetTimeout()
 end

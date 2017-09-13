@@ -25,7 +25,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 	self.m_CenterPoint = Vector3(iX + iW/2, iY + iH/2)
 	self.m_Max_I = iW / FireRoot.Settings["coords_per_fire"]
 	self.m_Max_V = iH / FireRoot.Settings["coords_per_fire"]
-	self.m_Max_Fires = math.min(100, math.round((self.m_Max_I * self.m_Max_V) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
+	self.m_Max_Fires = math.min(64, math.round((self.m_Max_I * self.m_Max_V) * 0.5)) -- increase fire amount and fire size until there is this specific amount of fires loaded
 	self.m_UpdateBind = bind(self.update, self)
 	self.m_UpdateTimer = setTimer(self.m_UpdateBind, FireRoot.Settings["fire_update_time"], 0, self.m_Root)
 	self.m_FireMap = {}
@@ -248,8 +248,10 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 					
 					fire:addSizeDecreaseCallback(function(player)
 						if isElement(player) then
+							local timeEstimateForFinish =  math.sqrt(self.m_Width*self.m_Height)/4 * 60 * 1000 -- estimated time to extinguish the fire (in ms)
 							local p = player.vehicle and 2 or 4 -- give more points if fire got deleted by "hand"
-							if self:isFireDecaying() then p = p/2 end -- give less points if fire is already decaying
+							if self:isFireDecaying() or (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish then p = p/2 end -- give less points if fire is already decaying
+							if (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish*2 then p = 0 end
 							if not self.m_Statistics.pointsByPlayer[player] then
 								self.m_Statistics.pointsByPlayer[player] = 0
 							end
@@ -275,7 +277,7 @@ function FireRoot:getFireSize(i, v)
 end
 
 function FireRoot:triggerStatistics()
-	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount())
+	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount(), math.sqrt(self.m_Width*self.m_Height)/4)
 end
 
 function FireRoot:countUsersAtSight(rescueOnly)

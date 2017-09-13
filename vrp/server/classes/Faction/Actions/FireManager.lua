@@ -144,9 +144,15 @@ function FireManager:getCurrentFire()
 	return self.m_CurrentFire
 end
 
-function FireManager:stopCurrentFire(fireDeleted)
+function FireManager:stopCurrentFire(stats)
+	if stats then 
+		for player, score in pairs(stats.pointsByPlayer) do
+			--player:giveCombinedReward()
+		end
+	else -- fire got deleted elsewhere (e.g. admin panel)
+		delete(self.m_CurrentFire)
+	end
 	delete(self.m_CurrentFire.Blip)
-	if not fireDeleted then delete(self.m_CurrentFire) end
 	self.m_CurrentFire = nil
 	self.m_NewsSent = nil
 end
