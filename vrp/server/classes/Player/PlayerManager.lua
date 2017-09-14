@@ -854,6 +854,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client:isOnFire() then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
