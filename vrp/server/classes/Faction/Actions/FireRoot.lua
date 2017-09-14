@@ -10,6 +10,7 @@ FireRoot.Map = {}
 FireRoot.Settings = {
 	["fire_update_time"] = 5000,
 	["coords_per_fire"] = 3,
+	["distance_to_player"] = 100, --distance from fire center to player inside he will be counted as active
 }
 
 
@@ -178,6 +179,8 @@ function FireRoot:update()
 	if self.m_Statistics.firesActive == 0 then
 		delete(self)
 	end
+
+	self.m_Statistics.activeRescuePlayers = self:countUsersAtSight(true)
 	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
 		PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
@@ -246,16 +249,16 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 						self.m_FireMap[i..","..v] = nil
 					end)
 					
-					fire:addSizeDecreaseCallback(function(player)
+					fire:addSizeDecreaseCallback(function(player, size)
 						if isElement(player) then
 							local timeEstimateForFinish =  math.sqrt(self.m_Width*self.m_Height)/4 * 60 * 1000 -- estimated time to extinguish the fire (in ms)
-							local p = player.vehicle and 2 or 4 -- give more points if fire got deleted by "hand"
-							if self:isFireDecaying() or (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish then p = p/2 end -- give less points if fire is already decaying
-							if (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish*2 then p = 0 end
+							local p = player.vehicle and size or size*2 -- give more points if fire got deleted by "hand"
+							if self:isFireDecaying() or (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish/2 then p = p/2 end -- give less points if fire is already decaying
+							if (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish then p = 0 end
 							if not self.m_Statistics.pointsByPlayer[player] then
 								self.m_Statistics.pointsByPlayer[player] = 0
 							end
-							self.m_Statistics.pointsByPlayer[player] = self.m_Statistics.pointsByPlayer[player] + p
+							self.m_Statistics.pointsByPlayer[player] = self.m_Statistics.pointsByPlayer[player] + math.round(p)
 						end
 					end)
 
@@ -281,23 +284,17 @@ function FireRoot:triggerStatistics()
 end
 
 function FireRoot:countUsersAtSight(rescueOnly)
-	if not self.m_CurrentFire then return 0, 0 end
-	outputDebug("counting...")
 	local activeRescue, activeState = 0, 0
 
 	for i, v in pairs(FactionRescue:getSingleton():getOnlinePlayers(true, true)) do
-		outputDebug("found rescue", v)
-		if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FIRE_DISTANCE_TO_PLAYER then
+		if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FireRoot.Settings.distance_to_player then
 			activeRescue = activeRescue + 1
-			outputDebug("found rescue in sight", v)
 		end
 	end
 	if not rescueOnly then
 		for i, v in pairs(FactionState:getSingleton():getOnlinePlayers(true, true)) do
-			outputDebug("found pd", v)
-			if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FIRE_DISTANCE_TO_PLAYER then
+			if getDistanceBetweenPoints3D(v.position, self.m_CenterPoint) <= FireRoot.Settings.distance_to_player then
 				activeState = activeState + 1
-				outputDebug("found pd in sight", v)
 			end
 		end
 	end

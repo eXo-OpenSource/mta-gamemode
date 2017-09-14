@@ -9,7 +9,6 @@ FireManager = inherit(Singleton)
 
 local FIRE_TIME_MIN = 45 -- in minutes
 local FIRE_TIME_MAX = 90 -- in minutes
-local FIRE_DISTANCE_TO_PLAYER = 200 -- distance inside which the player counts as an active member to extinguish the current fire
 
 function FireManager:constructor()
 	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*60*1000
@@ -148,14 +147,16 @@ function FireManager:stopCurrentFire(stats)
 	if stats then 
 		local moneyForFaction = 0
 		for player, score in pairs(stats.pointsByPlayer) do
-			player:giveCombinedReward("Feuer gelöscht", {
-				bankMoney = score*12,
-				karma = math.round(score/21),
-				points = math.round(score/10),
-			})
-			moneyForFaction = moneyForFaction + score*6
+			if isElement(player) then
+				player:giveCombinedReward("Feuer gelöscht", {
+					bankMoney = score*12,
+					karma = math.round(score/45),
+					points = math.round(score/22),
+				})
+				moneyForFaction = moneyForFaction + score*6
+			end
 		end
-		FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction, "Feuer gelöscht")
+		FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end

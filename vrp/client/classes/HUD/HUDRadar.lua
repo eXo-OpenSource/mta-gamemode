@@ -412,11 +412,10 @@ end
 
 function HUDRadar:getVisibleBlipsForRadar()
 	if not self.ms_CachedRadarBlips then 
-		self.ms_CacheCheck = {0, localPlayer.position}
+		self.ms_CacheCheck = 0
 	end
-	if (getTickCount() - self.ms_CacheCheck[1]) > 5000 then --or getDistanceBetweenPoints3D(Blip.ms_CacheCheck[2], localPlayer.position) > 50 then
-		outputDebug("updating blips", getTickCount())
-		self.ms_CacheCheck = {getTickCount(), localPlayer.position}
+	if (getTickCount() - self.ms_CacheCheck) > 1000 then
+		self.ms_CacheCheck = getTickCount()
 		self.ms_CachedRadarBlips = {}
 		for i = 1, #Blip.Blips do
 			local blip = Blip.Blips[i]

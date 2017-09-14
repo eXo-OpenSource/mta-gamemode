@@ -37,7 +37,7 @@ function Fire:destructor()
 	if isElement(self.m_Ped) then
 		for i,v in pairs(self.m_SizeDecreaseCallbackMap) do
 			if type(v) == "function" then
-				v(self.m_Extinguisher)
+				v(self.m_Extinguisher, 1)
 			end
 		end
 		for i,v in pairs(self.m_ExtinguishCallbackMap) do
@@ -72,7 +72,7 @@ function Fire:decreaseFireSize(responsiblePlayer)
 		end
 		for i,v in pairs(self.m_SizeDecreaseCallbackMap) do
 			if type(v) == "function" then
-				v(responsiblePlayer)
+				v(responsiblePlayer, self.m_Size+1) --+1 because we want to know the initial size
 			end
 		end
 		return true

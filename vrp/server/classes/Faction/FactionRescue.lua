@@ -580,18 +580,23 @@ function FactionRescue:toggleLadder(veh, player, force)
 		veh:setFrozen(false)
 		triggerClientEvent("rescueLadderUpdateCollision", veh, false)
 	else
-		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
-		veh.LadderEnabled = true
-		bindKey(player, "w", "both", self.m_LadderBind)
-		bindKey(player, "a", "both", self.m_LadderBind)
-		bindKey(player, "s", "both", self.m_LadderBind)
-		bindKey(player, "d", "both", self.m_LadderBind)
-		bindKey(player, "lctrl", "both", self.m_LadderBind)
-		bindKey(player, "lshift", "both", self.m_LadderBind)
-		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
-		veh:setFrozen(true)
-		veh.m_DisableToggleHandbrake = true
-		triggerClientEvent("rescueLadderUpdateCollision", veh, true)
+		if (veh.rotation.x < 5 or veh.rotation.x > 355) and (veh.rotation.y < 10 or veh.rotation.y > 350) then
+			player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
+			veh.LadderEnabled = true
+			bindKey(player, "w", "both", self.m_LadderBind)
+			bindKey(player, "a", "both", self.m_LadderBind)
+			bindKey(player, "s", "both", self.m_LadderBind)
+			bindKey(player, "d", "both", self.m_LadderBind)
+			bindKey(player, "lctrl", "both", self.m_LadderBind)
+			bindKey(player, "lshift", "both", self.m_LadderBind)
+			veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
+			veh:setFrozen(true)
+			veh:setRotation(0, 0, veh.rotation.z)
+			veh.m_DisableToggleHandbrake = true
+			triggerClientEvent("rescueLadderUpdateCollision", veh, true)
+		else
+			player:sendError(_("Suche dir eine ebenere Fläche!", player))
+		end
 	end
 end
 

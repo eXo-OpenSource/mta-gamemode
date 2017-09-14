@@ -1,6 +1,5 @@
 Fire = inherit(Singleton)
 Fire.Settings = {
-	["tickNoise"] = false,
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
 	["fireRenderDistance"] = 50,
@@ -104,15 +103,13 @@ end
 --\\
 
 function Fire:handlePedDamage(uAttacker, iWeap)
+	cancelEvent()
 	if self.m_Fires[source] then
 		if iWeap == 42 then -- extinguisher
-			if Fire.Settings["tickNoise"] and uAttacker == localPlayer then playSoundFrontEnd(37) end
 			self:handleSmoke(source)
-			if getElementHealth(source) <= (50) and uAttacker == localPlayer then
-				triggerServerEvent("fireElements:requestFireDeletion", source)
+			if uAttacker == localPlayer and math.random(1, Fire.Settings["extinguishTime"]*5) == 1 then
+				triggerServerEvent("fireElements:requestFireDeletion", source, self.m_Fires[source].iSize)
 			end
-		else
-			cancelEvent()
 		end
 	end
 end
@@ -128,9 +125,8 @@ cancelEvent()
 	if self.m_Fires[uPed] then
 		if getElementModel(source) == 407 then -- fire truck
 		self:handleSmoke(uPed)
-			if Fire.Settings["tickNoise"] and getVehicleController(source) == localPlayer then playSoundFrontEnd(37) end
-			if math.random(1, Fire.Settings["extinguishTime"]) == 1 and getVehicleController(source) == localPlayer then
-				triggerServerEvent("fireElements:requestFireDeletion", uPed)
+			if getVehicleController(source) == localPlayer and math.random(1, Fire.Settings["extinguishTime"]) == 1 then
+				triggerServerEvent("fireElements:requestFireDeletion", uPed, self.m_Fires[uPed].iSize)
 			end
 		end
 	end
@@ -222,7 +218,7 @@ end
 --||  		uPed			= the ped element synced by the server
 --\\
 
-function Fire:createFireElement(iSize, uPed, inThread)
+function Fire:createFireElement(iSize, uPed)
 	if not uPed then uPed = source end
 	local iX, iY, iZ = getElementPosition(uPed)
 	self.m_Fires[uPed] = {}
@@ -231,6 +227,7 @@ function Fire:createFireElement(iSize, uPed, inThread)
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollisionsEnabled(uPed, false) --temporary until stream in
 	self:checkForFireGroundInfo(uPed)
+	uPed:setData("NPC:Immortal", true)
 	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))
 	addEventHandler("onClientColShapeHit", self.m_Fires[uPed].uBurningCol, bind(self.burnPlayer, self))
 	addEventHandler("onClientElementStreamIn", uPed, function()
