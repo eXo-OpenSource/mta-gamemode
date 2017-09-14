@@ -64,7 +64,7 @@ function AdminGUI:constructor(money)
 	self.m_EventReasonEdit = GUIEdit:new(410, 150, 140, 30, tabAllgemein)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", self.onGeneralButtonClick, 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", self.onGeneralButtonClick, 450, 190, 100, 30, Color.Red, tabAllgemein)
-	self:addAdminButton("eventMenu", "Event-Menü", self.onGeneralButtonClick, 340, 230, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("event", "Event-Menü", self.onGeneralButtonClick, 340, 230, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", self.onGeneralButtonClick, 340, 310, 210, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("pedMenu", "Ped-Menü", self.onGeneralButtonClick, 340, 350, 210, 30, Color.Blue, tabAllgemein)
 	self:addAdminButton("playerHistory", "Spielerakten", self.onGeneralButtonClick, 340, 390, 210, 30, Color.Blue, tabAllgemein)
@@ -566,7 +566,7 @@ function AdminGUI:onGeneralButtonClick(func)
 		else
 			ErrorBox:new("Kein Grund oder Betrag angegeben!")
 		end
-	elseif func == "eventMenu" then
+	elseif func == "event" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
 	elseif func == "pedMenu" then
