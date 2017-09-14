@@ -83,3 +83,8 @@ function GUITabPanel:forceTab(tabId)
 
 	return tab
 end
+
+function GUITabPanel:updateGrid()
+	grid("reset", true)
+	grid("offset", 0)
+end

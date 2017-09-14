@@ -11,16 +11,15 @@ inherit(Singleton, StyleguideDemonstrationGUI)
 function StyleguideDemonstrationGUI:constructor()
 	--main
 
-	grid("offset", 50)
+	grid("offset", 50) -- static offset for window
 
 	self.m_Width = grid("x", 20)
 	self.m_Height = grid("y", 15)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"StyleguideDemonstrationGUI", true, true, self)
-	self.m_Tabs = self.m_Window:addTabPanel({"Allgemein", "weiteres"})
-
-	grid("offset", 0)
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Allgemein", "weiteres"})
+	self.m_TabPanel:updateGrid()
 
 	--Tab 1
 
@@ -78,7 +77,7 @@ function StyleguideDemonstrationGUI:constructor()
 			labelToggle:setText("onChange: " .. tostring(state))
 		end
 	local scrollArea = GUIGridScrollableArea:new(10, 1, 10, 10, 10, 20, true, false, self.m_Tabs[2], 1)
-
+	scrollArea:updateGrid()
 	GUIGridLabel:new(1, 1, 10, 1, _"irgendwelche Settings", scrollArea):setHeader()
 	for i = 1, 5 do
 		GUIGridLabel:new(1, i+1, 8, 1, "Setting "..i, scrollArea)

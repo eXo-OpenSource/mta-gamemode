@@ -185,3 +185,9 @@ function GUIScrollableArea:onInternalMouseWheelDown()
 
 	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - diff)
 end
+
+function GUIScrollableArea:updateGrid()
+	grid("reset", true)
+	grid("offset", 0)
+	grid("outMargin", -10)
+end

@@ -131,3 +131,8 @@ function GUIWindow:removeBackButton()
 		delete(self.m_BackButton)
 	end
 end
+
+function GUIWindow:updateGrid()
+	grid("reset", true)
+	grid("offset", 0)
+end

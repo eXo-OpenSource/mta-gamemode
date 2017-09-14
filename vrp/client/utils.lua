@@ -62,16 +62,24 @@ function textHeight(text, lineWidth, font, size)
 	return height
 end
 
-local offset = 30
+local offset = 0
+local outMargin = 0
 function grid(type, pos)
 	if not pos then pos = 1 end
 	if type == "offset" then
 		offset = pos
 		return true
+	elseif type == "outMargin" then
+		outMargin = pos
+		return true
+	elseif type == "reset" then -- reset all previous settings
+		offset = 0
+		outMargin = 0
+		return true
 	elseif type == "x" then
-		return 30*(pos - 1) + 10*pos
+		return 30*(pos - 1) + 10*pos + outMargin
 	elseif type == "y" then
-		return offset + 30*(pos - 1) + 10*pos
+		return offset + 30*(pos - 1) + 10*pos + outMargin
 	end
 	return 30*pos + 10*(pos - 1)
 end
