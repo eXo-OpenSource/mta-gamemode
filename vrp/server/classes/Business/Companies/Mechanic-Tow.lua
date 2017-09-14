@@ -414,6 +414,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 
 			-- Following is all cause of the animation. Shit happens..
 			local object = createObject(1337, vehicle.position, vehicle.rotation)
+			local diffRotation = client.vehicle.rotation.z - vehicle.rotation.z
 			object:setAlpha(0)
 			object:setCollisionsEnabled(false)
 
@@ -422,7 +423,8 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 
 			client.vehicle:setFrozen(true)
 			client.vehicle.m_DisableToggleHandbrake = true
-			object:move(2500, client.vehicle.matrix:transformPosition(Vector3(0, -1.1, .8)), 0, 0, 90, "InOutQuad")
+
+			object:move(2500, client.vehicle.matrix:transformPosition(Vector3(0, -1.1, .8)), 0, 0, diffRotation + 90, "InOutQuad")
 
 			client.vehicle.towTimer = setTimer(
 				function(towTruck, bike, object)
