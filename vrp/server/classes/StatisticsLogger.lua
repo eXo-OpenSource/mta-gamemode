@@ -395,7 +395,7 @@ function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tra
 		}
 	end
 
-	sqlLogs:queryExec("INSERT INTO ??_vehicleTrade (SellerId, BuyerId, VehicleId, Trunk, Price, TradeType, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+	sqlLogs:queryExec("INSERT INTO ??_VehicleTrade (SellerId, BuyerId, VehicleId, Trunk, Price, TradeType, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 			userId1, userId2, vehicleId, toJSON(trunkContent), price, tradeType)
 end
 
