@@ -545,6 +545,7 @@ function GroupManager:Event_ConvertVehicle(veh)
 				if status then
 					client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
 					group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
+					group.m_VehiclesSpawned = true
 					self:sendInfosToClient(client)
 				else
 					client:sendError(_("Es ist ein Fehler aufgetreten!", client))
