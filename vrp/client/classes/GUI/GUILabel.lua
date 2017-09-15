@@ -31,6 +31,9 @@ function GUILabel:drawThis(incache)
 		if GUI_DEBUG then
 			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 		end
+		if self.m_BackgroundColor then
+			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
+		end
 
 		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true, false, false, self.m_Rotation)
 	dxSetBlendMode("blend")
@@ -53,6 +56,11 @@ end
 
 function GUILabel:setAlignY(alignY)
 	self.m_AlignY = alignY
+	return self
+end
+
+function GUILabel:setBackgroundColor(color)
+	self.m_BackgroundColor = color
 	return self
 end
 

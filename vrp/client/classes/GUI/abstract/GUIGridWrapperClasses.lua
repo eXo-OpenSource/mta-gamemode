@@ -14,6 +14,7 @@ GUIGridCombobox = inherit(GUICombobox)
 GUIGridGridList = inherit(GUIGridList)
 GUIGridImage = inherit(GUIImage)
 GUIGridLabel = inherit(GUILabel)
+GUIGridLinkLabel = inherit(GUILinkLabel)
 GUIGridMiniMap = inherit(GUIMiniMap)
 GUIGridProgressBar = inherit(GUIProgressBar)
 GUIGridRadioButton = inherit(GUIRadioButton)
@@ -69,6 +70,13 @@ end
 
 function GUIGridLabel:constructor(posX, posY, width, height, text, parent)
     GUILabel.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
+    self:setFont(VRPFont(25))
+    self:setAlignY("center")
+    return self
+end
+
+function GUIGridLinkLabel:constructor(posX, posY, width, height, text, parent)
+    GUILinkLabel.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
     self:setFont(VRPFont(25))
     self:setAlignY("center")
     return self

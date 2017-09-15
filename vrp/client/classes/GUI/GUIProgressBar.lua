@@ -44,6 +44,7 @@ end
 
 function GUIProgressBar:setProgressTextEnabled(state)
 	self.m_ProgressTextEnabled = state
+	return self
 end
 
 function GUIProgressBar:drawThis()
