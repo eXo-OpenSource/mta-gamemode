@@ -30,6 +30,11 @@ end
 function GUIEdit:drawThis()
 	dxSetBlendMode("modulate_add")
 
+	if self.m_Icon then
+		dxDrawRectangle(self.m_AbsoluteX - 30, self.m_AbsoluteY, 30, self.m_Height, Color.White)
+		dxDrawText(self.m_Icon, self.m_AbsoluteX - 30, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), FontAwesome(self.m_Height*.9), "center", "center")
+	end
+
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
@@ -86,6 +91,11 @@ function GUIEdit:onInternalEditInput(caret)
 end
 
 function GUIEdit:onInternalLeftClickDown(absoluteX, absoluteY)
+	if self.m_Caption and self:getDrawnText() == self.m_Caption then
+		GUIInputControl.setFocus(self, 0)
+		return
+	end
+
 	if GUIInputControl.SelectionInProgress then return end
 	GUIInputControl.SelectionInProgress = true
 
@@ -107,6 +117,11 @@ function GUIEdit:onInternalLeftClickDown(absoluteX, absoluteY)
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
+	if self.m_Caption and self:getDrawnText() == self.m_Caption then
+		GUIInputControl.setFocus(self, 0)
+		return
+	end
+
 	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
 	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
@@ -187,9 +202,9 @@ function GUIEdit:onInternalUpdateSelection(checkIndex)
 
 	self.m_Selection = self.m_SelectionStart ~= self.m_SelectionEnd
 	if self.m_Selection then
-		self.m_SelectedFirst = utfSub(self.m_Text, 0, self.m_SelectionStart)
-		self.m_SelectedText = utfSub(self.m_Text, self.m_SelectionStart + 1, self.m_SelectionEnd)
-		self.m_SelectionOffset = dxGetTextWidth(utfSub(self.m_Text, 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
+		self.m_SelectedFirst = utfSub(self:getDrawnText(), 0, self.m_SelectionStart)
+		self.m_SelectedText = utfSub(self:getDrawnText(), self.m_SelectionStart + 1, self.m_SelectionEnd)
+		self.m_SelectionOffset = dxGetTextWidth(utfSub(self:getDrawnText(), 0, self.m_SelectionStart), self:getFontSize(), self:getFont())
 		self.m_SelectionWidth = dxGetTextWidth(self.m_SelectedText, self:getFontSize(), self:getFont())
 	end
 
@@ -222,7 +237,7 @@ function GUIEdit:setCaption(caption)
 end
 
 function GUIEdit:setMasked(maskChar)
-	self.m_MaskChar = maskChar or "*"
+	self.m_MaskChar = maskChar or "•"
 	return self
 end
 
@@ -268,4 +283,14 @@ end
 
 function GUIEdit:isIntegerOnly()
 	return self.m_IntegerOnly
+end
+
+function GUIEdit:setIcon(icon)
+	self.m_Icon = icon
+
+	local posX, posY = self:getPosition()
+	local width, height = self:getSize()
+
+	self:setSize(width - 30, height)
+	self:setPosition(posX + 30, posY)
 end

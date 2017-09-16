@@ -114,8 +114,8 @@ function LoginDemonstrationGUI:constructor()
 
 	img = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
 	GUIGridLabel:new(1, 3, 9, 2, _"Herzlich willkommen auf eXo Reallife, bitte logge dich mit deinen Accountdaten ein.", self.m_Window):setAlignX("center")
-	GUIGridEdit:new(1, 5, 9, 1, self.m_Window):setCaption("Username")
-	GUIGridEdit:new(1, 6, 9, 1, self.m_Window):setCaption("Passwort"):setMasked("•")
+	GUIGridEdit:new(1, 5, 9, 1, self.m_Window):setCaption("Username"):setIcon(FontAwesomeSymbols.Bug)
+	GUIGridEdit:new(1, 6, 9, 1, self.m_Window):setCaption("Passwort"):setMasked():setIcon(FontAwesomeSymbols.Fire)
 	GUIGridLabel:new(1, 7, 6, 1, _"Passwort speichern", self.m_Window)
 	GUIGridSwitch:new(7, 7, 3, 1, self.m_Window)
 
