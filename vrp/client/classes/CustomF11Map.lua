@@ -30,6 +30,9 @@ function CustomF11Map:constructor()
 	self.m_BlipList:addColumn("", 0.1)
 	self.m_BlipList:addColumn("Blip-Übersicht", 0.9)
 	self.m_BlipList:setVisible(false)
+
+	self.m_ClickOverlay.m_CacheArea:moveToBack()
+	self.m_BlipList.m_CacheArea:moveToBack()
 end
 
 function CustomF11Map:destructor()
@@ -77,6 +80,8 @@ function CustomF11Map:toggle()
 		addEventHandler("onClientRender", root, self.m_RenderFunc, false, "high")
 		self.m_ClickOverlay:setVisible(true)
 		self.m_BlipList:setVisible(true)
+		self.m_ClickOverlay.m_CacheArea:moveToBack()
+		self.m_BlipList.m_CacheArea:moveToBack()
 	elseif not self.m_CustomCallback then
 		self.m_Visible = false
 		HUDRadar:getSingleton():show()

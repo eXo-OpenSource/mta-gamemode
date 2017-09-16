@@ -10,10 +10,10 @@ inherit(Singleton, AnimationGUI)
 addRemoteEvents{"onClientAnimationStop"}
 
 function AnimationGUI:constructor()
-	GUIForm.constructor(self, screenWidth-270, screenHeight/2-500/2, 250, 500, true, true)
+	GUIForm.constructor(self, screenWidth-270, screenHeight/2-500/2, 250, 500, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Animationen", true, true, self)
 
-	self.m_AnimationList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-60, self)
+	self.m_AnimationList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-60, self.m_Window)
 	self.m_AnimationList:addColumn(_"Name", 1)
 	--self.m_StartAnimation = GUIButton:new(5, self.m_Height-35, self.m_Width-10, 30, "Animation ausführen", self):setBackgroundColor(Color.Green)
 	--self.m_StartAnimation.onLeftClick = function() self:startAnimation() end

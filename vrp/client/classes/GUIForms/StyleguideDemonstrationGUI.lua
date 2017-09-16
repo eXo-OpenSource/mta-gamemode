@@ -17,7 +17,7 @@ function StyleguideDemonstrationGUI:constructor()
 	self.m_Width = grid("x", 20)
 	self.m_Height = grid("y", 15)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"StyleguideDemonstrationGUI", true, true, self)
 	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Allgemein", "weiteres"})
 	self.m_TabPanel:updateGrid()
@@ -108,7 +108,7 @@ function LoginDemonstrationGUI:constructor()
 	self.m_Width = grid("x", 10)
 	self.m_Height = grid("y", 11)
 
-	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"", false, false, self)
 

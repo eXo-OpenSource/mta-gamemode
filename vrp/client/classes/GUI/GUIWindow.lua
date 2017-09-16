@@ -10,7 +10,6 @@ inherit(GUIMovable, GUIWindow)
 
 function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, hasCloseButton, parent)
 	checkArgs("GUIWindow:constructor", "number", "number", "number", "number", "string")
-	GUIWindowsFocus:getSingleton():setCurrentFocus( self )
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
@@ -19,19 +18,19 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_CloseOnClose = true
 	self.m_MovingEnabled = true
 
+	self.m_Parent:bringToFront() --don't bring the window itself to front but rather the GUIForm parent
+	self.onLeftClickDown = function()
+		self.m_Parent:bringToFront() --also bring it to the front if somebody clicks inside
+	end
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
 		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Primary, self)
 		self.m_TitlebarDummy.onLeftClickDown = function()
-			if GUIWindowsFocus:getSingleton():getCurrentFocus() == self or  GUIWindowsFocus:getSingleton():getCurrentFocus() == nil then
-				GUIWindowsFocus:getSingleton():setCurrentFocus( self )
-				if not self.m_MovingEnabled then return end
-				self:startMoving()
-			end
+			if not self.m_MovingEnabled then return end
+			self:startMoving()
 		end
 		self.m_TitlebarDummy.onLeftClick = function()
-			outputDebug("window moving stopped")
 			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
@@ -101,7 +100,6 @@ end
 function GUIWindow:close()
 	-- Jusonex: Destroy or close, I dunno what's better
 	delete(self.m_Parent or self)
-	GUIWindowsFocus:getSingleton():On_WindowOff( self )
 end
 
 function GUIWindow:deleteOnClose(close) -- Todo: Find a better name

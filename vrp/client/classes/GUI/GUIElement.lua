@@ -22,13 +22,14 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		return
 	end
 
+	local isDirectlyHovered = (not GUIElement.ms_HoveredElement or self.m_Parent == GUIElement.ms_HoveredElement or self.m_Parent.m_ChildrenByObject[GUIElement.ms_HoveredElement])
 	local absoluteX, absoluteY = self.m_AbsoluteX, self.m_AbsoluteY
 	if self.m_CacheArea then
 		absoluteX = absoluteX + self.m_CacheArea.m_AbsoluteX
 		absoluteY = absoluteY + self.m_CacheArea.m_AbsoluteY
 	end
 
-	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy)
+	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy) and isDirectlyHovered
 
 	if self.m_LActive and not mouse1 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
@@ -76,56 +77,59 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 
 	-- Set hovered element (do it every time because it gets reset before each processing iteration)
-	GUIElement.ms_HoveredElement = self
+	--only when element is directly, via parent or via neighbour hovered
+	if isDirectlyHovered then
+		GUIElement.ms_HoveredElement = self
 
-	-- Call on*Events (enabling)
-	if not self.m_Hover then
-		if self.onHover			then self:onHover(cx, cy)			end
-		if self.onInternalHover then self:onInternalHover(cx, cy) end
-		self.m_Hover = true
-		self:updateTooltip(self.m_Hover)
-	end
-	if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
-		if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
-		if self.onInternalLeftClickDown then self:onInternalLeftClickDown(cx, cy) 	end
-		self.m_LActive = true
+		-- Call on*Events (enabling)
+		if not self.m_Hover then
+			if self.onHover			then self:onHover(cx, cy)			end
+			if self.onInternalHover then self:onInternalHover(cx, cy) end
+			self.m_Hover = true
+			self:updateTooltip(self.m_Hover)
+		end
+		if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
+			if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
+			if self.onInternalLeftClickDown then self:onInternalLeftClickDown(cx, cy) 	end
+			self.m_LActive = true
 
-		if self ~= GUIRenderer.cacheroot then
-			GUIElement.ms_ClickDownProcessed = true
-			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
+			if self ~= GUIRenderer.cacheroot then
+				GUIElement.ms_ClickDownProcessed = true
+				GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
+			end
+
+			-- Check whether the focus changed
+
+			if not GUIInputControl.SelectionInProgress then
+				GUIInputControl.checkFocus(self)
+				return
+			end
+		end
+		if mouse2 and not self.m_RActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
+			if self.onRightClickDown			then self:onRightClickDown(cx, cy)			end
+			if self.onInternalRightClickDown	then self:onInternalRightClickDown(cx, cy)	end
+			self.m_RActive = true
+
+			if self ~= GUIRenderer.cacheroot then
+				GUIElement.ms_ClickDownProcessed = true
+				GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
+			end
 		end
 
-		-- Check whether the focus changed
 
-		if not GUIInputControl.SelectionInProgress then
-			GUIInputControl.checkFocus(self)
-			return
+		if self.m_LActive and not mouse1 then
+			self.m_LActive = false
 		end
-	end
-	if mouse2 and not self.m_RActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
-		if self.onRightClickDown			then self:onRightClickDown(cx, cy)			end
-		if self.onInternalRightClickDown	then self:onInternalRightClickDown(cx, cy)	end
-		self.m_RActive = true
 
-		if self ~= GUIRenderer.cacheroot then
-			GUIElement.ms_ClickDownProcessed = true
-			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
+		if self.m_RActive and not mouse2 then
+			self.m_RActive = false
 		end
-	end
 
-
-	if self.m_LActive and not mouse1 then
-		self.m_LActive = false
-	end
-
-	if self.m_RActive and not mouse2 then
-		self.m_RActive = false
-	end
-
-	-- Check on children
-	for k, v in ipairs(self.m_Children) do
-		if v:performChecks(mouse1, mouse2, cx, cy) then
-			--break
+		-- Check on children
+		for k, v in ipairs(self.m_Children) do
+			if v:performChecks(mouse1, mouse2, cx, cy) then
+				--break
+			end
 		end
 	end
 end
@@ -163,8 +167,11 @@ function GUIElement:updateTooltip(hovered)
 			self.m_Tooltip:setAlignX("center")
 			self.m_Tooltip.m_CacheArea:bringToFront()
 		else --destroy tooltip
-			self.m_Tooltip:delete()
-			self.m_TooltipArrow:delete()
+			if self.m_Tooltip then 
+				self.m_Tooltip:delete()
+				self.m_TooltipArrow:delete()
+				self.m_Tooltip = nil
+			end
 		end
 		self.m_TooltipActive = hovered
 	end

@@ -41,7 +41,7 @@ function HUDRadar:constructor()
 	end
 
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
-	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onClientRender", root, bind(self.draw, self), false, "high")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 
 	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
