@@ -12,6 +12,7 @@ function Neon.initalize()
 				if isElementStreamedIn(source) and getElementType(source) == "vehicle" then
 					if getElementData(source,"Neon") == true then
 						Neon.Vehicles[source] = true
+						outputConsole(("Neon.Vehicles[%s] = true (onClientElementDataChange)"):format(inspect(source)))
 					end
 				end
 			end
@@ -66,8 +67,8 @@ function Neon.Render()
 	for veh in pairs(Neon.Vehicles) do
 		if isElement(veh) then
 			if isElementStreamedIn(veh) then
-				if (getElementData(veh,"Neon") == true and getVehicleOverrideLights ( veh ) == 2) then
-					local NeonColor = getElementData(veh,"NeonColor")
+				if veh:getData("Neon") and getVehicleOverrideLights(veh) == 2 then
+					local NeonColor = veh:getData("NeonColor")
 					if NeonColor then
 						local pos = veh:getPosition()
                         local _, _, rotZ = getElementRotation(veh)
