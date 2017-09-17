@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Payday box class
 -- *
 -- ****************************************************************************
-GUIPaydayBox = inherit(GUIRectangle)
+GUIPaydayBox = inherit(DxRectangle)
 
 function GUIPaydayBox:constructor(texts)
 	self.m_AnimTime = 1000
@@ -24,7 +24,7 @@ function GUIPaydayBox:constructor(texts)
 	end
 	
 	
-	GUIRectangle.constructor(self, screenWidth/2 - self.m_W/2, -self.m_H, self.m_W, self.m_H)
+	DxRectangle.constructor(self, screenWidth/2 - self.m_W/2, -self.m_H, self.m_W, self.m_H)
 	self.m_BaseHeight = self.m_HeaderHeight/1.5 + self.m_HeaderHeight/2
 	self:setColor(Color.Grey)
 
@@ -90,7 +90,7 @@ function GUIPaydayBox:createUI()
 	self.m_BaseHeight = self.m_BaseHeight + math.max(i_inc, i_out) * self.m_HeaderHeight/2.5
 	
 	--subtotal
-	GUIRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self)
+	DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self)
 	self.m_BaseHeight = self.m_BaseHeight + 4
 	GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalIncome"][1][2]), self):setAlignX("left")
 	GUILabel:new(0, self.m_BaseHeight, self.m_W - margin, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalOutgoing"][1][2]), self):setAlignX("right")
@@ -103,7 +103,7 @@ function GUIPaydayBox:createUI()
 	
 	--infos
 	if self.m_PaydayTexts["info"] then
-		GUIRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self)
+		DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self)
 		self.m_BaseHeight = self.m_BaseHeight + 4
 		GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, _"weitere Informationen", self):setAlignX("left")
 		self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/2

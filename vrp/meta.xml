@@ -395,14 +395,15 @@
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
-	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
-	<script src="client/classes/GUI/DxElement.lua" type="client"/>
-	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
+	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
+	<script src="client/classes/GUI/DxElement.lua" type="client"/>
+	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
+	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
+	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
+	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableArea.lua" type="client"/>
 	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>

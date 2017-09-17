@@ -19,7 +19,7 @@ function GUICheckbox:constructor(posX, posY, width, height, text, parent)
 	GUIColorable.constructor(self)
 
 	-- Create a dummy gui element for animation
-	self.m_CheckedButton = GUIRectangle:new(0, 0, 0, 0, Color.Clear, self)
+	self.m_CheckedButton = DxRectangle:new(0, 0, 0, 0, Color.Clear, self)
 
 	self.m_Checked = false
 	self.m_Enabled = true

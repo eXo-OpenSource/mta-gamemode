@@ -66,10 +66,12 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 
 			-- Unhover down the tree (otherwise the unhover routine won't be executed)
 			for k, child in ipairs(self.m_Children) do
-				if child.onUnhover		  then child:onUnhover(cx, cy)         end
-				if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
-				child.m_Hover = false
-				child:updateTooltip(child.m_Hover)
+				if child.performChecks then --only update if it it a GUI element (because DxElements don't have checks)
+					if child.onUnhover		  then child:onUnhover(cx, cy)         end
+					if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
+					child.m_Hover = false
+					child:updateTooltip(child.m_Hover)
+				end
 			end
 		end
 
@@ -127,7 +129,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 
 		-- Check on children
 		for k, v in ipairs(self.m_Children) do
-			if v:performChecks(mouse1, mouse2, cx, cy) then
+			if v.performChecks and v:performChecks(mouse1, mouse2, cx, cy) then
 				--break
 			end
 		end
