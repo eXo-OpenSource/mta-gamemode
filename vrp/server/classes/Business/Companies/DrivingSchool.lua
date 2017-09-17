@@ -71,7 +71,8 @@ function DrivingSchool:constructor()
 
 	self.m_CurrentLessions = {}
     addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory","drivingSchoolRequestSpeechBubble", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker", "requestAutomaticTestPedBubble"}
-    addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
+
+	addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
     addEventHandler("drivingSchoolstartLessionQuestion", root, bind(self.Event_startLessionQuestion, self))
     addEventHandler("drivingSchoolStartLession", root, bind(self.Event_startLession, self))
@@ -99,12 +100,13 @@ function DrivingSchool:onVehicleSpawn(veh)
     end
 end
 
-function DrivingSchool:onVehiceEnter(player)
-    if player:getCompany() ~= self or not player:getPublicSync("inDrivingLession") == true then
-        player:sendError(_("Du darfst dieses Fahrzeug nicht fahren!", player))
-        return false
-    end
-    return true
+function DrivingSchool:onVehicleEnter(vehicle, player, seat)
+	if seat == 0 then return end
+	if not self.m_CurrentLessions[player] then return end
+
+	self.m_CurrentLessions[player].vehicle = vehicle
+	self.m_CurrentLessions[player].startMileage = vehicle:getMileage()
+	player:setPrivateSync("instructorData", {vehicle = vehicle, startMileage = vehicle:getMileage()})
 end
 
 function DrivingSchool:onBarrierHit(player)
@@ -332,7 +334,7 @@ function DrivingSchool:createAutomaticTestPed( pos, pos2 )
 			if button == "left" and state == "up" then
 				if source == self.m_DrivingSchoolAutoPed then
 					if player.m_HasTheory then
-						if #self:getOnlinePlayers() <= 4 then
+						if #self:getOnlinePlayers() < 3 then
 							if not player.m_HasDrivingLicense  then
 								if getPlayerMoney(player) >= DrivingSchool.LicenseCosts["car"] then
 									player.m_AutoTestMode = "car"
@@ -388,6 +390,7 @@ end
 function DrivingSchool:requestAutomaticTestPedBubble()
 	client:triggerEvent("addDrivingSchoolAutoTestSpeechBubble", self.m_DrivingSchoolAutoPed, self.m_DrivingSchoolAutoPed2)
 end
+
 function DrivingSchool:Event_startTheory()
     if source:getMoney() >= 300 then
         source:triggerEvent("showDrivingSchoolTest", self.m_DrivingSchoolPed)
@@ -402,11 +405,6 @@ function DrivingSchool:Event_drivingSchoolMenu(func)
     if func == "callInstructor" then
         client:sendInfo(_("Alle Fahrlehrer werden gerufen!",client))
         self:sendShortMessage(_("Der Spieler %s sucht einen Fahrlehrer! Bitte melden!", client, client.name))
-    elseif func == "showInstructor" then
-        outputChatBox(_("Folgende Fahrlehrer sind online:",client), client, 255, 255, 255)
-        for k, player in pairs(self:getOnlinePlayers()) do
-            outputChatBox(("%s %s"):format(player.name, player:getPublicSync("Company:Duty") and _("%s(Im Dienst)", client, "#357c01") or _("%s(Nicht im Dienst)", client, "#870000")), client, 255, 125, 0, true)
-        end
     end
 end
 
@@ -480,7 +478,11 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                 if not target:getPublicSync("inDrivingLession") == true then
                     if not self.m_CurrentLessions[instructor] then
                         self.m_CurrentLessions[instructor] = {
-                            ["target"] = target, ["type"] = type, ["instructor"] = instructor
+                            ["target"] = target,
+							["type"] = type,
+							["instructor"] = instructor,
+							["vehicle"] = false,
+							["startMileage"] = false,
                         }
                         target:takeMoney(costs, "Fahrschule")
                         self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), true)
@@ -536,10 +538,21 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
     if not client and clientServer then client = clientServer end
     local type = self.m_CurrentLessions[client]["type"]
     if success == true then
+		local vehicle = self.m_CurrentLessions[client].vehicle
+		if not vehicle then return end
+
+		local startMileage = self.m_CurrentLessions[client].startMileage
+		local mileageDiff = vehicle:getMileage()-startMileage
+
+		if mileageDiff <= 5000 then
+			client:sendWarning("Du musst mindestens 5km mit dem Fahrschüler fahren!")
+			return
+		end
+
         self:setPlayerLicense(target, type, true)
         target:sendInfo(_("Du hast die %s Prüfung erfolgreich bestanden und den Schein erhalten!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s erfolgreich beendet!",client, DrivingSchool.TypeNames[type], target.name))
-    	self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s erfolgreich beendet!"):format(DrivingSchool.TypeNames[type], target:getName()))
+    	self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s erfolgreich beendet (%s km)!"):format(DrivingSchool.TypeNames[type], target:getName(), math.round(mileageDiff/1000, 2)))
 	else
         target:sendError(_("Du hast die %s Prüfung nicht geschaft! Viel Glück beim nächsten Mal!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s abgebrochen!",client, DrivingSchool.TypeNames[type], target.name))

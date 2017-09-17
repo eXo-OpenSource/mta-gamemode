@@ -15,9 +15,15 @@ function DrivingSchoolInstructorGUI:constructor(type, student)
 	self.m_Student = student
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrlehrer-Menü"), true, false, self)
 	GUILabel:new(5, 35, self.m_Width-10, 25, _("Prüfung: %s", type), self.m_Window)
-	GUILabel:new(5, 60, self.m_Width-10, 20, _("Schüler: %s", student.name), self.m_Window)
-	self.m_SpeedLabel = GUILabel:new(5, 85, self.m_Width-10, 30, _("<< kein Fahrzeug >>"), self.m_Window)
-	GUILabel:new(5, 118, self.m_Width, 30, _("Anweisungen geben:", student.name), self.m_Window):setFont("default-bold"):setFontSize(1.2)
+	GUILabel:new(5, 55, self.m_Width-10, 25, _("Schüler: %s", student.name), self.m_Window)
+
+	GUILabel:new(5, 75, self.m_Width-10, 25, "Geschwindigkeit:", self.m_Window)
+	self.m_SpeedLabel = GUILabel:new(130, 75, self.m_Width-10, 25, "", self.m_Window)
+
+	GUILabel:new(5, 95, self.m_Width-10, 25, "Distanz:", self.m_Window)
+	self.m_DistanceLabel = GUILabel:new(130, 95, self.m_Width-10, 25, "", self.m_Window)
+
+	GUILabel:new(5, 118, self.m_Width, 30, _("Anweisungen geben:", student.name), self.m_Window)
 	self.m_LeftButton = GUIButton:new(27, 145, 45, 40, "←", self):setBackgroundColor(Color.LightBlue)
 	self.m_LeftButton.onLeftClick = bind(self.turnLeft, self)
 	self.m_StraightButton = GUIButton:new(77, 145, 45, 40, "↑", self):setBackgroundColor(Color.LightBlue)
@@ -43,14 +49,16 @@ function DrivingSchoolInstructorGUI:turnArround() 			triggerServerEvent("driving
 function DrivingSchoolInstructorGUI:turnToDrivingSchool() 	triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "school") 		end
 
 function DrivingSchoolInstructorGUI:updateSpeed()
-	if self.m_Student.vehicle then
-		local speed = self.m_Student.vehicle:getSpeed()
-		self.m_SpeedLabel:setText(_("Tempo: %d km/h", speed))
-		if speed > 85 then self.m_SpeedLabel:setColor(Color.Red) else self.m_SpeedLabel:setColor(Color.Green) end
-		return
+	local instructorData = localPlayer:getPrivateSync("instructorData")
+	if instructorData and localPlayer.vehicle and self.m_Student.vehicle and instructorData.vehicle == self.m_Student.vehicle then
+		local speed = localPlayer.vehicle:getSpeed()
+		self.m_SpeedLabel:setText(_("%d km/h", speed))
+		self.m_SpeedLabel:setColor(speed > 85 and Color.Red or Color.Green)
+
+		local mileageDiff = math.round((localPlayer.vehicle:getMileage()-instructorData.startMileage)/1000)
+		self.m_DistanceLabel:setText(_("%d km", mileageDiff))
+		self.m_DistanceLabel:setColor(mileageDiff < 5 and Color.Red or Color.Green)
 	end
-	self.m_SpeedLabel:setText(_("<< kein Fahrzeug >>"))
-	self.m_SpeedLabel:setColor(Color.White)
 end
 
 addEventHandler("showDrivingSchoolInstructorGUI", root,
