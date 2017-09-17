@@ -625,4 +625,15 @@ function Group:payDay(vehicleAmount)
 		self:takeMoney(sum, "Payday")
 	end
 	self:sendShortMessage(table.concat(output, "\n"))
+	if self:getMoney() < 0 then
+		if self.m_VehiclesSpawned then
+			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
+			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
+				mechanic:respawnVehicle(vehicle)
+			end
+		else
+			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())
+		end
+		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
+	end
 end

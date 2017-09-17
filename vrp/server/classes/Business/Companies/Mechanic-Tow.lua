@@ -168,28 +168,40 @@ function MechanicTow:Event_mechanicRepairCancel(vehicle)
 end
 
 function MechanicTow:Event_mechanicTakeVehicle()
-	if client:getMoney() >= 500 then
-		client:takeMoney(500, "Mech&Tow")
-		self:giveMoney(500, "Fahrzeug freikauf", true)
-		source:fix()
-
-		-- Spawn vehicle in non-collision zone
-		source:setPositionType(VehiclePositionType.World)
-		source:setDimension(0)
-		local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
-
-
-		if source:getVehicleType() == VehicleType.Plane then
-			x, y, z, rotation = 871.285, -1264.624, 15.5, 0
-		elseif source:getVehicleType() == VehicleType.Helicopter then
-			x, y, z, rotation =  912.602, -1252.053, 16, 0
+	if instanceof(source, GroupVehicle, true) then
+		if client:getGroup():getMoney() >= 500 then
+			client:getGroup():takeMoney(500, "Mech&Tow")
+			self:giveMoney(500, "Fahrzeug freikauf", true)
+		else
+			client:sendError(_("In der Kasse deiner %s befindet sich nicht genügend Geld! (500$)", client, client:getGroup():getType()))
+			return false
 		end
-
-		source:setPosition(x, y, z)
-		source:setRotation(0, 0, rotation)
 	else
-		client:sendError(_("Du hast nicht genügend Geld!", client))
+		if client:getMoney() >= 500 then
+			client:takeMoney(500, "Mech&Tow")
+			self:giveMoney(500, "Fahrzeug freikauf", true)
+
+		else
+			client:sendError(_("Du hast nicht genügend Geld! (500$)", client))
+			return false
+		end
 	end
+	source:fix()
+
+	-- Spawn vehicle in non-collision zone
+	source:setPositionType(VehiclePositionType.World)
+	source:setDimension(0)
+	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+
+
+	if source:getVehicleType() == VehicleType.Plane then
+		x, y, z, rotation = 871.285, -1264.624, 15.5, 0
+	elseif source:getVehicleType() == VehicleType.Helicopter then
+		x, y, z, rotation =  912.602, -1252.053, 16, 0
+	end
+
+	source:setPosition(x, y, z)
+	source:setRotation(0, 0, rotation)
 end
 
 function MechanicTow:createTowLot()
