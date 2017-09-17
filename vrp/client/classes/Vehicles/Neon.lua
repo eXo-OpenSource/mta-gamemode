@@ -12,7 +12,6 @@ function Neon.initalize()
 				if isElementStreamedIn(source) and getElementType(source) == "vehicle" then
 					if getElementData(source,"Neon") == true then
 						Neon.Vehicles[source] = true
-						outputConsole(("Neon.Vehicles[%s] = true (onClientElementDataChange)"):format(inspect(source)))
 					end
 				end
 			end

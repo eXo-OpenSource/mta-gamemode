@@ -17,7 +17,7 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -46,6 +46,32 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
+
+	addEventHandler("clientToggleVehicleEngine", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleEngine(client)
+		end
+	)
+
+	addEventHandler("clientToggleVehicleLight", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleLight(client)
+		end
+	)
+
+	addEventHandler("clientToggleHandbrake", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+
+			if client.vehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+				client.vehicle:toggleHandBrake(client)
+			else
+				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
+			end
+		end
+	)
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then

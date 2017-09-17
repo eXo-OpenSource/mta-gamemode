@@ -90,6 +90,21 @@ function Vehicle:magnetVehicleCheck()
 	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
 
+function Vehicle:toggleEngine()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleEngine", localPlayer)
+end
+
+function Vehicle:toggleLight()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleLight", localPlayer)
+end
+
+function Vehicle:toggleHandbrake()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleHandbrake", localPlayer)
+end
+
 addEventHandler("vehicleEngineStart", root,
 	function(veh)
 		local sound = "files/audio/Enginestart.ogg"

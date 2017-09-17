@@ -151,8 +151,6 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
-
-		player.m_InVehicle = self
 	end
 
 	if self.m_HasBeenUsed then
@@ -205,8 +203,6 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
 			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
-
-		player.m_InVehicle = nil
 	end
 end
 
@@ -279,8 +275,30 @@ function Vehicle:toggleEngine(player)
 		end
 		return
 	end
+
+	local state = not getVehicleEngineState(self)
+	if not state then
+		self:setEngineState(state)
+
+		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+			self:toggleInternalSmoke()
+		end
+
+		if VEHICLE_BIKES[self:getModel()] then
+			player:meChat(true, "verschließt sein Fahrradschloss!")
+		end
+
+		local occs = self:getOccupants()
+		if occs then
+			for i, v in pairs(occs) do
+				triggerClientEvent(v, "playSeatbeltAlarm", v, false)
+			end
+		end
+
+		return true
+	end
+
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
-		local state = not getVehicleEngineState(self)
 		if state == true then
 			if not VEHICLE_BIKES[self:getModel()] then
 				if self.m_Fuel <= 0 then
@@ -292,12 +310,7 @@ function Vehicle:toggleEngine(player)
 					return false
 				end
 			end
-		else
-			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
-				self:toggleInternalSmoke()
-			end
-		end
-		if state == true then
+
 			if player and not getVehicleEngineState(self) then
 				if VEHICLE_BIKES[self:getModel()] then -- Bikes
 					player:meChat(true, "öffnet sein Fahrradschloss!")
@@ -332,18 +345,6 @@ function Vehicle:toggleEngine(player)
 				end
 			end
 			return false
-		else
-			if VEHICLE_BIKES[self:getModel()] then
-				player:meChat(true, "verschließt sein Fahrradschloss!")
-			end
-			self:setEngineState(state)
-			local occs = self:getOccupants()
-			if occs then
-				for i, v in pairs(occs) do
-					triggerClientEvent(v, "playSeatbeltAlarm", v, false)
-				end
-			end
-			return true
 		end
 	end
 
