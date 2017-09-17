@@ -151,10 +151,10 @@ function CompanyVehicle:onEnter(player, seat)
 	if self:isFrozen() == true then
 		self:setFrozen(false)
 	end
-	if self:getCompany():getId() == 4 then
-		self:getCompany():onVehiceEnter(source, player, seat)
-	end
 
+	if self:getCompany().onVehicleEnter then
+		self:getCompany():onVehicleEnter(source, player, seat)
+	end
 end
 
 function CompanyVehicle:onExit(player, seat)

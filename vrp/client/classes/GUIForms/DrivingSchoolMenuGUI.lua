@@ -48,7 +48,3 @@ function DrivingSchoolMenuGUI:callInstructor()
 	localPlayer.callInstructorCooldown = getTickCount()
 	triggerServerEvent("drivingSchoolMenu", localPlayer, "callInstructor")
 end
-
-function DrivingSchoolMenuGUI:showInstructor()
-	triggerServerEvent("drivingSchoolMenu", localPlayer, "showInstructor")
-end
