@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="http://mta/local/files/html/js/editor/prism.min.css">
+        <link rel="stylesheet" href="http://mta/local/files/html/js/editor/codeflask.css">
+        <script src="http://mta/local/files/html/js/mtaevents.min.js"></script>
+        <script src="http://mta/local/files/html/js/editor/prism.min.js"></script>
+        <script src="http://mta/local/files/html/js/editor/codeflask.js"></script>
+        <style>
+            html, body, .codeview{
+                margin:0;
+                padding:0;
+            }
+            .codeview {
+                width:100%;
+                height:250px;
+                position:relative;
+            }
+            </style>
+      </head>
+      <body>
+            <div class="codeview" id="code"></div>
+            <script>
+              var flask = new CodeFlask;
+              flask.run('#code', {language: 'lua'});
+              flask.onUpdate(function(code) {
+                mta.triggerEvent("shortMessageBox", code)
+            });
+              var sendContent = function(){
+                mta.triggerEvent("shortMessageBox", "jo hi")
+              }
+        </script>
+        <button onclick="sendContent()">jo senden</button>
+      </body>
+
+</html>

@@ -22,6 +22,7 @@ GUIGridRectangle = inherit(GUIRectangle)
 GUIGridSlider = inherit(GUISlider)
 GUIGridSwitch = inherit(GUISwitch)
 GUIGridScrollableArea = inherit(GUIScrollableArea)
+GUIGridWebView = inherit(GUIWebView)
 
 
 
@@ -34,6 +35,7 @@ function GUIGridRectangle:constructor(posX, posY, width, height, color, parent) 
 function GUIGridProgressBar:constructor(posX, posY, width, height, parent) return GUIProgressBar.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSlider:constructor(posX, posY, width, height, parent) return GUISlider.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSwitch:constructor(posX, posY, width, height, parent) return GUISwitch.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
+function GUIGridWebView:constructor(posX, posY, width, height, url, transparent, parent) return GUIWebView.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), url, transparent, parent) end
 function GUIGridScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space) return GUIScrollableArea.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), grid("d", documentWidth), grid("d", documentHeight), verticalScrollbar, horizontalScrollbar, parent, grid("y", space)) end
 
 

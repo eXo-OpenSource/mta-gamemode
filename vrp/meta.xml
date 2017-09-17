@@ -446,6 +446,8 @@
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
 	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
+
+	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
 	<!-- Eastereggs -->
 	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
 	<script src="client/classes/EasterEggs/Slenderman.lua" type="client"/>
@@ -919,7 +921,12 @@
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
+	<file src="files/html/js/editor/codeflask.js" />
+	<file src="files/html/js/editor/codeflask.css" />
+	<file src="files/html/js/editor/prism.min.js" />
+	<file src="files/html/js/editor/prism.min.css" />
 	<file src="files/html/help.htm" />
+	<file src="files/html/editor.htm" />
 
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
