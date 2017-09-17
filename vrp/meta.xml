@@ -921,10 +921,10 @@
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
-	<file src="files/html/js/editor/codeflask.js" />
-	<file src="files/html/js/editor/codeflask.css" />
-	<file src="files/html/js/editor/prism.min.js" />
-	<file src="files/html/js/editor/prism.min.css" />
+	<file src="files/html/js/editor/3024-night.css" />
+	<file src="files/html/js/editor/codemirror.css" />
+	<file src="files/html/js/editor/codemirror.js" />
+	<file src="files/html/js/editor/lua.js" />
 	<file src="files/html/help.htm" />
 	<file src="files/html/editor.htm" />
 
