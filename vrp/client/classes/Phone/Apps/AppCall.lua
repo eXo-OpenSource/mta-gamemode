@@ -235,7 +235,13 @@ function AppCall:openIncoming(caller, voiceEnabled)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
 	-- Play ring sound
-	self.m_RingSound = playSound(core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3"), true)
+	local ringsound = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
+	if ringsound == CUSTOM_RINGSOUND_PATH and not fileExists(CUSTOM_RINGSOUND_PATH) then
+		ringsound = "files/audio/Ringtones/Klingelton1.mp3"
+		core:getConfig():set("Phone", "Ringtone", ringsound)
+	end
+
+	self.m_RingSound = playSound(ringsound, true)
 	showCursor(false)
 end
 

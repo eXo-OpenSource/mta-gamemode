@@ -671,3 +671,5 @@ TEXTURE_SYSTEM_HELP =
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}
+
+CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
