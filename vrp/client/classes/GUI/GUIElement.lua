@@ -57,8 +57,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	if not inside then
 		-- Call on*Events (disabling)
 		if self.m_Hover then
-			if self.onUnhover		  then self:onUnhover()         end
-			if self.onInternalUnhover then self:onInternalUnhover() end
+			if self.onUnhover		  then self:onUnhover(cx, cy)         end
+			if self.onInternalUnhover then self:onInternalUnhover(cx, cy) end
 			self.m_Hover = false
 			self:updateTooltip(self.m_Hover)
 			self.m_LActive = false
@@ -66,8 +66,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 
 			-- Unhover down the tree (otherwise the unhover routine won't be executed)
 			for k, child in ipairs(self.m_Children) do
-				if child.onUnhover		  then child:onUnhover()         end
-				if child.onInternalUnhover then child:onInternalUnhover() end
+				if child.onUnhover		  then child:onUnhover(cx, cy)         end
+				if child.onInternalUnhover then child:onInternalUnhover(cx, cy) end
 				child.m_Hover = false
 				child:updateTooltip(child.m_Hover)
 			end
@@ -148,7 +148,7 @@ function GUIElement:updateTooltip(hovered)
 			local x, y = self:getPosition(true)
 			local w, h = self:getSize()
 			local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
-			
+
 			if self.m_TooltipPos == "left" then
 				self.m_Tooltip = GUILabel:new(x - 10 - textW, y + h/2 - 10, textW, 20, self.m_TooltipText)
 				self.m_TooltipArrow = GUIImage:new(x - 14, y + h/2 - 4, 16, 8, "files/images/GUI/Triangle.png"):setRotation(90)
@@ -167,7 +167,7 @@ function GUIElement:updateTooltip(hovered)
 			self.m_Tooltip:setAlignX("center")
 			self.m_Tooltip.m_CacheArea:bringToFront()
 		else --destroy tooltip
-			if self.m_Tooltip then 
+			if self.m_Tooltip then
 				self.m_Tooltip:delete()
 				self.m_TooltipArrow:delete()
 				self.m_Tooltip = nil
@@ -181,8 +181,11 @@ function GUIElement.unhoverAll()
 	local self = GUIElement.ms_HoveredElement
 	while self do
 		if self.m_Hover then
-			if self.onUnhover		  then self:onUnhover()         end
-			if self.onInternalUnhover then self:onInternalUnhover() end
+			local relCursorX, relCursorY = getCursorPosition()
+			local cursorX, cursorY = relCursorX * screenWidth, relCursorY * screenHeight
+
+			if self.onUnhover		  then self:onUnhover(cursorX, cursorY)         end
+			if self.onInternalUnhover then self:onInternalUnhover(cursorX, cursorY) end
 			self.m_Hover = false
 		end
 		self = self.m_Parent

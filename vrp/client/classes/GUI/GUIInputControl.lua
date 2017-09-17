@@ -132,12 +132,12 @@ local function getNextEditbox(baseElement, startElement)
 	local idx = table.find(children, startElement)
 
 	for i = idx+1, #children do
-		if instanceof(children[i], GUIEdit, true) then
+		if instanceof(children[i], GUIEdit) then
 			return children[i]
 		end
 	end
 	for i = 0, idx-1 do
-		if instanceof(children[i], GUIEdit, true) then
+		if instanceof(children[i], GUIEdit) then
 			return children[i]
 		end
 	end
