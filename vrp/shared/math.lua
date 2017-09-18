@@ -53,3 +53,17 @@ end
 function math.lerp(min, max, pos)
 	return max + pos * (max - min)
 end
+
+function math.round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
+function math.clamp(low,value,high)
+    return math.max(low,math.min(value,high))
+end
+
+function math.percent(value, max)
+	if not max then max = 100 end
+	return math.clamp(0, value/max*100, 100)
+end

@@ -42,6 +42,10 @@ function Area:getOwnerId()
 	return self.m_Owner
 end
 
+function Area:getId() 
+	return self.m_ID
+end
+
 function Area:createRadar()
 	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
 	local areaX2, areaY2 = self.m_PositionRadar[3],self.m_PositionRadar[4]
@@ -49,11 +53,11 @@ function Area:createRadar()
 	local areaHeight = math.abs(areaY - areaY2)
 	local factionColor = factionColors[self.m_Owner]
 	if factionColor then
-		 factionColor = setBytesInInt32(240,factionColor.r,factionColor.g,factionColor.b)
+		 factionColor = setBytesInInt32(150,factionColor.r,factionColor.g,factionColor.b)
 	else factionColor = GANGWAR_DUMP_COLOR
 	end
 	if self.m_IsAttacked then
-		factionColor = setBytesInInt32(255,220,0,0)
+		factionColor = setBytesInInt32(150,220,0,0)
 	end
 	self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
 end
@@ -78,11 +82,11 @@ function Area:attack( faction1, faction2)
 	if not self.m_IsAttacked then
 		self.m_IsAttacked = true
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
-		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
+		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:delete()
-		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
+		self.m_BlipImage = Blip:new("Gangwar.png", self.m_Position[1], self.m_Position[2], {faction = {faction1:getId(), faction2:getId()}}, 9999)
 		self:createRadar()
 		self.m_RadarArea:setFlashing(true)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)

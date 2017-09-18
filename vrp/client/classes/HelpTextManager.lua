@@ -11,29 +11,31 @@ function HelpTextManager:constructor()
 	self.m_Texts = {}
 
 	-- General purpose texts here
-	self:addText("Allgemein", HelpTextTitles.General.Main, HelpTexts.General.Main)
-	self:addText("Allgemein", HelpTextTitles.General.Team, HelpTexts.General.Team)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Kart, HelpTexts.Leisure.Kart)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Fishing, HelpTexts.Leisure.Fishing)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Boxing, HelpTexts.Leisure.Boxing)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Bars, HelpTexts.Leisure.Bars)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Minigames,HelpTexts.Leisure.Minigames)
-	self:addText("Freizeit", HelpTextTitles.Leisure.Horserace, HelpTexts.Leisure.Horserace)
-	self:addText("Gameplay", HelpTextTitles.Gameplay.Cars, HelpTexts.Gameplay.Cars)
-	self:addText("Credits", HelpTextTitles.Credits.OldVRPTeam, HelpTexts.Credits.OldVRPTeam)
-	self:addText("Credits", HelpTextTitles.Credits.Other, HelpTexts.Credits.Other)
+	-- TODO: rework the whole thing - RB 28.05.2017
+	self:addText("Allgemein", HelpTextTitles.General.Main, "general.main")
+	self:addText("Allgemein", HelpTextTitles.General.Team, "general.team")
+	self:addText("Fahrzeuge", HelpTextTitles.Vehicles.Info, "vehicles.info")
+	self:addText("Fahrzeuge", HelpTextTitles.Vehicles.CustomTextures, "vehicles.customtextures")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Kart, "leisure.kart")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Fishing, "leisure.fishing")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Boxing, "leisure.boxing")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Bars, "leisure.bars")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Minigames, "leisure.minigames")
+	self:addText("Freizeit", HelpTextTitles.Leisure.Horserace, "leisure.horserace")
+	self:addText("Credits", HelpTextTitles.Credits.OldVRPTeam, "credits.oldvrpteam")
+	self:addText("Credits", HelpTextTitles.Credits.Other, "credits.other")
 
 end
 
-function HelpTextManager:addText(category, title, text)
+function HelpTextManager:addText(category, title, helpId)
 	-- First, translate all parameters
-	category, title, text = _(category), _(title), _(text)
+	category, title = _(category), _(title)
 
 	if not self.m_Texts[category] then
 		self.m_Texts[category] = {}
 	end
 
-	self.m_Texts[category][title] = text
+	self.m_Texts[category][title] = helpId
 end
 
 function HelpTextManager:getTexts()

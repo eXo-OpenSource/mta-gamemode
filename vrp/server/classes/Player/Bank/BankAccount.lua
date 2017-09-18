@@ -46,11 +46,7 @@ end
 
 function BankAccount:update()
   if self.m_OwnerType == BankAccountTypes.Player then
-    local player, isOffline = DatabasePlayer.get(self.m_OwnerId)
-    if isOffline then -- We do not require offline Players here
-		player.m_DoNotSave = true
-		delete(player)
-    end
+    local player = DatabasePlayer.get(self.m_OwnerId)
 
     if player:isActive() then
         player:setPublicSync("BankMoney", self:getMoney())
@@ -68,17 +64,19 @@ function BankAccount:getId()
   return self.m_Id
 end
 
-function BankAccount:setMoney(amount, reason)
+function BankAccount:setMoney(amount, reason, silent)
 	if isNan(amount) then return end
 
 	self.m_Money = amount
 
-	if self.m_OwnerType == BankAccountTypes.Company then
-		CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""))
-	elseif self.m_OwnerType == BankAccountTypes.Faction then
-		FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""))
-	elseif self.m_OwnerType == BankAccountTypes.Admin then
-		Admin:getSingleton():sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""), "Admin-Eventkasse")
+	if not silent then
+		if self.m_OwnerType == BankAccountTypes.Company then
+			CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""))
+		elseif self.m_OwnerType == BankAccountTypes.Faction then
+			FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""))
+		elseif self.m_OwnerType == BankAccountTypes.Admin then
+			Admin:getSingleton():sendShortMessage(("%s$ - %s"):format(self.m_Money, reason or ""), "Admin-Eventkasse")
+		end
 	end
 	self:update()
 end
@@ -87,35 +85,37 @@ function BankAccount:getMoney()
   return tonumber(self.m_Money)
 end
 
-function BankAccount:addMoney(money, reason)
+function BankAccount:addMoney(money, reason, silent)
 	if isNan(money) then return end
 
   	if money > 0 then
 		self.m_Money = self.m_Money + money
-
-		if self.m_OwnerType == BankAccountTypes.Company then
-			CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
-		elseif self.m_OwnerType == BankAccountTypes.Faction then
-			FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
-		elseif self.m_OwnerType == BankAccountTypes.Admin then
-			Admin:getSingleton():sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""), "Admin-Eventkasse")
+		if not silent then
+			if self.m_OwnerType == BankAccountTypes.Company then
+				CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
+			elseif self.m_OwnerType == BankAccountTypes.Faction then
+				FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
+			elseif self.m_OwnerType == BankAccountTypes.Admin then
+				Admin:getSingleton():sendShortMessage(("+%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""), "Admin-Eventkasse")
+			end
 		end
 		self:update()
 	end
 end
 
-function BankAccount:takeMoney(money, reason)
+function BankAccount:takeMoney(money, reason, silent)
 	if isNan(money) then return end
 
 	if money > 0 then
 		self.m_Money = self.m_Money - money
-
-		if self.m_OwnerType == BankAccountTypes.Company then
-			CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
-		elseif self.m_OwnerType == BankAccountTypes.Faction then
-			FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
-		elseif self.m_OwnerType == BankAccountTypes.Admin then
-			Admin:getSingleton():sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""), "Admin-Eventkasse")
+		if not silent then
+			if self.m_OwnerType == BankAccountTypes.Company then
+				CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
+			elseif self.m_OwnerType == BankAccountTypes.Faction then
+				FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""))
+			elseif self.m_OwnerType == BankAccountTypes.Admin then
+				Admin:getSingleton():sendShortMessage(("-%s$ (%s$) - %s"):format(money, self.m_Money, reason or ""), "Admin-Eventkasse")
+			end
 		end
 		self:update()
 	end

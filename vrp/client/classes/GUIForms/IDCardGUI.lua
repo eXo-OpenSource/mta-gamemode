@@ -22,12 +22,12 @@ function IDCardGUI:constructor(player)
 
 	GUILabel:new(200, 75, 140, 25, _"Lizenzen:", self)
 
-	GUILabel:new(200, 100, 140, 20, _"Auto-Führerschein:", self)
-	GUILabel:new(200, 120, 140, 20, _"Motorrad-Schein:", self)
+	GUILabel:new(200, 100, 140, 20, _"Autoführerschein:", self)
+	GUILabel:new(200, 120, 140, 20, _"Motorradschein:", self)
 	GUILabel:new(200, 140, 140, 20, _"LKW-Schein:", self)
 	GUILabel:new(200, 160, 140, 20, _"Flugschein:", self)
 	GUILabel:new(200, 190, 140, 20, _"GWD-Note:", self)
-	GUILabel:new(200, 210, 140, 20, _"STVO-Punkte:", self)
+	GUILabel:new(200, 210, 140, 20, _"StVO-Punkte:", self)
 
 
 
@@ -41,10 +41,10 @@ function IDCardGUI:constructor(player)
 	self.m_PaNote = GUILabel:new(340, 190, 40, 20, "-keine-", self):setAlignX("right")
 	self.m_STVO = GUILabel:new(320, 210, 60, 20, "-keine-", self):setAlignX("right")
 
-	GUILabel:new(10, 160, 140, 20, _"Job-Level:", self)
-	GUILabel:new(10, 180, 140, 20, _"Waffen-Level:", self)
-	GUILabel:new(10, 200, 140, 20, _"Fahrzeug-Level:", self)
-	GUILabel:new(10, 220, 140, 20, _"Skin-Level:", self)
+	GUILabel:new(10, 160, 140, 20, _"Joblevel:", self)
+	GUILabel:new(10, 180, 140, 20, _"Waffenlevel:", self)
+	GUILabel:new(10, 200, 140, 20, _"Fahrzeuglevel:", self)
+	GUILabel:new(10, 220, 140, 20, _"Skinlevel:", self)
 
 	self.m_LevelLabels = {}
 	self.m_LevelLabels["job"] = GUILabel:new(140, 160, 40, 20, "0", self)
@@ -93,7 +93,7 @@ end
 
 function IDCardGUI:getSymbol(bool)
 	if bool == true then
-		return FontAwesomeSymbols.Check, Color.Green
+		return FontAwesomeSymbols.CheckSquare, Color.Green
 	else
 		return FontAwesomeSymbols.Square, Color.Red
 	end

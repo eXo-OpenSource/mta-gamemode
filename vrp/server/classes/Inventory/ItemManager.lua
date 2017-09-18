@@ -12,6 +12,7 @@ function ItemManager:constructor()
 	addRemoteEvents{"onClientBreakItem"}
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
+		["Warnkegel"] = ItemBarricade,
 		["Blitzer"] = ItemSpeedCam,
 		["Nagel-Band"] = ItemNails,
 		["Radio"] = ItemRadio,
@@ -25,10 +26,20 @@ function ItemManager:constructor()
 		["Pilz"] = ItemFood,
 		["Zigarette"] = ItemFood,
 		["Donut"] = ItemFood,
+		["Keks"] = ItemFood,
+		["Apfel"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
+		["Osterei"] = ItemEasteregg;
+		["Taser"] = ItemTaser;
 
 		["Wuerfel"] = ItemDice,
-		["Weed-Samen"] = PlantWeed,
+		["Angelrute"] = ItemFishing,
+		["Kleine Kühltasche"] = ItemFishing,
+		["Kühltasche"] = ItemFishing,
+		["Kühlbox"] = ItemFishing,
+		["Köder"] = ItemFishing,
+		["Weed-Samen"] = Plant,
+		["Apfelbaum-Samen"] = Plant,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
@@ -49,6 +60,7 @@ function ItemManager:constructor()
 		["Pot-Helm"] = WearableHelmet,
 		["Gasmaske"] = WearableHelmet,
 		["Einsatzhelm"] = WearableHelmet,
+		["Hasenohren"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
@@ -56,12 +68,8 @@ function ItemManager:constructor()
 	}
 
 	self.m_Properties = {
-	["Barrikade"] = {true} --// breakable,
-}
-	self.m_SpecialItems = {
-		["Mautpass"] = true,
-		["Kanne"] = true,
-		["Donutbox"] = true
+		["Barrikade"] = {true}, --// breakable,
+		["Warnkegel"] = {true}, --// breakable,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
@@ -75,6 +83,7 @@ function ItemManager:constructor()
 		instance.m_Breakable = breakable
 		ItemManager.Map[name] = instance
 	end
+
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
 end
 

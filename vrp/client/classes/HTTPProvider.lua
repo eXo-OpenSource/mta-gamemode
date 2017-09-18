@@ -21,10 +21,10 @@ function HTTPProvider:start(force)
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
 		outputDebug(self.ms_URL.."index.xml")
-		local responseData, errno = self:fetchAsync("index.xml")
-		if errno ~= 0 then
-			outputDebug(errno)
-			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+		local responseData, responseInfo = self:fetchAsync("index.xml")
+		if not responseInfo["success"] == true then
+			outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 			return false
 		end
 
@@ -75,10 +75,10 @@ function HTTPProvider:start(force)
 			for i, v in ipairs(files) do
 				self.ms_GUIInstance:setStatus("current file", v.path)
 				outputDebug(v.path)
-				local responseData, errno = self:fetchAsync(v.path)
-				if errno ~= 0 then
-					outputDebug(errno)
-					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+				local responseData, responseInfo = self:fetchAsync(v.path)
+				if not responseInfo["success"] == true then
+					outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 					return false
 				end
 
@@ -131,10 +131,64 @@ function HTTPProvider:start(force)
 	end
 end
 
+function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
+	-- request url access for download
+	if self:requestAccessAsync() then
+		self.ms_GUIInstance:setStatus("file count", 1)
+		self.ms_GUIInstance:setStatus("current file", fileName)
+		outputDebug(fileName)
+		local responseData, responseInfo = self:fetchAsync(fileName)
+		if not responseInfo["success"] == true then
+			outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
+			return false
+		end
+
+		if responseData ~= "" then
+			local filePath = ("%s/%s%s"):format(targetPath, fileName, encrypt and ".texture" or "")
+			if fileExists(filePath) then
+				fileDelete(filePath)
+			end
+			local file = fileCreate(filePath)
+			if file then
+				if encrypt then
+					file:write(base64Encode(responseData))
+				else
+					file:write(responseData)
+				end
+				file:setPos(file:getSize())
+				file:close()
+			end
+
+			if raw then
+				local pixelFile = fileCreate(("%s.pixels"):format(filePath))
+				if pixelFile then
+					local texture = DxTexture(filePath)
+					pixelFile:write(texture:getPixels())
+					texture:destroy()
+					pixelFile:close()
+				end
+				fileDelete(filePath)
+			end
+
+			-- success
+			return true
+		else
+			self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(fileName))
+		end
+	else
+		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		return false
+	end
+end
+
 function HTTPProvider:fetch(callback, file)
-    return fetchRemote(("%s/%s"):format(self.ms_URL, file), HTTP_CONNECT_ATTEMPTS,
-        function(responseData, errno)
-            callback(responseData, errno)
+    local options = {
+		["connectionAttempts"] = HTTP_CONNECT_ATTEMPTS
+	}
+	return fetchRemote(("%s/%s"):format(self.ms_URL, file), options,
+        function(responseData, responseInfo)
+            callback(responseData, responseInfo)
         end
     )
 end

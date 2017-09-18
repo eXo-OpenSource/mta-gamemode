@@ -42,6 +42,7 @@ function BoxManager:constructor()
 				player:triggerEvent("abortDeathGUI", true)
 				self:onWasted(player)
 				self:respawnPlayer(player, killer)
+				player:setAlpha(255)
 				return true
 			end
 		end
@@ -65,6 +66,7 @@ end
 
 function BoxManager:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
+		if hitElement:isFactionDuty() or hitElement:isCompanyDuty() then hitElement:sendError("Du kannst diese Aktion im Dienst nicht ausüben!") return end
 		hitElement:triggerEvent("openBoxingGUI", self.m_BoxHallCol)
 	end
 end
@@ -74,7 +76,9 @@ function BoxManager:requestFight(target, moneyId)
 		local money = BOXING_MONEY[moneyId]
 		if client:getMoney() >= money then
 			if target:getMoney() >= money then
-				target:triggerEvent("questionBox", _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
+				if target:isFactionDuty() or target:isCompanyDuty() then client:sendError("Der Spieler ist im Dienst und kann diese Aktion nicht ausüben!") return end
+
+				QuestionBox:new(client, target, _("Möchtest du gegen %s eine Runde Boxen? Einsatz: %d$", target, client:getName(), money), "boxingAcceptFight", "boxingDeclineFight", client, target, money)
 				client:sendShortMessage(_("Du hast eine Boxkampf-Herausforderung an %s gesendet! Einsatz: %d$", client, target:getName(), money))
 			else
 				client:sendError(_("%s hat nicht genug Geld dabei!", client, target:getName()))
@@ -193,6 +197,7 @@ function BoxManager:respawnPlayer(player, killer)
 	player:triggerEvent("deathmatchStartDeathScreen", killer or player, false)
 	fadeCamera(player, false, 2)
 	player:triggerEvent("Countdown", 5, "Respawn in")
+	player:setAlpha(255)
 	setTimer(function()
 		spawnPlayer(player, Vector3(765.34, 5.67, 1000.72), 0, 0, 5, 0)
 		player:setDefaultSkin()
@@ -201,6 +206,12 @@ function BoxManager:respawnPlayer(player, killer)
 		player:setHeadless(false)
 		player:setCameraTarget(player)
 		player:fadeCamera(true, 1)
+		setElementAlpha(player,255)
+		if player.ped_deadDouble then
+			if isElement(player.ped_deadDouble) then
+				destroyElement(player.ped_deadDouble)
+			end
+		end
 		player:triggerEvent("CountdownStop", "Respawn in")
 	end,5000,1)
 end

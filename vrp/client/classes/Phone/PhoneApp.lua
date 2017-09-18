@@ -11,7 +11,6 @@ function PhoneApp:constructor(appName, icon)
 	self.m_Name = appName
 	self.m_Icon = icon
 	self.m_IsOpen = false
-	self.m_Activities = {}
 	self.m_DestroyOnClose = false
 end
 
@@ -49,27 +48,11 @@ function PhoneApp:close()
 	if self.onClose then
 		self:onClose(self.m_Form)
 	end
-	self:closeActivities()
 	delete(self.m_Form)
 	self.m_Form = nil
 	self.m_IsOpen = false
 end
 
-function PhoneApp:addActivity(activity)
-	self:closeActivities()
-	table.insert(self.m_Activities, activity)
-end
-
-function PhoneApp:closeActivities()
-	for k, activity in pairs(self.m_Activities) do
-		delete(activity)
-	end
-	self.m_Activities = {}
-end
-
-function PhoneApp:getActivities()
-	return self.m_Activities
-end
 
 function PhoneApp:isDestroyOnCloseEnabled()
 	return self.m_DestroyOnClose

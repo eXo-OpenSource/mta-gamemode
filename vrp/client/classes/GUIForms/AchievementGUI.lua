@@ -21,7 +21,7 @@ function AchievementGUI:constructor(money)
 
 
 	GUILabel:new(self.m_Width*0.45, self.m_Height*0.07, self.m_Width*0.55, self.m_Height*0.08, _"Achievements", self.m_Window)
-	GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Auf eXo-Reallife gibt es viele Achievements mit verschiedenen Belohnungen die gefunden bzw. erledigt werden können. Einige davon sind vesteckt, und tauchen erst in der Liste auf wenn du diese findest!", self.m_Window):setMultiline(true)
+	GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Auf eXo-Reallife gibt es viele Achievements mit verschiedenen Belohnungen, die gefunden bzw. erledigt werden können. Einige davon sind vesteckt und tauchen erst in der Liste auf wenn du diese findest!", self.m_Window):setMultiline(true)
 	self.m_SelectedTitle = GUILabel:new(self.m_Width*0.45, self.m_Height*0.45, self.m_Width*0.50, self.m_Height*0.07, " ", self.m_Window)
 	self.m_SelectedDescription = GUILabel:new(self.m_Width*0.45, self.m_Height*0.53, self.m_Width*0.50, self.m_Height*0.05, " ", self.m_Window):setMultiline(true)
 	self.m_SelectedGoten = GUILabel:new(self.m_Width*0.45, self.m_Height*0.82, self.m_Width*0.50, self.m_Height*0.05, " ", self.m_Window):setMultiline(true)

@@ -230,7 +230,9 @@ end
 * performIndicatorChecks
 Checks how the indicators state should be: created, updated or destroyed.
 --]]
-function Indicator:performIndicatorChecks ( vehicle )
+function Indicator:performIndicatorChecks(vehicle)
+	if VEHICLE_BIKES[vehicle:getModel()] then return end
+
     -- Get the current indicator states
     local indicatorLeft = getElementData(vehicle, 'i:left')
     local indicatorRight = getElementData(vehicle, 'i:right')
@@ -267,7 +269,7 @@ end
 Sets all the active indicators alpha.
 --]]
 
-function Indicator:setIndicatorsAlpha ( state, alpha )
+function Indicator:setIndicatorsAlpha ( state, alpha, updateSpeedo )
     if state.coronaLeft then
         setMarkerColor ( state.coronaLeft[1],   self.ms_Color[1],
                                                 self.ms_Color[2],
@@ -277,7 +279,7 @@ function Indicator:setIndicatorsAlpha ( state, alpha )
                                                 self.ms_Color[2],
                                                 self.ms_Color[3],
                                                 alpha )
-		HUDSpeedo:getSingleton():setIndicatorAlpha("left", alpha)
+		if updateSpeedo then HUDSpeedo:getSingleton():setIndicatorAlpha("left", alpha) end
     end
     if state.coronaRight then
         setMarkerColor ( state.coronaRight[1],  self.ms_Color[1],
@@ -288,7 +290,7 @@ function Indicator:setIndicatorsAlpha ( state, alpha )
                                                 self.ms_Color[2],
                                                 self.ms_Color[3],
                                                 alpha )
-		HUDSpeedo:getSingleton():setIndicatorAlpha("right", alpha)
+		if updateSpeedo then HUDSpeedo:getSingleton():setIndicatorAlpha("right", alpha) end
     end
 end
 
@@ -331,18 +333,19 @@ function Indicator:processIndicators ( state )
         end
     end]]
 
+    -- Get the vehicle that we are in
+    local playerVehicle = getPedOccupiedVehicle ( localPlayer )
+
     -- Check if we must switch the state
     if state.nextChange <= state.timeElapsed then
         -- Turn to switched on indicators, in both cases. When turning on,
         -- it goes straight to the full alpha mode. When turning off, it
         -- fades out from full alpha to full transparent.
-        self:setIndicatorsAlpha ( state, self.ms_Color[4] )
+
+        self:setIndicatorsAlpha ( state, self.ms_Color[4], playerVehicle == state.vehicle )
 
         -- Switch the state
         state.currentState = not state.currentState
-
-        -- Get the vehicle that we are in
-        local playerVehicle = getPedOccupiedVehicle ( localPlayer )
 
         -- Restart the timers and play a sound if we are in that vehicle
         state.timeElapsed = 0
@@ -361,9 +364,9 @@ function Indicator:processIndicators ( state )
         -- just set the alpha to zero. Else, set it to the current alpha
         -- value.
         if state.timeElapsed >= self.ms_FadeTime then
-            self:setIndicatorsAlpha ( state, 0 )
+            self:setIndicatorsAlpha ( state, 0, playerVehicle == state.vehicle)
         else
-            self:setIndicatorsAlpha ( state, (1 - (state.timeElapsed / self.ms_FadeTime)) * self.ms_Color[4] )
+            self:setIndicatorsAlpha ( state, (1 - (state.timeElapsed / self.ms_FadeTime)) * self.ms_Color[4], playerVehicle == state.vehicle)
         end
     end
 end
@@ -496,28 +499,24 @@ function Indicator:addEvents()
 	* onClientElementStreamIn
 	Detects when a vehicle streams in, to check if we must draw the indicators.
 	--]]
-	addEventHandler('onClientElementStreamIn', root, function ()
-		if getElementType(source) == 'vehicle' then
-			-- Perform the indicator checks for the just streamed in vehicle.
-			self:performIndicatorChecks ( source )
-		end
-	end)
+    function Indicator:onVehicleStreamedIn(veh)
+        self:performIndicatorChecks (veh)
+    end
 
 	--[[
 	* onClientElementStreamOut
 	Detects when a vehicle streams out, to destroy its state.
 	--]]
-	addEventHandler('onClientElementStreamOut', root, function ()
-		if getElementType(source) == 'vehicle' then
-			-- Grab the current indicators state
-			local currentState = self.m_AllowedVehicles [ source ]
 
-			-- If it has a state, remove it.
-			if currentState then
-				self:destroyIndicatorState(currentState)
-				self.m_AllowedVehicles [ source ] = nil
-			end
-		end
-	end)
+    function Indicator:onVehicleStreamedOut(veh)
+        -- Grab the current indicators state
+        local currentState = self.m_AllowedVehicles [ source ]
+
+        -- If it has a state, remove it.
+        if currentState then
+            self:destroyIndicatorState(currentState)
+            self.m_AllowedVehicles [ source ] = nil
+        end
+    end
 
 end

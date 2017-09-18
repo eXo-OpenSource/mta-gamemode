@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Admin = inherit(Singleton)
+ADMIN_OVERLAP_THRESHOLD = 5
 
 function Admin:constructor()
     self.m_OnlineAdmins = {}
@@ -66,12 +67,16 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
+	addCommandHandler("cookie", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
+	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
+	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
+
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -85,7 +90,14 @@ function Admin:constructor()
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
-
+	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
+	addEventHandler("admin:acceptOverlappingCheck", root, bind(self.Event_OnAcceptOverlapCheck, self))
+	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
+	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
+	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
+	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
+	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
+	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -103,6 +115,8 @@ function Admin:constructor()
 	end, 10000, 0)
 
 	if DEBUG then
+		addCommandHandler("placeObject", bind(self.placeObject, self))
+
 		addEventHandler("onDebugMessage", root, function(message, level, file, line)
 			for player, rank in pairs(self.m_OnlineAdmins) do
 				if rank >= RANK.Supporter then
@@ -112,6 +126,73 @@ function Admin:constructor()
 		end)
 	end
 
+end
+
+function Admin:Event_OnAdminGangwarReset( id, ts )
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		local area = Gangwar:getSingleton().m_Areas[id] 
+		if area then 
+			if not ts then ts = 0 end 
+			if ts < 0 then ts = 0 end
+			local time = getRealTime(ts)
+			local day = time.monthday
+			local month = time.month+1
+			local year = time.year+1900
+			local hour = time.hour
+			local minute = time.minute 
+			ts = ts - ( GANGWAR_ATTACK_PAUSE * UNIX_TIMESTAMP_24HRS )
+			if ts < 0 then ts = 0 end
+			area.m_LastAttack = ts
+			area:update()
+			area.m_RadarArea:delete()
+			area:createRadar()
+			self:sendShortMessage(_("%s hat die Attackier-Zeit des Gebietes %s geändert!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name))
+			client:sendInfo(_("Das Gebiet wird freigegeben am: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !", client))
+			client:triggerEvent("gangwarRefresh")
+			StatisticsLogger:getSingleton():addAdminAction( client, "GW-AttackTime", "Gebiet: "..Gangwar:getSingleton().m_Areas[id].m_Name.."; AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+		end
+	end
+end
+
+function Admin:Event_OnAdminGangwarChangeOwner( id, faction) 
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		if id and faction and id > 0 and faction > 0 then 
+			local area = Gangwar:getSingleton().m_Areas[id] 
+			if area then 
+				local faction = FactionManager:getSingleton():getFromId(faction)
+				area.m_Owner = faction.m_Id
+				local now = getRealTime().timestamp
+				area.m_LastAttack = now
+				area:update()
+				area.m_RadarArea:delete()
+				area:createRadar()
+				client:sendInfo(_("Das Gebiet wurde umgesetzt!", client))
+				self:sendShortMessage(_("%s hat das Gebiet %s der Fraktion %s gesetzt!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name, faction:getShortName()))
+				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "Gebiet: " ..Gangwar:getSingleton().m_Areas[id].m_Name.." Fraktion: "..faction:getShortName().." !")
+				client:triggerEvent("gangwarRefresh")
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStartRequest() 
+	if client:getRank() >= ADMIN_RANK_PERMISSION["supermanFly"] then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then
+				exports["superman"]:startSuperMan(client)
+			end
+		end
+	end
+end
+
+function Admin:Event_OnSuperManStopRequest()
+	if client:getRank() >= RANK.Moderator then
+		if client:getPublicSync("supportMode") then
+			if exports["superman"] then
+				exports["superman"]:stopSuperMan(client)
+			end
+		end
+	end
 end
 
 function Admin:destructor()
@@ -133,7 +214,7 @@ function Admin:destructor()
 end
 
 function Admin:addAdmin(player,rank)
-	outputDebug("Added Admin "..player:getName())
+	--outputDebug("Added Admin "..player:getName()) (gets outputted already (ACL addObject))
 	self.m_OnlineAdmins[player] = rank
 	if DEBUG then
     	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
@@ -268,7 +349,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                     return
                 else
                     if arg1 then
-                        if cmd == "rkick" or cmd == "permaban" then
+                        if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
                             self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
                             return
                         else
@@ -284,10 +365,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" or cmd == "unprison" then
+        if cmd == "spect" or cmd == "unprison" or cmd == "freeze" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
-        elseif cmd == "rkick" or cmd == "permaban" then
+        elseif cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
             admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
             return
         else
@@ -312,6 +393,17 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:goToPlayer(admin, func, target:getName())
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
+		elseif func == "freeze" then
+            if target:isFrozen() then
+				target:setFrozen(false)
+				self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+			else
+				if target.vehicle then target:removeFromVehicle() end
+				target:setFrozen(true)
+				self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
+				target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+			end
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
 			outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
@@ -404,49 +496,67 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
             local text = target
-            triggerClientEvent("announceText", admin, text)
+            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
 			if not target then return end
-			if target ~= admin then
-				local preTarget = admin:getPrivateSync("isSpecting")
-				if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then
-					removeEventHandler("onElementDimensionChange", preTarget, admin.m_SpectDimensionFunc)
-					removeEventHandler("onElementInteriorChange", preTarget, admin.m_SpectInteriorFunc)
-				end
-				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-				admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
-				setCameraTarget(admin, target)
-				admin:setFrozen(true)
-				admin.m_PreSpectInt = getElementInterior(admin)
-				admin.m_IsSpecting = true
-				admin:setPrivateSync("isSpecting",target)
-				admin.m_PreSpectDim = getElementDimension(admin)
-				admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
-				addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-				admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
-				addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-				if admin:isInVehicle() then
-					admin:getOccupiedVehicle():setFrozen(true)
-				end
-					bindKey(admin, "space", "down", function()
-						setCameraTarget(admin, admin)
+			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+			if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+
+			admin.m_IsSpecting = true
+			admin:setPrivateSync("isSpecting", target)
+			admin.m_PreSpectInt = getElementInterior(admin)
+			admin.m_PreSpectDim = getElementDimension(admin)
+			admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
+			admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
+			admin.m_SpectStop =
+				function()
+					for i, v in pairs(target.spectBy) do
+						if v == admin then
+							table.remove(target.spectBy, i)
+						end
+					end
+
+					setCameraTarget(admin, admin)
 					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 					unbindKey(admin, "space", "down")
+
 					admin:setFrozen(false)
-					if admin:isInVehicle() then
-						admin:getOccupiedVehicle():setFrozen(false)
-					end
-					setElementInterior(admin, admin.m_PreSpectInt)
-					setElementDimension(admin, admin.m_PreSpectDim)
+					if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
+
 					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
+					admin:setInterior(admin.m_PreSpectInt)
+					admin:setDimension(admin.m_PreSpectDim)
+
 					admin.m_IsSpecting = false
-					admin:setPrivateSync("isSpecting",false)
-				end)
-			else admin:sendError("Sie können sich nicht selbst specten!")
-			end
+					admin:setPrivateSync("isSpecting", false)
+				end
+
+			if not target.spectBy then target.spectBy = {} end
+			table.insert(target.spectBy, admin)
+
+			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
+
+			admin:setInterior(target.interior)
+			admin:setCameraInterior(target.interior)
+			admin:setDimension(target.dimension)
+
+			-- this will probably fix the camera issue
+			local position = target.position
+			setCameraMatrix(admin, position)
+			setCameraTarget(admin, target)
+
+			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+			addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+			bindKey(admin, "space", "down", admin.m_SpectStop)
+
+			admin:setFrozen(true)
+			if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
         elseif func == "offlinePermaban" then
 			if not target then return end
 			if not reason or #reason == 0 then return end
@@ -564,12 +674,47 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			else
       		  admin:sendError(_("Ungültiges Ziel!", admin))
 			end
+		elseif func == "cookie" then
+			local reason = reason:gsub("_", " ")
+			if target:getInventory():giveItem("Keks", 1) then
+				target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
+				self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+			else
+				admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
+			end
         end
     else
         admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
     end
 end
 
+function Admin:outputSpectatingChat(source, messageType, message, phonePartner, playerToSend)
+	if source.spectBy then
+		for _, admin in pairs(source.spectBy) do
+			if isElement(admin) then
+				outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), admin, 150, 150, 150)
+			end
+		end
+
+		return
+	end
+
+	if playerToSend then
+		for _, v in pairs(playerToSend) do
+			if v.spectBy then
+				for _, admin in pairs(v.spectBy) do
+					if isElement(admin) then
+						outputChatBox(("[%s] %s: %s"):format(messageType, getPlayerName(source), message), admin, 150, 150, 150)
+					end
+				end
+			end
+		end
+	end
+
+	--[[if phonePartner and phonePartner.spectBy then
+
+	end]]
+end
 
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Ticketsupporter then
@@ -603,6 +748,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(260)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", true)
+		end
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
 		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
@@ -613,6 +761,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(player:getPublicSync("Admin:OldSkin"))
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("superman:toggle", false)
+		end
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
 		self:toggleJetPack(player)
@@ -640,9 +791,11 @@ function Admin:deleteArrow()
     if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
-function Admin:sendMessage(msg,r,g,b)
+function Admin:sendMessage(msg,r,g,b, minRank)
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(msg, key, r,g,b)
+		if key:getRank() >= (minRank or 1) then
+			outputChatBox(msg, key, r,g,b)
+		end
 	end
 end
 
@@ -732,12 +885,14 @@ local tpTable = {
         ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
+        ["angeln"] =        {["pos"] = Vector3(382.74, -1897.72, 7.52),  	["typ"] = "Orte"},
         ["casino"] =        {["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
         ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
         ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},
         ["flughafensf"] =   {["pos"] = Vector3(-1559.40, -445.55,  5.73),  	["typ"] = "Orte"},
         ["stadthalle"] =    {["pos"] = Vector3(1802.17, -1284.10, 13.33),  	["typ"] = "Orte"},
-        ["bank"] =          {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
+        ["bankpc"] =        {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
+        ["bankls"] =        {["pos"] = Vector3(1461.12, -998.87, 26.51),   	["typ"] = "Orte"},
         ["garten"] =        {["pos"] = Vector3(2450.16, 110.44, 26.16),  	["typ"] = "Orte"},
         ["premium"] =       {["pos"] = Vector3(1246.52, -2055.33, 59.53),  	["typ"] = "Orte"},
 		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
@@ -748,6 +903,10 @@ local tpTable = {
         ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
         ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
+		["lsdocks"] =       {["pos"] = Vector3(2711.48, -2405.28, 13.49),	["typ"] = "Orte"},
+		["pferderennen"] =  {["pos"] = Vector3(1631.56, -1166.35, 23.66),  	["typ"] = "Orte"},
+		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
+		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
@@ -771,23 +930,23 @@ local tpTable = {
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
-        ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
+        ["tuning"] =    	{["pos"] = Vector3(1050.65, -1031.07, 31.75),  	["typ"] = "Shops"},
+        ["texture"] =    	{["pos"] = Vector3(1844.30, -1861.05, 13.38),  	["typ"] = "Shops"},
+        ["cjkleidung"] =    {["pos"] = Vector3(1128.82, -1452.29, 15.48),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-        ["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
-        ["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+        --["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
-        ["fbi"] =           {["pos"] = Vector3(1534.83, -1440.72, 13.16),  	["typ"] = "Fraktionen"},
+        ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
-		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
-		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),  	["typ"] = "Fraktionen"},
-		["yakuza"] =         {["pos"] = Vector3(2414.44, -2090.31, 13.42),  	["typ"] = "Fraktionen"},
+		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
+		["yakuza"] =        {["pos"] = Vector3(1441.33, -1329.08, 13.55),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
@@ -849,17 +1008,28 @@ function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
 end
 
-function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
 
-        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+        if targetPlayer:getFaction() then
+			local faction = targetPlayer:getFaction()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
+			end
+			faction:removePlayer(targetPlayer)
+		end
 
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
     		if faction then
-    			faction:addPlayer(targetPlayer,6)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
+				end
+
+    			faction:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))
@@ -869,15 +1039,27 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+function Admin:Event_adminSetPlayerCompany(targetPlayer, Id, rank, internal, external)
 	if client:getRank() >= RANK.Supporter then
-        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
+
+        if targetPlayer:getCompany() then
+			local company = targetPlayer:getCompany()
+			if external or internal then
+				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company", company:getPlayerRank(targetPlayer), internal, external)
+			end
+			company:removePlayer(targetPlayer)
+		end
+
         if Id == 0 then
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
     		if company then
-    			company:addPlayer(targetPlayer,5)
+				if external or internal then
+					HistoryPlayer:getSingleton():addJoinEntry(targetPlayer.m_Id, client.m_Id, company.m_Id, "company")
+					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), company.m_Id, "company")
+				end
+    			company:addPlayer(targetPlayer, tonumber(rank))
     			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Unternehmen nicht gefunden!", client))
@@ -886,10 +1068,18 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	end
 end
 
-function Admin:Event_vehicleRequestInfo(target)
+function Admin:Event_vehicleRequestInfo(target, isGroup)
+	local vehicleTable = {}
+
+	if isGroup and target:getGroup() then
+		vehicleTable = target:getGroup():getVehicles()
+	else
+		vehicleTable = target:getVehicles()
+	end
+
 	local vehicles = {}
-	for k, vehicle in pairs(target:getVehicles()) do
-        vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	for k, vehicle in pairs(vehicleTable) do
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 
 	client:triggerEvent("adminVehicleRetrieveInfo", vehicles)
@@ -909,7 +1099,9 @@ end
 
 function Admin:Event_portToVehicle(veh)
     if client:getRank() >= RANK.Supporter then
-        local pos = client:getPosition()
+        if client.vehicle then return end
+
+		local pos = client:getPosition()
         local pos = veh:getPosition()
 		client:setInterior(veh:getInterior())
 		client:setDimension(veh:getDimension())
@@ -985,20 +1177,47 @@ function Admin:getVehFromId(player, cmd, vehId)
     end
 end
 
-function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Clanmember then
-        if isElement(source) then
+function Admin:Event_vehicleDespawn(reason)
+    if client:getRank() < RANK.Clanmember then
+		-- Todo: Report cheat attempt
+		return
+	end
 
-			VehicleManager:getSingleton():checkVehicle(source)
-			if not source:isRespawnAllowed() then
-				client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
-				return
+	if not isElement(source) or getElementType(source) ~= "vehicle" then
+		return
+	end
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht despawnt werden!", client))
+		return
+	end
+
+	VehicleManager:getSingleton():checkVehicle(source)
+
+	if source:isPermanent() then
+		client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+
+		if getElementData(source, "OwnerName") then
+			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
+			if targetId and targetId > 0 then
+				local delTarget, isOffline = DatabasePlayer.get(targetId)
+				if delTarget then
+					if isOffline then
+						delTarget:addOfflineMessage(("Dein Fahrzeug (%s) wurde von %s despawnt (%s)!"):format(source:getName(), client:getName(), reason))
+						delete(delTarget)
+					else
+						delTarget:sendInfo(_("Dein Fahrzeug (%s) wurde von %s despawnt! Grund: %s", client, source:getName(), client:getName(), reason))
+					end
+				end
 			end
+		end
 
-			client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
-            source:setDimension(PRIVATE_DIMENSION_SERVER)
-        end
-    end
+		source:setDimension(PRIVATE_DIMENSION_SERVER)
+		source.despawned = true
+	elseif instanceof(source, TemporaryVehicle) then
+		client:sendInfo(_("Du hast das Fahrzeug %s gelöscht!", client, source:getName()))
+		source:destroy()
+	end
 end
 
 function Admin:Command_MarkPos(player, add)
@@ -1006,7 +1225,7 @@ function Admin:Command_MarkPos(player, add)
 		if not add then
 			local markPos = getElementData(player, "Admin_MarkPos")
 			if markPos then
-				player:sendInfo("Du hast dich zu Makierung geportet!")
+				player:sendInfo("Du hast dich zu Markierung geportet!")
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
@@ -1015,23 +1234,126 @@ function Admin:Command_MarkPos(player, add)
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else
-				player:sendError("Du hast keine Makierung /mark")
+				player:sendError("Du hast keine Markierung /mark")
 			end
 		else
 			local pos = player:getPosition()
 			local dim = player:getDimension()
 			local interior = player:getInterior()
 			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
-			player:sendInfo("Makierung gesetzt!")
+			player:sendInfo("Markierung gesetzt!")
 		end
 	end
 end
 
-function Admin:runString(player, cmd, ...)
+function Admin:reloadHelpText(player)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
+		Help:getSingleton():loadHelpTexts()
+		player:sendInfo(_("Die F1 Hilfe wurde neu geladen!", player))
+	end
+end
+
+function Admin:runString(player, cmd, ...)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
 	end
 end
 
+function Admin:runPlayerString(player, cmd, target, ...)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
+		local tPlayer
+		local sendResponse
+		if target ~= "root" then
+			tPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, player)
+			sendResponse = true
+		else
+			tPlayer = root
+			sendResponse = false
+		end
+		if tPlayer then
+			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
+
+			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
+	  	else
+			player:sendError(_("Kein Ziel gefunden!", player))
+		end
+	end
+end
+
+function Admin:Event_OnClientRunStringResult(result)
+	if isElement(source) and source:getType() == "player" then
+		outputChatBox(source:getName() .." executed command: "..result, source, 255, 51, 51)
+	end
+end
+
+function Admin:checkOverlappingVehicles()
+	QuestionBox:new(client, client,  _("Warnung! Diese Funktion ist performance-lastig",client), "admin:acceptOverlappingCheck")
+end
+
+function Admin:Event_OnAcceptOverlapCheck()
+    if source:getRank() >= RANK.Administrator then
+		local vehicles = getElementsByType("vehicle")
+		OVERLAPPING_VEHICLES = {}
+		for i = 1, #vehicles do
+			if (getElementDimension(vehicles[i]) == 0 and getElementInterior(vehicles[i])) == 0 and not (instanceof(vehicles[i], FactionVehicle) or instanceof(vehicles[i], CompanyVehicle)) then
+				for i2 = 1, #vehicles do
+					if vehicles[i2] ~= vehicles[i] then
+						if vehicles[i].getPosition and vehicles[i2].getPosition then
+							local pos1, pos2 = vehicles[i]:getPosition(), vehicles[i2]:getPosition()
+							local dist = getDistanceBetweenPoints3D(pos1, pos2)
+							if dist <= ADMIN_OVERLAP_THRESHOLD then
+								OVERLAPPING_VEHICLES[#OVERLAPPING_VEHICLES+1] = vehicles[i]
+							end
+						end
+					end
+				end
+			end
+		end
+		local markedVehicles = {}
+		local veh, x,y,z
+		for i = 1,#OVERLAPPING_VEHICLES do
+			veh = OVERLAPPING_VEHICLES[i]
+			if not markedVehicles[veh] then
+				x,y,z = getElementPosition(veh)
+				outputChatBox(x..","..y..","..z, source, 200, 0, 0)
+				markedVehicles[veh] = true
+			end
+		end
+		outputChatBox("^^^ Es wurden "..#OVERLAPPING_VEHICLES.." die sich möglicherweise Überlappen gefunden! ^^^", source, 200, 50, 0)
+	else
+		source:sendError("Erst ab Administrator!")
+	end
+end
+
+function Admin:sendNewPlayerMessage(player)
+	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
+end
+
+function Admin:placeObject(player, cmd, model)
+	if player:getRank() < RANK.Administrator then
+		return
+	end
+
+	if model and tonumber(model) then
+		player:triggerEvent("objectPlacerStart", tonumber(model), "adminObjectPlaced", false, true)
+		player.m_PlacingInfo = {["model"] = model}
+		return true
+	else
+		player:sendError(_("Syntax: /placeObject [Model-ID]", player))
+	end
+end
+
+function Admin:Event_ObjectPlaced(x, y, z, rotation)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	outputChatBox(("Position: %.2f, %.2f, %.2f"):format(x, y, z))
+	outputChatBox(("Rotation: 0, 0, %.2f"):format(rotation))
+
+	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
+	client.m_PlacingInfo = nil
+	return
+end

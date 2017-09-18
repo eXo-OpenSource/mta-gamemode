@@ -86,7 +86,7 @@ SHOP_TYPES = {
 		["Marker"] = Vector3(-23.37, -55.63, 1002.6),
 		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
 		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
-		["Class"] = GasStation
+		["Class"] = GasStationShop
 	},
 	[14] = {
 		["Name"] = "Bank",
@@ -133,14 +133,40 @@ SHOP_TYPES = {
 		["Ped"] = {29, Vector3(-201.49, -4.85, 1002.27), 158},
 		["Interior"] = {17, Vector3(-204.40, -9.08, 1002.27)},
 		["Class"] = CJClothes
+	},
+	[19] = {
+		["Name"] = "Anglershop",
+		["Marker"] = Vector3(393.19, -1902.86, 6.95),
+		["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop
+	},
+	[20] = {
+		["Name"] = "Tankstelle ohne Shop",
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = GasStationShop
+	},
+	[21] = {
+		["Name"] = "Ammunation Central",
+		["Marker"] = Vector3(1380.34, -1278, 12.6),
+		["Ped"] = {158, Vector3(1380.34, -1280.79, 13.54), 0},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = Ammunation
+	},
+	[22] = {
+		["Name"] = "Ammunation South",
+		["Marker"] = Vector3(2379.96, -1986.57, 12.6),
+		["Ped"] = {158, Vector3(2379.84, -1984.17, 13.56), 180},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = Ammunation
 	}
-
 }
 
 SHOP_ITEMS = {
 	["Gärtnerei"] = {
 		["Weed-Samen"] = 20,
-		["Kanne"] = 500
+		["Kanne"] = 500,
+		["Apfelbaum-Samen"] = 40,
 	};
 	["24/7"] = {
 		["Radio"] = 2000,
@@ -178,6 +204,13 @@ SHOP_ITEMS = {
 		["Monster"] = 25,
 		["Shot"] = 8,
 		["Cuba-Libre"] = 12
+	};
+	["Anglershop"] = {
+		["Angelrute"] = 150,
+		["Kleine Kühltasche"] = 50,
+		["Kühltasche"] = 100,
+		["Kühlbox"] = 250,
+		--["Köder"] = 5,
 	};
 }
 
@@ -235,84 +268,6 @@ SHOP_BAR_STRIP = {
 
 SHOP_BAR_STRIP_ANIMATIONS = {"STR_Loop_A", "STR_Loop_A", "STR_Loop_C"}
 
-SHOP_FUEL = {
-	["Tankstelle Temple"] = {
-		["Marker"] = Vector3(1007.8759155273, -940.43975830078, 41.18),
-		["FuelStation"] = {1007.2157, -936.54523, 42.9, 8}
-	},
-	["San Fierro Downtown"] = {
-		["Marker"] = Vector3(-1672.8955078125,415.9296875, 5.68),
-		["FuelStation"] = {-1669.9, 412.39999, 8, 46}
-	},
-	["San Fierro Juniper Hill"] = {
-		["Marker"] = Vector3(-2405.73828125,975.3662109375,43.896875),
-		["FuelStation"] = {-2410.8994, 975.7998, 46, 90}
-	},
-	["Tankstelle Angle Pine"] = {
-		["Marker"] = Vector3(-2246.2653808594, -2561.2934570313, 30.921875),
-		["FuelStation"] = {-2246.8994, -2559.5, 32.7, 63.243}
-	},
-	["Tankstelle Dillimore"] = {
-		["Marker"] = Vector3(655.52795410156, -565.03424072266, 15.3359375),
-		["FuelStation"] = {655.5, -564.90002, 16.9, 90}
-	},
-	["Tankstelle Flint County"] = {
-		["Marker"] = Vector3(-92.113708496094, -1171.3128662109 ,1.3799414634705),
-		["FuelStation"] = {-88.1, -1171.4, 2.9, 68}
-	},
-	["Red Sands West"] = {
-		["Marker"] = Vector3(1597.9239501953 ,2199.1923828125 ,9.9),
-		["FuelStation"] = {1596.3, 2204.5, 11.6, 0}
-	},
-	["Spinybed"] = {
-		["Marker"] = Vector3(2146.923828125,2748.362304687 ,9.8203125),
-		["FuelStation"] = {2147.6001, 2753.3999, 11.5, 0}
-	},
-	["Las Venturas 2"] = {
-		["Marker"] = Vector3(2114.7553710938 ,920.28552246094 ,9.8203125),
-		["FuelStation"] = {2114.8999, 925.5, 11.5, 359.989}
-	},
-	["Valle Ocultado"] = {
-		["Marker"] = Vector3(-731.541015625,2741.8486328125,46.5),
-		["FuelStation"] = {-731.5, 2745, 47.8, 0}
-	},
-	["Tierra Roboda 2"] = {
-		["Marker"] = Vector3(-1327.8564453125,2682.9794921875 ,49.0625),
-		["FuelStation"] = {-1328.1, 2680.2, 51, 354}
-	},
-	["Idlewood"] = {
-		["Marker"] = Vector3(1936.951171875,-1775.9375,12.3828125),
-		["FuelStation"] = {1941.7957, -1776.4347, 14.2, 90}
-	},
-	["Fort Carson"] = {
-		["Marker"] = Vector3(71.8173828125,1220.35546875,17.815870285034),
-		["FuelStation"] = {68.1, 1221.3, 19.6, 252}
-	},
-	["Whetstone"] = {
-		["Marker"] = Vector3(-1612.5341796875 ,-2723.4165039063 ,47.6),
-		["FuelStation"] = {-1607.8096, -2716.1602, 49.428, 323.998}
-	},
-	["Last Venturas East"] = {
-		["Marker"] = Vector3(2638.4443359375 ,1106.2412109375 ,9.8203125),
-		["FuelStation"] = {2639.8999, 1100.9, 11.5, 359.243}
-	},
-	["The Emerald Isle"] = {
-		["Marker"] = Vector3(2203.1423339844 ,2473.5385742188 ,9.8203125),
-		["FuelStation"] = {2196.9246, 2475.0313, 11.47524, 270}
-	},
-	["Montegomery"] = {
-		["Marker"] = Vector3(1380.0498046875,456.221679687,19.4),
-		["FuelStation"] = {1381.0996, 460.09961, 20.8, 155.495}
-	},
-	["Bone County"] = {
-		["Marker"] = Vector3(615.7958984375,1690.638671875,5.6),
-		["FuelStation"] = {617.59998, 1687.9, 7.8, 35.5}
-	},
-	["Tierra Roboda 1"] = {
-		["Marker"] = Vector3(-1465.9541015625,1864.23046875,32),
-		["FuelStation"] = {-1465.5, 1868.2, 33.4, 3.239}
-	}
-}
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}
 ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(2862.30, -1439.80, 9),
@@ -320,7 +275,6 @@ ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(432.80, -1749.60, 7.5),
 	Vector3(1225.90, -2346.14, 11.90)
 }
-
 
 CJ_CLOTHE_TYPES = {
 	[0] = "Shirt",

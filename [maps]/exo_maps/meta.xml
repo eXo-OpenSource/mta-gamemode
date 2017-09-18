@@ -11,26 +11,26 @@
 
 	<map src="atm.map" />
 	<map src="CrackPalace.map" />
-
+	<map src="medic_fix.map" />
+	<map src="interior_fixes.map" />
 	<!--<map src="fun/boxarena.map" />/-->
 
 	<map src="fraktionen/army.map" />
 	<map src="fraktionen/army_lsbase.map" />
+	<map src="fraktionen/army_shooting_town.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
+	<map src="fraktionen/lspd-int.map" />
 	<map src="fraktionen/sfpd_int.map" />
 	<map src="fraktionen/sfpd_out.map" />
-	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
-	<map src="fraktionen/fbi_int.map" dimension="23" />
+	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
-	<map src="fraktionen/Exo-yaku.map" dimension="0" />
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
-	<map src="unternehmen/rescue.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 	<map src="banken/bankPalomino.map" />
@@ -40,6 +40,9 @@
 	<map src="autohaus/12_elegant.map" />
 	<map src="autohaus/billig_autohaus.map" />
 	<map src="autohaus/bootshop.map" />
+
+	<map src="gangwar/KLM-GW.map" />
+	<map src="gangwar/Raffi-GW.map" />
 
 	<!--map src="jobs/cartransport.map" /-->
 	<map src="jobs/gaertnerei.map" />
@@ -52,24 +55,33 @@
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-
+	
+	<map src="ammunation.map" />
+	<map src="ammunation2.map" />
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
-  	<map src="hospital.map" />
+  	<!--<map src="hospital.map" />-->
 	<map src="airport.map" />
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
 	<map src="gangwar.map" />
+	<map src="bankLS.map" />
 
 	<map src="tankstellen_removals.map" />
 
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 
-	<map src="tankstelle-marcel.map"/>
-	
+	<map src="Tankstellen.map"/>
+
 	<map src="stuntfix.map"/>
-		
+
+	<map src="fishshop.map"/>
+
 	<map src="minigamescafe.map" dimension="2" />
+	<map src="tokyotown.map" dimension="0" />
+
+	<!--xxking-->
+	<map src="Heliport-Immo.map" dimension="0" />
 </meta>

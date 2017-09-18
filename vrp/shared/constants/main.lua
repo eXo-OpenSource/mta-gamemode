@@ -1,21 +1,46 @@
-
+PROJECT_NAME = "eXo Reallife"
+PROJECT_VERSION = "1.3.37"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
--- TODO: Change before release
+-- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
+MAX_FISHING_LEVEL = 10
 
+MAX_WANTED_LEVEL = 12
+
+-- EVENTS:
+EVENT_EASTER = false
+
+-- BONI:
+PAYDAY_NOOB_BONUS = 500 -- dollar
+PAYDAY_NOOB_BONUS_MAX_PLAYTIME = 50 -- hours
+
+--TEXTURES:
+TEXTURE_STATUS = {
+	["Testing"] = 0,
+	["Pending"] = 1,
+	["Active"] = 2,
+	["Declined"] = 3
+}
+local status = {}
+for k, v in pairs(TEXTURE_STATUS) do
+	status[k] = v
+	status[v] = k
+end
+TEXTURE_STATUS = status
+
+--ALCOHOL:
 MAX_ALCOHOL_LEVEL = 6
 ALCOHOL_LOSS_INTERVAL =  5*60 -- IN SECONDS
 ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
-PROJECT_NAME = "eXo Reallife"
-
+--JOB_LEVELS:
 JOB_LEVEL_PIZZA = 0
 JOB_LEVEL_SWEEPER = 0
 JOB_LEVEL_LOGISTICAN = 1
@@ -27,7 +52,30 @@ JOB_LEVEL_HELITRANSPORT = 4
 JOB_LEVEL_FARMER = 5
 JOB_LEVEL_GRAVEL = 6
 
+JOB_EXTRA_POINT_FACTOR = 1.5 -- point multiplicator for every job
 
+BLIP_CATEGORY = {
+	Default = "Allgemein",
+	Shop = "Shops",
+	Job = "Arbeitsstellen",
+	Faction = "Fraktions-Basen",
+	Company = "Unternehmenssitze",
+	VehicleMaintenance = "Fahrzeug-Unterhaltung",
+	Leisure = "Freizeit",
+	Other = "Anderes",
+}
+
+BLIP_COLOR_CONSTANTS = {
+	Red = {200, 0, 0},
+	Orange = {255, 150, 0},
+	Yellow = {200, 200, 0},
+}
+
+BLIP_CATEGORY_ORDER = {
+	BLIP_CATEGORY.Default, BLIP_CATEGORY.Job, BLIP_CATEGORY.Faction, BLIP_CATEGORY.Company, BLIP_CATEGORY.VehicleMaintenance, BLIP_CATEGORY.Shop, BLIP_CATEGORY.Leisure, BLIP_CATEGORY.Other
+}
+
+--USER RANKS:
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -49,13 +97,18 @@ for k, v in pairs(RANK) do
 end
 RANK = r2
 
+--ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
+	["playerHistory"] = RANK.Supporter,
+	["eventGangwarMenu"] = RANK.Administrator,
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
+	["freeze"] = RANK.Supporter,
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Clanmember,
 	["goto"] = RANK.Clanmember,
 	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
@@ -64,14 +117,14 @@ ADMIN_RANK_PERMISSION = {
 	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
-	["smode"] = RANK.Clanmember,
+	["smode"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
 	["respawnRadius"] = RANK.Supporter,
 	["clearChat"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
-	["tp"] = RANK.Clanmember,
+	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
 	["gotocords"] = RANK.Supporter,
@@ -86,7 +139,18 @@ ADMIN_RANK_PERMISSION = {
 	["offlineNickchange"] = RANK.Moderator,
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
-	["removeWarn"] = RANK.Administrator
+	["removeWarn"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
+	["checkOverlappingVehicles"] = RANK.Administrator,
+	["cookie"] = RANK.Developer, -- give that man a cookie
+	["showDebugElementView"] = RANK.Administrator, --F10 view
+	["moveWorldItem"] = RANK.Moderator,
+	["deleteWorldItem"] = RANK.Moderator,
+	["showWorldItemInformation"] = RANK.Supporter,
+	["editHouse"] = RANK.Administrator,
+	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
+	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
+	["supermanFly"] = RANK.Moderator -- flying supporter
 }
 
 GroupRank = {
@@ -113,6 +177,7 @@ CompanyRank = {
 	Leader = 5
 }
 
+OBJECT_DELETE_MIN_RANK = 4 -- faction/company/group rank to destroy WorldItems (i.e. not put them into their inventory)
 
 local r3 = {}
 for k, v in pairs(GroupRank) do
@@ -254,11 +319,48 @@ SkinInfo = {
 	[184] = {"Blau weiß Schwarzes Shirt", 90},
 	[206] = {"Olives Shirt", 100},
 
+	[1] = {"Offenes Hemd", 50},
+	[9] = {"Brauner Anzug", 120},
+	[10] = {"Alte Dame", 50},
+	[12] = {"Schwarzes Kleid", 120},
+	[31] = {"Farmerin", 70},
+	[38] = {"Golferin", 80},
+	[39] = {"Alte Dame", 60},
+	[40] = {"Roter Rock", 100},
+	[41] = {"Trainingsanzug", 60},
+	[45] = {"Grüne Badehose", 50},
+	[53] = {"Golferin 2", 80},
+	[55] = {"Gestreifter Rock", 80},
+	[56] = {"Rock mit grünes Oberteil", 70},
+	[62] = {"Opa in Schlafanzug", 50},
+	[67] = {"Gangster mit weißen Oberteil", 70},
+	[69] = {"Jeanshose, Jeansoberteil", 60},
+	[72] = {"Trucker mit Bart", 60},
+	[76] = {"Business Dame", 130},
+	[88] = {"Alte Dame mit roten Oberteil", 60},
+	[91] = {"Weißer Rock", 80},
+	[95] = {"Armer Rentner", 90},
+	[148] = {"Frau mit blauen Anzug", 120},
+	[150] = {"Frau mit gestreifter Kleidung", 110},
+	[157] = {"Bauerin", 60},
+	[170] = {"Rotes T-Shirt", 70},
+	[172] = {"Anzug, Fliege 2", 170},
+	[182] = {"Rentner mit Bierbauch", 70},
+	[185] = {"Gesteiftes Hemd mit schwarzer Hose", 90},
+	[190] = {"Frau Bauchfrei", 80},
+	[193] = {"Frau Bauchfrei 2", 80},
+	[214] = {"Weißes Kleid", 120},
+	[215] = {"Weiße Rose mit gelben Oberteil", 100},
+	[223] = {"Gangster mit Goldkette", 120},
+	[241] = {"Afro mit Bierbauch", 100},
+	[249] = {"Zuhälter", 250},
+	[250] = {"Mann mit grünes T-Shirt", 80},
+	[258] = {"Kariertes Hemd", 100},
+	[259] = {"Kariertes Hemd 2", 100},
+	[261] = {"Trucker mit Bart 2", 60},
 }
 
 MAX_KARMA_LEVEL = 150
-
-VehicleSpecialProperty = {Color = -1, LightColor = -2, Color2 = -3, Shader = -4, Horn = -5, Neon = -6, NeonColor = -7}
 
 Tasks = {
 	TASK_GUARD = 1,
@@ -269,6 +371,7 @@ Tasks = {
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 VehicleSpecial = {Soundvan = 1}
+VEHICLE_TOTAL_LOSS_HEALTH = 260 -- below = total loss
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
 
@@ -284,8 +387,8 @@ HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
 HANGAR_UPGRADES_TEXTS = {[0] = "Hangar: kein Hangar", [1] = "Hangar: Unkown Hangar", [2] = "Hangar: Unkown Hangar", [3] = "Hangar: Unkown Hangar"}
 
-WEAPONTRUCK_MAX_LOAD = 20000
-WEAPONTRUCK_MAX_LOAD_STATE = 40000
+WEAPONTRUCK_MAX_LOAD = 60000
+WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.3, 0.3), ["rot"] = Vector3(0, 0, 180)},
@@ -295,19 +398,42 @@ PlayerAttachObjects = {
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
 VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
 VEHICLE_SPECIAL_TEXTURE = {
+	[417] = "leviathnbody8bit256",
+	[425] = "hunterbody8bit256a",
+	[447] = "sparrow92body128",
+	[460] = "skimmer92body128",
+	[469] = "sparrow92body128",
+	[481] = "vehiclegeneric256", --bmx
+	[483] = "#emapcamperbody256",
+	[487] = "maverick92body128",
+	[488] = "polmavbody128a",
+	[497] = "polmavbody128a",
+	[510] = "mtbike64x128",
+	[511] = "beagle256",
+	[512] = "cropdustbody256",
+	[513] = "stunt256",
+	[519] = "shamalbody256",
+	[521] = "fcr90092body128",
+	[522] = "nrg50092body128",
+	[534] = "remapremington256body",
+	[535] = "#emapslamvan92body128",
+	[536] = "#emapblade92body128",
+	[548] = "cargobob92body256",
+	[553] = "nevada92body256",
+	[558] = "@hite",
+	[559] = "#emapjesterbody256",
 	[560] = "#emapsultanbody256",
 	[561] = "#emapstratum292body256",
-	[495] = "vehiclegrunge256",
-	[575] = "remapbroadway92body128",
+	[562] = "#emapelegybody128",
+	[563] = "raindance92body128",
 	[565] = "#emapflash92body256",
-	[536] = "#emapblade92body128",
-	[483] = "#emapcamperbody256",
-	[415] = "vehiclegrunge256",
-	[411] = "vehiclegrunge256",
-	[562] = "#emapelegybody128",
-	[562] = "#emapelegybody128",
-	[535] = "#emapslamvan92body128",
-	[559] = "#emapjesterbody256",
+	[567] = "#emapsavanna92body128",
+	[575] = "remapbroadway92body128",
+	[576] = "remaptornado92body128",
+	[577] = "at400_92_256",
+	[581] = "bf40092body128",
+	[586] = "wayfarerbody8bit128",
+	[593] = "dodo92body8bit256",
 }
 
 VEHICLE_BIKES = {
@@ -329,8 +455,6 @@ AD_COST = 30
 AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
-AD_COLORS = {"Orange", "Grün", "Hell-Blau"}
-
 AD_DURATIONS = {
 	["20 Sekunden"] = 20,
 	["30 Sekunden"] = 30,
@@ -348,7 +472,7 @@ WEAPON_NAMES = {
 	[7] = "Billiard Queue",
 	[8] = "Katana",
 	[9] = "Kettensäge",
-	[10] = "Langer Pinker Dildo",
+	[10] = "Langer Dildo",
 	[11] = "Kurzer Dildo",
 	[12] = "Vibrator",
 	[14] = "Blumen",
@@ -360,8 +484,8 @@ WEAPON_NAMES = {
 	[23] = "Taser",
 	[24] = "Desert Eagle",
 	[25] = "Schrotflinte",
-	[26] = "Abgesägte Schrotflinte",
-	[27] = "SPAZ-12 Spezialwaffe",
+	[26] = "Abgesägte Schrot",
+	[27] = "SPAZ-12",
 	[28] = "Uzi",
 	[29] = "MP5",
 	[30] = "AK-47",
@@ -445,10 +569,15 @@ for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
 
-MEDIC_TIME = 60000
-DEATH_TIME = 36000
-DEATH_TIME_PREMIUM = 21000
-DEATH_TIME_ADMIN = 11000
+MEDIC_TIME = 180000
+DEATH_TIME = 30000
+DEATH_TIME_PREMIUM = 0
+DEATH_TIME_ADMIN = 0
+
+if DEBUG then
+	MEDIC_TIME = 10000
+	DEATH_TIME = 0
+end
 
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
@@ -486,15 +615,17 @@ VRP_RADIO = {
 	{"User Track Player", 12}
 }
 
-BeggarTypes = {
+BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
 	Transport = 3;
     Weed = 4;
-	Ecstasy = 5;
+	Heroin = 5;
 }
+
+BeggarTypeNames = {}
 for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
+	BeggarTypeNames[v] = i
 end
 
 HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
@@ -514,3 +645,134 @@ WEAPON_LEVEL = {
 }
 
 BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}
+
+
+FISHING_BAGS = {
+	["Kühlbox"] = {max = 65, level = 8},
+	["Kühltasche"] = {max = 25, level = 4},
+	["Kleine Kühltasche"] = {max = 15, level = 0},
+}
+
+-- (level * 15)^2 // for i = 1, 10 do print(("[%s] = %s,"):format(i, (i*15)^2)) end
+FISHING_LEVELS = {
+	[1] = 225,
+	[2] = 900,
+	[3] = 2025,
+	[4] = 3600,
+	[5] = 5625,
+	[6] = 8100,
+	[7] = 11025,
+	[8] = 14400,
+	[9] = 18225,
+	[10] = 22500,
+}
+
+SPAWN_LOCATIONS = {
+	DEFAULT = 0,
+	NOOBSPAWN = 1,
+	GARAGE = 2,
+	FACTION_BASE = 3,
+	COMPANY_BASE = 4,
+	HOUSE = 5,
+	VEHICLE = 6,
+}
+
+VEHICLE_MODEL_SPAWNS = {
+	[508] = true,
+	[484] = true,
+	[483] = true,
+	[454] = true,
+}
+
+VEHICLE_SPAWN_OFFSETS = {
+	[508] = Vector3(3, 0, 0),
+	[484] = Vector3(0, -2, 2),
+	[483] = Vector3(2, 2, 0),
+	[454] = Vector3(-0.4, -3.0, 2),
+}
+
+CAR_COLORS_FROM_ID =
+{
+	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
+	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
+	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
+	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
+	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
+	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
+	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
+	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
+	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
+	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
+	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
+	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
+	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
+	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
+	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
+	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
+	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
+}
+
+HOUSE_INTERIOR_TABLE = {
+	[1] = {1, 223.27027893066, 1287.4304199219, 1081.9130859375};
+	[2] = {5, 2233.8625488281, -1113.7662353516, 1050.8828125};
+	[3] = {8, 2365.224609375, -1135.1401367188, 1050.875};
+	[4] = {11, 2282.9448242188, -1139.9676513672, 1050.8984375};
+	[5] = {6, 2196.373046875, -1204.3984375, 1049.0234375};
+	[6] = {10, 2270.2353515625, -1210.4715576172, 1047.5625};
+	[7] = {6, 2309.1716308594, -1212.6801757813, 1049.0234375};
+	[8] = {1, 2217.1474609375, -1076.2725830078, 1050.484375};
+	[9] = {2, 2237.5483398438, -1081.1091308594, 1049.0234375};
+	[10] = {9, 2318.0712890625, -1026.2338867188, 1050.2109375};
+	[11] = {4, 260.99948120117, 1284.8186035156, 1080.2578125};
+	[12] = {5, 140.2495880127, 1366.5075683594, 1083.859375};
+	[13] = {9, 82.978126525879, 1322.5451660156, 1083.8662109375};
+	[14] = {15, -284.0530090332, 1471.0965576172, 1084.375};
+	[15] = {4, -260.75534057617, 1456.6932373047, 1084.3671875};
+	[16] = {8, -42.373157501221, 1405.9846191406, 1084.4296875};
+	[17] = {2, 2454.717041, -1700.871582, 1013.515197};
+	[18] = {1, 2527.654052, -1679.388305, 1015.515197};
+	[19] = {8, 2807.619873, -1171.899902, 1025.5234375};
+	[20] = {5, 318.564971, 1118.209960, 1083.5234375};
+	[21] = {12, 2324.419921, -1145.568359, 1050.5234375};
+	[22] = {5, 1298.8719482422, -796.77032470703, 1083.6569824219};
+}
+
+VEHICLE_PICKUP = {
+	[422] = true,
+	[554] = true,
+	[433] = true,
+	[444] = true,
+	[556] = true,
+	[557] = true,
+	[478] = true,
+	[578] = true,
+	[535] = true,
+	[543] = true,
+	[605] = true,
+	[600] = true,
+}
+
+CompanyStaticId = {
+	DRIVINGSCHOOL = 1,
+	MECHANIC = 2,
+	SANNEWS = 3,
+	EPT = 4,
+}
+
+FactionStaticId = {
+	SAPD = 1,
+	FBI = 2,
+	MBT = 3,
+	RESCUE = 4,
+	LCN = 5,
+	YAKUZZA = 6,
+	GROVE = 7,
+	BALLAS = 8,
+	OUTLAWS = 9,
+	VATOS = 10
+}
+
+FUEL_PRICE_MULTIPLICATOR = 2
+MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+SERVICE_FUEL_PRICE_MULTIPLICATOR = 5
+SERVICE_REPAIR_PRICE_MULTIPLICATOR = 5

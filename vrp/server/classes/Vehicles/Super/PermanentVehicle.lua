@@ -9,6 +9,10 @@ PermanentVehicle = inherit(Vehicle)
 
 -- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
 function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
+		return false -- Apply vehilce limit
+	end
+
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
 			local position = vehicle:getPosition()
@@ -26,7 +30,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId, premium)
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, trunkId, premium)
 				vehicle:setHealth(health)
 				vehicle:setMileage(milage)
 				vehicle:setFuel(fuel)
@@ -42,7 +46,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 	return false
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId, premium)
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium)
 	rotation = tonumber(rotation) or 0
 	if type(owner) == "userdata" then
 		owner = owner:getId()
@@ -52,7 +56,7 @@ function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunk
 		trunkId = Trunk.create()
 	end
 
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId, premium) then
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, Color, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, 0, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, 1000, VehiclePositionType.World, nil, nil, trunkId, premium)
 		VehicleManager:getSingleton():addRef(vehicle)
@@ -94,17 +98,10 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
-	self:setMileage(mileage)
-	self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	self:setMileage(mileage or 0)
+	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
-	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
-		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
-		if row and row.Special > 0 then
-			self.m_Tunings:saveTuning("Special", row.Special)
-			self.m_Tunings:applyTuning()
-		end
-	end
 	self.m_HasBeenUsed = 0
 end
 
@@ -125,8 +122,8 @@ function PermanentVehicle:save()
   local health = getElementHealth(self)
   if self.m_Trunk then self.m_Trunk:save() end
 
-  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, `Keys` = ?, PositionType = ?, TuningsNew = ?, Mileage = ?, Fuel = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, toJSON(self.m_Keys), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, `Keys` = ?, PositionType = ?, TuningsNew = ?, Mileage = ?, Fuel = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, toJSON(self.m_Keys), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -206,7 +203,7 @@ function PermanentVehicle:respawn(garageOnly)
   local owner = Player.getFromId(self.m_Owner)
   if owner and isElement(owner) then
     -- Is the vehicle allowed to spawn in the garage
-    if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat then
+    if vehicle:getModel() == 539 or (vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat) then
       -- Does the player have a garage
       if owner:getGarageType() > 0 then
         -- Is there a slot available?
@@ -220,7 +217,7 @@ function PermanentVehicle:respawn(garageOnly)
         if maxSlots > numVehiclesInGarage then
 			self:setInGarage(true)
 			self:setDimension(PRIVATE_DIMENSION_SERVER)
-			fixVehicle(self)
+			self:fix()
 			setVehicleOverrideLights(self, 1)
 			self:setEngineState(false)
 			self:setSirensOn(false)

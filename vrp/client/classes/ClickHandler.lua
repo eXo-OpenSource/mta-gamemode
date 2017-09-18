@@ -21,7 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-
+		[1676] = function(element, clickInfo) if element:getData("Name") and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") then self:addMouseMenu(GasStationMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end end;
 	}
 
 	self.m_ClickInfo = false
@@ -37,6 +37,8 @@ function ClickHandler:constructor()
 
 	addEventHandler("onClientCursorMove", root,
 		function(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
+			if not self.m_Rendered then return false end -- only update if client rendered a new frame (hack to get the args from onClientCursorMove but every onClientRender)
+			self.m_Rendered = false
 			-- Do not draw if cursor is not visible and is not on top of any GUI element
 			if not isCursorShowing() or GUIElement.getHoveredElement() then
 				self.m_DrawCursor = false
@@ -65,6 +67,7 @@ function ClickHandler:constructor()
 
 	addEventHandler("onClientRender", root,
 		function()
+			self.m_Rendered = true
 			if self.m_DrawCursor then
 				local cx, cy = getCursorPosition()
 
@@ -105,6 +108,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Disabled clickhandler as long as the player is not logged in
 	if not localPlayer:isLoggedIn() then return end
+	if localPlayer.m_ObjectPlacerActive then return end
+	if localPlayer.m_InChessGame then return end
 
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end
@@ -134,8 +139,16 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if getElementData(element, "worlditem") then
 		if trigger then
 			if button == "left" then
-				triggerServerEvent("worldItemClick", element)
-			elseif button == "right" then
+				self:addMouseMenu(WorldItemMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+			end
+		end
+		return true
+	end
+	if getElementData(element, "worlditem_attachment") then
+		if trigger then
+			if button == "left" then
+				local ele = getElementData(element, "worlditem_attachment")
+				self:addMouseMenu(WorldItemMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, ele), ele)
 			end
 		end
 		return true
@@ -161,6 +174,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 					elseif getElementType(element) == "object" then
 						if getElementData(element, "bankPC") then
 							self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						elseif element:getData("onClickEvent") then
+							element:getData("onClickEvent")()
 						end
 					end
 
@@ -188,6 +203,17 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 			if trigger then
 				if button == "left" then
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				end
+			end
+			return true
+		end
+	end
+	-- check vehicle attachments
+	if getElementData(element, "vehicle-attachment") and isElement(getElementData(element, "vehicle-attachment")) then
+		if range < 10 and not localPlayer.m_inTuning then
+			if trigger then
+				if button == "left" then
+					self:addMouseMenu(self.m_Menu["vehicle"]:new(clickInfo.absoluteX, clickInfo.absoluteY, getElementData(element, "vehicle-attachment")), getElementData(element, "vehicle-attachment"))
 				end
 			end
 			return true

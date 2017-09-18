@@ -6,14 +6,6 @@
 -- *
 -- ****************************************************************************
 
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Tour.lua
--- *  PURPOSE:     eXo Tour Class (server)
--- *
--- ****************************************************************************
-
 Tour = inherit(Singleton)
 function Tour:constructor()
 	addRemoteEvents{"tourStart", "tourStop", "tourSuccess"}
@@ -128,7 +120,7 @@ Tour.Data = {
 	[7] = {
 		["Title"] = "Fahrzeug verschwunden",
 		["Description"] = "Kommen wir nun zum Unternehmen Mechanic & Tow. Fahre zum Abschlepphof!",
-		["Success"] = "Hier können abgeschleppte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
+		["Success"] = "Hier können abgeschleppte oder explodierte Fahrzeuge freigekauft werden. Schaue dazu rechts im Hof ins Glashaus.",
 		["Position"] = Vector3(925.55, -1221.33, 15.98),
 		["Money"] = 500
 	},
@@ -155,9 +147,9 @@ Tour.Data = {
 	},
 	[11] = {
 		["Title"] = "Fishing? Still funny!",
-		["Description"] = "Der nächste Punkt auf unserer Liste ist der Angelplatz. Folge einfach wieder dem Pfeil!",
-		["Success"] = "Hier an den grünen Markern kannst du Angeln. Verkaufe deine Beute einfach bei Angler Lutz, rechts von der Treppe",
-		["Position"] = Vector3(351.64, -2085.80, 7.3),
+		["Description"] = "Der nächste Punkt auf unserer Liste ist der Angler Lutz. Folge einfach wieder dem Pfeil!",
+		["Success"] = "Hier ist der Angelshop, weitere Infos zu unserem Angelsystem erhälst du im Hilfemenü (F1)",
+		["Position"] = Vector3(393.06, -1897.12, 7.3),
 		["Money"] = 50
 	},
 	[12] = {
@@ -169,7 +161,7 @@ Tour.Data = {
 	},
 	[13] = {
 		["Title"] = "Alkohol ist auch eine Lösung",
-		["Description"] = "Puh viel geschaft. Machen wir nun einen Abstecher in eine Bar!",
+		["Description"] = "Puh viel geschafft. Machen wir nun einen Abstecher in eine Bar!",
 		["Success"] = "Es gibt zahlreiche Bars in Los Santos. Besitzer der Bar können Stripperinnen engagieren und Musik verwalten.",
 		["Position"] = Vector3(1830.46, -1683.94, 12.7),
 		["Money"] = 200
@@ -190,7 +182,7 @@ Tour.Data = {
 	},
 	[16] = {
 		["Title"] = "Formel 1 - Naja fast",
-		["Description"] = "Der letzte Punkt unserer Tour führ zu einem richtigen Highlight. Der eXo-Reallife Kartbahn!",
+		["Description"] = "Der letzte Punkt unserer Tour führt zu einem richtigen Highlight. Der eXo-Reallife Kartbahn!",
 		["Success"] = "Hier kannst du Rennen gegen die Uhr fahren und neue Toptimes aufstellen. Das wars mit der Tour, weiter Hilfe findest du unter F1, /report oder im Forum!",
 		["Position"] = Vector3(1295.52, 149.98, 19),
 		["Money"] = 500

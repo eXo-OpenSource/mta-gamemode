@@ -34,6 +34,8 @@ function VehicleGarages:createEntrance(info, Id)
 	local entranceShape = createColSphere(enterX, enterY, enterZ, 3)
 	if not info.hideblip then
 		local blip = Blip:new("Garage.png", enterX, enterY,root,600)
+		blip:setDisplayText("Garage", BLIP_CATEGORY.VehicleMaintenance)
+		blip:setOptionalColor({108, 124, 139})
 	end
 
 	addEventHandler("onColShapeHit", entranceShape, bind(self.EntranceShape_Hit, self))
@@ -73,7 +75,7 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
   player:setPrivateSync("isInGarage", true)
 	player.m_GarageSession = session
 
-	player:setSpawnLocation(SPAWN_LOCATION_GARAGE)
+	player:setSpawnLocation(SPAWN_LOCATIONS.GARAGE)
 	player:setLastGarageEntrance(session:getEntranceId())
 	player:setDimension(session:getDimension())
 
@@ -93,7 +95,7 @@ function VehicleGarages:closeSession(session)
 
 	-- Tell the player that we closed the garage session
 	sessionOwner:triggerEvent("vehicleGarageSessionClose")
-	sessionOwner:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
+	sessionOwner:setSpawnLocation(SPAWN_LOCATIONS.DEFAULT)
 	sessionOwner:setDimension(0)
 
 	self.m_Sessions[idx] = nil

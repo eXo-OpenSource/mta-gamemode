@@ -32,16 +32,23 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 	else
-		self:addItem(_"Respawn",
+		self:addItem(_"Respawnen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleRespawn", self:getElement())
 				end
 			end
 		)
+		self:addItem(_"Parken",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehiclePark", self:getElement())
+				end
+			end
+		)
 	end
 	if localPlayer:getRank() >= RANK.Moderator then
-		self:addItem(_"Fahrzeug reparieren",
+		self:addItem(_"Reparieren",
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleRepair", self:getElement())
@@ -49,14 +56,20 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 
-		self:addItem(_"Fahrzeug despawnen",
+		self:addItem(_"Despawnen",
 			function()
 				if not self:getElement() then return end
-					triggerServerEvent("adminVehicleDespawn", self:getElement())
+				InputBox:new(_"Fahrzeug despawnen", _"Aus welchem Grund möchtest du das Fahrzeug despawnen?",
+					function(reason)
+						if self:getElement() then
+							triggerServerEvent("adminVehicleDespawn", self:getElement(), reason)
+						end
+					end
+				)
 			end
 		)
 
-		self:addItem(_"Fahrzeug Handbremse lösen",
+		self:addItem(_"Handbremse lösen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleToggleHandbrake", self:getElement())
@@ -64,7 +77,7 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 
-		self:addItem(_"Fahrzeug löschen",
+		self:addItem(_"Löschen",
 			function()
 				if not self:getElement() then return end
 				InputBox:new(_"Fahrzeug löschen", _"Aus welchem Grund möchtest du das Fahrzeug löschen?",
@@ -77,4 +90,6 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 	end
+
+	self:adjustWidth()
 end

@@ -8,13 +8,13 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
 
-addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
+addRemoteEvents{"showAdminMenu", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
 
 function AdminGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
@@ -65,8 +65,10 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
-
-
+	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", 340, 310, 210, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("pedMenu", "Ped-Menü", 340, 350, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("playerHistory", "Spielerakten", 340, 390, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("eventGangwarMenu", "Gangwar-Menü", 340, 430, 210, 30, Color.Blue, tabAllgemein)
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -113,10 +115,12 @@ function AdminGUI:constructor(money)
 
 	GUILabel:new(440, 130, 160, 30, _"Sonstiges:", tabSpieler)
 	self:addAdminButton("spect", "specten", 440, 170, 160, 30, Color.LightRed, tabSpieler)
-	self:addAdminButton("goto", "hin porten", 440, 210, 160, 30, Color.Green, tabSpieler)
-	self:addAdminButton("gethere", "her porten", 440, 250, 160, 30, Color.Green, tabSpieler)
-	self:addAdminButton("nickchange", "Nick ändern", 440, 290, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("freeze", "ent/freezen", 440, 210, 160, 30, Color.LightRed, tabSpieler)
+	self:addAdminButton("goto", "hin porten", 440, 250, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("gethere", "her porten", 440, 290, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("nickchange", "Nick ändern", 440, 330, 160, 30, Color.Orange, tabSpieler)
 
+	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", 610, 130, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 610, 170, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("warn", "Warns verwalten", 610, 210, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("setFaction", "in Fraktion setzen", 610, 250, 160, 30, Color.Blue, tabSpieler)
@@ -166,16 +170,6 @@ function AdminGUI:constructor(money)
 	self.m_FullScreen.onLeftClick = function ()
 		self:close()
 		local url = self.m_WebPanel:getUnderlyingBrowser():getURL()
-		WebBrowser:new(url)
-	end
-
-	local tabDev = self.m_TabPanel:addTab(_"DevPanel")
-	local devPanelUrl = "http://exo-reallife.de/dev"
-	self.m_DevPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, devPanelUrl, true, tabDev)
-	self.m_FullScreenDev = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabDev):setFont(FontAwesome(15))
-	self.m_FullScreenDev.onLeftClick = function ()
-		self:close()
-		local url = self.m_DevPanel:getUnderlyingBrowser():getURL()
 		WebBrowser:new(url)
 	end
 
@@ -314,7 +308,7 @@ function AdminGUI:onSelectPlayer(player)
 	local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
-	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
+	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keins -"))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_PlayerJobLabel:setText(_("Job: %s", player:getJobName()))
 	self.m_PlayerMoneyLabel:setText(_("Geld: %d$", player:getPublicSync("Money") or 0))
@@ -373,7 +367,10 @@ function AdminGUI:onButtonClick(func)
 	if func == "showVehicles" then
 		AdminVehicleGUI:new(self.m_SelectedPlayer, self)
 		self:close()
-	elseif func == "gethere" or func == "goto" or func == "spect" then
+	elseif func == "showGroupVehicles" then
+		AdminVehicleGUI:new(self.m_SelectedPlayer, self, true)
+		self:close()
+	elseif func == "gethere" or func == "goto" or func == "spect" or func == "freeze" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
@@ -426,18 +423,30 @@ function AdminGUI:onButtonClick(func)
 				end)
 	elseif func == "setCompany" then
 		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-		ChangerBox:new(_"Unternehmen setzten",
-				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
-				function (companyId)
-					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
+		ChangerBoxWithCheck:new(_"Unternehmen setzten",
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable, {0, 1, 2, 3, 4, 5}, "In Fraktionsverlauf vermerken?",
+				function (companyId, rank, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external)
+							triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId, rank)
+					end
 				end)
 	elseif func == "setFaction" then
 		local factionTable = FactionManager:getSingleton():getFactionNames()
 		factionTable[0] = "Keine Fraktion"
-		ChangerBox:new(_"Fraktion setzten",
-				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
-				function (factionId)
-					triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+		ChangerBoxWithCheck:new(_"Fraktion setzten",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable, {0, 1, 2, 3, 4, 5, 6}, "In Fraktionsverlauf vermerken?",
+				function (factionId, rank, state)
+					if state then
+						HistoryUninviteGUI:new(function(internal, external)
+							triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank, internal, external)
+						end)
+					else
+						triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId, rank)
+					end
 				end)
 	elseif func == "respawnCompany" then
 		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
@@ -516,16 +525,27 @@ function AdminGUI:onButtonClick(func)
 	elseif func == "eventMenu" then
 		self:close()
 		AdminEventGUI:getSingleton():open()
+	elseif func == "pedMenu" then
+		self:close()
+		AdminPedGUI:getSingleton():open()
+	elseif func == "playerHistory" then
+		self:close()
+		HistoryPlayerGUI:new(AdminGUI)
+	elseif func == "eventGangwarMenu" then 
+		self:close() 
+		GangwarDebugGUI:new(AdminGUI)
 	elseif func == "vehicleTexture" then
-		--self:close()
-		--TexturePreviewGUI:getSingleton():open()
+		self:close()
+		TexturePreviewGUI:getSingleton():openAdmin()
+	elseif func == "checkOverlappingVehicles" then
+		triggerServerEvent("checkOverlappingVehicles", localPlayer)
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
 			local pos = {x, y, z}
 			triggerServerEvent("adminTriggerFunction", root, func, pos)
 		else
-			ErrorBox("Ungültige Koordinaten-Angabe")
+			ErrorBox:new("Ungültige Koordinaten-Angabe")
 		end
 	elseif func == "nickchange" then
 		InputBox:new(_("Spieler %s umbenennen", self.m_SelectedPlayer:getName()),
@@ -564,13 +584,6 @@ addEventHandler("showAdminMenu", root,
 	end
 )
 
-addEventHandler("announceText", root,
-	function(message)
-		AdminGUI.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, false,true)
-		playSound("files/audio/announcment.mp3")
-	end
-)
-
 AdminInputBox = inherit(GUIForm)
 
 function AdminInputBox:constructor(title, durationText, callback)
@@ -595,11 +608,11 @@ end
 
 AdminVehicleGUI = inherit(GUIForm)
 
-function AdminVehicleGUI:constructor(player, adminGui)
+function AdminVehicleGUI:constructor(player, adminGui, isGroup)
 	self.m_Player = player
 	self.m_AdminGui = adminGui
 	GUIForm.constructor(self, screenWidth/2-500/2, screenHeight/2-300/2, 500, 300)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", player:getName()), true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", isGroup and (player:getGroupName() and player:getGroupName() or "-") or player:getName()), true, true, self)
 	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
 	self.m_VehiclesGrid = GUIGridList:new(10, 40, 300, 250, self.m_Window)
 	self.m_VehiclesGrid:addColumn(_"Name", 0.5)
@@ -625,7 +638,7 @@ function AdminVehicleGUI:constructor(player, adminGui)
 	addRemoteEvents{"adminVehicleRetrieveInfo"}
 	addEventHandler("adminVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 
-	triggerServerEvent("adminGetPlayerVehicles", localPlayer, player)
+	triggerServerEvent("adminGetPlayerVehicles", localPlayer, player, isGroup)
 end
 
 function AdminVehicleGUI:Event_vehicleRetrieveInfo(vehiclesInfo)

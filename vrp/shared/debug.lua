@@ -5,9 +5,13 @@
 -- *  PURPOSE:     Debug stuff
 -- *
 -- ****************************************************************************
-DEBUG = GIT_BRANCH == nil or GIT_BRANCH == "master" or GIT_BRANCH == "develop" or GIT_BRANCH == "release/testing"
+DEBUG = GIT_BRANCH ~= "release/production"
+if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
+	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
+	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
+end
 
-if triggerClientEvent then
+if triggerClientEvent and DEBUG_LOAD_SAVE then
 	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
 end
 
@@ -101,23 +105,54 @@ function tableToString(tab)
 	return result
 end
 
+
+local runStringSavedVars = {}
+
+local function prepareRunStringVars(runPlayer)
+	runStringSavedVars.me = me
+	runStringSavedVars.my = my
+	runStringSavedVars.player = player
+	runStringSavedVars.cprint = cprint
+
+	me = runPlayer
+	my = runPlayer
+	player = function(target)
+		return PlayerManager:getSingleton():getPlayerFromPartOfName(target,runPlayer)
+	end 
+	cprint = function(var)
+		outputConsole(inspect(var), runPlayer)
+	end
+end
+
+
+local function restoreRunStringVars()
+	me = runStringSavedVars.me
+	my = runStringSavedVars.my
+	cprint = runStringSavedVars.cprint
+	player = runStringSavedVars.player
+
+	runStringSavedVars = {}
+end
+
 -- Hacked in from runcode
-function runString(commandstring, source)
+function runString(commandstring, source, suppress)
 	local sourceName, output, outputPlayer
 	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
 		output = function (msg)
-			if SERVER then
-				Admin:getSingleton():sendMessage(msg, 255, 51, 51)
-			else
-				outputChatBox(msg, 255, 51, 51)
+			if not suppress then
+				if SERVER then
+					Admin:getSingleton():sendMessage(msg, 255, 51, 51, ADMIN_RANK_PERMISSION["seeRunString"])
+				else
+					outputChatBox(msg, 255, 51, 51)
+				end
 			end
 		end
 		outputPlayer = source
 	else
 		sourceName = "Console"
 		output = function (msg)
-			Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+			Admin:getSingleton():sendMessage(msg, 255, 51, 51, ADMIN_RANK_PERMISSION["seeRunString"])
 		end
 		outputPlayer = nil
 
@@ -125,6 +160,7 @@ function runString(commandstring, source)
 	output(sourceName.." executed command: "..commandstring, outputPlayer)
 	local notReturned
 	--First we test with return
+	prepareRunStringVars(outputPlayer)
 	local commandFunction,errorMsg = loadstring("return "..commandstring)
 	if errorMsg then
 		--It failed.  Lets try without "return"
@@ -153,16 +189,22 @@ function runString(commandstring, source)
 			else
 				resultsString = resultsString..", "
 			end
-			local resultType = type(results[i])
-			if isElement(results[i]) then
-				resultType = "element:"..getElementType(results[i])
+			if type(results[i]) ~= "table" then
+				resultsString = resultsString..inspect(results[i])
+			else
+				resultsString = resultsString..tostring(results[i])
 			end
-			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
-		output("Command results: "..resultsString, outputPlayer)
+		if resultsString ~= "" then
+			output("Command results: "..resultsString, outputPlayer)
+		end
+		return resultsString
 	elseif not errorMsg then
 		output("Command executed!", outputPlayer)
+		return
 	end
+
+	restoreRunStringVars()
 end
 
 --[[
@@ -185,10 +227,12 @@ function getDebugInfo(stack)
 	return className, tostring(debug.getinfo(stack or 2).name), tostring(debug.getinfo(stack or 2).currentline)
 end
 
-function outputDebug(errmsg)
+function outputDebug(...)
 	if DEBUG then
 		local className, methodName, currentline = getDebugInfo(3)
-		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, methodName, currentline, tostring(errmsg)), 3)
+		local msgs = {...}
+		for i,v in pairs(msgs) do msgs[i] = inspect(v) end
+		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, methodName, currentline, table.concat(msgs, " | ")), 3)
 	end
 end
 

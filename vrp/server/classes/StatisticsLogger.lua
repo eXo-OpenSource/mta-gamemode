@@ -22,7 +22,10 @@ function StatisticsLogger:destructor()
 end
 
 function StatisticsLogger:getZone(player)
-	return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	if player then
+		return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+	end
+	return "unknown"
 end
 
 function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
@@ -40,7 +43,7 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local groupId = 0
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
-    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp, Date) VALUES(?, ?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
 
@@ -49,6 +52,13 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
 	local since = getRealTime().timestamp-days*24*60*60
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
     return result
+end
+
+function StatisticsLogger:getGroupLogUserIDs(groupType, groupId)
+	local days = 7
+	local since = getRealTime().timestamp-days*24*60*60
+	local result = sqlLogs:queryFetch("SELECT DISTINCT UserId FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
+	return result
 end
 
 function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
@@ -65,8 +75,52 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 	local userId = 0
     if isElement(player) then userId = player:getId() end
 
-    sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Date) VALUES (?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
+	local hearedOld = {}
+	for k, pl in ipairs(heared) do
+		hearedOld[k] = pl:getName()
+	end
+
+	local parameters = {sqlLogs:getPrefix(), userId, type, text, toJSON(hearedOld), self:getZone(player), player.position.x, player.position.y}
+
+	for k, pl in ipairs(heared) do
+		table.insert(parameters, sqlLogs:getPrefix())
+		table.insert(parameters, pl:getId())
+	end
+
+	local query = "INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, PosX, PosY, Date) VALUES (?, ?, ?, ?, ?, ?, ?, Now());"
+	query = query .. " SET @lastId = LAST_INSERT_ID();"
+	query = query .. string.rep(" INSERT INTO ??_ChatReceivers (MessageId, Receiver) VALUES (@lastId, ?);", #heared)
+
+    sqlLogs:queryExec(query,
+        unpack(parameters))
+end
+
+
+function StatisticsLogger:addJobLog(player, job, duration, earned, vehicle, distance, points, amount)
+	local userId = 0
+    if isElement(player) then userId = player:getId() end
+
+	if not vehicle then vehicle = 0 end
+	if not distance then distance = 0 end
+	if not points then points = 0 end
+	if not amount then amount = 0 end
+
+    sqlLogs:queryExec("INSERT INTO ??_Job (UserId, Job, Duration, Earned, Bonus, Vehicle, Distance, Points, Amount, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, job, duration, earned, 0, vehicle, distance, points, amount)
+end
+
+function StatisticsLogger:addVehicleLog(player, ownerId, ownerType, elementId, model, action)
+	local userId = 0
+    if isElement(player) then userId = player:getId() end
+
+	if not ownerId then ownerId = 0 end
+	if not ownerType then ownerType = "" end
+	if not elementId then elementId = 0 end
+	if not model then model = 0 end
+	if not action then action = "" end
+
+    sqlLogs:queryExec("INSERT INTO ??_Vehicles (UserId, ElementId, OwnerId, OwnerType, Action, Model, Date) VALUES (?, ?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, elementId, ownerId, ownerType, action, model)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
@@ -117,12 +171,12 @@ function StatisticsLogger:addAmmunationLog(player, type, weapons, costs)
         sqlLogs:getPrefix(), userId, type, weapons, costs, self:getZone(player))
 end
 
-function StatisticsLogger:addVehicleDeleteLog(userId, admin, model)
+function StatisticsLogger:addVehicleDeleteLog(userId, admin, model, reason)
 	local adminId = 0
 	if isElement(admin) then adminId = admin:getId() else adminId = admin or 0 end
 
-	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Date) VALUES(?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin))
+	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Reason, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin), reason)
 end
 
 function StatisticsLogger:addTextLog(logname, text)
@@ -138,7 +192,7 @@ function StatisticsLogger:addTextLog(logname, text)
 	fileClose(file)
 end
 
-function StatisticsLogger:addDrugPlantLog( player, type )
+function StatisticsLogger:addPlantLog(player, type)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_DrugPlants (UserId, Type, Date ) VALUES(?, ?,  NOW())",
         sqlLogs:getPrefix(), userId, type)
@@ -288,16 +342,74 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 	end
 end
 
-function StatisticsLogger:itemTradeLogs( player, player2, item, price)
-    local userId = 0
-	local userId2 = 0
+function StatisticsLogger:itemTradeLogs( player, player2, item, price, amount)
+	local userId1, userId2 = 0, 0
+
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
 	if item and price then
 		if tonumber(price) then
-			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Date) VALUES(?, ?, ?, ?,  NOW())",
-				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price))
+			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Amount, Date) VALUES(?, ?, ?, ?, ?,  NOW())",
+				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price), amount or 0)
 		end
 	end
 end
 
+function StatisticsLogger:addfishCaughtLogs(player, FishName, FishSize, Location)
+	if player and FishName and FishSize and Location then
+		sqlLogs:queryExec("INSERT INTO ??_fishCaught (PlayerId, FishName, FishSize, Location, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			player:getId(), FishName, FishSize, ("%s - %s"):format(Location, self:getZone(player)))
+	end
+end
+
+function StatisticsLogger:addFishTradeLogs(PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator) -- ReceivingId 0 for server
+	if PlayerId and ReceivingId and FishName and FishSize and Price and RareMultiplicator then
+		sqlLogs:queryExec("INSERT INTO ??_fishTrade (PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			PlayerId, ReceivingId, FishName, FishSize, Price, RareMultiplicator)
+	end
+end
+
+function StatisticsLogger:addVehicleTrunkLog(trunk, player, action, itemType, item, itemAmount, slot)
+	local userId = 0
+
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_VehicleTrunk (UserId, Trunk, Action, ItemType, Item, Amount, Slot) VALUES (?, ?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			userId, trunk, action, itemType, item, itemAmount, slot)
+end
+
+function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
+	local userId1, userId2 = 0, 0
+
+	if isElement(player) then userId1 = player:getId() else userId1 = player or 0 end
+	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
+
+	local vehicleId = vehicle:getId() or 0
+	local trunkContent = {}
+	if vehicle.getTrunk and vehicle:getTrunk() then
+		local trunk = vehicle:getTrunk()
+		trunkContent = {
+			["Id"] = trunk.m_Id,
+			["Items"] = trunk.m_ItemSlot,
+			["Weapons"] = trunk.m_WeaponSlot
+		}
+	end
+
+	sqlLogs:queryExec("INSERT INTO ??_vehicleTrade (SellerId, BuyerId, VehicleId, Trunk, Price, TradeType, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId1, userId2, vehicleId, toJSON(trunkContent), price, tradeType)
+end
+
+function StatisticsLogger:addRaidLog(attacker, target, success, money)
+	local userId1, userId2, faction = 0, 0, 0
+
+	if isElement(attacker) then userId1 = attacker:getId() faction = attacker:getFaction():getId() else userId1 = attacker or 0 end
+	if isElement(target) then userId2 = target:getId() else userId2 = target or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_Raid (Attacker, Target, Money, Success, Position, Faction, Date) VALUES (?, ?, ?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+			userId, userId2, money, success, self:getZone(target), faction)
+end
+
+function StatisticsLogger:addGangwarLog(area, attacker, owner, starttimestamp, endtimestamp, winner)
+	sqlLogs:queryExec("INSERT INTO ??_Gangwar (Gebiet, Angreifer, Besitzer, StartZeit, EndZeit, Gewinner) VALUES (?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
+			area, attacker, owner, starttimestamp, endtimestamp, winner)
+end

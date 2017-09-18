@@ -11,6 +11,10 @@ function SanNews:constructor()
 	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
  	self:setSafe(safe)
 
+	local id = self:getId()
+	local blip = Blip:new("House.png", 732.40, -1339.90, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
+	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
+
     VehicleBarrier:new(Vector3(781.40, -1384.60, 13.50), Vector3(0, 90, 180), 0).onBarrierHit = bind(self.onBarrierHit, self)
     VehicleBarrier:new(Vector3(781.30, -1330.30, 13.40), Vector3(0, 90, 180), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
@@ -18,12 +22,12 @@ function SanNews:constructor()
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
-	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage"}
+	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage", "sanNewsStartStreetrace"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
 	addEventHandler("sanNewsStopInterview", root, bind(self.Event_stopInterview, self))
 	addEventHandler("sanNewsAdvertisement", root, bind(self.Event_advertisement, self))
 	addEventHandler("sanNewsToggleMessage", root, bind(self.Event_toggleMessage, self))
-
+	addEventHandler("sanNewsStartStreetrace", root, bind(self.Event_startStreetrace, self))
 
 	addCommandHandler("news", bind(self.Event_news, self))
 	addCommandHandler("sannews", bind(self.Event_sanNewsMessage, self), false, false)
@@ -47,6 +51,14 @@ function SanNews:Event_news(player, cmd, ...)
 			local argTable = { ... }
 			local text = table.concat ( argTable , " " )
 			outputChatBox(_("#FE8D14Reporter %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
+
+    		local receivedPlayers = {}
+			for k, targetPlayer in ipairs(getElementsByType("player")) do
+				if targetPlayer ~= player then
+					receivedPlayers[#receivedPlayers+1] = targetPlayer
+				end
+			end
+			StatisticsLogger:getSingleton():addChatLog(player, "news", text, receivedPlayers)
 		else
 			player:sendError(_("Du bist nicht im Dienst!", player))
 		end
@@ -63,14 +75,14 @@ function SanNews:Event_startInterview(target)
 
 				client:sendInfo(_("Du hast ein Interview mit %s gestartet!", client, target.name))
 				target:sendInfo(_("Reporter %s hat ein Interview mit dir gestartet!", target, client.name))
-				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l [text])", client))
+				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l [text])", target))
 				self:addInterviewPlayer(client)
 				self:addInterviewPlayer(target)
 			else
-				client:sendError(_("Es findet bereits ein Interview statt!", player))
+				client:sendError(_("Es findet bereits ein Interview statt!", client))
 			end
 		else
-			client:sendError(_("Du bist nicht im Dienst!", player))
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
@@ -87,7 +99,7 @@ function SanNews:Event_stopInterview(target)
 			target:sendInfo(_("Reporter %s hat das Interview mit dir beendet!", target, client.name))
 			self:stopInterview()
 		else
-			client:sendError(_("Du bist nicht im Dienst!", player))
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
@@ -95,7 +107,7 @@ end
 function SanNews:Event_onPlayerQuit()
 	if table.find(self.m_InterviewPlayer, source) then
 		for index, player in pairs(self.m_InterviewPlayer) do
-			player:sendInfo(_("Interview beendet! Ein Spieler ist offline gegangen!", client))
+			player:sendInfo(_("Interview beendet! Ein Spieler ist offline gegangen!", player))
 		end
 		self:stopInterview()
 	end
@@ -104,7 +116,7 @@ end
 function SanNews:onInterviewColshapeLeave(leaveElement)
 	if table.find(self.m_InterviewPlayer, leaveElement) then
 		for index, player in pairs(self.m_InterviewPlayer) do
-			player:sendInfo(_("Interview beendet! Ihr habt euch zuweit entfernt!", client))
+			player:sendInfo(_("Interview beendet! Ihr habt euch zu weit entfernt!", player))
 		end
 		self:stopInterview()
 	end
@@ -128,13 +140,21 @@ function SanNews:Event_onPlayerChat(player, text, type)
 				else
 					outputChatBox(_("#FE8D14[Interview] %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
 				end
+
+				local receivedPlayers = {}
+				for k, targetPlayer in ipairs(getElementsByType("player")) do
+					if targetPlayer ~= player then
+						receivedPlayers[#receivedPlayers+1] = targetPlayer
+					end
+				end
+				StatisticsLogger:getSingleton():addChatLog(player, "interview", text, receivedPlayers)
 				return true
 			end
 		end
 	end
 end
 
-function SanNews:Event_advertisement(sendername, text, color, duration)
+function SanNews:Event_advertisement(senderIndex, text, color, duration)
 	local length = text:len()
 	if length <= 50 and length >= 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
@@ -148,11 +168,21 @@ function SanNews:Event_advertisement(sendername, text, color, duration)
 		if client:getMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
 				client:takeMoney(costs, "San News Ad")
-				self:giveMoney(costs, "San News Ad")
+				self:giveMoney(costs, "San News Ad", true)
 				client:triggerEvent("closeAdvertisementBox")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				StatisticsLogger:getSingleton():addAdvert(client, text)
-				triggerClientEvent("showAd", client, sendername, text, color, duration)
+
+				local sender = {referenz = "player", name = client:getName()}
+				if senderIndex == 2 and client:getGroup() and client:getGroup():getName() then
+					sender = {referenz = "group", name = client:getGroup():getName(), number = client:getGroup():getPhoneNumber()}
+				elseif senderIndex == 3 and client:getFaction() and client:getFaction():getShortName() then
+					sender = {referenz = "faction", name = client:getFaction():getShortName(), number = client:getFaction():getPhoneNumber()}
+				elseif senderIndex == 4 and client:getCompany() and client:getCompany():getShortName() then
+					sender = {referenz = "company", name = client:getCompany():getShortName(), number = client:getCompany():getPhoneNumber()}
+				end
+
+				triggerClientEvent("showAd", client, sender, text, color, duration)
 			else
 				local next = self.m_NextAd - getRealTime().timestamp
 				client:sendError(_("Die nächste Werbung kann erst in %d Sekunden gesendet werden!", client, next))
@@ -171,6 +201,10 @@ function SanNews:Event_toggleMessage()
 		self.m_SanNewsMessageEnabled = true
 		self:sendShortMessage(("%s hat /sannews aktiviert!"):format(client:getName()))
 	end
+end
+
+function SanNews:Event_startStreetrace()
+	EventManager:getSingleton():openRandomEvent()
 end
 
 function SanNews:Event_sanNewsMessage(player, cmd, ...)

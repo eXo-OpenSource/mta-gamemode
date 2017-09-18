@@ -191,47 +191,10 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			end
 		end
 	end
-	if weaponStorage and ammoInStorage and weaponBeforeEquip and ammoBeforeEquip then
-		if #weaponStorage >= 2 then
-			if weaponInStorage == weaponStorage[1] then
-				local weapon, ammo = getPedWeapon(player, 2)
-				if weapon == weaponStorage[1] and weapon ~= weaponBeforeEquip then
-					Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
-					giveWeapon(player, weaponBeforeEquip, ammoBeforeEquip, true)
-					outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
-				else
-					Guns:getSingleton():setWeaponInStorage(player, weaponBeforeEquip, ammoBeforeEquip)
-					giveWeapon(player, weaponStorage[1], ammoStorage[weaponStorage[1]], true)
-					outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Recktsklick (Gedrückt) +X", player, 200, 200, 0)
-				end
-			end
-		end
-	elseif weaponStorage then
-		if #weaponStorage >= 2 then
-			outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
-			Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
-		end
-	end
 	self:save()
 end
 
-function Depot:addWeaponsToDepot(weaponTable)
-	for weaponID,v in pairs(weaponTable) do
-		for typ,amount in pairs(weaponTable[weaponID]) do
-			if amount > 0 then
-				if typ == "Waffe" then
-					self:addWeaponD(weaponID,amount)
-				elseif typ == "Munition" then
-					if weaponID == 25 then amount = amount * 6 end
-					if weaponID == 33 then amount = amount * 5 end
-					if weaponID == 34 then amount = amount * 4 end
-					self:addMagazineD(weaponID,amount)
-				end
-			end
-		end
-	end
-	self:save()
-end
+
 
 function Depot:addItem(player, item, amount)
 	for i=1, 6 do

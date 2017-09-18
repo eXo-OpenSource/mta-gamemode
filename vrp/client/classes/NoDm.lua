@@ -4,9 +4,10 @@ NoDm.Zones = {
 	[1] = {Vector3(1399.112, -1862.453, 12), Vector3(160,120,15)},
 	[2] = {Vector3(1322.850, -1721.659, 12), Vector3(92,120, 15)},
 	[3] = {Vector3(430, -100, 998), Vector3(50, 40, 10), 4},
-	[4] = {Vector3{1770, -1342.12, 20.77},Vector3{65, 72, 123}},
+	[4] = {Vector3{1770.88, -1313.1, 20.77},Vector3{65, 44, 123}},
 	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}}, -- Rescue
 	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
+	[7] = {Vector3(2091.23, -1824.72, 12), Vector3(40, 45, 20)}
 }
 
 function NoDm:constructor()
@@ -24,7 +25,7 @@ function NoDm:constructor()
 		if koords[3] and koords[3] > 0 then
 			colshape:setInterior(koords[3])
 		else
-			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
+			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 150})
 		end
 		self:addZone(colshape)
 	end

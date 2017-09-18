@@ -41,6 +41,12 @@ function enumFields(name)
 end
 
 function table.size(tab)
+	if not tab or not type(tab) == "table" then
+		outputDebugString("Bad Argument #1 in function table.size. See Console for more details")
+		outputConsole(debug.traceback())
+		return false
+	end
+
 	local i = 0
 	for _ in pairs(tab) do
 		i = i + 1
@@ -339,7 +345,7 @@ function nextframe(fn, ...)
 end
 
 function toboolean(num)
-	return num ~= 0 and num ~= "0"
+	return num and num ~= 0 and num ~= "0" and num ~= "false"
 end
 
 function addRemoteEvents(eventList)
@@ -540,9 +546,28 @@ function countLineBreaks(text)
 	return count
 end
 
-function math.round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
+function convertNumber ( number )
+	local formatted = number
+	while true do
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1.%2')
+		if ( k==0 ) then
+			break
+		end
+	end
+	return formatted
+end
+
+function toMoneyString(money)
+	if tonumber(money) then
+		return convertNumber(math.floor(money)).."$"
+	end
+	return tostring(money)
+end
+
+function getOpticalZoneName(x, y, z)
+	local zone1 = getZoneName(x, y, z or 0)
+	local zone2 = getZoneName(x, y, z or 0, true)
+	return zone1 ~= zone2 and ("%s, %s"):format(zone1, zone2) or zone1
 end
 
 function linear(t, b, c, d)
@@ -601,54 +626,6 @@ function timespanArray(seconds)
     td["hour"] = ((((seconds - td["sec"]) /60)-td["min"]) / 60) % 24
     td["day"] = math.floor( (((((seconds - td["sec"]) /60)-td["min"]) / 60) / 24) )
     return td
-end
-
-function getVehicleInteractType(vehicle)
-	-- front doors, hood, trunk
-    local twoDoors = {  602, 429, 402, 541, 415, 480, 562, 587, 565, 559, 603, 506, 558, 555, 536, 575,
-                        518, 419, 534, 576, 412, 496, 401, 527, 542, 533, 526, 474, 545, 517, 410, 436,
-                        475, 439, 549, 491, 599, 552, 499, 422, 414, 600, 543, 478, 456, 554, 589, 500,
-                        489, 442, 495, 605}
-
-    -- front doors, rear doors, hood, trunk
-    local fourDoors = { 560, 567, 445, 438, 507, 585, 466, 492, 546, 551, 516, 467, 426, 547, 405, 580,
-                        550, 566, 420, 540, 421, 529, 490, 596, 598, 597, 418, 579, 400, 470, 404, 479,
-                        458, 561, 604}
-
-    -- front doors, hood  (small cars)
-    local twoDoorsNoTrunk = {411, 451, 477, 535, 528, 525, 508, 494, 502, 503, 423}
-
-    -- front doors, hood, rear doors at backside
-    local vans = {416, 427, 609, 498, 428, 459, 482, 582, 413, 440}
-
-    -- front doors, hood (big cars)
-    local trucks = {433, 524, 455, 403, 443, 515, 514, 408}
-
-    -- front doors
-    -- 407 and 544 firetrucks, 601 swat tank , 574 sweeper, 483 camper, 588 hotdog, 434 hotrod, 444 monstertruck, 583 tug
-    local special = {407, 544, 601, 573, 574, 483, 588, 434, 444, 583}
-
-    -- stretch
-    local stretch = {409}
-
-	local types = {
-		["2 doors"] = twoDoors,
-		["2 doors, no trunk"] = twoDoorsNoTrunk,
-		["4 doors"] = fourDoors,
-		["Van"] = vans,
-		["Truck"] = trucks,
-		["Special"] = special,
-		["stretch"] = stretch
-	}
-
-    for name, type in pairs(types) do
-		for index, model in pairs(type) do
-			if vehicle:getModel() == model then
-				return name
-			end
-		end
-	end
-    return "not useable"
 end
 
 -- Override it
@@ -751,10 +728,25 @@ local vehicles = {
 }
 local _isVehicleOnGround = isVehicleOnGround
 function isVehicleOnGround(vehicle)
-	if isElement(vehicle) and vehicles[vehicle:getModel()] then
-		return vehicle.velocity.length == 0
-	else
-		return _isVehicleOnGround(vehicle)
+	if isElement(vehicle) then
+		if vehicle:getVehicleType() == VehicleType.Plane or vehicles[vehicle:getModel()] then
+			return vehicle:getSpeed() == 0
+		elseif vehicle:getVehicleType() == VehicleType.Boat then
+			return vehicle:getSpeed() < 3
+		else
+			return _isVehicleOnGround(vehicle)
+		end
 	end
 end
 function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end
+
+function getColorNameFromVehicle(c1, c2)
+	local color1 = CAR_COLORS_FROM_ID[c1] or "Unerkannt"
+	local color2 = CAR_COLORS_FROM_ID[c2] or "Unerkannt"
+
+	if color1 ~= color2 then
+		return color1 .. " & " .. color2
+	else
+		return color1
+	end
+end

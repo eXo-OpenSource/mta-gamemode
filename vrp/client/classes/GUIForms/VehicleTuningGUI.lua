@@ -9,7 +9,7 @@ VehicleTuningGUI = inherit(GUIForm)
 addRemoteEvents{"vehicleTuningShopEnter", "vehicleTuningShopExit"}
 
 
-function VehicleTuningGUI:constructor(vehicle)
+function VehicleTuningGUI:constructor(vehicle, specialType)
     GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
     -- Part selection form
@@ -60,6 +60,8 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
     end
 
+	self.m_SpecialType = specialType or ""
+
     self.m_CartContent = {}
     self.m_Vehicle = vehicle
     self:initPartsList()
@@ -104,15 +106,18 @@ function VehicleTuningGUI:closeAllWindows()
     if self.m_TexturePicker then delete(self.m_TexturePicker) end
     if self.m_VehicleShader then delete(self.m_VehicleShader) end
     if self.m_HornPicker then delete(self.m_HornPicker) end
+	if self.m_NeonPicker then delete(self.m_NeonPicker) end
 end
 
 function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
     for id, data in ipairs(VehicleTuningGUI.SpecialTunings) do
         local partName, partData = unpack(data)
-        local item = self.m_PartsList:addItem(partName)
-        item.PartSlot = partData
-        item.onLeftClick = bind(self.PartItem_Click, self)
+		if self.m_SpecialType ~= "AirportPainter" or (partData == "Color1" or partData == "Color2") then
+        	local item = self.m_PartsList:addItem(partName)
+        	item.PartSlot = partData
+        	item.onLeftClick = bind(self.PartItem_Click, self)
+		end
     end
 
     -- Add upgrades
@@ -140,13 +145,16 @@ function VehicleTuningGUI:updateUpgradeList(slot)
 
     -- Add compatible upgrades
     for k, upgradeId in pairs(upgrades) do
-        local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
-        self.m_UpgradeIdMapping[rowId] = upgradeId
+		if not (self.m_Vehicle:getModel() == 560 and upgradeId == 1164) then	-- Buggy spoiler for Sultan (invisible after reconnect)
+			local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
+			self.m_UpgradeIdMapping[rowId] = upgradeId
+		end
     end
 end
 
 function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
-    local targetPosition = self.CameraPositions[slot]
+	local slot = self.m_SpecialType == "AirportPainter" and "AirportPainter" or slot
+	local targetPosition = self.CameraPositions[slot]
     local targetLookAtPosition = self.m_Vehicle:getPosition()
     if type(targetPosition) == "table" then
         targetPosition, targetLookAtPosition = unpack(targetPosition)
@@ -186,26 +194,25 @@ function VehicleTuningGUI:updatePrices()
             -- If no price is available, search for the part price instead
 			if not price then
 				price = getVehicleUpgradePrice(slot)
-				if not price then 
+				if not price then
 					price = 0
-				else 
-					if not tonumber(price) then 
+				else
+					if not tonumber(price) then
 						price = 0
 					end
 				end
-			else 
+			else
 				if not tonumber(price) then
 					price = getVehicleUpgradePrice(slot)
-					if not price then 
+					if not price then
 						price = 0
-					else 
-						if not tonumber(price) then 
+					else
+						if not tonumber(price) then
 							price = 0
-						end	
+						end
 					end
 				end
 			end
-            if slot == VehicleSpecialProperty.Neon and upgradeId == 1 then price = 0 end
 
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
             overallPrice = overallPrice + price
@@ -241,32 +248,27 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
     -- If no price is available, search for the part price instead
     if not price then
 		price = getVehicleUpgradePrice(partId)
-		if not price then 
+		if not price then
 			price = 0
-		else 
-			if not tonumber(price) then 
+		else
+			if not tonumber(price) then
 				price = 0
 			end
 		end
-	else 
+	else
 		if not tonumber(price) then
 			price = getVehicleUpgradePrice(partId)
-			if not price then 
+			if not price then
 				price = 0
-			else 
-				if not tonumber(price) then 
+			else
+				if not tonumber(price) then
 					price = 0
 				end
 			end
 		end
     end
-	--[[
-    -- Standard parts are free
-    if info == 0 then
-        price = 0
-    end
-	]]
-    if partId == VehicleSpecialProperty.Neon and info == 1 then
+
+    if partId == "Neon" and info == 0 then
         price = 0
         partName = "Neon-Ausbau"
     end
@@ -345,25 +347,24 @@ function VehicleTuningGUI:PartItem_Click(item)
         elseif item.PartSlot == "Neon" then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_TexturePicker = VehicleTuningItemGrid:new(
+            self.m_NeonPicker = VehicleTuningItemGrid:new(
                 "Neonröhren ein/ausbauen",
-                {[1] = _"Keine Neonröhre", [2] = _"Neonröhre einbauen"},
+                {[0] = _"Keine Neonröhre", [1] = _"Neonröhre einbauen"},
                 function(neon)
-                    local neonBool = neon == 2 and true or false
-					self.m_NewTuning:saveTuning(item.PartSlot, neonBool)
+					self.m_NewTuning:saveTuning(item.PartSlot, neon == 1)
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neonBool)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neon)
                 end,
                 function(neon)
-                    if neon ~= 1 then
+                    if neon == 1 then
                         setElementData(self.m_Vehicle, "Neon", true)
                         setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
                         Neon.Vehicles[self.m_Vehicle] = true
                     else
                         setElementData(self.m_Vehicle, "Neon", false)
                         setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-                        if Neon.Vehicles[veh] then
-                            Neon.Vehicles[veh] = nil
+                        if Neon.Vehicles[self.m_Vehicle] then
+                            Neon.Vehicles[self.m_Vehicle] = nil
                         end
                     end
                 end
@@ -412,6 +413,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "Texture" then
+			--[[Disabled
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
@@ -419,7 +421,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 {"None", _"Line", _"DiagonalRally", _"RallyStripes", _"ZebraStripes"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture > 1 then
 						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
 						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
@@ -431,12 +433,13 @@ function VehicleTuningGUI:PartItem_Click(item)
                 end,
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-					TextureReplace.deleteFromElement(self.m_Vehicle)
+					TextureReplacer.deleteFromElement(self.m_Vehicle)
 					if texture ~= 1 then
                         self.m_PreviewShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     end
                 end
             )
+			Disabled --]]
             return
         end
 		self:resetUpgrades()
@@ -494,12 +497,12 @@ end
 
 local vehicleTuningShop = false
 addEventHandler("vehicleTuningShopEnter", root,
-    function(vehicle)
+    function(vehicle, specialType)
         if vehicleTuningShop then
             delete(vehicleTuningShop)
         end
 
-        vehicleTuningShop = VehicleTuningGUI:new(vehicle)
+        vehicleTuningShop = VehicleTuningGUI:new(vehicle, specialType)
 
         vehicle:setDimension(PRIVATE_DIMENSION_CLIENT)
         localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
@@ -544,10 +547,12 @@ VehicleTuningGUI.CameraPositions = {
     ["Color1"] = Vector3(4.2, 2.1, 2.1),
     ["Color2"] = Vector3(4.2, 2.1, 2.1),
     ["ColorLight"] = Vector3(0, 5.6, 1),
-    ["Texture"] = Vector3(4.2, 2.1, 2.1),
+    --["Texture"] = Vector3(4.2, 2.1, 2.1),
     ["CustomHorn"] = Vector3(4.2, 2.1, 2.1),
     ["Neon"] = Vector3(4.2, 2.1, 2.1),
     ["NeonColor"] = Vector3(4.2, 2.1, 2.1),
+
+	["AirportPainter"] = Vector3(7, 7, 2.1),
 
 }
 
@@ -558,7 +563,7 @@ VehicleTuningGUI.SpecialTunings = {
 	{"Neonröhren", "Neon"},
 	{"Neonröhren-Farbe", "NeonColor"},
 	{"Spezial-Hupe", "CustomHorn"},
-	{"Spezial-Lackierung", "Texture"},
+	--{"Spezial-Lackierung", "Texture"},
 }
 
 VehicleTuningGUI.SpecialTuningsNames = {}

@@ -66,10 +66,10 @@ end
 
 function GunBoxGUI:loadPlayerWeapons()
     self.m_MyWeaponsGrid:clear()
-    for i=2, 12 do
+    for i = 0, 12 do
 		local weaponId = getPedWeapon(localPlayer, i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
+            local item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
             item.onLeftClick = function()
                 self.m_SelectedItem = weaponId
                 self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)

@@ -6,13 +6,15 @@ WEAPON_DAMAGE = {
 	[24] = 35,
 
 	[25] = 20,
-
-	[28] = 5,
-	[29] = 6,
-	[32] = 5,
+	
+	[26] = 23,
+	
+	[28] = 8,
+	[29] = 8,
+	[32] = 9,
 
 	[30] = 9,
-	[31] = 7,
+	[31] = 9,
 
 	[33] = 15,
 	[34] = 50,
@@ -73,4 +75,8 @@ WEAPON_MODELS_WORLD =
 	[44] = 368,
 	[45] = 369,
 	[46] = 371,
+}
+
+TRADE_DISABLED_WEAPONS = { --weapons that should not be traded with
+	[9] = true, --Chainsaw
 }

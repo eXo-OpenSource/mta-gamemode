@@ -31,6 +31,12 @@ function VehicleTuningShop:constructor()
             Vector3(1041.4, -1017.5, 31.3), -- LS Temple
             {Vector3(1041.9, -1031.5, 31.8), 180},
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
+        },
+		{
+            Vector3(1448.12, -2438.56, 13.55), -- LS Temple
+            {Vector3(1461.07, -2493.30, 13.71), 270},
+            Vector3(1448.12, -2438.56, 14.7),
+			"AirportPainter"
         }
     }
 
@@ -38,9 +44,17 @@ function VehicleTuningShop:constructor()
         local position = info[1]
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
+        local blip = Blip:new("TuningGarage.png", position.x, position.y,root,600)
+        blip:setDisplayText("Tuninggarage"..(info[4] == "AirportPainter" and " (Flugzeuge)" or ""), BLIP_CATEGORY.VehicleMaintenance)
+        blip:setOptionalColor({3, 169, 244})
 
-        Blip:new("TuningGarage.png", position.x, position.y,root,600)
+		if info[4] and info[4] == "AirportPainter" then
+			createMarker(position.x, position.y, position.z-1.2, "cylinder", 6, 50, 200, 255)
+			colshape.Type = info[4]
+		end
     end
+
+
 
     -- Register quit hook that moves the player out of the garage before saving
     Player.getQuitHook():register(
@@ -54,8 +68,8 @@ function VehicleTuningShop:constructor()
     )
 end
 
-function VehicleTuningShop:openFor(player, vehicle, garageId)
-    player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle())
+function VehicleTuningShop:openFor(player, vehicle, garageId, specialType)
+    player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle(), specialType)
 
     vehicle:setFrozen(true)
     player:setFrozen(true)
@@ -63,6 +77,8 @@ function VehicleTuningShop:openFor(player, vehicle, garageId)
     vehicle:setPosition(position)
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
+
+	player.m_WasBuckeled = getElementData(player, "isBuckeled")
 end
 
 function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
@@ -89,6 +105,10 @@ function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
             warpPedIntoVehicle(player, vehicle)
         end
 
+		if player.m_WasBuckeled then
+			player.m_SeatBelt = vehicle
+			setElementData(player, "isBuckeled", true)
+		end
     end
 end
 
@@ -119,7 +139,9 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
                 return
             end
         else
-            hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+            --hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
+			hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
+			return
         end
 
         -- Remove occupants
@@ -130,7 +152,9 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
         end
 
         local vehicleType = vehicle:getVehicleType()
-        if vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
+        if source.Type and source.Type == "AirportPainter" and (vehicleType == VehicleType.Helicopter or vehicleType == VehicleType.Plane) then
+			 self:openFor(hitElement, vehicle, garageId, source.Type)
+		elseif vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
             self:openFor(hitElement, vehicle, garageId)
         else
             hitElement:sendError(_("Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!", hitElement))
@@ -186,7 +210,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             if upgradeId ~= 0 then
                 vehicle:addUpgrade(upgradeId)
             else
-                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
+                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(slot))
             end
         else
 			--outputChatBox(slot..": "..tostring(upgradeId))

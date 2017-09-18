@@ -59,6 +59,10 @@ end
 addEvent("vehicleTakeMarkerGUI", true)
 addEventHandler("vehicleTakeMarkerGUI", root,
 	function(vehicles, callbackEvent, buttonText)
+		if MechanicTow:getSingleton().ms_SelectionGUI then
+			MechanicTow:getSingleton().ms_SelectionGUI:delete()
+		end
+
 		local gui = VehicleTakeGUI:new()
 		gui:setVehicles(vehicles)
 		gui:setCallback(callbackEvent)

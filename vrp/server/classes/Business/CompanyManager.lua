@@ -9,59 +9,68 @@ CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
 function CompanyManager:constructor()
-  outputServerLog("Loading companies...")
-  local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
-  for i, row in pairs(result) do
-    local result2 = sql:queryFetch("SELECT Id, CompanyRank FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
-    local players = {}
-    for i, row2 in ipairs(result2) do
-      players[row2.Id] = row2.CompanyRank
-    end
+	self:loadCompanies()
 
-    if Company.DerivedClasses[row.Id] then
-      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
-    else
-        outputServerLog(("Company class for Id %s not found!"):format(row.Id))
-      --self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
-    end
-  end
+	-- Events
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
 
-  -- Add events
-  addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
-  addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
-  addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
-  addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
-  addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
-  addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
-  addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
-  addEventHandler("companyDeleteMember", root, bind(self.Event_companyDeleteMember, self))
-  addEventHandler("companyInvitationAccept", root, bind(self.Event_companyInvitationAccept, self))
-  addEventHandler("companyInvitationDecline", root, bind(self.Event_companyInvitationDecline, self))
-  addEventHandler("companyRankUp", root, bind(self.Event_companyRankUp, self))
-  addEventHandler("companyRankDown", root, bind(self.Event_companyRankDown, self))
-  addEventHandler("companySaveRank", root, bind(self.Event_companySaveRank, self))
-  addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
-  addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
-  addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
-
+	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
+	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
+	addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
+	addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
+	addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
+	addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
+	addEventHandler("companyDeleteMember", root, bind(self.Event_companyDeleteMember, self))
+	addEventHandler("companyInvitationAccept", root, bind(self.Event_companyInvitationAccept, self))
+	addEventHandler("companyInvitationDecline", root, bind(self.Event_companyInvitationDecline, self))
+	addEventHandler("companyRankUp", root, bind(self.Event_companyRankUp, self))
+	addEventHandler("companyRankDown", root, bind(self.Event_companyRankDown, self))
+	addEventHandler("companySaveRank", root, bind(self.Event_companySaveRank, self))
+	addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
+	addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
+	addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
+	addEventHandler("companyToggleLoan", root, bind(self.Event_toggleLoan, self))
 end
 
 function CompanyManager:destructor()
-  for i, v in pairs(CompanyManager.Map) do
-    delete(v)
-  end
+	for i, v in pairs(CompanyManager.Map) do
+		delete(v)
+	end
+end
+
+function CompanyManager:loadCompanies()
+	local st, count = getTickCount(), 0
+	local result = sql:queryFetch("SELECT * FROM ??_companies", sql:getPrefix())
+	for i, row in pairs(result) do
+		local result2 = sql:queryFetch("SELECT Id, CompanyRank, CompanyLoanEnabled FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), row.Id)
+		local players, playerLoans = {}, {}
+		for i, row2 in ipairs(result2) do
+			players[row2.Id] = row2.CompanyRank
+			playerLoans[row2.Id] = row2.CompanyLoanEnabled
+		end
+
+		if Company.DerivedClasses[row.Id] then
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+		else
+			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
+			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+		end
+
+		count = count + 1
+	end
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s companies in %sms"):format(count, getTickCount()-st)) end
 end
 
 function CompanyManager:getFromId(Id)
-  return CompanyManager.Map[Id]
+	return CompanyManager.Map[Id]
 end
 
 function CompanyManager:addRef(ref)
-  CompanyManager.Map[ref:getId()] = ref
+	CompanyManager.Map[ref:getId()] = ref
 end
 
 function CompanyManager:removeRef(ref)
-  CompanyManager.Map[ref:getId()] = nil
+	CompanyManager.Map[ref:getId()] = nil
 end
 
 function CompanyManager:Event_companyRequestLog()
@@ -112,7 +121,7 @@ function CompanyManager:Event_companyDeposit(amount)
 
 	client:takeMoney(amount, "Unternehmen-Einlage")
 	company:giveMoney(amount, "Unternehmen-Einlage")
-    company:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
+    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
     company:refreshBankAccountGUI(client)
 
@@ -136,7 +145,7 @@ function CompanyManager:Event_companyWithdraw(amount)
 
 	company:takeMoney(amount, "Unternehmen-Auslage")
 	client:giveMoney(amount, "Unternehmen-Auslage")
-    company:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 	self:sendInfosToClient(client)
     company:refreshBankAccountGUI(client)
 end
@@ -171,7 +180,7 @@ function CompanyManager:Event_companyAddPlayer(player)
 	end
 end
 
-function CompanyManager:Event_companyDeleteMember(playerId)
+function CompanyManager:Event_companyDeleteMember(playerId, reasonInternaly, reasonExternaly)
 	if not playerId then return end
 	local company = client:getCompany()
 	if not company then return end
@@ -193,7 +202,10 @@ function CompanyManager:Event_companyDeleteMember(playerId)
 		return
 	end
 
+	HistoryPlayer:getSingleton():addLeaveEntry(playerId, client.m_Id, company.m_Id, "company", company:getPlayerRank(playerId), reasonInternaly, reasonExternaly)
+
 	company:removePlayer(playerId)
+
     company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
 
 	self:sendInfosToClient(client)
@@ -212,6 +224,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 
 			company:sendMessage(_("#008888Unternehmen: #FFFFFF%s ist soeben dem Unternehmen beigetreten!", client, getPlayerName(client)),200,200,200,true)
 			company:addLog(client, "Unternehmen", "ist dem Unternehmen beigetreten!")
+			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, company:hasInvitation(client), company.m_Id, "company")
 
 			self:sendInfosToClient(client)
 		else
@@ -253,15 +266,20 @@ function CompanyManager:Event_companyRankUp(playerId)
 	end
 
 	if company:getPlayerRank(playerId) < CompanyRank.Leader then
-		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
-		local player = DatabasePlayer.getFromId(playerId)
-		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+		if company:getPlayerRank(playerId) < company:getPlayerRank(client) then
+			company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
+			HistoryPlayer:getSingleton():setHighestRank(playerId, company:getPlayerRank(playerId), company.m_Id, "company")
+			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
+			local player = DatabasePlayer.getFromId(playerId)
+			if player and isElement(player) and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+			end
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, company:getPlayerRank(client)))
 		end
-		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 5 setzen!", client))
+		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 5 befördern!", client))
 	end
 end
 
@@ -282,35 +300,19 @@ function CompanyManager:Event_companyRankDown(playerId)
 	end
 
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
-		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
-		local player = DatabasePlayer.getFromId(playerId)
-		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+		if company:getPlayerRank(playerId) <= company:getPlayerRank(client) then
+			HistoryPlayer:getSingleton():setHighestRank(playerId, company:getPlayerRank(playerId), company.m_Id, "company")
+			company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
+			company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
+			local player = DatabasePlayer.getFromId(playerId)
+			if player and isElement(player) and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+			end
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 		end
-		self:sendInfosToClient(client)
 	end
-end
-
-function CompanyManager:Event_openCompanyWeaponShopGUI()
-	local company = client:getCompany()
-	if company then
-		client:triggerEvent("showCompanyWeaponShopGUI")
-	end
-end
-
-function CompanyManager:Event_receiveCompanyWeaponShopInfos()
-	local company = client:getCompany()
-	local depot = company.m_Depot
-	local playerId = client:getId()
-	local rank = company.m_Players[playerId]
-	triggerClientEvent(client,"updateCompanyWeaponShopGUI",client,company.m_ValidWeapons, company.m_WeaponDepotInfo, depot:getWeaponTable(id), company:getRankWeapons(rank))
-end
-
-function CompanyManager:Event_companyWeaponShopBuy(weaponTable)
-	local company = client:getCompany()
-	local depot = company.m_Depot
-	depot:takeWeaponsFromDepot(client,weaponTable)
 end
 
 function CompanyManager:Event_companyRespawnVehicles()
@@ -346,37 +348,43 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty()
-	if getPedOccupiedVehicle(client) then
+function CompanyManager:Event_toggleDuty(wasted)
+	if getPedOccupiedVehicle(client) and not wasted then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
 	local company = client:getCompany()
 	if company then
-		if client:isCompanyDuty() then
-			client:setDefaultSkin()
-			client.m_CompanyDuty = false
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
-			client:setPublicSync("Company:Duty",false)
-            takeAllWeapons(client)
-            if company.stop then
-                company:stop(client)
-            end
-		else
-            if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
-				return false
+		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
+			if client:isCompanyDuty() then
+				client:setDefaultSkin()
+				client:setCompanyDuty(false)
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
+				client:setPublicSync("Company:Duty",false)
+				takeAllWeapons(client)
+				if company.stop then
+					company:stop(client)
+				end
+			else
+				if client:getPublicSync("Faction:Duty") and client:getFaction() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
+					return false
+				end
+				company:changeSkin(client)
+				client:setCompanyDuty(true)
+				company:updateCompanyDutyGUI(client)
+				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
+				client:setPublicSync("Company:Duty",true)
+				takeAllWeapons(client)
+				if company.m_Id == CompanyStaticId.SANNEWS then
+					giveWeapon(client, 43, 50) -- Camera
+				end
+				if company.start then
+					company:start(client)
+				end
 			end
-
-			company:changeSkin(client)
-			client.m_CompanyDuty = true
-			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
-			client:setPublicSync("Company:Duty",true)
-            takeAllWeapons(client)
-            if company.start then
-                company:start(client)
-            end
+		else
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))
@@ -384,28 +392,30 @@ function CompanyManager:Event_toggleDuty()
 	end
 end
 
+function CompanyManager:Event_toggleLoan(playerId)
+	if not playerId then return end
+	local company = client:getCompany()
+	if not company then return end
+
+	if not company:isPlayerMember(client) or not company:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
+		return
+	end
+
+	if company:getPlayerRank(client) < CompanyRank.Manager then
+		client:sendError(_("Dazu bist du nicht berechtigt!", client))
+		return
+	end
+
+	local current = company:isPlayerLoanEnabled(playerId)
+	company:setPlayerLoanEnabled(playerId, current and 0 or 1)
+	self:sendInfosToClient(client)
+
+	company:addLog(client, "Unternehmen", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
+end
+
 function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
 	end
-end
-
-function CompanyManager:sendAllToClient(client)
-	--[[
-	local vehicleTab = {}
-	for i, company in pairs(CompanyManager.Map) do
-		if companyVehicleShaders[company:getId()] then
-			for i, v in pairs(company.m_Vehicles) do
-				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
-					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
-					if shaderInfo.shaderEnabled then
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
-					end
-				end
-			end
-		end
-	end
-
-	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
-	]]
 end

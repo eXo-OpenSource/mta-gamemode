@@ -23,11 +23,11 @@ function MinigameManager:constructor()
 
 	-- Zombie Survival
 	--ZombieSurvival.initalize()
-	self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
+	--self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
 
 	-- Sniper Game
-	SniperGame.initalize()
-	self.m_SniperGameHighscore = Highscore:new("SniperGame")
+	--SniperGame.initalize()
+	--self.m_SniperGameHighscore = Highscore:new("SniperGame")
 
 	self:addHooks()
 
@@ -59,40 +59,29 @@ addEventHandler("MinigameSendHighscore", resourceRoot, MinigameManager.receiveHi
 function MinigameManager:addHooks()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
+			if player.Minigame then
+				player:triggerEvent("abortDeathGUI", true)
+				player.Minigame:removePlayer(player)
 				return true
-			else
-				return false
 			end
 		end
 	)
 
 	PlayerManager:getSingleton():getAFKHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
-				return true
-			else
-				return false
+			if player.Minigame then
+				player.Minigame:removePlayer(player)
 			end
 		end
 	)
 
 	Player.getQuitHook():register(
 		function(player)
-			local match = self:getPlayerMinigame(player)
-			if match then
-				match:removePlayer(player)
-				return true
-			else
-				return false
+			if player.Minigame then
+				player.Minigame:removePlayer(player)
 			end
 		end
 	)
-
 end
 
 function MinigameManager:getPlayerMinigame(player)

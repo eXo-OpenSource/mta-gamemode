@@ -47,7 +47,7 @@ git push
 
 Wenn hier ein Fehler auftaucht und man aufgefordert wird zu pullen, ist folgender Fall eingetreten:
 Man hat lokal Commits, die auf auf einem nicht aktuellen Zustand des Repositories basieren (da jemand anderes
-in der Zwischenzeit schon Commits gepusht hat).   
+in der Zwischenzeit schon Commits gepusht hat).
 Ein normales `git pull` würde dazu führen, dass zusätzlich ein Merge-Commit erstellt wird, der den neuen und alten Entwicklungszweig zusammenführt.
 Dies ist jedoch in so gut wie keinen Fällen nötig. Stattdessen empfiehlt es sich die entfernten Commits zu rebasen
 (das bedeutet: lokale Commits temporär rückgängig machen, die Commits vom Server herunterladen und anwenden und schließlich die lokalen Commits auf
@@ -55,6 +55,71 @@ die aktuelle Version des Repos anwenden):
 ```
 git pull --rebase
 ```
+
+### Neustes Update auf den Produktiv-Server laden
+Bevor Änderungen gemacht werden, müssen wir zuerst unseren lokalen master branch auf den aktuellsten stand bringen
+```
+git pull
+```
+
+Nun wechseln wir in den `release/production` branch und updaten diesen branch bei uns lokal
+```
+git checkout release/production
+git pull
+```
+
+Jetzt können wir den master mergen und die Updates in den branch "laden"
+```
+git merge master
+```
+
+Und dann pushen wir das ganze zum Server
+```
+git push
+```
+
+Das Update wird dann automatisch um 05:00 Uhr auf den Server geladen!
+
+### Hotfixes auf dem Produktiv-Server machen
+
+1. Hotfix-Branch auf basis von `release/production` erstellen
+	```
+	git checkout release/production
+	git pull
+	git checkout -b hotfix/mein-hotfix-name
+	```
+	Als Konvention hat es sich eingebürgert den Namen danach durch Bindestriche zu trennen.
+
+2. Jetzt können ganz normal Commits gemacht werden. Sollte beim Pushen eine Fehlermeldung erscheinen, kann folgender Pushbefehl verwendet werden:
+
+    ```
+    git push origin hotfix/mein-hotfix-name
+    ```
+3. Ist der Bug behoben, wird zunächst zurück auf den master gewechelt:
+
+    ```
+    git checkout master
+    ```
+4. Nun wird der Hotfix-Branch squash-gemerged. Das bedeutet, dass alle Commits zu einem einzigen zusammengeführt (_gesquasht_) werden.
+
+    ```
+   	git merge --squash hotfix/mein-hotfix-name
+	```
+5. Den schritt 3 & 4 wiederholen wir auch nochmal für den Branch `release/production`
+
+    ```
+    git checkout release/production
+	git merge --squash hotfix/mein-hotfix-name
+    ```
+
+6. Am Ende nur noch pushen und den Hotfix-Branch löschen:
+
+    ```
+    git push
+    git push origin :hotfix/mein-hotfix-name # Doppelpunkt löscht den Branch auf dem Server
+    git branch -d hotfix/mein-hotfix-name # Branch lokal auch löschen (optional)
+    ```
+7. Um den Hotfix auf den Server zu laden, zu `https://git.heisi.at/eXo/mta-gamemode/environments` navigieren und bei der Spalte `production` auf `Re-deploy` klicken, dadurch wird der hotfix auf den Produktiv-Server geladen und neu gestartet.
 
 ### Bugfixes auf dem Dev-Server machen
 _Fast-Deploy_ ermöglicht es Änderungen zu machen, die nahezu sofort auf dem Dev-Server verfügbar sind.

@@ -39,7 +39,25 @@ function Core:constructor()
 		)()
 	else
 		local dgi = DownloadGUI:getSingleton()
-		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		Provider:getSingleton():addFileToRequest("vrp.list")
+		Provider:getSingleton():requestFiles(
+			function()
+				local fh = fileOpen("vrp.list")
+				local json = fileRead(fh, fileGetSize(fh))
+				fileClose(fh)
+				local tbl = fromJSON(json)
+
+				for _, v in pairs(tbl) do
+					Provider:getSingleton():addFileToRequest(v)
+				end
+
+				Provider:getSingleton():requestFiles(
+					bind(DownloadGUI.onComplete, dgi),
+					bind(DownloadGUI.onProgress, dgi)
+				)
+			end
+		)
+
 		setAmbientSoundEnabled( "gunfire", false )
 		showChat(true)
 	end
@@ -111,14 +129,13 @@ function Core:ready()
 	Townhall:new()
 	PremiumArea:new()
 
-	PlantWeed.initalize()
+	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
+	GroupSaleVehicles.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
-	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
-
 
 	Shaders.load()
 
@@ -129,12 +146,11 @@ function Core:ready()
 	GasStation:new()
 
 	ChessSession:new()
-	
-	GroupRob:new() 
-	
 	WareClient:new()
+	GroupRob:new()
+	DrivingSchool:new()
+	Help:new()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
-
 end
 
 function Core:afterLogin()
@@ -145,8 +161,10 @@ function Core:afterLogin()
 	KarmaBar:new()
 	HUDSpeedo:new()
 	Nametag:new()
-	HUDRadar:getSingleton():show()
+	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
 	HUDUI:getSingleton():show()
+	CustomF11Map:getSingleton():enable()
+	GPS:new()
 	Collectables:new()
 	KeyBinds:new()
 	Indicator:new()
@@ -180,34 +198,33 @@ function Core:afterLogin()
 	Fishing.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
+	TextureReplacer.loadBacklog()
 
-	-- Miami Spawn deactivated:
-	HUDRadar:getSingleton():setEnabled(true)
 	showChat(true)
 	setCameraTarget(localPlayer)
 	setElementFrozen(localPlayer,false)
-	triggerServerEvent("remoteClientSpawn", localPlayer)
-	-- //Miami Spawn deactivated:
 
-	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
-	addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
-	triggerServerEvent("requestVehicleTextures", localPlayer)
+	--addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
 
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
 			object:setBreakable(false)
 		end
 	end
+
 end
 
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	if CustomModelManager:isInstantiated() then
+		delete(CustomModelManager:getSingleton())
+	end
 end
 
 function Core:getConfig()
@@ -227,7 +244,7 @@ function Core:throwInternalError(message)
 end
 
 
--- AntiCheat for blips // Workaround
+-- AntiCheat for blips // Workaround // this wont detect cheated blips
 setTimer(
 	function()
 		local attachedBlips = {}

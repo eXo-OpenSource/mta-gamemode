@@ -16,7 +16,6 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	if owner == localPlayer:getName() then
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.35/2), screenHeight/2-(370/2), screenWidth*0.35, 370)
 		columnWidth = self.m_Width*0.5
-
 	else
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.2/2), screenHeight/2-(370/2), screenWidth*0.2, 370)
 		columnWidth = self.m_Width
@@ -24,7 +23,6 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hausmenü", true, true, self)
 	self.m_Window:deleteOnClose( true )
-
 
 	self.m_LabelOwner =     GUILabel:new(10, 40, self.m_Width-20, 30,_"s", self.m_Window)
 	self.m_LabelPrice =     GUILabel:new(10, 70, self.m_Width-20, 30,_"s", self.m_Window)
@@ -45,7 +43,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Sell:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Sell.onLeftClick = bind(self.sellHouse,self)
 	self.m_Sell:setVisible(false)
-	
+
 	self.m_Enter = GUIButton:new(10, 225, columnWidth-20, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)
@@ -58,21 +56,30 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Lock:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Lock.onLeftClick = bind(self.lockHouse,self)
 	self.m_Lock:setVisible(false)
-	
-	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self)
+
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION.editHouse then
+		self.m_EditHouse = GUIButton:new(columnWidth/2+5, 90, columnWidth/2-15, 35, _("Haus editieren"), self)
+		self.m_EditHouse:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
+		self.m_EditHouse.onLeftClick = function()
+			HouseEditGUI:new()
+		end
+	end
+
+	self.m_Rob = GUIButton:new(10, 280, columnWidth-20, 35, _("Raub starten"), self):setVisible(false)
 	self.m_Rob:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rob.onLeftClick = bind(self.tryRob,self)
 	if bRobPrompt then
 		self.m_Rob:setVisible(true)
 	end
-	
-	self.m_Close = GUIButton:new(10, 325, columnWidth-20, 35, _("Schließen"), self)
-	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Close.onLeftClick = function () delete(self) end
-	
+
+	self.m_UpdateSpawnpoint = GUIButton:new(10, 325, columnWidth-20, 35, _("Als Spawnpunkt festlegen"), self)
+	self.m_UpdateSpawnpoint:setFont(VRPFont(28)):setFontSize(1)
+	self.m_UpdateSpawnpoint.onLeftClick = function() triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.HOUSE) end
+
 
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))
+
 
 
 	--self.m_Break:setVisible(isValidRob)
@@ -142,6 +149,11 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 		self.m_Leave:setVisible(false)
 		self.m_Enter:setVisible(true)
 	end
+end
+
+function HouseGUI:destructor()
+	delete(HouseEditGUI:getSingleton())
+	GUIForm.destructor(self)
 end
 
 function HouseGUI:deposit()
@@ -219,16 +231,16 @@ function HouseGUI:lockHouse()
 	triggerServerEvent("lockHouse",root)
 end
 
-function HouseGUI:tryRob() 
+function HouseGUI:tryRob()
 	triggerServerEvent("tryRobHouse", localPlayer)
 end
 
 addEventHandler("showHouseMenu", root,
-	function(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
+	function(...)
 		if HouseGUI:isInstantiated() then
 			delete(HouseGUI:getSingleton())
 		end
-		HouseGUI:new(owner, price, rentprice, isValidRob, isClosed, tenants, money, bRobPrompt)
+		HouseGUI:new(...)
 	end
 )
 
@@ -244,6 +256,8 @@ addEventHandler("addHouseBlip", root,
 	function(id, x, y)
 		if not HouseGUI.Blips[id] then
 			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
+			HouseGUI.Blips[id]:setDisplayText("Haus")
+			HouseGUI.Blips[id]:setOptionalColor({122, 163, 57})
 		end
 	end
 )

@@ -28,13 +28,26 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 				triggerServerEvent("giveBeggarItem", self:getElement(), "Burger")
 			end
 		)
+	elseif element:getData("BeggarType") == BeggarTypes.Heroin then
+
+
+		self:addItem("5g Heroin kaufen",
+			function ()
+				QuestionBox:new(
+					_("Möchtest du 5g Heroin für 150$ kaufen?"),
+					function ()
+						triggerServerEvent("buyBeggarItem", self:getElement(), "Heroin")
+					end
+				)
+			end
+		)
 	elseif element:getData("BeggarType") == BeggarTypes.Weed then
 
 		self:addItem("Weed verkaufen",
 			function ()
 				InputBox:new("Weed verkaufen", "Wieviel Weed möchtest du verkaufen?",
 					function (amount)
-						if tonumber(amount) > 0 and tonumber(amount) <= 200 then
+						if tonumber(amount) and tonumber(amount) > 0 and tonumber(amount) <= 200 then
 							triggerServerEvent("sellBeggarWeed", self:getElement(), tonumber(amount))
 						else
 							outputChatBox(_("%s (Obdachloser): Mehr als 200g Weed kann ich mir nicht leisten!", element:getData("BeggarName")))
@@ -55,4 +68,5 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 			triggerServerEvent("robBeggarPed", self:getElement())
 		end
 	)
+	self:adjustWidth()
 end

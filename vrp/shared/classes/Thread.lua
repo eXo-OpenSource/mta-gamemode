@@ -8,7 +8,7 @@
 Thread = inherit(Object)
 Thread.Map = {}
 
-function Thread:new(func, priority, ...)
+function Thread:newPromise(func, priority, ...)
 	local self = new(self, func, priority)
 	self.ms_Promise = Promise:new(bind(self.start, self))
 	return self.ms_Promise
@@ -34,7 +34,7 @@ function Thread:destructor()
 	end
 end
 
-function Thread:start(fulfill, reject)
+function Thread:start(fulfill)
 	self.ms_Thread = coroutine.create(self.m_Func)
 	self.ms_StartTime = getTickCount()
 	self:resume()
@@ -45,7 +45,7 @@ function Thread:start(fulfill, reject)
 				self:resume()
 		  		self.m_Yields = self.m_Yields + 1
 			elseif self:getStatus() == COROUTINE_STATUS_DEAD then
-				fulfill()
+				if fulfill then fulfill() end
 				delete(self)
 			end
 		end, self:getPriority(), 0

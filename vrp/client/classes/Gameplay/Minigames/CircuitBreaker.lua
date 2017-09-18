@@ -6,13 +6,15 @@
 -- *
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
+addRemoteEvents{"startCircuitBreaker", "forceCircuitBreakerClose"}
 
-function CircuitBreaker:constructor()
+function CircuitBreaker:constructor(callbackEvent)
 	self.WIDTH, self.HEIGHT = 1080, 650
-
+	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
+	self.m_CallBackEvent = callbackEvent
+
 	--Render targets
-	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
 	self.m_RT_lineBG = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- First Line Background
 	self.m_RT_lineBG2 = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- Seccond Line Background
@@ -22,7 +24,6 @@ function CircuitBreaker:constructor()
 	self:loadImages()
 	self:createGameplay()
 	self:updateRenderTarget()
-
 	self:bindKeys()
 
 	self.m_fnRender = bind(CircuitBreaker.onClientRender, self)
@@ -54,10 +55,24 @@ function CircuitBreaker:destructor()
 	toggleControl("forwards",true)
 	toggleControl("backwards",true)
 	showChat(true)
-end
 
-function CircuitBreaker:setCallBackEvent(callbackEvent)
-	self.m_CallBackEvent = callbackEvent
+	for _, texture in pairs(self.m_Textures) do
+		texture:destroy()
+	end
+
+	for level, groups in pairs(self.m_Levels) do
+		for group, v in pairs(groups) do
+			self.m_Levels[level][group][5]:destroy()
+		end
+	end
+
+	for _, line in pairs(self.m_Lines) do
+		for _, renderTarget in pairs(line) do
+			renderTarget:destroy()
+		end
+	end
+
+	if self.m_RT_endscreen then self.m_RT_endscreen:destroy() end
 end
 
 function CircuitBreaker:loadImages()
@@ -74,7 +89,7 @@ function CircuitBreaker:loadImages()
 	}
 
 	for _, img in pairs(self.m_Images) do
-		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
+		self.m_Textures[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
 end
 
@@ -261,7 +276,6 @@ function CircuitBreaker:setState(state)
 		end
 	end
 
-
 	if state == "complete" then	--Todo: Call next level via 5 sec. timer?
 		self.m_State = "complete"
 		outputDebug("level complete")
@@ -311,7 +325,16 @@ function CircuitBreaker:bindKeys()
 			end
 		end
 
+	self.fn_StopGame =
+		function()
+			if self.m_State == "done" then
+				if self.m_CallBackEvent then
+					triggerServerEvent(self.m_CallBackEvent, localPlayer)
+				end
+			end
 
+			delete(self)
+		end
 
 	bindKey("arrow_l", "down", self.fn_changeDirection)			bindKey("a", "down", self.fn_changeDirection)
 	bindKey("arrow_r", "down", self.fn_changeDirection)			bindKey("d", "down", self.fn_changeDirection)
@@ -320,10 +343,6 @@ function CircuitBreaker:bindKeys()
 
 	bindKey("enter", "down", self.fn_StartGame)
 	bindKey("space", "down", self.fn_StopGame)
-end
-
-function CircuitBreaker:fn_StopGame()
-	delete(CircuitBreaker:getSingleton())
 end
 
 function CircuitBreaker:changeDirection(key)
@@ -346,27 +365,19 @@ end
 
 function CircuitBreaker:updateRenderTarget()
 	---
-	-- Update background render target
-	---
-	self.m_RT_background:setAsTarget()
-
-	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(0, 0, 0,100)) -- 323232
-	dxDrawRectangle(0, 0, screenWidth, self.m_HeaderHeight, tocolor(0, 0, 0, 170))
-
-	dxSetRenderTarget()
-
-	---
 	-- Update PCB render target
 	---
 
 	self.m_RT_PCB:setAsTarget()
-	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.pcb)
-	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
-	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.output)
+	dxDrawImage(0, 0, self.WIDTH, self.HEIGHT, self.m_Textures.pcb)
+	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.m_Textures.input)
+	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY[self.m_Level], 56, 82, self.m_Textures.output)
 
+	dxSetBlendMode("add")
 	for _, v in pairs(self.m_Levels[self.m_Level]) do
 		dxDrawImage(unpack(v))
 	end
+	dxSetBlendMode("blend")
 
 	dxSetRenderTarget()
 
@@ -439,7 +450,7 @@ function CircuitBreaker:onClientRender()
 
 	-- Render game
 	local scale = 0.8
-	local origWidth,origHeight = self.WIDTH, self.HEIGHT
+	local origWidth, origHeight = self.WIDTH, self.HEIGHT
 	local origHeader = self.m_HeaderHeight
 	local origSWidth, origSHeight = screenWidth, screenHeight
 	self.WIDTH = self.WIDTH *scale
@@ -494,6 +505,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 	if count > 3 then
 		return outputConsole("Zu wenig Videospeicher in MTA-Memory!")
 	end
+
 	local WIDTH, HEIGHT = width, height
 	local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
 	local line = 5
@@ -528,7 +540,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 							if rnd_structur[1] == "smdresistor" then
 								self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
 							else
-								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self.m_Textures[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
 							end
 							table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 						end
@@ -537,8 +549,9 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 			end
 		end
 	else
-		return self:createStructurGroup(width,height,count+1)
+		return self:createStructurGroup(width, height, count + 1)
 	end
+
 	dxSetRenderTarget()
 	return collideImage
 end
@@ -560,7 +573,7 @@ function CircuitBreaker:createRandomResistor(posX, posY, width, height, labelTyp
 		value = ("%s%s"):format(value:gsub("[.]", ""), e)
 	end
 
-	dxDrawImage(posX, posY, width, height, self.smdresistor)
+	dxDrawImage(posX, posY, width, height, self.m_Textures.smdresistor)
 	dxDrawText(value, posX, posY, posX + width, posY + height, tocolor(255, 255, 255), .5/14*height, "clear", "center", "center")
 end
 
@@ -572,17 +585,22 @@ function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, heigh
 	end
 end
 
-addEvent("startCircuitBreaker", true)
 addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
-		delete(CircuitBreaker:getSingleton())
-        local instance = CircuitBreaker:new()
-		instance:setCallBackEvent(callbackEvent)
+		if CircuitBreaker:isInstantiated() then
+			outputChatBox("instantiated")
+			delete(CircuitBreaker:getSingleton())
+		end
+
+   		CircuitBreaker:new(callbackEvent)
     end
 )
 
-addEvent("forceCircuitBreakerClose", true)
-addEventHandler("forceCircuitBreakerClose", root, function()
-	CircuitBreaker:getSingleton():setState("idle")
-	delete(CircuitBreaker:getSingleton())
-end)
+addEventHandler("forceCircuitBreakerClose", root,
+	function()
+		if CircuitBreaker:isInstantiated() then
+			outputChatBox("instantiated")
+			delete(CircuitBreaker:getSingleton())
+		end
+	end
+)

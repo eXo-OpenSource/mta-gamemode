@@ -35,20 +35,24 @@ function GroupGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
 	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupCreateLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.14, self.m_Width*0.5, self.m_Height*0.06, _"Du kannst in der Stadthalle eine neue Firma oder Gang gründen!", tabGroups):setMultiline(true)
-	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
 	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
 	--self.m_GroupMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabGroups):setCaption(_"Betrag")
 	--self.m_GroupMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabGroups)
 	--self.m_GroupMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabGroups)
-	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.4, self.m_Height*0.5, tabGroups)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.7)
-	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.3)
-	self.m_GroupAddPlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabGroups):setBarColor(Color.Green)
-	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
-	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
+	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
+	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
+	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.49)
+	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.18)
+	self.m_GroupPlayersGrid:addColumn(_"Aktivität", 0.27)
+
+	self.m_GroupAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabGroups):setBarColor(Color.Green)
+	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
+	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
+	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
+	self.m_GroupToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.72, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabGroups)
 
 	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
 	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
@@ -67,7 +71,7 @@ function GroupGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-
+	self.m_GroupToggleLoanButton.onLeftClick = bind(self.GroupToggleLoanButton_Click, self)
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -76,22 +80,24 @@ function GroupGUI:constructor()
 	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
 	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
-	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setFontSize(1.2)
-	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabVehicles):setFontSize(1.2)
+	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
+	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles):setBarColor(Color.Orange)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+	self.m_VehicleRemoveFromGroup = VRPButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug entfernen", true, tabVehicles):setBarColor(Color.Red)
+	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.06, _"Privat-Fahrzeuge:", tabVehicles)
 	self.m_PrivateVehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.65, self.m_Height*0.31, tabVehicles)
 	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.4)
 	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.6)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
-	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
+	self.m_VehicleConvertToGroupButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"\nFahrzeug zur \nFirma/Gang hinzufügen", true, tabVehicles):setBarColor(Color.Green)
+	self.m_VehicleConvertToGroupButton.m_Label:setSize(self.m_Width*0.28, self.m_Height*0.07):setMultiline(true):setFontSize(0.45)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
-	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug entfernen", tabVehicles):setFontSize(1.2)
-	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
+
 
 	local tabBusiness = self.m_TabPanel:addTab(_"Geschäfte")
 	self.m_TabBusiness = tabBusiness
@@ -104,12 +110,10 @@ function GroupGUI:constructor()
 
 	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.LightBlue, tabBusiness)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
-	self.m_ShopsMoneyLable = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
+	self.m_ShopsMoneyLabel = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.LightBlue)
-	self.m_ShopsLocate = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", tabBusiness):setFontSize(1.2)
-	--self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabBusiness):setFontSize(1.2)
+	self.m_ShopsLocate = VRPButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", true, tabBusiness)
 	self.m_ShopsLocate.onLeftClick = bind(self.ShopLocateButton_Click, self)
-	--self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.3, self.m_Width*0.28, self.m_Height*0.06, _"Informationen:", tabBusiness):setColor(Color.LightBlue)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.36, self.m_Width*0.28, self.m_Height*0.06, _"Name:", tabBusiness)
@@ -169,16 +173,24 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
-		self.m_GroupMoneyLabel:setText(tostring(money).."$")
+		self.m_GroupMoneyLabel:setText(toMoneyString(money))
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
+		self.m_VehicleConvertToGroupButton:setText(_("\nFahrzeug zur\n%s hinzufügen", type))
 
 		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
 
 		self.m_GroupPlayersGrid:clear()
 		for _, info in ipairs(players) do
-			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
+			local activitySymbol = info.loanEnabled == 1 and FontAwesomeSymbols.Calender_Check or FontAwesomeSymbols.Calender_Time
+			local item = self.m_GroupPlayersGrid:addItem(activitySymbol, info.name, info.rank, tostring(info.activity).." h")
+			item:setColumnFont(1, FontAwesome(20), 1):setColumnColor(1, info.loanEnabled == 1 and Color.Green or Color.Red)
 			item.Id = info.playerId
+
+			item.onLeftClick =
+				function()
+					self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+				end
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames
@@ -191,6 +203,9 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 			local x, y = self.m_VehicleTuningStatus:getPosition()
 			self.m_VehicleTuningStatus:setText(text)
 			self.m_VehicleTuningStatusChange:setPosition(x + dxGetTextWidth(text, self.m_VehicleTuningStatus:getFontSize(), self.m_VehicleTuningStatus:getFont()) + 10, y)
+			self.m_TypeLabelLeader:setText(type)
+			local x, y = self.m_TypeLabelLeader:getPosition()
+			self.m_TypeChange:setPosition(x + dxGetTextWidth(type, self.m_TypeLabelLeader:getFontSize(), self.m_TypeLabelLeader:getFont()) + 10, y)
 		end
 
 		-- Group Vehicles
@@ -410,6 +425,18 @@ function GroupGUI:addLeaderTab()
 		self.m_VehicleTuningStatusChange.onHover = function () self.m_VehicleTuningStatusChange:setColor(Color.White) end
 		self.m_VehicleTuningStatusChange.onUnhover = function () self.m_VehicleTuningStatusChange:setColor(Color.LightBlue) end
 
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, _"Typ:", tabLeader)
+		self.m_TypeLabelLeader = GUILabel:new(self.m_Width*0.7, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
+		self.m_TypeChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.LightBlue)
+		self.m_TypeChange.onLeftClick = function ()
+			local newType = localPlayer:getGroupType() == "Firma" and "Gang" or "Firma"
+			QuestionBox:new(_("Möchtest du wirklich deine %s in eine %s umwandeln? Kosten: 20.000$", localPlayer:getGroupType(), newType),
+			function() 	triggerServerEvent("groupChangeType", root) end
+			)
+		end
+		self.m_TypeChange.onHover = function () self.m_TypeChange:setColor(Color.White) end
+		self.m_TypeChange.onUnhover = function () self.m_TypeChange:setColor(Color.LightBlue) end
+
 		self:refreshRankGrid()
 		self.m_LeaderTab = true
 	end
@@ -511,7 +538,7 @@ function GroupGUI:VehicleLocateButton_Click()
 
 	if item.PositionType == VehiclePositionType.World then
 		local x, y, z = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+		local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 		local marker = createMarker(x, y, z + 2, "arrow", .6, 60, 255, 130)
 		blip:setZ(z)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
@@ -537,21 +564,21 @@ function GroupGUI:Event_retriveBusinessInfo(info)
 
 	local compMoney = 0
 	for i, shop in pairs(info) do
-		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), ("%d$"):format(shop.money))
+		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), toMoneyString(shop.money))
 		item.ShopId = shop.id
 		item.ShopName = shop.name
-		item.LastRob = shop.LastRob
+		item.LastRob = shop.lastRob
 		item.Position = Vector3(shop.position)
 		item.onLeftClick = function(item)
 			self.m_ShopsNameLabel:setText(_(item.ShopName))
 			self.m_ShopsPositionLabel:setText(_(getZoneName(item.Position)))
-			self.m_ShopsRobLabel:setText(getOpticalTimestamp(item.LastRob))
+			self.m_ShopsRobLabel:setText(item.LastRob > 0 and getOpticalTimestamp(item.LastRob) or "-")
 		end
 
 		compMoney = compMoney + shop.money
 	end
 
-	self.m_ShopsMoneyLable:setText(_("%d$", compMoney))
+	self.m_ShopsMoneyLabel:setText(toMoneyString(compMoney))
 end
 
 function GroupGUI:ShopLocateButton_Click()
@@ -562,7 +589,7 @@ function GroupGUI:ShopLocateButton_Click()
 	end
 
 	local x, y, z = item.Position.x, item.Position.y, item.Position.z
-	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+	local blip = Blip:new("Marker.png", x, y, 9999, {200, 0, 0})
 	blip:setZ(z)
 	ShortMessage:new(_("Das Geschäft befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), item.ShopName, Color.DarkLightBlue, -1)
 	.m_Callback = function (this)
@@ -570,5 +597,12 @@ function GroupGUI:ShopLocateButton_Click()
 			delete(blip)
 		end
 		delete(this)
+	end
+end
+
+function GroupGUI:GroupToggleLoanButton_Click()
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupToggleLoan", root, selectedItem.Id)
 	end
 end

@@ -7,6 +7,8 @@
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
 
+local AppCallGlobal = nil
+
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -22,69 +24,30 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
+	AppCallGlobal = self
 end
 
 function AppCall:onOpen(form)
-	-- Create main activity
-	MainActivity:new(self)
+	self.m_Form = form
+	self.m_Width = self.m_Form.m_Width
+	self.m_Height = self.m_Form.m_Height
+
+	self:openMain()
 end
 
-function AppCall:onClose()
-	for k, activity in pairs(self.m_Activities) do
-		if instanceof(activity, IncomingCallActivity, true) then
-			if activity:getCaller() then
-				activity:busy()
-			end
-		elseif instanceof(activity, CallResultActivity, true) then
-			if activity.m_InCall == true then
-				activity:ButtonReplace_Click()
-			end
-		end
-	end
-	-- Todo: Tell the callee that we closed the app
-end
+function AppCall:closeAll()
+	if self.m_Background then delete(self.m_Background) end
+	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self.m_Form)
 
--- Events
-function PhoneApp:Event_callIncoming(caller, voiceEnabled)
-	if not caller then return end
-
-	Phone:getSingleton():openApp(self)
-	IncomingCallActivity:new(self, caller, voiceEnabled)
-end
-
-function PhoneApp:Event_callBusy(callee)
-	-- Create busy activity
-	Phone:getSingleton():openApp(self)
-	for k, activity in ipairs(self.m_Activities) do
-		if instanceof(activity, IncomingCallActivity, true) then
-			activity:busy()
-		end
-	end
-	--CallResultActivity:new(self, "player", callee, CALL_RESULT_BUSY)
-end
-
-function PhoneApp:Event_callAnswer(callee, voiceCall)
-	-- Create answer activity
-	Phone:getSingleton():openApp(self)
-	CallResultActivity:new(self, "player", callee, CALL_RESULT_ANSWER, voiceCall)
-end
-
-function PhoneApp:Event_callReplace(responsiblePlayer)
-	for k, activity in ipairs(self.m_Activities) do
-		if instanceof(activity, IncomingCallActivity, true) then
-			activity:busy()
-		end
-	end
-	CallResultActivity:new(self, "player", callee, CALL_RESULT_REPLACE)
 end
 
 
--- Activities
-MainActivity = inherit(AppActivity)
+-- <Main Screen>
+function AppCall:openMain()
+	self:closeAll()
 
-function MainActivity:constructor(app)
-	AppActivity.constructor(self, app)
-	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	local parent, width, height = self.m_Background, self.m_Background.m_Width, self.m_Background.m_Height
+	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, width, height, parent)
 	self.m_Tabs = {}
 	self.m_Tabs["Keyboard"] = self.m_TabPanel:addTab(_"Ziffernblock", FontAwesomeSymbols.Phone)
 	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
@@ -136,32 +99,31 @@ function MainActivity:constructor(app)
 	self.m_ServiceListGrid:addColumn(_"Frak/Untern.", 0.7)
 	self.m_ServiceListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCallService.onLeftClick = bind(self.ButtonCallService_Click, self)
+	self.m_ButtonCallService.onLeftClick = function() self:startSpecialCall(self.m_ServiceListGrid) end
 
 	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
 	self.m_GroupListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
 	self.m_GroupListGrid:addColumn(_"Firma/Gang", 0.7)
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCallGroup_Click, self)
+	self.m_ButtonCallGroup.onLeftClick = function() self:startSpecialCall(self.m_GroupListGrid) end
 
 	triggerServerEvent("requestPhoneNumbers", localPlayer)
 
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 
-	app.m_InCall = false
-
+	self.m_InCall = false
 end
 
-function MainActivity:addNumpadButton(text, column, row)
+function AppCall:addNumpadButton(text, column, row)
 	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"])
 	self.m_NumpadButton[text].onLeftClick = function()
 		self.m_Edit:setText(self.m_Edit:getText()..text)
 	end
 end
 
-function MainActivity:ButtonCallNumpad_Click()
+function AppCall:ButtonCallNumpad_Click()
 	local number = tonumber(self.m_Edit:getText())
 	if not number or string.len(number) < 3 then
 		ErrorBox:new(_"Ungültige Telefonnummer eingegeben!")
@@ -176,30 +138,24 @@ function MainActivity:ButtonCallNumpad_Click()
 	if self.m_PhoneNumbers[number]["OwnerType"] == "player" then
 		if getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"]) then
 			local player = getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"])
-			CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoiceNumpad:isChecked())
+			self:openInCall("player", player, CALL_RESULT_CALLING, self.m_CheckVoiceNumpad:isChecked())
 			triggerServerEvent("callStart", root, player, self.m_CheckVoiceNumpad:isChecked())
 		else
 			ErrorBox:new(_"Der Spieler ist nicht online!")
 		end
 	else
-		CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
+		self:openInCall(self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
 		triggerServerEvent("callStartSpecial", root, number)
 	end
 end
 
-function MainActivity:ButtonCallService_Click()
-	local number = tonumber(self.m_ServiceListGrid:getSelectedItem().Number)
-	CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
+function AppCall:startSpecialCall(grid)
+	local number = tonumber(grid:getSelectedItem().Number)
+	self:openInCall(self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
 	triggerServerEvent("callStartSpecial", root, number)
 end
 
-function MainActivity:ButtonCallGroup_Click()
-	local number = tonumber(self.m_GroupListGrid:getSelectedItem().Number)
-	CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
-	triggerServerEvent("callStartSpecial", root, number)
-end
-
-function MainActivity:ButtonCallPlayer_Click()
+function AppCall:ButtonCallPlayer_Click()
 	local player = getPlayerFromName(self.m_PlayerListGrid:getSelectedItem().Owner)
 	if not player then
 		ErrorBox:new(_"Dieser Spieler ist nicht online!")
@@ -210,15 +166,12 @@ function MainActivity:ButtonCallPlayer_Click()
 		return
 	end
 
-	--CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
-	CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, false)
+	self:openInCall("player", player, CALL_RESULT_CALLING, false)
 
-	--triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
 	triggerServerEvent("callStart", root, player, false)
-
 end
 
-function MainActivity:ButtonAddContact_Click()
+function AppCall:ButtonAddContact_Click()
 	local item = self.m_PlayerListGrid:getSelectedItem()
 	local playerContacts = fromJSON(core:get("ContactList", "Players", "[ [ ] ]"))
 
@@ -235,7 +188,7 @@ function MainActivity:ButtonAddContact_Click()
 	end
 end
 
-function MainActivity:searchPlayer()
+function AppCall:searchPlayer()
 	self.m_PlayerListGrid:clear()
 
 	for number, numData in pairs(self.m_PhoneNumbers) do
@@ -249,7 +202,7 @@ function MainActivity:searchPlayer()
 	end
 end
 
-function MainActivity:Event_receivePhoneNumbers(list)
+function AppCall:Event_receivePhoneNumbers(list)
 	self.m_PhoneNumbers = list
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
 
@@ -261,20 +214,23 @@ function MainActivity:Event_receivePhoneNumbers(list)
 	end
 end
 
-IncomingCallActivity = inherit(AppActivity)
+-- </Main Screen>
 
-function IncomingCallActivity:constructor(app, caller, voiceEnabled)
-	AppActivity.constructor(self, app)
+-- <Incoming Call>
+function AppCall:openIncoming(caller, voiceEnabled)
+	self:closeAll()
+	local parent, width, height = self.m_Background, self.m_Background.m_Width, self.m_Background.m_Height
+
 	self.m_Caller = caller
 	self.m_VoiceEnabled = voiceEnabled
 
-	self.m_CallLabel = GUILabel:new(8, 10, self.m_Width, 30, _("Eingehender Anruf von \n%s", caller:getName()), self):setMultiline(true):setAlignX("center")
+	self.m_CallLabel = GUILabel:new(8, 10, width, 30, _("Eingehender Anruf von \n%s", caller:getName()), parent):setMultiline(true):setAlignX("center")
 	self.m_CallLabel:setColor(Color.Black)
-	GUIWebView:new(self.m_Width/2-70, 70, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, self)
-	self.m_ButtonAnswer = GUIButton:new(10, self.m_Height-50, 110, 30, _"Annehmen", self)
+	GUIWebView:new(width/2-70, 70, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, parent)
+	self.m_ButtonAnswer = GUIButton:new(10, height-50, 110, 30, _"Annehmen", parent)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
 	self.m_ButtonAnswer.onLeftClick = bind(self.ButtonAnswer_Click, self)
-	self.m_ButtonBusy = GUIButton:new(self.m_Width-120, self.m_Height-50, 110, 30, _"Ablehnen", self)
+	self.m_ButtonBusy = GUIButton:new(width-120, height-50, 110, 30, _"Ablehnen", parent)
 	self.m_ButtonBusy:setBackgroundColor(Color.Red)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
@@ -283,24 +239,22 @@ function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 	showCursor(false)
 end
 
-function IncomingCallActivity:ButtonAnswer_Click()
+function AppCall:ButtonAnswer_Click()
 	if self.m_RingSound and isElement(self.m_RingSound) then
 		destroyElement(self.m_RingSound)
 	end
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
 		triggerServerEvent("callAnswer", root, self.m_Caller, self.m_VoiceEnabled)
-
-		-- Show active call activity
-		CallResultActivity:new(self:getApp(), "player",self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
+		self:openInCall("player",self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
 	end
 end
 
-function IncomingCallActivity:ButtonBusy_Click()
+function AppCall:ButtonBusy_Click()
 	self:busy()
 	Phone:getSingleton():close()
 end
 
-function IncomingCallActivity:busy()
+function AppCall:busy()
 	if self.m_RingSound and isElement(self.m_RingSound) then
 		destroyElement(self.m_RingSound)
 	end
@@ -308,34 +262,37 @@ function IncomingCallActivity:busy()
 		triggerServerEvent("callBusy", root, self.m_Caller)
 	end
 	self.m_Caller = nil
-	MainActivity:new(self:getApp())
+	self:openMain()
 end
 
-function IncomingCallActivity:getCaller()
+function AppCall:getCaller()
 	return self.m_Caller
 end
+-- </Incoming Call>
 
-CallResultActivity = inherit(AppActivity)
 
-function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
-	AppActivity.constructor(self, app)
+-- <InCall>
 
-	app.m_InCall = true
+function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
+	self:closeAll()
+	local parent, width, height = self.m_Background, self.m_Background.m_Width, self.m_Background.m_Height
+
+	self.m_InCall = true
 
 	self.m_Callee = callee
 	self.m_CalleeType = calleeType
 
-	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", self):setAlignX("center")
+	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", parent):setAlignX("center")
 	if resultType == CALL_RESULT_ANSWER then
 		self.m_Caller = callee
 		self.m_ResultLabel:setText(_"Verbunden mit")
 		self.m_ResultLabel:setColor(Color.Green)
-		GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), self):setColor(Color.Black):setAlignX("center")
+		GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), parent):setColor(Color.Black):setAlignX("center")
 		if voiceCall then
-			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", self):setColor(Color.Black):setAlignX("center")
+			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", parent):setColor(Color.Black):setAlignX("center")
 		end
-		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, self)
-		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", self)
+		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, parent)
+		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", parent)
 		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
 		self.m_ButtonSendLocation.onLeftClick = function()
 			if self.m_LastClick and getTickCount() - self.m_LastClick < 10000 then
@@ -346,7 +303,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			self.m_LastClick = getTickCount()
 			triggerServerEvent("callSendLocation", root, self.m_Callee)
 		end
-		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
+		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", parent)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
 	elseif resultType == CALL_RESULT_BUSY then
@@ -355,19 +312,22 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		setTimer(
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then
-					MainActivity:new(app)
-					app.m_InCall = false
+					self:openMain()
+					self.m_InCall = false
 				end
 			end, 3000, 1
 		)
 	elseif resultType == CALL_RESULT_REPLACE then
 		self.m_ResultLabel:setText(_"Aufgelegt")
 		self.m_ResultLabel:setColor(Color.Red)
+		if self.m_RingSound and isElement(self.m_RingSound) then
+			destroyElement(self.m_RingSound)
+		end
 		setTimer(
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then
-					MainActivity:new(app)
-					app.m_InCall = false
+					self:openMain()
+					self.m_InCall = false
 				end
 			end, 3000, 1
 		)
@@ -375,17 +335,17 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ResultLabel:setText(_"Anrufen...")
 		self.m_ResultLabel:setColor(Color.Black)
 		if calleeType == "player" then
-			GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), self):setColor(Color.Black):setAlignX("center")
+			GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), parent):setColor(Color.Black):setAlignX("center")
 		else
-			GUILabel:new(0, 50, self.m_Width, 30, callee, self):setColor(Color.Black):setAlignX("center")
+			GUILabel:new(0, 50, self.m_Width, 30, callee, parent):setColor(Color.Black):setAlignX("center")
 		end
-		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
+		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", parent)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
 	end
 end
 
-function CallResultActivity:ButtonReplace_Click()
+function AppCall:ButtonReplace_Click()
 	if self.m_CalleeType == "player" then
 		if self.m_Callee and isElement(self.m_Callee) then
 			triggerServerEvent("callReplace", root, self.m_Callee)
@@ -393,4 +353,43 @@ function CallResultActivity:ButtonReplace_Click()
 	else
 		triggerServerEvent("callAbbortSpecial", localPlayer)
 	end
+end
+-- </InCall>
+
+
+
+function AppCall:onClose()
+	if self.m_InCall then
+		self:ButtonReplace_Click()
+	end
+	self:openMain()
+	-- Todo: Tell the callee that we closed the app
+end
+
+-- Events
+function AppCall:Event_callIncoming(caller, voiceEnabled)
+	if not caller then return end
+
+	Phone:getSingleton():openApp(self)
+	self:openIncoming(caller, voiceEnabled)
+end
+
+function AppCall:Event_callBusy(callee)
+	Phone:getSingleton():openApp(self)
+	if self.m_InCall then
+		self:busy()
+	end
+end
+
+function AppCall:Event_callAnswer(callee, voiceCall)
+	Phone:getSingleton():openApp(self)
+	self:openInCall("player", callee, CALL_RESULT_ANSWER, voiceCall)
+end
+
+function AppCall:Event_callReplace(responsiblePlayer)
+	Phone:getSingleton():openApp(self)
+	if self.m_InCall then
+		self:busy()
+	end
+	self:openInCall("player", callee, CALL_RESULT_REPLACE)
 end

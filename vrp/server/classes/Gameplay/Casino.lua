@@ -27,7 +27,9 @@ function Casino:constructor()
 
 	-- Big Casino
 	InteriorEnterExit:new(Vector3(1471.36, -1178.09, 23.92), Vector3(2233.99, 1714.685, 1012.38), 180, 0, 1)
-	Blip:new("Casino.png", 1471.36, -1178.09,root,300)
+	self.m_Blip = Blip:new("Casino.png", 1471.36, -1178.09,root,300)
+	self.m_Blip:setDisplayText("Casino", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({238, 226, 200})
 
 	Slotmachine:new(2244.2177734375, 1634.9814453125, 1008.7, 0, 0, 307.98718261719,1)
 	Slotmachine:new(2228.0625, 1635.673828125, 1008.7, 0, 0, 47.892883300781,1)
@@ -42,6 +44,17 @@ function Casino:constructor()
 	Slotmachine:new(2223.2060546875, 1571.296875, 1008.959375, 0, 0, 120,1)
 	Slotmachine:new(2229.0947265625, 1563.3232421875, 1008.959375, 0, 0, 120,1)
 
+	if EVENT_EASTER then
+		EasterSlotmachine:new(1484.71, -1779.22, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1496.80, -1779.20, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1496.69, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1485.75, -1795.99, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1474.80, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1464.18, -1796.03, 14, 0, 0, 180, 0, 0)
+		EasterSlotmachine:new(1452.44, -1789.24, 14, 0, 0, 90, 0, 0)
+		EasterSlotmachine:new(1464.05, -1779.20, 14, 0, 0, 0, 0, 0)
+		EasterSlotmachine:new(1475.17, -1779.20, 14, 0, 0, 0, 0, 0)
+	end
 end
 
 function Casino:onChessMarkerHit(hitElement, dim)
@@ -52,7 +65,7 @@ end
 
 function Casino:startMultiplayerGame(game, target)
 	if target and isElement(target) then
-		target:triggerEvent("questionBox", _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
+		QuestionBox:new(client, target, _("Möchtest du mit %s eine Runde %s spielen?", target, client:getName(), Casino.MultiPlayerGameNames[game]), "acceptMultiplayerGame", "declineMultiplayerGame", client, target, game)
 		client:sendShortMessage(_("Du hast eine %s-Anfrage an %s gesendet!", client, Casino.MultiPlayerGameNames[game], target:getName()))
 	else
 		client:sendInfo(_("Spieler nicht gefunden!", client))

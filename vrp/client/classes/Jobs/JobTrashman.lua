@@ -8,7 +8,7 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 260, 2090.34, -2079.65, 13.5, 180, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
+	Job.constructor(self, 260, 2090.34, -2079.65, 13.5, 180, "Trashman.png", {100, 100, 100}, "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
 	self:setJobLevel(JOB_LEVEL_TRASHMAN)
 
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
@@ -19,7 +19,7 @@ function JobTrashman:constructor()
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
 
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), "jobs.trashman")
 end
 
 function JobTrashman:start()

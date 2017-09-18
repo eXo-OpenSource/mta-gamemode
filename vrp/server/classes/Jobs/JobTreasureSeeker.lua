@@ -24,12 +24,12 @@ function JobTreasureSeeker:constructor()
 	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
-		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
-		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] =1200, ["Max"] = 2000, ["Scale"] = 5.5},
-		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
-		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 200, ["Max"] = 400},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 800, ["Max"] = 1600},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 400, ["Max"] = 800},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 1800, ["Max"] = 2500, ["Scale"] = 5.5},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 800, ["Max"] = 1600},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 800, ["Max"] = 1600, ["Scale"] = 2}
 	}
 end
 
@@ -42,7 +42,7 @@ end
 
 function JobTreasureSeeker:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_TREASURESEEKER) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER))
 		return false
 	end
 	return true
@@ -70,6 +70,7 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 	self:registerJobVehicle(player, vehicle, true, true)
 
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
+	player.m_LastJobAction = getRealTime().timestamp
 end
 
 function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
@@ -82,10 +83,14 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local model = veh.Magnet.Object:getModel()
 						if not self.m_TreasureTypes[model] then return end
 						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
-						hitElement:giveMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
+						local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+						local points = math.floor(5*JOB_EXTRA_POINT_FACTOR)
+						hitElement.m_LastJobAction = getRealTime().timestamp
+						StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTreasureSeeker", duration, loan, nil, nil, points)
+						hitElement:addBankMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
-						hitElement:givePoints(5)
+						hitElement:givePoints(points)
 
 						self:loadTreasure(hitElement)
 					else
@@ -141,7 +146,7 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 
 				setTimer(function()
 					veh.Magnet:attach(veh, 0, -6.2, 2)
-					player:sendShortMessage(_("Glückwunsch du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
+					player:sendShortMessage(_("Glückwunsch, du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
 					veh:setFrozen(false)
 				end, 30000, 1)
 

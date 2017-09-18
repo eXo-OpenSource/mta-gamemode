@@ -15,12 +15,12 @@ end
 
 function ItemDonutBox:use(player, itemId, bag, place, itemName)
 	local inventory = player:getInventory()
-	local donutsLeft = inventory:getSpecialItemData(itemName) or 9
+	local donutsLeft = tonumber(player:getInventory():getItemValueByBag(bag, place)) or 9
 	if donutsLeft and (donutsLeft-1) >= 0 then
 		player:sendMessage(("#4F4F65%d/9 Donuts übrig!"):format(donutsLeft-1))
 
 		-- set count -1
-		inventory:setSpecialItemData(itemName, donutsLeft-1)
+		inventory:setItemValueByBag(bag, place, donutsLeft-1)
 
 		-- use item donut
 		if inventory.m_ClassItems["Donut"] then

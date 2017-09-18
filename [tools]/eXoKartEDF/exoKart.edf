@@ -2,30 +2,32 @@
 	<element name="spawnpoint" friendlyname="Spawnpoint" icon="files/spawnpoint.png">
 		<data name="position" type="coord3d" default="0,0,0" />
 		<data name="rotation" type="coord3d" default="0,0,0" />
-		
+
 		<vehicle model="571" editorOnly="true"/>
 	</element>
-	
+
 	<element name="info" friendlyname="Mapname" icon="files/mapinfo.png">
 		<data name="position" type="coord3d" default="0,0,0" />
 		<data name="rotation" type="coord3d" default="0,0,0" />
-		<data name="model" type="skinID" default="64"/>
-		
+		<data name="model" type="skinID" default="192"/>
+
 		<data name="Mapname" type="string" default="" />
 		<data name="Author" type="string" default="" />
-		
+		<data name="Respawn" type="boolean" default="true" description="Erlaubt das zurücksetzen zum letzten Checkpoint"/> <!-- default value can not be "false" cause of editor errors -->
+
 		<ped model="!model!" position="!position!" rotation="!rotation!" editorOnly="true" />
 	</element>
-	
+
 	<element name="startmarker" friendlyname="Startmarker" icon="files/start.png">
 		<data name="position" type="coord3d" default="0,0,0" />
 		<marker type="cylinder" size="1" color="#ffff007d" editorOnly="true"/>
 	</element>
-	
+
 	<element name="checkpoint" friendlyname="Checkpoint" icon="files/checkpoint.png">
 		<data name="position" type="coord3d" default="0,0,0" />
 		<data name="size" type="number" description="marker size" default="6"/>
-		
+		<data name="type" type="selection:checkpoint,start/finish" default="checkpoint"/>
+
 		<marker type="cylinder" size="!size!" color="#0088ff96" editorOnly="true"/>
 	</element>
 </def>

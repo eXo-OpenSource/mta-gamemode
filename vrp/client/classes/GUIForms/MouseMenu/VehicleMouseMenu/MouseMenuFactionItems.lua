@@ -50,4 +50,6 @@ function VehicleMouseMenuFactionItems:constructor(posX, posY, element)
 			end
 		end
 	end
+
+	self:adjustWidth()
 end

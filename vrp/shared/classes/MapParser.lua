@@ -23,14 +23,14 @@ local readFuncs = {
 			rx = tonumber(attr.rotX), ry = tonumber(attr.rotY), rz = tonumber(attr.rotZ), model = tonumber(attr.vehicle)}
 	end;
 	checkpoint = function(attributes)
-		return {type = "checkpoint", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
+		return {type = "checkpoint", checkpointType = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
 	end;
 	startmarker = function(attributes)
 		return {type="startmarker", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ)}
 	end;
 	info = function(attributes)
 		return {type="infoPed", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), respawn = toboolean(attributes.Respawn)}
 	end;
 }
 local createFuncs = {
@@ -48,6 +48,7 @@ local createFuncs = {
 	end;
 	checkpoint = function(info)
 		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
+		m.checkpointType = info.checkpointType
 		return m
 	end;
 	removeWorldObject = function(info)
@@ -68,7 +69,7 @@ local createFuncs = {
 			func = function(vehicle) setElementModel(vehicle, info.model) end
 		else
 			model = 2837
-			func = function(vehicle) fixVehicle(vehicle) end
+			func = function(vehicle) vehicle:fix() end
 		end
 		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
 		addEventHandler("onPickupHit", pickup, function(player)

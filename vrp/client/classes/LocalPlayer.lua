@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -16,6 +16,7 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
+	self.FPS = {startTick = getTickCount(), counter = 0, frames = 0 }
 
 	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
 	self.m_AFKCheckCount = 0
@@ -38,13 +39,15 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
-	addEventHandler("onClientRender",root,bind(self.renderPostMortemInfo, self))
+	addEventHandler("onClientPreRender", root, bind(LocalPlayer.calcFPS, self))
 	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
-	addEventHandler("onClientRender",root,bind(self.checkWeaponAim, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
+	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
+	addEventHandler("playSound", root, bind(self.Event_PlaySound, self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
+	addCommandHandler("anim", bind(self.startAnimation, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
 
@@ -86,10 +89,6 @@ end
 function LocalPlayer:Event_onGetTime( realtime )
 	setTime(realtime.hour, realtime.minute)
 	setMinuteDuration(60000)
-end
-
-function LocalPlayer:checkWeaponAim()
-
 end
 
 function LocalPlayer:fadeOutScope()
@@ -153,7 +152,7 @@ function LocalPlayer:Event_RenderAlcohol()
 	if alc then
 		if alc >= 2 then
 			toggleControl("sprint",false)
-			setControlState("walk",true)
+			setPedControlState("walk",true)
 		end
 	end
 end
@@ -209,6 +208,10 @@ function LocalPlayer:getJobLevel()
 	return self:getPrivateSync("JobLevel") or 0
 end
 
+function LocalPlayer:getFishingLevel()
+	return self:getPrivateSync("FishingLevel") or 0
+end
+
 function LocalPlayer:getSessionId()
 	return self:getPrivateSync("SessionID") or ""
 end
@@ -235,12 +238,12 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
-				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
 			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then
-			triggerServerEvent("companyToggleDuty", localPlayer)
+			triggerServerEvent("companyToggleDuty", localPlayer, true)
 		end
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
@@ -251,8 +254,10 @@ function LocalPlayer:Event_playerWasted()
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
+	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
 	local funcA = function()
+		self.m_Death = false
 		if self.m_DeathMessage then
 			delete(self.m_DeathMessage)
 		end
@@ -265,11 +270,11 @@ function LocalPlayer:Event_playerWasted()
 
 		local soundLength = 20 -- Length of Halleluja in Seconds
 		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
-			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
 		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
-		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
+		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
 		self.m_Add = 0
@@ -296,15 +301,15 @@ function LocalPlayer:Event_playerWasted()
 		)
 	end
 	local SMClick = function()
-		if localPlayer:isDead() then
+		if self.m_Death then
 			funcA()
 		else
-			ErrorBox:new(_"Du bist nicht mehr tod!")
+			ErrorBox:new(_"Du bist nicht mehr tot!")
 			return
 		end
 	end
 	setGameSpeed(0.1)
-	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
 	local x,y,z = getPedBonePosition(localPlayer,5)
 	setSkyGradient(10,10,10,30,30,30)
@@ -364,6 +369,7 @@ end
 
 function LocalPlayer:checkAFK()
 	if not self:isLoggedIn() then return end
+	if DEBUG then return end
 
 	if not self:getPublicSync("AFK") == true then
 		local pos = self:getPosition()
@@ -446,62 +452,60 @@ function LocalPlayer:toggleAFK(state, teleport)
 	end
 end
 
-function LocalPlayer:renderPostMortemInfo()
-	local peds = getElementsByType("ped", root, true)
-	local isMortem,x,y,z, name
-	local px, py, pz, tx, ty, tz, dist
-	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do
-		isMortem = getElementData(ped, "NPC:isDyingPed")
-		if isMortem then
-			x,y,z = getPedBonePosition(ped, 8)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
-			if dist then
-				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z)
-						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
-						if x and y then
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
-						end
-					end
-				end
-			end
-		end
-	end
-	if self.m_MortemWeaponPickup then
-		if getKeyState("lalt") and getKeyState("m") then
-			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
-			self.m_MortemWeaponPickup = false
-		end
-	end
-end
-
 
 function LocalPlayer:renderPedNameTags()
-	local peds = getElementsByType("ped", root, true)
-	local nameTag,x,y,z, textWidth
-	local px, py, pz, tx, ty, tz, dist
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/PedNameTag") end
+
+	local nameTag, mortemTag, x, y, z
+	local px, py, pz, tx, ty, tz
 	px, py, pz = getCameraMatrix( )
-	for k, ped in ipairs( peds) do
+
+	for k, ped in pairs(getElementsByType("ped", root, true)) do
+		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag") end
 		nameTag = getElementData(ped, "Ped:fakeNameTag")
-		if nameTag then
-			textWidth = dxGetTextWidth(nameTag, 1,"default-bold")
-			x,y,z = getPedBonePosition(ped, 3)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20
-			if dist then
+		mortemTag = getElementData(ped, "NPC:isDyingPed")
+		if mortemTag then mortemTag = getElementData(ped,"NPC:namePed") or "Unbekannt" end
+
+		if nameTag or mortemTag then
+			x,y,z = getPedBonePosition(ped, 8)
+			if getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z+1)
+						x,y = getScreenFromWorldPosition(x,y,z+0.5)
 						if x and y then
-							dxDrawText(nameTag, x-textWidth/2,y+1,x+textWidth/2,y+1,tocolor(0,0,0,255),1,"default-bold")
-							dxDrawText(nameTag, x-textWidth/2,y,x+textWidth/2,y,tocolor(200,200,200,255),1,"default-bold")
+							if nameTag then
+								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(200, 200, 200, 255), 1, "default-bold", "center", "center")
+							elseif mortemTag then
+								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 1, "default-bold", "center", "center")
+							end
 						end
 					end
 				end
 			end
 		end
+		if self.m_MortemWeaponPickup then -- better solution would be key-binds, but this is easy and safe
+			if getKeyState("lalt") and getKeyState("m") then
+				triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
+				self.m_MortemWeaponPickup = false
+			end
+		end
+	end
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/PedNameTag") end
+end
+
+function LocalPlayer:calcFPS()
+	if getTickCount() - self.FPS.startTick >= 1000 then
+		if self.FPS.frames ~= self.FPS.counter then
+			self.FPS.frames = self.FPS.counter
+		end
+		self.FPS.counter = 0
+		self.FPS.startTick = getTickCount()
+	else
+		self.FPS.counter = self.FPS.counter + 1
 	end
 end
 
@@ -542,6 +546,10 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
+	for i = 1,7 do
+		setElementData(localPlayer,"W_A:w"..i-1, core:get("W_ATTACH", "weapon"..i-1, true))
+		triggerEvent("Weapon_Attach:recheckWeapons", localPlayer, i-1)
+	end
 end
 
 function LocalPlayer:Event_setAdmin(player, rank)
@@ -549,9 +557,9 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		bindKey("lshift", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx, vy, 0.3)
 					end
@@ -560,16 +568,40 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 		bindKey("lalt", "down",
 			function()
-				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) then
 					local vehicle = getPedOccupiedVehicle(self)
-					if vehicle then
+					if vehicle and not isCursorShowing() then
 						local vx, vy, vz = getElementVelocity(vehicle)
 						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
 					end
 				end
 			end
 		)
-		bindKey("f5", "down",
+		bindKey("lctrl", "down",
+			function()
+				if not DEBUG then return false end
+				if self:getRank() >= RANK.Moderator and (DEBUG or self:getPublicSync("supportMode") == true) and localPlayer.vehicle then
+					setWorldSpecialPropertyEnabled("aircars", not isWorldSpecialPropertyEnabled("aircars"))
+					self.m_AircarsEnabled = true
+					ShortMessage:new(_("Fahrzeug-Flugmodus %s.", isWorldSpecialPropertyEnabled("aircars") and "aktiviert" or "deaktiviert"))
+				elseif self.m_AircarsEnabled then
+					setWorldSpecialPropertyEnabled("aircars", false)
+					self.m_AircarsEnabled = false
+					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
+				end
+			end
+		)
+
+		self:setPublicSyncChangeHandler("supportMode", function(state)
+			if not state then
+				if self.m_AircarsEnabled then
+					setWorldSpecialPropertyEnabled("aircars", false)
+					self.m_AircarsEnabled = false
+					ShortMessage:new(_("Fahrzeug-Flugmodus deaktiviert."))
+				end
+			end
+		end)
+		--[[bindKey("f5", "down",
 			function()
 				if self:getRank() >= RANK.Moderator then
 					if MapGUI:isInstantiated() then
@@ -585,11 +617,11 @@ function LocalPlayer:Event_setAdmin(player, rank)
 					end
 				end
 			end
-		)
+		)]]
 
-		if rank >= RANK.Developer then
+		if rank >= ADMIN_RANK_PERMISSION["runString"] then
 			addCommandHandler("dcrun", function(cmd, ...)
-				if self:getRank() >= RANK.Servermanager then
+				if self:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end
@@ -600,6 +632,25 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
+function LocalPlayer:Event_RunString(codeString, sendResponse)
+	local result = runString(codeString, localPlayer, true)
+
+	if sendResponse then
+		triggerServerEvent("onClientRunStringResult", source, tostring(result))
+	else
+		if source == localPlayer then
+			triggerServerEvent("onClientRunStringResult", source, tostring(result))
+		end
+	end
+
+	outputDebug("Running server string: "..tostring(codeString))
+end
+
+function LocalPlayer:Event_PlaySound(path)
+	if type(path) == "string" then
+		playSound(path)
+	end
+end
 
 function LocalPlayer:getAchievements ()
 	return table.setIndexToInteger(fromJSON(self:getPrivateSync("Achievements"))) or {[0] = false}
@@ -613,8 +664,36 @@ function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
 end
 
+function LocalPlayer:getWorldObject()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, false, false, true, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		elseif result[12] then
+			return result[12], {result[13], result[14], result[15]}, {result[16], result[17], result[18]}
+		end
+	end
+
+	return false
+end
+
+function LocalPlayer:getWorldVehicle()
+	local lookAt = localPlayer.position + (Camera.matrix.forward)*3
+	local result = {processLineOfSight(localPlayer.position, lookAt, true, true, false, false, false, false, false, true, localPlayer, true) }
+
+	if result[1] then
+		if result[5] then
+			return result[5], {getElementPosition(result[5])}, {getElementRotation(result[5])} -- If we want to trigger to server, we can't use Vectors
+		end
+	end
+
+	return false
+end
+
 function LocalPlayer:Event_onClientPlayerSpawn()
-	NoDm:getSingleton():checkNoDm()
+
 
 	local col = createColSphere(localPlayer.position, 3)
 
@@ -642,6 +721,32 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 			end
 		end, 10000, 1
 	)]]
+	local weaponAttachCheck = core:get("W_ATTACH", "alt_w5holst", false)
+	setElementData(localPlayer,"W_A:alt_w5", weaponAttachCheck)
+	triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
+	nextframe(function()
+		NoDm:getSingleton():checkNoDm()
+	end)
+end
+
+function LocalPlayer:startAnimation(_, ...)
+	if not localPlayer.vehicle then
+		triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
+	end
+end
+
+function LocalPlayer:vehiclePickUp()
+	if self.vehicle then return end
+
+	if self:getPrivateSync("isAttachedToVehicle") then
+		triggerServerEvent("attachPlayerToVehicle", self)
+		return
+	end
+
+	if not self.contactElement or self.contactElement:getType() ~= "vehicle" then return end
+	if self.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[self.contactElement:getModel()] then
+		triggerServerEvent("attachPlayerToVehicle", self)
+	end
 end
 
 addEvent("showModCheck", true)

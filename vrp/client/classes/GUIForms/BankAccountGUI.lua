@@ -20,7 +20,7 @@ function BankAccountGUI:constructor(name, depositEvent, withdrawEvent, additiona
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, name.." Konto", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.Green)
-	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.28, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", self.m_Window)
+	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.28, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Lade...", self.m_Window)
 
 	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
 	local tabWidth, tabHeight = self.m_TabPanel:getSize()

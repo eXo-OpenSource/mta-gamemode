@@ -4,9 +4,7 @@ function Neon.initalize()
     Neon.Image = dxCreateTexture("files/images/Other/Neon.png")
     Neon.Vehicles = {}
     Neon.getNeonTable()
-    addEventHandler("onClientElementStreamIn",getRootElement(),Neon.VehiclestreamedIn)
-    addEventHandler("onClientElementStreamOut",getRootElement(),Neon.VehiclestreamedOut)
-    addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+	Neon.toggle(core:get("Vehicles", "Neon", true))
 
 	addEventHandler("onClientElementDataChange", getRootElement(),
 		function(dataName)
@@ -42,24 +40,18 @@ function Neon.getNeonTable()
 	end
 end
 
-function Neon.VehiclestreamedIn()
-	local veh = source
-	if getElementType(veh) == "vehicle" then
-		if veh:getVehicleType() == VehicleType.Automobile then
-			if getElementData(veh,"Neon") == true then
-				Neon.Vehicles[veh] = true
-			end
+function Neon.VehiclestreamedIn(veh)
+	if getVehicleType(veh) == VehicleType.Automobile then
+		if getElementData(veh,"Neon") == true then
+			Neon.Vehicles[veh] = true
 		end
 	end
 end
 
 function Neon.VehiclestreamedOut(veh)
-	local veh = source
-	if getElementType(veh) == "vehicle" then
-		if veh:getVehicleType() == VehicleType.Automobile then
-			if getElementData(veh,"Neon") == true then
-				Neon.Vehicles[veh] = nil
-			end
+	if getVehicleType(veh) == VehicleType.Automobile then
+		if getElementData(veh,"Neon") == true then
+			Neon.Vehicles[veh] = nil
 		end
 	end
 end
@@ -106,5 +98,16 @@ function Neon.Render()
 		else
 			Neon.Vehicles[veh] = nil
 		end
+	end
+end
+
+
+function Neon.toggle(state)
+	if state and not Neon.ms_Active then
+		addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+		Neon.ms_Active = true
+	elseif not state and Neon.ms_Active then
+		removeEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+		Neon.ms_Active = false
 	end
 end

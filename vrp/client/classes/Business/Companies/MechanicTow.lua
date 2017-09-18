@@ -1,36 +1,92 @@
 MechanicTow = inherit(Singleton)
 
 function MechanicTow:constructor()
-	self.m_Ped = createPed(50, 913.83, -1232.65, 16.98)
+	self.m_Ped = createPed(50, 913.83, -1234.65, 16.98)
 	setElementData(self.m_Ped, "clickable", true)
 	self.m_Ped:setData("NPC:Immortal", true)
 	self.m_Ped:setFrozen(true)
 	self.m_Ped:setData("onClickEvent",
 		function()
-			local questionBox = QuestionBox:new("Welches Fahrzeug möchtest du freikaufen?",
+			self.ms_SelectionGUI = GUIButtonMenu:new("Fahrzeug Art")
+			self.ms_SelectionGUI:addItem(_"Privat Fahrzeug", Color.LightBlue,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "permanentVehicle")
-				end,
+				end
+			)
+			self.ms_SelectionGUI:addItem(_"Firma/Gruppen Fahrzeug", Color.LightBlue,
 				function()
 					triggerServerEvent("mechanicOpenTakeGUI", localPlayer, "groupVehicle")
 				end
 			)
-
-			questionBox:setButtonText("Privat", "Firma/Gruppe")
 		end
 	)
 
 	SpeakBubble3D:new(self.m_Ped, _"Fahrzeug freikaufen", _"Klicke mich an!")
 
 	NonCollidingArea:new(894.25, -1188.40, 16.98, 10)
-	NonCollidingArea:new(924.76, -1192.84, 16.72, 10)
+	NonCollidingArea:new(915.76, -1192.84, 16.72, 10)
+	NonCollidingArea:new(908.032, -1259.658, 15, 15)
+	-- NonCollidingArea:new(864.61, -1272.77, 15, 15)
 
-
-	self.m_BugPed = createPed(50, 885.95, -1176.06, 16.98, 270)
+	self.m_BugPed = createPed(50, 850.305, -1226.058, 17.269, 290)
 	setElementData(self.m_BugPed, "clickable", true)
 	self.m_BugPed:setData("BugChecker", true)
 	self.m_BugPed:setData("NPC:Immortal", true)
 	self.m_BugPed:setFrozen(true)
 
 	SpeakBubble3D:new(self.m_BugPed, _"Ich kann Wanzen aufspüren", _"Klicke mich an!")
+
+	self.m_RenderFuelHoles = {}
+	self.m_RequestFill = bind(MechanicTow.requestFill, self)
+
+	addEventHandler("onClientElementStreamIn", root, bind(MechanicTow.onObjectStreamIn, self))
+	addEventHandler("onClientRender", root, bind(MechanicTow.renderFuelHose, self))
+end
+
+function MechanicTow:onObjectStreamIn()
+	if source:getModel() == 1909 then
+		self.m_RenderFuelHoles[source] = true
+	end
+end
+
+function MechanicTow:renderFuelHose()
+	for element in pairs(self.m_RenderFuelHoles) do
+		if isElement(element) then
+			local vehicle = element:getData("attachedToVehicle")
+			if isElement(vehicle) and vehicle.towingVehicle then
+				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
+					local worldVehicle = localPlayer:getWorldVehicle()
+					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle then
+						localPlayer.lastWorldVehicle = worldVehicle
+
+						VehicleFuel.forceClose()
+						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
+					end
+
+					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
+						self.m_RenderFuelHoles[element] = nil
+						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+					end
+				end
+			else
+				self.m_RenderFuelHoles[element] = nil
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
+					triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+				end
+			end
+		else
+			self.m_RenderFuelHoles[element] = nil
+		end
+	end
+end
+
+function MechanicTow:requestFill(vehicle, fuel)
+	if not vehicle.controller then
+		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
+		return
+	end
+
+	triggerServerEvent("mechanicVehicleRequestFill", localPlayer, vehicle, fuel)
 end

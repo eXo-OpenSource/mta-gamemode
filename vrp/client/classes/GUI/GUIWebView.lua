@@ -26,9 +26,14 @@ end
 function GUIWebView:destructor()
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    focusBrowser(nil)
     self.m_Browser:destroy()
 
     GUIElement.destructor(self)
+end
+
+function GUIWebView:setAjaxHandler(handler)
+    self.m_Browser:setAjaxHandler("ajax", handler)
 end
 
 function GUIWebView:drawThis()
@@ -60,8 +65,8 @@ function GUIWebView:getUnderlyingBrowser()
     return self.m_Browser
 end
 
-function GUIWebView:callEvent(eventName, ...)
-    local code = ("mtatools._callEvent('%s', '%s')"):format(eventName, toJSON({...}))
+function GUIWebView:callEvent(eventName, data)
+    local code = ("mtatools._callEvent('%s', `%s`)"):format(eventName, string.gsub(data, "`", "\\`"))
     return self.m_Browser:executeJavascript(code)
 end
 
@@ -85,11 +90,11 @@ function GUIWebView:onInternalRightClickDown()
 end
 
 function GUIWebView:onInternalMouseWheelDown()
-    self.m_Browser:injectMouseWheel(-20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and -40 or -20, 0)
 end
 
 function GUIWebView:onInternalMouseWheelUp()
-    self.m_Browser:injectMouseWheel(20, 0)
+    self.m_Browser:injectMouseWheel(getKeyState("lshift") and 40 or 20, 0)
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)

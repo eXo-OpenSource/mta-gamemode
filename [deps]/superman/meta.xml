@@ -1,0 +1,7 @@
+<meta>
+  <info author="Alberto Alonso (ryden)" version="1.0" type="script" />
+  <script src="s_superman.lua" type="server" />
+  <script src="c_superman.lua" type="client" />
+  <export function="startSuperMan" type="server" />
+  <export function="stopSuperMan" type="server" />
+</meta>

@@ -34,6 +34,7 @@ function ChessSession:Event_endGame( endReason, loser)
 		self.m_ChessGraphics.m_GameOver = true
 		self.m_ChessGraphics.m_EndReason = endReason
 		self.m_ChessGraphics.m_Loser = loser
+		localPlayer.m_InChessGame = false
 	end
 end
 
@@ -47,6 +48,7 @@ function ChessSession:Event_onClockUpdate( turn, mTable )
 	end
 end
 function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)
+	localPlayer.m_InChessGame = true
 	self.m_Team = localTeam
 	self.m_Players = players
 	self:initialiseGame( initMatrix , isSpeed)

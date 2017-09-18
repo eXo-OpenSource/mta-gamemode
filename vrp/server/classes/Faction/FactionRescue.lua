@@ -49,12 +49,17 @@ function FactionRescue:constructor()
 	self.m_MoveLadderBind = bind(self.moveLadder, self)
 
 
-	nextframe( -- Todo workaround
+	nextframe(
 		function ()
-			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
+			local safe = createObject(2332, 1724.8, -1754.29, 15.25, 0, 0, 180)
+			setElementDoubleSided(safe,true)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
+
+	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400)
+	blip:setOptionalColor({factionColors[4].r, factionColors[4].g, factionColors[4].b})
+	blip:setDisplayText(self.m_Faction:getName(), BLIP_CATEGORY.Faction)
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -92,14 +97,31 @@ function FactionRescue:countPlayers()
 	return #self.m_Faction:getOnlinePlayers()
 end
 
-function FactionRescue:getOnlinePlayers()
+function FactionRescue:getOnlinePlayers(afkCheck, dutyCheck)
 	local players = {}
 
-	for index, value in pairs(self.m_Faction:getOnlinePlayers()) do
+	for index, value in pairs(self.m_Faction:getOnlinePlayers(afkCheck, dutyCheck)) do
 		table.insert(players, value)
 	end
 
 	return players
+end
+
+function FactionRescue:sendWarning(text, header, withOffDuty, pos, ...)
+	for k, player in pairs(self:getOnlinePlayers(false, not withOffDuty)) do
+		player:sendWarning(_(text, player, ...), 30000, header)
+	end
+	if pos and pos.x then pos = {pos.x, pos.y, pos.z} end -- serialiseVector conversion
+	if pos and pos[1] and pos[2] then
+		local blip = Blip:new("Fire.png", pos[1], pos[2], {factionType = "Rescue"}, 4000, BLIP_COLOR_CONSTANTS.Orange)
+			blip:setDisplayText(header)
+		if pos[3] then
+			blip:setZ(pos[3])
+		end
+		setTimer(function()
+			blip:delete()
+		end, 30000, 1)
+	end
 end
 
 function FactionRescue:onBarrierHit(player)
@@ -120,10 +142,11 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 				if faction then
 					if faction:isRescueFaction() == true then
 						if not hitElement.vehicle then
+							hitElement.m_CurrentDutyPickup = source
 							hitElement:triggerEvent("showRescueFactionDutyGUI")
 							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 						else
-      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", player))
+      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", hitElement))
 						end
 					end
 				end
@@ -161,33 +184,37 @@ function FactionRescue:Event_changeSkin(player)
 
 end
 
-function FactionRescue:Event_toggleDuty(type)
+function FactionRescue:Event_toggleDuty(type, wasted)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",false)
-			client:setPublicSync("Rescue:Type",false)
-			client:getInventory():removeAllItem("Barrikade")
-			takeWeapon(client,42)
+		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
+			if client:isFactionDuty() then
+				client:setDefaultSkin()
+				client:setFactionDuty(false)
+				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",false)
+				client:setPublicSync("Rescue:Type",false)
+				client:getInventory():removeAllItem("Warnkegel")
+				takeAllWeapons(client)
+			else
+				if client:getPublicSync("Company:Duty") and client:getCompany() then
+					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
+					return false
+				end
+				takeAllWeapons(client)
+				if type == "fire" then
+					giveWeapon(client, 42, 10000, true)
+				end
+				client:setFactionDuty(true)
+				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
+				client:setPublicSync("Faction:Duty",true)
+				client:setPublicSync("Rescue:Type",type)
+				client:getInventory():removeAllItem("Warnkegel")
+				client:getInventory():giveItem("Warnkegel", 10)
+				self:Event_changeSkin(client)
+			end
 		else
-			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-				return false
-			end
-			takeWeapon(client,42)
-			if type == "fire" then
-				giveWeapon(client, 42, 2000, true)
-			end
-			client.m_FactionDuty = true
-			client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
-			client:setPublicSync("Faction:Duty",true)
-			client:setPublicSync("Rescue:Type",type)
-			client:getInventory():removeAllItem("Barrikade")
-			client:getInventory():giveItem("Barrikade", 10)
-			self:Event_changeSkin(client)
+			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
 		client:sendError(_("Du bist in nicht im Rescue-Team!", client))
@@ -205,7 +232,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 				else
 					self:getStretcher(client, vehicle)
 					setElementAlpha(client,255)
-					if client.ped_deadDouble then
+					if isElement(client.ped_deadDouble) then
 						destroyElement(client.ped_deadDouble)
 					end
 				end
@@ -233,7 +260,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
 	setElementAlpha(player,255)
-	if player.ped_deadDouble then
+	if isElement(player.ped_deadDouble) then
 		destroyElement(player.ped_deadDouble)
 	end
 	-- Move the Stretcher to the Player
@@ -250,7 +277,7 @@ function FactionRescue:getStretcher(player, vehicle)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
 			setElementAlpha(player,255)
-			if player.ped_deadDouble then
+			if isElement(player.ped_deadDouble) then
 				destroyElement(player.ped_deadDouble)
 			end
 		end, 3000, 1, player
@@ -395,7 +422,7 @@ function FactionRescue:Event_healPlayerQuestion(target)
 	if isElement(target) then
 		if target:getHealth() < 100 then
 			local costs = math.floor(100-target:getHealth())
-			target:triggerEvent("questionBox", _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
+			QuestionBox:new(client, target, _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
 		else
 			client:sendError(_("Der Spieler hat volles Leben!", client))
 		end
@@ -465,66 +492,94 @@ function FactionRescue:onLadderTruckEnter(player, seat)
 	end
 end
 
-function FactionRescue:onLadderTruckExit(player, seat)
-	if seat > 0 then return end
-	if source.LadderEnabled then
-		self:toggleLadder(source, player)
-	end
-end
-
-function FactionRescue:onLadderTruckSpawn(veh)
-	if veh.Ladder then
-		for index, obj in pairs(veh.Ladder) do
-			obj:destroy()
-		end
-	end
-
-	if veh.LadderTimer and isTimer(veh.LadderTimer) then
-		killTimer(veh.LadderTimer)
-	end
-
-	veh.LadderEnabled = false
-	veh.LadderMove = {}
-
-	veh.Ladder = {}
-	veh.Ladder["main"] = createObject(1932, veh:getPosition())
-	veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
-
-	veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
-
-	veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder2"]:setScale(0.8)
-	veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
-
-	veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
-	veh.Ladder["ladder3"]:setScale(0.6)
-	veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
-
-	for index, obj in pairs(veh.Ladder) do
-		obj:setCollisionsEnabled(false)
-	end
-
-	addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
-	addEventHandler("onVehicleExit", veh, bind(self.onLadderTruckExit, self))
-
-end
-
-function FactionRescue:toggleLadder(veh, player, force)
-	if veh.LadderEnabled and not force then
-		player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeuge wieder fahren!", player))
-		veh.LadderEnabled = false
+function FactionRescue:disableLadderBinds(player)
+	if player and isElement(player) and getElementType(player) == "player" then
 		unbindKey(player, "w", "both", self.m_LadderBind)
 		unbindKey(player, "a", "both", self.m_LadderBind)
 		unbindKey(player, "s", "both", self.m_LadderBind)
 		unbindKey(player, "d", "both", self.m_LadderBind)
 		unbindKey(player, "lctrl", "both", self.m_LadderBind)
 		unbindKey(player, "lshift", "both", self.m_LadderBind)
-		self:onLadderTruckSpawn(veh)
-		veh:setFrozen(false)
+	end
+end
+
+function FactionRescue:onLadderTruckExit(player, seat)
+	if seat > 0 then return end
+	if source.LadderEnabled then
+		self:disableLadderBinds(player)
+		triggerClientEvent(player, "rescueLadderFixCamera", source)
+		if source.LadderTimer and isTimer(source.LadderTimer) then
+			killTimer(source.LadderTimer)
+		end
+	end
+end
+
+function FactionRescue:onLadderTruckReset(veh)
+	if veh.Ladder then
+		veh.Ladder["main"]:setAttachedOffsets(0, 0.5, 1.1)
+		veh.Ladder["ladder1"]:setAttachedOffsets(0, 0, 0)
+		veh.Ladder["ladder2"]:setAttachedOffsets(0, -1.4, 0.2)
+		veh.Ladder["ladder3"]:setAttachedOffsets(0, -1, 0.2)
+		veh.LadderEnabled = false
 		veh.m_DisableToggleHandbrake = false
 	else
-		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit WASD, STRG und SHIFT!", player))
+		addEventHandler("onVehicleEnter", veh, bind(self.onLadderTruckEnter, self))
+		addEventHandler("onVehicleStartExit", veh, bind(self.onLadderTruckExit, self))
+
+		veh.LadderEnabled = false
+		veh.LadderMove = {}
+
+		veh.Ladder = {}
+		veh.Ladder["main"] = createObject(1932, veh:getPosition())
+		veh.Ladder["main"]:attach(veh, 0, 0.5, 1.1)
+		veh.Ladder["mainAttachOffset"] = Vector3(0, 0.5, 1.1)
+
+		veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+
+		veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder2"]:setScale(0.8)
+		veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], 0, -1.4, 0.2)
+
+		veh.Ladder["ladder3"] = createObject(1931, veh:getPosition())
+		veh.Ladder["ladder3"]:setScale(0.6)
+		veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], 0, -1, 0.2)
+		for i,v in pairs(veh.Ladder) do
+			if isElement(v) then
+				if i ~= "main" then
+					setElementCollisionsEnabled(v, true)
+				end
+				setElementData(v, "vehicle-attachment", veh) --register as a clickable object of the fire truck (mouse menu)
+			end
+		end
+	end
+
+	for i,v in pairs(veh.Ladder) do
+		if isElement(v) then
+			setElementCollisionsEnabled(v, false)
+		end
+	end
+
+	if veh.LadderTimer and isTimer(veh.LadderTimer) then
+		killTimer(veh.LadderTimer)
+	end
+end
+
+function FactionRescue:toggleLadder(veh, player, force)
+	if veh.LadderEnabled and not force then
+		if veh.LadderTimer and isTimer(veh.LadderTimer) then
+			killTimer(veh.LadderTimer)
+		end
+		if player then
+			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player))
+			self:disableLadderBinds(player)
+			triggerClientEvent(player, "rescueLadderFixCamera", veh)
+		end
+		self:onLadderTruckReset(veh)
+		veh:setFrozen(false)
+		triggerClientEvent("rescueLadderUpdateCollision", veh, false)
+	else
+		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
 		veh.LadderEnabled = true
 		bindKey(player, "w", "both", self.m_LadderBind)
 		bindKey(player, "a", "both", self.m_LadderBind)
@@ -532,15 +587,10 @@ function FactionRescue:toggleLadder(veh, player, force)
 		bindKey(player, "d", "both", self.m_LadderBind)
 		bindKey(player, "lctrl", "both", self.m_LadderBind)
 		bindKey(player, "lshift", "both", self.m_LadderBind)
-		setTimer(self.m_MoveLadderBind, 50, 0, veh)
+		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
 		veh:setFrozen(true)
 		veh.m_DisableToggleHandbrake = true
-		veh.Ladder["main"]:detach(veh)
-		for index, obj in pairs(veh.Ladder) do
-			if not index == "main" then
-				obj:setCollisionsEnabled(true)
-			end
-		end
+		triggerClientEvent("rescueLadderUpdateCollision", veh, true)
 	end
 end
 
@@ -551,11 +601,11 @@ end
 
 function FactionRescue:ladderFunction(player, key, state)
 	local veh = player.vehicle
-	if not veh then return end
-	if veh:getModel() ~= 544 then return end
+	if not veh then self:disableLadderBinds(player) return end
+	if veh:getModel() ~= 544 then self:disableLadderBinds(player) return end
 
-	if key == "a" then	veh.LadderMove["left"] = state == "down" and true or false end
-	if key == "d" then	veh.LadderMove["right"] = state == "down" and true or false end
+	if key == "d" then	veh.LadderMove["left"] = state == "down" and true or false end
+	if key == "a" then	veh.LadderMove["right"] = state == "down" and true or false end
 	if key == "w" then	veh.LadderMove["up"] = state == "down" and true or false end
 	if key == "s" then	veh.LadderMove["down"] = state == "down" and true or false end
 	if key == "lctrl" then	veh.LadderMove["in"] = state == "down" and true or false end
@@ -563,35 +613,45 @@ function FactionRescue:ladderFunction(player, key, state)
 end
 
 function FactionRescue:moveLadder(veh)
-
-	local rx, ry, rz = getElementRotation(veh.Ladder["main"])
+	local x, y, z, rx, ry, rz = getElementAttachedOffsets(veh.Ladder["main"])
 	local x1, y1, z1, rx1, ry1, rz1 = getElementAttachedOffsets(veh.Ladder["ladder1"])
 	local x2, y2, z2, rx2, ry2, rz2 = getElementAttachedOffsets(veh.Ladder["ladder2"])
 	local x3, y3, z3, rx3, ry3, rz3 = getElementAttachedOffsets(veh.Ladder["ladder3"])
 
+
 	if veh.LadderMove["right"] then
-		veh.Ladder["main"]:setRotation(rx, ry, rz+0.7)
+		veh.Ladder["main"]:setAttachedOffsets(x, y, z, rx, ry, rz+0.7)
 	elseif veh.LadderMove["left"] then
-		veh.Ladder["main"]:setRotation(rx, ry, rz-0.7)
-	elseif veh.LadderMove["up"] then
+		veh.Ladder["main"]:setAttachedOffsets(x, y, z, rx, ry, rz-0.7)
+	end
+
+	if veh.LadderMove["up"] then
 		if rx1 > -50 then
-			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1-0.5, ry1, rz1)
+			veh.Ladder["ladder1"]:setAttachedOffsets(x1, y1, z1, rx1-0.5, ry1, rz1)
 		end
 	elseif veh.LadderMove["down"] then
 		if rx1 < 0 then
-			veh.Ladder["ladder1"]:attach(veh.Ladder["main"], x1, y1, z1, rx1+0.5, ry1, rz1)
+			veh.Ladder["ladder1"]:setAttachedOffsets(x1, y1, z1, rx1+0.5, ry1, rz1)
 		end
-	elseif veh.LadderMove["in"] then
+	end
+
+	if veh.LadderMove["in"] then
 		if y3 < -1.4 then
-			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3+0.1, z3, rx3, ry3, rz3)
+			veh.Ladder["ladder3"]:setAttachedOffsets(x3, y3+0.1, z3, rx3, ry3, rz3)
 		elseif y2 < -1.4 then
-			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2+0.1, z2, rx2, ry2, rz2)
+			veh.Ladder["ladder2"]:setAttachedOffsets(x2, y2+0.1, z2, rx2, ry2, rz2)
 		end
 	elseif veh.LadderMove["out"] then
 		if y2 > -5.5 then
-			veh.Ladder["ladder2"]:attach(veh.Ladder["ladder1"], x2, y2-0.05, z2, rx2, ry2, rz2)
+			veh.Ladder["ladder2"]:setAttachedOffsets(x2, y2-0.05, z2, rx2, ry2, rz2)
 		elseif y3 > -4.5 then
-			veh.Ladder["ladder3"]:attach(veh.Ladder["ladder2"], x3, y3-0.05, z3, rx3, ry3, rz3)
+			veh.Ladder["ladder3"]:setAttachedOffsets(x3, y3-0.05, z3, rx3, ry3, rz3)
 		end
+	end
+
+	if veh.controller then
+		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
+	else --fallback, timer gets killed automatically in most cases
+		killTimer(sourceTimer)
 	end
 end

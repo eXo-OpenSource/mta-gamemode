@@ -32,6 +32,10 @@ function DrivingSchoolInstructorGUI:constructor(type, student)
 	self.m_SpeedUpdateTimer = setTimer(bind(self.updateSpeed, self), 50, 0)
 end
 
+function DrivingSchoolInstructorGUI:virtual_destructor()
+	if isTimer(self.m_SpeedUpdateTimer) then killTimer(self.m_SpeedUpdateTimer) end
+end
+
 function DrivingSchoolInstructorGUI:turnLeft() 				triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "left") 			end
 function DrivingSchoolInstructorGUI:turnStraight() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "straight") 		end
 function DrivingSchoolInstructorGUI:turnRight() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "right") 		end
@@ -40,9 +44,8 @@ function DrivingSchoolInstructorGUI:turnToDrivingSchool() 	triggerServerEvent("d
 
 function DrivingSchoolInstructorGUI:updateSpeed()
 	if self.m_Student.vehicle then
-		local vx, vy, vz = getElementVelocity(self.m_Student.vehicle)
-		local speed = math.floor((vx^2 + vy^2 + vz^2) ^ 0.5 * 161)
-		self.m_SpeedLabel:setText(_("Tempo: %d km/H", speed))
+		local speed = self.m_Student.vehicle:getSpeed()
+		self.m_SpeedLabel:setText(_("Tempo: %d km/h", speed))
 		if speed > 85 then self.m_SpeedLabel:setColor(Color.Red) else self.m_SpeedLabel:setColor(Color.Green) end
 		return
 	end

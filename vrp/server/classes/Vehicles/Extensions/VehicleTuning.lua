@@ -8,17 +8,17 @@
 VehicleTuning = inherit(Object)
 VehicleTuning.Map = {}
 
-function VehicleTuning:constructor(vehicle, tuningJSON)
+function VehicleTuning:constructor(vehicle, tuningJSON, disableTextureForce)
 	self.m_Vehicle = vehicle
 	if tuningJSON then
 		self.m_Tuning = fromJSON(tuningJSON)
-		self:applyTuning()
+		self:applyTuning(disableTextureForce or false)
 	else
 		self:createNew()
 	end
 	VehicleTuning.Map[self.m_Vehicle] = self
 
-	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end)
+	addEventHandler("onElementDestroy", self.m_Vehicle, function() delete(self) end, false)
 end
 
 function VehicleTuning:getJSON()
@@ -29,18 +29,18 @@ function VehicleTuning:getTunings()
 	return self.m_Tuning
 end
 
-function VehicleTuning:applyTuning()
+function VehicleTuning:applyTuning(disableTextureForce)
 	local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
 	local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
 	self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
 	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
 	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
 
-	for i = 0, 16 do
-		removeVehicleUpgrade(self.m_Vehicle, i)
+	for _, v in pairs(self.m_Vehicle.upgrades) do
+		removeVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	for k, v in pairs(self.m_Tuning["GTATuning"] or {}) do
+	for _, v in pairs(self.m_Tuning["GTATuning"] or {}) do
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
@@ -53,16 +53,16 @@ function VehicleTuning:applyTuning()
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
 	--{"vehiclegrunge256" = "files/images/...", "..." = "files/images/..."}
-	if not self.m_Vehicle.m_IsURLTexture then
-		if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
-			local texture = self.m_Tuning["Texture"]
-			self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
-		end
+	if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
+		local texture = self.m_Tuning["Texture"]
+		self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
+	end
 
-		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
-			if #texturePath > 3 then
-				self.m_Vehicle:setTexture(texturePath, textureName, true)
-			end
+	for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
+		if #texturePath > 3 then
+			self.m_Vehicle:setTexture(texturePath, textureName, not disableTextureForce)
+		else
+			self.m_Tuning["Texture"][textureName] = nil
 		end
 	end
 end
@@ -71,21 +71,17 @@ function VehicleTuning:createNew()
 	self.m_Tuning = {}
 	self.m_Tuning["Color1"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
 	self.m_Tuning["Color2"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["ColorLight"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["ColorLight"] = {255, 255, 255}
 	self.m_Tuning["GTATuning"] = {}
-	self.m_Tuning["Neon"] = false
-	self.m_Tuning["NeonColor"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
+	self.m_Tuning["Neon"] = 0
+	self.m_Tuning["NeonColor"] = {0, 0, 0}
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
 	self.m_Tuning["Texture"] = {}
 end
 
 function VehicleTuning:saveTuning(type, data)
-	--if self.m_Tuning[type] then
 	self.m_Tuning[type] = data
-	--else
-	--	outputDebugString("Invalid Tuning Type "..type)
-	--end
 end
 
 function VehicleTuning:getTuning(type)
@@ -108,7 +104,7 @@ end
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
-	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
+	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon") and 1 or 0
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 	if self.m_Vehicle.m_Texture then
 		self.m_Tuning["Texture"][self.m_Vehicle.m_Texture:getTextureName() or "vehiclegrunge256"] = self.m_Vehicle.m_Texture:getPath() or ""
@@ -116,7 +112,9 @@ function VehicleTuning:loadTuningFromVehicle()
 end
 
 function VehicleTuning:updateNeon()
-	local state = self.m_Tuning["Neon"]
+	if self.m_Tuning["Neon"] == true then self.m_Tuning["Neon"] = 1 end -- Workaround, remove until irgendwann
+
+	local state = self.m_Tuning["Neon"] == 1
 	self.m_Vehicle:setData("Neon", state, true)
 	if state == true then
 		self.m_Vehicle.m_Neon = self.m_Tuning["NeonColor"] or {255, 0, 0}
@@ -167,11 +165,27 @@ function VehicleTuning:setSpecial(special)
 			addEventHandler("onElementInteriorChange", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleExplode", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleRespawn", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker, false)
 		end
 	end
 end
 
 function VehicleTuning:addTexture(texturePath, textureName)
-	self.m_Tuning["Texture"][textureName or "vehiclegrunge256"] = texturePath
+	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	self.m_Tuning["Texture"][textureName] = texturePath
+end
+
+function VehicleTuning:getList()
+	local text = ""
+
+	local neon = self.m_Tuning["Neon"] == 1 and "Ja" or "Nein"
+	local horn = self.m_Tuning["CustomHorn"] > 0 and "Ja" or "Nein"
+	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
+	local texture = self.m_Tuning["Texture"][textureName] and "Ja" or "Nein"
+
+
+	text = text.."Neon: "..neon.."\n"
+	text = text.."Spezial-Hupe: "..horn.."\n"
+	text = text.."Textur: "..texture.."\n"
+	return text
 end

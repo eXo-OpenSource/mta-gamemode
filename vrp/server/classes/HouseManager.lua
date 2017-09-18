@@ -6,20 +6,25 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant","tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse",
+"breakHouse","lockHouse",
+"houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
+"tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
+"houseAdminRequestData", "houseAdminChangeInterior"
+}
 
-local ROB_DELAY = 1000*60*15
+local ROB_DELAY = DEBUG and 50 or 1000*60*15
 
 function HouseManager:constructor()
-
+	local st, count = getTickCount(), 0
 	self.m_RobPlayers = {}
 	self.m_Houses = {}
 
-	outputServerLog("Loading houses...")
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
 		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
+		count = count + 1
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -37,7 +42,11 @@ function HouseManager:constructor()
 	addEventHandler("tryRobHouse",root,bind(self.tryRob,self))
 	addEventHandler("playerFindRobableItem",root,bind(self.onFindRobItem,self))
 	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
+	addEventHandler("houseAdminRequestData", root, bind(self.requestAdminData,self))
+	addEventHandler("houseAdminChangeInterior", root, bind(self.changeInterior,self))
+
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
 end
 
 function HouseManager:createNewHouse(player,cmd,...)
@@ -45,7 +54,7 @@ function HouseManager:createNewHouse(player,cmd,...)
 	if player:getRank() >= RANK.Administrator then
 		local interior, price = ...
 		interior, price = tonumber(interior), tonumber(price)
-		if interior and price and House.interiorTable[interior] then
+		if interior and price and HOUSE_INTERIOR_TABLE[interior] then
 			local pos = player:getPosition()
 			self:newHouse(pos, interior, price)
 			player:sendMessage(("house created @ %f, %f, %f"):format(x,y,z), 255, 255, 255)
@@ -110,7 +119,7 @@ function HouseManager:leaveHouse()
 	self.m_Houses[client.visitingHouse]:leaveHouse(client)
 end
 
-function HouseManager:tryRob() 
+function HouseManager:tryRob()
 	if not client then return end
 	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:tryRob(client)
@@ -128,6 +137,18 @@ function HouseManager:onTryToGiveWanted()
 	if client.vehicle then return end
 	if not client.m_CurrentHouse then return end
 	client.m_CurrentHouse:tryToCatchRobbers(client)
+end
+
+function HouseManager:requestAdminData()
+	if client:getRank() < ADMIN_RANK_PERMISSION.editHouse then return end
+	client:triggerEvent("getAdminHouseData", self.m_Houses[client.visitingHouse].m_InteriorID)
+end
+
+function HouseManager:changeInterior(interior)
+	if client:getRank() < ADMIN_RANK_PERMISSION.editHouse then return end
+	self.m_Houses[client.visitingHouse].m_InteriorID = interior
+	self.m_Houses[client.visitingHouse]:refreshInteriorMarker()
+	client:sendInfo(_("Du hast den Haus-Interior erfolgreich in ID: %d geändert!", client, interior))
 end
 
 function HouseManager:buyHouse()

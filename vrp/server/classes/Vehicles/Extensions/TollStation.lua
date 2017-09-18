@@ -12,7 +12,8 @@ function TollStation:constructor(Name, BarrierPos, BarrierRot, PedPos, PedRot, t
 	self.m_Barrier = VehicleBarrier:new(BarrierPos, BarrierRot, 2.5, type, 1500)
 	self.m_Barrier.onBarrierHit = bind(self.onBarrierHit, self)
 
-	self.m_Ped = GuardActor:new(PedPos)
+	self.m_Ped = NPC:new(71, PedPos.x, PedPos.y, PedPos.z)
+	self.m_Ped:setImmortal(true)
 	self.m_Ped:giveWeapon(31, 999999999, true)
 	self.m_Ped:setRotation(PedRot)
 	self.m_Ped:setFrozen(true)
@@ -54,7 +55,7 @@ function TollStation:onBarrierHit(player)
 
 			local veh = player.vehicle
 			for seat, occupant in pairs(veh:getOccupants()) do
-				if occupant:getWantedLevel() > 0 then
+				if occupant:getWanteds() > 0 then
 					for i, faction in pairs(FactionState:getSingleton():getFactions()) do
 						faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung des Flüchtigen %s!"):format(self.m_Name, occupant:getName()), 10000)
 					end
@@ -87,13 +88,13 @@ end
 function TollStation:buyToll(player)
 	if isElement(player) then
 		if (player:getPosition() - self.m_Barrier.m_Barrier:getPosition()).length <= 10 then
-			if player:getMoney() >= TOLL_KEY_COSTS then
-				player:takeMoney(TOLL_KEY_COSTS, "Mautkosten")
+			if player:getBankMoney() >= TOLL_KEY_COSTS then
+				player:takeBankMoney(TOLL_KEY_COSTS, "Mautkosten")
 				self.m_Barrier:toggleBarrier(player, true)
-				FactionManager:getSingleton():getFromId(1):giveMoney(TOLL_KEY_COSTS, "Mautstation")
+				FactionManager:getSingleton():getFromId(1):giveMoney(TOLL_KEY_COSTS, "Mautstation", true)
 				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 			else
-				player:sendError(_("Du hast zuwenig Geld! (%s$)", player, TOLL_KEY_COSTS))
+				player:sendError(_("Du hast zu wenig Geld auf deinem Bankkonto! (%s$)", player, TOLL_KEY_COSTS))
 			end
 		else
 			player:sendError(_("Du bist zuweit entfernt!", player))
@@ -121,7 +122,8 @@ function TollStation:onPedWasted(_, killer)
 			setTimer(
 				function()
 					self.m_Ped:destroy()
-					self.m_Ped = GuardActor:new(self.m_RespawnPos)
+					self.m_Ped = NPC:new(71, self.m_RespawnPos.x, self.m_RespawnPos.y, self.m_RespawnPos.z)
+					self.m_Ped:setImmortal(true)
 					self.m_Ped:setRotation(self.m_RespawnRot)
 					self.m_Ped:giveWeapon(31, 999999999, true)
 					self.m_Ped:setFrozen(true)

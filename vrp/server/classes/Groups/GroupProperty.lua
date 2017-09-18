@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 GroupProperty = inherit(Object)
-
+local PICKUP_ARROW = 1318
+local PICKUP_FOR_SALE = 1272
 function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
 
 	self.m_Id = Id
@@ -25,8 +26,8 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Dimension = Id+1000
 	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
-	self.m_Pickup = createPickup(Pickup, 3, 1272, 0)
-
+	self.m_Pickup = createPickup(Pickup, 3, PICKUP_FOR_SALE, 0)
+	if self.m_OwnerID ~= 0 then setPickupType(self.m_Pickup, 3, PICKUP_ARROW) end
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
@@ -201,26 +202,30 @@ function GroupProperty:openForPlayer(player)
 	if self.m_Owner then
 		rank = self.m_Owner:getPlayerRank(player:getId())
 	end
-	if self.m_Open == 1 or self:hasKey(player) or rank == 6 then
-		if getElementType(player) == "player" then
-			fadeCamera(player,false,1,0,0,0)
-			setElementFrozen( player, true)
-			self:outputEntry( player )
-			setTimer( bind( GroupProperty.setInside,self),2500,1, player)
+	if not player.vehicle then
+		if self.m_Open == 1 or self:hasKey(player) or rank == 6 then
+			if getElementType(player) == "player" then
+				fadeCamera(player,false,1,0,0,0)
+				setElementFrozen( player, true)
+				self:outputEntry( player )
+				setTimer( bind( GroupProperty.setInside,self),2500,1, player)
+			end
+		else
+			player:sendError("Tür kann nicht geöffnet werden!")
 		end
-	else
-		player:sendError("Tür kann nicht geöffnet werden!")
 	end
 end
 
 function GroupProperty:setInside( player )
-	if isElement(player) then
+	if isElement(player) and not player.vehicle then
 		setElementInterior(player,self.m_Interior, self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z)
 		setElementDimension(player,self.m_Dimension)
 		player:setRotation(0, 0, 0)
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
-		setElementFrozen( player, false)
+		setTimer(function() --map glitch fix
+			setElementFrozen( player, false)
+		end, 1000, 1)
 		player.justEntered = true
 		setTimer(function() player.justEntered = false end, 2000,1)
 	end
@@ -329,6 +334,11 @@ end
 --// SETTERS
 function GroupProperty:setOwner( id )
 	self.m_Owner = GroupManager.getFromId(OwnerId) or false
+	if self.m_Owner == false then 
+		setPickupType(self.m_Pickup, 3, PICKUP_FOR_SALE)
+	else 
+		setPickupType(self.m_Pickup, 3, PICKUP_ARROW)
+	end
 	return self.m_Owner
 end
 

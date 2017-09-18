@@ -12,6 +12,9 @@ function HorseRace:constructor()
 	self.m_CalcBind = bind(self.calc, self)
 
 	self.m_Blip = Blip:new("Horse.png", 1631.80, -1172.73)
+	self.m_Blip:setDisplayText("Pferderennen-Wettbüro", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({110, 70, 20})
+
 
 	InteriorEnterExit:new(Vector3(1631.80, -1172.73, 24.08), Vector3(834.65, 7.28, 1004.19), 0, 90, 3)
 
@@ -185,7 +188,12 @@ function HorseRace:setWinner(horseId)
 				playeritem:triggerEvent("stopPferdeRennenClient")
 			end
 		end
-		self:checkWinner(horseId)
+
+		Async.create(
+			function()
+				self:checkWinner(horseId)
+			end
+		)()
 	end
 end
 
@@ -196,16 +204,28 @@ end
 function HorseRace:checkWinner(winningHorse)
 	local result = sql:queryFetch("SELECT * FROM ??_horse_bets", sql:getPrefix())
  	for i, row in pairs(result) do
-		local player = Player.getFromId(row.UserId)
-		if player and isElement(player) and player:isLoggedIn() then
-			if row["Horse"] == winningHorse then
+		local player, isOffline = DatabasePlayer.get(row.UserId)
+
+		if row["Horse"] == winningHorse then
+			if player then
+				if isOffline then player:load() end
+
 				local win = tonumber(row["Bet"])*3
-				outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
 				player:giveMoney(win, "Pferde-Wetten")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
-			else
+
+				if not isOffline then
+					outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
+				end
+			end
+		else
+			if not isOffline then
 				outputChatBox(_("[Pferde-Wetten] Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!", player, row["Horse"]) ,player, 255, 150, 255)
 			end
+		end
+
+		if isOffline then
+			delete(player)
 		end
 	end
 

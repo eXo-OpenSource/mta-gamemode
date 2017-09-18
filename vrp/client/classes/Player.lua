@@ -15,6 +15,7 @@ function Player:virtual_constructor()
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncChangeHandler = {}
+	self.m_PublicSyncChangeHandler = {}
 end
 
 function Player:getPublicSync(key)
@@ -34,11 +35,18 @@ function Player:onUpdateSync(private, public)
 	end
 	for k, v in pairs(public or {}) do
 		self.m_PublicSync[k] = v
+
+		local f = self.m_PublicSyncChangeHandler[k]
+		if f then f(v) end
 	end
 end
 
 function Player:setPrivateSyncChangeHandler(key, handler)
 	self.m_PrivateSyncChangeHandler[key] = handler
+end
+
+function Player:setPublicSyncChangeHandler(key, handler)
+	self.m_PublicSyncChangeHandler[key] = handler
 end
 
 function Player:getXP()
@@ -153,6 +161,15 @@ function Player:getMatchID ()
 			self.m_tempMatchID
 		) or (0)
 	)
+end
+
+function Player:getSurfingCar()
+	local result = {processLineOfSight(localPlayer.position, localPlayer.matrix:transformPosition(Vector3(0, 0, -1.5)), false, true, false, false, false, false, false, false, localPlayer, false, true)}
+	return result[5]
+end
+
+function Player:isSurfOnCar(vehicle)
+	return self:getSurfingCar() == vehicle
 end
 
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}

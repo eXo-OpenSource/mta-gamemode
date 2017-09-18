@@ -1,17 +1,28 @@
 LogGUI = inherit(GUIForm)
 
 function LogGUI:constructor(parent, log, players)
+	local yOffset = 0
+	if not parent then
+		GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+		self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Logs", true, true, self)
+		self.m_Window:deleteOnClose(true)
+		parent = self.m_Window
+		yOffset = 40
+	end
+
 	self.m_Log = log
 	self.m_Players = players
-	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
-	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02, parent.m_Width*0.25, parent.m_Height*0.07, parent)
-	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
-	self.m_Search = GUIEdit:new(parent.m_Width*0.55, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.07, parent)
-	self.m_SearchButton = GUIButton:new(parent.m_Width*0.78, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.07, _"Suchen", parent)
+	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
+	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02+yOffset, parent.m_Width*0.25, parent.m_Height*0.07, parent)
+	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
+	self.m_Search = GUIEdit:new(parent.m_Width*0.55, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.07, parent)
+	self.m_SearchButton = VRPButton:new(parent.m_Width*0.78, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.07, _"Suchen", true, parent)
 	self.m_SearchButton.onLeftClick = function() self:setSearch() end
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
 	self.m_Categories = {}
-	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1, parent.m_Width*0.96, parent.m_Height*0.87, parent)
+	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1+yOffset, parent.m_Width*0.96, parent.m_Height*0.87-yOffset, parent)
+	self.m_LogGrid:setFont(VRPFont(20))
+	self.m_LogGrid:setItemHeight(20)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self:refresh()
@@ -23,9 +34,16 @@ function LogGUI:updateLog(players, log)
 	self:refresh()
 end
 
+function LogGUI:addBackButton(callBack)
+	if self.m_Window then
+		self.m_Window:addBackButton(function () callBack() delete(self) end)
+	end
+end
+
+
 function LogGUI:refresh()
 	self.m_LogGrid:clear()
-
+	local item
 	for _, row in ipairs(self.m_Log) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
 
@@ -37,7 +55,8 @@ function LogGUI:refresh()
 
 		if self:checkCatFilter(row.Category) then
 			if self:checkSeachFilter(playerName, row) and #self.m_LogGrid:getItems() < 150 then -- Todo: add user limit or pages?
-				self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
+				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
+				item:setFont(VRPFont(20))
 			end
 		end
 	end

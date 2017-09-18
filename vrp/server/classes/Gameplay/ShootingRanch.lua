@@ -25,7 +25,7 @@ ShootingRanch.Trainings = {
 }
 
 function ShootingRanch:constructor()
-	InteriorEnterExit:new(Vector3(-7188.08, -2488.68, 32.36), Vector3(242.27, 66.40, 1003.64), 0, 270, 6)
+	InteriorEnterExit:new(Vector3(-7188.08, -2488.68, 32.36), Vector3(1560.30, -1671.06, 16.20), 0, 270)
 
 	self.m_ShootingRanchMarker = createMarker(-7190.96, -2482.61, 31.4, "cylinder", 1, 0, 255, 0, 200)
 	addEventHandler("onMarkerHit", self.m_ShootingRanchMarker, function(hitElement, dim)
@@ -43,13 +43,13 @@ function ShootingRanch:constructor()
 
 	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
-		if dim then
+		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", false)
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
-		if dim then
+		if dim and hitElement:getType() == "player" then
 			hitElement:triggerEvent("toggleRadar", true)
 		end
 	end)
@@ -74,9 +74,9 @@ function ShootingRanch:warpPlayerWaffenbox(player)
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
-		setElementDimension(player,0)
-		setElementInterior(player,6)
-		player:setPosition(244.16,69.11,1003.64)
+		--setElementDimension(player,0)
+		--setElementInterior(player,6)
+		--player:setPosition(244.16,69.11,1003.64)
 		return false
 	end
 end

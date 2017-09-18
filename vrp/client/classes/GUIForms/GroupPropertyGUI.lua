@@ -37,7 +37,7 @@ function GroupPropertyGUI:constructor( tObj )
 	GUIRectangle:new(self.m_Width*0.59, self.m_Height*0.29, self.m_Width*0.37, self.m_Height*0.49, tocolor(179,89,0,255),self.m_TabManage)
 	self.m_Map = GUIMiniMap:new(self.m_Width*0.6, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.47, self.m_TabManage)
 	self.m_Map:setPosition(x, y)
-	self.m_Map:addBlip("Waypoint.png", x, y)
+	self.m_Map:addBlip("Marker.png", x, y)
 
 	local tabAccess = self.m_TabPanel:addTab(_("Berechtigung"))
 	self.m_TabAccess = tabAccess
@@ -127,12 +127,7 @@ function GroupPropertyGUI:setGroupDoorState( b )
 	end
 end
 
-function GroupPropertyGUI:destroyMessage()
-	if self.m_Message then
-		self.m_Message:delete()
-		self.m_MessageDisplayed = false
-	end
-end
+
 
 function GroupPropertyGUI:setMessage( text )
 	if #text < 20 and #text > 1 then

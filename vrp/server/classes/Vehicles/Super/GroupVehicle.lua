@@ -19,14 +19,15 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local fuel = vehicle:getFuel()
 			local tuningJSON = vehicle.m_Tunings:getJSON()
 			local premium = vehicle:isPremiumVehicle() and vehicle:getOwner() or 0
-
+			local dimension = 0
+			local interior = 0
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
 			trunk:save()
 			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, milage, fuel, trunkId, tuningJSON, premium, dimension, interior)
 				vehicle:setHealth(health)
 
 				return vehicle:save(), vehicle
@@ -37,7 +38,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 	return false
 end
 
-function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium)
+function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior, forSale, salePrice)
 	self.m_Id = Id
 	self.m_Group = Group
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -48,6 +49,7 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self.m_Rotation = self:getRotation()
 	setElementData(self, "OwnerName", self.m_Group:getName())
 	setElementData(self, "OwnerType", "group")
+	setElementData(self, "GroupType", self.m_Group:getType())
 	if health and health <= 300 then
 		health = 300
 	end
@@ -59,6 +61,7 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	if self.m_PositionType ~= VehiclePositionType.World then
 		-- Move to unused dimension | Todo: That's probably a bad solution
 		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+		self.m_Dimesion = dimension
 	end
 
 	if self.m_Group.m_Vehicles then
@@ -67,7 +70,6 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
-			veh:setHealth(1000)
 			veh:respawn(true)
 		end, 10000, 1, source)
 	end)
@@ -82,11 +84,20 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
+	self.m_Dimesion = dimension
+	self.m_Interior = interior
 	if self.m_Group:canVehiclesBeModified() then
 		self.m_Tunings = VehicleTuning:new(self, tuningJSON)
 	else
 		self.m_Tunings = VehicleTuning:new(self)
 	end
+
+	if forSale and forSale == 1 then
+		self:setForSale(true, salePrice)
+	else
+		self:setForSale(false, 0)
+	end
+
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
@@ -102,9 +113,9 @@ function GroupVehicle:getGroup()
   return self.m_Group
 end
 
-function GroupVehicle.create(Group, model, posX, posY, posZ, rotation, milage, fuel, trunkId, tuningJSON, premium)
+function GroupVehicle.create(Group, model, posX, posY, posZ, rotX, rotY, rotation, milage, fuel, trunkId, tuningJSON, premium)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation, trunkId, tuningJSON, premium) then
+	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotX, rotY, rotation, trunkId, tuningJSON, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, 1000, VehiclePositionType.World, milage, fuel, trunkId, tuningJSON, premium)
     	VehicleManager:getSingleton():addRef(vehicle)
@@ -116,6 +127,7 @@ end
 function GroupVehicle:purge()
 	if sql:queryExec("DELETE FROM ??_group_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
+		triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 		destroyElement(self)
 		return true
 	end
@@ -126,8 +138,8 @@ function GroupVehicle:save()
 	local health = getElementHealth(self)
 	if self.m_Trunk then self.m_Trunk:save() end
 
-	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ? WHERE Id = ?", sql:getPrefix(),
-   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
+	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ?, ForSale = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_ForSale and 1 or 0, self.m_SalePrice or 0, self.m_Id)
 end
 
 function GroupVehicle:isGroupPremiumVehicle()
@@ -174,7 +186,9 @@ function GroupVehicle:respawn(force)
 
 	self:setEngineState(false)
 	self:setPosition(self.m_SpawnPos)
-	self:setRotation(0, 0, self.m_SpawnRot)
+	self:setRotation(self.m_SpawnRot)
+	setElementDimension(self, self.m_Dimesion or 0)
+	setElementInterior(self, self.m_Interior or 0)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
 	self:setFrozen(true)
@@ -182,6 +196,59 @@ function GroupVehicle:respawn(force)
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()
 	self:fix()
+	self:setForSale(self.m_ForSale, self.m_SalePrice)
+
+	if self.m_Magnet then
+		detachElements(self.m_Magnet)
+		self.m_Magnet:attach(self, 0, 0, -1.5)
+
+		self.m_MagnetHeight = -1.5
+		self.m_MagnetActivated = false
+	end
 
 	return true
+end
+
+function GroupVehicle:setForSale(sale, price)
+	if sale then
+		self.m_ForSale = true
+		self.m_SalePrice = tonumber(price)
+		self.m_DisableToggleEngine = true
+		self.m_DisableToggleHandbrake = true
+		self:setFrozen(true)
+	else
+		self.m_ForSale = false
+		self.m_SalePrice = 0
+		self.m_DisableToggleEngine = false
+		self.m_DisableToggleHandbrake = false
+	end
+	setElementData(self, "forSale", self.m_ForSale, true)
+	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
+end
+
+function GroupVehicle:buy(player)
+	if self.m_ForSale then
+		if self.m_SalePrice >= 0 and player:getMoney() >= self.m_SalePrice then
+			local group = self:getGroup()
+			local price = self.m_SalePrice
+			triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
+			local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
+			if status then
+				StatisticsLogger:getSingleton():addVehicleTradeLog(newVeh, player, 0, price, "group")
+				player:takeMoney(price, "Firmen-Fahrzeug Kauf")
+				group:giveMoney(price, "Firmen-Fahrzeug Verkauf")
+				group:sendShortMessage(_("%s hat ein Fahrzeug für %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
+				player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
+				group:addLog(player, "Fahrzeugverkauf", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." für "..price.." gekauft!")
+				removeElementData(newVeh, "forSale")
+				removeElementData(newVeh, "forSalePrice")
+			else
+				player:sendError(_("Es ist ein Fehler aufgetreten!", player))
+			end
+		else
+			player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, self.m_SalePrice))
+		end
+	else
+		player:sendError(_("Dieses Fahrzeug steht nicht zum verkauf!", player))
+	end
 end

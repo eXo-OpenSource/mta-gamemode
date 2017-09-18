@@ -27,7 +27,7 @@ Inventory.Tabs = {
 
 
 function Inventory:constructor()
-	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
+	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+40)/2, 330, (80+106+40))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
 	self.m_Window:toggleMoving(false)
 	self.m_Tabs = {}
@@ -43,27 +43,19 @@ function Inventory:constructor()
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
 	self:addItemSlots(14, self.m_Tabs[1])
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
-	self:addItemSlots(3, self.m_Tabs[2])
+	self:addItemSlots(5, self.m_Tabs[2])
 	self.m_Tabs[3] = self:addTab("files/images/Inventory/food.png", tabArea)
 	self:addItemSlots(5, self.m_Tabs[3])
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
 	self:addItemSlots(7, self.m_Tabs[4])
 
-	--[[
-	-- Lower Area (Items)
-	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height), self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height), self)
-	local itemX, itemY = itemArea:getSize()
-	self.m_ItemArea = itemArea
-	GUIRectangle:new(0, 0, itemX, itemY, Color.LightBlue, itemArea)
-	GUIEmptyRectangle:new(0, 0, itemX, itemY, 2, Color.White, itemArea)
-	--]]
+	self.m_InfoText1 = GUILabel:new(0, self.m_Height-45, self.m_Width, 20, _"Info: Zum Löschen von Items Control und Linksklick!", self.m_Window):setAlignX("center")
+	self.m_InfoText2 = GUILabel:new(0, self.m_Height-25, self.m_Width, 20, "", self.m_Window):setAlignX("center")
 
 	--Developement:
 	--self.m_ItemData = Inventory:getSingleton():getItemData()
     --self.m_Items = Inventory:getSingleton():getItems()
 	--self.m_Bag = Inventory:getSingleton():getBagData()
-
-
 
 	self.m_func1 = bind(self.Event_loadPlayerInventarClient,  self)
 	self.m_func2 = bind(self.Event_syncInventoryFromServer,  self)
@@ -80,25 +72,19 @@ end
 
 function Inventory:Event_OnRender()
 	self.m_IsDeleteKeyDown = getKeyState("lctrl")
-
-	if self.getSize then
-		if self.Show then
-			local sw,sh = self:getSize()
-			dxDrawText("Zum Löschen von Items Control und Linksklick!", screenWidth/2 - sw/2, screenHeight/2 - sh/2, screenWidth/2  +sw/2, (((screenHeight/2*0.95) +sh/2)+1), tocolor(0, 0, 0,255),1,"default-bold","center","bottom")
-			dxDrawText("Zum Löschen von Items Control und Linksklick!",  screenWidth/2 - sw/2, screenHeight/2 - sh/2, screenWidth/2  +sw/2, ((screenHeight/2*0.95) +sh/2), tocolor(200,200,200,255),1,"default-bold","center","bottom")
-		end
-	end
 end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
-	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
+--	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
-	outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	if self.m_Debug then
+		outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
+	end
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end
@@ -141,8 +127,9 @@ function Inventory:addItem(place, item)
 		slot.Id = place-1
 		slot.Place = place
 		slot.ItemName = item["Objekt"]
-		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"] > 1 and item["Menge"] or "", slot):setAlignX("right"):setAlignY("bottom")
+		slot.Amount = item["Menge"]
+		slot.ItemImage = GUIImage:new(0, 20, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+		slot.ItemLabel = GUILabel:new(0, slot.m_Height+8, slot.m_Width, 15, item["Menge"] > 1 and item["Menge"] or "", slot):setAlignX("right"):setAlignY("bottom")
 	end
 end
 
@@ -197,9 +184,6 @@ function Inventory:addTab(img, parent)
 	end
 
 	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height)+30, self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height)-30, self)
-	local itemX, itemY = itemArea:getSize()
-	--itemArea.m_Background = GUIRectangle:new(0, 0, itemX, itemY, Inventory.Color.ItemsBackground, itemArea)
-	--itemArea.m_BackgroundRound = GUIEmptyRectangle:new(0, 0, itemX, itemY, 2, Color.White, itemArea)
 
 	if Id ~= 1 then
 		itemArea:setVisible(false)
@@ -254,6 +238,11 @@ function Inventory:addItemEvents(item)
 	item.onHover = function()
 		if not Inventory:getSingleton().m_IsDeleteKeyDown then
 			item:setColor(Inventory.Color.ItemBackgroundHover)
+			if item.Item then
+				local itemName = item.ItemName
+				self.m_InfoText1:setText(_("%s - Menge: %d", itemName, item.Amount))
+				self.m_InfoText2:setText(self.m_ItemData[itemName]["Info"])
+			end
 		else
 			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)
 		end
@@ -261,6 +250,8 @@ function Inventory:addItemEvents(item)
 
 	item.onUnhover = function()
 		item:setColor(Inventory.Color.ItemBackground)
+		self.m_InfoText1:setText(_"Info: Zum Löschen von Items Control und Linksklick!")
+		self.m_InfoText2:setText("")
 	end
 
 	item.onLeftClick = function()

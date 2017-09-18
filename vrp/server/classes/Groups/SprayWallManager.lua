@@ -9,17 +9,20 @@ SprayWallManager = inherit(Singleton)
 local RESOURCES_DISTRIBUTE_INTERVAL = 60*60*1000
 
 function SprayWallManager:constructor()
+	local st, count = getTickCount(), 0
 	self.m_Map = {}
 
-	outputServerLog("Loading SprayWalls...")
+	if DEBUG_LOAD_SAVE then outputServerLog("Loading SprayWalls...") end
 	for i, info in ipairs(SprayWallData) do
 		self.m_Map[i] = SprayWall:new(i, info.wallPosition, info.resources or 50)
+		count = count + 1
 	end
 
 	addRemoteEvents{"sprayWallTagSprayed"}
 	addEventHandler("sprayWallTagSprayed", root, bind(self.Event_SprayWallTagSprayed, self))
 
 	-- Start the timer that produces and distributes the resources
+	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s spayWalls in %sms"):format(count, getTickCount()-st)) end
 	setTimer(bind(self.distributeResources, self), RESOURCES_DISTRIBUTE_INTERVAL, 0)
 end
 

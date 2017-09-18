@@ -8,7 +8,7 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation", "requestEPTList"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
@@ -17,6 +17,7 @@ function PhoneInteraction:constructor()
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
 	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
 	addEventHandler("callSendLocation", root, bind(self.callSendLocation, self))
+	addEventHandler("requestEPTList", root, bind(self.requestEPTList, self))
 
 
 	self.m_LastSpecialCallNumber = {}
@@ -110,21 +111,23 @@ function PhoneInteraction:callReplace(callee)
 end
 
 function PhoneInteraction:abortCall(player)
-	if player:getPhonePartner() then
-		local partner = player:getPhonePartner()
-		setPlayerVoiceBroadcastTo(partner, nil)
-		partner:setPhonePartner(nil)
-		partner:triggerEvent("callReplace", player)
-		partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
+	if player and isElement(player) and player.getPhonePartner then
+		if player:getPhonePartner() then
+			local partner = player:getPhonePartner()
+			setPlayerVoiceBroadcastTo(partner, nil)
+			partner:setPhonePartner(nil)
+			partner:triggerEvent("callReplace", player)
+			partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
+	
+			if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
+			if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
 
-		if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
-		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
-
-		setPlayerVoiceBroadcastTo(player, nil)
-		player:setPhonePartner(nil)
-		player:triggerEvent("callReplace", partner)
-		player.IncomingCall = false
-		partner.IncomingCall = false
+			setPlayerVoiceBroadcastTo(player, nil)
+			player:setPhonePartner(nil)
+			player:triggerEvent("callReplace", partner)
+			player.IncomingCall = false
+			partner.IncomingCall = false 
+		end
 	end
 end
 
@@ -170,4 +173,15 @@ function PhoneInteraction:callSendLocation()
 		local pos = client:getPosition()
 		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000)
 	end
+end
+
+function PhoneInteraction:requestEPTList()
+	local eptList = {}
+	for _, player in pairs(CompanyManager:getSingleton():getFromId(4):getOnlinePlayers()) do
+		if player:isCompanyDuty() and player.vehicle and player.vehicle:getData("EPT_Taxi") and player.vehicleSeat == 0 then
+			table.insert(eptList, player)
+		end
+	end
+
+	client:triggerEvent("receivingEPTList", eptList)
 end

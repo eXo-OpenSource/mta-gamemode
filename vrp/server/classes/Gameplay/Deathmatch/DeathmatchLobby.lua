@@ -52,7 +52,7 @@ function DeathmatchLobby:loadMap()
 	self.m_MapData["dim"] = 2000+self.m_Id
 	self.m_MapData["int"] = map.Interior
 	self.m_MapData["spawns"] = map.Spawns
-	self.m_Colshape = createColSphere(self.m_MapData["spawns"][1], 100)
+	self.m_Colshape = createColSphere(self.m_MapData["spawns"][1], 200)
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
 	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
@@ -162,6 +162,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 				player:setHeadless(false)
 				player:setCameraTarget(player)
 				player:fadeCamera(true, 1)
+				player:setAlpha(255)
 				player:triggerEvent("CountdownStop", "Respawn in")
 				giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 			end
@@ -173,6 +174,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		player:setHealth(100)
 		player:setHeadless(false)
 		player:setArmor(0)
+		player:setAlpha(255)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	end
 end
@@ -189,6 +191,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setHeadless(false)
 		player:setHealth(100)
 		player:setArmor(0)
+		player:setAlpha(255)
 		player.deathmatchLobby = nil
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")

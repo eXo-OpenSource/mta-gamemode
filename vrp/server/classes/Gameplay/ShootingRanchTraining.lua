@@ -36,14 +36,13 @@ function ShootingRanchTraining:constructor(player, level)
 		setElementData(player, "ShootingRanch:Hits", 0)
 
 
-		toggleAllControls(player,false)
+		toggleAllControls(player,false, true, false)
 		toggleControl(player,"fire",true)
 		toggleControl(player,"aim_weapon",true)
 		player:triggerEvent("startClientShootingRanch")
 
 		player:sendInfo(_("Treffe %dx eines der Bewegenden Ziele!", player, self.m_TargetHits))
 		player:sendShortMessage(_("Schaffe die Prüfung in unter %d Sekunden mit einer Trefferquote von mind. %d Prozent!", player, self.m_Time, self.m_TargetAccuracy), _("Schießstand", player))
-
 	else
 		player:sendError("Invalid Training Data")
 	end
@@ -53,18 +52,16 @@ function ShootingRanchTraining:destructor()
 	self.m_Player:triggerEvent("stopClientShootingRanch")
 
 	local data = self:updateClient()
-	self.m_Player:triggerEvent("showShootingRanchResult", data, self.m_Success)
+	self.m_Player:triggerEvent("showShootingRanchResult", data, self.m_Success, self.m_Player:getTotalAmmo())
 
-	setElementInterior(self.m_Player,6)
 	setElementDimension(self.m_Player,0)
-	self.m_Player:setPosition(245.20, 69.44, 1003.64)
+	self.m_Player:setPosition(1561.429, -1675.023, 16.195)
 	removeElementData(self.m_Player, "ShootingRanch:Data")
-	toggleAllControls(self.m_Player, true)
+	toggleAllControls(self.m_Player, true, true, false)
 	takeAllWeapons(self.m_Player)
 	self.m_Player.m_RemoveWeaponsOnLogout = nil
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	self.m_Player:triggerEvent("disableDamage", false)
-
 end
 
 function ShootingRanchTraining:onTargetHit(player)

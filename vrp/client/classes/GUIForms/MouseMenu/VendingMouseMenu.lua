@@ -32,7 +32,7 @@ function VendingMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Ausrauben",
 		function()
 			if self:getElement() then
-				QuestionBox:new(_("Möchtest du wirklich den Automaten ausrauben? Du erhälst dafür 2 Wanteds!"),
+				QuestionBox:new(_("Möchtest du wirklich den Automaten ausrauben? Du erhälst dafür 1 Wanted!"),
 					function() 	triggerServerEvent("vendingRob", self:getElement()) end
 				)
 			end

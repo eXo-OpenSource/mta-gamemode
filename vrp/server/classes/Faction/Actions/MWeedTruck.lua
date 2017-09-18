@@ -53,7 +53,7 @@ function MWeedTruck:onStartPointHit(hitElement, matchingDimension)
 						hitElement:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",hitElement, WEEDTRUCK_MIN_MEMBERS))
 						return false
 					end
-					hitElement:triggerEvent("questionBox", _("Möchtest du einen Weed-Truck starten? Kosten: %d$", hitElement, MWeedTruck.Settings["costs"]), "weedTruckStart")
+					QuestionBox:new(hitElement, hitElement, _("Möchtest du einen Weed-Truck starten? Kosten: %d$", hitElement, MWeedTruck.Settings["costs"]), "weedTruckStart")
 				end
 
 			else
@@ -66,18 +66,17 @@ function MWeedTruck:onStartPointHit(hitElement, matchingDimension)
 end
 
 function MWeedTruck:Event_weedTruckStart()
-	local faction = client:getFaction()
+	local faction = source:getFaction()
 	if faction then
 		if faction:isEvilFaction() then
-			if ActionsCheck:getSingleton():isActionAllowed(client) then
-				if client:getMoney() >= MWeedTruck.Settings["costs"] then
-					client:takeMoney(MWeedTruck.Settings["costs"], "Weed-Truck")
-					self.m_CurrentWeedTruck = WeedTruck:new(client)
+			if ActionsCheck:getSingleton():isActionAllowed(source) then
+				if source:getMoney() >= MWeedTruck.Settings["costs"] then
+					source:takeMoney(MWeedTruck.Settings["costs"], "Weed-Truck")
+					self.m_CurrentWeedTruck = WeedTruck:new(source)
 					ActionsCheck:getSingleton():setAction("Weed-Truck")
-					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", client, faction, "faction")
-
+					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", source, faction, "faction")
 				else
-					client:sendError(_("Du hast nicht genug Geld dabei! (%d$)", client, MWeedTruck.Settings["costs"]))
+					source:sendError(_("Du hast nicht genug Geld dabei! (%d$)", source, MWeedTruck.Settings["costs"]))
 				end
 			end
 		end

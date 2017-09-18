@@ -7,11 +7,11 @@
 -- ****************************************************************************
 HUDSpeedo = inherit(Singleton)
 
+
 function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
 	self.m_Draw = bind(self.draw, self)
-	self.m_Fuel = 100
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
 
 	-- Add event handlers
@@ -20,25 +20,30 @@ function HUDSpeedo:constructor()
 			if seat == 0 then
 				if VEHICLE_BIKES[vehicle:getModel()] then
 					ShortMessage:new(_"Öffne das Fahrradschloss mit 'X'!")
+					ShortMessage:new(_"Löse die Bremse mit 'G'!")
 				else
 					self:show()
 				end
 			end
+			self:playSeatbeltAlarm(true)
 		end
 	)
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 then
-				if not VEHICLE_BIKES[vehicle:getModel()] then
-					self:hide()
+				if vehicle then
+					if not VEHICLE_BIKES[vehicle:getModel()] then
+						self:hide()
+					end
 				end
 			end
+			self:playSeatbeltAlarm(false)
 		end
 	)
-	addEvent("vehicleFuelSync", true)
-	addEventHandler("vehicleFuelSync", root,
-		function(fuel)
-			self.m_Fuel = fuel
+	addEvent("playSeatbeltAlarm", true)
+	addEventHandler("playSeatbeltAlarm", root,
+		function(state)
+			self:playSeatbeltAlarm(state)
 		end
 	)
 end
@@ -56,17 +61,20 @@ function HUDSpeedo:setIndicatorAlpha(direction, alpha)
 end
 
 function HUDSpeedo:draw()
-	if not isPedInVehicle(localPlayer) then
+	if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/Speedo") end
+	if not isPedInVehicle(localPlayer) or localPlayer.vehicleSeat ~= 0 then
 		self:hide()
 		return
 	end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
+	if not vehicle then  -- death in veh fix
+		self:hide()
+		return
+	end
 	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
-	if not vehicle:getFuel() then return end
-	local vx, vy, vz = getElementVelocity(vehicle)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	local speed = vehicle:getSpeed()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 
 	-- Set maximum
@@ -90,24 +98,28 @@ function HUDSpeedo:draw()
 
 	-- draw the engine icon
 	if getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png", 0, 0, 0, Color.Green)
+		dxDrawImage(drawX, drawY + 15, self.m_Size, self.m_Size, "files/images/Speedo/engine.png", 0, 0, 0, Color.Green)
 	elseif vehicle.EngineStart then
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
+		dxDrawImage(drawX, drawY + 15, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
 
 	if handbrake or getControlState("handbrake") or vehicle:isFrozen() then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 	else
 		local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
-		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+70, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
+		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+60, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
 
-	if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
-		if getTickCount()%1000 > 500 then
-			dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+	dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
+
+	if vehicle:getVehicleType() == VehicleType.Automobile then
+		if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
+			if getTickCount()%1000 > 500 then
+				dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
+			end
+		elseif getVehicleEngineState(vehicle) then
+			dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 		end
-	elseif getVehicleEngineState(vehicle) then
-		dxDrawImage(drawX + 128 - 48, drawY + 128, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 	end
 
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
@@ -122,9 +134,16 @@ function HUDSpeedo:draw()
 	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 
 	-- draw the fuel-o-meter
+	self.m_Fuel = vehicle:getData("fuel")
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
+
+	if localPlayer.vehicle.towedByVehicle then
+		self.m_TrailerFuel = localPlayer.vehicle.towedByVehicle:getFuel()
+		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle_trailer.png", self.m_TrailerFuel * 180/100)
+	end
 	--dxSetBlendMode("blend")
+	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
 end
 
 function HUDSpeedo:allOccupantsBuckeled()
@@ -137,6 +156,22 @@ function HUDSpeedo:allOccupantsBuckeled()
 	end
 
 	return true
+end
+
+function HUDSpeedo:playSeatbeltAlarm(state)
+	if state then
+		if not localPlayer.m_SeatbeltSoundEnabled then
+			if localPlayer.vehicle and localPlayer.vehicle:getVehicleType() == VehicleType.Automobile and localPlayer.vehicle:getData("syncEngine") and not localPlayer:getData("isBuckeled") and not VEHICLE_BIKES[localPlayer.vehicle:getModel()] then
+				if core:get("Vehicles", "seatbeltWarning", true) then
+					localPlayer.m_SeatbeltSound = playSound("files/audio/car_seatbelt_warning.mp3")
+					localPlayer.m_SeatbeltSoundEnabled = true
+				end
+			end
+		end
+	else
+		if isElement(localPlayer.m_SeatbeltSound) then stopSound(localPlayer.m_SeatbeltSound) end
+		localPlayer.m_SeatbeltSoundEnabled = false
+	end
 end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)

@@ -30,12 +30,20 @@ http://icons8.com/icons/#!/527/support
 Other icons:
 https://www.iconfinder.com/icons/197219/electronic_meanicons_mouse_tech_icon#size=128
 https://www.youtube.com/yt/brand/downloads.html
+http://iconshow.me/banknote -- payday money
 
 Music:
 http://www.jamendo.com/de/track/293904/you-are-a-mirror-instrumental
 http://www.freesound.org/people/Kastenfrosch/sounds/162458/
 https://www.jamendo.com/de/track/1094513/dollarmentary-n.b.k.-forever-prod-by-vinny-idol
 
+https://www.freesound.org/people/SpliceSound/sounds/218315/ -- seatbelt warning
+https://www.freesound.org/people/RutgerMuller/sounds/50900/ -- seatbeld click
+http://freesound.org/people/Aiwha/sounds/196106/ -- bus notification
+
 Fonts:
 http://www.dafont.com/mostwasted.font
 Font Awesome by Dave Gandy - http://fontawesome.io
+
+Javascript Libs:
+Showdown MD Parser - https://github.com/showdownjs/showdown

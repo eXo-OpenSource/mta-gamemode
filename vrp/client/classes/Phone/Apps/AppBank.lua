@@ -44,6 +44,10 @@ function AppBank:onOpen(form)
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
 	end
 
+	self.m_Tabs["Statements"] = self.m_TabPanel:addTab(_"Kontoauszug", FontAwesomeSymbols.List)
+	local tab = self.m_Tabs["Statements"]
+	self.m_StatementsBrowser = GUIWebView:new(0, 0, tab.m_Width, tab.m_Height-10, ("https://exo-reallife.de/ingame/vRPphone/apps/bank/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, tab)
+
 	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
 	triggerServerEvent("bankMoneyBalanceRequest", root)
 end

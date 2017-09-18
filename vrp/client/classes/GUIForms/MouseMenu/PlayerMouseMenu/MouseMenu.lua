@@ -24,14 +24,16 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				SendMoneyGUI:new(function(amount) triggerServerEvent("playerSendMoney", self:getElement(), amount) end)
 			end
 		end
-	)
+	):setIcon(FontAwesomeSymbols.Money)
+
 	self:addItem(_"Handel starten",
 		function()
 			if self:getElement() then
 				TradeGUI:new(self:getElement())
 			end
 		end
-	)
+	):setIcon(FontAwesomeSymbols.Handshake)
+
 	self:addItem(_"Spielen >>>",
 		function()
 			if self:getElement() then
@@ -39,7 +41,8 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuGames:new(posX, posY, element), element)
 			end
 		end
-	)
+	):setIcon(FontAwesomeSymbols.Gamepad)
+
 	if localPlayer:getFaction() then
 		if localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true  then
 			self:addItem(_"Fraktion >>>",
@@ -49,15 +52,15 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 						ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuFaction:new(posX, posY, element), element)
 					end
 				end
-			)
-		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() and element:getFaction() ~= localPlayer:getFaction() then
+			):setIcon(FontAwesomeSymbols.Group)
+		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() and element:getFaction() ~= localPlayer:getFaction() and not (element.vehicle and localPlayer:isSurfOnCar(element.vehicle)) then
 			self:addItem(_"Fraktion: Spieler überfallen",
 				function()
 					if self:getElement() then
 						triggerServerEvent("factionEvilStartRaid", localPlayer, self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Bolt)
 		end
 	end
 
@@ -69,8 +72,9 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuCompany:new(posX, posY, element), element)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Building)
 	end
+
 	if localPlayer:getFactionId() == 4 and localPlayer:getPublicSync("Faction:Duty") == true then
 		self:addItem(_"Medic: heilen",
 			function()
@@ -78,10 +82,11 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 					triggerServerEvent("factionRescueHealPlayerQuestion", localPlayer, self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Medikit)
 	end
+
 	if localPlayer:getRank() >= RANK.Supporter then
-		self:addItem(_"Admin: Kick",
+		self:addItem(_"Admin: kicken",
 			function()
 				if self:getElement() then
 					InputBox:new(_("Spieler %s kicken", self:getElement():getName()),
@@ -95,6 +100,15 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 						end)
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Star)
+		self:addItem(_"Admin: ent/freezen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("adminTriggerFunction", localPlayer, "freeze", self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Star)
 	end
+
+	self:adjustWidth()
 end

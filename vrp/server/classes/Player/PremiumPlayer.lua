@@ -10,10 +10,16 @@ PremiumPlayer = inherit(Object)
 function PremiumPlayer:constructor(player)
 	self.m_Player = player
 	self.m_Premium = false
+	self.m_PremiumEaster = 0
 
+	self:refresh()
+end
+
+function PremiumPlayer:refresh()
 	local row = sqlPremium:queryFetchSingle("SELECT * FROM user WHERE UserId = ?", self.m_Player:getId())
 	if row then
 		self.m_PremiumUntil = row.premium_bis
+		self.m_PremiumEaster = row.premium_easter
 	else
 		self.m_PremiumUntil = 0
 	end
@@ -30,7 +36,6 @@ function PremiumPlayer:constructor(player)
 	end
 
 	self.m_Player:setPublicSync("Premium", self.m_Premium)
-
 end
 
 function PremiumPlayer:isPremium()
@@ -55,7 +60,7 @@ function PremiumPlayer:takeVehicle(model)
 	if row and row.ID then
 		if #self.m_Player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*self.m_Player:getVehicleLevel()) then
 			sqlPremium:queryExec("UPDATE premium_veh SET abgeholt = 1, Timestamp_abgeholt = ? WHERE ID = ?;", getRealTime().timestamp, row.ID)
-			local vehicle = PermanentVehicle.create(self.m_Player, model, 1268.63, -2069.85, 59.49, 0, nil, true)
+			local vehicle = PermanentVehicle.create(self.m_Player, model, 1268.63, -2069.85, 59.49, 0, 0, 0, nil, true)
 			if vehicle then
 				warpPedIntoVehicle(self.m_Player, vehicle)
 				self.m_Player:triggerEvent("vehicleBought")
@@ -67,9 +72,22 @@ function PremiumPlayer:takeVehicle(model)
 				self.m_Player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", self.m_Player), 255, 0, 0)
 			end
 		else
-			self.m_Player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", self.m_Player), 255, 0, 0)
+			self.m_Player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", self.m_Player))
 		end
 	else
 		self.m_Player:sendError("Ungültiges Fahrzeug!")
 	end
+end
+
+function PremiumPlayer:giveEasterMonth()
+	local seconds = 30*24*60*60
+
+	if self:isPremium() then
+		self.m_PremiumUntil = self.m_PremiumUntil + seconds
+	else
+		self.m_PremiumUntil = getRealTime().timestamp + seconds
+	end
+
+	sqlPremium:queryExec("UPDATE user SET premium_easter = ?, premium_bis = ?, premium = 1 WHERE UserId = ?;", self.m_PremiumEaster+1, self.m_PremiumUntil, self.m_Player:getId())
+	self:refresh()
 end

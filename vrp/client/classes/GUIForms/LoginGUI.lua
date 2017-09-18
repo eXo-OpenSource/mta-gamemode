@@ -19,6 +19,20 @@ function LoginGUI:constructor()
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[
+eXo 1.3 - 03.08.2017
+
+einige Neuerungen:
+- neues Textursystem 
+- EPT-Überarbeitung
+- Erhöhung der Wantedanzahl
+- Diplomatiesystem
+- Designänderungen
+- ...und noch viel mehr!
+
+Einen ausführlichen Change-
+log findet ihr natürlich unter
+forum.exo-reallife.de!
+
 		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
@@ -38,7 +52,7 @@ function LoginGUI:constructor()
 	self.m_LoginInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.025,
 		sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
 
-	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen so kannst du dich im "Registrieren"-Tab registrieren.
+	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen, so kannst du dich im "Registrieren"-Tab registrieren.
 	]], self.m_LoginTab):setFont(VRPFont(sh*0.03))
 
 	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
@@ -104,6 +118,7 @@ function LoginGUI:constructor()
 
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
 		if self.m_RegisterEditPass:getText() == self.m_RegisterEditPass2:getText() then
+			self.m_RegisterRegisterButton:setEnabled(false)
 			triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
 		else triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 		end
@@ -154,6 +169,10 @@ function LoginGUI:constructor()
 	)
 
 	self:showLogin()
+	nextframe(function()
+		if DEBUG_AUTOLOGIN then self.m_LoginLoginButton:onLeftClick() end
+	end)
+	
 
 	-- Show some help
 	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)
@@ -293,7 +312,8 @@ addEvent("registerfailed", true)
 addEventHandler("registerfailed", root,
 	function(text)
 		LoginGUI:getSingleton().m_RegisterErrorBox:show()
-		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)
+		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)	
+		LoginGUI:getSingleton().m_RegisterRegisterButton:setEnabled(true)
 	end
 )
 

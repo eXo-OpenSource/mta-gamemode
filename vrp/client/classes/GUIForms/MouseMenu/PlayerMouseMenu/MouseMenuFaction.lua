@@ -33,36 +33,49 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 						triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Bolt)
 		end
+
 		self:addItem(_"Fraktion: Spieler durchsuchen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateFriskPlayer", localPlayer, self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Search)
+
+		self:addItem(_"Fraktion: Alkoholtest durchführen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateStartAlcoholTest", localPlayer, self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Beer)
+
 		self:addItem(_"Fraktion: nach Lizenz fragen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateShowLicenses", localPlayer, self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.IDCard)
+
 		self:addItem(_"Fraktion: Drogen abnehmen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateTakeDrugs", localPlayer, self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Check)
+
 		self:addItem(_"Fraktion: Waffen abnehmen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateTakeWeapons", localPlayer, self:getElement())
 				end
 			end
-		)
+		):setIcon(FontAwesomeSymbols.Check)
+
 		if localPlayer:getFaction():getId() == 3 then
 			self:addItem(_"Fraktion: GWD-Note vergeben",
 				function()
@@ -70,7 +83,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 						StateFactionNoteGUI:new(self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Document)
 		elseif localPlayer:getFaction():getId() == 2 then
 			self:addItem(_"Fraktion: Wanze verstecken",
 				function()
@@ -78,7 +91,9 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 						triggerServerEvent("factionStateAttachBug", self:getElement())
 					end
 				end
-			)
+			):setIcon(FontAwesomeSymbols.Bug)
 		end
 	end
+
+	self:adjustWidth()
 end

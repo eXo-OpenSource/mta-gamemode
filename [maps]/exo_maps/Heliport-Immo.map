@@ -1,0 +1,5 @@
+<map edf:definitions="editor_main">
+    <object id="object (gatehouse1_SFSe) (1)" breakable="true" interior="0" alpha="255" model="10829" doublesided="false" scale="1" dimension="0" posX="588" posY="-1272.5" posZ="63.2" rotX="0" rotY="0" rotZ="193"></object>
+    <object id="object (helipad01) (1)" breakable="true" interior="0" alpha="255" model="3934" doublesided="false" scale="1" dimension="0" posX="607" posY="-1282.1" posZ="63.2" rotX="0" rotY="0" rotZ="307"></object>
+    <object id="object (DYN_post_box) (1)" breakable="true" interior="0" alpha="255" model="1478" doublesided="false" scale="1" dimension="0" posX="603.70001" posY="-1235.2" posZ="17.8" rotX="0" rotY="0" rotZ="200"></object>
+</map>

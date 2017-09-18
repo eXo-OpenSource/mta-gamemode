@@ -7,8 +7,16 @@
 -- ****************************************************************************
 
 Guns = inherit(Singleton)
+local w,h = guiGetScreenSize()
+local tracer = dxCreateTexture("files/images/Textures/tracer.png")
+local flyTime = 200
+local NO_TRACERS = {
+	[25] = true,
+	[26] = true,
+	[27] = true,
+}
 
-local TOGGLE_WEAPONS = 
+local TOGGLE_WEAPONS =
 {
 	[24] = true, -- [FROM] = TO
 	[23] = true,
@@ -20,7 +28,6 @@ function Guns:constructor()
 	self.m_BloodImage = "files/images/Other/blood.png"
 	self.m_BloodAlpha = 0
 	self.m_BloodRender = bind(self.drawBloodScreen, self)
-
 
 	engineImportTXD (engineLoadTXD ( "files/models/taser.txd" ), 347 )
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
@@ -36,7 +43,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
-	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
+	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
@@ -49,7 +56,7 @@ function Guns:destructor()
 end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
-	if killer == localPlayer then 
+	if killer == localPlayer then
 		triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
 	end
 end
@@ -92,33 +99,35 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 end
 
 function Guns:Event_onWeaponSwitch(pw, cw)
-	if source == localPlayer then 
+	if source == localPlayer then
 		local prevWeapon = getPedWeapon(localPlayer,pw)
 		local cWeapon = getPedWeapon(localPlayer, cw)
-		if cWeapon ~= 34 then 
+		if cWeapon ~= 34 then
 			toggleControl("fire",true)
-			if localPlayer.m_FireToggleOff then 
+			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+6000 <= getTickCount() then
 					localPlayer.m_FireToggleOff = false
 				end
 			end
-		else 
-			if localPlayer.m_FireToggleOff then 
+			self.m_HasSniper = false
+		else
+			if localPlayer.m_FireToggleOff then
 				if localPlayer.m_LastSniperShot+6000 >= getTickCount() then
 					toggleControl("fire",false)
-				else 
+				else
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
 				end
 			else
-				if not NoDm:getSingleton().m_NoDm then 
+				if not NoDm:getSingleton().m_NoDm then
 					toggleControl("fire",true)
 					localPlayer.m_FireToggleOff = false
 				end
 			end
+			self.m_HasSniper = true
 		end
 	end
-end	
+end
 
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
@@ -148,18 +157,91 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			self.m_ResetTimer = setTimer(function() removeEventHandler("onClientRender", root, self.m_TaserRender) end, 15000, 1)
 		end
 	end
+
 	if source == localPlayer then
-		if weapon == 34 then 
+		if weapon == 34 then
 			if not localPlayer.m_FireToggleOff then
 				localPlayer.m_LastSniperShot = getTickCount()
 				localPlayer.m_FireToggleOff = true
 				toggleControl("fire",false)
-				setTimer(function()  
+				setTimer(function()
 					localPlayer.m_FireToggleOff = false
 					toggleControl("fire",true)
 				end, 6000,1)
 			end
 		end
+	end
+
+	if weapon == 43 then -- Camera
+		HUDRadar:getSingleton():hide()
+		HUDUI:getSingleton():hide()
+		HelpBar:getSingleton().m_Icon:setVisible(false)
+		showChat(false)
+
+		for k, v in pairs(MessageBoxManager.Map) do
+			v:hide()
+		end
+
+		--dxDrawText("Powered by #Pew#ff8000P#fffffforn.com", 10, 10, screenWidth, screenHeight, Color.White, 1, "clear", "left", "top", false, false, false, true)
+		dxDrawImage(0, screenHeight - 68, 142/1920*screenWidth, 68/1080*screenHeight, "files/images/Logo.png", 0, 0, 0, tocolor(255, 255, 255, 50))
+
+		nextframe(
+			function()
+				HUDRadar:getSingleton():show()
+				HUDUI:getSingleton():show()
+				showChat(true)
+
+				if core:get("HUD", "showHelpBar", true) then
+					HelpBar:getSingleton().m_Icon:setVisible(true)
+				end
+
+				for k, v in pairs(MessageBoxManager.Map) do
+					v:show()
+				end
+			end
+		)
+	end
+end
+
+function Guns:Event_checkFadeIn()
+	local hasSniper = getPedWeapon(localPlayer) == 34
+	if hasSniper then
+		local bAiming = isPedAiming(localPlayer)
+		if bAiming then
+			if not self.m_SniperShader then
+				self.m_SniperShader = SniperShader:new(3000)
+				playSound("files/audio/sniper.ogg")
+				self.m_SniperTimer = setTimer(function()
+					self:removeSniperShader()
+				end, 3100,1)
+			end
+		else
+			if self.m_SniperShader then
+				delete(self.m_SniperShader)
+			end
+			self.m_SniperShader = false
+			if self.m_SniperTimer then
+				if isTimer(self.m_SniperTimer) then
+					killTimer(self.m_SniperTimer)
+				end
+			end
+		end
+	else
+		if self.m_SniperShader then
+			delete(self.m_SniperShader)
+		end
+		self.m_SniperShader = false
+		if self.m_SniperTimer then
+			if isTimer(self.m_SniperTimer) then
+				killTimer(self.m_SniperTimer)
+			end
+		end
+	end
+end
+
+function Guns:removeSniperShader()
+	if self.m_SniperShader then
+		delete(self.m_SniperShader)
 	end
 end
 
@@ -209,9 +291,9 @@ function Guns:drawBloodScreen()
 end
 
 function Guns:Event_onClientPedDamage(attacker)
-	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then 
+	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then
 		cancelEvent()
-	else 
+	else
 		if attacker == localPlayer then
 			if core:get("Other", "HitSoundBell", true) then
 				playSound("files/audio/hitsound.wav")
@@ -243,16 +325,16 @@ end
 function Guns:crounch(btn, state)
 	if state == "down" then
 		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
-			setControlState ( "crouch", true )
+			setPedControlState ( "crouch", true )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
 			end
-			self.m_LastCrouchTimers[1] = setTimer ( setControlState, 100, 1, "crouch", false )
+			self.m_LastCrouchTimers[1] = setTimer ( setPedControlState, 100, 1, "crouch", false )
 		end
 	else
 		if getTickCount() - self.m_LastShot <= 700 then
-			setControlState ( "crouch", false )
+			setPedControlState ( "crouch", false )
 			toggleControl ( "crouch", false )
 			if isTimer ( self.m_LastCrouchTimers[1] ) then
 				killTimer ( self.m_LastCrouchTimers[1] )
@@ -270,7 +352,7 @@ end
 function Guns:stopFastDeagle(weapon)
 	if weapon == 24 then
 		self.m_LastShot = getTickCount()
-		setControlState ( "crouch", false )
+		setPedControlState ( "crouch", false )
 		if isPedDucked ( localPlayer ) then
 			toggleControl ( "crouch", false )
 			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
@@ -283,22 +365,5 @@ function Guns:toggleFastShot(bool)
 	if not self.m_AntiFastShotEnabled then
 		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
 		unbindKey ( "crouch", "both", crouch )
-	end
-end
-
-function Guns:checkSwitchWeapon(b, p) 
-	if b == "x" and  not p and getKeyState("mouse2") then 
-		local weapon = getPedWeapon(localPlayer)
-		local now = getTickCount()
-		if getElementData(localPlayer, "hasSecondWeapon") then
-			if self.m_LastWeaponToggle + 4000 <= now then
-				if TOGGLE_WEAPONS[weapon] then 
-					self.m_LastWeaponToggle = getTickCount()
-					triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
-				end
-			else 
-				outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
-			end
-		end
 	end
 end

@@ -58,10 +58,11 @@ function GUIForm:open(hiddenCursor)
 end
 
 function GUIForm:close(decrementedCursorCounter)
+    guiSetInputEnabled(false)
+	focusBrowser()
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 		self:toggleKeys(true)
-		NoDm:getSingleton():checkNoDm()
 	end
 
 	-- Disable blur shader if it has been enabled before
@@ -72,7 +73,6 @@ function GUIForm:close(decrementedCursorCounter)
 			RadialShader:getSingleton():setEnabled(false)
 		end
 	end
-	focusBrowser()
 	return self:setVisible(false)
 end
 
@@ -97,7 +97,7 @@ end
 function GUIForm:fadeIn(time)
 	if not time then time = 1000 end
 	self:setVisible(true)
-	for k, v in pairs(self:getChildrenRecursive()) do
+	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
 				Animation.FadeAlpha:new(v, 750, 0, v:getAlpha() or 255)
@@ -108,7 +108,7 @@ end
 
 function GUIForm:fadeOut(time)
 	if not time then time = 1000 end
-	for k, v in pairs(self:getChildrenRecursive()) do
+	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
 				Animation.FadeAlpha:new(v, 750, v:getAlpha() or 255, 0)
@@ -128,7 +128,7 @@ function GUIForm:bind(key, fn)
 	bindKey(key, "down", handler)
 end
 
-function GUIForm:unbind(key, fn)
+function GUIForm:unbind(key)
 	if not self.m_KeyBinds[key] then
 		return
 	end
@@ -137,7 +137,7 @@ function GUIForm:unbind(key, fn)
 end
 
 function GUIForm.closeAll()
-	for id, form in pairs(GUIForm.Map) do
+	for _, form in pairs(GUIForm.Map) do
 		if form then
 			form:close(false)
 		end
@@ -152,9 +152,22 @@ function GUIForm:isBackgroundBlurred()
 	return false
 end
 
+GUIForm.AllowedKeys = {
+	["^[F0-9]*$"] = true, 	-- F1 - F12
+	["tab"] = true, 		-- kwt
+	["enter"] = true, 		-- kwt
+	["b"] = true, 			-- Toggle cursor on/off
+	["m"] = true, 			-- Turn music on/off in download screen
+	["pgup"] = true, 		-- scroll chatbox/debugscript
+	["pgdn"] = true			-- scroll chatbox/debugscript
+}
+
 GUIForm.keysEnabled = true
 GUIForm.onClientKey =
 	function(button)
-		if button:match("^[F0-9]*$") or button:match("tab") or button:match("enter") then return end
+		for keys in pairs(GUIForm.AllowedKeys) do
+			if button:match(keys) then return end
+		end
+
 		cancelEvent()
 	end

@@ -6,26 +6,39 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT_MIN = 500 --// default 200
-local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
+local MONEY_PER_TRANSPORT_MIN = 520*2 --// default 200
+local MONEY_PER_TRANSPORT_MAX = 1020*2 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
 
 	-- Create Cranes
-	self.m_Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
-	self.m_Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
+		self.m_Cranes = {
+		["LS-Docks"] = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6),
+		["Fleischberg"] = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30),
+		["Las Venturas"] = Crane:new(1607.5, 2300.1, 16.40, 1607.5, 2371.20, 16.40),
+		["San Fierro"] = Crane:new(-1748.382, 104.676, 9.474, -1748.382, 149.426, 9.474),
+	}
 
-	self.m_Marker1 = self:createCraneMarker(self.m_Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0)
-	self.m_Marker2 = self:createCraneMarker(self.m_Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180)
+	self.m_Markers = {
+		["LS-Docks"] = self:createCraneMarker(self.m_Cranes["LS-Docks"], Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0),
+		["Fleischberg"] = self:createCraneMarker(self.m_Cranes["Fleischberg"], Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180),
+		["Las Venturas"] = self:createCraneMarker(self.m_Cranes["Las Venturas"], Vector3(1607.5, 2300.10, 9.8), Vector3(1607.5, 2299.10, 11.4), 180),
+		["San Fierro"] = self:createCraneMarker(self.m_Cranes["San Fierro"], Vector3(-1748.382, 104.676, 2.7), Vector3(-1748.38, 103.41, 4.34), 180),
+	}
 
-	self.m_VehicleSpawner1 = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
-	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
-	self.m_VehicleSpawner1:disable()
+	self.m_VehicleSpawners = {
+		["LS-Docks"] = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self)),
+		["Fleischberg"] = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self)),
+		["Las Venturas"] = VehicleSpawner:new(1595.93, 2294.12, 9.8, {"DFT-30"}, 220, bind(Job.requireVehicle, self)),
+		["San Fierro"] = VehicleSpawner:new(-1738.31, 87.00, 2.52, {"DFT-30"}, 150, bind(Job.requireVehicle, self)),
 
-	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
-	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
-	self.m_VehicleSpawner2:disable()
+	}
+
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+		spawner:disable()
+	end
 
 	self:changeLoan()
 
@@ -34,13 +47,14 @@ function JobLogistician:constructor()
 end
 
 function JobLogistician:start(player)
-	self.m_VehicleSpawner1:toggleForPlayer(player, true)
-	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner:toggleForPlayer(player, true)
+	end
 end
 
 function JobLogistician:checkRequirements(player)
 	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN))
 		return false
 	end
 	return true
@@ -51,8 +65,9 @@ function JobLogistician:changeLoan()
 end
 
 function JobLogistician:stop(player)
-	self.m_VehicleSpawner1:toggleForPlayer(player, false)
-	self.m_VehicleSpawner2:toggleForPlayer(player, false)
+	for name, spawner in pairs(self.m_VehicleSpawners) do
+		spawner:toggleForPlayer(player, false)
+	end
 	self:destroyJobVehicle(player)
 	if isElement(player.LogisticanContainer) then player.LogisticanContainer:destroy() end
 	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
@@ -61,6 +76,7 @@ function JobLogistician:stop(player)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
+	player.m_LastJobAction = getRealTime().timestamp
 	vehicle.m_DisableToggleHandbrake = true
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
@@ -77,8 +93,8 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 	end
 	player:startNavigationTo(pos)
 
-	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player,9999)
-	blip:setStreamDistance(10000)
+	local blip = Blip:new("Marker.png", pos.x, pos.y, player,9999, BLIP_COLOR_CONSTANTS.Red)
+		blip:setDisplayText("Container-Abgabepunkt")
 	player:setData("Logistician:Blip", blip)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
@@ -95,6 +111,17 @@ function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)
 	return marker
 end
 
+function JobLogistician:getRandomTargetMarker(sourceMarker)
+	local markers = {}
+	for name, marker in pairs(self.m_Markers) do
+		if marker ~= sourceMarker then
+			table.insert(markers, marker)
+		end
+	end
+
+	return markers[math.random(1, #markers)]
+end
+
 function JobLogistician:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getOccupiedVehicle() and hitElement.vehicleSeat == 0 and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
@@ -107,8 +134,12 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							hitElement:giveMoney(self.m_MoneyPerTransport, "Logistiker Job")
-							hitElement:givePoints(10)
+							local duration = getRealTime().timestamp - hitElement.m_LastJobAction
+							hitElement.m_LastJobAction = getRealTime().timestamp
+							outputDebug(getDistanceBetweenPoints3D(hitElement:getData("Logistician:LastCrane").m_Object:getPosition(), crane.m_Object:getPosition()))
+							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
+							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
+							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
@@ -118,14 +149,8 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						hitElement:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", hitElement))
 					else
 						crane:loadContainer(veh, hitElement)
-
-						if source == self.m_Marker1 then
-							self:setNewDestination(hitElement, self.m_Marker2, crane)
-						elseif source == self.m_Marker2 then
-							self:setNewDestination(hitElement, self.m_Marker1, crane)
-						else
-							hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
-						end
+						local target = self:getRandomTargetMarker(source)
+						self:setNewDestination(hitElement, target, crane)
 					end
 				end
 			else
@@ -173,7 +198,7 @@ function Crane:dropContainer(vehicle, player, callback)
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	self.m_Timer = setTimer(function()
@@ -190,7 +215,7 @@ function Crane:dropContainer(vehicle, player, callback)
 			detachElements(container)
 			attachElements(container, self.m_Tow, 0, 0, -4.1, 0, 0)
 			vehicle:setFrozen(false)
-			toggleAllControls(player, true)
+			toggleAllControls(player, true, true, false)
 
 			-- Roll up the tow
 			self:rollTowUp(
@@ -238,7 +263,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	self.m_Container = container
 
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
@@ -273,7 +298,7 @@ function Crane:loadContainer(vehicle, player, callback)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
 											self.m_Container = nil
 											vehicle:setFrozen(false)
-											toggleAllControls(player, true)
+											toggleAllControls(player, true, true, false)
 
 											-- Roll up the tow a last time
 											self:rollTowUp(

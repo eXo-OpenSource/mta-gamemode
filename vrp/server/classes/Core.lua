@@ -3,6 +3,9 @@ addEvent("Core.onClientInternalError", true)
 
 function Core:constructor()
 	outputServerLog("Initializing core...")
+	nextframe(function() --small hack to override the name meta-name
+		setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
+	end)
 
 	-- Small hack to get the global core immediately
 	core = self
@@ -64,13 +67,12 @@ function Core:constructor()
 		PlayerManager:new()
 		JobManager:new()
 		BankManager:new()
-		Async.create(function() Forum:new() end)()
+		BankRobberyManager:new()
 		--WantedSystem:new()
 		Provider:new()
 		GroupManager:new()
 		GroupPropertyManager:new()
 		HouseManager:new()
-		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
 		AdminEventManager:new()
@@ -83,7 +85,7 @@ function Core:constructor()
 		SkinShops:new()
 		--Deathmatch:new() Not finished
 		VehicleTuningShop:new()
-		--VehicleCustomTextureShop:new()
+		VehicleCustomTextureShop:new()
 		DimensionManager:new()
 		ActorManager:new()
 		InteriorManager:new()
@@ -92,10 +94,12 @@ function Core:constructor()
 		Guns:new()
 		InventoryManager:new()
 		ItemManager:new()
+		StaticWorldItems:new()
 		Casino:new()
 		ActionsCheck:new()
 		TrainManager:new()
 		FireManager:new()
+		GasStationManager:new()
 		ShopManager:new()
 		Jail:new()
 		VehicleInteraction:new()
@@ -105,15 +109,21 @@ function Core:constructor()
 		MinigameManager:new()
 		Townhall:new()
 		BeggarPedManager:new()
-		Fishing:new()
 		ShootingRanch:new()
 		DeathmatchManager:new()
 		SkydivingManager:new()
 		Kart:new()
 		HorseRace:new()
 		BoxManager:new()
+		Fishing:new()
+		InactivityManager:new()
+		HistoryPlayer:new()
+
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
+		Chair:new()
+
+		Help:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -122,8 +132,7 @@ function Core:constructor()
 		PayNSpray.initializeAll()
 		TollStation.initializeAll()
 		Depot.initalize()
-
-		BankRobbery:new()
+		QuestionBox.initalize()
 
 		ChessSessionManager:new()
 		-- Generate Missions
@@ -151,10 +160,11 @@ function Core:constructor()
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
 				if xmlNodeGetName(v) == "vrpfile" then
 					files[#files+1] = xmlNodeGetAttribute(v, "src")
+					Provider:getSingleton():offerFile(xmlNodeGetAttribute(v, "src"))
 				end
 			end
-			Package.save("vrp.data", files)
-			Provider:getSingleton():offerFile("vrp.data")
+			Package.save("vrp.list", files, true)
+			Provider:getSingleton():offerFile("vrp.list")
 		end
 
 		-- Refresh all players
@@ -178,19 +188,14 @@ function Core:constructor()
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
 
-		Blip:new("North.png", 0, 6000, root, 12000)
-
-		GlobalTimer:getSingleton():registerEvent(function()
-			outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
-		end, "Server Restart Message 1", nil, 04, 50)
-		GlobalTimer:getSingleton():registerEvent(function()
-			outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
-		end, "Server Restart Message 2", nil, 04, 55)
-
-		GlobalTimer:getSingleton():registerEvent(function()
-			getThisResource():restart()
-		end, "Server Restart", nil, 05, 00)
-
+		if GIT_BRANCH == "release/production" then
+			GlobalTimer:getSingleton():registerEvent(function()
+				outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
+			end, "Server Restart Message 1", nil, 04, 50)
+			GlobalTimer:getSingleton():registerEvent(function()
+				outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
+			end, "Server Restart Message 2", nil, 04, 55)
+		end
 	end
 end
 

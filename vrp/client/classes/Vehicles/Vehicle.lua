@@ -20,7 +20,7 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -29,11 +29,27 @@ function Vehicle:constructor()
 		self.m_SpecialSmokeEnabled = false
 	end
 
-	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setControlState("handbrake", true) end end)
+	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
 end
 
-function Vehicle:getFuel()
-	return 100
+function Vehicle:getMaxHealth()
+	return self:getData("customMaxHealth") or 1000
+end
+
+function Vehicle:getHealthInPercent()
+	return math.clamp(0, math.ceil((self.health - VEHICLE_TOTAL_LOSS_HEALTH)/(self:getMaxHealth() - VEHICLE_TOTAL_LOSS_HEALTH)*100), 100)
+end
+
+function Vehicle:isAlwaysDamageable()
+	return self:getData("alwaysDamageable")
+end
+
+function Vehicle:isBroken()
+	return self:getData("vehicleEngineBroken")
+end
+
+function Vehicle:getBulletArmorLevel()
+	return self:getData("vehicleBulletArmorLevel") or 1
 end
 
 function Vehicle:isSmokeEnabled()
@@ -46,13 +62,28 @@ end
 
 function Vehicle:getSpeed()
 	local vx, vy, vz = getElementVelocity(self)
-	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 195
 	return speed
+end
+
+function Vehicle:getMileage()
+	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
+end
+
+function Vehicle:getFuel()
+	return self:getData("fuel")
 end
 
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
+end
+
+function Vehicle:magnetVehicleCheck()
+	local vehicle = self:getData("MagnetGrabbedVehicle")
+	local groundPosition = vehicle and getGroundPosition(vehicle.position)
+
+	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
 end
 
 addEventHandler("vehicleEngineStart", root,
@@ -68,6 +99,9 @@ addEventHandler("vehicleEngineStart", root,
 		veh.EngineStart = true
 		setTimer(function()
 			veh.EngineStart = false
+			if localPlayer.vehicle == veh then
+				HUDSpeedo:playSeatbeltAlarm(true)
+			end
 		end, 2050 ,1)
 	end
 )
@@ -101,7 +135,7 @@ addEventHandler("vehicleHandbrake", root,
 							end
 
 							if getElementData(vehicle, "Handbrake") then
-								setControlState("handbrake", true)
+								setPedControlState("handbrake", true)
 							end
 						end, 1000, 0, vehicle)
 				end
@@ -112,7 +146,7 @@ addEventHandler("vehicleHandbrake", root,
 
 addEventHandler("vehiclePlayCustomHorn", root,
 	function (horn)
-		if not source.m_HornSound then
+		if not source.m_HornSound and core:get("Vehicles", "customHorn", true) then
 			source.m_HornSound = playSound3D(("files/audio/Horns/%s.mp3"):format(horn), source:getPosition(), true)
 			source.m_HornSound:setMinDistance(0)
 			source.m_HornSound:setMaxDistance(70)
@@ -153,7 +187,7 @@ setTimer(
 
 			-- Send current mileage every minute to the server
 			counter = counter + 1
-			if counter >= 60 or vehicle:getModel() == 420 or vehicle:getModel() == 438 then
+			if counter >= 60 or vehicle:getData("EPT_Taxi") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
 				end
@@ -168,37 +202,64 @@ setTimer(
 )
 
 -- The following code prevents vehicle from exploding "fully"
+local totalLossVehicleTypes = {
+	[VehicleType.Automobile] = true,
+	[VehicleType.Bike] = true,
+}
+
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
-		local occ = getVehicleOccupants(source)
-		local counter = 0
-		for seat, player in pairs(occ) do
-			counter = counter + 1
+		if (not getElementData(source, "syncEngine") and not tId) and not (source.isAlwaysDamageable and source:isAlwaysDamageable()) then return cancelEvent() end
+		if source.isBroken and source:isBroken() then return cancelEvent() end
+		--calculate vehicle armor
+		if not tId and weapon and source.getBulletArmorLevel then
+			cancelEvent()
+			local newLoss = loss / source:getBulletArmorLevel()
+			source:setHealth(math.max(0, source:getHealth()-newLoss))
 		end
-		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
-		if source:getData("disableVehicleDamageSystem") then return end
-		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
-			if source:getHealth() - loss < 310 then
-				cancelEvent()
-				if isElementSyncer(source) and source:getHealth() >= 310 then
+		if totalLossVehicleTypes[source:getVehicleType()] then
+			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
+				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
+					source.m_LastBroken = getTickCount()
 					triggerServerEvent("vehicleBreak", source)
-					source.m_Broken = true
-
-					if localPlayer:getOccupiedVehicle() == source then
-						WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
-					end
 				end
 				setVehicleEngineState(source, false)
-				source:setHealth(301)
+				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 			end
 		end
-		if getVehicleOccupant(source,0) == localPlayer then 
+		if getVehicleOccupant(source,0) == localPlayer then
 			if not weapon then
-				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
+				triggerServerEvent("onVehicleCrash", source, loss)
 			end
 		end
+
 	end
 )
+
+addEventHandler("onClientVehicleCollision", root, function()
+	if source:getData("disableCollisionCheck") then return end
+	if totalLossVehicleTypes[source:getVehicleType()] then
+		local rx, ry, rz = getElementRotation(source)
+		source:setDamageProof(rx > 160 and rx < 200) -- to disable burning
+		if source:getHealth() <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then -- Crashfix
+			source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
+		end
+	end
+end)
+
+if EVENT_EASTER then
+	addEventHandler("onClientVehicleCollision", root,
+		function(hitElement, force)
+			if not localPlayer.vehicle then return end
+			if localPlayer.vehicle ~= source then return end
+			if localPlayer.vehicleSeat ~= 0 then return end
+
+			if hitElement and hitElement:getModel() == 1933 and force > 500 then
+				localPlayer:giveAchievement(92)
+			end
+		end
+	)
+end
 
 addEventHandler("soundvanChangeURLClient", root,
 	function(url)
@@ -231,3 +292,80 @@ function( dir )
 		playSound("files/audio/headlight_down.mp3")
 	end
 end)
+
+addEventHandler("vehicleReceiveTuningList", localPlayer,
+function (vehicle, tunings)
+	if tunings then
+		ShortMessage:new(_("Das Fahrzeug besitzt folgende Tunings:\n%s", tunings), "Tunings von "..vehicle:getName())
+	else
+		ErrorBox:new(_"Das Fahrzeug hat keine Tunings!")
+	end
+end)
+
+
+local renderLeviathanRope = {}
+
+
+addEventHandler("onClientElementStreamIn", root,
+	function()
+		if getElementType(source) == "vehicle" then
+			if source:getModel() == 417 then
+				renderLeviathanRope[source] = true
+			elseif source:getModel() == 544 then
+				setVehicleComponentVisible(source, "misc_a", false)
+				setVehicleComponentVisible(source, "misc_b", false)
+				setVehicleComponentVisible(source, "misc_c", false)
+				triggerEvent("rescueLadderUpdateCollision", source, false)
+			end
+			GroupSaleVehicles.VehiclestreamedIn(source)
+			Indicator:getSingleton():onVehicleStreamedIn(source)
+			Neon.VehiclestreamedIn(source)
+		end
+	end
+)
+
+
+addEventHandler("onClientElementStreamOut", root,
+	function()
+		if renderLeviathanRope[source] then
+			renderLeviathanRope[source] = nil
+		end
+		if getElementType(source) == "vehicle" then
+			GroupSaleVehicles.VehiclestreamedOut(source)
+			Indicator:getSingleton():onVehicleStreamedOut(source)
+			Neon.VehiclestreamedOut(source)
+		end
+	end
+)
+
+
+addEventHandler("onClientRender", root,
+	function()
+		if DEBUG then ExecTimeRecorder:getSingleton():startRecording("3D/VehicleRopes") end
+		for vehicle in pairs(renderLeviathanRope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
+			if not isElement(vehicle) then renderLeviathanRope[vehicle] = nil break end
+
+			local magnet = getElementData(vehicle, "Magnet")
+			if magnet then
+				if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
+				dxDrawLine3D(vehicle.position, magnet.position, tocolor(100, 100, 100, 255), 10)
+			end
+		end
+		for engine, magnet in pairs(JobTreasureSeeker.Rope) do
+			if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes") end
+			if isElement(engine) and isElement(magnet) then
+				if isElementStreamedIn(engine) then
+					local pos1 = engine:getPosition()
+					local pos2 = magnet:getPosition()
+					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/VehicleRopes", true) end
+					dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
+				end
+			else
+				JobTreasureSeeker.Rope[engine] = nil
+			end
+		end
+		if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/VehicleRopes") end
+	end
+)
+
