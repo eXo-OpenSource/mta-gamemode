@@ -824,6 +824,7 @@
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/minigames/WareJump.lua" type="client"/>
 	<script src="client/classes/Gameplay/Ware/minigames/WareDuck.lua" type="client"/>

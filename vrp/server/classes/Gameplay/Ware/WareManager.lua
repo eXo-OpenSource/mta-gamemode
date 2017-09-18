@@ -13,9 +13,9 @@ WareManager.Map = {}
 --//1321.26, -1644.13, 13.55
 function WareManager:constructor( x,y,z )
 	self.m_Pickup = createPickup(x, y, z, 3, 1239,0)
-	WareManager.Map[#WareManager.Map+1] = self
 	self.m_MapId = #WareManager.Map
 	self.m_WareObj = Ware:new(self.m_MapId)
+	WareManager.Map[#WareManager.Map+1] = self.m_WareObj
 	PlayerManager:getSingleton():getWastedHook():register(
 	function(player, killer, weapon)
 		if player.bInWare then
