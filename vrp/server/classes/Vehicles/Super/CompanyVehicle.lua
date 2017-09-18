@@ -38,13 +38,14 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 	return false
 end
 
-function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage)
+function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage, fuel)
 	self.m_Id = Id
 	self.m_Company = company
 	self.m_PositionType = positionType or VehiclePositionType.World
 	self.m_SpawnPos = self:getPosition()
 	self.m_SpawnRot = self:getRotation()
 	self:setFrozen(true)
+	self:setFuel(fuel or 100)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	setElementData(self, "OwnerName", self.m_Company:getName())
@@ -78,11 +79,6 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 
 	if self.m_Company.m_Vehicles then
 		table.insert(self.m_Company.m_Vehicles, self)
-	end
-
-	self:setFuel(self.m_Fuel or 100)
-	if self:getModel() == 611 then -- Fuel tank
-		self:setFuel(0)
 	end
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
@@ -186,9 +182,8 @@ end
 function CompanyVehicle:save()
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Company:getId(), toJSON(tunings), self:getMileage(),
-		self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
+	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Fuel = ?, Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Company:getId(), toJSON(tunings), self:getFuel(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function CompanyVehicle:hasKey(player)

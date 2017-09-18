@@ -7,7 +7,7 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal)
+function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel)
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -54,7 +54,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
-	self:setFuel(self.m_Fuel or 100)
+	self:setFuel(fuel or 100)
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -184,8 +184,8 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
-		sql:getPrefix(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Fuel = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
+		sql:getPrefix(), self:getMileage(), self:getFuel(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)
