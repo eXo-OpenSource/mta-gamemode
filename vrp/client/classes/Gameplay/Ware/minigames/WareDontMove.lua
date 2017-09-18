@@ -16,6 +16,7 @@ end
 
 function WareDontMove:Event_ListenerOn()
 	self.m_HasMoved = false
+	self.m_TickCount = getTickCount()
 	removeEventHandler("onClientRender", root, self.m_RenderBind)
 	addEventHandler("onClientRender", root, self.m_RenderBind)
 end
@@ -26,7 +27,8 @@ function WareDontMove:Event_ListenerOff()
 end
 
 function WareDontMove:Event_Render()
-	if not self.m_HasStopped then 
+	local now = getTickCount()
+	if not self.m_HasStopped and now - self.m_TickCount >= 500 then 
 		if getPedMoveState(localPlayer) ~= "stand" then 
 			removeEventHandler("onClientRender", root, self.m_RenderBind)
 			triggerServerEvent("Ware:clientMoved", localPlayer)
