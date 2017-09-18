@@ -193,7 +193,6 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	source:setDimension(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
 
-
 	if source:getVehicleType() == VehicleType.Plane then
 		x, y, z, rotation = 871.285, -1264.624, 15.5, 0
 	elseif source:getVehicleType() == VehicleType.Helicopter then
@@ -209,13 +208,13 @@ function MechanicTow:createTowLot()
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
 	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
-	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
+	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self))
 end
 
 function MechanicTow:onEnterTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
 	if hitElement:getCompany() ~= self then return end
-	if not hitElement.vehicle or hitElement.vehicle:getCompany() ~= self or hitElement.vehicle:getModel() ~= 525 then return end
+	if not hitElement.vehicle or hitElement.vehicle:getCompany() ~= self or (hitElement.vehicle:getModel() ~= 525 and hitElement.vehicle:getModel() ~= 417) then return end
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
 	if towingBike then
@@ -232,9 +231,7 @@ function MechanicTow:onEnterTowLot(hitElement)
 	end
 
 	hitElement.m_InTowLot = true
-	if not hitElement.vehicle.towedByVehicle then
-		hitElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hitElement))
-	end
+	hitElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hitElement))
 end
 
 function MechanicTow:sendWarning(text, header, withOffDuty, pos, ...)
@@ -256,7 +253,7 @@ end
 
 function MechanicTow:onLeaveTowLot(hitElement)
 	if getElementType(hitElement) ~= "player" then return end
-	hitElement.m_InTowLot = false
+	hitElement.m_InTowLot = nil
 end
 
 function MechanicTow:onAttachVehicleToTow(towTruck)
@@ -272,7 +269,8 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 	end
 end
 
-function MechanicTow:onDetachVehicleFromTow( towTruck )
+function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
+	local source = vehicle and vehicle or source
 	source:toggleRespawn(true)
 
 	local driver = getVehicleOccupant(towTruck)
@@ -472,6 +470,12 @@ function MechanicTow:Event_mechanicDetachBike()
 
 		towingBike:setData("towedByVehicle", nil, true)
 		client.vehicle:setData("towingBike", nil, true)
+	end
+end
+
+function MechanicTow:checkLeviathanTowing(player, vehicle)
+	if player.vehicle and vehicle then
+		self:onDetachVehicleFromTow(player.vehicle, vehicle)
 	end
 end
 

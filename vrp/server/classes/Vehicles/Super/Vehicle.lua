@@ -685,6 +685,10 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			detachElements(self.m_GrabbedVehicle)
 
 			setElementData(self, "MagnetGrabbedVehicle", nil)
+
+			if client.m_InTowLot and client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC then
+				client:getCompany():checkLeviathanTowing(client, self.m_GrabbedVehicle)
+			end
 		else
 			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
 		end
