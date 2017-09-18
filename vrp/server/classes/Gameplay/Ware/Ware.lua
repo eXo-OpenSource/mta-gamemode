@@ -30,6 +30,7 @@ function Ware:constructor( dimension )
 		WareDontMove,
 		WareClimb,
 		WareParachute,
+		WareMath
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
@@ -39,6 +40,9 @@ function Ware:constructor( dimension )
 	self.m_AfterRound = bind(self.afterRound, self)
 	self.m_startRound = bind(self.startRound, self)
 	self:startRound()
+
+	Player.getChatHook():register(bind(self.onPlayerChat, self))
+
 end
 
 function Ware:startRound()
@@ -58,6 +62,16 @@ function Ware:onDeath( player, killer, weapon)
 	if self.m_CurrentMode then
 		if self.m_CurrentMode.onDeath then
 			self.m_CurrentMode:onDeath( player, killer, weapon)
+		end
+	end
+end
+
+function Ware:onPlayerChat(player, text, type)
+	if self.m_CurrentMode then
+		if self.m_CurrentMode.onChat then
+			if table.find(self.m_Players, player) then
+				self.m_CurrentMode:onChat(player, text, type)
+			end
 		end
 	end
 end

@@ -213,6 +213,7 @@
 	<script src="server/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareClimb.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareParachute.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMath.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
