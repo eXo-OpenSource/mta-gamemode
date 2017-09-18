@@ -151,10 +151,8 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
 	elseif type == "Weapon" then
-		if client.disableWeaponStorage then
-			client:sendError(_("Du darfst diese Waffe nicht handeln!", client))
-			return
-		end
+		if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen handeln!", client)) return end
+		if target:hasTemporaryStorage() then client:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", client)) return end
 
 		if client:getFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
@@ -252,10 +250,8 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 		return
 	end
 
-	if player.disableWeaponStorage then
-		player:sendError(_("Du darfst diese Waffe nicht handeln!", player))
-		return
-	end
+	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen handeln!", player)) return end
+	if target:hasTemporaryStorage() then player:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", player)) return end
 
 	local weaponSlot = getSlotFromWeapon(weaponId)
 	if player:getWeapon(weaponSlot) > 0 then

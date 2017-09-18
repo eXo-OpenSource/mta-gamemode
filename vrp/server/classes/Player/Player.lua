@@ -57,12 +57,6 @@ function Player:destructor()
 		delete(self.m_Inventory)
 	end
 
-	-- Collect all world items
---	local worldItems = WorldItem.getItemsByOwner(self)
---	for k, worldItem in pairs(worldItems) do
---		worldItem:collect(self)
---	end
-
 	-- Call the quit hook (to clean up various things before saving)
 
 	Player.ms_QuitHook:call(self)
@@ -71,7 +65,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() or self.m_RemoveWeaponsOnLogout then
+	if self:isFactionDuty() then
 		takeAllWeapons(self)
 	end
 
@@ -325,17 +319,14 @@ function Player:save()
 			self.m_UniqueInterior = 0
 		end
 
+		if self:hasTemporaryStorage() then
+			self:restoreStorage()
+		end
+
 		local weapons = {}
 		for slot = 0, 11 do -- exclude satchel detonator (slot 12)
 			local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
 			if ammo > 0 then
-				weapons[#weapons + 1] = {weapon, ammo}
-			end
-		end
-
-		if self:hasTemporaryStorage() then
-			weapons = {}
-			for weapon, ammo in pairs(self.m_Storage.weapons) do
 				weapons[#weapons + 1] = {weapon, ammo}
 			end
 		end

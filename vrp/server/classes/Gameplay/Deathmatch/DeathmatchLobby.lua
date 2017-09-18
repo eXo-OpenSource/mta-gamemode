@@ -135,14 +135,11 @@ function DeathmatchLobby:addPlayer(player)
 
 	player:createStorage(true)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
-	
+
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
 	end
-	
-	--player.m_RemoveWeaponsOnLogout = true
-	player.disableWeaponStorage = true
-	
+
 	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
@@ -189,17 +186,13 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
 		player:restoreStorage()
-		--player.m_RemoveWeaponsOnLogout = nil
-		player.disableWeaponStorage = nil
-		
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(1325.21, -1559.48, 13.54)
 		player:setHeadless(false)
-		player:setHealth(100)
-		player:setArmor(0)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
+
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
 			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})
