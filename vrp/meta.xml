@@ -921,7 +921,7 @@
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
-	<file src="files/html/js/editor/3024-night.css" />
+	<file src="files/html/js/editor/material.css" />
 	<file src="files/html/js/editor/codemirror.css" />
 	<file src="files/html/js/editor/codemirror.js" />
 	<file src="files/html/js/editor/lua.js" />
