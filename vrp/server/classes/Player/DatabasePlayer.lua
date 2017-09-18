@@ -486,7 +486,7 @@ function DatabasePlayer:incrementJobLevel()
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
-function DatabasePlayer:setWeaponLevel (level)
+function DatabasePlayer:setWeaponLevel(level)
 	self.m_WeaponLevel = level
 	if self:isActive() then
 		self:setPrivateSync("WeaponLevel", self.m_WeaponLevel)
@@ -500,18 +500,18 @@ function DatabasePlayer:setWeaponLevel (level)
 	end
 end
 
-function DatabasePlayer:setVehicleLevel (level)
+function DatabasePlayer:setVehicleLevel(level)
 	if level < 1 then level = 1 end
 	self.m_VehicleLevel = level
 	if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
 end
 
-function DatabasePlayer:setSkinLevel (level)
+function DatabasePlayer:setSkinLevel(level)
 	self.m_SkinLevel = level
 	if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
 end
 
-function DatabasePlayer:setJobLevel (level)
+function DatabasePlayer:setJobLevel(level)
 	self.m_JobLevel = level
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end

@@ -1527,6 +1527,7 @@ end
 function Player:restoreStorage()
 	if not self.m_Storage then return false end
 
+	takeAllWeapons(self)
 	for weapon, ammo in pairs(self.m_Storage.weapons) do
 		giveWeapon(self, weapon, ammo)
 	end
