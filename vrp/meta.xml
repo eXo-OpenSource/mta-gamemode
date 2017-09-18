@@ -529,8 +529,6 @@
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
-	<script src="client/classes/GUI/Editor/GUIEditorPreview.lua" type="client"/>
-	<script src="client/classes/GUI/Editor/GUIEditorMouseMenuWrapper.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>

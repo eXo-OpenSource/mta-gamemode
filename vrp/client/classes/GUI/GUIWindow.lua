@@ -130,7 +130,7 @@ function GUIWindow:removeBackButton()
 	end
 end
 
-function GUIWindow:updateGrid()
+function GUIWindow.updateGrid(withTabs)
 	grid("reset", true)
-	grid("offset", 0)
+	grid("offset", withTabs and 50 or 30)
 end

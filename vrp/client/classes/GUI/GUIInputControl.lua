@@ -37,6 +37,8 @@ function GUIInputControl.setFocus(edit, caret)
 		guiSetInputEnabled(true)
 		guiSetText(GUIInputControl.ms_Edit, edit:getText())
 
+		focusBrowser(nil)
+
 		GUIInputControl.skipChangedEvent = false
 
 		if caret then

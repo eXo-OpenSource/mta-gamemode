@@ -16,8 +16,8 @@ addEvent("onCodeEditorSend", true)
 CodeEditorGUI.ms_Themes = {"material", "base16-light"}
 
 function CodeEditorGUI:constructor()
-    grid("reset", true)
-	grid("offset", 30)
+    
+	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 20)
 	self.m_Height = grid("y", 16)
 
@@ -70,6 +70,14 @@ function CodeEditorGUI:onCodeReceive(code)
 	end
 end
 
+function CodeEditorGUI:insertTemplate(template)
+	self.m_EditorBrowser:callEvent("onCodeEditorTemplateInsert", template)
+end
+
+
+--//
+--||	CodeSession
+--\\
 
 function CodeSession:constructor()
 	self.m_Sessions = {}
@@ -87,9 +95,7 @@ function CodeSession:loadClass(parsedString, name)
 		loadstring(parsedString)()
 		InfoBox:new(_("Klasse %s geladen.", name))
 		local instance = self.m_Sessions[name].getSingleton and self.m_Sessions[name]:getSingleton() or self.m_Sessions[name]
-		if self.m_Sessions[name].constructor then 
-			self.m_Sessions[name]:new()
-		elseif self.m_Sessions[name].getSingleton then
+		if self.m_Sessions[name].getSingleton then
 			self.m_Sessions[name].getSingleton()
 		end
 	else

@@ -365,7 +365,7 @@ function CustomF11Map:zoom(zoomIn)
 	local oldMapCenterX = screenWidth/2 - self.m_CenterPosX -- this saves the world position at the map center to re-center the map 
 	local oldMapCenterY = screenHeight/2 - self.m_CenterPosY
 	local oldWorldPosX, oldWorldPosY = self:mapToWorldPosition(oldMapCenterX, oldMapCenterY)
-	self.m_Zoom = math.clamp(1, self.m_Zoom + (zoomIn and 0.05 or -0.05), 2)
+	self.m_Zoom = math.clamp(1, self.m_Zoom + (zoomIn and 0.05 or -0.05), 2.5)
 	self.m_Height = screenHeight * self.m_Zoom
 	self:setWorldCenterPosition(oldWorldPosX, oldWorldPosY)
 end
