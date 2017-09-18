@@ -144,6 +144,7 @@ function Core:ready()
 	--SprayWallManager:new()
 	AntiClickSpam:new()
 	GasStation:new()
+	WareClient:new()
 
 	ChessSession:new()
 

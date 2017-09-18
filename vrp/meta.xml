@@ -201,6 +201,19 @@
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareSurvive.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCrateBreak.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDuck.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareJump.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareClimb.lua" type="server"/>
+
+	
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPeds/TransportBeggar.lua" type="server"/>
@@ -664,7 +677,8 @@
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
+	
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -809,6 +823,13 @@
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 
+	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/minigames/WareJump.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDuck.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="client"/>
+
 	<!-- Fishing -->
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing/FishingRod.lua" type="client"/>
@@ -847,8 +868,6 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 
-	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
-
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
 	<file src="files/images/Chess/Bishop.png" />
@@ -863,8 +882,16 @@
 	<vrpfile src="files/images/Chess/QueenB.png" />
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
-
-
+	
+	<!-- ware-gamemode -->
+	<vrpfile src="files/images/Textures/waretex.png"/>
+	<vrpfile src="files/images/Textures/sky.png"/>
+	
+	<vrpfile src="files/audio/Ware/kahoot.ogg" />
+	<vrpfile src="files/audio/Ware/done.mp3" />
+	<vrpfile src="files/audio/Ware/fail.mp3" />
+	<vrpfile src="files/fonts/SuperMario256.ttf" />
+	
 	<vrpfile src="files/images/warning.png" />
 
 	<!-- board piece -->
