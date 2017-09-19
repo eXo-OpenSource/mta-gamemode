@@ -917,14 +917,21 @@
 
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
+	<file src="files/html/js/jquery-3.2.1.min.js" />
+	<file src="files/html/js/bootstrap.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
-	<file src="files/html/js/editor/material.css" />
-	<file src="files/html/js/editor/base16-light.css" />
-	<file src="files/html/js/editor/codemirror.css" />
 	<file src="files/html/js/editor/codemirror.js" />
 	<file src="files/html/js/editor/lua.js" />
 	<file src="files/html/js/editor/templates.js" />
+
+	<file src="files/html/css/bootstrap.min.css" />
+	<file src="files/html/css/bootstrap.ingame.css" />
+
+	<file src="files/html/css/editor/codemirror.css" />
+	<file src="files/html/css/editor/base16-light.css" />
+	<file src="files/html/css/editor/material.css" />
+
 	<file src="files/html/help.htm" />
 	<file src="files/html/editor.htm" />
 

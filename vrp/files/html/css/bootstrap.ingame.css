@@ -1,0 +1,164 @@
+@font-face {
+    font-family: ekMukta;
+    src: url(../../fonts/EkMukta.ttf);
+}
+
+body{
+	background-color: transparent;
+	font-size:14px;
+	color:#FFF;
+	font-family: 'ekMukta';
+}
+
+html[data-useragent*='Chrome'] body {
+    background-color: #000;
+}
+
+.panel{
+	background: transparent;
+	border-radius: 0px;
+	border: none;
+}
+
+.table-hover>tbody>tr:hover {
+    background-color: rgb(58, 186, 242);
+}
+h3, h4, h2, h1 {
+	color:#FFF;
+
+}
+
+.navbar-exo{
+    background-color: rgb(50,50,50);
+    border-color: #e7e7e7;
+	border-bottom: 2px solid rgb(50, 200, 255);
+	border-radius: 0px;
+	margin-bottom: 5px;
+	min-height: 30px;
+}
+
+@media (min-width: 200px){
+	.navbar-nav>li>a {
+		padding-top: 7px;
+		padding-bottom: 7px;
+	}
+}
+
+.navbar-exo .nav>li>a:focus, .navbar-exo .nav>li>a:hover {
+	background-color: rgb(50, 200, 255);
+}
+
+.navbar-exo .navbar-nav>li>a {
+    color: #FFF;
+	font-size:16px;
+}
+
+.navbar-exo .open>a, .navbar-exo .open>a:focus, .navbar-exo .open>a:hover {
+	background-color: rgb(50, 200, 255);
+}
+.navbar-exo  .dropdown-menu {
+	background-color: rgb(50,50,50);
+	border-radius: 0px;
+}
+
+.navbar-exo  .dropdown-menu>li>a{
+	color: #FFF;
+}
+
+.navbar-exo .dropdown-menu>li>a:focus, .navbar-exo .dropdown-menu>li>a:hover {
+	background-color: rgb(50, 200, 255);
+}
+
+
+.panel-body {
+	padding: 0px 0px 15px 0px;
+}
+
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+	border:none;
+}
+
+.table-hover>thead>tr:hover {
+    background-color: transparent; /* Assuming you want the hover color to be white */
+}
+
+.panel-default>.panel-heading {
+	background-color: rgba(55, 55, 55, 0.9);
+	border-bottom: 2px solid rgb(58, 186, 242);
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+	padding:0px;
+	min-height: 30px;
+	border: none;
+	color:#FFF;
+	font-size:20px;
+}
+
+.panel-title {
+	padding:6px;
+	font-size: 18px;
+}
+
+.btn-vrp{
+	border-radius: 0px;
+	font-size:18px;
+	min-width:200px;
+	padding: 0px 20px;
+	border:none;
+	background-image: none;
+	color:#FFF;
+}
+.btn-vrp-danger{
+	background-color: rgb(55, 55, 55);
+	border-top: 2px rgb(178,  35,  33) solid;
+}
+
+.btn-vrp-danger:hover, .btn-vrp-success:hover, .btn-vrp-primary:hover{
+	background-color: rgb(55, 55, 55);
+	border-top: 2px rgb(255, 255, 255) solid;
+	text-decoration: none;
+    color: #FFF;
+}
+
+.btn-vrp-primary{
+	background-color: rgb(55, 55, 55);
+	border-top: 2px rgb(58, 186, 242) solid;
+}
+
+.btn-vrp-success{
+	background-color: rgb(55, 55, 55);
+	border-top: 2px rgb(11, 102, 8) solid;
+}
+
+
+.btn{
+	border-radius: 0px;
+	font-size:18px;
+	min-width:150px;
+	padding: 5px 12px;
+	border:none;
+	background-image: none;
+}
+
+.btn-success{
+	background-color: rgb(11, 102, 8);
+	border:none;
+	color:#FFF;
+}
+
+.btn-success:hover, .btn-awesome:hover{
+	background-color: rgb(255, 255, 255);
+	color:#000;
+}
+
+
+.btn-awesome{
+	border-radius: 0px;
+	font-size:18px;
+	padding: 5px 5px;
+	border:none;
+	background-image: none;
+	width: 30px;
+    height: 30px;
+	min-width:0px;
+}
