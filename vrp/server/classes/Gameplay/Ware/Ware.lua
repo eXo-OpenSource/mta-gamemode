@@ -22,17 +22,17 @@ function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
 		WareMoney,
-		--WareSurvive,
-		--WareCarJack,
-		--WareCrateBreak,
-		--WareDuck,
-		--WareJump,
-		--WareKeepMove,
-		--WareDontMove,
-		--WareClimb,
-		--WareParachute,
-		--WareMath, 
-		--WareStayTop,
+		WareSurvive,
+		WareCarJack,
+		WareCrateBreak,
+		WareDuck,
+		WareJump,
+		WareKeepMove,
+		WareDontMove,
+		WareClimb,
+		WareParachute,
+		WareMath,
+		WareStayTop,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
