@@ -13,7 +13,7 @@ local CONST_GROUND_ID = 8661 --// "greyground256"
 local DUMMY_OBJ_GROUND = createObject ( CONST_GROUND_ID,0,0,3)
 local CONST_GROUND_BOX = {getElementBoundingBox ( DUMMY_OBJ_GROUND )}
 destroyElement(DUMMY_OBJ_GROUND)
-local ORIGIN_VECTOR = {0,0,12000}
+local ORIGIN_VECTOR = {0,0,4000}
 local x_max = 50
 local y_max = 50
 
@@ -25,7 +25,7 @@ function updateBounds( object )
 	DUMMY_OBJ_GROUND = createObject ( CONST_GROUND_ID,0,0,3)
 	CONST_GROUND_BOX = {getElementBoundingBox ( DUMMY_OBJ_GROUND )}
 	destroyElement(DUMMY_OBJ_GROUND)
-	ORIGIN_VECTOR = {0,0,12000}
+	ORIGIN_VECTOR = {0,0,4000}
 	x_max = 50
 	y_max = 50
 end

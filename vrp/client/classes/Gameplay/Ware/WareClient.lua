@@ -47,6 +47,11 @@ end
 
 function WareClient:OnJoinWare( gamespeed ) 
 	self.m_Gamespeed = gamespeed or 1
+	setSkyGradient(23, 99, 132, 23, 99, 132)
+	setElementModel(localPlayer, 244)
+	setTime(12, 00)
+	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 244)
+	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 244)
 end
 function WareClient:OnLeaveWare() 
 end
@@ -81,8 +86,6 @@ function WareClient:Event_GameSpeedChange( gamespeed )
 	end
 end
 
-
-
 function WareClient:RenderBestList(rot)
 	if self.m_TopList and showBest then 
 		for i = 1,4 do 
@@ -115,8 +118,8 @@ function WareClient:Event_OnRender()
 	local prog = elap/dur
 	local rot = interpolateBetween(-6,0,0,6,0,0,prog,"CosineCurve")
 	if self.m_ShowDesc and showDesc then 
-		dxDrawText(self.m_ShowDesc,w*0.5-(self.m_TextWidth*0.5),h*0.3+1,w*0.5+(self.m_TextWidth*0.5),h,tocolor(0, 0, 0, 255),1,self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
-		dxDrawText(self.m_ShowDesc,w*0.5-(self.m_TextWidth*0.5),h*0.3,w*0.5+(self.m_TextWidth*0.5),h,tocolor(7, 91, 140, 255),1,self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
+		dxDrawText(self.m_ShowDesc,w*0.5-(self.m_TextWidth*0.5),h*0.4+1,w*0.5+(self.m_TextWidth*0.5),h,tocolor(0, 0, 0, 255),1,self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
+		dxDrawText(self.m_ShowDesc,w*0.5-(self.m_TextWidth*0.5),h*0.4,w*0.5+(self.m_TextWidth*0.5),h,tocolor(7, 91, 140, 255),1,self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
 	end
 	self:RenderBestList(rot)
 end

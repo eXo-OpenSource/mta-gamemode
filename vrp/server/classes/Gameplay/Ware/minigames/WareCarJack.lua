@@ -37,7 +37,7 @@ function WareCarJack:createCar()
 			for i = 1, carAmount do 
 				self.m_Cars[i] = createVehicle(randCar,x+5+math.random(0,width-10), y+5+math.random(0,height-10), z+3)
 				setElementDimension(self.m_Cars[i], self.m_Super.m_Dimension)
-				setVehicleEngineState(self.m_Cars[i],true)
+				self.m_Cars[i]:setEngineState(true)
 			end
 			local x,y,z,width,height = unpack(self.m_Super.m_Arena)
 		end

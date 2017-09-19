@@ -1719,6 +1719,8 @@
 	<vrpfile src="files/models/zombie.txd"/>
 	<vrpfile src="files/models/waterCan.txd" />
 	<vrpfile src="files/models/waterCan.dff" />
+	<vrpfile src="files/models/waluigi.txd" />
+	<vrpfile src="files/models/waluigi.dff" />
 	<vrpfile src="files/models/waterCan.col" />
 	<vrpfile src="files/models/mostWanted.txd" />
 	<vrpfile src="files/models/mostWanted.dff" />
