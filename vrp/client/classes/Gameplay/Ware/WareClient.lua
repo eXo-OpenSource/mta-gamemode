@@ -10,7 +10,7 @@ WareClient = inherit(Singleton)
 local w,h = guiGetScreenSize()
 local showDesc = false
 local showBest = false
-addRemoteEvents{"onClientWareRoundStart","onClientWareRoundEnd","onClientWareJoin","onClientWareLeave", "onClientWareChangeGameSpeed","onClientWareSuceed"}
+addRemoteEvents{"onClientWareRoundStart","onClientWareRoundEnd","onClientWareJoin","onClientWareLeave", "onClientWareChangeGameSpeed","onClientWareSuceed", "onClientWareFail"}
 function WareClient:constructor()
 	addEventHandler("onClientWareJoin", localPlayer,bind(self.OnJoinWare,self))
 	addEventHandler("onClientWareLeave", localPlayer,bind(self.OnLeaveWare,self))
@@ -18,7 +18,7 @@ function WareClient:constructor()
 	addEventHandler("onClientWareRoundEnd", localPlayer,bind(self.Event_RoundEnd,self))
 	addEventHandler("onClientWareChangeGameSpeed", localPlayer,bind(self.Event_GameSpeedChange,self))
 	addEventHandler("onClientWareSuceed", localPlayer,bind(self.Event_OnSuceed,self))
-	
+	addEventHandler("onClientWareFail", localPlayer,bind(self.Event_OnFail,self))
 	self.m_RendBind = bind(self.Event_OnRender,self)
 	addEventHandler("onClientRender", root, self.m_RendBind)
 	self.m_Font = FontMario256(h*0.05)
@@ -41,10 +41,13 @@ function WareClient:Event_OnSuceed()
 	playSound("files/audio/Ware/done.mp3")
 end
 
+function WareClient:Event_OnFail() 
+	playSound("files/audio/Ware/fail.mp3")
+end
+
 function WareClient:OnJoinWare( gamespeed ) 
 	self.m_Gamespeed = gamespeed or 1
 end
-
 function WareClient:OnLeaveWare() 
 end
 

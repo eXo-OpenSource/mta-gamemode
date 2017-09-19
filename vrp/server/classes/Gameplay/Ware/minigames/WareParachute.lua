@@ -12,7 +12,7 @@ WareParachute.timeScale = 2
 function WareParachute:constructor( super )
 	self.m_Super = super
 	self:createPlatform()
-	self:portPlayers(200)
+	self:portPlayers(200, true)
 
 end
 
@@ -26,18 +26,20 @@ function WareParachute:createPlatform()
 	end
 end
 
-function WareParachute:portPlayers(zOffset)
+function WareParachute:portPlayers(zOffset, bPara)
 	local x, y, z, width, height = unpack(self.m_Super.m_Arena)
 	for key, p in ipairs(self.m_Super.m_Players) do
 		p:triggerEvent("PlatformEnv:toggleColShapeHitRespawn", false)
 		p:triggerEvent("PlatformEnv:toggleWallCollission", false)
 		p:setPosition((x+5)+ math.random(0,width-5), (y+5)+ math.random(0,height-5),z+zOffset)
-		p:giveWeapon(46, 1, true)
+		if bPara then
+			p:giveWeapon(46, 1, true)
+		end
 	end
 end
 
 function WareParachute:destructor()
-	self:portPlayers(0)
+	self:portPlayers(1, false)
 	for key, p in ipairs(self.m_Super.m_Players) do
 		if getPedContactElement(p) == self.m_PlatformObj then
 			self.m_Super:addPlayerToWinners( p )
