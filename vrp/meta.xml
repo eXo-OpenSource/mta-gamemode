@@ -827,6 +827,7 @@
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/WareHUD.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/minigames/WareJump.lua" type="client"/>
 	<script src="client/classes/Gameplay/Ware/minigames/WareDuck.lua" type="client"/>
 	<script src="client/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="client"/>
@@ -886,9 +887,11 @@
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
 	<!-- ware-gamemode -->
-	<vrpfile src="files/images/Textures/waretex.png"/>
-	<vrpfile src="files/images/Textures/sky.png"/>
-
+	<vrpfile src="files/images/Textures/Ware/waretex.png"/>
+	<vrpfile src="files/images/Textures/Ware/bomb.png"/>
+	<vrpfile src="files/images/Textures/Ware/fuse.png"/>
+	<vrpfile src="files/images/Textures/Ware/fire.png"/>
+	
 	<vrpfile src="files/audio/Ware/kahoot.ogg" />
 	<vrpfile src="files/audio/Ware/done.mp3" />
 	<vrpfile src="files/audio/Ware/fail.mp3" />
@@ -1342,7 +1345,6 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
-	<vrpfile src="files/images/Textures/waretex.png"/>
 	<vrpfile src="files/images/Textures/tracer.png"/>
 
 	<!-- Inventory Images -->

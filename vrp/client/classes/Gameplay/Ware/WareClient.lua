@@ -30,6 +30,7 @@ function WareClient:constructor()
 	self.m_WareDuck = WareDuck:new()
 	self.m_WareKeepMove = WareKeepMove:new()
 	self.m_WareDontMove = WareDontMove:new()
+	self.m_WareDisplay = WareHUD:new()
 end
 
 function WareClient:destructor()
@@ -47,12 +48,13 @@ end
 function WareClient:OnLeaveWare() 
 end
 
-function WareClient:Event_RoundStart( desc )
+function WareClient:Event_RoundStart( desc, duration )
 	self.m_TextWidth = dxGetTextWidth(desc,1,self.m_Font or "default-bold")
 	self.m_ShowDesc = desc
 	showDesc = true
 	showBest = false
 	self.m_TopList = false
+	self.m_WareDisplay:displayRoundTime( duration )
 end
 
 function WareClient:Event_RoundEnd( bestList)
@@ -62,6 +64,7 @@ function WareClient:Event_RoundEnd( bestList)
 	showBest = true
 	self.m_RoundSound = playSound("files/audio/Ware/kahoot.ogg")
 	setSoundSpeed(self.m_RoundSound, self.m_Gamespeed)
+	self.m_WareDisplay:stopRoundTime( )
 end
 
 function WareClient:Event_GameSpeedChange( gamespeed )

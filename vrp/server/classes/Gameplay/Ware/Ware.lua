@@ -48,14 +48,15 @@ end
 function Ware:startRound()
 	self.m_Successors = {}
 	local randomMode = self.m_GameModeList[math.random(1,#self.m_GameModeList)]
+	local roundTime = Ware.roundTimes[self.m_Gamespeed]
+	local roundDuration = (roundTime*1000)*(randomMode.timeScale or 1)
 	if randomMode then
 		self.m_CurrentMode = randomMode:new(self)
 		for key, player in ipairs(self.m_Players) do
-			player:triggerEvent("onClientWareRoundStart", randomMode.modeDesc)
+			player:triggerEvent("onClientWareRoundStart", randomMode.modeDesc, roundDuration)
 		end
 	end
-	local roundTime = Ware.roundTimes[self.m_Gamespeed]
-	self.m_RoundEnd = setTimer( self.m_AfterRound, (roundTime*1000)*(randomMode.timeScale or 1), 1)
+	self.m_RoundEnd = setTimer( self.m_AfterRound,roundDuration, 1)
 end
 
 function Ware:onDeath( player, killer, weapon)
