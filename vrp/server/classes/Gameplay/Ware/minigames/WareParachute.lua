@@ -37,6 +37,7 @@ function WareParachute:portPlayers(zOffset)
 end
 
 function WareParachute:destructor()
+	self:portPlayers(0)
 	for key, p in ipairs(self.m_Super.m_Players) do
 		if getPedContactElement(p) == self.m_PlatformObj then
 			self.m_Super:addPlayerToWinners( p )
@@ -45,7 +46,6 @@ function WareParachute:destructor()
 		p:triggerEvent("PlatformEnv:toggleWallCollission", true)
 
 	end
-	self:portPlayers(0)
 	if self.m_PlatformObj then
 		destroyElement(self.m_PlatformObj)
 	end
