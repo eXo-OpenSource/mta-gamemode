@@ -1,7 +1,6 @@
 FileTextureReplacer = inherit(TextureReplacer)
 FileTextureReplacer.ClientPath = "files/images/Textures/%s"
 
--- normal methods
 function FileTextureReplacer:constructor(element, fileName, textureName, options)
 	assert(fileName and fileName:len() > 0, "Bad Argument @ FileTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
