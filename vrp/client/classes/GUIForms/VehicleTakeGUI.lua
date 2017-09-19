@@ -21,7 +21,7 @@ end
 function VehicleTakeGUI:setVehicles(vehicles)
 	self.m_Grid:clear()
 	for k, vehicle in pairs(vehicles) do
-		local name = type(vehicle) == "userdata" and vehicle:getName() or getVehicleNameFromModel(vehicle)
+		local name = type(vehicle) == "userdata" and vehicle:getName() or VehicleCategory:getSingleton():getModelName(vehicle)
 		local item = self.m_Grid:addItem(name)
 		item.Vehicle = vehicle
 		item.onLeftDoubleClick = bind(self.TakeButton_Click, self)
