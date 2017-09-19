@@ -14,8 +14,7 @@ WareManager.Map = {}
 function WareManager:constructor( x,y,z )
 	self.m_Pickup = createPickup(x, y, z, 3, 1239,0)
 	self.m_MapId = #WareManager.Map
-	self.m_WareObj = Ware:new(self.m_MapId)
-	WareManager.Map[#WareManager.Map+1] = self.m_WareObj
+	WareManager.Map[#WareManager.Map+1] = Ware:new(self.m_MapId)
 	PlayerManager:getSingleton():getWastedHook():register(
 	function(player, killer, weapon)
 		if player.bInWare then
@@ -29,7 +28,7 @@ end
 
 function WareManager:Event_onPickupHit( player )
 	local dimension = source:getDimension() == player:getDimension()
-	if dimension then 
+	if dimension then
 		player:triggerEvent("Ware:wareOpenGUI")
 	end
 end
