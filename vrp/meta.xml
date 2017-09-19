@@ -924,6 +924,7 @@
 	<file src="files/html/js/editor/codemirror.css" />
 	<file src="files/html/js/editor/codemirror.js" />
 	<file src="files/html/js/editor/lua.js" />
+	<file src="files/html/js/editor/templates.js" />
 	<file src="files/html/help.htm" />
 	<file src="files/html/editor.htm" />
 
