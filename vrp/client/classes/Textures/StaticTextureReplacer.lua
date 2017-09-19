@@ -1,11 +1,25 @@
-StaticTextureReplacer = inherit(FileTextureReplacer)
+StaticFileTextureReplacer = inherit(FileTextureReplacer)
 
-function StaticTextureReplacer:constructor(fileName, textureName, options)
+function StaticFileTextureReplacer:constructor(fileName, textureName, options)
 	FileTextureReplacer.constructor(self, nil, fileName, textureName, options)
 	self:load()
 end
 
-function StaticTextureReplacer:destructor()
+function StaticFileTextureReplacer:destructor()
 	self:unload()
 	FileTextureReplacer.destructor(self)
+end
+
+
+
+StaticRenderTargetTextureReplacer = inherit(FileTextureReplacer)
+
+function StaticRenderTargetTextureReplacer:constructor(fileName, textureName, options)
+	RenderTargetTextureReplacer.constructor(self, nil, fileName, textureName, options)
+	self:load()
+end
+
+function StaticRenderTargetTextureReplacer:destructor()
+	self:unload()
+	RenderTargetTextureReplacer.destructor(self)
 end

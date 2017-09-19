@@ -378,6 +378,8 @@
 	<script src="client/classes/Textures/TextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/HTTPTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>
+	<script src="client/classes/Textures/RenderTargetTextureReplacer.lua" type="client"/>
+	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
 	<script src="client/classes/NonCollidingSphere.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
