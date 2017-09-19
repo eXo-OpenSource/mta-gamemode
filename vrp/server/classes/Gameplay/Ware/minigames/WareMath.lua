@@ -27,7 +27,10 @@ function WareMath:constructor( super )
 	elseif randomOperator == 2 then 
 		self.m_RightAnswer = self.m_Int1 - self.m_Int2
 	elseif randomOperator == 3 then 
+		self.m_Int1 = math.random(1,14)
+		self.m_Int2 = math.random(1,10)
 		self.m_RightAnswer = self.m_Int1 * self.m_Int2
+		WareMath.modeDesc = ("Wieviel ist %d "..operatorString.." %d?"):format(self.m_Int1, self.m_Int2)
 	end
 	for key, p in ipairs(self.m_Super.m_Players) do
 		showChat(p, true)
