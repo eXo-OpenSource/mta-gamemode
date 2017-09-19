@@ -12,7 +12,7 @@ WareMath.Operators =
 {
 	"+", 
 	"-",
-	"*", 
+	"x", 
 	":" -- todo remove division that return rational numbers
 }
 function WareMath:constructor( super )
