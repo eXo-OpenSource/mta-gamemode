@@ -30,7 +30,7 @@ h3, h4, h2, h1 {
 
 .navbar-exo{
     background-color: rgb(50,50,50);
-    border-color: #e7e7e7;
+    border:none;
 	border-bottom: 2px solid rgb(50, 200, 255);
 	border-radius: 0px;
 	margin-bottom: 5px;
