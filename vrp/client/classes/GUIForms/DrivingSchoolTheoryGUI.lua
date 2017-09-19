@@ -8,7 +8,7 @@
 DrivingSchoolTheoryGUI = inherit(GUIForm)
 inherit(Singleton, DrivingSchoolTheoryGUI)
 
-addRemoteEvents{"showDrivingSchoolTest","addDrivingSchoolSpeechBubble"}
+addRemoteEvents{"showDrivingSchoolTest"}
 
 --// CONSTANTS //
 local width,height = screenWidth*0.4,screenHeight*0.4
@@ -44,7 +44,7 @@ function DrivingSchoolTheoryGUI:constructor(type )
 
 		self.m_Text:delete(); self.m_StartButton:delete(); self:nextQuestion();
 	end
-	self.m_QuestionsDone = {	}
+	self.m_QuestionsDone = {}
 	self.m_QuestionCounter = 0
 	self.m_ErrPoints = 0
 
@@ -135,20 +135,12 @@ end
 
 addEventHandler("showDrivingSchoolTest", localPlayer,
 	function(type )
-		DrivingSchoolTheoryGUI:new(type, ped)
+		DrivingSchoolTheoryGUI:new(type)
 	end
 )
 
 addEventHandler("hideDrivingSchoolTheoryGUI", localPlayer,
 	function()
 		DrivingSchoolTheoryGUI:getSingleton():delete()
-	end
-)
-
-addEventHandler("addDrivingSchoolSpeechBubble", localPlayer,
-	function( ped )
-		local name = _"Fahrschule Theorietest"
-		local description = _"Für mehr Infos klicke mich an!"
-		ped.SpeakBubble = SpeakBubble3D:new(ped, name, description, -90)
 	end
 )
