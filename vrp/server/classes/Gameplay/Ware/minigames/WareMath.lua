@@ -7,7 +7,7 @@
 -- ****************************************************************************
 WareMath = inherit(Object)
 WareMath.modeDesc = "Wieviel ist x + x?"
-WareMath.timeScale = 0.8
+WareMath.timeScale = 0.5
 WareMath.Operators = 
 {
 	"+", 

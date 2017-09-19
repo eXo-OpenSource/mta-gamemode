@@ -20,7 +20,16 @@ Ware.afterRoundTime = 7000
 function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
-
+		WareMoney,
+		WareSurvive,
+		WareCarJack,
+		WareCrateBreak,
+		WareDuck,
+		WareJump,
+		WareKeepMove,
+		WareDontMove,
+		WareClimb,
+		WareParachute,
 		WareMath
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
