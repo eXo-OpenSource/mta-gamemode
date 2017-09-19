@@ -13,7 +13,7 @@ local CONST_GROUND_ID = 8661 --// "greyground256"
 local DUMMY_OBJ_GROUND = createObject ( CONST_GROUND_ID,0,0,3)
 local CONST_GROUND_BOX = {getElementBoundingBox ( DUMMY_OBJ_GROUND )}
 destroyElement(DUMMY_OBJ_GROUND)
-local ORIGIN_VECTOR = {0,0,500}
+local ORIGIN_VECTOR = {0,0,12000}
 local x_max = 50
 local y_max = 50
 
@@ -25,7 +25,7 @@ function updateBounds( object )
 	DUMMY_OBJ_GROUND = createObject ( CONST_GROUND_ID,0,0,3)
 	CONST_GROUND_BOX = {getElementBoundingBox ( DUMMY_OBJ_GROUND )}
 	destroyElement(DUMMY_OBJ_GROUND)
-	ORIGIN_VECTOR = {0,0,500}
+	ORIGIN_VECTOR = {0,0,12000}
 	x_max = 50
 	y_max = 50
 end
@@ -271,6 +271,24 @@ function PlatformEnvironment:toggleColShapeHitRespawn(state)
 	self.m_HitRespawn = state
 end
 
+function PlatformEnvironment:rotateTile( index, time) 
+	if index and time then 
+		if self.m_Env[index] then 
+			local x,y,z = getElementPosition(self.m_Env[index])
+			moveObject(self.m_Env[index], time, x, y, z, 360, 0, 0, "Linear")
+		end
+	end
+end
+
+function PlatformEnvironment:resetAllTiles() 
+	local obj
+	for i = 1,#self.m_Env do
+		obj = self.m_Env[i]
+		stopObject(obj)
+		setElementRotation(obj, 0, 0, 0)
+	end
+end
+
 function PlatformEnvironment:destructor()
 	if self.m_Env then
 		local obj
@@ -311,5 +329,19 @@ addEvent("PlatformEnv:parseMap", true)
 addEventHandler("PlatformEnv:parseMap", root, function( objTable )
 	if currentActiveEnviroment then
 		currentActiveEnviroment:parseMap( objTable )
+	end
+end)
+
+addEvent("PlatformEnv:rotateTile", true)
+addEventHandler("PlatformEnv:rotateTile", root, function( tileIndex, time ) 
+	if currentActiveEnviroment then 
+		currentActiveEnviroment:rotateTile(tileIndex, time)
+	end
+end)
+
+addEvent("PlatformEnv:resetAllTiles", true)
+addEventHandler("PlatformEnv:resetAllTiles", root, function( tileIndex, time ) 
+	if currentActiveEnviroment then 
+		currentActiveEnviroment:resetAllTiles()
 	end
 end)

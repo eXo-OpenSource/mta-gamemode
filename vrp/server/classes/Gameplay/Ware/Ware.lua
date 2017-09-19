@@ -17,6 +17,7 @@ Ware.roundTimes =
 Ware.arenaSize = 4
 Ware.sidelength = 9
 Ware.afterRoundTime = 7000
+Ware.arenaZ = 15000
 function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
@@ -30,13 +31,14 @@ function Ware:constructor( dimension )
 		WareDontMove,
 		WareClimb,
 		WareParachute,
-		WareMath
+		WareMath, 
+		WareStayTop,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
 	self.m_Gamespeed = 1
 	self.m_RoundCount = 0
-	self.m_Arena = {0,0,500,Ware.arenaSize*Ware.sidelength,Ware.arenaSize*Ware.sidelength}
+	self.m_Arena = { 0, 0, Ware.arenaZ, Ware.arenaSize*Ware.sidelength, Ware.arenaSize*Ware.sidelength}
 	self.m_AfterRound = bind(self.afterRound, self)
 	self.m_startRound = bind(self.startRound, self)
 	self:startRound()
@@ -57,6 +59,15 @@ function Ware:startRound()
 		end
 	end
 	self.m_RoundEnd = setTimer( self.m_AfterRound,roundDuration, 1)
+	local x,y,z
+	for k, player in ipairs( self.m_Players ) do
+		x, y, z = getElementPosition(player)
+		if isPedDead(player) or getElementHealth(player) == 0 or z < Ware.arenaZ then
+			self:spawnWarePlayer(player)
+		end
+		setPedOnFire(player, false)
+		setElementHealth(player, 100)
+	end
 end
 
 function Ware:onDeath( player, killer, weapon)
@@ -115,8 +126,10 @@ function Ware:afterRound()
 			table.insert(points,{player, player:getData("Ware:roundsWon") or 0})
 		end
 		table.sort(points,function(a,b) return a[2] > b[2] end)
+		local x,y,z
 		for k, player in ipairs( self.m_Players ) do
-			if isPedDead(player) or getElementHealth(player) == 0 then
+			x, y, z = getElementPosition(player)
+			if isPedDead(player) or getElementHealth(player) == 0 or z < Ware.arenaZ then
 				self:spawnWarePlayer(player)
 			end
 			setPedOnFire(player, false)
@@ -132,7 +145,7 @@ function Ware:joinPlayer( player )
 	if not self:isPlayer(player) then
 		table.insert(self.m_Players, player)
 		player:setData("Ware:roundsWon",0)
-		player:triggerEvent("PlatformEnv:generate", 0,0,500,Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/waretex.png", "sam_camo", 3095)
+		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 		self:spawnWarePlayer(player)
 		player.bInWare = self
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
@@ -140,13 +153,14 @@ function Ware:joinPlayer( player )
 end
 
 function Ware:spawnWarePlayer(player)
-	spawnPlayer(player,0,0,500,player.m_Skin)
+	spawnPlayer(player, 0, 0, Ware.arenaZ+2, player.m_Skin)
 	setElementFrozen(player,false)
-	setElementPosition(player, Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength),Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength),502)
+	setElementPosition(player, Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength),Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength), Ware.arenaZ+2)
 	setElementDimension(player, self.m_Dimension)
 	setCameraTarget(player, player)
 	setElementAlpha(player,255)
 end
+
 function Ware:leavePlayer( player )
 	local key = self:isPlayer(player)
 	if key then

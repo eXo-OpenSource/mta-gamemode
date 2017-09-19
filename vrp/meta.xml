@@ -205,6 +205,7 @@
 	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareSurvive.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareStayTop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareCrateBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareDuck.lua" type="server"/>

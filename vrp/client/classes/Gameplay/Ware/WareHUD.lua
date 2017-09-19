@@ -38,6 +38,7 @@ function WareHUD:render_bomb()
 	if prog < 0 then prog = 0 end
 	local timeLeft = self.m_RoundDuration - elapsed
 	timeLeft = secondsToClock(timeLeft)
+	dxDrawText(timeLeft, bombStartX, bombStartY+bombHeight*1.1, bombStartX + bombWidth, (bombStartY + bombHeight*1.1)+2, tocolor(0, 0, 0, 255), 1*scale, "default-bold", "center")
 	dxDrawText(timeLeft, bombStartX, bombStartY+bombHeight*1.1, bombStartX + bombWidth, (bombStartY + bombHeight*1.1), tocolor(200, 200*(1-prog), 0, 255), 1*scale, "default-bold", "center")
 	dxDrawImage(bombStartX, bombStartY, bombWidth, bombHeight, self:makePath("bomb.png"))
 	dxDrawImageSection(bombStartX+bombWidth+screenWidth*0.3, bombStartY+bombHeight*0.5-screenHeight*0.025, -1*screenWidth*0.3, math.floor(screenHeight*0.05), (self.m_FuseWidth*prog)*-1, 0, self.m_FuseWidth, self.m_FuseHeight, fuseTexture)
