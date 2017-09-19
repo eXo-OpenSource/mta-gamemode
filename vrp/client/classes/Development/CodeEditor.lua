@@ -16,7 +16,7 @@ addEvent("onCodeEditorSend", true)
 CodeEditorGUI.ms_Themes = {"material", "base16-light"}
 
 function CodeEditorGUI:constructor()
-    
+
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 20)
 	self.m_Height = grid("y", 16)
@@ -30,7 +30,7 @@ function CodeEditorGUI:constructor()
 	self.m_RefreshBtn = GUIGridIconButton:new(18, 1, FontAwesomeSymbols.Refresh, self.m_Window)
 	self.m_CopyBtn = GUIGridIconButton:new(19, 1, FontAwesomeSymbols.Copy, self.m_Window)
     self.m_EditorBrowser = GUIGridWebView:new(1, 2, 19, 10, "http://mta/local/files/html/editor.htm", false, self.m_Window)
-	
+
 	GUIGridLabel:new(1, 12, 5, 1, _"Optionen", self.m_Window):setHeader("sub")
     GUIGridButton:new(1, 13, 5, 1, "Option 1", self.m_Window)
     GUIGridButton:new(1, 14, 5, 1, "Option 2", self.m_Window)
@@ -91,22 +91,22 @@ end
 
 function CodeSession:loadClass(parsedString, name)
 	if not self.m_Sessions[name] then
-		outputConsole(parsedString)
+		--outputConsole(parsedString)
 		loadstring(parsedString)()
 		InfoBox:new(_("Klasse %s geladen.", name))
 		local instance = self.m_Sessions[name].getSingleton and self.m_Sessions[name]:getSingleton() or self.m_Sessions[name]
 		if self.m_Sessions[name].getSingleton then
-			self.m_Sessions[name].getSingleton()
+			self.m_Sessions[name]:getSingleton()
 		end
 	else
 		ErrorBox:new(_("Klasse %s ist bereits geladen", name))
-	end	
+	end
 end
 
 function CodeSession:unloadClass(name)
 	if self.m_Sessions[name] then
 		local instance = self.m_Sessions[name].getSingleton and self.m_Sessions[name]:getSingleton() or self.m_Sessions[name]
-		if instance.destructor then 
+		if instance.destructor then
 			instance:destructor()
 		else
 			outputDebugString("code session '"..name.."' has no destructor (possibly not deleted!")
