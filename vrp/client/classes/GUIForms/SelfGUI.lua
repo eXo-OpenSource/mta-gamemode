@@ -154,8 +154,9 @@ function SelfGUI:constructor()
 	self.m_TabVehicles = tabVehicles
 	self.m_VehiclesLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _("Fahrzeuge: (%d/%d)", 0, 0), tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.6, tabVehicles)
-	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
-	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
+	self.m_VehiclesGrid:addColumn(_"Steuer", 0.2)
 	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage:", tabVehicles)
 	self.m_VehicleGarageUpgradeButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
 	self.m_VehicleGarageUpgradeButton.onHover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.White) end
@@ -617,7 +618,7 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			else
 				positionType = _"Unbekannt"
 			end
-			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType)
+			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
 			item.PositionType = vehicleInfo[2]

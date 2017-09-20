@@ -77,8 +77,9 @@ function GroupGUI:constructor()
 	self.m_TabVehicles = tabVehicles
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.4, tabVehicles)
-	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
-	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
+	self.m_VehiclesGrid:addColumn(_"Steuer", 0.2)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles):setBarColor(Color.Orange)
@@ -89,8 +90,9 @@ function GroupGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.06, _"Privat-Fahrzeuge:", tabVehicles)
 	self.m_PrivateVehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.65, self.m_Height*0.31, tabVehicles)
-	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.4)
-	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.6)
+	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.5)
+	self.m_PrivateVehiclesGrid:addColumn(_"Steuer", 0.2)
 	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
 	self.m_VehicleConvertToGroupButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.14, _"\nFahrzeug zur \nFirma/Gang hinzufügen", true, tabVehicles):setBarColor(Color.Green)
 	self.m_VehicleConvertToGroupButton.m_Label:setSize(self.m_Width*0.28, self.m_Height*0.07):setMultiline(true):setFontSize(0.45)
@@ -222,7 +224,8 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 					position = "Autohof"
 				end
 
-				local item = self.m_VehiclesGrid:addItem(element:getName(), position)
+				local item = self.m_VehiclesGrid:addItem(element:getName(), position, ("%d$"):format(element:getTax() or 0))
+
 				item.VehicleElement = element
 				item.PositionType = positionType
 			end
@@ -262,7 +265,7 @@ function GroupGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 			else
 				positionType = _"Unbekannt"
 			end
-			local item = self.m_PrivateVehiclesGrid:addItem(element:getName(), positionType)
+			local item = self.m_PrivateVehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
 			item.PositionType = vehicleInfo[2]
