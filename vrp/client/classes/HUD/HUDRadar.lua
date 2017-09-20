@@ -417,7 +417,7 @@ function HUDRadar:getVisibleBlipsForRadar()
 	if (getTickCount() - self.ms_CacheCheck) > 1000 then
 		self.ms_CacheCheck = getTickCount()
 		self.ms_CachedRadarBlips = {}
-		for i = 1, #Blip.Blips do
+		for i, v in pairs(Blip.Blips) do
 			local blip = Blip.Blips[i]
 			local display = true
 			local blipX, blipY = blip:getPosition()
