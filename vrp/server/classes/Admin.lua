@@ -768,7 +768,7 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 			if targetPlayer then
 				if isOffline then
 					targetPlayer:load()
-					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target))
 					target:endPrison()
 					self:addPunishLog(admin, targetId, func)
 					delete(targetPlayer)
