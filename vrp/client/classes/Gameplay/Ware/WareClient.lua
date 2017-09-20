@@ -51,6 +51,7 @@ function WareClient:OnJoinWare( gamespeed )
 	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 244)
 	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 244)
 	self:toggleEnvironementSettings(true)
+	setPedWalkingStyle(localPlayer, 125)
 end
 
 function WareClient:OnLeaveWare()

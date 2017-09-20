@@ -176,6 +176,7 @@ function Ware:spawnWarePlayer(player)
 	setElementDimension(player, self.m_Dimension)
 	setCameraTarget(player, player)
 	setElementAlpha(player,255)
+	setElementModel(player, 244)
 end
 
 function Ware:leavePlayer( player )
