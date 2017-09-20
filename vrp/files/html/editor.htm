@@ -25,22 +25,29 @@
 <body>
 	<nav class="navbar navbar-exo">
 		<ul class="nav navbar-nav">
-		  <li><a href='#' onclick="updateCodeMirror(editor, templates.constructor)">constructor</a></li>
-		  <li><a href='#' onclick="updateCodeMirror(editor, templates.destructor)">destructor</a></li>
-		  <li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">GUI Elemente <span class="caret"></span></a>
-			<ul class="dropdown-menu">
-			  <li><a href="#" onclick="updateCodeMirror(editor, templates.window);">Window</a></li>
-			  <li><a href="#" onclick="updateCodeMirror(editor, templates.label);">Label</a></li>
-			  <li><a href="#" onclick="updateCodeMirror(editor, templates.button);">Button</a></li>
-			  <li><a href="#" onclick="updateCodeMirror(editor, templates.gridlist);">GridList</a></li>
-			</ul>
-		  </li>
+			<li><a href='#' onclick="updateCodeMirror(templates.constructor)">constructor</a></li>
+			<li><a href='#' onclick="updateCodeMirror(templates.destructor)">destructor</a></li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">GUI Elemente <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="#" onclick="updateCodeMirror(templates.window);">Window</a></li>
+					<li><a href="#" onclick="updateCodeMirror(templates.label);">Label</a></li>
+					<li><a href="#" onclick="updateCodeMirror(templates.button);">Button</a></li>
+					<li><a href="#" onclick="updateCodeMirror(templates.gridlist);">GridList</a></li>
+				</ul>
+			</li>
 		</ul>
 	</nav>
 	<textarea id="code" name="code"></textarea>
     <script>
-        var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+		var Settings = {};
+
+		String.prototype.replaceAll = function(search, replacement) {
+			var target = this;
+			return target.split(search).join(replacement);
+		};
+
+		var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             lineNumbers: true,
             styleActiveLine: true,
             matchBrackets: true,
@@ -49,10 +56,15 @@
             indentWithTabs: true,
             tabSize: 4,
             indentUnit: 4,
-        });
+		});
 
-		function updateCodeMirror(editor, data){
+		Settings.editor = editor;
+		Settings.className = "NewGUI";
+
+		function updateCodeMirror(data){
+			var editor = Settings.editor;
 			editor.focus()
+			data = data.replaceAll("NewGUI", Settings.className);
 			var selection = editor.getSelection();
 			if(selection.length>0){
 				editor.replaceSelection(data);
@@ -74,7 +86,11 @@
         });
         mtatools.registerEvent("onCodeEditorThemeChange", function(theme) {
             editor.setOption("theme", theme);
-        });
+		});
+
+		mtatools.registerEvent("onCodeEditorClassNameChanged", function(name) {
+			Settings.className = name;
+		});
 
     </script>
 </body>

@@ -30,6 +30,7 @@ function CodeEditorGUI:constructor()
 	self.m_RefreshBtn = GUIGridIconButton:new(18, 1, FontAwesomeSymbols.Refresh, self.m_Window)
 	self.m_CopyBtn = GUIGridIconButton:new(19, 1, FontAwesomeSymbols.Copy, self.m_Window)
     self.m_EditorBrowser = GUIGridWebView:new(1, 2, 19, 10, "http://mta/local/files/html/editor.htm", true, self.m_Window)
+	self.m_EditorBrowser:callEvent("onCodeEditorClassNameChanged", self.m_NameEdit:getText())
 
 	GUIGridLabel:new(1, 12, 5, 1, _"Optionen", self.m_Window):setHeader("sub")
     GUIGridButton:new(1, 13, 5, 1, "Option 1", self.m_Window)
@@ -43,6 +44,10 @@ function CodeEditorGUI:constructor()
 	end
 	self.m_ThemeChanger.onChange = function(theme)
 		self.m_EditorBrowser:callEvent("onCodeEditorThemeChange", theme)
+	end
+
+	self.m_NameEdit.onChange = function(className)
+		self.m_EditorBrowser:callEvent("onCodeEditorClassNameChanged", className)
 	end
 
 	self.m_RefreshBtn.onLeftClick = function()
