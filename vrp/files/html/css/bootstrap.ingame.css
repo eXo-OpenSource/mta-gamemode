@@ -5,7 +5,6 @@
 
 body{
 	background-color: transparent;
-	font-size:14px;
 	color:#FFF;
 	font-family: 'ekMukta';
 }
@@ -35,6 +34,7 @@ h3, h4, h2, h1 {
 	border-radius: 0px;
 	margin-bottom: 5px;
 	min-height: 30px;
+	font-size:14px;
 }
 
 @media (min-width: 200px){
