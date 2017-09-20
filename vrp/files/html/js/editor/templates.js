@@ -1,7 +1,7 @@
 var templates = {
 //constructor
 constructor: `NewGUI = inherit(GUIForm)
-	inherit(Singleton, NewGUI)
+inherit(Singleton, NewGUI)
 
 function NewGUI:constructor()
 	GUIForm.constructor(self, screenWidth*0.5-(500/2), screenHeight*0.5-(500/2), 500, 500, true, true)
