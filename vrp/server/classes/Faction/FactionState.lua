@@ -1015,7 +1015,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					player:moveToJail(CUTSCENE)
 					self:uncuffPlayer( player)
 					player:clearCrimes()
-					
+
 					local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 					local inv = player:getInventory()
 					for index, item in pairs(DrugItems) do
@@ -1810,10 +1810,9 @@ function FactionState:Event_startEvidenceTruck()
 					StateEvidenceTruck:new(client, totalMoney)
 					PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 					self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-					-- Todo Remove This:
-					--sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-					--self.m_EvidenceRoomItems = {}
-					--triggerClientEvent(root,"State:clearEvidenceItems", root)
+					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+					self.m_EvidenceRoomItems = {}
+					triggerClientEvent(root,"State:clearEvidenceItems", root)
 				else
 					client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 				end
