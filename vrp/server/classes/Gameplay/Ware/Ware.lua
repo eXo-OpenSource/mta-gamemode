@@ -21,7 +21,7 @@ Ware.arenaZ = 500
 function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
-	--[[	WareMoney,
+		WareMoney,
 		WareSurvive,
 		WareCarJack,
 		WareCrateBreak,
@@ -35,7 +35,7 @@ function Ware:constructor( dimension )
 		WareStayTop,
 		WareButtons,
 		WareGuess,
-		WareStayTop,]]
+		WareStayTop,
 		WareRamp,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
@@ -147,11 +147,11 @@ function Ware:afterRound()
 	setTimer(self.m_startRound, Ware.afterRoundTime, 1)
 end
 
-function Ware:getLosers() 
+function Ware:getLosers()
 	local loosers = {}
-	if self.m_Players then 
-		for i = 1, #self.m_Players do 
-			if not self:isPlayerWinner( self.m_Players[i] ) then 
+	if self.m_Players then
+		for i = 1, #self.m_Players do
+			if not self:isPlayerWinner( self.m_Players[i] ) then
 				table.insert( loosers, self.m_Players[i] )
 			end
 		end
