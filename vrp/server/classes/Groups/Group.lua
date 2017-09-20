@@ -589,7 +589,19 @@ function Group:checkDespawnVehicle()
 	end
 end
 
-function Group:payDay(vehicleAmount)
+function Group:calculateVehicleTax(data)
+	local sum = 0
+	local tax
+	for category, amount in pairs(data) do
+		tax = VehicleCategory:getSingleton():getCategoryTax(category)
+		if tax then
+			sum = sum + tax*amount
+		end
+	end
+	return sum
+end
+
+function Group:payDay(vehicleData)
 	local incoming = {}
 	local outgoing = {}
 	local interest = 0
@@ -598,7 +610,7 @@ function Group:payDay(vehicleAmount)
 		interest = self.m_Money > 300000 and math.floor(300000*0.0005) or math.floor(self.m_Money*0.0005)
 	end
 
-	outgoing["Fahrzeugsteuern"] = (vehicleAmount * 25)*-1
+	outgoing["Fahrzeugsteuern"] = self:calculateVehicleTax(vehicleData)*-1
 	incoming["Zinsen"] = interest
 	table.insert(output, ("%s-Payday:"):format(self.m_Type == "Firma" and "Firmen" or self.m_Type))
 	--table.insert(output, "Einkommen:\n")
