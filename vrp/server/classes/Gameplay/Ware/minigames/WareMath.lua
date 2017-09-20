@@ -51,7 +51,6 @@ function WareMath:onChat(player, text, type)
 			player:triggerEvent("onClientWareFail")
 		end
 	end
-	return
 end
 
 function WareMath:destructor()
