@@ -27,7 +27,7 @@ end
 function WareRamp:createRamp()
 	self.m_Ramp = createObject(13641, 24.74, 17.54, 502.27, 0, 0, 320)
 	self.m_Ramp:setDimension(self.m_Super.m_Dimension)
-	self.m_Col = createColSphere(34.62, 10.22, 512.7, 7)
+	self.m_Col = createColSphere(36.7, 8.2, 512.7, 7)
 	self.m_Col:setDimension(self.m_Super.m_Dimension)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if hitElement and isElement(hitElement) and hitElement:getType() == "player" and dim then
