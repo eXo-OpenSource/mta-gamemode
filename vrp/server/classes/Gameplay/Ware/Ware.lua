@@ -21,6 +21,7 @@ Ware.arenaZ = 500
 function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
+		--[[
 		WareMoney,
 		WareSurvive,
 		WareCarJack,
@@ -32,7 +33,8 @@ function Ware:constructor( dimension )
 		WareClimb,
 		WareParachute,
 		WareMath,
-		WareStayTop,
+		WareStayTop,]]
+		WareButtons,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
