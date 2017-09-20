@@ -69,6 +69,10 @@ function WareClient:toggleEnvironementSettings( bool )
 end
 
 function WareClient:Event_RoundStart( desc, duration )
+	if WareRoundGUI.Current then
+		delete(WareRoundGUI:getSingleton())
+		WareRoundGUI.Current = nil
+	end
 	self.m_TextWidth = dxGetTextWidth(desc,1,self.m_Font or "default-bold")
 	self.m_ShowDesc = desc
 	showDesc = true
@@ -77,7 +81,7 @@ function WareClient:Event_RoundStart( desc, duration )
 	self.m_WareDisplay:displayRoundTime( duration )
 end
 
-function WareClient:Event_RoundEnd( bestList)
+function WareClient:Event_RoundEnd( bestList, winner, losers, desc)
 	showDesc = false
 	self.m_ShowDesc = false
 	self.m_TopList = bestList
@@ -85,6 +89,12 @@ function WareClient:Event_RoundEnd( bestList)
 	self.m_RoundSound = playSound("files/audio/Ware/kahoot.ogg")
 	setSoundSpeed(self.m_RoundSound, self.m_Gamespeed)
 	self.m_WareDisplay:stopRoundTime( )
+	if not WareRoundGUI.Current then
+		WareRoundGUI.Current = WareRoundGUI:new(winner, losers, desc)
+	else
+		delete(WareRoundGUI:getSingleton())
+		WareRoundGUI.Current = WareRoundGUI:new(winner, losers, desc)
+	end
 end
 
 function WareClient:Event_GameSpeedChange( gamespeed )

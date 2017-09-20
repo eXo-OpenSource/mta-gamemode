@@ -16,7 +16,7 @@ Ware.roundTimes =
 
 Ware.arenaSize = 4
 Ware.sidelength = 9
-Ware.afterRoundTime = 4000
+Ware.afterRoundTime = 6000
 Ware.arenaZ = 500
 function Ware:constructor( dimension )
 	self.m_GameModeList =
@@ -117,8 +117,10 @@ function Ware:afterRound()
 		self.m_Gamespeed = 1
 	end
 	if self.m_CurrentMode then
+		local modeDesc = self.m_CurrentMode.modeDesc
 		delete(self.m_CurrentMode)
 		local winners = self.m_Successors
+		local losers = self:getLosers()
 		if winners then
 			for k, player in ipairs( winners ) do
 				player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
@@ -138,10 +140,22 @@ function Ware:afterRound()
 			setPedOnFire(player, false)
 			setElementHealth(player, 100)
 			player:triggerEvent("onClientWareChangeGameSpeed", self.m_Gamespeed)
-			player:triggerEvent("onClientWareRoundEnd", points)
+			player:triggerEvent("onClientWareRoundEnd", points, winners, losers, modeDesc)
 		end
 	end
 	setTimer(self.m_startRound, Ware.afterRoundTime, 1)
+end
+
+function Ware:getLosers() 
+	local loosers = {}
+	if self.m_Players then 
+		for i = 1, #self.m_Players do 
+			if not self:isPlayerWinner( self.m_Players[i] ) then 
+				table.insert( loosers, self.m_Players[i] )
+			end
+		end
+	end
+	return loosers
 end
 
 function Ware:joinPlayer( player )
