@@ -32,6 +32,7 @@ function Ware:constructor( dimension )
 		WareClimb,
 		WareParachute,
 		WareMath,
+		WareGuess, 
 		WareStayTop,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
@@ -42,7 +43,6 @@ function Ware:constructor( dimension )
 	self.m_AfterRound = bind(self.afterRound, self)
 	self.m_startRound = bind(self.startRound, self)
 	self:startRound()
-
 	Player.getChatHook():register(bind(self.onPlayerChat, self))
 
 end
@@ -103,6 +103,7 @@ function Ware:isPlayerWinner( player )
 	end
 	return false
 end
+
 function Ware:afterRound()
 	self.m_RoundCount = self.m_RoundCount + 1
 	if self.m_RoundCount > 10 and self.m_RoundCount < 20 then
@@ -153,7 +154,7 @@ function Ware:joinPlayer( player )
 end
 
 function Ware:spawnWarePlayer(player)
-	spawnPlayer(player, 0, 0, Ware.arenaZ+2, player.m_Skin)
+	spawnPlayer(player, 0, 0, Ware.arenaZ+2, 244)
 	setElementFrozen(player,false)
 	setElementPosition(player, Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength),Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength), Ware.arenaZ+2)
 	setElementDimension(player, self.m_Dimension)

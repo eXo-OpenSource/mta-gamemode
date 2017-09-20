@@ -47,13 +47,24 @@ end
 
 function WareClient:OnJoinWare( gamespeed ) 
 	self.m_Gamespeed = gamespeed or 1
-	setSkyGradient(23, 99, 132, 23, 99, 132)
-	setElementModel(localPlayer, 244)
-	setTime(12, 00)
 	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 244)
 	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 244)
+	self:toggleEnvironementSettings(true)
 end
+
 function WareClient:OnLeaveWare() 
+	self:toggleEnvironementSettings(false)
+end
+
+function WareClient:toggleEnvironementSettings( bool )
+	if bool then 
+		setSkyGradient(23, 99, 132, 23, 99, 132)
+		setTime(12, 00)
+		setCloudsEnabled(false)
+	else 
+		resetSkyGradient()
+		setCloudsEnabled(true)
+	end
 end
 
 function WareClient:Event_RoundStart( desc, duration )

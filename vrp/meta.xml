@@ -209,6 +209,7 @@
 	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareCrateBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareDuck.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareGuess.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareJump.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="server"/>
