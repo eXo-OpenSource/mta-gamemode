@@ -923,11 +923,11 @@ function Player:payDay()
 	--Outgoing
 	local temp_bank_money = self:getBankMoney() + income
 
-	outgoing_vehicles = #self:getTaxableVehicles()*75
+	outgoing_vehicles, vehiclesTaxAmount = self:calcVehiclesTax()
 	if outgoing_vehicles > 0 then
 		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
 		temp_bank_money = temp_bank_money - outgoing_vehicles
-		points_total = points_total + #self:getTaxableVehicles()*2
+		points_total = points_total + vehiclesTaxAmount*2
 	end
 
 	if HouseManager:isInstantiated() then
@@ -990,14 +990,16 @@ function Player:payDay()
 	self:save()
 end
 
-function Player:getTaxableVehicles()
-	local vehicles = {}
+function Player:calcVehiclesTax()
+	local tax = 0
+	local amount = 0
 	for key, vehicle in pairs(self:getVehicles()) do
-		if not VEHICLE_BIKES[vehicle:getModel()] then
-			table.insert(vehicles, vehicle)
+		if vehicle:getTax() > 0 then
+			tax = tax + vehicle:getTax()
+			amount = amount + 1
 		end
 	end
-	return vehicles
+	return tax, amount
 end
 
 function Player:addPaydayText(type, text, amount)
