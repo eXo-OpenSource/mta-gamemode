@@ -11,6 +11,7 @@ function CustomModelManager:constructor()
 	self.m_DFFMap = {}
 	self.m_COLMap = {}
 	self.m_TXDMap = {}
+	self.m_TextureReplaces = {}
 	--self:loadImportDFF("files/models/dead_tree_18.dff", 846)
 
 
@@ -208,10 +209,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 
 	--shader
-	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
-	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
-	--self:loadShader("files/images/Other/trans.png", "txgrass0_1")
-	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
+	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
+	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
+	--self:loadShader("RoadSigns/trans.png", "txgrass0_1")
+	self:loadShader("RoadSigns/trans.png", "txgrass1_1")
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
@@ -269,13 +270,13 @@ function CustomModelManager:unloadAllModels()
 	for modelId in pairs(self.m_TXDMap) do
 		self:restoreModel(modelId)
 	end
+	for _, instance in pairs(self.m_TextureReplaces) do
+		delete(instance)
+	end
 end
 
 function CustomModelManager:loadShader(filePath, textureName)
-	local shader = dxCreateShader("files/shader/texreplace.fx")
-	local texture = dxCreateTexture(filePath)
-	dxSetShaderValue(shader, "gTexture", texture)
-	engineApplyShaderToWorldTexture(shader, textureName)
+	table.insert(self.m_TextureReplaces, StaticFileTextureReplacer:new(filePath, textureName, {}))
 end
 
 function CustomModelManager:destructor()

@@ -12,18 +12,17 @@ function GasStation:constructor()
 	self.m_RenderFuelHoles = {}
 	self.m_RenderGasStations = {}
 
-	self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
-	self.m_ShaderTextures = {"petrolpumpbase_256", "vgnptrpump1_256"}
 	self.m_RenderTarget = dxCreateRenderTarget(512, 512)
+	self.m_Shaders = {
+		StaticRenderTargetTextureReplacer:new(self.m_RenderTarget, "petrolpumpbase_256", {}),
+		StaticRenderTargetTextureReplacer:new(self.m_RenderTarget, "vgnptrpump1_256", {})
+	}
 
 	self.m_Amount = "-"
 	self.m_Price = "-"
 
 	self.m_Font = dxCreateFont("files/fonts/fuelstation.ttf", 25)
 	self.m_Size = 1
-
-	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[1])
-	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[2])
 
 	self.m_FilledDone =
 		function(vehicle, fuel, station)
@@ -123,10 +122,11 @@ function GasStation:renderGasStation()
 	end
 
 	dxSetRenderTarget(self.m_RenderTarget)
-	self:renderBackground()
-	self:renderDisplay()
+		self:renderBackground()
+		self:renderDisplay()
 	dxSetRenderTarget()
-	dxSetShaderValue(self.m_Shader, "gTexture", self.m_RenderTarget)
+	--self.m_Shaders[1]:update()
+	--self.m_Shaders[2]:update()
 end
 
 function GasStation:renderBackground()

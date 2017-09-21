@@ -1064,7 +1064,7 @@
 	<vrpfile src="files/images/Weapons/Cue.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
-	<vrpfile src="files/images/Other/trans.png"/>
+	<vrpfile src="files/images/Textures/Other/trans.png"/>
 	<vrpfile src="files/images/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
 	<vrpfile src="files/images/Other/arrow.png"/>
@@ -1084,8 +1084,8 @@
 	<vrpfile src="files/images/Other/RedGreenRed.png"/>
 	<vrpfile src="files/images/Other/focus.png"/>
 	<vrpfile src="files/images/Other/cuff.png"/>
-	<vrpfile src="files/images/Other/parking1.png"/>
-	<vrpfile src="files/images/Other/parking2.png"/>
+	<vrpfile src="files/images/Textures/RoadSigns/parking1.png"/>
+	<vrpfile src="files/images/Textures/RoadSigns/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
 

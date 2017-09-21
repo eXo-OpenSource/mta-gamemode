@@ -29,10 +29,7 @@ end
 
 function TurtleRace:constructor(turtles)
 	for _, turtle in pairs(turtles) do
-		local shader = dxCreateShader("files/shader/texreplace.fx")
-		local texture = dxCreateTexture(("files/images/Textures/Turtles/%s.png"):format(turtle.id))
-		dxSetShaderValue(shader, "gTexture", texture)
-		engineApplyShaderToWorldTexture(shader, "turtletop", turtle.object)
+		FileTextureReplacer:new(turtle.object, ("files/images/Textures/Turtles/%s.png"):format(turtle.id), "turtletop", {})
 	end
 
 	self.m_Turtles = turtles

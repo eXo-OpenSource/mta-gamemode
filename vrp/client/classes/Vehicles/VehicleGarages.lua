@@ -42,20 +42,16 @@ end
 function VehicleGarages:updateTextures()
 	local mapElements = self.m_MapParser:getElements(self.m_CurrentMapIndex)
 	if mapElements then
-		local shader = dxCreateShader("files/shader/texreplace.fx")
-		local texture = dxCreateTexture("files/images/Other/garage.jpg")
-		dxSetShaderValue(shader, "gTexture", texture)
-
 		for index, element in pairs(mapElements) do
 			if type(element) == "table" then
 				for index2, element2 in pairs(element) do
 					if isElement(element2) and element2:getModel() == 2885 then
-						engineApplyShaderToWorldTexture(shader, "alleydoor9b", element2)
+						FileTextureReplacer:new(element2, "files/images/Other/garage.jpg", "alleydoor9b", {})
 					end
 				end
 			else
 				if element:getModel() == 2885 then
-					engineApplyShaderToWorldTexture(shader, "alleydoor9b", element)
+					FileTextureReplacer:new(element, "files/images/Other/garage.jpg", "alleydoor9b", {})
 				end
 			end
 
