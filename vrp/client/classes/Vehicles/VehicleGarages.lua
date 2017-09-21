@@ -46,12 +46,12 @@ function VehicleGarages:updateTextures()
 			if type(element) == "table" then
 				for index2, element2 in pairs(element) do
 					if isElement(element2) and element2:getModel() == 2885 then
-						FileTextureReplacer:new(element2, "Other/garage.jpg", "alleydoor9b", {})
+						FileTextureReplacer:new(element2, "Other/garage.jpg", "alleydoor9b", {}):load()
 					end
 				end
 			else
 				if element:getModel() == 2885 then
-					FileTextureReplacer:new(element, "Other/garage.jpg", "alleydoor9b", {})
+					FileTextureReplacer:new(element, "Other/garage.jpg", "alleydoor9b", {}):load()
 				end
 			end
 
