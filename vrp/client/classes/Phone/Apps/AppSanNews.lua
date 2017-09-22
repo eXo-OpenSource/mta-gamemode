@@ -116,6 +116,8 @@ end
 local currentAd
 addEvent("showAd", true)
 addEventHandler("showAd", root, function(sender, text, color, duration)
+	if not localPlayer:isLoggedIn() then return end
+	
 	local callSender =
 	function()
 		if Phone:getSingleton():isOn()then
