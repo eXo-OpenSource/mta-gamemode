@@ -35,14 +35,16 @@ DrivingSchool.testRoute =
 	{1439.76, -1729.61, 13.04},
 	{1431.99, -1659.23, 13.04},
 	{1372.90, -1648.60, 13.04},
-
 }
 
+addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "drivingSchoolPassTheory", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker",	"drivingSchoolStartLessionQuestion", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand"}
 function DrivingSchool:constructor()
     InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
 	VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = bind(self.onBarrierHit, self)
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
+	self.m_StartLession = bind(self.startLession, self)
+	self.m_DiscardLession = bind(self.discardLession, self)
 
     local safe = createObject(2332, -2032.70, -113.70, 1036.20)
     safe:setInterior(3)
@@ -53,7 +55,6 @@ function DrivingSchool:constructor()
 	blip:setDisplayText(self:getName(), BLIP_CATEGORY.Company)
 
 	self.m_CurrentLessions = {}
-    addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "drivingSchoolPassTheory", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker"}
 
 	addEventHandler("drivingSchoolCallInstructor", root, bind(DrivingSchool.Event_callInstructor, self))
 	addEventHandler("drivingSchoolStartTheory", root, bind(DrivingSchool.Event_startTheory, self))
@@ -61,12 +62,8 @@ function DrivingSchool:constructor()
 
 	addEventHandler("drivingSchoolStartAutomaticTest", root, bind(DrivingSchool.Event_startAutomaticTest, self))
 	addEventHandler("drivingSchoolHitRouteMarker", root, bind(DrivingSchool.onHitRouteMarker, self))
+	addEventHandler("drivingSchoolStartLessionQuestion", root, bind(DrivingSchool.Event_startLessionQuestion, self))
 
-	-------------------------------------------------------------------------------------------------------
-
-    addEventHandler("drivingSchoolDiscardLession", root, bind(DrivingSchool.Event_discardLession, self))
-    addEventHandler("drivingSchoolstartLessionQuestion", root, bind(DrivingSchool.Event_startLessionQuestion, self))
-    addEventHandler("drivingSchoolStartLession", root, bind(DrivingSchool.Event_startLession, self))
     addEventHandler("drivingSchoolEndLession", root, bind(DrivingSchool.Event_endLession, self))
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(DrivingSchool.Event_receiveTurnCommand, self))
 end
@@ -365,17 +362,15 @@ function DrivingSchool:onHitRouteMarker()
 	end
 end
 
--------------------------------------------------------------------------------------------------------
-
 function DrivingSchool:Event_startLessionQuestion(target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
-        if self:checkPlayerLicense(target, type) == false then
+        if not self:checkPlayerLicense(target, type) then
 			if target.m_HasTheory then
 				if target:getMoney() >= costs then
-					if not target:getPublicSync("inDrivingLession") == true then
+					if not target:getPublicSync("inDrivingLession") then
 						if not self.m_CurrentLessions[client] then
-							QuestionBox:new(client, target, _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
+							QuestionBox:new(client, target, _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], costs), self.m_StartLession, self.m_DiscardLession, client, target, type)
 						else
 							client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
 						end
@@ -396,12 +391,12 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
     end
 end
 
-function DrivingSchool:Event_discardLession(instructor, target, type)
+function DrivingSchool:discardLession(instructor, target, type)
     instructor:sendError(_("Der Spieler %s hat die %s Prüfung abgelehnt!", instructor, target.name, DrivingSchool.TypeNames[type]))
     target:sendError(_("Du hast die %s Prüfung mit %s abgelehnt!", target, DrivingSchool.TypeNames[type], instructor.name))
 end
 
-function DrivingSchool:Event_startLession(instructor, target, type)
+function DrivingSchool:startLession(instructor, target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
         if self:checkPlayerLicense(target, type) == false then
@@ -448,13 +443,13 @@ end
 
 function DrivingSchool:Event_onQuit()
     if self.m_CurrentLessions[source] then
-        self:Event_endLession(self.m_CurrentLessions[source]["target"], false, source)
+        local lession = self.m_CurrentLessions[source]
+		self:Event_endLession(lession["target"], false, source)
         lession["target"]:sendError(_("Der Fahrlehrer %s ist offline gegangen!",lession["target"], source.name))
     elseif self:getLessionFromStudent(source) then
         local lession = self:getLessionFromStudent(source)
         self:Event_endLession(source, false, lession["instructor"])
         lession["instructor"]:sendError(_("Der Fahrschüler %s ist offline gegangen!",lession["instructor"], source.name))
-    else
     end
 end
 
@@ -491,9 +486,9 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
     self.m_CurrentLessions[client] = nil
 end
 
-function DrivingSchool:Event_receiveTurnCommand(turnCommand)
+function DrivingSchool:Event_receiveTurnCommand(turnCommand, arg)
     local target = self.m_CurrentLessions[client]["target"]
     if target then
-        target:triggerEvent("drivingSchoolChangeDirection", turnCommand)
+        target:triggerEvent("drivingSchoolChangeDirection", turnCommand, arg)
     end
 end

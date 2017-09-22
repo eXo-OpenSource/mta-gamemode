@@ -36,7 +36,7 @@ function DrivingSchoolStudentGUI:setInVehicle()
 	self.m_DirectionLabel:setText("")
 end
 
-function DrivingSchoolStudentGUI:changeDirection(direction)
+function DrivingSchoolStudentGUI:changeDirection(direction, arg)
 	if direction == "straight" then
 		self.m_Image:setImage("files/images/Other/arrow.png")
 		self.m_Image:setRotation(0)
@@ -61,6 +61,16 @@ function DrivingSchoolStudentGUI:changeDirection(direction)
 		self.m_Image:setImage("files/images/Other/trans.png")
 		self.m_InstructionLabel:setText("Fahre nun\nzurück zur\nFahrschule!")
 		self.m_DirectionLabel:setText("")
+	elseif direction == "break" then
+		if arg == "down" then
+			toggleControl("accelerate", false)
+			toggleControl("brake_reverse", false)
+			setControlState("brake_reverse", true)
+		else
+			setControlState("brake_reverse", false)
+			toggleControl("brake_reverse", true)
+			toggleControl("accelerate", true)
+		end
 	end
 end
 

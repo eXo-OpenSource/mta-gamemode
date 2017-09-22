@@ -36,9 +36,13 @@ function DrivingSchoolInstructorGUI:constructor(type, student)
 	self.m_DSButton.onLeftClick = bind(self.turnToDrivingSchool, self)
 
 	self.m_SpeedUpdateTimer = setTimer(bind(self.updateSpeed, self), 50, 0)
+
+	self.m_InstructorBreak = bind(DrivingSchoolInstructorGUI.instructorBreak, self)
+	bindKey("space", "both", self.m_InstructorBreak)
 end
 
 function DrivingSchoolInstructorGUI:virtual_destructor()
+	unbindKey("space", "both", self.m_InstructorBreak)
 	if isTimer(self.m_SpeedUpdateTimer) then killTimer(self.m_SpeedUpdateTimer) end
 end
 
@@ -47,6 +51,7 @@ function DrivingSchoolInstructorGUI:turnStraight() 			triggerServerEvent("drivin
 function DrivingSchoolInstructorGUI:turnRight() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "right") 		end
 function DrivingSchoolInstructorGUI:turnArround() 			triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "turnarround")	end
 function DrivingSchoolInstructorGUI:turnToDrivingSchool() 	triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "school") 		end
+function DrivingSchoolInstructorGUI:instructorBreak(_, state) triggerServerEvent("drivingSchoolReceiveTurnCommand", localPlayer, "break", state) end
 
 function DrivingSchoolInstructorGUI:updateSpeed()
 	local instructorData = localPlayer:getPrivateSync("instructorData")
