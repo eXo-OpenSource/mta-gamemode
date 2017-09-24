@@ -23,7 +23,7 @@ GUIGridSlider = inherit(GUISlider)
 GUIGridSwitch = inherit(GUISwitch)
 GUIGridScrollableArea = inherit(GUIScrollableArea)
 GUIGridWebView = inherit(GUIWebView)
-
+GUIGridMemo = inherit(GUIMemo)
 
 
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -37,7 +37,7 @@ function GUIGridSlider:constructor(posX, posY, width, height, parent) return GUI
 function GUIGridSwitch:constructor(posX, posY, width, height, parent) return GUISwitch.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridWebView:constructor(posX, posY, width, height, url, transparent, parent) return GUIWebView.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), url, transparent, parent) end
 function GUIGridScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space) return GUIScrollableArea.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), grid("d", documentWidth), grid("d", documentHeight), verticalScrollbar, horizontalScrollbar, parent, grid("y", space)) end
-
+function GUIGridMemo:constructor(posX, posY, width, height, parent) return GUIMemo.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)

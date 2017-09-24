@@ -19,7 +19,7 @@ function StyleguideDemonstrationGUI:constructor()
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"StyleguideDemonstrationGUI", true, true, self)
-	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Allgemein", "weiteres"})
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Allgemein", "weiteres", "Notizen"})
 	self.m_TabPanel:updateGrid()
 
 	--Tab 1
@@ -97,6 +97,8 @@ function StyleguideDemonstrationGUI:constructor()
 		GUIGridLabel:new(1, i+1, 8, 1, "Setting "..i, scrollArea)
 		GUIGridCheckbox:new(9, i+1, 5, 1, "", scrollArea)
 	end
+
+	GUIGridMemo:new(1, 1, 18, 13, self.m_Tabs[3])
 end
 
 function StyleguideDemonstrationGUI:destructor()

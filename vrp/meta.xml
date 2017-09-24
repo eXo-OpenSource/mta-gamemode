@@ -445,6 +445,7 @@
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
 	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
@@ -921,9 +922,11 @@
 	<file src="files/html/js/bootstrap.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
+
 	<file src="files/html/js/editor/codemirror.js" />
 	<file src="files/html/js/editor/lua.js" />
 	<file src="files/html/js/editor/templates.js" />
+	<file src="files/html/js/memo/summernote.js" />
 
 	<file src="files/html/css/bootstrap.min.css" />
 	<file src="files/html/css/bootstrap.ingame.css" />
@@ -931,9 +934,13 @@
 	<file src="files/html/css/editor/codemirror.css" />
 	<file src="files/html/css/editor/base16-light.css" />
 	<file src="files/html/css/editor/material.css" />
+	<file src="files/html/css/memo/summernote.css" />
+	<file src="files/html/css/memo/font/summernote.ttf" />
+	<file src="files/html/css/memo/font/summernote.woff" />
 
 	<file src="files/html/help.htm" />
 	<file src="files/html/editor.htm" />
+	<file src="files/html/memo.htm" />
 
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
