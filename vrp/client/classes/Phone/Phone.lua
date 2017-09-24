@@ -33,6 +33,7 @@ function Phone:constructor()
 	self:registerApp(AppNavigator)
 	self:registerApp(AppEPT)
 	self:registerApp(AppSanNews)
+	self:registerApp(AppNotes)
 
 
 	-- Add GUI elements
