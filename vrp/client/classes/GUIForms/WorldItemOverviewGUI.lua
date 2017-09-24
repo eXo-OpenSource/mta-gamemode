@@ -65,9 +65,9 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_Changer = GUIChanger:new(5, 375, 250, 30, self)
 	self.m_Changer:addItem("Filter (gesamte Liste)")
 	self.m_Changer:addItem("Auswahl in Liste")
-	self.m_CollectBtn = VRPButton:new(260, 375, 185, 30, _"Aufheben", true, self)
+	self.m_CollectBtn = GUIButton:new(260, 375, 185, 30, _"Aufheben", self):setBarEnabled(true)
 	self.m_CollectBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Collect)
-	self.m_DeleteBtn = VRPButton:new(450, 375, 185, 30, _"Löschen", true, self):setBarColor(Color.Red)
+	self.m_DeleteBtn = GUIButton:new(450, 375, 185, 30, _"Löschen", self):setBackgroundColor(Color.Red):setBarEnabled(true)
 	self.m_DeleteBtn.onLeftClick = bind(WorldItemOverviewGUI.Event_OnActionButtonClick, self, WorldItemOverviewGUI.Action.Delete)
 end
 

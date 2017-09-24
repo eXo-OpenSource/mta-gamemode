@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<title>GUIMemo</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="http://mta/local/files/html/css/bootstrap.min.css">
+	<!--<link rel="stylesheet" href="http://mta/local/files/html/css/bootstrap.ingame.css">-->
+	<link rel="stylesheet" href="http://mta/local/files/html/css/memo/summernote.css">
+
+	<script src="http://mta/local/files/html/js/mtaevents.min.js"></script>
+	<script src="http://mta/local/files/html/js/jquery-3.2.1.min.js"></script>
+	<script src="http://mta/local/files/html/js/bootstrap.min.js"></script>
+	<script src="http://mta/local/files/html/js/memo/summernote.js"></script>
+	<style>
+ 		html, body, form, textarea {
+			background-color: transparent;
+			background: transparent;
+        }
+        form, textarea, .codemirror {
+            width:100%;
+			height:90%;
+        }
+    </style>
+</head>
+<body>
+	<div id="summernote"><p></p></div>
+	<script>
+		$(document).ready(function() {
+			$('#summernote').summernote({
+				toolbar: [
+					//['style', ['style']],
+					['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+					//['fontname', ['fontname']],
+					['fontsize', ['fontsize']],
+					['color', ['color']],
+					['para', ['ul', 'ol', 'paragraph']],
+					['table', ['table']],
+					//['view', ['fullscreen', 'codeview', 'help']]
+				],
+
+				height: document.documentElement.clientHeight - 75,
+				minHeight: document.documentElement.clientHeight - 75,
+				maxHeight: document.documentElement.clientHeight - 75,
+
+				callbacks: {
+   					onChange: function(contents, $editable) {
+      					console.log('onChange:', contents, $editable);
+      					mta.triggerEvent("onMemoTextChanged", contents);
+      				}
+    			}
+			});
+
+			mtatools.registerEvent("onMemoSetText", function(text) {
+				$('#summernote').summernote('code', text);
+        	});
+		});
+	</script>
+	</body>
+</html>

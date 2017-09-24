@@ -40,7 +40,8 @@ function HUDRadar:constructor()
 		core:set("HUD", "drawBlips", true)
 	end
 
-	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onClientPreRender", root, bind(self.update, self))
+	addEventHandler("onClientRender", root, bind(self.draw, self), false, "high")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 
 	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
@@ -411,7 +412,7 @@ function HUDRadar:drawBlips()
 end
 
 function HUDRadar:getVisibleBlipsForRadar()
-	if not self.ms_CachedRadarBlips then 
+	if not self.ms_CachedRadarBlips then
 		self.ms_CacheCheck = 0
 	end
 	if (getTickCount() - self.ms_CacheCheck) > 1000 then
@@ -436,12 +437,12 @@ function HUDRadar:getVisibleBlipsForRadar()
 				display = false
 			end
 
-			if blipX and display then 
+			if blipX and display then
 				if getDistanceBetweenPoints2D(localPlayer.position.x, localPlayer.position.y, blipX, blipY) < blip:getStreamDistance() then
 					table.insert(self.ms_CachedRadarBlips, blip)
 				end
 			end
-		end		
+		end
 	end
 	return self.ms_CachedRadarBlips
 end

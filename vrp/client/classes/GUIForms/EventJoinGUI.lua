@@ -16,8 +16,8 @@ function EventJoinGUI:constructor(eventId)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.22, self.m_Width*0.98, self.m_Height*0.08, _"Beschreibung:", self.m_Window)
 	self.m_DescriptionLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.3, self.m_Width*0.98, self.m_Height*0.08, _"Das Straßenrennen ist ein cooles Event.\nDeine Aufgabe ist es an ein Ziel zu fahren!\n\nViel Glück!", self.m_Window)
 
-	self.m_ButtonJoin = VRPButton:new(self.m_Width*0.05, self.m_Height*0.85, self.m_Width*0.4, self.m_Height*0.1, _"Beitreten", true, self.m_Window):setBarColor(Color.Green)
-	self.m_ButtonCancel = VRPButton:new(self.m_Width*0.55, self.m_Height*0.85, self.m_Width*0.4, self.m_Height*0.1, _"Abbrechen", true, self.m_Window):setBarColor(Color.Red)
+	self.m_ButtonJoin = GUIButton:new(self.m_Width*0.05, self.m_Height*0.85, self.m_Width*0.4, self.m_Height*0.1, _"Beitreten", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_ButtonCancel = GUIButton:new(self.m_Width*0.55, self.m_Height*0.85, self.m_Width*0.4, self.m_Height*0.1, _"Abbrechen", self.m_Window):setBackgroundColor(Color.Red):setBarEnabled(true)
 
 	self.m_ButtonCancel.onLeftClick = function() delete(self) end
 	self.m_ButtonJoin.onLeftClick = (

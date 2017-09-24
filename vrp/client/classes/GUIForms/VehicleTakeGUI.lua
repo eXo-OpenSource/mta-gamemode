@@ -14,7 +14,7 @@ function VehicleTakeGUI:constructor()
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.8, self.m_Window)
 		:addColumn("Fahrzeugname", 1)
 
-	self.m_TakeButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Freikaufen (500$)", true, self.m_Window)
+	self.m_TakeButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Freikaufen (500$)", self.m_Window):setBarEnabled(true)
 	self.m_TakeButton.onLeftClick = bind(self.TakeButton_Click, self)
 end
 

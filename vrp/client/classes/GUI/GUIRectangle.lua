@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUIRectangle class
 -- *
 -- ****************************************************************************
-
 GUIRectangle = inherit(GUIElement)
 inherit(GUIColorable, GUIRectangle)
 

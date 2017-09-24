@@ -45,11 +45,11 @@ function InventoryGUI:constructor()
 	-- Buttons
 	local useText = _"Verwenden"
 	local fwUse = fontWidth(useText, "default", 1.75)
-	self.m_ButtonUse = VRPButton:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, useText, true, self):setBarColor(tocolor(28, 101, 28))
+	self.m_ButtonUse = GUIButton:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, useText, self):setBackgroundColor(tocolor(28, 101, 28)):setBarEnabled(true)
 
 	local removeText = _"Wegwerfen"
 	local fwRemove = fontWidth(removeText, "default", 1.75)
-	self.m_ButtonDiscard = VRPButton:new(w/3+w/3*2-50-fwUse*1.3-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, removeText, true, self):setBarColor(tocolor(143, 0, 0))
+	self.m_ButtonDiscard = GUIButton:new(w/3+w/3*2-50-fwUse*1.3-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, removeText, self):setBackgroundColor(tocolor(143, 0, 0)):setBarEnabled(true)
 
 	self.m_ButtonUse.onLeftClick = bind(self.ButtonUse_Click, self)
 	self.m_ButtonDiscard.onLeftClick = bind(self.ButtonDiscard_Click, self)

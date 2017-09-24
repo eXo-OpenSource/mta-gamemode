@@ -36,6 +36,13 @@ function GUIMouseMenu:addItem(text, callback)
 	return item
 end
 
+function GUIMouseMenu:clearItems()
+	for i, v in pairs(self.m_Items) do 
+		v:delete()
+	end
+	self.m_Items = {}
+end
+
 function GUIMouseMenu:adjustWidth()
 	local maxWidth = 0
 

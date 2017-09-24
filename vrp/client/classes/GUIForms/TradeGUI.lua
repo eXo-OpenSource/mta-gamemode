@@ -47,7 +47,7 @@ function TradeGUI:constructor(target)
     self.m_LabelError = GUILabel:new(340, 310, 225, 25, "", self.m_Window)
     self.m_LabelError:setColor(Color.Red)
 
-    self.m_ButtonTrade = VRPButton:new(340, 350, 225, 35, _"Handel vorschlagen", true, self.m_Window):setBarColor(Color.Green)
+    self.m_ButtonTrade = GUIButton:new(340, 350, 225, 35, _"Handel vorschlagen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
     self.m_ButtonTrade:setEnabled(false)
 
     self.m_ButtonTrade.onLeftClick = function() self:requestTrade() end
