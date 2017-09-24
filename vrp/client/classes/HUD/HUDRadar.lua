@@ -40,7 +40,6 @@ function HUDRadar:constructor()
 		core:set("HUD", "drawBlips", true)
 	end
 
-	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self), false, "high")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 
