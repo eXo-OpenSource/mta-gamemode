@@ -14,13 +14,11 @@ function Main.resourceStart()
 end
 addEventHandler("onResourceStart", resourceRoot, Main.resourceStart, true, "high+99999")
 
-function Main.preResourceStop()
-	-- Call stop hook
-	core:getStopHook():call()
-end
-addEventHandler("onResourceStop", resourceRoot, Main.preResourceStop, true, "high+99999")
-
 function Main.resourceStop()
+	-- call stop hook
+	core:getStopHook():call()
+
+	-- delete all objects
 	delete(core)
 end
 addEventHandler("onResourceStop", resourceRoot, Main.resourceStop, true, "low-99999")
@@ -33,7 +31,7 @@ local function sendSlackMessage(msg, level, stackTrace)
 		for id = #stackTrace, 1, -1 do
 			local data = stackTrace[id]
 			data[1] = data[1]:gsub("@", "") -- for some reason msgs start with an @ which we don't need
-			formattedStackTrace = 
+			formattedStackTrace =
 			formattedStackTrace .. ("<https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d|%s:%d>\n"):format(GIT_BRANCH or "master", data[1], data[2], data[1], data[2])
 		end
 		local json = toJSON({

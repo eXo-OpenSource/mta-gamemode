@@ -9,7 +9,7 @@ Thread = inherit(Object)
 Thread.Map = {}
 
 function Thread:newPromise(func, priority, ...)
-	local self = new(self, func, priority)
+	local self = Thread:new(func, priority)
 	self.ms_Promise = Promise:new(bind(self.start, self))
 	return self.ms_Promise
 end
