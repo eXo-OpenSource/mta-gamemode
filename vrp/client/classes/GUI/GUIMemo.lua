@@ -19,6 +19,12 @@ function GUIMemo:getText()
 end
 
 function GUIMemo:setText(text)
-	assert(type(text) == "string" or type(text) == "number", "Bad argument @ GUIFontContainer.setText")
+	assert(type(text) == "string" or type(text) == "number", "Bad argument @ GUIMemo.setText")
 	self:callEvent("onMemoSetText", tostring(text))
+end
+
+-- Styles: full; lite; none (default)
+function GUIMemo:setToolbarStyle(style)
+	assert(type(style) == "string", "Bad argument @ GUIMemo.setToolbarStyle")
+	self:callEvent("onMemoSetToolbarStyle", style)
 end

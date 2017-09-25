@@ -27,31 +27,77 @@
 	<script>
 		$(document).ready(function() {
 			$('#summernote').summernote({
-				toolbar: [
-					//['style', ['style']],
-					['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
-					//['fontname', ['fontname']],
-					['fontsize', ['fontsize']],
-					['color', ['color']],
-					['para', ['ul', 'ol', 'paragraph']],
-					['table', ['table']],
-					//['view', ['fullscreen', 'codeview', 'help']]
-				],
-
-				height: document.documentElement.clientHeight - 75,
-				minHeight: document.documentElement.clientHeight - 75,
-				maxHeight: document.documentElement.clientHeight - 75,
+				toolbar: [],
 
 				callbacks: {
    					onChange: function(contents, $editable) {
       					console.log('onChange:', contents, $editable);
       					mta.triggerEvent("onMemoTextChanged", contents);
-      				}
+      				},
+      				onInit: function() {
+      					$("#summernote").summernote("fullscreen.toggle");
+    				}
     			}
 			});
 
 			mtatools.registerEvent("onMemoSetText", function(text) {
 				$('#summernote').summernote('code', text);
+        	});
+
+			mtatools.registerEvent("onMemoSetToolbarStyle", function(style) {
+				$('#summernote').summernote('destroy');
+
+				if (style == 'full') {
+					$('#summernote').summernote({
+						toolbar: [
+							['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+							['fontsize', ['fontsize']],
+							['color', ['color']],
+							['para', ['ul', 'ol', 'paragraph']],
+							['table', ['table']],
+						],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				} else if (style == 'lite') {
+					$('#summernote').summernote({
+						toolbar: [
+							['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+						],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				} else {
+					$('#summernote').summernote({
+						toolbar: [],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				}
         	});
 		});
 	</script>

@@ -6077,7 +6077,8 @@
             }),
             ui.dropdown({
               items: [
-                '<div class="note-palette">',
+              // We dont need background colorZZzZ
+               /* '<div class="note-palette">',
                 '  <div class="note-palette-title">' + lang.color.background + '</div>',
                 '  <div>',
                 '    <button type="button" class="note-color-reset btn btn-light" data-event="backColor" data-value="inherit">',
@@ -6085,7 +6086,7 @@
                 '    </button>',
                 '  </div>',
                 '  <div class="note-holder" data-event="backColor"/>',
-                '</div>',
+                '</div>',*/
                 '<div class="note-palette">',
                 '  <div class="note-palette-title">' + lang.color.foreground + '</div>',
                 '  <div>',
@@ -7829,7 +7830,7 @@
         'Tahoma', 'Times New Roman', 'Verdana'
       ],
 
-      fontSizes: ['8', '9', '10', '11', '12', '14', '18', '24', '36'],
+      fontSizes: ['5', '8', '9', '10', '11', '12', '14', '18', '24', '36'],
 
       // pallete colors(n x n)
       colors: [
