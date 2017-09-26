@@ -147,6 +147,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		player:spawn()
 
 		StatisticsLogger:addLogin( player, Username, "Login")
+		ClientStatistics:getSingleton():handle(player)
 		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 	else
 		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
