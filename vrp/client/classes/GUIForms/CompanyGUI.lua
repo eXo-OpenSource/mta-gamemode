@@ -152,7 +152,7 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
-		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder):setBarEnabled(true)
+		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
 		self.m_LeaderTab = true
 	end
