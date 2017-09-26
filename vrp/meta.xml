@@ -93,6 +93,7 @@
 	<script src="server/classes/InactivityManager.lua" type="server"/>
 	<script src="server/classes/BindManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
+	<script src="server/classes/ClientStatistics.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -399,6 +400,7 @@
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
+	<script src="client/classes/ClientStatistics.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
