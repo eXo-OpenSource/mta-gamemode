@@ -25,8 +25,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_Enabled = true
 
 	-- Create a dummy gui element for animation
-	self.m_BarLeft = DxRectangle:new(0, 0, 0, 2, Color.White, self)
-	self.m_BarRight = DxRectangle:new(0, 0, 0, 2, Color.White, self)
+	self.m_AnimatedBar = DxRectangle:new(0, 0, 0, 2, Color.White, self)
 end
 
 function GUIButton:drawThis()
@@ -61,19 +60,12 @@ function GUIButton:onInternalHover(cx, cy)
 		end
 
 		local buttonX, buttonY = self:getPosition(true)
-		local posX = cx - buttonX
-		local diffToRight = self.m_Width - posX
-		local diffToLeft = self.m_Width - diffToRight
-		self.m_HoverPosX = posX
+		self.m_HoverPosX = cx - buttonX
 
-		self.m_BarLeft:setSize(0, 2)
-		self.m_BarRight:setSize(0, 2)
-		self.m_BarLeft:setPosition(posX, 0)
-		self.m_BarRight:setPosition(posX, 0)
-
-		Animation.Move:new(self.m_BarLeft, 150, 0, 0, "OutQuad")
-		Animation.Size:new(self.m_BarLeft, 150, diffToLeft, 2, "OutQuad")
-		Animation.Size:new(self.m_BarRight, 150, diffToRight, 2, "OutQuad")
+		self.m_AnimatedBar:setSize(0, 2)
+		self.m_AnimatedBar:setPosition(self.m_HoverPosX, 0)
+		Animation.Move:new(self.m_AnimatedBar, 150, 0, 0, "OutQuad")
+		Animation.Size:new(self.m_AnimatedBar, 150, self.m_Width, 2, "OutQuad")
 	end
 end
 
@@ -87,9 +79,8 @@ function GUIButton:onInternalUnhover()
 		end
 
 		if self.m_HoverPosX then
-			Animation.Move:new(self.m_BarLeft, 150, self.m_HoverPosX, 0, "OutQuad")
-			Animation.Size:new(self.m_BarLeft, 150, 0, 2, "OutQuad")
-			Animation.Size:new(self.m_BarRight, 150, 0, 2, "OutQuad")
+			Animation.Move:new(self.m_AnimatedBar, 150, self.m_HoverPosX, 0, "OutQuad")
+			Animation.Size:new(self.m_AnimatedBar, 150, 0, 2, "OutQuad")
 		end
 	end
 end
