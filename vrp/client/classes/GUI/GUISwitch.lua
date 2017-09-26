@@ -13,8 +13,7 @@ function GUISwitch:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 
 	-- Create a dummy button for animation
-	self.m_Button = GUIRectangle:new(0, 0, self.m_Width/2 - 4, self.m_Height - 4, Color.Clear, self)
-
+	self.m_Button = DxRectangle:new(0, 0, self.m_Width/2 - 4, self.m_Height - 4, Color.Clear, self)
 	self.m_State = true
 end
 
