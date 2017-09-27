@@ -8,12 +8,12 @@
 ClientStatistics = inherit(Singleton)
 
 function ClientStatistics:constructor()
-    addRemoteEvents{"receiveClientStatistics"}
+    addRemoteEvents{"receiveClientStatistics", "fpsClientStatistics"}
 	addEventHandler("receiveClientStatistics", root, bind(self.Event_ReceiveStatistics, self))
+	addEventHandler("fpsClientStatistics", root, bind(self.Event_ReceiveFps, self))
 end
 
 function ClientStatistics:handle(client)
-    outputConsole("request hardware info from "..client:getName())
     client:triggerEvent("requestClientStatistics")
 end
 
@@ -38,6 +38,27 @@ function ClientStatistics:Event_ReceiveStatistics(data)
     end
 end
 
+function ClientStatistics:Event_ReceiveFps(fps, freeVram)
+    local playerId = client:getId()
+    local serial = client:getSerial()
+
+    if not playerId or not serial then
+        error("ClientStatistics call without proper user --> id or serial missing")
+        return
+    end
+    
+    local result = sql:queryFetch("SELECT * FROM ??_client_statistics WHERE UserId = ? AND Serial = ?;", sql:getPrefix(), playerId, serial)
+
+    
+    if not result or #result == 0 then
+        sql:queryExec("INSERT INTO ??_client_statistics (UserId, Serial, FPS, FreeVRAM) VALUES (?, ?, ?, ?)",
+            sql:getPrefix(), playerId, serial, fps and fps or 0, freeVram and freeVram or 0)
+    else
+        sql:queryExec("UPDATE ??_client_statistics SET FPS = ?, FreeVRAM = ? WHERE UserId = ? AND Serial = ?",
+            sql:getPrefix(), fps and fps or 0, freeVram and freeVram or 0, playerId, serial)
+    end
+end
+
 --[[
 CREATE TABLE `vrp_client_statistics` (
 `UserId`  int NULL ,
@@ -50,6 +71,9 @@ CREATE TABLE `vrp_client_statistics` (
 PRIMARY KEY (`UserId`, `Serial`)
 )
 ;
+
+ALTER TABLE vrp_client_statistics ADD FPS INT NULL;
+ALTER TABLE vrp_client_statistics ADD FreeVRAM INT NULL;
 
 {
   AllowScreenUpload = true,
