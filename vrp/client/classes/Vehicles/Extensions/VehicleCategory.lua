@@ -37,6 +37,16 @@ function VehicleCategory:getCategoryFuelType(category)
     return self.m_CategoryData[category].fuelType
 end
 
+function VehicleCategory:getCategoryFuelTankSize(category)
+    if not self.m_CategoryData[category] then return false end
+    return self.m_CategoryData[category].fuelTankSize
+end
+
+function VehicleCategory:getCategoryFuelConsumption(category)
+    if not self.m_CategoryData[category] then return false end
+    return self.m_CategoryData[category].fuelConsumption
+end
+
 
 function VehicleCategory:getModelName(model)
     if not self.m_ModelData[model] then return false end

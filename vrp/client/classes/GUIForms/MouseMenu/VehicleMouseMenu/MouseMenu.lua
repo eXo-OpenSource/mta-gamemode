@@ -308,6 +308,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Group)
 	end
+	
+	self:addItem(_"Details >>>",
+		function()
+			if self:getElement() then
+				delete(self)
+				ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuDetails:new(posX, posY, element), element)
+			end
+		end
+	):setIcon(FontAwesomeSymbols.Search)
+
 
 	if element:getVehicleType() == VehicleType.Helicopter and element == localPlayer.vehicle and localPlayer.vehicleSeat ~= 0 then
 		self:addItem(_"Abseilen",

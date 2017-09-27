@@ -15,12 +15,23 @@ function GasStationMouseMenu:constructor(posX, posY, element)
 	--self:addItem(_("Besitzer: %s", name))
 	self:addItem(_("Tankstelle: %s", name)):setTextColor(Color.LightBlue)
 
-	self:addItem(_("Zapfpistole %s (Benzin)", localPlayer:getPrivateSync("hasGasStationFuelNozzle") and "einhängen" or "nehmen"),
-		function()
-			if localPlayer.vehicle then return end
-			triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element)
+	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") then
+		self:addItem(_"Zapfpistole einhängen",
+			function()
+				if localPlayer.vehicle then return end
+				triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element)
+			end
+		):setIcon(FontAwesomeSymbols.Fire)
+	else
+		for fuelType in pairs(element:getData("FuelTypes")) do
+			self:addItem(_("Zapfpistole nehmen (%s)", FUEL_NAME[fuelType]),
+				function()
+					if localPlayer.vehicle then return end
+					triggerServerEvent("gasStationTakeFuelNozzle", localPlayer, element, fuelType)
+				end
+			):setIcon(FontAwesomeSymbols.Fire)
 		end
-	):setIcon(FontAwesomeSymbols.Fire)
+	end
 
 	--self:addItem(_"Zapfpistole nehmen (Diesel)", function() end):setIcon(FontAwesomeSymbols.Fire)
 	--self:addItem(_"Ladekabel nehmen (Elektro)", function() end):setIcon(FontAwesomeSymbols.Bolt)

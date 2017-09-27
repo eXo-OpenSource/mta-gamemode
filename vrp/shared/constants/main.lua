@@ -778,6 +778,20 @@ FactionStaticId = {
 	VATOS = 10
 }
 
+FUEL_PRICE = { --price per liter
+	["petrol"] = 2.3,
+	["petrol_plus"] = 3.4,
+	["diesel"] = 1.7,
+	["jetfuel"] = 4.6,
+    
+}
+FUEL_NAME = { --display name
+	["petrol"] = "Super",
+	["petrol_plus"] = "Super Plus",
+	["diesel"] = "Diesel",
+	["jetfuel"] = "Kerosin",
+    
+}
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 5

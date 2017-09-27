@@ -13,7 +13,7 @@ function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
 	for _, station in pairs(GAS_STATIONS) do
-		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation)
+		local instance = GasStation:new(station.stations, station.accessible, station.name, station.nonInterior, station.serviceStation, station.fuelTypes)
 
 		if station.name then
 			GasStationManager.Shops[station.name] = instance
@@ -41,14 +41,14 @@ function GasStationManager:onPlayerQuit(player)
 	end
 end
 
-function GasStationManager:takeFuelNozzle(element)
+function GasStationManager:takeFuelNozzle(element, fuelType)
 	if GasStation.Map[element] then
 		if isElement(client.gs_fuelNozzle) then
 			GasStation.Map[element]:rejectFuelNozzle(client, element)
 			return
 		end
 
-		GasStation.Map[element]:takeFuelNozzle(client, element)
+		GasStation.Map[element]:takeFuelNozzle(client, element, fuelType)
 	end
 end
 
@@ -67,14 +67,13 @@ end
 		self.m_PendingTransaction[client] = {station = station, vehicle = vehicle, fuel = math.round(fuel)}
 	end
 end]]
-
-function GasStationManager:confirmTransaction(vehicle, fuel, station)
+function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFuel, price)
 	local station = GasStation.Map[station]
 	if station then
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
+				outputDebug(fuel)
 			local fuel = vehicle:getFuel() + fuel > 100 and 100 - vehicle:getFuel() or fuel
-			local price = math.round(fuel * (station:isServiceStation() and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR))
-
+			outputDebug(fuel)
 			if fuel == 0 then
 				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
 				return
@@ -153,6 +152,7 @@ GAS_STATIONS = {
 			{Vector3(1006.91, -936.43, 42.86), 8, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "San Fierro Downtown",
@@ -163,6 +163,7 @@ GAS_STATIONS = {
 			{Vector3(-1669.84, 412.59, 7.90), 223, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "San Fierro Juniper Hill",
@@ -171,6 +172,7 @@ GAS_STATIONS = {
 			{Vector3(-2410.8994, 979, 46), 90, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Angle Pine",
@@ -179,6 +181,7 @@ GAS_STATIONS = {
 			{Vector3(-2241.68, -2562.21, 32.6), 243, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Tankstelle Dillimore",
@@ -187,6 +190,7 @@ GAS_STATIONS = {
 			{Vector3(655.68, -559.91, 16.6), 90, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Tankstelle Flint County",
@@ -197,6 +201,7 @@ GAS_STATIONS = {
 			{Vector3(-96.84, -1173.24, 3), 65, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "The Emerald Isle",
@@ -209,6 +214,7 @@ GAS_STATIONS = {
 			{Vector3(2207.69, 2480, 11.5), 90, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Red Sands West",
@@ -217,6 +223,7 @@ GAS_STATIONS = {
 			{Vector3(1596.1, 2204.5, 11.5), 0, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Spinybed",
@@ -225,6 +232,7 @@ GAS_STATIONS = {
 			{Vector3(2147.63, 2742.5, 11.4), 0, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Las Venturas 2",
@@ -233,6 +241,7 @@ GAS_STATIONS = {
 			{Vector3(2114.8999, 914.72, 11.45), 0, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Valle Ocultado",
@@ -240,6 +249,7 @@ GAS_STATIONS = {
 			{Vector3(-740.41, 2753.35, 47.7), 90, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Tierra Roboda 2",
@@ -250,6 +260,7 @@ GAS_STATIONS = {
 			{Vector3(-1329.68, 2669.25, 51), 354, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Idlewood",
@@ -258,6 +269,7 @@ GAS_STATIONS = {
 			{Vector3(1941.7, -1769.4, 14.17), 90, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Fort Carson",
@@ -266,6 +278,7 @@ GAS_STATIONS = {
 			{Vector3(73.80, 1219.45, 19.6), 252, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Whetstone",
@@ -276,6 +289,7 @@ GAS_STATIONS = {
 			{Vector3(-1601.41, -2707.17, 49.4), 324, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Last Venturas East",
@@ -284,14 +298,16 @@ GAS_STATIONS = {
 			{Vector3(2639.9, 1111.83, 11.5), 0, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
-		name = "Montegomery",
+		name = "Montgomery",
 		stations = {
 			{Vector3(1379.81, 460.5, 20.8), 155.5, 2},
 			{Vector3(1384.36, 458.6, 20.8), 155.5, 2},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Bone County",
@@ -305,6 +321,7 @@ GAS_STATIONS = {
 			{Vector3(603.53, 1707, 7.7), 35.5, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "Tierra Roboda 1",
@@ -315,6 +332,7 @@ GAS_STATIONS = {
 			{Vector3(-1478.72, 1867.25, 33.3), 3.24, 1},
 		},
 		accessible =  {0, 0},
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	{
 		name = "LS-Airport Tankstelle",
@@ -323,6 +341,7 @@ GAS_STATIONS = {
 		},
 		accessible = {0, 0},
 		nonInterior = true,
+		fuelTypes = {"petrol", "jetfuel"},
 	},
 	{
 		name = "Tankstelle Ocean Docks",
@@ -331,6 +350,8 @@ GAS_STATIONS = {
 		},
 		accessible = {0, 0},
 		nonInterior = true,
+		fuelTypes = {"diesel"},
+
 	},
 	-- Company fuelstations
 	{
@@ -340,6 +361,7 @@ GAS_STATIONS = {
 		},
 		accessible =  {2, CompanyStaticId.MECHANIC},
 		nonInterior = true,
+		fuelTypes = {"petrol", "diesel", "petrol_plus"},
 	},
 	-- Faction fuelstations
 	{
@@ -356,6 +378,7 @@ GAS_STATIONS = {
 		accessible =  {1, 0},
 		nonInterior = true,
 		serviceStation = true,
+		fuelTypes = {"petrol", "diesel"},
 	},
 	{
 		name = "Rescue Service Station",
@@ -366,5 +389,6 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.RESCUE},
 		nonInterior = true,
 		serviceStation = true,
+		fuelTypes = {"petrol", "diesel"},
 	},
 }

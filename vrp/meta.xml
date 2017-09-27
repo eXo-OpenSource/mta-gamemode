@@ -548,6 +548,7 @@
 
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
@@ -1313,6 +1314,7 @@
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
 	<vrpfile src="files/images/Textures/EPTBusStop.png"/>
+	<vrpfile src="files/images/Textures/GasStation.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>

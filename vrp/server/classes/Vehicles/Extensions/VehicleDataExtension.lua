@@ -24,6 +24,10 @@ function VehicleDataExtension:getFuelType()
     return VehicleCategory:getSingleton():getCategoryFuelType(self:getCategory())
 end
 
+function VehicleDataExtension:getFuelTankSize()
+    return VehicleCategory:getSingleton():getCategoryFuelTankSize(self:getCategory())
+end
+
 function VehicleDataExtension:getTax()
     return VehicleCategory:getSingleton():getCategoryTax(self:getCategory())
 end

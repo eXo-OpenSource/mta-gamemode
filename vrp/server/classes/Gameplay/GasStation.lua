@@ -8,12 +8,14 @@
 GasStation = inherit(Object)
 GasStation.Map = {}
 
-function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation)
+function GasStation:constructor(stations, accessible, name, nonInterior, serviceStation, fuelTypes)
 	self.m_Stations = {}
 	self.m_Accessible = accessible
 	self.m_Name = name
 	self.m_NonInterior = nonInterior
 	self.m_ServiceStation = serviceStation
+	self.m_FuelTypes = {}
+	for i, v in pairs(fuelTypes) do self.m_FuelTypes[v] = true end -- invert table
 
 	for _, station in pairs(stations) do
 		local position, rotation, maxHoses = unpack(station)
@@ -29,6 +31,7 @@ function GasStation:constructor(stations, accessible, name, nonInterior, service
 		if self.m_ServiceStation then
 			object:setData("isServiceStation", true, true)
 		end
+		object:setData("FuelTypes", self.m_FuelTypes, true, true)
 	end
 end
 
@@ -81,7 +84,7 @@ function GasStation:isServiceStation()
 	return self.m_ServiceStation
 end
 
-function GasStation:takeFuelNozzle(player, element)
+function GasStation:takeFuelNozzle(player, element, fuelType)
 	if not self:hasPlayerAccess(player) then
 		player:sendError("Du bist nicht berechtigt diese Tankstelle zu nutzen!")
 		return
@@ -95,13 +98,13 @@ function GasStation:takeFuelNozzle(player, element)
 	player.gs_fuelNozzle = createObject(1909, player.position)
 	player.gs_fuelNozzle:setData("attachedGasStation", element, true)
 	player.gs_fuelNozzle:setData("attachedPlayer", player, true)
-	client:setPrivateSync("hasGasStationFuelNozzle", true)
+	client:setPrivateSync("hasGasStationFuelNozzle", fuelType)
 	player.gs_usingFuelStation = element
 
 	exports.bone_attach:attachElementToBone(player.gs_fuelNozzle, player, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 	toggleControl(player, "fire", false)
 
-	self.m_Stations[element].players[player] = true
+	self.m_Stations[element].players[player] = fuelType
 end
 
 function GasStation:rejectFuelNozzle(player, element)
