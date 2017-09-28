@@ -17,7 +17,7 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -46,6 +46,32 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
+
+	addEventHandler("clientToggleVehicleEngine", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleEngine(client)
+		end
+	)
+
+	addEventHandler("clientToggleVehicleLight", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleLight(client)
+		end
+	)
+
+	addEventHandler("clientToggleHandbrake", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+
+			if client.vehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+				client.vehicle:toggleHandBrake(client)
+			else
+				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
+			end
+		end
+	)
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -230,20 +256,10 @@ end
 
 function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
-	--[[
-	outputServerLog("Loading vehicles...")
-	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
-		VehicleManager:getSingleton():addRef(vehicle, false)
-	end
-	]]--
-	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
 	end
@@ -254,7 +270,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal))
+			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal), row.Fuel)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		end
@@ -1088,7 +1104,7 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	end
 end
 
-function VehicleManager:Event_vehicleBreak()
+function VehicleManager:Event_vehicleBreak(weapon)
 	if not source.isBroken or not source:isBroken() then
 		self:checkVehicle(source)
 		if not VEHICLE_BIKES[source:getModel()] then
@@ -1096,7 +1112,13 @@ function VehicleManager:Event_vehicleBreak()
 			if source.controller then
 				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
 			end
-			-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+			local maxRnd = (weapon and weapon >= 22 and weapon <= 38) and 10 or 20
+			if math.random(1, maxRnd) == 1 then
+				if FactionRescue:getSingleton():countPlayers() >= 3 then
+					FactionRescue:getSingleton():addVehicleFire(source)
+				end
+			end
+
 			source:setBroken(true)
 		end
 	end

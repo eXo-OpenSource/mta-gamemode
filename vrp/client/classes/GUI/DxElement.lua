@@ -15,6 +15,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 
 	if self.m_Parent then
 		self.m_Parent.m_Children[#self.m_Parent.m_Children+1] = self
+		self.m_Parent.m_ChildrenByObject[self] = true
 	end
 
 	self.m_PosX   = math.floor(posX)
@@ -23,6 +24,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	self.m_Height = math.floor(height)
 
 	self.m_Children = {}
+	self.m_ChildrenByObject = {}
 	self.m_Visible = true
 	self.m_Alpha = 255
 
@@ -69,6 +71,7 @@ function DxElement:destructor(keepParent)
 				break
 			end
 		end
+		self.m_Parent.m_ChildrenByObject[self] = nil
 	end
 
 	self:anyChange()

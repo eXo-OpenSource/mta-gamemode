@@ -45,3 +45,13 @@ end
 function Company:getShortName()
 	return self.m_NameShort
 end
+
+function Company:getOnlinePlayers()
+	local players = {}
+	for _, player in pairs(Element.getAllByType"player") do
+		if player:getCompany() and player:getCompany() == self then
+			table.insert(players, player)
+		end
+	end
+	return players
+end

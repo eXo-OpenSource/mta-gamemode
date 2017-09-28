@@ -28,6 +28,10 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 
 	self.m_Pickup = createPickup(Pickup, 3, PICKUP_FOR_SALE, 0)
 	if self.m_OwnerID ~= 0 then setPickupType(self.m_Pickup, 3, PICKUP_SOLD) end
+
+	self.m_Pickup.m_PickupType = "GroupProperty" -- used for fire message geration
+	self.m_Pickup.m_PickupName = Name
+	
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
@@ -84,7 +88,11 @@ function GroupProperty:destructor()
 		end
 	end
 	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_DepotId, self.m_Id)
-	self.m_Depot:save()
+	if self.m_Depot then
+		self.m_Depot:save()
+	else
+		outputDebugString("Save Depot for Group Property "..self.m_Id.." failed! (Not found)")
+	end
 end
 
 function GroupProperty:setDepotId(Id)
@@ -334,10 +342,10 @@ end
 --// SETTERS
 function GroupProperty:setOwner( id )
 	self.m_Owner = GroupManager.getFromId(OwnerId) or false
-	if self.m_Owner == false then 
+	if self.m_Owner == false then
 		setPickupType(self.m_Pickup, 3, PICKUP_FOR_SALE)
-	else 
-		setPickupType(self.m_Pickup, 3, PICKUP_ARROW)
+	else
+		setPickupType(self.m_Pickup, 3, PICKUP_SOLD)
 	end
 	return self.m_Owner
 end

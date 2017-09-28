@@ -13,7 +13,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)
 	end
-	self:addItem(_("Fahrzeug: %s", element:getName())):setTextColor(Color.LightBlue)
+	self:addItem(_("Fahrzeug: %s (%s)", element:getName(), element:getCategoryName())):setTextColor(Color.LightBlue)
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
 			self:addItem(_("%sschließen", element:isLocked() and "Auf" or "Zu"),
@@ -191,8 +191,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				end
 			):setIcon(FontAwesomeSymbols.Random)
-		end
-		]]
+		end]]
 		if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
 			if #self:getAttachedElement(2912, element) > 0 then
 				self:addItem(_"Kiste abladen",
@@ -227,7 +226,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 
-		if localPlayer:getPublicSync("CompanyId") == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") == true then
+		if localPlayer:getCompany() and localPlayer:getCompany():getId() == CompanyStaticId.MECHANIC and localPlayer:getPublicSync("Company:Duty") then
 			if element:getHealth() < 950 then
 				self:addItem(_"Mechaniker: Reparieren",
 					function()
@@ -247,6 +246,30 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Cogs)
 			end
+
+			if localPlayer.vehicle and localPlayer.vehicle:getData("OwnerName") == localPlayer:getCompany():getName() then
+				if (element:getVehicleType() == VehicleType.Bike or VEHICLE_BIKES[element:getModel()]) and element:isEmpty() and not localPlayer.vehicle:getData("towingBike") then
+					self:addItem(_("Mechaniker: %s aufladen", element:getVehicleType() == VehicleType.Bike and "Motorrad" or "Fahrrad"),
+						function()
+							if self:getElement() then
+								triggerServerEvent("mechanicAttachBike", localPlayer, self:getElement())
+								delete(self)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Cogs)
+				end
+				if element == localPlayer.vehicle and localPlayer.vehicle:getData("towingBike") then
+					self:addItem(_("Mechaniker: %s abladen", localPlayer.vehicle:getData("towingBike"):getVehicleType() == VehicleType.Bike and "Motorrad" or "Fahrrad"),
+						function()
+							if self:getElement() then
+								triggerServerEvent("mechanicDetachBike", localPlayer, self:getElement())
+								delete(self)
+							end
+						end
+					):setIcon(FontAwesomeSymbols.Cogs)
+				end
+			end
+
 			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 and not localPlayer:getPrivateSync("hasGasStationFuelNozzle") then -- fuel tank
 				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasMechanicFuelNozzle") and "einhängen" or "nehmen"),
 					function()
@@ -285,6 +308,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Group)
 	end
+	
+	self:addItem(_"Details >>>",
+		function()
+			if self:getElement() then
+				delete(self)
+				ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuDetails:new(posX, posY, element), element)
+			end
+		end
+	):setIcon(FontAwesomeSymbols.Search)
+
 
 	if element:getVehicleType() == VehicleType.Helicopter and element == localPlayer.vehicle and localPlayer.vehicleSeat ~= 0 then
 		self:addItem(_"Abseilen",

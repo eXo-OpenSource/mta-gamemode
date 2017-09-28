@@ -18,7 +18,6 @@ BindGUI.Headers = {
 
 BindGUI.Functions = {
 	["say"] = "Chat (/say)",
-	["m"] = "Megaphon (/m)",
 	["s"] = "schreien (/s)",
 	["f"] = "flüstern (/l)",
 	["t"] = "Fraktion (/t)",

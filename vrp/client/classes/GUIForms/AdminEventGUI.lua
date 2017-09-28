@@ -50,9 +50,49 @@ function AdminEventGUI:constructor(money)
 		triggerServerEvent("adminEventRequestData", localPlayer)
 	end
 
+
+	---------------------------------------
+
+	self.m_TabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
+
+	self.m_VehiclesGrid = GUIGridList:new(10, 35, 400, 425, self.m_TabVehicles)
+	self.m_VehiclesGrid:addColumn(_"Fahrzeuge", 0.4)
+	self.m_VehiclesGrid:addColumn(_"Gefreezt", 0.2)
+	self.m_VehiclesGrid:addColumn(_"Spieler", 0.4)
+	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, self.m_TabVehicles):setFont(FontAwesome(15))
+	self.m_RefreshButton.onLeftClick = function ()
+		triggerServerEvent("adminEventRequestData", localPlayer)
+	end
+
+	GUILabel:new(420, 35, 300, 30, "Fahrzeuge erstellen:", self.m_TabVehicles)
+
+	GUILabel:new(420, 65, 50, 20, "Anzahl", self.m_TabVehicles)
+	self.m_Amount = GUIEdit:new(420, 85, 50, 30, self.m_TabVehicles)
+	self.m_Amount:setNumeric(true, true)
+
+	GUILabel:new(480, 65, 70, 20, "Richtung", self.m_TabVehicles)
+	self.m_DirectionChanger = GUIChanger:new(480, 85, 90, 30, self.m_TabVehicles)
+	self.m_DirectionChanger:addItem("L")
+	self.m_DirectionChanger:addItem("R")
+	self.m_DirectionChanger:addItem("V")
+	self.m_DirectionChanger:addItem("H")
+	self.m_EventButton["createVehicles"] = GUIButton:new(580, 85, 190, 30, "Fahrzeug duplizieren", self.m_TabVehicles):setFontSize(1)
+	self.m_EventButton["createVehicles"].onLeftClick = function()
+		if self.m_Amount:getText() and tonumber(self.m_Amount:getText()) and tonumber(self.m_Amount:getText()) > 0 then
+			local direction = self.m_DirectionChanger:getSelectedItem()
+			triggerServerEvent("adminEventCreateVehicles", localPlayer, tonumber(self.m_Amount:getText()), direction)
+		end
+	end
+
+	GUILabel:new(420, 130, 300, 30, "Alle Fahrzeuge:", self.m_TabVehicles)
+	self.m_EventButton["unfreezeAllVehicles"] = GUIButton:new(420, 160, 100, 30, "entfreezen", self.m_TabVehicles):setBackgroundColor(Color.Green):setFontSize(1)
+	self.m_EventButton["unfreezeAllVehicles"].onLeftClick = function() triggerServerEvent("adminEventAllVehiclesAction", localPlayer, "unfreeze") end
+	self.m_EventButton["freezeAllVehicles"] = GUIButton:new(530, 160, 100, 30, "freezen", self.m_TabVehicles):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_EventButton["freezeAllVehicles"].onLeftClick = function() triggerServerEvent("adminEventAllVehiclesAction", localPlayer, "freeze") end
+	self.m_EventButton["deleteAllVehicles"] = GUIButton:new(640, 160, 100, 30, "löschen", self.m_TabVehicles):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_EventButton["deleteAllVehicles"].onLeftClick = function() triggerServerEvent("adminEventAllVehiclesAction", localPlayer, "delete") end
+
 	addEventHandler("adminEventReceiveData", root, bind(self.onReceiveData, self))
-
-
 end
 
 function AdminEventGUI:onShow()
@@ -66,9 +106,10 @@ function AdminEventGUI:onHide()
 	SelfGUI:getSingleton():removeWindow(self)
 end
 
-function AdminEventGUI:onReceiveData(eventActive, players)
+function AdminEventGUI:onReceiveData(eventActive, players, vehicles)
 	self.m_EventToggleButton:setText(eventActive and _"Event beenden" or _"Event starten")
 	self.m_PlayersGrid:clear()
+	self.m_VehiclesGrid:clear()
 	if eventActive then
 		for index, button in pairs(self.m_EventButton) do
 			button:setEnabled(true)
@@ -76,6 +117,12 @@ function AdminEventGUI:onReceiveData(eventActive, players)
 
 		for index, player in pairs(players) do
 			self.m_PlayersGrid:addItem(player:getName())
+		end
+
+		for index, vehicle in pairs(vehicles) do
+			if vehicle and isElement(vehicle) then
+				self.m_VehiclesGrid:addItem(vehicle:getName(), vehicle:isFrozen() and _"Ja" or _"Nein", vehicle:getOccupant(1) or "keiner")
+			end
 		end
 	else
 		for index, button in pairs(self.m_EventButton) do

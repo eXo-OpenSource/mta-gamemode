@@ -16,6 +16,8 @@ end
 function GroupManager:constructor()
 	self:loadGroups()
 
+	GlobalTimer:getSingleton():registerEvent(bind(self.payDay, self), "Group Payday", nil, nil, 00) -- Every Hour
+
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
@@ -44,6 +46,7 @@ function GroupManager:constructor()
 	addEventHandler("groupStopVehicleForSale", root, bind(self.Event_StopVehicleForSale, self))
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
+
 end
 
 function GroupManager:destructor()
@@ -542,6 +545,7 @@ function GroupManager:Event_ConvertVehicle(veh)
 				if status then
 					client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
 					group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
+					group.m_VehiclesSpawned = true
 					self:sendInfosToClient(client)
 				else
 					client:sendError(_("Es ist ein Fehler aufgetreten!", client))
@@ -701,4 +705,19 @@ function GroupManager:Event_ToggleLoan(playerId)
 	self:sendInfosToClient(client)
 
 	group:addLog(client, "Gang/Firma", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
+end
+
+function GroupManager:payDay()
+	local result = sql:queryFetch("SELECT vh.Group AS GroupId, (SELECT Category FROM ??_vehicle_model_data vmd WHERE vmd.Model = vh.Model) AS VCategory, COUNT(Id) AS Amount FROM ??_group_vehicles vh GROUP BY vh.`Group`, VCategory", sql:getPrefix(), sql:getPrefix())
+	local groups = {}
+	for k, row in pairs(result) do
+		if not groups[row.GroupId] then groups[row.GroupId] = {} end
+		groups[row.GroupId][row.VCategory] = row.Amount
+	end
+
+	for groupId, data in pairs(groups) do
+		if GroupManager.Map[groupId] then
+			GroupManager.Map[groupId]:payDay(data)
+		end
+	end
 end

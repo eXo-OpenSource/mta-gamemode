@@ -12,9 +12,11 @@ function GasStation:constructor()
 	self.m_RenderFuelHoles = {}
 	self.m_RenderGasStations = {}
 
-	self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
-	self.m_ShaderTextures = {"petrolpumpbase_256", "vgnptrpump1_256"}
 	self.m_RenderTarget = dxCreateRenderTarget(512, 512)
+	self.m_Shaders = {
+		StaticRenderTargetTextureReplacer:new(self.m_RenderTarget, "petrolpumpbase_256", {}),
+		StaticRenderTargetTextureReplacer:new(self.m_RenderTarget, "vgnptrpump1_256", {})
+	}
 
 	self.m_Amount = "-"
 	self.m_Price = "-"
@@ -22,12 +24,9 @@ function GasStation:constructor()
 	self.m_Font = dxCreateFont("files/fonts/fuelstation.ttf", 25)
 	self.m_Size = 1
 
-	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[1])
-	engineApplyShaderToWorldTexture(self.m_Shader, self.m_ShaderTextures[2])
-
 	self.m_FilledDone =
-		function(vehicle, fuel, station)
-			GasStation.PendingTransaction = {station = station, vehicle = vehicle, fuel = fuel}
+		function(vehicle, fuel, station, price, opticalFuel)
+			GasStation.PendingTransaction = {station = station, vehicle = vehicle, fuel = fuel, price = price, opticalFuel = opticalFuel}
 			InfoBox:new("Gehe in die Tankstelle um zu bezahlen!")
 			--triggerServerEvent("gasStationStartTransaction", localPlayer, vehicle, fuel, station)
 		end
@@ -123,34 +122,37 @@ function GasStation:renderGasStation()
 	end
 
 	dxSetRenderTarget(self.m_RenderTarget)
-	self:renderBackground()
-	self:renderDisplay()
+		self:renderBackground()
+		self:renderDisplay()
 	dxSetRenderTarget()
-	dxSetShaderValue(self.m_Shader, "gTexture", self.m_RenderTarget)
+	--self.m_Shaders[1]:update()
+	--self.m_Shaders[2]:update()
 end
 
 function GasStation:renderBackground()
-	dxDrawRectangle(0, 0, 512, 512, tocolor(80, 80, 80))
-	dxDrawRectangle(50, 80, 412, 60, Color.Green)
-	dxDrawRectangle(55, 85, 402, 50, Color.Black)
-	dxDrawRectangle(50, 180, 412, 60, Color.Green)
-	dxDrawRectangle(55, 185, 402, 50, Color.Black)
+	dxDrawImage(0, 0, 512, 512, "files/images/Textures/GasStation.png")
+	dxDrawRectangle(50, 80, 412, 60, Color.DarkBlue)
+	dxDrawRectangle(55, 85, 200, 50, Color.Black)
+	dxDrawRectangle(50, 180, 412, 60, Color.DarkBlue)
+	dxDrawRectangle(55, 185, 200, 50, Color.Black)
 end
 
 function GasStation:renderDisplay()
 	if localPlayer:getPrivateSync("hasGasStationFuelNozzle") and localPlayer.usingGasStation then
-		self.m_Amount = VehicleFuel:isInstantiated() and math.round(VehicleFuel:getSingleton().m_Fuel, 2) or 0
-		self.m_Price = VehicleFuel:isInstantiated() and math.round(self.m_Amount * (localPlayer.usingGasStation:getData("isServiceStation") and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR), 2) or 0
+		self.m_Amount = VehicleFuel:isInstantiated() and VehicleFuel:getSingleton():getOpticalFuelAmount() or 0
+		self.m_Price = VehicleFuel:isInstantiated() and VehicleFuel:getSingleton():getFuelPrice() or 0
 	else
 		self.m_Amount = "-"
 		self.m_Price = "-"
 	end
 
-	local px, py, width, height = 50, 80, 412, 60
-	dxDrawText("LITER / L" , px, py - height, px + width, py, Color.Black, self.m_Size-0.2, self.m_Font, "left", "bottom")
-	dxDrawText(self.m_Amount , px, py, px + width, py + height, Color.LightGrey, self.m_Size, self.m_Font, "center", "center")
+	local px, py, width, height = 55, 85, 200, 50
 
-	local px, py, width, height = 50, 180, 412, 60
-	dxDrawText("KOSTEN / $", px, py - height, width, py, Color.Black, self.m_Size - 0.2, self.m_Font, "left", "bottom")
-	dxDrawText(self.m_Price, px, py, px + width, py + height, Color.LightGrey, self.m_Size, self.m_Font, "center", "center")
+
+	dxDrawText("Liter" , px + width, py, px + width*2, py + height, Color.White, 3, "default-bold", "center", "center")
+	dxDrawText(self.m_Amount , px, py, px + width, py + height, Color.White, self.m_Size, self.m_Font, "center", "center")
+
+	local px, py, width, height = 55, 185, 200, 50
+	dxDrawText("Dollar", px + width, py, px + width*2, py + height, Color.White, 3, "default-bold", "center", "center")
+	dxDrawText(self.m_Price, px, py, px + width, py + height, Color.White, self.m_Size, self.m_Font, "center", "center")
 end

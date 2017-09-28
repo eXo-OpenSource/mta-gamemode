@@ -1,7 +1,6 @@
 FileTextureReplacer = inherit(TextureReplacer)
 FileTextureReplacer.ClientPath = "files/images/Textures/%s"
 
--- normal methods
 function FileTextureReplacer:constructor(element, fileName, textureName, options)
 	assert(fileName and fileName:len() > 0, "Bad Argument @ FileTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
@@ -25,5 +24,11 @@ function FileTextureReplacer:unload()
 
 	local a = TextureCache.removeCached(FileTextureReplacer.ClientPath:format(self.m_FileName), self)
 	local b = self:detach()
-	return ((a and b) and TextureReplacer.Status.SUCCESS) or TextureReplacer.Status.FAILURE
+	if b == TextureReplacer.Status.SUCCESS and a then
+		return TextureReplacer.Status.SUCCESS
+	elseif not a then
+		return TextureReplacer.Status.FAILURE
+	else
+		return b
+	end
 end

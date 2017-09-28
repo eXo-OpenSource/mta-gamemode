@@ -10,7 +10,6 @@ inherit(GUIMovable, GUIWindow)
 
 function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, hasCloseButton, parent)
 	checkArgs("GUIWindow:constructor", "number", "number", "number", "number", "string")
-	GUIWindowsFocus:getSingleton():setCurrentFocus( self )
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
@@ -19,21 +18,23 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_CloseOnClose = true
 	self.m_MovingEnabled = true
 
+	self.m_Parent:bringToFront() --don't bring the window itself to front but rather the GUIForm parent
+	self.onLeftClickDown = function()
+		self.m_Parent:bringToFront() --also bring it to the front if somebody clicks inside
+	end
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
-		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Grey, self)
+		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Primary, self)
 		self.m_TitlebarDummy.onLeftClickDown = function()
-			if GUIWindowsFocus:getSingleton():getCurrentFocus() == self or  GUIWindowsFocus:getSingleton():getCurrentFocus() == nil then
-				GUIWindowsFocus:getSingleton():setCurrentFocus( self )
-				if not self.m_MovingEnabled then return end
-				self:startMoving()
-			end
+			if not self.m_MovingEnabled then return end
+			self:startMoving()
 		end
 		self.m_TitlebarDummy.onLeftClick = function()
 			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
+		self.m_TitleBarAccentStripe = GUIRectangle:new(0, 30, self.m_Width, 2, Color.Accent, self)
 
 		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
 			:setAlignX("center")
@@ -62,17 +63,7 @@ function GUIWindow:drawThis()
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
 
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 175))
-
-	-- Draw logo
-	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
-		dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height - 29 - 10, 62, 29, "files/images/GUI/logo.png")
-	end
-
-	if self.m_HasTitlebar then
-		-- Draw line under title bar
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 1, Color.White)
-	end
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Background)
 
 	dxSetBlendMode("blend")
 end
@@ -91,11 +82,24 @@ function GUIWindow:setTitleBarText (text)
 	return self
 end
 
+function GUIWindow:addTabPanel(tabs)
+	if not self.m_TabPanel then
+		self.m_TitleBarAccentStripe:hide()
+		self.m_TabPanel = GUITabPanel:new(0, 30, self.m_Width, self.m_Height-30, self)
+
+		local tabElements = {}
+		for i,v in ipairs(tabs) do
+			tabElements[i] = self.m_TabPanel:addTab(v, true)
+		end
+		self.m_TabPanel:resizeTabs()
+		return tabElements, self.m_TabPanel
+	end
+end
+
 --- Closes the window
 function GUIWindow:close()
 	-- Jusonex: Destroy or close, I dunno what's better
 	delete(self.m_Parent or self)
-	GUIWindowsFocus:getSingleton():On_WindowOff( self )
 end
 
 function GUIWindow:deleteOnClose(close) -- Todo: Find a better name
@@ -124,4 +128,9 @@ function GUIWindow:removeBackButton()
 	if self.m_BackButton then
 		delete(self.m_BackButton)
 	end
+end
+
+function GUIWindow.updateGrid(withTabs)
+	grid("reset", true)
+	grid("offset", withTabs and 50 or 30)
 end

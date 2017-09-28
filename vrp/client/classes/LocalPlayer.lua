@@ -715,9 +715,11 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 end
 
 function LocalPlayer:startAnimation(_, ...)
-	if not localPlayer.vehicle then
-		triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
-	end
+	if localPlayer:getData("isTasered") then return end
+	if localPlayer.vehicle then return end
+	if localPlayer:isOnFire() then return end
+	
+	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
 
 function LocalPlayer:vehiclePickUp()

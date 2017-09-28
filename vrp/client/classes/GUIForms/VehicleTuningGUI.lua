@@ -351,21 +351,20 @@ function VehicleTuningGUI:PartItem_Click(item)
                 "Neonröhren ein/ausbauen",
                 {[0] = _"Keine Neonröhre", [1] = _"Neonröhre einbauen"},
                 function(neon)
+					self.m_NewTuning:saveTuning("NeonColor", {255,0,0})
 					self.m_NewTuning:saveTuning(item.PartSlot, neon == 1)
 					self.m_NewTuning:applyTuning()
 					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neon)
                 end,
                 function(neon)
                     if neon == 1 then
-                        setElementData(self.m_Vehicle, "Neon", true)
-                        setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
-                        Neon.Vehicles[self.m_Vehicle] = true
-                    else
-                        setElementData(self.m_Vehicle, "Neon", false)
-                        setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-                        if Neon.Vehicles[self.m_Vehicle] then
-                            Neon.Vehicles[self.m_Vehicle] = nil
-                        end
+						self.m_Vehicle:setData("Neon", true)
+						self.m_Vehicle:setData("NeonColor", {255,0,0})
+						Neon.Vehicles[self.m_Vehicle] = true
+					else
+						self.m_Vehicle:setData("Neon", false)
+						self.m_Vehicle:setData("NeonColor", {0,0,0})
+						Neon.Vehicles[self.m_Vehicle] = Neon.Vehicles[self.m_Vehicle] and true or nil
                     end
                 end
             )
@@ -383,7 +382,7 @@ function VehicleTuningGUI:PartItem_Click(item)
 					self.m_NewTuning:applyTuning()
 				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
 				function(r, g, b)
-					setElementData(self.m_Vehicle, "NeonColor", {r, g, b})
+					self.m_Vehicle:setData("NeonColor", {r, g, b})
 				end)
             if self.m_NewTuning:getTuning(item.PartSlot) and type(self.m_NewTuning:getTuning(item.PartSlot)) == "table" then
 				self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTuning(item.PartSlot)))

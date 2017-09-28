@@ -18,6 +18,8 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	self.m_ConfirmCallback = confirmCallback
 	self.m_ConfirmWithSpace = confirmWithSpace
 
+	self.m_isServiceStation = localPlayer.usingGasStation:getData("isServiceStation")
+
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
 
 	self.m_HandleClick = bind(VehicleFuel.handleClick, self)
@@ -40,11 +42,25 @@ end
 
 function VehicleFuel:confirm()
 	if self.m_Fuel > 0 then
-		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self.m_Fuel, self.m_GasStation) end
+		if self.m_ConfirmCallback then self.m_ConfirmCallback(self.m_Vehicle, self:getFuelAmount(), self.m_GasStation, self:getFuelPrice(), self:getOpticalFuelAmount()) end
 	end
 end
 
-function VehicleFuel:handleClick(_, state)
+function VehicleFuel:getOpticalFuelAmount()
+	local tankSize = self.m_Vehicle:getFuelTankSize()
+	return math.round((self.m_Fuel or 0)/100*tankSize, 2)
+end
+
+function VehicleFuel:getFuelAmount()
+	return self.m_Fuel
+end
+
+function VehicleFuel:getFuelPrice()
+	local mult = (self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR or 1)
+	return math.round(self:getOpticalFuelAmount() * FUEL_PRICE[self.m_Vehicle:getFuelType()] * mult, 2)
+end
+
+function VehicleFuel:handleClick(__, state)
 	if isCursorShowing() then return end
 	setPedControlState("fire", false)
 	toggleControl("fire", false)
@@ -55,8 +71,11 @@ function VehicleFuel:handleClick(_, state)
 	if self.m_MouseDown then
 		if localPlayer:getWorldVehicle() ~= self.m_Vehicle then return end
 		if self.m_Vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
-
-		self.m_FuelProgress:startAnimation(15000 - (self.m_Fuel + self.m_FuelOffset) *150, "Linear", 100 - self.m_FuelOffset)
+		if localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then 
+			WarningBox:new(_("In diesen Tank solltest du nur %s füllen.", FUEL_NAME[self.m_Vehicle:getFuelType()])) return end
+		
+		local time = self.m_Vehicle:getFuelTankSize() 
+		self.m_FuelProgress:startAnimation(time*150 - (self.m_Fuel + self.m_FuelOffset) *time, "Linear", 100 - self.m_FuelOffset)
 		toggleAllControls(false, true, false)
 	else
 		self.m_FuelProgress:stopAnimation()

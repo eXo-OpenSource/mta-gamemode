@@ -7,7 +7,7 @@ function CachedTexture:constructor(path)
 end
 
 function CachedTexture:destructor()
-	if self.m_Texture then
+	if self.m_Texture and isElement(self.m_Texture) then
 		self.m_Texture:destroy()
 	end
 end

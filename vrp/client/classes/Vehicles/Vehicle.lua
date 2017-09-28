@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
+inherit(VehicleDataExtension, Vehicle)
 
 VEHICLE_ALT_SOUND =
 {
@@ -74,6 +75,10 @@ function Vehicle:getFuel()
 	return self:getData("fuel")
 end
 
+function Vehicle:isEmpty()
+	return self.occupants and table.size(self.occupants) == 0
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
@@ -84,6 +89,21 @@ function Vehicle:magnetVehicleCheck()
 	local groundPosition = vehicle and getGroundPosition(vehicle.position)
 
 	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
+end
+
+function Vehicle:toggleEngine()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleEngine", localPlayer)
+end
+
+function Vehicle:toggleLight()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleLight", localPlayer)
+end
+
+function Vehicle:toggleHandbrake()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleHandbrake", localPlayer)
 end
 
 addEventHandler("vehicleEngineStart", root,
@@ -221,7 +241,7 @@ addEventHandler("onClientVehicleDamage", root,
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
 					source.m_LastBroken = getTickCount()
-					triggerServerEvent("vehicleBreak", source)
+					triggerServerEvent("vehicleBreak", source, weapon)
 				end
 				setVehicleEngineState(source, false)
 				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)

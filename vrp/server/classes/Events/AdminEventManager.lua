@@ -4,19 +4,21 @@ function AdminEventManager:constructor()
 	self.m_EventRunning = false
 	self.m_CurrentEvent = false
 
-	self.m_EventPartic = {}
+	self.m_EventVehicles = {}
+	self.m_EventVehiclesAmount = 0
 
 	addCommandHandler("teilnehmen", bind(self.joinEvent, self))
 
-	addRemoteEvents{"adminEventRequestData", "adminEventToggle", "adminEventTrigger"}
+	addRemoteEvents{"adminEventRequestData", "adminEventToggle", "adminEventTrigger", "adminEventAllVehiclesAction", "adminEventCreateVehicles"}
 	addEventHandler("adminEventRequestData", root, bind(self.requestData, self))
 	addEventHandler("adminEventToggle", root, bind(self.toggle, self))
 	addEventHandler("adminEventTrigger", root, bind(self.onEventTrigger, self))
-
+	addEventHandler("adminEventAllVehiclesAction", root, bind(self.allVehiclesTrigger, self))
+	addEventHandler("adminEventCreateVehicles", root, bind(self.createVehicles, self))
 end
 
 function AdminEventManager:onEventTrigger(func)
-	if client:getRank() <= RANK.Supporter then return end
+	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		client:sendError(_("Es läuft aktuell kein Event!", client))
 	end
@@ -26,6 +28,32 @@ function AdminEventManager:onEventTrigger(func)
 	elseif func == "teleportPlayers" then
 		self.m_CurrentEvent:teleportPlayers(client)
 	end
+	self:sendData(client)
+end
+
+function AdminEventManager:allVehiclesTrigger(func)
+	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		client:sendError(_("Es läuft aktuell kein Event!", client))
+	end
+	if func == "delete" then
+		self.m_CurrentEvent:deleteEventVehicles(client)
+	elseif func == "freeze" then
+		self.m_CurrentEvent:freezeEventVehicles(client)
+	elseif func == "unfreeze" then
+		self.m_CurrentEvent:unfreezeEventVehicles(client)
+	end
+	self:sendData(client)
+end
+
+function AdminEventManager:createVehicles(amount, direction)
+	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		client:sendError(_("Es läuft aktuell kein Event!", client))
+	end
+
+	self.m_CurrentEvent:createVehiclesInRow(client, amount, direction)
+	self:sendData(client)
 end
 
 function AdminEventManager:joinEvent(player)
@@ -60,3 +88,4 @@ function AdminEventManager:sendData(player)
 		player:triggerEvent("adminEventReceiveData", false)
 	end
 end
+

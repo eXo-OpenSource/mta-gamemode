@@ -57,12 +57,6 @@ function Player:destructor()
 		delete(self.m_Inventory)
 	end
 
-	-- Collect all world items
---	local worldItems = WorldItem.getItemsByOwner(self)
---	for k, worldItem in pairs(worldItems) do
---		worldItem:collect(self)
---	end
-
 	-- Call the quit hook (to clean up various things before saving)
 
 	Player.ms_QuitHook:call(self)
@@ -71,7 +65,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() or self.m_RemoveWeaponsOnLogout then
+	if self:isFactionDuty() then
 		takeAllWeapons(self)
 	end
 
@@ -250,6 +244,7 @@ function Player:loadCharacterInfo()
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
+	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
 
@@ -280,18 +275,6 @@ function Player:initialiseBinds()
 	if self:getFaction() then
  		bindKey(self, "y", "down", "chatbox", "Fraktion")
  	end
-	--[[ Spieler werden sich folgende Binds lieber selbst zu recht legen
- 	if self:getCompany() then
- 		bindKey(self, "u", "down", "chatbox", "Unternehmen")
- 	end
- 	if self:getGroup() then
- 		bindKey(self, "3", "down", "chatbox", "Firma/Gang")
- 	end
-	--]]
-	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
-	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
-	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then if vehicle:hasKey(player) or player:getRank() >= RANK.Moderator then vehicle:toggleHandBrake(player) else player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player)) end end end)
-	--bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -337,6 +320,10 @@ function Player:save()
 			self.m_UniqueInterior = 0
 		end
 
+		if self:hasTemporaryStorage() then
+			self:restoreStorage()
+		end
+
 		local weapons = {}
 		for slot = 0, 11 do -- exclude satchel detonator (slot 12)
 			local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
@@ -344,20 +331,17 @@ function Player:save()
 				weapons[#weapons + 1] = {weapon, ammo}
 			end
 		end
+
 		local dimension = 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
-		local sSkin = getElementModel(self)
+		local sSkin = self:getModel()
 		if interior > 0 then dimension = self:getDimension() end
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
-
-		--if self:getInventory() then
-		--	self:getInventory():save()
-		--end
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 		DatabasePlayer.save(self)
 		outputServerLog("Saved Data for Player "..self:getName())
@@ -939,11 +923,11 @@ function Player:payDay()
 	--Outgoing
 	local temp_bank_money = self:getBankMoney() + income
 
-	outgoing_vehicles = #self:getVehicles()*75
+	outgoing_vehicles, vehiclesTaxAmount = self:calcVehiclesTax()
 	if outgoing_vehicles > 0 then
 		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
 		temp_bank_money = temp_bank_money - outgoing_vehicles
-		points_total = points_total + #self:getVehicles() * 2
+		points_total = points_total + vehiclesTaxAmount*2
 	end
 
 	if HouseManager:isInstantiated() then
@@ -1004,6 +988,18 @@ function Player:payDay()
 	-- Add Payday again
 	self:setNextPayday()
 	self:save()
+end
+
+function Player:calcVehiclesTax()
+	local tax = 0
+	local amount = 0
+	for key, vehicle in pairs(self:getVehicles()) do
+		if vehicle:getTax() > 0 then
+			tax = tax + vehicle:getTax()
+			amount = amount + 1
+		end
+	end
+	return tax, amount
 end
 
 function Player:addPaydayText(type, text, amount)
@@ -1493,4 +1489,53 @@ function Player:addClothes(texture, model, typeId)
 	addPedClothes(self, texture, model, typeId)
 
 	self.m_SkinData[typeId] = {texture = texture, model = model}
+end
+
+-- Temporary player storage
+local stats = {69, 70, 71, 72, 74, 76, 77, 78, 160, 229, 230}
+function Player:createStorage(storeSkills)
+	self.m_Storage = {
+		weapons = {},
+		stats = {},
+		health = self:getHealth(),
+		armor = self:getArmor(),
+	}
+
+	for slot = 0, 11 do
+		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+		if ammo > 0 then
+			self.m_Storage.weapons[weapon] = ammo
+		end
+	end
+
+	takeAllWeapons(self)
+
+	if storeSkills then
+		for _, stat in pairs(stats) do
+			self.m_Storage.stats[stat] = self:getStat(stat)
+			setPedStat(self, stat, 0)
+		end
+	end
+end
+
+function Player:restoreStorage()
+	if not self.m_Storage then return false end
+
+	takeAllWeapons(self)
+	for weapon, ammo in pairs(self.m_Storage.weapons) do
+		giveWeapon(self, weapon, ammo)
+	end
+
+	for stat, value in pairs(self.m_Storage.stats) do
+		setPedStat(self, stat, value)
+	end
+
+	self:setHealth(self.m_Storage.health)
+	self:setArmor(self.m_Storage.armor)
+
+	self.m_Storage = nil
+end
+
+function Player:hasTemporaryStorage()
+	return type(self.m_Storage) == "table"
 end

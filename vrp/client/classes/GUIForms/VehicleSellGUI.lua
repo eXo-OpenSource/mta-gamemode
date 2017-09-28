@@ -12,7 +12,7 @@ inherit(Singleton, VehicleSellGUI)
 function VehicleSellGUI:constructor( ts, veh )
 	local veh = getPedOccupiedVehicle(localPlayer)
 	local width, height =  (screenWidth*0.4)/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4
-	local model = getVehicleNameFromModel( getElementModel( veh ))
+	local model = veh:getName()
 	local date = ts[1].."/"..(ts[2]+1).."/"..ts[3]+1900
 	self.m_Veh = veh
 	GUIForm.constructor(self, (screenWidth*0.5 - width/2) /ASPECT_RATIO_MULTIPLIER , (screenHeight*0.5-height/2)/ASPECT_RATIO_MULTIPLIER, width, height)

@@ -628,3 +628,64 @@ end
 function Group:getHouses()
 	return self.m_Houses
 end
+
+function Group:calculateVehicleTax(data)
+	local sum = 0
+	local tax
+	for category, amount in pairs(data) do
+		tax = VehicleCategory:getSingleton():getCategoryTax(category)
+		if tax then
+			sum = sum + tax*amount
+		end
+	end
+	return sum
+end
+
+function Group:payDay(vehicleData)
+	local incoming = {}
+	local outgoing = {}
+	local interest = 0
+	local output = {}
+	if self.m_Money > 0 then
+		interest = self.m_Money > 300000 and math.floor(300000*0.0005) or math.floor(self.m_Money*0.0005)
+	end
+
+	outgoing["Fahrzeugsteuern"] = self:calculateVehicleTax(vehicleData)*-1
+	incoming["Zinsen"] = interest
+	table.insert(output, ("%s-Payday:"):format(self.m_Type == "Firma" and "Firmen" or self.m_Type))
+	--table.insert(output, "Einkommen:\n")
+	for name, amount in pairs(incoming) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+	--table.insert(output, "\nAusgaben:\n")
+	for name, amount in pairs(outgoing) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+
+	local sum, inc, out = 0, 0, 0
+	for name, amount in pairs(incoming) do
+		inc = inc+amount
+	end
+	for name, amount in pairs(outgoing) do
+		out = out+amount
+	end
+	sum = inc+out
+	table.insert(output, ("Gesamt: %d$"):format(sum))
+	if sum > 0 then
+		self:giveMoney(sum, "Payday")
+	elseif sum < 0 then
+		self:takeMoney(sum, "Payday")
+	end
+	self:sendShortMessage(table.concat(output, "\n"))
+	if self:getMoney() < 0 then
+		if self.m_VehiclesSpawned then
+			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
+			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
+				mechanic:respawnVehicle(vehicle)
+			end
+		else
+			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())
+		end
+		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
+	end
+end

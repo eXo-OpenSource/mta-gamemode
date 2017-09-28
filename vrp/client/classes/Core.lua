@@ -150,7 +150,7 @@ function Core:ready()
 	GroupRob:new()
 	DrivingSchool:new()
 	Help:new()
-	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
+	ClientStatistics:new()
 end
 
 function Core:afterLogin()
@@ -197,6 +197,7 @@ function Core:afterLogin()
 
 	PlantGUI.load()
 	Fishing.load()
+	TurtleRace.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()

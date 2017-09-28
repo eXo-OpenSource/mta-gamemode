@@ -22,7 +22,7 @@ function GlobalTimer:execute()
 			if not eventData["weekday"] or eventData["weekday"] == weekday then
 				if not eventData["hour"] or eventData["hour"] == hour then
 					if minute == eventData["minute"] then
-						eventData["callback"]()
+						eventData["callback"](unpack(eventData["args"]))
 						eventData["active"] = false
 						setTimer(function()
 							eventData["active"] = true
@@ -34,7 +34,7 @@ function GlobalTimer:execute()
 	end
 end
 
-function GlobalTimer:registerEvent(callback, name, weekday, hour, minute)
+function GlobalTimer:registerEvent(callback, name, weekday, hour, minute, ...)
 	local id = #self.m_Events+1
 	self.m_Events[id] = {
 		["name"] = name,
@@ -43,5 +43,6 @@ function GlobalTimer:registerEvent(callback, name, weekday, hour, minute)
 		["hour"] = hour,
 		["minute"] = minute,
 		["active"] = true,
+		["args"] = {...},
 	}
 end

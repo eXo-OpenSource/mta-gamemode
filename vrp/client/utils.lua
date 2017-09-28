@@ -16,10 +16,14 @@ addedEventHandlers = {
 	["onClientPreRender"] 	= {},
 	["onClientHUDRender"] 	= {},
 }
---[[function addEventHandler(eventName, attached, func, prop, priority)
+addedEventFuncUID = {}
+
+function addEventHandler(eventName, attached, func, prop, priority)
 	if addedEventHandlers[eventName] then
 		local info = debug.getinfo(2, "Sl")
-		addedEventHandlers[eventName][func] = {info.short_src, info.currentline}
+		local UID = getTickCount()+math.random(100, 200)
+		addedEventHandlers[eventName][func] = {UID, info.short_src, info.currentline}
+		addedEventFuncUID[UID] = func
 	end
 	return _addEventHandler(eventName, attached, func, prop, priority)
 end
@@ -29,7 +33,7 @@ function removeEventHandler(eventName, attached, func)
 		if addedEventHandlers[eventName][func] then addedEventHandlers[eventName][func] = nil end
 	end
 	return _removeEventHandler(eventName, attached, func)
-end]]
+end
 
 
 function updateCameraMatrix(x, y, z, lx, ly, lz, r, fov)
@@ -60,6 +64,28 @@ function textHeight(text, lineWidth, font, size)
 		end
 	end
 	return height
+end
+
+local offset = 0
+local outMargin = 0
+function grid(type, pos)
+	if not pos then pos = 1 end
+	if type == "offset" then
+		offset = pos
+		return true
+	elseif type == "outMargin" then
+		outMargin = pos
+		return true
+	elseif type == "reset" then -- reset all previous settings
+		offset = 0
+		outMargin = 0
+		return true
+	elseif type == "x" then
+		return 30*(pos - 1) + 10*pos + outMargin
+	elseif type == "y" then
+		return offset + 30*(pos - 1) + 10*pos + outMargin
+	end
+	return 30*pos + 10*(pos - 1)
 end
 
 --[[local text = "BlaBlaBlaBla\nfffasdfasdfasdf\nasdf"

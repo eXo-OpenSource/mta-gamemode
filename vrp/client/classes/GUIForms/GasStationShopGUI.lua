@@ -32,18 +32,20 @@ function GasStationShopGUI:constructor(callback, name)
 
 	if GasStation.PendingTransaction and GasStation.PendingTransaction.station:getData("Name") == name then
 		local vehicle = GasStation.PendingTransaction.vehicle
-		local fuel = math.round(GasStation.PendingTransaction.fuel)
+		local fuel = GasStation.PendingTransaction.fuel
 		local station = GasStation.PendingTransaction.station
+		local opticalFuel = GasStation.PendingTransaction.opticalFuel
+		local price = GasStation.PendingTransaction.price
 
-		self.m_Fuel:setText(fuel .. " L")
-		self.m_Price:setText(fuel * FUEL_PRICE_MULTIPLICATOR .. " $")
+		self.m_Fuel:setText(GasStation.PendingTransaction.opticalFuel .. " L")
+		self.m_Price:setText(GasStation.PendingTransaction.price .. " $")
 
 		self.m_Confirm = GUIButton:new(5, 240, 230, 25, "Bezahlen", tabFuelStation):setBackgroundColor(Color.Green)
 		self.m_Cancel = GUIButton:new(240, 240, 230, 25, "Abbrechen", tabFuelStation):setBackgroundColor(Color.Red)
 
 		self.m_Confirm.onLeftClick =
 			function()
-				triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station)
+				triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station, opticalFuel, price)
 			end
 
 		self.m_Cancel.onLeftClick =

@@ -17,10 +17,10 @@ function ShootingRanchTraining:constructor(player, level)
 
 		local data = ShootingRanch.Trainings[level]
 
-		takeAllWeapons(player)
+		player:createStorage()
+
 		giveWeapon(player, data["Weapon"], data["Ammo"], true)
 		player:triggerEvent("disableDamage", true)
-
 		player:takeMoney(WEAPON_LEVEL[level]["costs"], "Schießstand")
 
 		self.m_Player = player
@@ -31,10 +31,7 @@ function ShootingRanchTraining:constructor(player, level)
 		self.m_StartMuni = data["Ammo"]
 		self.m_Hits = 0
 
-		player.m_RemoveWeaponsOnLogout = true
-
 		setElementData(player, "ShootingRanch:Hits", 0)
-
 
 		toggleAllControls(player,false, true, false)
 		toggleControl(player,"fire",true)
@@ -56,10 +53,9 @@ function ShootingRanchTraining:destructor()
 
 	setElementDimension(self.m_Player,0)
 	self.m_Player:setPosition(1561.429, -1675.023, 16.195)
+	self.m_Player:restoreStorage()
 	removeElementData(self.m_Player, "ShootingRanch:Data")
 	toggleAllControls(self.m_Player, true, true, false)
-	takeAllWeapons(self.m_Player)
-	self.m_Player.m_RemoveWeaponsOnLogout = nil
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	self.m_Player:triggerEvent("disableDamage", false)
 end

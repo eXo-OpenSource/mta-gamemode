@@ -18,18 +18,22 @@ function GUICheckbox:constructor(posX, posY, width, height, text, parent)
 	GUIFontContainer.constructor(self, text, 1.5)
 	GUIColorable.constructor(self)
 
+	-- Create a dummy gui element for animation
+	self.m_CheckedButton = DxRectangle:new(0, 0, 0, 0, Color.Clear, self)
+
 	self.m_Checked = false
 	self.m_Enabled = true
 end
 
 function GUICheckbox:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox.png", 0, 0, 0, self:getColor())
-	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true, false, false, true)
 
-	if self.m_Checked then
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox_checked.png", 0, 0, 0, self:getColor())
-	end
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, self.m_Enabled and Color.Primary or Color.PrimaryNoClick)
+
+	local w, h = self.m_CheckedButton:getSize()
+	dxDrawRectangle(self.m_AbsoluteX + self.m_Height/2 - w/2, self.m_AbsoluteY + self.m_Height/2 - h/2, w, h, self.m_Enabled and Color.Accent or Color.LightGrey)
+
+	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true, false, false, true)
 	dxSetBlendMode("blend")
 end
 
@@ -50,6 +54,10 @@ end
 function GUICheckbox:setChecked(checked)
 	checkArgs("GUICheckbox:setChecked", "boolean")
 	self.m_Checked = checked
+
+	local size = self.m_Checked and self.m_Height - 4 or 0
+	Animation.Size:new(self.m_CheckedButton, 150, size, size, "OutQuad")
+
 	self:anyChange()
 	return self
 end

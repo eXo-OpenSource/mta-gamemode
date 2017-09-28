@@ -336,9 +336,9 @@ function PlayerManager:startPaydayDebug(player)
 end
 
 function PlayerManager:breakingNews(text, ...)
-	for k, v in pairs(getElementsByType("player")) do
+	for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		local textFinish = _(text, v, ...)
-		v:triggerEvent("breakingNews", textFinish)
+		v:triggerEvent("breakingNews", textFinish, "Breaking News")
 	end
 end
 
@@ -422,7 +422,6 @@ function PlayerManager:playerCommand(cmd)
 end
 
 function PlayerManager:playerQuit()
-	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
 	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
 
@@ -565,7 +564,7 @@ function PlayerManager:playerChat(message, messageType)
 	local lastMsg, msgTimeSent = source:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
 		cancelEvent()
-		return 
+		return
 	end
 	source:setLastChatMessage(message)
 
@@ -631,10 +630,10 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	
+
 	local lastMsg, msgTimeSent = source:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
-		return 
+		return
 	end
 	source:setLastChatMessage(text)
 
@@ -666,7 +665,7 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 
 	local lastMsg, msgTimeSent = source:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
-		return 
+		return
 	end
 	source:setLastChatMessage(text)
 
@@ -689,10 +688,10 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 
 	local lastMsg, msgTimeSent = source:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
-		return 
+		return
 	end
 	source:setLastChatMessage(text)
-	
+
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -710,7 +709,7 @@ function PlayerManager:Command_playerShrug(source, cmd)
 	local text = "zuckt mit den Schultern ¯\\_(ツ)_/¯"
 	local lastMsg, msgTimeSent = source:getLastChatMessage()
 	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
-		return 
+		return
 	end
 	source:setLastChatMessage(text)
 	source:meChat(true, text)
@@ -854,6 +853,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client:isOnFire() then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
@@ -920,10 +920,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		return
 	end
 
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
-		return
-	end
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
@@ -971,10 +968,9 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
-		return
-	end
+
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
+
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then

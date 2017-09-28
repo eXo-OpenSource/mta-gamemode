@@ -110,12 +110,15 @@ ADMIN_RANK_PERMISSION = {
 	["showVehicles"] = RANK.Supporter,
 	["showGroupVehicles"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
+	["offlinePrison"] = RANK.Supporter,
 	["spect"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
+	["offlineWarn"] = RANK.Supporter,
 	["kick"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
+	["offlineUnPrison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,
@@ -124,6 +127,7 @@ ADMIN_RANK_PERMISSION = {
 	["clearChat"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
+	["addOfflineWarn"] = RANK.Supporter,
 	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
@@ -132,7 +136,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
-	["eventMenu"] = RANK.Moderator,
+	["event"] = RANK.Moderator,
 	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
@@ -140,7 +144,9 @@ ADMIN_RANK_PERMISSION = {
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
 	["removeWarn"] = RANK.Administrator,
+	["removeOfflineWarn"] = RANK.Administrator,
 	["pedMenu"] = RANK.Administrator,
+	["fireMenu"] = RANK.Administrator,
 	["checkOverlappingVehicles"] = RANK.Administrator,
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
@@ -772,6 +778,20 @@ FactionStaticId = {
 	VATOS = 10
 }
 
+FUEL_PRICE = { --price per liter
+	["petrol"] = 2.3,
+	["petrol_plus"] = 3.4,
+	["diesel"] = 1.7,
+	["jetfuel"] = 4.6,
+    
+}
+FUEL_NAME = { --display name
+	["petrol"] = "Super",
+	["petrol_plus"] = "Super Plus",
+	["diesel"] = "Diesel",
+	["jetfuel"] = "Kerosin",
+    
+}
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
 SERVICE_FUEL_PRICE_MULTIPLICATOR = 5

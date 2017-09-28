@@ -14,14 +14,14 @@ function VehicleTakeGUI:constructor()
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.8, self.m_Window)
 		:addColumn("Fahrzeugname", 1)
 
-	self.m_TakeButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Freikaufen (500$)", true, self.m_Window)
+	self.m_TakeButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Freikaufen (500$)", self.m_Window):setBarEnabled(true)
 	self.m_TakeButton.onLeftClick = bind(self.TakeButton_Click, self)
 end
 
 function VehicleTakeGUI:setVehicles(vehicles)
 	self.m_Grid:clear()
 	for k, vehicle in pairs(vehicles) do
-		local name = type(vehicle) == "userdata" and vehicle:getName() or getVehicleNameFromModel(vehicle)
+		local name = type(vehicle) == "userdata" and vehicle:getName() or VehicleCategory:getSingleton():getModelName(vehicle)
 		local item = self.m_Grid:addItem(name)
 		item.Vehicle = vehicle
 		item.onLeftDoubleClick = bind(self.TakeButton_Click, self)

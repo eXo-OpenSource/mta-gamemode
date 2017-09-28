@@ -201,6 +201,7 @@ HelpTextTitles = {
 		SideSwipe = "Minigame: SideSwipe";
 		SniperGame = "Minigame: Sniper Game";
 		TCars = "Minigame: 2Cars";
+		Roulette = "Casino: Roulette";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -462,6 +463,10 @@ HelpTexts = {
 		TCars = [[
 			Steuere beide Autos mit den Tasten 'a' und 'd' oder Pfeilsten links, rechts. Weiche den Kästchen aus und sammel jeden Punkt.
 		]];
+		Roulette = [[
+			Das Ziel ist wie bei jedem Glücksspiel mit einer „Wette“ Geld zu gewinnen. Man setzt einen bestimmten Betrag
+			ein Feld und vertraut auf sein Glück!
+		]];
 
 	};
 	Actions = {
@@ -666,3 +671,5 @@ TEXTURE_SYSTEM_HELP =
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}
+
+CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
