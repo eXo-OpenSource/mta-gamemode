@@ -439,21 +439,9 @@ function getPointFromDistanceRotation3D(x,y,z,rx,ry,rz,distance)
 end
 
 -- returns 4 integers from a value created by tocolor (aka. inverse tocolor)
+-- https://gist.github.com/StiviiK/b7efbfb34122c44ce60db53f10a7197d
 function fromcolor(color)
-	local str = string.format("%x", color)
-	local value = {}
-	if #str % 2 ~= 0 then
-		str = "0"..str
-	end
-
-	for word in str:gmatch("%x%x") do
-		value[#value+1] = tonumber("0x"..word)
-	end
-	if value[4] then
-		value[5] = value[1]
-		table.remove(value, 1)
-	end
-	return unpack(value)
+  return bitExtract(color, 16, 8), bitExtract(color, 8, 8), bitExtract(color, 0, 8), bitExtract(color, 24, 8)
 end
 
 function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
