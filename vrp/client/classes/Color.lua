@@ -53,18 +53,15 @@ Color = {
 }
 
 function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
-	p = math.clamp(0, p, 1)
+	local p = math.clamp(0, p, 1)
 	if p == 0 then return Color.Clear end
 	if p == 1 then return color end
-	local a, r, g, b = getBytesInInt32(color)
-	return tocolor(r, g, b, a * p)
+	return bitReplace(color, bitExtract(color, 24, 8) * p, 24, 8)
 end
 
 function Color.changeAlpha(color, alpha)
-	p = math.clamp(0, alpha, 255)
-	if p == 0 then return Color.Clear end
-	local a, r, g, b = getBytesInInt32(color)
-	return tocolor(r, g, b, alpha)
+	if math.clamp(0, alpha, 255) == 0 then return Color.Clear end
+	return bitReplace(color, alpha, 24, 8)
 end
 
 Color.calculateColorScheme = function()
