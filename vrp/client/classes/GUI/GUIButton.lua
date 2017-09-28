@@ -96,10 +96,8 @@ end
 
 function GUIButton:setAlpha(alpha)
 	self.m_Alpha = alpha
-	local r,g,b,a = fromcolor(self.m_Color)
-	self.m_Color = tocolor(r, g, b, alpha)
-	local r1,g1,b1,a1 = fromcolor(self.m_BackgroundNormalColor)
-	self.m_BackgroundColor = tocolor(r1, g1, b1, alpha)
+	self.m_Color = bitReplace(self.m_Color, alpha, 24, 8)
+	self.m_BackgroundColor = bitReplace(self.m_BackgroundColor, alpha, 24, 8)
 
 	self:anyChange()
 	return self

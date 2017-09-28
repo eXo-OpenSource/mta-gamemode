@@ -15,7 +15,7 @@ function GUIProgressBar:constructor(posX, posY, width, height, parent)
 	self.m_Progress = 0
 	self.m_ForegroundColor = Color.Accent
 	self.m_BackgroundColor = Color.PrimaryNoClick
-	
+
 	-- Does not do anything, only marks the progress bar as colorable
 	GUIColorable.constructor(self)
 end
@@ -64,10 +64,8 @@ end
 
 function GUIProgressBar:setAlpha(alpha)
 	self.m_Alpha = alpha
-	local r,g,b,a = fromcolor(self.m_ForegroundColor)
-	self.m_ForegroundColor = tocolor(r, g, b, alpha)
-	local r,g,b,a = fromcolor(self.m_BackgroundColor)
-	self.m_BackgroundColor = tocolor(r, g, b, alpha)
+	self.m_ForegroundColor = bitReplace(self.m_ForegroundColor, alpha, 24, 8)
+	self.m_BackgroundColor = bitReplace(self.m_BackgroundColor, alpha, 24, 8)
 
 	return self
 end
