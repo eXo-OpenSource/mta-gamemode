@@ -403,6 +403,9 @@ end
 
 function Vehicle:setEngineState(state)
 	setVehicleEngineState(self, state)
+
+	VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
+
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false

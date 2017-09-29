@@ -75,12 +75,13 @@ function GasStation:nonInteriorRequest()
 
 	local vehicle = GasStation.PendingTransaction.vehicle
 	local fuel = GasStation.PendingTransaction.fuel
+	local opticalFuel = GasStation.PendingTransaction.opticalFuel
+	local price = GasStation.PendingTransaction.price
 	local station = GasStation.PendingTransaction.station
-	local price = math.floor(fuel * (station:getData("isServiceStation") and SERVICE_FUEL_PRICE_MULTIPLICATOR or FUEL_PRICE_MULTIPLICATOR))
 
-	QuestionBox:new(("Möchtest du %s Liter für %s$ auftanken?"):format(fuel, price),
+	QuestionBox:new(("Möchtest du %s Liter für %s$ auftanken?"):format(opticalFuel, price),
 		function()
-			triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station)
+			triggerServerEvent("gasStationConfirmTransaction", localPlayer, vehicle, fuel, station, opticalFuel, price)
 		end,
 		function()
 			GasStation.PendingTransaction = nil

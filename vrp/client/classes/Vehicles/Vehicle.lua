@@ -196,24 +196,35 @@ local counter = 0
 setTimer(
 	function()
 		local vehicle = localPlayer:getOccupiedVehicle()
-		if vehicle then
+		if vehicle and localPlayer.vehicleSeat == 0 then
 			if not vehicle.m_LastPosition then
 				vehicle.m_LastPosition = vehicle:getPosition()
 			end
 
 			local position = vehicle:getPosition()
-			vehicle.m_DiffMileage = vehicle.m_DiffMileage + (position - vehicle.m_LastPosition).length
-			vehicle.m_LastPosition = position
 
+			local posDelta = (position - vehicle.m_LastPosition).length
+			vehicle.m_LastPosition = position
+			if posDelta > 100 then return end -- over 100m in 1 sec = teleport (most likely)
+
+			local deltaTimeH =  1/60/60 -- 1sec in h
+			local kmh = (posDelta/1000)/deltaTimeH
+			if kmh > vehicle:getHandling()["maxVelocity"] then -- diff is higher than diff with max velocity of this vehicle, so crop it
+				kmh = vehicle:getHandling()["maxVelocity"]
+				posDelta = kmh*deltaTimeH*1000
+			end
+
+			vehicle.m_DiffMileage = vehicle.m_DiffMileage + posDelta
+			
 			-- Send current mileage every minute to the server
 			counter = counter + 1
 			if counter >= 60 or vehicle:getData("EPT_Taxi") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
+					vehicle.m_DiffMileage = 0
 				end
 
 				counter = 0
-				vehicle.m_DiffMileage = 0
 			end
 		end
 	end,

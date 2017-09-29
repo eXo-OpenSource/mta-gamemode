@@ -71,9 +71,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 	local station = GasStation.Map[station]
 	if station then
 		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
-				outputDebug(fuel)
 			local fuel = vehicle:getFuel() + fuel > 100 and 100 - vehicle:getFuel() or fuel
-			outputDebug(fuel)
 			if fuel == 0 then
 				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
 				return
@@ -341,7 +339,7 @@ GAS_STATIONS = {
 		},
 		accessible = {0, 0},
 		nonInterior = true,
-		fuelTypes = {"petrol", "jetfuel"},
+		fuelTypes = {"petrol_plus", "jetfuel"},
 	},
 	{
 		name = "Tankstelle Ocean Docks",

@@ -42,7 +42,7 @@ function VehicleCategory:getCategoryFuelTankSize(category)
     return self.m_CategoryData[category].fuelTankSize
 end
 
-function VehicleCategory:getCategoryFuelConsumption(category)
+function VehicleCategory:getCategoryFuelConsumptionMultiplicator(category)
     if not self.m_CategoryData[category] then return false end
     return self.m_CategoryData[category].fuelConsumption
 end

@@ -14,6 +14,7 @@ function VehicleManager:constructor()
 	self.m_CompanyVehicles = {}
 	self.m_GroupVehicles = {}
 	self.m_FactionVehicles = {}
+	self.m_VehiclesWithEngineOn = {}
 	self:setSpeedLimits()
 
 	-- Add events
@@ -115,7 +116,7 @@ function VehicleManager:constructor()
 			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
-
+				source.m_LastMileageCheck = getTickCount() -- this is probably close to the enter time at which the client starts measuring the mileage, only for anti-cheat
 				setVehicleEngineState(source, source:getEngineState())
 			end
 		end
@@ -490,15 +491,22 @@ function VehicleManager:loadGroupVehicles(group)
 	end
 end
 
-function VehicleManager:updateFuelOfPermanentVehicles()
-	for k, player in pairs(getElementsByType("player")) do
-		local vehicle = getPedOccupiedVehicle(player)
-		if vehicle and vehicle.getFuel and vehicle:getEngineState() then
-			local fuelConsumption = 0.5
-			if vehicle.getSpeed and vehicle:getSpeed()/100 > fuelConsumption then
-				fuelConsumption = math.abs(vehicle:getSpeed()/100)
+function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
+	for veh, mileage in pairs(self.m_VehiclesWithEngineOn) do --table gets managed on engine switch in Vehicle class
+		if veh and isElement(veh) and veh.getEngineState and veh.getFuel and veh.getSpeed and veh:getEngineState() then
+			local curVel = (veh:getMileage()-mileage)/1000*60 --60 because we want km/h from km/min
+			if curVel == 0 then -- fallback on updating with speed if mileage did not change
+				curVel = veh:getSpeed()
 			end
-			vehicle:setFuel(vehicle:getFuel() - fuelConsumption)
+			local mass = veh:getHandling()["mass"]
+			
+			local cons = ((curVel/50 * veh:getFuelConsumptionMultiplicator()) + mass/5000) --basic consumption based on speed and mass (in liter)
+
+			veh:setFuel(veh:getFuel() - cons/veh:getFuelTankSize()*100)
+			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass) 
+			self.m_VehiclesWithEngineOn[veh] = veh:getMileage()
+		else --garbage collection
+			self.m_VehiclesWithEngineOn[veh] = nil
 		end
 	end
 end
@@ -1090,6 +1098,7 @@ function VehicleManager:Event_vehicleEmpty()
 end
 
 function VehicleManager:Event_vehicleSyncMileage(diff)
+	local diff = diff
 	if diff < -0.001 then
 		AntiCheat:getSingleton():report(client, "Sent invalid mileage", CheatSeverity.Middle)
 		return
@@ -1098,7 +1107,15 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	local vehicle = client:getOccupiedVehicle()
 	if vehicle then
 		if vehicle.setMileage and vehicle.setMileage then
+			local deltaTimeMS = (getTickCount() - (vehicle.m_LastMileageCheck or 0))
+			local deltaTimeH =  deltaTimeMS/1000/60/60
+			local kmh = (diff/1000)/deltaTimeH
+			if kmh > vehicle:getHandling()["maxVelocity"] then -- diff is higher than diff with max velocity of this vehicle, so crop it
+				kmh = vehicle:getHandling()["maxVelocity"]
+				diff = kmh*deltaTimeH*1000
+			end
 			vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+			vehicle.m_LastMileageCheck = getTickCount()
 			client:increaseStatistics("Driven", diff)
 		end
 	end

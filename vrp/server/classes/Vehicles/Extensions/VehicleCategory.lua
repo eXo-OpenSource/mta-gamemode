@@ -17,7 +17,7 @@ function VehicleCategory:constructor()
 			tax = row.Tax,
             fuelType = row.FuelType,
             fuelTankSize = row.FuelTankSize,
-            fuelConsumption = row.FuelConsumptionPerKM,
+            fuelConsumption = row.FuelConsumptionMultiplicator,
 		}
 	end
     local result = sql:queryFetch("SELECT * FROM ??_vehicle_model_data", sql:getPrefix())
@@ -53,7 +53,7 @@ function VehicleCategory:getCategoryFuelTankSize(category)
     return self.m_CategoryData[category].fuelTankSize
 end
 
-function VehicleCategory:getCategoryFuelConsumption(category)
+function VehicleCategory:getCategoryFuelConsumptionMultiplicator(category)
     if not self.m_CategoryData[category] then return false end
     return self.m_CategoryData[category].fuelConsumption
 end
