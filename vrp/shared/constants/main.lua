@@ -99,64 +99,83 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
-	["playerHistory"] = RANK.Supporter,
-	["eventGangwarMenu"] = RANK.Administrator,
-	["direction"] = RANK.Supporter, -- Up Down Left Right
-	["mark"] = RANK.Supporter, -- also gotomark
+
+	--player punish
 	["freeze"] = RANK.Supporter,
-	["eventMoneyDeposit"] = RANK.Supporter,
-	["gethere"] = RANK.Clanmember,
-	["goto"] = RANK.Clanmember,
-	["showVehicles"] = RANK.Supporter,
-	["showGroupVehicles"] = RANK.Supporter,
+	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["offlinePrison"] = RANK.Supporter,
-	["spect"] = RANK.Supporter,
-	["warn"] = RANK.Supporter,
-	["offlineWarn"] = RANK.Supporter,
-	["kick"] = RANK.Supporter,
-	["rkick"] = RANK.Supporter,
-	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["offlineUnPrison"] = RANK.Moderator,
-	["supportMode"] = RANK.Supporter,
-	["smode"] = RANK.Supporter,
-	["respawnFaction"] = RANK.Supporter,
-	["respawnCompany"] = RANK.Supporter,
-	["respawnRadius"] = RANK.Supporter,
-	["clearChat"] = RANK.Supporter,
-	["clearchat"] = RANK.Supporter,
-	["addWarn"] = RANK.Supporter,
-	["addOfflineWarn"] = RANK.Supporter,
-	["tp"] = RANK.Supporter,
+	["warn"] = RANK.Supporter,
+	["offlineWarn"] = RANK.Supporter,
+	["removeWarn"] = RANK.Administrator,
+	["removeOfflineWarn"] = RANK.Administrator,
 	["timeban"] = RANK.Supporter,
-	["adminAnnounce"] = RANK.Supporter,
-	["gotocords"] = RANK.Supporter,
 	["permaban"] = RANK.Supporter,
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
-	["eventMoneyWithdraw"] = RANK.Moderator,
-	["event"] = RANK.Moderator,
-	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
+	
+	--admin general 
+	["event"] = RANK.Moderator,
+	["eventMoneyWithdraw"] = RANK.Moderator,
+	["eventMoneyDeposit"] = RANK.Supporter,
+	["vehicleTexture"] = RANK.Moderator,
+	["spect"] = RANK.Supporter,
+	["smode"] = RANK.Supporter,
+	["adminAnnounce"] = RANK.Supporter,
+	["clearchat"] = RANK.Supporter,
+	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
+	
+	--group management
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
-	["removeWarn"] = RANK.Administrator,
-	["removeOfflineWarn"] = RANK.Administrator,
-	["pedMenu"] = RANK.Administrator,
-	["fireMenu"] = RANK.Administrator,
+	["resetAction"] = RANK.Moderator,
+	["playerHistory"] = RANK.Supporter,
+	["respawnFaction"] = RANK.Supporter, -- respawn whole faction
+	["respawnCompany"] = RANK.Supporter, -- respawn whole company
+	
+	--teleport
+	["direction"] = RANK.Supporter, -- Up Down Left Right
+	["mark"] = RANK.Supporter, -- also gotomark
+	["gethere"] = RANK.Clanmember,
+	["goto"] = RANK.Clanmember,
+	["tp"] = RANK.Supporter,
+	["gotocords"] = RANK.Supporter,
+
+	--vehicle interaction
 	["checkOverlappingVehicles"] = RANK.Administrator,
+	["respawnRadius"] = RANK.Supporter,
+	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
+	["respawnVehicle"] = RANK.Supporter, -- respawn per click
+	["parkVehicle"] = RANK.Supporter, -- set spawn position
+	["repairVehicle"] = RANK.Supporter, -- repair per click
+	["despawnVehicle"] = RANK.Supporter, -- despawn
+	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
+	["looseVehicleHandbrake"] = RANK.Supporter,
+	
+	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
-	["moveWorldItem"] = RANK.Moderator,
-	["deleteWorldItem"] = RANK.Moderator,
-	["showWorldItemInformation"] = RANK.Supporter,
-	["editHouse"] = RANK.Administrator,
 	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
 	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
-	["supermanFly"] = RANK.Moderator -- flying supporter
+
+	--World Items (e.g. Barricade)
+	["moveWorldItem"] 				= RANK.Supporter,
+	["deleteWorldItem"] 			= RANK.Supporter,
+	["showWorldItemInformation"] 	= RANK.Supporter,
+
+	--server edit tools
+	["editHouse"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
+	["fireMenu"] = RANK.Administrator,
+	["eventGangwarMenu"] = RANK.Administrator,
+
+	--
 }
 
 GroupRank = {

@@ -523,7 +523,7 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
+		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
@@ -555,7 +555,7 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= RANK.Moderator then
+	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
@@ -722,13 +722,14 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 end
 
 function VehicleManager:Event_vehicleRepair()
-	if client:getRank() < RANK.Moderator then
+	if client:getRank() < ADMIN_RANK_PERMISSION["repairVehicle"] then
 		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
 		return
 	end
-	local ownerName = source.controller == client and "sein" or (source.controller and source.controller:getName().."'s") or "ein"
-	StatisticsLogger:getSingleton():addAdminAction(player, "Vehicle-Repair", ownerName)
-	Admin:getSingleton():sendShortMessage(_("%s hat %s Fahrzeug repariert", client, client:getName(), ownerName))
+
+	StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Repair", getElementData(source, "OwnerName") or "Unknown")
+	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
+
 	source:fix()
 end
 
@@ -751,8 +752,9 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, FactionVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn(true)
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getFaction()) or source:getFaction():getId() ~= client:getFaction():getId() then
@@ -765,21 +767,24 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, CompanyVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn( true )
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
 				return
 			end
-			source:respawn( )
+			source:respawn()
+			return
 		end
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if (client:getRank() >= RANK.Moderator) then
+		if (client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"]) then
 			source:respawn(true)
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
@@ -806,12 +811,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
+	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
 
-	if source:isBroken() and client:getRank() < RANK.Supporter then
+	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
@@ -873,12 +878,12 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
+ 	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
 	end
 
-	if source:isBroken() and client:getRank() < RANK.Supporter then
+	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
@@ -891,6 +896,8 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	if source:getPositionType() == VehiclePositionType.World then
  		if source:getOwner() == client:getId() then
 			client:takeBankMoney(100, "Fahrzeug Respawn")
+		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 		end
 		source:respawnOnSpawnPosition()
  	else
@@ -906,7 +913,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 		return
 	end
 
-	if client:getRank() < RANK.Moderator then
+	if client:getRank() < ADMIN_RANK_PERMISSION["deleteVehicle"] then
 		-- Todo: Report cheat attempt
 		return
 	end
@@ -928,13 +935,12 @@ function VehicleManager:Event_vehicleDelete(reason)
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 					end
 				end
-			else
-				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
 
 		-- Todo Add Log
 		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel(), reason)
+		Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s gelöscht (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown", reason))
 		source:purge()
 	else
 		destroyElement(source)

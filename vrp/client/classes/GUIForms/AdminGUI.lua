@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
+AdminGUI.playerFunctions = {"gethere", "goto", "rkick", "prison", "unprison", "freeze", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "showGroupVehicles", "unban", "spect", "nickchange"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -41,11 +41,11 @@ function AdminGUI:constructor(money)
 	self.m_RespawnRadius:setText("50")
 
 	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
-	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("smode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
-	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", self.onGeneralButtonClick, 10, 230, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("clearchat", "Chat löschen / Werbung ausblenden", self.onGeneralButtonClick, 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 270, 250, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Blue, tabAllgemein)
 
@@ -108,7 +108,7 @@ function AdminGUI:constructor(money)
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
 	GUILabel:new(220, 130, 160, 30, _"Strafen:", tabSpieler)
-	self:addAdminButton("kick", "kicken", self.onPlayerButtonClick, 220, 170, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("rkick", "kicken", self.onPlayerButtonClick, 220, 170, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("prison", "ins Prison", self.onPlayerButtonClick, 220, 210, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("unprison", "aus Prison entlassen", self.onPlayerButtonClick, 220, 250, 160, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("timeban", "Timeban", self.onPlayerButtonClick, 220, 290, 160, 30, Color.Red, tabSpieler)
@@ -435,7 +435,7 @@ function AdminGUI:onPlayerButtonClick(func)
 		self:close()
 	elseif func == "gethere" or func == "goto" or func == "spect" or func == "freeze" then
 		triggerServerEvent("adminPlayerFunction", root, func, self.m_SelectedPlayer)
-	elseif func == "kick" then
+	elseif func == "rkick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self.m_SelectedPlayer:getName()),
 				function (reason)
@@ -537,7 +537,7 @@ function AdminGUI:onGeneralButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
-	elseif func == "supportMode" or func == "clearChat" or func == "resetAction" then
+	elseif func == "smode" or func == "clearchat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
@@ -749,12 +749,12 @@ function WarnManagement:addWarn()
 		function (reason, duration)
 			if reason and duration then
 				if self.m_Type == "online" then
-					triggerServerEvent("adminPlayerFunction", root, "addWarn", self.m_Player, reason, duration)
+					triggerServerEvent("adminPlayerFunction", root, "warn", self.m_Player, reason, duration)
 					setTimer(function()
 						self:loadWarns()
 					end	,500, 1)
 				elseif self.m_Type == "offline" then
-					triggerServerEvent("adminOfflinePlayerFunction", root, "addOfflineWarn", self.m_Player, reason, duration)
+					triggerServerEvent("adminOfflinePlayerFunction", root, "offlineWarn", self.m_Player, reason, duration)
 					triggerServerEvent("adminGetOfflineWarns", localPlayer, self.m_Player)
 				end
 			else

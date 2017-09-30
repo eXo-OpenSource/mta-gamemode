@@ -409,9 +409,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		return
 	end
 
-	if func == "supportMode" or func == "smode" then
+	if func == "smode" then
 		self:toggleSupportMode(admin)
-	elseif func == "clearchat" or func == "clearChat" then
+	elseif func == "clearchat" then
 		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
 		for index, player in pairs(Element.getAllByType("player")) do
 			for i=0, 2100 do
@@ -520,7 +520,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
 			target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
 		end
-	elseif func == "kick" or func == "rkick" then
+	elseif func == "rkick" then
 		self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
 		outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
 		outputChatBox("Grund: "..reason,root, 200, 0, 0)
@@ -565,7 +565,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
 		outputChatBox("Grund: "..reason,root, 200, 0, 0)
 		Ban.addBan(target, admin, reason)
-	elseif func == "addWarn" or func == "warn" then
+	elseif func == "warn" then
 		if not target then return end
 		if not duration then return end
 		if not reason then return end
@@ -732,7 +732,7 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 				end
 			end
 		)()
-	elseif func == "addOfflineWarn" then
+	elseif func == "offlineWarn" then
 		if not duration then return end
 		if not reason then return end
 		duration = tonumber(duration)
@@ -1270,7 +1270,7 @@ function Admin:getVehFromId(player, cmd, vehId)
 end
 
 function Admin:Event_vehicleDespawn(reason)
-    if client:getRank() < RANK.Clanmember then
+    if client:getRank() < ADMIN_RANK_PERMISSION["despawnVehicle"] then
 		-- Todo: Report cheat attempt
 		return
 	end
@@ -1287,7 +1287,8 @@ function Admin:Event_vehicleDespawn(reason)
 	VehicleManager:getSingleton():checkVehicle(source)
 
 	if source:isPermanent() then
-		client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+		StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Despawn", ("Besitzer: %s, Grund: %s"):format(getElementData(source, "OwnerName") or "", reason))
+		self:sendShortMessage(_("%s hat das Fahrzeug %s von %s despawnt (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "", reason))
 
 		if getElementData(source, "OwnerName") then
 			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
