@@ -18,7 +18,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	self.m_ConfirmCallback = confirmCallback
 	self.m_ConfirmWithSpace = confirmWithSpace
 
-	self.m_isServiceStation = localPlayer.usingGasStation:getData("isServiceStation")
+	self.m_isServiceStation = localPlayer.usingGasStation and localPlayer.usingGasStation:getData("isServiceStation")
 
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
 
@@ -56,6 +56,7 @@ function VehicleFuel:getFuelAmount()
 end
 
 function VehicleFuel:getFuelPrice()
+	if not FUEL_PRICE[self.m_Vehicle:getFuelType()] then return 0 end
 	local mult = (self.m_isServiceStation and SERVICE_FUEL_PRICE_MULTIPLICATOR or 1)
 	return math.round(self:getOpticalFuelAmount() * FUEL_PRICE[self.m_Vehicle:getFuelType()] * mult, 2)
 end
@@ -71,7 +72,7 @@ function VehicleFuel:handleClick(__, state)
 	if self.m_MouseDown then
 		if localPlayer:getWorldVehicle() ~= self.m_Vehicle then return end
 		if self.m_Vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
-		if localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then 
+		if self.m_Vehicle:getFuelType() ~= "universal" and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") and localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then 
 			WarningBox:new(_("In diesen Tank solltest du nur %s füllen.", FUEL_NAME[self.m_Vehicle:getFuelType()])) return end
 		
 		local time = self.m_Vehicle:getFuelTankSize() 

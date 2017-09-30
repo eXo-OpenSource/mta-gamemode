@@ -11,15 +11,17 @@ addRemoteEvents{"onVehicleCategoryDataReceive"}
 function VehicleCategory:constructor()
     self.m_CategoryData = {}
     self.m_ModelData = {}
+    self.m_CustomModels = {}
 end
 
-function VehicleCategory:loadData(categoryData, modelData)
+function VehicleCategory:loadData(categoryData, modelData, customModels)
     self.m_CategoryData = categoryData
     self.m_ModelData = modelData
+    self.m_CustomModels = customModels 
 end
 
-function VehicleCategory:syncWithClient(player)
-    player:triggerEvent("onVehicleCategoryDataReceive", self.m_CategoryData, self.m_ModelData)
+function VehicleCategory:getCustomModelData(id)
+    return self.m_CustomModels[id]
 end
 
 function VehicleCategory:getCategoryName(category)
@@ -59,6 +61,6 @@ function VehicleCategory:getModelCategory(model)
 end
 
 
-addEventHandler("onVehicleCategoryDataReceive", root, function(categoryData, modelData)
-    VehicleCategory:getSingleton():loadData(categoryData, modelData)
+addEventHandler("onVehicleCategoryDataReceive", root, function(categoryData, modelData, customModels)
+    VehicleCategory:getSingleton():loadData(categoryData, modelData, customModels)
 end)

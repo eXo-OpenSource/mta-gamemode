@@ -783,6 +783,8 @@ FUEL_PRICE = { --price per liter
 	["petrol_plus"] = 3.4,
 	["diesel"] = 1.7,
 	["jetfuel"] = 4.6,
+	["universal"] = 0,
+	["nofuel"] = 0,
     
 }
 FUEL_NAME = { --display name
@@ -790,6 +792,8 @@ FUEL_NAME = { --display name
 	["petrol_plus"] = "Super Plus",
 	["diesel"] = "Diesel",
 	["jetfuel"] = "Kerosin",
+	["universal"] = "Universal-Kraftstoff",
+	["nofuel"] = "kein Kraftstoff",
     
 }
 FUEL_PRICE_MULTIPLICATOR = 2

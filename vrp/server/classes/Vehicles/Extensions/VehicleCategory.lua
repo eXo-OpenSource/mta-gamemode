@@ -10,6 +10,13 @@ VehicleCategory = inherit(Singleton)
 function VehicleCategory:constructor()
     self.m_CategoryData = {}
     self.m_ModelData = {}
+    self.m_CustomModels = {
+        [611] = {
+            fuelTankSize = 500,
+            fuelType = "universal"
+        }
+    } --temporary until there is a useful database structure
+
     local result = sql:queryFetch("SELECT * FROM ??_vehicle_category_data", sql:getPrefix())
 	for i, row in pairs(result) do
 		self.m_CategoryData[row.Id] = {
@@ -30,7 +37,11 @@ function VehicleCategory:constructor()
 end
 
 function VehicleCategory:syncWithClient(player)
-    player:triggerEvent("onVehicleCategoryDataReceive", self.m_CategoryData, self.m_ModelData)
+    player:triggerEvent("onVehicleCategoryDataReceive", self.m_CategoryData, self.m_ModelData, self.m_CustomModels)
+end
+
+function VehicleCategory:getCustomModelData(id)
+    return self.m_CustomModels[id]
 end
 
 function VehicleCategory:getCategoryName(category)

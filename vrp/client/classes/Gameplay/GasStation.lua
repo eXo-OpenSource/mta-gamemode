@@ -100,7 +100,7 @@ function GasStation:renderGasStation()
 					localPlayer.usingGasStation = station
 
 					local worldVehicle = localPlayer:getWorldVehicle()
-					if worldVehicle and worldVehicle ~= localPlayer.lastWorldVehicle then
+					if worldVehicle and worldVehicle ~= localPlayer.lastWorldVehicle and worldVehicle:getFuelType() ~= "nofuel" then
 						localPlayer.lastWorldVehicle = worldVehicle
 
 						VehicleFuel.forceClose()

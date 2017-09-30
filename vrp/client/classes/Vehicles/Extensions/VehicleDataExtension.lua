@@ -21,11 +21,13 @@ function VehicleDataExtension:getCategoryName()
 end
 
 function VehicleDataExtension:getFuelType()
-    return VehicleCategory:getSingleton():getCategoryFuelType(self:getCategory())
+    local custom = VehicleCategory:getSingleton():getCustomModelData(self:getModel())
+    return custom and custom.fuelType or VehicleCategory:getSingleton():getCategoryFuelType(self:getCategory())
 end
 
 function VehicleDataExtension:getFuelTankSize()
-    return VehicleCategory:getSingleton():getCategoryFuelTankSize(self:getCategory())
+    local custom = VehicleCategory:getSingleton():getCustomModelData(self:getModel())
+    return custom and custom.fuelTankSize or VehicleCategory:getSingleton():getCategoryFuelTankSize(self:getCategory())
 end
 
 function VehicleDataExtension:getFuelConsumptionMultiplicator()
