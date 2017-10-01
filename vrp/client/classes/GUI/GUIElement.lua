@@ -104,7 +104,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 
 			if not GUIInputControl.SelectionInProgress then
 				GUIInputControl.checkFocus(self)
-				return
+				--return
 			end
 		end
 		if mouse2 and not self.m_RActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
