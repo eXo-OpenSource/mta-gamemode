@@ -112,6 +112,7 @@ FontAwesomeSymbols = {
 	Newspaper = "",
 	Advertisement = "",
 	Fire = "",
+	File = "",
 }
 
 Fonts = {
