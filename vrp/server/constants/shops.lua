@@ -37,8 +37,8 @@ SHOP_TYPES = {
 	[6] = {
 		["Name"] = "Gärtnerei",
 		["Interior"] = {0, Vector3(0, 0, 0)},
-		["Ped"] = {202, Vector3(2426.27, 125.96, 26.48), 270},
-		["Marker"] = Vector3(2427.99, 126.00, 25.5),
+		["Ped"] = {158, Vector3(2428.57, 123.81, 27.00), 180},
+		["Marker"] = Vector3(2428.33, 122.54, 26),
 		["Class"] = ItemShop
 	},
 	[7] = {
