@@ -106,7 +106,7 @@ function StyleguideDemonstrationGUI:destructor()
 end
 
 function LoginDemonstrationGUI:constructor()
-	grid("reset", true)
+	--[[grid("reset", true)
 	self.m_Width = grid("x", 10)
 	self.m_Height = grid("y", 11)
 
@@ -116,8 +116,8 @@ function LoginDemonstrationGUI:constructor()
 
 	img = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
 	GUIGridLabel:new(1, 3, 9, 2, _"Herzlich willkommen auf eXo Reallife, bitte logge dich mit deinen Accountdaten ein.", self.m_Window):setAlignX("center")
-	GUIGridEdit:new(1, 5, 9, 1, self.m_Window):setCaption("Username"):setIcon(FontAwesomeSymbols.Bug)
-	GUIGridEdit:new(1, 6, 9, 1, self.m_Window):setCaption("Passwort"):setMasked():setIcon(FontAwesomeSymbols.Fire)
+	GUIGridEdit:new(1, 5, 9, 1, self.m_Window):setCaption(_"Username"):setIcon(FontAwesomeSymbols.Player)
+	GUIGridEdit:new(1, 6, 9, 1, self.m_Window):setCaption(_"Passwort"):setMasked():setIcon(FontAwesomeSymbols.Lock)
 	GUIGridLabel:new(1, 7, 6, 1, _"Passwort speichern", self.m_Window)
 	GUIGridSwitch:new(7, 7, 3, 1, self.m_Window)
 
@@ -126,6 +126,32 @@ function LoginDemonstrationGUI:constructor()
 		self.m_BtnLogin:setEnabled(false)
 	end
 	self.m_Label = GUIGridLinkLabel:new(1, 10, 9, 1, _"(Kein Account? Registriere dich noch heute!)", self.m_Window):setClickCallback(function()
+		outputDebug("label clicked")
+	end)
+	self.m_Label:setAlignX("center")]]
+
+	self.m_Width = grid("x", 10)
+	self.m_Height = grid("y", 14)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"", false, false, self)
+
+	img = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
+	GUIGridLabel:new(1, 3, 9, 3, _"Bitte fülle das Formular aus um einen neuen Account zu erstellen. Pro PC und Internetanschluss ist nur ein Account zugelassen.", self.m_Window):setAlignX("center")
+	GUIGridEdit:new(1, 6, 9, 1, self.m_Window):setCaption(_"Username"):setIcon(FontAwesomeSymbols.Player)
+	GUIGridEdit:new(1, 7, 9, 1, self.m_Window):setCaption(_"Passwort"):setMasked():setIcon(FontAwesomeSymbols.Lock)
+	GUIGridEdit:new(1, 8, 9, 1, self.m_Window):setCaption(_"Passwort wiederholen"):setMasked():setIcon(FontAwesomeSymbols.Lock)
+	GUIGridEdit:new(1, 9, 9, 1, self.m_Window):setCaption(_"Email-Adresse"):setMasked():setIcon(FontAwesomeSymbols.Mail)
+	
+	GUIGridCheckbox:new(1, 10, 7, 1, "Ich akzeptiere die Serverregeln.", self.m_Window)
+	GUIGridLinkLabel:new(8, 10, 2, 1, "(ansehen)", self.m_Window)
+
+	self.m_BtnLogin = GUIGridButton:new(1, 11, 9, 1, "Registrieren", self.m_Window):setBarEnabled(false)
+	self.m_BtnLogin.onLeftClick = function()
+		self.m_BtnLogin:setEnabled(false)
+	end
+	self.m_Label = GUIGridLinkLabel:new(1, 13, 9, 1, _"(zurück zum Login)", self.m_Window):setClickCallback(function()
 		outputDebug("label clicked")
 	end)
 	self.m_Label:setAlignX("center")

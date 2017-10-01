@@ -23,6 +23,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_Color = self.m_NormalColor
 	self.m_BackgroundColor = self.m_BackgroundNormalColor
 	self.m_Enabled = true
+	self.m_BarActivated = true
 
 	-- Create a dummy gui element for animation
 	self.m_AnimatedBar = DxRectangle:new(0, 0, 0, 2, Color.White, self):setDrawingEnabled(true)

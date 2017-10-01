@@ -42,7 +42,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	end
 
 	if self.m_HasCloseButton then
-		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBarEnabled(false):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
 	end
 end

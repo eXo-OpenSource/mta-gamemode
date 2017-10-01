@@ -15,7 +15,7 @@ end
 
 function GUITabPanel:addTab(tabName, small)
 	local height = small and 20 or 30
-	local tabButton = GUIButton:new(#self.m_Tabs * 110, 0, 110, height, tabName or "", self)
+	local tabButton = GUIButton:new(#self.m_Tabs * 110, 0, 110, height, tabName or "", self):setBarEnabled(false)
 
 	tabButton:setColor(Color.White)
 	tabButton:setBackgroundColor(Color.Primary)
