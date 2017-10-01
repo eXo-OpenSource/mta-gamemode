@@ -63,7 +63,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	local dest
 	local EvilBlipVisible = {}
 	if self.m_Type == "evil" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
+		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/8
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 		table.insert(EvilBlipVisible, self.m_StartFaction:getId())
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
@@ -80,7 +80,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 			end
 		end
 	elseif self.m_Type == "state" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
+		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/8
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do

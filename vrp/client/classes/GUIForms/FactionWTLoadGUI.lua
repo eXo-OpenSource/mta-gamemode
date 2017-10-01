@@ -29,9 +29,25 @@ function FactionWTLoadGUI:constructor()
 	self.m_TotalCosts = 0
 
 	self.m_MaxLoad = localPlayer:getFaction():isStateFaction() and WEAPONTRUCK_MAX_LOAD_STATE or WEAPONTRUCK_MAX_LOAD
+	self.m_MaxLoadPerBox = math.floor(self.m_MaxLoad/8)
 
-	GUILabel:new(645,30, 280, 35, "im Waffentruck:", self.m_Window)
-	self.m_CartGrid = GUIGridList:new(645, 65, 280, 280, self.m_Window)
+	self.m_BoxContent = {}
+	self.m_BoxLabels = {}
+	local x, y = 645, 300
+	for i=1, 8 do
+		self.m_BoxContent[i] = {}
+
+		if i == 5 then
+			x = x+140
+			y = 320
+		else
+			y = y+20
+		end
+
+		self.m_BoxLabels[i] = GUILabel:new(x, y, 140, 20, _("Kiste %d: 0$/%d$", i, self.m_MaxLoadPerBox), self.m_Window)
+	end
+
+	self.m_CartGrid = GUIGridList:new(645, 35, 280, 280, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anz.", 0.1)
 	self.m_CartGrid:addColumn(_"Preis", 0.3)
@@ -41,8 +57,8 @@ function FactionWTLoadGUI:constructor()
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
-	self.m_ShiftNotice = GUILabel:new(645, 350, 280, 20, _("Strg + Klick: Alles aufladen\nShift + Klick: 10 aufladen"), self.m_Window)
-	self.m_Sum = GUILabel:new(645,390, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
+	self.m_ShiftNotice = GUILabel:new(25, 430, 500, 20, _("Info: Strg + Klick: Alles aufladen | Shift + Klick: 10 aufladen"), self.m_Window)
+	self.m_Sum = GUILabel:new(645, 395, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()
@@ -167,6 +183,10 @@ function FactionWTLoadGUI:updateCart()
 		end
 	end
 
+	for index, box in pairs(self.m_BoxContent) do
+		self.m_BoxLabels[index]:setText(_("Kiste %d: %d$/%d$", index, self:calcBoxAmount(index), self.m_MaxLoadPerBox))
+	end
+
 	self.m_TotalCosts = totalCosts
 	self.m_Sum:setText(_("Gesamtkosten: %d$/%d$", totalCosts, self.m_MaxLoad))
 end
@@ -176,6 +196,8 @@ function FactionWTLoadGUI:deleteItemFromCart()
 	if item then
 		self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
 
+		self:removeFromBox(item.typ, item.id)
+
 		self:updateCart()
 		self:updateButtons()
 	else
@@ -183,7 +205,17 @@ function FactionWTLoadGUI:deleteItemFromCart()
 	end
 end
 
-function FactionWTLoadGUI:addItemToCart(typ,weapon)
+function FactionWTLoadGUI:removeFromBox(typ, weapon)
+	for index, box in ipairs(self.m_BoxContent) do
+		if box[weapon] and box[weapon][typ] and box[weapon][typ] > 0 then
+			box[weapon][typ] = box[weapon][typ]-1
+			return
+		end
+	end
+end
+
+function FactionWTLoadGUI:addItemToCart(typ, weapon)
+	local amount = 1
 	if getKeyState("lctrl") or getKeyState("lshift") then
 		local index = "Waffe"
 		local index2 = "Waffe"
@@ -202,23 +234,69 @@ function FactionWTLoadGUI:addItemToCart(typ,weapon)
 		local maxMoney = math.floor(remainingBudget / pricePerUnit)
 
 		if maxMoney > max then
-			self.m_Cart[weapon][index] = self.m_Cart[weapon][index] + max
+			amount = max
 		else
-			self.m_Cart[weapon][index] = self.m_Cart[weapon][index] + maxMoney
+			amount = maxMoney
 		end
-	else
-		if typ == "weapon" then self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"]+1 end
-		if typ == "munition" then self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"]+1 end
 	end
 
+	local success = true
+	for i = 1, amount do
+		local box = self:getBox(typ, weapon)
+		if box then
+			if not self.m_BoxContent[box][weapon] then self.m_BoxContent[box][weapon] = {} end
+
+			if typ == "weapon" then
+				self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"] + 1
+				if not self.m_BoxContent[box][weapon]["Waffe"] then self.m_BoxContent[box][weapon]["Waffe"] = 0 end
+
+				self.m_BoxContent[box][weapon]["Waffe"] = self.m_BoxContent[box][weapon]["Waffe"] + 1
+			end
+			if typ == "munition" then
+				self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"] + 1
+				if not self.m_BoxContent[box][weapon]["Munition"] then self.m_BoxContent[box][weapon]["Munition"] = 0 end
+				self.m_BoxContent[box][weapon]["Munition"] = self.m_BoxContent[box][weapon]["Munition"] + 1
+			end
+		else
+			success = false
+		end
+	end
+
+	if not success then
+		ErrorBox:new("Es haben nicht alle Waffen/Magazine in den Kisten Platz!")
+	end
 
 	self:updateCart()
 	self:updateButtons()
 end
 
-function FactionWTLoadGUI:addMunitionToCart(weapon)
-	self.m_Cart[weapon]["Magazin"] = self.m_Cart[weapon]["Magazin"]+1
-	self:updateCart()
+function FactionWTLoadGUI:getBox(typ, weaponID)
+	local price = 0
+	for index, box in ipairs(self.m_BoxContent) do
+		if typ == "weapon" then
+			price = self.m_DepotWeaponsMax[weaponID]["WaffenPreis"]
+		elseif typ == "munition" then
+			price = self.m_DepotWeaponsMax[weaponID]["MagazinPreis"]
+		end
+
+		if self:calcBoxAmount(index) + price <= self.m_MaxLoadPerBox then
+			return index
+		end
+	end
+	return false
+end
+
+function FactionWTLoadGUI:calcBoxAmount(i)
+	local sum = 0
+	for weaponID, data in pairs(self.m_BoxContent[i]) do
+		if data["Waffe"] then
+			sum = sum + data["Waffe"] * self.m_DepotWeaponsMax[weaponID]["WaffenPreis"]
+		end
+		if data["Munition"] then
+			sum = sum + data["Munition"] * self.m_DepotWeaponsMax[weaponID]["MagazinPreis"]
+		end
+	end
+	return sum
 end
 
 function FactionWTLoadGUI:factionReceiveWeaponShopInfos()
