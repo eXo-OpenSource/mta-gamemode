@@ -38,6 +38,74 @@ function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
 	return false
 end
 
+function StatisticsLogger:addMoneyLogNew(fromId, fromType, formBank, toId, toType, toBank, amount, reason, category, subcategory)
+	-- Create new table for all new transactions
+end
+
+--[[
+New function --> replaces all old functions
+New Singleton called SingletonBank
+New Object called ObjectBank
+--> they contain the transferMoney and transferBankMoney methods
+
+	transferMoney
+	transferBankMoney
+
+	object:transferMoney(toId, toType, toBank, amount, reason, category, subcategory)
+	object:transferMoney(toObject, toBank, amount, reason, category, subcategory)
+	
+	object:transferBankMoney(toId, toType, toBank, amount, reason, category, subcategory)
+	object:transferBankMoney(toObject, toBank, amount, reason, category, subcategory)
+]]
+
+--[[
+	Categories
+	- Group
+		- Loan
+		- Deposit
+		- Withdraw
+	- Faction
+		- Loan
+		- Deposit
+		- Withdraw
+	- Company
+		- Loan
+		- Deposit
+		- Withdraw
+	- Job
+		- Gravel
+		- Farmer
+		- etc.
+	- Event
+	- Player
+		- 
+]]
+
+--[[
+	From
+	- Id
+	- Type
+	- Bank (1 if its from a bank)
+	To
+	- Id
+	- Type
+	- Bank (1 if its from a bank)
+	Amount
+	Category
+	Subcategory
+	Reason
+]]
+--[[
+	
+-- 111 places giveMoney
+-- 93 places takeMoney
+-- 19 places addMoney ??
+
+-- 21 places addBankMoney
+-- 24 places takeBankMoney
+
+]]
+
 function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local userId = 0
     local groupId = 0
