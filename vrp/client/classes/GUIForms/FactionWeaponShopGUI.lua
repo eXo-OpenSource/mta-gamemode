@@ -223,11 +223,6 @@ function FactionWeaponShopGUI:addItemToCart(typ,weapon)
 	self:updateButtons()
 end
 
-function FactionWeaponShopGUI:addMunitionToCart(weapon)
-	self.m_Cart[weapon]["Magazin"] = self.m_Cart[weapon]["Magazin"]+1
-	self:updateCart()
-end
-
 function FactionWeaponShopGUI:factionReceiveWeaponShopInfos()
 	triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
 end
