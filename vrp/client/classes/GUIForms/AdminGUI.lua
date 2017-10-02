@@ -243,9 +243,12 @@ function AdminGUI:refreshOnlinePlayers()
 end
 
 function AdminGUI:addAdminButton(name, text, func, x, y, width, height, color, parent)
-	self.m_adminButton[name] = GUIButton:new(x, y, width, height, _(text),  parent):setFontSize(1):setBackgroundColor(color)
+	self.m_adminButton[name] = GUIButton:new(x, y, width, height, _(text),  parent):setBackgroundColor(color)
 	self.m_adminButton[name].func = name
 	self.m_adminButton[name].onLeftClick = bind(func, self, name)
+	if text:len() > 18 then
+		self.m_adminButton[name]:setFontSize(0.8)
+	end
 	if AdminGUI.playerFunctions[name] then
 		self.m_adminButton[name]:setEnabled(false)
 	end
