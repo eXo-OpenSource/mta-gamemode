@@ -417,6 +417,10 @@ function DatabasePlayer:takeMoney(amount, reason)
 	return DatabasePlayer.giveMoney(self, -amount, reason)
 end
 
+function DatabasePlayer:transferBankMoney(toObject, amount, reason, silent, category, subcategory)
+	self:getBankAccount():transferMoney(toObject, amount, reason, silent, category, subcategory)
+end
+
 function DatabasePlayer:setXP(xp)
 	self.m_XP = xp
 end

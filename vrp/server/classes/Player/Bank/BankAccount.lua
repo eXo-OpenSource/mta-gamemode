@@ -120,3 +120,75 @@ function BankAccount:takeMoney(money, reason, silent)
 		self:update()
 	end
 end
+
+--[[
+	object:transferBankMoney({toId, toType}, toBank, amount, reason, silent, category, subcategory)
+	object:transferBankMoney(toObject, toBank, amount, reason, silent, category, subcategory)
+]]
+
+function BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+	if isNan(money) then return end
+
+
+	Async.create(
+		function()
+				
+			local targetObject = type(toObject) == "table" and nil or toObject
+			local offlinePlayer = false
+			local isPlayer = false
+			local toBank = false
+
+			if type(toObject) == "table" and not toObject.m_Id then
+				if not (#toObject >= 2 and #toObject <= 3) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
+
+				if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
+					targetObject = toObject[1]
+					toBank = toObject[2]
+				else
+					if toObject[2] == "player" then
+						targetObject, offlinePlayer = DatabasePlayer.get(toObject[1])
+
+						if offlinePlayer then
+							targetObject:load()
+						end
+					elseif toObject[2] == "faction" then
+						targetObject = FactionManager:getSingleton().Map[toObject[1]]
+					elseif toObject[2] == "company" then
+						targetObject = CompanyManager:getSingleton().Map[toObject[1]]
+					elseif toObject[2] == "company" then
+						targetObject = GroupManager:getSingleton().Map[toObject[1]]
+					else
+						error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[2]))	
+					end
+					toBank = toObject[3]
+				end
+			end
+
+			if not targetObject.m_Id then
+				error("BankAccount.transferMoney @ Target is missing")
+			end
+			
+			isPlayer = instanceof(targetObject, DatabasePlayer)
+
+			if self:getMoney() < amount then
+				return false
+			end
+
+			self:takeMoney(amount, reason, silent)
+
+			if isPlayer then
+				if toBank then
+					targetObject:addBankMoney(amount, reason)
+				else
+					targetObject:giveMoney(amount, reason)
+				end
+			else
+					targetObject:giveMoney(amount, reason, silent)
+			end
+
+			if offlinePlayer then
+				delete(targetObject)
+			end
+		end
+	)()
+end

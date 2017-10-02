@@ -335,6 +335,10 @@ function Group:takeMoney(amount, reason)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
 end
 
+function Group:transferMoney(toObject, amount, reason, silent, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+end
+
 function Group:setMoney(amount)
 	self.m_Money = amount
 

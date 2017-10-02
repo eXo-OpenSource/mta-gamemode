@@ -51,11 +51,11 @@ New Object called ObjectBank
 	transferMoney
 	transferBankMoney
 
-	object:transferMoney(toId, toType, toBank, amount, reason, category, subcategory)
-	object:transferMoney(toObject, toBank, amount, reason, category, subcategory)
+	object:transferMoney({toId, toType}, toBank, amount, reason, silent, category, subcategory)
+	object:transferMoney(toObject, toBank, amount, reason, silent, category, subcategory)
 	
-	object:transferBankMoney(toId, toType, toBank, amount, reason, category, subcategory)
-	object:transferBankMoney(toObject, toBank, amount, reason, category, subcategory)
+	object:transferBankMoney({toId, toType}, toBank, amount, reason, silent, category, subcategory)
+	object:transferBankMoney(toObject, toBank, amount, reason, silent, category, subcategory)
 ]]
 
 --[[

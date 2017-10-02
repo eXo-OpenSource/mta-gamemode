@@ -312,6 +312,10 @@ function Faction:takeMoney(amount, reason, silent)
 	return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
 
+function Faction:transferMoney(toObject, amount, reason, silent, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+end
+
 function Faction:setRankLoan(rank,amount)
 	self.m_RankLoans[tostring(rank)] = amount
 end
