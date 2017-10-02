@@ -344,6 +344,12 @@ function string.duration(seconds)
 	end
 end
 
+function string.count(str, search)
+	local _, count = string.gsub(str, search, "")
+	return count
+end
+
+
 function string.short(str, i)
 	return #str > i and str:sub(0, i).."..." or str
 end

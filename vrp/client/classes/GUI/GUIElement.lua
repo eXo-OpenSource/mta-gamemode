@@ -136,9 +136,10 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 end
 
-function GUIElement:setTooltip(text, pos)
+function GUIElement:setTooltip(text, pos, multiline)
 	self.m_TooltipText = text
 	self.m_TooltipPos = pos
+	self.m_TooltipMultiline = multiline or false
 	return self
 end
 
@@ -150,24 +151,32 @@ function GUIElement:updateTooltip(hovered)
 			local x, y = self:getPosition(true)
 			local w, h = self:getSize()
 			local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
+			local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*20+10 or 20
 
 			if self.m_TooltipPos == "left" then
-				self.m_Tooltip = GUILabel:new(x - 10 - textW, y + h/2 - 10, textW, 20, self.m_TooltipText)
+				self.m_Tooltip = GUILabel:new(x - textH/2 - textW, y + h/2 - 10, textW, textH, self.m_TooltipText)
 				self.m_TooltipArrow = GUIImage:new(x - 14, y + h/2 - 4, 16, 8, "files/images/GUI/Triangle.png"):setRotation(90)
 			elseif self.m_TooltipPos == "right" then
-				self.m_Tooltip = GUILabel:new(x + w + 10, y + h/2 - 10, textW, 20, self.m_TooltipText)
+				self.m_Tooltip = GUILabel:new(x + w + textH/2, y + h/2 - 10, textW, textH, self.m_TooltipText)
 				self.m_TooltipArrow = GUIImage:new(x + w - 2, y + h/2 - 4, 16, 8, "files/images/GUI/Triangle.png"):setRotation(270)
 			elseif self.m_TooltipPos == "bottom" then
-				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y + h + 10, textW, 20, self.m_TooltipText)
+				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y + h + 10, textW, textH, self.m_TooltipText)
 				self.m_TooltipArrow = GUIImage:new(x + w/2 - 8, y + h + 2, 16, 8, "files/images/GUI/Triangle.png"):setRotation(0)
 			else -- top is default
-				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y - 30, textW, 20, self.m_TooltipText)
+				self.m_Tooltip = GUILabel:new(x + w/2 - textW/2, y - textH-10, textW, textH, self.m_TooltipText)
 				self.m_TooltipArrow = GUIImage:new(x + w/2 - 8, y - 10, 16, 8, "files/images/GUI/Triangle.png"):setRotation(180)
+			end
+
+			if self.m_TooltipMultiline then
+				self.m_Tooltip:setMultiline(true)
+				self.m_Tooltip:setFont(f)
 			end
 
 			self.m_Tooltip:setColor(Color.PrimaryNoClick):setBackgroundColor(Color.White)
 			self.m_Tooltip:setAlignX("center")
 			self.m_Tooltip.m_CacheArea:bringToFront()
+
+
 		else --destroy tooltip
 			if self.m_Tooltip then
 				self.m_Tooltip:delete()
