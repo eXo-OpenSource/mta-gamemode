@@ -32,22 +32,12 @@ function FactionWTLoadGUI:constructor()
 	self.m_MaxLoadPerBox = math.floor(self.m_MaxLoad/8)
 
 	self.m_BoxContent = {}
-	self.m_BoxLabels = {}
-	local x, y = 645, 300
+
 	for i=1, 8 do
 		self.m_BoxContent[i] = {}
-
-		if i == 5 then
-			x = x+140
-			y = 320
-		else
-			y = y+20
-		end
-
-		self.m_BoxLabels[i] = GUILabel:new(x, y, 140, 20, _("Kiste %d: 0$/%d$", i, self.m_MaxLoadPerBox), self.m_Window)
 	end
 
-	self.m_CartGrid = GUIGridList:new(645, 35, 280, 280, self.m_Window)
+	self.m_CartGrid = GUIGridList:new(645, 35, 280, 350, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anz.", 0.1)
 	self.m_CartGrid:addColumn(_"Preis", 0.3)
@@ -58,7 +48,11 @@ function FactionWTLoadGUI:constructor()
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
 	self.m_ShiftNotice = GUILabel:new(25, 430, 500, 20, _("Info: Strg + Klick: Alles aufladen | Shift + Klick: 10 aufladen"), self.m_Window)
-	self.m_Sum = GUILabel:new(645, 395, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
+	self.m_Sum = GUILabel:new(645, 395, 280, 28, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
+	self.m_Info = GUIButton:new(945-28-15, 395, 28, 28, FontAwesomeSymbols.Info, self.m_Window)
+	self.m_Info:setFont(FontAwesome(20)):setFontSize(1)
+	self.m_Info:setBarEnabled(false)
+    self.m_Info:setBackgroundColor(Color.LightBlue)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()
@@ -183,12 +177,14 @@ function FactionWTLoadGUI:updateCart()
 		end
 	end
 
+	local boxTable = {}
 	for index, box in pairs(self.m_BoxContent) do
-		self.m_BoxLabels[index]:setText(_("Kiste %d: %d$/%d$", index, self:calcBoxAmount(index), self.m_MaxLoadPerBox))
+		boxTable[index] = _("Kiste %d: %d$/%d$", index, self:calcBoxAmount(index), self.m_MaxLoadPerBox)
 	end
 
 	self.m_TotalCosts = totalCosts
 	self.m_Sum:setText(_("Gesamtkosten: %d$/%d$", totalCosts, self.m_MaxLoad))
+	self.m_Info:setTooltip(table.concat(boxTable, "\n"), "top", true)
 end
 
 function FactionWTLoadGUI:deleteItemFromCart()
