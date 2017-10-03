@@ -683,6 +683,7 @@
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -868,6 +869,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
+
+	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 
