@@ -641,7 +641,9 @@ function Group:payDay(vehicleData)
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
 			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
-				mechanic:respawnVehicle(vehicle)
+				if not vehicle:getPositionType() == VehiclePositionType.Mechanic then
+					mechanic:respawnVehicle(vehicle)
+				end
 			end
 		else
 			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())
