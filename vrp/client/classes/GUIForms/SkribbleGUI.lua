@@ -38,3 +38,23 @@ function SkribbleGUI:virtual_destructor()
 	--GUIForm.destructor(self)
 end
 
+function SkribbleGUI:setHost()
+	self.m_Timer = setTimer(function()
+		self.m_Skribble:setDrawingEnabled(true)
+		local syncData = self.m_Skribble:getSyncData(true)
+		if #syncData > 0 then
+			triggerServerEvent("onSyncSkribbleData", localPlayer, syncData)
+		end
+	end, 100, 0)
+end
+
+addEvent("sendSkribbleData", true)
+addEventHandler("sendSkribbleData", root,
+	function(data)
+		if not SkribbleGUI:isInstantiated() then
+			SkribbleGUI:new()
+		end
+
+		SkribbleGUI:getSingleton().m_Skribble:drawSyncData(data)
+	end
+)
