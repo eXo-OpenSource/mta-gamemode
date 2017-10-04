@@ -25,18 +25,16 @@ function SkribbleGUI:constructor()
 	self.m_Grid:addItem("[eXo]Stumpy", 42)
 	self.m_Grid:addItem("[eXo]xXKing", 0)
 
-	--GUIGridRectangle:new(6, 1, 19, 13, Color.White, self.m_Window)
-	self.m_Skribble = Skribble:new(Vector2(grid("d", 19), grid("d", 13)))
-	self.m_SkribbleImage = GUIGridImage:new(6, 1, 19, 13, self.m_Skribble.m_RenderTarget, self.m_Window)
+	self.m_Skribble = GUIGridSkribble:new(6, 1, 19, 13, self.m_Window)
 
 	for index, color in pairs({"Black", "Grey", "LightGrey", "White", "Red", "Orange", "Blue", "DarkBlue", "Brown", "Green", "LightRed", "Yellow"}) do
 		local button = GUIGridRectangle:new(6 + (index - 1), 14, 1, 1, Color[color], self.m_Window)
-		button.onLeftClick = function() Skribble:getSingleton().m_DrawColor = Color[color] end
+		button.onLeftClick = function() self.m_Skribble:setDrawColor(Color[color]) end
 	end
 end
 
 function SkribbleGUI:virtual_destructor()
-	delete(self.m_Skribble)
+	--delete(self.m_Skribble)
 	--GUIForm.destructor(self)
 end
 
