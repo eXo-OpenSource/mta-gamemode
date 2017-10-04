@@ -141,6 +141,7 @@ function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
 			if player:isFactionDuty() then
+				self:setDriver(player)
 				return true
 			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
@@ -150,8 +151,10 @@ function FactionVehicle:onEnter(player, seat)
 				return false
 			end
 		elseif player:getFaction() and player:getFaction() == self.m_Faction then
+			self:setDriver(player)
 			return true
 		elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
+			self:setDriver(player)
 			return true
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))

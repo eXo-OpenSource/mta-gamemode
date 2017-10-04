@@ -149,6 +149,7 @@ function CompanyVehicle:onEnter(player, seat)
 	end
 
 	if self:getCompany().onVehicleEnter then
+		self:setDriver(player)
 		self:getCompany():onVehicleEnter(source, player, seat)
 	end
 end

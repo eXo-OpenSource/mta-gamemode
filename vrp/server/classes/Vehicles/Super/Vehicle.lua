@@ -7,7 +7,6 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
-
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -22,6 +21,8 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
+
+	self.m_LastDrivers = {}
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -795,6 +796,16 @@ end
 function Vehicle:isEmpty()
 	return self.occupants and table.size(self.occupants) == 0
 end
+
+function Vehicle:setDriver(player)
+	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
+		return
+	end
+
+	table.insert(self.m_LastDrivers, player:getName())
+	self:setData("lastDrivers", self.m_LastDrivers, true)
+end
+
 
 -- Override it
 function Vehicle:getVehicleType()
