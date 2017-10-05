@@ -101,6 +101,7 @@ FontAwesomeSymbols = {
 	Car = "",
 	Bullseye = "",
 	Circle_O_Notch = "",
+	Circle = "",
 	Heart = "",
 	Shield = "",
 	Comment = "",

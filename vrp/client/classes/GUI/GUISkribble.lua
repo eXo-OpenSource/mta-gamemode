@@ -43,13 +43,15 @@ function GUISkribble:onCursorMove(_, _, x, y)
 			local drawSize = Vector2(self.m_DrawSize, self.m_DrawSize)
 			local drawStart = (self.m_LastPosition - pos)-- - drawSize/2
 			local drawEnd = cursorPosition - pos
-			local interpolateCount = math.ceil((drawStart - drawEnd).length/self.m_DrawSize)*(self.m_DrawSize > 1 and 2 or 1)
+			--local interpolateCount = math.ceil((drawStart - drawEnd).length/self.m_DrawSize)*(self.m_DrawSize > 1 and 2 or 1)
+			local interpolateCount = math.ceil((drawStart - drawEnd).length)
 
 			self.m_RenderTarget:setAsTarget()
 			for i = 1, interpolateCount do
 				local drawStart = Vector2(interpolateBetween(drawStart.x, drawStart.y, 0, drawEnd.x, drawEnd.y, 0, i/interpolateCount, "Linear"))
 				--dxDrawImage(drawStart - drawSize/2, drawSize, "files/images/GUI/FullCircle.png", 0, 0, 0, self.m_DrawColor)
-				dxDrawRectangle(drawStart - drawSize/2, drawSize, self.m_DrawColor)
+				--dxDrawRectangle(drawStart - drawSize/2, drawSize, self.m_DrawColor)
+				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, 1, FontAwesome(self.m_DrawSize))
 			end
 
 			dxSetRenderTarget()
