@@ -177,6 +177,7 @@
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
@@ -695,6 +696,7 @@
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkribbleLobbyGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>

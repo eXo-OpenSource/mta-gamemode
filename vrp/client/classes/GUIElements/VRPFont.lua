@@ -113,6 +113,7 @@ FontAwesomeSymbols = {
 	Advertisement = "",
 	Fire = "",
 	File = "",
+	Clock = "",
 }
 
 Fonts = {

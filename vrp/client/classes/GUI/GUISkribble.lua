@@ -23,8 +23,6 @@ function GUISkribble:constructor(posX, posY, width, height, parent)
 end
 
 function GUISkribble:virtual_destructor()
-	outputChatBox("virtual_destructor")
-
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
 end
 
