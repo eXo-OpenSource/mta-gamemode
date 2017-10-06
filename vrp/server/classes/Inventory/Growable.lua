@@ -100,6 +100,7 @@ function Growable:harvest(player)
 					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
 					delete(self)
 				end
+				player:setData("Plant:Current", false)
 			else
 				player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
 			end
