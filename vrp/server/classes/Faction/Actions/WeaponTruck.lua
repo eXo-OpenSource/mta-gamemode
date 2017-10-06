@@ -542,7 +542,7 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 		for typ, amount in pairs(weaponTable[weaponID]) do
 			insertAmount = 0
 			if amount > 0 then
-				if (faction:isStateFaction() and allowedWeapons[weaponID]) or isEvilFaction() then
+				if (faction:isStateFaction() and allowedWeapons[weaponID]) or faction:isEvilFaction() then
 					if typ == "Waffe" then
 						if depotInfo[weaponID]["Waffe"] >= depot.m_Weapons[weaponID]["Waffe"] + amount then
 							insertAmount = amount

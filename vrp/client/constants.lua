@@ -219,9 +219,6 @@ HelpTextTitles = {
 		OldVRPTeam = "vRP-Team";
 		Other = "sonstige Credits";
 	};
-	Settings = {
-		ShortMessageCTC = "Information - ShortMessage-CTC";
-	};
 	Vehicles = {
 		Info = "Info zu Fahrzeugen";
 		CustomTextures = "Fahrzeug-Texturen";
@@ -538,9 +535,6 @@ HelpTexts = {
 			Anti c-Bug
 			realdriveby
 		]];
-	};
-	Settings = {
-		ShortMessageCTC = "ShortMessage-CTC (Click-to-Close) ist eine Option mit der eingestellt werden kann, ob eine ShortMessage-Box (wie diese) durch ein einfaches klicken geschlossen werden kann oder nur durch den Timeout.\n\nNote: Callback-clicks are always working!";
 	};
 	Vehicles = {
 		 Info = [[

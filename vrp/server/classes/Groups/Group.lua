@@ -636,7 +636,7 @@ function Group:payDay(vehicleData)
 	elseif sum < 0 then
 		self:takeMoney(sum, "Payday")
 	end
-	self:sendShortMessage(table.concat(output, "\n"))
+	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)

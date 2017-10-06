@@ -58,9 +58,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 		if self.m_Callback then
 			self:m_Callback()
 		end
-		if core:get("HUD", "shortMessageCTC", false) then
-			delete(self)
-		end
+		delete(self)
 	end
 
 	-- Instantiate custom GUIMiniMap
