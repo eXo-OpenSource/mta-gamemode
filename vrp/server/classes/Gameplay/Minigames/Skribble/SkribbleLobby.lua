@@ -18,6 +18,8 @@ function SkribbleLobby:constructor(id, owner, name, password, rounds)
 	self.m_CurrentRound = 1
 	self.m_State = "idle"
 	self.m_CurrentDrawing = nil
+	self.m_GuessingWords = nil
+	self.m_GuessingWord = nil
 
 	self:addPlayer(owner)
 end
@@ -41,6 +43,16 @@ function SkribbleLobby:setState(state)
 		end
 
 		self.m_CurrentDrawing = nextPlayer
+		self.m_GuessingWords = self:getRandomWords()
+		--self:syncLobbyInfos()
+
+		for player, data in pairs(self.m_Players) do
+			if player == self.m_CurrentDrawing then
+				player:triggerEvent("skribbleChoosingWord", self.m_GuessingWords)
+			else
+				player:triggerEvent("skribbleShowInfoText", ("%s wählt ein Wort aus ..."):format(self.m_CurrentDrawing:getName()))
+			end
+		end
 	elseif state == "finishedRound" then
 		self.m_State = state
 
@@ -100,7 +112,6 @@ function SkribbleLobby:addPlayer(player)
 
 		self.m_StartRoundTimer = setTimer(
 			function()
-				self:showInfoText()
 				self:setState("choosing")
 			end, 2000, 1
 		)
@@ -126,6 +137,36 @@ function SkribbleLobby:getNextDrawingPlayer()
 		if data.queued then
 			return player
 		end
+	end
+end
+
+function SkribbleLobby:getRandomWords()
+	local isInList =
+		function(tab, word)
+			for _, v in pairs(tab) do
+				if v[1] == word[1] then return true end
+			end
+		end
+
+	local words = {}
+	for i = 1, 3 do
+		local word = SKRIBBLE_WORDS[math.random(1, #SKRIBBLE_WORDS)]
+		while isInList(words, word) do
+			word = SKRIBBLE_WORDS[math.random(1, #SKRIBBLE_WORDS)]
+		end
+
+
+		outputConsole("Insert: " .. word[1])
+		table.insert(words, word)
+	end
+
+	return words
+end
+
+function SkribbleLobby:choosedWord(player, key)
+	if player == self.m_CurrentDrawing then
+		self.m_GuessingWord = self.m_GuessingWords[key]
+		outputChatBox(player:getName() .. " choosed word: " .. self.m_GuessingWord[1])
 	end
 end
 

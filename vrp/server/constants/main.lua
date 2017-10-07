@@ -159,7 +159,7 @@ RESOURCES_TO_STOP = {
 }
 
 
--- 0 = Nomen, 1 = verb, 2 = Adjektiv
+-- 0 = Nomen, 1 = Verb, 2 = Adjektiv
 SKRIBBLE_WORDS = {
 	{"Affe", 0},
 	{"Banane", 0},

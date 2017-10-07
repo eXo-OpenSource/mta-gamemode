@@ -7,7 +7,7 @@
 -- ****************************************************************************
 SkribbleGUI = inherit(GUIForm)
 inherit(Singleton, SkribbleGUI)
-addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText"}
+addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText", "skribbleChoosingWord"}
 
 function SkribbleGUI:constructor()
 	GUIWindow.updateGrid()
@@ -57,7 +57,14 @@ function SkribbleGUI:showInfoText(text)
 	if not text then self:hideInfoText() return end
 	self.m_InfoLabel:setText(text)
 
-	Animation.FadeAlpha:new(self.m_Background, 250, 0, 200)
+	local backgroundAlpha = self.m_Background:getAlpha()
+	if backgroundAlpha ~= 200 then
+		Animation.FadeAlpha:new(self.m_Background, 250, backgroundAlpha, 200)
+	end
+
+	local posX, posY = self.m_InfoLabel:getPosition()
+	self.m_InfoLabel:setPosition(posX, -posY)
+	Animation.Move:new(self.m_InfoLabel, 250, posX, posY, "OutQuad")
 	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 0, 255)
 end
 
@@ -79,6 +86,24 @@ function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds)
 
 	self.m_CurrentDrawing = currentDrawing
 	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
+end
+
+function SkribbleGUI:choosingWord(words)
+	self:showInfoText("Wähle ein Wort aus ...\n\n\n\n")
+
+	self.m_WordButtons = {}
+	for key, word in pairs(words) do
+		local posX, posY = self.m_Skribble:getPosition()
+		local width, height = self.m_Skribble:getSize()
+
+		self.m_WordButtons[key] = GUIButton:new(posX + width/2 - 125, (posY+height/2) + 55*(key-2), 250, 50, word[1], self.m_Window):setBarEnabled(false):setAlpha(0)
+		Animation.FadeAlpha:new(self.m_WordButtons[key], 500*key, 0, 255)
+
+		self.m_WordButtons[key].onLeftClick =
+			function()
+				triggerServerEvent("skribbleChoosedWord", localPlayer, key)
+			end
+	end
 end
 
 function SkribbleGUI:changeColor()
@@ -107,6 +132,14 @@ addEventHandler("skribbleShowInfoText", root,
 	function(...)
 		if SkribbleGUI:isInstantiated() then
 			SkribbleGUI:getSingleton():showInfoText(...)
+		end
+	end
+)
+
+addEventHandler("skribbleChoosingWord", root,
+	function(words)
+		if SkribbleGUI:isInstantiated() then
+			SkribbleGUI:getSingleton():choosingWord(words)
 		end
 	end
 )
