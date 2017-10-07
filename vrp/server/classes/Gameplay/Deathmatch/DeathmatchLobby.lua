@@ -176,7 +176,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		player:setPosition(pos)
 		player:setHealth(100)
 		player:setHeadless(false)
-		player:setArmor(0)
+		player:setArmor(100)
 		player:setAlpha(255)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	end
