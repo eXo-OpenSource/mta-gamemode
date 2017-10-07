@@ -33,16 +33,16 @@ function GUISlider:constructor(posX, posY, width, height, parent)
 
     --use a GUI element as a handle (this got implemented later on to prevent an ongoing onClientCursorMove just to handle hover events)
     self.m_Handle = GUIRectangle:new(self:getInternalRelativeValue()*(self.m_Width-HANDLE_WIDTH), 0, HANDLE_WIDTH, HANDLE_WIDTH, Color.Accent, self)
-    self.m_Handle.onHover = function() 
+    self.m_Handle.onHover = function()
         self.m_Handle:setColor(Color.White)
         self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, self.m_Height, "OutQuad")
     end
 
-    self.m_Handle.onUnhover = function() 
-        if not self.m_Scrolling then 
+    self.m_Handle.onUnhover = function()
+        if not self.m_Scrolling then
             self.m_Handle:setColor(Color.Accent)
-            self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, HANDLE_WIDTH, "OutQuad") 
-        end 
+            self.m_Animation = Animation.Size:new(self.m_Handle, self.m_AnimationDuration, HANDLE_WIDTH, HANDLE_WIDTH, "OutQuad")
+        end
     end
 end
 
@@ -50,6 +50,7 @@ function GUISlider:setRange(rangeMin, rangeMax)
     self.m_RangeMin = tonumber(rangeMin) or self.m_RangeMin
     self.m_RangeMax = tonumber(rangeMax) or self.m_RangeMax
     self:setValue(self.m_Value) -- recall value to clamp it to new range
+	return self
 end
 
 function GUISlider:setValue(value)
