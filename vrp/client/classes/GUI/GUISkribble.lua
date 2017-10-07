@@ -82,9 +82,7 @@ function GUISkribble:onClientRender()
 	end
 end
 
-function GUISkribble:clear()
-	if not self.m_DrawingEnabled then return end
-
+function GUISkribble:clear(skip)
 	self.m_RenderTarget:setAsTarget()
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, Color.White)
 	dxSetRenderTarget()

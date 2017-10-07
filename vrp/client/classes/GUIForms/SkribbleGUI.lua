@@ -7,7 +7,7 @@
 -- ****************************************************************************
 SkribbleGUI = inherit(GUIForm)
 inherit(Singleton, SkribbleGUI)
-addRemoteEvents{"skribbleSyncLobbyInfos"}
+addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText"}
 
 function SkribbleGUI:constructor()
 	GUIWindow.updateGrid()
@@ -21,8 +21,8 @@ function SkribbleGUI:constructor()
 	GUIGridLabel:new(1, 1, 1, 1, FontAwesomeSymbols.Clock, self.m_Window):setFont(FontAwesome(30)):setFontSize(1):setAlignX("center")
 
 	self.m_TimeRemain = GUIGridLabel:new(2, 1, 1, 1, "80", self.m_Window)
-	self.m_RoundLabel = GUIGridLabel:new(1, 1, 5, 1, "Runde 1 von 5", self.m_Window):setAlignX("right")
-	self.m_GuessingWord = GUIGridLabel:new(10, 1, 10, 1, "_ _ _ _ _ _ _ _ _", self.m_Window)
+	self.m_RoundLabel = GUIGridLabel:new(1, 1, 5, 1, "", self.m_Window):setAlignX("right")
+	self.m_GuessingWord = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
 
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Spieler", .6)
@@ -31,7 +31,7 @@ function SkribbleGUI:constructor()
 	self.m_Skribble = GUIGridSkribble:new(6, 2, 19, 13, self.m_Window)
 
 	self.m_Background = GUIGridRectangle:new(6, 2, 19, 13, Color.Clear, self.m_Window)
-	self.m_InfoLabel = GUIGridLabel:new(6, 2, 19, 13, "", self.m_Window):setAlign("center", "center")
+	self.m_InfoLabel = GUIGridLabel:new(6, 2, 19, 13, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
 
 	self.m_ChangeColor = GUIGridIconButton:new(6, 15, FontAwesomeSymbols.Brush, self.m_Window)
 	self.m_ChangeColor.onLeftClick = bind(SkribbleGUI.changeColor, self)
@@ -40,7 +40,7 @@ function SkribbleGUI:constructor()
 	erase.onLeftClick = function() self.m_Skribble:setDrawColor(Color.White) end
 
 	local clearDraw = GUIGridIconButton:new(8, 15, FontAwesomeSymbols.Trash, self.m_Window)
-	clearDraw.onLeftClick = function() self.m_Skribble:clear() end
+	clearDraw.onLeftClick = function() if self.m_CurrentDrawing == localPlayer then self.m_Skribble:clear() end end
 
 	-- About the slider range:
 	-- GUISkribble draws a FontAwesome text/symbol
@@ -53,11 +53,32 @@ function SkribbleGUI:virtual_destructor()
 	triggerServerEvent("skribbleLeaveLobby", localPlayer)
 end
 
-function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, state)
+function SkribbleGUI:showInfoText(text)
+	if not text then self:hideInfoText() return end
+	self.m_InfoLabel:setText(text)
+
+	Animation.FadeAlpha:new(self.m_Background, 250, 0, 200)
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 0, 255)
+end
+
+function SkribbleGUI:hideInfoText()
+	if self.m_InfoLabel:getText() == "" then return end
+
+	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 255, 0).onFinish =
+		function()
+			self.m_InfoLabel:setText("")
+		end
+end
+
+function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds)
 	self.m_PlayersGrid:clear()
 	for player, data in pairs(players) do
 		self.m_PlayersGrid:addItem(player:getName(), data.points)
 	end
+
+	self.m_CurrentDrawing = currentDrawing
+	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
 end
 
 function SkribbleGUI:changeColor()
@@ -79,6 +100,14 @@ addEventHandler("skribbleSyncLobbyInfos", root,
 		end
 
 		SkribbleGUI:getSingleton():updateInfos(...)
+	end
+)
+
+addEventHandler("skribbleShowInfoText", root,
+	function(...)
+		if SkribbleGUI:isInstantiated() then
+			SkribbleGUI:getSingleton():showInfoText(...)
+		end
 	end
 )
 

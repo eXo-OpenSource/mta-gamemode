@@ -178,7 +178,7 @@
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleLobby.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>
