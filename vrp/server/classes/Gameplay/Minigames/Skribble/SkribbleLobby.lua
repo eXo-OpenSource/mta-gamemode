@@ -35,24 +35,52 @@ function SkribbleLobby:setState(state)
 		self.m_State = state
 		if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
 		self:showInfoText("Warten auf weitere Spieler ...")
+
+		self.m_CurrentDrawing = nil
+		self.m_GuessingWords = nil
+		self.m_GuessingWord = nil
+
+		self:syncLobbyInfos()
 	elseif state == "choosing" then
 		self.m_State = state
 		local nextPlayer = self:getNextDrawingPlayer()
 		if not nextPlayer then
-			self:setState("finishedRound")
+			return self:setState("finishedRound")
 		end
 
 		self.m_CurrentDrawing = nextPlayer
+		self.m_GuessingWord = nil
 		self.m_GuessingWords = self:getRandomWords()
-		--self:syncLobbyInfos()
 
-		for player, data in pairs(self.m_Players) do
+		for player in pairs(self.m_Players) do
 			if player == self.m_CurrentDrawing then
 				player:triggerEvent("skribbleChoosingWord", self.m_GuessingWords)
 			else
 				player:triggerEvent("skribbleShowInfoText", ("%s wählt ein Wort aus ..."):format(self.m_CurrentDrawing:getName()))
 			end
 		end
+
+		self:syncLobbyInfos()
+	elseif state == "drawing" then
+		self.m_State = state
+		self.m_Players[self.m_CurrentDrawing].queued = false
+		self.m_Players[self.m_CurrentDrawing].guessedWord = true
+
+		self:syncLobbyInfos(true)
+		self:showInfoText()
+	elseif state == "drawingFinished" then
+		self.m_State = state
+
+		for _, data in pairs(self.m_Players) do
+			data.guessedWord = false
+		end
+
+		self.m_CurrentDrawing = nil
+		self.m_GuessingWords = nil
+		self.m_GuessingWord = nil
+
+		self:syncLobbyInfos()
+		-- todo show results :)
 	elseif state == "finishedRound" then
 		self.m_State = state
 
@@ -69,6 +97,12 @@ function SkribbleLobby:setState(state)
 		end
 	elseif state == "finishedGame" then
 		self.m_State = state
+
+		self.m_CurrentDrawing = nil
+		self.m_GuessingWords = nil
+		self.m_GuessingWord = nil
+
+		self:syncLobbyInfos()
 		-- todo show results :)
 	end
 end
@@ -127,6 +161,8 @@ function SkribbleLobby:removePlayer(player)
 		return delete(self)
 	elseif playerCount < 2 then
 		self:setState("idle")
+	elseif player == self.m_CurrentDrawing then
+		--todo
 	end
 
 	self:syncLobbyInfos()
@@ -155,8 +191,6 @@ function SkribbleLobby:getRandomWords()
 			word = SKRIBBLE_WORDS[math.random(1, #SKRIBBLE_WORDS)]
 		end
 
-
-		outputConsole("Insert: " .. word[1])
 		table.insert(words, word)
 	end
 
@@ -164,15 +198,45 @@ function SkribbleLobby:getRandomWords()
 end
 
 function SkribbleLobby:choosedWord(player, key)
-	if player == self.m_CurrentDrawing then
+	if player == self.m_CurrentDrawing and self:isState("choosing") then
 		self.m_GuessingWord = self.m_GuessingWords[key]
-		outputChatBox(player:getName() .. " choosed word: " .. self.m_GuessingWord[1])
+		self:setState("drawing")
 	end
 end
 
-function SkribbleLobby:syncLobbyInfos()
+function SkribbleLobby:receiveDrawing(client, drawData)
 	for player in pairs(self.m_Players) do
-		player:triggerEvent("skribbleSyncLobbyInfos", self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds)
+		if player ~= client then
+			player:triggerEvent("skribbleSyncDrawing", drawData)
+		end
+	end
+end
+
+function SkribbleLobby:verifyGuess(text)
+	local toGuessingWord = self.m_GuessingWord[1]:lower()
+	local guessedWord = text:lower()
+
+	-- Todo: Simplify rates by recognizing similar words
+	return toGuessingWord == guessedWord
+end
+
+function SkribbleLobby:checkDrawRound()
+	local guessedPlayers = {}
+
+	for player, data in pairs(self.m_Players) do
+		if data.guessedWord then
+			table.insert(guessedPlayers, player)
+		end
+	end
+
+	if #guessedPlayers == table.size(self.m_Players) then
+		self:setState("drawingFinished")
+	end
+end
+
+function SkribbleLobby:syncLobbyInfos(clearDrawings)
+	for player in pairs(self.m_Players) do
+		player:triggerEvent("skribbleSyncLobbyInfos", self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, clearDrawings)
 	end
 end
 
@@ -182,11 +246,27 @@ function SkribbleLobby:sendShortMessage(text, ...)
 	end
 end
 
-function SkribbleLobby:onPlayerChat(player, text, type)
+function SkribbleLobby:onPlayerChat(client, text, type)
 	if type ~= 0 then return end
 
-	for player in pairs(self.m_Players) do
-		player:outputChat(("[Skribble] %s#E8FCFC: %s"):format(player:getName(), text), 255, 90, 0, true)
+	if not self.m_Players[client].guessedWord then
+		if self:verifyGuess(text) then
+			self.m_Players[client].guessedWord = true
+
+			self:checkDrawRound()
+			return true
+		end
+	end
+
+	local clientGuessed = self.m_Players[client].guessedWord
+	local color = clientGuessed and {150, 255, 140, true} or {255, 135, 70, true}
+
+	for player, data in pairs(self.m_Players) do
+		if not clientGuessed then
+			player:outputChat(("[Skribble] %s#E8E8E8: %s"):format(client:getName(), text), unpack(color))
+		elseif clientGuessed and data.guessedWord then
+			player:outputChat(("[Skribble] %s#E8E8E8: %s"):format(client:getName(), text), unpack(color))
+		end
 	end
 
 	return true

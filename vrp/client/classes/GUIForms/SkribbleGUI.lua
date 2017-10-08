@@ -7,7 +7,7 @@
 -- ****************************************************************************
 SkribbleGUI = inherit(GUIForm)
 inherit(Singleton, SkribbleGUI)
-addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText", "skribbleChoosingWord"}
+addRemoteEvents{"skribbleSyncLobbyInfos", "skribbleShowInfoText", "skribbleChoosingWord", "skribbleSyncDrawing"}
 
 function SkribbleGUI:constructor()
 	GUIWindow.updateGrid()
@@ -22,7 +22,7 @@ function SkribbleGUI:constructor()
 
 	self.m_TimeRemain = GUIGridLabel:new(2, 1, 1, 1, "80", self.m_Window)
 	self.m_RoundLabel = GUIGridLabel:new(1, 1, 5, 1, "", self.m_Window):setAlignX("right")
-	self.m_GuessingWord = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
+	self.m_GuessingWordLabel = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
 
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Spieler", .6)
@@ -55,6 +55,7 @@ end
 
 function SkribbleGUI:showInfoText(text)
 	if not text then self:hideInfoText() return end
+	self:deleteChoosingButtons()
 	self.m_InfoLabel:setText(text)
 
 	local backgroundAlpha = self.m_Background:getAlpha()
@@ -69,6 +70,7 @@ function SkribbleGUI:showInfoText(text)
 end
 
 function SkribbleGUI:hideInfoText()
+	self:deleteChoosingButtons()
 	if self.m_InfoLabel:getText() == "" then return end
 
 	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
@@ -78,14 +80,32 @@ function SkribbleGUI:hideInfoText()
 		end
 end
 
-function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds)
+function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, guessingWord, clearDrawings)
 	self.m_PlayersGrid:clear()
 	for player, data in pairs(players) do
 		self.m_PlayersGrid:addItem(player:getName(), data.points)
 	end
 
+	if clearDrawings then
+		self.m_Skribble:clear(true)
+	end
+
+	self.m_GuessingWord = guessingWord
 	self.m_CurrentDrawing = currentDrawing
 	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
+
+	if self.m_GuessingWord then
+		if self.m_CurrentDrawing == localPlayer then
+			self.m_GuessingWordLabel:setText(self.m_GuessingWord[1])
+			self:setDrawingEnabled(true)
+		else
+			self.m_GuessingWordLabel:setText(("_ "):rep(#self.m_GuessingWord[1]))
+		end
+	end
+
+	if self.m_CurrentDrawing ~= localPlayer then
+		self:setDrawingEnabled(false)
+	end
 end
 
 function SkribbleGUI:choosingWord(words)
@@ -97,12 +117,46 @@ function SkribbleGUI:choosingWord(words)
 		local width, height = self.m_Skribble:getSize()
 
 		self.m_WordButtons[key] = GUIButton:new(posX + width/2 - 125, (posY+height/2) + 55*(key-2), 250, 50, word[1], self.m_Window):setBarEnabled(false):setAlpha(0)
-		Animation.FadeAlpha:new(self.m_WordButtons[key], 500*key, 0, 255)
+		Animation.FadeAlpha:new(self.m_WordButtons[key], 300*key, 0, 255)
 
 		self.m_WordButtons[key].onLeftClick =
 			function()
+				if isTimer(self.m_ChooseTimer) then killTimer(self.m_ChooseTimer) end
 				triggerServerEvent("skribbleChoosedWord", localPlayer, key)
 			end
+	end
+
+	self.m_ChooseTimer = setTimer(
+		function()
+			triggerServerEvent("skribbleChoosedWord", localPlayer, 1)
+		end, 10000, 1
+	)
+end
+
+function SkribbleGUI:deleteChoosingButtons()
+	if self.m_WordButtons then
+		for _, button in pairs(self.m_WordButtons) do
+			button:delete()
+		end
+	end
+end
+
+function SkribbleGUI:setDrawingEnabled(state)
+	if state then
+		self.m_Skribble:setDrawingEnabled(true)
+
+		if isTimer(self.m_SyncDrawTimer) then return end
+		self.m_SyncDrawTimer = setTimer(
+			function()
+				local syncData = self.m_Skribble:getSyncData(true)
+				if #syncData > 0 then
+					triggerServerEvent("skribbleSendDrawing", localPlayer, syncData)
+				end
+			end, 500, 0
+		)
+	else
+		if isTimer(self.m_SyncDrawTimer) then killTimer(self.m_SyncDrawTimer) end
+		self.m_Skribble:setDrawingEnabled(false)
 	end
 end
 
@@ -143,6 +197,22 @@ addEventHandler("skribbleChoosingWord", root,
 		end
 	end
 )
+
+addEventHandler("skribbleSyncDrawing", root,
+	function(drawData)
+		if SkribbleGUI:isInstantiated() then
+			SkribbleGUI:getSingleton().m_Skribble:drawSyncData(drawData)
+		end
+	end
+)
+
+--[[addEventHandler("skribbleSetDrawingEnabled", root,
+	function(state)
+		if SkribbleGUI:isInstantiated() then
+			SkribbleGUI:getSingleton():setDrawingEnabled(state)
+		end
+	end
+)]]
 
 --[[function SkribbleGUI:setHost()
 	self.m_Timer = setTimer(function()

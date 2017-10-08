@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 SkribbleManager = inherit(Singleton)
-addRemoteEvents{"skribbleRequestLobbys", "skribbleCreateLobby", "skribbleJoinLobby", "skribbleLeaveLobby", "skribbleChoosedWord"}
+addRemoteEvents{"skribbleRequestLobbys", "skribbleCreateLobby", "skribbleJoinLobby", "skribbleLeaveLobby", "skribbleChoosedWord", "skribbleSendDrawing"}
 
 function SkribbleManager:constructor()
 	self.m_Lobbys = {}
@@ -24,6 +24,7 @@ function SkribbleManager:constructor()
 	addEventHandler("skribbleJoinLobby", root, bind(SkribbleManager.joinLobby, self))
 	addEventHandler("skribbleLeaveLobby", root, bind(SkribbleManager.leaveLobby, self))
 	addEventHandler("skribbleChoosedWord", root, bind(SkribbleManager.choosedWord, self))
+	addEventHandler("skribbleSendDrawing", root, bind(SkribbleManager.receiveDrawing, self))
 end
 
 function SkribbleManager:unlinkLobby(id)
@@ -68,4 +69,9 @@ end
 function SkribbleManager:choosedWord(key)
 	if not client.skribbleLobby then return end
 	client.skribbleLobby:choosedWord(client, key)
+end
+
+function SkribbleManager:receiveDrawing(drawData)
+	if not client.skribbleLobby then return end
+	client.skribbleLobby:receiveDrawing(client, drawData)
 end

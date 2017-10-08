@@ -16,7 +16,7 @@ function GUISkribble:constructor(posX, posY, width, height, parent)
 	self.m_DrawingEnabled = false
 
 	self.m_RenderTarget = DxRenderTarget(self.m_Width, self.m_Height)
-	self:clear()
+	self:clear(true)
 
 	self.m_CursorMoveFunc = bind(GUISkribble.onCursorMove, self)
 	self.m_RenderFunc = bind(GUISkribble.onClientRender, self)
@@ -82,13 +82,19 @@ function GUISkribble:onClientRender()
 	end
 end
 
-function GUISkribble:clear()
+function GUISkribble:clear(hard)
 	self.m_RenderTarget:setAsTarget()
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, Color.White)
 	dxSetRenderTarget()
 
-	table.insert(self.m_SyncData, {type = 0})
 	self:anyChange()
+
+	if hard then
+		self.m_SyncData = {}
+		return
+	end
+
+	table.insert(self.m_SyncData, {type = 0})
 end
 
 function GUISkribble:setDrawingEnabled(state)
@@ -118,8 +124,7 @@ function GUISkribble:drawSyncData(data)
 			local drawEnd = Vector2(unpack(draw.to))
 			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(draw.size))
 			local drawSize = Vector2(textWidth, textWidth)
-
-			local interpolateCount = math.ceil((drawStart - drawEnd).length/draw.size)*(draw.size > 1 and 2 or 1)
+			local interpolateCount = math.ceil((drawStart - drawEnd).length)
 
 			self.m_RenderTarget:setAsTarget()
 			for i = 1, interpolateCount do
