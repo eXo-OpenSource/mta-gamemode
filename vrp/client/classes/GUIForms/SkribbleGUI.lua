@@ -80,7 +80,7 @@ function SkribbleGUI:hideInfoText()
 		end
 end
 
-function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, guessingWord, clearDrawings)
+function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, guessingWord, clearDrawings, timeLeft)
 	self.m_PlayersGrid:clear()
 	for player, data in pairs(players) do
 		self.m_PlayersGrid:addItem(player:getName(), data.points)
@@ -105,6 +105,10 @@ function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, 
 
 	if self.m_CurrentDrawing ~= localPlayer then
 		self:setDrawingEnabled(false)
+	end
+
+	if timeLeft then
+		-- todo
 	end
 end
 
