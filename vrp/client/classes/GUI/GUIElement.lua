@@ -151,7 +151,7 @@ function GUIElement:updateTooltip(hovered)
 			local x, y = self:getPosition(true)
 			local w, h = self:getSize()
 			local textW = fontWidth(self.m_TooltipText, f, 1) + 10 -- 30 is the margin
-			local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*20+10 or 20
+			local textH = self.m_TooltipMultiline and (string.count(self.m_TooltipText, "\n")+1)*dxGetFontHeight(1, VRPFont(20)) or 20
 
 			if self.m_TooltipPos == "left" then
 				self.m_Tooltip = GUILabel:new(x - textH/2 - textW, y + h/2 - 10, textW, textH, self.m_TooltipText)
@@ -173,10 +173,8 @@ function GUIElement:updateTooltip(hovered)
 			end
 
 			self.m_Tooltip:setColor(Color.PrimaryNoClick):setBackgroundColor(Color.White)
-			self.m_Tooltip:setAlignX("center")
+			self.m_Tooltip:setAlignX(self.m_TooltipMultiline and "left" or "center")
 			self.m_Tooltip.m_CacheArea:bringToFront()
-
-
 		else --destroy tooltip
 			if self.m_Tooltip then
 				self.m_Tooltip:delete()
