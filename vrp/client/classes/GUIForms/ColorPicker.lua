@@ -69,8 +69,8 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_M5.Option = "M5"
 
 	-- Accept Button
-	self.m_SaveToMemory = GUIButton:new(180, 295, 30, 30, "✚", self.m_Window):setBackgroundColor(Color.Grey):setBackgroundHoverColor(Color.LightGrey)
-	self.m_AcceptButton = GUIButton:new(270, 295, 115, 30, "✔", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_SaveToMemory = GUIButton:new(180, 295, 30, 30, "✚", self.m_Window):setBarEnabled(false):setBackgroundColor(Color.Grey):setBackgroundHoverColor(Color.LightGrey)
+	self.m_AcceptButton = GUIButton:new(270, 295, 115, 30, "✔", self.m_Window):setBarEnabled(false):setBackgroundColor(Color.Green)
 	self.m_AcceptButton.onLeftClick = bind(ColorPicker.accept, self)
 
 	-- Default values
