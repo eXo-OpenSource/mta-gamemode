@@ -37,8 +37,10 @@ function SkribbleLobby:setState(state)
 	if state == "idle" then
 		self.m_State = state
 		if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
+		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		self:showInfoText("Warten auf weitere Spieler ...")
 
+		self.m_SyncData = nil
 		self.m_CurrentDrawing = nil
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
@@ -75,8 +77,11 @@ function SkribbleLobby:setState(state)
 			end, 80000, 1
 		)
 
-		self:syncLobbyInfos(true)
+		self.m_SyncData = {clearDrawings = true} -- clear all previous drawing
+		self:syncLobbyInfos()
 		self:showInfoText()
+
+		self.m_SyncData = nil
 	elseif state == "finishedDrawing" then
 		self.m_State = state
 
@@ -86,8 +91,8 @@ function SkribbleLobby:setState(state)
 			data.guessedWord = false
 		end
 
-		local subText = (isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() > 0) and "Alle Spieler haben das Wort erraten!" or "Die Zeit ist abgelaufen!"
-		self:showInfoText(("Das Wort war: %s\n%s"):format(self.m_GuessingWord[1], subText))
+		self.m_SyncData = {showDrawResult = true, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
+		self:showInfoText("")
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 
@@ -96,7 +101,6 @@ function SkribbleLobby:setState(state)
 		self.m_GuessingWord = nil
 
 		self:syncLobbyInfos()
-		-- todo show results :)
 	elseif state == "finishedRound" then
 		self.m_State = state
 
@@ -107,7 +111,13 @@ function SkribbleLobby:setState(state)
 				data.queued = true
 			end
 
-			self:setState("choosing")
+			self:showInfoText("Runde " .. self.m_CurrentRound)
+
+			self.m_StartRoundTimer = setTimer(
+				function()
+					self:setState("choosing")
+				end, 2000, 1
+			)
 		else
 			self:setState("finishedGame")
 		end
@@ -264,11 +274,11 @@ function SkribbleLobby:getGuessedPlayers()
 	return guessedPlayers
 end
 
-function SkribbleLobby:syncLobbyInfos(clearDrawings)
+function SkribbleLobby:syncLobbyInfos()
 	local timeLeft = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() or false
 
 	for player in pairs(self.m_Players) do
-		player:triggerEvent("skribbleSyncLobbyInfos", self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, clearDrawings, timeLeft)
+		player:triggerEvent("skribbleSyncLobbyInfos", self.m_State, self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, self.m_SyncData, timeLeft)
 	end
 end
 

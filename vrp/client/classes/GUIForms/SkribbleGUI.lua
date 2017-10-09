@@ -80,18 +80,30 @@ function SkribbleGUI:hideInfoText()
 		end
 end
 
-function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, guessingWord, clearDrawings, timeLeft)
+function SkribbleGUI:showDrawResult()
+	if self.m_ResultLabels then return end
+
+	local posX, posY = self.m_Skribble:getPosition()
+	local width, height = self.m_Skribble:getSize()
+	local timesUp = self.m_SyncData.timesUp
+	local guessingWord = self.m_SyncData.guessingWord
+
+	self.m_ResultLabels = {}
+	self.m_ResultLabels[1] = GUILabel:new(0, 0, 0, 0, ("Das Wort war: %s"):format(guessingWord), self.m_Window):setFont(VRPFont(50))
+	self.m_ResultLabels[2] = GUILabel:new(0, 0, 0,  0, timesUp and "Zeit abgelaufen!" or "Alle Spieler haben das Wort erraten!", self.m_Window):setFont(VRPFont(30)):setColor(Color.LightGrey)
+end
+
+function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, syncData, timeLeft)
 	self.m_PlayersGrid:clear()
 	for player, data in pairs(players) do
 		self.m_PlayersGrid:addItem(player:getName(), data.points)
 	end
 
-	if clearDrawings then
-		self.m_Skribble:clear(true)
-	end
-
+	self.m_State = state
+	self.m_Players = players
 	self.m_GuessingWord = guessingWord
 	self.m_CurrentDrawing = currentDrawing
+	self.m_SyncData = syncData
 	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
 
 	if self.m_GuessingWord then
@@ -105,6 +117,12 @@ function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, 
 
 	if self.m_CurrentDrawing ~= localPlayer then
 		self:setDrawingEnabled(false)
+	end
+
+	if self.m_State == "finishedDrawing" and self.m_SyncData and self.m_SyncData.showDrawResult then
+		self:showDrawResult()
+	else
+
 	end
 
 	if timeLeft then
@@ -121,6 +139,10 @@ function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, 
 	else
 		if isTimer(self.m_TimeLeftTimer) then killTimer(self.m_TimeLeftTimer) end
 		self.m_TimeLeftLabel:setText("")
+	end
+
+	if self.m_SyncData and self.m_SyncData.clearDrawings then
+		self.m_Skribble:clear(true)
 	end
 end
 
@@ -154,6 +176,8 @@ function SkribbleGUI:deleteChoosingButtons()
 		for _, button in pairs(self.m_WordButtons) do
 			button:delete()
 		end
+
+		self.m_WordButtons = nil
 	end
 end
 
