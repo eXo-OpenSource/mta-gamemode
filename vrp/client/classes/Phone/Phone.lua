@@ -34,6 +34,7 @@ function Phone:constructor()
 	self:registerApp(AppEPT)
 	self:registerApp(AppSanNews)
 	self:registerApp(AppNotes)
+	self:registerApp(AppSkribble)
 
 
 	-- Add GUI elements
