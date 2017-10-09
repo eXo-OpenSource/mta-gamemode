@@ -49,6 +49,8 @@ function SkribbleManager:requestLobbys()
 end
 
 function SkribbleManager:createLobby(name, password, rounds)
+	if client.skribbleLobby then return end
+
 	-- todo: check arguments
 	local id = #self.m_Lobbys + 1
 	self.m_Lobbys[id] = SkribbleLobby:new(id, client, name, password, rounds)

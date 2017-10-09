@@ -25,6 +25,9 @@ function SkribbleLobby:constructor(id, owner, name, password, rounds)
 end
 
 function SkribbleLobby:destructor()
+	if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
+	if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
+
 	SkribbleManager:getSingleton():unlinkLobby(self.m_Id)
 end
 
@@ -66,14 +69,14 @@ function SkribbleLobby:setState(state)
 		self.m_Players[self.m_CurrentDrawing].queued = false
 		self.m_Players[self.m_CurrentDrawing].guessedWord = 0
 
-		self:syncLobbyInfos(true)
-		self:showInfoText()
-
 		self.m_DrawTimer = setTimer(
 			function()
 				self:setState("finishedDrawing")
 			end, 80000, 1
 		)
+
+		self:syncLobbyInfos(true)
+		self:showInfoText()
 	elseif state == "finishedDrawing" then
 		self.m_State = state
 
@@ -262,8 +265,9 @@ function SkribbleLobby:getGuessedPlayers()
 end
 
 function SkribbleLobby:syncLobbyInfos(clearDrawings)
+	local timeLeft = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() or false
+
 	for player in pairs(self.m_Players) do
-		local timeLeft = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() or false
 		player:triggerEvent("skribbleSyncLobbyInfos", self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, clearDrawings, timeLeft)
 	end
 end
@@ -285,6 +289,9 @@ function SkribbleLobby:onPlayerChat(client, text, type)
 				self:setState("finishedDrawing")
 			end
 
+			for player in pairs(self.m_Players) do
+				player:outputChat(("[Skribble] %s hat das Wort erraten!"):format(client:getName()), 90, 190, 80)
+			end
 			return true
 		end
 	end

@@ -57,9 +57,9 @@ function AppSkribble:onOpen(form)
 	end
 
 	GUIButton:new(10, form.m_Height-90, form.m_Width-20, 30, "Erstellen", createTab).onLeftClick =
-	function()
-		triggerServerEvent("skribbleCreateLobby", localPlayer, self.m_Name:getText(), self.m_Password:getText(), self.m_Rounds:getSelectedItem())
-	end
+		function()
+			triggerServerEvent("skribbleCreateLobby", localPlayer, self.m_Name:getText(), self.m_Password:getText(), self.m_Rounds:getSelectedItem())
+		end
 
 	-- toplistTab
 	GUILabel:new(10, 10, form.m_Width-20, 50, _"Bestenliste", toplistTab)

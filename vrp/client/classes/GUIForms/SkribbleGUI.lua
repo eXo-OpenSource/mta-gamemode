@@ -20,7 +20,7 @@ function SkribbleGUI:constructor()
 	GUIGridRectangle:new(1, 1, 24, 1, Color.LightGrey, self.m_Window)
 	GUIGridLabel:new(1, 1, 1, 1, FontAwesomeSymbols.Clock, self.m_Window):setFont(FontAwesome(30)):setFontSize(1):setAlignX("center")
 
-	self.m_TimeRemain = GUIGridLabel:new(2, 1, 1, 1, "80", self.m_Window)
+	self.m_TimeLeftLabel = GUIGridLabel:new(2, 1, 1, 1, "", self.m_Window)
 	self.m_RoundLabel = GUIGridLabel:new(1, 1, 5, 1, "", self.m_Window):setAlignX("right")
 	self.m_GuessingWordLabel = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
 
@@ -108,7 +108,19 @@ function SkribbleGUI:updateInfos(players, currentDrawing, currentRound, rounds, 
 	end
 
 	if timeLeft then
-		-- todo
+		self.m_TimeLeft = math.floor(timeLeft/1000)
+		self.m_TimeLeftLabel:setText(self.m_TimeLeft)
+
+		if isTimer(self.m_TimeLeftTimer) then killTimer(self.m_TimeLeftTimer) end
+		self.m_TimeLeftTimer = setTimer(
+			function()
+				self.m_TimeLeft = self.m_TimeLeft - 1
+				self.m_TimeLeftLabel:setText(self.m_TimeLeft)
+			end, 1000, self.m_TimeLeft
+		)
+	else
+		if isTimer(self.m_TimeLeftTimer) then killTimer(self.m_TimeLeftTimer) end
+		self.m_TimeLeftLabel:setText("")
 	end
 end
 
@@ -180,6 +192,7 @@ addEventHandler("skribbleSyncLobbyInfos", root,
 	function(...)
 		if not SkribbleGUI:isInstantiated() then
 			SkribbleGUI:new(...)
+			Phone:getSingleton():close()
 		end
 
 		SkribbleGUI:getSingleton():updateInfos(...)
