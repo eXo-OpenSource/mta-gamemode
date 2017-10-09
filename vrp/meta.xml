@@ -696,7 +696,6 @@
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/SkribbleLobbyGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
