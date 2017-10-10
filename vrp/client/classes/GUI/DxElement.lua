@@ -260,7 +260,10 @@ function DxElement:setAbsolutePosition(posX, posY)
 		children = children.m_Children
 	end
 
-	-- Todo: Adjust m_PosX etc.
+	if self.m_Parent == GUIRenderer.cacheroot or not self.m_Parent then
+		self.m_PosX = posX
+		self.m_PosY = posY
+	end
 	self:anyChange()
 	return self
 end
