@@ -56,6 +56,7 @@ end
 function SkribbleGUI:showInfoText(text)
 	if not text then self:hideInfoText() return end
 	self:deleteChoosingButtons()
+	self:deleteDrawResult()
 	self.m_InfoLabel:setText(text)
 
 	local backgroundAlpha = self.m_Background:getAlpha()
@@ -71,6 +72,7 @@ end
 
 function SkribbleGUI:hideInfoText()
 	self:deleteChoosingButtons()
+	self:deleteDrawResult()
 	if self.m_InfoLabel:getText() == "" then return end
 
 	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
@@ -81,16 +83,47 @@ function SkribbleGUI:hideInfoText()
 end
 
 function SkribbleGUI:showDrawResult()
-	if self.m_ResultLabels then return end
+	self:deleteDrawResult()
 
 	local posX, posY = self.m_Skribble:getPosition()
 	local width, height = self.m_Skribble:getSize()
 	local timesUp = self.m_SyncData.timesUp
 	local guessingWord = self.m_SyncData.guessingWord
+	local offset = width/4
 
 	self.m_ResultLabels = {}
-	self.m_ResultLabels[1] = GUILabel:new(0, 0, 0, 0, ("Das Wort war: %s"):format(guessingWord), self.m_Window):setFont(VRPFont(50))
-	self.m_ResultLabels[2] = GUILabel:new(0, 0, 0,  0, timesUp and "Zeit abgelaufen!" or "Alle Spieler haben das Wort erraten!", self.m_Window):setFont(VRPFont(30)):setColor(Color.LightGrey)
+	self.m_ResultLabels[1] = GUILabel:new(posX, posY, width, 80, ("Das Wort war: %s"):format(guessingWord), self.m_Window):setFont(VRPFont(50)):setAlignX("center"):setAlpha(0)
+	self.m_ResultLabels[2] = GUILabel:new(posX, posY + 55, width, 25, timesUp and "Zeit abgelaufen!" or "Alle Spieler haben das Wort erraten!", self.m_Window):setFont(VRPFont(25)):setAlignX("center"):setColor(Color.LightGrey):setAlpha(0)
+
+	Animation.FadeAlpha:new(self.m_ResultLabels[1], 250, 0, 255)
+	Animation.FadeAlpha:new(self.m_ResultLabels[2], 250, 0, 255)
+
+	local i = 1
+	for player, data in pairs(self.m_Players) do
+		local nameLabel = GUILabel:new(posX + offset, posY + 100 + 25*(i-1), offset, 25, player:getName(), self.m_Window):setFont(VRPFont(30)):setAlpha(0)
+		local pointsLabel = GUILabel:new(posX + offset*2, posY + 100 + 25*(i-1), offset, 25, ("+%s"):format(data.gotPoints), self.m_Window):setFont(VRPFont(30)):setColor(data.gotPoints > 0 and Color.Green or Color.Red):setAlignX("right"):setAlpha(0)
+
+		table.insert(self.m_ResultLabels, nameLabel)
+		table.insert(self.m_ResultLabels, pointsLabel)
+
+		Animation.FadeAlpha:new(nameLabel, 250, 0, 255)
+		Animation.FadeAlpha:new(pointsLabel, 250, 0, 255)
+
+		i = i + 1
+	end
+end
+
+function SkribbleGUI:deleteDrawResult()
+	if self.m_ResultLabels then
+		for k, element in pairs(self.m_ResultLabels) do
+			Animation.FadeAlpha:new(element, 250, 255, 0).onFinish =
+				function()
+					element:delete()
+				end
+		end
+
+		self.m_ResultLabels = nil
+	end
 end
 
 function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, syncData, timeLeft)
@@ -122,7 +155,7 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 	if self.m_State == "finishedDrawing" and self.m_SyncData and self.m_SyncData.showDrawResult then
 		self:showDrawResult()
 	else
-
+		self:deleteDrawResult()
 	end
 
 	if timeLeft then

@@ -27,6 +27,7 @@ end
 function SkribbleLobby:destructor()
 	if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 	if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
+	if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
 
 	SkribbleManager:getSingleton():unlinkLobby(self.m_Id)
 end
@@ -38,6 +39,7 @@ function SkribbleLobby:setState(state)
 		self.m_State = state
 		if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
+		if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
 		self:showInfoText("Warten auf weitere Spieler ...")
 
 		self.m_SyncData = nil
@@ -101,6 +103,12 @@ function SkribbleLobby:setState(state)
 		self.m_GuessingWord = nil
 
 		self:syncLobbyInfos()
+
+		self.m_NextPlayerTimer = setTimer(
+			function()
+				self:setState("choosing")
+			end, 5000, 1
+		)
 	elseif state == "finishedRound" then
 		self.m_State = state
 
