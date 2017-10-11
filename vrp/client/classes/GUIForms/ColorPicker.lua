@@ -8,13 +8,15 @@
 ColorPicker = inherit(GUIForm)
 inherit(Singleton, ColorPicker)
 
-function ColorPicker:constructor(acceptCallback, changeCallback)
+function ColorPicker:constructor(acceptCallback, changeCallback, resetCallback, defaultColor)
     local width, height = 390, 330
     GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ColorPicker", true, true, self)
 
 	self.m_AcceptCallback = acceptCallback
 	self.m_ChangeCallback = changeCallback
+	self.m_ResetCallback = resetCallback
+	self.m_DefaultColor = defaultColor
 
 	-- Border
 	GUIRectangle:new(4, 34, 258, 258, Color.Black, self.m_Window) -- Gradient
@@ -79,6 +81,13 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_Saturation = 1
 	self.m_Brightness = 1
 
+	if self.m_DefaultColor then
+		local r, g, b = fromcolor(self.m_DefaultColor)
+		if r and g and b then
+			self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b, 1)
+		end
+	end
+
 	self:updateColor()
 	self:updatePosition()
 
@@ -121,6 +130,13 @@ end
 function ColorPicker:virtual_destructor()
 	removeEventHandler("onClientClick", root, self.m_OnCursorClick)
 	removeEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
+
+	if not self.m_AcceptDelete and self.m_DefaultColor then
+		if self.m_ResetCallback then
+			local r, g, b = fromcolor(self.m_DefaultColor)
+			self.m_ResetCallback(r, g, b)
+		end
+	end
 end
 
 function ColorPicker:onCursorClick(_, state)
@@ -317,6 +333,7 @@ function ColorPicker:accept()
 			self.m_AcceptCallback(r, g, b)
 		end
 
+		self.m_AcceptDelete = true
 		delete(self)
 	end
 end
