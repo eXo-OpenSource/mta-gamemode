@@ -1000,6 +1000,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -1016,6 +1017,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconEPT.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>

@@ -9,7 +9,7 @@ AppSkribble = inherit(PhoneApp)
 addRemoteEvents{"skribbleReceiveLobbys"}
 
 function AppSkribble:constructor()
-	PhoneApp.constructor(self, "Skribble", "IconNotes.png")
+	PhoneApp.constructor(self, "Skribble", "IconScribble.png")
 end
 
 function AppSkribble:onOpen(form)
