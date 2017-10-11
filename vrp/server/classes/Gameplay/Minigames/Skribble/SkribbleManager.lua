@@ -19,6 +19,14 @@ function SkribbleManager:constructor()
 		end
 	)
 
+	Player.getQuitHook():register(
+		function(player)
+			if player.skribbleLobby then
+				return player.skribbleLobby:removePlayer(player)
+			end
+		end
+	)
+
 	addEventHandler("skribbleRequestLobbys", root, bind(SkribbleManager.requestLobbys, self))
 	addEventHandler("skribbleCreateLobby", root, bind(SkribbleManager.createLobby, self))
 	addEventHandler("skribbleJoinLobby", root, bind(SkribbleManager.joinLobby, self))

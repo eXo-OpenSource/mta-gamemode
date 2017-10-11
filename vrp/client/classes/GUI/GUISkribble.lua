@@ -86,8 +86,6 @@ function GUISkribble:onInternalLeftClick(x, y)
 	dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
 	dxSetRenderTarget()
 
-	outputChatBox("draw click")
-
 	table.insert(self.m_SyncData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
 	self:anyChange()
 end

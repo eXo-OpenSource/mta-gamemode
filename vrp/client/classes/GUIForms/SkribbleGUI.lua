@@ -63,6 +63,8 @@ end
 
 function SkribbleGUI:virtual_destructor()
 	triggerServerEvent("skribbleLeaveLobby", localPlayer)
+
+	if isTimer(self.m_ChooseTimer) then killTimer(self.m_ChooseTimer) end
 end
 
 function SkribbleGUI:showInfoText(text)
@@ -99,13 +101,17 @@ function SkribbleGUI:showDrawResult()
 
 	local posX, posY = self.m_Skribble:getPosition()
 	local width, height = self.m_Skribble:getSize()
-	local timesUp = self.m_SyncData.timesUp
+	local subText = self.m_SyncData.timesUp and "Zeit abgelaufen!" or "Alle Spieler haben das Wort erraten!"
 	local guessingWord = self.m_SyncData.guessingWord
 	local offset = width/4
 
+	if not isElement(self.m_SyncData.drawer) then
+		subText = "Der Zeichner hat das Spiel verlassen!"
+	end
+
 	self.m_ResultLabels = {}
 	self.m_ResultLabels[1] = GUILabel:new(posX, posY, width, 80, ("Das Wort war: %s"):format(guessingWord), self.m_Window):setFont(VRPFont(50)):setAlignX("center"):setAlpha(0)
-	self.m_ResultLabels[2] = GUILabel:new(posX, posY + 55, width, 25, timesUp and "Zeit abgelaufen!" or "Alle Spieler haben das Wort erraten!", self.m_Window):setFont(VRPFont(25)):setAlignX("center"):setColor(Color.LightGrey):setAlpha(0)
+	self.m_ResultLabels[2] = GUILabel:new(posX, posY + 55, width, 25, subText, self.m_Window):setFont(VRPFont(25)):setAlignX("center"):setColor(Color.LightGrey):setAlpha(0)
 
 	Animation.FadeAlpha:new(self.m_ResultLabels[1], 250, 0, 255)
 	Animation.FadeAlpha:new(self.m_ResultLabels[2], 250, 0, 255)
@@ -209,6 +215,7 @@ function SkribbleGUI:choosingWord(words)
 			end
 	end
 
+	if isTimer(self.m_ChooseTimer) then killTimer(self.m_ChooseTimer) end
 	self.m_ChooseTimer = setTimer(
 		function()
 			triggerServerEvent("skribbleChoosedWord", localPlayer, 1)

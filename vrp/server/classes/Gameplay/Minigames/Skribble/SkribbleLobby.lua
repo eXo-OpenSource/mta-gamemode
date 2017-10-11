@@ -47,9 +47,19 @@ function SkribbleLobby:setState(state)
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
 
+		for _, data in pairs(self.m_Players) do
+			data.guessedWord = false
+		end
+
 		self:syncLobbyInfos()
 	elseif state == "choosing" then
 		self.m_State = state
+
+		local playerCount = #self:getPlayers()
+		if playerCount < 2 then
+			return self:setState("idle")
+		end
+
 		local nextPlayer = self:getNextDrawingPlayer()
 		if not nextPlayer then
 			return self:setState("finishedRound")
@@ -93,7 +103,7 @@ function SkribbleLobby:setState(state)
 			data.guessedWord = false
 		end
 
-		self.m_SyncData = {showDrawResult = true, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
+		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
 		self:showInfoText("")
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
@@ -165,7 +175,7 @@ function SkribbleLobby:addPlayer(player)
 	self.m_Players[player] = {points = 0, queued = true}
 	player.skribbleLobby = self
 
-	self:sendShortMessage(player:getName() .. " is beigetreten!")
+	self:sendShortMessage(player:getName() .. " ist beigetreten!")
 	self:syncLobbyInfos()
 
 	local playerCount = #self:getPlayers()
@@ -190,13 +200,28 @@ function SkribbleLobby:removePlayer(player)
 	self.m_Players[player] = nil
 	player.skribbleLobby = nil
 
+	self:sendShortMessage(player:getName() .. " hat die Lobby verlassen!")
+
 	local playerCount = #self:getPlayers()
 	if playerCount == 0 then
 		return delete(self)
-	elseif playerCount < 2 then
-		self:setState("idle")
 	elseif player == self.m_CurrentDrawing then
-		--todo
+		if self:isState("drawing") then
+			self:setState("finishedDrawing")
+		else
+			self:setState("choosing")
+		end
+	elseif playerCount < 2 then
+		if self:isState("finishedGame") then
+			self.m_CurrentRound = 1
+
+			for _, data in pairs(self.m_Players) do
+				data.points = 0
+				data.queued = true
+			end
+		end
+
+		self:setState("idle")
 	end
 
 	self:syncLobbyInfos()
