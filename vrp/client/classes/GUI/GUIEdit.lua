@@ -30,12 +30,13 @@ end
 function GUIEdit:drawThis()
 	dxSetBlendMode("modulate_add")
 
+	local white = tocolor(255, 255, 255, self:getAlpha())
 	if self.m_Icon then
-		dxDrawRectangle(self.m_AbsoluteX - 30, self.m_AbsoluteY, 30, self.m_Height, Color.White)
+		dxDrawRectangle(self.m_AbsoluteX - 30, self.m_AbsoluteY, 30, self.m_Height, white)
 		dxDrawText(self.m_Icon, self.m_AbsoluteX - 30, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), FontAwesome(self.m_Height*.9), "center", "center")
 	end
 
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, white)
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
 	local text = self:getDrawnText()
@@ -49,17 +50,17 @@ function GUIEdit:drawThis()
 	if self.m_MarkedAll then
 		local textWidth = dxGetTextWidth(text, self:getFontSize(), self:getFont())
 		if textWidth > self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN then textWidth = self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN end
-		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + 6, textWidth, self.m_Height - 12, tocolor(0, 170, 255))
+		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + 6, textWidth, self.m_Height - 12, tocolor(0, 170, self:getAlpha()))
 	end
 
 	if self.m_Selection then
-		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
-		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + self.m_SelectionOffset, self.m_AbsoluteY + 6, self.m_SelectionWidth, self.m_Height - 12, tocolor(0, 170, 255))
+		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and white or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + self.m_SelectionOffset, self.m_AbsoluteY + 6, self.m_SelectionWidth, self.m_Height - 12, tocolor(0, 170, self:getAlpha()))
 
 		local textWidth = dxGetTextWidth(self.m_SelectedFirst, self:getFontSize(), self:getFont())
-		dxDrawText(self.m_SelectedText, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + textWidth, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, Color.White, self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+		dxDrawText(self.m_SelectedText, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + textWidth, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, white, self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 	else
-		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and Color.White or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
+		dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height, (self.m_MarkedAll) and white or self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 	end
 
 	if self.m_DrawCursor and not self.m_MarkedAll then
@@ -293,4 +294,5 @@ function GUIEdit:setIcon(icon)
 
 	self:setSize(width - 30, height)
 	self:setPosition(posX + 30, posY)
+	return self
 end

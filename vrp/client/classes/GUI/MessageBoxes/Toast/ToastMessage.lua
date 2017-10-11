@@ -21,7 +21,7 @@ function ToastMessage:constructor(text, timeout, title)
 	self.m_AlphaFaded = false
 
 	playSound(self:getSoundPath())
-	setTimer(function() delete(self) end, timeout or 5000, 1)
+	setTimer(function() delete(self) end, timeout or (#text*100 > 5000 and #text*100 or 5000), 1)
 
 	table.insert(MessageBoxManager.Map, self)
 	MessageBoxManager.resortPositions()

@@ -94,4 +94,5 @@ function GUILabel:setClickable(state)
 		self.onInternalHover = nil
 		self.onInternalUnhover = nil
 	end
+	return self
 end

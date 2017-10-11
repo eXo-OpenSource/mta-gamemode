@@ -493,7 +493,7 @@ function HUDUI:drawChart()
 	end
 	local oxygenColor = Color.HUD_Blue
 	if oxygen <= 50 then
-		oxygenColor = Color.changeAlphaPeriod(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
+		oxygenColor = Color.changeAlphaRate(oxygenColor, getProgress("health-color", getTickCount()%1000 > 500))
 	end
 
 	drawCol(1, health, healthColor, dsc and math.ceil(health).."% Leben" or math.ceil(health), FontAwesomeSymbols.Heart, Color.HUD_Red_D, "health", health == 0)

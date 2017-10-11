@@ -17,6 +17,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
 	self.m_MovingEnabled = true
+	self.m_BGColor = Color.Background
 
 	self.m_Parent:bringToFront() --don't bring the window itself to front but rather the GUIForm parent
 	self.onLeftClickDown = function()
@@ -63,7 +64,7 @@ function GUIWindow:drawThis()
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
 
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Background)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BGColor)
 
 	dxSetBlendMode("blend")
 end

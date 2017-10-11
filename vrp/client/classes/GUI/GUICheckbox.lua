@@ -28,10 +28,15 @@ end
 function GUICheckbox:drawThis()
 	dxSetBlendMode("modulate_add")
 
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, self.m_Enabled and Color.Primary or Color.PrimaryNoClick)
+	local primaryNc = Color.changeAlpha(Color.PrimaryNoClick, self:getAlpha())
+	local lightGrey = Color.changeAlpha(Color.LightGrey, self:getAlpha())
+	local primary = Color.changeAlpha(Color.Primary, self:getAlpha())
+	local accent = Color.changeAlpha(Color.Accent, self:getAlpha())
+
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, self.m_Enabled and primary or primaryNc)
 
 	local w, h = self.m_CheckedButton:getSize()
-	dxDrawRectangle(self.m_AbsoluteX + self.m_Height/2 - w/2, self.m_AbsoluteY + self.m_Height/2 - h/2, w, h, self.m_Enabled and Color.Accent or Color.LightGrey)
+	dxDrawRectangle(self.m_AbsoluteX + self.m_Height/2 - w/2, self.m_AbsoluteY + self.m_Height/2 - h/2, w, h, self.m_Enabled and accent or lightGrey)
 
 	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true, false, false, true)
 	dxSetBlendMode("blend")
