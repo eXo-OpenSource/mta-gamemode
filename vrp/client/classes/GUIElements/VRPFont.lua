@@ -52,6 +52,7 @@ FontAwesomeSymbols = {
 	Group = "",
 	Money = "",
 	Info = "",
+	Question = "",
 	CheckSquare = "",
 	Check = "",
 	Square = "",

@@ -33,13 +33,13 @@ function AppSkribble:onOpen(form)
 	self.m_LobbyGrid:addColumn(_"S", .1)
 	self.m_LobbyGrid:addColumn(_"R", .25)
 
-	local refreshButton = GUIButton:new(form.m_Width-40, 20, 30, 30, FontAwesomeSymbols.Refresh, lobbyTab):setFont(FontAwesome(20)):setFontSize(1)--:setBarEnabled(false)
+	local refreshButton = GUIButton:new(form.m_Width-40, 20, 30, 30, FontAwesomeSymbols.Refresh, lobbyTab):setFont(FontAwesome(25)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Primary)
 	refreshButton.onLeftClick =
 		function()
 			triggerServerEvent("skribbleRequestLobbys", localPlayer)
 		end
 
-	local infoButton = GUIButton:new(form.m_Width-80, 20, 30, 30, FontAwesomeSymbols.Info, lobbyTab):setFont(FontAwesome(20)):setFontSize(1)--:setBarEnabled(false)
+	local infoButton = GUIButton:new(form.m_Width-80, 20, 30, 30, FontAwesomeSymbols.Question, lobbyTab):setFont(FontAwesome(25)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Primary)
 	infoButton:setTooltip("  Weiß = Öffentliche Lobby\n  Orange = Private Lobby\n  S = Spieler\n  R = Runden\n  Doppelklick zum beitreten", "bottom", true)
 
 	-- createTab

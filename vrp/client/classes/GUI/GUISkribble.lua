@@ -45,7 +45,7 @@ function GUISkribble:onCursorMove(_, _, x, y)
 			local pos = Vector2(self:getPosition(true))
 			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(self.m_DrawSize))
 			local drawSize = Vector2(textWidth, textWidth)
-			local drawStart = (self.m_LastPosition - pos)-- - drawSize/2
+			local drawStart = (self.m_LastPosition - pos)
 			local drawEnd = cursorPosition - pos
 			local interpolateCount = math.ceil((drawStart - drawEnd).length)
 
@@ -62,9 +62,34 @@ function GUISkribble:onCursorMove(_, _, x, y)
 		end
 
 		self.m_LastPosition = cursorPosition
+		self.m_LastMoveTick = getTickCount()
 	else
 		self.m_LastPosition = nil
 	end
+end
+
+function GUISkribble:onInternalLeftClick(x, y)
+	if not self.m_DrawingEnabled then return end
+
+	local cursorPosition = Vector2(x, y)
+
+	if self.m_LastMoveTick and getTickCount() - self.m_LastMoveTick < 5 then return end
+	if self.m_LastClickPosition and (self.m_LastClickPosition - cursorPosition).length == 0 then return end
+	self.m_LastClickPosition = cursorPosition
+
+	local pos = Vector2(self:getPosition(true))
+	local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(self.m_DrawSize))
+	local drawSize = Vector2(textWidth, textWidth)
+	local drawStart = cursorPosition - pos
+
+	self.m_RenderTarget:setAsTarget()
+	dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), self.m_DrawColor, .5, FontAwesome(self.m_DrawSize))
+	dxSetRenderTarget()
+
+	outputChatBox("draw click")
+
+	table.insert(self.m_SyncData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+	self:anyChange()
 end
 
 function GUISkribble:onClientRender()
@@ -135,6 +160,14 @@ function GUISkribble:drawSyncData(data)
 			dxSetRenderTarget()
 
 			self:anyChange()
+		elseif draw.type == 2 then
+			local drawStart = Vector2(unpack(draw.start))
+			local textWidth = dxGetTextWidth(FontAwesomeSymbols.Circle, .5, FontAwesome(draw.size))
+			local drawSize = Vector2(textWidth, textWidth)
+
+			self.m_RenderTarget:setAsTarget()
+			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, FontAwesome(draw.size))
+			dxSetRenderTarget()
 		end
 	end
 end

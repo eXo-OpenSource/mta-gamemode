@@ -21,11 +21,12 @@ Color = {
 	DarkBlue  = {0,    32,  63},
 	DarkBlueAlpha   = {0,32,  63, 200},
     DarkLightBlue = {0, 50, 100, 255},
-	Brown     = {189, 109, 19},
+	Brown     = {128, 64, 0},
 	BrownAlpha= {189, 109, 19, 180},
 	LightBlue = {50, 200, 255},
 	Orange    = {254, 138, 0},
 	LightRed  = {244, 73, 85},
+	Purple 	  = {128, 0, 128},
 
 	HUD_Red		= {161,	47,	47},
 	HUD_Red_D	= {133,	28,	28},

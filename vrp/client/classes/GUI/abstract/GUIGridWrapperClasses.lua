@@ -18,6 +18,7 @@ GUIGridMiniMap = inherit(GUIMiniMap)
 GUIGridProgressBar = inherit(GUIProgressBar)
 GUIGridRadioButton = inherit(GUIRadioButton)
 GUIGridRectangle = inherit(GUIRectangle)
+GUIGridEmptyRectangle = inherit(GUIEmptyRectangle)
 GUIGridSlider = inherit(GUISlider)
 GUIGridSwitch = inherit(GUISwitch)
 GUIGridScrollableArea = inherit(GUIScrollableArea)
@@ -32,6 +33,7 @@ function GUIGridGridList:constructor(posX, posY, width, height, parent) return G
 function GUIGridImage:constructor(posX, posY, width, height, path, parent) return GUIImage.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), path, parent) end
 function GUIGridRadioButton:constructor(posX, posY, width, height, text, parent) return GUIRadioButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) end
 function GUIGridRectangle:constructor(posX, posY, width, height, color, parent) return GUIRectangle.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), color, parent) end
+function GUIGridEmptyRectangle:constructor(posX, posY, width, height, linewidth, color, parent) return GUIEmptyRectangle.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), linewidth, color, parent) end
 function GUIGridProgressBar:constructor(posX, posY, width, height, parent) return GUIProgressBar.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSlider:constructor(posX, posY, width, height, parent) return GUISlider.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSwitch:constructor(posX, posY, width, height, parent) return GUISwitch.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -39,7 +41,6 @@ function GUIGridWebView:constructor(posX, posY, width, height, url, transparent,
 function GUIGridScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space) return GUIScrollableArea.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), grid("d", documentWidth), grid("d", documentHeight), verticalScrollbar, horizontalScrollbar, parent, grid("y", space)) end
 function GUIGridMemo:constructor(posX, posY, width, height, parent) return GUIMemo.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSkribble:constructor(posX, posY, width, height, parent) return GUISkribble.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
-
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)

@@ -33,13 +33,25 @@ function SkribbleGUI:constructor()
 	self.m_Background = GUIGridRectangle:new(6, 2, 19, 13, Color.Clear, self.m_Window)
 	self.m_InfoLabel = GUIGridLabel:new(6, 2, 19, 13, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
 
-	self.m_ChangeColor = GUIGridIconButton:new(6, 15, FontAwesomeSymbols.Brush, self.m_Window)
+	local predefinedColors = {"Black", "Brown", "Red", "Orange", "Yellow", "Green", "LightBlue", "Blue", "Purple"}
+	for i, color in pairs(predefinedColors) do
+		local colorButton = GUIGridRectangle:new(5 + i, 15, 1, 1, Color[color], self.m_Window)
+		colorButton.onLeftClick =
+			function()
+				self.m_ChangeColor:setBackgroundColor(Color[color])
+				self.m_Skribble:setDrawColor(Color[color])
+			end
+
+		GUIGridEmptyRectangle:new(5 + i, 15, 1, 1, 1, Color.Black, self.m_Window)
+	end
+
+	self.m_ChangeColor = GUIGridIconButton:new(16, 15, FontAwesomeSymbols.Brush, self.m_Window):setBarEnabled(false):setBackgroundColor(Color.Primary)
 	self.m_ChangeColor.onLeftClick = bind(SkribbleGUI.changeColor, self)
 
-	local erase = GUIGridIconButton:new(7, 15, FontAwesomeSymbols.Erase, self.m_Window)
+	local erase = GUIGridIconButton:new(17, 15, FontAwesomeSymbols.Erase, self.m_Window):setBarEnabled(false):setBackgroundColor(Color.Primary)
 	erase.onLeftClick = function() self.m_Skribble:setDrawColor(Color.White) end
 
-	local clearDraw = GUIGridIconButton:new(8, 15, FontAwesomeSymbols.Trash, self.m_Window)
+	local clearDraw = GUIGridIconButton:new(18, 15, FontAwesomeSymbols.Trash, self.m_Window):setBarEnabled(false):setBackgroundColor(Color.Primary)
 	clearDraw.onLeftClick = function() if self.m_CurrentDrawing == localPlayer then self.m_Skribble:clear() end end
 
 	-- About the slider range:
@@ -241,7 +253,12 @@ function SkribbleGUI:changeColor()
 		end,
 		function(r, g, b)
 			self.m_ChangeColor:setBackgroundColor(tocolor(r, g, b))
-		end
+		end,
+		function(r, g, b)
+			self.m_ChangeColor:setBackgroundColor(tocolor(r, g, b))
+			self.m_Skribble:setDrawColor(tocolor(r, g, b))
+		end,
+		self.m_Skribble.m_DrawColor
 	)
 end
 
