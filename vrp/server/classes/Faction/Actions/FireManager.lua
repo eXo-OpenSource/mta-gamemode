@@ -123,7 +123,7 @@ function FireManager:onUpdateHandler(stats)
 end
 
 function FireManager:sendNews(text) -- adapted from PlayerManager
-	local fire = self.m_CurrentFire
+	--[[local fire = self.m_CurrentFire -- DO THIS SOME OTHER TIME!!!!!!!!!!
 	local textFinish
 	if fire then
 		for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
@@ -135,7 +135,7 @@ function FireManager:sendNews(text) -- adapted from PlayerManager
 			end
 			v:triggerEvent("breakingNews", textFinish, "Verkehrsbehinderung")
 		end
-	end
+	end]]
 end
 
 

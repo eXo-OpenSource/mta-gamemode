@@ -44,7 +44,8 @@ function FireRoot:constructor(iX, iY, iW, iH)
 		self.m_DebugArea = RadarArea:new(iX, iY, iW, -iH, {200, 0, 0, 100})
 	end
 
-    for index = 1, math.sqrt(iW*iH)/FireRoot.Settings["coords_per_fire"]/3 do
+	self:updateFire(math.floor(m_Max_I/2), math.floor(m_Max_V/2), 3)
+    for index = 1, math.min(math.sqrt(iW*iH) / FireRoot.Settings["coords_per_fire"] / 3 , self.m_Max_Fires) do
         local i, v = math.random(0, iW/FireRoot.Settings["coords_per_fire"]), math.random(0, iH/FireRoot.Settings["coords_per_fire"])
         self:updateFire(i, v, 3)
     end
