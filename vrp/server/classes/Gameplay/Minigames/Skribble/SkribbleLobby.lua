@@ -20,12 +20,14 @@ function SkribbleLobby:constructor(id, owner, name, password, rounds)
 	self.m_CurrentDrawing = nil
 	self.m_GuessingWords = nil
 	self.m_GuessingWord = nil
+	self.m_Hints = {}
 
 	self:addPlayer(owner)
 end
 
 function SkribbleLobby:destructor()
 	if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
+	if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
 	if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
 	if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
 
@@ -40,12 +42,14 @@ function SkribbleLobby:setState(state)
 		if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
+		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
 		self:showInfoText("Warten auf weitere Spieler ...")
 
 		self.m_SyncData = nil
 		self.m_CurrentDrawing = nil
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
+		self.m_Hints = {}
 
 		for _, data in pairs(self.m_Players) do
 			data.guessedWord = false
@@ -89,6 +93,13 @@ function SkribbleLobby:setState(state)
 			end, 80000, 1
 		)
 
+		self.m_HintTimer = setTimer(
+			function()
+				self:addHint()
+				self:syncLobbyInfos()
+			end, 30000, 2
+		)
+
 		self.m_SyncData = {clearDrawings = true} -- clear all previous drawing
 		self:syncLobbyInfos()
 		self:showInfoText()
@@ -107,10 +118,12 @@ function SkribbleLobby:setState(state)
 		self:showInfoText("")
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
+		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
 
 		self.m_CurrentDrawing = nil
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
+		self.m_Hints = {}
 
 		self:syncLobbyInfos()
 
@@ -243,6 +256,17 @@ function SkribbleLobby:calculatePoints()
 	end
 end
 
+function SkribbleLobby:addHint()
+	local wordLength = self.m_GuessingWord[1]:len()
+	local randomHintIndex = math.random(1, wordLength)
+
+	while self.m_Hints[randomHintIndex] do
+		randomHintIndex = math.random(1, wordLength)
+	end
+
+	self.m_Hints[randomHintIndex] = true
+end
+
 function SkribbleLobby:getNextDrawingPlayer()
 	for player, data in pairs(self.m_Players) do
 		if data.queued then
@@ -311,7 +335,7 @@ function SkribbleLobby:syncLobbyInfos()
 	local timeLeft = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() or false
 
 	for player in pairs(self.m_Players) do
-		player:triggerEvent("skribbleSyncLobbyInfos", self.m_State, self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, self.m_SyncData, timeLeft)
+		player:triggerEvent("skribbleSyncLobbyInfos", self.m_State, self.m_Players, self.m_CurrentDrawing, self.m_CurrentRound, self.m_Rounds, self.m_GuessingWord, self.m_Hints, self.m_SyncData, timeLeft)
 	end
 end
 

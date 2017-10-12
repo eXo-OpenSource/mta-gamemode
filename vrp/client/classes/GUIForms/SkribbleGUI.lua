@@ -144,7 +144,7 @@ function SkribbleGUI:deleteDrawResult()
 	end
 end
 
-function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, syncData, timeLeft)
+function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, hints, syncData, timeLeft)
 	self.m_PlayersGrid:clear()
 	for player, data in pairs(players) do
 		self.m_PlayersGrid:addItem(player:getName(), data.points)
@@ -155,6 +155,7 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 	self.m_GuessingWord = guessingWord
 	self.m_CurrentDrawing = currentDrawing
 	self.m_SyncData = syncData
+	self.m_Hints = hints
 	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
 
 	if self.m_GuessingWord then
@@ -162,7 +163,7 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 			self.m_GuessingWordLabel:setText(self.m_GuessingWord[1])
 			self:setDrawingEnabled(true)
 		else
-			self.m_GuessingWordLabel:setText(("_ "):rep(#self.m_GuessingWord[1]))
+			self:updateGuessingWordLabel()
 		end
 	end
 
@@ -196,6 +197,26 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 		self.m_Skribble:clear(true)
 	end
 end
+
+function SkribbleGUI:updateGuessingWordLabel()
+	local wordLength = self.m_GuessingWord[1]:len()
+
+	if table.size(self.m_Hints) == 0 then
+		self.m_GuessingWordLabel:setText(("_ "):rep(wordLength))
+	else
+		local text = ""
+		for i = 1, wordLength do
+			if not self.m_Hints[i] then
+				text = ("%s_ "):format(text)
+			else
+				text = ("%s%s "):format(text, utfSub(self.m_GuessingWord[1], i, i))
+			end
+		end
+
+		self.m_GuessingWordLabel:setText(text)
+	end
+end
+
 
 function SkribbleGUI:choosingWord(words)
 	self:showInfoText("Wähle ein Wort aus ...\n\n\n\n")
