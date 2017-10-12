@@ -38,7 +38,7 @@ function GUIPhoneTabPanel:getCurrentTab()
 end
 
 function GUIPhoneTabPanel:addTab(tabName, symbol)
-	local tabButton = GUIButton:new(#self.m_Tabs * 65, self.m_Height-50, 65, 50, "", self)
+	local tabButton = GUIButton:new(#self.m_Tabs * 65, self.m_Height-50, 65, 50, "", self):setBarEnabled(false)
 	local tabLabel = GUILabel:new(#self.m_Tabs * 65, self.m_Height-16, 65, 15, tabName, self):setAlignX("center"):setFontSize(1)
 	local tabIcon = GUILabel:new(#self.m_Tabs * 65, self.m_Height-45, 65, 25, symbol, self):setAlignX("center"):setFont(FontAwesome(30))
 

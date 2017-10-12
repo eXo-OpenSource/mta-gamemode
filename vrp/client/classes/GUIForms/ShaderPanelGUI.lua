@@ -12,8 +12,7 @@ function ShaderPanel:constructor()
   GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
   self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shader-Einstellungen", true, true, self)
-  self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-  self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
+  self.m_Window:addBackButton(function () delete(self) SelfGUI:getSingleton():show() end)
   self.m_ShaderGridList = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.07, self.m_Width*0.39, self.m_Height*0.8, self)
   self.m_ShaderGridList:addColumn(_"Name", 0.6)
   self.m_ShaderGridList:addColumn(_"Aktiv", 0.4)
