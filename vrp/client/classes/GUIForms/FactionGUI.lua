@@ -157,7 +157,7 @@ function FactionGUI:addLeaderTab()
 
 		self:refreshLeaderTab()
 
-		self.m_FactionPlayerFileButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder)
+		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 		self.m_Leader = true
 	else
@@ -380,14 +380,14 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, permissions, re
 		qText = {}
 		new = {}
 		text, color, new[1], qText[1] = unpack(btnData[currentDiplomacy][1])
-		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.13, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[1] = GUIButton:new(self.m_Width*0.66, self.m_Height*0.13, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBackgroundColor(color)
 		self.m_DiplomacyButtons[1].onLeftClick = function()
 			QuestionBox:new(_(qText[1], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[1]) end
 			)
 		end
 		text, color, new[2], qText[2] = unpack(btnData[currentDiplomacy][2])
-		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.21, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[2] = GUIButton:new(self.m_Width*0.66, self.m_Height*0.21, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBackgroundColor(color)
 		self.m_DiplomacyButtons[2].onLeftClick = function()
 			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
@@ -440,16 +440,16 @@ function FactionGUI:onDiplomacyRequestItemSelect(id, data)
 	end
 	self.m_DiplomacyRequestButtons = {}
 	if data["source"] == localPlayer:getFaction():getId() then
-		self.m_DiplomacyRequestButtons["Remove"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.32, self.m_Height*0.07, "Zurückziehen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Remove"] = GUIButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.32, self.m_Height*0.07, "Zurückziehen", self.m_TabDiplomacy):setBackgroundColor(Color.Red)
 		self.m_DiplomacyRequestButtons["Remove"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "remove")
 		end
 	else
-		self.m_DiplomacyRequestButtons["Accept"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Annehmen", true, self.m_TabDiplomacy):setBarColor(Color.Green)
+		self.m_DiplomacyRequestButtons["Accept"] = GUIButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Annehmen", self.m_TabDiplomacy):setBackgroundColor(Color.Green)
 		self.m_DiplomacyRequestButtons["Accept"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "accept")
 		end
-		self.m_DiplomacyRequestButtons["Decline"] = VRPButton:new(self.m_Width*0.77, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Ablehnen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Decline"] = GUIButton:new(self.m_Width*0.77, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Ablehnen", self.m_TabDiplomacy):setBackgroundColor(Color.Red)
 		self.m_DiplomacyRequestButtons["Decline"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "decline")
 		end

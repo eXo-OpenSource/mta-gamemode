@@ -64,7 +64,7 @@ function AppSanNews:onOpen(form)
 	self.m_InfoRect = GUIRectangle:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.13, Color.Red, self.m_Tabs["Advertisment"])
 	self.m_InfoLabel = GUILabel:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.07, "Kosten: 0$", self.m_Tabs["Advertisment"]):setFontSize(0.8):setAlignX("center")
 
-	self.m_SubmitButton = VRPButton:new(tab.m_Width*0.02, tab.m_Height*0.85, tab.m_Width*0.96, tab.m_Height*0.09, _"Werbung schalten", true, self.m_Tabs["Advertisment"]):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(tab.m_Width*0.02, tab.m_Height*0.85, tab.m_Width*0.96, tab.m_Height*0.09, _"Werbung schalten", self.m_Tabs["Advertisment"]):setBackgroundColor(Color.Green)
 
 
 	self.m_SubmitButton.onLeftClick =
@@ -117,7 +117,7 @@ local currentAd
 addEvent("showAd", true)
 addEventHandler("showAd", root, function(sender, text, color, duration)
 	if not localPlayer:isLoggedIn() then return end
-	
+
 	local callSender =
 	function()
 		if Phone:getSingleton():isOn()then

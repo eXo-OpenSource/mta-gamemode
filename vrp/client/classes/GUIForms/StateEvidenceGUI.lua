@@ -28,7 +28,7 @@ function StateEvidenceGUI:constructor( evidenceTable )
 ]]
 
 	self:refreshGrid()
-	self.m_DestroyEvidenceButton= VRPButton:new( (self.m_Width/2) - 90, 330, 180, 30, "Geld-Transport starten", true, self.m_Window)
+	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 90, 330, 180, 30, "Geld-Transport starten", self.m_Window)
 	self.m_DestroyEvidenceButton.onLeftClick = function ()
 		QuestionBox:new(_"Möchtest du wirklich einen Asservaten Geld-Truck starten?", function()
 			triggerServerEvent("State:startEvidenceTruck", localPlayer)

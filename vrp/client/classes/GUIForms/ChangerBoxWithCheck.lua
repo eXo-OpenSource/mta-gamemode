@@ -27,9 +27,9 @@ function ChangerBoxWithCheck:constructor(title, text, items, items2, checkBoxTex
 		item2 = self.m_Changer2:addItem(v)
 		self.m_itemTable2[v] = index
 	end
-	self.m_SubmitButton = VRPButton:new(7, 164, 247, 35, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(7, 164, 247, 35, _"Bestätigen", true, self.m_Window):setBackgroundColor(Color.Green)
 	self.m_CheckBox = GUICheckbox:new(282, 168, 247, 17, checkBoxText, self.m_Window):setFont(VRPFont(25)):setFontSize(1)
-	
+
 	self.m_SubmitButton.onLeftClick = function()
 		if callback then
 
