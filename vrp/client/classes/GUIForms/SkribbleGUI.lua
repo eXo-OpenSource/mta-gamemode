@@ -25,8 +25,9 @@ function SkribbleGUI:constructor()
 	self.m_GuessingWordLabel = GUIGridLabel:new(10, 1, 10, 1, "", self.m_Window)
 
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
-	self.m_PlayersGrid:addColumn(_"Spieler", .6)
-	self.m_PlayersGrid:addColumn(_"Punkte", .4)
+	self.m_PlayersGrid:addColumn(_"Spieler", .5)
+	self.m_PlayersGrid:addColumn(_"Punkte", .3)
+	self.m_PlayersGrid:addColumn(_"", .2)
 
 	self.m_Skribble = GUIGridSkribble:new(6, 2, 19, 13, self.m_Window)
 
@@ -145,18 +146,26 @@ function SkribbleGUI:deleteDrawResult()
 end
 
 function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, hints, syncData, timeLeft)
-	self.m_PlayersGrid:clear()
-	for player, data in pairs(players) do
-		self.m_PlayersGrid:addItem(player:getName(), data.points)
-	end
-
 	self.m_State = state
 	self.m_Players = players
 	self.m_GuessingWord = guessingWord
 	self.m_CurrentDrawing = currentDrawing
 	self.m_SyncData = syncData
 	self.m_Hints = hints
+
 	self.m_RoundLabel:setText(("Runde %s von %s"):format(currentRound, rounds))
+
+	self.m_PlayersGrid:clear()
+	for player, data in pairs(self.m_Players) do
+		local item = self.m_PlayersGrid:addItem(player:getName(), data.points, player == self.m_CurrentDrawing and FontAwesomeSymbols.Pencil or (data.queued and FontAwesomeSymbols.Clock or FontAwesomeSymbols.Check))
+		item:setColumnFont(3, FontAwesome(20), 1)
+		item:setClickable(false)
+		item:setColor(Color.White)
+
+		if data.guessedWord and player ~= self.m_CurrentDrawing then
+			item:setBackgroundColor(tocolor(60, 255, 0, 180))
+		end
+	end
 
 	if self.m_GuessingWord then
 		if self.m_CurrentDrawing == localPlayer then
