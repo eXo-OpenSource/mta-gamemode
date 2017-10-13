@@ -51,23 +51,29 @@ function PolicePanel:constructor()
 	self.m_PlayerSearch.onChange = function () self:loadPlayers() end
 
 	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 125, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green):setFontSize(1)
+	self.m_LocatePlayerBtn:setFont(VRPFont(20))
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
 
 	self.m_StopLocateBtn = GUIButton:new(450, 305, 125, 30, "Ortung beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_StopLocateBtn:setFont(VRPFont(20))
 	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
 
 	self.m_AddWantedsBtn = GUIButton:new(320, 340, 125, 30, "Wanteds geben", self.m_TabSpieler):setFontSize(1)
+	self.m_AddWantedsBtn:setFont(VRPFont(20))
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
 
 	self.m_DeleteWantedsBtn = GUIButton:new(450, 340, 125, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_DeleteWantedsBtn:setFont(VRPFont(20))
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
 	end
 
 	self.m_AddSTVOBtn = GUIButton:new(320, 375, 125, 30, "STVO-Punkte geben", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_AddSTVOBtn:setFont(VRPFont(20))
 	self.m_AddSTVOBtn.onLeftClick = function() self:giveSTVO("give") end
 	self.m_SetSTVOBtn = GUIButton:new(450, 375, 125, 30, "STVO-Punkte setzen", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_SetSTVOBtn:setFont(VRPFont(20))
 	self.m_SetSTVOBtn.onLeftClick = function() self:giveSTVO("set") end
 
 	self.m_TabJail = self.m_TabPanel:addTab(_"Knast")
