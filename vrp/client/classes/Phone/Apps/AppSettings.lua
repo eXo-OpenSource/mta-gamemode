@@ -50,7 +50,10 @@ function AppSettings:onOpen(form)
 	self.m_RingtoneChanger.onChange =
 		function(text)
 			self:stopRingtone()
-			self.m_RingtoneCustom:setChecked(false)
+
+			if self.m_RingtoneCustom then
+				self.m_RingtoneCustom:setChecked(false)
+			end
 
 			local path = ("files/audio/Ringtones/%s.mp3"):format(text:gsub(" ", ""))
 			self.m_Sound = playSound(path)
