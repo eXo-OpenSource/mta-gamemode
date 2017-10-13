@@ -18,13 +18,14 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 		end
 	)
 
-		self:addItem(_("Kategorie: %s", element:getCategoryName())):setTextColor(Color.White)
-		self:addItem(_("Steuern: %s $ / PayDay", element:getTax())):setTextColor(Color.White)
-		self:addItem(_("Sprittyp: %s", FUEL_NAME[element:getFuelType()])):setTextColor(Color.White)
-		self:addItem(_("Tankgröße: %s Liter", element:getFuelTankSize())):setTextColor(Color.White)
+	self:addItem(_("Kategorie: %s", element:getCategoryName())):setTextColor(Color.White)
+	self:addItem(_("Steuern: %s $ / PayDay", element:getTax())):setTextColor(Color.White)
+	self:addItem(_("Sprittyp: %s", FUEL_NAME[element:getFuelType()])):setTextColor(Color.White)
+	self:addItem(_("Tankgröße: %s Liter", element:getFuelTankSize())):setTextColor(Color.White)
+	if DEBUG then
 		self:addItem(_("Tankinhalt: %s  Liter (%s%%)",element:getFuel()/100*element:getFuelTankSize(), element:getFuel())):setTextColor(Color.White)
 		self:addItem(_("Verbrauchsmult.: %s",element:getFuelConsumptionMultiplicator())):setTextColor(Color.White)
+	end
 	
-
 	self:adjustWidth()
 end

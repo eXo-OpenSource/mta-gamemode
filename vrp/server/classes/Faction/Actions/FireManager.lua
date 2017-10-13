@@ -11,11 +11,12 @@ local FIRE_TIME_MIN = 45 -- in minutes
 local FIRE_TIME_MAX = 90 -- in minutes
 
 function FireManager:constructor()
-	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*60*1000
-	self.m_StartFirePulse = TimedPulse:new(rnd)
-	self.m_StartFirePulse:registerHandler(bind(self.checkFire, self))
 	self.m_CurrentFire = nil
 	self.m_Fires = {}
+	self.m_EnabledFires = {} -- just enabled fires which should be switched out randomly
+	
+	self.m_FireUpdateBind = bind(FireManager.checkFire ,self)
+	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1)
 
 	self.m_RandomFireStrings = { -- blablabla [...]
 		"steht in Flammen", 
@@ -48,20 +49,21 @@ function FireManager:loadFirePlaces()
 			["creator"] = row.Creator,
 			["enabled"] = row.Enabled == 1 and true or false,
 		}
+		if row.Enabled == 1 then
+			table.insert(self.m_EnabledFires, row.Id)
+		end
 	end
 end
 
 function FireManager:checkFire()
-	if FactionRescue:getSingleton():countPlayers() >= 3 then
+	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
-	else
-		--outputDebug("checkFire - Not enough Rescue Players on! ("..FactionRescue:getSingleton():countPlayers().."/3)")
 	end
 end
 
-function FireManager:startRandomFire(source)
+function FireManager:startRandomFire()
 	--//TODO
-	self:startFire(rnd)
+	self:startFire(self.m_EnabledFires[math.random(1, #self.m_EnabledFires)])
 end
 
 function FireManager:startFire(id)
@@ -165,6 +167,10 @@ function FireManager:stopCurrentFire(stats)
 	end
 	self.m_CurrentFire = nil
 	self.m_NewsSent = nil
+
+	if not isTimer(self.m_FireTimer) then
+		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
+	end
 end
 
 function FireManager:receiveFires()
@@ -259,6 +265,12 @@ function FireManager:Event_editFire(id, tblArgs)
 	self.m_Fires[id]["positionTbl"] = {tblArgs.position.x, tblArgs.position.y, tblArgs.position.z}
 	self.m_Fires[id]["width"] = tblArgs.width
 	self.m_Fires[id]["height"] = tblArgs.height
+
+	if self.m_Fires[id]["enabled"] then
+		table.insert(self.m_EnabledFires, Id)
+	else
+		table.removevalue(self.m_EnabledFires, Id)
+	end
 
 	client:sendSuccess(_("Feuer %d gespeichert.", client, id))
 	self:sendAdminFireData(client) -- resend data (update client UI)
