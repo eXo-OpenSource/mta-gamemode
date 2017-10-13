@@ -58,8 +58,11 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Lock:setVisible(false)
 
 	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION.editHouse then
-		self.m_EditHouse = GUIButton:new(columnWidth/2+5, 90, columnWidth/2-15, 35, _("Haus editieren"), self)
-		self.m_EditHouse:setBackgroundColor(Color.Orange):setFont(VRPFont(28)):setFontSize(1)
+		self.m_EditHouse = GUIButton:new(self.m_Width-40, 90, 30, 30, FontAwesomeSymbols.Edit, self)
+		self.m_EditHouse:setTooltip("Haus editieren", "left")
+		self.m_EditHouse:setFont(FontAwesome(15)):setFontSize(1)
+		self.m_EditHouse:setBarEnabled(false)
+		self.m_EditHouse:setBackgroundColor(Color.Orange)
 		self.m_EditHouse.onLeftClick = function()
 			HouseEditGUI:new()
 		end
@@ -139,7 +142,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 			self.m_Lock:setText(_"Abschließen")
 		end
 	else
-		GUILabel:new(10, 100,self.m_Width-20, 30, _("Mietpreis: $%d", rentprice) , self.m_Window)
+		GUILabel:new(10, 100,self.m_Width-70, 25, _("Mietpreis: $%d", rentprice) , self.m_Window)
 	end
 
 	if localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0 then

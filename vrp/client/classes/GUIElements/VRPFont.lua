@@ -118,6 +118,7 @@ FontAwesomeSymbols = {
 	Clock = "",
 	Brush = "",
 	Erase = "",
+	Edit = "",
 }
 
 Fonts = {
