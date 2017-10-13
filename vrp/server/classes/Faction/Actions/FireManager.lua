@@ -56,6 +56,7 @@ function FireManager:loadFirePlaces()
 end
 
 function FireManager:checkFire()
+	outputDebug("checking for fire")
 	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
 	end
@@ -147,18 +148,20 @@ end
 
 function FireManager:stopCurrentFire(stats)
 	if stats then 
-		local moneyForFaction = 0
-		for player, score in pairs(stats.pointsByPlayer) do
-			if isElement(player) then
-				player:giveCombinedReward("Feuer gelöscht", {
-					bankMoney = score*12,
-					karma = math.round(score/45),
-					points = math.round(score/22),
-				})
-				moneyForFaction = moneyForFaction + score*6
+		if stats.activeRescuePlayers and stats.activeRescuePlayers > 0 then
+			local moneyForFaction = 0
+			for player, score in pairs(stats.pointsByPlayer) do
+				if isElement(player) then
+					player:giveCombinedReward("Feuer gelöscht", {
+						bankMoney = score*12,
+						karma = math.round(score/45),
+						points = math.round(score/22),
+					})
+					moneyForFaction = moneyForFaction + score*6
+				end
 			end
+			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")
 		end
-		FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end
