@@ -5,7 +5,7 @@
 	<script src="attach_func.lua" />
 	<script src="attach_func.lua" type="client" />
 	<script src="bone_pos_rot.lua" type="client" />
-	
+
 	<export function="attachElementToBone" type="server" />
 	<export function="attachElementToBone" type="client" />
 	<export function="detachElementFromBone" type="server" />

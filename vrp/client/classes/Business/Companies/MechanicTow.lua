@@ -35,4 +35,58 @@ function MechanicTow:constructor()
 	self.m_BugPed:setFrozen(true)
 
 	SpeakBubble3D:new(self.m_BugPed, _"Ich kann Wanzen aufspüren", _"Klicke mich an!")
+
+	self.m_RenderFuelHoles = {}
+	self.m_RequestFill = bind(MechanicTow.requestFill, self)
+
+	addEventHandler("onClientElementStreamIn", root, bind(MechanicTow.onObjectStreamIn, self))
+	addEventHandler("onClientRender", root, bind(MechanicTow.renderFuelHose, self))
+end
+
+function MechanicTow:onObjectStreamIn()
+	if source:getModel() == 1909 then
+		self.m_RenderFuelHoles[source] = true
+	end
+end
+
+function MechanicTow:renderFuelHose()
+	for element in pairs(self.m_RenderFuelHoles) do
+		if isElement(element) then
+			local vehicle = element:getData("attachedToVehicle")
+			if isElement(vehicle) and vehicle.towingVehicle then
+				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
+
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
+					local worldVehicle = localPlayer:getWorldVehicle()
+					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle and worldVehicle:getFuelType() ~= "nofuel" then
+						localPlayer.lastWorldVehicle = worldVehicle
+
+						VehicleFuel.forceClose()
+						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
+					end
+
+					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
+						self.m_RenderFuelHoles[element] = nil
+						triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+					end
+				end
+			else
+				self.m_RenderFuelHoles[element] = nil
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
+					triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
+				end
+			end
+		else
+			self.m_RenderFuelHoles[element] = nil
+		end
+	end
+end
+
+function MechanicTow:requestFill(vehicle, fuel)
+	if not vehicle.controller then
+		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
+		return
+	end
+
+	triggerServerEvent("mechanicVehicleRequestFill", localPlayer, vehicle, fuel)
 end

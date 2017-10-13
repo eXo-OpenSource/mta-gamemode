@@ -51,23 +51,29 @@ function PolicePanel:constructor()
 	self.m_PlayerSearch.onChange = function () self:loadPlayers() end
 
 	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 125, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green):setFontSize(1)
+	self.m_LocatePlayerBtn:setFont(VRPFont(20))
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
 
 	self.m_StopLocateBtn = GUIButton:new(450, 305, 125, 30, "Ortung beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_StopLocateBtn:setFont(VRPFont(20))
 	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
 
 	self.m_AddWantedsBtn = GUIButton:new(320, 340, 125, 30, "Wanteds geben", self.m_TabSpieler):setFontSize(1)
+	self.m_AddWantedsBtn:setFont(VRPFont(20))
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
 
 	self.m_DeleteWantedsBtn = GUIButton:new(450, 340, 125, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_DeleteWantedsBtn:setFont(VRPFont(20))
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
 	end
 
 	self.m_AddSTVOBtn = GUIButton:new(320, 375, 125, 30, "STVO-Punkte geben", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_AddSTVOBtn:setFont(VRPFont(20))
 	self.m_AddSTVOBtn.onLeftClick = function() self:giveSTVO("give") end
 	self.m_SetSTVOBtn = GUIButton:new(450, 375, 125, 30, "STVO-Punkte setzen", self.m_TabSpieler):setBackgroundColor(Color.LightRed):setFontSize(1)
+	self.m_SetSTVOBtn:setFont(VRPFont(20))
 	self.m_SetSTVOBtn.onLeftClick = function() self:giveSTVO("set") end
 
 	self.m_TabJail = self.m_TabPanel:addTab(_"Knast")
@@ -258,10 +264,11 @@ function PolicePanel:onSelectBug(id)
 			item = self.m_BugLogGrid:addItem(msg)
 			item:setFont(VRPFont(20))
 		end
-
-		self.m_BugDisable:setEnabled(true)
-		self.m_BugClearLog:setEnabled(true)
-		self.m_BugLocate:setEnabled(true)
+		if localPlayer:getFaction() and localPlayer:getFaction():getId() == 2 then
+			self.m_BugDisable:setEnabled(true)
+			self.m_BugClearLog:setEnabled(true)
+			self.m_BugLocate:setEnabled(true)
+		end
 		self.m_BugRefresh:setEnabled(true)
 
 	else
@@ -348,6 +355,8 @@ function PolicePanel:locateElement(element, locationOf)
 		local pos = element:getPosition()
 		ElementLocateBlip = Blip:new("Marker.png", pos.x, pos.y, 9999)
 		ElementLocateBlip:attachTo(element)
+		ElementLocateBlip:setColor(BLIP_COLOR_CONSTANTS.Red)
+		ElementLocateBlip:setDisplayText(elementText)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
 		GPSUpdateStep = 10
@@ -443,7 +452,7 @@ function GiveWantedSTVOBox:constructor(player, min, max, title, callback)
 	end
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
 	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
-	self.m_SubmitButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_SubmitButton.onLeftClick =
 	function()
 		callback(player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())

@@ -12,18 +12,16 @@ function PublicTransport:constructor()
 	self:registerBusStopObjects()
 end
 
-
 function PublicTransport:setBusDisplayText(vehicle, text, line)
 	if not isElement(vehicle.Bus_TexReplace) then
 		outputDebug("no texture")
-		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true) FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
-		vehicle.m_BusShader = DxShader("files/shader/texreplace.fx", 10)
-		vehicle.m_BusShader:setValue("gTexture", vehicle.Bus_TexReplace)
-		vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
-		outputDebug(vehicle.Bus_TexReplace, vehicle.m_BusShader)
-		addEventHandler("onClientElementDestroy", vehicle, function() 
-			delete(vehicle.Bus_TexReplace) 
-			delete(vehicle.m_BusShader)
+		FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
+		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true)
+		RenderTargetTextureReplacer:new(vehicle, vehicle.Bus_TexReplace, "coach92decals128",  {})
+
+		outputDebug(vehicle.Bus_TexReplace)
+		addEventHandler("onClientElementDestroy", vehicle, function()
+			delete(vehicle.Bus_TexReplace)
 			vehicle.Bus_TexReplace = nil
 		end, false)
 	end
@@ -35,9 +33,7 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	end
 	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
 	dxSetRenderTarget(nil)
-	outputDebug(vehicle.Bus_TexReplace, vehicle.m_BusShader)
-	vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
-
+	outputDebug(vehicle.Bus_TexReplace)
 end
 
 function PublicTransport:busStopStreamIn(obj)
@@ -55,7 +51,7 @@ function PublicTransport:busStopStreamIn(obj)
 end
 
 function PublicTransport:busStopStreamOut()
-	if source.m_BusCol then	
+	if source.m_BusCol then
 		source.m_BusCol:destroy()
 		source.m_BusCol = nil
 		self.m_StreamedInBusObjects[source] = nil
@@ -87,7 +83,7 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 					Indicator:getSingleton():switchIndicatorState("warn")
 				end
 				playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..text.."&client=tw-ob")
-			end, 2000, 1)	
+			end, 2000, 1)
 		end, 5000, 1)
 	else
 		for stopObj, name in pairs(self.m_StreamedInBusObjects) do -- output message at next stop
@@ -135,6 +131,7 @@ function PublicTransport:registerBusStopObjects()
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
 			v:getData("object").m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
+			v:getData("object"):setBreakable(false)
 			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
 			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
 			if v:getData("object"):isStreamedIn() then

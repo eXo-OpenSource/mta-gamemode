@@ -9,8 +9,9 @@ CustomModelManager = inherit(Singleton)
 
 function CustomModelManager:constructor()
 	self.m_DFFMap = {}
-	self.m_COLMap = {} 
+	self.m_COLMap = {}
 	self.m_TXDMap = {}
+	self.m_TextureReplaces = {}
 	--self:loadImportDFF("files/models/dead_tree_18.dff", 846)
 
 
@@ -69,11 +70,28 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/fishshop.col", 6289)
 	self:loadImportTXD("files/models/fishshop.txd", 6289)
 	self:loadImportDFF("files/models/fishshop.dff", 6289)
+	--ammunation
+	self:loadImportCOL("files/models/ammunation.col", 4552)
+	self:loadImportDFF("files/models/ammunation.dff", 4552)
+	self:loadImportCOL("files/models/ammunation_int.col", 18049)
+	self:loadImportDFF("files/models/ammunation_int.dff", 18049)
+
+	self:loadImportCOL("files/models/ammunation2.col", 5106)
+	self:loadImportDFF("files/models/ammunation2.dff", 5106)
+	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
+	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
+
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
 	self:loadImportTXD("files/models/fence.txd", 1866)
 	self:loadImportDFF("files/models/fence.dff", 1866)
 
+	-- fuel nozzle
+	self:loadImportCOL("files/models/fuelnozzle.col", 1909)
+	self:loadImportTXD("files/models/fuelnozzle.txd", 1909)
+	self:loadImportDFF("files/models/fuelnozzle.dff", 1909)
+
+	self:loadImportDFF("files/models/gasstation.dff", 1676)
 
 	--other objects
 	-- Blitzer
@@ -191,10 +209,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 
 	--shader
-	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
-	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
-	--self:loadShader("files/images/Other/trans.png", "txgrass0_1")
-	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
+	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
+	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
+	--self:loadShader("RoadSigns/trans.png", "txgrass0_1")
+	self:loadShader("Other/trans.png", "txgrass1_1")
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
@@ -252,13 +270,13 @@ function CustomModelManager:unloadAllModels()
 	for modelId in pairs(self.m_TXDMap) do
 		self:restoreModel(modelId)
 	end
+	for _, instance in pairs(self.m_TextureReplaces) do
+		delete(instance)
+	end
 end
 
 function CustomModelManager:loadShader(filePath, textureName)
-	local shader = dxCreateShader("files/shader/texreplace.fx")
-	local texture = dxCreateTexture(filePath)
-	dxSetShaderValue(shader, "gTexture", texture)
-	engineApplyShaderToWorldTexture(shader, textureName)
+	table.insert(self.m_TextureReplaces, StaticFileTextureReplacer:new(filePath, textureName, {}))
 end
 
 function CustomModelManager:destructor()

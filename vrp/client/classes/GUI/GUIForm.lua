@@ -159,7 +159,8 @@ GUIForm.AllowedKeys = {
 	["b"] = true, 			-- Toggle cursor on/off
 	["m"] = true, 			-- Turn music on/off in download screen
 	["pgup"] = true, 		-- scroll chatbox/debugscript
-	["pgdn"] = true			-- scroll chatbox/debugscript
+	["pgdn"] = true,		-- scroll chatbox/debugscript
+	["t"] = true,
 }
 
 GUIForm.keysEnabled = true

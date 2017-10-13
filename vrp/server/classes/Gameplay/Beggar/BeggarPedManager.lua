@@ -1,7 +1,15 @@
 BeggarPedManager = inherit(Singleton)
 BeggarPedManager.Map = {}
 addRemoteEvents{"robBeggarPed", "giveBeggarPedMoney", "giveBeggarItem", "acceptTransport", "sellBeggarWeed", "buyBeggarItem",
-"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn"}
+"adminPedPlaced", "adminPedRequestData", "adminCreatePed", "adminPedChangeRole", "adminPedSpawn", "adminPedDelete"}
+
+BeggarPedManager.Classes  = {
+	[1] = {["Class"] = MoneyBeggar, ["Name"] = "Money"},
+	[2] = {["Class"] = ItemBeggar, ["Name"] = "Food"},
+	[3] = {["Class"] = TransportBeggar, ["Name"] = "Transport"},
+    [4] = {["Class"] = WeedBeggar, ["Name"] = "Weed"},
+	[5] = {["Class"] = ItemBeggar, ["Name"] = "Heroin"}
+}
 
 function BeggarPedManager:constructor()
 	-- Spawn Peds
@@ -22,7 +30,9 @@ function BeggarPedManager:constructor()
 	addEventHandler("adminPedPlaced", root, bind(self.Event_pedPlaced, self))
 	addEventHandler("adminPedChangeRole", root, bind(self.Event_changeRole, self))
 	addEventHandler("adminPedSpawn", root, bind(self.Event_adminPedSpawn, self))
+	addEventHandler("adminPedDelete", root, bind(self.Event_adminPedDelete, self))
 	addEventHandler("buyBeggarItem", root, bind(self.Event_buyBeggarItem, self))
+
 
 end
 
@@ -59,12 +69,13 @@ function BeggarPedManager:spawnPeds()
 			v:destroy()
 		end
 	end
-
+	local classId
 	-- Create new Peds
 	for i, v in pairs(self.m_Positions) do
 		if chance(50) then -- They only spawn with a probability of 50%
-			local ped = BeggarPed:new(i, v.Pos, v.Rot, v.Roles)
-			self:addRef(ped)
+			local classId = #v.Roles > 0 and Randomizer:getRandomTableValue(v.Roles) or math.random(1, #BeggarPedManager.Classes)
+			local ped = BeggarPed:new(i, classId, v.Pos, v.Rot)
+			if ped then self:addRef(ped) end
 		end
 	end
 end
@@ -142,7 +153,8 @@ function BeggarPedManager:Event_pedPlaced(x, y, z, rotation)
 	end
 
 	if sql:queryExec("INSERT INTO ??_npc (PosX, PosY, PosZ, Rot) VALUES (?, ?, ?, ?)", sql:getPrefix(), x, y, z, rotation) then
-		local ped = BeggarPed:new(sql:lastInsertId(), Vector3(x, y, z), Vector3(0, 0, rotation), {})
+		local classId = math.random(1, #BeggarPedManager.Classes)
+		local ped = BeggarPed:new(sql:lastInsertId(), classId, Vector3(x, y, z), Vector3(0, 0, rotation), {})
 		self:addRef(ped)
 		client:sendInfo(_("Neuen NPC hinzugefügt!", client))
 		self:loadPositions()
@@ -181,10 +193,14 @@ function BeggarPedManager:Event_changeRole(pedId, func, roleId)
 
 	if self.m_Positions[pedId] then
 		if func == "add" then
+			if table.find(self.m_Positions[pedId]["Roles"], roleId) then
+				client:sendError(_("Dieser Ped hat diese Rolle bereits zugewiesen!", client))
+				return
+			end
 			table.insert(self.m_Positions[pedId]["Roles"], roleId)
 			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s zugewiesen!", client, pedId, BeggarTypeNames[roleId]))
 		elseif func == "rem" then
-			table.remove(self.m_Positions[pedId]["Roles"], table.find(roleId))
+			table.remove(self.m_Positions[pedId]["Roles"], table.find(self.m_Positions[pedId]["Roles"], roleId))
 			client:sendInfo(_("Du hast dem Ped ID %d die Rolle %s entfernt!", client, pedId, BeggarTypeNames[roleId]))
 		end
 		self:savePedRoles(pedId)
@@ -199,15 +215,37 @@ function BeggarPedManager:savePedRoles(pedId)
 end
 
 function BeggarPedManager:Event_adminPedSpawn(pedId)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
 	if BeggarPedManager.Map[pedId] then
 		delete(BeggarPedManager.Map[pedId])
 		client:sendInfo(_("Ped mit ID %d despawnt!", client, pedId))
 	else
 		if self.m_Positions[pedId] then
-			local ped = BeggarPed:new(pedId, self.m_Positions[pedId].Pos, self.m_Positions[pedId].Rot, self.m_Positions[pedId].Roles)
-			self:addRef(ped)
-			client:sendInfo(_("Ped mit ID %d gespawnt!", client, pedId))
+			local classId = #self.m_Positions[pedId].Roles > 0 and Randomizer:getRandomTableValue(self.m_Positions[pedId].Roles) or math.random(1, #BeggarPedManager.Classes)
+			local ped = BeggarPed:new(pedId, classId, self.m_Positions[pedId].Pos, self.m_Positions[pedId].Rot)
+			if ped then
+				self:addRef(ped)
+				client:sendInfo(_("Ped mit ID %d gespawnt!", client, pedId))
+			end
 		end
 	end
+	self:adminSendData(client)
+end
+
+function BeggarPedManager:Event_adminPedDelete(pedId)
+	if client:getRank() < ADMIN_RANK_PERMISSION["pedMenu"] then
+		client:sendError(_("Du darfst diese Funktion nicht nutzen!!", client))
+		return
+	end
+
+	if BeggarPedManager.Map[pedId] then delete(BeggarPedManager.Map[pedId]) end
+	client:sendInfo(_("Ped-Position mit ID %d gelöscht!", client, pedId))
+	sql:queryExec("DELETE FROM ??_npc WHERE Id = ?", sql:getPrefix(), pedId)
+	self.m_Positions[pedId] = nil
+
 	self:adminSendData(client)
 end

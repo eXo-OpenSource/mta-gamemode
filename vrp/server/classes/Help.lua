@@ -52,7 +52,6 @@ function Help:loadHelpTexts()
     self.m_HelpTexts = toJSON(self.m_HelpTexts)
     self.m_HelpHash = hash("sha1", self.m_HelpTexts)
     if DEBUG_LOAD_SAVE then outputServerLog(("Created %s help-texts in %sms"):format(count, getTickCount()-st)) end
-	triggerClientEvent(root, "helpTextReceive", root, self.m_HelpTexts)
 end
 
 

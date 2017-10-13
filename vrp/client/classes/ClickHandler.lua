@@ -21,6 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1676] = function(element, clickInfo) if element:getData("Name") and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") then self:addMouseMenu(GasStationMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end end;
 	}
 
 	self.m_ClickInfo = false

@@ -32,22 +32,26 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 	else
-		self:addItem(_"Respawnen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("vehicleRespawn", self:getElement())
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
+			self:addItem(_"Respawnen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("vehicleRespawn", self:getElement())
+					end
 				end
-			end
-		)
-		self:addItem(_"Parken",
-			function()
-				if self:getElement() then
-					triggerServerEvent("vehiclePark", self:getElement())
+			)
+		end
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] then
+			self:addItem(_"Parken",
+				function()
+					if self:getElement() then
+						triggerServerEvent("vehiclePark", self:getElement())
+					end
 				end
-			end
-		)
+			)
+		end
 	end
-	if localPlayer:getRank() >= RANK.Moderator then
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["repairVehicle"] then
 		self:addItem(_"Reparieren",
 			function()
 				if self:getElement() then
@@ -55,7 +59,9 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 				end
 			end
 		)
+	end
 
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["despawnVehicle"] then
 		self:addItem(_"Despawnen",
 			function()
 				if not self:getElement() then return end
@@ -68,7 +74,9 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 				)
 			end
 		)
+	end
 
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
 		self:addItem(_"Handbremse lösen",
 			function()
 				if self:getElement() then
@@ -76,7 +84,9 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 				end
 			end
 		)
+	end
 
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["deleteVehicle"] then
 		self:addItem(_"Löschen",
 			function()
 				if not self:getElement() then return end

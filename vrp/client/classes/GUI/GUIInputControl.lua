@@ -37,6 +37,8 @@ function GUIInputControl.setFocus(edit, caret)
 		guiSetInputEnabled(true)
 		guiSetText(GUIInputControl.ms_Edit, edit:getText())
 
+		focusBrowser(nil)
+
 		GUIInputControl.skipChangedEvent = false
 
 		if caret then
@@ -67,6 +69,14 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 		local currentEdit = GUIInputControl.ms_CurrentInputFocus
 		if currentEdit then
 			local text = guiGetText(source)
+
+			if currentEdit.m_Selection and not currentEdit.m_SelectionRenderOnly then
+				GUIInputControl.skipChangedEvent = true
+				text = ("%s%s"):format(utfSub(text, 0, currentEdit.m_SelectionStart), utfSub(text, currentEdit.m_SelectionEnd + 1, #text))
+				guiSetText(source, text)
+				guiEditSetCaretIndex(GUIInputControl.ms_Edit, currentEdit.m_SelectionStart + 1)
+				GUIInputControl.skipChangedEvent = false
+			end
 
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
@@ -111,6 +121,7 @@ addEventHandler("onClientPreRender", root,
 			local caretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
 
 			if oldCaretIndex ~= caretIndex then
+				GUIInputControl.ms_CurrentInputFocus.m_MarkedAll = false
 				GUIInputControl.ms_CurrentInputFocus:setCaretPosition(caretIndex)
 				oldCaretIndex = caretIndex
 			end
@@ -123,12 +134,12 @@ local function getNextEditbox(baseElement, startElement)
 	local idx = table.find(children, startElement)
 
 	for i = idx+1, #children do
-		if instanceof(children[i], GUIEdit, true) then
+		if instanceof(children[i], GUIEdit) then
 			return children[i]
 		end
 	end
 	for i = 0, idx-1 do
-		if instanceof(children[i], GUIEdit, true) then
+		if instanceof(children[i], GUIEdit) then
 			return children[i]
 		end
 	end
@@ -138,12 +149,28 @@ end
 
 addEventHandler("onClientKey", root,
 	function(button, pressed)
-		if button == "tab" and pressed then
-			local current = GUIInputControl.ms_CurrentInputFocus
-			if current then
-				local element = getNextEditbox(current:getParent(), current)
-				if element then
-					GUIInputControl.setFocus(element, 0)
+		local current = GUIInputControl.ms_CurrentInputFocus
+
+		if button == "tab" and pressed and current then
+			local element = getNextEditbox(current:getParent(), current)
+			if element then
+				GUIInputControl.setFocus(element, 0)
+			end
+		elseif button == "a" and pressed and current then
+			if getKeyState("lctrl") or getKeyState("rctrl") then
+				current.m_MarkedAll = true
+				current:anyChange()
+			end
+		elseif (button == "arrow_l" or button == "arrow_r" or button == "home" or button == "end") and pressed and current then
+			if not getKeyState("lshift") or not getKeyState("rshift") then
+				current.m_MarkedAll = false
+				current.m_Selection = false
+				current:anyChange()
+			end
+		elseif button == "c" and pressed and GUIInputControl.ms_RecentlyInFocus then
+			if getKeyState("lctrl") or getKeyState("rctrl") then
+				if GUIInputControl.ms_RecentlyInFocus.m_SelectedText then
+					setClipboard(GUIInputControl.ms_RecentlyInFocus.m_SelectedText)
 				end
 			end
 		end

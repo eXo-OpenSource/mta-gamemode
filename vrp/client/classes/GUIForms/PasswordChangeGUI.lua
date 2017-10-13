@@ -24,7 +24,7 @@ function PasswordChangeGUI:constructor()
 
 	self.m_Error = GUILabel:new(10, 160, 380, 30, "", self.m_Window):setColor(Color.Red)
 
-	self.m_SubmitButton = VRPButton:new(10, 195, 380, 40, _"Bestätigen", true, self.m_Window):setBarColor(Color.LightBlue)
+	self.m_SubmitButton = GUIButton:new(10, 195, 380, 40, _"Bestätigen", self.m_Window):setBackgroundColor(Color.LightBlue):setBarEnabled(true)
 	self.m_SubmitButton:setEnabled(false)
 	self.m_SubmitButton.onLeftClick = function()
 		triggerServerEvent("passwordChange", localPlayer, self.m_OldPassword:getText(), self.m_NewPassword1:getText(), self.m_NewPassword2:getText())

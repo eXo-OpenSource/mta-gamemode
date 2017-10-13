@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<title>GUIMemo</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="http://mta/local/files/html/css/bootstrap.min.css">
+	<!--<link rel="stylesheet" href="http://mta/local/files/html/css/bootstrap.ingame.css">-->
+	<link rel="stylesheet" href="http://mta/local/files/html/css/memo/summernote.css">
+
+	<script src="http://mta/local/files/html/js/mtaevents.min.js"></script>
+	<script src="http://mta/local/files/html/js/jquery-3.2.1.min.js"></script>
+	<script src="http://mta/local/files/html/js/bootstrap.min.js"></script>
+	<script src="http://mta/local/files/html/js/memo/summernote.js"></script>
+	<style>
+ 		html, body, form, textarea {
+			background-color: transparent;
+			background: transparent;
+        }
+        form, textarea, .codemirror {
+            width:100%;
+			height:90%;
+        }
+    </style>
+</head>
+<body>
+	<div id="summernote"><p></p></div>
+	<script>
+		$(document).ready(function() {
+			$('#summernote').summernote({
+				toolbar: [],
+
+				callbacks: {
+   					onChange: function(contents, $editable) {
+      					console.log('onChange:', contents, $editable);
+      					mta.triggerEvent("onMemoTextChanged", contents);
+      				},
+      				onInit: function() {
+      					$("#summernote").summernote("fullscreen.toggle");
+    				}
+    			}
+			});
+
+			mtatools.registerEvent("onMemoSetText", function(text) {
+				$('#summernote').summernote('code', text);
+        	});
+
+			mtatools.registerEvent("onMemoSetToolbarStyle", function(style) {
+				$('#summernote').summernote('destroy');
+
+				if (style == 'full') {
+					$('#summernote').summernote({
+						toolbar: [
+							['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+							['fontsize', ['fontsize']],
+							['color', ['color']],
+							['para', ['ul', 'ol', 'paragraph']],
+							['table', ['table']],
+						],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				} else if (style == 'lite') {
+					$('#summernote').summernote({
+						toolbar: [
+							['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+						],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				} else {
+					$('#summernote').summernote({
+						toolbar: [],
+
+						callbacks: {
+   							onChange: function(contents, $editable) {
+      							console.log('onChange:', contents, $editable);
+      							mta.triggerEvent("onMemoTextChanged", contents);
+      						},
+      						onInit: function() {
+      							$("#summernote").summernote("fullscreen.toggle");
+    						}
+    					}
+					});
+				}
+        	});
+		});
+	</script>
+	</body>
+</html>

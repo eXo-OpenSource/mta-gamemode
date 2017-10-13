@@ -9,7 +9,6 @@ function HTTPTextureReplacer:constructor(element, fileName, textureName, options
 	TextureReplacer.constructor(self, element, textureName, options)
 
 	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
-	--outputChatBox("HTTP: "..self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
 end
 

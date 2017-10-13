@@ -17,7 +17,7 @@ function VehicleSellAcceptGUI:constructor( player, price, car )
 	self.m_Car = car
 	self.m_Window = GUIWindow:new(0,0,width,height,_"Handelsvertrag - Handshake",true,true,self)
 	self.m_LabelContract =	GUILabel:new(width*0.1,height*0.2,width*0.8, height*0.1,_"Vertragsangebot:", self.m_Window)
-	self.m_LabelContract2 =	GUILabel:new(width*0.2,height*0.32,width*0.8, height*0.1,_"Fahrzeug: "..getVehicleNameFromModel( getElementModel( car )), self.m_Window)
+	self.m_LabelContract2 =	GUILabel:new(width*0.2,height*0.32,width*0.8, height*0.1,_"Fahrzeug: "..(car:getName()), self.m_Window)
 	self.m_LabelContract3 =	GUILabel:new(width*0.2,height*0.44,width*0.8, height*0.1,_"Verkäufer: "..player.name, self.m_Window)
 	self.m_LabelContract4 =	GUILabel:new(width*0.2,height*0.56,width*0.8, height*0.1,_"Verkaufspreis ($): "..price, self.m_Window)
 	self.m_AcceptButton = GUIButton:new(width*0.3, height*0.8, width*0.4, height*0.1, "Weiter", self.m_Window)

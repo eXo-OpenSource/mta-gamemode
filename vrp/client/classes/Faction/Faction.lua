@@ -116,7 +116,7 @@ function FactionManager:OnRenderSpeed()
 			if self.m_SpeedCamSpeed and self.m_SpeedCamVehicle then
 				if self.m_bLineChecked == self.m_SpeedCamVehicle then
 					local speed = math.floor(self.m_SpeedCamSpeed)
-					local vName = getVehicleName(self.m_SpeedCamVehicle)
+					local vName = self.m_SpeedCamVehicle:getName()
 					local occ = getVehicleOccupant(self.m_SpeedCamVehicle)
 					local c1, c2 = getVehicleColor(self.m_SpeedCamVehicle)
 					local colName = getColorNameFromVehicle(c1, c2)

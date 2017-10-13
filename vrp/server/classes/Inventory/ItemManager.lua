@@ -27,8 +27,10 @@ function ItemManager:constructor()
 		["Zigarette"] = ItemFood,
 		["Donut"] = ItemFood,
 		["Keks"] = ItemFood,
+		["Apfel"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
+		["Taser"] = ItemTaser;
 
 		["Wuerfel"] = ItemDice,
 		["Angelrute"] = ItemFishing,
@@ -36,7 +38,8 @@ function ItemManager:constructor()
 		["Kühltasche"] = ItemFishing,
 		["Kühlbox"] = ItemFishing,
 		["Köder"] = ItemFishing,
-		["Weed-Samen"] = PlantWeed,
+		["Weed-Samen"] = Plant,
+		["Apfelbaum-Samen"] = Plant,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
@@ -65,13 +68,8 @@ function ItemManager:constructor()
 	}
 
 	self.m_Properties = {
-	["Barrikade"] = {true}, --// breakable,
-	["Warnkegel"] = {true}, --// breakable,
-}
-	self.m_SpecialItems = {
-		["Mautpass"] = true,
-		["Kanne"] = true,
-		["Donutbox"] = true
+		["Barrikade"] = {true}, --// breakable,
+		["Warnkegel"] = {true}, --// breakable,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Phone Tab
 -- *
 -- ****************************************************************************
-
 GUIPhoneTabPanel = inherit(GUIElement)
 
 function GUIPhoneTabPanel:constructor(posX, posY, width, height, parent)
@@ -14,7 +13,6 @@ function GUIPhoneTabPanel:constructor(posX, posY, width, height, parent)
 	self.m_Tabs = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIRectangle:new(posX, height-50, width, 50, Color.Grey, self)
-
 end
 
 function GUIPhoneTabPanel:setTab(id)
@@ -40,7 +38,7 @@ function GUIPhoneTabPanel:getCurrentTab()
 end
 
 function GUIPhoneTabPanel:addTab(tabName, symbol)
-	local tabButton = GUIButton:new(#self.m_Tabs * 65, self.m_Height-50, 65, 50, "", self)
+	local tabButton = GUIButton:new(#self.m_Tabs * 65, self.m_Height-50, 65, 50, "", self):setBarEnabled(false)
 	local tabLabel = GUILabel:new(#self.m_Tabs * 65, self.m_Height-16, 65, 15, tabName, self):setAlignX("center"):setFontSize(1)
 	local tabIcon = GUILabel:new(#self.m_Tabs * 65, self.m_Height-45, 65, 25, symbol, self):setAlignX("center"):setFont(FontAwesome(30))
 
@@ -80,9 +78,9 @@ end
 
 function GUIPhoneTabPanel:drawThis()
 	dxSetBlendMode("modulate_add")
-	
+
 	-- Draw the background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150) --[[tocolor(255, 255, 255, 40)]])
-	
+
 	dxSetBlendMode("blend")
 end

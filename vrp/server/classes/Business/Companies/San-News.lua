@@ -168,14 +168,17 @@ function SanNews:Event_advertisement(senderIndex, text, color, duration)
 		if client:getMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
 				client:takeMoney(costs, "San News Ad")
-				self:giveMoney(costs, "San News Ad")
-				client:triggerEvent("closeAdvertisementBox")
+				self:giveMoney(costs, "San News Ad", true)
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				StatisticsLogger:getSingleton():addAdvert(client, text)
 
 				local sender = {referenz = "player", name = client:getName()}
 				if senderIndex == 2 and client:getGroup() and client:getGroup():getName() then
 					sender = {referenz = "group", name = client:getGroup():getName(), number = client:getGroup():getPhoneNumber()}
+				elseif senderIndex == 3 and client:getFaction() and client:getFaction():getShortName() then
+					sender = {referenz = "faction", name = client:getFaction():getShortName(), number = client:getFaction():getPhoneNumber()}
+				elseif senderIndex == 4 and client:getCompany() and client:getCompany():getShortName() then
+					sender = {referenz = "company", name = client:getCompany():getShortName(), number = client:getCompany():getPhoneNumber()}
 				end
 
 				triggerClientEvent("showAd", client, sender, text, color, duration)

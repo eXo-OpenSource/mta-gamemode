@@ -31,7 +31,7 @@ function PublicTransport:constructor()
 	InteriorEnterExit:constructor(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 4) --parking lot
 	InteriorEnterExit:constructor(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
 
-	
+
 	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
 	safe:setInterior(12)
 	safe:setDimension(4)
@@ -103,7 +103,7 @@ function PublicTransport:Event_PlayerRequestBusData()
 					local prevName = self.m_BusStops[id-1].name
 					local nextName = self.m_BusStops[id+1].name
 					if prevName == nextName then -- end station found
-						if not endStationFound then 
+						if not endStationFound then
 							endStationFound = true -- start collecting stations
 						else
 							quitNextStation = true -- don't quit here, but collect the second end station
@@ -116,8 +116,8 @@ function PublicTransport:Event_PlayerRequestBusData()
 						position = serialiseVector(self.m_BusStops[id].object.position)
 					})
 				end
-				if quitNextStation then 
-					break 
+				if quitNextStation then
+					break
 				end
 			end
 		end
@@ -213,7 +213,7 @@ function PublicTransport:endTaxiDrive(customer)
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		if price > 0 then 
 			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
-				self:giveMoney(math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName())) -- prevent players from spawning afk money
+				self:giveMoney(math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), true) -- prevent players from spawning afk money
 			end
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
@@ -328,19 +328,23 @@ function PublicTransport:stopBusTour_Driver(player) --also gets triggered when p
 	player:setPublicSync("EPT:BusDuty", false)
 end
 
-function PublicTransport:startBusTour_Driver(player, nextStation, line) 
+function PublicTransport:startBusTour_Driver(player, nextStation, line)
 	if player.Bus_Blip then
 		delete(player.Bus_Blip)
 	end
-	local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][nextStation]].object)
-	player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
-	player.Bus_Blip:setDisplayText("Bushaltestelle")
-	player:setPublicSync("EPT:BusDuty", true)
+	if not nextStation or not self.m_BusStops[nextStation] then
+		player:sendShortMessage(_("Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), dann melde dies bitte im Bugtracker"))
+	else
+		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][nextStation]].object)
+		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
+		player.Bus_Blip:setDisplayText("Bushaltestelle")
+		player:setPublicSync("EPT:BusDuty", true)
+	end
 end
 
 
 function PublicTransport:isBusOnTour(vehicle)
-	return vehicle and (vehicle.Bus_OnDuty and true or false) 
+	return vehicle and (vehicle.Bus_OnDuty and true or false)
 end
 
 function PublicTransport:stopBusTour(vehicle, player)
@@ -442,7 +446,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			local dist = math.round(getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position) * (math.random(998, 1002)/1000))
 			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
 			player:givePoints(math.round(5 * (dist/1000))) --5 / km
-			self:giveMoney(math.round(50 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
+			self:giveMoney(math.round(50 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
 			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(50 * (dist/1000)))))
 		end
 

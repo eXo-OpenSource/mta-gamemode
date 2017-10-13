@@ -18,7 +18,7 @@ function PaintjobPreviewGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.7, self.m_Height*0.07, _"URL:", self.m_Window)
 	self.m_PreviewURL = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.51, self.m_Width*0.4, self.m_Height*0.07,  self.m_Window)
-	self.m_PreviewButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.07, _"Vorschau", true,self.m_Window)
+	self.m_PreviewButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.07, _"Vorschau", self.m_Window):setBarEnabled(true)
 	self.m_PreviewButton.onLeftClick = bind(self.PreviewButton_Click, self)
 	self.m_CallBackEvent = bind(self.Event_OnCallBackDownload, self)
 	addEventHandler("onClientPreviewVehicleChecked", localPlayer, bind(self.Event_onCheckedVehicle, self))

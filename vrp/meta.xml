@@ -11,11 +11,14 @@
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 
 	<script src="shared/debug.lua" type="shared"/>
+
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
+	<script src="shared/constants/roulette.lua" type="shared"/>
+
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
@@ -29,6 +32,7 @@
 	<script src="shared/classes/Log.lua" type="shared"/>
 	<script src="shared/classes/POParser.lua" type="shared"/>
 	<script src="shared/classes/Queue.lua" type="shared"/>
+	<script src="shared/classes/AutomaticQueue.lua" type="shared"/>
 	<script src="shared/classes/TimedPulse.lua" type="shared"/>
 	<script src="shared/classes/TranslationManager.lua"  type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
@@ -87,6 +91,7 @@
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
 	<script src="server/classes/QuestionBox.lua" type="server"/>
 	<script src="server/classes/InactivityManager.lua" type="server"/>
+	<script src="server/classes/BindManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
 	<script src="server/classes/ClientStatistics.lua" type="server"/>
 
@@ -135,6 +140,8 @@
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 
 	<!-- Wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -147,7 +154,6 @@
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsCocaine.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Drugs/PlantWeed.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
@@ -164,6 +170,16 @@
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
+	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleLobby.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>
@@ -172,6 +188,8 @@
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -189,13 +207,17 @@
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuNation.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuNationManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
 	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
+	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
+	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/TransportBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/MoneyBeggar.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPeds/WeedBeggar.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
@@ -212,8 +234,9 @@
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
-	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/GasStationShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/Ammunation.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Platform/PlatformManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Platform/Platform.lua" type="server"/>
@@ -241,11 +264,12 @@
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/StateEvidenceTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeedTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeedTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/FireRoot.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
@@ -265,6 +289,7 @@
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -285,6 +310,7 @@
 	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
 	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
 
 	<!-- Events -->
@@ -364,6 +390,8 @@
 	<script src="client/classes/Textures/TextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/HTTPTextureReplacer.lua" type="client"/>
 	<script src="client/classes/Textures/FileTextureReplacer.lua" type="client"/>
+	<script src="client/classes/Textures/RenderTargetTextureReplacer.lua" type="client"/>
+	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
 	<script src="client/classes/NonCollidingSphere.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
@@ -382,19 +410,21 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
+	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
-	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
-	<script src="client/classes/GUI/DxElement.lua" type="client"/>
-	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
+	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
+	<script src="client/classes/GUI/DxElement.lua" type="client"/>
+	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
+	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
+	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
+	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableArea.lua" type="client"/>
 	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>
@@ -426,6 +456,7 @@
 	<script src="client/classes/GUI/GUIProgressBar.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
+	<script src="client/classes/GUI/GUISlider.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
@@ -433,7 +464,12 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
+	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
+	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
+	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
 	<!-- Eastereggs -->
 	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
 	<script src="client/classes/EasterEggs/Slenderman.lua" type="client"/>
@@ -445,11 +481,11 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
+	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
-	<script src="client/classes/Inventory/PlantWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
@@ -466,6 +502,7 @@
 	<script src="client/classes/GUI/Animations/FadeColor.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/Move.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeAlpha.lua" type="client"/>
+	<script src="client/classes/GUI/Animations/Size.lua" type="client"/>
 
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/GUIPaydayBox.lua" type="client"/>
@@ -487,7 +524,6 @@
 
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
@@ -513,6 +549,8 @@
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 
+	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
@@ -520,10 +558,11 @@
 
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -531,8 +570,9 @@
 	<script src="client/classes/GUIForms/MouseMenu/BugCheckerPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/GasStationMouseMenu.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/WorldItemMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/ButtonMenu/FactionVehicleServiceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseRobSellGUI.lua" type="client"/>
@@ -568,7 +608,7 @@
 	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChangerBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ChangerBoxWithCheck.lua" type="client"/>
-	<script src="client/classes/GUIForms/DrivingSchoolMenuGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrivingSchoolPedGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolTheoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolStudentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
@@ -603,13 +643,14 @@
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminEventGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminPedGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AdminFireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/BindGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
-	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
@@ -644,9 +685,16 @@
 	<script src="client/classes/GUIForms/TexturePreviewGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/FriskGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/WorldItemOverviewGUI.lua" type="client" />
+	<script src="client/classes/GUIForms/StyleguideDemonstrationGUI.lua" type="client" />
+
 	<script src="client/classes/GUIForms/BusRouteInformationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FuelTankGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/GasStationShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
-	
+	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -691,6 +739,10 @@
 	<script src="client/classes/Phone/Apps/AppAmmunation.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppBank.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNavigator.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppSanNews.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppNotes.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppSkribble.lua" type="client"/>
+
 
 	<!-- Companies -->
 	<script src="client/classes/Business/Company.lua" type="client"/>
@@ -732,6 +784,8 @@
 	<script src="client/classes/AI/Tasks/TaskShootTarget.lua" type="client"/>
 
 	<!-- Vehicles -->
+	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
@@ -741,6 +795,8 @@
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
+
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -806,11 +862,8 @@
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
-
-	<!-- serverside -->
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
+	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
 	<!-- CHESS -->
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessConstants.lua" type="client" cache="true" />
@@ -819,6 +872,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
+
+	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 
@@ -892,9 +947,29 @@
 
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
+	<file src="files/html/js/jquery-3.2.1.min.js" />
+	<file src="files/html/js/bootstrap.min.js" />
 	<file src="files/html/js/showdown.min.js" />
 	<file src="files/html/js/showdown-button.js" />
+
+	<file src="files/html/js/editor/codemirror.js" />
+	<file src="files/html/js/editor/lua.js" />
+	<file src="files/html/js/editor/templates.js" />
+	<file src="files/html/js/memo/summernote.js" />
+
+	<file src="files/html/css/bootstrap.min.css" />
+	<file src="files/html/css/bootstrap.ingame.css" />
+
+	<file src="files/html/css/editor/codemirror.css" />
+	<file src="files/html/css/editor/base16-light.css" />
+	<file src="files/html/css/editor/material.css" />
+	<file src="files/html/css/memo/summernote.css" />
+	<file src="files/html/css/memo/font/summernote.ttf" />
+	<file src="files/html/css/memo/font/summernote.woff" />
+
 	<file src="files/html/help.htm" />
+	<file src="files/html/editor.htm" />
+	<file src="files/html/memo.htm" />
 
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
@@ -922,6 +997,8 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -937,6 +1014,8 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconEPT.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>
@@ -956,6 +1035,7 @@
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/FullCircle.png"/>
 	<vrpfile src="files/images/GUI/HelpIcon.png"/>
+	<vrpfile src="files/images/GUI/Triangle.png"/>
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>
@@ -982,6 +1062,7 @@
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
+	<vrpfile src="files/images/Speedo/fuel_needle_trailer.png"/>
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>
 	<vrpfile src="files/images/Speedo/indicator_right.png"/>
 
@@ -1027,16 +1108,15 @@
 	<vrpfile src="files/images/Weapons/Uzi.png"/>
 	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 	<vrpfile src="files/images/Weapons/Vest.png"/>
+	<vrpfile src="files/images/Weapons/Cue.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
-	<vrpfile src="files/images/Other/trans.png"/>
-	<vrpfile src="files/images/Other/garage.jpg"/>
+	<vrpfile src="files/images/Textures/Other/trans.png"/>
+	<vrpfile src="files/images/Textures/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
 	<vrpfile src="files/images/Other/arrow.png"/>
 	<vrpfile src="files/images/Other/arrow_ta.png"/>
-	<vrpfile src="files/images/Other/BreakingNews.png"/>
-	<vrpfile src="files/images/Other/BreakingNewsBG.png"/>
-	<vrpfile src="files/images/Other/BreakingNewsEnd.png"/>
+	<vrpfile src="files/images/Other/BreakingNewsArrow.png"/>
 	<vrpfile src="files/images/Other/TaxoMeter.png"/>
 	<vrpfile src="files/images/Other/Circle.png"/>
 	<vrpfile src="files/images/Other/nodm.png"/>
@@ -1051,14 +1131,26 @@
 	<vrpfile src="files/images/Other/RedGreenRed.png"/>
 	<vrpfile src="files/images/Other/focus.png"/>
 	<vrpfile src="files/images/Other/cuff.png"/>
-	<vrpfile src="files/images/Other/parking1.png"/>
-	<vrpfile src="files/images/Other/parking2.png"/>
+	<vrpfile src="files/images/Textures/RoadSigns/parking1.png"/>
+	<vrpfile src="files/images/Textures/RoadSigns/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
 	<vrpfile src="files/images/Other/slender.jpg"/>
 
 	<vrpfile src="files/images/Other/PewPew/head.png"/>
 	<vrpfile src="files/images/Other/PewPew/body.png"/>
 	<vrpfile src="files/images/Other/PewPew/hit.png"/>
+
+	<vrpfile src="files/images/Roulette/table.png" />
+	<vrpfile src="files/images/Roulette/circle.png" />
+	<vrpfile src="files/images/Roulette/arrow.png" />
+
+	<vrpfile src="files/images/Roulette/token_black.png" />
+	<vrpfile src="files/images/Roulette/token_blue.png" />
+	<vrpfile src="files/images/Roulette/token_gray.png" />
+	<vrpfile src="files/images/Roulette/token_green.png" />
+	<vrpfile src="files/images/Roulette/token_pink.png" />
+	<vrpfile src="files/images/Roulette/token_red.png" />
+	<vrpfile src="files/images/Roulette/token_yellow.png" />
 
 	<vrpfile src="files/images/Deathmatch/death_img.png"/>
 	<vrpfile src="files/images/Deathmatch/death_round.png"/>
@@ -1068,6 +1160,7 @@
 	<vrpfile src="files/images/Minigames/SideSwipe.png"/>
 	<vrpfile src="files/images/Minigames/GoJump.png"/>
 	<vrpfile src="files/images/Minigames/2Cars.png"/>
+	<vrpfile src="files/images/Minigames/Roulette.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
@@ -1141,6 +1234,8 @@
 	<vrpfile src="files/images/Radar/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar/Blips/North.png"/>
 	<vrpfile src="files/images/Radar/Blips/Gravel.png"/>
+	<vrpfile src="files/images/Radar/Blips/Turtle.png"/>
+	<vrpfile src="files/images/Radar/Blips/Warning.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1227,6 +1322,7 @@
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
 	<vrpfile src="files/images/Textures/EPTBusStop.png"/>
+	<vrpfile src="files/images/Textures/GasStation.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>
@@ -1247,6 +1343,13 @@
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ranger.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/RescueLogo.png"/>
+
+	<vrpfile src="files/images/Textures/Turtles/1.png"/>
+	<vrpfile src="files/images/Textures/Turtles/2.png"/>
+	<vrpfile src="files/images/Textures/Turtles/3.png"/>
+	<vrpfile src="files/images/Textures/Turtles/4.png"/>
+	<vrpfile src="files/images/Textures/Turtles/5.png"/>
+	<vrpfile src="files/images/Textures/Turtles/6.png"/>
 
 	<!-- Vehicle Textures -->
 	<vrpfile src="files/images/Textures/Special/1.png"/>
@@ -1319,11 +1422,13 @@
 	<vrpfile src="files/images/Inventory/items/Items/Coolbox.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pommes.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Apfel.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Snack.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Bier.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Suessigkeiten.png" />
@@ -1424,6 +1529,10 @@
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
+
+	<!-- TurtleRace -->
+	<vrpfile src="files/images/TurtleRace/Turtle.png"/>
+	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
@@ -1686,9 +1795,21 @@
 	<vrpfile src="files/models/fishshop.txd" />
 	<vrpfile src="files/models/fishshop.dff" />
 	<vrpfile src="files/models/fishshop.col" />
+	<vrpfile src="files/models/ammunation.col" />
+	<vrpfile src="files/models/ammunation.dff" />
+	<vrpfile src="files/models/ammunation_int.col" />
+	<vrpfile src="files/models/ammunation_int.dff" />
+	<vrpfile src="files/models/ammunation2.col" />
+	<vrpfile src="files/models/ammunation2.dff" />
+	<vrpfile src="files/models/ammunation2_int.col" />
+	<vrpfile src="files/models/ammunation2_int.dff" />
 	<vrpfile src="files/models/fence.txd" />
 	<vrpfile src="files/models/fence.dff" />
 	<vrpfile src="files/models/fence.col" />
+	<vrpfile src="files/models/fuelnozzle.txd"/>
+	<vrpfile src="files/models/fuelnozzle.dff"/>
+	<vrpfile src="files/models/fuelnozzle.col"/>
+	<vrpfile src="files/models/gasstation.dff"/>
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />
@@ -1797,7 +1918,6 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	<map src="files/maps/Academi.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
@@ -1820,6 +1940,7 @@
 	<include resource="WetRoads" />
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
+
 	<!-- ACL Request -->
 	<aclrequest>
 		<right name="function.startResource" access="true" />
@@ -1828,5 +1949,13 @@
 		<right name="function.fetchRemote" access="true" />
 		<right name="function.createResource" access="true" />
 		<right name="function.ModifyOtherObjects" access="true" />
+		<right name="function.addAccount" access="true" />
+		<right name="function.removeAccount" access="true" />
+		<right name="function.aclCreateGroup" access="true" />
+		<right name="function.aclCreate" access="true" />
+		<right name="function.aclGroupAddACL" access="true" />
+		<right name="function.aclSetRight" access="true" />
+		<right name="function.aclGroupAddObject" access="true" />
+		<right name="function.aclGroupRemoveObject" access="true" />
 	</aclrequest>
 </meta>

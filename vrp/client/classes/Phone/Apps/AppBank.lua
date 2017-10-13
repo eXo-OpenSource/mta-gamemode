@@ -32,17 +32,21 @@ function AppBank:onOpen(form)
 	GUILabel:new(10, 155, 240, 20, _"An:", self.m_Tabs["Transfer"])
 	self.m_TransferToEdit = GUIEdit:new(10, 175, 240, 30, self.m_Tabs["Transfer"])
 
-	self.m_TransferButton = VRPButton:new(10, 210, 240, 30, _"Überweisen", true, self.m_Tabs["Transfer"])
+	self.m_TransferButton = GUIButton:new(10, 210, 240, 30, _"Überweisen", self.m_Tabs["Transfer"]):setBarEnabled(true)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
 	GUILabel:new(10, 270, 120, 30, _"Spenden:", self.m_Tabs["Transfer"])
 	local donate = {}
-	donate["San News"] = VRPButton:new(10, 300, 117, 30, _"San News", true, self.m_Tabs["Transfer"]):setBarColor(Color.Green)
-	donate["eXo Event-Team"] = VRPButton:new(135, 300, 117, 30, _"eXo Event-Team", true, self.m_Tabs["Transfer"]):setBarColor(Color.Yellow)
+	donate["San News"] = GUIButton:new(10, 300, 117, 30, _"San News", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Green):setBarEnabled(true):setFontSize(.9)
+	donate["eXo Event-Team"] = GUIButton:new(135, 300, 117, 30, _"eXo Event-Team", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Yellow):setBarEnabled(true):setFontSize(.9)
 
 	for index, btn in pairs(donate) do
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
 	end
+
+	self.m_Tabs["Statements"] = self.m_TabPanel:addTab(_"Kontoauszug", FontAwesomeSymbols.List)
+	local tab = self.m_Tabs["Statements"]
+	self.m_StatementsBrowser = GUIWebView:new(0, 0, tab.m_Width, tab.m_Height-10, ("https://exo-reallife.de/ingame/vRPphone/apps/bank/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, tab)
 
 	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
 	triggerServerEvent("bankMoneyBalanceRequest", root)

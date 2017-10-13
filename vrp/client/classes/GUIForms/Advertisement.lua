@@ -43,10 +43,7 @@ function AdvertisementBox:constructor()
 	end
 
 	self.m_InfoLabel = GUILabel:new(self.m_Width*0.01, self.m_Height*0.8, self.m_Width*0.75, self.m_Height*0.15, "Kosten: 0$", self.m_Window):setFontSize(0.8)
-
-	self.m_SubmitButton = VRPButton:new(self.m_Width*0.64, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.15, _"Werbung schalten", true, self.m_Window):setBarColor(Color.Green)
-
-
+	self.m_SubmitButton = GUIButton:new(self.m_Width*0.64, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.15, _"Werbung schalten", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_SubmitButton.onLeftClick =
 		function()
 			local senderName, senderIndex = self.m_SenderNameChanger:getIndex()

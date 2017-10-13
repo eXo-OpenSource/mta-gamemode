@@ -17,6 +17,7 @@ function FactionRescue:constructor()
 	self:createDutyPickup(1721.06, -1752.76, 13.55, 0) -- Base
 	self:createDutyPickup(1760.72, -1744.20, 6, 0) -- Garage
 
+	self.m_VehicleFires = {}
 
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
@@ -49,14 +50,11 @@ function FactionRescue:constructor()
 	self.m_MoveLadderBind = bind(self.moveLadder, self)
 
 
-	nextframe( -- Todo workaround
+	nextframe(
 		function ()
 			local safe = createObject(2332, 1724.8, -1754.29, 15.25, 0, 0, 180)
 			setElementDoubleSided(safe,true)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
-
-			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1798, -1739.7, 5)) --Unity garage
-			FactionManager:getSingleton():createVehicleServiceMarker("Rescue", Vector3(1713.385, -1774.8, 12.5)) --Unity side
 		end
 	)
 
@@ -198,15 +196,15 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
-				takeWeapon(client,42)
+				takeAllWeapons(client)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				takeWeapon(client,42)
+				takeAllWeapons(client)
 				if type == "fire" then
-					giveWeapon(client, 42, 2000, true)
+					giveWeapon(client, 42, 10000, true)
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
@@ -573,8 +571,8 @@ function FactionRescue:toggleLadder(veh, player, force)
 		if veh.LadderTimer and isTimer(veh.LadderTimer) then
 			killTimer(veh.LadderTimer)
 		end
-		if player then 
-			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player)) 
+		if player then
+			player:sendShortMessage(_("Leiter deaktiviert! Du Kannst das Fahrzeug wieder fahren!", player))
 			self:disableLadderBinds(player)
 			triggerClientEvent(player, "rescueLadderFixCamera", veh)
 		end
@@ -582,18 +580,23 @@ function FactionRescue:toggleLadder(veh, player, force)
 		veh:setFrozen(false)
 		triggerClientEvent("rescueLadderUpdateCollision", veh, false)
 	else
-		player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
-		veh.LadderEnabled = true
-		bindKey(player, "w", "both", self.m_LadderBind)
-		bindKey(player, "a", "both", self.m_LadderBind)
-		bindKey(player, "s", "both", self.m_LadderBind)
-		bindKey(player, "d", "both", self.m_LadderBind)
-		bindKey(player, "lctrl", "both", self.m_LadderBind)
-		bindKey(player, "lshift", "both", self.m_LadderBind)
-		veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
-		veh:setFrozen(true)
-		veh.m_DisableToggleHandbrake = true
-		triggerClientEvent("rescueLadderUpdateCollision", veh, true)
+		if (veh.rotation.x < 5 or veh.rotation.x > 355) and (veh.rotation.y < 10 or veh.rotation.y > 350) then
+			player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
+			veh.LadderEnabled = true
+			bindKey(player, "w", "both", self.m_LadderBind)
+			bindKey(player, "a", "both", self.m_LadderBind)
+			bindKey(player, "s", "both", self.m_LadderBind)
+			bindKey(player, "d", "both", self.m_LadderBind)
+			bindKey(player, "lctrl", "both", self.m_LadderBind)
+			bindKey(player, "lshift", "both", self.m_LadderBind)
+			veh.LadderTimer = setTimer(self.m_MoveLadderBind, 50, 0, veh)
+			veh:setFrozen(true)
+			veh:setRotation(0, 0, veh.rotation.z)
+			veh.m_DisableToggleHandbrake = true
+			triggerClientEvent("rescueLadderUpdateCollision", veh, true)
+		else
+			player:sendError(_("Suche dir eine ebenere Fläche!", player))
+		end
 	end
 end
 
@@ -652,9 +655,44 @@ function FactionRescue:moveLadder(veh)
 		end
 	end
 
-	if veh.controller then 
+	if veh.controller then
 		triggerClientEvent(veh.controller, "rescueLadderFixCamera", veh, veh.Ladder["main"], veh.Ladder["ladder3"])
 	else --fallback, timer gets killed automatically in most cases
 		killTimer(sourceTimer)
 	end
+end
+
+function FactionRescue:addVehicleFire(veh)
+	if not instanceof(veh, PermanentVehicle) then return end
+
+	local pos = veh:getPosition()
+	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
+	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
+	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 6, 6)
+	self.m_VehicleFires[veh].Blip = Blip:new("Fire.png", pos.x, pos.y, root, 200)
+	self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
+	self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
+
+	CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein verbranntes Auto-Wrack muss abgeschleppt werden! Position: %s", "Auto-Wrack", true, pos, zone)
+
+	if veh.controller then
+		veh.controller:sendWarning(_("Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!", veh.controller))
+	end
+
+	local model = veh:getModel()
+	local pos, rot = veh:getPosition(), veh:getRotation()
+	local r1, g1, b1, r2, g2, b2 = veh:getColor()
+	setTimer(function(veh)
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(veh)
+		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z)
+		tempVehicle:setHealth(400)
+		tempVehicle:setColor(r1, g1, b1, r2, g2, b2)
+		tempVehicle:disableRespawn(true)
+		tempVehicle:setLocked(true)
+		tempVehicle.burned = true
+	end, 10000, 1, veh)
+
+	self.m_VehicleFires[veh]:addOnFinishHook(function(zone)
+		self.m_Faction:sendShortMessage(("Fahrzeugbrand an Position %s gelöscht!"):format(zone))
+	end, zone)
 end

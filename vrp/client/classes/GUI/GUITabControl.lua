@@ -6,7 +6,6 @@
 -- *  NOTE:		   You can access individual tabs by using Tabpanel[Tabid]
 -- *
 -- ****************************************************************************
-
 GUITabControl = inherit(GUIElement)
 
 function GUITabControl:constructor(posX, posY, width, height, parent)

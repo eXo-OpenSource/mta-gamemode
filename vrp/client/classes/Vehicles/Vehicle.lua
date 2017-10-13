@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
+inherit(VehicleDataExtension, Vehicle)
 
 VEHICLE_ALT_SOUND =
 {
@@ -30,10 +31,6 @@ function Vehicle:constructor()
 	end
 
 	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setPedControlState("handbrake", true) end end)
-end
-
-function Vehicle:getFuel()
-	return 100
 end
 
 function Vehicle:getMaxHealth()
@@ -74,6 +71,14 @@ function Vehicle:getMileage()
 	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
 end
 
+function Vehicle:getFuel()
+	return self:getData("fuel")
+end
+
+function Vehicle:isEmpty()
+	return self.occupants and table.size(self.occupants) == 0
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
@@ -83,7 +88,22 @@ function Vehicle:magnetVehicleCheck()
 	local vehicle = self:getData("MagnetGrabbedVehicle")
 	local groundPosition = vehicle and getGroundPosition(vehicle.position)
 
-	triggerServerEvent("clientMagnetGrabVehicle", localPlayer, groundPosition)
+	triggerServerEvent("clientMagnetGrabVehicle", self, groundPosition)
+end
+
+function Vehicle:toggleEngine()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleEngine", localPlayer)
+end
+
+function Vehicle:toggleLight()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleVehicleLight", localPlayer)
+end
+
+function Vehicle:toggleHandbrake()
+	if localPlayer.vehicleSeat ~= 0 then return end
+	triggerServerEvent("clientToggleHandbrake", localPlayer)
 end
 
 addEventHandler("vehicleEngineStart", root,
@@ -176,24 +196,35 @@ local counter = 0
 setTimer(
 	function()
 		local vehicle = localPlayer:getOccupiedVehicle()
-		if vehicle then
+		if vehicle and localPlayer.vehicleSeat == 0 then
 			if not vehicle.m_LastPosition then
 				vehicle.m_LastPosition = vehicle:getPosition()
 			end
 
 			local position = vehicle:getPosition()
-			vehicle.m_DiffMileage = vehicle.m_DiffMileage + (position - vehicle.m_LastPosition).length
-			vehicle.m_LastPosition = position
 
+			local posDelta = (position - vehicle.m_LastPosition).length
+			vehicle.m_LastPosition = position
+			if posDelta > 100 then return end -- over 100m in 1 sec = teleport (most likely)
+
+			local deltaTimeH =  1/60/60 -- 1sec in h
+			local kmh = (posDelta/1000)/deltaTimeH
+			if kmh > vehicle:getHandling()["maxVelocity"] then -- diff is higher than diff with max velocity of this vehicle, so crop it
+				kmh = vehicle:getHandling()["maxVelocity"]
+				posDelta = kmh*deltaTimeH*1000
+			end
+
+			vehicle.m_DiffMileage = vehicle.m_DiffMileage + posDelta
+			
 			-- Send current mileage every minute to the server
 			counter = counter + 1
 			if counter >= 60 or vehicle:getData("EPT_Taxi") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
+					vehicle.m_DiffMileage = 0
 				end
 
 				counter = 0
-				vehicle.m_DiffMileage = 0
 			end
 		end
 	end,
@@ -221,7 +252,7 @@ addEventHandler("onClientVehicleDamage", root,
 			if source:getHealth() - loss <= VEHICLE_TOTAL_LOSS_HEALTH and source:getHealth() > 0 then
 				if isElementSyncer(source) and (source.m_LastBroken and (getTickCount() - source.m_LastBroken > 500) or true ) then
 					source.m_LastBroken = getTickCount()
-					triggerServerEvent("vehicleBreak", source)
+					triggerServerEvent("vehicleBreak", source, weapon)
 				end
 				setVehicleEngineState(source, false)
 				source:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)

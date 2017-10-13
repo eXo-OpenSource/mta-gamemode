@@ -64,7 +64,7 @@ function VehicleShopGUI:setVehicleList(list)
 	self.m_VehicleList:clear()
 
 	for k, v in pairs(list) do
-		local item = self.m_VehicleList:addItem(getVehicleNameFromModel(k), v[3], "$"..tostring(v[2])):setColumnAlignX(3, "right")
+		local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[3], "$"..tostring(v[2])):setColumnAlignX(3, "right")
 		item.VehicleId = k
 		item.onLeftClick = function()
 			self.m_CurrentVehicle = v[1]

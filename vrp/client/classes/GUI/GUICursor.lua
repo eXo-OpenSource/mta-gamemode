@@ -16,7 +16,6 @@ function GUICursor:constructor()
 	end
 
 	self:setCursorMode(toboolean(core:get("HUD", "CursorMode", false)))
-
 end
 
 function GUICursor:destructor()

@@ -6,7 +6,7 @@ function Core:constructor()
 	nextframe(function() --small hack to override the name meta-name
 		setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
 	end)
-	
+
 	-- Small hack to get the global core immediately
 	core = self
 	self.m_Failed = false
@@ -15,7 +15,7 @@ function Core:constructor()
 	if DEBUG then
 		Debugging:new()
 	end
-	
+
 	Config:new()
 
 	-- Update MySQL DB if this is not the testserver/releaseserver
@@ -73,7 +73,6 @@ function Core:constructor()
 		GroupManager:new()
 		GroupPropertyManager:new()
 		HouseManager:new()
-		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
 		AdminEventManager:new()
@@ -100,6 +99,7 @@ function Core:constructor()
 		ActionsCheck:new()
 		TrainManager:new()
 		FireManager:new()
+		GasStationManager:new()
 		ShopManager:new()
 		Jail:new()
 		VehicleInteraction:new()
@@ -114,11 +114,14 @@ function Core:constructor()
 		SkydivingManager:new()
 		Kart:new()
 		HorseRace:new()
+		TurtleRace:new()
 		BoxManager:new()
 		Fishing:new()
 		InactivityManager:new()
 		HistoryPlayer:new()
+		VehicleCategory:new()
 		ClientStatistics:new()
+		SkribbleManager:new()
 
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
@@ -149,6 +152,7 @@ function Core:constructor()
 		--SprayWallManager:new()
 		GroupHouseRob:new()
 
+		BindManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 

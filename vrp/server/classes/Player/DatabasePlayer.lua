@@ -414,8 +414,7 @@ function DatabasePlayer:giveMoney(amount, reason)
 end
 
 function DatabasePlayer:takeMoney(amount, reason)
-	self:giveMoney(-amount, reason)
-	return true
+	return DatabasePlayer.giveMoney(self, -amount, reason)
 end
 
 function DatabasePlayer:setXP(xp)
@@ -426,7 +425,26 @@ function DatabasePlayer:getLevel()
 	return calculatePlayerLevel(self.m_XP)
 end
 
-function DatabasePlayer:setKarma(karma)
+function DatabasePlayer:giveKarma(value, reason) -- TODO: maybe log it?
+	self:setXP(self.m_XP + value)
+	self:setKarma(self.m_Karma + value)
+	if self:isActive() then
+		self:setPrivateSync("KarmaLevel", self.m_Karma)
+		self:setPublicSync("Karma", self.m_Karma)
+	end
+
+	local group = self:getGroup()
+	if group then
+		group:giveKarma(value)
+	end
+	return true
+end
+
+function DatabasePlayer:takeKarma(value, reason)
+	DatabasePlayer.giveKarma(self, -value, reason)
+end
+
+function DatabasePlayer:setKarma(karma, reason)
 	self.m_Karma = karma
 	if self.m_Karma > MAX_KARMA_LEVEL then self.m_Karma = MAX_KARMA_LEVEL end
 	if self.m_Karma < -MAX_KARMA_LEVEL then self.m_Karma = -MAX_KARMA_LEVEL end
@@ -434,23 +452,13 @@ function DatabasePlayer:setKarma(karma)
 	if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
-function DatabasePlayer:giveKarma(value)
-	self:setXP(self.m_XP + value)
-	self:setKarma(self.m_Karma + value)
-
-	local group = self:getGroup()
-	if group then
-		group:giveKarma(value)
-	end
-end
-
-function DatabasePlayer:givePoints(p)
+function DatabasePlayer:givePoints(p, reason) -- TODO: maybe log this?
 	self.m_Points = self.m_Points + math.floor(p)
 	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
 end
 
-function DatabasePlayer:takePoints(p)
-	self:givePoints(-p)
+function DatabasePlayer:takePoints(p, reason)
+	DatabasePlayer.givePoints(self, -p, reason)
 end
 
 function DatabasePlayer:setPoints(p)
@@ -478,11 +486,11 @@ function DatabasePlayer:incrementJobLevel()
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
-function DatabasePlayer:setWeaponLevel (level)
+function DatabasePlayer:setWeaponLevel(level)
 	self.m_WeaponLevel = level
 	if self:isActive() then
 		self:setPrivateSync("WeaponLevel", self.m_WeaponLevel)
-		for _, stat in ipairs({ 69, 70, 71, 72, 74, 76, 77, 78}) do
+		for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 			if stat == 69 then
 				setPedStat(self, stat, self.m_WeaponLevel*90)
 			else
@@ -492,18 +500,18 @@ function DatabasePlayer:setWeaponLevel (level)
 	end
 end
 
-function DatabasePlayer:setVehicleLevel (level)
+function DatabasePlayer:setVehicleLevel(level)
 	if level < 1 then level = 1 end
 	self.m_VehicleLevel = level
 	if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
 end
 
-function DatabasePlayer:setSkinLevel (level)
+function DatabasePlayer:setSkinLevel(level)
 	self.m_SkinLevel = level
 	if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
 end
 
-function DatabasePlayer:setJobLevel (level)
+function DatabasePlayer:setJobLevel(level)
 	self.m_JobLevel = level
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end

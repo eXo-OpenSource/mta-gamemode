@@ -44,6 +44,14 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Search)
 
+		self:addItem(_"Fraktion: Alkoholtest durchführen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateStartAlcoholTest", localPlayer, self:getElement())
+				end
+			end
+		):setIcon(FontAwesomeSymbols.Beer)
+
 		self:addItem(_"Fraktion: nach Lizenz fragen",
 			function()
 				if self:getElement() then

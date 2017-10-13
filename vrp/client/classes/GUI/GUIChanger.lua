@@ -6,38 +6,75 @@
 -- *
 -- ****************************************************************************
 GUIChanger = inherit(GUIElement)
+inherit(GUIFontContainer, GUIChanger)
 inherit(GUIColorable, GUIChanger)
 
 function GUIChanger:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
+	GUIFontContainer.constructor(self, "", 1, VRPFont(height*.9))
 	GUIColorable.constructor(self, Color.White)
+
+	self.m_BackgroundColor = Color.LightBlue
 
 	self.m_Items = {}
 	self.m_CurrentItem = 1
 
-	--self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
-	self.m_LeftButton.onLeftClick = function()
-		self.m_CurrentItem = self.m_CurrentItem - 1
-		if self.m_CurrentItem <= 0 then
-			self.m_CurrentItem = #self.m_Items
+	self.m_LeftButton = GUIRectangle:new(2, 2, self.m_Height - 4, self.m_Height - 4, Color.Accent, self)
+	self.m_LeftButton.onHover =
+		function()
+			self.m_LeftLabel:setColor(Color.Black)
+			self.m_LeftButton:setColor(Color.White)
+			Animation.Move:new(self.m_LeftButton, 150, 0, 0, "OutQuad")
+			Animation.Size:new(self.m_LeftButton, 150, self.m_Height, self.m_Height, "OutQuad")
 		end
-		self:setIndex(self.m_CurrentItem)
-	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Grey):setFontSize(1)
-	self.m_RightButton.onLeftClick = function()
-		self.m_CurrentItem = self.m_CurrentItem + 1
-		if self.m_CurrentItem > #self.m_Items then
-			self.m_CurrentItem = 1
+	self.m_LeftButton.onUnhover =
+		function()
+			self.m_LeftLabel:setColor(Color.White)
+			self.m_LeftButton:setColor(Color.Accent)
+			Animation.Move:new(self.m_LeftButton, 150, 2, 2, "OutQuad")
+			Animation.Size:new(self.m_LeftButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
 		end
-		self:setIndex(self.m_CurrentItem)
-	end
+	self.m_LeftButton.onLeftClick =
+		function()
+			self.m_CurrentItem = self.m_CurrentItem - 1
+			if self.m_CurrentItem <= 0 then
+				self.m_CurrentItem = #self.m_Items
+			end
+			self:setIndex(self.m_CurrentItem)
+		end
+
+	self.m_RightButton = GUIRectangle:new(self.m_Width - self.m_Height + 2, 2, self.m_Height - 4, self.m_Height - 4, Color.Accent, self)
+	self.m_RightButton.onHover =
+		function()
+			self.m_RightLabel:setColor(Color.Black)
+			self.m_RightButton:setColor(Color.White)
+			Animation.Move:new(self.m_RightButton, 150, self.m_Width - self.m_Height, 0, "OutQuad")
+			Animation.Size:new(self.m_RightButton, 150, self.m_Height, self.m_Height, "OutQuad")
+		end
+	self.m_RightButton.onUnhover =
+		function()
+			self.m_RightLabel:setColor(Color.White)
+			self.m_RightButton:setColor(Color.Accent)
+			Animation.Move:new(self.m_RightButton, 150, self.m_Width - self.m_Height + 2, 2, "OutQuad")
+			Animation.Size:new(self.m_RightButton, 150, self.m_Height - 4, self.m_Height - 4, "OutQuad")
+		end
+	self.m_RightButton.onLeftClick =
+		function()
+			self.m_CurrentItem = self.m_CurrentItem + 1
+			if self.m_CurrentItem > #self.m_Items then
+				self.m_CurrentItem = 1
+			end
+			self:setIndex(self.m_CurrentItem)
+		end
+
+	self.m_LeftLabel = GUILabel:new(0, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setFontSize(1):setAlign("center", "center")
+	self.m_RightLabel = GUILabel:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, FontAwesomeSymbols.Right, self):setFont(FontAwesome(20)):setFontSize(1):setAlign("center", "center")
 end
 
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.LightBlue)
-	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_Height-8), "center", "center")
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.PrimaryNoClick)
+	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "center", "center")
 	dxSetBlendMode("blend")
 end
 
@@ -68,7 +105,13 @@ function GUIChanger:setSelectedItem(item)
 	end
 end
 
-function GUIChanger:getSelectedItem(item)
+function GUIChanger:setBackgroundColor(color)
+	self.m_BackgroundColor = color
+	self:anyChange()
+	return self
+end
+
+function GUIChanger:getSelectedItem()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
 end
 

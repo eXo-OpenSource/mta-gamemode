@@ -41,13 +41,13 @@ function AppEPT:onOpen(form)
 	self.m_BusRoute:setLine(1)
 
 	local width = form.m_Width-20
-	self.m_Line1Btn = VRPButton:new(10, 60, width/2-5, 30, _"Linie 1", true, self.m_Tabs["Bus"])
-		:setBarColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[1].color)))
+	self.m_Line1Btn = GUIButton:new(10, 60, width/2-5, 30, _"Linie 1", self.m_Tabs["Bus"])
+		:setBackgroundColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[1].color)))
 	self.m_Line1Btn.onLeftClick = function()
 		self.m_BusRoute:setLine(1)
 	end
-	self.m_Line2Btn = VRPButton:new(10 + width/2 + 5, 60, width/2-5, 30, _"Linie 2", true, self.m_Tabs["Bus"])
-		:setBarColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[2].color)))
+	self.m_Line2Btn = GUIButton:new(10 + width/2 + 5, 60, width/2-5, 30, _"Linie 2", self.m_Tabs["Bus"])
+		:setBackgroundColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[2].color)))
 	self.m_Line2Btn.onLeftClick = function()
 		self.m_BusRoute:setLine(2)
 	end

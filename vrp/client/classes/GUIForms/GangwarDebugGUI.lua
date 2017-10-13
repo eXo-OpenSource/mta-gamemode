@@ -13,8 +13,7 @@ function GangwarDebugGUI:constructor(gui)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Gangwar-Menü", true, true, self)
 
 	if gui then
-		self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-		self.m_BackButton.onLeftClick = function() self:close() gui:getSingleton():show() Cursor:show() end
+		self.m_Window:addBackButton(function () delete(self) gui:getSingleton():show() end)
 	end
 	self.m_GangwarAreas = {}
 	self.m_GangAreasGrid = GUIGridList:new(10, 55, 200, 300, self.m_Window)

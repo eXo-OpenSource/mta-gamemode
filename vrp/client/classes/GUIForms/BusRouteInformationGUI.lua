@@ -37,13 +37,13 @@ function BusRouteInformationGUI:constructor(element)
     self.m_Window:deleteOnClose(true)
     local baseHeight = 31 -- header  + line
     if #self.m_Lines > 1 then
-        self.m_Line1Btn = VRPButton:new(5, baseHeight + 5, self.m_Width/2-7.5, 30, "Linie 1", true, self)
-            :setBarColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[1].color)))
+        self.m_Line1Btn = GUIButton:new(5, baseHeight + 5, self.m_Width/2-7.5, 30, "Linie 1", self)
+            :setBackgroundColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[1].color)))
         self.m_Line1Btn.onLeftClick = function()
             self.m_BusRoute:setLine(1)
         end
-        self.m_Line2Btn = VRPButton:new(self.m_Width/2 + 2.5, baseHeight + 5, self.m_Width/2-7.5, 30, "Linie 2", true, self)
-            :setBarColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[2].color)))
+        self.m_Line2Btn = GUIButton:new(self.m_Width/2 + 2.5, baseHeight + 5, self.m_Width/2-7.5, 30, "Linie 2", self)
+            :setBackgroundColor(tocolor(unpack(EPTBusData.lineData.lineDisplayData[2].color)))
         self.m_Line2Btn.onLeftClick = function()
             self.m_BusRoute:setLine(2)
         end
@@ -53,5 +53,5 @@ function BusRouteInformationGUI:constructor(element)
     if self.m_Line then
         self.m_BusRoute = BusRoutePlan:new(0, baseHeight, self.m_Width, self.m_Height - baseHeight, baseHeight, self)
         self.m_BusRoute:setLine(self.m_Line, self.m_StationName)
-    end    
+    end
 end

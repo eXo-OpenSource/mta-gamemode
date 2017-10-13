@@ -32,10 +32,10 @@ function Animation.Move:preRender()
 	end
 end
 
-function Animation.Move:setTargetPosition (x, y)
+function Animation.Move:setTargetPosition(x, y)
 	self.m_X, self.m_Y = x, y
 end
 
-function Animation.Move:setFinishTime (time)
+function Animation.Move:setFinishTime(time)
 	self.m_Time = self.m_Time + time
 end

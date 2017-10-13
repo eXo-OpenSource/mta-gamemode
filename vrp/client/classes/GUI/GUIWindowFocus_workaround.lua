@@ -8,7 +8,10 @@ end
 
 function GUIWindowsFocus:setCurrentFocus( mObj )
 	if mObj and mObj:isVisible() then
+		if self.m_CurrentFocus then self.m_CurrentFocus.m_Parent:moveToBack() end
 		self.m_CurrentFocus = mObj
+		mObj.m_Parent:bringToFront()
+		outputDebug(mObj.m_TitleLabel:getText(), "is on focus")
 		return
 	end
 	self.m_CurrentFocus = nil

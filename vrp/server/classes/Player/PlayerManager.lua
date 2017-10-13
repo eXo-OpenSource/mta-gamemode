@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -56,6 +56,7 @@ function PlayerManager:constructor()
 	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
+	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
 
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
@@ -67,6 +68,7 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
+	addCommandHandler("shrug",bind(self.Command_playerShrug, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
@@ -334,9 +336,9 @@ function PlayerManager:startPaydayDebug(player)
 end
 
 function PlayerManager:breakingNews(text, ...)
-	for k, v in pairs(getElementsByType("player")) do
+	for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		local textFinish = _(text, v, ...)
-		v:triggerEvent("breakingNews", textFinish)
+		v:triggerEvent("breakingNews", textFinish, "Breaking News")
 	end
 end
 
@@ -420,7 +422,6 @@ function PlayerManager:playerCommand(cmd)
 end
 
 function PlayerManager:playerQuit()
-	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
 	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
 
@@ -560,6 +561,13 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return
+	end
+	source:setLastChatMessage(message)
+
 	if Player.getChatHook():call(source, message, messageType) then
 		cancelEvent()
 		return
@@ -622,6 +630,13 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()
@@ -647,6 +662,13 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(0)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -663,6 +685,13 @@ end
 function PlayerManager:Command_playerOOC(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -676,7 +705,18 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
 end
 
-
+function PlayerManager:Command_playerShrug(source, cmd)
+	local text = "zuckt mit den Schultern ¯\\_(ツ)_/¯"
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+	source:meChat(true, text)
+	if source.isTasered then return	end
+	if source.vehicle then return end
+	setPedAnimation(source, "shop", "SHP_HandsUp_Scr", 400, false, false, true, false)
+end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
@@ -813,6 +853,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client:isOnFire() then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
@@ -879,10 +920,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		return
 	end
 
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
-		return
-	end
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
@@ -930,10 +968,9 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
-		return
-	end
+
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
+
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
@@ -1041,5 +1078,42 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 	else
 		client:setSpawnLocation(locationId)
 		client:sendInfo("Spawnpunkt wurde geändert.")
+	end
+end
+
+function PlayerManager:Event_AttachToVehicle()
+	if client:getPrivateSync("isAttachedToVehicle") then
+		client:setPrivateSync("isAttachedToVehicle", false)
+		client:detach()
+		return
+	end
+
+	if not client.contactElement or client.contactElement:getType() ~= "vehicle" then return end
+	if client.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[client.contactElement:getModel()] then
+		local px, py, pz = getElementPosition(client)
+		local vx, vy, vz = getElementPosition(client.contactElement)
+		local sx = px - vx
+		local sy = py - vy
+		local sz = pz - vz
+
+		local rotpX = 0
+		local rotpY = 0
+		local rotpZ = getPlayerRotation(client)
+
+		local rotvX, rotvY, rotvZ = getVehicleRotation(client.contactElement)
+
+		local t, p, f = math.rad(client.contactElement.rotation.x), math.rad(client.contactElement.rotation.y), math.rad(client.contactElement.rotation.z)
+		local ct, st, cp, sp, cf, sf = math.cos(t), math.sin(t), math.cos(p), math.sin(p), math.cos(f), math.sin(f)
+
+		local z = ct*cp*sz + (sf*st*cp + cf*sp)*sx + (-cf*st*cp + sf*sp)*sy
+		local x = -ct*sp*sz + (-sf*st*sp + cf*cp)*sx + (cf*st*sp + sf*cp)*sy
+		local y = st*sz - sf*ct*sx + cf*ct*sy
+
+		local rotX = rotpX - rotvX
+		local rotY = rotpY - rotvY
+		local rotZ = rotpZ - rotvZ
+
+		client:attach(client.contactElement, x, y, z, rotX, rotY, rotZ)
+		client:setPrivateSync("isAttachedToVehicle", client.contactElement)
 	end
 end
