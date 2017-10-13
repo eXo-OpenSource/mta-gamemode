@@ -201,7 +201,7 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 
 	if self.m_GuessingWord then
 		if self.m_CurrentDrawing == localPlayer then
-			self.m_GuessingWordLabel:setText(self.m_GuessingWord[1])
+			self.m_GuessingWordLabel:setText(self.m_GuessingWord.Word)
 			self:setDrawingEnabled(true)
 		else
 			self:updateGuessingWordLabel()
@@ -246,7 +246,7 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 end
 
 function SkribbleGUI:updateGuessingWordLabel()
-	local wordLength = self.m_GuessingWord[1]:len()
+	local wordLength = self.m_GuessingWord.Word:len()
 
 	if table.size(self.m_Hints) == 0 then
 		self.m_GuessingWordLabel:setText(("_ "):rep(wordLength))
@@ -256,7 +256,7 @@ function SkribbleGUI:updateGuessingWordLabel()
 			if not self.m_Hints[i] then
 				text = ("%s_ "):format(text)
 			else
-				text = ("%s%s "):format(text, utfSub(self.m_GuessingWord[1], i, i))
+				text = ("%s%s "):format(text, utfSub(self.m_GuessingWord.Word, i, i))
 			end
 		end
 
@@ -272,7 +272,7 @@ function SkribbleGUI:choosingWord(words)
 		local posX, posY = self.m_Skribble:getPosition()
 		local width, height = self.m_Skribble:getSize()
 
-		self.m_WordButtons[key] = GUIButton:new(posX + width/2 - 125, (posY+height/2) + 55*(key-2), 250, 50, word[1], self.m_Window):setBarEnabled(false):setAlpha(0)
+		self.m_WordButtons[key] = GUIButton:new(posX + width/2 - 125, (posY+height/2) + 55*(key-2), 250, 50, word.Word, self.m_Window):setBarEnabled(false):setAlpha(0)
 		Animation.FadeAlpha:new(self.m_WordButtons[key], 300*key, 0, 255)
 
 		self.m_WordButtons[key].onLeftClick =

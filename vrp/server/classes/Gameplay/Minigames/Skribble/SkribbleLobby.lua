@@ -121,7 +121,7 @@ function SkribbleLobby:setState(state)
 
 		table.sort(players, function(a, b) return a[2] > b[2] end)
 
-		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, players = players, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
+		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, players = players, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord.Word}
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
@@ -300,7 +300,7 @@ function SkribbleLobby:calculatePoints()
 end
 
 function SkribbleLobby:addHint()
-	local wordLength = self.m_GuessingWord[1]:len()
+	local wordLength = self.m_GuessingWord.Word:len()
 	local randomHintIndex = math.random(1, wordLength)
 
 	while self.m_Hints[randomHintIndex] do
@@ -322,15 +322,15 @@ function SkribbleLobby:getRandomWords()
 	local isInList =
 		function(tab, word)
 			for _, v in pairs(tab) do
-				if v[1] == word[1] then return true end
+				if v.Word == word.Word then return true end
 			end
 		end
 
 	local words = {}
 	for i = 1, 3 do
-		local word = SKRIBBLE_WORDS[math.random(1, #SKRIBBLE_WORDS)]
+		local word = SkribbleManager.Words[math.random(1, #SkribbleManager.Words)]
 		while isInList(words, word) do
-			word = SKRIBBLE_WORDS[math.random(1, #SKRIBBLE_WORDS)]
+			word = SkribbleManager.Words[math.random(1, #SkribbleManager.Words)]
 		end
 
 		table.insert(words, word)
@@ -355,7 +355,7 @@ function SkribbleLobby:receiveDrawing(client, drawData)
 end
 
 function SkribbleLobby:verifyGuess(text)
-	local toGuessingWord = self.m_GuessingWord[1]:lower()
+	local toGuessingWord = self.m_GuessingWord.Word:lower()
 	local guessedWord = text:lower()
 
 	-- Todo: Simplify rates by recognizing similar words

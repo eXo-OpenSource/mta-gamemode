@@ -9,6 +9,8 @@ SkribbleManager = inherit(Singleton)
 addRemoteEvents{"skribbleRequestLobbys", "skribbleCreateLobby", "skribbleJoinLobby", "skribbleLeaveLobby", "skribbleChoosedWord", "skribbleSendDrawing"}
 
 function SkribbleManager:constructor()
+	SkribbleManager.Words = sql:queryFetch("SELECT Word, WordType FROM ??_skribble", sql:getPrefix())
+
 	self.m_Lobbys = {}
 
 	Player.getChatHook():register(
@@ -33,6 +35,10 @@ function SkribbleManager:constructor()
 	addEventHandler("skribbleLeaveLobby", root, bind(SkribbleManager.leaveLobby, self))
 	addEventHandler("skribbleChoosedWord", root, bind(SkribbleManager.choosedWord, self))
 	addEventHandler("skribbleSendDrawing", root, bind(SkribbleManager.receiveDrawing, self))
+end
+
+function SkribbleManager:reloadWords()
+	SkribbleManager.Words = sql:queryFetch("SELECT Word, WordType FROM ??_skribble", sql:getPrefix())
 end
 
 function SkribbleManager:unlinkLobby(id)
