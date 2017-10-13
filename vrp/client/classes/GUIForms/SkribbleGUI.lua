@@ -71,7 +71,7 @@ end
 function SkribbleGUI:showInfoText(text)
 	if not text then self:hideInfoText() return end
 	self:deleteChoosingButtons()
-	self:deleteDrawResult()
+	self:deleteResultLabels()
 	self.m_InfoLabel:setText(text)
 
 	local backgroundAlpha = self.m_Background:getAlpha()
@@ -87,7 +87,7 @@ end
 
 function SkribbleGUI:hideInfoText()
 	self:deleteChoosingButtons()
-	self:deleteDrawResult()
+	self:deleteResultLabels()
 	if self.m_InfoLabel:getText() == "" then return end
 
 	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
@@ -98,7 +98,7 @@ function SkribbleGUI:hideInfoText()
 end
 
 function SkribbleGUI:showDrawResult()
-	self:deleteDrawResult()
+	self:showInfoText("")
 
 	local posX, posY = self.m_Skribble:getPosition()
 	local width, height = self.m_Skribble:getSize()
@@ -132,17 +132,52 @@ function SkribbleGUI:showDrawResult()
 	end
 end
 
-function SkribbleGUI:deleteDrawResult()
+function SkribbleGUI:showGameResult()
+	self:showInfoText("Ergebnis\n\n\n\n\n\n\n\n")
+
+	local posX, posY = self.m_Skribble:getPosition()
+	local width, height = self.m_Skribble:getSize()
+	local offset = width/4
+	local positionColors = {[1] = Color.Yellow, [2] = Color.LightGrey, [3] = Color.Browm}
+
+	self.m_ResultLabels = {}
+
+	for i, data in pairs(self.m_SyncData.players) do
+		local posLabel = GUILabel:new(posX, posY + 100 + 25*(i-1), offset - 10, 25, ("#%s"):format(i), self.m_Window):setFont(VRPFont(30)):setAlpha(0):setAlignX("right")
+		local nameLabel = GUILabel:new(posX + offset, posY + 100 + 25*(i-1), offset, 25,  data[1], self.m_Window):setFont(VRPFont(30)):setAlpha(0)
+		local pointsLabel = GUILabel:new(posX + offset*2, posY + 100 + 25*(i-1), offset, 25, data[2], self.m_Window):setFont(VRPFont(30)):setAlpha(0):setAlignX("right")
+
+		if positionColors[i] then
+			posLabel:setColor(positionColors[i])
+			nameLabel:setColor(positionColors[i])
+			pointsLabel:setColor(positionColors[i])
+		end
+
+		table.insert(self.m_ResultLabels, posLabel)
+		table.insert(self.m_ResultLabels, nameLabel)
+		table.insert(self.m_ResultLabels, pointsLabel)
+
+		Animation.FadeAlpha:new(posLabel, 250, 0, 255)
+		Animation.FadeAlpha:new(nameLabel, 250, 0, 255)
+		Animation.FadeAlpha:new(pointsLabel, 250, 0, 255)
+	end
+end
+
+function SkribbleGUI:deleteResultLabels()
 	if self.m_ResultLabels then
 		for k, element in pairs(self.m_ResultLabels) do
 			Animation.FadeAlpha:new(element, 250, 255, 0).onFinish =
-				function()
-					element:delete()
-				end
+			function()
+				element:delete()
+			end
 		end
 
 		self.m_ResultLabels = nil
 	end
+end
+
+function SkribbleGUI:deleteGameResult()
+
 end
 
 function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, rounds, guessingWord, hints, syncData, timeLeft)
@@ -180,10 +215,20 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 		self:setDrawingEnabled(false)
 	end
 
-	if self.m_State == "finishedDrawing" and self.m_SyncData and self.m_SyncData.showDrawResult then
-		self:showDrawResult()
+	if self.m_SyncData then
+		if self.m_State == "finishedDrawing" and self.m_SyncData.showDrawResult then
+			self:showDrawResult()
+		end
+
+		if self.m_State == "finishedGame" and self.m_SyncData.showGameResult then
+			self:showGameResult()
+		end
+
+		if self.m_SyncData.clearDrawings then
+			self.m_Skribble:clear(true)
+		end
 	else
-		self:deleteDrawResult()
+		self:deleteResultLabels()
 	end
 
 	if timeLeft then
@@ -200,10 +245,6 @@ function SkribbleGUI:updateInfos(state, players, currentDrawing, currentRound, r
 	else
 		if isTimer(self.m_TimeLeftTimer) then killTimer(self.m_TimeLeftTimer) end
 		self.m_TimeLeftLabel:setText("")
-	end
-
-	if self.m_SyncData and self.m_SyncData.clearDrawings then
-		self.m_Skribble:clear(true)
 	end
 end
 
@@ -225,7 +266,6 @@ function SkribbleGUI:updateGuessingWordLabel()
 		self.m_GuessingWordLabel:setText(text)
 	end
 end
-
 
 function SkribbleGUI:choosingWord(words)
 	self:showInfoText("Wähle ein Wort aus ...\n\n\n\n")
@@ -333,33 +373,3 @@ addEventHandler("skribbleSyncDrawing", root,
 		end
 	end
 )
-
---[[addEventHandler("skribbleSetDrawingEnabled", root,
-	function(state)
-		if SkribbleGUI:isInstantiated() then
-			SkribbleGUI:getSingleton():setDrawingEnabled(state)
-		end
-	end
-)]]
-
---[[function SkribbleGUI:setHost()
-	self.m_Timer = setTimer(function()
-		self.m_Skribble:setDrawingEnabled(true)
-		local syncData = self.m_Skribble:getSyncData(true)
-		if #syncData > 0 then
-			triggerServerEvent("onSyncSkribbleData", localPlayer, syncData)
-		end
-	end, 100, 0)
-end]]
-
---[[addEvent("sendSkribbleData", true)
-addEventHandler("sendSkribbleData", root,
-	function(data)
-		if not SkribbleGUI:isInstantiated() then
-			SkribbleGUI:new()
-		end
-
-		SkribbleGUI:getSingleton().m_Skribble:drawSyncData(data)
-	end
-)
-]]

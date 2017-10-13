@@ -115,7 +115,6 @@ function SkribbleLobby:setState(state)
 		end
 
 		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
-		self:showInfoText("")
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
@@ -155,12 +154,39 @@ function SkribbleLobby:setState(state)
 	elseif state == "finishedGame" then
 		self.m_State = state
 
+		local players = {}
+		for player, data in pairs(self.m_Players) do
+			table.insert(players, {player:getName(), data.points})
+		end
+
+		table.sort(players, function(a, b) return a[2] > b[2] end)
+
+		self.m_SyncData = {showGameResult = true, players = players} -- clear all previous drawing
+
 		self.m_CurrentDrawing = nil
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
 
 		self:syncLobbyInfos()
-		-- todo show results :)
+
+		self.m_RestartGameTimer = setTimer(
+			function()
+				self.m_CurrentRound = 1
+				self.m_SyncData = nil
+				self.m_CurrentDrawing = nil
+				self.m_GuessingWords = nil
+				self.m_GuessingWord = nil
+				self.m_Hints = {}
+
+				for _, data in pairs(self.m_Players) do
+					data.points = 0
+					data.queued = true
+					data.guessedWord = false
+				end
+
+				self:setState("choosing")
+			end, 15000, 1
+		)
 	end
 end
 
