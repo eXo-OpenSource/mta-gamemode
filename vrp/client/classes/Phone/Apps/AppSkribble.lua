@@ -49,7 +49,7 @@ function AppSkribble:onOpen(form)
 	self.m_Name = GUIEdit:new(10, 85, form.m_Width-20, 30, createTab):setText(("%s's Lobby"):format(localPlayer:getName()))
 	self.m_Password = GUIEdit:new(10, 155, form.m_Width-20, 30, createTab):setMasked():setTooltip("Leer lassen für eine öffentliche Lobby!", "bottom")
 	self.m_Rounds = GUIChanger:new(10, 225, form.m_Width-20, 30, createTab)
-	for i = 2, 10 do
+	for i = 3, 10 do
 		self.m_Rounds:addItem(i)
 	end
 

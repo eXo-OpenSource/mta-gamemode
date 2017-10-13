@@ -117,18 +117,15 @@ function SkribbleGUI:showDrawResult()
 	Animation.FadeAlpha:new(self.m_ResultLabels[1], 250, 0, 255)
 	Animation.FadeAlpha:new(self.m_ResultLabels[2], 250, 0, 255)
 
-	local i = 1
-	for player, data in pairs(self.m_Players) do
-		local nameLabel = GUILabel:new(posX + offset, posY + 100 + 25*(i-1), offset, 25, player:getName(), self.m_Window):setFont(VRPFont(30)):setAlpha(0)
-		local pointsLabel = GUILabel:new(posX + offset*2, posY + 100 + 25*(i-1), offset, 25, ("+%s"):format(data.gotPoints), self.m_Window):setFont(VRPFont(30)):setColor(data.gotPoints > 0 and Color.Green or Color.Red):setAlignX("right"):setAlpha(0)
+	for i, data in pairs(self.m_SyncData.players) do
+		local nameLabel = GUILabel:new(posX + offset, posY + 100 + 25*(i-1), offset, 25, data[1], self.m_Window):setFont(VRPFont(30)):setAlpha(0)
+		local pointsLabel = GUILabel:new(posX + offset*2, posY + 100 + 25*(i-1), offset, 25, ("+%s"):format(data[2]), self.m_Window):setFont(VRPFont(30)):setColor(data[2] > 0 and Color.Green or Color.Red):setAlignX("right"):setAlpha(0)
 
 		table.insert(self.m_ResultLabels, nameLabel)
 		table.insert(self.m_ResultLabels, pointsLabel)
 
 		Animation.FadeAlpha:new(nameLabel, 250, 0, 255)
 		Animation.FadeAlpha:new(pointsLabel, 250, 0, 255)
-
-		i = i + 1
 	end
 end
 

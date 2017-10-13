@@ -30,12 +30,13 @@ function SkribbleLobby:destructor()
 	if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
 	if isTimer(self.m_StartRoundTimer) then killTimer(self.m_StartRoundTimer) end
 	if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
+	if isTimer(self.m_RestartGameTimer) then killTimer(self.m_RestartGameTimer) end
 
 	SkribbleManager:getSingleton():unlinkLobby(self.m_Id)
 end
 
 function SkribbleLobby:setState(state)
-	outputChatBox("SkribbleLobby:setState -> " .. tostring(state))
+	--outputChatBox("SkribbleLobby:setState -> " .. tostring(state))
 
 	if state == "idle" then
 		self.m_State = state
@@ -43,6 +44,7 @@ function SkribbleLobby:setState(state)
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		if isTimer(self.m_NextPlayerTimer) then killTimer(self.m_NextPlayerTimer) end
 		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
+		if isTimer(self.m_RestartGameTimer) then killTimer(self.m_RestartGameTimer) end
 		self:showInfoText("Warten auf weitere Spieler ...")
 
 		self.m_SyncData = nil
@@ -110,11 +112,16 @@ function SkribbleLobby:setState(state)
 
 		self:calculatePoints()
 
-		for _, data in pairs(self.m_Players) do
+		local players = {}
+
+		for player, data in pairs(self.m_Players) do
 			data.guessedWord = false
+			table.insert(players, {player:getName(), data.gotPoints})
 		end
 
-		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
+		table.sort(players, function(a, b) return a[2] > b[2] end)
+
+		self.m_SyncData = {showDrawResult = true, drawer = self.m_CurrentDrawing, players = players, timesUp = isTimer(self.m_DrawTimer) and self.m_DrawTimer:getDetails() <= 0, guessingWord = self.m_GuessingWord[1]}
 
 		if isTimer(self.m_DrawTimer) then killTimer(self.m_DrawTimer) end
 		if isTimer(self.m_HintTimer) then killTimer(self.m_HintTimer) end
@@ -224,7 +231,7 @@ function SkribbleLobby:addPlayer(player)
 		return
 	end
 
-	if self:isState("idle") and playerCount > 1 then
+	if self:isState("idle") and playerCount > 1 and not isTimer(self.m_StartRoundTimer) then
 		self:showInfoText("Runde " .. self.m_CurrentRound)
 
 		self.m_StartRoundTimer = setTimer(
@@ -263,15 +270,29 @@ function SkribbleLobby:removePlayer(player)
 end
 
 function SkribbleLobby:calculatePoints()
+	local playerCount = #self:getPlayers()
+	local pool = playerCount*200
+	local timeleftSum = 0
+	local highestTimeleft = 0
+
 	for player, data in pairs(self.m_Players) do
 		if data.guessedWord then
-			if player == self.m_CurrentDrawing then
-				data.gotPoints = data.guessedWord -- todo calculation
-				data.points = data.points + data.gotPoints
-			else
-				data.gotPoints = data.guessedWord -- todo calculation
-				data.points = data.points + data.gotPoints
+			timeleftSum = timeleftSum + data.guessedWord
+
+			if data.guessedWord > highestTimeleft then
+				highestTimeleft = data.guessedWord
 			end
+		end
+	end
+
+	if self.m_Players[self.m_CurrentDrawing] then
+		self.m_Players[self.m_CurrentDrawing].guessedWord = highestTimeleft*0.6
+	end
+
+	for player, data in pairs(self.m_Players) do
+		if data.guessedWord then
+			data.gotPoints = math.round(pool/timeleftSum*data.guessedWord/5)*5
+			data.points = data.points + data.gotPoints
 		else
 			data.gotPoints = 0
 		end
@@ -381,6 +402,8 @@ function SkribbleLobby:onPlayerChat(client, text, type)
 			for player in pairs(self.m_Players) do
 				player:outputChat(("[Skribble] %s hat das Wort erraten!"):format(client:getName()), 90, 190, 80)
 			end
+
+			self:syncLobbyInfos()
 			return true
 		end
 	end
