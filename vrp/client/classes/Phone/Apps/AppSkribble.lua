@@ -55,10 +55,11 @@ function AppSkribble:onOpen(form)
 
 	GUIButton:new(10, form.m_Height-90, form.m_Width-20, 30, "Erstellen", createTab).onLeftClick =
 		function()
-			triggerServerEvent("skribbleCreateLobby", localPlayer, self.m_Name:getText(), self.m_Password:getText(), self.m_Rounds:getSelectedItem())
+			if self.m_Name:getText() and self.m_Name:getText() ~= "" then
+				triggerServerEvent("skribbleCreateLobby", localPlayer, self.m_Name:getText(), self.m_Password:getText(), self.m_Rounds:getSelectedItem())
+			end
 		end
 
-	---
 	self.m_ReceiveLobbys = bind(AppSkribble.receiveLobbys, self)
 	addEventHandler("skribbleReceiveLobbys", root, self.m_ReceiveLobbys)
 
@@ -73,9 +74,6 @@ function AppSkribble:receiveLobbys(lobbys)
 	self.m_LobbyGrid:clear()
 
 	for id, lobby in pairs(lobbys) do
-		--local item = self.m_LobbyGrid:addItem(lobby.password ~= "" and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Group, lobby.name, lobby.owner:getName(), lobby.players, ("%s/%s"):format(lobby.currentRound, lobby.rounds))
-		--item:setColumnFont(1, FontAwesome(25), 1):setColumnColor(1, lobby.password ~= "" and Color.Red or Color.Green)
-
 		local item = self.m_LobbyGrid:addItem(lobby.name, lobby.players, ("%s/%s"):format(lobby.currentRound, lobby.rounds))
 		item.onLeftDoubleClick =
 			function()
