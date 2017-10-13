@@ -105,7 +105,7 @@ function SkribbleGUI:showDrawResult()
 	local guessingWord = self.m_SyncData.guessingWord
 	local offset = width/4
 
-	if not isElement(self.m_SyncData.drawer) then
+	if not self.m_Players[self.m_SyncData.drawer] then
 		subText = "Der Zeichner hat das Spiel verlassen!"
 	end
 
