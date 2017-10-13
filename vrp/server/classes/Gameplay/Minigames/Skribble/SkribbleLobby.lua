@@ -285,7 +285,7 @@ function SkribbleLobby:calculatePoints()
 		end
 	end
 
-	if self.m_Players[self.m_CurrentDrawing] then
+	if self.m_Players[self.m_CurrentDrawing] and timeleftSum > 0 then
 		self.m_Players[self.m_CurrentDrawing].guessedWord = highestTimeleft*0.6
 	end
 
