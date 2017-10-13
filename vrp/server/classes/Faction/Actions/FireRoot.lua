@@ -183,7 +183,7 @@ function FireRoot:update()
 
 	self.m_Statistics.activeRescuePlayers = self:countUsersAtSight(true)
 	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
-		PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
+		--PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
 	end
 	if self.m_OnUpdateHook then
