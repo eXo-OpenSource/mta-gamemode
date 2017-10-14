@@ -176,7 +176,7 @@ function FishingRod:checkWater(distance)
 	targetPosition.z = -0.2
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
-	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true) and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
+	if not result[9] and isLineOfSightClear(localPlayer.position, startPosition, true, true, true, true, true, false, false, localPlayer) and (testLineAgainstWater(startPosition, targetPosition) or getGroundPosition(targetPosition) == 0) then
 		return true
 	end
 	return false
