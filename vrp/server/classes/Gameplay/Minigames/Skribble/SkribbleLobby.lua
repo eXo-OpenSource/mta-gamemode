@@ -285,12 +285,12 @@ function SkribbleLobby:calculatePoints()
 		end
 	end
 
-	if self.m_Players[self.m_CurrentDrawing] and timeleftSum > 0 then
+	if self.m_Players[self.m_CurrentDrawing] then
 		self.m_Players[self.m_CurrentDrawing].guessedWord = highestTimeleft*0.6
 	end
 
 	for player, data in pairs(self.m_Players) do
-		if data.guessedWord then
+		if data.guessedWord and timeleftSum > 0 then
 			data.gotPoints = math.round(pool/timeleftSum*data.guessedWord/5)*5
 			data.points = data.points + data.gotPoints
 		else
