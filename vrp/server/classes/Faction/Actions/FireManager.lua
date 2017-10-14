@@ -16,7 +16,7 @@ function FireManager:constructor()
 	self.m_EnabledFires = {} -- just enabled fires which should be switched out randomly
 	
 	self.m_FireUpdateBind = bind(FireManager.checkFire ,self)
-	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1)
+	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1)
 
 	self.m_RandomFireStrings = { -- blablabla [...]
 		"steht in Flammen", 
@@ -172,7 +172,7 @@ function FireManager:stopCurrentFire(stats)
 	self.m_NewsSent = nil
 
 	if not isTimer(self.m_FireTimer) then
-		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
+		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
 	end
 end
 
