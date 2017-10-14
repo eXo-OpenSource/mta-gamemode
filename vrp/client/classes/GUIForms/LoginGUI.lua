@@ -324,15 +324,15 @@ addEventHandler("loginsuccess", root,
 			core:set("Login", "username", lgi.m_Elements.editName:getText())
 			core:set("Login", "password", pwhash)
 		end
-		lgi:initClose(function() --async to wait for animation
-			core:afterLogin()	
-			-- Maybe start tutorial (I dunno this doesn't seem to be used)
-			if tutorialstage == 0 then
-				setElementPosition(localPlayer, 0, 0, 5)
-				-- Temp fix?
-				triggerServerEvent("introFinished", root)
-			end	
-		end)
+		core:afterLogin()	
+		lgi:initClose()
+		
+		-- Maybe start tutorial (I dunno this doesn't seem to be used)
+		if tutorialstage == 0 then
+			setElementPosition(localPlayer, 0, 0, 5)
+			-- Temp fix?
+			triggerServerEvent("introFinished", root)
+		end	
 	end
 )
 
@@ -373,6 +373,7 @@ function LoginGUI.stopCameraDrive()
 		delete(localPlayer.m_LoginShader)
 		localPlayer.m_LoginShader = nil
 	end
+	setCameraTarget(localPlayer)
 	triggerServerEvent("onClientRequestTime", localPlayer)
 end
 
