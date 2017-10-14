@@ -53,10 +53,10 @@ function AppCall:openMain()
 	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
-	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, "⌫", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Red)
+	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, "⌫", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Red):setBarEnabled(false)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
-	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
 	--self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
 	self.m_NumpadButton = {}
@@ -117,7 +117,7 @@ function AppCall:openMain()
 end
 
 function AppCall:addNumpadButton(text, column, row)
-	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"])
+	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"]):setBarEnabled(false)
 	self.m_NumpadButton[text].onLeftClick = function()
 		self.m_Edit:setText(self.m_Edit:getText()..text)
 	end
