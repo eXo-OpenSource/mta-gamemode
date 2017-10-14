@@ -132,7 +132,7 @@ function CompanyVehicle:onStartEnter(player,seat)
 		end
 	else
 		if self:getCompany():getId() == 4 then
-			self:getCompany():onVehiceStartEnter(source, player, seat)
+			self:getCompany():onVehicleStartEnter(source, player, seat)
 		end
 	end
 end

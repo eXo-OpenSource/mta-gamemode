@@ -156,6 +156,10 @@ function Blip:attach(element)
 	self:updateClient("Update", {attachedElement = element})
 end
 
+function Blip:attachTo(element)
+	return self:attach(element)
+end
+
 function Blip:getAttachedElement()
 	return self.m_AttachedTo
 end

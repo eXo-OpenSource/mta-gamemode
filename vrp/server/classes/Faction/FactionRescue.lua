@@ -669,11 +669,6 @@ function FactionRescue:addVehicleFire(veh)
 	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
 	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
 	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 6, 6)
-	self.m_VehicleFires[veh].Blip = Blip:new("Fire.png", pos.x, pos.y, root, 200)
-	self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
-	self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
-
-	CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein verbranntes Auto-Wrack muss abgeschleppt werden! Position: %s", "Auto-Wrack", true, pos, zone)
 
 	if veh.controller then
 		veh.controller:sendWarning(_("Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!", veh.controller))
@@ -683,16 +678,53 @@ function FactionRescue:addVehicleFire(veh)
 	local pos, rot = veh:getPosition(), veh:getRotation()
 	local r1, g1, b1, r2, g2, b2 = veh:getColor()
 	setTimer(function(veh)
-		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(veh)
+		if instanceof(veh, FactionVehicle) or instanceof(veh, CompanyVehicle) then
+			local occs = veh:getOccupants()
+			if occs then
+				for i, occ in pairs(occs) do
+					occ:removeFromVehicle()
+				end
+			end
+			veh:respawn(true)
+		else
+			CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(veh)
+		end
+
+		self.m_VehicleFires[veh].Blip = Blip:new("Warning.png", pos.x, pos.y, root, 400)
+		self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
+		self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
+
 		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z)
-		tempVehicle:setHealth(400)
+		tempVehicle:setHealth(300)
 		tempVehicle:setColor(r1, g1, b1, r2, g2, b2)
 		tempVehicle:disableRespawn(true)
 		tempVehicle:setLocked(true)
 		tempVehicle.burned = true
+		tempVehicle.Blip = Blip:new("CarShop.png", 0, 0, {company = CompanyStaticId.MECHANIC}, 400)
+		tempVehicle.Blip:setColor({150, 150, 150}) -- gets deleted on tow
+		tempVehicle.Blip:setDisplayText("Auto-Wrack")
+		tempVehicle.Blip:attachTo(tempVehicle)
+
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):sendWarning("Ein verbranntes Auto-Wrack muss abgeschleppt werden! Position: %s", "Auto-Wrack", true, pos, zone)
+		for i= 0, 5 do tempVehicle:setDoorState(i, chance(50) and 2 or 4) end
+		tempVehicle:setWheelStates(chance(50) and 1 or 0, chance(50) and 1 or 0, chance(50) and 1 or 0, chance(50) and 1 or 0)
+
 	end, 10000, 1, veh)
 
-	self.m_VehicleFires[veh]:addOnFinishHook(function(zone)
-		self.m_Faction:sendShortMessage(("Fahrzeugbrand an Position %s gelöscht!"):format(zone))
+	self.m_VehicleFires[veh]:setOnFinishHook(function(stats)
+		self.m_VehicleFires[veh].Blip:delete()
+		self.m_VehicleFires[veh] = nil
+		if stats.activeRescuePlayers and stats.activeRescuePlayers > 0 then
+			local moneyForFaction = 0
+			for player, score in pairs(stats.pointsByPlayer) do
+				if isElement(player) then
+					player:giveCombinedReward("Fahrzeugbrand gelöscht", {
+						bankMoney = score*120,
+					})
+					moneyForFaction = moneyForFaction + score*60
+				end
+			end
+			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Fahrzeugbrand gelöscht")
+		end
 	end, zone)
 end
