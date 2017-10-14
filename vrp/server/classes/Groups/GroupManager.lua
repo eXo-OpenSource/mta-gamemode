@@ -704,7 +704,7 @@ function GroupManager:Event_ToggleLoan(playerId)
 end
 
 function GroupManager:payDay()
-	local result = sql:queryFetch("SELECT vh.Group AS GroupId, (SELECT Category FROM ??_vehicle_model_data vmd WHERE vmd.Model = vh.Model) AS VCategory, COUNT(Id) AS Amount FROM ??_group_vehicles vh GROUP BY vh.`Group`, VCategory", sql:getPrefix(), sql:getPrefix())
+	local result = sql:queryFetch("SELECT vh.Group AS GroupId, (SELECT Category FROM ??_vehicle_model_data vmd WHERE vmd.Model = vh.Model) AS VCategory, COUNT(Id) AS Amount FROM ??_group_vehicles vh WHERE vh.Premium = 0 GROUP BY vh.`Group`, VCategory", sql:getPrefix(), sql:getPrefix())
 	local groups = {}
 	for k, row in pairs(result) do
 		if not groups[row.GroupId] then groups[row.GroupId] = {} end
