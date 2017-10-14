@@ -86,7 +86,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 					if station:getShop() then
 						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-						station:getShop():giveMoney(price/2, "Betankung")
+						station:getShop():giveMoney(price/5, "Betankung")
 					end
 				else
 					client:sendError("Du hast nicht genügend Geld dabei!")
