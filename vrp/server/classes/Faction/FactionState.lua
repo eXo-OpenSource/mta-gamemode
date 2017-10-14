@@ -1269,9 +1269,13 @@ function FactionState:Event_toggleDuty(wasted)
 	if faction:isStateFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
+				if wasted then
+					client:takeAllWeapons()
+				else
+					self:Event_storageWeapons(client)
+				end
 				client:setDefaultSkin()
 				client:setFactionDuty(false)
-				takeAllWeapons(client)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
 				client:setPublicSync("Faction:Duty",false)
@@ -1337,10 +1341,21 @@ function FactionState:Event_toggleSwat()
 	end
 end
 
-function FactionState:Event_storageWeapons()
+function FactionState:Event_storageWeapons(player)
+	local client = client
+	if player then 
+		client = player
+	end
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
+
+			--switch tazer if it is being used
+			local weapon = getPedWeapon(client, 2)
+			if weapon == 23 then
+				ItemManager.Map["Taser"]:use(client)
+			end
+
 			local depot = faction:getDepot()
 			for i= 1, 12 do
 				if client:getWeapon(i) > 0 then
