@@ -24,8 +24,8 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hausmenü", true, true, self)
 	self.m_Window:deleteOnClose( true )
 
-	self.m_LabelOwner =     GUILabel:new(10, 40, self.m_Width/2-20, 30,_"s", self.m_Window)
-	self.m_LabelPrice =     GUILabel:new(10, 70, self.m_Width/2-20, 30,_"s", self.m_Window)
+	self.m_LabelOwner =     GUILabel:new(10, 40, self.m_Width-20, 30,_"s", self.m_Window)
+	self.m_LabelPrice =     GUILabel:new(10, 70, self.m_Width-20, 30,_"s", self.m_Window)
 
 	self.m_Rent = GUIButton:new(10, 135, columnWidth/2-15, 35, _("Einmieten"), self)
 	self.m_Rent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
