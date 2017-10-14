@@ -1343,7 +1343,7 @@ end
 
 function FactionState:Event_storageWeapons(player)
 	local client = client
-	if player then 
+	if player then
 		client = player
 	end
 	local faction = client:getFaction()
@@ -1529,8 +1529,8 @@ local faction = client:getFaction()
 			client:meChat(true, ("führt einen Alkoholtest an %s durch!"):format(target:getName()))
 			target:meChat(true, "pustet in das Röhrchen des Alkohol-Schnelltesters...")
 			setTimer(function(player, target)
-				player:sendInfo(_("Du hast einen Alkoholtest an %s durchgeführt!\nErgebnis: %d Promille", player, target:getName(), target.m_AlcoholLevel))
-				target:sendInfo(_("%s hat einen Alkoholtest an dir durchgeführt!\nErgebnis: %d Promille", target, player:getName(), target.m_AlcoholLevel))
+				player:sendInfo(_("Du hast einen Alkoholtest an %s durchgeführt!\nErgebnis: %s Promille", player, target:getName(), target.m_AlcoholLevel))
+				target:sendInfo(_("%s hat einen Alkoholtest an dir durchgeführt!\nErgebnis: %s Promille", target, player:getName(), target.m_AlcoholLevel))
 			end, 2000, 1, client, target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
