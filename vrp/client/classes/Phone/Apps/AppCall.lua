@@ -75,10 +75,10 @@ function AppCall:openMain()
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue):setBarEnabled(false)
 	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
 
-	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
@@ -92,14 +92,14 @@ function AppCall:openMain()
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
 	self.m_ServiceListGrid:addColumn(_"Frak/Untern.", 0.7)
 	self.m_ServiceListGrid:addColumn(_"Num.", 0.3)
-	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallService.onLeftClick = function() self:startSpecialCall(self.m_ServiceListGrid) end
 
 	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
 	self.m_GroupListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
 	self.m_GroupListGrid:addColumn(_"Firma/Gang", 0.7)
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
-	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallGroup.onLeftClick = function() self:startSpecialCall(self.m_GroupListGrid) end
 
 	triggerServerEvent("requestPhoneNumbers", localPlayer)
