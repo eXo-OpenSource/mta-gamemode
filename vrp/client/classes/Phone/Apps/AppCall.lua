@@ -7,8 +7,6 @@
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
 
-local AppCallGlobal = nil
-
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -17,14 +15,13 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 
-	-- Add event handlers
+
 	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
 
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-	AppCallGlobal = self
 end
 
 function AppCall:onOpen(form)
@@ -38,11 +35,8 @@ end
 function AppCall:closeAll()
 	if self.m_Background then delete(self.m_Background) end
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self.m_Form)
-
 end
 
-
--- <Main Screen>
 function AppCall:openMain()
 	self:closeAll()
 
@@ -58,7 +52,7 @@ function AppCall:openMain()
 
 	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
-	--self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
+
 	self.m_NumpadButton = {}
 	self:addNumpadButton("1", 1, 0)
 	self:addNumpadButton("2", 2, 0)
@@ -214,9 +208,6 @@ function AppCall:Event_receivePhoneNumbers(list)
 	end
 end
 
--- </Main Screen>
-
--- <Incoming Call>
 function AppCall:openIncoming(caller, voiceEnabled)
 	self:closeAll()
 	local parent, width, height = self.m_Background, self.m_Background.m_Width, self.m_Background.m_Height
@@ -274,10 +265,6 @@ end
 function AppCall:getCaller()
 	return self.m_Caller
 end
--- </Incoming Call>
-
-
--- <InCall>
 
 function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 	self:closeAll()
@@ -359,23 +346,21 @@ function AppCall:ButtonReplace_Click()
 	else
 		triggerServerEvent("callAbbortSpecial", localPlayer)
 	end
+
+	self.m_Caller = nil
 end
--- </InCall>
-
-
 
 function AppCall:onClose()
 	if self.m_InCall then
 		self:ButtonReplace_Click()
 	end
 	self:openMain()
-	-- Todo: Tell the callee that we closed the app
 end
 
--- Events
 function AppCall:Event_callIncoming(caller, voiceEnabled)
 	if not caller then return end
 
+	Phone:getSingleton():closeAllApps()
 	Phone:getSingleton():openApp(self)
 	self:openIncoming(caller, voiceEnabled)
 end
