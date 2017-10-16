@@ -227,13 +227,9 @@ function FactionEvil:Event_StartRaid(target)
 					client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 				end
 			else
-				client:sendError(_("Der Spieler ist nicht mehr online!", client))
+				client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))
 			end
-		else
-			client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))
 		end
-	else
-		client:sendError(_("Nur Spieler böser Fraktionen können andere Spieler überfallen!", client))
 	end
 end
 
