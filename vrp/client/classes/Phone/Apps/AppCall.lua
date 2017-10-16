@@ -307,6 +307,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 					self.m_InCall = false
+					self.m_Caller = false
 				end
 			end, 3000, 1
 		)
@@ -321,6 +322,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 					self.m_InCall = false
+					self.m_Caller = false
 				end
 			end, 3000, 1
 		)

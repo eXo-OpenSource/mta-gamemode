@@ -50,7 +50,7 @@ function Phone:constructor()
 	self.m_HomeButton.onLeftClick =
 	function()
 		if self.m_PhoneOn then
-			if self.m_CurrentApp and (self.m_CurrentApp.m_InCall or self.m_CurrentApp.m_Caller)  then return end
+			if self.m_CurrentApp and (self.m_CurrentApp.m_InCall or self.m_CurrentApp.m_Caller) then return end
 			self:closeAllApps()
 			self.m_IconSurface:setVisible(true)
 		end
@@ -126,6 +126,11 @@ function Phone:registerApp(appClasst)
 end
 
 function Phone:onShow()
+	if localPlayer:getHealth() == 0 then
+		self:close()
+		return
+	end
+
 	if self.m_PhoneOn then
 		if self.m_CurrentApp then
 			self.m_IconSurface:setVisible(false)

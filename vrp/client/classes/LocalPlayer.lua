@@ -243,6 +243,7 @@ function LocalPlayer:Event_playerWasted()
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
+	Phone:getSingleton():close()
 	showChat(false)
 	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
@@ -718,7 +719,7 @@ function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
-	
+
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
 
