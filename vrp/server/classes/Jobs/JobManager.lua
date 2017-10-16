@@ -77,7 +77,6 @@ function JobManager:stopJobForPlayer(player)
 	end
 
 	if job.stop then
-		outputChatBox("Call job:stop(player)")
 		job:stop(player)
 	end
 
