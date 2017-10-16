@@ -226,7 +226,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 					position = "Autohof"
 				end
 
-				local item = self.m_VehiclesGrid:addItem(element:getName(), position, ("%d$"):format(element:getTax() or 0))
+				local item = self.m_VehiclesGrid:addItem(element:getName(), position, ("%d$"):format(math.floor(element:getTax()/4) or 0))
 
 				item.VehicleElement = element
 				item.PositionType = positionType

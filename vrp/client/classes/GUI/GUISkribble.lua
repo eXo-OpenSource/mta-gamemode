@@ -11,6 +11,7 @@ function GUISkribble:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
 	self.m_SyncData = {}
+	self.m_RestorableDrawData = {}
 	self.m_DrawSize = 1
 	self.m_DrawColor = Color.Black
 	self.m_DrawingEnabled = false
@@ -20,13 +21,16 @@ function GUISkribble:constructor(posX, posY, width, height, parent)
 
 	self.m_CursorMoveFunc = bind(GUISkribble.onCursorMove, self)
 	self.m_RenderFunc = bind(GUISkribble.onClientRender, self)
+	self.m_RestoreFunc = bind(GUISkribble.onClientRestore, self)
 	addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
 	addEventHandler("onClientRender", root, self.m_RenderFunc)
+	addEventHandler("onClientRestore", root, self.m_RestoreFunc)
 end
 
 function GUISkribble:virtual_destructor()
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
 	removeEventHandler("onClientRender", root, self.m_RenderFunc)
+	removeEventHandler("onClientRestore", root, self.m_RestoreFunc)
 end
 
 function GUISkribble:drawThis()
@@ -58,6 +62,7 @@ function GUISkribble:onCursorMove(_, _, x, y)
 			dxSetRenderTarget()
 
 			table.insert(self.m_SyncData, {type = 1, start = {drawStart.x, drawStart.y}, to = {drawEnd.x, drawEnd.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+			table.insert(self.m_RestorableDrawData, {type = 1, start = {drawStart.x, drawStart.y}, to = {drawEnd.x, drawEnd.y}, color = self.m_DrawColor, size = self.m_DrawSize})
 			self:anyChange()
 		end
 
@@ -87,6 +92,7 @@ function GUISkribble:onInternalLeftClick(x, y)
 	dxSetRenderTarget()
 
 	table.insert(self.m_SyncData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+	table.insert(self.m_RestorableDrawData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
 	self:anyChange()
 end
 
@@ -105,7 +111,7 @@ function GUISkribble:onClientRender()
 	end
 end
 
-function GUISkribble:clear(hard)
+function GUISkribble:clear(hard, drawRestoreData)
 	self.m_RenderTarget:setAsTarget()
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, Color.White)
 	dxSetRenderTarget()
@@ -114,10 +120,14 @@ function GUISkribble:clear(hard)
 
 	if hard then
 		self.m_SyncData = {}
+		self.m_RestorableDrawData = {}
 		return
 	end
 
-	table.insert(self.m_SyncData, {type = 0})
+	if self.m_DrawingEnabled and not drawRestoreData then
+		table.insert(self.m_SyncData, {type = 0})
+		table.insert(self.m_RestorableDrawData, {type = 0})
+	end
 end
 
 function GUISkribble:setDrawingEnabled(state)
@@ -138,10 +148,10 @@ function GUISkribble:getSyncData(reset)
 	return syncData
 end
 
-function GUISkribble:drawSyncData(data)
+function GUISkribble:drawSyncData(data, drawRestoreData)
 	for _, draw in ipairs(data) do
 		if draw.type == 0 then
-			self:clear()
+			self:clear(false, drawRestoreData)
 		elseif draw.type == 1 then
 			local drawStart = Vector2(unpack(draw.start))
 			local drawEnd = Vector2(unpack(draw.to))
@@ -154,7 +164,6 @@ function GUISkribble:drawSyncData(data)
 				local drawStart = Vector2(interpolateBetween(drawStart.x, drawStart.y, 0, drawEnd.x, drawEnd.y, 0, i/interpolateCount, "Linear"))
 				dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, FontAwesome(draw.size))
 			end
-
 			dxSetRenderTarget()
 
 			self:anyChange()
@@ -166,6 +175,20 @@ function GUISkribble:drawSyncData(data)
 			self.m_RenderTarget:setAsTarget()
 			dxDrawText(FontAwesomeSymbols.Circle, drawStart - drawSize/2, Vector2(0,0), draw.color, .5, FontAwesome(draw.size))
 			dxSetRenderTarget()
+		end
+
+		if not drawRestoreData then
+			table.insert(self.m_RestorableDrawData, draw)
+		end
+	end
+end
+
+function GUISkribble:onClientRestore(didClearRenderTargets)
+	if didClearRenderTargets then
+		self:clear(false, true)
+
+		if #self.m_RestorableDrawData > 0 then
+			self:drawSyncData(self.m_RestorableDrawData, true)
 		end
 	end
 end

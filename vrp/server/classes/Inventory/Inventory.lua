@@ -401,13 +401,14 @@ function Inventory:removeItem(item, amount, value)
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
 								self:removeItemFromPlace(bag, place, amount)
+								return
 							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
 									self:removeItemFromPlace(bag, place, amount, value)
+									return
 								end
 							end
-							return
 						end
 					end
 				end

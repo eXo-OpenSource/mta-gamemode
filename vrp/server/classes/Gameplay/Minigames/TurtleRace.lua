@@ -176,7 +176,11 @@ function TurtleRace:setState(state)
 			player:triggerEvent("turtleRaceStop", self.m_FinishedTurtle)
 		end
 
-		self:checkWinner()
+		Async.create(
+			function()
+				self:checkWinner()
+			end
+		)()
 
 		setTimer(
 			function()

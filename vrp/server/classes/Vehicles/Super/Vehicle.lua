@@ -417,11 +417,11 @@ function Vehicle:getEngineState()
 end
 
 function Vehicle:setFuel(fuel)
-	self.m_Fuel = fuel
+	self.m_Fuel = math.clamp(0, fuel, 100)
 	self:setData("fuel", self.m_Fuel, true)
 
 	-- Switch engine off in case of an empty fuel tank
-	if self.m_Fuel <= 0 then
+	if self.m_Fuel == 0 then
 		self:setEngineState(false)
 	end
 end

@@ -32,10 +32,10 @@ function VehicleInteraction:constructor()
 	}
     self.m_ValidDoors = {
         bonnet_dummy    = 0,
-        boot_dummy      = 1, 
-        door_lf_dummy   = 2, 
+        boot_dummy      = 1,
+        door_lf_dummy   = 2,
         door_rf_dummy   = 3,
-        door_lr_dummy   = 4, 
+        door_lr_dummy   = 4,
         door_rr_dummy   = 5,
     }
 
@@ -64,7 +64,7 @@ end
 function VehicleInteraction:render()
     if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
 	local playerPos = localPlayer:getPosition()
-	self.m_lookAtVehicle = getPedTarget(localPlayer)
+	self.m_lookAtVehicle = localPlayer:getWorldVehicle() --getPedTarget(localPlayer)
     if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
             if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
@@ -198,7 +198,7 @@ function VehicleInteraction:lock()
 			if not isPedInVehicle(localPlayer) then
                 if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
                     self.m_LastInteraction = getTickCount()
-				    triggerServerEvent("onLockVehicleDoor", localPlayer, door)
+				    triggerServerEvent("onLockVehicleDoor", localPlayer)
                 end
 			end
 		end

@@ -129,7 +129,7 @@ function PublicTransport:onBarrierHit(player)
     return player:getCompany() == self
 end
 
-function PublicTransport:onVehiceEnter(veh, player, seat)
+function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			player:triggerEvent("showTaxoMeter")
@@ -155,7 +155,7 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 	end
 end
 
-function PublicTransport:onVehiceStartEnter(veh, player, seat)
+function PublicTransport:onVehicleStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			cancelEvent()
@@ -444,10 +444,13 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		-- Give the player some money and switch to the next bus stop
 		if lastId then 
 			local dist = math.round(getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position) * (math.random(998, 1002)/1000))
-			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
-			player:givePoints(math.round(5 * (dist/1000))) --5 / km
-			self:giveMoney(math.round(50 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
-			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(50 * (dist/1000)))))
+	
+			player:giveCombinedReward("Busfahrer-Gehalt", {
+				bankMoney = math.round(340 * (dist/1000)),-- 340 / km
+				points = math.round(5 * (dist/1000)),--5 / km
+			})
+			self:giveMoney(math.round(100 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
+			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(100 * (dist/1000)))))
 		end
 
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1

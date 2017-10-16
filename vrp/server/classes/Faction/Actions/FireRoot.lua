@@ -74,8 +74,6 @@ function FireRoot:destructor()
 
 	if self.m_OnFinishHook then
 		self.m_OnFinishHook(self.m_Statistics)
-		outputDebugString("fire root "..inspect(self.m_Root).." has been extinguished completely. Statistics:")
-        iprint(self.m_Statistics)
 	end
 
     FireRoot.Map[self] = nil

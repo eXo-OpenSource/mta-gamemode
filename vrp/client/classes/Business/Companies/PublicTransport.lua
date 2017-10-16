@@ -14,12 +14,8 @@ end
 
 function PublicTransport:setBusDisplayText(vehicle, text, line)
 	if not isElement(vehicle.Bus_TexReplace) then
-		outputDebug("no texture")
-		FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
 		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true)
 		RenderTargetTextureReplacer:new(vehicle, vehicle.Bus_TexReplace, "coach92decals128",  {})
-
-		outputDebug(vehicle.Bus_TexReplace)
 		addEventHandler("onClientElementDestroy", vehicle, function()
 			delete(vehicle.Bus_TexReplace)
 			vehicle.Bus_TexReplace = nil
@@ -33,7 +29,6 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	end
 	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
 	dxSetRenderTarget(nil)
-	outputDebug(vehicle.Bus_TexReplace)
 end
 
 function PublicTransport:busStopStreamIn(obj)

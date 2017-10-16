@@ -283,6 +283,9 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 					StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
 					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(source:getName(), getElementData(source, "OwnerName") or "Unbekannt"))
 				else
+					if source.Blip then
+						source.Blip:delete()
+					end
 					source:destroy()
 					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
 					driver:giveMoney(200, "Fahrzeug-Wrack")

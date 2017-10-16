@@ -100,7 +100,7 @@ function GUIForm:fadeIn(time)
 	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
-				Animation.FadeAlpha:new(v, 750, 0, v:getAlpha() or 255)
+				Animation.FadeAlpha:new(v, 750, 0, 255)
 			end
 		end
 	end

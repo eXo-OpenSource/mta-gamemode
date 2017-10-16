@@ -7,8 +7,6 @@
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
 
-local AppCallGlobal = nil
-
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -17,14 +15,13 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 
-	-- Add event handlers
+
 	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
 
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-	AppCallGlobal = self
 end
 
 function AppCall:onOpen(form)
@@ -38,11 +35,8 @@ end
 function AppCall:closeAll()
 	if self.m_Background then delete(self.m_Background) end
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self.m_Form)
-
 end
 
-
--- <Main Screen>
 function AppCall:openMain()
 	self:closeAll()
 
@@ -53,12 +47,12 @@ function AppCall:openMain()
 	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
-	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, "⌫", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Red)
+	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, "⌫", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Red):setBarEnabled(false)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
-	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
-	--self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
+
 	self.m_NumpadButton = {}
 	self:addNumpadButton("1", 1, 0)
 	self:addNumpadButton("2", 2, 0)
@@ -81,10 +75,10 @@ function AppCall:openMain()
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue)
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue):setBarEnabled(false)
 	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
 
-	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
@@ -98,14 +92,14 @@ function AppCall:openMain()
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
 	self.m_ServiceListGrid:addColumn(_"Frak/Untern.", 0.7)
 	self.m_ServiceListGrid:addColumn(_"Num.", 0.3)
-	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallService.onLeftClick = function() self:startSpecialCall(self.m_ServiceListGrid) end
 
 	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
 	self.m_GroupListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
 	self.m_GroupListGrid:addColumn(_"Firma/Gang", 0.7)
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
-	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallGroup.onLeftClick = function() self:startSpecialCall(self.m_GroupListGrid) end
 
 	triggerServerEvent("requestPhoneNumbers", localPlayer)
@@ -117,7 +111,7 @@ function AppCall:openMain()
 end
 
 function AppCall:addNumpadButton(text, column, row)
-	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"])
+	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"]):setBarEnabled(false)
 	self.m_NumpadButton[text].onLeftClick = function()
 		self.m_Edit:setText(self.m_Edit:getText()..text)
 	end
@@ -214,9 +208,6 @@ function AppCall:Event_receivePhoneNumbers(list)
 	end
 end
 
--- </Main Screen>
-
--- <Incoming Call>
 function AppCall:openIncoming(caller, voiceEnabled)
 	self:closeAll()
 	local parent, width, height = self.m_Background, self.m_Background.m_Width, self.m_Background.m_Height
@@ -274,10 +265,6 @@ end
 function AppCall:getCaller()
 	return self.m_Caller
 end
--- </Incoming Call>
-
-
--- <InCall>
 
 function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 	self:closeAll()
@@ -320,6 +307,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 					self.m_InCall = false
+					self.m_Caller = false
 				end
 			end, 3000, 1
 		)
@@ -334,6 +322,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 					self.m_InCall = false
+					self.m_Caller = false
 				end
 			end, 3000, 1
 		)
@@ -359,23 +348,21 @@ function AppCall:ButtonReplace_Click()
 	else
 		triggerServerEvent("callAbbortSpecial", localPlayer)
 	end
+
+	self.m_Caller = nil
 end
--- </InCall>
-
-
 
 function AppCall:onClose()
 	if self.m_InCall then
 		self:ButtonReplace_Click()
 	end
 	self:openMain()
-	-- Todo: Tell the callee that we closed the app
 end
 
--- Events
 function AppCall:Event_callIncoming(caller, voiceEnabled)
 	if not caller then return end
 
+	Phone:getSingleton():closeAllApps()
 	Phone:getSingleton():openApp(self)
 	self:openIncoming(caller, voiceEnabled)
 end

@@ -595,6 +595,7 @@ function Group:calculateVehicleTax(data)
 	for category, amount in pairs(data) do
 		tax = VehicleCategory:getSingleton():getCategoryTax(category)
 		if tax then
+			tax = math.floor(tax/4)
 			sum = sum + tax*amount
 		end
 	end

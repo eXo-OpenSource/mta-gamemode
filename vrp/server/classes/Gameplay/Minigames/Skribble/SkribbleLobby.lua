@@ -14,6 +14,7 @@ function SkribbleLobby:constructor(id, owner, name, password, rounds)
 	self.m_Password = password
 	self.m_Rounds = rounds
 
+	self.m_DrawData = {}
 	self.m_Players = {}
 	self.m_CurrentRound = 1
 	self.m_State = "idle"
@@ -52,6 +53,7 @@ function SkribbleLobby:setState(state)
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
 		self.m_Hints = {}
+		self.m_DrawData = {}
 
 		for _, data in pairs(self.m_Players) do
 			data.guessedWord = false
@@ -74,6 +76,7 @@ function SkribbleLobby:setState(state)
 		self.m_CurrentDrawing = nextPlayer
 		self.m_GuessingWord = nil
 		self.m_GuessingWords = self:getRandomWords()
+		self.m_DrawData = {}
 
 		for player in pairs(self.m_Players) do
 			if player == self.m_CurrentDrawing then
@@ -86,6 +89,7 @@ function SkribbleLobby:setState(state)
 		self:syncLobbyInfos()
 	elseif state == "drawing" then
 		self.m_State = state
+		self.m_DrawData = {}
 		self.m_Players[self.m_CurrentDrawing].queued = false
 		self.m_Players[self.m_CurrentDrawing].guessedWord = 0
 
@@ -130,6 +134,7 @@ function SkribbleLobby:setState(state)
 		self.m_GuessingWords = nil
 		self.m_GuessingWord = nil
 		self.m_Hints = {}
+		self.m_DrawData = {}
 
 		self:syncLobbyInfos()
 
@@ -184,6 +189,7 @@ function SkribbleLobby:setState(state)
 				self.m_GuessingWords = nil
 				self.m_GuessingWord = nil
 				self.m_Hints = {}
+				self.m_DrawData = {}
 
 				for _, data in pairs(self.m_Players) do
 					data.points = 0
@@ -229,6 +235,10 @@ function SkribbleLobby:addPlayer(player)
 	if playerCount == 1 then
 		player:triggerEvent("skribbleShowInfoText", "Warten auf weitere Spieler ...")
 		return
+	end
+
+	if self:isState("drawing") then
+		player:triggerEvent("skribbleSyncDrawing", self.m_DrawData)
 	end
 
 	if self:isState("idle") and playerCount > 1 and not isTimer(self.m_StartRoundTimer) then
@@ -285,12 +295,12 @@ function SkribbleLobby:calculatePoints()
 		end
 	end
 
-	if self.m_Players[self.m_CurrentDrawing] and timeleftSum > 0 then
+	if self.m_Players[self.m_CurrentDrawing] then
 		self.m_Players[self.m_CurrentDrawing].guessedWord = highestTimeleft*0.6
 	end
 
 	for player, data in pairs(self.m_Players) do
-		if data.guessedWord then
+		if data.guessedWord and timeleftSum > 0 then
 			data.gotPoints = math.round(pool/timeleftSum*data.guessedWord/5)*5
 			data.points = data.points + data.gotPoints
 		else
@@ -352,6 +362,8 @@ function SkribbleLobby:receiveDrawing(client, drawData)
 			player:triggerEvent("skribbleSyncDrawing", drawData)
 		end
 	end
+
+	table.append(self.m_DrawData, drawData)
 end
 
 function SkribbleLobby:verifyGuess(text)

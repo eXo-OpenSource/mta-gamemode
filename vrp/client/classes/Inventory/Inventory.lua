@@ -143,10 +143,15 @@ end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		if slot.ItemImage then
-			delete(slot.ItemImage)
-		end
+		if slot.ItemImage then delete(slot.ItemImage) end
+		if slot.LabelBackground then delete(slot.LabelBackground) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
+
+		slot.Item = nil
+		slot.Id = nil
+		slot.Place = nil
+		slot.ItemName = nil
+		slot.Amount = nil
 	end
 	if self.m_Bag then
 		for place, id in pairs(self.m_Bag[Inventory.Tabs[self.m_CurrentTab]]) do

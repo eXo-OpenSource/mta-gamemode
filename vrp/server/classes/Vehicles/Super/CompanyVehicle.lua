@@ -132,7 +132,7 @@ function CompanyVehicle:onStartEnter(player,seat)
 		end
 	else
 		if self:getCompany():getId() == 4 then
-			self:getCompany():onVehiceStartEnter(source, player, seat)
+			self:getCompany():onVehicleStartEnter(source, player, seat)
 		end
 	end
 end
@@ -147,9 +147,10 @@ function CompanyVehicle:onEnter(player, seat)
 	if self:isFrozen() == true then
 		self:setFrozen(false)
 	end
+	
+	self:setDriver(player)
 
 	if self:getCompany().onVehicleEnter then
-		self:setDriver(player)
 		self:getCompany():onVehicleEnter(source, player, seat)
 	end
 end

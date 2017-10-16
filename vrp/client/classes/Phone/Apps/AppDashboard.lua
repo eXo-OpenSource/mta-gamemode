@@ -95,8 +95,8 @@ function DashboardNotification:constructor(id, x, y, width, height, title, text,
 	GUILabel:new(5, 35, width-10, 22, text, self)
 
 	--self.m_Label = GUILabel:new(5, 5, width-10, 30, text, self)
-	self.m_ButtonAccept = GUIButton:new(width-135, height-30, 60, 20, "✓", self):setBackgroundColor(Color.Green)
-	self.m_ButtonDecline = GUIButton:new(width-70, height-30, 60, 20, "✕", self):setBackgroundColor(Color.Red)
+	self.m_ButtonAccept = GUIButton:new(width-135, height-30, 60, 20, "✓", self):setBackgroundColor(Color.Green):setBarEnabled(false)
+	self.m_ButtonDecline = GUIButton:new(width-70, height-30, 60, 20, "✕", self):setBackgroundColor(Color.Red):setBarEnabled(false)
 end
 
 function DashboardNotification:setOnAcceptHandler(handler)

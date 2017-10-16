@@ -190,7 +190,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	end
 	local totalMoney = 0
 	for key, value in pairs (bags) do
-		if value:getModel() == 1550 then
+		if value and isElement(value) and value:getModel() == 1550 then
 			totalMoney = totalMoney + value.money
 			value:destroy()
 		end
