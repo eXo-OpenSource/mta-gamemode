@@ -196,11 +196,11 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 			end
 
 			if sourceFaction:isEvilFaction() and killerFaction:isEvilFaction() then
-				if not attacker:isInGangwar() then
+				if not killer:isInGangwar() then
 					if killerFaction:getDiplomacy(sourceFaction) == FACTION_DIPLOMACY["im Krieg"] then
 						local bonus = sourceFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or sourceFaction:getMoney()
-						sourceFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), source:getName()))
-						killerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), source:getName()))
+						sourceFaction:takeMoney(bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()))
+						killerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()))
 					end
 				end
 			end
