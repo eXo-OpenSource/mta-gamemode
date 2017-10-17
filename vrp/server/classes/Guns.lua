@@ -146,7 +146,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 		end
 	end
 	if not source:getData("isInDeathMatch") then
-		target:setReviveWeapons()
+		source:setReviveWeapons()
 
 		local pos = source:getPosition()
 		local dim = source:getDimension()
@@ -199,8 +199,8 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 				if not attacker:isInGangwar() then
 					if killerFaction:getDiplomacy(sourceFaction) == FACTION_DIPLOMACY["im Krieg"] then
 						local bonus = sourceFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or sourceFaction:getMoney()
-						sourceFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
-						killerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+						sourceFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), source:getName()))
+						killerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), source:getName()))
 					end
 				end
 			end
