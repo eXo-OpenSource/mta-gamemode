@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 JobPizza = inherit(Job)
+JobPizza.ValidVehicleModels = {509, 448}
 
 addRemoteEvents{ "nextPizzaDelivery" }
 
@@ -73,7 +74,7 @@ end
 function JobPizza:onMarkerHit( element, bdim )
 	if element == localPlayer or element == getPedOccupiedVehicle( localPlayer ) then
 		local obj = getPedOccupiedVehicle( localPlayer )
-		if obj:getModel() ~= 448 then return end
+		if not table.find(JobPizza.ValidVehicleModels, obj:getModel()) then return end
 
 		if obj then
 				local speedx, speedy, speedz = getElementVelocity ( obj )
