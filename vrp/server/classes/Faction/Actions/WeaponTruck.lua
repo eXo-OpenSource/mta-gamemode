@@ -236,6 +236,7 @@ end
 function WeaponTruck:Event_onBoxClick(button, state, player)
 	if button == "left" and state == "down" then
 		if player.vehicle then return end
+		if player:isDead() then return end
 		if player:getFaction() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
 			if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
@@ -365,7 +366,7 @@ function WeaponTruck:Event_DeloadBox(veh)
 		if veh == self.m_Truck or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
 				if not client:getPlayerAttachedObject() then
-					if not client.vehicle then
+					if not client.vehicle and not client:isDead() then
 						for key, box in pairs (getAttachedElements(veh)) do
 							if box.model == 2912 then
 								box:setScale(1)
