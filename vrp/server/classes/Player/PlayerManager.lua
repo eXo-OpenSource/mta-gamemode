@@ -24,7 +24,6 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
-	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -204,71 +203,6 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 	end
 end
 
-function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
-	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
-	end
-	if not source:getData("isInDeathMatch") then
-		local x,y,z = getElementPosition(source)
-		local dim = getElementDimension(source)
-		local int = getElementInterior(source)
-		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
-		setElementDimension(source.ped_deadDouble,dim)
-		setElementInterior(source.ped_deadDouble, int)
-		if kWeapon == 34 then
-			setPedHeadless(source.ped_deadDouble, true)
-		end
-		local randAnim = math.random(1,5)
-		if randAnim == 5 then
-			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
-		else
-			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
-		end
-		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
-		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
-		setElementHealth(source.ped_deadDouble, 20)
-		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
-		setElementAlpha(source,0)
-	end
-	local inv = source:getInventory()
-	if inv then
-		if inv:getItemAmount("Diebesgut") > 0 then
-			inv:removeAllItem("Diebesgut")
-			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
-		end
-	end
-	if not source:getData("isInDeathMatch") then
-		local facSource = source:getFaction()
-		if k_ then
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if facSource:isStateFaction() and source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if not facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
-			end
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if not facSource:isStateFaction() and not source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-end
 
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()

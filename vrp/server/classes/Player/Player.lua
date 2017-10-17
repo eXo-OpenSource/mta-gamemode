@@ -70,6 +70,11 @@ function Player:destructor()
 	end
 
 	self:setJailNewTime()
+
+	if self:hasTemporaryStorage() then
+		self:restoreStorage()
+	end
+
 	self:save()
 
 	if self.m_BankAccount then
@@ -318,10 +323,6 @@ function Player:save()
 		-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
 		if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
 			self.m_UniqueInterior = 0
-		end
-
-		if self:hasTemporaryStorage() then
-			self:restoreStorage()
 		end
 
 		local weapons = {}

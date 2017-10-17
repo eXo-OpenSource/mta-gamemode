@@ -378,7 +378,7 @@ function StatisticsLogger:addVehicleTrunkLog(trunk, player, action, itemType, it
 			userId, trunk, action, itemType, item, itemAmount, slot)
 end
 
-function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
+function StatisticsLogger:addVehicleTradeLog(vehicle, player, player2, price, tradeType)
 	local userId1, userId2 = 0, 0
 
 	if isElement(player) then userId1 = player:getId() else userId1 = player or 0 end
