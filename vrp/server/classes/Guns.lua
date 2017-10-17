@@ -136,7 +136,9 @@ end
 
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon)
-	StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
+	if killer and isElement(killer) and weapon then
+		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
+	end
 
 	if source.ped_deadDouble then
 		if isElement(source.ped_deadDouble) then
