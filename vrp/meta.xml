@@ -323,6 +323,9 @@
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
+	<!-- Halloween -->
+	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
+
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
 	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
@@ -803,6 +806,9 @@
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
+
+	<!-- Halloween -->
+	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
