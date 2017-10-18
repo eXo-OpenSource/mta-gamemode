@@ -808,6 +808,7 @@
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
 	<!-- Halloween -->
+	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 
 	<!-- Factions -->
@@ -1130,7 +1131,8 @@
 	<vrpfile src="files/images/Other/Tour.png"/>
 	<vrpfile src="files/images/Other/blood.png"/>
 	<vrpfile src="files/images/Other/Neon.png"/>
-	<vrpfile src="files/images/Other/bubble.png"/>
+	<vrpfile src="files/images/Other/bubble_border.png"/>
+	<vrpfile src="files/images/Other/bubble_bg.png"/>
 	<vrpfile src="files/images/Other/premium.png"/>
 	<vrpfile src="files/images/Other/TreasureRadar.png"/>
 	<vrpfile src="files/images/Other/TreasureRadarBlip.png"/>

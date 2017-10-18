@@ -84,7 +84,7 @@ function Core:ready()
 	triggerServerEvent("playerReady", root)
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}	
+	Browser.requestDomains{"exo-reallife.de"}
 
 	DxHelper:new()
 	TranslationManager:new()
@@ -195,6 +195,10 @@ function Core:afterLogin()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()
+
+	if EVENT_HALLOWEEN then
+		Halloween:new()
+	end
 
 	showChat(true)
 	setCameraTarget(localPlayer)
