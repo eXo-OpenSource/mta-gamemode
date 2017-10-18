@@ -25,6 +25,7 @@ GUIGridScrollableArea = inherit(GUIScrollableArea)
 GUIGridWebView = inherit(GUIWebView)
 GUIGridMemo = inherit(GUIMemo)
 GUIGridSkribble = inherit(GUISkribble)
+GUIGridRating = inherit(GUIRating)
 
 
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -41,6 +42,7 @@ function GUIGridWebView:constructor(posX, posY, width, height, url, transparent,
 function GUIGridScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space) return GUIScrollableArea.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), grid("d", documentWidth), grid("d", documentHeight), verticalScrollbar, horizontalScrollbar, parent, grid("y", space)) end
 function GUIGridMemo:constructor(posX, posY, width, height, parent) return GUIMemo.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSkribble:constructor(posX, posY, width, height, parent) return GUISkribble.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
+function GUIGridRating:constructor(posX, posY, width, height, amount, parent) return GUIRating.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), amount, parent) end
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
