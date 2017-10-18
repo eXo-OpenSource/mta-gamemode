@@ -147,6 +147,7 @@ function GUIButton:setEnabled(state, tabButton)
 	end
 	self.m_Enabled = state
 	self:anyChange()
+	return self
 end
 
 function GUIButton:isEnabled()

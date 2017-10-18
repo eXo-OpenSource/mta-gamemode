@@ -1542,6 +1542,7 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
+	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>

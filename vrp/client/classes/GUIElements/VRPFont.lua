@@ -120,6 +120,8 @@ FontAwesomeSymbols = {
 	Pencil = "",
 	Erase = "",
 	Edit = "",
+	Ban = "",
+	Bell = "",
 }
 
 Fonts = {
