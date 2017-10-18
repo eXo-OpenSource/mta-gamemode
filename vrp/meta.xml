@@ -325,6 +325,7 @@
 
 	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
+	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -470,6 +471,7 @@
 	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
 	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
+	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
@@ -810,6 +812,7 @@
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
@@ -1032,17 +1035,15 @@
 	<vrpfile src="files/images/Phone/Backgrounds/Xperia_X.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/OnePlus_3T.png"/>
 
-	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
-	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton_checked.png" onDemand="false"/>
 	<file src="files/images/GUI/Cursor.png"/>
 	<file src="files/images/GUI/Mouse.png"/>
-	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/FullCircle.png"/>
 	<vrpfile src="files/images/GUI/HelpIcon.png"/>
 	<vrpfile src="files/images/GUI/Triangle.png"/>
+	<vrpfile src="files/images/GUI/Star.png"/>
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>

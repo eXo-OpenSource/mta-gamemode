@@ -11,7 +11,7 @@ function Halloween:constructor()
 
 	ped:setData("onClickEvent",
 		function()
-			DrawContestGUI:new()
+			DrawContestOverviewGUI:new()
 		end
 	)
 end

@@ -123,6 +123,10 @@ function Core:constructor()
 		ClientStatistics:new()
 		SkribbleManager:new()
 
+		if EVENT_HALLOWEEN then
+			Halloween:new()
+		end
+
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 		GPS:new()
 		Chair:new()
