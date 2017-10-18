@@ -37,7 +37,6 @@ function GUIEdit:drawThis()
 	end
 
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, white)
-	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
 	local text = self:getDrawnText()
 	local aliginX = "left"
