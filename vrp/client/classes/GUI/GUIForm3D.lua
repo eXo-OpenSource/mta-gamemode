@@ -65,6 +65,7 @@ function GUIForm3D:StreamArea_Leave(hitElement, matchingDimension)
 	if self.m_CacheArea then
 		delete(self.m_CacheArea)
 		self.m_CacheArea = false
+		if self.onStreamOut then self:onStreamOut() end
 	end
 end
 

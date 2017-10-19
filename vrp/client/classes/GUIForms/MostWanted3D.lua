@@ -12,7 +12,8 @@ function MostWanted:onStreamIn(surface)
 	self.m_Row = 0
 	self.m_Column = 0
 	self.m_Url = self:generateUrl()
-	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
+	self.m_WebView = GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
+	self.m_WebView:setControlsEnabled(false)
 end
 
 function MostWanted:generateUrl()
