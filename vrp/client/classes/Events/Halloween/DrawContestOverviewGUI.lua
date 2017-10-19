@@ -13,24 +13,27 @@ addRemoteEvents{"drawContestReceivePlayers", "drawContestReceiveImage"}
 function DrawContestOverviewGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 26)
-	self.m_Height = grid("y", 12)
+	self.m_Height = grid("y", 13)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Halloween Zeichenwettbewerb", true, true, self)
 
-	self.m_PlayersGrid = GUIGridGridList:new(1, 1, 5, 14, self.m_Window)
+	self.m_ContestNameLabel = GUIGridLabel:new(1, 1, 10, 1, "Aktueller Bewerb: -", self.m_Window)
+	self.m_ContestTypeLabel = GUIGridLabel:new(13, 1, 10, 1, "Aktuelle Phase: -", self.m_Window)
+
+	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Zeichnungen", 1)
 
-	self.m_Skribble = GUIGridSkribble:new(6, 1, 20, 10, self.m_Window)
-	self.m_Background = GUIGridRectangle:new(6, 1, 20, 10, Color.Clear, self.m_Window)
-	self.m_InfoLabel = GUIGridLabel:new(6, 1, 20, 10, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
+	self.m_Skribble = GUIGridSkribble:new(6, 2, 20, 10, self.m_Window)
+	self.m_Background = GUIGridRectangle:new(6, 2, 20, 10, Color.Clear, self.m_Window)
+	self.m_InfoLabel = GUIGridLabel:new(6, 2, 20, 10, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
 
 	self.m_SelectedPlayerId = 0
 	self.m_SelectedPlayerName = ""
 
 	self:showInfoText("eXo-Reallife Halloween Zeichen-Wettbewerb!\nMale ein Bild zum angegeben Thema.\n(Jeder User darf nur ein Bild pro Thema einsenden)\nEinem Tag nach Einsendeschluss können User das Bild bewerten.\nZu Gewinnen gibt es bei jedem Wettbewerb 15 eXo-Dollar!")
 
-	self.m_Rating = GUIGridRating:new(6, 11, 5, 1, 5, self.m_Window)
+	self.m_Rating = GUIGridRating:new(6, 12, 5, 1, 5, self.m_Window)
 	self.m_Rating.onChange = function(ratingValue)
 		QuestionBox:new(_("Möchtest du das Bild von %s mit %d Stern/en bewerten?", self.m_SelectedPlayerName, ratingValue),
 		function() triggerServerEvent("drawContestRateImage", localPlayer, ratingValue) end,
@@ -40,7 +43,7 @@ function DrawContestOverviewGUI:constructor()
 
 	self.m_Rating:setVisible(false)
 
-	local draw = GUIGridButton:new(21, 11, 5, 1, "eigenes Bild malen", self.m_Window)
+	local draw = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
 	draw.onLeftClick = function()
 		DrawContestGUI:new()
 		delete(self)
@@ -76,7 +79,10 @@ function DrawContestOverviewGUI:hideInfoText()
 		end
 end
 
-function DrawContestOverviewGUI:onReceivePlayers(players)
+function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, players)
+	self.m_ContestNameLabel:setText(_("Aktueller Bewerb: %s", contestName))
+	self.m_ContestTypeLabel:setText(_("Aktuelle Phase: %s", contestType == "draw" and "Zeichenphase" or "Abstimmungsphase"))
+
 	self.m_PlayersGrid:clear()
 	local item
 	for id, name in pairs(players) do
@@ -90,6 +96,7 @@ function DrawContestOverviewGUI:onReceivePlayers(players)
 			triggerServerEvent("drawContestRequestImage", localPlayer, id)
 		end
 	end
+
 end
 
 function DrawContestOverviewGUI:onReceiveImage(drawData)
