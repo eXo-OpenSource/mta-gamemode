@@ -1037,15 +1037,15 @@
 	<vrpfile src="files/images/Phone/Backgrounds/Xperia_X.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/OnePlus_3T.png"/>
 
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/Radiobutton.png" onDemand="false"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/Radiobutton_checked.png" onDemand="false"/>
-	<file src="vrp/client/classes/GUICore/GUIFiles/Cursor.png"/>
-	<file src="vrp/client/classes/GUICore/GUIFiles/Mouse.png"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/RoundedCorner.png" onDemand="false"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/FullCircle.png"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/HelpIcon.png"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/Triangle.png"/>
-	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/Star.png"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/Radiobutton.png" onDemand="false"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/Radiobutton_checked.png" onDemand="false"/>
+	<file src="vrp/client/classes/GUICore/GUIFiles/images/Cursor.png"/>
+	<file src="vrp/client/classes/GUICore/GUIFiles/images/Mouse.png"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/RoundedCorner.png" onDemand="false"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/FullCircle.png"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/HelpIcon.png"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/Triangle.png"/>
+	<vrpfile src="vrp/client/classes/GUICore/GUIFiles/images/Star.png"/>
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>
