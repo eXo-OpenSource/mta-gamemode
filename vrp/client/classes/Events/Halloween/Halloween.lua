@@ -68,10 +68,11 @@ function HalloweenSpookyScreen:constructor()
 end
 
 function HalloweenSpookyScreen:onStreamIn(surface)
-	self.m_WebView = GUIWebView:new(0, 0, self.m_ResX, self.m_ResY, string.format("https://www.youtube.com/embed/0DGoQo3HYF0?autoplay=1&controls=0&disablekb=1&loop=1&playlist=0DGoQo3HYF0&showinfo=0&iv_load_policy=3&start=%s", self.m_StartTime), true, surface)
+	local startTime = (getRealTime().hour * 60 * 60 + getRealTime().minute * 60 + getRealTime().second * 60) % 307 -- the video is 307 seconds long
+
+	self.m_WebView = GUIWebView:new(0, 0, self.m_ResX, self.m_ResY, string.format("https://www.youtube.com/embed/0DGoQo3HYF0?autoplay=1&controls=0&disablekb=1&loop=1&playlist=0DGoQo3HYF0&showinfo=0&iv_load_policy=3&start=%s", startTime), true, surface)
 	self.m_WebView:setControlsEnabled(false)
 	self.m_WebView.onDocumentReady = function()
-		self.m_StremInTC = getTickCount()
 		local draw = surface.draw
 		surface.draw = function()
 			draw(surface)
@@ -94,6 +95,5 @@ function HalloweenSpookyScreen:onStreamIn(surface)
 end
 
 function HalloweenSpookyScreen:onStreamOut()
-	self.m_StartTime = math.floor((self.m_StartTime + (getTickCount()-self.m_StremInTC)/1000)%307) -- video is 307 seconds long
 	if self.m_ShortMessage then self.m_ShortMessage:delete() end
 end

@@ -13,7 +13,7 @@ addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBli
 
 function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId)
 	self.m_isOwner = ownerName == localPlayer:getName()
-	self.m_isTenant = tenants and tenants[localPlayer:getPrivateSync("Id")]
+	self.m_isTenant = tenants and tenants[tostring(localPlayer:getPrivateSync("Id"))]
 	self.m_isRentEnabled = rentprice > 0
 	self.m_isInside = localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0
 	self.m_Tenants = tenants
