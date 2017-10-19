@@ -571,6 +571,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	end
 	source:setLastChatMessage(text)
 
+	if Player.getScreamHook():call(source, text) then
+		cancelEvent()
+		return
+	end
+
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()

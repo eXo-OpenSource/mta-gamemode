@@ -12,6 +12,7 @@ registerElementClass("player", Player)
 -- Create Hooks
 Player.ms_QuitHook = Hook:new()
 Player.ms_ChatHook = Hook:new()
+Player.ms_ScreamHook = Hook:new()
 
 addEvent("characterInitialized")
 addEvent("introFinished", true)
@@ -1108,6 +1109,10 @@ end
 
 function Player.getChatHook()
 	return Player.ms_ChatHook
+end
+
+function Player.getScreamHook()
+	return Player.ms_ScreamHook
 end
 
 function Player:setKarma(karma)
