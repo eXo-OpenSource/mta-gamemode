@@ -19,6 +19,7 @@ function Halloween:constructor()
 	HalloweenSpookyScreen:new()
 	
 	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
+
 end
 
 HalloweenSign = inherit(GUIForm3D)
@@ -41,6 +42,15 @@ function Halloween:renderDarkness() -- not to be confused with 'dankness'!
 	setFarClipDistance(100)
 	setFogDistance(5)
 	setSkyGradient(0, 0, 0, 0, 0, 0)
+	setWeather(9)
+	setWaterColor(255, 0, 0)
+	if chance(25) then
+		if chance(50) then
+			setTrafficLightState("yellow", "yellow")
+		else
+			setTrafficLightState("disabled")
+		end
+	end
 end
 
 
@@ -65,13 +75,25 @@ function HalloweenSpookyScreen:onStreamIn(surface)
 		local draw = surface.draw
 		surface.draw = function()
 			draw(surface)
-			local vol = 1 - (getDistanceBetweenPoints3D(self.m_Position, localPlayer.position)/self.m_StreamDistance) 
-			self.m_WebView:setVolume(vol/2)--max it to 0.5
+			if not self.m_Muted then
+				local vol = 1 - (getDistanceBetweenPoints3D(self.m_Position, localPlayer.position)/self.m_StreamDistance) 
+				self.m_WebView:setVolume(vol/2)--max it to 0.5
+			else
+				self.m_WebView:setVolume(0)
+			end
 		end
 	end
+	self.m_ShortMessage = ShortMessage:new(_("Klicke hier %s.", self.m_Muted and "um die Stummschaltung der Leinwand aufzuheben" or "um die Leinwand stummzuschalten"), nil, nil, -1, function()
+		self.m_Muted = not self.m_Muted
+		self.m_ShortMessage = nil
+		if self.m_Muted then
+			self.m_WebView:setVolume(0)
+		end
+	end)
 
 end
 
 function HalloweenSpookyScreen:onStreamOut()
 	self.m_StartTime = math.floor((self.m_StartTime + (getTickCount()-self.m_StremInTC)/1000)%307) -- video is 307 seconds long
+	if self.m_ShortMessage then self.m_ShortMessage:delete() end
 end

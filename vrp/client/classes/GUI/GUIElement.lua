@@ -107,6 +107,10 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 				GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 			end
 
+			if EVENT_HALLOWEEN then
+				Cursor:drawClickBlood()
+			end
+
 			-- Check whether the focus changed
 
 			if not GUIInputControl.SelectionInProgress then

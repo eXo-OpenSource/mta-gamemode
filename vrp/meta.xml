@@ -936,6 +936,8 @@
 	<vrpfile src="files/images/Events/Easter/slot_5.png" />
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
 
+	<vrpfile src="files/images/Events/Halloween/blood.png" />
+
 	<!-- Todo -->
 
 	<script src="client/Main.lua" type="client"/>
