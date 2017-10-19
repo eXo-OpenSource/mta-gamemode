@@ -419,60 +419,60 @@
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
-	<script src="client/classes/Color.lua" type="client"/>
-	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
-	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
-	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
-	<script src="client/classes/GUI/DxHelper.lua" type="client"/>
-	<script src="client/classes/GUI/DxElement.lua" type="client"/>
-	<script src="client/classes/GUI/DxRectangle.lua" type="client"/>
-	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
-	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
-	<script src="client/classes/GUI/GUIScrollableArea.lua" type="client"/>
-	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
-	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>
-	<script src="client/classes/GUI/GUIDebugging.lua" type="client"/>
-	<script src="client/classes/GUI/GUIInputControl.lua" type="client"/>
-	<script src="client/classes/GUI/GUIImage.lua" type="client"/>
-	<script src="client/classes/GUI/GUIEdit.lua" type="client"/>
-	<script src="client/classes/GUI/GUIForm.lua" type="client"/>
-	<script src="client/classes/GUI/GUIForm3D.lua" type="client"/>
-	<script src="client/classes/GUI/GUILabel.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRenderer.lua" type="client"/>
-	<script src="client/classes/GUI/GUIWindow.lua" type="client"/>
-	<script src="client/classes/GUI/GUIWindowFocus_workaround.lua" type="client"/>
-	<script src="client/classes/GUI/GUICursor.lua" type="client"/>
-	<script src="client/classes/GUI/GUIButtonMenu.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMouseMenuItem.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMouseMenuNoClickItem.lua" type="client"/>
-	<script src="client/classes/GUI/GUIGridList.lua" type="client"/>
-	<script src="client/classes/GUI/GUIGridListItem.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRectangle.lua" type="client"/>
-	<script src="client/classes/GUI/GUIScrollbar.lua" type="client"/>
-	<script src="client/classes/GUI/GUITabControl.lua" type="client"/>
-	<script src="client/classes/GUI/GUITabPanel.lua" type="client"/>
-	<script src="client/classes/GUI/GUIVerticalScrollbar.lua" type="client"/>
-	<script src="client/classes/GUI/GUIHorizontalScrollbar.lua" type="client"/>
-	<script src="client/classes/GUI/GUICombobox.lua" type="client"/>
-	<script src="client/classes/GUI/GUIChanger.lua" type="client"/>
-	<script src="client/classes/GUI/GUIProgressBar.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRadioButton.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
-	<script src="client/classes/GUI/GUISlider.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
-	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
-	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
-	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
-	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
-	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
-	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
-	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
-	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
-	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
+	<script src="client/classes/GUICore/Color.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/abstract/GUIColorable.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/abstract/GUIFontContainer.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/abstract/GUIMovable.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/DxHelper.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/DxElement.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/DxRectangle.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIElement.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/CacheArea.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/CacheArea3D.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIScrollableArea.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIButton.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUICheckbox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIDebugging.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIInputControl.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIImage.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIEdit.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIForm.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIForm3D.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUILabel.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRenderer.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIWindow.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIWindowFocus_workaround.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUICursor.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIButtonMenu.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMouseMenuItem.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMouseMenuNoClickItem.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIGridList.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIGridListItem.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRectangle.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIScrollbar.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUITabControl.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUITabPanel.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIVerticalScrollbar.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIHorizontalScrollbar.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUICombobox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIChanger.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIProgressBar.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRadioButton.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRadioButtonGroup.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUISlider.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRoundedRect.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIWebView.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIWebForm.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIScrollableText.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMovingText.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIPhoneTabPanel.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMiniMap.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUISwitch.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIMemo.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUISkribble.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIRating.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
 	<!-- Eastereggs -->
@@ -501,37 +501,37 @@
 	<script src="client/classes/Inventory/Wearable/WearableHelmet.lua" type="client"/>
 
 	<!-- Animations -->
-	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/FadeIn.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/FadeColor.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/Move.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/FadeAlpha.lua" type="client"/>
-	<script src="client/classes/GUI/Animations/Size.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/Animation.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/FadeOut.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/FadeIn.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/FadeColor.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/Move.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/FadeAlpha.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Animations/Size.lua" type="client"/>
 
 	<!-- Special GUI elements -->
-	<script src="client/classes/GUI/GUIPaydayBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/GUIPaydayBox.lua" type="client"/>
 
-	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/InfoBox.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/WarningBox.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/MessageBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/InfoBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/WarningBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
 
 	<!-- Notifications -->
-	<script src="client/classes/GUI/MessageBoxes/MessageBoxManager.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/Toast/ToastMessage.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/Toast/ToastInfo.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/Toast/ToastWarning.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
-	<script src="client/classes/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/MessageBoxManager.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/Toast/ToastMessage.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/Toast/ToastInfo.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/Toast/ToastWarning.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/Toast/ToastError.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/MessageBoxes/Toast/ToastSuccess.lua" type="client"/>
 
-	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
-	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
-	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
+	<script src="client/classes/GUICore/GUIElements/VRPFont.lua" type="client"/>
+	<script src="client/classes/GUICore/GUIElements/RageFont.lua" type="client"/>
+	<script src="client/classes/GUICore/GUIElements/VRPItem.lua" type="client"/>
+	<script src="client/classes/GUICore/GUIElements/KarmaBar.lua" type="client"/>
+	<script src="client/classes/GUICore/GUIElements/BusRoutePlan.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
@@ -554,7 +554,7 @@
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
 
-	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
+	<script src="client/classes/GUICore/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
