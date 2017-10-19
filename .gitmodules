@@ -1,0 +1,3 @@
+[submodule "vrp/client/classes/GUI_CORE"]
+	path = vrp/client/classes/GUI_CORE
+	url = git@git.heisi.at:eXo/gui-core
