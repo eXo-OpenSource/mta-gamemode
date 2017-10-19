@@ -27,18 +27,11 @@ DrawContest.Events = {
 }
 
 function DrawContest:constructor()
-	addRemoteEvents{"onDrawContestSave", "drawContestRequestPlayers", "drawContestRequestImage", "drawContestRateImage"}
+	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage"}
 
 
-	addEventHandler("onDrawContestSave", root, bind(self.saveImage, self))
 	addEventHandler("drawContestRequestPlayers", root, bind(self.requestPlayers, self))
-	addEventHandler("drawContestRequestImage", root, bind(self.requestImage, self))
 	addEventHandler("drawContestRateImage", root, bind(self.rateImage, self))
-end
-
-function DrawContest:saveImage(data)
-	sql:queryExec("INSERT ??_drawContest (UserId, DrawData, Datetime) VALUES (?, ?, NOW())", sql:getPrefix(), client:getId(), data)
-	client:sendInfo("Bild gespeichert!")
 end
 
 function DrawContest:getCurrentEvent()
@@ -51,27 +44,28 @@ function DrawContest:getCurrentEvent()
 			return name, "vote"
 		end
 	end
-	return "none", "none"
+	return false, false
 end
 
 function DrawContest:requestPlayers()
+	local contestName, contestType = self:getCurrentEvent()
+	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
+
 	local players = {}
-	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest", sql:getPrefix())
+	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ?", sql:getPrefix(), contestName)
     for i, row in pairs(result) do
 		players[row.UserId] = Account.getNameFromId(row.UserId)
 	end
-	local contestName, contestType = self:getCurrentEvent()
 	client:triggerEvent("drawContestReceivePlayers", contestName, contestType, players)
 end
 
-function DrawContest:requestImage(userId)
-	local row = sql:queryFetchSingle("SELECT DrawData FROM ??_drawContest WHERE UserId = ?", sql:getPrefix(), userId)
-	triggerLatentClientEvent(client, "drawContestReceiveImage", 50000, false, client, row.DrawData)
-end
-
 function DrawContest:rateImage(userId)
-	local row = sql:queryFetchSingle("SELECT Ratings FROM ??_drawContest WHERE UserId = ?", sql:getPrefix(), userId)
-	triggerLatentClientEvent(client, "drawContestReceiveImage", 50000, false, client, row.DrawData)
+	local contestName, contestType = self:getCurrentEvent()
+	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
+	if not contestType == "vote" then client:sendError("Aktuell kann nicht Abgestimmt werden!") return end
+
+	--Todo
+
 end
 
 

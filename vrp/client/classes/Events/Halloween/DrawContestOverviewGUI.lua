@@ -5,10 +5,16 @@
 -- *  PURPOSE:     TODO
 -- *
 -- ****************************************************************************
+
+--DEVELOP INFO:
+-- Player Grid wird von Lokaler DB über MTA geladen
+-- Bild wird über PHP auf Test-DB gespeichert/geladen
+
+
 DrawContestOverviewGUI = inherit(GUIForm)
 inherit(Singleton, DrawContestOverviewGUI)
 
-addRemoteEvents{"drawContestReceivePlayers", "drawContestReceiveImage"}
+addRemoteEvents{"drawContestReceivePlayers"}
 
 function DrawContestOverviewGUI:constructor()
 	GUIWindow.updateGrid()
@@ -18,7 +24,7 @@ function DrawContestOverviewGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Halloween Zeichenwettbewerb", true, true, self)
 
-	self.m_ContestNameLabel = GUIGridLabel:new(1, 1, 10, 1, "Aktueller Bewerb: -", self.m_Window)
+	self.m_ContestNameLabel = GUIGridLabel:new(1, 1, 10, 1, "Aktuelle Aufgabe: -", self.m_Window)
 	self.m_ContestTypeLabel = GUIGridLabel:new(13, 1, 10, 1, "Aktuelle Phase: -", self.m_Window)
 
 	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
@@ -43,15 +49,17 @@ function DrawContestOverviewGUI:constructor()
 
 	self.m_Rating:setVisible(false)
 
-	local draw = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
-	draw.onLeftClick = function()
-		DrawContestGUI:new()
-		delete(self)
+	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
+	self.m_AddDrawBtn:setVisible(false)
+	self.m_AddDrawBtn.onLeftClick = function()
+		if self.m_Contest and self.m_ContestType == "draw" then
+			DrawContestGUI:new(self.m_Contest)
+			delete(self)
+		end
 	end
 
 	triggerServerEvent("drawContestRequestPlayers", localPlayer)
 	addEventHandler("drawContestReceivePlayers", root, bind(self.onReceivePlayers, self))
-	addEventHandler("drawContestReceiveImage", root, bind(self.onReceiveImage, self))
 end
 
 function DrawContestOverviewGUI:showInfoText(text)
@@ -80,27 +88,46 @@ function DrawContestOverviewGUI:hideInfoText()
 end
 
 function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, players)
-	self.m_ContestNameLabel:setText(_("Aktueller Bewerb: %s", contestName))
+	self.m_Contest = contestName
+	self.m_ContestType = contestType
+	self.m_ContestNameLabel:setText(_("Aktuelle Aufgabe: %s", contestName))
 	self.m_ContestTypeLabel:setText(_("Aktuelle Phase: %s", contestType == "draw" and "Zeichenphase" or "Abstimmungsphase"))
+
+	if self.m_ContestType == "draw" then
+		self.m_AddDrawBtn:setVisible(true)
+		self.m_Rating:setVisible(false)
+	else
+		self.m_AddDrawBtn:setVisible(false)
+		self.m_Rating:setVisible(true)
+	end
 
 	self.m_PlayersGrid:clear()
 	local item
 	for id, name in pairs(players) do
 		item = self.m_PlayersGrid:addItem(name)
 		item.onLeftClick = function()
-			self.m_SelectedPlayerName = name
-			self.m_SelectedPlayerId = id
-			self.m_Skribble:clear(true)
-			self.m_Rating:setVisible(false)
-			self:showInfoText("Das Bild wird geladen...")
-			triggerServerEvent("drawContestRequestImage", localPlayer, id)
+			if not localPlayer.LastRequest then
+				self.m_SelectedPlayerName = name
+				self.m_SelectedPlayerId = id
+				self.m_Skribble:clear(true)
+				self.m_Rating:setVisible(false)
+				self:showInfoText("Das Bild wird geladen...")
+				localPlayer.LastRequest = true
+				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
+			else
+				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
+			end
 		end
 	end
 
 end
 
 function DrawContestOverviewGUI:onReceiveImage(drawData)
+	localPlayer.LastRequest = false
 	self:hideInfoText()
-	self.m_Rating:setVisible(true)
 	self.m_Skribble:drawSyncData(fromJSON(drawData))
+
+	if self.m_ContestType == "vote" then
+		self.m_Rating:setVisible(true)
+	end
 end

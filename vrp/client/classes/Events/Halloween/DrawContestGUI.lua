@@ -8,7 +8,7 @@
 DrawContestGUI = inherit(GUIForm)
 inherit(Singleton, DrawContestGUI)
 
-function DrawContestGUI:constructor()
+function DrawContestGUI:constructor(contest)
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 21)
 	self.m_Height = grid("y", 12)
@@ -18,6 +18,10 @@ function DrawContestGUI:constructor()
 
 	self.m_Skribble = GUIGridSkribble:new(1, 1, 20, 10, self.m_Window)
 	self.m_Skribble:setDrawingEnabled(true)
+	self.m_Background = GUIGridRectangle:new(1, 1, 20, 10, Color.Clear, self.m_Window)
+	self.m_InfoLabel = GUIGridLabel:new(1, 1, 20, 10, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
+
+	self.m_Contest = contest
 
 	local predefinedColors = {"Black", "Brown", "Red", "Orange", "Yellow", "Green", "LightBlue", "Blue", "Purple"}
 	for i, color in pairs(predefinedColors) do
@@ -50,8 +54,30 @@ function DrawContestGUI:constructor()
 	local save = GUIGridButton:new(18, 11, 3, 1, "Einsenden", self.m_Window)
 	save.onLeftClick = function()
 		QuestionBox:new("Möchtest du das Bild wirklich einsenden? Warnung: Du kannst nur ein einziges Bild für das Event einsenden!", function()
-			triggerLatentServerEvent("onDrawContestSave", 50000, false, root, toJSON(self.m_Skribble:getSyncData()))
+			self.m_Skribble:setDrawingEnabled(false)
 
+			self:showInfoText("Das Bild wird gespeichert...")
+
+			local options = {
+				["postData"] =  ("secret=%s&playerId=%d&contest=%s&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), contest, toJSON(self.m_Skribble:getSyncData()))
+			}
+
+			fetchRemote("https://exo-reallife.de/ingame/drawContest/addData.php", options,
+				function(responseData, responseInfo)
+					--outputConsole(inspect({data = responseData, info = responseInfo}))
+					responseData = fromJSON(responseData)
+					if not responseData["error"] then
+						self:showInfoText("Das Bild wurde erfolgreich gespeichert!")
+					else
+						if responseData["error"] == "Already sent a image" then
+							self:showInfoText("Fehler: Du hast bereits ein Bild zu dieser Aufgabe eingesendet!")
+						else
+							self:showInfoText("Fehler: "..responseData["error"])
+						end
+					end
+
+				end
+			)
 		end)
 
 	end
@@ -59,6 +85,32 @@ end
 
 function DrawContestGUI:virtual_destructor()
 
+end
+
+
+function DrawContestGUI:showInfoText(text)
+	if not text then self:hideInfoText() return end
+	self.m_InfoLabel:setText(text)
+
+	local backgroundAlpha = self.m_Background:getAlpha()
+	if backgroundAlpha ~= 200 then
+		Animation.FadeAlpha:new(self.m_Background, 250, backgroundAlpha, 200)
+	end
+
+	local posX, posY = self.m_InfoLabel:getPosition()
+	self.m_InfoLabel:setPosition(posX, -posY)
+	Animation.Move:new(self.m_InfoLabel, 250, posX, posY, "OutQuad")
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 0, 255)
+end
+
+function DrawContestGUI:hideInfoText()
+	if self.m_InfoLabel:getText() == "" then return end
+
+	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 255, 0).onFinish =
+		function()
+			self.m_InfoLabel:setText("")
+		end
 end
 
 function DrawContestGUI:changeColor()
