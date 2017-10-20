@@ -23,9 +23,9 @@ function Halloween:initTTPlayer(pId)
 	end
 end
 
-function Halloween:registerTrickOrTreat(player, houseId)
+function Halloween:registerTrickOrTreat(pId, houseId)
+	local player = DatabasePlayer.getFromId(pId)
 	if isElement(player) and getElementType(player) == "player" then
-		local pId = player:getId()
 		self:initTTPlayer(pId)
 		local d = self.m_TrickOrTreatPIDs[pId]
 		if not d.currentHouseId then
@@ -33,12 +33,12 @@ function Halloween:registerTrickOrTreat(player, houseId)
 			d.currentHouseId = houseId
 			d.trickStarted = getTickCount()
 			d.playersNearby = {}
-			table.insert(d.playersNearby, player)
+			table.insert(d.playersNearby, player:getId())
 
 			for i, v in pairs(getElementsByType("player")) do
 				self:initTTPlayer(v:getId())
 				if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId then
-					table.insert(d.playersNearby, v)
+					table.insert(d.playersNearby, v:getId())
 					self.m_TrickOrTreatPIDs[v:getId()].trickStarted = getTickCount()
 					self.m_TrickOrTreatPIDs[v:getId()].currentHouseId = houseId
 				end
@@ -59,23 +59,26 @@ function Halloween:checkForTTScream(player, text)
 	end
 end
 
-function Halloween:finishTrickOrTreat(player, houseId)
-	local pId = player:getId()
-
+function Halloween:finishTrickOrTreat(pId, houseId)
+	local pCount = table.size(self.m_TrickOrTreatPIDs[pId].playersNearby)
 	for i, v in pairs(self.m_TrickOrTreatPIDs[pId].playersNearby) do --this includes "player" as he gets inserted in registerTrickOrTreat
-		if v and isElement(v) then
+		local d = self.m_TrickOrTreatPIDs[v]
+		local pl = DatabasePlayer.getFromId(v)
+		if pl and isElement(pl) then
 			if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) then
-				local d = self.m_TrickOrTreatPIDs[v:getId()]
 				if d.lastMessage and d.lastMessage > d.trickStarted and (getTickCount() - d.lastVisited) < 30000 then
 					if d.currentHouseId == houseId then
-						player:sendShortMessage("jo hat geklappt für "..inspect(v))
+						local rnd = math.random(1, math.min(5, pCount))
+						poutputDebug("jo hat geklappt für", pl)
+						pl:getInventory():giveItem("Suessigkeiten", rnd)
+						pl:sendSuccess(_("Du hast %d Süßigkeiten bekommen!", pl, rnd))
 						d.visitedHouses[houseId] = getTickCount()
 						d.lastVisited = getTickCount()
-						d.currentHouseId = nil
-						d.lastMessage = nil
 					end
 				end
 			end
 		end
+		d.currentHouseId = nil
+		d.lastMessage = nil
 	end
 end
