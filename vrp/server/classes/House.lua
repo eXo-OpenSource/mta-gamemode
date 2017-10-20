@@ -401,10 +401,15 @@ function House:ringDoorBell(player)
 	player:playSound("files/audio/door_bell.wav")
 	player:meChat(true, "klingelt an der Haustür!")
 	player.m_HouseDoorBellCooldown = true
+	if EVENT_HALLOWEEN then 
+		Halloween:getSingleton():registerTrickOrTreat(player, self.m_Id)
+	end
 
 	setTimer(function(player)
 		if isElement(player) then
-			if self:isPlayerNearby(player) then
+			if EVENT_HALLOWEEN then 
+				Halloween:getSingleton():finishTrickOrTreat(player, self.m_Id)
+			elseif self:isPlayerNearby(player) then
 				local pCount = table.size(self.m_PlayersInterior)
 				if pCount > 0 then --check if there are players inside
 					local playerMoved = false
@@ -427,10 +432,10 @@ function House:ringDoorBell(player)
 				else
 					player:sendShortMessage(_("Es scheint niemand zu Hause zu sein.", player))
 				end
-			end
+			end			
 			player.m_HouseDoorBellCooldown = false
 		end
-	end, 5000, 1, player)
+	end, EVENT_HALLOWEEN and math.random(15000, 25000) or 5000, 1, player)
 end
 
 function House:removePlayerFromList(player)
