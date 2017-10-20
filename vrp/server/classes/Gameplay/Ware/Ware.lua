@@ -167,6 +167,7 @@ function Ware:joinPlayer( player )
 		self:spawnWarePlayer(player)
 		player.bInWare = self
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
+		player:triggerEvent("Ware:closeGUI")
 	end
 end
 
@@ -186,6 +187,7 @@ function Ware:leavePlayer( player )
 		table.remove(self.m_Players, key)
 		player.bInWare = false
 		player:triggerEvent("onClientWareLeave")
+		player:triggerEvent("Ware:closeGUI")
 	end
 end
 
@@ -197,3 +199,5 @@ function Ware:isPlayer( pPlayer )
 	end
 	return false
 end
+
+function Ware:getPlayers() return self.m_Players end 

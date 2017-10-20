@@ -25,7 +25,7 @@ function WareRoundGUI:constructor(winner, loser, modeDesc)
 	self.m_LoserGrid:addColumn(_"Verlierer", 1)
 	
 	self.m_LeaveButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Lobby verlassen", true, self.m_Window):setBarColor(Color.Red)
-	---self.m_LeaveButton.onLeftClick = bind(self.leaveLobby, self)
+	self.m_LeaveButton.onLeftClick = bind(self.leaveLobby, self)
 
 	self:refresh(winner, loser)
 end
@@ -35,13 +35,7 @@ function WareRoundGUI:destructor()
 end
 
 function WareRoundGUI:leaveLobby()
-	--[[
-	if localPlayer:isDead() then
-		ErrorBox:new(_"Bitte warte bis du wieder gespawnt bist!")
-		return
-	end
-	triggerServerEvent("deathmatchLeaveLobby", localPlayer)
-	--]]
+	triggerServerEvent("Ware:tryLeaveLobby", localPlayer, false)
 end
 
 function WareRoundGUI:refresh(winner, loser)

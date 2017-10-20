@@ -56,6 +56,13 @@ end
 
 function WareClient:OnLeaveWare()
 	self:toggleEnvironementSettings(false)
+	if WareRoundGUI.Current then 
+		WareRoundGUI.Current:delete()
+	end
+	if self.m_WareDisplay then 
+		self.m_WareDisplay:delete()
+	end
+	removeEventHandler("onClientRender", root, self.m_RendBind)
 end
 
 function WareClient:toggleEnvironementSettings( bool )
