@@ -86,36 +86,38 @@ function Halloween:checkForTTScream(player, text)
 end
 
 function Halloween:finishTrickOrTreat(pId, houseId)
-	local pCount = table.size(self.m_TrickOrTreatPIDs[pId].playersNearby)
-	local ownerId = HouseManager:getSingleton().m_Houses[houseId]:getOwner()
-	local ownerAtHome = (ownerId and ownerId ~= 0) and chance(75) or 0 -- chance that somebody is there to give sweets
-	local rndPhrase = Halloween.ms_Phrases[pCount > 1 and "multi" or "single"]
-		rndPhrase = rndPhrase[math.random(1, #rndPhrase)]
+	if self.m_TrickOrTreatPIDs[pId] and self.m_TrickOrTreatPIDs[pId].playersNearby then
+		local pCount = table.size(self.m_TrickOrTreatPIDs[pId].playersNearby)
+		local ownerId = HouseManager:getSingleton().m_Houses[houseId]:getOwner()
+		local ownerAtHome = (ownerId and ownerId ~= 0) and chance(75) or 0 -- chance that somebody is there to give sweets
+		local rndPhrase = Halloween.ms_Phrases[pCount > 1 and "multi" or "single"]
+			rndPhrase = rndPhrase[math.random(1, #rndPhrase)]
 
-	for i, v in pairs(self.m_TrickOrTreatPIDs[pId].playersNearby) do --this includes "player" as he gets inserted in registerTrickOrTreat
-		local d = self.m_TrickOrTreatPIDs[v]
-		local pl = DatabasePlayer.getFromId(v)
-		if pl and isElement(pl) then
-			if d.currentHouseId == houseId then
-				if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(pl) then
-					if d.lastMessage and d.lastMessage >= d.trickStarted and (getTickCount() - d.lastVisited) > 30000 then
-						if ownerAtHome then 
-							local rnd = math.random(1, math.min(5, pCount))
-							pl:getInventory():giveItem("Suessigkeiten", rnd)
-							pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
-							pl:sendMessage(("Bewohner sagt: %s"):format(rndPhrase), 200, 200, 200)
-						else
-							pl:sendShortMessage(_("Es scheint niemand zu Hause zu sein...", pl))
-						end
-						d.visitedHouses[houseId] = getTickCount()
-						d.lastVisited = getTickCount()
-					end		
-				else
-					pl:sendWarning(_("Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!", pl))
+		for i, v in pairs(self.m_TrickOrTreatPIDs[pId].playersNearby) do --this includes "player" as he gets inserted in registerTrickOrTreat
+			local d = self.m_TrickOrTreatPIDs[v]
+			local pl = DatabasePlayer.getFromId(v)
+			if pl and isElement(pl) then
+				if d.currentHouseId == houseId then
+					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(pl) then
+						if d.lastMessage and d.lastMessage >= d.trickStarted and (getTickCount() - d.lastVisited) > 30000 then
+							if ownerAtHome then 
+								local rnd = math.random(1, math.min(5, pCount))
+								pl:getInventory():giveItem("Suessigkeiten", rnd)
+								pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
+								pl:sendMessage(("Bewohner sagt: %s"):format(rndPhrase), 200, 200, 200)
+							else
+								pl:sendShortMessage(_("Es scheint niemand zu Hause zu sein...", pl))
+							end
+							d.visitedHouses[houseId] = getTickCount()
+							d.lastVisited = getTickCount()
+						end		
+					else
+						pl:sendWarning(_("Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!", pl))
+					end
 				end
 			end
+			d.currentHouseId = nil
+			d.lastMessage = nil
 		end
-		d.currentHouseId = nil
-		d.lastMessage = nil
 	end
 end

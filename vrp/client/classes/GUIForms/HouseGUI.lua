@@ -13,7 +13,7 @@ addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBli
 
 function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed, tenants, money, hasKey, houseId)
 	self.m_isOwner = ownerName == localPlayer:getName()
-	self.m_isTenant = tenants and tenants[tostring(localPlayer:getPrivateSync("Id"))]
+	self.m_isTenant = tenants and tenants[localPlayer:getPrivateSync("Id")]
 	self.m_isRentEnabled = rentprice > 0
 	self.m_isInside = localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0
 	self.m_Tenants = tenants
@@ -48,7 +48,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 		GUIGridLabel:new(1, 3, 6, 1, _"(Keine neuen Mieter akzeptiert)", self.m_Window)
 	end
 
-	
+	outputDebug(isValidRob, hasKey)
 	self.m_LockBtn = GUIGridButton:new(1, 4, 6, 1, isClosed and _"Aufschließen" or _"Abschließen", self.m_Window):setEnabled(hasKey)
 	self.m_SpawnBtn = GUIGridButton:new(1, 5, 6, 1, _"als Spawnpunkt festlegen", self.m_Window):setEnabled(hasKey)
 	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)

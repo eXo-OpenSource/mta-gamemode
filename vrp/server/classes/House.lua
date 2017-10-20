@@ -88,14 +88,14 @@ function House:toggleLockState( player )
 end
 
 function House:showGUI(player)
+	local tenants = {}
+	for playerId, timestamp in pairs(self.m_Keys) do
+		tenants[playerId] = Account.getNameFromId(playerId)
+	end
 	if player:getId() == self.m_Owner then
-		local tenants = {}
-		for playerId, timestamp in pairs(self.m_Keys) do
-			tenants[playerId] = Account.getNameFromId(playerId)
-		end
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money, self:isValidToEnter(player), self.m_Id)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_Money, true, self.m_Id)
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false, false, self:isValidToEnter(player), self.m_Id)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id)
 	end
 end
 
@@ -181,6 +181,7 @@ function House:rentHouse(player)
 			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendSuccess(_("Du wurdest erfolgreich eingemietet", player))
 			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
+			self:showGUI(player)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
 		end
@@ -196,6 +197,9 @@ function House:unrentHouse(player, noDistanceCheck)
 		if player and isElement(player) then
 			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player))
 			player:triggerEvent("removeHouseBlip", self.m_Id)
+			if not noDistanceCheck then
+				self:showGUI(player)
+			end
 
 			if self.m_PlayersInterior[player] then
 				self:leaveHouse(player)
