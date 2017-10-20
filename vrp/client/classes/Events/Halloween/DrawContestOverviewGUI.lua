@@ -42,7 +42,7 @@ function DrawContestOverviewGUI:constructor()
 	self.m_Rating = GUIGridRating:new(6, 12, 5, 1, 5, self.m_Window)
 	self.m_Rating.onChange = function(ratingValue)
 		QuestionBox:new(_("Möchtest du das Bild von %s mit %d Stern/en bewerten?", self.m_SelectedPlayerName, ratingValue),
-		function() triggerServerEvent("drawContestRateImage", localPlayer, ratingValue) end,
+		function() triggerServerEvent("drawContestRateImage", localPlayer, self.m_SelectedPlayerId, ratingValue) end,
 		function() self.m_Rating:reset() end
 	)
 	end
@@ -98,7 +98,6 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 		self.m_Rating:setVisible(false)
 	else
 		self.m_AddDrawBtn:setVisible(false)
-		self.m_Rating:setVisible(true)
 	end
 
 	self.m_PlayersGrid:clear()

@@ -1,8 +1,10 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male PewX"] = {
-		["Draw"] = {["Start"] = 1508450400, ["End"] = 1508709600}, 	--25.10 - 26.10
-		["Vote"] = {["Start"] = 1508709600, ["End"] = 1508882400}  	--26.10 - 27.10
+		--["Draw"] = {["Start"] = 1508450400, ["End"] = 1508709600}, 	--25.10 - 26.10
+		--["Vote"] = {["Start"] = 1508709600, ["End"] = 1508882400}  	--26.10 - 27.10
+		["Draw"] = {["Start"] = 1508450400, ["End"] = 999}, 	--25.10 - 26.10
+		["Vote"] = {["Start"] = 1508450400, ["End"] = 1508882400}  	--26.10 - 27.10
 	},
 	["Male einen Kürbis"] = {
 		["Draw"] = {["Start"] = 1508882400, ["End"] = 1508968800}, 	--25.10 - 26.10
@@ -53,19 +55,40 @@ function DrawContest:requestPlayers()
 
 	local players = {}
 	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ?", sql:getPrefix(), contestName)
-    for i, row in pairs(result) do
+    if not result then return end
+	for i, row in pairs(result) do
 		players[row.UserId] = Account.getNameFromId(row.UserId)
 	end
 	client:triggerEvent("drawContestReceivePlayers", contestName, contestType, players)
 end
 
-function DrawContest:rateImage(userId)
+function DrawContest:getVotes(ownerId, contestName)
+	local row = sql:queryFetchSingle("SELECT VoteData FROM ??_drawContest WHERE UserId = ? AND Contest = ?", sql:getPrefix(), ownerId, contestName)
+	if row.VoteData and row.VoteData:len() > 0 then
+		return fromJSON(row.VoteData)
+	end
+	return {}
+end
+
+function DrawContest:saveVotes(ownerId, contestName, votes)
+	return sql:queryExec("UPDATE ??_drawContest SET VoteData = ? WHERE UserId = ? AND Contest = ?", sql:getPrefix(), toJSON(votes), ownerId, contestName)
+end
+
+function DrawContest:rateImage(userId, rating)
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 	if not contestType == "vote" then client:sendError("Aktuell kann nicht Abgestimmt werden!") return end
 
-	--Todo
+	local votes = self:getVotes(userId, contestName)
+	if votes[client:getId()] then
+		client:sendError("Du hast bereits für dieses Bild abgestimmt!")
+		return
+	end
 
+	votes[client:getId()] = rating
+	self:saveVotes(userId, contestName, votes)
+
+	client:sendSuccess("Du hast das Bild erfolgreich bewertet!")
 end
 
 
