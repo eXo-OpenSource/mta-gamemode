@@ -34,6 +34,7 @@ function BankAccount:constructor(Id, Money, OwnerType, OwnerId)
   self.m_Activity = ""
   self.m_OwnerType = OwnerType
   self.m_OwnerId = OwnerId
+	self.m_Negative = false
 end
 
 function BankAccount:destructor()
@@ -126,51 +127,60 @@ end
 	object:transferBankMoney(toObject, toBank, amount, reason, silent, category, subcategory)
 ]]
 
+--[[
+	[object (Player, Faction, Company, Group) | {string objectName, int objectId [, bool toBank]} | {object (Player, Faction, Company, Group), bool toBank}] toObject
+	int amount
+	string reason
+	bool silent
+	string category
+	string subcategory
+]]
+
 function BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
 	if isNan(money) then return end
-
+	
 
 	Async.create(
 		function()
 				
-			local targetObject = type(toObject) == "table" and nil or toObject
+			local targetObject = toObject
 			local offlinePlayer = false
 			local isPlayer = false
 			local toBank = false
 
-			if type(toObject) == "table" and not toObject.m_Id then
+			if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
 				if not (#toObject >= 2 and #toObject <= 3) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
 
 				if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
 					targetObject = toObject[1]
 					toBank = toObject[2]
 				else
-					if toObject[2] == "player" then
-						targetObject, offlinePlayer = DatabasePlayer.get(toObject[1])
+					if toObject[1] == "player" then
+						targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
 
 						if offlinePlayer then
 							targetObject:load()
 						end
-					elseif toObject[2] == "faction" then
-						targetObject = FactionManager:getSingleton().Map[toObject[1]]
-					elseif toObject[2] == "company" then
-						targetObject = CompanyManager:getSingleton().Map[toObject[1]]
-					elseif toObject[2] == "company" then
-						targetObject = GroupManager:getSingleton().Map[toObject[1]]
+					elseif toObject[1] == "faction" then
+						targetObject = FactionManager:getSingleton().Map[toObject[2]]
+					elseif toObject[1] == "company" then
+						targetObject = CompanyManager:getSingleton().Map[toObject[2]]
+					elseif toObject[1] == "group" then
+						targetObject = GroupManager:getSingleton().Map[toObject[2]]
 					else
-						error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[2]))	
+						error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
 					end
 					toBank = toObject[3]
 				end
 			end
 
-			if not targetObject.m_Id then
+			if not instanceof(targetObject, BankAccount) and not targetObject.m_Id then
 				error("BankAccount.transferMoney @ Target is missing")
 			end
 			
 			isPlayer = instanceof(targetObject, DatabasePlayer)
 
-			if self:getMoney() < amount then
+			if self:getMoney() < amount and not self.m_Negative then
 				return false
 			end
 
@@ -183,7 +193,11 @@ function BankAccount:transferMoney(toObject, amount, reason, silent, category, s
 					targetObject:giveMoney(amount, reason)
 				end
 			else
-					targetObject:giveMoney(amount, reason, silent)
+					if targetObject.giveMoney then
+						targetObject:giveMoney(amount, reason, silent)
+					else
+						targetObject:addMoney(amount, reason, silent)
+					end
 			end
 
 			if offlinePlayer then
