@@ -159,7 +159,9 @@ function Core:constructor()
 		BindManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
-
+		
+		WareManager:new(1736.53, -1270.35, 13.54)
+		
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")

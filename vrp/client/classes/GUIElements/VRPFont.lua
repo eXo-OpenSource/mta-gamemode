@@ -129,3 +129,14 @@ Fonts = {
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
 	Digital = "files/fonts/digital-7.ttf",
 }
+
+local FontMario = {}
+function FontMario256(height)
+	local fontsize = math.floor(height/2)
+	if not FontMario[fontsize] then
+		FontMario[fontsize] = dxCreateFont("files/fonts/SuperMario256.ttf", fontsize)
+	end
+
+	return FontMario[fontsize]
+end
+
