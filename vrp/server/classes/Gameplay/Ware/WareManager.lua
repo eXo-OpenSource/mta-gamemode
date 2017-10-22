@@ -12,10 +12,9 @@ WareManager.Map = {}
 local MAX_PLAYERS_PER_WARE = 12
 
 function WareManager:constructor( x,y,z )
-	self.m_Pickup = createPickup(x, y, z, 3, 1239,0) --1736.53, -1270.35, 13.54
+	self.m_Pickup = createPickup(x, y, z, 3, 1313,0) --1736.53, -1270.35, 13.54
 	self.m_Pos = {x, y, z}
 	addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:refreshGUI"}
-	
 	addEventHandler("Ware:tryJoinLobby", root, bind(self.Event_onTryJoinLobby, self))
 	addEventHandler("Ware:refreshGUI", root, bind(self.Event_refreshGUI, self))
 	for i = 1, 5 do 

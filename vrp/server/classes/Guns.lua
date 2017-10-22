@@ -145,7 +145,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 			destroyElement(source.ped_deadDouble)
 		end
 	end
-	if not source:getData("isInDeathMatch") then
+	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
 		source:setReviveWeapons()
 
 		local pos = source:getPosition()

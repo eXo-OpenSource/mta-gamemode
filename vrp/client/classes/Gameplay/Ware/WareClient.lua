@@ -52,9 +52,12 @@ function WareClient:OnJoinWare( gamespeed )
 	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 244)
 	self:toggleEnvironementSettings(true)
 	setPedWalkingStyle(localPlayer, 125)
+	setPlayerHudComponentVisible("area_name", false)
+	setPlayerHudComponentVisible("vehicle_name", false)
+	HUDUI:getSingleton():setEnabled(false)
 end
 
-function WareClient:OnLeaveWare()
+function WareClient:OnLeaveWare(gamespeed)
 	self:toggleEnvironementSettings(false)
 	if WareRoundGUI.Current then 
 		WareRoundGUI.Current:delete()
@@ -62,7 +65,12 @@ function WareClient:OnLeaveWare()
 	if self.m_WareDisplay then 
 		self.m_WareDisplay:delete()
 	end
+	setPedWalkingStyle(localPlayer, 0)
+	setGameSpeed(gamespeed)
 	removeEventHandler("onClientRender", root, self.m_RendBind)
+	setPlayerHudComponentVisible("area_name", true)
+	setPlayerHudComponentVisible("vehicle_name", true)
+	HUDUI:getSingleton():setEnabled(true)
 end
 
 function WareClient:toggleEnvironementSettings( bool )

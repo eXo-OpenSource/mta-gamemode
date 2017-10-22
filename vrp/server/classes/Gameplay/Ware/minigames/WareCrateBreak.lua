@@ -11,7 +11,7 @@ WareCrateBreak.timeScale = 1
 addEvent("onCrateDestroyed",true)
 local allowedWeapons = 
 {
-	0,9,25,31,35,38,18,
+	0,9,25,31,35,38,
 }
 
 function WareCrateBreak:constructor( super )

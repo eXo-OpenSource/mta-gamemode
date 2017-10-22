@@ -37,6 +37,7 @@ function Ware:constructor( dimension )
 		WareGuess,
 		WareStayTop,
 		WareRamp,
+		WareMurder,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
@@ -46,6 +47,7 @@ function Ware:constructor( dimension )
 	self.m_AfterRound = bind(self.afterRound, self)
 	self.m_startRound = bind(self.startRound, self)
 	self:startRound()
+	self.m_Gamespeed = getGameSpeed()
 	Player.getChatHook():register(bind(self.onPlayerChat, self))
 
 end
@@ -166,6 +168,7 @@ function Ware:joinPlayer( player )
 		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/waretex.png", "sam_camo", 3095)
 		self:spawnWarePlayer(player)
 		player.bInWare = self
+		player:setData("inWare", true)
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
 	end
@@ -186,8 +189,9 @@ function Ware:leavePlayer( player )
 	if key then
 		table.remove(self.m_Players, key)
 		player.bInWare = false
-		player:triggerEvent("onClientWareLeave")
+		player:triggerEvent("onClientWareLeave", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
+		player:setData("inWare", false)
 	end
 end
 

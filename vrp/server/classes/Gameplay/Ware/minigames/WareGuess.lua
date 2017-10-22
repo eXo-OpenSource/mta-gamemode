@@ -40,6 +40,7 @@ function WareGuess:spawnCars()
 		ry = y + height*0.2 + ry
 		self.m_Cars[#self.m_Cars+1] = createVehicle(WareGuess.vehicleIds[randomVehicle], rx, ry, z+rz )
 		setVehicleDamageProof(self.m_Cars[#self.m_Cars], true)
+		setElementDimension(self.m_Cars[#self.m_Cars], self.m_Super.m_Dimension)
 	end
 	self.m_RightAnswer = randomNumber
 end

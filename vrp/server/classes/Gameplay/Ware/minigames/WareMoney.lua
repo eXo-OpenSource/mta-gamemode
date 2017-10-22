@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 WareMoney = inherit(Object)
-WareMoney.modeDesc = "Sammel 6000 Dollar ein!"
+WareMoney.modeDesc = "Sammle 6000 Dollar ein!"
 WareMoney.time = 1
 
 function WareMoney:constructor( super )
@@ -23,7 +23,7 @@ end
 function WareMoney:createMoneyAround()
 	if self.m_Super.m_Arena then 
 		local x,y,z,width,height = unpack(self.m_Super.m_Arena)
-		local moneyAmount = math.floor(#self.m_Super.m_Players / 2)
+		local moneyAmount = #self.m_Super.m_Players
 		if moneyAmount == 0 then 
 			moneyAmount = 1
 		end

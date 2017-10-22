@@ -35,7 +35,7 @@ function WareCarJack:createCar()
 			self.m_Cars = {}
 			if carAmount == 0 then carAmount = 1 end
 			for i = 1, carAmount do 
-				self.m_Cars[i] = createVehicle(randCar,x+5+math.random(0,width-10), y+5+math.random(0,height-10), z+3)
+				self.m_Cars[i] = TemporaryVehicle.create(randCar,x+5+math.random(0,width-10), y+5+math.random(0,height-10), z+3)
 				setElementDimension(self.m_Cars[i], self.m_Super.m_Dimension)
 				self.m_Cars[i]:setEngineState(true)
 			end
@@ -55,6 +55,6 @@ function WareCarJack:destructor()
 		end
 	end
 	for i = 1, #self.m_Cars do 
-		destroyElement(self.m_Cars[i])
+		if isElement(self.m_Cars[i]) then self.m_Cars[i]:destroy() end
 	end
 end
