@@ -914,8 +914,6 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
-	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
-
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
 	<file src="files/images/Chess/Bishop.png" />

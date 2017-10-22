@@ -21,7 +21,7 @@ function WareGUI:constructor( tbl )
 	self.m_LobbyGrid:addColumn(_"Spieler", 0.5)
 	
 
-	self.m_RefreshButton = VRPButton:new(self.m_Width*0.5-self.m_Width*0.3, self.m_Height-self.m_Height*0.18, self.m_Width*0.6, self.m_Height*0.07, _"Aktualisieren", true, self.m_Window):setBarColor(Color.Green)
+	self.m_RefreshButton = GUIButton:new(self.m_Width*0.5-self.m_Width*0.3, self.m_Height-self.m_Height*0.18, self.m_Width*0.6, self.m_Height*0.07, _"Aktualisieren", self.m_Window)
 	self.m_RefreshButton.onLeftClick = bind(self.refreshAll, self)
 
 	setElementFrozen(localPlayer, true)
