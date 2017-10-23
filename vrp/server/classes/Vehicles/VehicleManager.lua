@@ -499,8 +499,8 @@ function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
 				curVel = veh:getSpeed()
 			end
 			local mass = veh:getHandling()["mass"]
-			
-			local cons = ((curVel/50 * veh:getFuelConsumptionMultiplicator()) + mass/5000) --basic consumption based on speed and mass (in liter)
+			local consumptionMultiplicator = veh:getFuelConsumptionMultiplicator() or 1 -- returns boolean for temporaryVehicles
+			local cons = ((curVel/50 * consumptionMultiplicator) + mass/5000) --basic consumption based on speed and mass (in liter)
 
 			veh:setFuel(veh:getFuel() - cons/veh:getFuelTankSize()*100)
 			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass) 

@@ -160,7 +160,7 @@ function Core:constructor()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 		
-		WareManager:new(1736.53, -1270.35, 13.54)
+		WareManager:new(930.67, -1072.61, 24.38)
 		
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
