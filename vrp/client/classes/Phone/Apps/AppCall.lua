@@ -306,9 +306,10 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
-					self.m_InCall = false
-					self.m_Caller = false
 				end
+				
+				self.m_InCall = false
+				self.m_Caller = false
 			end, 3000, 1
 		)
 	elseif resultType == CALL_RESULT_REPLACE then
@@ -321,9 +322,10 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
-					self.m_InCall = false
-					self.m_Caller = false
 				end
+				
+				self.m_InCall = false
+				self.m_Caller = false
 			end, 3000, 1
 		)
 	elseif resultType == CALL_RESULT_CALLING then
