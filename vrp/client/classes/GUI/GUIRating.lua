@@ -50,12 +50,16 @@ end
 
 function GUIRating:onRating(star)
 	if self.m_Rated then return end
-	self:onStarHover(star)
-	self.m_Rated = star
+	self:setRating(star)
 
 	if self.onChange then
 		self.onChange(self.m_Rated)
 	end
+end
+
+function GUIRating:setRating(star)
+	self:onStarHover(star)
+	self.m_Rated = star
 end
 
 function GUIRating:reset()

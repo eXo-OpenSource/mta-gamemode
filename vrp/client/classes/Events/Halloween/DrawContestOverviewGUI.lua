@@ -14,7 +14,7 @@
 DrawContestOverviewGUI = inherit(GUIForm)
 inherit(Singleton, DrawContestOverviewGUI)
 
-addRemoteEvents{"drawContestReceivePlayers"}
+addRemoteEvents{"drawContestReceivePlayers", "drawingContestReceiveVote"}
 
 function DrawContestOverviewGUI:constructor()
 	GUIWindow.updateGrid()
@@ -39,15 +39,19 @@ function DrawContestOverviewGUI:constructor()
 
 	self:showInfoText("eXo-Reallife Halloween Zeichen-Wettbewerb!\nMale ein Bild zum angegeben Thema.\n(Jeder User darf nur ein Bild pro Thema einsenden)\nEinem Tag nach Einsendeschluss können User das Bild bewerten.\nZu Gewinnen gibt es bei jedem Wettbewerb 15 eXo-Dollar!")
 
-	self.m_Rating = GUIGridRating:new(6, 12, 5, 1, 5, self.m_Window)
+	self.m_RatingLabel = GUIGridLabel:new(6, 12, 3, 1, "Deine Bewertung:", self.m_Window)
+	self.m_Rating = GUIGridRating:new(9, 12, 5, 1, 5, self.m_Window)
 	self.m_Rating.onChange = function(ratingValue)
 		QuestionBox:new(_("Möchtest du das Bild von %s mit %d Stern/en bewerten?", self.m_SelectedPlayerName, ratingValue),
 		function() triggerServerEvent("drawContestRateImage", localPlayer, self.m_SelectedPlayerId, ratingValue) end,
 		function() self.m_Rating:reset() end
 	)
 	end
+	self.m_RatingAdmin = GUIGridLabel:new(15, 12, 10, 1, "", self.m_Window):setAlignX("right")
 
+	self.m_RatingLabel:setVisible(false)
 	self.m_Rating:setVisible(false)
+	self.m_RatingAdmin:setVisible(false)
 
 	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
 	self.m_AddDrawBtn:setVisible(false)
@@ -60,6 +64,9 @@ function DrawContestOverviewGUI:constructor()
 
 	triggerServerEvent("drawContestRequestPlayers", localPlayer)
 	addEventHandler("drawContestReceivePlayers", root, bind(self.onReceivePlayers, self))
+	addEventHandler("drawingContestReceiveVote", root, bind(self.onReceiveVote, self))
+
+
 end
 
 function DrawContestOverviewGUI:showInfoText(text)
@@ -95,7 +102,9 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 
 	if self.m_ContestType == "draw" then
 		self.m_AddDrawBtn:setVisible(true)
+		self.m_RatingLabel:setVisible(false)
 		self.m_Rating:setVisible(false)
+		self.m_RatingAdmin:setVisible(false)
 	else
 		self.m_AddDrawBtn:setVisible(false)
 	end
@@ -109,16 +118,26 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 				self.m_SelectedPlayerName = name
 				self.m_SelectedPlayerId = id
 				self.m_Skribble:clear(true)
+				self.m_RatingLabel:setVisible(false)
 				self.m_Rating:setVisible(false)
+				self.m_RatingAdmin:setVisible(false)
+				self.m_Rating:reset()
 				self:showInfoText("Das Bild wird geladen...")
 				localPlayer.LastRequest = true
+				triggerServerEvent("drawContestRequestRating", localPlayer, id, contestName)
 				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
 			end
 		end
 	end
+end
 
+function DrawContestOverviewGUI:onReceiveVote(rating, admin)
+	self.m_Rating:setRating(rating)
+	if admin then
+		self.m_RatingAdmin:setText(admin)
+	end
 end
 
 function DrawContestOverviewGUI:onReceiveImage(drawData)
@@ -127,6 +146,10 @@ function DrawContestOverviewGUI:onReceiveImage(drawData)
 	self.m_Skribble:drawSyncData(fromJSON(drawData))
 
 	if self.m_ContestType == "vote" then
+		self.m_RatingLabel:setVisible(true)
 		self.m_Rating:setVisible(true)
+		if localPlayer:getRank() >= RANK.Moderator then
+			self.m_RatingAdmin:setVisible(true)
+		end
 	end
 end

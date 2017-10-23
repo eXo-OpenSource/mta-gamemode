@@ -29,11 +29,12 @@ DrawContest.Events = {
 }
 
 function DrawContest:constructor()
-	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage"}
+	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage", "drawContestRequestRating"}
 
 
 	addEventHandler("drawContestRequestPlayers", root, bind(self.requestPlayers, self))
 	addEventHandler("drawContestRateImage", root, bind(self.rateImage, self))
+	addEventHandler("drawContestRequestRating", root, bind(self.requestRating, self))
 end
 
 function DrawContest:getCurrentEvent()
@@ -91,6 +92,24 @@ function DrawContest:rateImage(userId, rating)
 	client:sendSuccess("Du hast das Bild erfolgreich bewertet!")
 end
 
+function DrawContest:requestRating(userId)
+	local contestName, contestType = self:getCurrentEvent()
+	if not contestName then return end
+	if not contestType == "vote" then return end
+	local admin = false
+	local votes = self:getVotes(userId, contestName)
+
+	if client:getRank() >= RANK.Moderator then
+		local votesCount = table.size(votes)
+		local votesSum = 0
+		for id, rating in pairs(votes) do votesSum = votesSum + rating end
+		admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
+	end
+
+	if votes[client:getId()] then
+		client:triggerEvent("drawingContestReceiveVote", votes[client:getId()], admin)
+	end
+end
 
 
 
