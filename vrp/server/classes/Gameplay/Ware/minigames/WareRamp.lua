@@ -31,7 +31,7 @@ function WareRamp:createRamp()
 	self.m_Col:setDimension(self.m_Super.m_Dimension)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if hitElement and isElement(hitElement) and hitElement:getType() == "player" and dim then
-			if hitElement.vehicle and hitElement.vehicle:getModel() == 468 then
+			if hitElement.vehicle and isElement(hitElement.vehicle) and hitElement.vehicle:getModel() == 468 then
 				setTimer(function(player)
 					self.m_Super:addPlayerToWinners(player)
 					player.vehicle:destroy()
