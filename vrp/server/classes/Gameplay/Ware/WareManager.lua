@@ -12,12 +12,12 @@ WareManager.Map = {}
 local MAX_PLAYERS_PER_WARE = 12
 
 function WareManager:constructor( x,y,z )
-	self.m_Pickup = createPickup(x, y, z, 3, 1313,0) --1736.53, -1270.35, 13.54
+	--self.m_Pickup = createPickup(x, y, z, 3, 1313,0) --1736.53, -1270.35, 13.54
 	self.m_Pos = {x, y, z}
-	addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:refreshGUI"}
+	addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:refreshGUI", "Ware:onPedClick"}
 	addEventHandler("Ware:tryJoinLobby", root, bind(self.Event_onTryJoinLobby, self))
 	addEventHandler("Ware:refreshGUI", root, bind(self.Event_refreshGUI, self))
-	for i = 1, 5 do 
+	for i = 1, 5 do
 		WareManager.Map[#WareManager.Map+1] = Ware:new(i)
 	end
 	PlayerManager:getSingleton():getWastedHook():register(
@@ -36,8 +36,11 @@ function WareManager:constructor( x,y,z )
 		end
 	)
 
-	addEventHandler("onPickupHit",self.m_Pickup, bind(self.Event_onPickupHit, self))
+	--addEventHandler("onPickupHit",self.m_Pickup, bind(self.Event_onPickupHit, self))
 	addEventHandler("Ware:tryLeaveLobby", root , bind(self.Event_onLeaveLobby, self))
+	addEventHandler("Ware:onPedClick", root , bind(self.Event_onPedClick, self))
+
+
 end
 
 function WareManager:Event_refreshGUI()
@@ -47,7 +50,7 @@ function WareManager:Event_refreshGUI()
 	end
 end
 
-function WareManager:Event_onLeaveLobby( isServerStop)	
+function WareManager:Event_onLeaveLobby( isServerStop)
 	if not client then return end
 	local player = client
 	if player.bInWare then
@@ -74,7 +77,7 @@ function WareManager:Event_onLeaveLobby( isServerStop)
 end
 
 
-function WareManager:leaveLobby( player, isServerStop)	
+function WareManager:leaveLobby( player, isServerStop)
 	if player.bInWare then
 		if isElement(player) then
 			player.bInWare:leavePlayer(player)
@@ -100,9 +103,9 @@ end
 
 
 function WareManager:Event_onTryJoinLobby( id )
-	if client then 
-		if WareManager.Map[id] then 
-			if #WareManager.Map[id]:getPlayers() < MAX_PLAYERS_PER_WARE then 
+	if client then
+		if WareManager.Map[id] then
+			if #WareManager.Map[id]:getPlayers() < MAX_PLAYERS_PER_WARE then
 				self.Map[id]:joinPlayer( client )
 			end
 		end
@@ -116,6 +119,9 @@ function WareManager:Event_onPickupHit( player )
 	end
 end
 
+function WareManager:Event_onPedClick()
+	client:triggerEvent("Ware:wareOpenGUI", WareManager.Map)
+end
 
 
 function WareManager:destructor()

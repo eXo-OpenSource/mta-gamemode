@@ -1,10 +1,12 @@
 Halloween = inherit(Singleton)
 
 function Halloween:constructor()
-	local ped = Ped.create(181, Vector3(1487.88, -1710.87, 14.05), 90)
+	--Drawing Contest
+
+	local ped = Ped.create(151, Vector3(906.59998, -1065.7, 24.8), 270)
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
-	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Zeichen-Contest")
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Zeichen-Wettbewerb")
 	ped.SpeakBubble:setBorderColor(Color.Orange)
 	ped.SpeakBubble:setTextColor(Color.Orange)
 	setElementData(ped, "clickable", true)
@@ -15,11 +17,29 @@ function Halloween:constructor()
 		end
 	)
 
+
+	--Ware Ped
+	local ped = Ped.create(68, Vector3(934.79999, -1070.5, 25), 118)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Ware-Games")
+	ped.SpeakBubble:setBorderColor(Color.Orange)
+	ped.SpeakBubble:setTextColor(Color.Orange)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			triggerServerEvent("Ware:onPedClick", localPlayer)
+		end
+	)
+
+	--    <ped id="ped (5)" dimension="0" model="77" interior="0" rotZ="160.003" alpha="255" posX="833.40002" posY="-1112.1" posZ="24.2" rotX="0" rotY="0"></ped>
+	--    <ped id="ped (1)" dimension="0" model="264" interior="0" rotZ="268.496" frozen="false" alpha="255" posX="813.40002" posY="-1103.1" posZ="25.8" rotX="0" rotY="0"></ped>
+
 	HalloweenSign:new()
 	HalloweenSpookyScreen:new()
-	
-	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
 
+	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
 end
 
 HalloweenSign = inherit(GUIForm3D)
@@ -77,7 +97,7 @@ function HalloweenSpookyScreen:onStreamIn(surface)
 		surface.draw = function()
 			draw(surface)
 			if not self.m_Muted then
-				local vol = 1 - (getDistanceBetweenPoints3D(self.m_Position, localPlayer.position)/self.m_StreamDistance) 
+				local vol = 1 - (getDistanceBetweenPoints3D(self.m_Position, localPlayer.position)/self.m_StreamDistance)
 				self.m_WebView:setVolume(vol/2)--max it to 0.5
 			else
 				self.m_WebView:setVolume(0)

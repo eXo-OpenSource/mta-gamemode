@@ -25,14 +25,26 @@ function Halloween:constructor()
 			Halloween:getSingleton():checkForTTScream(player, text)
 		end
 	)
+
+	local romero = TemporaryVehicle.create(442, 937.79999, -1120.6, 23.8, 24)
+	romero:setColor(0, 0, 0)
+	romero:setFrozen(true)
+    romero:setLocked(true)
+	romero:setVariant(255, 255)
+	romero:setMaxHealth(2000, true)
+	romero:setBulletArmorLevel(2)
+	romero:setRepairAllowed(false)
+	romero:toggleRespawn(false)
+	romero:setAlwaysDamageable(true)
+	romero.m_DisableToggleHandbrake = true
 end
 
 function Halloween:initTTPlayer(pId)
-	if not self.m_TrickOrTreatPIDs[pId] then 
+	if not self.m_TrickOrTreatPIDs[pId] then
 		self.m_TrickOrTreatPIDs[pId] = {
 			visitedHouses = {},
 			lastVisited = 0,
-		} 
+		}
 	end
 end
 
@@ -76,7 +88,7 @@ end
 function Halloween:checkForTTScream(player, text)
 	local pId = player:getId()
 	if player.vehicle or player:getPrivateSync("isAttachedToVehicle") then return end
-	
+
 	self:initTTPlayer(pId)
 	local d = self.m_TrickOrTreatPIDs[pId]
 	if text:lower():gsub("ß", "ss"):find("süsses oder saures") then
@@ -100,7 +112,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 				if d.currentHouseId == houseId then
 					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(pl) then
 						if d.lastMessage and d.lastMessage >= d.trickStarted and (getTickCount() - d.lastVisited) > 30000 then
-							if ownerAtHome then 
+							if ownerAtHome then
 								local rnd = math.random(1, math.min(5, pCount))
 								pl:getInventory():giveItem("Suessigkeiten", rnd)
 								pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
@@ -110,7 +122,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 							end
 							d.visitedHouses[houseId] = getTickCount()
 							d.lastVisited = getTickCount()
-						end		
+						end
 					else
 						pl:sendWarning(_("Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!", pl))
 					end
