@@ -159,7 +159,15 @@ SHOP_TYPES = {
 		["Ped"] = {158, Vector3(2379.84, -1984.17, 13.56), 180},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = Ammunation
+	},
+	[23] = {
+		["Name"] = "Halloween Shop",
+		["Marker"] = Vector3(939.81, -1108.97, 23.3),
+		["Ped"] = {205, Vector3(938.5, -1111.2, 24.2), 325.755},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop
 	}
+
 }
 
 SHOP_ITEMS = {
@@ -212,6 +220,10 @@ SHOP_ITEMS = {
 		["Kühlbox"] = 250,
 		--["Köder"] = 5,
 	};
+	["Halloween Shop"] = {
+		["Kuheuter mit Pommes"] = 25,
+		["Zombie-Burger"] = 15,
+	}
 }
 
 SHOP_OWNER_TYPES = {

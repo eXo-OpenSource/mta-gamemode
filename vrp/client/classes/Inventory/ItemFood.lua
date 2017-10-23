@@ -17,6 +17,19 @@ addEventHandler("smokeEffect", root, function(item)
 	end
 end)
 
+addEvent("bloodFx", true)
+addEventHandler("bloodFx", root, function(item)
+	if isElement(source) then
+		setTimer(
+			function(player)
+				local pos = player.position
+				fxAddBlood(pos.x, pos.y, pos.z+0.6, 0, 0, 0, 150, 1)
+			end, 100, 40, source
+		)
+
+	end
+end)
+
 function ItemFood.attachEffect(effect, element)
 	ItemFood.attachedEffects[effect] = {effect = effect, element = element}
 	addEventHandler("onClientElementDestroy", effect, function()
