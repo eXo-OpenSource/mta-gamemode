@@ -32,7 +32,8 @@
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
-
+	
+	<map src="events/halloween.map" />
 
 	<!--fixes-->
 	<map src="mapfixes/CrackPalace.map" />
