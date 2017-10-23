@@ -932,7 +932,7 @@
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
 	<!-- ware-gamemode -->
-	<vrpfile src="files/images/Textures/Ware/waretex.png"/>
+	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
 	<vrpfile src="files/images/Textures/Ware/bomb.png"/>
 	<vrpfile src="files/images/Textures/Ware/fuse.png"/>
 	<vrpfile src="files/images/Textures/Ware/fire.png"/>

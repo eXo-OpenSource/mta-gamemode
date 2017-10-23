@@ -110,6 +110,7 @@ function Ware:isPlayerWinner( player )
 end
 
 function Ware:afterRound()
+	local endGame = false
 	self.m_RoundCount = self.m_RoundCount + 1
 	if self.m_RoundCount > 10 and self.m_RoundCount < 20 then
 		self.m_Gamespeed = 2
@@ -118,6 +119,7 @@ function Ware:afterRound()
 	elseif self.m_RoundCount >= 30 then
 		self.m_RoundCount = 0
 		self.m_Gamespeed = 1
+		endGame = true
 	end
 	if self.m_CurrentMode then
 		local modeDesc = self.m_CurrentMode.modeDesc
@@ -143,10 +145,16 @@ function Ware:afterRound()
 			setPedOnFire(player, false)
 			setElementHealth(player, 100)
 			player:triggerEvent("onClientWareChangeGameSpeed", self.m_Gamespeed)
-			player:triggerEvent("onClientWareRoundEnd", points, winners, losers, modeDesc)
+			player:triggerEvent("onClientWareRoundEnd", points, winners, losers, modeDesc, endGame)
 		end
 	end
 	setTimer(self.m_startRound, Ware.afterRoundTime, 1)
+end
+
+function Ware:resetRound()
+	for k, player in ipairs( self.m_Players ) do
+		player:setData("Ware:roundsWon",  0	)
+	end
 end
 
 function Ware:getLosers()
@@ -165,7 +173,7 @@ function Ware:joinPlayer( player )
 	if not self:isPlayer(player) then
 		table.insert(self.m_Players, player)
 		player:setData("Ware:roundsWon",0)
-		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/waretex.png", "sam_camo", 3095)
+		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/Ware/waretex.jpg", "sam_camo", 3095)
 		self:spawnWarePlayer(player)
 		player.bInWare = self
 		player:setData("inWare", true)
@@ -181,7 +189,7 @@ function Ware:spawnWarePlayer(player)
 	setElementDimension(player, self.m_Dimension)
 	setCameraTarget(player, player)
 	setElementAlpha(player,255)
-	setElementModel(player, 244)
+	setElementModel(player, 18)
 end
 
 function Ware:leavePlayer( player )
@@ -192,6 +200,7 @@ function Ware:leavePlayer( player )
 		player:triggerEvent("onClientWareLeave", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
 		player:setData("inWare", false)
+		player:setData("Ware:roundsWon",  0)
 	end
 end
 

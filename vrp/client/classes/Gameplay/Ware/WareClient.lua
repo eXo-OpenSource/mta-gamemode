@@ -10,6 +10,7 @@ WareClient = inherit(Singleton)
 local w,h = guiGetScreenSize()
 local showDesc = false
 local showBest = false
+local showWinner = false
 addRemoteEvents{"onClientWareRoundStart","onClientWareRoundEnd","onClientWareJoin","onClientWareLeave", "onClientWareChangeGameSpeed","onClientWareSuceed", "onClientWareFail"}
 function WareClient:constructor()
 	addEventHandler("onClientWareJoin", localPlayer,bind(self.OnJoinWare,self))
@@ -19,13 +20,11 @@ function WareClient:constructor()
 	addEventHandler("onClientWareChangeGameSpeed", localPlayer,bind(self.Event_GameSpeedChange,self))
 	addEventHandler("onClientWareSuceed", localPlayer,bind(self.Event_OnSuceed,self))
 	addEventHandler("onClientWareFail", localPlayer,bind(self.Event_OnFail,self))
-	self.m_RendBind = bind(self.Event_OnRender,self)
-	addEventHandler("onClientRender", root, self.m_RendBind)
 	self.m_Font = FontMario256(h*0.05)
 	self.m_FontSmall = FontMario256(h*0.03)
 	self.m_StartTick = getTickCount()
 	self.m_EndTick = self.m_StartTick+1000
-
+	self.m_RendBind = bind(self.Event_OnRender,self)
 	self.m_WareJump = WareJump:new()
 	self.m_WareDuck = WareDuck:new()
 	self.m_WareKeepMove = WareKeepMove:new()
@@ -48,13 +47,19 @@ end
 
 function WareClient:OnJoinWare( gamespeed )
 	self.m_Gamespeed = gamespeed or 1
-	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 244)
-	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 244)
+	CustomModelManager:getSingleton():loadImportTXD("files/models/waluigi.txd", 18)
+	CustomModelManager:getSingleton():loadImportDFF("files/models/waluigi.dff", 18)
 	self:toggleEnvironementSettings(true)
 	setPedWalkingStyle(localPlayer, 125)
 	setPlayerHudComponentVisible("area_name", false)
 	setPlayerHudComponentVisible("vehicle_name", false)
 	HUDUI:getSingleton():setEnabled(false)
+	removeEventHandler("onClientRender", root, self.m_RendBind)
+	addEventHandler("onClientRender", root, self.m_RendBind)
+	if self.m_WareDisplay then 
+		self.m_WareDisplay:delete()
+	end
+	self.m_WareDisplay = WareHUD:new()
 end
 
 function WareClient:OnLeaveWare(gamespeed)
@@ -66,11 +71,13 @@ function WareClient:OnLeaveWare(gamespeed)
 		self.m_WareDisplay:delete()
 	end
 	setPedWalkingStyle(localPlayer, 0)
-	setGameSpeed(gamespeed)
+	setGameSpeed(1)
 	removeEventHandler("onClientRender", root, self.m_RendBind)
 	setPlayerHudComponentVisible("area_name", true)
+	CustomModelManager:getSingleton():restoreModel(18)
 	setPlayerHudComponentVisible("vehicle_name", true)
 	HUDUI:getSingleton():setEnabled(true)
+	showChat(true)
 end
 
 function WareClient:toggleEnvironementSettings( bool )
@@ -93,15 +100,17 @@ function WareClient:Event_RoundStart( desc, duration )
 	self.m_ShowDesc = desc
 	showDesc = true
 	showBest = false
+	showWinner = false
 	self.m_TopList = false
 	self.m_WareDisplay:displayRoundTime( duration )
 end
 
-function WareClient:Event_RoundEnd( bestList, winner, losers, desc)
+function WareClient:Event_RoundEnd( bestList, winner, losers, desc, announceWinner)
 	showDesc = false
 	self.m_ShowDesc = false
 	self.m_TopList = bestList
 	showBest = true
+	showWinner = announceWinner
 	self.m_RoundSound = playSound("files/audio/Ware/kahoot.ogg")
 	setSoundSpeed(self.m_RoundSound, self.m_Gamespeed)
 	self.m_WareDisplay:stopRoundTime( )
@@ -109,7 +118,7 @@ function WareClient:Event_RoundEnd( bestList, winner, losers, desc)
 		WareRoundGUI.Current = WareRoundGUI:new(winner, losers, desc)
 	else
 		delete(WareRoundGUI:getSingleton())
-		WareRoundGUI.Current = WareRoundGUI:new(winner, losers, desc)
+		WareRoundGUI.Current = WareRoundGUI:new(winner, losers, desc )
 	end
 end
 
@@ -145,6 +154,10 @@ function WareClient:RenderBestList(rot)
 					end
 				end
 			end
+		end
+		if showWinner then 
+			dxDrawText("Game Over!", 0, 0, w, h+1, tocolor(0, 0, 0, 255), 1, self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
+			dxDrawText("Game Over!", 0, 0, w, h, tocolor(200, 0, 0, 255), 1, self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
 		end
 	end
 end
