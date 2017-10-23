@@ -140,6 +140,7 @@
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemPumpkin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 
@@ -1897,6 +1898,12 @@
 	<file src="files/models/easter_egg.dff" />
 	<file src="files/models/easter_egg.col" />
 	<!-- Easter Event End-->
+
+	<!-- Halloween Event Start-->
+	<file src="files/models/pumpkin.txd" />
+	<file src="files/models/pumpkin.dff" />
+	<!--<file src="files/models/pumpkin.col" />-->
+	<!-- Halloween Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
 	<vrpfile src="files/models/fbi.dff" />

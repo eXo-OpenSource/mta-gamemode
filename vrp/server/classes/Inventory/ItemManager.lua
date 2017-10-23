@@ -30,6 +30,7 @@ function ItemManager:constructor()
 		["Apfel"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
+		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
 
 		["Wuerfel"] = ItemDice,

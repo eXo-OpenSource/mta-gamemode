@@ -208,6 +208,11 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 
+	--self:loadImportCOL("files/models/pumpkin.col", 1935) - Todo @Toxsi
+	self:loadImportCOL("files/models/easter_egg.col", 1935)
+	self:loadImportTXD("files/models/pumpkin.txd", 1935)
+	self:loadImportDFF("files/models/pumpkin.dff", 1935)
+
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
 	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
