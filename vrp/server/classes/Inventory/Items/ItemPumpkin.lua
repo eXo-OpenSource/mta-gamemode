@@ -9,7 +9,7 @@ ItemPumpkin = inherit(Item)
 
 function ItemPumpkin:constructor()
 
-    self.m_Model = 1933
+    self.m_Model = 1935
 	self.m_Pumpkins = {}
 	WearableHelmet.objectTable["Kürbis"] = {1935, 0.1, 0, 0.8, 0, 180, "Kürbis", true}
 	--model, zOffset, yOffset, scale, rotX, rotZ
