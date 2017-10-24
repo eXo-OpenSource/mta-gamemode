@@ -2,7 +2,6 @@ MechanicTow = inherit(Company)
 addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicDetachFuelTank", "mechanicTakeFuelNozzle", "mechanicRejectFuelNozzle", "mechanicTakeVehicle", "mechanicOpenTakeGUI", "mechanicVehicleRequestFill", "mechanicAttachBike", "mechanicDetachBike"}
 
 function MechanicTow:constructor()
-	self:createTowLot()
 	self.m_PendingQuestions = {}
 
 	local safe = createObject(2332, 857.594, -1182.628, 17.569, 0, 0, 270)
