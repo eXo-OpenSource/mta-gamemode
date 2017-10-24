@@ -9,18 +9,18 @@ function MechanicTow:constructor()
 	safe:setScale(0.7)
 	self:setSafe(safe)
 
-	local x, y, z, rot
+	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
 
 	self.m_NonCollissionCols = {}
 	for index, pos in pairs(MechanicTow.SpawnPositions) do
-		x, y, z, rot = unpack(pos)
+		local x, y, z, rot = unpack(pos)
 		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
 		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
 	end
 
 	local blip = Blip:new("CarLot.png", 913.83, -1234.65, root, 400)
-		blip:setOptionalColor({150, 150, 150})
-		blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
+	blip:setOptionalColor({150, 150, 150})
+	blip:setDisplayText("Autohof", BLIP_CATEGORY.VehicleMaintenance)
 
 	local id = self:getId()
 	local blip = Blip:new("House.png", 857.594, -1182.628, {company = id}, 400, {companyColors[id].r, companyColors[id].g, companyColors[id].b})
@@ -29,6 +29,8 @@ function MechanicTow:constructor()
 	self.m_FillAccept = bind(MechanicTow.FillAccept, self)
 	self.m_FillDecline = bind(MechanicTow.FillDecline, self)
 
+	addEventHandler("onColShapeHit", self.m_TowColShape, bind(self.onEnterTowLot, self))
+	addEventHandler("onColShapeLeave", self.m_TowColShape, bind(self.onLeaveTowLot, self))
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
@@ -40,6 +42,8 @@ function MechanicTow:constructor()
 	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
 	addEventHandler("mechanicAttachBike", root, bind(self.Event_mechanicAttachBike, self))
 	addEventHandler("mechanicDetachBike", root, bind(self.Event_mechanicDetachBike, self))
+	addEventHandler("onTrailerAttach", root, bind(self.onAttachVehicleToTow, self))
+	addEventHandler("onTrailerDetach", root, bind( self.onDetachVehicleFromTow, self))
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 end
@@ -201,14 +205,6 @@ function MechanicTow:Event_mechanicTakeVehicle()
 
 	source:setPosition(x, y, z)
 	source:setRotation(0, 0, rotation)
-end
-
-function MechanicTow:createTowLot()
-	self.m_TowColShape = createColRectangle(861.296, -1258.862, 14, 17)
-	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
-	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
-	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
-	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self))
 end
 
 function MechanicTow:onEnterTowLot(hitElement)
@@ -420,7 +416,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
-		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or source.burned then
 			vehicle:toggleRespawn(false)
 			client.vehicle:setData("towingBike", vehicle, true)
 			vehicle:setData("towedByVehicle", client.vehicle, true)
