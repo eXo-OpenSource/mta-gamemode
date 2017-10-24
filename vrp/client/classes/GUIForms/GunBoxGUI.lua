@@ -37,8 +37,11 @@ function GunBoxGUI:constructor()
     self:addSlot(5, 320, 250)
     self:addSlot(6, 470, 250)
 
-    self.m_ToBox = GUIButton:new(275, 70, 30, 250, ">>", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1)
+    self.m_ToBox = GUIButton:new(275, 70, 30, 250, FontAwesomeSymbols.Right, self.m_Window)
     self.m_ToBox:setEnabled(false)
+    self.m_ToBox:setFont(FontAwesome(15)):setFontSize(1)
+    self.m_ToBox:setBarEnabled(false)
+    self.m_ToBox:setBackgroundColor(Color.Accent)
 
     self.m_ToBox.onLeftClick = function() self:ToBox() end
     self:loadPlayerWeapons()
@@ -55,7 +58,7 @@ function GunBoxGUI:addSlot(id, posX, posY)
     self.m_WeaponSlots[id].Image = GUIImage:new(posX+10, posY+15, 40, 40, "files/images/Other/noImg.png", self.m_Window)
     self.m_WeaponSlots[id].Label = GUILabel:new(posX+60, posY+5, 70, 20, self.ms_SlotsSettings["weapon"].emptyText, self.m_Window):setFontSize(1)
     self.m_WeaponSlots[id].Amount = GUILabel:new(posX+60, posY+25, 70, 20, "", self.m_Window):setFontSize(1)
-    self.m_WeaponSlots[id].TakeButton = GUIButton:new(posX+60, posY+45, 70, 20, "<<", self.m_Window):setFontSize(1):setBackgroundColor(self.ms_SlotsSettings["weapon"].btnColor)
+    self.m_WeaponSlots[id].TakeButton = GUIButton:new(posX+60, posY+45, 70, 20, FontAwesomeSymbols.Left, self.m_Window):setFont(FontAwesome(15)):setFontSize(1):setBackgroundColor(self.ms_SlotsSettings["weapon"].btnColor)
     self.m_WeaponSlots[id].TakeButton:setEnabled(false)
     self.m_WeaponSlots[id].TakeButton.onLeftClick = function() self:fromBox(id) end
 

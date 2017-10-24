@@ -17,7 +17,9 @@ GrowableManager.Types = {
 		["MaxSize"] = 20,
 		["Item"] = "Weed",
 		["Seed"] = "Weed-Samen",
-		["ItemPerSize"] = 1
+		["ItemPerSize"] = 1,
+		["TimesEarnedForDestroy"] = 1,
+		["Illegal"] = true
 	};
 	["Apfelbaum"] = {
 		["Object"] = 892,
@@ -29,7 +31,9 @@ GrowableManager.Types = {
 		["MaxSize"] = 20,
 		["Item"] = "Apfel",
 		["Seed"] = "Apfelbaum-Samen",
-		["ItemPerSize"] = 1
+		["ItemPerSize"] = 1,
+		["TimesEarnedForDestroy"] = 3,
+		["Illegal"] = false
 	};
 }
 GrowableManager.Map = {}
@@ -61,7 +65,7 @@ end
 function GrowableManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_plants", sql:getPrefix())
 	for i, row in pairs(result) do
-		GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered)
+		GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered, row.times_earned)
 	end
 end
 
@@ -87,11 +91,11 @@ end
 
 function GrowableManager:addNewPlant(type, position, owner)
 	local ts = getRealTime().timestamp
-	sql:queryExec("INSERT INTO ??_plants (Type, Owner, PosX, PosY, PosZ, Size, planted, last_grown, last_watered) VALUES (? , ? , ?, ?, ?, ?, ?, ?, ?)",
-	sql:getPrefix(), type, owner:getId(), position.x, position.y, position.z, 0, ts, ts, 0)
+	sql:queryExec("INSERT INTO ??_plants (Type, Owner, PosX, PosY, PosZ, Size, planted, last_grown, last_watered, times_earned) VALUES (? , ? , ?, ?, ?, ?, ?, ?, ?, ?)",
+	sql:getPrefix(), type, owner:getId(), position.x, position.y, position.z, 0, ts, ts, 0, 0)
 	StatisticsLogger:getSingleton():addPlantLog(owner, type)
 	local id = sql:lastInsertId()
-	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0)
+	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0, 0)
 	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 
@@ -115,24 +119,28 @@ function GrowableManager:getPlantNameFromSeed(seed)
 	return false
 end
 
-function GrowableManager:getClientCheck(seed, bool, z_pos )
+function GrowableManager:getClientCheck(seed, bool, z_pos, isUnderWater)
 	if bool then
 		if client:isOnGround() then
-			if not client.vehicle then
-				local plantName = self:getPlantNameFromSeed(seed)
-				if plantName then
-					local pos = client:getPosition()
-					client:giveAchievement(61)
-					client:getInventory():removeItem(seed, 1)
-					GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
+			if not client:isInWater() and not isUnderWater then
+				if not client.vehicle then
+					local plantName = self:getPlantNameFromSeed(seed)
+					if plantName then
+						local pos = client:getPosition()
+						client:giveAchievement(61)
+						client:getInventory():removeItem(seed, 1)
+						GrowableManager:getSingleton():addNewPlant(plantName, Vector3(pos.x, pos.y, z_pos), client)
+					else
+						client:sendError(_"Internal Error: Invalid Plant")
+					end
 				else
-					client:sendError("Internal Error: Invalid Plant")
+					client:sendError(_"Du sitzt in einem Fahrzeug!")
 				end
 			else
-				client:sendError("Du sitzt in einem Fahrzeug!")
+				client:sendError(_"Du bist im Wasser! Hier kannst du nichts pflanzen!")
 			end
 		else
-			client:sendError("Du bist nicht am Boden!")
+			client:sendError(_"Du bist nicht am Boden!")
 		end
 	else
 		client:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")

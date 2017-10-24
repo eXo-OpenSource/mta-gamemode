@@ -63,7 +63,7 @@ function BusRoutePlan:updateBusPositions()
     local _, baseY = self:getScrollPosition()
 
     for vehicle, line in pairs(PublicTransport:getSingleton():getActiveBusVehicles()) do 
-        if self.m_Line == line then
+        if self.m_Line == line and vehicle.controller then
             local name1, name2 = vehicle:getData("EPT:Bus_LastStopName"), vehicle:getData("EPT:Bus_NextStopName")
             if self.m_BusStationNames[name1] and self.m_BusStationNames[name2] then
                 local distToLast = getDistanceBetweenPoints3D(self.m_BusStationNames[name1][2], vehicle.position)

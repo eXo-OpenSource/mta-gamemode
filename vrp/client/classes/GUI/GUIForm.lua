@@ -100,7 +100,7 @@ function GUIForm:fadeIn(time)
 	for _, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
-				Animation.FadeAlpha:new(v, 750, 0, v:getAlpha() or 255)
+				Animation.FadeAlpha:new(v, 750, 0, 255)
 			end
 		end
 	end
@@ -159,7 +159,8 @@ GUIForm.AllowedKeys = {
 	["b"] = true, 			-- Toggle cursor on/off
 	["m"] = true, 			-- Turn music on/off in download screen
 	["pgup"] = true, 		-- scroll chatbox/debugscript
-	["pgdn"] = true			-- scroll chatbox/debugscript
+	["pgdn"] = true,		-- scroll chatbox/debugscript
+	["t"] = true,
 }
 
 GUIForm.keysEnabled = true

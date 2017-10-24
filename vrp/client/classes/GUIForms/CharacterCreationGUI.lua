@@ -22,13 +22,13 @@ function CharacterCreationGUI:constructor()
 	self.m_Options = {}
 	GUIForm.constructor(self, sw/3*2, sh/5, sw/4, sh/2)
 	self.m_Selector = GUIRectangle:new(0, sh*0.06, sw/4, sh/2-sh*0.06, tocolor(0, 0, 0, 128), self)
-	self.m_LoginButton 		= VRPButton:new(0, 0, sw/4, sh*0.06, "Erstelle deinen Charakter", true, self)
+	self.m_LoginButton = GUIButton:new(0, 0, sw/4, sh*0.06, "Erstelle deinen Charakter", self):setBarEnabled(true)
 	GUILabel:new(sw/4*0.05, sh/30*1, (sw/4), sh*0.01, "Dein Name", self.m_Selector):setAlign("left", "top"):setFont(VRPFont(sh*0.05))
 	GUILabel:new(sw/4*0.5,  sh/30*1, sw/4*0.5-sw/4*0.05, sh*0.01, "sbx320", self.m_Selector):setAlign("right", "top"):setFont(VRPFont(sh*0.05))
 	self.m_SkinLabel = GUILabel:new(sw/4*0.05, sh/30*2, (sw/4), sh*0.01, "Grundskin", self.m_Selector):setAlign("left", "top"):setFont(VRPFont(sh*0.05))
 	self.m_SkinIdLabel = GUILabel:new(sw/4*0.5,  sh/30*2, sw/4*0.5-sw/4*0.05, sh*0.01, "19", self.m_Selector):setAlign("right", "top"):setFont(VRPFont(sh*0.05))
 
-	self.m_PlayButton = VRPButton:new(sw/4*0.05, sh/2-sh*0.075, sw/4*0.9, sh*0.05, "Bestätigen", true, self)
+	self.m_PlayButton = GUIButton:new(sw/4*0.05, sh/2-sh*0.075, sw/4*0.9, sh*0.05, "Bestätigen", self):setBarEnabled(true)
 	self.m_PlayButton.onLeftClick = function()
 		local options = {}
 		for k, v in pairs(self.m_Options) do

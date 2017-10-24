@@ -12,32 +12,43 @@ MinigameGUI.Data = {
 	["ZombieSurvival"] = {
 		["title"] = HelpTextTitles.Minigames.ZombieSurvival,
 		["description"] = HelpTexts.Minigames.ZombieSurvival,
+		["highscore"] = true,
 		["image"] = "files/images/Minigames/ZombieSurvival.png",
 		["startFunction"] = function() triggerServerEvent("startZombieSurvival", localPlayer) end
 	},
 	["GoJump"] = {
 		["title"] = HelpTextTitles.Minigames.GoJump,
 		["description"] = HelpTexts.Minigames.GoJump,
+		["highscore"] = true,
 		["image"] = "files/images/Minigames/GoJump.png",
 		["startFunction"] = function() GoJump:new() end
 	},
 	["SideSwipe"] = {
 		["title"] = HelpTextTitles.Minigames.SideSwipe,
 		["description"] = HelpTexts.Minigames.SideSwipe,
+		["highscore"] = true,
 		["image"] = "files/images/Minigames/SideSwipe.png",
 		["startFunction"] = function() SideSwipe:new() end
 	},
 	["SniperGame"] = {
 		["title"] = HelpTextTitles.Minigames.SniperGame,
 		["description"] = HelpTexts.Minigames.SniperGame,
+		["highscore"] = true,
 		["image"] = "files/images/Minigames/SniperGame.png",
 		["startFunction"] = function() triggerServerEvent("startSniperGame", localPlayer) end
 	},
 	["2Cars"] = {
 		["title"] = HelpTextTitles.Minigames.TCars,
 		["description"] = HelpTexts.Minigames.TCars,
+		["highscore"] = true,
 		["image"] = "files/images/Minigames/2Cars.png",
 		["startFunction"] = function() TCars:new() end
+	},
+	["Roulette"] = {
+		["title"] = HelpTextTitles.Minigames.Roulette,
+		["description"] = HelpTexts.Minigames.Roulette,
+		["image"] = "files/images/Minigames/Roulette.png",
+		["startFunction"] = function() RouletteGUI:new() end
 	},
 }
 
@@ -50,18 +61,20 @@ function MinigameGUI:constructor(game)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, data["title"], true, true, self)
 	self.m_Image = GUIImage:new(10, 40, 300, 200, data["image"], self)
 	self.m_Description = GUILabel:new(320, 40, 270, 100, data["description"], self):setFont(VRPFont(24))
-	self.m_PlayButton = VRPButton:new(320, 175, 270, 30, _"Spielen", true, self):setBarColor(Color.Green)
-	self.m_HighscoreButton = VRPButton:new(320, 210, 270, 30, _"Highscore zeigen", true, self):setBarColor(Color.LightBlue)
 
+	self.m_PlayButton = GUIButton:new(320, 210, 270, 30, _"Spielen", self):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_PlayButton.onLeftClick = function()
 		data["startFunction"]()
 		delete(self)
 	end
-	self.m_HighscoreButton.onLeftClick = function()
-		HighscoreGUI:new(game)
-		delete(self)
-	end
 
+	if data["highscore"] then
+		self.m_HighscoreButton = GUIButton:new(320, 175, 270, 30, _"Highscore zeigen", self):setBackgroundColor(Color.LightBlue):setBarEnabled(true)
+		self.m_HighscoreButton.onLeftClick = function()
+			HighscoreGUI:new(game)
+			delete(self)
+		end
+	end
 end
 
 addEventHandler("showMinigameGUI", root,

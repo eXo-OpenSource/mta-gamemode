@@ -7,7 +7,7 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal)
+function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel)
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -54,6 +54,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
+	self:setFuel(fuel or 100)
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
@@ -94,7 +95,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
 	end
-	
+
 	if (self:getModel() == 432 or self:getModel() == 520 or self:getModel() == 425) and self.m_Faction:isStateFaction() then
 		addEventHandler("onVehicleStartEnter", self, function(player, seat)
 			if seat == 0 then
@@ -102,7 +103,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 					if player:getFaction().m_Id ~= 3 or player:getFaction():getPlayerRank(player) == 0 then
 						cancelEvent()
 					end
-				end 
+				end
 			end
 		end)
 	end
@@ -140,6 +141,7 @@ function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
 			if player:isFactionDuty() then
+				self:setDriver(player)
 				return true
 			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
@@ -149,8 +151,10 @@ function FactionVehicle:onEnter(player, seat)
 				return false
 			end
 		elseif player:getFaction() and player:getFaction() == self.m_Faction then
+			self:setDriver(player)
 			return true
 		elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
+			self:setDriver(player)
 			return true
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
@@ -183,8 +187,8 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
-		sql:getPrefix(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Fuel = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
+		sql:getPrefix(), self:getMileage(), self:getFuel(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)

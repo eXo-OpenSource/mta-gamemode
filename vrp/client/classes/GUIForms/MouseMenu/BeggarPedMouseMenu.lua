@@ -50,7 +50,7 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 						if tonumber(amount) and tonumber(amount) > 0 and tonumber(amount) <= 200 then
 							triggerServerEvent("sellBeggarWeed", self:getElement(), tonumber(amount))
 						else
-							outputChatBox(_("%s (Obdachloser): Mehr als 200g Weed kann ich mir nicht leisten!", element:getData("BeggarName")))
+							outputChatBox(_("#FE8A00%s: #FFFFFF%s", element:getData("BeggarName"), "Mehr als 200g Weed kann ich mir nicht leisten!"), 0,0,0, true)
 						end
 					end, true)
 			end

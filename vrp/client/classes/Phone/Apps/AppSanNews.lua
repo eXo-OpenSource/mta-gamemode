@@ -10,7 +10,7 @@ AppSanNews = inherit(PhoneApp)
 local ColorTable = {
 	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
-	["Hell-Blau"] = Color.AD_LightBlue,
+	["Blau-Grün"] = Color.AD_LightBlue,
 	["Red"] = Color.Red,
 }
 
@@ -36,7 +36,7 @@ function AppSanNews:onOpen(form)
 
 	GUILabel:new(tab.m_Width*0.02, tab.m_Height*0.32, tab.m_Width*0.48, tab.m_Height*0.07, "Farbe:", self.m_Tabs["Advertisment"])
 	self.m_ColorChanger = GUIChanger:new(tab.m_Width*0.4, tab.m_Height*0.32, tab.m_Width*0.58, tab.m_Height*0.07, self.m_Tabs["Advertisment"])
-	for key, name in pairs(AD_COLORS) do
+	for name, color in pairs(ColorTable) do
 		self.m_ColorChanger:addItem(name)
 	end
 	self.m_ColorChanger.onChange = function () self:calcCosts() end
@@ -64,7 +64,7 @@ function AppSanNews:onOpen(form)
 	self.m_InfoRect = GUIRectangle:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.13, Color.Red, self.m_Tabs["Advertisment"])
 	self.m_InfoLabel = GUILabel:new(tab.m_Width*0.02, tab.m_Height*0.65, tab.m_Width*0.96, tab.m_Height*0.07, "Kosten: 0$", self.m_Tabs["Advertisment"]):setFontSize(0.8):setAlignX("center")
 
-	self.m_SubmitButton = VRPButton:new(tab.m_Width*0.02, tab.m_Height*0.85, tab.m_Width*0.96, tab.m_Height*0.09, _"Werbung schalten", true, self.m_Tabs["Advertisment"]):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(tab.m_Width*0.02, tab.m_Height*0.85, tab.m_Width*0.96, tab.m_Height*0.09, _"Werbung schalten", self.m_Tabs["Advertisment"]):setBackgroundColor(Color.Green)
 
 
 	self.m_SubmitButton.onLeftClick =
@@ -116,6 +116,8 @@ end
 local currentAd
 addEvent("showAd", true)
 addEventHandler("showAd", root, function(sender, text, color, duration)
+	if not localPlayer:isLoggedIn() then return end
+
 	local callSender =
 	function()
 		if Phone:getSingleton():isOn()then
@@ -156,6 +158,8 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(sender.name), ColorTable[color], AD_DURATIONS[duration]*1000, callSender)
 end)
 
+
+addEvent("closeAd")
 addEventHandler("closeAd", root, function()
 	if currentAd then
 		delete(currentAd)

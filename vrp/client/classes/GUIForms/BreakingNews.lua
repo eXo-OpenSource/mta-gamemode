@@ -116,16 +116,20 @@ function BreakingNews:render()
 end
 
 addEventHandler("breakingNews", root,
-	function(...)
+	function(text, title, color, titleColor)
 		if core:get("HUD", "breakingNewsBox", true) then
 			if BreakingNews:isInstantiated() then
-				BreakingNews:getSingleton():addNews(...)
+				BreakingNews:getSingleton():addNews(text, title, color, titleColor)
 			else
-				BreakingNews:new(...)
+				BreakingNews:new(text, title, color, titleColor)
 			end
 		end
 		if core:get("HUD", "breakingNewsInChat", false) then
-			outputChatBox(("#DD1111[Breaking News] #FFFFFF %s"):format(...), 0, 0, 0, true)
+			local r, g, b = fromcolor(Color.LightRed)
+			if color and type(color) == "table" then 
+				r, g, b = unpack(color)
+			end
+			outputChatBox(("[Breaking News] #FFFFFF %s"):format(text, title, color, titleColor), r, g, b, true)
 		end
 	end
 )

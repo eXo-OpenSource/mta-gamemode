@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 
+local defaultAlpha = 150
+
 Color = {
 	Clear     = {0, 0, 0, 0   },
 	Black     = {0,     0,   0},
@@ -19,11 +21,12 @@ Color = {
 	DarkBlue  = {0,    32,  63},
 	DarkBlueAlpha   = {0,32,  63, 200},
     DarkLightBlue = {0, 50, 100, 255},
-	Brown     = {189, 109, 19},
+	Brown     = {128, 64, 0},
 	BrownAlpha= {189, 109, 19, 180},
 	LightBlue = {50, 200, 255},
 	Orange    = {254, 138, 0},
 	LightRed  = {244, 73, 85},
+	Purple 	  = {128, 0, 128},
 
 	HUD_Red		= {161,	47,	47},
 	HUD_Red_D	= {133,	28,	28},
@@ -38,8 +41,37 @@ Color = {
 	HUD_Orange_D= {245,127,23},
 	HUD_Lime_D	= {130,119,23},
 	HUD_Brown_D	= {62,39,35},
+
+	Background	= {0, 0, 0, defaultAlpha}, --black
+	Primary		= {35, 35, 35, 230}, --grey
+	PrimaryNoClick	= {55, 55, 55, 230}, -- light grey
+	Accent		= {58, 186, 242}, --light blue
+	Success 	= {11,  102,   8}, -- green
+	Error 		= {178,  35,  33}, -- green
+	Warning 	= {254, 138, 0}, -- green
+
 	AD_LightBlue = {0, 125, 125},
 }
+
+function Color.changeAlphaRate(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
+	local p = math.clamp(0, p, 1)
+	if p == 0 then return Color.Clear end
+	if p == 1 then return color end
+	return bitReplace(color, bitExtract(color, 24, 8) * p, 24, 8)
+end
+
+function Color.changeAlpha(color, alpha)
+	if math.clamp(0, alpha, 255) == 0 then return Color.Clear end
+	return bitReplace(color, alpha, 24, 8)
+end
+
+Color.calculateColorScheme = function()
+	Color.Accent_Alpha = Color.changeAlpha(Color.Accent, defaultAlpha)
+	Color.Success_Alpha = Color.changeAlpha(Color.Success, defaultAlpha)
+	Color.Error_Alpha = Color.changeAlpha(Color.Error, defaultAlpha)
+	Color.Warning_Alpha = Color.changeAlpha(Color.Warning, defaultAlpha)
+
+end
 
 AdminColor = {
 	[0] = {255,255,255},
@@ -59,30 +91,9 @@ for k,v in pairs(AdminColor) do
 end
 
 for k, v in pairs(Color) do
-	Color[k] = tocolor(unpack(v))
+	if type(v) == "table" then
+		Color[k] = tocolor(unpack(v))
+	end
 end
 
-
---originally from misterdick's color tests
-function Color.fromcolor(color)
-    local blue = bitAnd(color,255)
-    local green = bitAnd(bitRShift(color,8),255)
-    local red = bitAnd(bitRShift(color,16),255)
-    local alpha = bitAnd(bitRShift(color,24),255)
-    return red, green, blue, alpha
-end
-
-function Color.changeAlphaPeriod(color, p) -- 0 = 0 alpha, 1 = full alpha depending on color
-	p = math.clamp(0, p, 1)
-	if p == 0 then return Color.Clear end
-	if p == 1 then return color end
-	local r, g, b, a = Color.fromcolor(color)
-	return tocolor(r, g, b, a * p)
-end
-
-function Color.changeAlpha(color, alpha)
-	p = math.clamp(0, p, 255)
-	if p == 0 then return Color.Clear end
-	local r, g, b, a = Color.fromcolor(color)
-	return tocolor(r, g, b, alpha)
-end
+Color.calculateColorScheme()

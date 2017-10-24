@@ -43,7 +43,6 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
-	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
@@ -66,6 +65,9 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
+	elseif weapon == 42 then --Fire Extinguisher
+		cancelEvent()
+		setPedOnFire(source, false)
 	elseif weapon == 23 then -- Taser
 		local dist = getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition())
 		if not attacker.vehicle and dist < 10 and dist > 1.5 then
@@ -366,22 +368,5 @@ function Guns:toggleFastShot(bool)
 	if not self.m_AntiFastShotEnabled then
 		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
 		unbindKey ( "crouch", "both", crouch )
-	end
-end
-
-function Guns:checkSwitchWeapon(b, p)
-	if b == "x" and  not p and getKeyState("mouse2") then
-		local weapon = getPedWeapon(localPlayer)
-		local now = getTickCount()
-		if getElementData(localPlayer, "hasSecondWeapon") then
-			if self.m_LastWeaponToggle + 4000 <= now then
-				if TOGGLE_WEAPONS[weapon] then
-					self.m_LastWeaponToggle = getTickCount()
-					triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
-				end
-			else
-				outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
-			end
-		end
 	end
 end

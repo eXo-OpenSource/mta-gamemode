@@ -14,7 +14,7 @@ function Account.login(player, username, password, pwhash)
 	if (not username or not password) and not pwhash then return false end
 
 	if not username:match("^[a-zA-Z0-9_.%[%]]*$") then
-		player:triggerEvent("loginfailed", "Ungültiger Nickname. Bitte melde dich bei einem Admin!")
+		player:triggerEvent("loginfailed", "Ungültiger Nickname. Dein Name darf nur alphanumerische Zeichen verwenden.")
 		return false
 	end
 
@@ -31,32 +31,32 @@ function Account.login(player, username, password, pwhash)
 					Account.createAccount(player, row2.userID, row2.username, row2.email)
 					return
 				else
-					player:triggerEvent("loginfailed", "Fehler: Gespeichertes Passwort ungültig!")
+					player:triggerEvent("loginfailed", "Gespeichertes Passwort ungültig! Bitte gib dein Passwort erneut in das Eingabefeld ein.")
 					return false
 				end
 			else
 				local param = {["userId"] = row2.userID; ["password"] = password;}
-				local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-				if errno == 0 then
+				local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+				if responseInfo["success"] == true then
 					local returnData = fromJSON(data)
 					if not returnData then outputConsole(data, player) return end
 					if returnData.error then
-						player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
+						player:triggerEvent("loginfailed", returnData.error)
 						return false
 					end
 					if returnData.login == true then
 						Account.createAccount(player, row2.userID, row2.username, row2.email)
 						return
 					else
-						player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
+						player:triggerEvent("loginfailed", "Unbekannter Fehler")
 						return
 					end
 				else
-					outputDebugString("Error@FetchRemote: "..errno)
+					outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 				end
 			end
 		end
-		player:triggerEvent("loginfailed", "Fehler: Spieler nicht gefunden!")
+		player:triggerEvent("loginfailed", "Spieler nicht gefunden!")
 		return
 	end
 
@@ -69,7 +69,7 @@ function Account.login(player, username, password, pwhash)
 	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
 	local row = Async.wait()
 	if not row or not row.password then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
+		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- "Error: Invalid username or password"
 		return false
 	end
 
@@ -77,26 +77,26 @@ function Account.login(player, username, password, pwhash)
 		if pwhash == row.password then
 			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
 		else
-			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
+			player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
 		end
 	else
 		local param = {["userId"] = ForumID; ["password"] = password;}
-		local data, errno = Account.asyncCallAPI("checkPassword", toJSON(param))
-		if errno == 0 then
+		local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
+		if responseInfo["success"] == true then
 			local returnData = fromJSON(data)
 			if not returnData then outputConsole(data, player) return end
 			if returnData.error then
-				player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
+				player:triggerEvent("loginfailed", returnData.error)
 				return false
 			end
 			if returnData.login == true then
 				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, row.password)
 			else
-				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
+				player:triggerEvent("loginfailed", "Unbekannter Fehler")
 			end
 		else
-			outputDebugString("Error@FetchRemote: "..errno)
+			outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 		end
 	end
 end
@@ -105,7 +105,7 @@ addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(
 
 function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
 	if DatabasePlayer.getFromId(Id) then
-		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
+		player:triggerEvent("loginfailed", "Dieser Account ist schon in Benutzung")
 		return false
 	end
 
@@ -115,7 +115,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		if #MultiAccount.getAccountsBySerial(player:getSerial()) > 1 then
 			if not MultiAccount.isAccountLinkedToSerial(Id, player:getSerial()) then
 				if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
-					player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt.")
+					player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt. Dies kann passieren, wenn sich jemand auf deinem PC mit anderen Accountdaten einloggt. Bitte melde dich im Forum (forum.exo-reallife.de) unter 'administrative Anfragen', um das Problem zu beseitigen.")
 					return false
 				else
 					MultiAccount.linkAccountToSerial(Id, player:getSerial())
@@ -123,7 +123,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
-	if player.getTutorialStage and instanceof(player, DatabasePlayer) then
+	if player.getTutorialStage and instanceof(player, Player) then
 		-- Update last serial and last login
 		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
@@ -137,9 +137,9 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 				player:createCharacter()
 			end
 		else
-			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(player:getName())
+			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
 			outputServerLog(msg)
-			outputDebugString(msg)
+			outputDebugString(msg, 1)
 			outputConsole(debug.traceback())
 			player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 		end
@@ -147,6 +147,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		player:spawn()
 
 		StatisticsLogger:addLogin( player, Username, "Login")
+		ClientStatistics:getSingleton():handle(player)
 		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 	else
 		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
@@ -173,18 +174,18 @@ function Account.register(player, username, password, email)
 	-- Some sanity checks on the username
 	-- Require at least 1 letter and a length of 3
 	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 or #username > 22 then
-		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname.", player))
+		player:triggerEvent("registerfailed", _("Ungültiger Nickname. Dein Name darf nur alphanumerische Zeichen und den Unterstrich (_) verwenden.", player))
 		return false
 	end
 
 	if #password < 5 then
-		player:triggerEvent("registerfailed", _("Fehler: Passwort zu kurz! Min. 5 Zeichen!", player))
+		player:triggerEvent("registerfailed", _("Passwort zu kurz! Min. 5 Zeichen!", player))
 		return false
 	end
 
 	-- Validate email
 	if not email:match("^[%w._-]+@[%w._-]+%.%w+$") or #email > 50 then
-		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))
+		player:triggerEvent("registerfailed", _("Ungültige eMail", player))
 		return false
 	end
 
@@ -192,7 +193,7 @@ function Account.register(player, username, password, email)
 	if MULTIACCOUNT_CHECK then
 		if MultiAccount.isSerialUsed(player:getSerial()) then
 			if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
-				player:triggerEvent("registerfailed", _("Fehler: Du besitzt bereits ein Account!", player))
+				player:triggerEvent("registerfailed", _("Du besitzt bereits ein Account!", player))
 				return false
 			end
 		end
@@ -203,9 +204,9 @@ function Account.register(player, username, password, email)
 	local row = Async.wait()
 	if row then
 		if row.username == username then
-			player:triggerEvent("registerfailed", _("Fehler: Benutzername wird bereits verwendet", player))
+			player:triggerEvent("registerfailed", _("Benutzername wird bereits verwendet", player))
 		elseif row.email == email then
-			player:triggerEvent("registerfailed", _("Fehler: Diese E-Mail wird bereits verwendet", player))
+			player:triggerEvent("registerfailed", _("Diese E-Mail wird bereits verwendet", player))
 		end
 
 		return false
@@ -239,8 +240,8 @@ addEventHandler("accountguest", root, function() Async.create(Account.guest)(cli
 function Account.createForumAccount(player, username, password, email)
 	if not password then return end
 	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
-	local data, errno = Account.asyncCallAPI("createAccount", toJSON(param))
-	if errno == 0 then
+	local data, responseInfo = Account.asyncCallAPI("createAccount", toJSON(param))
+	if responseInfo["success"] == true then
 		local returnData = fromJSON(data)
 		if not returnData then outputConsole(data, player) return end
 		if returnData.error then
@@ -253,12 +254,16 @@ function Account.createForumAccount(player, username, password, email)
 			player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
 		end
 	else
-		outputDebugString("Error@FetchRemote: "..errno)
+		outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 	end
 end
 
 function Account.asyncCallAPI(func, postData)
-	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), 1, Async.waitFor(), postData, false)
+	local options = {
+		["connectionAttempts"] = 1,
+		["postData"] = postData
+	}
+	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), options, Async.waitFor())
 	return Async.wait()
 end
 

@@ -198,7 +198,7 @@ function Crane:dropContainer(vehicle, player, callback)
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	self.m_Timer = setTimer(function()
@@ -215,7 +215,7 @@ function Crane:dropContainer(vehicle, player, callback)
 			detachElements(container)
 			attachElements(container, self.m_Tow, 0, 0, -4.1, 0, 0)
 			vehicle:setFrozen(false)
-			toggleAllControls(player, true)
+			toggleAllControls(player, true, true, false)
 
 			-- Roll up the tow
 			self:rollTowUp(
@@ -263,7 +263,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	self.m_Container = container
 
 	vehicle:setFrozen(true)
-	toggleAllControls(player, false)
+	toggleAllControls(player, false, true, false)
 
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
@@ -298,7 +298,7 @@ function Crane:loadContainer(vehicle, player, callback)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
 											self.m_Container = nil
 											vehicle:setFrozen(false)
-											toggleAllControls(player, true)
+											toggleAllControls(player, true, true, false)
 
 											-- Roll up the tow a last time
 											self:rollTowUp(

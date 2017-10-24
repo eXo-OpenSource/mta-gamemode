@@ -68,17 +68,11 @@ function Core:onDownloadComplete()
 	self:ready()
 
 	-- create login gui
-	lgi = LoginGUI:new()
-	lgi:setVisible(false)
-	lgi:fadeIn(750)
-
 	local pwhash = core:get("Login", "password", "")
 	local username = core:get("Login", "username", "")
-	lgi.m_LoginEditUser:setText(username)
-	lgi.m_LoginEditPass:setText(pwhash)
-	lgi.usePasswordHash = pwhash
-	lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
-	lgi:anyChange()
+	lgi = LoginGUI:new(username, pwhash)
+
+
 
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
@@ -88,6 +82,9 @@ end
 function Core:ready()
 	-- Tell the server that we're ready to accept additional data
 	triggerServerEvent("playerReady", root)
+
+	-- Request Browser Domains
+	Browser.requestDomains{"exo-reallife.de"}	
 
 	DxHelper:new()
 	TranslationManager:new()
@@ -150,13 +147,10 @@ function Core:ready()
 	GroupRob:new()
 	DrivingSchool:new()
 	Help:new()
-	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
+	ClientStatistics:new()
 end
 
 function Core:afterLogin()
-	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}
-
 	RadioGUI:new()
 	KarmaBar:new()
 	HUDSpeedo:new()
@@ -170,6 +164,7 @@ function Core:afterLogin()
 	Indicator:new()
 	Tour:new()
 	Achievement:new()
+	BindManager:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -196,6 +191,7 @@ function Core:afterLogin()
 
 	PlantGUI.load()
 	Fishing.load()
+	TurtleRace.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()
@@ -209,7 +205,7 @@ function Core:afterLogin()
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
-	addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
+	--addCommandHandler("paintjob", function() PaintjobPreviewGUI:getSingleton():open() end)
 
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
@@ -222,6 +218,7 @@ end
 function Core:destructor()
 	delete(Cursor)
 	delete(self.m_Config)
+	delete(BindManager:getSingleton())
 	if CustomModelManager:isInstantiated() then
 		delete(CustomModelManager:getSingleton())
 	end

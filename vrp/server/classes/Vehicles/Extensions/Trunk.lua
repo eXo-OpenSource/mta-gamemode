@@ -120,24 +120,19 @@ end
 function Trunk:takeItem(player, slot)
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
-			--if self.m_ItemSlot[slot]["Amount"] > 0 then
-				local item = self.m_ItemSlot[slot]["Item"]
-				local amount = self.m_ItemSlot[slot]["Amount"]
-				if player:getInventory():getFreePlacesForItem(item) >= amount then
-					self.m_ItemSlot[slot]["Item"] = "none"
-					self.m_ItemSlot[slot]["Amount"] = 0
-					player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
-					self.m_ItemSlot[slot]["Value"] = ""
-					player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
-					self:refreshClient(player)
-					StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
-					return
-				else
-					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
-				end
-			--else
-			--	player:sendError("Internal Error Amount to low", player)
-			--end
+			local item = self.m_ItemSlot[slot]["Item"]
+			local amount = self.m_ItemSlot[slot]["Amount"]
+
+			if player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"]) then
+				self.m_ItemSlot[slot]["Item"] = "none"
+				self.m_ItemSlot[slot]["Amount"] = 0
+
+				self.m_ItemSlot[slot]["Value"] = ""
+				player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
+				self:refreshClient(player)
+				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
+				return
+			end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
 		end
@@ -149,10 +144,8 @@ function Trunk:takeWeapon(player, slot)
 		player:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", player))
 		return
 	end
-	if player.disableWeaponStorage then
-		player:sendError(_("Du darfst diese Waffe nicht nehmen!", player))
-		return
-	end
+
+	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen entnehmen!", player)) return end
 
 	if self.m_WeaponSlot[slot] then
 		if self.m_WeaponSlot[slot]["WeaponId"] > 0 then
@@ -189,10 +182,8 @@ function Trunk:addWeapon(player, weaponId, muni)
 		player:sendError(_("Du darfst im Dienst keine Waffen einlagern!", player))
 		return
 	end
-	if player.disableWeaponStorage then
-		player:sendError(_("Du darfst diese Waffe nicht einlagern!", player))
-		return
-	end
+
+	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen einlagern!", player)) return end
 
 	for index, slot in pairs(self.m_WeaponSlot) do
 		if slot["WeaponId"] == 0 then

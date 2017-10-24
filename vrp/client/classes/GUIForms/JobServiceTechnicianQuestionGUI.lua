@@ -23,7 +23,7 @@ function JobServiceTechnicianQuestionGUI:constructor()
 	self.m_AnswersRadio[3] = GUIRadioButton:new(0, self.m_Height*0.24, self.m_Width, self.m_Height*0.07, "", self.m_AnswerGroup)
 	self.m_AnswersRadio[4] = GUIRadioButton:new(0, self.m_Height*0.36, self.m_Width, self.m_Height*0.07, "", self.m_AnswerGroup)
 
-	self.m_NextButton = VRPButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.3, self.m_Height*0.1, _"Weiter", true, self.m_Window):setBarColor(Color.Green)
+	self.m_NextButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.3, self.m_Height*0.1, _"Weiter", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
     self.m_NextButton.onLeftClick = bind(self.NextButton_Click, self)
 end
 

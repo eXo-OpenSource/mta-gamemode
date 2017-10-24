@@ -6,9 +6,7 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-
-addRemoteEvents{"clientMagnetGrabVehicle"}
-
+inherit(VehicleDataExtension, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -23,6 +21,8 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
+
+	self.m_LastDrivers = {}
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -40,11 +40,8 @@ function Vehicle:virtual_constructor()
 
 	if self:getModel() == 417 then
 		self:addMagnet()
-		self.m_MagnetVehicleCheck = bind(Vehicle.magnetVehicleCheck, self)
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
-
-		addEventHandler("clientMagnetGrabVehicle", root, self.m_MagnetVehicleCheck)
 	end
 end
 
@@ -109,8 +106,8 @@ function Vehicle:hasKey(player)
 	end
 end
 
-function Vehicle:playLockEffect()
-	triggerClientEvent("vehicleCarlock", self)
+function Vehicle:playLockEffect(locked)
+	triggerClientEvent("vehicleCarlock", self, locked)
 	setVehicleOverrideLights(self, 2)
 	setTimer(setVehicleOverrideLights, 500, 1, self, 1)
 	setTimer(setVehicleOverrideLights, 1000, 1, self, 2)
@@ -156,8 +153,6 @@ function Vehicle:onPlayerEnter(player, seat)
 				bindKey(player, "special_control_down", "both", self.m_MagnetDown)
 			end
 		end
-
-		player.m_InVehicle = self
 	end
 
 	if self.m_HasBeenUsed then
@@ -210,8 +205,6 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
 			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
 		end
-
-		player.m_InVehicle = nil
 	end
 end
 
@@ -284,8 +277,30 @@ function Vehicle:toggleEngine(player)
 		end
 		return
 	end
+
+	local state = not getVehicleEngineState(self)
+	if not state then
+		self:setEngineState(state)
+
+		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+			self:toggleInternalSmoke()
+		end
+
+		if VEHICLE_BIKES[self:getModel()] then
+			player:meChat(true, "verschließt sein Fahrradschloss!")
+		end
+
+		local occs = self:getOccupants()
+		if occs then
+			for i, v in pairs(occs) do
+				triggerClientEvent(v, "playSeatbeltAlarm", v, false)
+			end
+		end
+
+		return true
+	end
+
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
-		local state = not getVehicleEngineState(self)
 		if state == true then
 			if not VEHICLE_BIKES[self:getModel()] then
 				if self.m_Fuel <= 0 then
@@ -297,12 +312,7 @@ function Vehicle:toggleEngine(player)
 					return false
 				end
 			end
-		else
-			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
-				self:toggleInternalSmoke()
-			end
-		end
-		if state == true then
+
 			if player and not getVehicleEngineState(self) then
 				if VEHICLE_BIKES[self:getModel()] then -- Bikes
 					player:meChat(true, "öffnet sein Fahrradschloss!")
@@ -337,18 +347,6 @@ function Vehicle:toggleEngine(player)
 				end
 			end
 			return false
-		else
-			if VEHICLE_BIKES[self:getModel()] then
-				player:meChat(true, "verschließt sein Fahrradschloss!")
-			end
-			self:setEngineState(state)
-			local occs = self:getOccupants()
-			if occs then
-				for i, v in pairs(occs) do
-					triggerClientEvent(v, "playSeatbeltAlarm", v, false)
-				end
-			end
-			return true
 		end
 	end
 
@@ -406,6 +404,9 @@ end
 
 function Vehicle:setEngineState(state)
 	setVehicleEngineState(self, state)
+
+	VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
+
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
@@ -416,16 +417,12 @@ function Vehicle:getEngineState()
 end
 
 function Vehicle:setFuel(fuel)
-	self.m_Fuel = fuel
+	self.m_Fuel = math.clamp(0, fuel, 100)
+	self:setData("fuel", self.m_Fuel, true)
 
 	-- Switch engine off in case of an empty fuel tank
-	if self.m_Fuel <= 0 then
+	if self.m_Fuel == 0 then
 		self:setEngineState(false)
-	else
-		local driver = getVehicleOccupant(self, 0)
-		if driver then
-			driver:triggerEvent("vehicleFuelSync", fuel)
-		end
 	end
 end
 
@@ -693,12 +690,16 @@ function Vehicle:magnetVehicleCheck(groundPosition)
 			detachElements(self.m_GrabbedVehicle)
 
 			setElementData(self, "MagnetGrabbedVehicle", nil)
+
+			if client.m_InTowLot and client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC then
+				client:getCompany():checkLeviathanTowing(client, self.m_GrabbedVehicle)
+			end
 		else
 			client:sendError("Das Fahrzeug kann nur auf dem Boden abgestellt werden!")
 		end
 	else
 		if not self.m_Magnet and not isElement(self.m_Magnet) then
-			client:sendError("Internal Error: Magnet Objekt nicht gefunden! Bitte bei einem Scripter melden!")
+			client:sendError("INTERNAL ERROR: Funktioniert immer noch nicht...")
 			return
 		end
 		local colShape = createColSphere(self.m_Magnet.matrix:transformPosition(Vector3(0, 0, -0.5)), 2)
@@ -791,6 +792,20 @@ function Vehicle:isPlayerSurfOnCar(player)
 
 	return false
 end
+
+function Vehicle:isEmpty()
+	return self.occupants and table.size(self.occupants) == 0
+end
+
+function Vehicle:setDriver(player)
+	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
+		return
+	end
+
+	table.insert(self.m_LastDrivers, player:getName())
+	self:setData("lastDrivers", self.m_LastDrivers, true)
+end
+
 
 -- Override it
 function Vehicle:getVehicleType()

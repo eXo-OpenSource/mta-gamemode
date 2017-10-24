@@ -73,7 +73,7 @@ function Blip:isVisibleForPlayer(player)
 
 	local fac = player:getFaction()
 	if fac then
-		if self.m_VisibleTo["faction"] and self.m_VisibleTo["faction"][fac:getId()] then
+		if self.m_VisibleTo["faction"] and (self.m_VisibleTo["faction"][fac:getId()] or (fac:getAllianceFaction() and self.m_VisibleTo["faction"][fac:getAllianceFaction():getId()])) then
 			if self.m_VisibleTo["duty"] and (fac:getType() ~= "Evil" and not player:isFactionDuty()) then return false end -- duty check not for evil factions
 			return true
 		elseif self.m_VisibleTo["factionType"] and self.m_VisibleTo["factionType"][fac:getType()] then
@@ -92,7 +92,7 @@ function Blip:isVisibleForPlayer(player)
 	if group and self.m_VisibleTo["group"] and self.m_VisibleTo["group"][group:getId()] then
 		return true
 	end
-	 
+
 	if type(self.m_VisibleTo) == "table" then
 		for i,v in pairs(self.m_VisibleTo) do
 			if v == player then return true end -- visibleTo is a table full of players
@@ -119,7 +119,7 @@ function Blip:getPosition(vec)
 	if self:getAttachedElement() then
 		x, y, z = getElementPosition(self:getAttachedElement())
 	else
-		x, y, z = self.m_WorldX, self.m_WorldY, self.m_WorldZ or 0
+		x, y, z = self.m_PosX, self.m_PosY, self.m_PosZ or 0
 	end
 	if vec then
 		x = Vector3(x, y, z)
@@ -156,8 +156,12 @@ function Blip:attach(element)
 	self:updateClient("Update", {attachedElement = element})
 end
 
+function Blip:attachTo(element)
+	return self:attach(element)
+end
+
 function Blip:getAttachedElement()
-	return Blip.AttachedBlips[self]
+	return self.m_AttachedTo
 end
 
 function Blip:detach()
@@ -170,6 +174,8 @@ function Blip:setDisplayText(text, category)
 	self.m_DisplayText = text
 	self.m_Category = category or BLIP_CATEGORY.Default
 	self:updateClient("Update", {displayText = text, category = self.m_Category})
+
+	return self
 end
 
 function Blip:updateClient(type, data)

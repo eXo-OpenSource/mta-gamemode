@@ -40,24 +40,38 @@ end
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 
-	if player:isPhoneEnabled() == true then
-		if client:getData("isInDeathMatch") or player:getData("isInDeathMatch") then
-			client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!",client, player.name))
-			client:triggerEvent("callReplace", player)
-			return
-		end
-
-		if not player:getPhonePartner() and not player.IncomingCall then
-			player:triggerEvent("callIncoming", client, voiceEnabled)
-			player.IncomingCall = true
-		else
-			client:sendError(_("Besetzt... Der Spieler telefoniert gerade!",client, player.name))
-			client:triggerEvent("callReplace", player)
-		end
-	else
-		client:sendError(_("Das Handy von '%s' ist ausgeschaltet!",client, player.name))
+	if not player:isPhoneEnabled() then
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!", client, player.name))
 		client:triggerEvent("callReplace", player)
+		return
 	end
+
+	if client:getHealth() == 0 or player:getHealth() == 0 then
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar TOT!", client, player.name))
+		client:triggerEvent("callReplace", player)
+		return
+	end
+
+	if client:getData("isInDeathMatch") or player:getData("isInDeathMatch") then
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!", client, player.name))
+		client:triggerEvent("callReplace", player)
+		return
+	end
+
+	if client.skribbleLobby or player.skribbleLobby then
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!", client, player.name))
+		client:triggerEvent("callReplace", player)
+		return
+	end
+
+	if player:getPhonePartner() or player.IncomingCall then
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!", client, player.name))
+		client:triggerEvent("callReplace", player)
+		return
+	end
+
+	player:triggerEvent("callIncoming", client, voiceEnabled)
+	player.IncomingCall = true
 end
 
 function PhoneInteraction:callBusy(caller)
@@ -118,7 +132,7 @@ function PhoneInteraction:abortCall(player)
 			partner:setPhonePartner(nil)
 			partner:triggerEvent("callReplace", player)
 			partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
-	
+
 			if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
 			if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
 
@@ -126,7 +140,7 @@ function PhoneInteraction:abortCall(player)
 			player:setPhonePartner(nil)
 			player:triggerEvent("callReplace", partner)
 			player.IncomingCall = false
-			partner.IncomingCall = false 
+			partner.IncomingCall = false
 		end
 	end
 end

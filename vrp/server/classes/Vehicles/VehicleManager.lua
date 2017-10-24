@@ -14,13 +14,11 @@ function VehicleManager:constructor()
 	self.m_CompanyVehicles = {}
 	self.m_GroupVehicles = {}
 	self.m_FactionVehicles = {}
+	self.m_VehiclesWithEngineOn = {}
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
-		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -46,8 +44,35 @@ function VehicleManager:constructor()
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
+	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
+	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
+	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
 
+	addEventHandler("clientToggleVehicleEngine", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleEngine(client)
+		end
+	)
 
+	addEventHandler("clientToggleVehicleLight", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+			client.vehicle:toggleLight(client)
+		end
+	)
+
+	addEventHandler("clientToggleHandbrake", root,
+		function()
+			if client.vehicleSeat ~= 0 then return end
+
+			if client.vehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+				client.vehicle:toggleHandBrake(client)
+			else
+				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
+			end
+		end
+	)
 
 	addEventHandler("checkPaintJobPreviewCar", root, function()
 		if client then
@@ -91,12 +116,8 @@ function VehicleManager:constructor()
 			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
-
+				source.m_LastMileageCheck = getTickCount() -- this is probably close to the enter time at which the client starts measuring the mileage, only for anti-cheat
 				setVehicleEngineState(source, source:getEngineState())
-				player:triggerEvent("vehicleFuelSync", source:getFuel())
-				if source.towedByVehicle then
-					player:triggerEvent("vehicleTrailerFuelSync", source.towedByVehicle:getFuel())
-				end
 			end
 		end
 	)
@@ -157,6 +178,10 @@ end
 
 function VehicleManager:Event_GetTuningList()
 	source:getTuningList(client)
+end
+
+function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
+	source:magnetVehicleCheck(groundPosition)
 end
 
 function VehicleManager:getFactionVehicles(factionId)
@@ -232,20 +257,10 @@ end
 
 function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
-	--[[
-	outputServerLog("Loading vehicles...")
-	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
-		VehicleManager:getSingleton():addRef(vehicle, false)
-	end
-	]]--
-	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
 	end
@@ -256,7 +271,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal))
+			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal), row.Fuel)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		end
@@ -476,15 +491,22 @@ function VehicleManager:loadGroupVehicles(group)
 	end
 end
 
-function VehicleManager:updateFuelOfPermanentVehicles()
-	for k, player in pairs(getElementsByType("player")) do
-		local vehicle = getPedOccupiedVehicle(player)
-		if vehicle and vehicle.getFuel and vehicle:getEngineState() then
-			local fuelConsumption = 0.5
-			if vehicle.getSpeed and vehicle:getSpeed()/100 > fuelConsumption then
-				fuelConsumption = math.abs(vehicle:getSpeed()/100)
+function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
+	for veh, mileage in pairs(self.m_VehiclesWithEngineOn) do --table gets managed on engine switch in Vehicle class
+		if veh and isElement(veh) and veh.getEngineState and veh.getFuel and veh.getSpeed and veh:getEngineState() then
+			local curVel = (veh:getMileage()-mileage)/1000*60 --60 because we want km/h from km/min
+			if curVel == 0 then -- fallback on updating with speed if mileage did not change
+				curVel = veh:getSpeed()
 			end
-			vehicle:setFuel(vehicle:getFuel() - fuelConsumption)
+			local mass = veh:getHandling()["mass"]
+			
+			local cons = ((curVel/50 * veh:getFuelConsumptionMultiplicator()) + mass/5000) --basic consumption based on speed and mass (in liter)
+
+			veh:setFuel(veh:getFuel() - cons/veh:getFuelTankSize()*100)
+			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass) 
+			self.m_VehiclesWithEngineOn[veh] = veh:getMileage()
+		else --garbage collection
+			self.m_VehiclesWithEngineOn[veh] = nil
 		end
 	end
 end
@@ -501,7 +523,7 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
+		if source:hasKey(client) or client:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
@@ -533,7 +555,7 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= RANK.Moderator then
+	if client:getCompany() and client:getCompany():getId() == CompanyStaticId.MECHANIC or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"] then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
@@ -700,10 +722,13 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 end
 
 function VehicleManager:Event_vehicleRepair()
-	if client:getRank() < RANK.Moderator then
+	if client:getRank() < ADMIN_RANK_PERMISSION["repairVehicle"] then
 		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
 		return
 	end
+
+	StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Repair", getElementData(source, "OwnerName") or "Unknown")
+	Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s repariert.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 
 	source:fix()
 end
@@ -727,8 +752,9 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, FactionVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn(true)
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getFaction()) or source:getFaction():getId() ~= client:getFaction():getId() then
@@ -741,21 +767,24 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if instanceof(source, CompanyVehicle) then
-		if client:getRank() >= RANK.Moderator then
+		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn( true )
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
 				return
 			end
-			source:respawn( )
+			source:respawn()
+			return
 		end
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if (client:getRank() >= RANK.Moderator) then
+		if (client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"]) then
 			source:respawn(true)
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 			return
 		else
 			if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
@@ -782,12 +811,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
+	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
 
-	if source:isBroken() and client:getRank() < RANK.Supporter then
+	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
@@ -849,12 +878,12 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
+ 	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
 	end
 
-	if source:isBroken() and client:getRank() < RANK.Supporter then
+	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
@@ -867,6 +896,8 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	if source:getPositionType() == VehiclePositionType.World then
  		if source:getOwner() == client:getId() then
 			client:takeBankMoney(100, "Fahrzeug Respawn")
+		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
+			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 		end
 		source:respawnOnSpawnPosition()
  	else
@@ -882,7 +913,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 		return
 	end
 
-	if client:getRank() < RANK.Moderator then
+	if client:getRank() < ADMIN_RANK_PERMISSION["deleteVehicle"] then
 		-- Todo: Report cheat attempt
 		return
 	end
@@ -904,13 +935,12 @@ function VehicleManager:Event_vehicleDelete(reason)
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 					end
 				end
-			else
-				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
 
 		-- Todo Add Log
 		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel(), reason)
+		Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s gelöscht (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown", reason))
 		source:purge()
 	else
 		destroyElement(source)
@@ -1074,6 +1104,7 @@ function VehicleManager:Event_vehicleEmpty()
 end
 
 function VehicleManager:Event_vehicleSyncMileage(diff)
+	local diff = diff
 	if diff < -0.001 then
 		AntiCheat:getSingleton():report(client, "Sent invalid mileage", CheatSeverity.Middle)
 		return
@@ -1082,13 +1113,21 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	local vehicle = client:getOccupiedVehicle()
 	if vehicle then
 		if vehicle.setMileage and vehicle.setMileage then
+			local deltaTimeMS = (getTickCount() - (vehicle.m_LastMileageCheck or 0))
+			local deltaTimeH =  deltaTimeMS/1000/60/60
+			local kmh = (diff/1000)/deltaTimeH
+			if kmh > vehicle:getHandling()["maxVelocity"] then -- diff is higher than diff with max velocity of this vehicle, so crop it
+				kmh = vehicle:getHandling()["maxVelocity"]
+				diff = kmh*deltaTimeH*1000
+			end
 			vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+			vehicle.m_LastMileageCheck = getTickCount()
 			client:increaseStatistics("Driven", diff)
 		end
 	end
 end
 
-function VehicleManager:Event_vehicleBreak()
+function VehicleManager:Event_vehicleBreak(weapon)
 	if not source.isBroken or not source:isBroken() then
 		self:checkVehicle(source)
 		if not VEHICLE_BIKES[source:getModel()] then
@@ -1096,7 +1135,13 @@ function VehicleManager:Event_vehicleBreak()
 			if source.controller then
 				source.controller:sendWarning(_("Dein Fahrzeug ist kaputt und muss repariert werden!", source.controller))
 			end
-			-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
+			local maxRnd = (weapon and weapon >= 22 and weapon <= 38) and 10 or 20
+			if math.random(1, maxRnd) == 1 then
+				if FactionRescue:getSingleton():countPlayers() >= 3 then
+					FactionRescue:getSingleton():addVehicleFire(source)
+				end
+			end
+
 			source:setBroken(true)
 		end
 	end
@@ -1123,9 +1168,83 @@ function VehicleManager:Event_TrailerAttach(truck)
 
 	if source:getOwner() == truck:getOwner() then
 		source:setFrozen(false)
+	end
+end
 
-		if truck.controller then
-			truck.controller:triggerEvent("vehicleTrailerFuelSync", source:getFuel())
+function VehicleManager:Event_LoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "keinen Geldsack"
+	end
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					local object = client:getPlayerAttachedObject()
+					if #getAttachedElements(veh) < vehicleObjects[veh.model]["count"] then
+						if object then
+							local count = #getAttachedElements(veh)
+							client:detachPlayerObject(object)
+							object:attach(veh, vehicleObjects[veh.model][count+1])
+							if object.LoadHook then
+								object.LoadHook(client, veh, object)
+							end
+						else
+							client:sendError(_("Du hast %s dabei!", client, name))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
+					end
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
 		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
+	end
+end
+
+function VehicleManager:Event_DeLoadObject(veh, type)
+	local vehicleObjects, model, name
+	if type == "moneyBag" then
+		vehicleObjects = VEHICLE_BAG_LOAD
+		model = 1550
+		name = "kein Geldsack"
+	end
+
+	if client:getFaction() then
+		if vehicleObjects[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					for key, object in pairs (getAttachedElements(veh)) do
+						if object.model == model then
+							object:detach(self.m_Truck)
+							client:attachPlayerObject(object)
+							if object.DeloadHook then
+								object.DeloadHook(client, veh, object)
+							end
+							return
+						end
+					end
+					client:sendError(_("Es befindet sich %s im Truck!", client, name))
+					return
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
 end

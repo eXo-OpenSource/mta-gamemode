@@ -10,7 +10,7 @@ function BankRobberyManager:constructor()
 	self.m_Banks["Palomino"] = BankPalomino:new()
 	self.m_Banks["LosSantos"] = BankLosSantos:new()
 
-	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess", "bankRobberyLoadBag", "bankRobberyDeloadBag"}
+	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 
 	self.m_OnStartHack = bind(self.Event_onStartHacking, self)
 	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
@@ -18,8 +18,6 @@ function BankRobberyManager:constructor()
 
 	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
-	addEventHandler("bankRobberyLoadBag", root, bind(self.Event_LoadBag, self))
-	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 end
 
@@ -96,67 +94,7 @@ function BankRobberyManager:Event_onHackSuccessful()
 end
 
 
-function BankRobberyManager:Event_LoadBag(veh)
-	if client:getFaction() then
-		if VEHICLE_BAG_LOAD[veh.model] then
-			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					local bag = client:getPlayerAttachedObject()
-					if #getAttachedElements(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
-						if bag then
-							local count = #getAttachedElements(veh)
-							client:detachPlayerObject(bag)
-							bag:attach(veh, VEHICLE_BAG_LOAD[veh.model][count+1])
-						else
-							client:sendError(_("Du hast keinen Geldsack dabei!", client))
-						end
-					else
-						client:sendError(_("Das Fahrzeug ist bereits voll beladen!", client))
-					end
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
-				end
-			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
-			end
-		else
-			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!", client))
-		end
-	else
-		client:sendError(_("Nur Fraktionisten können Geldäcke abladen!", client))
-	end
-end
 
-function BankRobberyManager:Event_DeloadBag(veh)
-	if client:getFaction() then
-		if VEHICLE_BAG_LOAD[veh.model] then
-			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					for key, bag in pairs (getAttachedElements(veh)) do
-						if bag.model == 1550 then
-							bag:detach(self.m_Truck)
-							if client:getFaction():isStateFaction() and client:isFactionDuty() then
-								self.m_CurrentBank:statePeopleClickBag(client, bag)
-								return
-							else
-								client:attachPlayerObject(bag)
-								return
-							end
-						end
-					end
-					client:sendError(_("Es befindet sich kein Geldsack im Truck!", client))
-					return
-				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!", client))
-				end
-			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!", client))
-			end
-		else
-			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!", client))
-		end
-	else
-		client:sendError(_("Nur Fraktionisten können Geldsäcke abladen!", client))
-	end
-end
+
+
 

@@ -56,7 +56,7 @@ function PermanentVehicle.create(owner, model, posX, posY, posZ, rotX, rotY, rot
 		trunkId = Trunk.create()
 	end
 
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, Color, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, 0, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium) then
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, 1000, VehiclePositionType.World, nil, nil, trunkId, premium)
 		VehicleManager:getSingleton():addRef(vehicle)
@@ -102,13 +102,6 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
-	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
-		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
-		if row and row.Special > 0 then
-			self.m_Tunings:saveTuning("Special", row.Special)
-			self.m_Tunings:applyTuning()
-		end
-	end
 	self.m_HasBeenUsed = 0
 end
 
@@ -210,7 +203,7 @@ function PermanentVehicle:respawn(garageOnly)
   local owner = Player.getFromId(self.m_Owner)
   if owner and isElement(owner) then
     -- Is the vehicle allowed to spawn in the garage
-    if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat then
+    if self:getModel() == 539 or (vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat) then
       -- Does the player have a garage
       if owner:getGarageType() > 0 then
         -- Is there a slot available?

@@ -1,4 +1,4 @@
-﻿-- ****************************************************************************
+-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIElements/VRPFont.lua
@@ -52,6 +52,7 @@ FontAwesomeSymbols = {
 	Group = "",
 	Money = "",
 	Info = "",
+	Question = "",
 	CheckSquare = "",
 	Check = "",
 	Square = "",
@@ -101,6 +102,7 @@ FontAwesomeSymbols = {
 	Car = "",
 	Bullseye = "",
 	Circle_O_Notch = "",
+	Circle = "",
 	Heart = "",
 	Shield = "",
 	Comment = "",
@@ -111,6 +113,13 @@ FontAwesomeSymbols = {
 	Desktop = "",
 	Newspaper = "",
 	Advertisement = "",
+	Fire = "",
+	File = "",
+	Clock = "",
+	Brush = "",
+	Pencil = "",
+	Erase = "",
+	Edit = "",
 	Folder = "",
 }
 

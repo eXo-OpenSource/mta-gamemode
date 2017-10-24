@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Growable = inherit(Object)
 
-function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, lastGrown, lastWatered)
+function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, lastGrown, lastWatered, timesEarned)
 	self.m_Id = id
 	self.m_Type = type
 	self.m_Object = createObject(typeData["Object"], pos)
@@ -17,6 +17,7 @@ function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, l
 	self.m_LastGrown = lastGrown
 	self.m_LastWatered = lastWatered
 	self.m_OwnerId = ownerId
+	self.m_TimesEarned = timesEarned or 0
 
 	self.ms_GrowPerHour = typeData["GrowPerHour"]
 	self.ms_GrowPerHourWatered = typeData["GrowPerHourWatered"]
@@ -26,6 +27,8 @@ function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, l
 	self.ms_ItemPerSize = typeData["ItemPerSize"]
 	self.ms_ObjectSizeMin = typeData["ObjectSizeMin"]
 	self.ms_ObjectSizeSteps = typeData["ObjectSizeSteps"]
+	self.ms_TimesEarnedForDestroy = typeData["TimesEarnedForDestroy"]
+	self.ms_Illegal = typeData["Illegal"]
 
 	self.m_Colshape = createColSphere(pos.x, pos.y, pos.z+1, 1)
 	addEventHandler("onColShapeHit", self.m_Colshape, bind(self.onColShapeHit, self))
@@ -76,27 +79,30 @@ function Growable:harvest(player)
 	if not player.vehicle then
 	--if player:getId() == self.m_OwnerId or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 		local amount = self.m_Size*self.ms_ItemPerSize
-		if amount > 0 then
-			if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-				player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
-				player:getFaction():giveMoney(amount*5, "Drogen-Asservation")
+		if self.ms_Illegal and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+			player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
+			player:getFaction():giveMoney(amount*5, "Drogen-Asservation")
+			player:triggerEvent("hidePlantGUI")
+			self.m_Size = 0
+			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
+			delete(self)
+		elseif amount > 0 then
+			if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
+				player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
+				player:getInventory():giveItem(self.ms_Item, amount)
 				player:triggerEvent("hidePlantGUI")
 				self.m_Size = 0
-				sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
-				StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 1)
-				delete(self)
-			else
-				if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
-					player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
-					player:getInventory():giveItem(self.ms_Item, amount)
-					player:triggerEvent("hidePlantGUI")
-					self.m_Size = 0
+				self.m_TimesEarned = self.m_TimesEarned + 1
+				self:refreshObjectSize()
+				StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 0)
+				if self.m_TimesEarned >= self.ms_TimesEarnedForDestroy  then
 					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
-					StatisticsLogger:getSingleton():addDrugHarvestLog(player, self.m_Type, self.m_OwnerId, amount, 0)
 					delete(self)
-				else
-					player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
 				end
+				player:setData("Plant:Current", false)
+			else
+				player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
 			end
 		else
 			player:sendError(_("Die Pflanze ist noch nicht gewachsen!", player))
@@ -126,7 +132,7 @@ function Growable:waterPlant(player)
 end
 
 function Growable:save()
-	local result = sql:queryExec("UPDATE ??_plants SET Size = ?, last_grown = ?, last_watered = ? WHERE Id = ?", sql:getPrefix(), self.m_Size, self.m_LastGrown, self.m_LastWatered, self.m_Id)
+	local result = sql:queryExec("UPDATE ??_plants SET Size = ?, last_grown = ?, last_watered = ?, times_earned = ? WHERE Id = ?", sql:getPrefix(), self.m_Size, self.m_LastGrown, self.m_LastWatered, self.m_TimesEarned, self.m_Id)
 	if not result then outputDebug("Plant ID "..self.m_Id.." not saved!") end
 end
 

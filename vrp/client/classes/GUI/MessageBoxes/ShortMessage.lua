@@ -58,9 +58,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 		if self.m_Callback then
 			self:m_Callback()
 		end
-		if core:get("HUD", "shortMessageCTC", false) then
-			delete(self)
-		end
+		delete(self)
 	end
 
 	-- Instantiate custom GUIMiniMap
@@ -121,6 +119,15 @@ function ShortMessage:destructor(force)
 	end
 end
 
+function ShortMessage:setText(text)
+	local success = GUIFontContainer.setText(self, text)
+	if success then
+		local h = textHeight(self.m_Text, self.m_Width - 8, self.m_Font, self.m_FontSize) + (self.m_TitleHeight or 0) + 4
+		GUIElement.setSize(self, self.m_Width, h)
+		MessageBoxManager.resortPositions()
+	end
+end
+
 function ShortMessage:drawThis()
 	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
 	local hasTitleBar = self.m_TitleHeight ~= nil
@@ -141,6 +148,10 @@ function ShortMessage:drawThis()
 		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 	end
 	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+end
+
+function ShortMessage:resetTimeout()
+	resetTimer(self.m_Timeout)
 end
 
 addEvent("shortMessageBox", true)

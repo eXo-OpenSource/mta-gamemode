@@ -40,6 +40,20 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 		teleporter:addEnterEvent(bind(self.onEnter, self))
 		teleporter:addExitEvent(bind(self.onExit, self))
+	else
+		if self.m_BuyAble then
+			self.m_Colshape = createColSphere(self.m_Position, 3)
+			addEventHandler("onColShapeHit", self.m_Colshape, function(hitElement, dim)
+				if hitElement:getType() == "player" and dim then
+					self:onEnter(hitElement)
+				end
+			end)
+			addEventHandler("onColShapeLeave", self.m_Colshape, function(hitElement, dim)
+				if hitElement:getType() == "player" and dim then
+					self:onExit(hitElement)
+				end
+			end)
+		end
 	end
 
 	if typeData["Ped"] then
@@ -95,7 +109,7 @@ function Shop:onExit(player)
 end
 
 function Shop:openManageGUI(player)
-	if player:getInterior() >= 0 or player:getDimension() >= 0 then
+	if (player:getInterior() >= 0 or player:getDimension() >= 0) or (self.m_Colshape and isElement(self.m_Colshape) and player:isWithinColShape(self.m_Colshape)) then
 		player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
 	else
 		unbindKey(player, "f6", "down", self.m_ShopGUIBind)
@@ -121,6 +135,15 @@ function Shop:onItemMarkerHit(hitElement, dim)
 		else
 			hitElement:triggerEvent("showItemShopGUI")
 			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+		end
+	end
+end
+
+function Shop:onGasStationMarkerHit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if not self.m_Marker.m_Disable then
+			hitElement:triggerEvent("showGasStationShopGUI", self.m_Name)
+			triggerClientEvent(hitElement, "refreshGasStationShopGUI", hitElement, self.m_Id, self.m_Items)
 		end
 	end
 end
@@ -215,7 +238,7 @@ end
 
 function Shop:addBlip(blip)
 	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600)
-	if blip == "Bar.png" then 
+	if blip == "Bar.png" then
 		b:setDisplayText("Bar / Club", BLIP_CATEGORY.Leisure)
 		b:setOptionalColor({245, 160, 199})
 	else

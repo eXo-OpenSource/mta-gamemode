@@ -12,10 +12,10 @@ function CompanyGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_LeaderTab = false
@@ -27,25 +27,33 @@ function CompanyGUI:constructor()
 	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.10, "", tabAllgemein)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
 	self.m_CompanyRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
---	self.m_CompanyQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", true, tabAllgemein):setBarColor(Color.Red)
+--	self.m_CompanyQuitButton = GUIButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", tabAllgemein):setBackgroundColor(Color.Red)::setBarEnabled(true)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabAllgemein)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Inhalt:", tabAllgemein)
 	self.m_CompanyMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, "", tabAllgemein)
 	--self.m_CompanyMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.27, self.m_Height*0.07, tabAllgemein):setCaption(_"Betrag")
-	--self.m_CompanyMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabAllgemein)
-	--self.m_CompanyMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabAllgemein)
+	--self.m_CompanyMoneyDepositButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", tabAllgemein):setBarEnabled(true)
+	--self.m_CompanyMoneyWithdrawButton = GUIButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", tabAllgemein):setBarEnabled(true)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
-	self.m_CompanyRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
+	self.m_CompanyRespawnVehicleButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", tabAllgemein):setBarEnabled(true)
 	self.m_CompanyRespawnVehicleButton.onLeftClick = bind(self.CompanyRespawnVehicles, self)
 
 	if localPlayer:getCompany():getId() == 3 then -- San News
-		self.m_SanNewsToggleMsg = VRPButton:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.3, self.m_Height*0.07, _"/sannews de/aktivieren", true, tabAllgemein)
+		self.m_SanNewsToggleMsg = GUIButton:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.3, self.m_Height*0.07, _"/sannews de/aktivieren", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsToggleMsg.onLeftClick = bind(self.SanNewsToggleMessage, self)
 
-		self.m_SanNewsStartStreetrace = VRPButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", true, tabAllgemein)
+		self.m_SanNewsStartStreetrace = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.3, self.m_Height*0.07, _"Straßenrennen starten", tabAllgemein):setBarEnabled(true)
 		self.m_SanNewsStartStreetrace.onLeftClick = function() triggerServerEvent("sanNewsStartStreetrace", root) end
+	end
+
+	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
+	self.m_BindButton.onLeftClick = function()
+	if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+		self:close()
+		self.m_BindManageGUI = BindManageGUI:new("company")
+		self.m_BindManageGUI:addBackButton(function() CompanyGUI:getSingleton():show() end)
 	end
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
@@ -55,11 +63,11 @@ function CompanyGUI:constructor()
 	self.m_CompanyPlayersGrid:addColumn(_"Spieler", 0.44)
 	self.m_CompanyPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_CompanyPlayersGrid:addColumn(_"Aktivität", 0.27)
-	self.m_CompanyAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
-	self.m_CompanyRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
-	self.m_CompanyRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
-	self.m_CompanyRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	self.m_CompanyToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
+	self.m_CompanyAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_CompanyRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_CompanyRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_CompanyToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
 
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
@@ -126,7 +134,7 @@ function CompanyGUI:addLeaderTab()
 		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
 		self.m_SkinChanger.onChange = function(text, index) self.m_SkinVorschauBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, tabLeader)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
@@ -144,7 +152,7 @@ function CompanyGUI:addLeaderTab()
 			end
 		end
 
-		self.m_CompanyPlayerFileButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder)
+		self.m_CompanyPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder):setBarEnabled(true)
 		self.m_CompanyPlayerFileButton.onLeftClick = bind(self.CompanyPlayerFileButton_Click, self)
 		self.m_LeaderTab = true
 	end
@@ -268,8 +276,8 @@ end
 function CompanyGUI:CompanyRemovePlayerButton_Click()
 	local selectedItem = self.m_CompanyPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-	
-		HistoryUninviteGUI:new(function(internal, external) 
+
+		HistoryUninviteGUI:new(function(internal, external)
 			triggerServerEvent("companyDeleteMember", root, selectedItem.Id, internal, external)
 		end)
 	else

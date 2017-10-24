@@ -15,12 +15,7 @@ function AdminPedGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Admin-Ped Menü", true, true, self)
-
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
-	self.m_CloseButton.onLeftClick = function() self:delete() end
-
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_BackButton.onLeftClick = function() self:close() AdminGUI:getSingleton():show() Cursor:show() end
+	self.m_Window:addBackButton(function () delete(self) AdminGUI:getSingleton():show() end)
 
 	self.m_PedGrid = GUIGridList:new(10, 50, self.m_Width-20, 300, self.m_Window)
 	self.m_PedGrid:addColumn(_"ID", 0.05)
@@ -31,7 +26,7 @@ function AdminPedGUI:constructor(money)
 	self.m_PedGrid:addColumn(_"gespawnt", 0.15)
 
 
-	self.m_SpawnPed = GUIButton:new(10, 360, 180, 30, "ausgewählen Ped spawnen",  self):setFontSize(1):setBackgroundColor(Color.Green)
+	self.m_SpawnPed = GUIButton:new(10, 360, 200, 30, "ausgewählen Ped spawnen",  self):setFontSize(1):setBackgroundColor(Color.Green)
 	self.m_SpawnPed.onLeftClick = function()
 		if not self.m_SelectedPedId then
 			ErrorBox:new(_"Kein Ped ausgewählt!")
@@ -39,6 +34,14 @@ function AdminPedGUI:constructor(money)
 		triggerServerEvent("adminPedSpawn", localPlayer, self.m_SelectedPedId)
 	end
 	self.m_SpawnPed:setVisible(false)
+	self.m_DeletePosition = GUIButton:new(10, 395, 200, 30, "ausgewählen Ped Position löschen",  self):setFontSize(1):setBackgroundColor(Color.Red)
+	self.m_DeletePosition:setVisible(false)
+	self.m_DeletePosition.onLeftClick = function()
+		if not self.m_SelectedPedId then
+			ErrorBox:new(_"Kein Ped ausgewählt!")
+		end
+		triggerServerEvent("adminPedDelete", localPlayer, self.m_SelectedPedId)
+	end
 
 	self.m_CreatePed = GUIButton:new(10, 500, 180, 30, "neuen Ped plazieren",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
 	self.m_CreatePed.onLeftClick = function() delete(self) triggerServerEvent("adminCreatePed", localPlayer) end
@@ -127,9 +130,18 @@ end
 
 function AdminPedGUI:onSelectPed(id)
 	local data = self.m_PedData[id]
+	self.m_PedRolesGrid:clear()
+
+	if not data then
+		self.m_SelectedPedId = nil
+		self.m_SpawnPed:setVisible(false)
+		self.m_DeletePosition:setVisible(false)
+		return
+	end
+
 	self.m_SelectedPedId = id
 	self.m_SpawnPed:setVisible(true)
-
+	self.m_DeletePosition:setVisible(true)
 	if data["Spawned"] then
 		self.m_SpawnPed:setText("ausgewählen Ped despawnen")
 		self.m_SpawnPed:setBackgroundColor(Color.Red)
@@ -138,9 +150,6 @@ function AdminPedGUI:onSelectPed(id)
 		self.m_SpawnPed:setBackgroundColor(Color.Green)
 	end
 
-
-
-	self.m_PedRolesGrid:clear()
 	for index, roleId in pairs(data["Roles"]) do
 		item = self.m_PedRolesGrid:addItem(self.m_RoleNames[roleId])
 		item.id = roleId

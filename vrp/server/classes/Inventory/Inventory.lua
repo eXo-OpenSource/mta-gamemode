@@ -43,7 +43,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 				end
 			end
 		else
-			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
+			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 		end
 	end
 
@@ -80,19 +80,19 @@ function Inventory:loadItem(id)
 			self.m_Items[id]["Value"] = row["Value"]
 			self.m_Bag[row["Tasche"]][place] = id
 		else
-			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
+			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 		end
 	end
 	self:syncClient()
 end
 
-function Inventory:useItem(itemId, bag, itemName, place, delete)
+function Inventory:useItem(itemId, bag, itemName, place)
 	if self:getItemAmount(itemName) <= 0 then
 		client:sendError(_("Inventar Fehler: Kein Item", client))
 		return
 	end
 
-	if delete == true then
+	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
 		self:removeItemFromPlace(bag, place, 1)
 	end
 
@@ -401,13 +401,14 @@ function Inventory:removeItem(item, amount, value)
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
 								self:removeItemFromPlace(bag, place, amount)
+								return
 							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
 									self:removeItemFromPlace(bag, place, amount, value)
+									return
 								end
 							end
-							return
 						end
 					end
 				end
@@ -558,7 +559,7 @@ function Inventory:getItemIdFromName(item)
 end
 
 function Inventory:throwItem(item, bag, id, place, name)
-	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
+	self.m_Owner:sendInfo(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
 	self.m_Owner:meChat(true, "zerstört "..name.."!")
 	local value = self:getItemValueByBag(bag,place)
 	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )

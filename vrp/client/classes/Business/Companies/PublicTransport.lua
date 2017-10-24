@@ -5,24 +5,21 @@ function PublicTransport:constructor()
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
 	self.m_ActiveBusVehicles = {}
 	self.m_ActiveLines = {}
+	self.m_StreamedInBusObjects = {}
 
 	self.m_Event_BusStopStreamIn = bind(PublicTransport.busStopStreamIn, self)
 	self.m_Event_BusStopStreamOut = bind(PublicTransport.busStopStreamOut, self)
 	self:registerBusStopObjects()
 end
 
-
 function PublicTransport:setBusDisplayText(vehicle, text, line)
-	if not vehicle.Bus_TexReplace then
-		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true) FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
-		vehicle.m_BusShader = DxShader("files/shader/texreplace.fx")
-		vehicle.m_BusShader:setValue("gTexture", vehicle.Bus_TexReplace)
-		vehicle.m_BusShader:applyToWorldTexture("coach92decals128", vehicle)
-
-		addEventHandler("onClientElementDestroy", vehicle, function() 
-			delete(vehicle.Bus_TexReplace) 
-			delete(vehicle.m_BusShader)
-		end)
+	if not isElement(vehicle.Bus_TexReplace) then
+		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true)
+		RenderTargetTextureReplacer:new(vehicle, vehicle.Bus_TexReplace, "coach92decals128",  {})
+		addEventHandler("onClientElementDestroy", vehicle, function()
+			delete(vehicle.Bus_TexReplace)
+			vehicle.Bus_TexReplace = nil
+		end, false)
 	end
 	dxSetRenderTarget(vehicle.Bus_TexReplace, true)
 	dxDrawRectangle(0, 80, 256, 60, Color.Grey)
@@ -39,6 +36,7 @@ function PublicTransport:busStopStreamIn(obj)
 	if obj then source = obj end
 	if not source.m_BusCol then
 		source.m_BusCol = createColSphere(source.position, 3)
+		self.m_StreamedInBusObjects[source] = source:getData("EPT_bus_station")
 		addEventHandler("onClientColShapeHit", source.m_BusCol, function(hit, dim)
 			if not dim then return end
 			if hit ~= localPlayer or localPlayer.vehicle then return end
@@ -48,9 +46,10 @@ function PublicTransport:busStopStreamIn(obj)
 end
 
 function PublicTransport:busStopStreamOut()
-	if source.m_BusCol then	
+	if source.m_BusCol then
 		source.m_BusCol:destroy()
 		source.m_BusCol = nil
+		self.m_StreamedInBusObjects[source] = nil
 	end
 end
 
@@ -79,8 +78,15 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName, endStop, 
 					Indicator:getSingleton():switchIndicatorState("warn")
 				end
 				playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..text.."&client=tw-ob")
-			end, 2000, 1)	
+			end, 2000, 1)
 		end, 5000, 1)
+	else
+		for stopObj, name in pairs(self.m_StreamedInBusObjects) do -- output message at next stop
+			if name == nextStopName then
+				ShortMessage:new(_("Ein Bus der Linie %d (%s) kommt in Kürze an der Haltestelle %s an.", line, EPTBusData.lineData.lineDisplayData[line].displayName, nextStopName), _"Public Transport", {230, 170, 0})
+				break
+			end
+		end
 	end
 end
 
@@ -120,11 +126,18 @@ function PublicTransport:registerBusStopObjects()
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
 			v:getData("object").m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
+			v:getData("object"):setBreakable(false)
 			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
 			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
 			if v:getData("object"):isStreamedIn() then
 				self:busStopStreamIn(v:getData("object"))
 			end
+			setElementData(v:getData("object"), "clickable", true, false)
+			v:getData("object"):setData("onClickEvent",
+				function()
+					BusRouteInformationGUI:new(v:getData("object"))
+				end
+			)
 		end
 	end
 end
@@ -137,7 +150,7 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 
 	 self:addItem(_"Anzeigetafel ändern"):setTextColor(Color.Red)
 
-	self:addItem(_"Linie 1 bedienen",
+	self:addItem(_"Linie 1 nach Blueberry bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1)
@@ -145,10 +158,26 @@ function BusLineMouseMenu:constructor(posX, posY, element)
 		end
 	)
 
-	self:addItem(_"Linie 2 bedienen",
+	self:addItem(_"Linie 1 nach Downtown bedienen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 1, true)
+			end
+		end
+	)
+
+	self:addItem(_"Linie 2 nach Montgomery bedienen",
 		function()
 			if self:getElement() then
 				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2)
+			end
+		end
+	)
+
+	self:addItem(_"Linie 2 nach East LS bedienen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("publicTransportChangeBusDutyState", self:getElement(), "dutyLine", 2, true)
 			end
 		end
 	)

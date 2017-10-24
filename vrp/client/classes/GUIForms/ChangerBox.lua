@@ -19,7 +19,7 @@ function ChangerBox:constructor(title, text,items, callback)
 		item = self.m_Changer:addItem(v)
 		self.m_itemTable[v] = index
 	end
-	self.m_SubmitButton = VRPButton:new(self.m_Width*0.01, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_SubmitButton = GUIButton:new(self.m_Width*0.01, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 
 	self.m_SubmitButton.onLeftClick = function()
 		if callback then

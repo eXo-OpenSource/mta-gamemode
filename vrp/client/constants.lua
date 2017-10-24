@@ -201,6 +201,7 @@ HelpTextTitles = {
 		SideSwipe = "Minigame: SideSwipe";
 		SniperGame = "Minigame: Sniper Game";
 		TCars = "Minigame: 2Cars";
+		Roulette = "Casino: Roulette";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -217,9 +218,6 @@ HelpTextTitles = {
 	Credits = {
 		OldVRPTeam = "vRP-Team";
 		Other = "sonstige Credits";
-	};
-	Settings = {
-		ShortMessageCTC = "Information - ShortMessage-CTC";
 	};
 	Vehicles = {
 		Info = "Info zu Fahrzeugen";
@@ -462,6 +460,10 @@ HelpTexts = {
 		TCars = [[
 			Steuere beide Autos mit den Tasten 'a' und 'd' oder Pfeilsten links, rechts. Weiche den Kästchen aus und sammel jeden Punkt.
 		]];
+		Roulette = [[
+			Das Ziel ist wie bei jedem Glücksspiel mit einer „Wette“ Geld zu gewinnen. Man setzt einen bestimmten Betrag
+			ein Feld und vertraut auf sein Glück!
+		]];
 
 	};
 	Actions = {
@@ -533,9 +535,6 @@ HelpTexts = {
 			Anti c-Bug
 			realdriveby
 		]];
-	};
-	Settings = {
-		ShortMessageCTC = "ShortMessage-CTC (Click-to-Close) ist eine Option mit der eingestellt werden kann, ob eine ShortMessage-Box (wie diese) durch ein einfaches klicken geschlossen werden kann oder nur durch den Timeout.\n\nNote: Callback-clicks are always working!";
 	};
 	Vehicles = {
 		 Info = [[
@@ -666,3 +665,5 @@ TEXTURE_SYSTEM_HELP =
 }
 
 TEXTURE_LOADING_MODE = {STREAM = 1, PERMANENT = 2, NONE = 3, [1] = "STREAM", [2] = "PERMANENT", [3] = "NONE"}
+
+CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"

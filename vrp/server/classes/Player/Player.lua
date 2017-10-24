@@ -57,12 +57,6 @@ function Player:destructor()
 		delete(self.m_Inventory)
 	end
 
-	-- Collect all world items
---	local worldItems = WorldItem.getItemsByOwner(self)
---	for k, worldItem in pairs(worldItems) do
---		worldItem:collect(self)
---	end
-
 	-- Call the quit hook (to clean up various things before saving)
 
 	Player.ms_QuitHook:call(self)
@@ -71,11 +65,16 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() or self.m_RemoveWeaponsOnLogout then
+	if self:isFactionDuty() then
 		takeAllWeapons(self)
 	end
 
 	self:setJailNewTime()
+
+	if self:hasTemporaryStorage() then
+		self:restoreStorage()
+	end
+
 	self:save()
 
 	if self.m_BankAccount then
@@ -250,6 +249,7 @@ function Player:loadCharacterInfo()
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
+	VehicleCategory:getSingleton():syncWithClient(self)
 
 	self.m_IsDead = row.IsDead or 0
 
@@ -280,18 +280,6 @@ function Player:initialiseBinds()
 	if self:getFaction() then
  		bindKey(self, "y", "down", "chatbox", "Fraktion")
  	end
-	--[[ Spieler werden sich folgende Binds lieber selbst zu recht legen
- 	if self:getCompany() then
- 		bindKey(self, "u", "down", "chatbox", "Unternehmen")
- 	end
- 	if self:getGroup() then
- 		bindKey(self, "3", "down", "chatbox", "Firma/Gang")
- 	end
-	--]]
-	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
-	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
-	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then if vehicle:hasKey(player) or player:getRank() >= RANK.Moderator then vehicle:toggleHandBrake(player) else player:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", player)) end end end)
-	--bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and vehicle:getVehicleType() == VehicleType.Automobile then player:buckleSeatBelt(vehicle) end end)
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -344,20 +332,17 @@ function Player:save()
 				weapons[#weapons + 1] = {weapon, ammo}
 			end
 		end
+
 		local dimension = 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
-		local sSkin = getElementModel(self)
+		local sSkin = self:getModel()
 		if interior > 0 then dimension = self:getDimension() end
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
-
-		--if self:getInventory() then
-		--	self:getInventory():save()
-		--end
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 		DatabasePlayer.save(self)
 		outputServerLog("Saved Data for Player "..self:getName())
@@ -764,18 +749,6 @@ function Player:setDefaultSkin()
 	end
 end
 
-function Player:setKarma(karma)
-	if karma < 0 and self.m_Karma >= 0 then
-		self:giveAchievement(1)
-	end
-	if karma >= 0 and self.m_Karma < 0 then
-		self:giveAchievement(2)
-	end
-
-	DatabasePlayer.setKarma(self, karma)
-	self:setPublicSync("Karma", self.m_Karma)
-end
-
 function Player:setXP(xp)
 	DatabasePlayer.setXP(self, xp)
 	self:setPublicSync("XP", xp)
@@ -951,11 +924,11 @@ function Player:payDay()
 	--Outgoing
 	local temp_bank_money = self:getBankMoney() + income
 
-	outgoing_vehicles = #self:getVehicles()*75
+	outgoing_vehicles, vehiclesTaxAmount = self:calcVehiclesTax()
 	if outgoing_vehicles > 0 then
 		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
 		temp_bank_money = temp_bank_money - outgoing_vehicles
-		points_total = points_total + #self:getVehicles() * 2
+		points_total = points_total + vehiclesTaxAmount*2
 	end
 
 	if HouseManager:isInstantiated() then
@@ -981,7 +954,7 @@ function Player:payDay()
 
 	outgoing = outgoing_vehicles + outgoing_house
 
-	FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
+	--FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome", "", income)
@@ -1018,6 +991,18 @@ function Player:payDay()
 	self:save()
 end
 
+function Player:calcVehiclesTax()
+	local tax = 0
+	local amount = 0
+	for key, vehicle in pairs(self:getVehicles()) do
+		if vehicle:getTax() > 0 then
+			tax = tax + vehicle:getTax()
+			amount = amount + 1
+		end
+	end
+	return tax, amount
+end
+
 function Player:addPaydayText(type, text, amount)
 	if not self.m_paydayTexts[type] then self.m_paydayTexts[type] = {} end
 	table.insert(self.m_paydayTexts[type], {text, amount})
@@ -1048,10 +1033,24 @@ function Player:addCrime(crimeType)
 end
 
 function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.giveMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
-			self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", bNoSound)
+	end
+	return success
+end
+
+function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
+	local success = DatabasePlayer.takeMoney(self, money, reason)
+	if success then
+		local money = math.abs(money)
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s%s"):format("-"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", bNoSound)
 	end
@@ -1059,6 +1058,7 @@ function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.addBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1070,6 +1070,7 @@ function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
 end
 
 function Player:takeBankMoney(money, reason, bNoSound, silent) -- Overriden
+	if not money or money < 1 then return false end
 	local success = DatabasePlayer.takeBankMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
@@ -1109,17 +1110,120 @@ function Player.getChatHook()
 	return Player.ms_ChatHook
 end
 
-function Player:givePoints(p) -- Overriden
-	DatabasePlayer.givePoints(self, p)
-
-	if p ~= 0 then
-		self:sendShortMessage((p >= 0 and "+"..p or p).._(" Punkte", self))
+function Player:setKarma(karma)
+	if karma < 0 and self.m_Karma >= 0 then
+		self:giveAchievement(1)
 	end
+	if karma >= 0 and self.m_Karma < 0 then
+		self:giveAchievement(2)
+	end
+
+	DatabasePlayer.setKarma(self, karma)
+end
+
+function Player:giveKarma(karma, reason, bNoSound, silent)
+	if not karma or karma < 1 then return false end
+	local oldKarma = self.m_Karma
+	local success = DatabasePlayer.giveKarma(self, karma, reason)
+	if success then
+		if karma < 0 and self.m_Karma >= 0 then
+			self:giveAchievement(1)
+		end
+		if karma ~= 0 and not silent then
+			self:sendShortMessage(("%s Karma%s"):format("+"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+		end
+	end
+	return success
+end
+
+function Player:takeKarma(karma, reason, bNoSound, silent)
+	if not karma or karma < 1 then return false end
+	local oldKarma = self.m_Karma
+	local success = DatabasePlayer.takeKarma(self, karma, reason)
+	if success then
+		if oldKarma >= 0 and self.m_Karma < 0 then
+			self:giveAchievement(2)
+		end
+		if karma ~= 0 and not silent then
+			self:sendShortMessage(("%s Karma%s"):format("-"..karma, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+		end
+	end
+	return success
+end
+
+function Player:givePoints(p, reason, bNoSound, silent) -- Overriden
+	DatabasePlayer.givePoints(self, p, reason)
+	if p ~= 0 and not silent then
+		self:sendShortMessage(("%s Punkte%s"):format("+"..p, reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+	end
+end
+
+function Player:takePoints(p, reason, bNoSound, silent) -- Overriden
+	DatabasePlayer.takePoints(self, p, reason)
+	if p ~= 0 and not silent then
+		self:sendShortMessage(("%s Punkte%s"):format("-"..p , reason ~= nil and " - "..reason or ""), "Spielfortschritt", {0, 94, 255}, 3000)
+	end
+end
+
+function Player:giveCombinedReward(name, tblReward)
+	local smText = ""
+	for name, amount in pairs(tblReward) do
+		amount = tonumber(amount)
+		if amount then
+			amount = math.round(amount)
+			if name == "money" then
+				if amount > 0 then
+					self:giveMoney(amount, name, false, true)
+					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
+				elseif amount < 0 then
+					self:takeMoney(math.abs(amount), name, false, true)
+					smText = smText .. ("%s\n"):format(toMoneyString(amount))
+				end
+			elseif name == "bankMoney" then
+				if amount > 0 then
+					self:addBankMoney(amount, name, false, true)
+					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
+				elseif amount < 0 then
+					self:takeBankMoney(math.abs(amount), name, false, true)
+					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
+				end
+			elseif name == "points" then
+				if amount > 0 then
+					self:givePoints(amount, name, false, true)
+					smText = smText .. ("+%s Punkte\n"):format(amount)
+				elseif amount < 0 then
+					self:takePoints(math.abs(amount), name, false, true)
+					smText = smText .. ("%s Punkte\n"):format(amount)
+				end
+			elseif name == "karma" then
+				if amount > 0 then
+					self:giveKarma(amount, name, false, true)
+					smText = smText .. ("+%s Karma\n"):format(amount)
+				elseif amount < 0 then
+					self:takeKarma(math.abs(amount), name, false, true)
+					smText = smText .. ("%s Karma\n"):format(amount)
+				end
+			end
+		end
+	end
+	self:sendShortMessage(smText:sub(0, #smText-1), name, {0, 94, 255}, 10000)
 end
 
 function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
+
+function Player:getLastChatMessage()
+	if not self.m_LastChatMsg then
+		self.m_LastChatMsg = {"", 0}
+	end
+	return unpack(self.m_LastChatMsg) -- message, timeSent
+end
+
+function Player:setLastChatMessage(msg)
+	self.m_LastChatMsg = {msg, getTickCount()}
+end
+
 
 function Player:getPlayersInChatRange( irange)
 	local range
@@ -1160,6 +1264,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 			toggleControl(self, "next_weapon", bool )
 			toggleControl(self, "previous_weapon", bool )
 			toggleControl(self, "enter_exit", bool )
+			toggleControl(self, "enter_passenger", bool )
 		end
 	else
 		toggleControl(self, "jump", bool )
@@ -1168,6 +1273,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
 		toggleControl(self, "enter_exit", bool )
+		toggleControl(self, "enter_passenger", bool )
 	end
 end
 
@@ -1384,4 +1490,53 @@ function Player:addClothes(texture, model, typeId)
 	addPedClothes(self, texture, model, typeId)
 
 	self.m_SkinData[typeId] = {texture = texture, model = model}
+end
+
+-- Temporary player storage
+local stats = {69, 70, 71, 72, 74, 76, 77, 78, 160, 229, 230}
+function Player:createStorage(storeSkills)
+	self.m_Storage = {
+		weapons = {},
+		stats = {},
+		health = self:getHealth(),
+		armor = self:getArmor(),
+	}
+
+	for slot = 0, 11 do
+		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+		if ammo > 0 then
+			self.m_Storage.weapons[weapon] = ammo
+		end
+	end
+
+	takeAllWeapons(self)
+
+	if storeSkills then
+		for _, stat in pairs(stats) do
+			self.m_Storage.stats[stat] = self:getStat(stat)
+			setPedStat(self, stat, 0)
+		end
+	end
+end
+
+function Player:restoreStorage()
+	if not self.m_Storage then return false end
+
+	takeAllWeapons(self)
+	for weapon, ammo in pairs(self.m_Storage.weapons) do
+		giveWeapon(self, weapon, ammo)
+	end
+
+	for stat, value in pairs(self.m_Storage.stats) do
+		setPedStat(self, stat, value)
+	end
+
+	self:setHealth(self.m_Storage.health)
+	self:setArmor(self.m_Storage.armor)
+
+	self.m_Storage = nil
+end
+
+function Player:hasTemporaryStorage()
+	return type(self.m_Storage) == "table"
 end

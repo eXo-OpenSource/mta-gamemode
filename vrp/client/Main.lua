@@ -12,6 +12,7 @@ function Main.resourceStart()
 	core = Core:new()
 	
 	setWorldSpecialPropertyEnabled("extraairresistance",false)
+	setPlayerHudComponentVisible("all", false)
 end
 addEventHandler("onClientResourceStart", resourceRoot, Main.resourceStart, true, "high+99999")
 

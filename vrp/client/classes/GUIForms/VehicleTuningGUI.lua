@@ -41,6 +41,7 @@ function VehicleTuningGUI:constructor(vehicle, specialType)
         self.m_UpgradeChanger = GUIChanger:new(screenWidth/2-width/2, screenHeight-20-height, width, height)
         self.m_UpgradeChanger.onChange = bind(self.UpgradeChanger_Change, self)
         self.m_AddToCartButton = GUIButton:new(screenWidth/2-width/2 + width + 3, screenHeight-20-height, height, height, FontAwesomeSymbols.CartPlus)
+            :setBarEnabled(false)
             :setFont(FontAwesome(height*0.8))
             :setFontSize(1)
         self.m_AddToCartButton.onLeftClick = bind(self.AddToCartButton_Click, self)
@@ -54,7 +55,7 @@ function VehicleTuningGUI:constructor(vehicle, specialType)
             :addColumn(_"Upgrade", 0.7)
             :addColumn(_"Preis", 0.3)
         self.m_PriceLabel = GUILabel:new(width*0.02, height*0.9, width*0.5, height*0.1, "", self.m_ShoppingCartWindow)
-        self.m_ClearButton = GUIButton:new(width*0.65-height*0.12, height*0.9, height*0.1, height*0.1, FontAwesomeSymbols.Trash, self.m_ShoppingCartWindow):setFont(FontAwesome(15)):setBackgroundColor(Color.Red)
+        self.m_ClearButton = GUIButton:new(width*0.65-height*0.12, height*0.9, height*0.1, height*0.1, FontAwesomeSymbols.Trash, self.m_ShoppingCartWindow):setBarEnabled(false):setFont(FontAwesome(15)):setBackgroundColor(Color.Red)
         self.m_ClearButton.onLeftClick = bind(self.ClearButton_Click, self)
 		self.m_BuyButton = GUIButton:new(width*0.65, height*0.9, width*0.35, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
         self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
@@ -351,21 +352,20 @@ function VehicleTuningGUI:PartItem_Click(item)
                 "Neonröhren ein/ausbauen",
                 {[0] = _"Keine Neonröhre", [1] = _"Neonröhre einbauen"},
                 function(neon)
+					self.m_NewTuning:saveTuning("NeonColor", {255,0,0})
 					self.m_NewTuning:saveTuning(item.PartSlot, neon == 1)
 					self.m_NewTuning:applyTuning()
 					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neon)
                 end,
                 function(neon)
                     if neon == 1 then
-                        setElementData(self.m_Vehicle, "Neon", true)
-                        setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
-                        Neon.Vehicles[self.m_Vehicle] = true
-                    else
-                        setElementData(self.m_Vehicle, "Neon", false)
-                        setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-                        if Neon.Vehicles[self.m_Vehicle] then
-                            Neon.Vehicles[self.m_Vehicle] = nil
-                        end
+						self.m_Vehicle:setData("Neon", true)
+						self.m_Vehicle:setData("NeonColor", {255,0,0})
+						Neon.Vehicles[self.m_Vehicle] = true
+					else
+						self.m_Vehicle:setData("Neon", false)
+						self.m_Vehicle:setData("NeonColor", {0,0,0})
+						Neon.Vehicles[self.m_Vehicle] = Neon.Vehicles[self.m_Vehicle] and true or nil
                     end
                 end
             )
@@ -383,7 +383,7 @@ function VehicleTuningGUI:PartItem_Click(item)
 					self.m_NewTuning:applyTuning()
 				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
 				function(r, g, b)
-					setElementData(self.m_Vehicle, "NeonColor", {r, g, b})
+					self.m_Vehicle:setData("NeonColor", {r, g, b})
 				end)
             if self.m_NewTuning:getTuning(item.PartSlot) and type(self.m_NewTuning:getTuning(item.PartSlot)) == "table" then
 				self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTuning(item.PartSlot)))

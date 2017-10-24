@@ -10,7 +10,7 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 	},
 }
 
-local TAXI_PRICE_PER_KM = 20
+local TAXI_PRICE_PER_KM = 30
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
@@ -129,7 +129,7 @@ function PublicTransport:onBarrierHit(player)
     return player:getCompany() == self
 end
 
-function PublicTransport:onVehiceEnter(veh, player, seat)
+function PublicTransport:onVehicleEnter(veh, player, seat)
 	if seat == 0 then
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			player:triggerEvent("showTaxoMeter")
@@ -155,11 +155,11 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 	end
 end
 
-function PublicTransport:onVehiceStartEnter(veh, player, seat)
+function PublicTransport:onVehicleStartEnter(veh, player, seat)
 	if seat > 0 and not veh:getOccupant(0) then
 		if veh:getModel() == 420 or veh:getModel() == 438 or veh:getModel() == 487 then
 			cancelEvent()
-			player:sendError(_("Es sitzt kein Fahrer im Taxi.", player))
+			player:sendError(_("Es sitzt kein %s.", player, veh:getModel() == 487 and "Pilot im Helikopter" or "Fahrer im Taxi"))
 		elseif veh:getModel() == 437 then
 			cancelEvent()
 			player:sendError(_("Es sitzt kein Fahrer im Bus.", player))
@@ -186,14 +186,16 @@ function PublicTransport:onVehiceExit(veh, player, seat)
 	end
 end
 
-function PublicTransport:startTaxiDrive(veh, customer)
+function PublicTransport:startTaxiDrive(veh, customer, isFree)
 	self.m_TaxiCustomer[customer] = {}
 	self.m_TaxiCustomer[customer]["customer"] = customer
 	self.m_TaxiCustomer[customer]["vehicle"] = veh
 	self.m_TaxiCustomer[customer]["driver"] = veh:getOccupant(0)
+	self.m_TaxiCustomer[customer]["driverName"] = veh:getOccupant(0):getName()
 	self.m_TaxiCustomer[customer]["startMileage"] = veh:getMileage()
 	self.m_TaxiCustomer[customer]["diff"] = 0
 	self.m_TaxiCustomer[customer]["price"] = 0
+	self.m_TaxiCustomer[customer]["isFree"] = isFree
 	self.m_TaxiCustomer[customer]["timer"] = setTimer(self.m_TaxoMeter, 1000, 0, customer)
 	customer:triggerEvent("showTaxoMeter")
 	customer:triggerEvent("showPublicTransportTaxiGUI")
@@ -203,17 +205,24 @@ end
 function PublicTransport:endTaxiDrive(customer)
 	if self.m_TaxiCustomer[customer] then
 		local driver = self.m_TaxiCustomer[customer]["driver"]
+		local driverName = self.m_TaxiCustomer[customer]["driverName"]
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
-		driver:giveMoney(price, "Public Transport Taxi")
-		if price > 0 then
-			self:giveMoney(price, ("Taxifahrt von %s mit %s"):format(driver:getName(), customer:getName()))
+		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
+		if price > 0 then 
+			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
+				self:giveMoney(math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), true) -- prevent players from spawning afk money
+			end
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
-		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
-		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
+		
+		if isElement(driver) then 
+			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
+			driver:giveMoney(price, "Public Transport Taxi") 
+		end
+
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
 		if self.m_TaxiCustomer[customer]["blip"] then delete(self.m_TaxiCustomer[customer]["blip"]) end
 		self.m_TaxiCustomer[customer] = nil
@@ -223,15 +232,17 @@ function PublicTransport:endTaxiDrive(customer)
 end
 
 function PublicTransport:updateTaxometer(customer)
-	if self.m_TaxiCustomer[customer] and isElement(customer) then
+	if self.m_TaxiCustomer[customer] and isElement(customer) and self.m_TaxiCustomer[customer]["driver"] and isElement(self.m_TaxiCustomer[customer]["driver"]) then
 		self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
-		self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
+		if not self.m_TaxiCustomer[customer]["isFree"] then
+			self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
+		end
 		customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
 		if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] and not self.m_TaxiCustomer[customer]["moneyWarningSent"] then
 			self.m_TaxiCustomer[customer]["moneyWarningSent"] = true
-			customer:sendWarning(_("Du hast nicht mehr genügend Geld dabei!", customer, price))
-			self.m_TaxiCustomer[customer]["driver"]:sendWarning(_("Der Spieler hat nicht mehr genügend Geld dabei!", customer, price))
+			customer:sendWarning(_("Du hast nicht mehr genügend Geld dabei!", customer))
+			self.m_TaxiCustomer[customer]["driver"]:sendWarning(_("Der Spieler hat nicht mehr genügend Geld dabei!", customer))
 		end
 		self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
 	else
@@ -250,7 +261,7 @@ function PublicTransport:updateDriverTaxometer(vehicle, driver)
 			end
 		end
 	end
-	if driver then
+	if isElement(driver) then
 		driver:triggerEvent("syncDriverTaxoMeter", customers)
 	end
 end
@@ -266,11 +277,7 @@ end
 function PublicTransport:Event_OnTaxiDriverModeChange(customer, withTaxometer)
 	if not client.m_TaxiData or client.m_TaxiData ~= client.vehicle then return client:sendError(_("Du musst im Taxi sitzen!", client)) end
 	if not customer.vehicle or customer.vehicle ~= client.m_TaxiData then return client:sendError(_("Der Spieler sitzt nicht mehr im Taxi!", client)) end
-	if withTaxometer then
-		self:startTaxiDrive(client.m_TaxiData, customer)
-	else
-		customer:sendInfo(_("%s lässt dich gratis mitfahren.", customer, client.name))
-	end
+	self:startTaxiDrive(client.m_TaxiData, customer, not withTaxometer)
 end
 
 function PublicTransport:Event_setTargetFromMap(posX, posY)
@@ -297,10 +304,10 @@ function PublicTransport:Event_OnTaxiLightChange()
 	client.vehicle:setTaxiLightOn(not client.vehicle:isTaxiLightOn())
 end
 
-function PublicTransport:Event_changeBusDutyState(state, arg) -- from clientside mouse menu
+function PublicTransport:Event_changeBusDutyState(state, arg, arg2) -- from clientside mouse menu
 	if not client.vehicle then return end
 	if state == "dutyLine" then
-		self:startBusTour(client.vehicle, client, arg)
+		self:startBusTour(client.vehicle, client, arg, arg2)
 	elseif state == "dutySpecial" then
 		if client.vehicle.Bus_Line then
 			self:stopBusTour(client.vehicle, client)
@@ -325,10 +332,14 @@ function PublicTransport:startBusTour_Driver(player, nextStation, line)
 	if player.Bus_Blip then
 		delete(player.Bus_Blip)
 	end
-	local x, y, z = getElementPosition(self.m_BusStops[nextStation].object)
-	player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
-	player.Bus_Blip:setDisplayText("Bushaltestelle")
-	player:setPublicSync("EPT:BusDuty", true)
+	if not nextStation or not self.m_BusStops[nextStation] then
+		player:sendShortMessage(_("Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), dann melde dies bitte im Bugtracker"))
+	else
+		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][nextStation]].object)
+		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
+		player.Bus_Blip:setDisplayText("Bushaltestelle")
+		player:setPublicSync("EPT:BusDuty", true)
+	end
 end
 
 
@@ -367,7 +378,7 @@ function PublicTransport:stopBusTour(vehicle, player)
 	triggerClientEvent("busReachNextStop", root, vehicle, "Ausser Dienst", false)
 end
 
-function PublicTransport:startBusTour(vehicle, player, line)
+function PublicTransport:startBusTour(vehicle, player, line, backwards)
 	if vehicle.Bus_OnDuty and line == vehicle.Bus_Line then return false end
 	if self.m_Lines[line] then -- otherwise special service
 		if vehicle.Bus_Line then -- lines changed, so notify that the old bus route no longer recieves service
@@ -375,16 +386,28 @@ function PublicTransport:startBusTour(vehicle, player, line)
 		end
 		vehicle.Bus_OnDuty = true
 		vehicle.Bus_NextStop = 1
-		local marker = createColSphere(self.m_BusStops[self.m_Lines[line][1]].markerPos, 5)
+
+		if backwards then --search for the same station but in opposite direction
+			local firstName = self.m_BusStops[self.m_Lines[line][1]].name -- name of the first station
+			for i = 2, #self.m_Lines[line] do
+				if self.m_BusStops[self.m_Lines[line][i]].name == firstName then
+					vehicle.Bus_NextStop = i
+					break
+				end
+			end
+		end
+
+		local nextStop = self.m_BusStops[self.m_Lines[line][vehicle.Bus_NextStop]]
+		local marker = createColSphere(nextStop.markerPos, 5)
 		addEventHandler("onColShapeHit", marker, self.m_FuncStopHit)
-		self.m_BusStops[self.m_Lines[line][1]].marker[vehicle] = marker
+		nextStop.marker[vehicle] = marker
 
 		vehicle.Bus_Line = line
 		vehicle:setData("EPT_bus_duty", line, true)
 		vehicle:setColor(companyColors[4].r, companyColors[4].g, companyColors[4].b, unpack(PublicTransport.ms_BusLineData[line].color))
-		triggerClientEvent("busReachNextStop", root, player.vehicle, self.m_BusStops[self.m_Lines[line][1]].name, false, line)
+		triggerClientEvent("busReachNextStop", root, player.vehicle, nextStop.name, false, line)
 		player:giveAchievement(17)
-		self:startBusTour_Driver(player, self.m_Lines[line][1], line)
+		self:startBusTour_Driver(player, vehicle.Bus_NextStop, line) 
 		self.m_ActiveBusVehicles[vehicle] = line
 	else
 		vehicle.Bus_OnDuty = true
@@ -413,15 +436,22 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			return
 		end
 
-		-- Give the player some money and switch to the next bus stop
-		if lastId then
-			local dist = getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position)
-			player:addBankMoney(math.round(340 * (dist/1000)), "Public Transport Bus")	-- 340 / km
-			player:givePoints(math.round(5 * (dist/1000))) --5 / km
-			self:giveMoney(math.round(30 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()))
-			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(30 * (dist/1000)))))
+		if vehicle:getSpeed() > 40 then 
+			player:sendError(_("Du fährst zu schnell!", player))
+			return false 
 		end
-		player:districtChat(("Ein Bus der Linie %d ist an der Haltestelle '%s' eingetroffen!"):format(line, self.m_BusStops[stopId].name))
+
+		-- Give the player some money and switch to the next bus stop
+		if lastId then 
+			local dist = math.round(getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position) * (math.random(998, 1002)/1000))
+	
+			player:giveCombinedReward("Busfahrer-Gehalt", {
+				bankMoney = math.round(340 * (dist/1000)),-- 340 / km
+				points = math.round(5 * (dist/1000)),--5 / km
+			})
+			self:giveMoney(math.round(100 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
+			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(100 * (dist/1000)))))
+		end
 
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		vehicle.Bus_NextStop = newDestinationId

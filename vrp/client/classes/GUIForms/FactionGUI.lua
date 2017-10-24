@@ -16,10 +16,10 @@ function FactionGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_Leader = false
@@ -34,7 +34,7 @@ function FactionGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Aktions-Status:", tabAllgemein)
 	self.m_FactionNextActionLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.7, self.m_Height*0.06, "", tabAllgemein)
 
---	self.m_FactionQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", true, tabAllgemein):setBarColor(Color.Red)
+--	self.m_FactionQuitButton = GUIButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", tabAllgemein):setBackgroundColor(Color.Red):setBarEnabled(true)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabAllgemein)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Inhalt:", tabAllgemein)
@@ -42,12 +42,21 @@ function FactionGUI:constructor()
 	--self.m_FactionMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.27, self.m_Height*0.07, tabAllgemein):setCaption(_"Betrag")
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
-	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
+	self.m_FactionRespawnVehicleButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", tabAllgemein):setBarEnabled(true)
 	self.m_FactionRespawnVehicleButton.onLeftClick = bind(self.FactionRespawnVehicles, self)
-	self.m_LogButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Fraktions-Logs", true, tabAllgemein)
+
+	self.m_LogButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.3, self.m_Height*0.07, _"Fraktions-Logs", tabAllgemein):setBarEnabled(true)
 	self.m_LogButton.onLeftClick = bind(self.ShowLogs, self)
-	self.m_ObjectListButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", true, tabAllgemein)
+	self.m_ObjectListButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"platzierte Objekte", tabAllgemein):setBarEnabled(true)
 	self.m_ObjectListButton.onLeftClick = bind(self.ShowObjectList, self)
+	self.m_BindButton = GUIButton:new(self.m_Width*0.36, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Binds verwalten", tabAllgemein):setBarEnabled(true)
+	self.m_BindButton.onLeftClick = function()
+		if self.m_BindManageGUI then delete(self.m_BindManageGUI) end
+		self:close()
+		self.m_BindManageGUI = BindManageGUI:new("faction")
+		self.m_BindManageGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
+	end
+
 
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_tabMitglieder = tabMitglieder
@@ -56,11 +65,12 @@ function FactionGUI:constructor()
 	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.49)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.18)
 	self.m_FactionPlayersGrid:addColumn(_"Aktivität", 0.27)
-	self.m_FactionAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
-	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
-	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
-	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	self.m_FactionToggleLoanButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", true, tabMitglieder)
+
+	self.m_FactionAddPlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", tabMitglieder):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_FactionRemovePlayerButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", tabMitglieder):setBackgroundColor(Color.Red):setBarEnabled(true)
+	self.m_FactionRankUpButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", tabMitglieder):setBarEnabled(true)
+	self.m_FactionRankDownButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", tabMitglieder):setBarEnabled(true)
+	self.m_FactionToggleLoanButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.45, self.m_Width*0.3, self.m_Height*0.07, _"Gehalt deaktivieren", tabMitglieder):setBarEnabled(true)
 
 	self.m_tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
 
@@ -139,7 +149,7 @@ function FactionGUI:addLeaderTab()
 			self.m_SkinPreviewBrowser:setVisible(false)
 		end
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, self.m_TabLeader)
+		self.m_SaveRank = GUIButton:new(self.m_Width*0.73, self.m_Height*0.8, self.m_Width*0.26, self.m_Height*0.07, _"Rang speichern", self.m_TabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
@@ -147,7 +157,7 @@ function FactionGUI:addLeaderTab()
 
 		self:refreshLeaderTab()
 
-		self.m_FactionPlayerFileButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", true, self.m_tabMitglieder)
+		self.m_FactionPlayerFileButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.55, self.m_Width*0.3, self.m_Height*0.07, _"Spielerakten", self.m_tabMitglieder)
 		self.m_FactionPlayerFileButton.onLeftClick = bind(self.FactionPlayerFileButton_Click, self)
 		self.m_Leader = true
 	else
@@ -165,11 +175,13 @@ function FactionGUI:refreshLeaderTab()
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
 
-	for weaponID,v in pairs(self.m_ValidWeapons) do
+
+
+	for weaponID, v in pairs(self.m_ValidWeapons) do
 		if v == true then
-			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, WEAPON_NAMES[weaponID], self.m_TabLeader)
+			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, weaponID == 0 and "Spezial Waffen" or WEAPON_NAMES[weaponID], self.m_TabLeader)
 			self.m_WeaponsName[weaponID]:setAlignX("center")
-			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, WeaponIcons[weaponID], self.m_TabLeader)
+			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, weaponID == 0 and WeaponIcons[22] or WeaponIcons[weaponID], self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", self.m_TabLeader)
 			self.m_WeaponsCheck[weaponID]:setFontSize(1)
 			self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
@@ -179,7 +191,6 @@ function FactionGUI:refreshLeaderTab()
 			else
 				self.m_WaffenRow = self.m_WaffenRow+1
 			end
-
 		end
 	end
 	self.m_FactionRangGrid:clear()
@@ -369,14 +380,14 @@ function FactionGUI:Event_retrieveDiplomacy(sourceId, diplomacy, permissions, re
 		qText = {}
 		new = {}
 		text, color, new[1], qText[1] = unpack(btnData[currentDiplomacy][1])
-		self.m_DiplomacyButtons[1] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.13, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[1] = GUIButton:new(self.m_Width*0.66, self.m_Height*0.13, self.m_Width*0.32, self.m_Height*0.07, text, self.m_TabDiplomacy):setBackgroundColor(color)
 		self.m_DiplomacyButtons[1].onLeftClick = function()
 			QuestionBox:new(_(qText[1], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[1]) end
 			)
 		end
 		text, color, new[2], qText[2] = unpack(btnData[currentDiplomacy][2])
-		self.m_DiplomacyButtons[2] = VRPButton:new(self.m_Width*0.66, self.m_Height*0.21, self.m_Width*0.32, self.m_Height*0.07, text, true, self.m_TabDiplomacy):setBarColor(color)
+		self.m_DiplomacyButtons[2] = GUIButton:new(self.m_Width*0.66, self.m_Height*0.21, self.m_Width*0.32, self.m_Height*0.07, text, self.m_TabDiplomacy):setBackgroundColor(color)
 		self.m_DiplomacyButtons[2].onLeftClick = function()
 			QuestionBox:new(_(qText[2], FactionManager:getSingleton():getFromId(sourceId):getShortName()),
 				function() 	triggerServerEvent("factionChangeDiplomacy", localPlayer, sourceId, new[2]) end
@@ -429,16 +440,16 @@ function FactionGUI:onDiplomacyRequestItemSelect(id, data)
 	end
 	self.m_DiplomacyRequestButtons = {}
 	if data["source"] == localPlayer:getFaction():getId() then
-		self.m_DiplomacyRequestButtons["Remove"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.32, self.m_Height*0.07, "Zurückziehen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Remove"] = GUIButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.32, self.m_Height*0.07, "Zurückziehen", self.m_TabDiplomacy):setBackgroundColor(Color.Red)
 		self.m_DiplomacyRequestButtons["Remove"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "remove")
 		end
 	else
-		self.m_DiplomacyRequestButtons["Accept"] = VRPButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Annehmen", true, self.m_TabDiplomacy):setBarColor(Color.Green)
+		self.m_DiplomacyRequestButtons["Accept"] = GUIButton:new(self.m_Width*0.54, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Annehmen", self.m_TabDiplomacy):setBackgroundColor(Color.Green)
 		self.m_DiplomacyRequestButtons["Accept"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "accept")
 		end
-		self.m_DiplomacyRequestButtons["Decline"] = VRPButton:new(self.m_Width*0.77, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Ablehnen", true, self.m_TabDiplomacy):setBarColor(Color.Red)
+		self.m_DiplomacyRequestButtons["Decline"] = GUIButton:new(self.m_Width*0.77, self.m_Height*0.81, self.m_Width*0.21, self.m_Height*0.07, "Ablehnen", self.m_TabDiplomacy):setBackgroundColor(Color.Red)
 		self.m_DiplomacyRequestButtons["Decline"].onLeftClick = function()
 			triggerServerEvent("factionDiplomacyAnswer", localPlayer, id, "decline")
 		end
@@ -522,6 +533,9 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 				self.m_RankSkins = rankSkins
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
+				if localPlayer:getFaction():isEvilFaction() then
+					self.m_ValidWeapons[0] = true
+				end
 				self:addLeaderTab()
 			end
 		end

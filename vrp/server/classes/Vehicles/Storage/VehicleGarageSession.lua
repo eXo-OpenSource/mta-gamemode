@@ -35,8 +35,8 @@ function VehicleGarageSession:furnish()
 end
 
 function VehicleGarageSession:addVehicle(vehicle)
-	if vehicle:getVehicleType() == VehicleType.Plane or vehicle:getVehicleType() == VehicleType.Helicopter or vehicle:getVehicleType() == VehicleType.Boat then
-		self.m_Player:sendError("Detected wrong Vehicle in Garage! (VehicleType:"..vehicle:getVehicleType()..")")
+	if vehicle:getModel() ~= 539 and (vehicle:getVehicleType() == VehicleType.Plane or vehicle:getVehicleType() == VehicleType.Helicopter or vehicle:getVehicleType() == VehicleType.Boat) then
+		self.m_Player:sendError("Es können nur Autos und Motorräder in der Garage geparkt werden! (VehicleType:"..vehicle:getVehicleType()..")")
 		return false
 	end
 

@@ -5,11 +5,10 @@
 -- *  PURPOSE:     GUI moving text
 -- *
 -- ****************************************************************************
-
 GUIMovetext = inherit(DxElement)
 inherit(GUIFontContainer, GUIMovetext)
 
-function GUIMovetext:constructor(posX, posY, width, height, text,title,scrollspeed,startoffset,icon,postgui)
+function GUIMovetext:constructor(posX, posY, width, height, text, title, scrollspeed, startoffset, icon, postgui)
 	checkArgs("GUIMovetext:constructor", "number", "number", "number", "number","string","string" ,"number","number")
 	DxElement.constructor(self, posX, posY, width, height)
 	GUIFontContainer.constructor(self, text,1)

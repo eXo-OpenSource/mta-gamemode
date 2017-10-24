@@ -16,16 +16,35 @@ function Guns:constructor()
 
 	for index,skill in pairs(weaponSkills) do
 		-- Taser:
-		setWeaponProperty (23, skill, "weapon_range", 10 )
-		setWeaponProperty (23, skill, "maximum_clip_ammo", 9999 )
-		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
+		setWeaponProperty(23, skill, "weapon_range", 10 )
+		setWeaponProperty(23, skill, "maximum_clip_ammo", 9999 )
+		setWeaponProperty(23, skill, "anim_loop_stop", 0 )
+		-- Deagle:
+		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
+		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
+		-- Uzi:
+		setWeaponProperty(28, skill, "accuracy",1.1000000238419) -- GTA-Std: 1.1000000238419
+		-- MP5:
+		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
+		-- M4:
+		setWeaponProperty(31, skill, "accuracy", 0.9) -- GTA-Std: 0.80000001192093
+		setWeaponProperty(31, skill, "weapon_range",105) -- GTA-Std: 90
+		-- Tec-9:
+		setWeaponProperty(32, skill, "weapon_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "target_range",50) -- GTA-Std: 35
+		setWeaponProperty(32, skill, "accuracy",1.1999999523163) -- GTA-Std: 1.1000000238419
+		-- Rifle:
+		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
+		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage","Guns:toggleWeapon"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-	addEventHandler("Guns:toggleWeapon", root, bind(self.Event_ToggleWeapon, self))
+
+	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
@@ -50,7 +69,7 @@ function Guns:Event_onTaser(target)
 	client:giveAchievement(65)
 
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
-	toggleAllControls(target,false)
+	toggleAllControls(target,false, true, false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
 	target.isTasered = true
 	setElementData(target, "isTasered", true)
@@ -58,7 +77,7 @@ function Guns:Event_onTaser(target)
 		setElementData(target, "isTasered", false)
 		target:setAnimation()
 		target:setFrozen(false)
-		toggleAllControls(target,true)
+		toggleAllControls(target,true, true, false)
 		target.isTasered = false
 	end, 15000, 1, target )
 end
@@ -112,20 +131,77 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 end
 
 function Guns:killPed(target, attacker, weapon, bodypart)
-	StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
-	if not target:getData("isInDeathMatch") then
-		target:setReviveWeapons()
-	end
 	target:kill(attacker, weapon, bodypart)
-	if not target:getData("isInDeathMatch") then
-		if target:getFaction() and target:getFaction():isEvilFaction() and attacker:getFaction() and attacker:getFaction():isEvilFaction() then
-			local attackerFaction = attacker:getFaction()
-			local targetFaction = target:getFaction()
-			if not attacker:isInGangwar() then
-				if attackerFaction:getDiplomacy(targetFaction) == FACTION_DIPLOMACY["im Krieg"] then
-					local bonus = targetFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or targetFaction:getMoney()
-					targetFaction:takeMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
-					attackerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(attacker:getName(), target:getName()))
+end
+
+
+function Guns:Event_OnWasted(totalAmmo, killer, weapon)
+	if killer and isElement(killer) and weapon then
+		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
+	end
+
+	if source.ped_deadDouble then
+		if isElement(source.ped_deadDouble) then
+			destroyElement(source.ped_deadDouble)
+		end
+	end
+	if not source:getData("isInDeathMatch") then
+		source:setReviveWeapons()
+
+		local pos = source:getPosition()
+		local dim = source:getDimension()
+		local int = source:getInterior()
+
+		source.ped_deadDouble = createPed(source:getModel(), pos)
+		source.ped_deadDouble:setDimension(dim)
+		source.ped_deadDouble:setInterior(int)
+
+		if weapon == 34 then
+			setPedHeadless(source.ped_deadDouble, true)
+		end
+		local randAnim = math.random(1,5)
+		if randAnim == 5 then
+			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
+		else
+			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
+		end
+		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
+		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
+		setElementHealth(source.ped_deadDouble, 20)
+		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
+		setElementAlpha(source,0)
+
+		local inv = source:getInventory()
+		if inv then
+			if inv:getItemAmount("Diebesgut") > 0 then
+				inv:removeAllItem("Diebesgut")
+				outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+			end
+		end
+
+		local sourceFaction = source:getFaction()
+
+		if killer and isElement(killer) and sourceFaction and killer:getFaction() then
+			local killerFaction = killer:getFaction()
+			if sourceFaction.m_Id ~= 4 then
+				if sourceFaction:isStateFaction() and source:isFactionDuty() then
+					if not killerFaction:isStateFaction() then
+						killer:givePoints(15)
+					end
+				else
+					if killerFaction:isStateFaction() then
+						killer:givePoints(15)
+					end
+				end
+			end
+
+			if sourceFaction:isEvilFaction() and killerFaction:isEvilFaction() then
+				if not killer:isInGangwar() then
+					if killerFaction:getDiplomacy(sourceFaction) == FACTION_DIPLOMACY["im Krieg"] then
+						local bonus = sourceFaction:getMoney() >= FACTION_WAR_KILL_BONUS and FACTION_WAR_KILL_BONUS or sourceFaction:getMoney()
+						sourceFaction:takeMoney(bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()))
+						killerFaction:giveMoney(bonus, ("Mord von %s an %s"):format(killer:getName(), source:getName()))
+					end
 				end
 			end
 		end
@@ -134,33 +210,6 @@ end
 
 function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
 	StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
-end
-
-function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
-
-end
-
-function Guns:Event_ToggleWeapon( oldweapon )
-	if oldweapon then
-		if client then
-			if not client.m_WeaponStorage then client.m_WeaponStorage = {} end
-			local slot = getSlotFromWeapon(oldweapon)
-			if client.m_WeaponStorage[slot] then
-				local weaponInStorage, ammoInStorage = unpack(client.m_WeaponStorage[slot])
-				if getSlotFromWeapon(weaponInStorage) == slot then
-					if weaponInStorage and ammoInStorage then
-						client.m_WeaponStorage[slot] = {oldweapon, getPedTotalAmmo(client,slot)}
-						giveWeapon(client, weaponInStorage, ammoInStorage, true)
-						if weaponInStorage == 23 then
-							client:meChat(true, "zieht seinen Taser.")
-							setTimer(setPedAnimation, 1000, 1, client, false)
-						end
-						setPedAnimation(client, "shop", "shp_gun_threat", 500, false, false, false)
-					end
-				end
-			end
-		end
-	end
 end
 
 function Guns:setWeaponInStorage(player, weapon, ammo)
@@ -259,14 +308,14 @@ function takeWeapon( player, weapon, ammo)
 	if object then
 		if isElement(object) then
 			local wId = getElementData(object, "a:weapon:id")
-			local tAmmo = getPedTotalAmmo (player, slot)
+			local totalAmmo = getPedTotalAmmo (player, slot)
 			if not ammo then
 				if (wId == weapon ) then
 					triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
 				end
 			else
-				if ammo and tAmmo then
-					if ( wId == weapon and (ammo >= tAmmo)) then
+				if ammo and totalAmmo then
+					if ( wId == weapon and (ammo >= totalAmmo)) then
 						triggerEvent("WeaponAttach:onWeaponTake", player, weapon, slot)
 					end
 				end

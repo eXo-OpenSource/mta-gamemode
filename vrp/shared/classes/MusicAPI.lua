@@ -25,15 +25,18 @@ end
 function MusicAPI:performSearch()
 	return Promise:new(
 		function (fullfill, reject)
-			fetchRemote(self.m_URL, 1,
-				function (responseData, errno)
-					if errno == 0 then
+			local options = {
+				["connectionAttempts"] = 1
+			}
+			fetchRemote(self.m_URL, options,
+				function (responseData, responseInfo)
+					if responseInfo["success"] == true then
 						fullfill(responseData)
 					else
-						reject(errno)
+						reject(responseInfo["statusCode"])
 					end
-				end,
-			"", false)
+				end
+			)
 		end
 	)
 end

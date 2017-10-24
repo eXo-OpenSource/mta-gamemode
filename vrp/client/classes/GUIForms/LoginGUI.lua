@@ -1,260 +1,285 @@
 LoginGUI = inherit(GUIForm)
 inherit(Singleton, LoginGUI)
 
-function LoginGUI:constructor()
+function LoginGUI:constructor(savedName, savedPW)
+
 	LoginGUI.startCameraDrive()
 	showChat(false)
 	setPlayerHudComponentVisible("radar",false)
-	local sw, sh = guiGetScreenSize()
-	self.usePasswordHash = false
 
-	GUIForm.constructor(self, sw*0.2, sh*0.2, sw*0.6, sh*0.6)
-	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self):setColor(tocolor(5, 10, 10))
-	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self):setColor(tocolor(5, 10, 10))
---	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
+	self.m_SavedName = savedName
+	self.m_SavedPW = savedPW
 
-	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01,  tocolor(10, 20, 20, 190), self)
-	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(50, 70, 70, 128), self)
-							  GUILabel:new(sw*0.01, sh*0.01, self.m_Width/0.02, self.m_Height*0.2, "News:", self.m_NewsTab):setFont(VRPFont(sh*0.06)):setColor(Color.LightBlue)
-	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
-		self.m_Width/0.02, self.m_Height*0.6,
-		[[
-eXo 1.3 - 03.08.2017
+	self.m_FadeTime = DEBUG_AUTOLOGIN and 50 or 250
+	self.m_Elements = {}	
 
-einige Neuerungen:
-- neues Textursystem 
-- EPT-Überarbeitung
-- Erhöhung der Wantedanzahl
-- Diplomatiesystem
-- Designänderungen
-- ...und noch viel mehr!
+	grid("reset", true)
+	self.m_W = grid("x", 10)
+	self.m_H = grid("y", 13) --height of register panel to switch content without recreating the form (as resizing stretches the cache area!)
 
-Einen ausführlichen Change-
-log findet ihr natürlich unter
-forum.exo-reallife.de!
+	GUIForm.constructor(self, 0, 0, self.m_W , self.m_H, true)
+	self.m_H = 0 -- to let the animation start from the center of the screen
+	self:centerForm()
 
-		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
-
-	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
-	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
-	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.1, sh*0.03, "Passwort", self.m_LoginTab) -- 1.75
-	self.m_LoginCheckbox	= GUICheckbox:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.62, sw*0.6*0.025, sw*0.6*0.025, "Passwort merken", self.m_LoginTab)
-	self.m_LoginErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.66, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_LoginTab)
-	self.m_LoginErrorBox:hide()
-	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.061, "Fehler: Irgendwas stimmt nicht!", self.m_LoginErrorBox):setAlign("center", "center")
-
-	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
-	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_LoginTab)
-
-	self.m_LoginEditPass:setMasked("*")
-	self.m_LoginInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.025,
-		sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
-
-	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen, so kannst du dich im "Registrieren"-Tab registrieren.
-	]], self.m_LoginTab):setFont(VRPFont(sh*0.03))
-
-	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
-	self.m_RegisterTab:setVisible(false)
-
-	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditPass2 = GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass2 = GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.1, sh*0.03, "Erneut Passwort", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
-
-	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
-	self.m_RegisterErrorBox:hide()
-	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_RegisterErrorBox):setAlign("center", "center")
-
-
-	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
-	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_RegisterTab)
-
-	self.m_RegisterEditPass:setMasked("*")
-	self.m_RegisterEditPass2:setMasked("*")
-	self.m_RegisterInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
-
-	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
-
-	Bitte fülle die folgenden Informationen aus um dich zu registrieren!
-	]], self.m_RegisterTab):setFont(VRPFont(sh*0.035))
-	--[[
-	self.m_GuestTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
-	self.m_GuestTab:setVisible(false)
-
-	self.m_GuestErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_GuestTab)
-	self.m_GuestErrorBox:hide()
-	self.m_GuestErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_GuestErrorBox):setAlign("center", "center")
-
-	self.m_GuestGuestButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Als Gast spielen", true, self.m_GuestTab)
-	self.m_GuestLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_GuestTab)
-
-	self.m_GuestInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
-	--]]
-	self.m_LoginButton:dark(true)
-	self.m_RegisterButton:dark(true)
-	--self.m_GuestButton:dark(true)
-
-	self.m_LoginButton.onLeftClick = bind(self.showLogin, self)
-	self.m_RegisterButton.onLeftClick = bind(self.checkRegister, self)
-	--self.m_GuestButton.onLeftClick = bind(self.showGuest, self)
-
-	self.m_LoginLoginButton.onLeftClick = bind(function(self)
-		local pw = self.m_LoginEditPass:getText()
-		if self.usePasswordHash and self.usePasswordHash == pw then -- User has not changed the password
-			triggerServerEvent("accountlogin", root, self.m_LoginEditUser:getText(), "", pw)
-		else
-			triggerServerEvent("accountlogin", root, self.m_LoginEditUser:getText(), pw)
-		end
-
-		-- Disable login button field to avoid several events
-		self.m_LoginLoginButton:setEnabled(false)
-	end, self)
-
-	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
-		if self.m_RegisterEditPass:getText() == self.m_RegisterEditPass2:getText() then
-			self.m_RegisterRegisterButton:setEnabled(false)
-			triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
-		else triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
-		end
-	end, self)
-
-
-	--self.m_GuestGuestButton.onLeftClick = bind(function(self)
-	--	triggerServerEvent("accountguest", root)
-	--end, self)
-
-	self:bind("arrow_l",
-		function(self)
-			if self.m_RegisterTab:isVisible() then
-				self:showLogin()
-			elseif self.m_LoginTab:isVisible() then
-				self:checkRegister()
-		--	elseif self.m_GuestTab:isVisible() then
-		--		self:showRegister()
-			end
-		end
-	)
-
-	self:bind("arrow_r",
-		function(self)
-			if self.m_LoginTab:isVisible() then
-				self:checkRegister()
-			elseif self.m_RegisterTab:isVisible() then
-		--		self:showGuest()
-				self:showLogin()
-			end
-		end
-	)
+	if not DEBUG_AUTOLOGIN then --only play animations when it is necessary
+		setTimer(function()
+			self:switchViews(savedName and true)
+		end, 500, 1)
+	else
+		self:switchViews(savedName and true)
+	end
+	
 
 	self:bind("enter",
 		function(self)
-			if self.m_LoginTab:isVisible() then
-				if self.m_LoginLoginButton:isEnabled() then
-					self.m_LoginLoginButton:onLeftClick()
+			if not self.m_Loaded or self.m_AnimInProgress then return end
+
+			if self.m_LoginMode then
+				if self.m_Elements.BtnLogin:isEnabled() then
+					self.m_Elements.BtnLogin:onLeftClick()
 				end
-			elseif self.m_RegisterTab:isVisible() then
-				if self.m_RegisterRegisterButton:isVisible() then
-					self.m_RegisterRegisterButton:onLeftClick()
+			else
+				if self.m_Elements.BtnRegister:isVisible() then
+					self.m_Elements.BtnRegister:onLeftClick()
 				end
 			--else
 			--	self.m_GuestGuestButton:onLeftClick()
 			end
 		end
 	)
+end
 
-	self:showLogin()
-	nextframe(function()
-		if DEBUG_AUTOLOGIN then self.m_LoginLoginButton:onLeftClick() end
-	end)
+function LoginGUI:fadeElements(fadeIn)
+	for i, v in pairs(self.m_Elements) do
+		if fadeIn then
+			Animation.FadeAlpha:new(v, self.m_FadeTime, 0, v:getAlpha() or 255)
+		else
+			Animation.FadeAlpha:new(v, self.m_FadeTime, v:getAlpha() or 255, 0)
+		end
+	end
+end
+
+function LoginGUI:switchViews(showLogin, deleteView, callback)
+	if self.m_AnimInProgress then return false end
+	self.m_AnimInProgress = true
+	self:fadeElements()
+
+	--animate the window using a dummy because otherwise the content would stretch
+	self.m_AnimationDummy = DxRectangle:new(self.m_AbsoluteX, self.m_AbsoluteY, self.m_W, self.m_H, Color.Background):setDrawingEnabled(true)
+	local newH = deleteView and 0 or showLogin and grid("y", 11) or grid("y", 13)
+	Animation.Move:new(self.m_AnimationDummy, self.m_FadeTime + self.m_FadeTime * 1.2, self.m_AbsoluteX, screenHeight/2 - newH/2, "InOutQuad")
 	
+	--this stupid code is just because the window bgcolor is sometimes changed too early (resulting in a transparent window for 1 frame. suggestions are welcome!
+	Animation.Size:new(self.m_AnimationDummy, 1, self.m_W, self.m_H, "InOutQuad").onFinish = function()
+		if self.m_Window then  self.m_Window.m_BGColor = Color.Clear end
+		Animation.Size:new(self.m_AnimationDummy, self.m_FadeTime + self.m_FadeTime * 1.2, self.m_W, newH, "InOutQuad")
+	end
+	
+	
+	setTimer(function()
+		self:deleteElements()
 
-	-- Show some help
-	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)
+		if not deleteView then
+			if showLogin then
+				self:loadLoginElements()
+			else
+				self:loadRegisterElements()
+			end
+			self:fadeElements(true)
+		end
+		self.m_Window.m_BGColor = Color.Clear 
+
+		setTimer(function()
+			if not deleteView then
+				if self.m_AnimationDummy then self.m_AnimationDummy:delete() end
+				self.m_Window.m_BGColor = Color.Background
+				self.m_AnimInProgress = false
+			else
+				self:delete()
+				if callback then callback() end
+			end
+		end, self.m_FadeTime, 1)
+
+	end, self.m_FadeTime*1.2, 1)
+end
+
+function LoginGUI:centerForm()
+	self:setPosition(screenWidth/2 - self.m_W/2, screenHeight/2 - self.m_H/2)
+end
+
+function LoginGUI:deleteElements()
+	for i, v in pairs(self.m_Elements) do
+		v:delete()
+	end
+end
+
+function LoginGUI:loadLoginElements()
+	grid("reset", true)
+	self.m_W = grid("x", 10)
+	self.m_H = grid("y", 11)
+	self:centerForm()
+	self.m_LoginMode = true
+	
+	self.m_Window = GUIWindow:new(0, 0, self.m_W, self.m_H, _"", false, false, self)
+	self.m_Elements.logo = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
+	
+	self.m_Elements.window = self.m_Window
+
+	self.m_Elements.lbl1 = GUIGridLabel:new(1, 3, 9, 2, _"Herzlich willkommen auf eXo Reallife, bitte logge dich mit deinen Accountdaten ein.", self.m_Window)
+		:setAlignX("center")
+	self.m_Elements.editName = GUIGridEdit:new(1, 5, 9, 1, self.m_Window)
+		:setCaption(_"Username")
+		:setIcon(FontAwesomeSymbols.Player)
+		:setText(self.m_SavedName or "")
+	self.m_Elements.editPW = GUIGridEdit:new(1, 6, 9, 1, self.m_Window)
+		:setCaption(_"Passwort")
+		:setText(self.m_SavedPW or "")
+		:setMasked()
+		:setIcon(FontAwesomeSymbols.Lock)
+	self.m_Elements.lbl2 = GUIGridLabel:new(1, 7, 6, 1, _"Passwort speichern", self.m_Window)
+	self.m_Elements.swSavePW = GUIGridSwitch:new(7, 7, 3, 1, self.m_Window):setState(self.m_SavedPW and self.m_SavedPW ~= "")
+
+	self.m_Elements.BtnLogin = GUIGridButton:new(1, 8, 9, 1, "Einloggen", self.m_Window)
+		:setBarEnabled(false)
+	self.m_Elements.BtnLogin.onLeftClick = function()
+		self.m_Elements.BtnLogin:setEnabled(false)
+	end
+	self.m_Elements.Label = GUIGridLabel:new(1, 10, 9, 1, _"(Kein Account? Registriere dich noch heute!)", self.m_Window)
+		:setClickable(true)
+		:setAlignX("center")
+	self.m_Elements.Label.onLeftClick = function()
+		self:switchViews(false)
+	end
+	self.m_Elements.Label:setAlignX("center")
+
+	--logic
+	self.m_Elements.BtnLogin.onLeftClick = bind(function(self)
+		local name = self.m_Elements.editName:getText()
+		local pw = self.m_Elements.editPW:getText()
+		
+		if self.m_SavedPW and self.m_SavedPW == pw then -- User has not changed the password
+			triggerServerEvent("accountlogin", root, name, "", pw)
+		else
+			triggerServerEvent("accountlogin", root, name, pw)
+		end
+
+		-- Disable login button field to avoid several events
+		self.m_Elements.BtnLogin:setEnabled(false)
+	end, self)
+
+	nextframe(function()
+		if DEBUG_AUTOLOGIN then self.m_Elements.BtnLogin:onLeftClick() end
+	end)
+
+	self.m_Loaded = true
+end
+
+function LoginGUI:loadRegisterElements()
+	grid("reset", true)
+	self.m_W = grid("x", 10)
+	self.m_H = grid("y", 13)
+	self:centerForm()
+	self.m_LoginMode = false
+	
+	self.m_Window = GUIWindow:new(0, 0, self.m_W, self.m_H, _"", false, false, self)
+	self.m_Elements.logo = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
+	
+	self.m_Elements.window = self.m_Window
+
+	self.m_Elements.lbl1 = GUIGridLabel:new(1, 3, 9, 3, _"Bitte fülle das Formular aus um einen neuen Account zu erstellen. Pro PC und Internetanschluss ist nur ein Account zugelassen.", self.m_Window)
+		:setAlignX("center")
+	self.m_Elements.editName = GUIGridEdit:new(1, 6, 9, 1, self.m_Window)
+		:setCaption(_"Username")
+		:setIcon(FontAwesomeSymbols.Player)
+	self.m_Elements.editPW = GUIGridEdit:new(1, 7, 9, 1, self.m_Window)
+		:setCaption(_"Passwort")
+		:setMasked()
+		:setIcon(FontAwesomeSymbols.Lock)
+	self.m_Elements.editPW2 = GUIGridEdit:new(1, 8, 9, 1, self.m_Window)
+		:setCaption(_"Passwort wiederholen")
+		:setMasked()
+		:setIcon(FontAwesomeSymbols.Lock)
+	self.m_Elements.editEmail = GUIGridEdit:new(1, 9, 9, 1, self.m_Window)
+		:setCaption(_"Email-Adresse")
+		:setIcon(FontAwesomeSymbols.Mail)
+	
+	self.m_Elements.checkAcceptRules = GUIGridCheckbox:new(1, 10, 7, 1, "Ich akzeptiere die Serverregeln.", self.m_Window)
+	self.m_Elements.cLblRules = GUIGridLabel:new(8, 10, 2, 1, "(ansehen)", self.m_Window)
+		:setClickable(true)
+		:setAlignX("right")
+
+	self.m_Elements.BtnRegister = GUIGridButton:new(1, 11, 9, 1, "Registrieren", self.m_Window)
+		:setBarEnabled(false)
+
+	self.m_Elements.Label = GUIGridLabel:new(3, 12, 5, 1, _"(zurück zum Login)", self.m_Window)
+		:setClickable(true)
+		:setAlignX("center")
+	
+	self.m_Elements.Label.onLeftClick = function()
+		self:switchViews(true)
+	end
+	
+	self.m_Elements.ErrorLbl = GUIGridLabel:new(1, 6, 9, 4, _"error text gets loaded here", self.m_Window)
+		:setAlignX("center")
+		:setBackgroundColor(Color.Red)
+		:setVisible(false)
+
+	--logic
+	self:checkRegister()
+
+	self.m_Elements.BtnRegister.onLeftClick = bind(function(self)
+		if self.m_Elements.editPW:getText() == self.m_Elements.editPW2:getText() then
+			if self.m_Elements.checkAcceptRules:isChecked() then
+				triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
+				self.m_Elements.BtnRegister:setEnabled(false)
+			else 
+				triggerEvent("registerfailed",localPlayer,"Du musst den Serveregeln zustimmen!")
+			end
+		else 
+			triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
+		end
+	end, self)
+
+	self.m_Elements.cLblRules.onLeftClick = function()
+		LoginRuleGUI:new()
+		InfoBox:new(_"Da alle Regeln in einem Dokument stehen wirkt der Scrollbalken erscheckend klein - aber keine Sorge, wichtig für dich sind für den Anfang nur die Regeln von §1 - §5.\nMit gedrückter Shift-Taste kannst du im Dokument schneller scrollen.")
+	end
+
+	self.m_Loaded = true
+end
+
+function LoginGUI:initClose(callback)
+	self:switchViews(true, true, callback)
+	localPlayer:setFrozen(true)
 end
 
 function LoginGUI:destructor()
-	--[[
-	local music = DownloadGUI:getSingleton().m_Music
-	setTimer(function(music)
-		if isElement(music) then
-			music:setVolume(music:getVolume()-0.05)
-		end
-	end, 100, 6, music)
-
-	setTimer(function()
-		delete(DownloadGUI:getSingleton())
-	end, 2000, 1)
-	--]]
-
+	localPlayer:setFrozen(false)
+	LoginGUI.stopCameraDrive()
 	Cursor:hide(true)
 	GUIForm.destructor(self)
-	LoginGUI.stopCameraDrive()
-end
-
-function LoginGUI:showLogin()
-	self.m_LoginButton:light()
-	self.m_LoginButton:setColor(tocolor(0,0, 0))
-	self.m_RegisterButton:dark()
-	self.m_RegisterButton:setColor(tocolor(10, 15, 15))
---	self.m_GuestButton:dark()
-
-	self.m_LoginTab:setVisible(true)
---	self.m_GuestTab:setVisible(false)
-	self.m_RegisterTab:setVisible(false)
 end
 
 function LoginGUI:checkRegister()
-	self:showRegister()
 	triggerServerEvent("checkRegisterAllowed", localPlayer)
 end
 
-function LoginGUI:showRegister()
-	self.m_RegisterButton:light()
-	self.m_RegisterButton:setColor(tocolor(0,0, 0))
-	self.m_LoginButton:dark()
-	self.m_LoginButton:setColor(tocolor(10, 15, 15))
-	--	self.m_GuestButton:dark()
-	self.m_LoginTab:setVisible(false)
-	--	self.m_GuestTab:setVisible(false)
-	self.m_RegisterTab:setVisible(true)
-end
 
 function LoginGUI:showRegisterMultiaccountError(name)
-	if self.m_RegisterMultiaccountBox then return end
+	self.m_Elements.editName:setVisible(false)
+	self.m_Elements.editPW:setVisible(false)
+	self.m_Elements.editPW2:setVisible(false)
+	self.m_Elements.editEmail:setVisible(false)
+	self.m_Elements.BtnRegister:setVisible(false)
+	self.m_Elements.checkAcceptRules:setVisible(false)
+	self.m_Elements.cLblRules:setVisible(false)
 
-	self.m_RegisterEditUser:setVisible(false)
-	self.m_RegisterTextUser:setVisible(false)
-	self.m_RegisterEditMail:setVisible(false)
-	self.m_RegisterTextMail:setVisible(false)
-	self.m_RegisterEditPass:setVisible(false)
-	self.m_RegisterEditPass2:setVisible(false)
-	self.m_RegisterTextPass:setVisible(false)
-	self.m_RegisterTextPass2:setVisible(false)
-
-
-	self.m_RegisterRegisterButton:setVisible(false)
-	local width, height = screenWidth*0.6*0.75*0.7, (screenHeight*0.6-screenHeight*0.6*0.01)*0.2
-
-	self.m_RegisterInfoText:setText(
-	[[Willkommen auf eXo-Reallife!
-
-	Es ist ein Fehler aufgetreten!
-	]]
-	)
-
-	local text = _("Für deine Serial existiert bereits ein Account.\nJeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!")
+	local text = _("Für deine Serial existiert bereits ein Account. Wenn du mit anderen Spielern im gleichen Netzwerk spielen möchtest, musst du einen Multiaccount-Antrag im Forum (forum.exo-reallife.de) verfassen.")
 	if name then
-		text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!", name)
+		text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! Wenn du mit anderen Spielern im gleichen Netzwerk spielen möchtest, musst du einen Multiaccount-Antrag im Forum (forum.exo-reallife.de) verfassen.", name)
 	end
-
-	self.m_RegisterMultiaccountBox = GUIRectangle:new(screenWidth*0.6*0.75*0.15, (screenHeight*0.6-screenHeight*0.6*0.01)*0.5, width, height, tocolor(255, 0, 0, 128), self.m_RegisterTab)
-	self.m_RegisterMultiaccountText = GUILabel:new(0, 0, width, height, text, self.m_RegisterMultiaccountBox):setAlign("center", "center"):setMultiline(true):setFont(VRPFont(25))
+	self.m_Elements.ErrorLbl:setVisible(true)
+	self.m_Elements.ErrorLbl:setText(text)
 
 end
 
@@ -267,60 +292,25 @@ addEventHandler("receiveRegisterAllowed", root,
 	end
 )
 
-function LoginGUI:showGuest()
-	self.m_RegisterButton:dark()
-	self.m_LoginButton:dark()
---	self.m_GuestButton:light()
-
-	self.m_LoginTab:setVisible(false)
---	self.m_GuestTab:setVisible(true)
-	self.m_RegisterTab:setVisible(false)
-end
-
-function LoginGUI:fadeIn(quick)
---[[	if quick then
-		self.m_LoginButton:setAlpha(255)
-	else
-		self.m_LoginButton:fadeIn(750)
-		self.m_RegisterButton:fadeIn(750)
-		self.m_GuestButton:fadeIn(750)
-
-		-- replace 750 with a high number to outline a bug
-		Animation.FadeAlpha:new(self.m_LoginTab, 500, 0, 128)
-	end
-]]
-	GUIForm.fadeIn(self, 750)
-end
-
-function LoginGUI:fadeOut(quick)
-	if quick then
-		self.m_LoginButton:setAlpha(0)
-	else
-
-	end
-end
-
 addEvent("loginfailed", true)
 addEventHandler("loginfailed", root,
 	function(text)
-		LoginGUI:getSingleton().m_LoginErrorBox:show()
-		LoginGUI:getSingleton().m_LoginErrorText:setText(text)
-		LoginGUI:getSingleton().m_LoginLoginButton:setEnabled(true)
+		ErrorBox:new(text)
+		LoginGUI:getSingleton().m_Elements.BtnLogin:setEnabled(true)
 	end
 )
 addEvent("registerfailed", true)
 addEventHandler("registerfailed", root,
 	function(text)
-		LoginGUI:getSingleton().m_RegisterErrorBox:show()
-		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)	
-		LoginGUI:getSingleton().m_RegisterRegisterButton:setEnabled(true)
+		ErrorBox:new(text)
+		LoginGUI:getSingleton().m_Elements.BtnRegister:setEnabled(true)
 	end
 )
 
 addEvent("closeLogin", true)
 addEventHandler("closeLogin", root,
-	function(text)
-		delete(LoginGUI:getSingleton())
+	function()
+		LoginGUI:getSingleton():initClose()
 	end
 )
 
@@ -329,51 +319,46 @@ addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root,
 	function(pwhash, tutorialstage)
 		local lgi = LoginGUI:getSingleton()
-		lgi.m_LoginLoginButton:setEnabled(true)
 
-		if lgi.m_LoginCheckbox:isChecked() and pwhash then
-			core:set("Login", "username", lgi.m_LoginEditUser:getText())
+		if lgi.m_Elements.swSavePW:isChecked() and pwhash then
+			core:set("Login", "username", lgi.m_Elements.editName:getText())
 			core:set("Login", "password", pwhash)
 		end
-		lgi:delete()
-
-		core:afterLogin(tutorialstage)
-
-		-- Maybe start tutorial
+		core:afterLogin()	
+		lgi:initClose()
+		
+		-- Maybe start tutorial (I dunno this doesn't seem to be used)
 		if tutorialstage == 0 then
-			-- Play Intro
-			--CutscenePlayer:getSingleton():playCutscene("Intro",
-			--	function()
-					setElementPosition(localPlayer, 0, 0, 5)
-
-					-- Temp fix?
-					triggerServerEvent("introFinished", root)
-			--	end
-			--)
-		elseif tutorialstage == 1 then
-			-- Create Character
-		elseif tutorialstage == 2 then
-			-- Play Tutorial Mission
-		else
-			-- If the tutorial is done the server will do the job of spawning etc.
-			--HUDRadar:getSingleton():show()
-			--HUDUI:getSingleton():show()
-		end
+			setElementPosition(localPlayer, 0, 0, 5)
+			-- Temp fix?
+			triggerServerEvent("introFinished", root)
+		end	
 	end
 )
 
-
 function LoginGUI.startCameraDrive()
-	setTime(0,0)
-	local rand = math.random(1,2)
-	if rand == 1 then
-		localPlayer.m_LoginDriveObject = cameraDrive:new(1773.43, -1139.05, 185.85, 1545.51, -1346.14, 180.48, 1621.89, -1516.79, 175.44, 1545.51, -1346.14, 180.48, 200*1000, "Linear" )
-	else
-		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 200*1000, "Linear" )
-		--else -- currently disabled
-		--localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
-	end
-	localPlayer.m_LoginShader =  LoginShader:new()
+	local positions = { -- from, to - use /cammat
+		{1513.67, -1730.51, 30.08, 1513.17, -1731.26, 29.63, 1448.87, -1729.30, 29.87, 1449.27, -1730.09, 29.40}, --Usertreff
+		{1705.56, -1705.53, 17.76, 1706.14, -1706.30, 18.02, 1706.79, -1709.58, 51.88, 1707.31, -1710.32, 51.45}, --Rescue Base
+		{1823.10, -1886.26, 34.70, 1822.36, -1886.72, 34.21, 1809.02, -1943.21, 18.81, 1808.39, -1942.46, 18.99}, --EPT
+		{334.18, -2145.09, 32.20, 334.43, -2144.12, 32.16, 329.64, -1845.51, 12.24, 330.36, -1844.82, 12.33}, --Pier
+		{-202.24, -346.63, 41.28, -202.20, -345.66, 41.03, -326.57, -18.33, 49.76, -325.65, -18.07, 49.46}, --Farm
+		{694.92, 752.66, 3.76, 694.45, 753.47, 3.43, 745.98, 904.85, 6.73, 745.20, 904.41, 6.29}, --Gravel
+		{1380.20, -2352.63, 62.20, 1380.91, -2351.94, 62.08, 1579.13, -2166.62, 42.35, 1580.00, -2167.12, 42.34}, --Airport
+		{2335.97, -1555.61, 45.53, 2336.34, -1554.68, 45.48, 2331.10, -1392.08, 69.67, 2330.62, -1391.23, 69.42}, --Ballas
+	}
+	local rand = math.random(1,#positions)
+	local p = positions[rand]
+	local timeMS = getDistanceBetweenPoints3D(p[1], p[2], p[3], p[7], p[8], p[9])*1000
+
+	localPlayer.m_LoginDriveObject = cameraDrive:new(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], timeMS, "Linear" )
+	localPlayer.m_LoginDriveObject:setFOV(100)
+
+	localPlayer.m_LoginCamTimer = setTimer(LoginGUI.startCameraDrive, timeMS, 1)
+	localPlayer:setDimension(0)
+	
+	RadialShader:getSingleton():setEnabled(true)
+	--localPlayer.m_LoginShader =  LoginShader:new()
 end
 
 function LoginGUI.stopCameraDrive()
@@ -381,9 +366,35 @@ function LoginGUI.stopCameraDrive()
 		delete(localPlayer.m_LoginDriveObject)
 		showChat(true)
 	end
+	if localPlayer.m_LoginCamTimer and isTimer(localPlayer.m_LoginCamTimer) then
+		killTimer(localPlayer.m_LoginCamTimer)
+	end
 	if localPlayer.m_LoginShader then
 		delete(localPlayer.m_LoginShader)
 		localPlayer.m_LoginShader = nil
 	end
+	setCameraTarget(localPlayer)
 	triggerServerEvent("onClientRequestTime", localPlayer)
 end
+
+
+
+
+LoginRuleGUI = inherit(GUIForm)
+inherit(Singleton, LoginRuleGUI)
+
+function LoginRuleGUI:constructor()
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 16) 	-- width of the window
+	self.m_Height = grid("y", 12) 	-- height of the window
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Regelwerk", true, true, self)
+	
+	self.m_Browser = GUIGridWebView:new(1, 1, 15, 11, "https://docs.google.com/document/d/1zIg7Xu-iqCUyZnyXPUuabvypwi41dU2zathChhh9PmA/pub?embedded=true", true, self.m_Window)
+end
+
+function LoginRuleGUI:destructor()
+	GUIForm.destructor(self)
+end
+

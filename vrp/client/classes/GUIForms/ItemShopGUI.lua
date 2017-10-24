@@ -27,7 +27,7 @@ function ItemShopGUI:constructor(callback)
 	self.m_EditAmount:setNumeric(true, true)
 	self.m_EditAmount:setText("1")
 
-	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.33, self.m_Height*0.12, _"Kaufen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_ButtonBuy = GUIButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.33, self.m_Height*0.12, _"Kaufen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
 	self.m_ButtonBuy.onLeftClick = bind(self.ButtonBuy_Click, self)
 
 	addEventHandler("refreshItemShopGUI", root, bind(self.refreshItemShopGUI, self))
@@ -86,16 +86,6 @@ addEventHandler("showBarGUI", root,
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
 		local callback = function(shop, itemName, amount)
 			triggerServerEvent("barBuyDrink", root, shop, itemName, amount)
-		end
-		ItemShopGUI:new(callback)
-	end
-)
-
-addEventHandler("showItemShopGUI", root,
-	function()
-		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
-		local callback = function(shop, itemName, amount)
-			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
 		end
 		ItemShopGUI:new(callback)
 	end

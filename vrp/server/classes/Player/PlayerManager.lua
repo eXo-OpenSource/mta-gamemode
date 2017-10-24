@@ -24,7 +24,6 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
-	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -68,6 +67,7 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("ooc",bind(self.Command_playerOOC, self))
+	addCommandHandler("shrug",bind(self.Command_playerShrug, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
@@ -203,71 +203,6 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 	end
 end
 
-function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
-	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
-	end
-	if not source:getData("isInDeathMatch") then
-		local x,y,z = getElementPosition(source)
-		local dim = getElementDimension(source)
-		local int = getElementInterior(source)
-		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
-		setElementDimension(source.ped_deadDouble,dim)
-		setElementInterior(source.ped_deadDouble, int)
-		if kWeapon == 34 then
-			setPedHeadless(source.ped_deadDouble, true)
-		end
-		local randAnim = math.random(1,5)
-		if randAnim == 5 then
-			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
-		else
-			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
-		end
-		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
-		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
-		setElementHealth(source.ped_deadDouble, 20)
-		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
-		setElementAlpha(source,0)
-	end
-	local inv = source:getInventory()
-	if inv then
-		if inv:getItemAmount("Diebesgut") > 0 then
-			inv:removeAllItem("Diebesgut")
-			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
-		end
-	end
-	if not source:getData("isInDeathMatch") then
-		local facSource = source:getFaction()
-		if k_ then
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if facSource:isStateFaction() and source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if not facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
-			end
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if not facSource:isStateFaction() and not source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-end
 
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()
@@ -335,9 +270,9 @@ function PlayerManager:startPaydayDebug(player)
 end
 
 function PlayerManager:breakingNews(text, ...)
-	for k, v in pairs(getElementsByType("player")) do
+	for k, v in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
 		local textFinish = _(text, v, ...)
-		v:triggerEvent("breakingNews", textFinish)
+		v:triggerEvent("breakingNews", textFinish, "Breaking News")
 	end
 end
 
@@ -421,7 +356,6 @@ function PlayerManager:playerCommand(cmd)
 end
 
 function PlayerManager:playerQuit()
-	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
 	self.m_QuitPlayers[source:getId()] = getTickCount()
 	self.m_QuitHook:call(source)
 
@@ -561,6 +495,13 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return
+	end
+	source:setLastChatMessage(message)
+
 	if Player.getChatHook():call(source, message, messageType) then
 		cancelEvent()
 		return
@@ -623,6 +564,13 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}
 	local faction = source:getFaction()
@@ -648,6 +596,13 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(0)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -664,6 +619,13 @@ end
 function PlayerManager:Command_playerOOC(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
+
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+
 	local playersToSend = source:getPlayersInChatRange(1)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
@@ -677,7 +639,18 @@ function PlayerManager:Command_playerOOC(source , cmd, ...)
 	Admin:getSingleton():outputSpectatingChat(source, "OOC", text, nil, playersToSend)
 end
 
-
+function PlayerManager:Command_playerShrug(source, cmd)
+	local text = "zuckt mit den Schultern ¯\\_(ツ)_/¯"
+	local lastMsg, msgTimeSent = source:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (text == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		return
+	end
+	source:setLastChatMessage(text)
+	source:meChat(true, text)
+	if source.isTasered then return	end
+	if source.vehicle then return end
+	setPedAnimation(source, "shop", "SHP_HandsUp_Scr", 400, false, false, true, false)
+end
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
@@ -814,6 +787,7 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if client.isTasered then return	end
 	if client.vehicle then return end
+	if client:isOnFire() then return end
 	if client.lastAnimation and getTickCount() - client.lastAnimation < 1000 then return end
 
 	if ANIMATIONS[animation] then
@@ -880,10 +854,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		return
 	end
 
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
-		return
-	end
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen einlagern!", client)) return end
 
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
@@ -931,10 +902,9 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-	if client.disableWeaponStorage then
-		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
-		return
-	end
+
+	if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen entnehmen!", client)) return end
+
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then

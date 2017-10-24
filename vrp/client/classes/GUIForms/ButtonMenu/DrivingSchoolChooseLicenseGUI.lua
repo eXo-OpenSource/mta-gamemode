@@ -13,19 +13,19 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 
 	self:addItem(_"Autoführerschein",Color.Green ,
 		function()
-			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "car")
+			triggerServerEvent("drivingSchoolStartLessionQuestion", localPlayer, self.m_Target, "car")
 			self:delete()
 		end
 	)
 	self:addItem(_"Motorradschein",Color.Blue ,
 		function()
-			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "bike")
+			triggerServerEvent("drivingSchoolStartLessionQuestion", localPlayer, self.m_Target, "bike")
 			self:delete()
 		end
 	)
 	self:addItem(_"LKW-Schein",Color.LightRed ,
 		function()
-			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "truck")
+			triggerServerEvent("drivingSchoolStartLessionQuestion", localPlayer, self.m_Target, "truck")
 			self:delete()
 		end
 	)
@@ -37,7 +37,7 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 	--)
 	self:addItem(_"Flugschein",Color.LightBlue ,
 		function()
-			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "plane")
+			triggerServerEvent("drivingSchoolStartLessionQuestion", localPlayer, self.m_Target, "plane")
 			self:delete()
 		end
 	)

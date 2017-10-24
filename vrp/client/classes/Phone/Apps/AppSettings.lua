@@ -19,7 +19,6 @@ function AppSettings:onOpen(form)
 	self.m_PhoneChanger = GUIChanger:new(10, 85, 200, 30, form)
 	self.m_PhoneChanger.onChange =
 		function(text)
-		-- Save it
 			Phone:getSingleton():setPhone(text)
 			core:getConfig():set("Phone", "Phone", text)
 		end
@@ -33,18 +32,14 @@ function AppSettings:onOpen(form)
 	self.m_BackgroundChanger = GUIChanger:new(10, 150, 200, 30, form)
 	self.m_BackgroundChanger.onChange =
 		function(text)
-			-- Save it
 			Phone:getSingleton():setBackground(text)
 			core:getConfig():set("Phone", "Background", text)
 		end
-	-- Todo: table? // Convert to jpg
-	self.m_BackgroundChanger:addItem("Xperia_X")
-	self.m_BackgroundChanger:addItem("Google_Pixel")
-	self.m_BackgroundChanger:addItem("iOS_7")
-	self.m_BackgroundChanger:addItem("iOS_10")
-	self.m_BackgroundChanger:addItem("Nexus")
-	self.m_BackgroundChanger:addItem("Xperia_Z3")
-	self.m_BackgroundChanger:addItem("OnePlus_3T")
+
+	local backgrounds = {"Xperia_X", "Google_Pixel", "iOS_7", "iOS_10", "Nexus", "Xperia_Z3", "OnePlus_3T"}
+	for _, background in pairs(backgrounds) do
+		self.m_BackgroundChanger:addItem(background)
+	end
 
 	if core:get("Phone", "Background") then
 		self.m_BackgroundChanger:setSelectedItem(core:get("Phone", "Background"))
@@ -52,28 +47,57 @@ function AppSettings:onOpen(form)
 
 	GUILabel:new(10, 195, 200, 20, _"Klingelton", form):setColor(Color.Black)
 	self.m_RingtoneChanger = GUIChanger:new(10, 215, 200, 30, form)
-	self.m_RingtoneChanger.onChange = function(text)
-		if self.m_Sound and isElement(self.m_Sound) then
-			destroyElement(self.m_Sound)
-		end
-		local path = "files/audio/Ringtones/"..text:gsub(" ", "")..".mp3"
-		self.m_Sound = playSound(path)
+	self.m_RingtoneChanger.onChange =
+		function(text)
+			self:stopRingtone()
 
-		-- Save it
-		core:getConfig():set("Phone", "Ringtone", path)
-	end
+			if self.m_RingtoneCustom then
+				self.m_RingtoneCustom:setChecked(false)
+			end
+
+			local path = ("files/audio/Ringtones/%s.mp3"):format(text:gsub(" ", ""))
+			self.m_Sound = playSound(path)
+
+			core:getConfig():set("Phone", "Ringtone", path)
+		end
 
 	local items = {}
 	for i = 1, 14 do
-		local path = "files/audio/Ringtones/Klingelton"..i..".mp3"
+		local path = ("files/audio/Ringtones/Klingelton%s.mp3"):format(i)
 		items[path] = self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
 	end
-	local selected = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3"), true
-	self.m_RingtoneChanger:setIndex(items[selected], true)
 
+	local customRingtonePath = "files/audio/Ringtones/custom.mp3"
+	if fileExists(customRingtonePath) then
+		self.m_RingtoneCustom = GUICheckbox:new(10, 260, 300, 20, "Eigenen Klingelton benutzen", form):setFont(VRPFont(25)):setFontSize(1)
+		self.m_RingtoneCustom.onChange =
+			function(state)
+				if state then
+					self:stopRingtone()
+					self.m_Sound = playSound(customRingtonePath)
+					core:getConfig():set("Phone", "Ringtone", customRingtonePath)
+				else
+					self:stopRingtone()
+					core:getConfig():set("Phone", "Ringtone", nil)
+				end
+			end
+	end
+
+	local selected = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
+	if selected == customRingtonePath then
+		self.m_RingtoneCustom:setChecked(true)
+	elseif items[selected] then
+		self.m_RingtoneChanger:setIndex(items[selected], true)
+	end
 end
 
 function AppSettings:onClose()
+	if self.m_Sound and isElement(self.m_Sound) then
+		destroyElement(self.m_Sound)
+	end
+end
+
+function AppSettings:stopRingtone()
 	if self.m_Sound and isElement(self.m_Sound) then
 		destroyElement(self.m_Sound)
 	end

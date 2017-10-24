@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 import sys
 
 start = time.time()
-linter = "luac"
+linter = "luac5.1"
 linter_length = 4
 if platform.system() == "Windows":
 	linter = "tools/luac.exe"

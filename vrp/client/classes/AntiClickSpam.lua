@@ -9,7 +9,7 @@
 AntiClickSpam = inherit(Singleton)
 
 function AntiClickSpam:constructor()
-	self.m_Warn = 4
+	self.m_Warn = 6
 	self.m_Block = 8
 	self.m_Counter = 0
 	self.m_Enabled = true
@@ -39,13 +39,15 @@ end
 
 function AntiClickSpam:block()
 	showCursor(false)
-	local timer = setTimer(function()
-		showCursor(false)
-	end, 50, 0)
 
-	setTimer(function(timer)
-		if isTimer(timer) then killTimer(timer) end
-	end, 10000, 1, timer)
+	local f = function()
+		showCursor(false)
+	end
+	addEventHandler("onClientRender", root, f)
+	local timer = setTimer(function()
+		removeEventHandler("onClientRender", root, f)
+	end, 10000, 1)
+
 end
 
 function AntiClickSpam:reset()

@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.3"
+PROJECT_VERSION = "1.4.2"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -99,57 +99,83 @@ RANK = r2
 
 --ADMIN PERMISSIONS:
 ADMIN_RANK_PERMISSION = {
-	["playerHistory"] = RANK.Supporter,
-	["direction"] = RANK.Supporter, -- Up Down Left Right
-	["mark"] = RANK.Supporter, -- also gotomark
+
+	--player punish
 	["freeze"] = RANK.Supporter,
-	["eventMoneyDeposit"] = RANK.Supporter,
-	["gethere"] = RANK.Clanmember,
-	["goto"] = RANK.Clanmember,
-	["showVehicles"] = RANK.Supporter,
-	["showGroupVehicles"] = RANK.Supporter,
-	["prison"] = RANK.Supporter,
-	["spect"] = RANK.Supporter,
-	["warn"] = RANK.Supporter,
-	["kick"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
-	["resetAction"] = RANK.Moderator,
+	["prison"] = RANK.Supporter,
+	["offlinePrison"] = RANK.Supporter,
 	["unprison"] = RANK.Moderator,
-	["supportMode"] = RANK.Supporter,
-	["smode"] = RANK.Supporter,
-	["respawnFaction"] = RANK.Supporter,
-	["respawnCompany"] = RANK.Supporter,
-	["respawnRadius"] = RANK.Supporter,
-	["clearChat"] = RANK.Supporter,
-	["clearchat"] = RANK.Supporter,
-	["addWarn"] = RANK.Supporter,
-	["tp"] = RANK.Supporter,
+	["offlineUnPrison"] = RANK.Moderator,
+	["warn"] = RANK.Supporter,
+	["offlineWarn"] = RANK.Supporter,
+	["removeWarn"] = RANK.Administrator,
+	["removeOfflineWarn"] = RANK.Administrator,
 	["timeban"] = RANK.Supporter,
-	["adminAnnounce"] = RANK.Supporter,
-	["gotocords"] = RANK.Supporter,
 	["permaban"] = RANK.Supporter,
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
-	["eventMoneyWithdraw"] = RANK.Moderator,
-	["eventMenu"] = RANK.Moderator,
-	["vehicleTexture"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
+
+	--admin general
+	["event"] = RANK.Moderator,
+	["eventMoneyWithdraw"] = RANK.Moderator,
+	["eventMoneyDeposit"] = RANK.Supporter,
+	["vehicleTexture"] = RANK.Moderator,
+	["spect"] = RANK.Supporter,
+	["smode"] = RANK.Supporter,
+	["adminAnnounce"] = RANK.Supporter,
+	["clearchat"] = RANK.Supporter,
+	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
+
+	--group management
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
-	["removeWarn"] = RANK.Administrator,
-	["pedMenu"] = RANK.Administrator,
+	["resetAction"] = RANK.Moderator,
+	["playerHistory"] = RANK.Supporter,
+	["respawnFaction"] = RANK.Supporter, -- respawn whole faction
+	["respawnCompany"] = RANK.Supporter, -- respawn whole company
+
+	--teleport
+	["direction"] = RANK.Supporter, -- Up Down Left Right
+	["mark"] = RANK.Supporter, -- also gotomark
+	["gethere"] = RANK.Clanmember,
+	["goto"] = RANK.Clanmember,
+	["tp"] = RANK.Supporter,
+	["gotocords"] = RANK.Supporter,
+
+	--vehicle interaction
 	["checkOverlappingVehicles"] = RANK.Administrator,
+	["respawnRadius"] = RANK.Supporter,
+	["showVehicles"] = RANK.Supporter,
+	["showGroupVehicles"] = RANK.Supporter,
+	["respawnVehicle"] = RANK.Supporter, -- respawn per click
+	["parkVehicle"] = RANK.Supporter, -- set spawn position
+	["repairVehicle"] = RANK.Supporter, -- repair per click
+	["despawnVehicle"] = RANK.Supporter, -- despawn
+	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
+	["looseVehicleHandbrake"] = RANK.Supporter,
+
+	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
-	["moveWorldItem"] = RANK.Moderator,
-	["deleteWorldItem"] = RANK.Moderator,
-	["showWorldItemInformation"] = RANK.Supporter,
-	["editHouse"] = RANK.Administrator,
 	["runString"] = RANK.Servermanager, --drun, dcrun, dpcrun
 	["seeRunString"] = RANK.Moderator, --chat and console outputs from above
-	["supermanFly"] = RANK.Moderator -- flying supporter
+
+	--World Items (e.g. Barricade)
+	["moveWorldItem"] 				= RANK.Supporter,
+	["deleteWorldItem"] 			= RANK.Supporter,
+	["showWorldItemInformation"] 	= RANK.Supporter,
+
+	--server edit tools
+	["editHouse"] = RANK.Administrator,
+	["pedMenu"] = RANK.Administrator,
+	["fireMenu"] = RANK.Administrator,
+	["eventGangwarMenu"] = RANK.Administrator,
+
+	--
 }
 
 GroupRank = {
@@ -454,8 +480,6 @@ AD_COST = 30
 AD_COST_PER_CHAR = 3
 AD_BREAK_TIME = 30 -- In Seconds
 
-AD_COLORS = {"Orange", "Grün", "Hell-Blau"}
-
 AD_DURATIONS = {
 	["20 Sekunden"] = 20,
 	["30 Sekunden"] = 30,
@@ -473,7 +497,7 @@ WEAPON_NAMES = {
 	[7] = "Billiard Queue",
 	[8] = "Katana",
 	[9] = "Kettensäge",
-	[10] = "Langer Pinker Dildo",
+	[10] = "Langer Dildo",
 	[11] = "Kurzer Dildo",
 	[12] = "Vibrator",
 	[14] = "Blumen",
@@ -485,8 +509,8 @@ WEAPON_NAMES = {
 	[23] = "Taser",
 	[24] = "Desert Eagle",
 	[25] = "Schrotflinte",
-	[26] = "Abgesägte Schrotflinte",
-	[27] = "SPAZ-12 Spezialwaffe",
+	[26] = "Abgesägte Schrot",
+	[27] = "SPAZ-12",
 	[28] = "Uzi",
 	[29] = "MP5",
 	[30] = "AK-47",
@@ -574,6 +598,11 @@ MEDIC_TIME = 180000
 DEATH_TIME = 30000
 DEATH_TIME_PREMIUM = 0
 DEATH_TIME_ADMIN = 0
+
+if DEBUG then
+	MEDIC_TIME = 10000
+	DEATH_TIME = 0
+end
 
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
@@ -754,13 +783,44 @@ CompanyStaticId = {
 	SANNEWS = 3,
 	EPT = 4,
 }
-
 ITEM_HOLDER_TYPE = {
 	WEAPON = 1,
 	GEN_ITEMS = 2,
 	MONEY = 3,
 }
-for name, value in pairs(ITEM_HOLDER_TYPE) do
-	_G[("ITEM_HOLDER_TYPE_%s"):format(name)] = value
-end
-ITEM_HOLDER_TYPE = nil
+
+FactionStaticId = {
+	SAPD = 1,
+	FBI = 2,
+	MBT = 3,
+	RESCUE = 4,
+	LCN = 5,
+	YAKUZZA = 6,
+	GROVE = 7,
+	BALLAS = 8,
+	OUTLAWS = 9,
+	VATOS = 10
+}
+
+FUEL_PRICE = { --price per liter
+	["petrol"] = 2.3,
+	["petrol_plus"] = 3.4,
+	["diesel"] = 1.7,
+	["jetfuel"] = 4.6,
+	["universal"] = 0,
+	["nofuel"] = 0,
+
+}
+FUEL_NAME = { --display name
+	["petrol"] = "Super",
+	["petrol_plus"] = "Super Plus",
+	["diesel"] = "Diesel",
+	["jetfuel"] = "Kerosin",
+	["universal"] = "Universal-Kraftstoff",
+	["nofuel"] = "kein Kraftstoff",
+
+}
+FUEL_PRICE_MULTIPLICATOR = 2
+MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5
+SERVICE_FUEL_PRICE_MULTIPLICATOR = 5
+SERVICE_REPAIR_PRICE_MULTIPLICATOR = 5

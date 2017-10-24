@@ -80,7 +80,7 @@ function GUIGridListItem:drawThis()
 		if self.m_Columns[columnIndex].image then
 			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + self.m_Columns[columnIndex].imageWidth, self.m_Height - 6, self.m_Columns[columnIndex].text, 0, 0, 0, self.m_Columns[columnIndex].color or self.m_Color)
 		else
-			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_Columns[columnIndex].fontSize or self.m_FontSize, self.m_Columns[columnIndex].font or self.m_Font, self.m_Columns[columnIndex].alignX)
+			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_AbsoluteY + self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_Columns[columnIndex].fontSize or self.m_FontSize, self.m_Columns[columnIndex].font or self.m_Font, self.m_Columns[columnIndex].alignX, "center")
 		end
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end

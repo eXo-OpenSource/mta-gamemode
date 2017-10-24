@@ -211,6 +211,44 @@ end
 	end
 ]]
 
+
+function Blip.getVisibleBlipsForRadar()
+	if not Blip.ms_CachedRadarBlips then 
+		Blip.ms_CacheCheck = {0, localPlayer.position}
+	end
+	if (getTickCount() - Blip.ms_CacheCheck[1]) > 5000 or getDistanceBetweenPoints3D(Blip.ms_CacheCheck[2], localPlayer.position) > 50 then
+		outputDebug("updating blips", getTickCount())
+		Blip.ms_CacheCheck = {getTickCount(), localPlayer.position}
+		Blip.ms_CachedRadarBlips = {}
+		for i = 1, #Blip.Blips do
+			local blip = Blip.Blips[i]
+			local display = true
+			local blipX, blipY = blip:getPosition()
+
+			if Blip.AttachedBlips[blip] then
+				if not isElement(Blip.AttachedBlips[blip]) then
+					delete(Blip.Blips[i])
+					break
+				end
+				if Blip.AttachedBlips[blip]:getInterior() ~= 0 or Blip.AttachedBlips[blip]:getDimension() ~= 0 then
+					display = false
+				end
+			end
+
+			if blip:getSaveName() and not core:get("BlipVisibility", blip:getSaveName(), true) then
+				display = false
+			end
+
+			if blipX and display then 
+				if getDistanceBetweenPoints2D(localPlayer.position.x, localPlayer.position.y, blipX, blipY) < blip:getStreamDistance() then
+					table.insert(Blip.ms_CachedRadarBlips, blip)
+				end
+			end
+		end		
+	end
+	return Blip.ms_CachedRadarBlips
+end
+
 function Blip.updateFromServer(id, data)
 	if not Blip.ServerBlips[id] then
 		Blip.ServerBlips[id] = Blip:new(data.icon, data.x, data.y, data.streamDistance, data.color, data.optionalColor)

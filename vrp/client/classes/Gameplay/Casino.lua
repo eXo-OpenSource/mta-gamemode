@@ -16,6 +16,28 @@ function Casino:constructor()
 	--self.m_BomberMan2DMarker = Vector3(2252.187, 1589.773, 1005.225)	--temp	(Todo: implement multiplayer to BomberMan2D (up to 4 players))
 	--self.m_TetrisMarker = Vector3(2252.187, 1589.773, 1005.225)		--temp	(Todo: Tetris (multiplayer up to 6 players))
 
+	self.m_RoulettePositions = {
+		Vector3(2230.30, 1615.95, 1005.225),
+		Vector3(2242.00, 1615.95, 1005.225),
+		Vector3(2230.40, 1618.25, 1005.225),
+		Vector3(2242.00, 1618.25, 1005.225),
+		Vector3(2230.30, 1596.13, 1005.225),
+		Vector3(2230.30, 1590.56, 1005.225),
+		Vector3(2242.00, 1596.13, 1005.225),
+		Vector3(2242.00, 1590.56, 1005.225)
+	}
+
+	self.m_RouletteCroupiers = {
+		{Vector3(2230.30, 1588.10, 1006.18), 0},
+		{Vector3(2230.30, 1593.60, 1006.18), 0},
+		{Vector3(2230.30, 1613.50, 1006.18), 0},
+		{Vector3(2230.30, 1620.70, 1006.18), 180},
+		{Vector3(2241.90, 1620.70, 1006.18), 180},
+		{Vector3(2241.90, 1613.50, 1006.18), 0},
+		{Vector3(2241.90, 1593.60, 1006.18), 0},
+		{Vector3(2241.94, 1588.10, 1006.18), 0},
+	}
+
 	self:createGameMarker()
 
 	addRemoteEvents{"openChessGui"}
@@ -65,4 +87,25 @@ function Casino:createGameMarker()
 			MinigameGUI:new("2Cars")
 		end
 	)
+
+	local marker
+	for index, pos in pairs(self.m_RoulettePositions) do
+		marker = createMarker(pos, "cylinder", 1, 255, 80, 0, 200)
+		marker:setInterior(1)
+		addEventHandler("onClientMarkerHit", marker,
+			function(hitElement)
+				if hitElement:getType() ~= "player" then return end
+				if hitElement ~= localPlayer then return end
+
+				MinigameGUI:new("Roulette")
+			end
+		)
+	end
+	local ped
+	for index, data in pairs(self.m_RouletteCroupiers) do
+		ped = createPed(171, data[1], data[2])
+		ped:setInterior(1)
+		ped:setData("NPC:Immortal", true)
+		ped:setFrozen(true)
+	end
 end

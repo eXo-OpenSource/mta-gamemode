@@ -166,10 +166,6 @@ function BankRobbery:startRobGeneral(player)
 		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end
-
-	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"} --// TODO CONTINUE FIXING THIS PART
-
-
 end
 
 function BankRobbery:Ped_Targetted(ped, attacker)
@@ -316,8 +312,13 @@ function BankRobbery:addMoneyToBag(player, money)
 			return
 		end
 	end
+	if not self.ms_BagSpawns[#self.m_MoneyBags+1] then
+		player:sendError(_("Ihr habt bereits die maximale Anzahl an Geldsäcken!", player))
+		return
+	end
 	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
+	newBag.DeloadHook = bind(self.deloadBag, self)
 	table.insert(self.m_MoneyBags, newBag)
 	newBag:setData("Money", money, true)
 	newBag:setData("MoneyBag", true, true)
@@ -330,6 +331,13 @@ function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
+	end
+end
+
+function BankRobbery:deloadBag(player, veh, bag)
+	if player:getFaction():isStateFaction() and player:isFactionDuty() then
+		player:detachPlayerObject(player:getPlayerAttachedObject())
+		self:statePeopleClickBag(player, object)
 	end
 end
 

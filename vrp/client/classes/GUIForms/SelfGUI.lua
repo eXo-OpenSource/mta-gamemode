@@ -40,7 +40,7 @@ function SelfGUI:constructor()
 	self.m_OpenWindows = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setBarEnabled(false):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
 	-- Tab: Allgemein
@@ -50,7 +50,7 @@ function SelfGUI:constructor()
 
 
 	if localPlayer:getRank() > 0 then
-		self.m_AdminButton = VRPButton:new(self.m_Width-self.m_Width*0.29, self.m_Height*0.02, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton = GUIButton:new(self.m_Width-self.m_Width*0.29, self.m_Height*0.02, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", tabGeneral):setBackgroundColor(Color.Red):setBarEnabled(true)
 		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 	end
 
@@ -111,24 +111,35 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
 
-	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral)
+	--[[self.m_AdButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", tabGeneral):setBarEnabled(true)
+	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)]]
+
+	self.m_TicketButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", tabGeneral):setBarEnabled(true)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
-	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral)
+	self.m_WarnButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", tabGeneral):setBarEnabled(true)
 	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
 
-	self.m_AchievementButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", true, tabGeneral)
+	self.m_AchievementButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", tabGeneral):setBarEnabled(true)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)
 
-	self.m_ObjectOverviewButton = VRPButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Platzierte Objekte", true, tabGeneral)
+	self.m_ObjectOverviewButton = GUIButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"platzierte Objekte", tabGeneral):setBarEnabled(true)
 	self.m_ObjectOverviewButton.onLeftClick = function()
 		triggerServerEvent("requestWorldItemListOfOwner", localPlayer, localPlayer:getPrivateSync("Id"), "player")
 		self:close()
 	end
-	self.m_ShortMessageLog = VRPButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Benachrichtigungen", true, tabGeneral)
+	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBarEnabled(true)
 	self.m_ShortMessageLog.onLeftClick = function()
 		ShortMessageLogGUI:getSingleton():open()
 		self:close()
+	end
+
+	self.m_BindButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Binds", tabGeneral):setBarEnabled(true)
+	self.m_BindButton.onLeftClick = function()
+		if self.m_BindGUI then delete(self.m_BindGUI) end
+		self:close()
+		self.m_BindGUI = BindGUI:new()
+		self.m_BindGUI:addBackButton(function() SelfGUI:getSingleton():show() end)
 	end
 
 	-- Tab: Statistics
@@ -146,8 +157,9 @@ function SelfGUI:constructor()
 	self.m_TabVehicles = tabVehicles
 	self.m_VehiclesLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _("Fahrzeuge: (%d/%d)", 0, 0), tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.6, tabVehicles)
-	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
-	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
+	self.m_VehiclesGrid:addColumn(_"Steuer", 0.2)
 	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage:", tabVehicles)
 	self.m_VehicleGarageUpgradeButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
 	self.m_VehicleGarageUpgradeButton.onHover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.White) end
@@ -156,11 +168,11 @@ function SelfGUI:constructor()
 	--self.m_VehicleHangarButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.81, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
 	--self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
 	--self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.LightBlue) end
-	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
-	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", true, tabVehicles)
+	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setBarEnabled(true)
+	self.m_VehicleSellButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"an Server verkaufen", tabVehicles):setBarEnabled(true)
  	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.LightBlue)
- 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", true, tabVehicles)
- 	self.m_VehicleWorldRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", true, tabVehicles)
+ 	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", tabVehicles):setBarEnabled(true)
+ 	self.m_VehicleWorldRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", tabVehicles):setBarEnabled(true)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	--self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
@@ -233,14 +245,13 @@ function SelfGUI:constructor()
 	end)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06, _"Fischerlevel:", tabPoints)
-	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
+	self.m_FishingLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.5, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getFishingLevel(), tabPoints)
 	self.m_FishingLevelProgress = GUIProgressBar:new(self.m_Width*.45, self.m_Height*.5, self.m_Width*.3, self.m_Height*.06, tabPoints)
-	self.m_FishingLevelStatLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.3, self.m_Height*0.06, (""):format(), tabPoints):setAlignX("center"):setColor(Color.LightGrey)
 	localPlayer:setPrivateSyncChangeHandler("FishingSkill", function(value)
 		if localPlayer:getPrivateSync("FishingLevel") < MAX_FISHING_LEVEL then
 			self.m_FishingLevelLabel:setText(_("%d/%d", localPlayer:getPrivateSync("FishingLevel"), MAX_FISHING_LEVEL))
 			self.m_FishingLevelProgress:setProgress(value/FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]*100)
-			self.m_FishingLevelStatLabel:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1]))
+			self.m_FishingLevelProgress:setText(("%s / %s"):format(value, FISHING_LEVELS[localPlayer:getPrivateSync("FishingLevel") + 1])):setProgressTextEnabled()
 		else
 			self.m_FishingLevelProgress:hide()
 		end
@@ -262,11 +273,11 @@ function SelfGUI:constructor()
 	end
 
 
-	self.m_ShaderButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shadereinstellungen", true, tabSettings)
+	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shadereinstellungen", tabSettings):setBarEnabled(true)
 	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
 
 	local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
-	self.m_ServerTour = VRPButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, true, tabSettings)
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setBarEnabled(true)
 	self.m_ServerTour.onLeftClick = function()
 		if not Tour:getSingleton():isActive() then
 		QuestionBox:new(
@@ -279,7 +290,7 @@ function SelfGUI:constructor()
 	end
 	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
 
-	self.m_KeyBindingsButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen", true, tabSettings)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings):setBarEnabled(true)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 
@@ -609,7 +620,7 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			else
 				positionType = _"Unbekannt"
 			end
-			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType)
+			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType, ("%d$"):format(element:getTax() or 0))
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
 			item.PositionType = vehicleInfo[2]
@@ -651,7 +662,9 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 end
 
 function SelfGUI:VehicleGarageUpgradeButton_Click()
-	triggerServerEvent("vehicleUpgradeGarage", root)
+	QuestionBox:new(_("Bitte bestätige %s deiner Garage. Das Geld wird von deinem Konto abgebucht.", localPlayer.m_GarageType == 0 and "den Kauf" or "das Upgrade"), function()
+		triggerServerEvent("vehicleUpgradeGarage", root)
+	end)
 end
 
 function SelfGUI:VehicleHangarButton_Click()
@@ -1083,25 +1096,7 @@ function SelfGUI:onSettingChange(setting)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
 
-		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren", self.m_SettingBG)
-		self.m_ShortMessageCTC:setFont(VRPFont(25))
-		self.m_ShortMessageCTC:setFontSize(1)
-		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
-		self.m_ShortMessageCTC.onChange = function (state)
-			core:set("HUD", "shortMessageCTC", state)
-		end
-
-		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.42, self.m_Height*0.325, self.m_Width*0.03, self.m_Height*0.04, "(?)", self.m_SettingBG)
-		self.m_ShortMessageCTCInfo:setFont(VRPFont(25))
-		self.m_ShortMessageCTCInfo:setFontSize(1)
-		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
-		self.m_ShortMessageCTCInfo.onHover = function () self.m_ShortMessageCTCInfo:setColor(Color.White) end
-		self.m_ShortMessageCTCInfo.onUnhover = function () self.m_ShortMessageCTCInfo:setColor(Color.LightBlue) end
-		self.m_ShortMessageCTCInfo.onLeftClick = function ()
-			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
-		end
-
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
 		self.m_HallelujaSound:setFontSize(1)
 		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
@@ -1109,7 +1104,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "HallelujaSound", state)
 		end
 
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
 		self.m_HitSound:setFont(VRPFont(25))
 		self.m_HitSound:setFontSize(1)
 		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))

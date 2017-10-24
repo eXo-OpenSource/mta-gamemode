@@ -73,13 +73,15 @@ function Admin:constructor()
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
 	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
-    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
+    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
+    addEventHandler("adminPlayerFunction", root, bind(self.Event_playerFunction, self))
+    addEventHandler("adminOfflinePlayerFunction", root, bind(self.Event_offlineFunction, self))
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
@@ -87,6 +89,8 @@ function Admin:constructor()
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
+    addEventHandler("adminGetOfflineWarns", root, bind(self.Event_getOfflineWarns, self))
+
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
 	addEventHandler("checkOverlappingVehicles", root, bind(self.checkOverlappingVehicles, self))
@@ -94,6 +98,9 @@ function Admin:constructor()
 	addEventHandler("onClientRunStringResult", root, bind(self.Event_OnClientRunStringResult, self))
 	addEventHandler("superman:start", root, bind(self.Event_OnSuperManStartRequest, self))
 	addEventHandler("superman:stop", root, bind(self.Event_OnSuperManStopRequest, self))
+	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
+	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
+	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -111,6 +118,8 @@ function Admin:constructor()
 	end, 10000, 0)
 
 	if DEBUG then
+		addCommandHandler("placeObject", bind(self.placeObject, self))
+
 		addEventHandler("onDebugMessage", root, function(message, level, file, line)
 			for player, rank in pairs(self.m_OnlineAdmins) do
 				if rank >= RANK.Supporter then
@@ -120,6 +129,53 @@ function Admin:constructor()
 		end)
 	end
 
+end
+
+function Admin:Event_OnAdminGangwarReset( id, ts )
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		local area = Gangwar:getSingleton().m_Areas[id]
+		if area then
+			if not ts then ts = 0 end
+			if ts < 0 then ts = 0 end
+			local time = getRealTime(ts)
+			local day = time.monthday
+			local month = time.month+1
+			local year = time.year+1900
+			local hour = time.hour
+			local minute = time.minute
+			ts = ts - ( GANGWAR_ATTACK_PAUSE * UNIX_TIMESTAMP_24HRS )
+			if ts < 0 then ts = 0 end
+			area.m_LastAttack = ts
+			area:update()
+			area.m_RadarArea:delete()
+			area:createRadar()
+			self:sendShortMessage(_("%s hat die Attackier-Zeit des Gebietes %s geändert!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name))
+			client:sendInfo(_("Das Gebiet wird freigegeben am: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !", client))
+			client:triggerEvent("gangwarRefresh")
+			StatisticsLogger:getSingleton():addAdminAction( client, "GW-AttackTime", "Gebiet: "..Gangwar:getSingleton().m_Areas[id].m_Name.."; AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+		end
+	end
+end
+
+function Admin:Event_OnAdminGangwarChangeOwner( id, faction)
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["eventGangwarMenu"] then
+		if id and faction and id > 0 and faction > 0 then
+			local area = Gangwar:getSingleton().m_Areas[id]
+			if area then
+				local faction = FactionManager:getSingleton():getFromId(faction)
+				area.m_Owner = faction.m_Id
+				local now = getRealTime().timestamp
+				area.m_LastAttack = now
+				area:update()
+				area.m_RadarArea:delete()
+				area:createRadar()
+				client:sendInfo(_("Das Gebiet wurde umgesetzt!", client))
+				self:sendShortMessage(_("%s hat das Gebiet %s der Fraktion %s gesetzt!", client, client:getName(), Gangwar:getSingleton().m_Areas[id].m_Name, faction:getShortName()))
+				StatisticsLogger:getSingleton():addAdminAction( client, "Gangwar-Gebiet", "Gebiet: " ..Gangwar:getSingleton().m_Areas[id].m_Name.." Fraktion: "..faction:getShortName().." !")
+				client:triggerEvent("gangwarRefresh")
+			end
+		end
+	end
 end
 
 function Admin:Event_OnSuperManStartRequest()
@@ -233,6 +289,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Ban = Ban.checkOfflineBan(Id);
 						Warn = Warn.getAmount(Id);
 						Karma = player:getKarma();
+						PrisonTime = player.m_PrisonTime;
                     }
 
                     if isOffline then delete(player) end
@@ -259,6 +316,18 @@ function Admin:Event_respawnCompanyVehicles(Id)
         company:respawnVehicles()
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
     end
+end
+
+function Admin:Event_getOfflineWarns(target)
+	local id = Account.getIdFromName(target)
+
+	if id then
+		local result = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?", sql:getPrefix(), id)
+		for index, row in pairs(result) do
+			row.adminName = Account.getNameFromId(row.adminId)
+		end
+		client:triggerEvent("adminReceiveOfflineWarns", result)
+	end
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
@@ -294,16 +363,16 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
             if isElement(target) then
                 if cmd == "spect" or cmd == "unprison" then
-                    self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
+                    self:Event_playerFunction(cmd, target, nil, nil, admin)
                     return
                 else
                     if arg1 then
                         if cmd == "rkick" or cmd == "permaban" or cmd == "cookie" then
-                            self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
+                            self:Event_playerFunction(cmd, target, arg1, 0, admin)
                             return
                         else
                             if arg2 then
-                                self:Event_adminTriggerFunction(cmd, target, arg2, arg1, admin)
+                                self:Event_playerFunction(cmd, target, arg2, arg1, admin)
                                 return
                             else
                                 admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
@@ -337,304 +406,380 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         return
     end
 
-    if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
-        if func == "goto" then
-            self:goToPlayer(admin, func, target:getName())
-        elseif func == "gethere" then
-            self:getHerePlayer(admin, func, target:getName())
-		elseif func == "freeze" then
-            if target:isFrozen() then
-				target:setFrozen(false)
-				self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
-				target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
-			else
-				if target.vehicle then target:removeFromVehicle() end
-				target:setFrozen(true)
-				self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
-				target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+    if admin:getRank() < ADMIN_RANK_PERMISSION[func] then
+		admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
+		return
+	end
+
+	if func == "smode" then
+		self:toggleSupportMode(admin)
+	elseif func == "clearchat" then
+		self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
+		for index, player in pairs(Element.getAllByType("player")) do
+			for i=0, 2100 do
+				player:sendMessage(" ")
 			end
-        elseif func == "kick" or func == "rkick" then
-            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
-			outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
+			player:triggerEvent("closeAd")
+		end
+		StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
+		outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+	elseif func == "resetAction" then
+		self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
+		ActionsCheck:getSingleton():reset()
+		StatisticsLogger:getSingleton():addAdminAction( admin, "resetAction", false)
+	elseif func == "respawnRadius" then
+		local radius = tonumber(target)
+		local pos = admin:getPosition()
+		local col = createColSphere(pos, radius)
+		local vehicles = getElementsWithinColShape(col, "vehicle")
+		col:destroy()
+		local count = 0
+		for index, vehicle in pairs(vehicles) do
+			if vehicle:isRespawnAllowed() then
+				vehicle:respawn(true)
+				count = count + 1
+			end
+		end
+		self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
+	elseif func == "adminAnnounce" then
+		local text = target
+		triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
+		StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
+
+	elseif func == "eventMoneyDeposit" or func == "eventMoneyWithdraw" then
+		local amount = tonumber(target)
+		if amount and amount > 0 and reason then
+			if func == "eventMoneyDeposit" then
+				if admin:getMoney() >= amount then
+					self.m_BankAccount:addMoney(amount)
+					self.m_BankAccount:save()
+					admin:takeMoney(amount, "Admin-Event-Kasse")
+					StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("+"..amount))
+					self:sendShortMessage(_("%s hat %d$ in die Eventkasse gelegt!", admin, admin:getName(), amount))
+					self:openAdminMenu(admin)
+				else
+					admin:sendError(_("Du hast nicht genug Geld dabei!", admin))
+				end
+			else
+				if self.m_BankAccount:getMoney() >= amount then
+					self.m_BankAccount:takeMoney(amount)
+					self.m_BankAccount:save()
+					admin:giveMoney(amount, "Admin-Event-Kasse")
+					StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("-"..amount))
+					self:sendShortMessage(_("%s hat %d$ aus der Eventkasse genommen!", admin, admin:getName(), amount))
+					self:openAdminMenu(admin)
+				else
+					admin:sendError(_("In der Kasse ist nicht soviel Geld!", admin))
+				end
+			end
+		else
+			admin:sendError(_("Betrag oder Grund ungültig!", admin))
+		end
+	elseif func == "gotocords" then
+		local x, y, z = unpack(target)
+		admin:setInterior(0)
+		admin:setDimension(0)
+		admin:setPosition(x, y, z)
+		if admin.vehicle then
+			admin.vehicle:setInterior(0)
+			admin.vehicle:setDimension(0)
+			admin.vehicle:setPosition(x, y, z)
+		else
+			admin:setPosition(x, y, z)
+		end
+		self:sendShortMessage(_("%s hat sich nach %s geportet!", admin, admin:getName(), getZoneName(x, y, z)))
+		StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
+	end
+end
+
+function Admin:Event_playerFunction(func, target, reason, duration, admin)
+	if client and isElement(client) then
+        admin = client
+    elseif isElement(admin) then
+        admin = admin
+    else
+        outputDebug("Event_playerFunction Error - Admin not found")
+        return
+    end
+
+	if admin:getRank() < ADMIN_RANK_PERMISSION[func] then
+		admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
+		return
+	end
+
+	if func == "goto" then
+		self:goToPlayer(admin, func, target:getName())
+	elseif func == "gethere" then
+		self:getHerePlayer(admin, func, target:getName())
+	elseif func == "freeze" then
+		if target:isFrozen() then
+			target:setFrozen(false)
+			self:sendShortMessage(_("%s hat %s entfreezt!", admin, admin:getName(), target:getName()))
+			target:sendShortMessage(_("Du wurdest von %s entfreezt", target, admin:getName()))
+		else
+			if target.vehicle then target:removeFromVehicle() end
+			target:setFrozen(true)
+			self:sendShortMessage(_("%s hat %s gefreezt!", admin, admin:getName(), target:getName()))
+			target:sendShortMessage(_("Du wurdest von %s gefreezt", target, admin:getName()))
+		end
+	elseif func == "rkick" then
+		self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
+		outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
+		outputChatBox("Grund: "..reason,root, 200, 0, 0)
+		kickPlayer(target, admin, reason)
+	elseif func == "prison" then
+		duration = tonumber(duration)
+		if duration then
+			self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+			target:setPrison(duration*60)
+			self:addPunishLog(admin, target, func, reason, duration*60)
+			outputChatBox(getPlayerName(admin).." hat "..getPlayerName(target).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			kickPlayer(target, admin, reason)
-        elseif func == "prison" then
-            duration = tonumber(duration)
-			if duration then
-				self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
-				target:setPrison(duration*60)
-				self:addPunishLog(admin, target, func, reason, duration*60)
-				outputChatBox(getPlayerName(admin).." hat "..getPlayerName(target).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
+		else
+		outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
+		end
+	elseif func == "unprison" then
+		if target then
+			if target.m_PrisonTime > 0 then
+				self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+				target:endPrison()
+				self:addPunishLog(admin, target, func)
+			else admin:sendError("Spieler ist nicht im Prison!")
+			end
+		else
+			outputChatBox("Syntax: /unprison [ziel]",admin,200,0,0)
+		end
+	elseif func == "timeban" then
+		if not target then return end
+		if not duration then return end
+		if not reason then return end
+		duration = tonumber(duration)
+		self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+		self:addPunishLog(admin, target, func, reason, duration*60*60)
+		outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+		outputChatBox("Grund: "..reason,root, 200, 0, 0)
+		Ban.addBan(target, admin, reason, duration*60*60)
+	elseif func == "permaban" then
+		if not target then return end
+		if not reason or #reason == 0 then return end
+		self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
+		self:addPunishLog(admin, target, func, reason, 0)
+		outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+		outputChatBox("Grund: "..reason,root, 200, 0, 0)
+		Ban.addBan(target, admin, reason)
+	elseif func == "warn" then
+		if not target then return end
+		if not duration then return end
+		if not reason then return end
+		duration = tonumber(duration)
+		self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+		Warn.addWarn(target, admin, reason, duration*60*60*24)
+		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
+		self:addPunishLog(admin, target, func, reason, duration*60*60*24)
+	elseif func == "removeWarn" then
+		if not target then return end
+		self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
+		local id = reason
+		Warn.removeWarn(target, id)
+		self:addPunishLog(admin, target, func, "", 0)
+	elseif func == "spect" then
+		if not target then return end
+		--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
+		if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
+
+		admin.m_IsSpecting = true
+		admin:setPrivateSync("isSpecting", target)
+		admin.m_PreSpectInt = getElementInterior(admin)
+		admin.m_PreSpectDim = getElementDimension(admin)
+		admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
+		admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
+		admin.m_SpectStop =
+			function()
+				for i, v in pairs(target.spectBy) do
+					if v == admin then
+						table.remove(target.spectBy, i)
+					end
+				end
+
+				setCameraTarget(admin, admin)
+				self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
+				unbindKey(admin, "space", "down")
+
+				admin:setFrozen(false)
+				if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
+
+				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
+				admin:setInterior(admin.m_PreSpectInt)
+				admin:setDimension(admin.m_PreSpectDim)
+
+				admin.m_IsSpecting = false
+				admin:setPrivateSync("isSpecting", false)
+			end
+
+		if not target.spectBy then target.spectBy = {} end
+		table.insert(target.spectBy, admin)
+
+		StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+		self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+		admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
+
+		admin:setInterior(target.interior)
+		admin:setCameraInterior(target.interior)
+		admin:setDimension(target.dimension)
+
+		-- this will probably fix the camera issue
+		local position = target.position
+		setCameraMatrix(admin, position)
+		setCameraTarget(admin, target)
+
+		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+		addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
+		bindKey(admin, "space", "down", admin.m_SpectStop)
+
+		admin:setFrozen(true)
+		if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
+	elseif func == "nickchange" then
+		local changeTarget = false
+		if target then
+			if isElement(target) and func == "nickchange" then
+				local oldName = target:getName()
+				changeTarget = target
+				if changeTarget:setNewNick(admin, reason) then
+					self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
+				end
+			end
+		else
+			admin:sendError(_("Ungültiges Ziel!", admin))
+		end
+	elseif func == "cookie" then
+		local reason = reason:gsub("_", " ")
+		if target:getInventory():giveItem("Keks", 1) then
+			target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
+			self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
+		else
+			admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
+		end
+    end
+end
+
+function Admin:Event_offlineFunction(func, target, reason, duration, admin)
+	if client and isElement(client) then
+        admin = client
+    elseif isElement(admin) then
+        admin = admin
+    else
+        outputDebug("Event_offlineFunction Error - Admin not found")
+        return
+    end
+
+	if admin:getRank() < ADMIN_RANK_PERMISSION[func] then
+		admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
+		return
+	end
+
+	if not target then return end
+	local targetId = Account.getIdFromName(target)
+	if not targetId or targetId == 0 then
+		admin:sendError(_("Spieler nicht gefunden!", admin))
+		return
+	end
+
+	if func == "offlinePermaban" then
+		if not reason or #reason == 0 then return end
+		self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
+		Ban.addBan(targetId, admin, reason)
+		self:addPunishLog(admin, targetId, func, reason, 0)
+		outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+		outputChatBox("Grund: "..reason,root, 200, 0, 0)
+    elseif func == "offlineTimeban" then
+		self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
+		if tonumber(duration) then
+			if type(reason) == "string" then
+				Ban.addBan(targetId, admin, reason, duration*60*60)
+				self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
 				outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			else
-			outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
+				admin:sendError("Keinen Grund angegeben!")
 			end
-		elseif func == "unprison" then
-			if target then
-				if target.m_PrisonTime > 0 then
-					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
-					target:endPrison()
-					self:addPunishLog(admin, target, func)
-				else admin:sendError("Spieler ist nicht im Prison!")
-				end
-			else
-				outputChatBox("Syntax: /unprison [ziel]",admin,200,0,0)
-			end
-        elseif func == "timeban" then
-			if not target then return end
-            if not duration then return end
-			if not reason then return end
-			duration = tonumber(duration)
-			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
-            self:addPunishLog(admin, target, func, reason, duration*60*60)
-			outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
-			outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			Ban.addBan(target, admin, reason, duration*60*60)
-        elseif func == "permaban" then
-			if not target then return end
-            if not reason or #reason == 0 then return end
-			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
-            self:addPunishLog(admin, target, func, reason, 0)
-			outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
-			outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			Ban.addBan(target, admin, reason)
-        elseif func == "addWarn" or func == "warn" then
-			if not target then return end
-			if not duration then return end
-			if not reason then return end
-			duration = tonumber(duration)
-			self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
-            Warn.addWarn(target, admin, reason, duration*60*60*24)
-            target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
-            self:addPunishLog(admin, target, func, reason, duration*60*60*24)
-        elseif func == "removeWarn" then
-			if not target then return end
-            self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
-            local id = reason
-            Warn.removeWarn(target, id)
-            self:addPunishLog(admin, target, func, "", 0)
-        elseif func == "supportMode" or func == "smode" then
-            self:toggleSupportMode(admin)
-        elseif func == "clearchat" or func == "clearChat" then
-			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
-            for index, player in pairs(Element.getAllByType("player")) do
-                for i=0, 2100 do
-                    player:sendMessage(" ")
-                end
-                player:triggerEvent("closeAd")
-            end
-			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
-			outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
-		elseif func == "resetAction" then
-			self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
-			ActionsCheck:getSingleton():reset()
-			StatisticsLogger:getSingleton():addAdminAction( admin, "resetAction", false)
-		elseif func == "respawnRadius" then
-			local radius = tonumber(target)
-			local pos = admin:getPosition()
-			local col = createColSphere(pos, radius)
-			local vehicles = getElementsWithinColShape(col, "vehicle")
-			col:destroy()
-			local count = 0
-			for index, vehicle in pairs(vehicles) do
-				if vehicle:isRespawnAllowed() then
-					vehicle:respawn(true)
-					count = count + 1
-				end
-			end
-			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
-        elseif func == "adminAnnounce" then
-            local text = target
-            triggerClientEvent("breakingNews", root, ("%s: %s"):format(client:getName(), text), "Admin Ankündigung", {255, 150, 0}, {0, 0, 0})
-			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
-        elseif func == "spect" then
-			if not target then return end
-			--if target == admin then admin:sendError("Du kannst dich nicht selbst specten!") return end
-			if admin:getPrivateSync("isSpecting") then admin:sendError("Beende das spectaten zuerst!") return end
-
-			admin.m_IsSpecting = true
-			admin:setPrivateSync("isSpecting", target)
-			admin.m_PreSpectInt = getElementInterior(admin)
-			admin.m_PreSpectDim = getElementDimension(admin)
-			admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
-			admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
-			admin.m_SpectStop =
-				function()
-					for i, v in pairs(target.spectBy) do
-						if v == admin then
-							table.remove(target.spectBy, i)
+		else
+			admin:sendError("Keine Dauer angegeben!")
+		end
+    elseif func == "offlineUnban" then
+		self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
+		self:addPunishLog(admin, targetId, func, reason, 0)
+		sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+		outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
+	elseif func == "offlineNickchange" then
+		Async.create( -- player:load()/:save() needs a aynchronous execution
+			function ()
+				local changeTarget, isOffline = DatabasePlayer.get(targetId)
+				if changeTarget then
+					if isOffline then
+						changeTarget:load()
+						if changeTarget:setNewNick(admin, reason) then
+							self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
+							changeTarget:addOfflineMessage("Du wurdest vom Admin "..admin:getName().." von "..target.." zu "..reason.." umgenannt!",1)
+							delete(changeTarget)
+							return
 						end
-					end
-
-					setCameraTarget(admin, admin)
-					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
-					unbindKey(admin, "space", "down")
-
-					admin:setFrozen(false)
-					if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
-
-					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-					removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-					admin:setInterior(admin.m_PreSpectInt)
-					admin:setDimension(admin.m_PreSpectDim)
-
-					admin.m_IsSpecting = false
-					admin:setPrivateSync("isSpecting", false)
-				end
-
-			if not target.spectBy then target.spectBy = {} end
-			table.insert(target.spectBy, admin)
-
-			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-			self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-			admin:sendInfo(_("Drücke Leertaste zum beenden!", admin))
-
-			admin:setInterior(target.interior)
-			admin:setCameraInterior(target.interior)
-			admin:setDimension(target.dimension)
-
-			-- this will probably fix the camera issue
-			local position = target.position
-			setCameraMatrix(admin, position)
-			setCameraTarget(admin, target)
-
-			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-			addEventHandler("onPlayerQuit", target, admin.m_SpectStop)
-			bindKey(admin, "space", "down", admin.m_SpectStop)
-
-			admin:setFrozen(true)
-			if admin.vehicle and admin.vehicleSeat == 0 then admin.vehicle:setFrozen(true) end
-        elseif func == "offlinePermaban" then
-			if not target then return end
-			if not reason or #reason == 0 then return end
-			self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
-			local targetId = Account.getIdFromName(target)
-			if targetId and targetId > 0 then
-				Ban.addBan(targetId, admin, reason)
-				self:addPunishLog(admin, targetId, func, reason, 0)
-				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
-				outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			else
-				admin:sendError(_("Spieler nicht gefunden!", admin))
-			end
-        elseif func == "offlineTimeban" then
-			if not target then return end
-            self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
-            local targetId = Account.getIdFromName(target)
-            if targetId and targetId > 0 then
-				if tonumber(duration) then
-					if type(reason) == "string" then
-						Ban.addBan(targetId, admin, reason, duration*60*60)
-						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
-						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
-						outputChatBox("Grund: "..reason,root, 200, 0, 0)
-					else admin:sendError("Keinen Grund angegeben!")
-					end
-				else admin:sendError("Keine Dauer angegeben!")
-				end
-            else
-                admin:sendError(_("Spieler nicht gefunden!", admin))
-            end
-        elseif func == "offlineUnban" then
-			if not target then return end
-            self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
-            local targetId = Account.getIdFromName(target)
-            if targetId and targetId > 0 then
-                self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
-				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
-            else
-                admin:sendError(_("Spieler nicht gefunden!", admin))
-            end
-		 elseif func == "eventMoneyDeposit" or func == "eventMoneyWithdraw" then
-            local amount = tonumber(target)
-            if amount and amount > 0 and reason then
-				if func == "eventMoneyDeposit" then
-					if admin:getMoney() >= amount then
-						self.m_BankAccount:addMoney(amount)
-						self.m_BankAccount:save()
-						admin:takeMoney(amount, "Admin-Event-Kasse")
-						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("+"..amount))
-						self:sendShortMessage(_("%s hat %d$ in die Eventkasse gelegt!", admin, admin:getName(), amount))
-						self:openAdminMenu(admin)
 					else
-						admin:sendError(_("Du hast nicht genug Geld dabei!", admin))
+						admin:sendError(_("Der Spieler ist online!", admin))
 					end
 				else
-					if self.m_BankAccount:getMoney() >= amount then
-						self.m_BankAccount:takeMoney(amount)
-						self.m_BankAccount:save()
-						admin:giveMoney(amount, "Admin-Event-Kasse")
-						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("-"..amount))
-						self:sendShortMessage(_("%s hat %d$ aus der Eventkasse genommen!", admin, admin:getName(), amount))
-						self:openAdminMenu(admin)
-					else
-						admin:sendError(_("In der Kasse ist nicht soviel Geld!", admin))
+					admin:sendError(_("Spieler nicht gefunden!", admin))
+				end
+			end
+		)()
+	elseif func == "offlineWarn" then
+		if not duration then return end
+		if not reason then return end
+		duration = tonumber(duration)
+		self:sendShortMessage(_("%s hat %s offline verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target, duration, reason))
+		Warn.addWarn(targetId, admin, reason, duration*60*60*24)
+		self:addPunishLog(admin, targetId, func, reason, duration*60*60*24)
+	elseif func == "removeOfflineWarn" then
+		self:sendShortMessage(_("%s hat einen Warn von %s entfernt! (Offline)", admin, admin:getName(), target))
+		local id = reason
+		Warn.removeWarn(targetId, id)
+		self:addPunishLog(admin, targetId, func, "", 0)
+	elseif func == "offlinePrison" then
+		if duration then
+			duration = tonumber(duration)
+			Async.create(
+			function ()
+				local targetPlayer, isOffline = DatabasePlayer.get(targetId)
+				if targetPlayer then
+					if isOffline then
+						targetPlayer:load()
+						self:sendShortMessage(_("%s hat %s für %d Minuten offline ins Prison gesteckt! Grund: %s", admin, admin:getName(), target, duration, reason))
+						self:addPunishLog(admin, targetId, func, reason, duration*60)
+						targetPlayer:setPrison(duration*60)
+						delete(targetPlayer)
 					end
 				end
-            else
-                admin:sendError(_("Betrag oder Grund ungültig!", admin))
-            end
-		elseif func == "gotocords" then
-			local x, y, z = unpack(target)
-			admin:setInterior(0)
-			admin:setDimension(0)
-			admin:setPosition(x, y, z)
-			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
-			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
-		elseif func == "nickchange" or func == "offlineNickchange" then
-			local changeTarget = false
-			if target then
-				if isElement(target) and func == "nickchange" then
-					local oldName = target:getName()
-					changeTarget = target
-					if changeTarget:setNewNick(admin, reason) then
-						self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
-					end
-				elseif func == "offlineNickchange" then
-					local targetId = Account.getIdFromName(target)
-            		if targetId and targetId > 0 then
-						Async.create( -- player:load()/:save() needs a aynchronous execution
-							function ()
-								local changeTarget, isOffline = DatabasePlayer.get(targetId)
-								if changeTarget then
-									if isOffline then
-										changeTarget:load()
-										if changeTarget:setNewNick(admin, reason) then
-											self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
-											changeTarget:addOfflineMessage("Du wurdest vom Admin "..admin:getName().." von "..target.." zu "..reason.." umgenannt!",1)
-                       						delete(changeTarget)
-											return
-										end
-									else
-										admin:sendError(_("Der Spieler ist online!", admin))
-									end
-								else
-									admin:sendError(_("Spieler nicht gefunden!", admin))
-								end
-							end
-						)()
-					else
-					     admin:sendError(_("Spieler nicht gefunden!", admin))
-					end
+			end)()
+		end
+	elseif func == "offlineUnPrison" then
+		Async.create(
+		function ()
+			local targetPlayer, isOffline = DatabasePlayer.get(targetId)
+			if targetPlayer then
+				if isOffline then
+					targetPlayer:load()
+					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target))
+					target:endPrison()
+					self:addPunishLog(admin, targetId, func)
+					delete(targetPlayer)
 				end
-			else
-      		  admin:sendError(_("Ungültiges Ziel!", admin))
 			end
-		elseif func == "cookie" then
-			local reason = reason:gsub("_", " ")
-			if target:getInventory():giveItem("Keks", 1) then
-				target:sendSuccess(_("%s hat dir einen Keks gegeben! Grund: %s", target, admin:getName(), reason))
-				self:sendShortMessage(_("%s hat %s einen Keks gegeben! Grund: %s", admin, admin:getName(), target:getName(), reason))
-			else
-				admin:sendError(_("Es ist kein Platz für einen Keks in %s's Inventar.", admin, target:getName()))
-			end
-        end
-    else
-        admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
-    end
+		end)()
+	else
+        outputDebug("Event_offlineFunction Error - Function not found")
+	end
 end
 
 function Admin:outputSpectatingChat(source, messageType, message, phonePartner, playerToSend)
@@ -1127,7 +1272,7 @@ function Admin:getVehFromId(player, cmd, vehId)
 end
 
 function Admin:Event_vehicleDespawn(reason)
-    if client:getRank() < RANK.Clanmember then
+    if client:getRank() < ADMIN_RANK_PERMISSION["despawnVehicle"] then
 		-- Todo: Report cheat attempt
 		return
 	end
@@ -1144,7 +1289,8 @@ function Admin:Event_vehicleDespawn(reason)
 	VehicleManager:getSingleton():checkVehicle(source)
 
 	if source:isPermanent() then
-		client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+		StatisticsLogger:getSingleton():addAdminAction(client, "Vehicle-Despawn", ("Besitzer: %s, Grund: %s"):format(getElementData(source, "OwnerName") or "", reason))
+		self:sendShortMessage(_("%s hat das Fahrzeug %s von %s despawnt (Grund: %s).", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "", reason))
 
 		if getElementData(source, "OwnerName") then
 			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
@@ -1278,4 +1424,31 @@ end
 
 function Admin:sendNewPlayerMessage(player)
 	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
+end
+
+function Admin:placeObject(player, cmd, model)
+	if player:getRank() < RANK.Administrator then
+		return
+	end
+
+	if model and tonumber(model) then
+		player:triggerEvent("objectPlacerStart", tonumber(model), "adminObjectPlaced", false, true)
+		player.m_PlacingInfo = {["model"] = model}
+		return true
+	else
+		player:sendError(_("Syntax: /placeObject [Model-ID]", player))
+	end
+end
+
+function Admin:Event_ObjectPlaced(x, y, z, rotation)
+	if client:getRank() < RANK.Administrator then
+		return
+	end
+
+	outputChatBox(("Position: %.2f, %.2f, %.2f"):format(x, y, z))
+	outputChatBox(("Rotation: 0, 0, %.2f"):format(rotation))
+
+	createObject(client.m_PlacingInfo["model"], x, y, z, 0, 0, rotation)
+	client.m_PlacingInfo = nil
+	return
 end

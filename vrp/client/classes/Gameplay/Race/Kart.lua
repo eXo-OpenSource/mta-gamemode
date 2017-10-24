@@ -10,7 +10,7 @@ addRemoteEvents{"KartStart", "KartStop", "KartRequestGhostDriver", "KartReceiveG
 
 Kart.record = false
 
-function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnEnabled)
+function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnEnabled, mapId)
 	self.m_State = "Flying"
 	self.m_HittedCheckpoints = {}
 
@@ -39,6 +39,7 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps, respawnE
 		addEventHandler("onClientMarkerHit", v, self.m_onCheckpointHit)
 	end
 
+	Kart.MapId = mapId
 	addEventHandler("onClientMarkerHit", self.m_StartFinishMarker, self.m_onStartFinishMarkerHit)
 end
 
@@ -118,21 +119,37 @@ function Kart:respawnToLastCheckpoint()
 	end
 end
 
-addEventHandler("KartReceiveGhostDriver", root,
-	function(record)
-		Kart.LastRequest = false
+function Kart.receiveGhostDriver(record)
+	Kart.LastRequest = false
 
-		local unparsed = fromJSON(record)
-		Kart.record = table.setIndexToInteger(unparsed)
+	local unparsed = fromJSON(record)
+	if not unparsed then WarningBox:new("Für diesen Spieler ist kein Geist verfügbar!") return false end
+	Kart.record = table.setIndexToInteger(unparsed)
 
-		for _, v in pairs(Kart.record) do
-			if type(v) == "table" then
-				v.position = Vector3(v.x, v.y, v.z)
-				v.rotation = Vector3(v.rx, v.ry, v.rz)
-			end
+	for _, v in pairs(Kart.record) do
+		if type(v) == "table" then
+			v.position = Vector3(v.x, v.y, v.z)
+			v.rotation = Vector3(v.rx, v.ry, v.rz)
 		end
 	end
-)
+
+	InfoBox:new("Geist übernommen!")
+end
+
+function Kart.uploadGhostDriver()
+	if not Kart.requestedRecord then return end
+
+	local options = {
+		["postData"] =  ("secret=%s&playerId=%d&mapId=%d&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), Kart.MapId, toJSON(Kart.requestedRecord))
+	}
+
+	fetchRemote("https://exo-reallife.de/ingame/kart/addGhost.php", options,
+		function(responseData, responseInfo)
+			Kart.requestedRecord = false
+			--outputConsole(inspect({data = responseData, info = responseInfo}))
+		end
+	)
+end
 
 addEventHandler("KartRequestGhostDriver", root,
 	function()
@@ -149,7 +166,7 @@ addEventHandler("KartRequestGhostDriver", root,
 			end
 
 			record.duration = getTickCount() - Kart:getSingleton().m_StartTick
-			triggerLatentServerEvent("sendKartGhost", 100000, false, root, record)
+			Kart.requestedRecord = record
 		end
 	end
 )
@@ -164,6 +181,7 @@ addEventHandler("KartStop", root,
 	function()
 		if Kart:isInstantiated() then
 			delete(Kart:getSingleton())
+			Kart.uploadGhostDriver()
 		end
 	end
 )

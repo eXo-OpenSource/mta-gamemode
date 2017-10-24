@@ -56,20 +56,13 @@ function MechanicTow:renderFuelHose()
 			if isElement(vehicle) and vehicle.towingVehicle then
 				dxDrawLine3D(vehicle.position, element.matrix:transformPosition(Vector3(0.07, 0, -0.11)), Color.Black, 5)
 
-				if localPlayer:getPrivateSync("hasFuelNozzle") then
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
 					local worldVehicle = localPlayer:getWorldVehicle()
-					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle then
+					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle ~= localPlayer.lastWorldVehicle and worldVehicle:getFuelType() ~= "nofuel" then
 						localPlayer.lastWorldVehicle = worldVehicle
 
-						if not VehicleFuel:isInstantiated() then
-							VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill)
-						end
-					elseif not worldVehicle then
-						localPlayer.lastWorldVehicle = nil
-
-						if VehicleFuel:isInstantiated() then
-							delete(VehicleFuel:getSingleton())
-						end
+						VehicleFuel.forceClose()
+						VehicleFuel:new(localPlayer.lastWorldVehicle, self.m_RequestFill, true)
 					end
 
 					if localPlayer.vehicle or (vehicle.position - element.position).length > 10 then
@@ -79,7 +72,7 @@ function MechanicTow:renderFuelHose()
 				end
 			else
 				self.m_RenderFuelHoles[element] = nil
-				if localPlayer:getPrivateSync("hasFuelNozzle") then
+				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
 					triggerServerEvent("mechanicRejectFuelNozzle", localPlayer)
 				end
 			end
@@ -90,10 +83,6 @@ function MechanicTow:renderFuelHose()
 end
 
 function MechanicTow:requestFill(vehicle, fuel)
-	if VehicleFuel:isInstantiated() then
-		delete(VehicleFuel:getSingleton())
-	end
-
 	if not vehicle.controller then
 		ErrorBox:new("In dem Fahrzeug sitzt kein Spieler")
 		return

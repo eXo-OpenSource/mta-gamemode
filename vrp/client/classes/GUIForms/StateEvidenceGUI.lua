@@ -28,9 +28,11 @@ function StateEvidenceGUI:constructor( evidenceTable )
 ]]
 
 	self:refreshGrid()
-	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 90, 330, 160, 30, "Inhalt entwerten", self.m_Window)
+	self.m_DestroyEvidenceButton= GUIButton:new( (self.m_Width/2) - 90, 330, 180, 30, "Geld-Transport starten", self.m_Window)
 	self.m_DestroyEvidenceButton.onLeftClick = function ()
-		triggerServerEvent("State:onRequestEvidenceDestroy", localPlayer)
+		QuestionBox:new(_"Möchtest du wirklich einen Asservaten Geld-Truck starten?", function()
+			triggerServerEvent("State:startEvidenceTruck", localPlayer)
+		end)
 	end
 end
 
@@ -47,18 +49,10 @@ function StateEvidenceGUI:refreshGrid()
 		type_, var1, var2, var3, cop, timeStamp = evidenceItems[1], evidenceItems[2], evidenceItems[3], evidenceItems[4], evidenceItems[5], evidenceItems[6]
 		if var1 then
 			if type_ == "Waffe" then var1 = getWeaponNameFromID(var1) or "Unbekannt"end
-			item = self.m_List:addItem(var1 or "Unbekannt", var2 or 1, var3 or "Unbekannt", cop or "Unbekannt", self:getOpticalTimestamp(timeStamp or getRealTime().timestamp)) 
+			item = self.m_List:addItem(var1 or "Unbekannt", var2 or 1, var3 or "Unbekannt", cop or "Unbekannt", getOpticalTimestamp(tonumber(timeStamp) or getRealTime().timestamp))
 			item.onLeftClick = function() end
 		end
 	end
-end
-
-function StateEvidenceGUI:getOpticalTimestamp(ts)
-	if type(ts) == "string" then tonumber(ts) end
-	local time = getRealTime(ts)
-	local month = time.month+1
-	local year = time.year-100
-	return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
 end
 
 addEventHandler("State:sendEvidenceItems", root,

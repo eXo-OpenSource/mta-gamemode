@@ -40,8 +40,7 @@ function HUDRadar:constructor()
 		core:set("HUD", "drawBlips", true)
 	end
 
-	addEventHandler("onClientPreRender", root, bind(self.update, self))
-	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onClientRender", root, bind(self.draw, self), false, "high")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 
 	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
@@ -221,8 +220,8 @@ function HUDRadar:restore()
 	self:updateMapTexture()
 end
 
-function HUDRadar:update()
-	if self.m_DesignSet == RadarDesign.Default or not self.m_Visible then
+function HUDRadar:draw()
+	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default then
 		return
 	end
 
@@ -242,12 +241,6 @@ function HUDRadar:update()
 
 	if self.m_NorthBlip then
 		self.m_NorthBlip:setPosition(localPlayer.position.x, localPlayer.position.y + 10000, 0) -- update north blip position so it always stays north
-	end
-end
-
-function HUDRadar:draw()
-	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default then
-		return
 	end
 
 	local isNotInInterior = getElementInterior(localPlayer) == 0
@@ -295,7 +288,7 @@ function HUDRadar:draw()
 
 	-- Draw renderTarget
 	if isNotInInterior then
-		dxDrawImageSection(self.m_PosX + 3, self.m_PosY + 3, self.m_Width - 6, self.m_Height - 6, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
+		dxDrawImageSection(self.m_PosX + 3, self.m_PosY + 3, self.m_Width - 6, self.m_Height - 6, self.m_Diagonal/2+3-self.m_Width/2, self.m_Diagonal/2+3-self.m_Height/2, self.m_Width-6, self.m_Height-6, self.m_RenderTarget)
 	else
 		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
 	end
@@ -362,81 +355,95 @@ function HUDRadar:drawBlips()
 			* math.matrix.three.translate(-px, -py, -pz)
 	end
 
-	for k, blip in pairs(self.m_Blips) do
+	local radarBlips = self:getVisibleBlipsForRadar()
+	--local radarBlips = Blip.getVisibleBlipsForRadar()
+
+	for i = 1, #radarBlips do
+		local blip = radarBlips[i]
 		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar") end
-		local display = true
 		local blipX, blipY = blip:getPosition()
 
-		if Blip.AttachedBlips[blip] then
-			if not isElement(Blip.AttachedBlips[blip]) then
-				delete(self.m_Blips[k])
-				break
+		-- Do transformation
+		local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
+		local x, y = pos[1][1], pos[2][1]
+
+		-- Check borders and fix position if necessary
+		if x < -self.m_Width/2 or x > self.m_Width/2 or y < -self.m_Height/2 or y > self.m_Height/2 then
+			-- Calculate angle
+			local rotation = math.atan2(y, x)
+
+			-- Identify and fix edges
+			-- Use the 2. intercept theorem (ger. Strahlensatz)
+			if rotation < -rotLimit and rotation > -math.pi+rotLimit then -- top
+				x = -self.m_Height/2 / y * x
+				y = -self.m_Height/2
+			elseif rotation > rotLimit and rotation < math.pi-rotLimit then -- bottom
+				x = self.m_Height/2 / y * x
+				y = self.m_Height/2
+			elseif rotation >= -rotLimit and rotation <= rotLimit then -- right
+				y = self.m_Width/2 / x * y
+				x = self.m_Width/2
+			else -- left
+				y = -self.m_Width/2 / x * y
+				x = -self.m_Width/2
+			end
+		end
+
+		-- Translate map to screen coordinates
+		local screenX, screenY = mapCenterX + x, mapCenterY + y
+
+		-- Finally, draw
+		local blipSize = blip:getSize() * Blip.getScaleMultiplier()
+		local imagePath = blip:getImagePath()
+
+		if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
+			if math.abs(pz - blip:getZ()) > 3 then
+				local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+				imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
+			end
+		end
+
+		if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar", true) end
+		local color = blip:getColor()
+		if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
+		dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, color)
+	end
+end
+
+function HUDRadar:getVisibleBlipsForRadar()
+	if not self.ms_CachedRadarBlips then
+		self.ms_CacheCheck = 0
+	end
+	if (getTickCount() - self.ms_CacheCheck) > 1000 then
+		self.ms_CacheCheck = getTickCount()
+		self.ms_CachedRadarBlips = {}
+		for i, v in pairs(Blip.Blips) do
+			local blip = Blip.Blips[i]
+			local display = true
+			local blipX, blipY = blip:getPosition()
+
+			if Blip.AttachedBlips[blip] then
+				if not isElement(Blip.AttachedBlips[blip]) then
+					delete(Blip.Blips[i])
+					break
+				end
+				if Blip.AttachedBlips[blip]:getInterior() ~= 0 or Blip.AttachedBlips[blip]:getDimension() ~= 0 then
+					display = false
+				end
 			end
 
-			local int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
-			if int == 0 and dim == 0 then
-				blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
-			else
+			if blip:getSaveName() and not core:get("BlipVisibility", blip:getSaveName(), true) then
 				display = false
 			end
-		end
 
-		if blip:getSaveName() and not core:get("BlipVisibility", blip:getSaveName(), true) then
-			display = false
-		end
-
-		if blipX and display then -- TODO: hotfix for #236
-			if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
-				-- Do transformation
-				local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
-				local x, y = pos[1][1], pos[2][1]
-
-				-- Check borders and fix position if necessary
-				if x < -self.m_Width/2 or x > self.m_Width/2 or y < -self.m_Height/2 or y > self.m_Height/2 then
-					-- Calculate angle
-					local rotation = math.atan2(y, x)
-
-					-- Identify and fix edges
-					-- Use the 2. intercept theorem (ger. Strahlensatz)
-					if rotation < -rotLimit and rotation > -math.pi+rotLimit then -- top
-						x = -self.m_Height/2 / y * x
-						y = -self.m_Height/2
-					elseif rotation > rotLimit and rotation < math.pi-rotLimit then -- bottom
-						x = self.m_Height/2 / y * x
-						y = self.m_Height/2
-					elseif rotation >= -rotLimit and rotation <= rotLimit then -- right
-						y = self.m_Width/2 / x * y
-						x = self.m_Width/2
-					else -- left
-						y = -self.m_Width/2 / x * y
-						x = -self.m_Width/2
-					end
-				end
-
-				-- Translate map to screen coordinates
-				local screenX, screenY = mapCenterX + x, mapCenterY + y
-
-				-- Finally, draw
-				local blipSize = blip:getSize() * Blip.getScaleMultiplier()
-				local imagePath = blip:getImagePath()
-
-				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
-					if math.abs(pz - blip:getZ()) > 3 then
-						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
-						imagePath = HUDRadar:getSingleton():getImagePath(markerImage)
-					end
-				end
-				if fileExists(imagePath) then
-					if DEBUG then ExecTimeRecorder:getSingleton():addIteration("UI/HUD/Radar", true) end
-					local color = blip:getColor()
-					if color == Color.White and core:get("HUD", "coloredBlips", true) then color = blip:getOptionalColor() end
-					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, color)
-				else
-					outputDebugString("Blip not found: "..imagePath)
+			if blipX and display then
+				if getDistanceBetweenPoints2D(localPlayer.position.x, localPlayer.position.y, blipX, blipY) < blip:getStreamDistance() then
+					table.insert(self.ms_CachedRadarBlips, blip)
 				end
 			end
 		end
 	end
+	return self.ms_CachedRadarBlips
 end
 
 function HUDRadar:drawRoute()
@@ -499,9 +506,9 @@ function HUDRadar:getZoom()
 end
 
 function HUDRadar:getPosition()
-	if self.m_GWRadar then -- appropriate distance to default radar
+	if self.m_GWRadar and isPlayerHudComponentVisible("radar") then -- appropriate distance to default radar
 		return self.m_PosX, screenHeight - 300*screenWidth/1600
-	elseif not self.m_Enabled or not self.m_Visible then -- bottom
+	elseif not self.m_Enabled or not self.m_Visible or getElementInterior(localPlayer) ~= 0 then -- bottom
 		return self.m_PosX, screenHeight
 	else -- position of radar
 		return self.m_PosX, self.m_PosY

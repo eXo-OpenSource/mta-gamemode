@@ -32,13 +32,13 @@ function AppBank:onOpen(form)
 	GUILabel:new(10, 155, 240, 20, _"An:", self.m_Tabs["Transfer"])
 	self.m_TransferToEdit = GUIEdit:new(10, 175, 240, 30, self.m_Tabs["Transfer"])
 
-	self.m_TransferButton = VRPButton:new(10, 210, 240, 30, _"Überweisen", true, self.m_Tabs["Transfer"])
+	self.m_TransferButton = GUIButton:new(10, 210, 240, 30, _"Überweisen", self.m_Tabs["Transfer"]):setBarEnabled(true)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
 	GUILabel:new(10, 270, 120, 30, _"Spenden:", self.m_Tabs["Transfer"])
 	local donate = {}
-	donate["San News"] = VRPButton:new(10, 300, 117, 30, _"San News", true, self.m_Tabs["Transfer"]):setBarColor(Color.Green)
-	donate["eXo Event-Team"] = VRPButton:new(135, 300, 117, 30, _"eXo Event-Team", true, self.m_Tabs["Transfer"]):setBarColor(Color.Yellow)
+	donate["San News"] = GUIButton:new(10, 300, 117, 30, _"San News", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Green):setBarEnabled(true):setFontSize(.9)
+	donate["eXo Event-Team"] = GUIButton:new(135, 300, 117, 30, _"eXo Event-Team", self.m_Tabs["Transfer"]):setBackgroundColor(Color.Yellow):setBarEnabled(true):setFontSize(.9)
 
 	for index, btn in pairs(donate) do
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
@@ -60,6 +60,7 @@ function AppBank:TransferButton_Click()
 	local amount = tonumber(self.m_TransferAmountEdit:getText())
 	local toCharName = self.m_TransferToEdit:getText()
 	if amount and amount > 0 then
+		self.m_TransferAmountEdit:setText("0")
 		triggerServerEvent("bankTransfer", root, toCharName, amount)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")

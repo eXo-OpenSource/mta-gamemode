@@ -47,8 +47,11 @@ function TrunkGUI:constructor()
     self:addSlot("weapon", 1, 320, 280)
     self:addSlot("weapon", 2, 470, 280)
 
-    self.m_ToTrunk = GUIButton:new(275, 70, 30, 250, ">>", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1)
-    self.m_ToTrunk:setEnabled(false)
+	self.m_ToTrunk = GUIButton:new(275, 70, 30, 250, FontAwesomeSymbols.Right, self.m_Window)
+	self.m_ToTrunk:setEnabled(false)
+	self.m_ToTrunk:setFont(FontAwesome(15)):setFontSize(1)
+	self.m_ToTrunk:setBarEnabled(false)
+	self.m_ToTrunk:setBackgroundColor(Color.Accent)
 
     self.m_ToTrunk.onLeftClick = function() self:toTrunk() end
     triggerServerEvent("refreshInventory", localPlayer)

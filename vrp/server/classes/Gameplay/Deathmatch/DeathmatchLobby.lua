@@ -132,10 +132,14 @@ function DeathmatchLobby:addPlayer(player)
 		["Kills"] = 0,
 		["Deaths"] = 0
 	}
-	takeAllWeapons(player)
+
+	player:createStorage(true)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
-	player.m_RemoveWeaponsOnLogout = true
-	player.disableWeaponStorage = true
+
+	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
+		setPedStat(player, stat, stat == 69 and 900 or 1000)
+	end
+
 	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
@@ -147,7 +151,6 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 	if dead then
 		player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
 		if killer then
-
 			self:increaseKill(killer, weapon)
 			self:increaseDead(player, weapon)
 		end
@@ -158,7 +161,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 				local skin = player:getModel()
 				spawnPlayer(player, pos, 0, skin, self.m_MapData["int"], self.m_MapData["dim"])
 				player:setHealth(100)
-				player:setArmor(0)
+				player:setArmor(100)
 				player:setHeadless(false)
 				player:setCameraTarget(player)
 				player:fadeCamera(true, 1)
@@ -173,7 +176,7 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 		player:setPosition(pos)
 		player:setHealth(100)
 		player:setHeadless(false)
-		player:setArmor(0)
+		player:setArmor(100)
 		player:setAlpha(255)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	end
@@ -182,17 +185,14 @@ end
 function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
-		takeAllWeapons(player)
-		player.m_RemoveWeaponsOnLogout = nil
-		player.disableWeaponStorage = nil
+		player:restoreStorage()
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(1325.21, -1559.48, 13.54)
 		player:setHeadless(false)
-		player:setHealth(100)
-		player:setArmor(0)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
+
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
 			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})

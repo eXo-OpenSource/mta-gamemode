@@ -194,6 +194,30 @@ function kspairs(t, f)
 	return iter
 end
 
+-- value-sorted pairs
+function spairs(t, order)
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
+end
+
 function chance(chance)
 	assert(chance >= 0 and chance <= 100, "Bad Chance (Range 0-100)")
 	return math.random(0, 100) <= chance
@@ -297,6 +321,12 @@ function string.duration(seconds)
 	end
 end
 
+function string.count(str, search)
+	local _, count = string.gsub(str, search, "")
+	return count
+end
+
+
 function string.short(str, i)
 	return #str > i and str:sub(0, i).."..." or str
 end
@@ -392,21 +422,9 @@ function getPointFromDistanceRotation3D(x,y,z,rx,ry,rz,distance)
 end
 
 -- returns 4 integers from a value created by tocolor (aka. inverse tocolor)
+-- https://gist.github.com/StiviiK/b7efbfb34122c44ce60db53f10a7197d
 function fromcolor(color)
-	local str = string.format("%x", color)
-	local value = {}
-	if #str % 2 ~= 0 then
-		str = "0"..str
-	end
-
-	for word in str:gmatch("%x%x") do
-		value[#value+1] = tonumber("0x"..word)
-	end
-	if value[4] then
-		value[5] = value[1]
-		table.remove(value, 1)
-	end
-	return unpack(value)
+  return bitExtract(color, 16, 8), bitExtract(color, 8, 8), bitExtract(color, 0, 8), bitExtract(color, 24, 8)
 end
 
 function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
@@ -626,54 +644,6 @@ function timespanArray(seconds)
     td["hour"] = ((((seconds - td["sec"]) /60)-td["min"]) / 60) % 24
     td["day"] = math.floor( (((((seconds - td["sec"]) /60)-td["min"]) / 60) / 24) )
     return td
-end
-
-function getVehicleInteractType(vehicle)
-	-- front doors, hood, trunk
-    local twoDoors = {  602, 429, 402, 541, 415, 480, 562, 587, 565, 559, 603, 506, 558, 555, 536, 575,
-                        518, 419, 534, 576, 412, 496, 401, 527, 542, 533, 526, 474, 545, 517, 410, 436,
-                        475, 439, 549, 491, 599, 552, 499, 422, 414, 600, 543, 478, 456, 554, 589, 500,
-                        489, 442, 495, 605, 434}
-
-    -- front doors, rear doors, hood, trunk
-    local fourDoors = { 560, 567, 445, 438, 507, 585, 466, 492, 546, 551, 516, 467, 426, 547, 405, 580,
-                        550, 566, 420, 540, 421, 529, 490, 596, 598, 597, 418, 579, 400, 470, 404, 479,
-                        458, 561, 604}
-
-    -- front doors, hood  (small cars)
-    local twoDoorsNoTrunk = {411, 451, 477, 535, 528, 525, 508, 494, 502, 503, 423}
-
-    -- front doors, hood, rear doors at backside
-    local vans = {416, 427, 609, 498, 428, 459, 482, 582, 413, 440}
-
-    -- front doors, hood (big cars)
-    local trucks = {433, 524, 455, 403, 443, 515, 514, 408}
-
-    -- front doors
-    -- 407 and 544 firetrucks, 601 swat tank , 574 sweeper, 483 camper, 588 hotdog, 444 monstertruck, 583 tug, 431 Bus, 437 Coach
-    local special = {407, 544, 601, 573, 574, 483, 588, 444, 583, 431, 437}
-
-    -- stretch
-    local stretch = {409}
-
-	local types = {
-		["2 doors"] = twoDoors,
-		["2 doors, no trunk"] = twoDoorsNoTrunk,
-		["4 doors"] = fourDoors,
-		["Van"] = vans,
-		["Truck"] = trucks,
-		["Special"] = special,
-		["stretch"] = stretch
-	}
-
-    for name, type in pairs(types) do
-		for index, model in pairs(type) do
-			if vehicle:getModel() == model then
-				return name
-			end
-		end
-	end
-    return "not useable"
 end
 
 -- Override it

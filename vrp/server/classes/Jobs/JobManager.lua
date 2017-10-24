@@ -37,13 +37,13 @@ function JobManager:constructor()
 
 	PlayerManager:getSingleton():getQuitHook():register(
 		function(player)
-			self:stopJobForPlayer(player)
+			player:setJob(nil)
 		end
 	)
 
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
-			self:stopJobForPlayer(player)
+			player:setJob(nil)
 		end
 	)
 end

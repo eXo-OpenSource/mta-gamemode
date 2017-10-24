@@ -18,7 +18,8 @@ end
 
 function VehicleInteraction:doInteractions(door)
 	local lookAtVehicle = getPedTarget(client)
-    if lookAtVehicle and (getElementType(lookAtVehicle) == "vehicle" ) then
+
+    if lookAtVehicle and getElementType(lookAtVehicle) == "vehicle" then
 		if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator or (not isVehicleLocked(lookAtVehicle) and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then
 			local doorRatio = getVehicleDoorOpenRatio(lookAtVehicle, door)
 			local doorStateS = getElementData(lookAtVehicle, tostring(door), true)
@@ -39,15 +40,18 @@ end
 
 function VehicleInteraction:doLock()
 	local lookAtVehicle = getPedTarget(client)
-	if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+
+	if lookAtVehicle and (lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator) then
 		if lookAtVehicle:isLocked() then
-			lookAtVehicle:playLockEffect()
+			lookAtVehicle:playLockEffect(false)
 			lookAtVehicle:setLocked(false)
 		else
-			lookAtVehicle:playLockEffect()
+			lookAtVehicle:playLockEffect(true)
 			lookAtVehicle:setLocked(true)
-			for i = 1,6 do
-				setVehicleDoorState ( lookAtVehicle, i-1, 0)
+			for i = 0, 5 do
+				if getVehicleDoorState(lookAtVehicle, i) == 4 then
+					setVehicleDoorState ( lookAtVehicle, i, 2)
+				end
 			end
 		end
 	else
@@ -121,41 +125,8 @@ end
 
 function VehicleInteraction:interactWith(source, vehicle, door)
     local doorRatio = getVehicleDoorOpenRatio(vehicle, door)
-    local doorState = getElementData(vehicle, door)
-
-    if (doorRatio <= 0) then
-        doorState = "closed"
-    elseif (doorRatio >= 1) then
-        doorState = "open"
-    end
 
     if doorRatio == 0 or doorRatio == 1 then
-        if (doorState == "closed") then
-            setTimer(function()
-                if (doorRatio <= 1) then
-                    doorRatio = doorRatio + 0.1
-                    if (doorRatio >= 1) then
-                        doorRatio = 1
-                        setElementData(vehicle, door, "open", true)
-                    end
-                end
-                setElementData(vehicle, door, "closed", true)
-                setVehicleDoorOpenRatio(vehicle, door, doorRatio)
-            end, 50, 11)
-
-        elseif (doorState == "open") then
-            setTimer ( function()
-                if (doorRatio > 0) then
-                    doorRatio = doorRatio - 0.1
-
-                    if (doorRatio <= 0) then
-                        doorRatio = 0
-                        setElementData(vehicle, door, "closed", true)
-                    end
-                end
-                setElementData(vehicle, door, "open", true)
-                setVehicleDoorOpenRatio(vehicle, door, doorRatio)
-            end, 50, 11)
-		end
+        setVehicleDoorOpenRatio(vehicle, door, 1 - doorRatio, 500)
 	end
 end
