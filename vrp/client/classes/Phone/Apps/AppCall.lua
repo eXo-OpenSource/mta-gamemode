@@ -307,7 +307,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 				end
-				
+
 				self.m_InCall = false
 				self.m_Caller = false
 			end, 3000, 1
@@ -323,7 +323,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 				if self:isOpen() and Phone:getSingleton():isOpen() then
 					self:openMain()
 				end
-				
+
 				self.m_InCall = false
 				self.m_Caller = false
 			end, 3000, 1
@@ -387,4 +387,20 @@ function AppCall:Event_callReplace(responsiblePlayer)
 		self:busy()
 	end
 	self:openInCall("player", callee, CALL_RESULT_REPLACE)
+end
+
+function AppCall:startCall(type, target)
+	if Phone:getSingleton():isOn()then
+		Phone:getSingleton():onShow()
+		Phone:getSingleton():closeAllApps()
+
+		if not self:isOpen() then
+			Phone:getSingleton():openApp(self)
+		end
+
+		self:openInCall(type, target, CALL_RESULT_CALLING, false)
+		triggerServerEvent("callStart", root, target, false)
+	else
+		WarningBox:new("Dein Handy ist ausgeschaltet!")
+	end
 end
