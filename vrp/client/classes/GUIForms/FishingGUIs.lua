@@ -22,7 +22,7 @@ function FishingTradeGUI:constructor(CoolingBags, Fishes)
 
 	self.m_AddAll = GUIButton:new(5, self.m_Height - 35, 250, 25, _"Alle hinzufügen", self.m_Window)
 	self.m_AddAll.onLeftClick = bind(FishingTradeGUI.addAllFish, self)
-	self.m_AddFish = GUIButton:new(260, 35, 25, self.m_Height - 75, ">>", self.m_Window):setFontSize(1)
+	self.m_AddFish = GUIButton:new(260, 35, 25, self.m_Height - 75, FontAwesomeSymbols.Right, self.m_Window):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false):setBackgroundColor(Color.Accent)
 	self.m_AddFish.onLeftClick = bind(FishingTradeGUI.addFish, self)
 
 	GUILabel:new(300, 35, 200, 20, _"Fisch:", self.m_Window)
