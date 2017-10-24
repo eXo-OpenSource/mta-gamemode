@@ -1127,7 +1127,7 @@ function Player:setKarma(karma)
 end
 
 function Player:giveKarma(karma, reason, bNoSound, silent)
-	if not karma or karma < 1 then return false end
+	if not karma then return false end
 	local oldKarma = self.m_Karma
 	local success = DatabasePlayer.giveKarma(self, karma, reason)
 	if success then
