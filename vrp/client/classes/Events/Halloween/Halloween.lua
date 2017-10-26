@@ -33,8 +33,22 @@ function Halloween:constructor()
 		end
 	)
 
+	--Bonus Ped
+	local ped = Ped.create(264, Vector3(813.40002, -1103.1, 25.8), 270)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Prämien-Shop")
+	ped.SpeakBubble:setBorderColor(Color.Orange)
+	ped.SpeakBubble:setTextColor(Color.Orange)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			BonusGUI:new()
+		end
+	)
+
 	--    <ped id="ped (5)" dimension="0" model="77" interior="0" rotZ="160.003" alpha="255" posX="833.40002" posY="-1112.1" posZ="24.2" rotX="0" rotY="0"></ped>
-	--    <ped id="ped (1)" dimension="0" model="264" interior="0" rotZ="268.496" frozen="false" alpha="255" posX="813.40002" posY="-1103.1" posZ="25.8" rotX="0" rotY="0"></ped>
 
 	HalloweenSign:new()
 	HalloweenSpookyScreen:new()

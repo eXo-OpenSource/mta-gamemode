@@ -835,6 +835,7 @@
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
@@ -980,6 +981,8 @@
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
+
+	<vrpfile src="files/images/Events/Halloween/Bonus_Romero.png" />
 
 	<!-- Todo -->
 
@@ -1906,7 +1909,7 @@
 	<!-- Halloween Event Start-->
 	<file src="files/models/pumpkin.txd" />
 	<file src="files/models/pumpkin.dff" />
-	<!--<file src="files/models/pumpkin.col" />-->
+	<file src="files/models/pumpkin.col" />
 	<!-- Halloween Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />

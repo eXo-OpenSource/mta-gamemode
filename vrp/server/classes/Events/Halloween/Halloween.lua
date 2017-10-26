@@ -13,6 +13,119 @@ Halloween.ms_Phrases = {
 	},
 }
 
+Halloween.ms_Bonus = {
+	Schutzweste = {
+		["Text"] = "Schutzweste",
+		["Pumpkin"] = 1,
+		["Sweets"] = 5,
+		["Type"] = "Special"
+	},
+	Weed = {
+		["Text"] = "50 Weed",
+		["Pumpkin"] = 5,
+		["Sweets"] = 15,
+		["Type"] = "Item",
+		["ItemName"] = "Weed",
+		["ItemAmount"] = 50
+	},
+	Heroin = {
+		["Text"] = "5 Heroin",
+		["Pumpkin"] = 5,
+		["Sweets"] = 20,
+		["Type"] = "Item",
+		["ItemName"] = "Heroin",
+		["ItemAmount"] = 3
+	},
+	Deagle = {
+		["Text"] = "Deagle (20 Schuss)",
+		["Pumpkin"] = 10,
+		["Sweets"] = 25,
+		["Type"] = "Weapon",
+		["WeaponId"] = 24,
+		["Ammo"] = 20
+	},
+	Dildo = {
+		["Text"] = "Dildo",
+		["Pumpkin"] = 15,
+		["Sweets"] = 25,
+		["Type"] = "Weapon",
+		["WeaponId"] = 10,
+		["Ammo"] = 1
+	},
+	Money5 = {
+		["Text"] = "5.000$",
+		["Pumpkin"] = 20,
+		["Sweets"] = 75,
+		["Type"] = "Money",
+		["MoneyAmount"] = 5000
+	},
+	Money10 = {
+		["Text"] = "10.000$",
+		["Pumpkin"] = 30,
+		["Sweets"] = 100,
+		["Type"] = "Money",
+		["MoneyAmount"] = 10000
+	},
+	PaydayBonus = {
+		["Text"] = "Payday Bonus",
+		["Pumpkin"] = 35,
+		["Sweets"] = 300,
+		["Type"] = "Special"
+	},
+	KarmaReset = {
+		["Text"] = "Karma Reset",
+		["Pumpkin"] = 50,
+		["Sweets"] = 300,
+		["Type"] = "Special"
+	},
+	Nickchange = {
+		["Text"] = "Nick Change",
+		["Pumpkin"] = 65,
+		["Sweets"] = 275,
+		["Type"] = "Special"
+	},
+	ZombieSkin = {
+		["Text"] = "Zombie Skin",
+		["Pumpkin"] = 75,
+		["Sweets"] = 300,
+		["Type"] = "Special"
+	},
+	Money75 = {
+		["Text"] = "75.000$",
+		["Pumpkin"] = 85,
+		["Sweets"] = 499,
+		["Type"] = "Money",
+		["MoneyAmount"] = 75000
+	},
+	VIP = {
+		["Text"] = "30 Tage VIP",
+		["Pumpkin"] = 95,
+		["Sweets"] = 600,
+		["Type"] = "Special"
+	},
+	Romero = {
+		["Text"] = "Romero",
+		["Image"] = "Bonus_Romero.png",
+		["Pumpkin"] = 110,
+		["Sweets"] = 850,
+		["Type"] = "Vehicle",
+		["Model"] = 442
+	},
+	Bravura  = {
+		["Text"] = "Bravura",
+		["Pumpkin"] = 125,
+		["Sweets"] = 900,
+		["Type"] = "Vehicle",
+		["Model"] = 442
+	},
+	Hausmarker  = {
+		["Text"] = "Hausmarker",
+		["Pumpkin"] = 150,
+		["Sweets"] = 999,
+		["Type"] = "Special"
+	}
+}
+
 function Halloween:constructor()
 	DrawContest:new()
 	self.m_TrickOrTreatPIDs = {}
@@ -37,6 +150,10 @@ function Halloween:constructor()
 	romero:toggleRespawn(false)
 	romero:setAlwaysDamageable(true)
 	romero.m_DisableToggleHandbrake = true
+
+
+	addRemoteEvents{"eventRequestBonusData"}
+	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
 end
 
 function Halloween:initTTPlayer(pId)
@@ -132,4 +249,8 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 			d.lastMessage = nil
 		end
 	end
+end
+
+function Halloween:Event_requestBonusData()
+	client:triggerEvent("eventReceiveBonusData", Halloween.ms_Bonus)
 end
