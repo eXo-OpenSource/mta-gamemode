@@ -16,12 +16,14 @@ Halloween.ms_Phrases = {
 Halloween.ms_Bonus = {
 	{
 		["Text"] = "Schutzweste",
+		["Image"] = "Bonus_Vest.png",
 		["Pumpkin"] = 1,
 		["Sweets"] = 5,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "50 Weed",
+		["Image"] = "Bonus_Weed.png",
 		["Pumpkin"] = 5,
 		["Sweets"] = 15,
 		["Type"] = "Item",
@@ -30,6 +32,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "5 Heroin",
+		["Image"] = "Bonus_Heroin.png",
 		["Pumpkin"] = 5,
 		["Sweets"] = 20,
 		["Type"] = "Item",
@@ -38,6 +41,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "Deagle (20 Schuss)",
+		["Image"] = "Bonus_Deagle.png",
 		["Pumpkin"] = 10,
 		["Sweets"] = 25,
 		["Type"] = "Weapon",
@@ -46,6 +50,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "Dildo",
+		["Image"] = "Bonus_Dildo.png",
 		["Pumpkin"] = 15,
 		["Sweets"] = 25,
 		["Type"] = "Weapon",
@@ -54,6 +59,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "5.000$",
+		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 20,
 		["Sweets"] = 75,
 		["Type"] = "Money",
@@ -61,6 +67,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "10.000$",
+		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 30,
 		["Sweets"] = 100,
 		["Type"] = "Money",
@@ -68,30 +75,35 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "Payday Bonus",
+		["Image"] = "Bonus_Payday.png",
 		["Pumpkin"] = 35,
 		["Sweets"] = 300,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Karma Reset",
+		["Image"] = "Bonus_Karma.png",
 		["Pumpkin"] = 50,
 		["Sweets"] = 300,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Nick Change",
+		["Image"] = "Bonus_NickChange.png",
 		["Pumpkin"] = 65,
 		["Sweets"] = 275,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Zombie Skin",
+		["Image"] = "Bonus_Zombie.png",
 		["Pumpkin"] = 75,
 		["Sweets"] = 300,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "75.000$",
+		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 85,
 		["Sweets"] = 499,
 		["Type"] = "Money",
@@ -99,6 +111,7 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "30 Tage VIP",
+		["Image"] = "Bonus_VIP.png",
 		["Pumpkin"] = 95,
 		["Sweets"] = 600,
 		["Type"] = "Special"
@@ -113,16 +126,11 @@ Halloween.ms_Bonus = {
 	},
 	{
 		["Text"] = "Bravura",
+		["Image"] = "Bonus_Bravura.png",
 		["Pumpkin"] = 125,
 		["Sweets"] = 900,
 		["Type"] = "Vehicle",
 		["Model"] = 442
-	},
-	{
-		["Text"] = "Hausmarker",
-		["Pumpkin"] = 150,
-		["Sweets"] = 999,
-		["Type"] = "Special"
 	}
 }
 
