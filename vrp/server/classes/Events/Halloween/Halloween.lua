@@ -37,7 +37,7 @@ Halloween.ms_Bonus = {
 		["Sweets"] = 20,
 		["Type"] = "Item",
 		["ItemName"] = "Heroin",
-		["ItemAmount"] = 3
+		["ItemAmount"] = 5
 	},
 	{
 		["Text"] = "Deagle (20 Schuss)",
@@ -122,7 +122,7 @@ Halloween.ms_Bonus = {
 		["Pumpkin"] = 110,
 		["Sweets"] = 850,
 		["Type"] = "Vehicle",
-		["Model"] = 442
+		["VehicleModel"] = 442
 	},
 	{
 		["Text"] = "Bravura",
@@ -130,7 +130,7 @@ Halloween.ms_Bonus = {
 		["Pumpkin"] = 125,
 		["Sweets"] = 900,
 		["Type"] = "Vehicle",
-		["Model"] = 442
+		["VehicleModel"] = 401
 	}
 }
 
@@ -160,8 +160,11 @@ function Halloween:constructor()
 	romero.m_DisableToggleHandbrake = true
 
 
-	addRemoteEvents{"eventRequestBonusData"}
+	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))
+	addEventHandler("eventBuyBonus", root, bind(self.Event_buyBonus, self))
+
+
 end
 
 function Halloween:initTTPlayer(pId)
@@ -261,4 +264,65 @@ end
 
 function Halloween:Event_requestBonusData()
 	client:triggerEvent("eventReceiveBonusData", Halloween.ms_Bonus)
+end
+
+function Halloween:Event_buyBonus(bonusId)
+	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten")
+	local playerPumpinks = client:getInventory():getItemAmount("Kürbis")
+	local bonus = Halloween.ms_Bonus[bonusId]
+	if not bonus then return end
+
+	if playerSweets < bonus["Sweets"] then
+		client:sendError(_("Du hast nicht genug Süßigkeiten! (%d)", client, bonus["Sweets"]))
+		return
+	end
+
+	if playerPumpinks < bonus["Pumpkin"] then
+		client:sendError(_("Du hast nicht genug Kürbisse! (%d)", client, bonus["Pumpkin"]))
+		return
+	end
+
+	if bonus["Type"] == "Weapon" then
+		client:giveWeapon(bonus["WeaponId"], bonus["Ammo"])
+	elseif bonus["Type"] == "Item" then
+		if client:getInventory():getFreePlacesForItem(bonus["ItemName"]) >= bonus["ItemAmount"] then
+			client:getInventory():giveItem(bonus["ItemName"], bonus["ItemAmount"])
+		else
+			client:sendError(_("Du hast nicht genug Platz in deinem Inventar!", client))
+			return
+		end
+	elseif bonus["Type"] == "Vehicle" then
+		local vehicle = PermanentVehicle.create(client, bonus["VehicleModel"], 956.881, -1115.489, 23.398, 0, 0, 180, nil, false)
+		if vehicle then
+			setTimer(function(player, vehicle)
+				player:warpIntoVehicle(vehicle)
+				player:triggerEvent("vehicleBought")
+			end, 100, 1, client, vehicle)
+		else
+			client:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", client), 255, 0, 0)
+		end
+
+	elseif bonus["Type"] == "Money" then
+		client:giveMoney(bonus["MoneyAmount"], "Halloween-Event")
+	elseif bonus["Type"] == "Special" then
+		if bonus["Text"] == "Vest" then
+			client:setArmor(100)
+		elseif bonus["Text"] == "Payday Bonus" then
+			client.m_HalloweenPaydayBonus = 2000
+		elseif bonus["Text"] == "Karma Reset" then
+			client:setKarma(0)
+		elseif bonus["Text"] == "Nick Change" then
+			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
+			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
+		elseif bonus["Text"] == "Zombie Skin" then
+			client:setSkin(310)
+			client.m_AltSkin = 310
+		elseif bonus["Text"] == "30 Tage VIP" then
+			client.m_Premium:giveEventMonth()
+		end
+	end
+
+	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!", client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"]))
+	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
+
 end

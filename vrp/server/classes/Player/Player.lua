@@ -908,6 +908,11 @@ function Player:payDay()
 		end
 	end
 
+	if EVENT_HALLOWEEN and self.m_HalloweenPaydayBonus then
+		income = income + self.m_HalloweenPaydayBonus
+		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
+	end
+
 	income_interest = math.floor(self:getBankMoney()*0.01)
 	if income_interest > 1500 then income_interest = 1500 end
 	if income_interest > 0 then

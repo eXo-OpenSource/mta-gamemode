@@ -33,8 +33,6 @@ function BonusGUI:constructor()
 end
 
 function BonusGUI:addBonus(index, data)
-
-
 	if self.m_BonusAmount > 0 and self.m_BonusAmount % 3 == 0 then
 		self.m_Row = self.m_Row + 6
 		self.m_Column = 1
@@ -60,7 +58,7 @@ function BonusGUI:addBonus(index, data)
 	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
 
 	self.m_BonusBtn[id] = GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id]):setBackgroundColor(Color.Red)
-
+	self.m_BonusBtn[id].onLeftClick = function() triggerServerEvent("eventBuyBonus", localPlayer, id) end
 
 	self.m_Column = self.m_Column + 5
 end

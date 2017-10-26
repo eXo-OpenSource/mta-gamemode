@@ -10,7 +10,7 @@ PremiumPlayer = inherit(Object)
 function PremiumPlayer:constructor(player)
 	self.m_Player = player
 	self.m_Premium = false
-	self.m_PremiumEaster = 0
+	self.m_PremiumEvent = 0
 
 	self:refresh()
 end
@@ -19,7 +19,7 @@ function PremiumPlayer:refresh()
 	local row = sqlPremium:queryFetchSingle("SELECT * FROM user WHERE UserId = ?", self.m_Player:getId())
 	if row then
 		self.m_PremiumUntil = row.premium_bis
-		self.m_PremiumEaster = row.premium_easter
+		self.m_PremiumEvent = row.premium_easter
 	else
 		self.m_PremiumUntil = 0
 	end
@@ -79,7 +79,7 @@ function PremiumPlayer:takeVehicle(model)
 	end
 end
 
-function PremiumPlayer:giveEasterMonth()
+function PremiumPlayer:giveEventMonth()
 	local seconds = 30*24*60*60
 
 	if self:isPremium() then
@@ -88,6 +88,6 @@ function PremiumPlayer:giveEasterMonth()
 		self.m_PremiumUntil = getRealTime().timestamp + seconds
 	end
 
-	sqlPremium:queryExec("UPDATE user SET premium_easter = ?, premium_bis = ?, premium = 1 WHERE UserId = ?;", self.m_PremiumEaster+1, self.m_PremiumUntil, self.m_Player:getId())
+	sqlPremium:queryExec("UPDATE user SET premium_easter = ?, premium_bis = ?, premium = 1 WHERE UserId = ?;", self.m_PremiumEvent+1, self.m_PremiumUntil, self.m_Player:getId())
 	self:refresh()
 end
