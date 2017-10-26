@@ -200,6 +200,10 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)
 
+	-- Halloween Smode
+	self:loadImportTXD("files/models/ghost.txd", 260)
+	self:loadImportDFF("files/models/ghost.dff", 260)
+
 
 	--Easter Event:
 	self:loadImportCOL("files/models/easter_egg.col", 1933)

@@ -1919,9 +1919,11 @@
 	<!-- Easter Event End-->
 
 	<!-- Halloween Event Start-->
-	<file src="files/models/pumpkin.txd" />
-	<file src="files/models/pumpkin.dff" />
-	<file src="files/models/pumpkin.col" />
+	<vrpfile src="files/models/pumpkin.txd" />
+	<vrpfile src="files/models/pumpkin.dff" />
+	<vrpfile src="files/models/pumpkin.col" />
+	<vrpfile src="files/models/ghost.dff"/>
+	<vrpfile src="files/models/ghost.txd"/>
 	<!-- Halloween Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
