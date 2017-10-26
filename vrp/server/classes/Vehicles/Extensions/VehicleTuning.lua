@@ -143,29 +143,39 @@ function VehicleTuning:setSpecial(special)
 				element:setCollisionsEnabled(false)
 			end
 
-			local refreshSpeaker = function()
-				for index, element in pairs(self.m_Vehicle.speakers) do
-					if isElement(self.m_Vehicle) then
-						element:setDimension(self.m_Vehicle:getDimension())
-						element:setInterior(self.m_Vehicle:getInterior())
-						if self.m_Vehicle.m_SoundURL then
-							triggerClientEvent("soundvanChangeURLClient", source, self.m_Vehicle.m_SoundURL)
-						end
-					else
-						element:destroy()
-						if self.m_Vehicle.m_SoundURL then
-							triggerClientEvent("soundvanStopSoundClient", self.m_Vehicle, url)
+			local refreshSpeaker =
+				function()
+					for index, element in pairs(self.m_Vehicle.speakers) do
+						if isElement(self.m_Vehicle) then
+							element:setDimension(self.m_Vehicle:getDimension())
+							element:setInterior(self.m_Vehicle:getInterior())
 						end
 					end
+
+					if self.m_Vehicle.m_SoundURL then
+						triggerClientEvent("soundvanChangeURLClient", self.m_Vehicle, self.m_Vehicle.m_SoundURL)
+					end
 				end
-			end
+
+			local destroySpeaker =
+				function()
+					for index, element in pairs(self.m_Vehicle.speakers) do
+						if isElement(element) then
+							element:destroy()
+						end
+					end
+
+					if self.m_Vehicle.m_SoundURL then
+						triggerClientEvent("soundvanStopSoundClient", self.m_Vehicle, url)
+					end
+				end
 
 			refreshSpeaker()
 			addEventHandler("onElementDimensionChange", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onElementInteriorChange", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleExplode", self.m_Vehicle, refreshSpeaker)
 			addEventHandler("onVehicleRespawn", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker, false)
+			addEventHandler("onElementDestroy", self.m_Vehicle, destroySpeaker, false)
 		end
 	end
 end
