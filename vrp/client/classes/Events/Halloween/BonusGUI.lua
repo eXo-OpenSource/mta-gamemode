@@ -24,6 +24,7 @@ function BonusGUI:constructor()
 	self.m_Column, self.m_Row = 1, 1
 
 	self.m_BonusBG = {}
+	self.m_BonusBtn = {}
 
 	triggerServerEvent("eventRequestBonusData", localPlayer)
 
@@ -43,10 +44,10 @@ function BonusGUI:addBonus(index, data)
 
 	local id = self.m_BonusAmount
 
+	self.m_BonusBG[id] = GUIGridImage:new(self.m_Column, self.m_Row, 4, 6, "files/images/Events/Halloween/Bonus_BG.png", self.m_ScrollArea)
+
 	if data["Image"] then
-		self.m_BonusBG[id] = GUIGridImage:new(self.m_Column, self.m_Row, 4, 6, ("files/images/Events/Halloween/%s"):format(data["Image"]), self.m_ScrollArea)
-	else
-		self.m_BonusBG[id] = GUIGridRectangle:new(self.m_Column, self.m_Row, 4, 6, Color.White, self.m_ScrollArea)
+		GUIGridImage:new(1, 1, 4, 6, ("files/images/Events/Halloween/%s"):format(data["Image"]), self.m_BonusBG[id])
 	end
 
 	GUIGridRectangle:new(1, 1, 4, 1, Color.Background, self.m_BonusBG[id])
@@ -58,7 +59,8 @@ function BonusGUI:addBonus(index, data)
 	GUIGridImage:new(3, 4.5, 1, 1, "files/images/Inventory/items/Essen/Suessigkeiten.png", self.m_BonusBG[id]):fitBySize(128, 128)
 	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
 
-	GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id]):setBackgroundColor(Color.Red)
+	self.m_BonusBtn[id] = GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id]):setBackgroundColor(Color.Red)
+
 
 	self.m_Column = self.m_Column + 5
 end
