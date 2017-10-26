@@ -305,7 +305,7 @@ function Halloween:Event_buyBonus(bonusId)
 	elseif bonus["Type"] == "Money" then
 		client:giveMoney(bonus["MoneyAmount"], "Halloween-Event")
 	elseif bonus["Type"] == "Special" then
-		if bonus["Text"] == "Vest" then
+		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)
 		elseif bonus["Text"] == "Payday Bonus" then
 			client.m_HalloweenPaydayBonus = 2000
