@@ -147,7 +147,7 @@ function CompanyVehicle:onEnter(player, seat)
 	if self:isFrozen() == true then
 		self:setFrozen(false)
 	end
-	
+
 	self:setDriver(player)
 
 	if self:getCompany().onVehicleEnter then
@@ -222,8 +222,12 @@ function CompanyVehicle:respawn(force)
 	-- Teleport to Spawnlocation
 	self.m_LastUseTime = math.huge
 
-	if self:getOccupants() then -- For Trailers
-		for _, player in pairs(self:getOccupants()) do
+	if self:getOccupants() then
+		if table.size(self:getOccupants()) > 0 then
+			return false
+		end
+	else -- Trailers don't have occupants and will return false. If the trailer is towed by a vehicle do not respawn the trailer
+		if self.towingVehicle and table.size(self.towingVehicle:getOccupants()) > 0 then
 			return false
 		end
 	end
