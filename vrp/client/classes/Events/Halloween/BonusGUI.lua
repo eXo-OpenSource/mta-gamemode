@@ -17,7 +17,7 @@ function BonusGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Halloween Bonus GUI", true, true, self)
 	GUIGridLabel:new(1, 1, 15, 1, "Herzlich Willkommen beim Halloween Premium Shop!\nHier kannst du deine Kürbisse und Süßigkeiten in wertvolle Prämien umwandeln!", self.m_Window)
-	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 3, 15, 9, 10, 20, true, false, self.m_Window, 3)
+	self.m_ScrollArea =	GUIGridScrollableArea:new(1, 3, 15, 9, 10, 36, true, false, self.m_Window, 3)
 	self.m_ScrollArea:updateGrid()
 	self.m_BonusAmount = 0
 
@@ -31,10 +31,14 @@ function BonusGUI:constructor()
 	addEventHandler("eventReceiveBonusData", root, bind(self.Event_receiveBonusData, self))
 end
 
-function BonusGUI:addBonus(name, data)
-	self.m_Column = (self.m_BonusAmount*5)+1
+function BonusGUI:addBonus(index, data)
 
-	if self.m_BonusAmount > 0 and self.m_BonusAmount % 3 == 0 then self.m_Row = self.m_Row + 6 self.m_Column = 1 end
+
+	if self.m_BonusAmount > 0 and self.m_BonusAmount % 3 == 0 then
+		self.m_Row = self.m_Row + 6
+		self.m_Column = 1
+	end
+
 	self.m_BonusAmount = self.m_BonusAmount + 1
 
 	local id = self.m_BonusAmount
@@ -55,12 +59,12 @@ function BonusGUI:addBonus(name, data)
 
 	GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id])
 
-
+	self.m_Column = self.m_Column + 5
 end
 
 function BonusGUI:Event_receiveBonusData(bonusData)
-	for name, data in pairs(bonusData) do
-		self:addBonus(name, data)
+	for name, data in ipairs(bonusData) do
+		self:addBonus(index, data)
 	end
 end
 
