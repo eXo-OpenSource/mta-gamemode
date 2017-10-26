@@ -125,6 +125,12 @@ end
 function Vehicle:onPlayerEnter(player, seat)
 	if player:getType() ~= "player" then return end
 
+	if self.onEnter and self:onEnter(player, seat) then
+		if seat == 0 then
+			self:setDriver(player)
+		end
+	end
+
 	if seat == 0 then
 		if not player:hasCorrectLicense(source) then
 			player:sendShortMessage(_("Achtung: Du hast keinen Führerschein für dieses Fahrzeug!", player))
@@ -409,13 +415,14 @@ function Vehicle:setEngineState(state)
 		VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
 	end
 
-	if instanceof(self, FactionVehicle) then
-		self:setDriver(self.controller)
-	end
-
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
+
+	if instanceof(self, PermanentVehicle, true) then return end
+	if self.controller then
+		self:setDriver(self.controller)
+	end
 end
 
 function Vehicle:getEngineState()

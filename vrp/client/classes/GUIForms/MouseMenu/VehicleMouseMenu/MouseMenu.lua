@@ -26,7 +26,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 		if getElementData(element, "lastDrivers") then
 			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")]
-			self:addItem(_("Letzer Fahrer: %s", lastDriver),
+			self:addItem(_("Letzter Fahrer: %s", lastDriver),
 				function()
 						if self:getElement() then
 							delete(self)

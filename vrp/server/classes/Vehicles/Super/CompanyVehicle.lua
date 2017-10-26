@@ -81,7 +81,7 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
-	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
+	--addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
@@ -144,15 +144,15 @@ function CompanyVehicle:onAttachTrailer(truck)
 end
 
 function CompanyVehicle:onEnter(player, seat)
-	if self:isFrozen() == true then
+	if self:isFrozen() then
 		self:setFrozen(false)
 	end
-
-	self:setDriver(player)
 
 	if self:getCompany().onVehicleEnter then
 		self:getCompany():onVehicleEnter(source, player, seat)
 	end
+
+	return true
 end
 
 function CompanyVehicle:onExit(player, seat)

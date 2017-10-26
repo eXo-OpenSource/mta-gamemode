@@ -257,3 +257,7 @@ function GroupVehicle:buy(player)
 		player:sendError(_("Dieses Fahrzeug steht nicht zum verkauf!", player))
 	end
 end
+
+function GroupVehicle:onEnter()
+	return true -- otherwise last driver will not added
+end
