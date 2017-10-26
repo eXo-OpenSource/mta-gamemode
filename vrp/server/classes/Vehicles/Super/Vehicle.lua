@@ -409,6 +409,10 @@ function Vehicle:setEngineState(state)
 		VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
 	end
 
+	if instanceof(self, FactionVehicle) then
+		self:setDriver(self.controller)
+	end
+
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
@@ -800,6 +804,8 @@ function Vehicle:isEmpty()
 end
 
 function Vehicle:setDriver(player)
+	if not self:getEngineState() then return end
+
 	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
 		return
 	end
