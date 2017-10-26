@@ -75,9 +75,11 @@ function DrivingSchool:onVehicleEnter(vehicle, player, seat)
 	if seat == 0 then return end
 	if not self.m_CurrentLessions[player] then return end
 
-	self.m_CurrentLessions[player].vehicle = vehicle
-	self.m_CurrentLessions[player].startMileage = vehicle:getMileage()
-	player:setPrivateSync("instructorData", {vehicle = vehicle, startMileage = vehicle:getMileage()})
+	if self.m_CurrentLessions[player].vehicle ~= vehicle then
+		self.m_CurrentLessions[player].vehicle = vehicle
+		self.m_CurrentLessions[player].startMileage = vehicle:getMileage()
+		player:setPrivateSync("instructorData", {vehicle = vehicle, startMileage = vehicle:getMileage()})
+	end
 end
 
 function DrivingSchool:onBarrierHit(player)
