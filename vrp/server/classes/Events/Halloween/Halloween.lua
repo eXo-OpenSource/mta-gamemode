@@ -315,13 +315,15 @@ function Halloween:Event_buyBonus(bonusId)
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
 			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
 		elseif bonus["Text"] == "Zombie Skin" then
-			client:setSkin(310)
-			client.m_AltSkin = 310
+			client:getInventory():giveItem("Kleidung", 1, 310)
+			client:sendShortMessage("Der Zombie-Skin wurde in dein Inventar gelegt!")
 		elseif bonus["Text"] == "30 Tage VIP" then
 			client.m_Premium:giveEventMonth()
 		end
 	end
 
+	client:getInventory():takeItem("Suessigkeiten", playerSweets)
+	client:getInventory():takeItem("Kürbis", playerPumpinks)
 	client:sendSuccess(_("Du hast erfolgreich den Bonus %s für %d Kürbisse und %d Süßigkeiten gekauft!", client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"]))
 	StatisticsLogger:getSingleton():addHalloweenLog(client, bonus["Text"], bonus["Pumpkin"], bonus["Sweets"])
 
