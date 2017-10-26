@@ -503,7 +503,7 @@ function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
 			local cons = ((curVel/50 * consumptionMultiplicator) + mass/5000) --basic consumption based on speed and mass (in liter)
 			local vehFuelSize = veh:getFuelTankSize() or 1
 			veh:setFuel(veh:getFuel() - cons/vehFuelSize*100)
-			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass) 
+			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass)
 			self.m_VehiclesWithEngineOn[veh] = veh:getMileage()
 		else --garbage collection
 			self.m_VehiclesWithEngineOn[veh] = nil
@@ -751,6 +751,16 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
+	if source:getPositionType() == VehiclePositionType.Mechanic then
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
+		return
+	end
+
+	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
+		client:sendError(_("Dieses Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
+	end
+
 	if instanceof(source, FactionVehicle) then
 		if client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			source:respawn(true)
@@ -806,18 +816,8 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		end
 	end
 
-	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt oder zerstört! Hole es an der Mech&Tow Base ab!", client))
-		return
-	end
-
 	if source:getOwner() ~= client:getId() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
-		return
-	end
-
-	if source:isBroken() and client:getRank() < ADMIN_RANK_PERMISSION["respawnVehicle"] then
-		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
 
@@ -825,6 +825,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendError(_("Du hast nicht genügend Geld auf deinem Bankkonto (100$)!", client))
 		return
 	end
+
 	if source:isInGarage() then
 		source:fix()
 		setVehicleOverrideLights(source, 1)
@@ -837,6 +838,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
 	end
+
 	local occupants = getVehicleOccupants(source)
 	for seat, player in pairs(occupants) do
 		removePedFromVehicle(player)
