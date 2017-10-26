@@ -43,21 +43,22 @@ function BonusGUI:addBonus(index, data)
 
 	local id = self.m_BonusAmount
 
-	self.m_BonusBG[id] = GUIGridRectangle:new(self.m_Column, self.m_Row, 4, 6, Color.White, self.m_ScrollArea)
-	GUIGridRectangle:new(1, 1, 4, 1, Color.LightBlue, self.m_BonusBG[id])
-	GUIGridLabel:new(1, 1, 4, 1, data["Text"], self.m_BonusBG[id]):setAlignX("center")
-
 	if data["Image"] then
-		GUIGridImage:new(1, 2, 4, 3, ("files/images/Events/Halloween/%s"):format(data["Image"]), self.m_BonusBG[id]):fitBySize(150, 130)
+		self.m_BonusBG[id] = GUIGridImage:new(self.m_Column, self.m_Row, 4, 6, ("files/images/Events/Halloween/%s"):format(data["Image"]), self.m_ScrollArea)
+	else
+		self.m_BonusBG[id] = GUIGridRectangle:new(self.m_Column, self.m_Row, 4, 6, Color.White, self.m_ScrollArea)
 	end
 
-	GUIGridRectangle:new(1, 5, 4, 1, Color.LightGrey, self.m_BonusBG[id])
-	GUIGridImage:new(1, 5, 1, 1, "files/images/Inventory/items/Items/Kuerbis.png", self.m_BonusBG[id]):fitBySize(128, 128)
-	GUIGridLabel:new(2, 5, 1, 1, tostring(data["Pumpkin"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(25))
-	GUIGridImage:new(3, 5, 1, 1, "files/images/Inventory/items/Essen/Suessigkeiten.png", self.m_BonusBG[id]):fitBySize(128, 128)
-	GUIGridLabel:new(4, 5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
+	GUIGridRectangle:new(1, 1, 4, 1, Color.Background, self.m_BonusBG[id])
+	GUIGridLabel:new(1, 1, 4, 1, data["Text"], self.m_BonusBG[id]):setAlignX("center")
 
-	GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id])
+	GUIGridRectangle:new(1, 4.5, 4, 1, Color.Background, self.m_BonusBG[id])
+	GUIGridImage:new(1, 4.5, 1, 1, "files/images/Inventory/items/Items/Kuerbis.png", self.m_BonusBG[id]):fitBySize(128, 128)
+	GUIGridLabel:new(2, 4.5, 1, 1, tostring(data["Pumpkin"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(25))
+	GUIGridImage:new(3, 4.5, 1, 1, "files/images/Inventory/items/Essen/Suessigkeiten.png", self.m_BonusBG[id]):fitBySize(128, 128)
+	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
+
+	GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id]):setBackgroundColor(Color.Red)
 
 	self.m_Column = self.m_Column + 5
 end
