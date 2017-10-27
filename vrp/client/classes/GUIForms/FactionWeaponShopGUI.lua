@@ -76,7 +76,7 @@ function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, dep
 		end
 	end
 
-	self.m_WeaponArea:resize(465, 155+self.m_WaffenColumn*200)
+	self.m_WeaponArea:resize(465, 180+self.m_WaffenColumn*200)
 	self.rankWeapons = rankWeapons
 	self.depot = depotWeapons
 	self:updateButtons()
