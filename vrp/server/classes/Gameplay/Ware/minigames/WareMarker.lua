@@ -37,6 +37,8 @@ function WareMarker:moveMarker()
 end
 
 function WareMarker:destructor()
+	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_DummyObject:stop()
 	for key, p in pairs(self.m_Super.m_Players) do
 		if p:isWithinMarker(self.m_Marker) then
 			self.m_Super:addPlayerToWinners(p)
@@ -44,5 +46,4 @@ function WareMarker:destructor()
 	end
 	self.m_Marker:destroy()
 	self.m_DummyObject:destroy()
-	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 end
