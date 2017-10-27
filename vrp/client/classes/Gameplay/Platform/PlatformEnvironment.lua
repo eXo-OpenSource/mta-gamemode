@@ -70,7 +70,6 @@ function PlatformEnvironment:createGround()
 	for i_x = 1, self.m_Width  do
 		for i_y = 1,  self.m_Height do
 			self.m_Env[#self.m_Env+1] = createObject(CONST_GROUND_ID, (x+(bound_x_off)*i_x), (y+(bound_y_off)*i_y), z)
-			outputChatBox((x+(bound_x_off)*i_x)..", "..(y+(bound_y_off)*i_y)..", "..z)
 			setElementDoubleSided(self.m_Env[#self.m_Env], true)
 			col_width = col_width + bound_x+0.48
 			col_height = col_height + bound_y+0.5
