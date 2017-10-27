@@ -308,7 +308,12 @@ function Halloween:Event_buyBonus(bonusId)
 		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)
 		elseif bonus["Text"] == "Payday Bonus" then
-			client.m_HalloweenPaydayBonus = 2000
+			if not client.m_HalloweenPaydayBonus then
+				client.m_HalloweenPaydayBonus = 2000
+			else
+				client:sendError(_("Du hast den Payday Bonus bereits aktiviert!", client))
+				return
+			end
 		elseif bonus["Text"] == "Karma Reset" then
 			client:setKarma(0)
 		elseif bonus["Text"] == "Nick Change" then
