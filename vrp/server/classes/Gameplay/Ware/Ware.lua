@@ -131,9 +131,10 @@ function Ware:afterRound()
 			for k, player in ipairs( winners ) do
 				player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
 				if #self.m_Players > Ware.Min_Players then
-					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + #self.m_Players)
-				else 
-					player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
+					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
+					player:sendShortMessage(_("Kürbis erhalten!", player))
+				else
+					player:sendError(_("Da zu wenig Spieler teilnehmen erhälst du keine Belohnung!", player))
 				end
 			end
 		end
@@ -152,7 +153,7 @@ function Ware:afterRound()
 			setElementHealth(player, 100)
 			player:triggerEvent("onClientWareChangeGameSpeed", self.m_Gamespeed)
 			player:triggerEvent("onClientWareRoundEnd", points, winners, losers, modeDesc, endGame)
-			if endGame then 
+			if endGame then
 				self:resetRound()
 			end
 		end
@@ -161,9 +162,9 @@ function Ware:afterRound()
 end
 
 function Ware:resetRound()
-	local pumpkinsEarned 
+	local pumpkinsEarned
 	for k, player in ipairs( self.m_Players ) do
-		pumpkinsEarned = player:getData("Ware:pumpkinsEarned") or 0 
+		pumpkinsEarned = player:getData("Ware:pumpkinsEarned") or 0
 		player:getInventory():giveItem("Kürbis", pumpkinsEarned)
 		player:sendInfo(_("Du erhälst "..pumpkinsEarned.. " Kürbise als Belohnung!", player))
 		player:setData("Ware:roundsWon",  0	)
@@ -230,4 +231,4 @@ function Ware:isPlayer( pPlayer )
 	return false
 end
 
-function Ware:getPlayers() return self.m_Players end 
+function Ware:getPlayers() return self.m_Players end
