@@ -267,8 +267,8 @@ function PolicePanel:onSelectBug(id)
 		if localPlayer:getFaction() and localPlayer:getFaction():getId() == 2 then
 			self.m_BugDisable:setEnabled(true)
 			self.m_BugClearLog:setEnabled(true)
-			self.m_BugLocate:setEnabled(true)
 		end
+		self.m_BugLocate:setEnabled(true)
 		self.m_BugRefresh:setEnabled(true)
 
 	else
