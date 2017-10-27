@@ -338,7 +338,6 @@ GAS_STATIONS = {
 			{Vector3(1606.10, -2445.5, 14.1), 0, 1}
 		},
 		accessible = {0, 0},
-		nonInterior = true,
 		fuelTypes = {"petrol_plus", "jetfuel"},
 	},
 	{
