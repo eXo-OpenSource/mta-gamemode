@@ -151,6 +151,7 @@ function Ware:afterRound()
 			end
 			setPedOnFire(player, false)
 			setElementHealth(player, 100)
+			setPedHeadless(player, false)
 			player:triggerEvent("onClientWareChangeGameSpeed", self.m_Gamespeed)
 			player:triggerEvent("onClientWareRoundEnd", points, winners, losers, modeDesc, endGame)
 			if endGame then
@@ -221,6 +222,7 @@ function Ware:leavePlayer( player )
 		player:setData("inWare", false)
 		player:setData("Ware:roundsWon",  0)
 		player:setData("Ware:pumpkinsEarned",  0)
+		setPedHeadless(player, false)
 	end
 end
 
