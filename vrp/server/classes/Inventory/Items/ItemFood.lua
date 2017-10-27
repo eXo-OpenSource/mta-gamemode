@@ -23,7 +23,7 @@ ItemFood.Settings = {
 		["CustomEvent"] = "bloodFx"}},
 	["Kuheuter mit Pommes"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "isst Kuheuter mit Pommes", ["Animation"] = {"FOOD", "EAT_Burger", 4500},
 		["CustomEvent"] = "bloodFx"},
-
+	["Suessigkeiten"] = {["Health"] = 5, ["Model"] = 2880, ["Text"] = "nascht leckere Süßigkeiten", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 
 }
 

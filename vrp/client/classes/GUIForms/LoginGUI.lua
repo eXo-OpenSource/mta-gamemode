@@ -349,6 +349,8 @@ function LoginGUI.startCameraDrive()
 	}
 	local rand = math.random(1,#positions)
 	local p = positions[rand]
+	if EVENT_HALLOWEEN then p = {956.14, -1133.92, 37.22, 884.34, -1066.16, 21.27, 824.06, -1105.73, 30.81, 915.61, -1065.58, 28.06} end --grave yard ls
+
 	local timeMS = getDistanceBetweenPoints3D(p[1], p[2], p[3], p[7], p[8], p[9])*1000
 
 	localPlayer.m_LoginDriveObject = cameraDrive:new(p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], timeMS, "Linear" )

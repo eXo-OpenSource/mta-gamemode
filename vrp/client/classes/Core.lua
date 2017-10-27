@@ -149,6 +149,10 @@ function Core:ready()
 	DrivingSchool:new()
 	Help:new()
 	ClientStatistics:new()
+
+	if EVENT_HALLOWEEN then
+		Halloween:new()
+	end
 end
 
 function Core:afterLogin()
@@ -196,10 +200,6 @@ function Core:afterLogin()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()
-
-	if EVENT_HALLOWEEN then
-		Halloween:new()
-	end
 
 	showChat(true)
 	setCameraTarget(localPlayer)

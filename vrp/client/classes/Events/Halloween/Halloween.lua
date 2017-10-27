@@ -70,26 +70,22 @@ function Halloween:constructor()
 
 	HalloweenSign:new()
 	HalloweenSpookyScreen:new()
+	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
 end
 
 function Halloween:addRandomBloodInPool()
-	local z = 22
-	local pos = {
-		{894.98, -1097.22, z}, 
-		{890.16, -1100.98, z},
-		{890.46, -1106.22, z}, 
-		{895.81, -1105.37, z},
-		{900.75, -1104.33, z}, 
-		{897.56, -1101.07, z}, 
-		{900.35, -1096.88, z},
-		{896.24, -1097.16, z},
-		{890.16, -1099.64, z},
-		{893.43, -1105.01, z},
-		{896.14, -1108.02, z}, 
-		{902.12, -1100.06, z}, 
-	}
-	if chance(25) then createEffect("blood_heli", unpack(pos[math.random(1, #pos)])) end
-		fxAddBlood(895.63, -1101.78, 25, 0, 0, 0, 180, 1)
+	if chance(5) then --create a big "smoke" thing of blood
+		local angle = math.random(0, 15)
+		local dist = math.random(10, 30)/10
+		createEffect("blood_heli", 895.63 + math.sin(angle * 24) * dist, -1101.78 + math.cos(angle * 24) * dist, 21)
+	end
+
+	if chance(50) then -- spawn blood on top position
+		fxAddBlood(895.63, -1101.78, 24.9, 0, 0, 0, 180, 1)
+	else --spawn blood on a random side position
+		local angle = math.random(0, 15)
+		fxAddBlood(895.63 + math.sin(angle * 24), -1101.78 + math.cos(angle * 24), 23.7, 0, 0, 0, 180, 1)
+	end
 end
 
 HalloweenSign = inherit(GUIForm3D)
