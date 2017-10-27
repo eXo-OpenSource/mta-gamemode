@@ -9,7 +9,7 @@ WareCrateBreak = inherit(Object)
 WareCrateBreak.modeDesc = "Vernichte eine Kiste!"
 WareCrateBreak.timeScale = 1
 addEvent("onCrateDestroyed",true)
-local allowedWeapons = 
+local allowedWeapons =
 {
 	0,9,25,31,35,38,
 }
@@ -23,10 +23,10 @@ function WareCrateBreak:constructor( super )
 end
 
 function WareCrateBreak:createCrates()
-	if self.m_Super.m_Arena then 
+	if self.m_Super.m_Arena then
 		local x,y,z,width,height = unpack(self.m_Super.m_Arena)
-		local crateAmount = math.floor(#self.m_Super.m_Players / 2)
-		if crateAmount == 0 then 
+		local crateAmount = math.floor(#self.m_Super.m_Players *2)
+		if crateAmount == 0 then
 			crateAmount = 1
 		end
 		self.m_CrateTable = {}
@@ -34,8 +34,8 @@ function WareCrateBreak:createCrates()
 		setElementAlpha(dummy_car,0)
 		local cx,cy,cz
 		setElementDimension(dummy_car,self.m_Super.m_Dimension)
-		if x and y and z and width and height then 
-			for i = 1, crateAmount do 
+		if x and y and z and width and height then
+			for i = 1, crateAmount do
 				self.m_CrateTable[#self.m_CrateTable+1] = createObject(1224,(x+5)+ math.random(0,width-5), (y+5)+ math.random(0,height-5), z+1)
 				cx,cy,cz = getElementPosition(self.m_CrateTable[#self.m_CrateTable])
 				setElementPosition(dummy_car,cx,cy,cz)
@@ -47,19 +47,19 @@ function WareCrateBreak:createCrates()
 		end
 		destroyElement(dummy_car)
 		local randWeap = allowedWeapons[math.random(1, #allowedWeapons)]
-		for key, p in ipairs(self.m_Super.m_Players) do 
+		for key, p in ipairs(self.m_Super.m_Players) do
 			giveWeapon(p, randWeap, 9999,true)
 		end
 	end
 end
 
 function WareCrateBreak:onBreakCrate( crate )
-	if crate then 
-		if isElement(crate) then 
+	if crate then
+		if isElement(crate) then
 			if crate:getData("ware:crate") then
 				if source.bInWare then
 					if source.bInWare == self.m_Super then
-						self.m_Super:addPlayerToWinners( source ) 
+						self.m_Super:addPlayerToWinners( source )
 						destroyElement(crate)
 					end
 				end
@@ -69,8 +69,8 @@ function WareCrateBreak:onBreakCrate( crate )
 end
 
 function WareCrateBreak:destructor()
-	for i = 1, #self.m_CrateTable do 	
-		if self.m_CrateTable[i] then 
+	for i = 1, #self.m_CrateTable do
+		if self.m_CrateTable[i] then
 			if isElement(self.m_CrateTable[i]) then
 				destroyElement(self.m_CrateTable[i])
 			end
