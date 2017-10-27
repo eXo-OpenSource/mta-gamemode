@@ -73,3 +73,4 @@ end
 function WareManager:Event_onPedClick()
 	client:triggerEvent("Ware:wareOpenGUI", WareManager.Map)
 end
+

@@ -39,6 +39,7 @@ function Ware:constructor( dimension )
 		WareStayTop,
 		WareRamp,
 		WareMurder,
+		WareMarker,
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}
@@ -242,6 +243,14 @@ function Ware:isPlayer( pPlayer )
 		end
 	end
 	return false
+end
+
+function Ware:getRandomPosition()
+	local x, y, z, width, height = unpack(self.m_Arena)
+	local posX = x + 5 + math.random(0, width-5)
+	local posY = y + 5 + math.random(0, height-5)
+	local posZ = z
+	return Vector3(posX, posY, posZ)
 end
 
 function Ware:getPlayers() return self.m_Players end
