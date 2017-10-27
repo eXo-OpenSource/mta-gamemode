@@ -23,7 +23,7 @@ function WareRoundGUI:constructor(winner, loser, modeDesc)
 	self.m_LoserGrid:setFont(VRPFont(20))
 	self.m_LoserGrid:setItemHeight(20)
 	self.m_LoserGrid:addColumn(_"Verlierer", 1)
-	
+
 	self.m_LeaveButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Lobby verlassen", self.m_Window)
 	self.m_LeaveButton.onLeftClick = bind(self.leaveLobby, self)
 
@@ -35,11 +35,11 @@ function WareRoundGUI:destructor()
 end
 
 function WareRoundGUI:leaveLobby()
-	triggerServerEvent("Ware:tryLeaveLobby", localPlayer, false)
+	triggerServerEvent("Ware:tryLeaveLobby", localPlayer)
 end
 
 function WareRoundGUI:refresh(winner, loser)
-	if winner then 
+	if winner then
 		for index, value in ipairs(winner) do
 			local item = self.m_WinnerGrid:addItem(getPlayerName(value))
 			item:setFont(VRPFont(20))

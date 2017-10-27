@@ -122,6 +122,7 @@ function Core:constructor()
 		VehicleCategory:new()
 		ClientStatistics:new()
 		SkribbleManager:new()
+		WareManager:new()
 
 		if EVENT_HALLOWEEN then
 			Halloween:new()
@@ -159,9 +160,7 @@ function Core:constructor()
 		BindManager:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
-		
-		WareManager:new(930.67, -1072.61, 24.38)
-		
+
 		-- Generate Package
 		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")

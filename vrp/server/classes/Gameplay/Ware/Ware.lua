@@ -50,7 +50,6 @@ function Ware:constructor( dimension )
 	self:startRound()
 	self.m_Gamespeed = getGameSpeed()
 	Player.getChatHook():register(bind(self.onPlayerChat, self))
-
 end
 
 function Ware:startRound()
@@ -133,7 +132,7 @@ function Ware:afterRound()
 				if #self.m_Players > Ware.Min_Players then
 					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
 					player:sendShortMessage(_("Kürbis erhalten!", player))
-				else 
+				else
 					player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
 				end
 			end
@@ -163,7 +162,7 @@ function Ware:afterRound()
 end
 
 function Ware:resetRound()
-	local pumpkinsEarned 
+	local pumpkinsEarned
 	for k, player in ipairs( self.m_Players ) do
 		pumpkinsEarned = math.floor((math.floor((player:getData("Ware:pumpkinsEarned") or 0) / 2)) / 10)
 		if pumpkinsEarned > 0 then
@@ -191,7 +190,7 @@ end
 function Ware:joinPlayer( player )
 	if not self:isPlayer(player) then
 		table.insert(self.m_Players, player)
-		player:setData("Ware:roundsWon",0)
+		player:setData("Ware:roundsWon", 0)
 		player:setData("Ware:pumpkinsEarned",  0)
 		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/Ware/waretex.jpg", "sam_camo", 3095)
 		self:spawnWarePlayer(player)
@@ -199,30 +198,40 @@ function Ware:joinPlayer( player )
 		player:setData("inWare", true)
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
+
+		player:createStorage(true)
 	end
 end
 
 function Ware:spawnWarePlayer(player)
 	spawnPlayer(player, 0, 0, Ware.arenaZ+2, 244)
-	setElementFrozen(player,false)
 	setElementPosition(player, Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength),Ware.arenaSize*Ware.sidelength/2+math.random(1,Ware.sidelength), Ware.arenaZ+2)
-	setElementDimension(player, self.m_Dimension)
-	setCameraTarget(player, player)
-	setElementAlpha(player,255)
-	setElementModel(player, 18)
+
+	player:setFrozen(false)
+	player:setDimension(self.m_Dimension)
+	player:setCameraTarget(player)
+	player:setAlpha(255)
+	player:setModel(18)
 end
 
-function Ware:leavePlayer( player )
+function Ware:leavePlayer(player)
 	local key = self:isPlayer(player)
 	if key then
 		table.remove(self.m_Players, key)
-		player.bInWare = false
+
 		player:triggerEvent("onClientWareLeave", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
-		player:setData("inWare", false)
-		player:setData("Ware:roundsWon",  0)
-		player:setData("Ware:pumpkinsEarned",  0)
-		setPedHeadless(player, false)
+		player:setData("inWare", nil)
+		player:setData("Ware:roundsWon",  nil)
+		player:setData("Ware:pumpkinsEarned",  nil)
+
+
+		spawnPlayer(player, Vector3(932.17, -1065.47, 24.38), 110, player.m_Skin)
+		player:setHeadless(false)
+		player:setAlpha(255)
+		player.bInWare = nil
+
+		player:restoreStorage()
 	end
 end
 
