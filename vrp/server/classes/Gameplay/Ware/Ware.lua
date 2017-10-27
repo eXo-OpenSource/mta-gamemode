@@ -22,7 +22,7 @@ Ware.Min_Players = 3
 function Ware:constructor( dimension )
 	self.m_GameModeList =
 	{
-		--[[
+
 		WareMoney,
 		WareSurvive,
 		WareCarJack,
@@ -40,7 +40,7 @@ function Ware:constructor( dimension )
 		WareStayTop,
 		WareRamp,
 		WareMurder,
-		WareMarker,]]
+		WareMarker,
 		WareSprint
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
