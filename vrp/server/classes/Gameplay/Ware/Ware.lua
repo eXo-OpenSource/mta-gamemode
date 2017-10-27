@@ -162,9 +162,9 @@ function Ware:afterRound()
 end
 
 function Ware:resetRound()
-	local pumpkinsEarned
+	local pumpkinsEarned 
 	for k, player in ipairs( self.m_Players ) do
-		pumpkinsEarned = math.floor((player:getData("Ware:pumpkinsEarned") or 0) / 2)
+		pumpkinsEarned = math.floor((math.floor((player:getData("Ware:pumpkinsEarned") or 0) / 2)) / 10)
 		if pumpkinsEarned > 0 then
 			player:getInventory():giveItem("Kürbis", pumpkinsEarned)
 			player:sendInfo(_("Du erhälst "..pumpkinsEarned.. " Kürbisse als Belohnung!", player))
