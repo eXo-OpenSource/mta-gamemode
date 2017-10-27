@@ -13,6 +13,7 @@ function ItemManager:constructor()
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
 		["Warnkegel"] = ItemBarricade,
+		["Sky Beam"] = ItemSkyBeam,
 		["Blitzer"] = ItemSpeedCam,
 		["Nagel-Band"] = ItemNails,
 		["Radio"] = ItemRadio,

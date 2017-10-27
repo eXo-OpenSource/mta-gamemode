@@ -192,6 +192,8 @@ function WorldItem.sendItemListToPlayer(id, type, player)
 		owner = DatabasePlayer.getFromId(id)	
 	elseif type == "faction" then
 		owner = FactionManager:getSingleton():getFromId(id)
+	elseif type == "company" then
+		owner = FactionManager:getSingleton():getFromId(id)
 	end
 	if owner then
 		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, owner:getName(), WorldItem.Map[owner] or {}, id, type)

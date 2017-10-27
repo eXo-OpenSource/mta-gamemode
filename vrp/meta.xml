@@ -113,6 +113,7 @@
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/CompanyWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -123,12 +124,8 @@
 	<script src="server/classes/Inventory/Growable.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemBarricade.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemSpeedCam.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemNails.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDice.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemAlcohol.lua" type="server"/>
@@ -155,6 +152,13 @@
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsCocaine.lua" type="server"/>
+
+	<!--WorldItems-->
+	<script src="server/classes/Inventory/Items/WorldItems/ItemBarricade.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemSpeedCam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemNails.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemRadio.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemSkyBeam.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
