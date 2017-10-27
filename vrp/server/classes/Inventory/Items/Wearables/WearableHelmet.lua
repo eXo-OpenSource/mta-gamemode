@@ -32,6 +32,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 
 	end
 	if not player.m_IsWearingHelmet and not player.m_Helmet then --// if the player clicks onto the helmet without currently wearing one
+		outputDebug(itemName, self:getName())
 		if itemName == "Einsatzhelm" and (not player:getFaction() or not player:getFaction():isStateFaction() or not player:isFactionDuty()) then
 			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
 			player:getInventory():removeAllItem(self:getName())
@@ -69,7 +70,8 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player:setData("isFaceConcealed", false)
 		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
-		if itemName == "Einsatzhelm" and not player:getFaction() or not player:getFaction():isStateFaction() or not player:isFactionDuty() then
+		outputDebug(itemName, self:getName())
+		if itemName == "Einsatzhelm" and (not player:getFaction() or not player:getFaction():isStateFaction() or not player:isFactionDuty()) then
 			player:sendError(_("Du bist nicht im Dienst! Das Item wurde abgenommen.", player))
 			player:getInventory():removeAllItem(self:getName())
 			return
