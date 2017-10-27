@@ -7,7 +7,7 @@
 -- ****************************************************************************
 WareManager = inherit(Singleton)
 WareManager.Map = {}
-addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:refreshGUI", "Ware:onPedClick" }
+addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:requestLobbys", "Ware:onPedClick" }
 
 local MAX_PLAYERS_PER_WARE = 12
 
@@ -36,15 +36,13 @@ function WareManager:constructor()
 
 	addEventHandler("Ware:tryJoinLobby", root, bind(self.Event_onTryJoinLobby, self))
 	addEventHandler("Ware:tryLeaveLobby", root , bind(self.Event_onLeaveLobby, self))
-	addEventHandler("Ware:refreshGUI", root, bind(self.Event_refreshGUI, self))
+	addEventHandler("Ware:requestLobbys", root, bind(self.Event_refreshGUI, self))
 	addEventHandler("Ware:onPedClick", root , bind(self.Event_onPedClick, self))
 end
 
 function WareManager:Event_refreshGUI()
-	if client then
-		client:triggerEvent("Ware:closeGUI")
-		client:triggerEvent("Ware:wareOpenGUI", WareManager.Map)
-	end
+	if not client then return end
+	client:triggerEvent("Ware:wareOpenGUI", WareManager.Map)
 end
 
 function WareManager:Event_onLeaveLobby()
