@@ -133,8 +133,8 @@ function Ware:afterRound()
 				if #self.m_Players > Ware.Min_Players then
 					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
 					player:sendShortMessage(_("Kürbis erhalten!", player))
-				else
-					player:sendError(_("Da zu wenig Spieler teilnehmen erhälst du keine Belohnung!", player))
+				else 
+					player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
 				end
 			end
 		end
