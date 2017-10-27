@@ -1396,6 +1396,9 @@
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
 	<vrpfile src="files/images/Textures/EPTBusStop.png"/>
+	<vrpfile src="files/images/Textures/busShelter_both.png"/>
+	<vrpfile src="files/images/Textures/busShelter_1.png"/>
+	<vrpfile src="files/images/Textures/busShelter_2.png"/>
 	<vrpfile src="files/images/Textures/GasStation.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
@@ -1929,6 +1932,10 @@
 	<vrpfile src="files/models/pumpkin.col" />
 	<vrpfile src="files/models/ghost.dff"/>
 	<vrpfile src="files/models/ghost.txd"/>
+	<vrpfile src="files/models/headstone.txd" />
+	<vrpfile src="files/models/headstone.dff" />
+	<vrpfile src="files/models/headstone.col" />
+
 	<!-- Halloween Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />

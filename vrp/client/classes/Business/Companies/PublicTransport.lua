@@ -125,17 +125,27 @@ end
 function PublicTransport:registerBusStopObjects()
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
-			v:getData("object").m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
-			v:getData("object"):setBreakable(false)
-			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
-			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
-			if v:getData("object"):isStreamedIn() then
-				self:busStopStreamIn(v:getData("object"))
+			local object = v:getData("object")
+			object.m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
+
+			if #object:getData("EPT_bus_station_lines") == 2 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_both.png", "bus shelter", {})
+			elseif object:getData("EPT_bus_station_lines")[1] == 1 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_1.png", "bus shelter", {})
+			elseif object:getData("EPT_bus_station_lines")[1] == 2 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_2.png", "bus shelter", {})
 			end
-			setElementData(v:getData("object"), "clickable", true, false)
-			v:getData("object"):setData("onClickEvent",
+
+			object:setBreakable(false)
+			addEventHandler("onClientElementStreamIn", object, self.m_Event_BusStopStreamIn, false)
+			addEventHandler("onClientElementStreamOut",object, self.m_Event_BusStopStreamOut, false)
+			if object:isStreamedIn() then
+				self:busStopStreamIn(object)
+			end
+			setElementData(object, "clickable", true, false)
+			object:setData("onClickEvent",
 				function()
-					BusRouteInformationGUI:new(v:getData("object"))
+					BusRouteInformationGUI:new(object)
 				end
 			)
 		end
