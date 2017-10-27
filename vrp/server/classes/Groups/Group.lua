@@ -635,7 +635,7 @@ function Group:payDay(vehicleData)
 	if sum > 0 then
 		self:giveMoney(sum, "Payday")
 	elseif sum < 0 then
-		self:takeMoney(sum, "Payday")
+		self:takeMoney(math.abs(sum), "Payday")
 	end
 	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then
