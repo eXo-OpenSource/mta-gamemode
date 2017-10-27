@@ -237,6 +237,7 @@
 	<script src="server/classes/Gameplay/Ware/minigames/WareButtons.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareRamp.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareMarker.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareSprint.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
@@ -890,6 +891,7 @@
 	<script src="client/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="client"/>
 	<script src="client/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="client"/>
 	<script src="client/classes/Gameplay/Ware/minigames/WareButtons.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareSprint.lua" type="client"/>
 
 	<!-- Fishing -->
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>

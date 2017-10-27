@@ -31,6 +31,7 @@ function WareClient:constructor()
 	self.m_WareDontMove = WareDontMove:new()
 	self.m_WareDisplay = WareHUD:new()
 	self.m_WareButtons = WareButtons:new()
+	self.m_WareSprint = WareSprint:new()
 end
 
 function WareClient:destructor()
@@ -56,7 +57,7 @@ function WareClient:OnJoinWare( gamespeed )
 	HUDUI:getSingleton():setEnabled(false)
 	removeEventHandler("onClientRender", root, self.m_RendBind)
 	addEventHandler("onClientRender", root, self.m_RendBind)
-	if self.m_WareDisplay then 
+	if self.m_WareDisplay then
 		self.m_WareDisplay:delete()
 	end
 	self.m_WareDisplay = WareHUD:new()
@@ -64,10 +65,10 @@ end
 
 function WareClient:OnLeaveWare(gamespeed)
 	self:toggleEnvironementSettings(false)
-	if WareRoundGUI.Current then 
+	if WareRoundGUI.Current then
 		WareRoundGUI.Current:delete()
 	end
-	if self.m_WareDisplay then 
+	if self.m_WareDisplay then
 		self.m_WareDisplay:delete()
 	end
 	setPedWalkingStyle(localPlayer, 0)
@@ -155,7 +156,7 @@ function WareClient:RenderBestList(rot)
 				end
 			end
 		end
-		if showWinner then 
+		if showWinner then
 			dxDrawText("Game Over!", 0, 0, w, h+1, tocolor(0, 0, 0, 255), 1, self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
 			dxDrawText("Game Over!", 0, 0, w, h, tocolor(200, 0, 0, 255), 1, self.m_Font or "default-bold","center","center",false,false,false,false,false,rot)
 		end

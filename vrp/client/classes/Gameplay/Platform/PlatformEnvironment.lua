@@ -70,6 +70,7 @@ function PlatformEnvironment:createGround()
 	for i_x = 1, self.m_Width  do
 		for i_y = 1,  self.m_Height do
 			self.m_Env[#self.m_Env+1] = createObject(CONST_GROUND_ID, (x+(bound_x_off)*i_x), (y+(bound_y_off)*i_y), z)
+			outputChatBox((x+(bound_x_off)*i_x)..", "..(y+(bound_y_off)*i_y)..", "..z)
 			setElementDoubleSided(self.m_Env[#self.m_Env], true)
 			col_width = col_width + bound_x+0.48
 			col_height = col_height + bound_y+0.5
@@ -271,16 +272,16 @@ function PlatformEnvironment:toggleColShapeHitRespawn(state)
 	self.m_HitRespawn = state
 end
 
-function PlatformEnvironment:rotateTile( index, time) 
-	if index and time then 
-		if self.m_Env[index] then 
+function PlatformEnvironment:rotateTile( index, time)
+	if index and time then
+		if self.m_Env[index] then
 			local x,y,z = getElementPosition(self.m_Env[index])
 			moveObject(self.m_Env[index], time, x, y, z, 360, 0, 0, "Linear")
 		end
 	end
 end
 
-function PlatformEnvironment:resetAllTiles() 
+function PlatformEnvironment:resetAllTiles()
 	local obj
 	for i = 1,#self.m_Env do
 		obj = self.m_Env[i]
@@ -333,15 +334,15 @@ addEventHandler("PlatformEnv:parseMap", root, function( objTable )
 end)
 
 addEvent("PlatformEnv:rotateTile", true)
-addEventHandler("PlatformEnv:rotateTile", root, function( tileIndex, time ) 
-	if currentActiveEnviroment then 
+addEventHandler("PlatformEnv:rotateTile", root, function( tileIndex, time )
+	if currentActiveEnviroment then
 		currentActiveEnviroment:rotateTile(tileIndex, time)
 	end
 end)
 
 addEvent("PlatformEnv:resetAllTiles", true)
-addEventHandler("PlatformEnv:resetAllTiles", root, function( tileIndex, time ) 
-	if currentActiveEnviroment then 
+addEventHandler("PlatformEnv:resetAllTiles", root, function( tileIndex, time )
+	if currentActiveEnviroment then
 		currentActiveEnviroment:resetAllTiles()
 	end
 end)
