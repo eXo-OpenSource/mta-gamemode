@@ -9,9 +9,10 @@ WareRamp = inherit(Object)
 WareRamp.modeDesc = "Springe durch den Ring!"
 WareRamp.timeScale = 1.5
 
-function WareRamp:constructor( super )
+function WareRamp:constructor(super)
 	self.m_Super = super
 	self.m_Vehicles = {}
+
 	local x,y,z,width,height = unpack(self.m_Super.m_Arena)
 	if x and y and z and width and height then
 		for key, p in ipairs(self.m_Super.m_Players) do
@@ -21,6 +22,7 @@ function WareRamp:constructor( super )
 			nextframe(function() p:warpIntoVehicle(self.m_Vehicles[p]) end)
 		end
 	end
+
 	self:createRamp()
 end
 
@@ -29,22 +31,29 @@ function WareRamp:createRamp()
 	self.m_Ramp:setDimension(self.m_Super.m_Dimension)
 	self.m_Col = createColSphere(36.7, 8.2, 512.7, 7)
 	self.m_Col:setDimension(self.m_Super.m_Dimension)
-	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
-		if hitElement and isElement(hitElement) and hitElement:getType() == "player" and dim then
-			if hitElement.vehicle and isElement(hitElement.vehicle) and hitElement.vehicle:getModel() == 468 then
-				setTimer(function(player)
+
+	addEventHandler("onColShapeHit", self.m_Col,
+		function(hitElement, dim)
+			if not hitElement or not dim then return end
+			if not hitElement:getType() == "player" then return end
+			if not hitElement.vehicle then return end
+			if hitElement.vehicle:getModel() ~= 468 then return end
+
+			setTimer(
+				function(player, vehicle)
 					self.m_Super:addPlayerToWinners(player)
-					player.vehicle:destroy()
-				end, 1000, 1, hitElement)
-			end
+					if isElement(vehicle) then vehicle:destroy() end
+				end, 1000, 1, hitElement, hitElement.vehicle
+			)
 		end
-	end)
+	)
 end
 
 function WareRamp:destructor()
 	for index, veh in pairs(self.m_Vehicles) do
 		if isElement(veh) then veh:destroy() end
 	end
+
 	if self.m_Ramp then self.m_Ramp:destroy() end
 	if self.m_Col then self.m_Col:destroy() end
 end
