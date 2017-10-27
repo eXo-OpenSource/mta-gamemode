@@ -1263,6 +1263,7 @@
 	<vrpfile src="files/images/Radar/Radar_Monochrome/Radar-small.jpg"/>
 	<!-- Blips -->
 	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
+	<vrpfile src="files/images/Radar/Blips/Ghost.png"/>
 	<vrpfile src="files/images/Radar/Blips/Evil.png"/>
 	<vrpfile src="files/images/Radar/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar/Blips/Logistician.png"/>

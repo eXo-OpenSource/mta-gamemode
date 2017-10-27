@@ -55,6 +55,7 @@ end
 
 function GUISlider:setValue(value)
     self.m_Value = math.clamp(self.m_RangeMin, tonumber(value) or 0, self.m_RangeMax)
+    return self
 end
 
 function GUISlider:internalCheckForNewValue(cx, cy)
