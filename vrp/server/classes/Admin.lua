@@ -54,6 +54,7 @@ function Admin:constructor()
 
     local adminCommandBind = bind(self.command, self)
 	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
+	self.m_DeleteArrowBind = bind(self.deleteArrow, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
@@ -837,8 +838,9 @@ function Admin:toggleSupportMode(player)
         player:sendInfo(_("Support Modus aktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setPublicSync("Admin:OldSkin", player:getModel())
-        player:setModel(260)
-        self:toggleSupportArrow(player, true)
+		player:setModel(260)
+		player:setWalkingStyle(138)
+        self:toggleSupportArrow(player, false)
 		player.m_SupMode = true
 		if player:getRank() >= RANK.Moderator then
 			player:triggerEvent("superman:toggle", true)
@@ -850,7 +852,8 @@ function Admin:toggleSupportMode(player)
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
-        player:setModel(player:getPublicSync("Admin:OldSkin"))
+		player:setModel(player:getPublicSync("Admin:OldSkin"))
+		player:setWalkingStyle(0)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
 		if player:getRank() >= RANK.Moderator then
@@ -869,7 +872,6 @@ function Admin:toggleSupportArrow(player, state)
         local pos = player:getPosition()
 		self.m_SupportArrow[player] = createMarker(pos, "arrow" ,0.5, 255, 255, 0)
         self.m_SupportArrow[player]:attach(player, 0, 0, 1.5)
-        self.m_DeleteArrowBind = bind(self.deleteArrow, self)
 		addEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
 		addEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
 	elseif state == false then
