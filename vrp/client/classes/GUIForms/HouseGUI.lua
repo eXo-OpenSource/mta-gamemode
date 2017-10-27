@@ -48,7 +48,6 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 		GUIGridLabel:new(1, 3, 6, 1, _"(Keine neuen Mieter akzeptiert)", self.m_Window)
 	end
 
-	outputDebug(isValidRob, hasKey)
 	self.m_LockBtn = GUIGridButton:new(1, 4, 6, 1, isClosed and _"Aufschließen" or _"Abschließen", self.m_Window):setEnabled(hasKey)
 	self.m_SpawnBtn = GUIGridButton:new(1, 5, 6, 1, _"als Spawnpunkt festlegen", self.m_Window):setEnabled(hasKey)
 	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)

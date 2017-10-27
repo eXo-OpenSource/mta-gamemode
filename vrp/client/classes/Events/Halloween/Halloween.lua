@@ -105,8 +105,8 @@ end
 
 function Halloween:renderDarkness() -- not to be confused with 'dankness'!
 	setTime(22,0) -- there are stars after 22 o clock
-	setFarClipDistance(100)
-	setFogDistance(5)
+	setFarClipDistance(200)
+	setFogDistance(-10)
 	setSkyGradient(0, 0, 0, 0, 0, 0)
 	setWeather(9)
 	setWaterColor(255, 0, 0)

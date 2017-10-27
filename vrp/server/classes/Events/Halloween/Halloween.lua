@@ -4,12 +4,18 @@ Halloween.ms_Phrases = {
 	single = {
 		"Hier bitteschön, lass es dir schmecken!",
 		"Das ist für dich!",
-		"Na wer hat sich denn hier verkleidet?"
+		"Hier, für dich!",
+		"Das hab ich noch im Schrank gefunden.",
+		"Na wer hat sich denn hier verkleidet?",
+		"Lass es dir schmecken!",
 	},
 	multi = {
 		"Ihr seid mir aber eine Gruselbande!",
+		"Na mal sehen ob das für euch reicht...",
 		"Oh! Hab ich mich erschkreckt! Hier bitte!",
 		"Wenn das nicht die Nachbargeister sind - Bitteschön!",
+		"Da brauche ich aber eine große Tüte.",
+		"Hier, die feinsten Naschereien!",
 	},
 }
 
@@ -229,7 +235,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 	if self.m_TrickOrTreatPIDs[pId] and self.m_TrickOrTreatPIDs[pId].playersNearby then
 		local pCount = table.size(self.m_TrickOrTreatPIDs[pId].playersNearby)
 		local ownerId = HouseManager:getSingleton().m_Houses[houseId]:getOwner()
-		local ownerAtHome = (ownerId and ownerId ~= 0) and chance(75) or 0 -- chance that somebody is there to give sweets
+		local ownerAtHome = (ownerId and ownerId ~= 0) and chance(75) or false -- chance that somebody is there to give sweets
 		local rndPhrase = Halloween.ms_Phrases[pCount > 1 and "multi" or "single"]
 			rndPhrase = rndPhrase[math.random(1, #rndPhrase)]
 
@@ -239,9 +245,14 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 			if pl and isElement(pl) then
 				if d.currentHouseId == houseId then
 					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(pl) then
-						if d.lastMessage and d.lastMessage >= d.trickStarted and (getTickCount() - d.lastVisited) > 30000 then
+						if d.lastMessage and d.lastMessage >= d.trickStarted and (getTickCount() - d.lastVisited) > 20000 then
 							if ownerAtHome then
 								local rnd = math.random(1, math.min(5, pCount))
+								if pl.m_IsWearingHelmet == "Kürbis" then --pumpkin head bonus
+									rnd = rnd + (chance(5) and 1 or 0)
+								elseif pl:getModel() == 310 then --zombie skin bonus
+									rnd = rnd + (chance(15) and 1 or 0)
+								end
 								pl:getInventory():giveItem("Suessigkeiten", rnd)
 								pl:sendSuccess(_("Du hast %d %s bekommen!", pl, rnd, rnd > 1 and "Süßigkeiten" or "Süßigkeit"))
 								pl:sendMessage(("Bewohner sagt: %s"):format(rndPhrase), 200, 200, 200)
