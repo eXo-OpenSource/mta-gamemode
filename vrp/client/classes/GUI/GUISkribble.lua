@@ -28,6 +28,7 @@ function GUISkribble:constructor(posX, posY, width, height, parent)
 end
 
 function GUISkribble:virtual_destructor()
+	if isElement(self.m_RenderTarget) then self.m_RenderTarget:destroy() end
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
 	removeEventHandler("onClientRender", root, self.m_RenderFunc)
 	removeEventHandler("onClientRestore", root, self.m_RestoreFunc)
