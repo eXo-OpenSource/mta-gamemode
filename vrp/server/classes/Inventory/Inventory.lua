@@ -35,7 +35,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			self.m_Items[id]["Value"] = row["Value"] or ""
 			self.m_Bag[row["Tasche"]][place] = id
 			if row["Objekt"] == "Mautpass" then
-				if not row["Value"] or tonumber(row["Value"]) < getRealTime().timestamp then
+				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
 					self:removeAllItem("Mautpass")
 					if isElement(self.m_Owner) then
 						self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
