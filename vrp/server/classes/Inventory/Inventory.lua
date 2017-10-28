@@ -592,7 +592,7 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
 	end
-
+	if value == "" then value = false end
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]

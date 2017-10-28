@@ -132,6 +132,8 @@ function Trunk:takeItem(player, slot)
 				self:refreshClient(player)
 				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
 				return
+			else
+				self:refreshClient(player)
 			end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
