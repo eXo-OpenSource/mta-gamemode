@@ -239,7 +239,6 @@ function PlatformEnvironment:spawnIntoPlatform()
 	setElementPosition(localPlayer, x,y,z+2 )
 	setElementDimension(localPlayer, self.m_Dimension)
 	HUDRadar:getSingleton():hide()
-	showChat(false)
 end
 
 function PlatformEnvironment:removeFromPlatform()
@@ -254,7 +253,6 @@ function PlatformEnvironment:removeFromPlatform()
 	end
 	--]]
 	HUDRadar:getSingleton():show()
-	showChat(true)
 	engineRestoreModel(7)
 end
 

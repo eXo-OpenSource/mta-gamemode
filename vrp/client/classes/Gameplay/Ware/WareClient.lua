@@ -80,7 +80,6 @@ function WareClient:OnLeaveWare(gamespeed)
 	CustomModelManager:getSingleton():restoreModel(18)
 	setPlayerHudComponentVisible("vehicle_name", true)
 	HUDUI:getSingleton():setEnabled(true)
-	showChat(true)
 end
 
 function WareClient:toggleEnvironementSettings( bool )

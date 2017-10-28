@@ -16,7 +16,6 @@ function WareGuess:constructor( super )
 	self.m_Super = super
 	local x,y,z,width,height = unpack(self.m_Super.m_Arena)
 	for key, p in ipairs(self.m_Super.m_Players) do
-		showChat(p, true)
 		setCameraMatrix(p, x, y, z+15, x+width*0.5, y+height*0.5, z)
 		setElementAlpha(p, 0)
 	end
@@ -94,7 +93,6 @@ function WareGuess:destructor()
 	self:checkWinner()
 
 	for key, p in ipairs(self.m_Super.m_Players) do
-		showChat(p, false)
 		setCameraTarget(p, p)
 		setElementAlpha(p, 255)
 	end

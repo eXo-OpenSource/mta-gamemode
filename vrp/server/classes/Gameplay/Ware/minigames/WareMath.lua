@@ -32,9 +32,7 @@ function WareMath:constructor( super )
 		self.m_RightAnswer = self.m_Int1 * self.m_Int2
 		WareMath.modeDesc = ("Wieviel ist %d %s %d?"):format(self.m_Int1, operatorString, self.m_Int2)
 	end
-	for key, p in ipairs(self.m_Super.m_Players) do
-		showChat(p, true)
-	end
+
 	self.m_WrongPlayers = {}
 	self.m_Winners = {}
 end
@@ -55,7 +53,5 @@ function WareMath:onChat(player, text, type)
 end
 
 function WareMath:destructor()
-	for key, p in ipairs(self.m_Super.m_Players) do
-		showChat(p, false)
-	end
+
 end
