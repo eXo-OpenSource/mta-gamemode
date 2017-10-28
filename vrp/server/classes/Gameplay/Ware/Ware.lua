@@ -204,6 +204,9 @@ function Ware:joinPlayer( player )
 		player:triggerEvent("Ware:closeGUI")
 
 		player:createStorage(true)
+		for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
+			setPedStat(player, stat, stat == 69 and 900 or 1000)
+		end
 	end
 end
 

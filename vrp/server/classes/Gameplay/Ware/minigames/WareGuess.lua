@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 WareGuess = inherit(Object)
-WareGuess.modeDesc = "Rate die Anzahl der Fahrzeuge! Schreibe Sie im Chat!"
+WareGuess.modeDesc = "Rate die Anzahl der Fahrzeuge!"
 WareGuess.timeScale = 0.7
 WareGuess.vehicleIds = {
    602, 496, 401, 518, 527, 589, 419, 462, 509, 522, 598, 583, 482
