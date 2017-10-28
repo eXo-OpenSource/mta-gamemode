@@ -42,11 +42,14 @@ function WareMath:onChat(player, text, type)
 		if not self.m_WrongPlayers[player] then
 			self.m_Super:addPlayerToWinners(player)
 			self.m_Winners[player] = true
+			outputChatBox("Richtig!", player, 0, 255, 0)
 		end
 	else
 		if not self.m_Winners[player] then
 			self.m_WrongPlayers[player] = true
 			player:triggerEvent("onClientWareFail")
+			outputChatBox("Falsch! (Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0)
+
 		end
 	end
 	return
