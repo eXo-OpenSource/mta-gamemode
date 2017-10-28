@@ -8,10 +8,13 @@
 WareParachute = inherit(Object)
 WareParachute.modeDesc = "Lande auf der Plattform!"
 WareParachute.timeScale = 2
+WareParachute.smallPlatform = false
 
 function WareParachute:constructor( super )
 	self.m_Super = super
-	self:createPlatform()
+	if WareParachute.smallPlatform then
+		self:createPlatform()
+	end
 	self:portPlayers(200, true)
 
 end
@@ -41,8 +44,14 @@ end
 function WareParachute:destructor()
 	self:portPlayers(1, false)
 	for key, p in ipairs(self.m_Super.m_Players) do
-		if getPedContactElement(p) == self.m_PlatformObj then
-			self.m_Super:addPlayerToWinners( p )
+		if WareParachute.smallPlatform then
+			if getPedContactElement(p) == self.m_PlatformObj then
+				self.m_Super:addPlayerToWinners(p)
+			end
+		else
+			if z >= Ware.arenaZ then
+				self.m_Super:addPlayerToWinners(p)
+			end
 		end
 		p:triggerEvent("PlatformEnv:toggleColShapeHitRespawn", true)
 		p:triggerEvent("PlatformEnv:toggleWallCollission", true)
