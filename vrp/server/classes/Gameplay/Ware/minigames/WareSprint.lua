@@ -9,7 +9,7 @@ WareSprint = inherit(Object)
 WareSprint.modeDesc = "Sprinte! (Leertaste)"
 WareSprint.timeScale = 1
 
-Ware.ObjectPos = {
+WareSprint.ObjectPos = {
 	{Vector3(13.18, 26.47, 500.00), Vector3(0, 0, 230.00)},
 	{Vector3(15.32, 28.54, 500.00), Vector3(0, 0, 200.00)},
 	{Vector3(17.95, 28.94, 500.00), Vector3(0, 0, 190.00)},
@@ -36,8 +36,8 @@ function WareSprint:constructor(super)
 	local i = 1
 	local pos, rot
 	for key, p in ipairs(self.m_Super.m_Players) do
-		pos = Ware.ObjectPos[i][1]
-		rot = Ware.ObjectPos[i][2]
+		pos = WareSprint.ObjectPos[i][1]
+		rot = WareSprint.ObjectPos[i][2]
 		self.m_Treadmills[p] = createObject(2627, pos.x, pos.y, pos.z+1, rot)
 		self.m_Treadmills[p]:setDimension(self.m_Super.m_Dimension)
 		p:setPosition(pos.x, pos.y, pos.z+2)

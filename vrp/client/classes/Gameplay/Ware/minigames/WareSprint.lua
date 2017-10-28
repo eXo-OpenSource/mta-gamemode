@@ -13,8 +13,8 @@ function WareSprint:constructor()
 	addEventHandler("setWareSprintListenerOff", localPlayer, bind(self.Event_ListenerOff,self))
 end
 
-function WareSprint:Event_ListenerOn(amount)
-	self.m_Form = WareSprintProgress:new(amount)
+function WareSprint:Event_ListenerOn()
+	self.m_Form = WareSprintProgress:new()
 end
 
 function WareSprint:Event_ListenerOff()
@@ -24,7 +24,7 @@ end
 WareSprintProgress = inherit(GUIForm)
 inherit(Singleton, WareSprintForm)
 
-function WareSprintProgress:constructor(amount)
+function WareSprintProgress:constructor()
 	GUIForm.constructor(self, screenWidth/2-100, screenHeight*0.6, 200, 30, false)
 	showCursor(true)
 	self.m_Progress = GUIProgressBar:new(0, 0, self.m_Width, self.m_Height, self)

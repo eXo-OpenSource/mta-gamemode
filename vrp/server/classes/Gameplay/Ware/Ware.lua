@@ -41,7 +41,8 @@ function Ware:constructor( dimension )
 		WareRamp,
 		WareMurder,
 		WareMarker,
-		WareSprint
+		WareSprint,
+		WareDraw
 	}
 	self.m_Dimension = dimension or math.random(1,65555)
 	self.m_Players = {}

@@ -63,6 +63,9 @@ function GUISkribble:onCursorMove(_, _, x, y)
 
 			table.insert(self.m_SyncData, {type = 1, start = {drawStart.x, drawStart.y}, to = {drawEnd.x, drawEnd.y}, color = self.m_DrawColor, size = self.m_DrawSize})
 			table.insert(self.m_RestorableDrawData, {type = 1, start = {drawStart.x, drawStart.y}, to = {drawEnd.x, drawEnd.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+			if self.m_DrawHook then
+				self.m_DrawHook({type = 1, start = {drawStart.x, drawStart.y}, to = {drawEnd.x, drawEnd.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+			end
 			self:anyChange()
 		end
 
@@ -93,6 +96,9 @@ function GUISkribble:onInternalLeftClick(x, y)
 
 	table.insert(self.m_SyncData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
 	table.insert(self.m_RestorableDrawData, {type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+	if self.m_DrawHook then
+		self.m_DrawHook({type = 2, start = {drawStart.x, drawStart.y}, color = self.m_DrawColor, size = self.m_DrawSize})
+	end
 	self:anyChange()
 end
 
@@ -191,4 +197,8 @@ function GUISkribble:onClientRestore(didClearRenderTargets)
 			self:drawSyncData(self.m_RestorableDrawData, true)
 		end
 	end
+end
+
+function GUISkribble:addDrawHook(callback)
+	self.m_DrawHook = callback
 end

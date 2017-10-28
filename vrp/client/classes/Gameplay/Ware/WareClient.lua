@@ -32,6 +32,8 @@ function WareClient:constructor()
 	self.m_WareDisplay = WareHUD:new()
 	self.m_WareButtons = WareButtons:new()
 	self.m_WareSprint = WareSprint:new()
+	self.m_WareDraw = WareDraw:new()
+
 end
 
 function WareClient:destructor()
