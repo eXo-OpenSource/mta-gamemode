@@ -16,7 +16,7 @@ Ware.roundTimes =
 
 Ware.arenaSize = 4
 Ware.sidelength = 9
-Ware.afterRoundTime = 6000
+Ware.afterRoundTime = 4000
 Ware.arenaZ = 500
 Ware.Min_Players = 3
 function Ware:constructor( dimension )
