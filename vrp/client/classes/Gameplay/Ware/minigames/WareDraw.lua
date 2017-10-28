@@ -13,8 +13,8 @@ function WareDraw:constructor()
 	addEventHandler("setWareDrawListenerOff", localPlayer, bind(self.Event_ListenerOff,self))
 end
 
-function WareDraw:Event_ListenerOn()
-	self.m_Form = WareDrawGUI:new()
+function WareDraw:Event_ListenerOn(amount)
+	self.m_Form = WareDrawGUI:new(amount)
 end
 
 function WareDraw:Event_ListenerOff()
@@ -30,7 +30,7 @@ function WareDrawGUI:constructor(amount)
 	self.m_Height = grid("y", 12)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/3-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Male in 6 verschiedenen Farben", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Male in genau %d verschiedenen Farben!", amount), true, true, self)
 
 	self.m_DrawColors = {}
 
@@ -40,7 +40,7 @@ function WareDrawGUI:constructor(amount)
 	self.m_Skribble:addDrawHook(function(data)
 		if not table.find(self.m_DrawColors, data.color) then
 			table.insert(self.m_DrawColors, data.color)
-			if #self.m_DrawColors >= 6 then
+			if #self.m_DrawColors >= amount then
 				triggerServerEvent("Ware:onDrawColor", localPlayer, self.m_DrawColors)
 			end
 		end
