@@ -209,9 +209,11 @@ end
 function Guns:Event_checkFadeIn()
 	local hasSniper = getPedWeapon(localPlayer) == 34
 	if hasSniper then
+
 		local bAiming = isPedAiming(localPlayer)
 		if bAiming then
 			if not self.m_SniperShader then
+				if localPlayer:getData("inWare") then return end
 				self.m_SniperShader = SniperShader:new(3000)
 				playSound("files/audio/sniper.ogg")
 				self.m_SniperTimer = setTimer(function()
