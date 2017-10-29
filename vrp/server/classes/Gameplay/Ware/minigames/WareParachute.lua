@@ -15,7 +15,7 @@ function WareParachute:constructor( super )
 	if WareParachute.smallPlatform then
 		self:createPlatform()
 	end
-	self:portPlayers(200, true)
+	self:portPlayers(250, true)
 
 end
 
@@ -49,7 +49,7 @@ function WareParachute:destructor()
 				self.m_Super:addPlayerToWinners(p)
 			end
 		else
-			if p:getPosition().z >= Ware.arenaZ then
+			if p:getPosition().z >= Ware.arenaZ and p:isOnGround() and not p:isDead() then
 				self.m_Super:addPlayerToWinners(p)
 			end
 		end

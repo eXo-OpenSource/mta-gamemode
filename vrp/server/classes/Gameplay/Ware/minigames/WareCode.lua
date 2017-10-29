@@ -9,9 +9,15 @@ WareCode = inherit(Object)
 WareCode.modeDesc = "Tippe folgendes: x"
 WareCode.timeScale = 0.5
 
+WareCode.Max = {
+	[1] = 8,
+	[2] = 6,
+	[3] = 4,
+}
+
 function WareCode:constructor( super )
 	self.m_Super = super
-	self.m_Amount = math.random(4, 10)
+	self.m_Amount = math.random(4, WareCode.Max[self.m_Super.m_Gamespeed])
 	self.m_RightAnswer = self:generate()
 	self.m_Winners = {}
 	self.m_WrongPlayers = {}
@@ -32,7 +38,7 @@ function WareCode:onChat(player, text)
 			outputChatBox("Falsch! (Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0)
 		end
 	end
-	return
+	return true
 end
 
 function WareCode:generate()

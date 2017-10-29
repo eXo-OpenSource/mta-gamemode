@@ -16,7 +16,7 @@ Ware.roundTimes =
 
 Ware.arenaSize = 4
 Ware.sidelength = 9
-Ware.afterRoundTime = 4000
+Ware.afterRoundTime = 2000
 Ware.arenaZ = 500
 Ware.Min_Players = 3
 function Ware:constructor( dimension )
@@ -92,7 +92,7 @@ function Ware:onPlayerChat(player, text, type)
 	if self.m_CurrentMode then
 		if self.m_CurrentMode.onChat then
 			if table.find(self.m_Players, player) then
-				self.m_CurrentMode:onChat(player, text, type)
+				return self.m_CurrentMode:onChat(player, text, type)
 			end
 		end
 	end

@@ -28,7 +28,7 @@ end
 function WareGuess:spawnCars()
 	self.m_Cars = {}
 	local x,y,z,width,height = unpack(self.m_Super.m_Arena)
-	local randomNumber = math.random(4, 25)
+	local randomNumber = math.random(4, 20)
 	local randomVehicle
 	local rx, ry, rz
 	for i = 1, randomNumber do
@@ -74,19 +74,8 @@ function WareGuess:onChat(player, text, type)
 		return
 	end
 	self.m_Numbers[player] = tonumber(text)
-
-	if tonumber(text) == self.m_RightAnswer then
-		if not self.m_WrongPlayers[player] then
-			self.m_Super:addPlayerToWinners(player)
-			self.m_Winners[player] = true
-		end
-	else
-		if not self.m_Winners[player] then
-			self.m_WrongPlayers[player] = true
-			player:triggerEvent("onClientWareFail")
-		end
-	end
-	return false
+	outputChatBox("#ffffffDeine Antwort: "..tonumber(text).." #00ff00Richtig ist "..self.m_RightAnswer.."!", player, 0, 255, 0, true)
+	return true
 end
 
 function WareGuess:destructor()

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 WareSprint = inherit(Object)
 WareSprint.modeDesc = "Sprinte! (Leertaste)"
-WareSprint.timeScale = 2
+WareSprint.timeScale = 1.5
 
 WareSprint.ObjectPos = {
 	{Vector3(13.18, 26.47, 500.00), Vector3(0, 0, 230.00)},
