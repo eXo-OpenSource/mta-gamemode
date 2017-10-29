@@ -39,6 +39,8 @@ function DrawContest:getCurrentEvent()
 		if now > drawStart and now < drawEnd then
 			return name, "draw"
 		end
+		local voteStart = data["Vote"]["Start"]
+		local voteEnd =  data["Vote"]["Start"] + data["Vote"]["Duration"]
 		if now > voteStart and now < voteEnd then
 			return name, "vote"
 		end
