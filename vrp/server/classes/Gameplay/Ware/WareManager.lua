@@ -63,6 +63,10 @@ end
 function WareManager:Event_onTryJoinLobby( id )
 	if client then
 		if WareManager.Map[id] then
+			if client:isFactionDuty() or client:isCompanyDuty() then
+				client:sendError(_("Du darfst nicht im Dienst sein!", client))
+				return
+			end
 			if #WareManager.Map[id]:getPlayers() < MAX_PLAYERS_PER_WARE then
 				self.Map[id]:joinPlayer(client)
 			end
