@@ -38,7 +38,7 @@ function WareMath:constructor( super )
 end
 
 function WareMath:onChat(player, text, type)
-	if tonumber(text) == self.m_RightAnswer then
+	if tonumber(text) and tonumber(text) == self.m_RightAnswer then
 		if not self.m_WrongPlayers[player] then
 			self.m_Super:addPlayerToWinners(player)
 			self.m_Winners[player] = true
@@ -48,8 +48,7 @@ function WareMath:onChat(player, text, type)
 		if not self.m_Winners[player] then
 			self.m_WrongPlayers[player] = true
 			player:triggerEvent("onClientWareFail")
-			outputChatBox("#ffffffDeine Antwort: "..tonumber(text).." #ff0000Falsch! #00ff00(Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0, true)
-
+			outputChatBox("#ffffffDeine Antwort: "..text.." #ff0000Falsch! #00ff00(Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0, true)
 		end
 	end
 	return true
