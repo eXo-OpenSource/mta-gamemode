@@ -46,31 +46,33 @@ function WareGuess:spawnCars()
 end
 
 function WareGuess:checkWinner()
-	local nearest = 999
-	local nearestPlayers = {}
-	local diff
-	for player, number in pairs(self.m_Numbers) do
-		diff = math.abs(self.m_RightAnswer-number)
-		if diff < nearest then
-			nearest = number
-		end
-		if diff == 0 then
-			outputChatBox("Du hast genau richtig geraten!", player, 0, 255, 0)
-		else
-			outputChatBox("Du liegst um "..diff.." daneben!", player, 255, 0, 0)
-		end
-	end
+    local nearest = 999
+    local nearestPlayers = {}
+    local diff
+    local nearestNumber = 0
+    for player, number in pairs(self.m_Numbers) do
+        diff = math.abs(self.m_RightAnswer-number)
+        if diff < nearest then
+            nearest = diff
+            nearestNumber = number
+        end
+        if diff == 0 then
+            outputChatBox("Du hast genau richtig geraten!", player, 0, 255, 0)
+        else
+            outputChatBox("Du liegst um "..diff.." daneben!", player, 255, 0, 0)
+        end
+    end
 
-	for player, number in pairs(self.m_Numbers) do
-		outputChatBox("Die beste Schätzung war "..nearest.."!", player, 50, 200, 255)
+    for player, number in pairs(self.m_Numbers) do
+        outputChatBox("Die beste Schätzung war "..nearestNumber.."!", player, 50, 200, 255)
 
-		if number == nearest then
-			self.m_Winners[player] = true
-			self.m_Super:addPlayerToWinners(player)
-		else
-			self.m_WrongPlayers[player] = true
-		end
-	end
+        if number == nearestNumber then
+            self.m_Winners[player] = true
+            self.m_Super:addPlayerToWinners(player)
+        else
+            self.m_WrongPlayers[player] = true
+        end
+    end
 end
 
 function WareGuess:onChat(player, text, type)
