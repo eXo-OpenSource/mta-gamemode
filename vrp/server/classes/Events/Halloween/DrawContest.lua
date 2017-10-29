@@ -1,24 +1,24 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
-		["Draw"] = {["Start"] = 1508882400, ["End"] = 1509404400}, 	--25.10 - 26.10
-		["Vote"] = {["Start"] = 1509404400, ["End"] = 1509490800}  	--26.10 - 27.10
+		["Draw"] = {["Start"] = 1508882400, ["Duration"] = 86400}, 	--25.10 - 26.10
+		["Vote"] = {["Start"] = 1509404400, ["Duration"] = 86400}  	--26.10 - 27.10
 	},
 	["Male Süßigkeiten"]= {
-		["Draw"] = {["Start"] = 1509490800, ["End"] = 1509577200}, 	--27.10 - 28.10
-		["Vote"] = {["Start"] = 1509577200, ["End"] = 1509663600} 	--28.10 - 29.10
+		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
+		["Vote"] = {["Start"] = 1509577200, ["Duration"] = 86400} 	--28.10 - 29.10
 	},
 	["Male ein Halloween-Kostüm"]= {
-		["Draw"] = {["Start"] = 1509663600, ["End"] = 1509750000}, 	--29.10 - 30.10
-		["Vote"] = {["Start"] = 1509750000, ["End"] = 1509836400}	--30.10 - 31.10
+		["Draw"] = {["Start"] = 1509663600, ["Duration"] = 86400}, 	--29.10 - 30.10
+		["Vote"] = {["Start"] = 1509750000, ["Duration"] = 86400}	--30.10 - 31.10
 	},
 	["Male eine Hexe"]= {
-		["Draw"] = {["Start"] = 1509836400, ["End"] = 1509922800},	--31.10 - 01.11
-		["Vote"] = {["Start"] = 1509922800, ["End"] = 1510009200}	--01.11 - 02.11
+		["Draw"] = {["Start"] = 1509836400, ["Duration"] = 86400},	--31.10 - 01.11
+		["Vote"] = {["Start"] = 1509922800, ["Duration"] = 86400}	--01.11 - 02.11
 	},
 	["Male eine Halloweenparty"]= {
-		["Draw"] = {["Start"] = 1510009200, ["End"] = 1510095600},	--02.11 - 03.11
-		["Vote"] = {["Start"] = 1510095600, ["End"] = 1510182000}	--03.11 - 04.11
+		["Draw"] = {["Start"] = 1510009200, ["Duration"] = 86400},	--02.11 - 03.11
+		["Vote"] = {["Start"] = 1510095600, ["Duration"] = 86400}	--03.11 - 04.11
 	}
 }
 
@@ -34,10 +34,12 @@ end
 function DrawContest:getCurrentEvent()
 	local now = getRealTime().timestamp
 	for name, data in pairs(DrawContest.Events) do
-		if now > data["Draw"]["Start"]+432000 and now < data["Draw"]["End"]+432000 then
+		local drawStart = data["Draw"]["Start"]
+		local drawEnd =  data["Draw"]["Start"] + data["Draw"]["Duration"]
+		if now > drawStart and now < drawEnd then
 			return name, "draw"
 		end
-		if now > data["Vote"]["Start"]+432000 and now < data["Vote"]["End"]+432000 then
+		if now > voteStart and now < voteEnd then
 			return name, "vote"
 		end
 	end
