@@ -216,8 +216,8 @@ function TextureReplace.downloadTexture(path, callback)
 end
 
 -- Events
-addEvent("changeElementTexture", true)
-addEventHandler("changeElementTexture", root,
+addEvent("changeElementTextureWare", true)
+addEventHandler("changeElementTextureWare", root,
 	function(vehicles)
 		for i, vehData in pairs(vehicles) do
 			local textureTab = TextureReplace.ServerElements
@@ -234,8 +234,8 @@ addEventHandler("changeElementTexture", root,
 	end
 )
 
-addEvent("removeElementTexture", true)
-addEventHandler("removeElementTexture", root,
+addEvent("removeElementTextureWare", true)
+addEventHandler("removeElementTextureWare", root,
 	function(textureName)
 		if TextureReplace.ServerElements[source] and TextureReplace.ServerElements[source][textureName] then
 			delete(TextureReplace.ServerElements[source][textureName])
