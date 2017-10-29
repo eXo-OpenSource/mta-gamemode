@@ -133,12 +133,13 @@ function Ware:afterRound()
 		local losers = self:getLosers()
 		if winners then
 			for k, player in ipairs( winners ) do
-				player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
-				if #self.m_Players > Ware.Min_Players then
-					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
-					player:sendShortMessage(_("Kürbis erhalten!", player))
-				else
-					player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
+				if player and isElement(player) then
+					player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
+					if #self.m_Players > Ware.Min_Players then
+						player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
+					else
+						player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
+					end
 				end
 			end
 		end
