@@ -49,7 +49,7 @@ function WareParachute:destructor()
 				self.m_Super:addPlayerToWinners(p)
 			end
 		else
-			if z >= Ware.arenaZ then
+			if p:getPosition().z >= Ware.arenaZ then
 				self.m_Super:addPlayerToWinners(p)
 			end
 		end
