@@ -431,6 +431,7 @@
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
+	<script src="client/classes/CustomCorona.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
@@ -2038,6 +2039,7 @@
 	<include resource="WetRoads" />
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
+	<include resource="custom_coronas" />
 
 	<!-- ACL Request -->
 	<aclrequest>
