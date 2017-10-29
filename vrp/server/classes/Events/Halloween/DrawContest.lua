@@ -1,6 +1,6 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
-	["Male PewX"] = {
+	["Event startet Morgen"] = {
 		--["Draw"] = {["Start"] = 1508450400, ["End"] = 1508709600}, 	--25.10 - 26.10
 		--["Vote"] = {["Start"] = 1508709600, ["End"] = 1508882400}  	--26.10 - 27.10
 		["Draw"] = {["Start"] = 1508450400, ["End"] = 999}, 	--25.10 - 26.10
@@ -40,10 +40,10 @@ end
 function DrawContest:getCurrentEvent()
 	local now = getRealTime().timestamp
 	for name, data in pairs(DrawContest.Events) do
-		if now > data["Draw"]["Start"] and now < data["Draw"]["End"] then
+		if now > data["Draw"]["Start"]+432000 and now < data["Draw"]["End"]+432000 then
 			return name, "draw"
 		end
-		if now > data["Vote"]["Start"] and now < data["Vote"]["End"] then
+		if now > data["Vote"]["Start"]+432000 and now < data["Vote"]["End"]+432000 then
 			return name, "vote"
 		end
 	end
