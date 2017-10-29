@@ -822,6 +822,7 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
