@@ -66,6 +66,7 @@ function WareGuess:checkWinner()
 
 		if number == nearest then
 			self.m_Winners[player] = true
+			self.m_Super:addPlayerToWinners(player)
 		else
 			self.m_WrongPlayers[player] = true
 		end
