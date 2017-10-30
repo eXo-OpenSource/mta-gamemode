@@ -1,7 +1,7 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
-		["Draw"] = {["Start"] = 1508882400, ["Duration"] = 86400}, 	--25.10 - 26.10
+		["Draw"] = {["Start"] = 1509318000, ["Duration"] = 86400}, 	--25.10 - 26.10
 		["Vote"] = {["Start"] = 1509404400, ["Duration"] = 86400}  	--26.10 - 27.10
 	},
 	["Male Süßigkeiten"]= {
@@ -23,12 +23,13 @@ DrawContest.Events = {
 }
 
 function DrawContest:constructor()
-	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage", "drawContestRequestRating"}
+	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage", "drawContestRequestRating", "drawContestHideImage"}
 
 
 	addEventHandler("drawContestRequestPlayers", root, bind(self.requestPlayers, self))
 	addEventHandler("drawContestRateImage", root, bind(self.rateImage, self))
 	addEventHandler("drawContestRequestRating", root, bind(self.requestRating, self))
+	addEventHandler("drawContestHideImage", root, bind(self.hideImage, self))
 end
 
 function DrawContest:getCurrentEvent()
@@ -53,7 +54,7 @@ function DrawContest:requestPlayers()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
 	local players = {}
-	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ?", sql:getPrefix(), contestName)
+	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ? AND Hidden = 0", sql:getPrefix(), contestName)
     if not result then return end
 	for i, row in pairs(result) do
 		players[row.UserId] = Account.getNameFromId(row.UserId)
@@ -88,6 +89,18 @@ function DrawContest:rateImage(userId, rating)
 	self:saveVotes(userId, contestName, votes)
 
 	client:sendSuccess("Du hast das Bild erfolgreich bewertet!")
+end
+
+function DrawContest:hideImage(userId)
+	if client:getRank() < RANK.Moderator then
+		return
+	end
+	local contestName, contestType = self:getCurrentEvent()
+	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
+
+	sql:queryExec("UPDATE ??_drawContest SET Hidden = 1 WHERE UserId = ? AND Contest = ?", sql:getPrefix(), ownerId, contestName)
+
+	client:sendSuccess("Du hast das Bild erfolgreich deaktiviert!")
 end
 
 function DrawContest:requestRating(userId)

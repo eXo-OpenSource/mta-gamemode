@@ -27,7 +27,7 @@ function DrawContestOverviewGUI:constructor()
 	self.m_ContestNameLabel = GUIGridLabel:new(1, 1, 10, 1, "Aktuelle Aufgabe: -", self.m_Window)
 	self.m_ContestTypeLabel = GUIGridLabel:new(13, 1, 10, 1, "Aktuelle Phase: -", self.m_Window)
 
-	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 14, self.m_Window)
+	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 11, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Zeichnungen", 1)
 
 	self.m_Skribble = GUIGridSkribble:new(6, 2, 20, 10, self.m_Window)
@@ -53,6 +53,12 @@ function DrawContestOverviewGUI:constructor()
 	self.m_Rating:setVisible(false)
 	self.m_RatingAdmin:setVisible(false)
 
+	self.m_HideAdmin = GUIGridButton:new(15, 12, 5, 1, "Deaktivieren", self.m_Window)
+	self.m_HideAdmin:setVisible(false)
+	self.m_HideAdmin.onLeftClick = function()
+		QuestionBox:new(_("Möchtest du das Bild von %s deaktivieren?", self.m_SelectedPlayerName),
+		function() triggerServerEvent("drawContestHideImage", localPlayer, self.m_SelectedPlayerId) end
+	)
 	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
 	self.m_AddDrawBtn:setVisible(false)
 	self.m_AddDrawBtn.onLeftClick = function()
@@ -144,6 +150,10 @@ function DrawContestOverviewGUI:onReceiveImage(drawData)
 	localPlayer.LastRequest = false
 	self:hideInfoText()
 	self.m_Skribble:drawSyncData(fromJSON(drawData))
+
+	if localPlayer:getRank() >= RANK.Moderator then
+		self.m_HideAdmin:setVisible(false)
+	end
 
 	if self.m_ContestType == "vote" then
 		self.m_RatingLabel:setVisible(true)
