@@ -103,7 +103,7 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	--setElementDimension(self, PRIVATE_DIMENSION_SERVER) --don't do this as it ruins the view in login panel (desyncs of other players) // (maybe add it again if it bugs for some reason)
 	setElementFrozen(self, true)
 	--[[setTimer(function()
 

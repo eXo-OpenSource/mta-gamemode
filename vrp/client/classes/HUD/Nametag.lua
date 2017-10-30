@@ -39,6 +39,7 @@ function Nametag:draw()
 			local phX, phY, phZ = player:getBonePosition(8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
+			if not localPlayer:isLoggedIn() then return false end
 			if (bDistance <= maxDistance) then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
