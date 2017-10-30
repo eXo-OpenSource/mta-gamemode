@@ -1357,6 +1357,10 @@
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	<vrpfile src="files/images/Nametag/SASF.png"/>
+	<vrpfile src="files/images/Nametag/EPT.png"/>
+	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
+	<vrpfile src="files/images/Nametag/San News.png"/>
+	<vrpfile src="files/images/Nametag/MT.png"/>
 
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>

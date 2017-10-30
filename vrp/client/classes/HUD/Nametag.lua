@@ -104,6 +104,9 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	if player:getFaction() then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
+	if player:getCompany() then 
+		icons[#icons+1] = (player:getCompany().m_Id == CompanyStaticId.MECHANIC and "MT" or player:getCompany():getShortName())..".png"
+	end
 	local bHasBigGun = false
 	if not getElementData(player, "CanWeaponBeConcealed") then
 		for i = 3,7 do
