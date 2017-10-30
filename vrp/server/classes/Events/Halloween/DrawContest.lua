@@ -2,7 +2,7 @@ DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
 		["Draw"] = {["Start"] = 1509321600, ["Duration"] = 86400}, 	--25.10 - 26.10
-		["Vote"] = {["Start"] = 1509408000, ["Duration"] = 86400}  	--26.10 - 27.10
+		["Vote"] = {["Start"] = 1509404000, ["Duration"] = 86400}  	--26.10 - 27.10
 	},
 	["Male Süßigkeiten"]= {
 		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
@@ -71,7 +71,11 @@ end
 function DrawContest:getVotes(ownerId, contestName)
 	local row = sql:queryFetchSingle("SELECT VoteData FROM ??_drawContest WHERE UserId = ? AND Contest = ?", sql:getPrefix(), ownerId, contestName)
 	if row.VoteData and row.VoteData:len() > 0 then
-		return fromJSON(row.VoteData)
+		local tbl = fromJSON(row.VoteData)
+		for id, vote in pairs(tbl) do
+			tbl[tonumber(id)] = tonumber(vote)
+		end
+		return tbl
 	end
 	return {}
 end
@@ -120,7 +124,7 @@ function DrawContest:requestRating(userId)
 	if client:getRank() >= RANK.Moderator then
 		local votesCount = table.size(votes)
 		local votesSum = 0
-		for id, rating in pairs(votes) do votesSum = votesSum + rating end
+		for id, rating in pairs(votes) do vobbtesSum = votesSum + rating end
 		admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
 	end
 

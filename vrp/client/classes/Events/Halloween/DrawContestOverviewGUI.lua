@@ -141,6 +141,7 @@ end
 
 function DrawContestOverviewGUI:onReceiveVote(rating, admin)
 	self.m_Rating:setRating(rating)
+	self.m_RatingAdmin:setText("")
 	if admin then
 		self.m_RatingAdmin:setText(admin)
 	end
