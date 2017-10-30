@@ -57,6 +57,7 @@ function DrawContest:requestPlayers()
 end
 
 function DrawContest:sendToClient(player)
+	local contestName, contestType = self:getCurrentEvent()
 	local players = {}
 	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ? AND Hidden = 0", sql:getPrefix(), contestName)
     if not result then return end
