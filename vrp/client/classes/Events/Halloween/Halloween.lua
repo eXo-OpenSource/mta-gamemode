@@ -15,7 +15,7 @@ function Halloween:constructor()
 
 	ped:setData("onClickEvent",
 		function()
-			DrawContestOverviewGUI:new()
+			DrawContestOverviewGUI:getSingleton():open()
 		end
 	)
 
@@ -50,7 +50,7 @@ function Halloween:constructor()
 	)
 
 	--water in grave yard
-	
+
 	createWater(884, -1112, 23, 908, -1112, 23, 884, -1090, 23, 908, -1090, 23)
 	setWaveHeight(0.2)
 	local col = createColSphere(895.49, -1101.41, 24.70, 40)

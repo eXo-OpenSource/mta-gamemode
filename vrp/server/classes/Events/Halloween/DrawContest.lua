@@ -124,7 +124,7 @@ function DrawContest:requestRating(userId)
 	if client:getRank() >= RANK.Moderator then
 		local votesCount = table.size(votes)
 		local votesSum = 0
-		for id, rating in pairs(votes) do vobbtesSum = votesSum + rating end
+		for id, rating in pairs(votes) do votesSum = votesSum + rating end
 		admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
 	end
 
