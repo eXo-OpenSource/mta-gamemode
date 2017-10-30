@@ -58,7 +58,7 @@ function DrawContestOverviewGUI:constructor()
 	self.m_HideAdmin.onLeftClick = function()
 		QuestionBox:new(_("Möchtest du das Bild von %s deaktivieren?", self.m_SelectedPlayerName),
 		function() triggerServerEvent("drawContestHideImage", localPlayer, self.m_SelectedPlayerId) end
-	)
+	end)
 	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
 	self.m_AddDrawBtn:setVisible(false)
 	self.m_AddDrawBtn.onLeftClick = function()

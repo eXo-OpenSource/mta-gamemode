@@ -1,8 +1,8 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
-		["Draw"] = {["Start"] = 1509318000, ["Duration"] = 86400}, 	--25.10 - 26.10
-		["Vote"] = {["Start"] = 1509404400, ["Duration"] = 86400}  	--26.10 - 27.10
+		["Draw"] = {["Start"] = 1509321600, ["Duration"] = 86400}, 	--25.10 - 26.10
+		["Vote"] = {["Start"] = 1509408000, ["Duration"] = 86400}  	--26.10 - 27.10
 	},
 	["Male Süßigkeiten"]= {
 		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
