@@ -2,7 +2,7 @@ DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
 		["Draw"] = {["Start"] = 1509317599, ["Duration"] = 86400},
-		["Vote"] = {["Start"] = 1509404000, ["Duration"] = 86400}
+		["Vote"] = {["Start"] = 1509404400, ["Duration"] = 86400}
 	},
 	["Male Süßigkeiten"]= {
 		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
@@ -131,6 +131,8 @@ function DrawContest:requestRating(userId)
 
 	if votes[client:getId()] then
 		client:triggerEvent("drawingContestReceiveVote", votes[client:getId()], admin)
+	elseif admin then
+		client:triggerEvent("drawingContestReceiveVote", nil, admin)
 	end
 end
 

@@ -127,6 +127,7 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 				self.m_RatingLabel:setVisible(false)
 				self.m_Rating:setVisible(false)
 				self.m_RatingAdmin:setVisible(false)
+				self.m_HideAdmin:setVisible(false)
 				self.m_Rating:reset()
 				self:showInfoText("Das Bild wird geladen...")
 				localPlayer.LastRequest = true
@@ -140,8 +141,12 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 end
 
 function DrawContestOverviewGUI:onReceiveVote(rating, admin)
-	self.m_Rating:setRating(rating)
 	self.m_RatingAdmin:setText("")
+	if rating then
+		self.m_Rating:setRating(rating)
+	else
+		self.m_Rating:reset()
+	end
 	if admin then
 		self.m_RatingAdmin:setText(admin)
 	end
