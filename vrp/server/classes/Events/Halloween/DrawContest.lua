@@ -53,13 +53,18 @@ function DrawContest:requestPlayers()
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
+	self:sendToClient(client)
+end
+
+function DrawContest:sendToClient(player)
 	local players = {}
 	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ? AND Hidden = 0", sql:getPrefix(), contestName)
     if not result then return end
 	for i, row in pairs(result) do
 		players[row.UserId] = Account.getNameFromId(row.UserId)
 	end
-	client:triggerEvent("drawContestReceivePlayers", contestName, contestType, players)
+	player:triggerEvent("drawContestReceivePlayers", contestName, contestType, players)
+
 end
 
 function DrawContest:getVotes(ownerId, contestName)
@@ -98,9 +103,10 @@ function DrawContest:hideImage(userId)
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
-	sql:queryExec("UPDATE ??_drawContest SET Hidden = 1 WHERE UserId = ? AND Contest = ?", sql:getPrefix(), ownerId, contestName)
+	sql:queryExec("UPDATE ??_drawContest SET Hidden = 1 WHERE UserId = ? AND Contest = ?", sql:getPrefix(), userId, contestName)
 
 	client:sendSuccess("Du hast das Bild erfolgreich deaktiviert!")
+	self:sendToClient(client)
 end
 
 function DrawContest:requestRating(userId)
