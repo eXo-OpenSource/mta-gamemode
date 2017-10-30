@@ -1,8 +1,8 @@
 DrawContest = inherit(Singleton)
 DrawContest.Events = {
 	["Male einen Kürbis"] = {
-		["Draw"] = {["Start"] = 1509321600, ["Duration"] = 86400}, 	--25.10 - 26.10
-		["Vote"] = {["Start"] = 1509404000, ["Duration"] = 86400}  	--26.10 - 27.10
+		["Draw"] = {["Start"] = 1509317599, ["Duration"] = 86400},
+		["Vote"] = {["Start"] = 1509404000, ["Duration"] = 86400}
 	},
 	["Male Süßigkeiten"]= {
 		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
@@ -74,6 +74,7 @@ function DrawContest:getVotes(ownerId, contestName)
 		local tbl = fromJSON(row.VoteData)
 		for id, vote in pairs(tbl) do
 			tbl[tonumber(id)] = tonumber(vote)
+			tbl[id] = nil
 		end
 		return tbl
 	end
