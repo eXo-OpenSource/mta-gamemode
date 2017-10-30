@@ -12,7 +12,7 @@ Halloween.ms_Phrases = {
 	multi = {
 		"Ihr seid mir aber eine Gruselbande!",
 		"Na mal sehen ob das für euch reicht...",
-		"Oh! Hab ich mich erschkreckt! Hier bitte!",
+		"Oh! Hab ich mich erschreckt! Hier bitte!",
 		"Wenn das nicht die Nachbargeister sind - Bitteschön!",
 		"Da brauche ich aber eine große Tüte.",
 		"Hier, die feinsten Naschereien!",

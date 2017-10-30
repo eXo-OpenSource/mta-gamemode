@@ -438,9 +438,9 @@ function House:ringDoorBell(player)
 				else
 					player:sendShortMessage(_("Es scheint niemand zu Hause zu sein.", player))
 				end
-			end			
+			end	
+			player.m_HouseDoorBellCooldown = false		
 		end
-		player.m_HouseDoorBellCooldown = false
 	end, timeForResponse, 1, player)
 end
 
