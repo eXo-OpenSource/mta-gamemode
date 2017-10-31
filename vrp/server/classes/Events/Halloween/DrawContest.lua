@@ -25,7 +25,6 @@ DrawContest.Events = {
 function DrawContest:constructor()
 	addRemoteEvents{"drawContestRequestPlayers", "drawContestRateImage", "drawContestRequestRating", "drawContestHideImage"}
 
-
 	addEventHandler("drawContestRequestPlayers", root, bind(self.requestPlayers, self))
 	addEventHandler("drawContestRateImage", root, bind(self.rateImage, self))
 	addEventHandler("drawContestRequestRating", root, bind(self.requestRating, self))
@@ -59,80 +58,76 @@ end
 function DrawContest:sendToClient(player)
 	local contestName, contestType = self:getCurrentEvent()
 	local players = {}
-	local result = sql:queryFetch("SELECT UserId FROM ??_drawContest WHERE Contest = ? AND Hidden = 0", sql:getPrefix(), contestName)
+	local result = sql:queryFetch("SELECT Id, UserId FROM ??_drawContest WHERE Contest = ? AND Hidden = 0", sql:getPrefix(), contestName)
     if not result then return end
+
 	for i, row in pairs(result) do
-		players[row.UserId] = Account.getNameFromId(row.UserId)
+		local playersVote = self:getVotes(row.Id, player:getId())
+		players[row.UserId] = {drawId = row.Id, name = Account.getNameFromId(row.UserId), vote = playersVote and playersVote.Vote}
 	end
+
 	player:triggerEvent("drawContestReceivePlayers", contestName, contestType, players)
-
 end
 
-function DrawContest:getVotes(userId, contestName)
-	local row = sql:queryFetchSingle("SELECT VoteData FROM ??_drawContest WHERE UserId = ? AND Contest = ?", sql:getPrefix(), userId, contestName)
-	if row.VoteData and row.VoteData:len() > 0 then
-		local tbl = fromJSON(row.VoteData)
-		for id, vote in pairs(tbl) do
-			tbl[tonumber(id)] = tonumber(vote)
-			tbl[tostring(id)] = nil
-		end
-		return tbl
+function DrawContest:getVotes(drawId, userId)
+	if not userId then
+		return sql:queryFetch("SELECT Vote FROM ??_drawcontest_votes WHERE DrawId = ?", sql:getPrefix(), drawId)
+	else
+		return sql:queryFetchSingle("SELECT Vote FROM ??_drawcontest_votes WHERE DrawId = ? AND UserId = ?", sql:getPrefix(), drawId, userId)
 	end
-	return {}
 end
 
-function DrawContest:saveVotes(userId, contestName, votes)
-	return sql:queryExec("UPDATE ??_drawContest SET VoteData = ? WHERE UserId = ? AND Contest = ?", sql:getPrefix(), toJSON(votes), userId, contestName)
-end
-
-function DrawContest:rateImage(userId, rating)
+function DrawContest:rateImage(drawId, rating)
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 	if not contestType == "vote" then client:sendError("Aktuell kann nicht Abgestimmt werden!") return end
 
-	local votes = self:getVotes(userId, contestName)
-	if votes[client:getId()] then
+	local hasVoted = self:getVotes(drawId, client:getId())
+	if hasVoted then
 		client:sendError("Du hast bereits für dieses Bild abgestimmt!")
 		return
 	end
 
-	votes[client:getId()] = rating
-	self:saveVotes(userId, contestName, votes)
-
+	sql:queryExec("INSERT INTO ??_drawcontest_votes (DrawId, UserId, Vote) VALUES (?, ?, ?)", sql:getPrefix(), drawId, client:getId(), rating)
 	client:sendSuccess("Du hast das Bild erfolgreich bewertet!")
 end
 
-function DrawContest:hideImage(userId)
+function DrawContest:hideImage(drawId)
 	if client:getRank() < RANK.Moderator then
 		return
 	end
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
-	sql:queryExec("UPDATE ??_drawContest SET Hidden = 1 WHERE UserId = ? AND Contest = ?", sql:getPrefix(), userId, contestName)
-
+	sql:queryExec("UPDATE ??_drawContest SET Hidden = 1 WHERE Id = ?", sql:getPrefix(), drawId)
 	client:sendSuccess("Du hast das Bild erfolgreich deaktiviert!")
+
 	self:sendToClient(client)
 end
 
-function DrawContest:requestRating(userId)
+function DrawContest:requestRating(drawId)
+	if client:getRank() < RANK.Moderator then return end
+	if not drawId then return end
+
 	local contestName, contestType = self:getCurrentEvent()
 	if not contestName then return end
 	if not contestType == "vote" then return end
-	local admin = false
-	local votes = self:getVotes(userId, contestName)
 
-	if client:getRank() >= RANK.Moderator then
-		local votesCount = table.size(votes)
-		if votesCount > 0 then
-			local votesSum = 0
-			for id, rating in pairs(votes) do votesSum = votesSum + rating end
-			admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
-		else
-			admin = "0 Abstimmungen"
+	local admin = "0 Abstimmungen"
+	local votes = self:getVotes(drawId)
+	local votesCount = table.size(votes)
+
+	if votesCount > 0 then
+		local votesSum = 0
+
+		for id, vote in pairs(votes) do
+			votesSum = votesSum + vote.Vote
 		end
+
+		admin = ("%d Abstimmung%s | %s Sterne"):format(votesCount, votesCount == 1 and "" or "en", math.round(votesSum/votesCount, 2))
 	end
-	client:triggerEvent("drawingContestReceiveVote", votes[client:getId()] or false, admin)
+
+	client:triggerEvent("drawingContestReceiveVote", admin)
 end
 
 

@@ -39,11 +39,11 @@ function DrawContestOverviewGUI:constructor()
 
 	self:showInfoText("eXo-Reallife Halloween Zeichen-Wettbewerb!\nMale ein Bild zum angegeben Thema.\n(Jeder User darf nur ein Bild pro Thema einsenden)\nEinem Tag nach Einsendeschluss können User das Bild bewerten.\nZu Gewinnen gibt es bei jedem Wettbewerb 15 eXo-Dollar!")
 
-	self.m_RatingLabel = GUIGridLabel:new(6, 12, 3, 1, "Deine Bewertung:", self.m_Window)
-	self.m_Rating = GUIGridRating:new(9, 12, 5, 1, 5, self.m_Window)
+	self.m_RatingLabel = GUIGridLabel:new(6, 12, 4, 1, "Deine Bewertung:", self.m_Window)
+	self.m_Rating = GUIGridRating:new(10, 12, 5, 1, 5, self.m_Window)
 	self.m_Rating.onChange = function(ratingValue)
 		QuestionBox:new(_("Möchtest du das Bild von %s mit %d Stern/en bewerten?", self.m_SelectedPlayerName, ratingValue),
-		function() triggerServerEvent("drawContestRateImage", localPlayer, self.m_SelectedPlayerId, ratingValue) end,
+		function() triggerServerEvent("drawContestRateImage", localPlayer, self.m_SelectedDrawId, ratingValue) self.m_SelectedDrawItem:setColor(Color.Orange) self.m_SelectedDrawItem.vote = ratingValue end,
 		function() self.m_Rating:reset() end
 	)
 	end
@@ -53,11 +53,11 @@ function DrawContestOverviewGUI:constructor()
 	self.m_Rating:setVisible(false)
 	self.m_RatingAdmin:setVisible(false)
 
-	self.m_HideAdmin = GUIGridButton:new(15, 12, 5, 1, "Deaktivieren", self.m_Window)
+	self.m_HideAdmin = GUIGridIconButton:new(25, 12, FontAwesomeSymbols.Trash, self.m_Window):setTooltip(_"Admin: Bild deaktivieren", "bottom"):setBackgroundColor(Color.Red)
 	self.m_HideAdmin:setVisible(false)
 	self.m_HideAdmin.onLeftClick = function()
 		QuestionBox:new(_("Möchtest du das Bild von %s deaktivieren?", self.m_SelectedPlayerName),
-		function() triggerServerEvent("drawContestHideImage", localPlayer, self.m_SelectedPlayerId) end)
+		function() triggerServerEvent("drawContestHideImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
 	end
 	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
 	self.m_AddDrawBtn:setVisible(false)
@@ -71,8 +71,6 @@ function DrawContestOverviewGUI:constructor()
 	triggerServerEvent("drawContestRequestPlayers", localPlayer)
 	addEventHandler("drawContestReceivePlayers", root, bind(self.onReceivePlayers, self))
 	addEventHandler("drawingContestReceiveVote", root, bind(self.onReceiveVote, self))
-
-
 end
 
 function DrawContestOverviewGUI:showInfoText(text)
@@ -117,21 +115,29 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 
 	self.m_PlayersGrid:clear()
 	local item
-	for id, name in pairs(players) do
-		item = self.m_PlayersGrid:addItem(name)
-		item.onLeftClick = function()
+	for id, drawing in pairs(players) do
+		item = self.m_PlayersGrid:addItem(drawing.name)
+
+		if drawing.vote then
+			item:setColor(Color.Orange)
+			item.vote = drawing.vote
+		end
+
+		item.onLeftClick = function(item)
+			if item == self.m_SelectedDrawItem then return end
+
 			if not localPlayer.LastRequest then
-				self.m_SelectedPlayerName = name
+				self.m_SelectedDrawItem = item
+				self.m_SelectedDrawId = drawing.drawId
+				self.m_SelectedDrawVote = item.vote
+
+				self.m_SelectedPlayerName = drawing.name
 				self.m_SelectedPlayerId = id
-				self.m_Skribble:clear(true)
-				self.m_RatingLabel:setVisible(false)
-				self.m_Rating:setVisible(false)
-				self.m_RatingAdmin:setVisible(false)
-				self.m_HideAdmin:setVisible(false)
-				self.m_Rating:reset()
-				self:showInfoText("Das Bild wird geladen...")
+
+				self:resetOverview("Das Bild wird geladen...")
 				localPlayer.LastRequest = true
-				triggerServerEvent("drawContestRequestRating", localPlayer, id, contestName)
+
+				triggerServerEvent("drawContestRequestRating", localPlayer, drawing.drawId)
 				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
@@ -140,13 +146,19 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 	end
 end
 
-function DrawContestOverviewGUI:onReceiveVote(rating, admin)
+function DrawContestOverviewGUI:resetOverview(labelText)
+	self.m_Skribble:clear(true)
+	self.m_RatingLabel:setVisible(false)
+	self.m_Rating:setVisible(false)
+	self.m_RatingAdmin:setVisible(false)
+	self.m_HideAdmin:setVisible(false)
+	self.m_Rating:reset()
+	self:showInfoText(labelText)
+end
+
+function DrawContestOverviewGUI:onReceiveVote(admin)
 	self.m_RatingAdmin:setText("")
-	if rating then
-		self.m_Rating:setRating(rating)
-	else
-		self.m_Rating:reset()
-	end
+
 	if admin then
 		self.m_RatingAdmin:setText(admin)
 	end
@@ -154,11 +166,16 @@ end
 
 function DrawContestOverviewGUI:onReceiveImage(drawData)
 	localPlayer.LastRequest = false
+
 	self:hideInfoText()
 	self.m_Skribble:drawSyncData(fromJSON(drawData))
 
 	if localPlayer:getRank() >= RANK.Moderator then
 		self.m_HideAdmin:setVisible(true)
+	end
+
+	if self.m_SelectedDrawVote then
+		self.m_Rating:setRating(self.m_SelectedDrawVote)
 	end
 
 	if self.m_ContestType == "vote" then
