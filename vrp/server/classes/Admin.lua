@@ -1352,6 +1352,7 @@ end
 function Admin:runString(player, cmd, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
+		StatisticsLogger:getSingleton():addDrunLog(player, codeString)
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
 	end
@@ -1369,7 +1370,9 @@ function Admin:runPlayerString(player, cmd, target, ...)
 			sendResponse = false
 		end
 		if tPlayer then
-			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
+			local codeString = table.concat({...}, " ")
+			StatisticsLogger:getSingleton():addDrunLog(player, codeString, tPlayer)
+			triggerClientEvent(tPlayer, "onServerRunString", player, codeString, sendResponse)
 
 			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
 	  	else
