@@ -68,21 +68,21 @@ function DrawContest:sendToClient(player)
 
 end
 
-function DrawContest:getVotes(ownerId, contestName)
-	local row = sql:queryFetchSingle("SELECT VoteData FROM ??_drawContest WHERE UserId = ? AND Contest = ?", sql:getPrefix(), ownerId, contestName)
+function DrawContest:getVotes(userId, contestName)
+	local row = sql:queryFetchSingle("SELECT VoteData FROM ??_drawContest WHERE UserId = ? AND Contest = ?", sql:getPrefix(), userId, contestName)
 	if row.VoteData and row.VoteData:len() > 0 then
 		local tbl = fromJSON(row.VoteData)
 		for id, vote in pairs(tbl) do
 			tbl[tonumber(id)] = tonumber(vote)
-			tbl[id] = nil
+			tbl[tostring(id)] = nil
 		end
 		return tbl
 	end
 	return {}
 end
 
-function DrawContest:saveVotes(ownerId, contestName, votes)
-	return sql:queryExec("UPDATE ??_drawContest SET VoteData = ? WHERE UserId = ? AND Contest = ?", sql:getPrefix(), toJSON(votes), ownerId, contestName)
+function DrawContest:saveVotes(userId, contestName, votes)
+	return sql:queryExec("UPDATE ??_drawContest SET VoteData = ? WHERE UserId = ? AND Contest = ?", sql:getPrefix(), toJSON(votes), userId, contestName)
 end
 
 function DrawContest:rateImage(userId, rating)
