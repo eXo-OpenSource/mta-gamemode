@@ -269,6 +269,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 			end
 			d.currentHouseId = nil
 			d.lastMessage = nil
+			pl.m_HouseDoorBellCooldown = false
 		end
 	end
 end
