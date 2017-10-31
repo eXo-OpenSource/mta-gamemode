@@ -124,16 +124,15 @@ function DrawContest:requestRating(userId)
 
 	if client:getRank() >= RANK.Moderator then
 		local votesCount = table.size(votes)
-		local votesSum = 0
-		for id, rating in pairs(votes) do votesSum = votesSum + rating end
-		admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
+		if votesCount > 0 then
+			local votesSum = 0
+			for id, rating in pairs(votes) do votesSum = votesSum + rating end
+			admin = ("%d Abstimmung/en | %d Sterne"):format(votesCount, math.round(votesSum/votesCount, 2))
+		else
+			admin = "0 Abstimmungen"
+		end
 	end
-
-	if votes[client:getId()] then
-		client:triggerEvent("drawingContestReceiveVote", votes[client:getId()], admin)
-	elseif admin then
-		client:triggerEvent("drawingContestReceiveVote", nil, admin)
-	end
+	client:triggerEvent("drawingContestReceiveVote", votes[client:getId()] or false, admin)
 end
 
 
