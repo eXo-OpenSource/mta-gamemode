@@ -196,6 +196,7 @@ end
 function Ware:joinPlayer( player )
 	if not self:isPlayer(player) then
 		table.insert(self.m_Players, player)
+		player:createStorage(true)
 		player:setData("Ware:roundsWon", 0)
 		player:setData("Ware:pumpkinsEarned",  0)
 		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/Ware/waretex.jpg", "sam_camo", 3095)
@@ -205,7 +206,6 @@ function Ware:joinPlayer( player )
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
 
-		player:createStorage(true)
 		for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 			setPedStat(player, stat, stat == 69 and 900 or 1000)
 		end
