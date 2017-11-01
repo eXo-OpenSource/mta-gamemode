@@ -327,12 +327,15 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 	elseif(ItemAmount - amount > 0) then
 		self.m_Items[id]["Menge"] = ItemAmount - amount
 		self:saveItemAmount(id, self.m_Items[id]["Menge"])
+		self:syncClient()
+		return true
 	else
 		self:deleteItem(id)
 		self.m_Items[id] = nil
 		self.m_Bag[bag][place] = nil
+		self:syncClient()
+		return true
 	end
-	self:syncClient()
 end
 
 function Inventory:getMaxItemAmount(item)
@@ -400,13 +403,13 @@ function Inventory:removeItem(item, amount, value)
 					if self.m_Items[id]["Objekt"] == item then
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
-								self:removeItemFromPlace(bag, place, amount)
-								return
+								if self:removeItemFromPlace(bag, place, amount) then
+									return true
+								end
 							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
-									self:removeItemFromPlace(bag, place, amount, value)
-									return
+									return self:removeItemFromPlace(bag, place, amount, value)
 								end
 							end
 						end
@@ -414,10 +417,9 @@ function Inventory:removeItem(item, amount, value)
 				end
 			end
 		end
-		for i=1, amount, 1 do
-			self:removeOneItem(item, value)
-		end
 	end
+
+	return false
 end
 
 function Inventory:removeAllItem(item, value)
@@ -445,6 +447,7 @@ function Inventory:removeAllItem(item, value)
 	end
 end
 
+-- WARNING: This method may not work properly
 function Inventory:removeOneItem(item, value)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
@@ -510,8 +513,7 @@ function Inventory:getPlaceForItem(item, itemAmount)
 	end
 end
 
-function Inventory:getItemAmount(item)
-
+function Inventory:getItemAmount(item, inStack)
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
 	end
@@ -520,14 +522,30 @@ function Inventory:getItemAmount(item)
 		local bag = self.m_ItemData[item]["Tasche"]
 		local amount = 0
 		local places = self:getPlaces(bag)
-		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					amount = amount+self.m_Items[id]["Menge"]
+
+		if not inStack then
+			for place = 0, places do
+				local id = self.m_Bag[bag][place]
+				if id then
+					if self.m_Items[id]["Objekt"] == item then
+						amount = amount+self.m_Items[id]["Menge"]
+					end
+				end
+			end
+		else
+			for place = 0, places do
+				local id = self.m_Bag[bag][place]
+				if id then
+					if self.m_Items[id]["Objekt"] == item then
+						local stackAmount = self.m_Items[id]["Menge"]
+						if stackAmount > amount then
+							amount = stackAmount
+						end
+					end
 				end
 			end
 		end
+
 		return amount
 	else
 		outputDebugString("[INV] Unglültiges Item: "..item)

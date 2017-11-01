@@ -279,8 +279,8 @@ function Halloween:Event_requestBonusData()
 end
 
 function Halloween:Event_buyBonus(bonusId)
-	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten")
-	local playerPumpinks = client:getInventory():getItemAmount("Kürbis")
+	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten", true)
+	local playerPumpinks = client:getInventory():getItemAmount("Kürbis", true)
 	local bonus = Halloween.ms_Bonus[bonusId]
 	if not bonus then return end
 
