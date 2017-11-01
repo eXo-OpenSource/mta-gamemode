@@ -1175,7 +1175,7 @@ function Player:takePoints(p, reason, bNoSound, silent) -- Overriden
 	end
 end
 
-function Player:giveCombinedReward(name, tblReward)
+function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
 		amount = tonumber(amount)
@@ -1183,40 +1183,40 @@ function Player:giveCombinedReward(name, tblReward)
 			amount = math.round(amount)
 			if name == "money" then
 				if amount > 0 then
-					self:giveMoney(amount, name, false, true)
+					self:giveMoney(amount, reason, false, true)
 					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
 				elseif amount < 0 then
-					self:takeMoney(math.abs(amount), name, false, true)
+					self:takeMoney(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s\n"):format(toMoneyString(amount))
 				end
 			elseif name == "bankMoney" then
 				if amount > 0 then
-					self:addBankMoney(amount, name, false, true)
+					self:addBankMoney(amount, reason, false, true)
 					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
 				elseif amount < 0 then
-					self:takeBankMoney(math.abs(amount), name, false, true)
+					self:takeBankMoney(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
 				end
 			elseif name == "points" then
 				if amount > 0 then
-					self:givePoints(amount, name, false, true)
+					self:givePoints(amount, reason, false, true)
 					smText = smText .. ("+%s Punkte\n"):format(amount)
 				elseif amount < 0 then
-					self:takePoints(math.abs(amount), name, false, true)
+					self:takePoints(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s Punkte\n"):format(amount)
 				end
 			elseif name == "karma" then
 				if amount > 0 then
-					self:giveKarma(amount, name, false, true)
+					self:giveKarma(amount, reason, false, true)
 					smText = smText .. ("+%s Karma\n"):format(amount)
 				elseif amount < 0 then
-					self:takeKarma(math.abs(amount), name, false, true)
+					self:takeKarma(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s Karma\n"):format(amount)
 				end
 			end
 		end
 	end
-	self:sendShortMessage(smText:sub(0, #smText-1), name, {0, 94, 255}, 10000)
+	self:sendShortMessage(smText:sub(0, #smText-1), reason, {0, 94, 255}, 10000)
 end
 
 function Player:setUniqueInterior(uniqueInteriorId)

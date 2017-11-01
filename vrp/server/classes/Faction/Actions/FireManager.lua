@@ -59,6 +59,10 @@ function FireManager:checkFire()
 	outputDebug("checking for fire")
 	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
+	else
+		if not isTimer(self.m_FireTimer) then
+			self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
+		end
 	end
 end
 
