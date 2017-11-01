@@ -15,11 +15,6 @@ Player.ms_ChatHook = Hook:new()
 Player.ms_ScreamHook = Hook:new()
 
 addEvent("characterInitialized")
-addEvent("introFinished", true)
-addEventHandler("introFinished", root, function()
-	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission
-	client:spawn()
-end)
 
 function Player:constructor()
 

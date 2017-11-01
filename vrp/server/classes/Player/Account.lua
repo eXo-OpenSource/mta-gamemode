@@ -135,24 +135,22 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		return
 	end
 
-	if player.getTutorialStage then
-		if player:getTutorialStage() == 1 then
-			Admin:getSingleton():sendNewPlayerMessage(player)
-			player:createCharacter()
-		end
-	else
-		local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
-		outputServerLog(msg)
-		outputDebugString(msg, 1)
-		outputConsole(debug.traceback())
-		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
+	if not Account.checkCharacter(Id) then
+		Admin:getSingleton():sendNewPlayerMessage(player)
+		player:createCharacter()
 	end
+
 	player:loadCharacter()
 	player:spawn()
 
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
-	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+	player:triggerEvent("loginsuccess", pwhash)
+end
+
+function Account.checkCharacter(Id)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_character WHERE Id = ?", sql:getPrefix(), Id)
+	return row and true or false
 end
 
 addEvent("checkRegisterAllowed", true)

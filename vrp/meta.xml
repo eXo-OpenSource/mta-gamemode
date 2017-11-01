@@ -753,7 +753,6 @@
 
 	<!-- Cutscenes -->
 	<script src="client/classes/Cutscene/Cutscenes/Intro.lua" type="client"/>
-	<script src="client/classes/Cutscene/Cutscenes/TutorialStage1.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/Arrest.lua" type="client"/>
 	<!--<script src="client/classes/Cutscene/Cutscenes/Hospital.lua" type="client"/>-->
 	<script src="client/classes/Cutscene/Cutscenes/ZombieSurvival.lua" type="client"/>
@@ -856,9 +855,6 @@
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
-
-	<!-- Missions -->
-	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
