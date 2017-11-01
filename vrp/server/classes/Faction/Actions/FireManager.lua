@@ -155,9 +155,9 @@ function FireManager:stopCurrentFire(stats)
 					player:giveCombinedReward("Feuer gelöscht", {
 						bankMoney = score*12,
 						karma = math.round(score/45),
-						points = math.round(score/22),
+						points = math.round(score/17),
 					})
-					moneyForFaction = moneyForFaction + score*6
+					moneyForFaction = moneyForFaction + score*18
 				end
 			end
 			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")
