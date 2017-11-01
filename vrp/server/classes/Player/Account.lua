@@ -124,7 +124,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		end
 	end
 
-	if Warn.checkWarn(player, true) or Ban.checkBan(player, true) then
+	if not Warn.checkWarn(player, true) or not Ban.checkBan(player, true) then
 		player:triggerEvent("loginfailed", "Du wurdest gebannt!")
 		return false
 	end
