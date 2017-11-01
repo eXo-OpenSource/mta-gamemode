@@ -572,9 +572,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		if not reason then return end
 		duration = tonumber(duration)
 		self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+
+		local targetId = target:getId()
 		Warn.addWarn(target, admin, reason, duration*60*60*24)
-		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
-		self:addPunishLog(admin, target, func, reason, duration*60*60*24)
+
+		if target and isElement(target) then
+			target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
+		end
+		self:addPunishLog(admin, targetId, func, reason, duration*60*60*24)
 	elseif func == "removeWarn" then
 		if not target then return end
 		self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
