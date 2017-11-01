@@ -33,8 +33,6 @@ function AppCall:onOpen(form)
 end
 
 function AppCall:closeAll()
-	outputChatBox(" > _ > ")
-
 	if self.m_Background then delete(self.m_Background) end
 	if self.m_WebView then delete(self.m_WebView) end
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self.m_Form)
