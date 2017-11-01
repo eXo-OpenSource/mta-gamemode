@@ -453,7 +453,10 @@ function DatabasePlayer:setKarma(karma, reason)
 	if self.m_Karma > MAX_KARMA_LEVEL then self.m_Karma = MAX_KARMA_LEVEL end
 	if self.m_Karma < -MAX_KARMA_LEVEL then self.m_Karma = -MAX_KARMA_LEVEL end
 
-	if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
+	if self:isActive() then
+		self:setPrivateSync("KarmaLevel", self.m_Karma)
+		self:setPublicSync("Karma", self.m_Karma)
+	end
 end
 
 function DatabasePlayer:givePoints(p, reason) -- TODO: maybe log this?

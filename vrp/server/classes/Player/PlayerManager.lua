@@ -24,7 +24,6 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
-	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -210,7 +209,7 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 			destroyElement(source.ped_deadDouble)
 		end
 	end
-	if not source:getData("isInDeathMatch") then
+	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
 		local x,y,z = getElementPosition(source)
 		local dim = getElementDimension(source)
 		local int = getElementInterior(source)
@@ -636,6 +635,11 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 		return
 	end
 	source:setLastChatMessage(text)
+
+	if Player.getScreamHook():call(source, text) then
+		cancelEvent()
+		return
+	end
 
 	local playersToSend = source:getPlayersInChatRange(2)
 	local receivedPlayers = {}

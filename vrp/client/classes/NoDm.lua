@@ -7,8 +7,12 @@ NoDm.Zones = {
 	[4] = {Vector3{1770.88, -1313.1, 20.77},Vector3{65, 44, 123}},
 	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}}, -- Rescue
 	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
-	[7] = {Vector3(2091.23, -1824.72, 12), Vector3(40, 45, 20)}
+	[7] = {Vector3(2091.23, -1824.72, 12), Vector3(40, 45, 20)},
 }
+
+if EVENT_HALLOWEEN then
+	NoDm.Zones[8] = {Vector3(807.48, -1130.5, 20), Vector3(145, 75, 40)} --grave yard
+end
 
 function NoDm:constructor()
 	self.m_NoDmZones = {}

@@ -42,7 +42,6 @@ end
 
 function Provider:offerFile(path)
 	assert(fileExists(path))
-
 	local fh = fileOpen(path)
 
 	self.m_Files[path] = {

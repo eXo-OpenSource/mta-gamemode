@@ -18,7 +18,8 @@ end
 
 function VehicleInteraction:doInteractions(door)
 	local lookAtVehicle = getPedTarget(client)
-    if lookAtVehicle and (getElementType(lookAtVehicle) == "vehicle" ) then
+
+    if lookAtVehicle and getElementType(lookAtVehicle) == "vehicle" then
 		if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator or (not isVehicleLocked(lookAtVehicle) and client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty()) then
 			local doorRatio = getVehicleDoorOpenRatio(lookAtVehicle, door)
 			local doorStateS = getElementData(lookAtVehicle, tostring(door), true)
@@ -37,18 +38,19 @@ function VehicleInteraction:doInteractions(door)
    end
 end
 
-function VehicleInteraction:doLock()
-	local lookAtVehicle = getPedTarget(client)
-	if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
-		if lookAtVehicle:isLocked() then
-			lookAtVehicle:playLockEffect(false)
-			lookAtVehicle:setLocked(false)
+function VehicleInteraction:doLock(vehicle)
+	if not vehicle or getElementType(vehicle) ~= "vehicle" then return end
+
+	if vehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+		if vehicle:isLocked() then
+			vehicle:playLockEffect(false)
+			vehicle:setLocked(false)
 		else
-			lookAtVehicle:playLockEffect(true)
-			lookAtVehicle:setLocked(true)
+			vehicle:playLockEffect(true)
+			vehicle:setLocked(true)
 			for i = 0, 5 do
-				if getVehicleDoorState(lookAtVehicle, i) == 4 then 
-					setVehicleDoorState ( lookAtVehicle, i, 2)
+				if getVehicleDoorState(vehicle, i) == 4 then
+					setVehicleDoorState(vehicle, i, 2)
 				end
 			end
 		end

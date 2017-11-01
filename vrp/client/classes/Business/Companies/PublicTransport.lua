@@ -14,12 +14,8 @@ end
 
 function PublicTransport:setBusDisplayText(vehicle, text, line)
 	if not isElement(vehicle.Bus_TexReplace) then
-		outputDebug("no texture")
-		FileTextureReplacer:new(vehicle, "Empty.png", "coach92decals128")
 		vehicle.Bus_TexReplace = DxRenderTarget(256, 256, true)
 		RenderTargetTextureReplacer:new(vehicle, vehicle.Bus_TexReplace, "coach92decals128",  {})
-
-		outputDebug(vehicle.Bus_TexReplace)
 		addEventHandler("onClientElementDestroy", vehicle, function()
 			delete(vehicle.Bus_TexReplace)
 			vehicle.Bus_TexReplace = nil
@@ -33,7 +29,6 @@ function PublicTransport:setBusDisplayText(vehicle, text, line)
 	end
 	dxDrawText("Public Transport", 10, 110, 246, 140, Color.Yellow, 1, VRPFont(20, Fonts.Digital), "right", "center", false, true)
 	dxSetRenderTarget(nil)
-	outputDebug(vehicle.Bus_TexReplace)
 end
 
 function PublicTransport:busStopStreamIn(obj)
@@ -130,17 +125,27 @@ end
 function PublicTransport:registerBusStopObjects()
 	for i,v in pairs(getElementsByType("bus_stop", resourceRoot)) do
 		if v:getData("object") then
-			v:getData("object").m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
-			v:getData("object"):setBreakable(false)
-			addEventHandler("onClientElementStreamIn", v:getData("object"), self.m_Event_BusStopStreamIn, false)
-			addEventHandler("onClientElementStreamOut",v:getData("object"), self.m_Event_BusStopStreamOut, false)
-			if v:getData("object"):isStreamedIn() then
-				self:busStopStreamIn(v:getData("object"))
+			local object = v:getData("object")
+			object.m_Texture = FileTextureReplacer:new(v:getData("object"), "EPTBusStop.png", "cj_bs_menu5", {})
+
+			if #object:getData("EPT_bus_station_lines") == 2 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_both.png", "bus shelter", {})
+			elseif object:getData("EPT_bus_station_lines")[1] == 1 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_1.png", "bus shelter", {})
+			elseif object:getData("EPT_bus_station_lines")[1] == 2 then
+				object.m_Texture2 = FileTextureReplacer:new(object, "busShelter_2.png", "bus shelter", {})
 			end
-			setElementData(v:getData("object"), "clickable", true, false)
-			v:getData("object"):setData("onClickEvent",
+
+			object:setBreakable(false)
+			addEventHandler("onClientElementStreamIn", object, self.m_Event_BusStopStreamIn, false)
+			addEventHandler("onClientElementStreamOut",object, self.m_Event_BusStopStreamOut, false)
+			if object:isStreamedIn() then
+				self:busStopStreamIn(object)
+			end
+			setElementData(object, "clickable", true, false)
+			object:setData("onClickEvent",
 				function()
-					BusRouteInformationGUI:new(v:getData("object"))
+					BusRouteInformationGUI:new(object)
 				end
 			)
 		end

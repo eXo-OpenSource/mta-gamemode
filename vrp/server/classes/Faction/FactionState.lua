@@ -1269,9 +1269,13 @@ function FactionState:Event_toggleDuty(wasted)
 	if faction:isStateFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
+				if wasted then
+					client:takeAllWeapons()
+				else
+					self:Event_storageWeapons(client)
+				end
 				client:setDefaultSkin()
 				client:setFactionDuty(false)
-				takeAllWeapons(client)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)
 				client:setPublicSync("Faction:Duty",false)
@@ -1337,10 +1341,21 @@ function FactionState:Event_toggleSwat()
 	end
 end
 
-function FactionState:Event_storageWeapons()
+function FactionState:Event_storageWeapons(player)
+	local client = client
+	if player then
+		client = player
+	end
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
+
+			--switch tazer if it is being used
+			local weapon = getPedWeapon(client, 2)
+			if weapon == 23 then
+				ItemManager.Map["Taser"]:use(client)
+			end
+
 			local depot = faction:getDepot()
 			for i= 1, 12 do
 				if client:getWeapon(i) > 0 then
@@ -1514,8 +1529,8 @@ local faction = client:getFaction()
 			client:meChat(true, ("führt einen Alkoholtest an %s durch!"):format(target:getName()))
 			target:meChat(true, "pustet in das Röhrchen des Alkohol-Schnelltesters...")
 			setTimer(function(player, target)
-				player:sendInfo(_("Du hast einen Alkoholtest an %s durchgeführt!\nErgebnis: %d Promille", player, target:getName(), target.m_AlcoholLevel))
-				target:sendInfo(_("%s hat einen Alkoholtest an dir durchgeführt!\nErgebnis: %d Promille", target, player:getName(), target.m_AlcoholLevel))
+				player:sendInfo(_("Du hast einen Alkoholtest an %s durchgeführt!\nErgebnis: %s Promille", player, target:getName(), target.m_AlcoholLevel))
+				target:sendInfo(_("%s hat einen Alkoholtest an dir durchgeführt!\nErgebnis: %s Promille", target, player:getName(), target.m_AlcoholLevel))
 			end, 2000, 1, client, target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
@@ -1781,41 +1796,39 @@ end
 
 function FactionState:Event_startEvidenceTruck()
 	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() then
-		if client:getFaction():getPlayerRank(client) >= 5 then
-			if ActionsCheck:getSingleton():isActionAllowed(client) then
-				local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
-				local totalMoney = 0
-				for i = 1, #self.m_EvidenceRoomItems do
-					evObj = self.m_EvidenceRoomItems[i]
-					if evObj and evObj[1] and evObj[1] == "Waffe" then
-						weapon = evObj[2]
-						weaponAmmo = evObj[3]
-						if weapon then
-							weapon = tonumber(weapon)
-							if AmmuNationInfo[weapon] then
-								weaponMoney  = AmmuNationInfo[weapon].Weapon
-								ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
-							else
-								weaponMoney = 500
-								ammoMoney = 0
-							end
-							if weaponMoney and ammoMoney then
-								totalMoney = totalMoney + (weaponMoney + ammoMoney)
-							end
+		if ActionsCheck:getSingleton():isActionAllowed(client) then
+			local evObj, weapon, weaponAmmo, weaponMoney, ammoMoney
+			local totalMoney = 0
+			for i = 1, #self.m_EvidenceRoomItems do
+				evObj = self.m_EvidenceRoomItems[i]
+				if evObj and evObj[1] and evObj[1] == "Waffe" then
+					weapon = evObj[2]
+					weaponAmmo = evObj[3]
+					if weapon then
+						weapon = tonumber(weapon)
+						if AmmuNationInfo[weapon] then
+							weaponMoney  = AmmuNationInfo[weapon].Weapon
+							ammoMoney  = math.floor((AmmuNationInfo[weapon].Magazine.price*weaponAmmo) / AmmuNationInfo[weapon].Magazine.amount)
+						else
+							weaponMoney = 500
+							ammoMoney = 0
+						end
+						if weaponMoney and ammoMoney then
+							totalMoney = totalMoney + (weaponMoney + ammoMoney)
 						end
 					end
 				end
-				if totalMoney > 0 then
-					ActionsCheck:getSingleton():setAction("Geldtransport")
-					StateEvidenceTruck:new(client, totalMoney)
-					PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
-					self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
-					sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
-					self.m_EvidenceRoomItems = {}
-					triggerClientEvent(root,"State:clearEvidenceItems", root)
-				else
-					client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
-				end
+			end
+			if totalMoney > 0 then
+				ActionsCheck:getSingleton():setAction("Geldtransport")
+				StateEvidenceTruck:new(client, totalMoney)
+				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
+				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
+				self.m_EvidenceRoomItems = {}
+				triggerClientEvent(root,"State:clearEvidenceItems", root)
+			else
+				client:sendError(_("In der Asservatenkammer befindet sich zuwenig Material!", client))
 			end
 		end
 	end

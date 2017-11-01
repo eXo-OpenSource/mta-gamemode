@@ -18,10 +18,10 @@ function MessageBox:constructor(text, timeout)
 		if timeout > 50 then
 			timeout = timeout
 		else
-			timeout = 5000
+			timeout = #text*100 > 5000 and #text*100 or 5000
 		end
 	else
-		timeout = 5000
+		timeout = #text*100 > 5000 and #text*100 or 5000
 	end
 	setTimer(function() delete(self) end, timeout, 1)
 	playSound(self:getSoundPath())

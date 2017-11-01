@@ -79,3 +79,20 @@ function GUILabel:setAlign(x, y)
 	self.m_AlignY = y or self.m_AlignY
 	return self
 end
+
+function GUILabel:setClickable(state)
+	if state then
+		self:setColor(Color.Accent)
+		self.onInternalHover = function()
+			self:setColor(Color.White)
+		end 
+		self.onInternalUnhover = function()
+			self:setColor(Color.Accent)
+		end 
+	else
+		self:setColor(Color.White)
+		self.onInternalHover = nil
+		self.onInternalUnhover = nil
+	end
+	return self
+end

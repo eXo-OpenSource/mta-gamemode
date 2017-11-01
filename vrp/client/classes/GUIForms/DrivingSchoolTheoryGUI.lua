@@ -91,10 +91,10 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 		self.m_QuestionButtons = {	}
 		self.m_QuestionCounter = self.m_QuestionCounter + 1
 		local question = QUESTIONS[randomInt][1]
-		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self.m_Window):setFont(VRPFont(22))
+		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.15, 50, 2, QUESTIONS[randomInt][6].." Punkte" ,self.m_Window):setFont(VRPFont(22))
 		self.m_QuestionPoints:setAlignX( "left" )
 		self.m_QuestionPoints:setAlignY( "top" )
-		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self.m_Window):setFont(VRPFont(28))
+		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9, 28, self.m_QuestionCounter..". "..question ,self.m_Window):setFont(VRPFont(28))
 		self.m_QuestionText:setAlignX( "center" )
 		self.m_QuestionText:setAlignY( "top" )
 		self.m_RBGroup = GUIRadioButtonGroup:new(self.m_Width*0.1, self.m_Height*0.4, self.m_Width*0.09, self.m_Height*0.4 ,self)

@@ -246,19 +246,15 @@ function Fire:updateStatistics(tblStats, serverTick, w, h)
 			self.m_ShortmessageLoaded = false
 		end)
 	end
-	--[[
-		startTime = getTickCount(),
-		firesByPlayer = {},
-		firesDecayed = 0,
-		firesActive = 0,
-		firesTotal = 0,
-	]]
+
 	local t = ("Zeit seit Ausbruch: %s\nFlammen: %s aktiv, %s seit Ausbruch\n\nbeteiligte Einsatzkräfte:"):format(string.duration((serverTick - tblStats.startTime)/1000), tblStats.firesActive, tblStats.firesTotal)
 
 	for i, v in pairs(tblStats.pointsByPlayer) do
 		t = t.. ("\n %s - %s Punkte (%s Feuer gelöscht)"):format(i:getName(), v, tblStats.firesByPlayer[i] or 0)
 	end
-	t = t.. ("\n\n~~~DEBUG~~~\nDimension (w,h): %s, %s\ngeschätzte Lösch-Zeit (min): %s"):format(w, h, math.sqrt(w*h)/4)
+	if DEBUG then
+		t = t.. ("\n\n~~~DEBUG~~~\nDimension (w,h): %s, %s\ngeschätzte Lösch-Zeit (min): %s"):format(w, h, math.sqrt(w*h)/4)
+	end
 	self.m_StatisticShortMessage:setText(t)
 	self.m_StatisticShortMessage:resetTimeout()
 end

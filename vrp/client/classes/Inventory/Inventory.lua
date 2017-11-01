@@ -25,11 +25,9 @@ Inventory.Tabs = {
 	[4] = "Drogen"
 }
 
-
 function Inventory:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+40)/2, 330, (80+106+40))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
-	self.m_Window:toggleMoving(false)
 	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 
@@ -121,6 +119,7 @@ function Inventory:addItem(place, item)
 		local slot = tab.m_ItemSlots[place+1]
 
 		if slot.ItemImage then delete(slot.ItemImage) end
+		if slot.LabelBackground then delete(slot.LabelBackground) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 
 		slot.Item = true
@@ -128,17 +127,31 @@ function Inventory:addItem(place, item)
 		slot.Place = place
 		slot.ItemName = item["Objekt"]
 		slot.Amount = item["Menge"]
-		slot.ItemImage = GUIImage:new(0, 20, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-		slot.ItemLabel = GUILabel:new(0, slot.m_Height+8, slot.m_Width, 15, item["Menge"] > 1 and item["Menge"] or "", slot):setAlignX("right"):setAlignY("bottom")
+
+		local amountText = slot.Amount > 1 and slot.Amount or ""
+		local textWidth = VRPTextWidth(amountText, 20) + 3
+
+		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+
+		if slot.Amount > 1 then
+			slot.LabelBackground = GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-12, textWidth, 12, Color.Background, slot)
+		end
+
+		slot.ItemLabel = GUILabel:new(0, slot.m_Height - 12, slot.m_Width, 12, amountText, slot):setAlign("right", "center"):setFont(VRPFont(20)):setFontSize(1):setColor(Color.Orange)
 	end
 end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		if slot.ItemImage then
-			delete(slot.ItemImage)
-		end
+		if slot.ItemImage then delete(slot.ItemImage) end
+		if slot.LabelBackground then delete(slot.LabelBackground) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
+
+		slot.Item = nil
+		slot.Id = nil
+		slot.Place = nil
+		slot.ItemName = nil
+		slot.Amount = nil
 	end
 	if self.m_Bag then
 		for place, id in pairs(self.m_Bag[Inventory.Tabs[self.m_CurrentTab]]) do
@@ -216,7 +229,7 @@ function Inventory:addItemSlots(count, parent)
 	parent.m_ItemSlots = {}
 	local x, y = parent:getSize()
 	local row = 0
-	id = 0
+	local id = 0
 	for i = 1, count, 1 do
 		local i = i - 7*row
 		id = #parent.m_ItemSlots+1                               -- y
@@ -315,7 +328,6 @@ end
 
 function Inventory:onShow()
 	showCursor(true)
-	self:setAbsolutePosition(screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	triggerServerEvent("refreshInventory", localPlayer)
 	self:loadItems()
 	self.Show = true

@@ -16,11 +16,7 @@ function AdminFireGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Admin-Feuer Menü", true, true, self)
 
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
-	self.m_CloseButton.onLeftClick = function() self:delete() end
-
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
-	self.m_BackButton.onLeftClick = function() self:close() AdminGUI:getSingleton():show() Cursor:show() end
+	self.m_Window:addBackButton(function ()  delete(self) AdminGUI:getSingleton():show() end)
 
 	self.m_FireGrid = GUIGridList:new(10, 50, self.m_Width-20, 360, self.m_Window)
 	self.m_FireGrid:addColumn(_"ID", 0.02)

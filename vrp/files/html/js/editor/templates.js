@@ -1,15 +1,19 @@
 var templates = {
 //constructor
-constructor: `NewGUI = inherit(GUIForm)
-inherit(Singleton, NewGUI)
+newClass: `Classname = inherit(GUIForm)
+inherit(Singleton, Classname)
 
-function NewGUI:constructor()
-	GUIForm.constructor(self, screenWidth*0.5-(500/2), screenHeight*0.5-(500/2), 500, 500, true, true)
+function Classname:constructor()
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 16) 	-- width of the window
+	self.m_Height = grid("y", 12) 	-- height of the window
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Window title", true, true, self)
 \t
 end
-`,
-//destructor
-destructor: `function NewGUI:destructor()
+
+function Classname:destructor()
 	GUIForm.destructor(self)
 end
 `,

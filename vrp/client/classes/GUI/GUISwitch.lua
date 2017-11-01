@@ -38,23 +38,32 @@ function GUISwitch:setState(state)
 	if self.onChange then
 		self.onChange(self.m_State)
 	end
+	return self
 end
 
 function GUISwitch:getState()
 	return self.m_State
 end
 
+function GUISwitch:isChecked() -- make it like GUICheckBox
+	return self.m_State
+end
+
 function GUISwitch:drawThis()
 	dxSetBlendMode("modulate_add")
+	local white = Color.changeAlpha(Color.White, self:getAlpha())
+	local black = Color.changeAlpha(Color.Black, self:getAlpha())
+	local primary = Color.changeAlpha(Color.Primary, self:getAlpha())
+	local accent = Color.changeAlpha(Color.Accent, self:getAlpha())
 
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Primary)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, primary)
 
 	local x, y = self.m_Button:getPosition()
 	local w, h = self.m_Button:getSize()
-	dxDrawRectangle(self.m_AbsoluteX + x + self.m_Width/4 - w/2, self.m_AbsoluteY + y + self.m_Height/2 - h/2, w, h, self.m_Hovered and Color.White or Color.Accent)
+	dxDrawRectangle(self.m_AbsoluteX + x + self.m_Width/4 - w/2, self.m_AbsoluteY + y + self.m_Height/2 - h/2, w, h, self.m_Hovered and white or accent)
 
-	dxDrawText("An", self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and self.m_State) and Color.Black or Color.White, self:getFontSize(), self:getFont(), "center", "center")
-	dxDrawText("Aus", self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and not self.m_State) and Color.Black or Color.White, self:getFontSize(), self:getFont(), "center", "center")
+	dxDrawText("An", self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and self.m_State) and black or white, self:getFontSize(), self:getFont(), "center", "center")
+	dxDrawText("Aus", self.m_AbsoluteX + self.m_Width/2, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, (self.m_Hovered and not self.m_State) and black or white, self:getFontSize(), self:getFont(), "center", "center")
 
 	dxSetBlendMode("blend")
 end

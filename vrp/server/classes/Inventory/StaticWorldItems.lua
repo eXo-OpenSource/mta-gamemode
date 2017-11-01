@@ -12,17 +12,23 @@ function StaticWorldItems:constructor()
 
 	self.m_Items = {
 		["Mushroom"]= {
-							["class"] = ItemManager:getSingleton():getInstance("Shrooms"),
-							["offsetZ"] = -1,
-							["chance"] = 33,
-							["enabled"] = true
+			["class"] = ItemManager:getSingleton():getInstance("Shrooms"),
+			["offsetZ"] = -1,
+			["chance"] = 33,
+			["enabled"] = true
 					  },
 		["Osterei"] = {
-							["class"] = ItemManager:getSingleton():getInstance("Osterei"),
-							["offsetZ"] = -0.85,
-							["chance"] = 33,
-							["enabled"] = EVENT_EASTER
+			["class"] = ItemManager:getSingleton():getInstance("Osterei"),
+			["offsetZ"] = -0.85,
+			["chance"] = 33,
+			["enabled"] = EVENT_EASTER
 					  },
+		["Kürbis"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Kürbis"),
+			["offsetZ"] = -0.85,
+			["chance"] = 33,
+			["enabled"] = EVENT_HALLOWEEN
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(60*60*1000)

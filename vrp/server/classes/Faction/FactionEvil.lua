@@ -44,8 +44,9 @@ end
 function FactionEvil:createInterior(Id, faction)
 	self.InteriorEnterExit[Id] = InteriorEnterExit:new(evilFactionInteriorEnter[Id], Vector3(2807.32, -1173.92, 1025.57), 0, 0, 8, Id)
 	self.m_WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
-	setElementDimension(self.m_WeaponPed[Id], Id)
-	setElementInterior(self.m_WeaponPed[Id], 8)
+	self.m_WeaponPed[Id]:setDimension(Id)
+	self.m_WeaponPed[Id]:setInterior(8)
+	self.m_WeaponPed[Id]:setFrozen(true)
 	self.m_WeaponPed[Id]:setImmortal(true)
 	self.m_WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	self.m_WeaponPed[Id].Faction = faction
@@ -195,24 +196,29 @@ function FactionEvil:Event_StartRaid(target)
 					client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
 					return
 				end
+
+				if target:getHealth() == 0 then return end
+
 				if target:getPublicSync("supportMode") then
 					client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
 					return
 				end
+
 				if target:getInterior() > 0 then
 					client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
 					return
 				end
+
 				if math.floor(target:getPlayTime()/60) < 10 then
 					client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
-					--return
+					return
 				end
 
 				if target:getMoney() > 0 then
 					local targetName = target:getName()
 					if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
 						client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
-						--return
+						return
 					end
 					target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()), 255, 0, 0)
 					target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target), 255, 0, 0)
@@ -227,13 +233,9 @@ function FactionEvil:Event_StartRaid(target)
 					client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 				end
 			else
-				client:sendError(_("Der Spieler ist nicht mehr online!", client))
+				client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))
 			end
-		else
-			client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))
 		end
-	else
-		client:sendError(_("Nur Spieler böser Fraktionen können andere Spieler überfallen!", client))
 	end
 end
 

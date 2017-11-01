@@ -54,6 +54,7 @@ function Admin:constructor()
 
     local adminCommandBind = bind(self.command, self)
 	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
+	self.m_DeleteArrowBind = bind(self.deleteArrow, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
@@ -837,8 +838,9 @@ function Admin:toggleSupportMode(player)
         player:sendInfo(_("Support Modus aktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setPublicSync("Admin:OldSkin", player:getModel())
-        player:setModel(260)
-        self:toggleSupportArrow(player, true)
+		player:setModel(260)
+		player:setWalkingStyle(138)
+        self:toggleSupportArrow(player, false)
 		player.m_SupMode = true
 		if player:getRank() >= RANK.Moderator then
 			player:triggerEvent("superman:toggle", true)
@@ -850,7 +852,8 @@ function Admin:toggleSupportMode(player)
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
-        player:setModel(player:getPublicSync("Admin:OldSkin"))
+		player:setModel(player:getPublicSync("Admin:OldSkin"))
+		player:setWalkingStyle(0)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
 		if player:getRank() >= RANK.Moderator then
@@ -869,7 +872,6 @@ function Admin:toggleSupportArrow(player, state)
         local pos = player:getPosition()
 		self.m_SupportArrow[player] = createMarker(pos, "arrow" ,0.5, 255, 255, 0)
         self.m_SupportArrow[player]:attach(player, 0, 0, 1.5)
-        self.m_DeleteArrowBind = bind(self.deleteArrow, self)
 		addEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
 		addEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
 	elseif state == false then
@@ -999,6 +1001,7 @@ local tpTable = {
 		["pferderennen"] =  {["pos"] = Vector3(1631.56, -1166.35, 23.66),  	["typ"] = "Orte"},
 		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Orte"},
+		["friedhof"] =   	{["pos"] = Vector3(908.84, -1102.33, 24.30),  	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
@@ -1349,6 +1352,7 @@ end
 function Admin:runString(player, cmd, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
+		StatisticsLogger:getSingleton():addDrunLog(player, codeString)
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
 	end
@@ -1366,7 +1370,9 @@ function Admin:runPlayerString(player, cmd, target, ...)
 			sendResponse = false
 		end
 		if tPlayer then
-			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
+			local codeString = table.concat({...}, " ")
+			StatisticsLogger:getSingleton():addDrunLog(player, codeString, tPlayer)
+			triggerClientEvent(tPlayer, "onServerRunString", player, codeString, sendResponse)
 
 			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
 	  	else

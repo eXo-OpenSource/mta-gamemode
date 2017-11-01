@@ -40,14 +40,14 @@ function AdminGUI:constructor(money)
 	self.m_RespawnRadius:setNumeric(true, true)
 	self.m_RespawnRadius:setText("50")
 
-	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("adminAnnounce", "senden", self.onGeneralButtonClick, 490, 10, 100, 30, Color.Orange, tabAllgemein)
 	self:addAdminButton("smode", "Support-Modus aktivieren/deaktivieren", self.onGeneralButtonClick, 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", self.onGeneralButtonClick, 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", self.onGeneralButtonClick, 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", self.onGeneralButtonClick, 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearchat", "Chat löschen / Werbung ausblenden", self.onGeneralButtonClick, 10, 230, 250, 30, Color.Red, tabAllgemein)
 	self:addAdminButton("resetAction", "Aktions-Sperre resetten", self.onGeneralButtonClick, 10, 270, 250, 30, Color.Orange, tabAllgemein)
-	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("vehicleTexture", "Fahrzeug Texturen Menu", self.onGeneralButtonClick, 10, 310, 250, 30, Color.Accent, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
 	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
@@ -64,26 +64,26 @@ function AdminGUI:constructor(money)
 	self.m_EventReasonEdit = GUIEdit:new(410, 150, 140, 30, tabAllgemein)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", self.onGeneralButtonClick, 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", self.onGeneralButtonClick, 450, 190, 100, 30, Color.Red, tabAllgemein)
-	self:addAdminButton("event", "Event-Menü", self.onGeneralButtonClick, 340, 230, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("event", "Event-Menü", self.onGeneralButtonClick, 340, 230, 210, 30, Color.Accent, tabAllgemein)
 	self:addAdminButton("checkOverlappingVehicles", "Überlappende Fahrzeuge", self.onGeneralButtonClick, 340, 310, 210, 30, Color.Red, tabAllgemein)
-	self:addAdminButton("pedMenu", "Ped-Menü", self.onGeneralButtonClick, 340, 350, 210, 30, Color.Blue, tabAllgemein)
-	self:addAdminButton("playerHistory", "Spielerakten", self.onGeneralButtonClick, 340, 390, 210, 30, Color.Blue, tabAllgemein)
-	self:addAdminButton("eventGangwarMenu", "Gangwar-Menü", self.onGeneralButtonClick, 340, 430, 210, 30, Color.Blue, tabAllgemein)
-	self:addAdminButton("fireMenu", "Feuer-Menü", self.onGeneralButtonClick, 340, 470, 210, 30, Color.Blue, tabAllgemein)
+	self:addAdminButton("pedMenu", "Ped-Menü", self.onGeneralButtonClick, 340, 350, 210, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("playerHistory", "Spielerakten", self.onGeneralButtonClick, 340, 390, 210, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("eventGangwarMenu", "Gangwar-Menü", self.onGeneralButtonClick, 340, 430, 210, 30, Color.Accent, tabAllgemein)
+	self:addAdminButton("fireMenu", "Feuer-Menü", self.onGeneralButtonClick, 340, 470, 210, 30, Color.Accent, tabAllgemein)
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
-	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBarEnabled(false)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("F") end
-	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"→",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"→",  tabAllgemein):setBarEnabled(false)
 	self.m_portEast.onLeftClick = function () self:portAdmin("R") end
-	self.m_portSouth = GUIButton:new(self.m_Width-105, 145, 30, 30, _"↓",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portSouth = GUIButton:new(self.m_Width-105, 145, 30, 30, _"↓",  tabAllgemein):setBarEnabled(false)
 	self.m_portSouth.onLeftClick = function () self:portAdmin("B") end
-	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"←",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"←",  tabAllgemein):setBarEnabled(false)
 	self.m_portWest.onLeftClick = function () self:portAdmin("L") end
-	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBarEnabled(false)
 	self.m_portUp.onLeftClick = function () self:portAdmin("U") end
-	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBarEnabled(false)
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
@@ -93,7 +93,7 @@ function AdminGUI:constructor(money)
 
 	self.m_PlayersGrid = GUIGridList:new(10, 45, 200, 425, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
-	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
+	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setBarEnabled(false):setFont(FontAwesome(15))
 	self.m_RefreshButton.onLeftClick = function ()
 		self:refreshOnlinePlayers()
 	end
@@ -124,13 +124,13 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("showGroupVehicles", "Firma/Gruppen Fahrzeuge", self.onPlayerButtonClick, 610, 130, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", self.onPlayerButtonClick, 610, 170, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("warn", "Warns verwalten", self.onPlayerButtonClick, 610, 210, 160, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("setFaction", "in Fraktion setzen", self.onPlayerButtonClick, 610, 250, 160, 30, Color.Blue, tabSpieler)
-	self:addAdminButton("setCompany", "in Unternehmen setzen", self.onPlayerButtonClick, 610, 290, 160, 30, Color.Blue, tabSpieler)
+	self:addAdminButton("setFaction", "in Fraktion setzen", self.onPlayerButtonClick, 610, 250, 160, 30, Color.Accent, tabSpieler)
+	self:addAdminButton("setCompany", "in Unternehmen setzen", self.onPlayerButtonClick, 610, 290, 160, 30, Color.Accent, tabSpieler)
 
 	local tabOffline = self.m_TabPanel:addTab(_"Offline")
 	GUILabel:new(10, 10, 200, 20, "Suche:", tabOffline)
 	self.m_SeachText = GUIEdit:new(10, 30, 170, 30, tabOffline)
-	self.m_SeachButton = GUIButton:new(180, 30, 30, 30, FontAwesomeSymbols.Search, tabOffline):setFont(FontAwesome(15))
+	self.m_SeachButton = GUIButton:new(180, 30, 30, 30, FontAwesomeSymbols.Search, tabOffline):setBarEnabled(false):setFont(FontAwesome(15))
 	self.m_SeachButton.onLeftClick = function ()
 		if #self.m_SeachText:getText() >= 3 then
 			triggerServerEvent("adminSeachPlayer", localPlayer, self.m_SeachText:getText())
@@ -156,7 +156,7 @@ function AdminGUI:constructor(money)
 
 	self:addAdminButton("offlineTimeban", "Timeban", self.onOfflineButtonClick, 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", self.onOfflineButtonClick, 410, 290, 180, 30, Color.Red, tabOffline)
-	self:addAdminButton("offlineUnban", "Unban", self.onOfflineButtonClick, 220, 330, 180, 30, Color.Blue, tabOffline)
+	self:addAdminButton("offlineUnban", "Unban", self.onOfflineButtonClick, 220, 330, 180, 30, Color.Accent, tabOffline)
 	self:addAdminButton("offlineNickchange", "NickChange", self.onOfflineButtonClick, 410, 330, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlineWarn", "Warns verwalten", self.onOfflineButtonClick, 220, 370, 180, 30, Color.Orange, tabOffline)
 	self:addAdminButton("offlinePrison", "ins Prison", self.onOfflineButtonClick, 220, 410, 180, 30, Color.Orange, tabOffline)
@@ -243,9 +243,12 @@ function AdminGUI:refreshOnlinePlayers()
 end
 
 function AdminGUI:addAdminButton(name, text, func, x, y, width, height, color, parent)
-	self.m_adminButton[name] = GUIButton:new(x, y, width, height, _(text),  parent):setFontSize(1):setBackgroundColor(color)
+	self.m_adminButton[name] = GUIButton:new(x, y, width, height, _(text),  parent):setBackgroundColor(color)
 	self.m_adminButton[name].func = name
 	self.m_adminButton[name].onLeftClick = bind(func, self, name)
+	if text:len() > 18 then
+		self.m_adminButton[name]:setFontSize(0.8)
+	end
 	if AdminGUI.playerFunctions[name] then
 		self.m_adminButton[name]:setEnabled(false)
 	end

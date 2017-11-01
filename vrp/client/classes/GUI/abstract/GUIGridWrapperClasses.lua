@@ -14,16 +14,18 @@ GUIGridCombobox = inherit(GUICombobox)
 GUIGridGridList = inherit(GUIGridList)
 GUIGridImage = inherit(GUIImage)
 GUIGridLabel = inherit(GUILabel)
-GUIGridLinkLabel = inherit(GUILinkLabel)
 GUIGridMiniMap = inherit(GUIMiniMap)
 GUIGridProgressBar = inherit(GUIProgressBar)
 GUIGridRadioButton = inherit(GUIRadioButton)
 GUIGridRectangle = inherit(GUIRectangle)
+GUIGridEmptyRectangle = inherit(GUIEmptyRectangle)
 GUIGridSlider = inherit(GUISlider)
 GUIGridSwitch = inherit(GUISwitch)
 GUIGridScrollableArea = inherit(GUIScrollableArea)
 GUIGridWebView = inherit(GUIWebView)
 GUIGridMemo = inherit(GUIMemo)
+GUIGridSkribble = inherit(GUISkribble)
+GUIGridRating = inherit(GUIRating)
 
 
 function GUIGridEdit:constructor(posX, posY, width, height, parent) return GUIEdit.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
@@ -32,17 +34,18 @@ function GUIGridGridList:constructor(posX, posY, width, height, parent) return G
 function GUIGridImage:constructor(posX, posY, width, height, path, parent) return GUIImage.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), path, parent) end
 function GUIGridRadioButton:constructor(posX, posY, width, height, text, parent) return GUIRadioButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent) end
 function GUIGridRectangle:constructor(posX, posY, width, height, color, parent) return GUIRectangle.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), color, parent) end
+function GUIGridEmptyRectangle:constructor(posX, posY, width, height, linewidth, color, parent) return GUIEmptyRectangle.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), linewidth, color, parent) end
 function GUIGridProgressBar:constructor(posX, posY, width, height, parent) return GUIProgressBar.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSlider:constructor(posX, posY, width, height, parent) return GUISlider.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridSwitch:constructor(posX, posY, width, height, parent) return GUISwitch.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
 function GUIGridWebView:constructor(posX, posY, width, height, url, transparent, parent) return GUIWebView.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), url, transparent, parent) end
 function GUIGridScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space) return GUIScrollableArea.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), grid("d", documentWidth), grid("d", documentHeight), verticalScrollbar, horizontalScrollbar, parent, grid("y", space)) end
 function GUIGridMemo:constructor(posX, posY, width, height, parent) return GUIMemo.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
-
+function GUIGridSkribble:constructor(posX, posY, width, height, parent) return GUISkribble.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), parent) end
+function GUIGridRating:constructor(posX, posY, width, height, amount, parent) return GUIRating.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), amount, parent) end
 
 function GUIGridButton:constructor(posX, posY, width, height, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
-    self:setBarEnabled(true)
     self:setFont(VRPFont(25)):setFontSize(1)
     return self
 end
@@ -50,6 +53,7 @@ end
 function GUIGridIconButton:constructor(posX, posY, text, parent)
     GUIButton.constructor(self, grid("x", posX), grid("y", posY), grid("d", 1), grid("d", 1), text, parent)
     self:setFont(FontAwesome(15)):setFontSize(1)
+    self:setBarEnabled(false)
     self:setBackgroundColor(Color.Accent)
     return self
 end
@@ -72,13 +76,6 @@ end
 
 function GUIGridLabel:constructor(posX, posY, width, height, text, parent)
     GUILabel.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
-    self:setFont(VRPFont(25))
-    self:setAlignY("center")
-    return self
-end
-
-function GUIGridLinkLabel:constructor(posX, posY, width, height, text, parent)
-    GUILinkLabel.constructor(self, grid("x", posX), grid("y", posY), grid("d", width), grid("d", height), text, parent)
     self:setFont(VRPFont(25))
     self:setAlignY("center")
     return self

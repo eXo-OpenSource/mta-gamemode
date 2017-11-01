@@ -93,7 +93,7 @@ function ItemDepotGUI:refreshData(id, items)
     self.m_Id = id
     for index, item in pairs(items) do
         if item["Item"] ~= 0 then
-         	if self.m_ItemSlots[index] then  
+         	if self.m_ItemSlots[index] then
 				self.m_ItemSlots[index].Label:setText(item["Item"])
 				self.m_ItemSlots[index].Amount:setText(_("%d Stk.", item["Amount"]))
 				if self.m_ItemSlots[index].Image and self.m_ItemData[item.Item] then
@@ -131,14 +131,25 @@ function ItemDepotGUI:checkAmount(text)
     end
 end
 
+function ItemDepotGUI:resetSelected()
+	self.m_SelectedItem = nil
+	self.m_SelectedItemAmount = nil
+	self.m_SelectedItemValue = nil
+end
+
 function ItemDepotGUI:toDepot()
     if self.m_Id then
-        local amount = tonumber(self.m_Amount:getText())
+		if not self.m_SelectedItem then
+			ErrorBox:new(_"Du hast kein Item aus der Liste ausgewält!")
+			return
+		end
+		local amount = tonumber(self.m_Amount:getText())
         if amount and amount > 0 then
             if amount <= self.m_SelectedItemAmount then
                 triggerServerEvent("itemDepotAdd", localPlayer, self.m_Id, self.m_SelectedItem, amount)
                 self.m_MyItemsGrid:setVisible(false)
-                self.m_LoadingLabel:setVisible(true)
+				self.m_LoadingLabel:setVisible(true)
+				self:resetSelected()
             else
                 ErrorBox:new(_"Anzahl zu hoch! Du hast nicht soviel von diesem Item!")
             end

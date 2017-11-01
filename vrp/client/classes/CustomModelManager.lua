@@ -200,6 +200,10 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)
 
+	-- Halloween Smode
+	self:loadImportTXD("files/models/ghost.txd", 260)
+	self:loadImportDFF("files/models/ghost.dff", 260)
+
 
 	--Easter Event:
 	self:loadImportCOL("files/models/easter_egg.col", 1933)
@@ -208,11 +212,20 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/Wearables/BunnyEars.txd", 1934)
 	self:loadImportDFF("files/models/Wearables/BunnyEars.dff", 1934)
 
+	--Halloween Event:
+	self:loadImportCOL("files/models/pumpkin.col", 1935)
+	self:loadImportTXD("files/models/pumpkin.txd", 1935)
+	self:loadImportDFF("files/models/pumpkin.dff", 1935)
+
+	self:loadImportCOL("files/models/headstone.col", 3878)
+	self:loadImportTXD("files/models/headstone.txd", 3878)
+	self:loadImportDFF("files/models/headstone.dff", 3878)
+
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
 	self:loadShader("RoadSigns/parking2.png", "roadsign01_128")
 	--self:loadShader("RoadSigns/trans.png", "txgrass0_1")
-	self:loadShader("RoadSigns/trans.png", "txgrass1_1")
+	self:loadShader("Other/trans.png", "txgrass1_1")
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

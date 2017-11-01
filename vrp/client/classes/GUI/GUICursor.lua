@@ -31,6 +31,23 @@ function GUICursor:draw()
 	end
 end
 
+function GUICursor:drawClickBlood()
+	local cursorX, cursorY = getCursorPosition()
+	if cursorX then
+		local s = math.random(50, 100)
+		local r = math.random(0,360)
+		cursorX, cursorY = cursorX*screenWidth, cursorY*screenHeight
+		
+		addEventHandler("onClientRender", root, function()
+			dxDrawImage(cursorX-s/2, cursorY-s/2, s, s, "files/images/Events/Halloween/blood.png", r)
+			s = s - 1
+			if s <= 0 then
+				removeEventHandler("onClientRender", root, getThisFunction())
+			end
+		end)
+	end
+end
+
 function GUICursor:toggleCursor(button, state)
 	if self.m_CursorMode then -- is instant?
 		showCursor(state == "down")

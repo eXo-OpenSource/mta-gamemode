@@ -16,10 +16,10 @@ function AppContacts:onOpen(form)
 	self.m_ContactListGrid:addColumn(_"Spieler", 0.7)
 	self.m_ContactListGrid:addColumn(_"Num.", 0.3)
 
-	self.m_ButtonRemoveContact = GUIButton:new(10, form.m_Height-40, 30, 30, "-", form):setBackgroundColor(Color.Red)
+	self.m_ButtonRemoveContact = GUIButton:new(10, form.m_Height-40, 30, 30, "-", form):setBackgroundColor(Color.Red):setBarEnabled(false)
 	self.m_ButtonRemoveContact.onLeftClick = bind(self.ButtonRemoveContact_Click, self)
 
-	self.m_ButtonCallPlayers = GUIButton:new(form.m_Width-110, form.m_Height-40, 100, 30, _"Anrufen", form):setBackgroundColor(Color.Green)
+	self.m_ButtonCallPlayers = GUIButton:new(form.m_Width-110, form.m_Height-40, 100, 30, _"Anrufen", form):setBackgroundColor(Color.Green):setBarEnabled(false)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 
 	self:refreshContacts()
@@ -50,8 +50,7 @@ function AppContacts:ButtonCallPlayer_Click()
 		return
 	end
 
-	Phone:getSingleton():getAppByClass(AppCall):openInCall("player", player, CALL_RESULT_CALLING, false)
-	triggerServerEvent("callStart", root, player, false)
+	Phone:getSingleton():getAppByClass(AppCall):startCall("player", player)
 end
 
 function AppContacts:refreshContacts()

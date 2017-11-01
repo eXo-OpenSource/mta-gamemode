@@ -12,6 +12,7 @@ registerElementClass("player", Player)
 -- Create Hooks
 Player.ms_QuitHook = Hook:new()
 Player.ms_ChatHook = Hook:new()
+Player.ms_ScreamHook = Hook:new()
 
 addEvent("characterInitialized")
 addEvent("introFinished", true)
@@ -70,6 +71,11 @@ function Player:destructor()
 	end
 
 	self:setJailNewTime()
+
+	if self:hasTemporaryStorage() then
+		self:restoreStorage()
+	end
+
 	self:save()
 
 	if self.m_BankAccount then
@@ -97,7 +103,7 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	--setElementDimension(self, PRIVATE_DIMENSION_SERVER) --don't do this as it ruins the view in login panel (desyncs of other players) // (maybe add it again if it bugs for some reason)
 	setElementFrozen(self, true)
 	--[[setTimer(function()
 
@@ -318,10 +324,6 @@ function Player:save()
 		-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
 		if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
 			self.m_UniqueInterior = 0
-		end
-
-		if self:hasTemporaryStorage() then
-			self:restoreStorage()
 		end
 
 		local weapons = {}
@@ -906,6 +908,11 @@ function Player:payDay()
 		end
 	end
 
+	if EVENT_HALLOWEEN and self.m_HalloweenPaydayBonus then
+		income = income + self.m_HalloweenPaydayBonus
+		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
+	end
+
 	income_interest = math.floor(self:getBankMoney()*0.01)
 	if income_interest > 1500 then income_interest = 1500 end
 	if income_interest > 0 then
@@ -1109,6 +1116,10 @@ function Player.getChatHook()
 	return Player.ms_ChatHook
 end
 
+function Player.getScreamHook()
+	return Player.ms_ScreamHook
+end
+
 function Player:setKarma(karma)
 	if karma < 0 and self.m_Karma >= 0 then
 		self:giveAchievement(1)
@@ -1121,7 +1132,7 @@ function Player:setKarma(karma)
 end
 
 function Player:giveKarma(karma, reason, bNoSound, silent)
-	if not karma or karma < 1 then return false end
+	if not karma then return false end
 	local oldKarma = self.m_Karma
 	local success = DatabasePlayer.giveKarma(self, karma, reason)
 	if success then

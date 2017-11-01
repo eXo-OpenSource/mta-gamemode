@@ -44,6 +44,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
 	addEventHandler("playSound", root, bind(self.Event_PlaySound, self))
+	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
@@ -96,6 +97,15 @@ function LocalPlayer:fadeOutScope()
 		localPlayer.m_IsFading = false
 	end
 end
+
+function LocalPlayer:Event_OnObjectBrake( attacker ) 
+	if attacker == localPlayer then
+		if getElementModel(source) == 1224 then 
+			triggerServerEvent("onCrateDestroyed",localPlayer,source)
+		end
+	end
+end
+
 
 function LocalPlayer:onAlcoholLevelChange()
 	if self:getPrivateSync("AlcoholLevel") > 0 then
@@ -243,6 +253,7 @@ function LocalPlayer:Event_playerWasted()
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
+	Phone:getSingleton():close()
 	showChat(false)
 	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
@@ -718,7 +729,7 @@ function LocalPlayer:startAnimation(_, ...)
 	if localPlayer:getData("isTasered") then return end
 	if localPlayer.vehicle then return end
 	if localPlayer:isOnFire() then return end
-	
+
 	triggerServerEvent("startAnimation", localPlayer, table.concat({...}, " "))
 end
 

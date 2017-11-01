@@ -17,7 +17,7 @@ function HouseEditGUI:constructor()
 	self.m_Window:deleteOnClose( true )
 
 	--HOUSE_INTERIOR_TABLE
-	self.m_Interior =     GUILabel:new(10, 40, self.m_Width-20, 30, _"Aktueller Interior: ", self.m_Window)
+	self.m_Interior = GUILabel:new(10, 40, self.m_Width-20, 30, _"Aktueller Interior: ", self.m_Window)
 	self.m_ChangeInt = GUIButton:new(10, 70, self.m_Width-20, 35, _"Interior ändern", self)
 	self.m_ChangeInt:setFont(VRPFont(28)):setFontSize(1)
 	self.m_ChangeInt.onLeftClick = function()

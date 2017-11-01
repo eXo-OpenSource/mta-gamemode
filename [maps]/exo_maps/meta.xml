@@ -10,9 +10,8 @@
 	<script src="mapEditorScriptingExtension_c.lua" type="client"></script>
 
 	<map src="atm.map" />
-	<map src="CrackPalace.map" />
+
 	<map src="medic_fix.map" />
-	<map src="interior_fixes.map" />
 	<!--<map src="fun/boxarena.map" />/-->
 
 	<map src="fraktionen/army.map" />
@@ -33,7 +32,18 @@
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
-	<map src="banken/bankPalomino.map" />
+	
+	<map src="events/halloween.map" />
+
+	<!--fixes-->
+	<map src="mapfixes/CrackPalace.map" />
+	<map src="mapfixes/interior_fixes.map" />
+	<!--<map src="mapfixes/map_fixes.map" />-->
+
+	<map src="gruppen/Security_Consulting.map" />
+	<map src="gruppen/Richman.map"/>
+	<map src="gruppen/Triangle.map"/>
+
 
 	<!--<map src="autohaus/9_bike.map" />/-->
 	<map src="autohaus/11_sport.map" />
@@ -43,9 +53,9 @@
 
 	<map src="gangwar/KLM-GW.map" />
 	<map src="gangwar/Raffi-GW.map" />
+	<map src="gangwar/gangwar.map" />
 
 	<!--map src="jobs/cartransport.map" /-->
-	<map src="jobs/gaertnerei.map" />
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/busjob.map" />
 	<map src="jobs/logistican.map" />
@@ -56,8 +66,9 @@
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
 	
-	<map src="ammunation.map" />
-	<map src="ammunation2.map" />
+	<map src="shop/ammunation.map" />
+	<map src="shop/ammunation2.map" />
+	<map src="shop/gaertnerei.map" />
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
@@ -65,23 +76,24 @@
 	<map src="airport.map" />
 	<map src="shootingranch.map" />
 	<map src="skydive.map" />
-	<map src="gangwar.map" />
-	<map src="bankLS.map" />
 
-	<map src="tankstellen_removals.map" />
+	<map src="bankLS.map" />
+	<map src="bankPalomino.map" />
+
+	<map src="shop/Tankstellen.map"/>
+	<map src="shop/tankstellen_removals.map" />
 
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 
-	<map src="Tankstellen.map"/>
+	
 
 	<map src="stuntfix.map"/>
 
-	<map src="fishshop.map"/>
+	<map src="shop/fishshop.map"/>
 
 	<map src="minigamescafe.map" dimension="2" />
 	<map src="tokyotown.map" dimension="0" />
 
-	<!--xxking-->
-	<map src="Heliport-Immo.map" dimension="0" />
+	
 </meta>

@@ -44,7 +44,8 @@ function FireRoot:constructor(iX, iY, iW, iH)
 		self.m_DebugArea = RadarArea:new(iX, iY, iW, -iH, {200, 0, 0, 100})
 	end
 
-    for index = 1, math.sqrt(iW*iH)/FireRoot.Settings["coords_per_fire"]/3 do
+	self:updateFire(math.floor(self.m_Max_I/2), math.floor(self.m_Max_V/2), 3)
+    for index = 1, math.min(math.sqrt(iW*iH) / FireRoot.Settings["coords_per_fire"] / 3 , self.m_Max_Fires) do
         local i, v = math.random(0, iW/FireRoot.Settings["coords_per_fire"]), math.random(0, iH/FireRoot.Settings["coords_per_fire"])
         self:updateFire(i, v, 3)
     end
@@ -73,8 +74,6 @@ function FireRoot:destructor()
 
 	if self.m_OnFinishHook then
 		self.m_OnFinishHook(self.m_Statistics)
-		outputDebugString("fire root "..inspect(self.m_Root).." has been extinguished completely. Statistics:")
-        iprint(self.m_Statistics)
 	end
 
     FireRoot.Map[self] = nil
@@ -182,7 +181,7 @@ function FireRoot:update()
 
 	self.m_Statistics.activeRescuePlayers = self:countUsersAtSight(true)
 	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
-		PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
+		--PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
 	end
 	if self.m_OnUpdateHook then

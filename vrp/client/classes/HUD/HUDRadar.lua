@@ -506,7 +506,7 @@ function HUDRadar:getZoom()
 end
 
 function HUDRadar:getPosition()
-	if self.m_GWRadar and getPlayerHudComponentVisible("radar") then -- appropriate distance to default radar
+	if self.m_GWRadar and isPlayerHudComponentVisible("radar") then -- appropriate distance to default radar
 		return self.m_PosX, screenHeight - 300*screenWidth/1600
 	elseif not self.m_Enabled or not self.m_Visible or getElementInterior(localPlayer) ~= 0 then -- bottom
 		return self.m_PosX, screenHeight

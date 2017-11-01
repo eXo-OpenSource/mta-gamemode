@@ -599,6 +599,7 @@ function Group:calculateVehicleTax(data)
 	for category, amount in pairs(data) do
 		tax = VehicleCategory:getSingleton():getCategoryTax(category)
 		if tax then
+			tax = math.floor(tax/4)
 			sum = sum + tax*amount
 		end
 	end
@@ -638,14 +639,16 @@ function Group:payDay(vehicleData)
 	if sum > 0 then
 		self:giveMoney(sum, "Payday")
 	elseif sum < 0 then
-		self:takeMoney(sum, "Payday")
+		self:takeMoney(math.abs(sum), "Payday")
 	end
-	self:sendShortMessage(table.concat(output, "\n"))
+	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
 			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
-				mechanic:respawnVehicle(vehicle)
+				if not vehicle:getPositionType() == VehiclePositionType.Mechanic then
+					mechanic:respawnVehicle(vehicle)
+				end
 			end
 		else
 			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())

@@ -151,8 +151,8 @@ JAIL_TIME_PER_WANTED_ARREST = 3
 JAIL_TIME_PER_WANTED_KILL = 4
 JAIL_TIME_PER_WANTED_OFFLINE = 5
 
-CHAT_MSG_REPEAT_COOLDOWN = 500 -- cooldown for different chat messages 
-CHAT_SAME_MSG_REPEAT_COOLDOWN = 3000 -- cooldown for same chat messages 
+CHAT_MSG_REPEAT_COOLDOWN = 500 -- cooldown for different chat messages
+CHAT_SAME_MSG_REPEAT_COOLDOWN = 3000 -- cooldown for same chat messages
 
 RESOURCES_TO_STOP = {
     "scoreboard";

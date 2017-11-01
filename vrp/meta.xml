@@ -113,6 +113,7 @@
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItems/CompanyWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
@@ -123,12 +124,8 @@
 	<script src="server/classes/Inventory/Growable.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemBarricade.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemSpeedCam.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemNails.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDice.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemAlcohol.lua" type="server"/>
@@ -140,6 +137,7 @@
 	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFishing.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemEasterEgg.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemPumpkin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 
@@ -154,6 +152,13 @@
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsCocaine.lua" type="server"/>
+
+	<!--WorldItems-->
+	<script src="server/classes/Inventory/Items/WorldItems/ItemBarricade.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemSpeedCam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemNails.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemRadio.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemSkyBeam.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
@@ -171,6 +176,16 @@
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
+	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Skribble/SkribbleLobby.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>
@@ -180,6 +195,7 @@
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -202,6 +218,29 @@
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareSurvive.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareStayTop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCrateBreak.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMurder.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDuck.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareGuess.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareJump.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareClimb.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareParachute.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMath.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareButtons.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareRamp.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareMarker.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareSprint.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareDraw.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareCode.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPeds/ItemBeggar.lua" type="server"/>
@@ -312,6 +351,10 @@
 	<script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
+
+	<!-- Halloween -->
+	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
+	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -425,7 +468,6 @@
 	<script src="client/classes/GUI/GUIForm.lua" type="client"/>
 	<script src="client/classes/GUI/GUIForm3D.lua" type="client"/>
 	<script src="client/classes/GUI/GUILabel.lua" type="client"/>
-	<script src="client/classes/GUI/GUILinkLabel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRenderer.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWindow.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWindowFocus_workaround.lua" type="client"/>
@@ -457,6 +499,8 @@
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
 	<script src="client/classes/GUI/GUISwitch.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMemo.lua" type="client"/>
+	<script src="client/classes/GUI/GUISkribble.lua" type="client"/>
+	<script src="client/classes/GUI/GUIRating.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIGridWrapperClasses.lua" type="client"/> <!--has to be loaded after all GUIElements-->
 
 	<script src="client/classes/Development/CodeEditor.lua" type="client"/>
@@ -514,7 +558,6 @@
 
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	<script src="client/classes/GUIElements/BusRoutePlan.lua" type="client"/>
@@ -553,7 +596,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuAdmin.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuFactionItems.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuPassenger.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuLastDriver.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
@@ -684,6 +727,9 @@
 	<script src="client/classes/GUIForms/GangwarDebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RouletteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TurtleRaceGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -731,6 +777,7 @@
 	<script src="client/classes/Phone/Apps/AppNavigator.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSanNews.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNotes.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppSkribble.lua" type="client"/>
 
 
 	<!-- Companies -->
@@ -793,6 +840,12 @@
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
+	<!-- Halloween -->
+	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
+	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
+
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
 	<script src="client/classes/Faction/FactionRescue.lua" type="client"/>
@@ -832,6 +885,18 @@
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 
+	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/WareHUD.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Ware/minigames/WareJump.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDuck.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareKeepMove.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDontMove.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareButtons.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareSprint.lua" type="client"/>
+	<script src="client/classes/Gameplay/Ware/minigames/WareDraw.lua" type="client"/>
+
 	<!-- Fishing -->
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing/FishingRod.lua" type="client"/>
@@ -854,14 +919,6 @@
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
-	<!-- serverside -->
-	<script src="server/classes/Gameplay/Minigames/Roulette/RouletteManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Roulette/Roulette.lua" type="server"/>
-
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
-
 	<!-- CHESS -->
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessConstants.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="client" cache="true" />
@@ -869,8 +926,7 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
-
-	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
@@ -887,6 +943,16 @@
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
+	<!-- ware-gamemode -->
+	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
+	<vrpfile src="files/images/Textures/Ware/bomb.png"/>
+	<vrpfile src="files/images/Textures/Ware/fuse.png"/>
+	<vrpfile src="files/images/Textures/Ware/fire.png"/>
+
+	<vrpfile src="files/audio/Ware/kahoot.ogg" />
+	<vrpfile src="files/audio/Ware/done.mp3" />
+	<vrpfile src="files/audio/Ware/fail.mp3" />
+	<vrpfile src="files/fonts/SuperMario256.ttf" />
 
 	<vrpfile src="files/images/warning.png" />
 
@@ -920,6 +986,27 @@
 	<vrpfile src="files/images/Events/Easter/slot_4.png" />
 	<vrpfile src="files/images/Events/Easter/slot_5.png" />
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
+
+	<vrpfile src="files/images/Events/Halloween/blood.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
+
+	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Bravura.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Deagle.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Dildo.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Heroin.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Karma.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_NickChange.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Money.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Payday.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Romero.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Vest.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_VIP.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Weed.png" />
+	<vrpfile src="files/images/Events/Halloween/Bonus_Zombie.png" />
 
 	<!-- Todo -->
 
@@ -993,6 +1080,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconEPT.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconContacts.png"/>
@@ -1009,6 +1097,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNavigator.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconEPT.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconNotes.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconScribble.png"/>
 
 	<vrpfile src="files/images/Phone/Backgrounds/Google_Pixel.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/iOS_7.png"/>
@@ -1018,17 +1107,15 @@
 	<vrpfile src="files/images/Phone/Backgrounds/Xperia_X.png"/>
 	<vrpfile src="files/images/Phone/Backgrounds/OnePlus_3T.png"/>
 
-	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
-	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton_checked.png" onDemand="false"/>
 	<file src="files/images/GUI/Cursor.png"/>
 	<file src="files/images/GUI/Mouse.png"/>
-	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/FullCircle.png"/>
 	<vrpfile src="files/images/GUI/HelpIcon.png"/>
 	<vrpfile src="files/images/GUI/Triangle.png"/>
+	<vrpfile src="files/images/GUI/Star.png"/>
 
 	<vrpfile src="files/images/Colorpicker/Gradient.png"/>
 	<vrpfile src="files/images/Colorpicker/hueBar.png"/>
@@ -1117,7 +1204,8 @@
 	<vrpfile src="files/images/Other/Tour.png"/>
 	<vrpfile src="files/images/Other/blood.png"/>
 	<vrpfile src="files/images/Other/Neon.png"/>
-	<vrpfile src="files/images/Other/bubble.png"/>
+	<vrpfile src="files/images/Other/bubble_border.png"/>
+	<vrpfile src="files/images/Other/bubble_bg.png"/>
 	<vrpfile src="files/images/Other/premium.png"/>
 	<vrpfile src="files/images/Other/TreasureRadar.png"/>
 	<vrpfile src="files/images/Other/TreasureRadarBlip.png"/>
@@ -1182,6 +1270,7 @@
 	<vrpfile src="files/images/Radar/Radar_Monochrome/Radar-small.jpg"/>
 	<!-- Blips -->
 	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
+	<vrpfile src="files/images/Radar/Blips/Ghost.png"/>
 	<vrpfile src="files/images/Radar/Blips/Evil.png"/>
 	<vrpfile src="files/images/Radar/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar/Blips/Logistician.png"/>
@@ -1269,6 +1358,10 @@
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	<vrpfile src="files/images/Nametag/SASF.png"/>
+	<vrpfile src="files/images/Nametag/EPT.png"/>
+	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
+	<vrpfile src="files/images/Nametag/San News.png"/>
+	<vrpfile src="files/images/Nametag/MT.png"/>
 
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
@@ -1315,6 +1408,9 @@
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
 	<vrpfile src="files/images/Textures/EPTBusStop.png"/>
+	<vrpfile src="files/images/Textures/busShelter_both.png"/>
+	<vrpfile src="files/images/Textures/busShelter_1.png"/>
+	<vrpfile src="files/images/Textures/busShelter_2.png"/>
 	<vrpfile src="files/images/Textures/GasStation.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
@@ -1360,7 +1456,6 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
-	<vrpfile src="files/images/Textures/waretex.png"/>
 	<vrpfile src="files/images/Textures/tracer.png"/>
 
 	<!-- Inventory Images -->
@@ -1529,6 +1624,7 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
+	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
@@ -1734,6 +1830,8 @@
 	<vrpfile src="files/models/zombie.txd"/>
 	<vrpfile src="files/models/waterCan.txd" />
 	<vrpfile src="files/models/waterCan.dff" />
+	<vrpfile src="files/models/waluigi.txd" />
+	<vrpfile src="files/models/waluigi.dff" />
 	<vrpfile src="files/models/waterCan.col" />
 	<vrpfile src="files/models/mostWanted.txd" />
 	<vrpfile src="files/models/mostWanted.dff" />
@@ -1840,6 +1938,18 @@
 	<file src="files/models/easter_egg.col" />
 	<!-- Easter Event End-->
 
+	<!-- Halloween Event Start-->
+	<vrpfile src="files/models/pumpkin.txd" />
+	<vrpfile src="files/models/pumpkin.dff" />
+	<vrpfile src="files/models/pumpkin.col" />
+	<vrpfile src="files/models/ghost.dff"/>
+	<vrpfile src="files/models/ghost.txd"/>
+	<vrpfile src="files/models/headstone.txd" />
+	<vrpfile src="files/models/headstone.dff" />
+	<vrpfile src="files/models/headstone.col" />
+
+	<!-- Halloween Event End-->
+
 	<vrpfile src="files/models/fbi.txd" />
 	<vrpfile src="files/models/fbi.dff" />
 
@@ -1911,7 +2021,6 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	<map src="files/maps/Academi.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

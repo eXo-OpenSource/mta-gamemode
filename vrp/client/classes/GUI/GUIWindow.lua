@@ -17,6 +17,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
 	self.m_MovingEnabled = true
+	self.m_BGColor = Color.Background
 
 	self.m_Parent:bringToFront() --don't bring the window itself to front but rather the GUIForm parent
 	self.onLeftClickDown = function()
@@ -42,7 +43,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	end
 
 	if self.m_HasCloseButton then
-		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+		self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBarEnabled(false):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
 	end
 end
@@ -63,7 +64,7 @@ function GUIWindow:drawThis()
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
 
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Background)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BGColor)
 
 	dxSetBlendMode("blend")
 end
@@ -108,7 +109,7 @@ function GUIWindow:deleteOnClose(close) -- Todo: Find a better name
 end
 
 function GUIWindow:addBackButton(callback)
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function()
 		self:close()
 		if type(callback) == "function" then

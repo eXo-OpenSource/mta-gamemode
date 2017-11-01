@@ -120,24 +120,21 @@ end
 function Trunk:takeItem(player, slot)
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
-			--if self.m_ItemSlot[slot]["Amount"] > 0 then
-				local item = self.m_ItemSlot[slot]["Item"]
-				local amount = self.m_ItemSlot[slot]["Amount"]
-				if player:getInventory():getFreePlacesForItem(item) >= amount then
-					self.m_ItemSlot[slot]["Item"] = "none"
-					self.m_ItemSlot[slot]["Amount"] = 0
-					player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"])
-					self.m_ItemSlot[slot]["Value"] = ""
-					player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
-					self:refreshClient(player)
-					StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
-					return
-				else
-					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
-				end
-			--else
-			--	player:sendError("Internal Error Amount to low", player)
-			--end
+			local item = self.m_ItemSlot[slot]["Item"]
+			local amount = self.m_ItemSlot[slot]["Amount"]
+
+			if player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"]) then
+				self.m_ItemSlot[slot]["Item"] = "none"
+				self.m_ItemSlot[slot]["Amount"] = 0
+
+				self.m_ItemSlot[slot]["Value"] = ""
+				player:sendInfo(_("Du hast %d %s aus deinem Kofferraum (Slot %d) genommen!", player, amount, item, slot))
+				self:refreshClient(player)
+				StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "item", item, amount, slot)
+				return
+			else
+				self:refreshClient(player)
+			end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
 		end

@@ -312,6 +312,10 @@ function BankRobbery:addMoneyToBag(player, money)
 			return
 		end
 	end
+	if not self.ms_BagSpawns[#self.m_MoneyBags+1] then
+		player:sendError(_("Ihr habt bereits die maximale Anzahl an Geldsäcken!", player))
+		return
+	end
 	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
 	newBag.DeloadHook = bind(self.deloadBag, self)

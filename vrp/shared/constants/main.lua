@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.3.37"
+PROJECT_VERSION = "1.4.4"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -16,6 +16,7 @@ MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
+EVENT_HALLOWEEN = true
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -116,8 +117,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
-	
-	--admin general 
+
+	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
 	["eventMoneyDeposit"] = RANK.Supporter,
@@ -129,7 +130,7 @@ ADMIN_RANK_PERMISSION = {
 	["supermanFly"] = RANK.Moderator, -- flying supporter
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
-	
+
 	--group management
 	["setFaction"] = RANK.Administrator,
 	["setCompany"] = RANK.Administrator,
@@ -137,7 +138,7 @@ ADMIN_RANK_PERMISSION = {
 	["playerHistory"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter, -- respawn whole faction
 	["respawnCompany"] = RANK.Supporter, -- respawn whole company
-	
+
 	--teleport
 	["direction"] = RANK.Supporter, -- Up Down Left Right
 	["mark"] = RANK.Supporter, -- also gotomark
@@ -157,7 +158,7 @@ ADMIN_RANK_PERMISSION = {
 	["despawnVehicle"] = RANK.Supporter, -- despawn
 	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
 	["looseVehicleHandbrake"] = RANK.Supporter,
-	
+
 	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
 	["showDebugElementView"] = RANK.Administrator, --F10 view
@@ -804,7 +805,7 @@ FUEL_PRICE = { --price per liter
 	["jetfuel"] = 4.6,
 	["universal"] = 0,
 	["nofuel"] = 0,
-    
+
 }
 FUEL_NAME = { --display name
 	["petrol"] = "Super",
@@ -813,7 +814,7 @@ FUEL_NAME = { --display name
 	["jetfuel"] = "Kerosin",
 	["universal"] = "Universal-Kraftstoff",
 	["nofuel"] = "kein Kraftstoff",
-    
+
 }
 FUEL_PRICE_MULTIPLICATOR = 2
 MECHANIC_FUEL_PRICE_MULTIPLICATOR = 2.5

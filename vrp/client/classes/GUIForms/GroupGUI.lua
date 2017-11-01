@@ -12,10 +12,10 @@ function GroupGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-312.5, screenHeight/2-230, 625, 460)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
+	self.m_CloseButton = GUIButton:new(self.m_Width-30, 0, 30, 30, FontAwesomeSymbols.Close, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.Red):setHoverColor(Color.White):setFontSize(1)
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
+	self.m_BackButton = GUIButton:new(self.m_Width-60, 0, 30, 30, FontAwesomeSymbols.Left, self):setFont(FontAwesome(20)):setBarEnabled(false):setBackgroundColor(Color.Clear):setBackgroundHoverColor(Color.LightBlue):setHoverColor(Color.White):setFontSize(1)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	-- Tab: Groups
@@ -226,7 +226,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 					position = "Autohof"
 				end
 
-				local item = self.m_VehiclesGrid:addItem(element:getName(), position, ("%d$"):format(element:getTax() or 0))
+				local item = self.m_VehiclesGrid:addItem(element:getName(), position, ("%d$"):format(math.floor(element:getTax()/4) or 0))
 
 				item.VehicleElement = element
 				item.PositionType = positionType

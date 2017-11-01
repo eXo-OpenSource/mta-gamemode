@@ -52,6 +52,7 @@ FontAwesomeSymbols = {
 	Group = "",
 	Money = "",
 	Info = "",
+	Question = "",
 	CheckSquare = "",
 	Check = "",
 	Square = "",
@@ -101,6 +102,7 @@ FontAwesomeSymbols = {
 	Car = "",
 	Bullseye = "",
 	Circle_O_Notch = "",
+	Circle = "",
 	Heart = "",
 	Shield = "",
 	Comment = "",
@@ -112,6 +114,14 @@ FontAwesomeSymbols = {
 	Newspaper = "",
 	Advertisement = "",
 	Fire = "",
+	File = "",
+	Clock = "",
+	Brush = "",
+	Pencil = "",
+	Erase = "",
+	Edit = "",
+	Ban = "",
+	Bell = "",
 }
 
 Fonts = {
@@ -119,3 +129,14 @@ Fonts = {
 	EkMukta_Bold = "files/fonts/EkMukta-Bold.ttf",
 	Digital = "files/fonts/digital-7.ttf",
 }
+
+local FontMario = {}
+function FontMario256(height)
+	local fontsize = math.floor(height/2)
+	if not FontMario[fontsize] then
+		FontMario[fontsize] = dxCreateFont("files/fonts/SuperMario256.ttf", fontsize)
+	end
+
+	return FontMario[fontsize]
+end
+

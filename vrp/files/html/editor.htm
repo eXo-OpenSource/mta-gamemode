@@ -25,8 +25,8 @@
 <body>
 	<nav class="navbar navbar-exo">
 		<ul class="nav navbar-nav">
-			<li><a href='#' onclick="updateCodeMirror(templates.constructor)">constructor</a></li>
-			<li><a href='#' onclick="updateCodeMirror(templates.destructor)">destructor</a></li>
+			<!--<li><a href='#' onclick="updateCodeMirror(templates.constructor)">constructor</a></li>
+			<li><a href='#' onclick="updateCodeMirror(templates.destructor)">destructor</a></li>-->
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">GUI Elemente <span class="caret"></span></a>
 				<ul class="dropdown-menu">
@@ -64,7 +64,7 @@
 		function updateCodeMirror(data){
 			var editor = Settings.editor;
 			editor.focus()
-			data = data.replaceAll("NewGUI", Settings.className);
+			data = data.replaceAll("Classname", Settings.className);
 			var selection = editor.getSelection();
 			if(selection.length>0){
 				editor.replaceSelection(data);
@@ -86,6 +86,10 @@
         });
         mtatools.registerEvent("onCodeEditorThemeChange", function(theme) {
             editor.setOption("theme", theme);
+		});
+		mtatools.registerEvent("onCodeEditorCreateClass", function() {
+			Settings.editor.setValue("");
+			updateCodeMirror(templates.newClass.replaceAll("Classname", Settings.className));
 		});
 
 		mtatools.registerEvent("onCodeEditorClassNameChanged", function(name) {

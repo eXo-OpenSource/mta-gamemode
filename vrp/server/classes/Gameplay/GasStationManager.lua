@@ -86,7 +86,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 					if station:getShop() then
 						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-						station:getShop():giveMoney(price/2, "Betankung")
+						station:getShop():giveMoney(price/5, "Betankung")
 					end
 				else
 					client:sendError("Du hast nicht genügend Geld dabei!")
@@ -338,7 +338,6 @@ GAS_STATIONS = {
 			{Vector3(1606.10, -2445.5, 14.1), 0, 1}
 		},
 		accessible = {0, 0},
-		nonInterior = true,
 		fuelTypes = {"petrol_plus", "jetfuel"},
 	},
 	{

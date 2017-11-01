@@ -10,7 +10,7 @@ StateEvidenceTruck = inherit(Singleton)
 StateEvidenceTruck.Time = 20*60*1000 -- in ms
 StateEvidenceTruck.spawnPos = Vector3(1591.18, -1685.65, 6.02)
 StateEvidenceTruck.spawnRot = Vector3(0, 0, 0)
-StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 18.3)
+StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 17.5)
 StateEvidenceTruck.MoneyBagSpawns = {
 	Vector3(1585.43, -1681.84, 14.39), Vector3(1585.46, -1682.38, 14.39),
 	Vector3(1584.85, -1681.83, 14.39), Vector3(1584.91, -1682.33, 14.39),
@@ -168,6 +168,11 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	local bags = {}
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+		hitElement:sendInfo(_("Bitte steig aus um die Kisten zu entladen!", hitElement))
+		return
+	end
+
+	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		bags = getAttachedElements(self.m_Truck)
 		hitElement:sendInfo(_("Geldtransporter erfolgreich abgegeben!",hitElement))
 		self:Event_OnTruckExit(hitElement,0)
@@ -182,21 +187,20 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	elseif hitElement:getPlayerAttachedObject() then
 			bags = getAttachedElements(hitElement)
 			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", #StateEvidenceTruck.MoneyBagSpawns-self:getRemainingBagAmount()+1, #StateEvidenceTruck.MoneyBagSpawns)
-			hitElement:sendInfo(_("Du hast erfolgreich eine Geldsack abgegeben!",hitElement))
+			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
 			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 	elseif hitElement:getOccupiedVehicle() then
-		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand oder mit dem Geldtransporter abladen!", hitElement))
+		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abladen!", hitElement))
 		return
 	end
 	local totalMoney = 0
 	for key, value in pairs (bags) do
-		if value:getModel() == 1550 then
+		if value and isElement(value) and value:getModel() == 1550 then
 			totalMoney = totalMoney + value.money
 			value:destroy()
 		end
 	end
 	faction:giveMoney(totalMoney, "Geldsack (Geldtransport)")
-	faction:sendShortMessage("Geldsack abgegeben (+%d$)", totalMoney)
 	if self:getRemainingBagAmount() == 0 or finish == true then
 		delete(self)
 	end

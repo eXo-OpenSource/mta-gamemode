@@ -24,6 +24,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			):setIcon(element:isLocked() and FontAwesomeSymbols.Lock or FontAwesomeSymbols.Unlock)
 		end
+		if getElementData(element, "lastDrivers") then
+			local lastDriver = getElementData(element, "lastDrivers")[#getElementData(element, "lastDrivers")]
+			self:addItem(_("Letzter Fahrer: %s", lastDriver),
+				function()
+						if self:getElement() then
+							delete(self)
+							ClickHandler:getSingleton():addMouseMenu(LastDriverMouseMenu:new(posX, posY, element), element)
+						end
+				end
+			):setIcon(FontAwesomeSymbols.Player)
+		end
 		if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") then
 			if localPlayer:getGroupName() == getElementData(element, "OwnerName") and (getElementData(element, "GroupType") and getElementData(element, "GroupType") == "Firma") then
 				if getElementData(element, "forSale") == true then
@@ -308,7 +319,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.Group)
 	end
-	
+
 	self:addItem(_"Details >>>",
 		function()
 			if self:getElement() then

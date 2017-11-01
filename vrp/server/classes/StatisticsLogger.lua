@@ -28,6 +28,19 @@ function StatisticsLogger:getZone(player)
 	return "unknown"
 end
 
+function StatisticsLogger:addDrunLog(user, command, target)
+    local elementId = 0
+    local targetId = 0
+	if user then elementId = user:getId() end
+	if target and target ~= root then targetId = target:getId() elseif target == root then targetId = -1 end
+	
+    if sqlLogs:queryExec("INSERT INTO ??_AdminDrun (UserId, Command, TargetId, Date) VALUES (?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), elementId, command, targetId) then
+		return true
+	end
+	return false
+end
+
 function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
     local elementId = 0
     if element then elementId = element:getId() end
@@ -446,7 +459,7 @@ function StatisticsLogger:addVehicleTrunkLog(trunk, player, action, itemType, it
 			userId, trunk, action, itemType, item, itemAmount, slot)
 end
 
-function StatisticsLogger:addVehicleTradeLog(vehicle, player, client, price, tradeType)
+function StatisticsLogger:addVehicleTradeLog(vehicle, player, player2, price, tradeType)
 	local userId1, userId2 = 0, 0
 
 	if isElement(player) then userId1 = player:getId() else userId1 = player or 0 end
@@ -480,4 +493,10 @@ end
 function StatisticsLogger:addGangwarLog(area, attacker, owner, starttimestamp, endtimestamp, winner)
 	sqlLogs:queryExec("INSERT INTO ??_Gangwar (Gebiet, Angreifer, Besitzer, StartZeit, EndZeit, Gewinner) VALUES (?, ?, ?, ?, ?, ?)", sqlLogs:getPrefix(),
 			area, attacker, owner, starttimestamp, endtimestamp, winner)
+end
+
+function StatisticsLogger:addHalloweenLog(player, bonus, pumpkins, sweets)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_EventHalloween (UserId, Bonus, Pumpkins, Sweets, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
+	userId, bonus, pumpkins, sweets)
 end

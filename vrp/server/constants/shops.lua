@@ -37,8 +37,8 @@ SHOP_TYPES = {
 	[6] = {
 		["Name"] = "Gärtnerei",
 		["Interior"] = {0, Vector3(0, 0, 0)},
-		["Ped"] = {202, Vector3(2426.27, 125.96, 26.48), 270},
-		["Marker"] = Vector3(2427.99, 126.00, 25.5),
+		["Ped"] = {158, Vector3(2428.57, 123.81, 27.00), 180},
+		["Marker"] = Vector3(2428.33, 122.54, 26.1),
 		["Class"] = ItemShop
 	},
 	[7] = {
@@ -159,7 +159,15 @@ SHOP_TYPES = {
 		["Ped"] = {158, Vector3(2379.84, -1984.17, 13.56), 180},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = Ammunation
+	},
+	[23] = {
+		["Name"] = "Halloween Shop",
+		["Marker"] = Vector3(939.81, -1108.97, 23.3),
+		["Ped"] = {205, Vector3(938.5, -1111.2, 24.2), 325.755},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop
 	}
+
 }
 
 SHOP_ITEMS = {
@@ -212,6 +220,10 @@ SHOP_ITEMS = {
 		["Kühlbox"] = 250,
 		--["Köder"] = 5,
 	};
+	["Halloween Shop"] = {
+		["Kuheuter mit Pommes"] = 25,
+		["Zombie-Burger"] = 15,
+	}
 }
 
 SHOP_OWNER_TYPES = {

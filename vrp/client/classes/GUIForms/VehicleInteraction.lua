@@ -32,10 +32,10 @@ function VehicleInteraction:constructor()
 	}
     self.m_ValidDoors = {
         bonnet_dummy    = 0,
-        boot_dummy      = 1, 
-        door_lf_dummy   = 2, 
+        boot_dummy      = 1,
+        door_lf_dummy   = 2,
         door_rf_dummy   = 3,
-        door_lr_dummy   = 4, 
+        door_lr_dummy   = 4,
         door_rr_dummy   = 5,
     }
 
@@ -64,7 +64,7 @@ end
 function VehicleInteraction:render()
     if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
 	local playerPos = localPlayer:getPosition()
-	self.m_lookAtVehicle = getPedTarget(localPlayer)
+	self.m_lookAtVehicle = localPlayer:getWorldVehicle()
     if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
             if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
@@ -118,11 +118,9 @@ function VehicleInteraction:drawTextBox(text, count)
 	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
 	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
 	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, self.m_Font, "center", "center", false, false, false, true, false)
-
 end
 
 function VehicleInteraction:getDoor()
-
     local min, minid = 10, 10 -- placeholders, no reason
     for type, id in pairs(self.m_ValidDoors) do
         local compPos
@@ -152,10 +150,10 @@ function VehicleInteraction:getDoor()
 end
 
 function VehicleInteraction:interact()
-    if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
+    if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
         local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
-        if (checkDoor ~= 4 ) then
-            if not (isVehicleLocked(self.m_lookAtVehicle)) then
+        if checkDoor ~= 4 then
+            if not isVehicleLocked(self.m_lookAtVehicle) then
                 if not isPedInVehicle(localPlayer) then
                     if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
                         self.m_LastInteraction = getTickCount()
@@ -168,14 +166,14 @@ function VehicleInteraction:interact()
 end
 
 function VehicleInteraction:action()
-	if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
+	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
         if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
             local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
             local door = tonumber(self:getDoor())
             if door == 0 or door == 1 then
                 local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
                 if doorRatio > 0 or checkDoor == 4 then
-                    if not(isVehicleLocked(self.m_lookAtVehicle)) then
+                    if not isVehicleLocked(self.m_lookAtVehicle) then
                         if not isPedInVehicle(localPlayer) then
                             self.m_LastInteraction = getTickCount()
                             triggerServerEvent("onActionVehicleDoor", localPlayer, door)
@@ -193,12 +191,12 @@ function VehicleInteraction:action()
 end
 
 function VehicleInteraction:lock()
-	if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
+	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
 		if self:isOwner(self.m_lookAtVehicle) then
 			if not isPedInVehicle(localPlayer) then
                 if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
                     self.m_LastInteraction = getTickCount()
-				    triggerServerEvent("onLockVehicleDoor", localPlayer, door)
+				    triggerServerEvent("onLockVehicleDoor", localPlayer, self.m_lookAtVehicle)
                 end
 			end
 		end
@@ -226,5 +224,6 @@ function VehicleInteraction:isOwner(veh)
 	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName() then
 		return
 	end
+
 	return false
 end

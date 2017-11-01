@@ -23,7 +23,12 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_Color = self.m_NormalColor
 	self.m_BackgroundColor = self.m_BackgroundNormalColor
 	self.m_Enabled = true
+	self.m_BarActivated = true
+	self.m_Blood = true --halloween
 
+	if EVENT_HALLOWEEN and math.random(1, 2) == 1 then
+		self.m_BackgroundImage = ("files/images/Events/Halloween/ButtonSplatter%d.png"):format(math.random(1,4))
+	end
 	-- Create a dummy gui element for animation
 	self.m_AnimatedBar = DxRectangle:new(0, 0, 0, 2, Color.White, self):setDrawingEnabled(true)
 end
@@ -37,8 +42,12 @@ function GUIButton:drawThis()
 	else
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 	end
-	dxDrawText(self:getText(), self.m_AbsoluteX + GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + GUI_BUTTON_BORDER_MARGIN,
-		self.m_AbsoluteX + self.m_Width - GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height - GUI_BUTTON_BORDER_MARGIN, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
+
+	if self.m_BackgroundImage then
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundImage)
+	end
+
+	dxDrawText(self:getText(), self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
 
 	dxSetBlendMode("blend")
 end
@@ -147,6 +156,7 @@ function GUIButton:setEnabled(state, tabButton)
 	end
 	self.m_Enabled = state
 	self:anyChange()
+	return self
 end
 
 function GUIButton:isEnabled()

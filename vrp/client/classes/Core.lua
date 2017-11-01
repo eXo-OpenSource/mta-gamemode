@@ -68,17 +68,11 @@ function Core:onDownloadComplete()
 	self:ready()
 
 	-- create login gui
-	lgi = LoginGUI:new()
-	lgi:setVisible(false)
-	lgi:fadeIn(750)
-
 	local pwhash = core:get("Login", "password", "")
 	local username = core:get("Login", "username", "")
-	lgi.m_LoginEditUser:setText(username)
-	lgi.m_LoginEditPass:setText(pwhash)
-	lgi.usePasswordHash = pwhash
-	lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
-	lgi:anyChange()
+	lgi = LoginGUI:new(username, pwhash)
+
+
 
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
@@ -88,6 +82,9 @@ end
 function Core:ready()
 	-- Tell the server that we're ready to accept additional data
 	triggerServerEvent("playerReady", root)
+
+	-- Request Browser Domains
+	Browser.requestDomains{"exo-reallife.de"}
 
 	DxHelper:new()
 	TranslationManager:new()
@@ -144,6 +141,7 @@ function Core:ready()
 	--SprayWallManager:new()
 	AntiClickSpam:new()
 	GasStation:new()
+	WareClient:new()
 
 	ChessSession:new()
 
@@ -151,16 +149,17 @@ function Core:ready()
 	DrivingSchool:new()
 	Help:new()
 	ClientStatistics:new()
+	Nametag:new()
+
+	if EVENT_HALLOWEEN then
+		Halloween:new()
+	end
 end
 
 function Core:afterLogin()
-	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}
-
 	RadioGUI:new()
 	KarmaBar:new()
 	HUDSpeedo:new()
-	Nametag:new()
 	HUDRadar:getSingleton():setEnabled(core:get("HUD", "showRadar", true))
 	HUDUI:getSingleton():show()
 	CustomF11Map:getSingleton():enable()

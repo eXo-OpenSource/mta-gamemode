@@ -145,13 +145,13 @@ function BoxManager:startFight(player1, player2, money)
 		data = BoxManager.Data[index]
 		playeritem:setPosition(data["BoxPos"])
 		playeritem:setRotation(0, 0, data["BoxRot"])
+		playeritem:createStorage()
 		playeritem:setArmor(0)
 		playeritem:setHealth(100)
 		playeritem:setModel(data["Skin"])
 		setPedFightingStyle(playeritem, 5)
 		playeritem:takeMoney(money, "Boxkampf-Einsatz")
 		playeritem.boxing = true
-		takeAllWeapons(playeritem)
 	end
 	self:sendShortMessage(_("%s und %s haben einen Boxkampf gestartet!", player1, player1:getName(), player2:getName()))
 
@@ -164,6 +164,7 @@ function BoxManager:resetFight()
 				playeritem:setDefaultSkin()
 				setPedFightingStyle(playeritem, 4)
 				playeritem:setPosition(BoxManager.Data[index]["SpawnPos"])
+				playeritem:restoreStorage()
 			end
 			playeritem.boxing = false
 

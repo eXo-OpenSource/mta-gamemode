@@ -47,8 +47,11 @@ function TrunkGUI:constructor()
     self:addSlot("weapon", 1, 320, 280)
     self:addSlot("weapon", 2, 470, 280)
 
-    self.m_ToTrunk = GUIButton:new(275, 70, 30, 250, ">>", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1)
-    self.m_ToTrunk:setEnabled(false)
+	self.m_ToTrunk = GUIButton:new(275, 70, 30, 250, FontAwesomeSymbols.Right, self.m_Window)
+	self.m_ToTrunk:setEnabled(false)
+	self.m_ToTrunk:setFont(FontAwesome(15)):setFontSize(1)
+	self.m_ToTrunk:setBarEnabled(false)
+	self.m_ToTrunk:setBackgroundColor(Color.Accent)
 
     self.m_ToTrunk.onLeftClick = function() self:toTrunk() end
     triggerServerEvent("refreshInventory", localPlayer)
@@ -159,7 +162,11 @@ end
 
 
 function TrunkGUI:checkAmount(text)
-    if self.m_SelectedItemType == "weapon" then
+	if not self.m_SelectedItemType then
+		return
+	end
+
+	if self.m_SelectedItemType == "weapon" then
         self.m_ToTrunk:setEnabled(true)
         return
     end
@@ -176,15 +183,27 @@ function TrunkGUI:checkAmount(text)
     end
 end
 
+function TrunkGUI:resetSelected()
+	self.m_SelectedItemType = nil
+	self.m_SelectedItem = nil
+	self.m_SelectedItemAmount = nil
+	self.m_SelectedItemValue = nil
+end
+
 function TrunkGUI:toTrunk()
-    if self.m_Id then
+	if self.m_Id then
+		if not self.m_SelectedItemType then
+			ErrorBox:new(_"Du hast kein Item aus der Liste ausgewält!")
+			return
+		end
         if self.m_SelectedItemType == "item" then
             local amount = tonumber(self.m_Amount:getText())
             if amount and amount > 0 then
                 if amount <= self.m_SelectedItemAmount then
-                    triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount, self.m_SelectedItemValue)
+					triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount, self.m_SelectedItemValue)
                     self.m_MyItemsGrid:setVisible(false)
-                    self.m_LoadingLabel:setVisible(true)
+					self.m_LoadingLabel:setVisible(true)
+					self:resetSelected()
                 else
                     ErrorBox:new(_"Anzahl zu hoch! Du hast nicht soviel von diesem Item!")
                 end

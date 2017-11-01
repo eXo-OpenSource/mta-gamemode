@@ -37,17 +37,9 @@ function DownloadGUI:onComplete()
 	setTimer(
 		function()
 			self:setVisible(false)
-			lgi = LoginGUI:new()
-			lgi:setVisible(false)
-			lgi:fadeIn(750)
-
 			local pwhash = core:get("Login", "password", "")
 			local username = core:get("Login", "username", "")
-			lgi.m_LoginEditUser:setText(username)
-			lgi.m_LoginEditPass:setText(pwhash)
-			lgi.usePasswordHash = pwhash
-			lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
-			lgi:anyChange()
+			lgi = LoginGUI:new(username, pwhash)
 		end,
 	200, 1)
 end

@@ -7,7 +7,6 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
-
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
@@ -22,6 +21,8 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
+
+	self.m_LastDrivers = {}
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -123,6 +124,12 @@ end
 
 function Vehicle:onPlayerEnter(player, seat)
 	if player:getType() ~= "player" then return end
+
+	if self.onEnter and self:onEnter(player, seat) then
+		if seat == 0 then
+			self:setDriver(player)
+		end
+	end
 
 	if seat == 0 then
 		if not player:hasCorrectLicense(source) then
@@ -404,11 +411,18 @@ end
 function Vehicle:setEngineState(state)
 	setVehicleEngineState(self, state)
 
-	VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
+	if self:getFuelType() ~= "nofuel" then
+		VehicleManager:getSingleton().m_VehiclesWithEngineOn[self] = state and self:getMileage() or nil -- toggle fuel consumption
+	end
 
 	self:setData("syncEngine", state, true)
 	self.m_EngineState = state
 	self.m_StartingEnginePhase = false
+
+	if instanceof(self, PermanentVehicle, true) then return end
+	if self.controller then
+		self:setDriver(self.controller)
+	end
 end
 
 function Vehicle:getEngineState()
@@ -416,11 +430,11 @@ function Vehicle:getEngineState()
 end
 
 function Vehicle:setFuel(fuel)
-	self.m_Fuel = fuel
+	self.m_Fuel = math.clamp(0, fuel, 100)
 	self:setData("fuel", self.m_Fuel, true)
 
 	-- Switch engine off in case of an empty fuel tank
-	if self.m_Fuel <= 0 then
+	if self.m_Fuel == 0 then
 		self:setEngineState(false)
 	end
 end
@@ -795,6 +809,18 @@ end
 function Vehicle:isEmpty()
 	return self.occupants and table.size(self.occupants) == 0
 end
+
+function Vehicle:setDriver(player)
+	if not self:getEngineState() then return end
+
+	if self.m_LastDrivers[#self.m_LastDrivers] == player:getName() then
+		return
+	end
+
+	table.insert(self.m_LastDrivers, player:getName())
+	self:setData("lastDrivers", self.m_LastDrivers, true)
+end
+
 
 -- Override it
 function Vehicle:getVehicleType()

@@ -13,6 +13,7 @@ function ItemManager:constructor()
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
 		["Warnkegel"] = ItemBarricade,
+		["Sky Beam"] = ItemSkyBeam,
 		["Blitzer"] = ItemSpeedCam,
 		["Nagel-Band"] = ItemNails,
 		["Radio"] = ItemRadio,
@@ -22,6 +23,9 @@ function ItemManager:constructor()
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
 		["Burger"] = ItemFood,
+		["Kuheuter mit Pommes"] = ItemFood,
+		["Zombie-Burger"] = ItemFood,
+		["Suessigkeiten"] = ItemFood,
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
 		["Zigarette"] = ItemFood,
@@ -30,6 +34,7 @@ function ItemManager:constructor()
 		["Apfel"] = ItemFood,
 		["Donutbox"] = ItemDonutBox,
 		["Osterei"] = ItemEasteregg;
+		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
 
 		["Wuerfel"] = ItemDice,

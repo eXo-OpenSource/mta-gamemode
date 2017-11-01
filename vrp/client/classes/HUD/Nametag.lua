@@ -39,6 +39,7 @@ function Nametag:draw()
 			local phX, phY, phZ = player:getBonePosition(8)
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
+			if not localPlayer:isLoggedIn() then return false end
 			if (bDistance <= maxDistance) then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
@@ -103,6 +104,9 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	end
 	if player:getFaction() then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
+	end
+	if player:getCompany() then 
+		icons[#icons+1] = (player:getCompany().m_Id == CompanyStaticId.MECHANIC and "MT" or player:getCompany():getShortName())..".png"
 	end
 	local bHasBigGun = false
 	if not getElementData(player, "CanWeaponBeConcealed") then

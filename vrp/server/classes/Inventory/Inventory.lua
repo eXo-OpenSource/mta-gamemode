@@ -35,7 +35,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			self.m_Items[id]["Value"] = row["Value"] or ""
 			self.m_Bag[row["Tasche"]][place] = id
 			if row["Objekt"] == "Mautpass" then
-				if not row["Value"] or tonumber(row["Value"]) < getRealTime().timestamp then
+				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
 					self:removeAllItem("Mautpass")
 					if isElement(self.m_Owner) then
 						self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
@@ -401,13 +401,14 @@ function Inventory:removeItem(item, amount, value)
 						if self.m_Items[id]["Menge"] >= amount then
 							if not value then
 								self:removeItemFromPlace(bag, place, amount)
+								return
 							else
 								itemValue = self:getItemValueByBag(bag, place)
 								if itemValue == value then
 									self:removeItemFromPlace(bag, place, amount, value)
+									return
 								end
 							end
-							return
 						end
 					end
 				end
@@ -558,7 +559,7 @@ function Inventory:getItemIdFromName(item)
 end
 
 function Inventory:throwItem(item, bag, id, place, name)
-	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
+	self.m_Owner:sendInfo(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
 	self.m_Owner:meChat(true, "zerstört "..name.."!")
 	local value = self:getItemValueByBag(bag,place)
 	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
@@ -591,7 +592,7 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
 	end
-
+	if value == "" then value = false end
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]
