@@ -61,8 +61,7 @@ function Warn.removeWarn(who, warnId)
 	end
 end
 
-function Warn.checkWarn(player, doNotSave)
-	local id = player.m_Id
+function Warn.checkWarn(player, id, doNotSave)
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
 	if Warn.getAmount(id) >= 3 then
