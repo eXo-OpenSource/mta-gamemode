@@ -123,15 +123,19 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
+
+	if Warn.checkWarn(player, true) or Ban.checkBan(player, true) then
+		player:triggerEvent("loginfailed", "Du wurdest gebannt!")
+		return false
+	end
+
 	-- Update last serial and last login
 	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
 	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
-	Warn.checkWarn(player, true)
-	Ban.checkBan(player, true)
-
-	if not player or not isElement(player) then -- Cause of kick directly after login (e.g. ban, warn)
+	if not player or not isElement(player) then -- Cause of kick directly after login (e.g. ban, warn) / Should not happened now
+		outputDebugString("Account.loginSuccess: Player-Element for "..UserName.." not found!", 1)
 		return
 	end
 
