@@ -124,7 +124,14 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 		end
 	end
 
-	if not Warn.checkWarn(player, true) and not Ban.checkBan(player, true) then
+	if not Warn.checkWarn(player, true) then
+		-- Todo Maybe it´s more beautiful not kicking player directly only display a more information error
+		if player and isElement(player) then player:triggerEvent("loginfailed", "Du wurdest aufgrund von 3 Warns gebannt!") end
+		return false
+	end
+
+	if not Ban.checkBan(player, true) then
+		-- Todo Maybe it´s more beautiful not kicking player directly only display a more information error
 		if player and isElement(player) then player:triggerEvent("loginfailed", "Du wurdest gebannt!") end
 		return false
 	end
