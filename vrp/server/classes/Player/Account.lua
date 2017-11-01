@@ -123,35 +123,36 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 			end
 		end
 	end
-	if player.getTutorialStage and instanceof(player, Player) then
-		-- Update last serial and last login
-		sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+	-- Update last serial and last login
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
-		player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
+	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
-		Warn.checkWarn(player, true)
-		Ban.checkBan(player, true)
-		if player.getTutorialStage then
-			if player:getTutorialStage() == 1 then
-				Admin:getSingleton():sendNewPlayerMessage(player)
-				player:createCharacter()
-			end
-		else
-			local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
-			outputServerLog(msg)
-			outputDebugString(msg, 1)
-			outputConsole(debug.traceback())
-			player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
+	Warn.checkWarn(player, true)
+	Ban.checkBan(player, true)
+
+	if not player or not isElement(player) then -- Cause of kick directly after login (e.g. ban, warn)
+		return
+	end
+
+	if player.getTutorialStage then
+		if player:getTutorialStage() == 1 then
+			Admin:getSingleton():sendNewPlayerMessage(player)
+			player:createCharacter()
 		end
-		player:loadCharacter()
-		player:spawn()
-
-		StatisticsLogger:addLogin( player, Username, "Login")
-		ClientStatistics:getSingleton():handle(player)
-		triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 	else
+		local msg = ("Method player:getTutorialStage() not found! Player: %s - Console->Details"):format(Username)
+		outputServerLog(msg)
+		outputDebugString(msg, 1)
+		outputConsole(debug.traceback())
 		player:triggerEvent("loginfailed", "Ein Fehler ist aufgetreten (internal error tutorialStage)")
 	end
+	player:loadCharacter()
+	player:spawn()
+
+	StatisticsLogger:addLogin( player, Username, "Login")
+	ClientStatistics:getSingleton():handle(player)
+	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 
 addEvent("checkRegisterAllowed", true)
