@@ -463,9 +463,9 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
 		if not vehicle then return end
 
 		local startMileage = self.m_CurrentLessions[client].startMileage
-		local mileageDiff = vehicle:getMileage()-startMileage
+		local mileageDiff = math.round((vehicle:getMileage()-startMileage)/1000, 1)
 
-		if mileageDiff <= 5000 then
+		if mileageDiff < 5 then
 			client:sendWarning("Du musst mindestens 5km mit dem Fahrschüler fahren!")
 			return
 		end
@@ -484,7 +484,7 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
     client:triggerEvent("hideDrivingSchoolInstructorGUI")
     removeEventHandler("onPlayerQuit", client, self.m_OnQuit)
     removeEventHandler("onPlayerQuit", target, self.m_OnQuit)
-    target:setPublicSync("inDrivingLession",false)
+    target:setPublicSync("inDrivingLession", false)
     self.m_CurrentLessions[client] = nil
 end
 
