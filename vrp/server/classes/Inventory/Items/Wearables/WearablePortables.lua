@@ -9,7 +9,7 @@ WearablePortables = inherit( Item )
 
 --{model, bone, x, y, z, rx, ry, rz, scale, doublesided, texture},
 --3,0,-0.1325,0.145,0,0,0,1
-WearablePortables.objectTable = 
+WearablePortables.objectTable =
 {
 	["Swatschild"] = {1631, -0.05, -0.15, 0.8, 180, -40,90, false,"Swat-Schild",0.4},
 }
@@ -23,13 +23,13 @@ function WearablePortables:destructor()
 end
 
 function WearablePortables:use(player, itemId, bag, place, itemName)
-	local inventory = InventoryManager:getSingleton():getPlayerInventory(player)
+	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
 	if value then --// for texture usage later
-		
+
 	end
 	if not player.m_IsWearingPortables and not player.m_Portables then --// if the player clicks onto the Portables without currently wearing one
-		if isElement(player.m_Portables) then 
+		if isElement(player.m_Portables) then
 			destroyElement(player.m_Portables)
 		end
 		local x,y,z = getElementPosition(player)
@@ -56,7 +56,7 @@ function WearablePortables:use(player, itemId, bag, place, itemName)
 		player.m_Portables = false
 		player:meChat(true, "legt "..WearablePortables.objectTable[itemName][9].." nieder!")
 	else --// else the player must have clicked on another Portables otherwise this instance of the class would have not been called
-		if isElement(player.m_Portables) then 
+		if isElement(player.m_Portables) then
 			destroyElement(player.m_Portables)
 		end
 		local x,y,z = getElementPosition(player)

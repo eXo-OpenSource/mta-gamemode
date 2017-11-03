@@ -120,8 +120,6 @@
 	<script src="server/classes/Inventory/StaticWorldItems.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
-	<script src="server/classes/Inventory/GrowableManager.lua" type="server"/>
-	<script src="server/classes/Inventory/Growable.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
@@ -217,6 +215,9 @@
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>

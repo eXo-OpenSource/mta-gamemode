@@ -63,10 +63,6 @@ function Inventory:syncClient()
 	end
 end
 
-function Inventory:forceRefresh()
-	self.m_Owner:triggerEvent( "forceInventoryRefresh", self.m_Bag, self.m_Items,self.m_ItemData)
-end
-
 function Inventory:loadItem(id)
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?", sql:getPrefix(), id) -- ToDo add Prefix
 	for i, row in ipairs(result) do
@@ -159,12 +155,6 @@ function Inventory:insertItem(amount, item, place, bag, value)
 	return sql:lastInsertId()
 end
 
-function Inventory:changePlaces(bag, oldPlace, newPlace)
-	self:setItemPlace(bag, oldPlace, -1)
-	self:setItemPlace(bag, newPlace, oldPlace)
-	self:setItemPlace(bag, -1, newPlace)
-end
-
 function Inventory:isPlaceEmpty(bag, place)
 	local id = self.m_Bag[bag][place]
 	if self.m_Items[id] then
@@ -220,19 +210,6 @@ end
 
 function Inventory:getItemID(bag, place)
 	return self.m_Bag[bag][place]
-end
-
-function Inventory:setItemPlace(bag, placeOld, placeNew)
-	local id = self:getItemID(bag, placeOld)
-	local nid= self:getItemID(bag, placeNew)
-	if not id or not self.m_Items[id] and self.m_Items[nid] ~= self.m_Items[id] then
-		return false
-	end
-	self.m_Bag[bag][placeOld] = nil
-	self.m_Items[id]["Platz"] = placeNew
-	self.m_Bag[bag][placeNew] = id
-	self:saveItemPlace(id, self.m_Items[id]["Platz"])
-	return true
 end
 
 function Inventory:getItemValueByBag( bag, place)
@@ -398,20 +375,16 @@ function Inventory:removeItem(item, amount, value)
 		local itemValue
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
-			if self.m_Items[id] then
-				if self.m_Items[id]["Objekt"] then
-					if self.m_Items[id]["Objekt"] == item then
-						if self.m_Items[id]["Menge"] >= amount then
-							if not value then
-								if self:removeItemFromPlace(bag, place, amount) then
-									return true
-								end
-							else
-								itemValue = self:getItemValueByBag(bag, place)
-								if itemValue == value then
-									return self:removeItemFromPlace(bag, place, amount, value)
-								end
-							end
+			if self.m_Items[id] and self.m_Items[id]["Objekt"] and self.m_Items[id]["Objekt"] == item then
+				if self.m_Items[id]["Menge"] >= amount then
+					if not value then
+						if self:removeItemFromPlace(bag, place, amount) then
+							return true
+						end
+					else
+						itemValue = self:getItemValueByBag(bag, place)
+						if itemValue == value then
+							return self:removeItemFromPlace(bag, place, amount, value)
 						end
 					end
 				end
@@ -445,52 +418,6 @@ function Inventory:removeAllItem(item, value)
 			end
 		end
 	end
-end
-
--- WARNING: This method may not work properly
-function Inventory:removeOneItem(item, value)
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		local amount = 0
-		for place = 0, places, 1 do
-			amount = 0
-			local id = self.m_Bag[bag][place]
-			local item_table = self.m_Items
-			local itemname = item_table[id]
-			local itemValue = self:getItemValueByBag(bag, place)
-			if itemname == item then
-				amount = self.m_Items[id]["Menge"]
-				if amount > 1 then
-					if not value then
-						self.m_Items[id]["Menge"] = amount-1
-						self:saveItemAmount(id, self.m_Items[id]["Menge"])
-						return true
-					else
-						if itemValue == value then
-							self.m_Items[id]["Menge"] = amount-1
-							self:saveItemAmount(id, self.m_Items[id]["Menge"])
-							return true
-						end
-					end
-				elseif amount == 1 then
-					if not value then
-						self:removeItemFromPlace(bag, place, 1)
-						return true
-					else
-						if itemValue == value then
-							self:removeItemFromPlace(bag, place, 1)
-							return true
-						end
-					end
-				end
-			end
-		end
-		return amount
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-	return false
 end
 
 function Inventory:getPlaceForItem(item, itemAmount)
@@ -552,30 +479,6 @@ function Inventory:getItemAmount(item, inStack)
 	end
 end
 
-function Inventory:getItemIdFromName(item)
-
-	if self.m_Debug == true then
-		outputDebugString("INV-DEBUG-getItemId: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
-	end
-
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local amount = 0
-		local places = self:getPlaces(bag)
-		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					return id
-				end
-			end
-		end
-		return false
-	else
-		outputDebugString("[INV] Unglültiges Item: "..item)
-	end
-end
-
 function Inventory:throwItem(item, bag, id, place, name)
 	self.m_Owner:sendInfo(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
 	self.m_Owner:meChat(true, "zerstört "..name.."!")
@@ -583,27 +486,6 @@ function Inventory:throwItem(item, bag, id, place, name)
 	WearableManager:getSingleton():removeWearable( self.m_Owner, name, value )
 	self:removeItemFromPlace(bag, place)
 end
-
-function Inventory:c_setItemPlace(bag, place, nplace)
-	self:setItemPlace(bag, place, nplace)
-end
-
-function Inventory:c_stackItems(newId, oldId, oldPlace)
-	local itemNameOld = self.m_Items[oldId]["Objekt"]
-	local itemNameNew = self.m_Items[newId]["Objekt"]
-	if itemNameOld == itemNameNew then
-		local amountNew = self.m_Items[newId]["Menge"]
-		local amountOld = self.m_Items[oldId]["Menge"]
-		local total = amountNew + amountOld
-		if total <= self.m_ItemData[itemNameOld]["Stack_max"] then
-			self.m_Items[newId]["Menge"] = total
-			self:saveItemAmount(newId, self.m_Items[newId]["Menge"])
-			local bag = self.m_Items[itemNameNew]["Tasche"]
-			self:removeItemFromPlace(bag, oldPlace, amountOld)
-		end
-	end
-end
-
 
 function Inventory:giveItem(item, amount, value) -- donotsync if player disconnects
 	checkArgs("Inventory:giveItem", "string", "number")
