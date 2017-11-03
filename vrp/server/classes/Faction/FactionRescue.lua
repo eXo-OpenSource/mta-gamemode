@@ -24,6 +24,8 @@ function FactionRescue:constructor()
 	self.m_Skins["fire"] = {27, 277, 278, 279}
 
 	self.m_LastStrecher = {}
+	self.m_BankAccountServer = BankServer.get("faction.rescue")
+	self.m_BankAccountServerCorpse = BankServer.get("player.corpse")
 
 	-- Barriers
 	--VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
@@ -312,8 +314,8 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
-					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
-					player:giveMoney(50, "Rescue Team Wiederbelebung")
+					self.m_BankAccountServer:transferMoney(self.m_Faction, 100 "Rescue Team Wiederbelebung", "Faction", "Revive")
+					self.m_BankAccountServer:transferMoney(player, 50 "Rescue Team Wiederbelebung", "Faction", "Revive")
 					if deadPlayer:giveReviveWeapons() then
 						outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
 					end
@@ -335,7 +337,7 @@ function FactionRescue:createDeathPickup(player, ...)
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
 	local money = math.floor(player:getMoney()*0.25)
-	player:takeMoney(money, "beim Tod verloren")
+	player:transferMoney(self.m_BankAccountServerCorpse, money, "beim Tod verloren", "Player", "Corpse")
 	player.m_DeathPickup.money = money
 
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
@@ -359,7 +361,7 @@ function FactionRescue:createDeathPickup(player, ...)
 								end
 								hitPlayer.m_RescueStretcher.player = player
 								if source.money and source.money > 0 then
-									hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
+									self.m_BankAccountServerCorpse:transferMoney(hitPlayer, source.money, "verlorenes Geld zurückbekommen", "Player", "Corpse")
 									source.money = 0
 								end
 
@@ -377,7 +379,7 @@ function FactionRescue:createDeathPickup(player, ...)
 					end
 				else
 					if source.money and source.money > 0 then
-						hitPlayer:giveMoney(source.money, "bei Leiche gefunden")
+						self.m_BankAccountServerCorpse:transferMoney(hitPlayer, source.money, "bei Leiche gefunden", "Player", "Corpse")
 						source.money = 0
 					end
 					hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
@@ -448,8 +450,8 @@ function FactionRescue:Event_healPlayer(medic, target)
 				target:setHealth(100)
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
 
-				target:takeMoney(costs, "Rescue Team Heilung")
-				self.m_Faction:giveMoney(costs, "Rescue Team Heilung")
+				target:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
+
 			else
 				medic:sendError(_("Der Spieler hat nicht genug Geld! (%d$)", medic, costs))
 				target:sendError(_("Du hast nicht genug Geld! (%d$)", target, costs))
@@ -472,8 +474,7 @@ function FactionRescue:Event_healPlayerHospital()
 				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team [Heal-Bot]")
 				client:sendInfo(_("Du wurdest für %s$ von dem Arzt geheilt!", client, costs))
 
-				client:takeMoney(costs, "Rescue Team Heilung")
-				self.m_Faction:giveMoney(costs, "Rescue Team Heilung")
+				client:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
 			else
 				client:sendError(_("Du hast zu wenig Geld dabei! (%s$)", client, costs))
 			end
@@ -719,12 +720,19 @@ function FactionRescue:addVehicleFire(veh)
 			for player, score in pairs(stats.pointsByPlayer) do
 				if isElement(player) then
 					player:giveCombinedReward("Fahrzeugbrand gelöscht", {
-						bankMoney = score*120,
+						money = {
+							mode = "give",
+							bank = true,
+							amount = score*120,
+							toOrFrom = self.m_BankAccountServer,
+							category = "Faction",
+							subcategory = "Fire"
+						}
 					})
 					moneyForFaction = moneyForFaction + score*60
 				end
 			end
-			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Fahrzeugbrand gelöscht")
+			FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		end
 	end, zone)
 end

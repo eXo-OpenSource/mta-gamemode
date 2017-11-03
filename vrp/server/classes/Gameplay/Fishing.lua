@@ -15,6 +15,7 @@ function Fishing:constructor()
 	self:loadFishDatas()
 	self:updatePricing()
 	self:updateStatistics()
+	self.m_BankAccountServer = BankServer.get("gameplay.fishing")
 
 	self.m_UpdatePricingPulse = TimedPulse:new(3600000)
 	self.m_UpdatePricingPulse:registerHandler(bind(Fishing.updatePricing, self))
@@ -268,7 +269,7 @@ function Fishing:clientSendFishTrading(list)
 	end
 
 	if totalPrice > 0 then
-		client:giveMoney(math.floor(totalPrice), "Fischhandel")
+		self.m_BankAccountServer:transferMoney(client, totalPrice, "Fischhandel", "Gampelay", "Fishing")
 	end
 end
 

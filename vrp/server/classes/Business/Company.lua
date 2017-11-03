@@ -129,19 +129,19 @@ end
 function Company:getMoney(...)
   return self.m_BankAccount:getMoney(...)
 end
-
-function Company:giveMoney(amount, reason, silent)
+--[[
+function Company:__giveMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, amount, reason or "Unbekannt")
     return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Company:takeMoney(amount, reason, silent)
+function Company:__takeMoney(amount, reason, silent)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, -amount, reason or "Unbekannt")
     return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
-
-function Company:transferMoney(toObject, amount, reason, silent, category, subcategory)
-	self.m_BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+]]
+function Company:transferMoney(toObject, amount, reason, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end
 
 function Company:getPhoneNumber()

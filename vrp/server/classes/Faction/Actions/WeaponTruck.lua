@@ -57,6 +57,8 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Boxes = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
+	
+	self.m_BankAccountServer = BankServer.get("action.weapon_truck")
 
 	TollStation.openAll()
 
@@ -590,7 +592,7 @@ function WeaponTruck:addWeaponsToDepot(player, faction, weaponTable)
 			end
 		end
 		if money > 0 then
-			faction:giveMoney(money, "Waffentruck Kisten")
+			self.m_BankAccountServer:transferMoney(faction, money, "Waffentruck Kisten", "Action", "WeaponTruck")
 		end
 	end
 

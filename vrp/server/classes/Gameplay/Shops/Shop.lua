@@ -8,10 +8,10 @@
 Shop = inherit(Object)
 
 function Shop:constructor()
-
+	self.m_BankAccountServer = BankServer.get("server.shop")
 end
 
-function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, bankAccount)
 	self.m_Id = id
 	self.m_Name = name
 	self.m_BuyAble = price > 0 and true or false
@@ -24,6 +24,13 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_TypeName = "Shop"
 	self.m_TypeDataName = typeData["Name"]
 
+	if not bankAccount or bankAccount == 0 then
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
+		self.m_BankAccountServer:transerMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
+		self.m_Money = 0
+	else
+		self.m_BankAccount = BankAccount.load(bankAccount)
+	end
 
 	self.m_ShopGUIBind = bind(self.openManageGUI, self)
 
@@ -184,7 +191,7 @@ function Shop:buy(player)
 				local group = player:getGroup()
 				if group:getPlayerRank(player) >= GroupRank.Manager then
 					if group:getMoney() >= self.m_Price then
-						group:takeMoney(self.m_Price, "Shop-Kauf")
+						group:transferMoney(self.m_BankAccountServer, self.m_Price, "Shop-Verkauf", "Shop", "Buy")
 						group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ gekauft!", player, player:getName(), self.m_Name, self.m_Price), 0, 255, 0)
 						group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ gekauft!", player, self.m_Name, self.m_Price))
 						self.m_OwnerId = group:getId()
@@ -213,7 +220,7 @@ function Shop:sell(player)
 			local group = player:getGroup()
 			if group:getPlayerRank(player) >= GroupRank.Manager then
 				local money = math.floor((self.m_Price*0.75))
-				group:giveMoney(money, "Shop-Verkauf")
+				self.m_BankAccountServer:transerMoney(group, money, "Shop-Verkauf", "Shop", "Sell")
 				group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ verkauft!", player, player:getName(), self.m_Name, money), 255, 0, 0)
 				group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ verkauft!", player, self.m_Name, money))
 				self.m_OwnerId = 0
@@ -247,16 +254,8 @@ function Shop:addBlip(blip)
 	return b
 end
 
-function Shop:giveMoney(amount, reason)
-	if amount > 0 then self.m_Money = self.m_Money + amount end
-end
-
-function Shop:takeMoney(amount, reason)
-	if amount > 0 then self.m_Money = self.m_Money - amount end
-end
-
 function Shop:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
 
 function Shop:openBankGui(player)
@@ -269,6 +268,7 @@ function Shop:refreshBankGui(player)
 end
 
 function Shop:save()
+	self.m_BankAccount:save()
 	if sql:queryExec("UPDATE ??_shops SET Money = ?, LastRob = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_LastRob, self.m_OwnerId, self.m_Id) then
 	else
 		outputDebug(("Failed to save Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))

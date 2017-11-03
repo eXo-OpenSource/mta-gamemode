@@ -39,7 +39,14 @@ function ItemBeggar:buyItem(player, item)
 			if player:getMoney() >= price then
 				local karma = 5
 				player:giveCombinedReward("Bettler-Handel", {
-					money = -price,
+					money = {
+						mode = "take",
+						bank = false,
+						amount = money,
+						toOrFrom = self.m_BankAccountServer,
+						category = "Gameplay",
+						subcategory = "BeggarTrade"
+					},
 					karma = -5,
 					points = 5,
 				})

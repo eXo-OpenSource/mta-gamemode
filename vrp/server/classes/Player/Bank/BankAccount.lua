@@ -86,7 +86,7 @@ function BankAccount:getMoney()
   return tonumber(self.m_Money)
 end
 
-function BankAccount:addMoney(money, reason, silent)
+function BankAccount:__giveMoney(money, reason, silent)
 	if isNan(money) then return end
 
   	if money > 0 then
@@ -104,7 +104,7 @@ function BankAccount:addMoney(money, reason, silent)
 	end
 end
 
-function BankAccount:takeMoney(money, reason, silent)
+function BankAccount:__takeMoney(money, reason, silent)
 	if isNan(money) then return end
 
 	if money > 0 then
@@ -128,81 +128,76 @@ end
 ]]
 
 --[[
-	[object (Player, Faction, Company, Group) | {string objectName, int objectId [, bool toBank]} | {object (Player, Faction, Company, Group), bool toBank}] toObject
+	[object (Player, Faction, Company, Group, BankAccount) | {string objectName, int objectId [, bool toBank, bool silent]} | {object (Player, Faction, Company, Group), bool toBank, bool silent}] toObject
 	int amount
 	string reason
-	bool silent
 	string category
 	string subcategory
 ]]
 
-function BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
-	if isNan(money) then return end
+function BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+	if isNan(amount) then return false end
+	local amount = math.floor(amount)
 	
+	local targetObject = toObject
+	local offlinePlayer = false
+	local isPlayer = false
+	local toBank = false
+	local silent = false
 
-	Async.create(
-		function()
-				
-			local targetObject = toObject
-			local offlinePlayer = false
-			local isPlayer = false
-			local toBank = false
+	if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
+		if not (#toObject >= 2 and #toObject <= 4) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
 
-			if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
-				if not (#toObject >= 2 and #toObject <= 3) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
+		if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
+			targetObject = toObject[1]
+			toBank = toObject[2]
+			silent = toObject[3]
+		else
+			if toObject[1] == "player" then
+				targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
 
-				if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
-					targetObject = toObject[1]
-					toBank = toObject[2]
-				else
-					if toObject[1] == "player" then
-						targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
-
-						if offlinePlayer then
-							targetObject:load()
-						end
-					elseif toObject[1] == "faction" then
-						targetObject = FactionManager:getSingleton().Map[toObject[2]]
-					elseif toObject[1] == "company" then
-						targetObject = CompanyManager:getSingleton().Map[toObject[2]]
-					elseif toObject[1] == "group" then
-						targetObject = GroupManager:getSingleton().Map[toObject[2]]
-					else
-						error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
-					end
-					toBank = toObject[3]
+				if offlinePlayer then
+					targetObject:load(true)
 				end
-			end
-
-			if not instanceof(targetObject, BankAccount) and not targetObject.m_Id then
-				error("BankAccount.transferMoney @ Target is missing")
-			end
-			
-			isPlayer = instanceof(targetObject, DatabasePlayer)
-
-			if self:getMoney() < amount and not self.m_Negative then
-				return false
-			end
-
-			self:takeMoney(amount, reason, silent)
-
-			if isPlayer then
-				if toBank then
-					targetObject:addBankMoney(amount, reason)
-				else
-					targetObject:giveMoney(amount, reason)
-				end
+			elseif toObject[1] == "faction" then
+				targetObject = FactionManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "company" then
+				targetObject = CompanyManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "group" then
+				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-					if targetObject.giveMoney then
-						targetObject:giveMoney(amount, reason, silent)
-					else
-						targetObject:addMoney(amount, reason, silent)
-					end
+				error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
 			end
-
-			if offlinePlayer then
-				delete(targetObject)
-			end
+			toBank = toObject[3]
+			silent = toObject[4]
 		end
-	)()
+	end
+
+	if not instanceof(targetObject, BankAccount) and not targetObject.m_Id then
+		error("BankAccount.transferMoney @ Target is missing")
+	end
+	
+	isPlayer = instanceof(targetObject, DatabasePlayer)
+
+	if self:getMoney() < amount and not self.m_Negative then
+		return false
+	end
+
+	self:__takeMoney(amount, reason, silent)
+
+	if isPlayer then
+		if toBank then
+			targetObject:__giveBankMoney(amount, reason)
+		else
+			targetObject:__giveMoney(amount, reason)
+		end
+	else
+		targetObject:__giveMoney(amount, reason, silent)
+	end
+
+	if offlinePlayer then
+		delete(targetObject)
+	end
+
+	return true
 end

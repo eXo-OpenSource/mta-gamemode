@@ -21,7 +21,8 @@ function GasStationManager:constructor()
 	end
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
-
+	self.m_BankAccountServer = BankServer.get("vehicle.gasstation")
+	
 	addEventHandler("gasStationTakeFuelNozzle", root, bind(GasStationManager.takeFuelNozzle, self))
 	addEventHandler("gasStationRejectFuelNozzle", root, bind(GasStationManager.rejectFuelNozzle, self))
 	--addEventHandler("gasStationStartTransaction", root, bind(GasStationManager.startTransaction, self))
@@ -79,14 +80,14 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 			if station:isUserFuelStation() then
 				if client:getMoney() >= price then
-					client:takeMoney(price, "Tanken")
+					client:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 					vehicle:setFuel(vehicle:getFuel() + fuel)
 
 					client:triggerEvent("gasStationReset")
 
 					if station:getShop() then
 						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-						station:getShop():giveMoney(price/5, "Betankung")
+						self.m_BankAccountServer:transferMoney(station:getShop().m_BankAccount, price/5, "Betankung", "Vehicle", "Refill")
 					end
 				else
 					client:sendError("Du hast nicht genügend Geld dabei!")

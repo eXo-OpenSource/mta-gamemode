@@ -114,17 +114,13 @@ function CompanyManager:Event_companyDeposit(amount)
 	if not company then return end
     if not amount then return end
 
-	if client:getMoney() < amount then
+	if client:transferMoney(company, amount, "Unternehmen-Einlage", "Company", "Deposit") then
+		company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
+		self:sendInfosToClient(client)
+		company:refreshBankAccountGUI(client)
+	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
-		return
 	end
-
-	client:takeMoney(amount, "Unternehmen-Einlage")
-	company:giveMoney(amount, "Unternehmen-Einlage")
-    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
-	self:sendInfosToClient(client)
-    company:refreshBankAccountGUI(client)
-
 end
 
 function CompanyManager:Event_companyWithdraw(amount)
@@ -138,16 +134,13 @@ function CompanyManager:Event_companyWithdraw(amount)
 		return
 	end
 
-	if company.m_BankAccount:getMoney() < amount then
+	if company:transferMoney(client, amount, "Unternehmen-Auslage", "Company", "Withdraw") then
+		company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
+		self:sendInfosToClient(client)
+		company:refreshBankAccountGUI(client)
+	else
 		client:sendError(_("In der Unternehmenskasse befindet sich nicht genügend Geld!", client))
-		return
 	end
-
-	company:takeMoney(amount, "Unternehmen-Auslage")
-	client:giveMoney(amount, "Unternehmen-Auslage")
-    company:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
-	self:sendInfosToClient(client)
-    company:refreshBankAccountGUI(client)
 end
 
 function CompanyManager:Event_companyAddPlayer(player)

@@ -11,7 +11,14 @@ function MoneyBeggar:giveMoney(player, money)
 			-- give wage
 			local karma = math.min(money, 5)
 			player:giveCombinedReward("Bettler-Geschenk", {
-				money = -money,
+				money = {
+					mode = "take",
+					bank = false,
+					amount = money,
+					toOrFrom = self.m_BankAccountServer,
+					category = "Gameplay",
+					subcategory = "Beggar"
+				},
 				karma = karma,
 				points = 1,
 			})

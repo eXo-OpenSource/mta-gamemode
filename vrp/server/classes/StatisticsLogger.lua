@@ -56,6 +56,71 @@ function StatisticsLogger:addMoneyLogNew(fromId, fromType, formBank, toId, toTyp
 end
 
 --[[
+	Needs testing
+	- Admin Kasse (Ein-/Auszahlen)
+	- Fahrschule Theorie
+	- Fahrschule Prüfung NPC und mit Spieler
+	- Mechaniker Reperatur
+	- Mechaniker Fahrzeug freikaufen
+	- Mechaniker Tanken
+	- Taxifahrt
+	- Busfahrt (Spieler, Kilometergeld)
+	- San News Werbung
+	- Unternehmen (Ein-/ Auszahlen)
+	- DM Race
+	- Streetrace
+	- BankRobbery (State & Evil)
+	- Evidence Truck
+	- Weapon Truck
+	- Fraktion Robbery
+	- Fraktion (Ein-/ Auszahlen)
+	- Rescue Heilung NPC
+	- Rescue Heilung Player
+	- Tod Geld Pickup (selbst und fremder Spieler aufheben)
+	- Rescue Fahrzeugbrand
+	- Staatsfraktion Kautionsticket
+	- Staatsfraktion Arrest
+	- Jail Bail
+	- Wanzencheck (Mechanics)
+	- Gangwar Payday
+	- Gangwar Kill Boni
+	- Beggars Geld geben
+	- Rescue Feuer
+	- Beggar Rob
+	- Beggar Trade
+	- Beggar Weed Sell
+	- Gameplay Boxen
+	- Slotmachine Eastern Event
+	- Fische verkaufen
+	- Shop (Sell/Buy/Withdraw)
+	- Fahrzeug tanken (Shop)
+	- Roulett
+	- Schildkrötenrennen
+	- Horse Race
+	- Shop Rob (State, Evil, Expire)
+
+]]
+
+
+--[[
+	vrp_stats --> Kills, Deaths, AFK, Driven, FishCought --> DEFAULT 0
+
+	ALTER TABLE `vrp_shops` ADD COLUMN `BankAccount` int(11) AFTER `OwnerType`;
+]]
+
+--[[
+	self.m_BankAccountServer = BankServer.get("gameplay.beggar")
+
+
+
+money = {
+					mode = "take",
+					bank = false,
+					amount = money,
+					toOrFrom = self.m_BankAccountServer,
+					category = "Gameplay",
+					subcategory = "Beggar"
+				}
 New function --> replaces all old functions
 New Singleton called SingletonBank
 New Object called ObjectBank

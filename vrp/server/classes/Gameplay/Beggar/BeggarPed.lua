@@ -22,6 +22,7 @@ function BeggarPed:virtual_constructor(id, classId)
 	self.m_RoleName = BeggarTypeNames[self.m_Type]
 
 	self.m_LastRobTime = 0
+	self.m_BankAccountServer = BankServer.get("gameplay.beggar")
 
 	addEventHandler("onPedWasted", self, bind(self.Event_onPedWasted, self))
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -77,7 +78,14 @@ function BeggarPed:rob(player)
 		-- Give wage
 		local money = math.random(1, 5)
 		player:giveCombinedReward("Bettler-Raub", {
-			money = money,
+			money = {
+				mode = "give",
+				bank = false,
+				amount = money,
+				toOrFrom = self.m_BankAccountServer,
+				category = "Gameplay",
+				subcategory = "BeggarRob"
+			},
 			karma = -math.ceil(money/2),
 		})
 		self:sendMessage(player, BeggarPhraseTypes.Rob)

@@ -11,7 +11,14 @@ function WeedBeggar:sellWeed(player, amount)
 		if player:getInventory():getItemAmount("Weed") >= amount then
 			player:getInventory():removeItem("Weed", amount)
 			player:giveCombinedReward("Bettler-Handel", {
-				money = amount*15,
+				money = {
+					mode = "give",
+					bank = false,
+					amount = amount*15,
+					toOrFrom = self.m_BankAccountServer,
+					category = "Gameplay",
+					subcategory = "BeggarWeed"
+				},
 				karma = -math.ceil(amount/50),
 				points = math.ceil(20 * amount/200),
 			})

@@ -1178,25 +1178,25 @@ end
 function Player:giveCombinedReward(name, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
+		if type(amount) ~= "table" then amount = tonumber(amount) end
 		amount = tonumber(amount)
 		if amount then
-			amount = math.round(amount)
+			if type(amount) ~= "table" then amount = math.round(amount) end
 			if name == "money" then
-				if amount > 0 then
-					self:giveMoney(amount, name, false, true)
-					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeMoney(math.abs(amount), name, false, true)
-					smText = smText .. ("%s\n"):format(toMoneyString(amount))
+				local prefix = amount.mode == "give" and "+" or ""
+				local bank = amount.bank and " (Konto)" or ""
+
+				if amount.mode == "give" then
+					amount.toOrFrom:transferMoney({player, amount.bank, true}, amount.amount, name, amount.cagegory, amount.subcategory)
+				else
+					if amount.bank then
+						player:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+					else
+						player:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+					end		
 				end
-			elseif name == "bankMoney" then
-				if amount > 0 then
-					self:addBankMoney(amount, name, false, true)
-					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeBankMoney(math.abs(amount), name, false, true)
-					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
-				end
+
+				smText = smText .. ("%s%s%s\n"):format(prefix, toMoneyString(amount), bank)
 			elseif name == "points" then
 				if amount > 0 then
 					self:givePoints(amount, name, false, true)

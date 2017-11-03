@@ -301,19 +301,19 @@ end
 function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
-
-function Faction:giveMoney(amount, reason, silent)
+--[[
+function Faction:__giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
 	return self.m_BankAccount:addMoney(amount, reason, silent)
 end
 
-function Faction:takeMoney(amount, reason, silent)
+function Faction:__takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
 	return self.m_BankAccount:takeMoney(amount, reason, silent)
 end
-
-function Faction:transferMoney(toObject, amount, reason, silent, category, subcategory)
-	self.m_BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+]]
+function Faction:transferMoney(toObject, amount, reason, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end
 
 function Faction:setRankLoan(rank,amount)

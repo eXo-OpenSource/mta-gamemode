@@ -13,6 +13,7 @@ function GangwarStatistics:constructor()
 	self.m_CollectorTimeouts =  {}
 	self.sqlMostDamage = {}
 	self.runtimeMostDamage = {}
+	self.m_BankAccountServer = BankServer.get("faction.gangwar")
 	local result = sql:queryFetch("SELECT * FROM ??_gangwar_stats;", sql:getPrefix())
 	for i, row in pairs(result) do
 		if row.type == "mvp" then
@@ -56,7 +57,7 @@ function GangwarStatistics:addDamageToCollector( mAreaID, damage )
 		local moneyKill = kill * GANGWAR_PAY_PER_KILL
 		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)
 		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",client,200,200,0,true)
-		client:giveMoney(moneyDamage+moneyKill,"Gangwar-Boni")
+		self.m_BankAccountServer:transferMoney(client, moneyDamage+moneyKill, "Gangwar-Boni", "Faction", "GangwarBoni")
 		self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { client, damage}
 		if #self.m_CollectorMap[mAreaID] == self.m_CollectorTimeouts[mAreaID] then 
 			self:stopAndOutput( mAreaID )

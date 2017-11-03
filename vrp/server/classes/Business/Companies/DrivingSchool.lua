@@ -45,6 +45,7 @@ function DrivingSchool:constructor()
     self.m_OnQuit = bind(self.Event_onQuit,self)
 	self.m_StartLession = bind(self.startLession, self)
 	self.m_DiscardLession = bind(self.discardLession, self)
+	self.m_BankAccountServer = BankServer.get("company.driving_school")
 
     local safe = createObject(2332, -2032.70, -113.70, 1036.20)
     safe:setInterior(3)
@@ -107,12 +108,11 @@ function DrivingSchool:Event_startTheory()
 
 	QuestionBox:new(client, client, _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", client),
 		function(player)
-			if player:getMoney() < 300 then
+			if not player:transferMoney(self.m_BankAccountServer, 300, "Fahrschule Theorie", "Company", "License") then
 				player:sendError(_("Du hast nicht genug Geld dabei!", player))
 				return
 			end
-
-			player:takeMoney(300, "Fahrschule")
+			
 			player:triggerEvent("showDrivingSchoolTest")
 		end,
 		function() end,
@@ -159,9 +159,7 @@ function DrivingSchool:Event_startAutomaticTest(type)
 				player:sendError(_("Du hast nicht genug Geld dabei!", player))
 				return
 			end
-
-			player:takeMoney(DrivingSchool.LicenseCosts[type], "NPC Fahrprüfung")
-			self:giveMoney(DrivingSchool.LicenseCosts[type], ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), true)
+			player:transferMoney(self.m_BankAccountServer, DrivingSchool.LicenseCosts[type], ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
 
 			player.m_AutoTestMode = type
 			self:startAutomaticTest(player, type)
@@ -411,10 +409,12 @@ function DrivingSchool:startLession(instructor, target, type)
 							["instructor"] = instructor,
 							["vehicle"] = false,
 							["startMileage"] = false,
-                        }
-                        target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs*0.5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), true)
-						instructor:giveMoney(math.floor(costs*0.15), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
+						}
+						
+						target:transferMoney(self.m_BankAccountServer, costs, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
+						self.m_BankAccountServer:transferMoney({self, nil, true}, costs*0.5, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
+						self.m_BankAccountServer:transferMoney(instructor, costs*0.15, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
+
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
                         target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, instructor.name, DrivingSchool.TypeNames[type]))

@@ -26,7 +26,8 @@ function FactionState:constructor()
 	}
 
 	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
-
+	self.m_BankAccountServer = BankServer.get("faction.state")
+	
 	addEventHandler("onColShapeLeave", root, function(element)
 		if element and isElement(element) and element:getType() == "player" and element.vehicle then
 			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
@@ -363,11 +364,11 @@ function FactionState:Event_OnTicketAccept(cop)
 			if client:getWanteds() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
-					cop:getFaction():giveMoney(TICKET_PRICE, "Ticket")
+					self.m_BankAccountServer:transferMoney(cop:getFaction(), TICKET_PRICE, "Ticket", "Faction", "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
 				client:setWanteds(0)
-				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
+				client:transferMoney(self.m_BankAccountServer, TICKET_PRICE, "[SAPD] Kautionsticket", "Faction", "Ticket"
 			end
 		end
 	end
@@ -1025,7 +1026,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					end
 
 					-- Pay some money to faction and karma, xp to the policeman
-					policeman:getFaction():giveMoney(factionBonus, "Arrest")
+					self.m_BankAccountServer:transferMoney(policeman:getFaction(), factionBonus, "Arrest", "Faction", "Arrest"
 					policeman:giveKarma(wantedLevel)
 					policeman:givePoints(wantedLevel)
 					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
@@ -1100,8 +1101,7 @@ function FactionState:Command_bail(player)
 				local money = player:getBankMoney()
 				if money >= player.m_Bail then
 
-					player:takeBankMoney(player.m_Bail, "Kaution")
-					FactionManager:getSingleton():getFromId(1):giveMoney(player.m_Bail, "Kaution", true)
+					player:transferBankMoney({FactionManager:getSingleton():getFromId(1), nil, true}, player.m_Bail, "Kaution", "Faction", "Bail")
 
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
@@ -1862,8 +1862,7 @@ function FactionState:Event_checkBug(element)
 		price = 50
 	end
 	if client:getMoney() >= price then
-		client:takeMoney(price, "Wanzen-Check")
-		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):giveMoney(math.floor(price/2), "Wanzen-Check")
+		client:transferMoney(CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC), price, "Wanzen-Check", "Company", "BugCheck")
 		if checkElement:getData("Wanze") == true and checkElement.BugId then
 			local id = checkElement.BugId
 			self.m_Bugs[id]["element"].BugId = nil
