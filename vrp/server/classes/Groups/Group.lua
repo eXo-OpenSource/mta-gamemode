@@ -647,7 +647,7 @@ function Group:payDay(vehicleData)
 				end
 			end
 		else
-			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())
+			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self:getId())
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
 	end
