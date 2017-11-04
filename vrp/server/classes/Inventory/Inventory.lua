@@ -259,7 +259,7 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 	else
 		self:deleteItem(id)
 		self.m_Items[id] = nil
-		self:getItemID(bag, place) = nil
+		self.m_Bag[bag][place] = nil
 		self:syncClient()
 		return true
 	end
