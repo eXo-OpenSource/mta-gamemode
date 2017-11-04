@@ -199,7 +199,7 @@ function Halloween:registerTrickOrTreat(pId, houseId, time)
 
 				for i, v in pairs(getElementsByType("player")) do
 					self:initTTPlayer(v:getId())
-					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId then
+					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId and v:getInterior() == 0 and v:getDimension() == 0 then
 						if not self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId] or (getTickCount() - self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId]) > Halloween.ms_HouseTTCooldown then
 							table.insert(d.playersNearby, v:getId())
 							self.m_TrickOrTreatPIDs[v:getId()].trickStarted = getTickCount()

@@ -70,7 +70,7 @@ function Townhall:constructor()
 
 
 	--// WT PED AREA
-	local itemSpawnerPed3 = Ped.create(267, Vector3(117.39, 1883.09, 17.88))
+	local itemSpawnerPed3 = Ped.create(287, Vector3(117.39, 1883.09, 17.88))
 	itemSpawnerPed3:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed3.Name = _"Ausrüstungsfahrzeug"
 	itemSpawnerPed3.Description = _"Hier startet der Waffentruck!"
