@@ -155,17 +155,12 @@ function Inventory:insertItem(amount, item, place, bag, value)
 	return sql:lastInsertId()
 end
 
-function Inventory:isPlaceEmpty(bag, place)
-	local id = self.m_Bag[bag][place]
-	if self.m_Items[id] then
-		if self.m_Items[id]["Objekt"] then
-			return false
-		else
-			return true
-		end
-	else
-		return true
-	end
+function Inventory:getItemID(bag, place)
+	return self.m_Bag[bag][place]
+end
+
+function Inventory:getMaxItemAmount(item)
+	return self.m_ItemData[item]["Item_Max"]
 end
 
 function Inventory:getLowEmptyPlace(bag)
@@ -173,14 +168,6 @@ function Inventory:getLowEmptyPlace(bag)
 		if(self:isPlaceEmpty(bag, i)) then
 			return i
 		end
-	end
-	return false
-end
-
-function Inventory:getLowestOccupiedPlace(bag)
-	local bag = self.m_Bag[bag]
-	for index, value in pairs(bag) do
-		return self.m_Items[id]["Platz"]
 	end
 	return false
 end
@@ -197,22 +184,7 @@ function Inventory:getPlaces(bag)
 	end
 end
 
-function Inventory:getCountOfPlaces(bag, item)
-	local places = self:getPlaces(bag)
-	local freePlaces = 0
-	for i = 0, places, 1 do
-		if isPlaceEmpty(bag, i) then
-			freePlaces = freePlaces+1
-		end
-	end
-	return freePlaces
-end
-
-function Inventory:getItemID(bag, place)
-	return self.m_Bag[bag][place]
-end
-
-function Inventory:getItemValueByBag( bag, place)
+function Inventory:getItemValueByBag(bag, place)
 	if bag and place then
 		local id = self:getItemID(bag, place)
 		if id then
@@ -221,34 +193,12 @@ function Inventory:getItemValueByBag( bag, place)
 	end
 end
 
-function Inventory:getItemValueByName(item)
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					return self.m_Items[id]["Value"]
-				end
-			end
-		end
-	end
-end
-
-function Inventory:setItemValueByName(item, value)
-	if self.m_ItemData[item] then
-		local bag = self.m_ItemData[item]["Tasche"]
-		local places = self:getPlaces(bag)
-		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
-			if id then
-				if self.m_Items[id]["Objekt"] == item then
-					self.m_Items[id]["Value"] = value
-					self:saveItemValue(id, value)
-				end
-			end
-		end
+function Inventory:isPlaceEmpty(bag, place)
+	local id = self:getItemID(bag, place)
+	if self.m_Items[id] and self.m_Items[id]["Objekt"] then
+		return false
+	else
+		return true
 	end
 end
 
@@ -257,7 +207,7 @@ function Inventory:setItemValueByBag( bag, place, value )
 		if place then
 			local id = self:getItemID(bag, place)
 			if id then
-				self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+				self.m_Items[self:getItemID(bag, place)]["Value"] = value
 				self:saveItemValue(id, value)
 			end
 		end
@@ -270,7 +220,7 @@ function Inventory:getItemPlacesByName(item)
 		local bag = self.m_ItemData[item]["Tasche"]
 		local places = self:getPlaces(bag)
 		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
+			local id = self:getItemID(bag, place)
 			if id then
 				if self.m_Items[id]["Objekt"] == item then
 					placeTable[#placeTable+1] = {place, bag}
@@ -284,7 +234,7 @@ function Inventory:getItemPlacesByName(item)
 end
 
 function Inventory:removeItemFromPlace(bag, place, amount, value)
-	local id = self.m_Bag[bag][place]
+	local id = self:getItemID(bag, place)
 	if not id then return false end
 
 	local ItemAmount = self.m_Items[id]["Menge"]
@@ -309,15 +259,13 @@ function Inventory:removeItemFromPlace(bag, place, amount, value)
 	else
 		self:deleteItem(id)
 		self.m_Items[id] = nil
-		self.m_Bag[bag][place] = nil
+		self:getItemID(bag, place) = nil
 		self:syncClient()
 		return true
 	end
 end
 
-function Inventory:getMaxItemAmount(item)
-	return self.m_ItemData[item]["Item_Max"]
-end
+
 
 function Inventory:getFreePlacesForItem(item)
 	if self.m_Debug == true then
@@ -339,7 +287,7 @@ function Inventory:getFreePlacesForItem(item)
 
 		for i = 0, invplaetze, 1 do
 			local place = i
-			local id = self.m_Bag[bag][place]
+			local id = self:getItemID(bag, place)
 			local itemName = self.m_ItemData[item]["Name"]
 			amount = 0
 			placesplus = 0
@@ -374,7 +322,7 @@ function Inventory:removeItem(item, amount, value)
 		local places = self:getPlaces(bag)
 		local itemValue
 		for place = 0, places, 1 do
-			local id = self.m_Bag[bag][place]
+			local id = self:getItemID(bag, place)
 			if self.m_Items[id] and self.m_Items[id]["Objekt"] and self.m_Items[id]["Objekt"] == item then
 				if self.m_Items[id]["Menge"] >= amount then
 					if not value then
@@ -402,7 +350,7 @@ function Inventory:removeAllItem(item, value)
 		local id,itemName
 		local itemValue
 		for place = 0, places, 1 do
-			id = self.m_Bag[bag][place]
+			id = self:getItemID(bag, place)
 			if id then
 				itemName = self.m_Items[id]["Objekt"]
 				if itemName == item then
@@ -425,7 +373,7 @@ function Inventory:getPlaceForItem(item, itemAmount)
 		local bag = self.m_ItemData[item]["Tasche"]
 		local id
 		for place = 0, self:getPlaces(bag), 1 do
-			id = self.m_Bag[bag][place]
+			id = self:getItemID(bag, place)
 			if id then
 				if self.m_Items[id]["Objekt"] == item then
 					if self.m_Items[id]["Menge"]+itemAmount <= self.m_ItemData[item]["Stack_max"] then
@@ -452,7 +400,7 @@ function Inventory:getItemAmount(item, inStack)
 
 		if not inStack then
 			for place = 0, places do
-				local id = self.m_Bag[bag][place]
+				local id = self:getItemID(bag, place)
 				if id then
 					if self.m_Items[id]["Objekt"] == item then
 						amount = amount+self.m_Items[id]["Menge"]
@@ -461,7 +409,7 @@ function Inventory:getItemAmount(item, inStack)
 			end
 		else
 			for place = 0, places do
-				local id = self.m_Bag[bag][place]
+				local id = self:getItemID(bag, place)
 				if id then
 					if self.m_Items[id]["Objekt"] == item then
 						local stackAmount = self.m_Items[id]["Menge"]
@@ -509,7 +457,7 @@ function Inventory:giveItem(item, amount, value) -- donotsync if player disconne
 			place = self:getLowEmptyPlace(bag)
 		end
 		if place then
-			local id = self.m_Bag[bag][place]
+			local id = self:getItemID(bag, place)
 			if placeType == "stack" then
 				--outputDebugString("giveItem - OldStack")
 				local itemAmount = self.m_Items[id]["Menge"]
