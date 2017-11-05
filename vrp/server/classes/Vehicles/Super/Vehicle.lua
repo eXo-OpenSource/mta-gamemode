@@ -11,6 +11,8 @@ Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle in
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
 	addEventHandler("onVehicleExit", self, bind(self.onPlayerExit, self))
+	addEventHandler("onElementInteriorChange", self, bind(self.onInteriorChange, self))
+	addEventHandler("onElementDimensionChange", self, bind(self.onDimensionChange, self))
 
 	self.m_LastUseTime = math.huge
 	setVehicleOverrideLights(self, 1)
@@ -210,6 +212,22 @@ function Vehicle:onPlayerExit(player, seat)
 		if self.m_Magnet then
 			unbindKey(player, "special_control_up", "both", self.m_MagnetUp)
 			unbindKey(player, "special_control_down", "both", self.m_MagnetDown)
+		end
+	end
+end
+
+function Vehicle:onInteriorChange()
+	self:removeAttachedPlayers()
+end
+
+function Vehicle:onDimensionChange()
+	self:removeAttachedPlayers()
+end
+
+function Vehicle:removeAttachedPlayers()
+	for i,v in pairs(getAttachedElements(self)) do
+		if getElementType(v) == "player" then
+			v:attachToVehicle(true)
 		end
 	end
 end

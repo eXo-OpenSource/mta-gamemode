@@ -1360,6 +1360,48 @@ function Player:getPlayerAttachedObject()
 	return false
 end
 
+function Player:attachToVehicle(forceDetach)
+	if self:getPrivateSync("isAttachedToVehicle") then
+		self:setPrivateSync("isAttachedToVehicle", false)
+		self:detach()
+		return
+	end
+
+	if forceDetach or not self.contactElement or self.contactElement:getType() ~= "vehicle" then return end
+	if self.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[self.contactElement:getModel()] then
+		if self.contactElement:getSpeed() < 20 then
+			local px, py, pz = getElementPosition(self)
+			local vx, vy, vz = getElementPosition(self.contactElement)
+			local sx = px - vx
+			local sy = py - vy
+			local sz = pz - vz
+
+			local rotpX = 0
+			local rotpY = 0
+			local rotpZ = getPlayerRotation(self)
+
+			local rotvX, rotvY, rotvZ = getVehicleRotation(self.contactElement)
+
+			local t, p, f = math.rad(self.contactElement.rotation.x), math.rad(self.contactElement.rotation.y), math.rad(self.contactElement.rotation.z)
+			local ct, st, cp, sp, cf, sf = math.cos(t), math.sin(t), math.cos(p), math.sin(p), math.cos(f), math.sin(f)
+
+			local z = ct*cp*sz + (sf*st*cp + cf*sp)*sx + (-cf*st*cp + sf*sp)*sy
+			local x = -ct*sp*sz + (-sf*st*sp + cf*cp)*sx + (cf*st*sp + sf*cp)*sy
+			local y = st*sz - sf*ct*sx + cf*ct*sy
+
+			local rotX = rotpX - rotvX
+			local rotY = rotpY - rotvY
+			local rotZ = rotpZ - rotvZ
+
+			self:attach(self.contactElement, x, y, z, rotX, rotY, rotZ)
+			self:setPrivateSync("isAttachedToVehicle", self.contactElement)
+			self:sendShortMessage(_("Drücke 'X' um dich nicht mehr am Fahrzeug festzuhalten.", self))
+		else
+			self:sendWarning(_("Dieses Fahrzeug ist zu schnell, um sich daran festzuhalten!", self))
+		end
+	end
+end
+
 function Player:setModel( skin )
 	setElementModel( self, skin or 0)
 end
