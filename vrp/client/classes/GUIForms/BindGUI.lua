@@ -74,7 +74,7 @@ function BindGUI:constructor()
   	self.m_ChangeBindButton.onLeftClick = function () self:editBind() end
 
 	--Remote Bind
-	self.m_Footer["remote"] = GUIEleement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
+	self.m_Footer["remote"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	self.m_CopyButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.35, self.m_Height*0.07, "Diesen Bind verwenden", self.m_Footer["remote"]):setBackgroundColor(Color.Green)
   	self.m_CopyButton.onLeftClick = function () self:copyBind() end
 
