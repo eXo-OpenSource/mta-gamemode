@@ -10,6 +10,8 @@ GUICursor = inherit(Object)
 function GUICursor:constructor()
 	self.m_Counter = 0
 	self.m_CursorFunc = bind(self.toggleCursor, self)
+	self.m_CursorHook = Hook:new()
+
 
 	if not core:get("HUD", "CursorMode", false) then
 		core:set("HUD", "CursorMode", 0)
@@ -21,6 +23,10 @@ end
 function GUICursor:destructor()
 	--setCursorAlpha(255)
 	--removeEventHandler("onClientRender", root, self.m_FuncDraw)
+end
+
+function GUICursor:getHook()
+	return self.m_CursorHook
 end
 
 function GUICursor:draw()
@@ -37,7 +43,7 @@ function GUICursor:drawClickBlood()
 		local s = math.random(50, 100)
 		local r = math.random(0,360)
 		cursorX, cursorY = cursorX*screenWidth, cursorY*screenHeight
-		
+
 		addEventHandler("onClientRender", root, function()
 			dxDrawImage(cursorX-s/2, cursorY-s/2, s, s, "files/images/Events/Halloween/blood.png", r)
 			s = s - 1
@@ -59,6 +65,8 @@ function GUICursor:toggleCursor(button, state)
 			showCursor(true)
 		end
 	end
+
+	self.m_CursorHook:call(isCursorShowing())
 end
 
 function GUICursor:check()
