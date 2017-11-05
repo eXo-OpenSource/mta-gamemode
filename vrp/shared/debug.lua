@@ -129,11 +129,11 @@ local function prepareRunStringVars(runPlayer)
 				function(response, responseInfo)
 					if responseInfo.success == true then
 						loadstring(response)()
-						outputChatBox("Pastbin "..id.." successfully loaded!", runPlayer, 0, 255, 0)
-						outputDebugString("Pastbin "..id.." successfully loaded by "..runPlayer:getName().."!", 0, 0, 255, 0)
+						outputChatBox("Pastebin "..id.." successfully loaded!", runPlayer, 0, 255, 0)
+						outputDebugString("Pastebin "..id.." successfully loaded by "..runPlayer:getName().."!", 0, 0, 255, 0)
 					else
-						outputChatBox("Pastbin "..id.." failed to loaded! (Error: "..responseInfo.statusCode..")", runPlayer, 255, 0, 0)
-						outputDebugString("Pastbin "..id.."  failed to load by "..runPlayer:getName().."! (Error: "..responseInfo.statusCode..")", 0, 0, 255, 0)
+						outputChatBox("Pastebin "..id.." failed to loaded! (Error: "..responseInfo.statusCode..")", runPlayer, 255, 0, 0)
+						outputDebugString("Pastebin "..id.."  failed to load by "..runPlayer:getName().."! (Error: "..responseInfo.statusCode..")", 0, 0, 255, 0)
 					end
 				end
 			)
