@@ -844,8 +844,8 @@ function Admin:toggleSupportMode(player)
         self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setPublicSync("Admin:OldSkin", player:getModel())
 		player:setModel(260)
-		player:setWalkingStyle(138)
-        self:toggleSupportArrow(player, false)
+		--player:setWalkingStyle(138)
+        self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
 		if player:getRank() >= RANK.Moderator then
 			player:triggerEvent("superman:toggle", true)
@@ -858,7 +858,7 @@ function Admin:toggleSupportMode(player)
         player:sendInfo(_("Support Modus deaktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
 		player:setModel(player:getPublicSync("Admin:OldSkin"))
-		player:setWalkingStyle(0)
+		--player:setWalkingStyle(0)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
 		if player:getRank() >= RANK.Moderator then
