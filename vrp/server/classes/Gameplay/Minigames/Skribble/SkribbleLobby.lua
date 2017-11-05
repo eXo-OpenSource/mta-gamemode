@@ -261,8 +261,6 @@ function SkribbleLobby:removePlayer(player)
 	local playerCount = #self:getPlayers()
 	if playerCount == 0 then
 		return delete(self)
-	elseif player == self.m_CurrentDrawing then
-		self:setState(self:isState("drawing") and "finishedDrawing" or "choosing")
 	elseif playerCount < 2 then
 		if self:isState("finishedGame") then
 			self.m_CurrentRound = 1
@@ -274,6 +272,12 @@ function SkribbleLobby:removePlayer(player)
 		end
 
 		self:setState("idle")
+	elseif player == self.m_CurrentDrawing then
+		self:setState(self:isState("drawing") and "finishedDrawing" or "choosing")
+	else
+		if #self:getGuessedPlayers() == #self:getPlayers() then
+			self:setState("finishedDrawing")
+		end
 	end
 
 	self:syncLobbyInfos()
