@@ -34,10 +34,14 @@ function BindManager:destructor()
 end
 
 function BindManager:Event_OnClientKey(button, pressOrRelease)
-    if table.find(KeyBindings.DisallowedKeys, button:lower()) then return end
+	if GUIInputControl.ms_CurrentInputFocus or isChatBoxInputActive() or isConsoleActive() then -- Textboxes
+		return
+	end
+
+	if table.find(KeyBindings.DisallowedKeys, button:lower()) then return end
 	self.m_PressedKeys[button] = pressOrRelease
 
-    if self:CheckForBind() then
+	if self:CheckForBind() then
         cancelEvent()
     end
 end
