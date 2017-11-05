@@ -24,6 +24,9 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 
 	self.m_HandleClick = bind(VehicleFuel.handleClick, self)
 	self.m_Confirm = bind(VehicleFuel.confirm, self)
+	self.m_StopInteraction = bind(VehicleFuel.stopInteraction, self)
+
+	Cursor:getHook():register(self.m_StopInteraction)
 
 	local pos = vehicle:getPosition()
 	pos.z = pos.z + 1.5
@@ -38,6 +41,9 @@ function VehicleFuel:virtual_destructor()
 	if not self.m_ConfirmWithSpace then self:confirm() end
 	unbindKey("space", "down", self.m_Confirm)
 	unbindKey("mouse1", "both", self.m_HandleClick)
+	toggleAllControls(true, true, false)
+
+	Cursor:getHook():unregister(self.m_StopInteraction)
 end
 
 function VehicleFuel:confirm()
@@ -72,16 +78,23 @@ function VehicleFuel:handleClick(__, state)
 	if self.m_MouseDown then
 		if localPlayer:getWorldVehicle() ~= self.m_Vehicle then return end
 		if self.m_Vehicle:getData("syncEngine") then WarningBox:new("Bitte schalte den Motor aus!") return end
-		if self.m_Vehicle:getFuelType() ~= "universal" and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") and localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then 
+		if self.m_Vehicle:getFuelType() ~= "universal" and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") and localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then
 			WarningBox:new(_("In diesen Tank solltest du nur %s füllen.", FUEL_NAME[self.m_Vehicle:getFuelType()])) return end
-		
-		local time = self.m_Vehicle:getFuelTankSize() 
+
+		local time = self.m_Vehicle:getFuelTankSize()
 		self.m_FuelProgress:startAnimation(time*150 - (self.m_Fuel + self.m_FuelOffset) *time, "Linear", 100 - self.m_FuelOffset)
 		toggleAllControls(false, true, false)
 	else
-		self.m_FuelProgress:stopAnimation()
-		toggleAllControls(true, true, false)
+		self:stopInteraction(true)
 	end
+end
+
+function VehicleFuel:stopInteraction(state)
+	if not state then return end
+
+	self.m_FuelProgress:stopAnimation()
+	toggleAllControls(true, true, false)
+	setPedControlState("fire", false)
 end
 
 function VehicleFuel:onStreamIn(surface)
