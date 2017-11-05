@@ -2,6 +2,8 @@ Halloween = inherit(Singleton)
 
 function Halloween:constructor()
 
+	WareClient:new()
+
 	Blip:new("Ghost.png", 945.57, -1103.55, 400):setDisplayText("Halloween-Friedhof")
 
 	--Drawing Contest

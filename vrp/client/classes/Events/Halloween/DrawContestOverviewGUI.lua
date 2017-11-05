@@ -10,11 +10,28 @@
 -- Player Grid wird von Lokaler DB über MTA geladen
 -- Bild wird über PHP auf Test-DB gespeichert/geladen
 
-
 DrawContestOverviewGUI = inherit(GUIForm)
 inherit(Singleton, DrawContestOverviewGUI)
 
 addRemoteEvents{"drawContestReceivePlayers", "drawingContestReceiveVote"}
+
+DrawContest = {}
+function DrawContest.createPed(model, pos, rot, title, text)
+	--Drawing Contest
+	local ped = Ped.create(model, pos, rot)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, title, text)
+	ped.SpeakBubble:setBorderColor(Color.Orange)
+	ped.SpeakBubble:setTextColor(Color.Orange)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			DrawContestOverviewGUI:getSingleton():open()
+		end
+	)
+end
 
 function DrawContestOverviewGUI:constructor()
 	GUIWindow.updateGrid()

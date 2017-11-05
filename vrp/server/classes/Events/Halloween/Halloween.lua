@@ -142,6 +142,7 @@ Halloween.ms_Bonus = {
 
 function Halloween:constructor()
 	DrawContest:new()
+	WareManager:new()
 	self.m_TrickOrTreatPIDs = {}
 
 	self.m_EventSign = createObject(1903, 1484.80, -1710.70, 12.4, 0, 0, 90)
