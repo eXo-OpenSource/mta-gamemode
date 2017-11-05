@@ -92,13 +92,19 @@ end
 	- Gameplay Boxen
 	- Slotmachine Eastern Event
 	- Fische verkaufen
-	- Shop (Sell/Buy/Withdraw)
+	- Shop (Sell/Buy)
 	- Fahrzeug tanken (Shop)
 	- Roulett
 	- Schildkrötenrennen
 	- Horse Race
 	- Shop Rob (State, Evil, Expire)
 
+	- Shop buy (food, items, clothes, weapons, item drink?)
+	- Shop deposit/withdraw
+	- Vehicle Shop - Fahrzeug kaufen
+	- Slotmachine
+	- Vending Machine (Buy, Rob)
+	- Group
 ]]
 
 
@@ -106,6 +112,7 @@ end
 	vrp_stats --> Kills, Deaths, AFK, Driven, FishCought --> DEFAULT 0
 
 	ALTER TABLE `vrp_shops` ADD COLUMN `BankAccount` int(11) AFTER `OwnerType`;
+	ALTER TABLE `vrp_vehicle_shops` ADD COLUMN `BankAccount` int(11);
 ]]
 
 --[[

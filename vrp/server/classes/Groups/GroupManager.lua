@@ -51,6 +51,7 @@ end
 
 function GroupManager:destructor()
 	for k, v in pairs(GroupManager.Map) do
+		v:save()
 		delete(v)
 	end
 end

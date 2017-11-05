@@ -368,7 +368,7 @@ function FactionState:Event_OnTicketAccept(cop)
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
 				client:setWanteds(0)
-				client:transferMoney(self.m_BankAccountServer, TICKET_PRICE, "[SAPD] Kautionsticket", "Faction", "Ticket"
+				client:transferMoney(self.m_BankAccountServer, TICKET_PRICE, "[SAPD] Kautionsticket", "Faction", "Ticket")
 			end
 		end
 	end

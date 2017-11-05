@@ -40,7 +40,7 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- {iWeaponID, iWeaponAmmo}
 
 	self.ms_Settings = {}
-
+	self.m_BankAccountServer = BankServer.get("gameplay.slotmachine")	
 
 	-- Methods
 	self.m_ResultFunc = bind(self.doResult, self)
@@ -266,20 +266,20 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice)
-		player:giveMoney(self.m_Prices.normalPrice+rnd, "Slotmaschine")
+		self.m_BankAccountServer:transferMoney(player, self.m_Prices.normalPrice+rnd, "Slotmaschine", "Gameplay", "Slotmachine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice+rnd))
 		StatisticsLogger:addCasino( player, name, rnd)
 	elseif name == "win" then
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice2)
-		player:giveMoney(self.m_Prices.normalPrice2+rnd, "Slotmaschine")
+		self.m_BankAccountServer:transferMoney(player, self.m_Prices.normalPrice2+rnd, "Slotmaschine", "Gameplay", "Slotmachine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice2+rnd))
 		StatisticsLogger:addCasino( player, name, rnd)
 	elseif name == "jackpot" then
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_jackpot", int, dim)
-		player:giveMoney(self.m_Prices.jackpot, "Slotmaschine")
+		self.m_BankAccountServer:transferMoney(player, self.m_Prices.jackpot, "Slotmaschine", "Gameplay", "Slotmachine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.jackpot))
 		triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z)
 		StatisticsLogger:addCasino( player, name, self.m_Prices.jackpot)
@@ -289,7 +289,7 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z)
 		outputChatBox(getPlayerName(player).." WON THE RARE JACKPOT!!!", getRootElement(), 0, 255, 0)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.rareJackpot))
-		player:giveMoney(self.m_Prices.rareJackpot, "Slotmaschine")
+		self.m_BankAccountServer:transferMoney(player, self.m_Prices.rareJackpot, "Slotmaschine", "Gameplay", "Slotmachine")
 		StatisticsLogger:addCasino( player, name, self.m_Prices.rareJackpot)
 	elseif name == "drogen" then
 		player:sendInfo(_("Du hast 5 Gramm Weed gewonnen!", player))
@@ -374,7 +374,7 @@ end
 function Slotmachine:startPlayer(player)
 	if player:getMoney() >= self.m_Prices.bet then
 		if self.canSpin == true then
-			player:takeMoney(self.m_Prices.bet, "Slotmaschine")
+			player:transferMoney(self.m_BankAccountServer, self.m_Prices.bet, "Slotmaschine", "Gampelay", "Slotmachine")
 		--	triggerClientEvent(player, "onSlotmachineWintext", player, "#FF0000-$"..self.m_Prices.bet)
 			self:start(player)
 		end

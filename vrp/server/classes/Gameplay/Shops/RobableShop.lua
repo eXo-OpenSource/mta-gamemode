@@ -163,7 +163,7 @@ function RobableShop:m_onExpire()
 
 	local money = self.m_Bag.Money or 0
 	local stateMoney = math.floor(money/3)
-	self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob"
+	self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 	self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney*2, "Shop Raub Sicherstellung 2/3", "Gameplay", "ShopRob")
 	self.m_Bag:destroy()
 

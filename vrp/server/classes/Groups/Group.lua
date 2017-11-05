@@ -322,29 +322,29 @@ function Group:setPlayerLoanEnabled(playerId, state)
 end
 
 function Group:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
-
-function Group:giveMoney(amount, reason)
+--[[
+function Group:__giveMoney(amount, reason)
 	self:setMoney(self.m_Money + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
 end
 
-function Group:takeMoney(amount, reason)
+function Group:__takeMoney(amount, reason)
 	self:setMoney(self.m_Money - amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
 end
-
-function Group:transferMoney(toObject, amount, reason, silent, category, subcategory)
-	self.m_BankAccount:transferMoney(toObject, amount, reason, silent, category, subcategory)
+]]
+function Group:transferMoney(toObject, amount, reason, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end
-
-function Group:setMoney(amount)
+--[[
+function Group:__setMoney(amount)
 	self.m_Money = amount
 
 	sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
-
+]]
 function Group:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
@@ -655,4 +655,8 @@ function Group:payDay(vehicleData)
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
 	end
+end
+
+function Group:save()
+	self.m_BankAccount:save()
 end
