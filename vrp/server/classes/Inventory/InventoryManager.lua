@@ -39,8 +39,8 @@ function InventoryManager:destructor()
 
 end
 
-function InventoryManager:getItemData()
-	return self.m_ItemData
+function InventoryManager:getItemDataForItem(itemName)
+	return self.m_ItemData[itemName]
 end
 
 function InventoryManager:loadItems()
