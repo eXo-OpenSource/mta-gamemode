@@ -230,22 +230,11 @@ addEventHandler("accountregister", root, function(...) Async.create(Account.regi
 function Account.createAccount(player, boardId, username, email)
 	local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), boardId, username, email, 0, player:getSerial(), player:getIP())
 	if result then
-		player.m_Account = Account:new(Id, username, player, false)
-		player:createCharacter()
-
 		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, false)
 	else
 		player:triggerEvent("loginfailed", "Fehler: Unable to create Ingame-Acc.")
 	end
 end
-
-function Account.guest(player)
-	player.m_Account = Account:new(0, "Guest", player, true)
-	player:spawn()
-	triggerClientEvent(player, "loginsuccess", root, nil, 0)
-end
-addEvent("accountguest", true)
-addEventHandler("accountguest", root, function() Async.create(Account.guest)(client) end)
 
 function Account.createForumAccount(player, username, password, email)
 	if not password then return end
