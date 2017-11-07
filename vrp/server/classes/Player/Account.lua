@@ -33,8 +33,8 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 
-	-- Ask SQL to fetch ForumID
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, RegisterDate FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
+	-- Ask SQL to fetch ForumId
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
 		board:queryFetchSingle(Async.waitFor(self), "SELECT username, password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
@@ -76,12 +76,13 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	local Id = row.Id
-	local ForumID = row.ForumID
+	local ForumId = row.ForumId
 	local Username = row.Name
 	local RegisterDate = row.RegisterDate
+	local TeamspeakId = row.TeamspeakId
 
 	-- Ask SQL to fetch the password from forum
-	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
+	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumId)
 	local row = Async.wait()
 	if not row or not row.password then
 		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- "Error: Invalid username or password"
@@ -90,13 +91,13 @@ function Account.login(player, username, password, pwhash)
 
 	if pwhash then
 		if pwhash == row.password then
-			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
+			Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, TeamspeakId, pwhash)
 		else
 			player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
 		end
 	else
-		local param = {["userId"] = ForumID; ["password"] = password;}
+		local param = {["userId"] = ForumId; ["password"] = password;}
 		local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
 		if responseInfo["success"] == true then
 			local returnData = fromJSON(data)
@@ -106,7 +107,7 @@ function Account.login(player, username, password, pwhash)
 				return false
 			end
 			if returnData.login == true then
-				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, row.password)
+				Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, TeamspeakId, row.password)
 			else
 				player:triggerEvent("loginfailed", "Unbekannter Fehler")
 			end
@@ -118,7 +119,7 @@ end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
+function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, TeamspeakId, pwhash)
 	if DatabasePlayer.getFromId(Id) then
 		player:triggerEvent("loginfailed", "Dieser Account ist schon in Benutzung")
 		return false
@@ -154,7 +155,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 	-- Update last serial and last login
 	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
-	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
+	player.m_Account = Account:new(Id, Username, player, false, ForumId, TeamspeakId, RegisterDate)
 
 	if not player or not isElement(player) then -- Cause of kick directly after login (e.g. ban, warn) / Should not happened now
 		outputDebugString("Account.loginSuccess: Player-Element for "..UserName.." not found!", 1)
@@ -243,9 +244,9 @@ addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
 
 function Account.createAccount(player, boardId, username, email)
-	local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), boardId, username, email, 0, player:getSerial(), player:getIP())
+	local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumId, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), boardId, username, email, 0, player:getSerial(), player:getIP())
 	if result then
-		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, false)
+		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, nil, false)
 	else
 		player:triggerEvent("loginfailed", "Fehler: Unable to create Ingame-Acc.")
 	end
@@ -281,12 +282,13 @@ function Account.asyncCallAPI(func, postData)
 	return Async.wait()
 end
 
-function Account:constructor(id, username, player, guest, ForumID, RegisterDate)
+function Account:constructor(id, username, player, guest, ForumId, TeamspeakId, RegisterDate)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
-	self.m_ForumId = ForumID
+	self.m_ForumId = ForumId
+	self.m_TeamspeakId = TeamspeakId
 	self.m_RegisterDate = RegisterDate or "Unbekannt"
 	player.m_IsGuest = guest;
 	player.m_Id = self.m_Id
@@ -334,8 +336,6 @@ function Account:getName()
 end
 
 function Account.getNameFromId(id)
-	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
-	local row = Async.wait()]]
 	local player = Player.getFromId(id)
 	if player and isElement(player) then
 		return player:getName()
@@ -346,15 +346,23 @@ function Account.getNameFromId(id)
 end
 
 function Account.getBoardIdFromId(id)
-	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
-	local row = Async.wait()]]
 	local player = Player.getFromId(id)
 	if player and isElement(player) then
 		return player:getAccount().m_ForumId
 	end
 
-	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
-	return row and row.ForumID
+	local row = sql:queryFetchSingle("SELECT ForumId FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	return row and row.ForumId
+end
+
+function Account.getTeamspeakIdFromId(id)
+	local player = Player.getFromId(id)
+	if player and isElement(player) then
+		return player:getAccount().m_TeamspeakId
+	end
+
+	local row = sql:queryFetchSingle("SELECT TeamspeakId FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	return row and row.TeamspeakId
 end
 
 function Account.getNameFromSerial(serial)
@@ -381,6 +389,6 @@ function Account.getIdFromName(name)
 end
 
 function Account.getBoardIdFromName(name)
-	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
-	return row.ForumID or 0
+	local row = sql:queryFetchSingle("SELECT ForumId FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+	return row.ForumId or 0
 end
