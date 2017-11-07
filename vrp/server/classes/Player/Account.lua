@@ -5,6 +5,21 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
+
+-- DEV NOTICE
+--[[
+	Steps on Register:
+		1.) checkRegisterAllowed triggered From Client
+		2.) receiveRegisterAllowed triggered to Client
+		3.) Account.register triggered from Client
+		4.) Account.createForumAccount
+		5.) Account.createAccount
+		6.) Account.loginSuccess
+		7.) In Account.loginSuccess there is Account.checkCharacter and
+		8.) player:createCharacter() in Account.loginSuccess
+		9.) Finished
+]]
+
 local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
