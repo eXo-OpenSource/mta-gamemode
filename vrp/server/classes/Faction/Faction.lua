@@ -47,7 +47,9 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 	self.m_DiplomacyJSON = diplomacy
 
-	self:getActivity()
+	if not DEBUG then
+		self:getActivity()
+	end
 end
 
 function Faction:destructor()

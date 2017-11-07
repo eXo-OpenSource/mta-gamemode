@@ -46,7 +46,9 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
 
 	self.m_VehicleTexture = companyVehicleShaders[Id] or false
 
-	self:getActivity()
+	if not DEBUG then
+		self:getActivity()
+	end
 end
 
 function Company:destructor()
