@@ -10,20 +10,31 @@ inherit(Singleton, HouseEditGUI)
 
 addRemoteEvents{"getAdminHouseData"}
 
+HouseEditGUI = inherit(GUIForm)
+inherit(Singleton, HouseEditGUI)
+
 function HouseEditGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2+(screenWidth*0.2/2)+10, screenHeight/2-(370/2), screenWidth*0.15, 120)
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 6) 	-- width of the window
+	self.m_Height = grid("y", 3) 	-- height of the window
+	local int = 3
 
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Haus editieren", true, true, self)
-	self.m_Window:deleteOnClose( true )
-
-	--HOUSE_INTERIOR_TABLE
-	self.m_Interior = GUILabel:new(10, 40, self.m_Width-20, 30, _"Aktueller Interior: ", self.m_Window)
-	self.m_ChangeInt = GUIButton:new(10, 70, self.m_Width-20, 35, _"Interior ändern", self)
-	self.m_ChangeInt:setFont(VRPFont(28)):setFontSize(1)
-	self.m_ChangeInt.onLeftClick = function()
-		self:hide()
+	self.m_InteriorChangeBtn = GUIGridButton:new(1, 1, 5, 1, _"Interior ändern", self.m_Window):setEnabled(localPlayer:hasAdminRightTo("freeHouse"))
+	self.m_InteriorChangeBtn.onLeftClick = function()
+		self:close()
 		HouseGUI:getSingleton():hide()
 		HouseInteriorChanger:new(self.m_CurrentInterior)
+	end
+
+	self.m_FreeBtn = GUIGridButton:new(1, 2, 5, 1, _"Zwangsenteignen", self.m_Window):setBackgroundColor(Color.Red)
+	self.m_FreeBtn.onLeftClick = function()
+		QuestionBox:new(_"Möchtest du das Haus wirklich enteignen? Mietverträge und die Hauskasse werden gelöscht und der Besitzer nicht entschädigt!", 
+			function()
+				triggerServerEvent("houseAdminFree", root, tonumber(selected))
+			end
+		)
 	end
 
 	triggerServerEvent("houseAdminRequestData", root)
@@ -32,7 +43,11 @@ end
 
 function HouseEditGUI:getHouseData(interior)
 	self.m_CurrentInterior = interior
-	self.m_Interior:setText(_("Aktueller Interior: %d", interior))
+	self.m_InteriorChangeBtn:setText(_("Interior (%d) ändern", interior))
+end
+
+function HouseEditGUI:destructor()
+	GUIForm.destructor(self)
 end
 
 

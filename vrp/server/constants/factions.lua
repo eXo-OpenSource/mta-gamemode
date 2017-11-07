@@ -142,7 +142,7 @@ factionRankNames[6] = {
 [6] = "Oyabun"
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
-factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
+factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)
@@ -177,8 +177,8 @@ factionRankNames[8] = {
 [5] = "OG.Nigga",
 [6] = "Big Boss"
 }
-factionColors[8] = {["r"] = 200,["g"] = 0,["b"] = 255}
-factionCarColors[8] = {["r"] = 200,["g"] = 0,["b"] = 255, ["r1"] = 200,["g1"] = 0,["b1"] = 255}
+factionColors[8] = {["r"] = 200,["g"] = 20,["b"] = 255}
+factionCarColors[8] = {["r"] = 110,["g"] = 20,["b"] = 150, ["r1"] = 110,["g1"] = 20,["b1"] = 150}
 factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [296]=true, [297]=true, [304]=true}
 factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
