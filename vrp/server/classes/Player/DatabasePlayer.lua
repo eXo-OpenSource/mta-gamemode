@@ -221,6 +221,7 @@ function DatabasePlayer:isLoggedIn()	return self.m_Id ~= -1	end
 function DatabasePlayer:isGuest()		return self.m_IsGuest   end
 function DatabasePlayer:getAccount()	return self.m_Account 	end
 function DatabasePlayer:getRank()		return self.m_Account and self.m_Account:getRank() or RANK.User end
+function DatabasePlayer:hasAdminRightTo(strPerm) return ADMIN_RANK_PERMISSION[strPerm] and self:getRank() >= ADMIN_RANK_PERMISSION[strPerm] end
 function DatabasePlayer:getRegistrationDate() return self.m_Account and self.m_Account:getRegistrationDate() end
 
 

@@ -628,6 +628,10 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
+function LocalPlayer:hasAdminRightTo(strPerm)
+	return ADMIN_RANK_PERMISSION[strPerm] and self:getRank() >= ADMIN_RANK_PERMISSION[strPerm]
+end
+
 function LocalPlayer:Event_RunString(codeString, sendResponse)
 	local result = runString(codeString, localPlayer, true)
 

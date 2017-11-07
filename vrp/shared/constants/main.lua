@@ -172,6 +172,7 @@ ADMIN_RANK_PERMISSION = {
 
 	--server edit tools
 	["editHouse"] = RANK.Administrator,
+	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,

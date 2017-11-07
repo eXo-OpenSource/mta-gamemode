@@ -10,7 +10,7 @@ addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse"
 "breakHouse","lockHouse",
 "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant",
 "tryRobHouse","playerFindRobableItem","playerRobTryToGiveWanted",
-"houseAdminRequestData", "houseAdminChangeInterior",
+"houseAdminRequestData", "houseAdminChangeInterior", "houseAdminFree",
 "houseRingDoor"
 }
 
@@ -46,6 +46,7 @@ function HouseManager:constructor()
 	addEventHandler("playerRobTryToGiveWanted",root,bind(self.onTryToGiveWanted,self))
 	addEventHandler("houseAdminRequestData", root, bind(self.requestAdminData,self))
 	addEventHandler("houseAdminChangeInterior", root, bind(self.changeInterior,self))
+	addEventHandler("houseAdminFree", root, bind(self.freeByAdmin,self))
 
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s houses in %sms"):format(count, getTickCount()-st)) end
@@ -157,6 +158,41 @@ function HouseManager:changeInterior(interior)
 	self.m_Houses[client.visitingHouse].m_InteriorID = interior
 	self.m_Houses[client.visitingHouse]:refreshInteriorMarker()
 	client:sendInfo(_("Du hast den Haus-Interior erfolgreich in ID: %d geändert!", client, interior))
+end
+
+function HouseManager:freeByAdmin()
+	if client:getRank() < ADMIN_RANK_PERMISSION.freeHouse then return end
+	local ownerId = self.m_Houses[client.visitingHouse]:getOwner()
+	if ownerId and ownerId > 0 then
+		local target, isOffline = DatabasePlayer.get(ownerId)
+		if target then
+			local msg = ("Dein Haus (Hausnr. %s) wurde von %s enteignet!"):format(self.m_Houses[client.visitingHouse].m_Id, client:getName())
+			if isOffline then
+				target:addOfflineMessage(msg, 1)
+
+				target.m_DoNotSave = true
+				delete(target)
+			else
+				target:sendWarning(msg)
+			end
+			self.m_Houses[client.visitingHouse]:clearHouse()
+			client:sendSuccess(_("Enteignung erfolgreich!", client))
+		end
+	else
+		client:sendError(_("Dieses Haus hat keinen Eigentümer!", client))
+	end
+end
+
+function HouseManager:teleportToAdmin(houseId, admin)
+	local houseId = tonumber(houseId)
+	if isElement(admin) and getElementType(admin) == "player" and houseId then
+		if self.m_Houses[houseId] then
+			self.m_Houses[houseId]:setPosition(admin:getPosition())
+			sql:queryExec("UPDATE ??_houses SET x = ?, y = ?, z = ? WHERE id = ?;", sql:getPrefix(), admin:getPosition().x, admin:getPosition().y, admin:getPosition().z, houseId)
+		else
+			admin:sendError(_("Kein Haus mit der Nummer %s gefunden.", admin, houseId))
+		end
+	end
 end
 
 function HouseManager:buyHouse()
