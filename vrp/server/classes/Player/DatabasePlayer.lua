@@ -169,6 +169,7 @@ function DatabasePlayer:load()
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
+	self.m_TeamspeakId = Account.getTeamspeakIdFromId(self.m_Id)
 	self.m_LoggedIn = true
 
 	self.m_Statistics = {}
@@ -796,8 +797,6 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		admin:sendError(_("Id nicht gefunden!", admin))
 		return false
 	end
-
-
 
 	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 then
 		admin:sendError(_("Ungültiger Nickname!", admin))
