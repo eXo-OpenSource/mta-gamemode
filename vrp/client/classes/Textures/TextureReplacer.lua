@@ -12,6 +12,11 @@ TextureReplacer.Status = {
 }
 TextureReplacer.Backlog = {}
 TextureReplacer.Queue = Queue:new()
+TextureReplacer.Queue.clear = function(self)
+	Queue.clear(self)
+	self.m_CurrentLoaded = 0
+	self.m_Count = 0
+end
 
 -- abstract methods
 TextureReplacer.load   = pure_virtual
@@ -23,7 +28,7 @@ function TextureReplacer:constructor(element, textureName, options)
 
 	self.m_Element     = element
 	self.m_TextureName = textureName
-	self.m_LoadingMode = core:get("Other", "TextureMode", 1)
+	self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
 	self.m_Active      = true
 
 	self.m_OnElementDestroy   = bind(delete, self)
@@ -160,7 +165,7 @@ function TextureReplacer.removeRef(instance)
 	else
 		for i, tab in pairs(TextureReplacer.Map.STATIC_ELEMENTS) do
 			if instance == inst then
-				TextureReplacer.Map.SHARED_ELEMENTS[i][j] = nil
+				TextureReplacer.Map.STATIC_ELEMENTS[i][j] = nil
 			end
 		end
 	end
@@ -176,6 +181,15 @@ end
 
 --// Queue
 function TextureReplacer:addToLoadingQeue()
+	if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", true) then
+		self:unload()
+		return false
+	end
+	if instanceof(self, HTTPTextureReplacer) and not core:get("Other", "HTTPTexturesEnabled", true) then
+		self:unload()
+		return false
+	end
+
 	if TextureReplacer.Queue:empty() then
 		TextureReplacer.Queue:push(self)
 		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
@@ -225,6 +239,28 @@ function TextureReplacer.changeLoadingMode(loadingMode)
 				instance:setLoadingMode(loadingMode)
 			else
 				outputDebug("Found invalid SHARED_ELEMENT Instance! ("..tostring(textureName)..":"..tostring(i)..")")
+			end
+		end
+	end
+end
+
+function TextureReplacer.forceReload()
+	-- clear queue to cancel current loading requests
+	TextureReplacer.Queue:clear()
+
+	for textureName, tab in pairs(TextureReplacer.Map.SHARED_ELEMENTS) do
+		for i, instance in pairs(tab) do
+			if instanceof(instance, TextureReplacer, false) then
+				if instance.m_Element then
+					instance:unload()
+					if instance.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+						if isElementStreamedIn(instance.m_Element) then
+							instance:onStreamIn()
+						end
+					elseif instance.m_LoadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+						instance:addToLoadingQeue()
+					end
+				end
 			end
 		end
 	end
