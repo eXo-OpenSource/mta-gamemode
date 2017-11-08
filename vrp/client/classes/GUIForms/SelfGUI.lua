@@ -1067,6 +1067,14 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "TextureMode", index)
 			self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[index]))
 			nextframe(function () TextureReplacer.changeLoadingMode(index) end)
+
+			if index == TEXTURE_LOADING_MODE.NONE then
+				self.m_TextureFileCheck:setEnabled(false)
+				self.m_TextureHTTPCheck:setEnabled(false)
+			else
+				self.m_TextureFileCheck:setEnabled(true)
+				self.m_TextureHTTPCheck:setEnabled(true)
+			end
 		end
 
 		self.m_InfoLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.6, self.m_Height*0.055, _"", self.m_SettingBG)
