@@ -1431,8 +1431,8 @@ function Admin:Event_OnAcceptOverlapCheck()
 	end
 end
 
-function Admin:sendNewPlayerMessage(player)
-	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(player:getName()), "Neuer Spieler!", nil, 15000)
+function Admin:sendNewPlayerMessage(name)
+	self:sendShortMessage(("%s hat sich soeben registriert! Hilf ihm am besten etwas auf die Sprünge!"):format(name), "Neuer Spieler!", nil, 15000)
 end
 
 function Admin:placeObject(player, cmd, model)

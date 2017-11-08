@@ -163,7 +163,7 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	end
 
 	if not Account.checkCharacter(Id) then
-		Admin:getSingleton():sendNewPlayerMessage(player)
+		Admin:getSingleton():sendNewPlayerMessage(Username)
 		player:createCharacter()
 	end
 
