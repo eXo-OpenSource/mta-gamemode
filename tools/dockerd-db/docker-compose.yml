@@ -1,0 +1,24 @@
+version: '3'
+services: 
+  exo_mysql:
+    image: mysql/mysql-server
+    environment:
+      MYSQL_ROOT_HOST: "172.23.0.3"
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: vrp
+      MYSQL_USER: vrp
+      MYSQL_PASSWORD: passwd
+    ports:
+      - "3306:3306"
+  exo_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - exo_mysql
+    environment:
+      PMA_HOST: db_host
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: passwd
+    ports:
+      - "3307:80"
+    links:
+      - exo_mysql:db_host
