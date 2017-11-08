@@ -81,17 +81,17 @@ function BindGUI:constructor()
 
 	--New Bind
 	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end
-	GUILabel:new(self.m_Width*0.34, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Nachricht:", self.m_Footer["new"])
-	self.m_NewText = GUIEdit:new(self.m_Width*0.34, self.m_Height*0.07, self.m_Width*0.64, self.m_Height*0.07, self.m_Footer["new"])
-	self.m_AddNewBindButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Hinzufügen", self.m_Footer["new"]):setBackgroundColor(Color.Green):setVisible(false)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.07, "Nachricht:", self.m_Footer["new"])
+	self.m_NewText = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.96, self.m_Height*0.07, self.m_Footer["new"])
+	self.m_AddNewBindButton = GUIButton:new(self.m_Width*0.74, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Hinzufügen", self.m_Footer["new"]):setBackgroundColor(Color.Green):setVisible(false)
   	self.m_AddNewBindButton.onLeftClick = function () self:editAddBind() end
-	self.m_EditBindButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", self.m_Footer["new"]):setBackgroundColor(Color.Orange):setVisible(false)
-  	self.m_EditBindButton.onLeftClick = function () self:ededitAddBind(self.m_SelectedBind) end
+	self.m_EditBindButton = GUIButton:new(self.m_Width*0.74, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", self.m_Footer["new"]):setBackgroundColor(Color.Orange):setVisible(false)
+  	self.m_EditBindButton.onLeftClick = function () self:editAddBind(self.m_SelectedBind) end
 
 	for index, footer in pairs(self.m_Footer) do
 		if index ~= "default" then
@@ -308,6 +308,7 @@ function BindManageGUI:constructor(ownerType)
 		self.m_NewText:setText("")
 		self.m_AddNewBindButton:setVisible(true)
 		self.m_EditBindButton:setVisible(false)
+		self.m_DeleteBindButton:setVisible(false)
 	end
 
 	self.m_Footer = {}
@@ -317,18 +318,18 @@ function BindManageGUI:constructor(ownerType)
 
 	--New/Edit Bind
 	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.07, "Nachricht:", self.m_Footer["new"])
+	self.m_NewText = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.96, self.m_Height*0.07, self.m_Footer["new"])
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end
-	GUILabel:new(self.m_Width*0.34, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Nachricht:", self.m_Footer["new"])
-	self.m_NewText = GUIEdit:new(self.m_Width*0.34, self.m_Height*0.07, self.m_Width*0.64, self.m_Height*0.07, self.m_Footer["new"])
-	self.m_AddNewBindButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Speichern", self.m_Footer["new"]):setBackgroundColor(Color.Green):setVisible(false)
+	self.m_AddNewBindButton = GUIButton:new(self.m_Width*0.50, self.m_Height*0.16, self.m_Width*0.23, self.m_Height*0.07, "Speichern", self.m_Footer["new"]):setBackgroundColor(Color.Green):setVisible(false)
   	self.m_AddNewBindButton.onLeftClick = function () self:editAddBind() end
-	self.m_EditBindButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Ändern", self.m_Footer["new"]):setBackgroundColor(Color.Orange):setVisible(false)
+	self.m_EditBindButton = GUIButton:new(self.m_Width*0.50, self.m_Height*0.16, self.m_Width*0.23, self.m_Height*0.07, "Ändern", self.m_Footer["new"]):setBackgroundColor(Color.Orange):setVisible(false)
   	self.m_EditBindButton.onLeftClick = function () self:editAddBind(self.m_SelectedBind) end
-	self.m_DeleteBindButton = GUIButton:new(self.m_Width*0.29, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Löschen", self.m_Footer["new"]):setBackgroundColor(Color.Red):setVisible(false)
+	self.m_DeleteBindButton = GUIButton:new(self.m_Width*0.75, self.m_Height*0.16, self.m_Width*0.23, self.m_Height*0.07, "Löschen", self.m_Footer["new"]):setBackgroundColor(Color.Red):setVisible(false)
   	self.m_DeleteBindButton.onLeftClick = function () self:deleteBind() end
 
 	for index, footer in pairs(self.m_Footer) do
@@ -396,4 +397,5 @@ function BindManageGUI:onBindSelect(item)
 	self.m_NewText:setText(item.parameter)
 	self.m_EditBindButton:setVisible(true)
 	self.m_DeleteBindButton:setVisible(true)
+	self.m_AddNewBindButton:setVisible(false)
 end

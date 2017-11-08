@@ -330,7 +330,7 @@ function House:sellHouse(player)
 	end
 end
 
-function House:clearHouse(player)
+function House:clearHouse()
 	self.m_Owner = false
 	self.m_Keys = {}
 	self.m_Money = 0

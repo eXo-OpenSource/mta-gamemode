@@ -142,6 +142,7 @@ Halloween.ms_Bonus = {
 
 function Halloween:constructor()
 	DrawContest:new()
+	WareManager:new()
 	self.m_TrickOrTreatPIDs = {}
 
 	self.m_EventSign = createObject(1903, 1484.80, -1710.70, 12.4, 0, 0, 90)
@@ -199,7 +200,7 @@ function Halloween:registerTrickOrTreat(pId, houseId, time)
 
 				for i, v in pairs(getElementsByType("player")) do
 					self:initTTPlayer(v:getId())
-					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId then
+					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId and v:getInterior() == 0 and v:getDimension() == 0 then
 						if not self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId] or (getTickCount() - self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId]) > Halloween.ms_HouseTTCooldown then
 							table.insert(d.playersNearby, v:getId())
 							self.m_TrickOrTreatPIDs[v:getId()].trickStarted = getTickCount()
@@ -279,8 +280,8 @@ function Halloween:Event_requestBonusData()
 end
 
 function Halloween:Event_buyBonus(bonusId)
-	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten")
-	local playerPumpinks = client:getInventory():getItemAmount("Kürbis")
+	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten", true)
+	local playerPumpinks = client:getInventory():getItemAmount("Kürbis", true)
 	local bonus = Halloween.ms_Bonus[bonusId]
 	if not bonus then return end
 

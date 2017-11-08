@@ -58,17 +58,18 @@ function Ban.addBan(who, author, reason, duration)
 	end
 end
 
-function Ban.checkBan(player, doNotSave)
+function Ban.checkBan(player, id, doNotSave)
 	if player and isElement(player) then
 		local serial = getPlayerSerial(player)
-		return Ban.checkSerial(serial, player, nil, doNotSave)
+		return Ban.checkSerial(serial, player, id, nil, doNotSave)
 	end
 	return false
 end
 
-function Ban.checkSerial(serial, player, cancel, doNotSave)
+function Ban.checkSerial(serial, player, id, cancel, doNotSave)
 	-- Note: true = not banned
-	local id = player and player:getId() or "false"
+	if not id then id = player and player:getId() or "false" end
+
 	sql:queryFetchSingle(Async.waitFor(), "SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 	local row = Async.wait()
 	if row then
@@ -94,7 +95,7 @@ end
 
 function Ban.checkOfflineBan(playerId)
 	local serial = Account.getLastSerialFromId(playerId)
-	if Ban.checkSerial(serial) == true then
+	if Ban.checkSerial(serial, nil, playerId) == true then
 		return false
 	else
 		return true
@@ -103,6 +104,6 @@ end
 
 addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial)
 	Async.create(function()
-		Ban.checkSerial(serial, source, true, true)
+		Ban.checkSerial(serial, source, nil, true, true)
 	end)()
 end)

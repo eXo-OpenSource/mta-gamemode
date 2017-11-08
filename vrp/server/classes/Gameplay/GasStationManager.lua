@@ -79,6 +79,36 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 			end
 
 			if station:isUserFuelStation() then
+				local faction = client:getFaction()
+				if faction and (faction:isEvilFaction() or client:isFactionDuty()) and instanceof(vehicle, FactionVehicle, true) then
+					if faction:getMoney() >= price then
+						faction:takeMoney(price, "Tanken")
+						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
+						vehicle:setFuel(vehicle:getFuel() + fuel)
+
+						client:triggerEvent("gasStationReset")
+						return
+					else
+						client:sendError("In der Fraktionskasse ist nicht genug Geld!")
+						return
+					end
+				end
+
+				local company = client:getCompany()
+				if company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
+					if company:getMoney() >= price then
+						company:takeMoney(price, "Tanken")
+						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
+						vehicle:setFuel(vehicle:getFuel() + fuel)
+
+						client:triggerEvent("gasStationReset")
+						return
+					else
+						client:sendError("In der Unternehmenskasse ist nicht genug Geld!")
+						return
+					end
+				end
+
 				if client:getMoney() >= price then
 					client:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 					vehicle:setFuel(vehicle:getFuel() + fuel)

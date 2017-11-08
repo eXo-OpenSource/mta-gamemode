@@ -10,11 +10,28 @@
 -- Player Grid wird von Lokaler DB über MTA geladen
 -- Bild wird über PHP auf Test-DB gespeichert/geladen
 
-
 DrawContestOverviewGUI = inherit(GUIForm)
 inherit(Singleton, DrawContestOverviewGUI)
 
 addRemoteEvents{"drawContestReceivePlayers", "drawingContestReceiveVote"}
+
+DrawContest = {}
+function DrawContest.createPed(model, pos, rot, title, text)
+	--Drawing Contest
+	local ped = Ped.create(model, pos, rot)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, title, text)
+	ped.SpeakBubble:setBorderColor(Color.Orange)
+	ped.SpeakBubble:setTextColor(Color.Orange)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			DrawContestOverviewGUI:getSingleton():open()
+		end
+	)
+end
 
 function DrawContestOverviewGUI:constructor()
 	GUIWindow.updateGrid()
@@ -59,7 +76,7 @@ function DrawContestOverviewGUI:constructor()
 		QuestionBox:new(_("Möchtest du das Bild von %s deaktivieren?", self.m_SelectedPlayerName),
 		function() triggerServerEvent("drawContestHideImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
 	end
-	self.m_AddDrawBtn = GUIGridButton:new(21, 12, 5, 1, "eigenes Bild malen", self.m_Window)
+	self.m_AddDrawBtn = GUIGridButton:new(6, 12, 5, 1, "Eigenes Bild malen", self.m_Window)
 	self.m_AddDrawBtn:setVisible(false)
 	self.m_AddDrawBtn.onLeftClick = function()
 		if self.m_Contest and self.m_ContestType == "draw" then

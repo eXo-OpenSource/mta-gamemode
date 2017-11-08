@@ -58,7 +58,7 @@ function enableContrast()
 
 	setEffectType1 ()
 	bEffectEnabled = true
-
+	addEventHandler( "onClientHUDRender", root, renderContrast)
 	if not bAllValid then
 		outputChatBox( "Could not create some things. Please use debugscript 3" )
 		disableContrast()
@@ -71,7 +71,7 @@ end
 --------------------------------
 function disableContrast()
 	if not bEffectEnabled then return end
-
+	removeEventHandler( "onClientHUDRender", root, renderContrast)
 	-- Destroy all shaders
 	for _,part in ipairs(effectParts) do
 		if part then
@@ -132,51 +132,51 @@ end
 ----------------------------------------------------------------
 -- Render
 ----------------------------------------------------------------
-addEventHandler( "onClientHUDRender", root,
-    function()
-		if not bAllValid or not Settings.var then return end
-		-- Bypass effect if left alt and num_7 are held
-		if getKeyState("lalt") and getKeyState("num_7") then return end
-		local v = Settings.var
 
-		RTPool.frameStart()
-		DebugResults.frameStart()
+function renderContrast()
+	if not bAllValid or not Settings.var then return end
+	-- Bypass effect if left alt and num_7 are held
+	if getKeyState("lalt") and getKeyState("num_7") then return end
+	local v = Settings.var
 
-		dxUpdateScreenSource( myScreenSourceFull )
+	RTPool.frameStart()
+	DebugResults.frameStart()
 
-		-- Get source textures
-		local current1 = myScreenSourceFull
-		local current2 = myScreenSourceFull
-		local sceneLuminance = lumTarget
+	dxUpdateScreenSource( myScreenSourceFull )
 
-		-- Effect path 1 (contrast)
-		current1 = applyModulation( current1, sceneLuminance, v.MultAmount, v.Mult, v.Add, v.ModExtraFrom, v.ModExtraTo, v.ModExtraMult )
-		current1 = applyContrast( current1, v.Brightness, v.Contrast )
+	-- Get source textures
+	local current1 = myScreenSourceFull
+	local current2 = myScreenSourceFull
+	local sceneLuminance = lumTarget
 
-		-- Effect path 2 (bloom)
-		current2 = applyBloomExtract( current2, sceneLuminance, v.ExtractThreshold )
-		current2 = applyDownsampleSteps( current2, v.DownSampleSteps )
-		current2 = applyGBlurH( current2, v.GBlurHBloom )
-		current2 = applyGBlurV( current2, v.GBlurVBloom )
-		current2 = applyBloomCombine( current2, current1, v.BloomIntensity, v.BloomSaturation, v.BaseIntensity, v.BaseSaturation )
+	-- Effect path 1 (contrast)
+	current1 = applyModulation( current1, sceneLuminance, v.MultAmount, v.Mult, v.Add, v.ModExtraFrom, v.ModExtraTo, v.ModExtraMult )
+	current1 = applyContrast( current1, v.Brightness, v.Contrast )
 
-		-- Update texture used to calculate the scene luminance level
-		updateLumSource( current1, v.LumSpeed, v.LumChangeAlpha )
+	-- Effect path 2 (bloom)
+	current2 = applyBloomExtract( current2, sceneLuminance, v.ExtractThreshold )
+	current2 = applyDownsampleSteps( current2, v.DownSampleSteps )
+	current2 = applyGBlurH( current2, v.GBlurHBloom )
+	current2 = applyGBlurV( current2, v.GBlurVBloom )
+	current2 = applyBloomCombine( current2, current1, v.BloomIntensity, v.BloomSaturation, v.BaseIntensity, v.BaseSaturation )
 
-		-- Final output
-		dxSetRenderTarget()
-		dxDrawImage( 0, 0, scx, scy, current1, 0, 0, 0, tocolor(255,255,255,v.MulBlend*255) )
-		dxDrawImage( 0, 0, scx, scy, current2, 0, 0, 0, tocolor(255,255,255,v.BloomBlend*255) )
+	-- Update texture used to calculate the scene luminance level
+	updateLumSource( current1, v.LumSpeed, v.LumChangeAlpha )
 
-		-- Draw border texture
-		dxDrawImage( 0, 0, scx, scy, textureVignette, 0, 0, 0, tocolor(255,255,255,v.Vignette*255) )
+	-- Final output
+	dxSetRenderTarget()
+	dxDrawImage( 0, 0, scx, scy, current1, 0, 0, 0, tocolor(255,255,255,v.MulBlend*255) )
+	dxDrawImage( 0, 0, scx, scy, current2, 0, 0, 0, tocolor(255,255,255,v.BloomBlend*255) )
 
-		-- Debug stuff
-		if v.PreviewEnable > 0.5 then
-			DebugResults.drawItems ( v.PreviewSize, v.PreviewPosX, v.PreviewPosY )
-		end
-    end
-)
+	-- Draw border texture
+	dxDrawImage( 0, 0, scx, scy, textureVignette, 0, 0, 0, tocolor(255,255,255,v.Vignette*255) )
+
+	-- Debug stuff
+	if v.PreviewEnable > 0.5 then
+		DebugResults.drawItems ( v.PreviewSize, v.PreviewPosX, v.PreviewPosY )
+	end
+end
+
 
 
 ----------------------------------------------------------------

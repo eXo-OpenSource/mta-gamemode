@@ -165,7 +165,8 @@ SHOP_TYPES = {
 		["Marker"] = Vector3(939.81, -1108.97, 23.3),
 		["Ped"] = {205, Vector3(938.5, -1111.2, 24.2), 325.755},
 		["Interior"] = {0, Vector3(0, 0, 0)},
-		["Class"] = ItemShop
+		["Class"] = ItemShop,
+		["disabled"] = not EVENT_HALLOWEEN
 	}
 
 }

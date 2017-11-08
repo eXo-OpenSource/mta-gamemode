@@ -8,18 +8,14 @@ DrawContest.Events = {
 		["Draw"] = {["Start"] = 1509490800, ["Duration"] = 86400}, 	--27.10 - 28.10
 		["Vote"] = {["Start"] = 1509577200, ["Duration"] = 86400} 	--28.10 - 29.10
 	},
-	["Male ein Halloween-Kostüm"]= {
+	["Male ein Geisterhaus"]= {
 		["Draw"] = {["Start"] = 1509663600, ["Duration"] = 86400}, 	--29.10 - 30.10
 		["Vote"] = {["Start"] = 1509750000, ["Duration"] = 86400}	--30.10 - 31.10
 	},
-	["Male eine Hexe"]= {
+	["Male Halloween auf eXo"]= {
 		["Draw"] = {["Start"] = 1509836400, ["Duration"] = 86400},	--31.10 - 01.11
 		["Vote"] = {["Start"] = 1509922800, ["Duration"] = 86400}	--01.11 - 02.11
 	},
-	["Male eine Halloweenparty"]= {
-		["Draw"] = {["Start"] = 1510009200, ["Duration"] = 86400},	--02.11 - 03.11
-		["Vote"] = {["Start"] = 1510095600, ["Duration"] = 86400}	--03.11 - 04.11
-	}
 }
 
 function DrawContest:constructor()

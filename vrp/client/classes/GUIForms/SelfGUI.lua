@@ -118,7 +118,7 @@ function SelfGUI:constructor()
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
 	self.m_WarnButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", tabGeneral):setBarEnabled(true)
-	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
+	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer:getName()) end
 
 	self.m_AchievementButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", tabGeneral):setBarEnabled(true)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)

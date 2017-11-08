@@ -2,6 +2,8 @@ Halloween = inherit(Singleton)
 
 function Halloween:constructor()
 
+	WareClient:new()
+
 	Blip:new("Ghost.png", 945.57, -1103.55, 400):setDisplayText("Halloween-Friedhof")
 
 	--Drawing Contest
@@ -111,7 +113,7 @@ end
 
 function Halloween:renderDarkness() -- not to be confused with 'dankness'!
 	setTime(22,0) -- there are stars after 22 o clock
-	setFarClipDistance(200)
+	setFarClipDistance(300)
 	setFogDistance(-10)
 	setSkyGradient(0, 0, 0, 0, 0, 0)
 	setWeather(9)

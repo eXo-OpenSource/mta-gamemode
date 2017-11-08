@@ -61,8 +61,7 @@ function Warn.removeWarn(who, warnId)
 	end
 end
 
-function Warn.checkWarn(player, doNotSave)
-	local id = player.m_Id
+function Warn.checkWarn(player, id, doNotSave)
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
 	if Warn.getAmount(id) >= 3 then
@@ -78,4 +77,5 @@ function Warn.checkWarn(player, doNotSave)
 	elseif Warn.getAmount(id) > 0 then
 		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", player, Warn.getAmount(id)),player, 255,0,0)
 	end
+	return true
 end

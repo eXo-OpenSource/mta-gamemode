@@ -110,7 +110,7 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 		--killer:reportCrime(Crime.Kill)
 
 		-- Take karma
-		killer:giveKarma(-3)
+		killer:takeKarma(3)
 
 		-- Destory the Ped
 		self:despawn()

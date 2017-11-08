@@ -7,7 +7,7 @@
 -- ****************************************************************************
 DEBUG = GIT_BRANCH ~= "release/production"
 if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
-	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
+	DEBUG_LOAD_SAVE = true -- defines if "loaded X"-messages are outputted to the server console
 	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
 end
 
@@ -113,15 +113,35 @@ local function prepareRunStringVars(runPlayer)
 	runStringSavedVars.my = my
 	runStringSavedVars.player = player
 	runStringSavedVars.cprint = cprint
+	runStringSavedVars.pastebin = pastebin
 
 	me = runPlayer
 	my = runPlayer
 	player = function(target)
 		return PlayerManager:getSingleton():getPlayerFromPartOfName(target,runPlayer)
-	end 
+	end
 	cprint = function(var)
 		outputConsole(inspect(var), runPlayer)
 	end
+	pastebin = function(id)
+		if id and type(id) == "string" then
+			fetchRemote("https://pastebin.com/raw/"..id, {},
+				function(response, responseInfo)
+					if responseInfo.success == true then
+						loadstring(response)()
+						outputChatBox("Pastebin "..id.." successfully loaded!", runPlayer, 0, 255, 0)
+						outputDebugString("Pastebin "..id.." successfully loaded by "..runPlayer:getName().."!", 0, 0, 255, 0)
+					else
+						outputChatBox("Pastebin "..id.." failed to loaded! (Error: "..responseInfo.statusCode..")", runPlayer, 255, 0, 0)
+						outputDebugString("Pastebin "..id.."  failed to load by "..runPlayer:getName().."! (Error: "..responseInfo.statusCode..")", 0, 0, 255, 0)
+					end
+				end
+			)
+		else
+			outputChatBox("Invalid Pastebin Id!", runPlayer, 255, 0, 0)
+		end
+	end
+
 end
 
 
@@ -130,6 +150,7 @@ local function restoreRunStringVars()
 	my = runStringSavedVars.my
 	cprint = runStringSavedVars.cprint
 	player = runStringSavedVars.player
+	pastebin = runStringSavedVars.pastebin
 
 	runStringSavedVars = {}
 end

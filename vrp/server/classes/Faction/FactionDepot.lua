@@ -200,8 +200,7 @@ function Depot:addItem(player, item, amount)
 	for i=1, 6 do
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
 		if self.m_Items[i]["Item"] == 0 then
-			if player:getInventory():getItemAmount(item) >= amount then
-				player:getInventory():removeItem(item, amount)
+			if player:getInventory():removeItem(item, amount) then
 				self.m_Items[i]["Item"] = item
 				self.m_Items[i]["Amount"] = amount
 				player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))

@@ -141,7 +141,6 @@ function Core:ready()
 	--SprayWallManager:new()
 	AntiClickSpam:new()
 	GasStation:new()
-	WareClient:new()
 
 	ChessSession:new()
 
@@ -154,6 +153,7 @@ function Core:ready()
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end
+	DrawContest.createPed(151, Vector3(1488.87, -1777.00, 13.55), 0, "Halloween", "Zeichen-Wettbewerb") -- Temporary for 06.11.2017
 end
 
 function Core:afterLogin()

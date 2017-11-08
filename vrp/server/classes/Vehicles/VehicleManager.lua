@@ -735,6 +735,7 @@ end
 
 function VehicleManager:Event_vehicleRespawn(garageOnly)
 	self:checkVehicle(source)
+	source:removeAttachedPlayers()
 
 	if not source:isRespawnAllowed() then
 		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
@@ -860,6 +861,7 @@ end
 
 function VehicleManager:Event_vehicleRespawnWorld()
 	self:checkVehicle(source)
+	source:removeAttachedPlayers()
 	if not source:isRespawnAllowed() then
 		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
 		return

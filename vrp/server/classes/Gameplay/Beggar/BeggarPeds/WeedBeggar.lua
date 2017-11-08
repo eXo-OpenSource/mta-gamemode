@@ -8,8 +8,7 @@ function WeedBeggar:sellWeed(player, amount)
 	if self.m_Despawning then return end
 	if not player.vehicle then
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
-		if player:getInventory():getItemAmount("Weed") >= amount then
-			player:getInventory():removeItem("Weed", amount)
+		if player:getInventory():removeItem("Weed", amount) then
 			player:giveCombinedReward("Bettler-Handel", {
 				money = {
 					mode = "give",
