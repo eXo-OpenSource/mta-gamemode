@@ -34,7 +34,7 @@ function TSConnect:callAPI(player, method, arg, callback)
 					callback(responseData)
 				end
 			else
-				outputDebugString(("TSConnect Fetch-Error: %s"):format(responseData["statusCode"]), 1)
+				outputDebugString(("TSConnect Fetch-Error: %s"):format(responseInfo["statusCode"]), 1)
 			end
 		end
 	)
