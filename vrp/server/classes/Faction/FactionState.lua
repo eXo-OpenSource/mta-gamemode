@@ -1821,6 +1821,7 @@ function FactionState:Event_startEvidenceTruck()
 			end
 			if totalMoney > 0 then
 				ActionsCheck:getSingleton():setAction("Geldtransport")
+				FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
 				StateEvidenceTruck:new(client, totalMoney)
 				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
@@ -1876,5 +1877,11 @@ function FactionState:Event_checkBug(element)
 		end
 	else
 		client:sendError(_("Du hast nicht genug Geld dabei! (%d$)", client, price))
+	end
+end
+
+function FactionState:sendMoveRequest(targetChannel, text)
+	for k, faction in pairs(self:getFactions()) do
+		faction:sendMoveRequest(targetChannel, text)
 	end
 end

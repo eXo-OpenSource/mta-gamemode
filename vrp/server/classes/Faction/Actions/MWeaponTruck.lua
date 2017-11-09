@@ -131,6 +131,7 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 							faction:takeMoney(totalAmount, "Waffen-Truck")
 						end
 						ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
+						FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
 						if self.m_CurrentWT then delete(self.m_CurrentWT) end
 						client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 						self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)

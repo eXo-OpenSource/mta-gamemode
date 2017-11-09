@@ -664,3 +664,9 @@ function Faction:createDiplomacyRequest(sourceFaction, targetFaction, diplomacy,
 		targetFaction:sendShortMessage(("Die Fraktion %s hat euch eine %s-Anfrage gesendet!"):format(sourceFaction:getName(), FACTION_DIPLOMACY[diplomacy]))
 	end
 end
+
+function Faction:sendMoveRequest(targetChannel, text)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		TSConnect:getSingleton():sendMoveRequest(player, targetChannel, text)
+	end
+end

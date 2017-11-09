@@ -152,6 +152,7 @@ function BankRobbery:startRobGeneral(player)
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name), 0, 255, 0)
+	FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
 
 	self.m_Timer = setTimer(bind(self.timeUp, self), BANKROB_TIME, 1)
 	self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
