@@ -107,7 +107,7 @@ end
 
 function BeggarPedManager:Event_giveBeggarMoney(amount)
 	if not instanceof(source, BeggarPed) then return end
-	source:giveMoney(client, amount)
+	source:giveBeggarMoney(client, amount)
 end
 
 function BeggarPedManager:Event_giveBeggarItem(item)

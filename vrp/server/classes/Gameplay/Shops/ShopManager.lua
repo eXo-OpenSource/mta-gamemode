@@ -64,7 +64,7 @@ function ShopManager:loadShops()
 		if not SHOP_TYPES[row.Type]["disabled"] then
 			--local newName = SHOP_TYPES[row.Type]["Name"].." "..getZoneName(row.PosX, row.PosY, row.PosZ)
 			--sql:queryExec("UPDATE ??_shops SET Name = ? WHERE Id = ?", sql:getPrefix(), newName ,row.Id)
-			local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType, row.BankAccount)
+			local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
 			ShopManager.Map[row.Id] = instance
 			if row.Blip and row.Blip ~= "" then
 				instance:addBlip(row.Blip)
@@ -76,7 +76,7 @@ end
 function ShopManager:loadVehicleShops()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicle_shops", sql:getPrefix())
     for k, row in ipairs(result) do
-		local instance = VehicleShop:new(row.Id, row.Name, row.Marker, row.NPC, row.Spawn, row.Image, row.Owner, row.Price, row.Money, row.BankAccount)
+		local instance = VehicleShop:new(row.Id, row.Name, row.Marker, row.NPC, row.Spawn, row.Image, row.Owner, row.Price, row.Money)
 		ShopManager.VehicleShopsMap[row.Id] = instance
 		if row.Blip then
 			instance:addBlip(row.Blip)
@@ -410,7 +410,8 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 	if canBuyWeapons then
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				client:takeBankMoney(totalAmount, "AmmuNation Bestellung")
+				
+				client:transferBankMoney(BankServer.get("shop.ammunation"), totalAmount, "AmmuNation Bestellung", "Shop", "Ammunation")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
 			else

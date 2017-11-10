@@ -14,6 +14,7 @@ function JobForkLift:constructor()
 	self.m_VehicleSpawner = VehicleSpawner:new(88.162, -250.316, 0.85, {"Forklift"}, 90, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
+	self.m_BankAccount = BankServer.get("job.fork_lift")
 
 	self:generateBoxes()
 
@@ -51,7 +52,7 @@ function JobForkLift:onBoxLoad(box)
 		local duration = getRealTime().timestamp - client.m_LastJobAction
 		local points
 		client.m_LastJobAction = getRealTime().timestamp
-		client:addBankMoney(MONEY_PER_BOX, "Gabelstapler-Job")
+		self.m_BankAccount:transferMoney({client, true}, MONEY_PER_BOX, "Gabelstapler-Job", "Job", "ForkLift")
 		if chance(50) then
 			points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
 			client:givePoints(points)

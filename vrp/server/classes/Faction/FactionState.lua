@@ -999,15 +999,14 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					if mon < factionBonus then
 						local bankM = player:getBankMoney()
 						local remainMoney = factionBonus - mon
-						player:takeMoney(mon, "Knaststrafe (Bar)")
+						player:transferMoney(self.m_BankAccountServer, mon, "Knaststrafe (Bar)", "Faction", "Arrest")
 						if remainMoney > bankM then
-							player:takeBankMoney(bankM, "Knaststrafe (Bank)")
-							player:takeBankMoney(bankM, "Knaststrafe (Bank)")
+							player:transferMoney(self.m_BankAccountServer, bankM, "Knaststrafe (Bank)", "Faction", "Arrest")
 						else
-							player:takeBankMoney(remainMoney, "Knaststrafe (Bank)")
+							player:transferMoney(self.m_BankAccountServer, remainMoney, "Knaststrafe (Bank)", "Faction", "Arrest")
 						end
 					else
-						player:takeMoney(factionBonus, "Knaststrafe (Bar)")
+						player:transferMoney(self.m_BankAccountServer, factionBonus, "Knaststrafe (Bar)", "Faction", "Arrest")
 					end
 
 					player:giveKarma(-wantedLevel)
@@ -1026,7 +1025,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					end
 
 					-- Pay some money to faction and karma, xp to the policeman
-					self.m_BankAccountServer:transferMoney(policeman:getFaction(), factionBonus, "Arrest", "Faction", "Arrest"
+					self.m_BankAccountServer:transferMoney(policeman:getFaction(), factionBonus, "Arrest", "Faction", "Arrest")
 					policeman:giveKarma(wantedLevel)
 					policeman:givePoints(wantedLevel)
 					PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
@@ -1072,14 +1071,14 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if mon < factionBonus then
 			local bankM = player:getBankMoney()
 			local remainMoney = factionBonus - mon
-			player:takeMoney(mon, "Knast Strafe (Bar)")
+			player:transferMoney(self.m_BankAccountServer, mon, "Knast Strafe (Bar)", "Faction", "Arrest")
 			if remainMoney > bankM then
-				player:takeBankMoney(bankM, "Knast Strafe (Bank)")
+				player:transferBankMoney(self.m_BankAccountServer, bankM, "Knast Strafe (Bank)", "Faction", "Arrest")
 			else
-				player:takeBankMoney(remainMoney, "Knast Strafe (Bank)")
+				player:transferBankMoney(self.m_BankAccountServer, remainMoney, "Knast Strafe (Bank)", "Faction", "Arrest")
 			end
 		else
-			player:takeMoney(factionBonus, "Knast Strafe (Bar)")
+			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
 		player:giveKarma(-wantedLevel)
 		player:setJailTime(jailTime)

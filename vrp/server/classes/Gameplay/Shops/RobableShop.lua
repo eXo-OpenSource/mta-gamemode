@@ -361,8 +361,8 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
 				PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit der Beute entkommen!", self.m_Shop:getName())
 			elseif source == self.m_StateMarker and hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 				local stateMoney = math.floor(money/3)
-				self.m_BankAccountServer:transferMoney(hitElement, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob"
-				self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob"
+				self.m_BankAccountServer:transferMoney(hitElement, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
+				self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 				self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 				hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
 				PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())

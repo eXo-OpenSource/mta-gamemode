@@ -420,16 +420,22 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	local targetObject = toObject
 	local offlinePlayer = false
 	local isPlayer = false
-	local toBank = false
+	local goesToBank = false
 	local silent = false
+	local allIfToMuch = false
+
+	local toType = ""
+	local toId = 0
+	local toBank = -1
 
 	if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
-		if not (#toObject >= 2 and #toObject <= 4) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
+		if not (#toObject >= 2 and #toObject <= 5) then error("DatabasePlayer.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
 
 		if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
 			targetObject = toObject[1]
-			toBank = toObject[2]
+			goesToBank = toObject[2]
 			silent = toObject[3]
+			allIfToMuch = toObject[4]
 		else
 			if toObject[1] == "player" then
 				targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
@@ -444,38 +450,60 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 			elseif toObject[1] == "group" then
 				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-				error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
+				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
 			end
-			toBank = toObject[3]
+			goesToBank = toObject[3]
 			silent = toObject[4]
+			allIfToMuch = toObject[5]
 		end
 	end
 
-	if not instanceof(targetObject, BankAccount) and not targetObject.m_Id then
+	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
 		error("BankAccount.transferMoney @ Target is missing")
 	end
 	
 	isPlayer = instanceof(targetObject, DatabasePlayer)
 
 	if self:getMoney() < amount then
-		return false
+		if allIfToMuch and self:getMoney() > 0 then
+			amount = self:getMoney()
+		else
+			return false
+		end
 	end
 
-	self:__takeMoney(amount, reason)
+	self:__takeMoney(amount, reason, silent)
 
 	if isPlayer then
-		if toBank then
+		toType = targetObject.m_BankAccount.m_OwnerType
+		toId = targetObject.m_BankAccount.m_OwnerId
+
+		if goesToBank then
 			targetObject:__giveBankMoney(amount, reason)
+			toBank = targetObject.m_BankAccount.m_Id
 		else
 			targetObject:__giveMoney(amount, reason)
+			toBank = 0
 		end
 	else
+		if instanceof(targetObject, BankAccount) then
+			toBank = targetObject.m_Id
+			toType = targetObject.m_OwnerType
+			toId = targetObject.m_OwnerId
+		else
+			toBank = targetObject.m_BankAccount.m_Id
+			toType = targetObject.m_BankAccount.m_OwnerType
+			toId = targetObject.m_BankAccount.m_OwnerId
+		end
+		
 		targetObject:__giveMoney(amount, reason, silent)
 	end
 
 	if offlinePlayer then
 		delete(targetObject)
 	end
+
+	StatisticsLogger:getSingleton():addMoneyLogNew(self.m_Id, 1, 0, toId, toType, toBank, amount, reason, category, subcategory)
 
 	return true
 end

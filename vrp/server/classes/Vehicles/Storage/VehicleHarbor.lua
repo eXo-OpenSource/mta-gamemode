@@ -17,6 +17,7 @@ function VehicleHarbor:constructor()
 	self.m_RespawnPos = Vector3(2368.210, -2538.178, 13.330)
 	self.m_RespawnRot = Vector3(0, 0, 324.654)
 	self.m_Marker = Marker.create(Vector3(2368.729, -2537.533, 12.431), "cylinder", 1, 255, 255, 0)
+	self.m_BankAccountServer = BankServer.get("vehicle.harbor")
 
 	--Events
 	--addEventHandler("onPedWasted", self.m_Ped, bind(VehicleHarbor.onPedWasted, self))
@@ -52,7 +53,7 @@ end
 
 function VehicleHarbor:Event_harborTakeVehicle()
 	if client:getMoney() >= 500 then
-		client:takeMoney(500, "Hafen")
+		client:transferMoney(self.m_BankAccountServer, 500, "Hafen", "Vehicle", "Repair")
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone

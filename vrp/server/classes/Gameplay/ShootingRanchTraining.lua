@@ -16,12 +16,12 @@ function ShootingRanchTraining:constructor(player, level)
 		end
 
 		local data = ShootingRanch.Trainings[level]
-
+		self.m_BankAccount = BankServer.get("gameplay.shooting_ranch")
 		player:createStorage()
 
 		giveWeapon(player, data["Weapon"], data["Ammo"], true)
 		player:triggerEvent("disableDamage", true)
-		player:takeMoney(WEAPON_LEVEL[level]["costs"], "Schießstand")
+		player:transferMoney(self.m_BankAccount, WEAPON_LEVEL[level]["costs"], "Schießstand", "Gameplay", "ShootingRanch")
 
 		self.m_Player = player
 		self.m_TargetLevel = level

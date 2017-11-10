@@ -6,6 +6,7 @@ function GroupPropertyManager:constructor( )
 	local st, count = getTickCount(), 0
 	self.Map = {}
 	self.ChangeMap = {}
+	self.m_BankAccountServer = BankServer.get("group.properties")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
 		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId, row.ElevatorData)
@@ -125,7 +126,7 @@ function GroupPropertyManager:BuyProperty( Id )
 				property.m_OwnerID = newOwner.m_Id or false
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
 				property.m_Open = 1
-				newOwner:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
+				newOwner:transferMoney(self.m_BankAccountServer, price, "Immobilie "..property.m_Name.." gekauft!", "Group", "PropertyBuy")
 				client:sendInfo("Du hast die Immobilie gekauft!")
 				if property.m_Pickup and isElement(property.m_Pickup) then 
 					setPickupType(property.m_Pickup, 3, PICKUP_ARROW)
@@ -174,7 +175,7 @@ function GroupPropertyManager:SellProperty(  )
 				if property.m_Pickup and isElement(property.m_Pickup) then 
 					setPickupType(property.m_Pickup, 3, PICKUP_FOR_SALE)
 				end
-				group:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
+				self.m_BankAccountServer:transferMoney(group, price, "Immobilie "..property.m_Name.." verkauft!", "Group", "PropertySell")
 				client:sendInfo("Sie haben die Immobilie verkauft! Das Geld befindet sich in der Firmen/Gangkasse!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do
 					player:triggerEvent("destroyGroupBlip",property.m_Id)

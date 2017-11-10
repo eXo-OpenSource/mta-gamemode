@@ -22,6 +22,7 @@ function JobFarmer:constructor()
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
+	self.m_BankAccountServer = BankServer.get("job.farmer")
 
 	local x, y, z = unpack(STOREMARKERPOS)
 	self.m_Storemarker = self:createJobElement (createMarker (x,y,z,"cylinder",3,0,125,0,125))
@@ -50,7 +51,7 @@ function JobFarmer:constructor()
 	end
 end
 
-function JobFarmer:giveMoney(player, vehicle)
+function JobFarmer:giveJobMoney(player, vehicle)
 	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
 		local income = player:getData("Farmer.Income")
 		local duration = getRealTime().timestamp - player.m_LastJobAction
@@ -60,7 +61,7 @@ function JobFarmer:giveMoney(player, vehicle)
 		else
 			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.combine", duration, income)
 		end
-		player:addBankMoney(income, "Farmer-Job")
+		self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
 		player:setData("Farmer.Income", 0)
 		player:triggerEvent("Job.updateIncome", 0)
 	end
@@ -88,7 +89,7 @@ function JobFarmer:onVehicleSpawn(player, vehicleModel, vehicle)
 	addEventHandler("onVehicleExit", vehicle,
 		function(vehPlayer, seat)
 			if seat == 0 and source:getModel() ~= 478 then
-				self:giveMoney(vehPlayer, source)
+				self:giveJobMoney(vehPlayer, source)
 			end
 		end
 	)
@@ -175,7 +176,7 @@ function JobFarmer:stop(player)
 	self:setJobElementVisibility(player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
-	self:giveMoney(player, player.jobVehicle)
+	self:giveJobMoney(player, player.jobVehicle)
 	self:destroyJobVehicle(player)
 end
 
@@ -202,7 +203,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 			local duration = getRealTime().timestamp - player.m_LastJobAction
 			player.m_LastJobAction = getRealTime().timestamp
 			StatisticsLogger:getSingleton():addJobLog(player, "jobFarmer.transport", duration, income, nil, nil, math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
-			player:addBankMoney(income, "Farmer-Job")
+			self.m_BankAccountServer:transferMoney({player, true}, income, "Farmer-Job", "Job", "Farmer")
 			player:givePoints(math.floor(math.ceil(self.m_CurrentPlants[player]/10)*JOB_EXTRA_POINT_FACTOR))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)

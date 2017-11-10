@@ -3,7 +3,7 @@ MoneyBeggar = inherit(BeggarPed)
 function MoneyBeggar:constructor()
 end
 
-function MoneyBeggar:giveMoney(player, money)
+function MoneyBeggar:giveBeggarMoney(player, money)
 	if self.m_Despawning then return end
 	if not player.vehicle then
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end

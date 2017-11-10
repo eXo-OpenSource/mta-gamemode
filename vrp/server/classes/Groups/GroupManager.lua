@@ -15,7 +15,7 @@ end
 
 function GroupManager:constructor()
 	self:loadGroups()
-
+	self.m_BankAccountServer = BankServer.get("group")
 	GlobalTimer:getSingleton():registerEvent(bind(self.payDay, self), "Group Payday", nil, nil, 00) -- Every Hour
 
 	-- Events
@@ -184,7 +184,7 @@ function GroupManager:Event_Create(name, type)
 		client:giveAchievement(60)
 
 		group:addPlayer(client, GroupRank.Leader)
-		client:takeMoney(GroupManager.GroupCosts, "Firmen/Gang Gründung")
+		client:transferMoney(self.m_BankAccountServer, GroupManager.GroupCosts, "Firmen/Gang Gründung", "Group", "Creation")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
 		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)
@@ -225,31 +225,26 @@ function GroupManager:Event_Delete()
 		end
 	end
 
-  local leaderAmount = group.m_Money/(1 + leaderCount)
-  group.m_Money = group.m_Money - leaderAmount
+  local money = group:getMoney()
+  local leaderAmount = money/(1 + leaderCount)
+  money = money - leaderAmount
   local memberAmount = 0
   local groupSize = table.size(group.m_Players)
   if groupSize == leaderAmount then
-      leaderAmount = (leaderAmount + group.m_Money)/leaderCount
+      leaderAmount = (leaderAmount + money)/leaderCount
   else
-      memberAmount = group.m_Money/(groupSize - leaderCount)
+      memberAmount = money/(groupSize - leaderCount)
   end
 
 	-- Distribute group's money
   for playerId, playerRank in pairs(group.m_Players) do
-  	Async.create(
-		  function()
-			local player, isOffline = DatabasePlayer.get(playerId)
-			if isOffline then player:load() end
-			if playerRank == GroupRank.Leader then
-				player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
-			else
-				player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
-			end
+	local amount = memberAmount
 
-			if isOffline then delete(player) end
-		end
-	)()
+	if playerRank == GroupRank.Leader then
+		amount = leaderAmount
+	end
+
+	group:transferMoney({"player", playerId, true}, amount, "Gang/Firmen Auflösung", "Group", "Delete")
   end
   	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
@@ -268,8 +263,7 @@ function GroupManager:Event_Deposit(amount)
 		return
 	end
 
-	client:takeMoney(amount, "Firmen/Gang Einzahlung")
-	group:giveMoney(amount, "Firmen/Gang Auszahlung")
+	client:transferMoney(group, amount, "Firmen/Gang Einzahlung", "Group", "Deposit")
 	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 	group:refreshBankGui(client)
@@ -291,8 +285,7 @@ function GroupManager:Event_Withdraw(amount)
 		return
 	end
 
-	group:takeMoney(amount, "Firmen/Gang Auszahlung")
-	client:giveMoney(amount, "Firmen/Gang Auszahlung")
+	group:transferMoney(client, amount, "Firmen/Gang Auszahlung", "Group", "Deposit")
 	group:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Kasse genommen!")
 
 	self:sendInfosToClient(client)
@@ -488,7 +481,7 @@ function GroupManager:Event_ChangeName(name)
 	end
 
 	if group:setName(name) then
-		client:takeMoney(GROUP_RENAME_COSTS, "Firmen/Gang Änderung")
+		client:transferMoney(self.m_BankAccountServer, GROUP_RENAME_COSTS, "Firmen/Gang Änderung", "Group", "Rename")
 		client:sendSuccess(_("Deine %s heißt nun\n%s!", client, group:getType(), group:getName()))
 		group:addLog(client, "Gang/Firma", "hat die "..group:getType().." in "..group:getName().." umbenannt!")
 
@@ -519,7 +512,7 @@ function GroupManager:Event_UpdateVehicleTuning()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then
-				group:takeMoney(3000, "Fahrzeug Tuning")
+				group:transferMoney(self.m_BankAccountServer, 3000, "Fahrzeug Tuning", "Group", "VehicleTuning")
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
 				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
 				if group.m_VehiclesCanBeModified == true then
@@ -674,7 +667,7 @@ function GroupManager:Event_ChangeType()
 
 	local oldType = group:getType()
 	local newType = oldType == "Firma" and "Gang" or "Firma"
-	group:takeMoney(20000, "Typ Änderung")
+	group:transferMoney(self.m_BankAccountServer, 20000, "Typ Änderung", "Group", "TypeChange")
 	group:setType(newType)
 	group:addLog(client, "Gang/Firma", "hat die "..oldType.." in eine "..newType.." umgewandelt!")
 	group:sendShortMessage(_("%s hat deine %s in eine %s umgewandelt!", client, client:getName(), oldType, newType))

@@ -30,6 +30,16 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
 	self.m_IsRob = bIsRob
+	self.m_BankAccountServer = BankServer.get("action.house_rob")
+	self.m_BankAccountServer2 = BankServer.get("server.house")
+
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.House)
+	if not self.m_BankAccount then
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.House, self.m_Id)
+		self.m_BankAccountServer2:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "House", "Migration")
+		self.m_Money = 0
+		self.m_BankAccount:save()
+	end
 
 	self:refreshInteriorMarker()
 
@@ -93,7 +103,7 @@ function House:showGUI(player)
 		tenants[playerId] = Account.getNameFromId(playerId)
 	end
 	if player:getId() == self.m_Owner then
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_Money, true, self.m_Id)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, false, self.m_LockStatus, tenants, self.m_BankAccount:getMoney(), true, self.m_Id)
 	else
 		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, false, self:isValidToEnter(player) and true or false, self.m_Id)
 	end
@@ -122,7 +132,7 @@ function House:breakHouse(player)
 				end
 				if isRobSuccessfully then
 					local loot = math.floor(self.m_Price/20*(math.random(75, 100)/100))
-					unit:giveMoney(loot, "Haus-Überfall")
+					self.m_BankAccountServer:transferMoney(unit, loot, "Haus-Überfall", "Action", "HouseRob")
 					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafür erhälst du $%s.", 0, 125, 0, loot)
 					unit:triggerEvent("CountdownStop", "Haus-Raub")
 					self:leaveHouse(unit)
@@ -234,8 +244,7 @@ function House:deposit(player, amount)
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
 		if player:getMoney() >= amount then
-			player:takeMoney(amount, "Hauskasse")
-			self.m_Money = self.m_Money + amount
+			player:transferMoney(self.m_BankAccount, amount, "Hauskasse", "House", "Deposit")
 			self:showGUI(player)
 		else
 			player:sendError(_("Du hast nicht genug Geld dabei!", player))
@@ -249,9 +258,8 @@ function House:withdraw(player, amount)
 	if not self:isPlayerNearby(player) then player:sendError(_("Du bist zu weit entfernt!", player)) return end
 	amount = tonumber(amount)
 	if player:getId() == self.m_Owner then
-		if self.m_Money >= amount then
-			self.m_Money = self.m_Money - amount
-			player:giveMoney(amount, "Hauskasse")
+		if self.m_BankAccount:getMoney() >= amount then
+			self.m_BankAccount:transferMoney(player, amount, "Hauskasse", "House", "Withdraw")
 			self:showGUI(player)
 		else
 			player:sendError(_("In der Hauskasse ist nicht genug Geld!", player))
@@ -306,6 +314,7 @@ function House:sendTenantsMessage(msg)
 end
 
 function House:save()
+	self.m_BankAccount:save()
 	local houseID = self.m_Owner or 0
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
@@ -321,8 +330,8 @@ function House:sellHouse(player)
 
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
-		player:addBankMoney(price, "Haus-Verkauf")
-		player:giveMoney(self.m_Money, "Hauskasse")
+		self.m_BankAccountServer2:transferMoney({player, true}, price, "Haus-Verkauf", "House", "Sell")
+		self.m_BankAccount:transferMoney(player, self.m_BankAccount:getMoney(), "Hauskasse", "House", "Sell")
 
 		self:clearHouse()
 	else
@@ -334,6 +343,7 @@ function House:clearHouse()
 	self.m_Owner = false
 	self.m_Keys = {}
 	self.m_Money = 0
+	self.m_BankAccount:transferMoney(self.m_BankAccountServer2, self.m_BankAccount:getMoney(), "Hausräumung", "House", "Cleared")
 	self:updatePickup()
 	self:save()
 end
@@ -550,7 +560,7 @@ function House:buyHouse(player)
 		end
 		player:giveAchievement(34)
 
-		player:takeBankMoney(self.m_Price, "Haus-Kauf")
+		player:transferBankMoney(self.m_BankAccountServer2, self.m_Price, "Haus-Kauf", "House", "Buy")
 		self.m_Owner = player:getId()
 		self:updatePickup()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))

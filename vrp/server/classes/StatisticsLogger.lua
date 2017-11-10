@@ -51,11 +51,38 @@ function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
 	return false
 end
 
-function StatisticsLogger:addMoneyLogNew(fromId, fromType, formBank, toId, toType, toBank, amount, reason, category, subcategory)
+function StatisticsLogger:addMoneyLogNew(fromId, fromType, fromBank, toId, toType, toBank, amount, reason, category, subcategory)
 	-- Create new table for all new transactions
+	-- 
+	--outputChatBox(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
+	outputServerLog(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
+    if sqlLogs:queryExec("INSERT INTO ??_MoneyNew (FromId, FromType, FromBank, ToId, ToType, ToBank, Amount, Reason, Category, Subcategory, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
+		sqlLogs:getPrefix(), fromId, fromType, fromBank, toId, toType, toBank, amount, reason, category, subcategory) then
+		return true
+	end
 end
 
 --[[
+CREATE TABLE `vrpLogs_MoneyNew` (
+`Id`  int NOT NULL AUTO_INCREMENT ,
+`FromId`  int NULL ,
+`FromType`  int NULL ,
+`FromBank`  int NULL ,
+`ToId`  int NULL ,
+`ToType`  int NULL ,
+`ToBank`  int NULL ,
+`Amount`  bigint NULL ,
+`Reason`  varchar(255) NULL ,
+`Category`  varchar(32) NULL ,
+`Subcategory`  varchar(32) NULL ,
+`Date`  datetime NULL ON UPDATE CURRENT_TIMESTAMP ,
+PRIMARY KEY (`Id`)
+)
+;
+
+
+
+
 	Needs testing
 	- Admin Kasse (Ein-/Auszahlen)
 	- Fahrschule Theorie
@@ -105,6 +132,70 @@ end
 	- Slotmachine
 	- Vending Machine (Buy, Rob)
 	- Group
+	- Faction Drug Asservation
+	- Group Spray Wall/Gang Area
+	- Group Payday (positive and negative)
+	- Group HouseRob
+	- Group delete
+	- Group (Deposit/Withdraw)
+	- Group Property (Sell/Buy)
+	- Evil Faction Kill Boni
+	- Player Trade
+	- Player Weapon Trade
+	- Player Vehicle Trade
+	- Event Halloween
+	- House Rob
+	- House Deposit/Withdraw
+	- House Sell/Buy
+	- Speedcam
+	- Farmer Job
+	- Bank Withdraw/Deposit
+	- San News Donation
+	- eXo Event-Team Donation
+	- Bank Transfer (Offline/Online)
+	- State Kill Arrest
+	- Player send money (with clickmenu)
+	- Server Tour
+	- Pay N Spray
+	- Toll Station
+	- Group Vehicle Sell
+	- Vehicle sell to server
+	- Job Fork Lift
+	- Job Heli Transport
+	- Job Logistician
+	- Job Lumberjack
+	- Job Pizza Delivery
+	- Job Road Sweeper
+	- Job Trashman
+	- Job Treasure Seeker
+	- Payday
+	- Garage Upgrade
+	- Hangar Upgrade
+	- Vehicle Respawn
+	- Shop Ammunation (mobile)
+	- Arrest of player
+	- Gas Station (User owend, Faction, Company)
+	- Kart
+	- Shooting Ranch
+	- Deathmatch Arena
+	- Weed Truck
+	- Weapon Truck
+	- ShopBar Stripper
+	- Skin Shop
+	- Skydive
+	- Group creation, rename, type change, tuning activation
+	- Harbor Repair
+	- Vehicle Tunings
+
+	--> Add fifth parameter --> if amount to big go zero
+	--> Check all Shop types!!!!
+	--> Shop Konto id?
+	--> Cleanup House (remove all m_Money)
+	--> Cleanup Shops (remove all m_Money)
+	--> Cleanup VehicleShop (remove all m_Money)
+
+
+	--> Create bank account for groups!!!
 ]]
 
 
@@ -112,7 +203,6 @@ end
 	vrp_stats --> Kills, Deaths, AFK, Driven, FishCought --> DEFAULT 0
 
 	ALTER TABLE `vrp_shops` ADD COLUMN `BankAccount` int(11) AFTER `OwnerType`;
-	ALTER TABLE `vrp_vehicle_shops` ADD COLUMN `BankAccount` int(11);
 ]]
 
 --[[

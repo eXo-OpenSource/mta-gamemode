@@ -41,6 +41,8 @@ BankAccountTypes = {
   Admin = 4;
   Server = 5;
   Shop = 6;
+  House = 7;
+  Group = 8;
 }
 
 AFK_POSITIONS = {

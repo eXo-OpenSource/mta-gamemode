@@ -16,12 +16,13 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_Money = money
 	self.m_BankAccountServer = BankServer.get("server.vehicle_shop")
 
-	if not bankAccount or bankAccount == 0 then
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
+	
+	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
-		self.m_BankAccountServer:transerMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
+		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
 		self.m_Money = 0
-	else
-		self.m_BankAccount = BankAccount.load(bankAccount)
+		self.m_BankAccount:save()
 	end
 
 	self.m_VehicleList = {}
@@ -99,7 +100,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 end
 
 function VehicleShop:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
 
 function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot)

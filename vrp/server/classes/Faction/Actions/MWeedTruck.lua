@@ -11,6 +11,7 @@ MWeedTruck.Settings = {["costs"] = 10000}
 
 function MWeedTruck:constructor()
 	self:createStartPoint(-1095.50, -1614.75, 75.5)
+	self.m_BankAccount = BankServer.get("action.trucks")
 
 	self.m_HelpColShape = createColSphere(-1095.50, -1614.75, 75.5, 5)
 	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))
@@ -71,7 +72,7 @@ function MWeedTruck:Event_weedTruckStart()
 		if faction:isEvilFaction() then
 			if ActionsCheck:getSingleton():isActionAllowed(source) then
 				if source:getMoney() >= MWeedTruck.Settings["costs"] then
-					source:takeMoney(MWeedTruck.Settings["costs"], "Weed-Truck")
+					faction:transferMoney(self.m_BankAccount, MWeedTruck.Settings["costs"], "Weed-Truck", "Action", "WeedTruck")
 					self.m_CurrentWeedTruck = WeedTruck:new(source)
 					ActionsCheck:getSingleton():setAction("Weed-Truck")
 					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", source, faction, "faction")

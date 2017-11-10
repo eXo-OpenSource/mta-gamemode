@@ -306,12 +306,12 @@ end
 --[[
 function Faction:__giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:addMoney(amount, reason, silent)
+	return self.m_BankAccount:__addMoney(amount, reason, silent)
 end
 
 function Faction:__takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
-	return self.m_BankAccount:takeMoney(amount, reason, silent)
+	return self.m_BankAccount:__takeMoney(amount, reason, silent)
 end
 ]]
 function Faction:transferMoney(toObject, amount, reason, category, subcategory)
@@ -329,7 +329,6 @@ function Faction:paydayPlayer(player)
 
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
-	self:takeMoney(loan, "Lohn von "..player:getName())
 	return loan
 end
 

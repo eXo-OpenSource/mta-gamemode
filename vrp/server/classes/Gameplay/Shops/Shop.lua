@@ -11,7 +11,7 @@ function Shop:constructor()
 	self.m_BankAccountServer = BankServer.get("server.shop")
 end
 
-function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType, bankAccount)
+function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 	self.m_Id = id
 	self.m_Name = name
 	self.m_BuyAble = price > 0 and true or false
@@ -23,13 +23,15 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_Position = position or nil
 	self.m_TypeName = "Shop"
 	self.m_TypeDataName = typeData["Name"]
+	self.m_BankAccountServer = BankServer.get("shop")
 
-	if not bankAccount or bankAccount == 0 then
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
+
+	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
-		self.m_BankAccountServer:transerMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
+		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
 		self.m_Money = 0
-	else
-		self.m_BankAccount = BankAccount.load(bankAccount)
+		self.m_BankAccount:save()
 	end
 
 	self.m_ShopGUIBind = bind(self.openManageGUI, self)
@@ -221,7 +223,7 @@ function Shop:sell(player)
 			local group = player:getGroup()
 			if group:getPlayerRank(player) >= GroupRank.Manager then
 				local money = math.floor((self.m_Price*0.75))
-				self.m_BankAccountServer:transerMoney(group, money, "Shop-Verkauf", "Shop", "Sell")
+				self.m_BankAccountServer:transferMoney(group, money, "Shop-Verkauf", "Shop", "Sell")
 				group:sendMessage(_("[FIRMA] %s hat den Shop '%s' für %d$ verkauft!", player, player:getName(), self.m_Name, money), 255, 0, 0)
 				group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ verkauft!", player, self.m_Name, money))
 				self.m_OwnerId = 0

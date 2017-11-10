@@ -151,7 +151,7 @@ function BoxManager:startFight(player1, player2, money)
 		playeritem:setHealth(100)
 		playeritem:setModel(data["Skin"])
 		setPedFightingStyle(playeritem, 5)
-		playeritem:transferMoney(self.m_BankAccountServer, money, "Boxkampf-Einsatz", "Gamplay", "BoxingEntry")
+		playeritem:transferMoney(self.m_BankAccountServer, money, "Boxkampf-Einsatz", "Gameplay", "BoxingEntry")
 		playeritem.boxing = true
 	end
 	self:sendShortMessage(_("%s und %s haben einen Boxkampf gestartet!", player1, player1:getName(), player2:getName()))
