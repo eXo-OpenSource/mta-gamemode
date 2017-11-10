@@ -118,10 +118,10 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 				target:triggerEvent("clientBloodScreen")
 				local basicDamage = WEAPON_DAMAGE[weapon]
 				if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
-					local dist = getDistanceBetweenPoints3D(attacker, target)
+					local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
 					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
 					basicDamage = basicDamage*((maxDist-dist)/maxDist)
-				elseif getDistanceBetweenPoints3D(attacker, target) < 1 then -- disable punshing with weapons
+				elseif getDistanceBetweenPoints3D(attacker.position, target.position) <= 1 then -- disable punshing with weapons
 					loss = math.random(2, 5)
 				end
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
