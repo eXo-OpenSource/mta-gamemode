@@ -1,5 +1,14 @@
 TSConnect = inherit(Singleton)
 
+--[[
+	API Doc:
+	tsMessageToClient(msg)
+	tsPoke(msg)
+	tsMoveClient(channelName or channelId)
+	tsAddServergroup(groupName or groupId)
+	tsRemoveServergroup(groupName or groupId)
+]]
+
 function TSConnect:constructor()
 	self.m_APIUrl = "https://exo-reallife.de/ingame/TSConnect/ts_connect.php"
 	self.m_Secret = "8H041OAyGYk8wEpIa1Fv"
@@ -18,7 +27,7 @@ end
 function TSConnect:destructor()
 end
 
-function TSConnect:callAPI(player, method, arg, callback)
+function TSConnect:callAPI(player, method, arg, response, callback)
 	if not player or not isElement(player) then
 		return false
 	end
@@ -33,7 +42,7 @@ function TSConnect:callAPI(player, method, arg, callback)
 				local responseData = fromJSON(rawResponseData)
 				if not responseData or responseData["error"] then
 					outputDebugString(("TSConnect PHP-Error: %s"):format(responseData and responseData["error"] or "no responseData"), 1)
-				elseif responseData["response"] and responseData["player"] then
+				elseif response and responseData["response"] and responseData["player"] then
 					local responsePlayer = PlayerManager:getSingleton():getPlayerFromId(responseData["player"])
 					if responsePlayer and isElement(responsePlayer) then
 						responsePlayer:sendShortMessage(responseData["response"], self.m_SMTitle, self.m_SMColor)
