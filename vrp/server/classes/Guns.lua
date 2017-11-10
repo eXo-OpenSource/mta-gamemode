@@ -122,7 +122,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
 					basicDamage = basicDamage*((maxDist-dist)/maxDist)
 				elseif getDistanceBetweenPoints3D(attacker.position, target.position) <= 1 then -- disable punshing with weapons
-					loss = math.random(2, 5)
+					basicDamage = math.random(2, 5)
 				end
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier

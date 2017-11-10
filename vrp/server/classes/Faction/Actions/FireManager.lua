@@ -60,9 +60,8 @@ function FireManager:checkFire()
 	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
 	else
-		if not isTimer(self.m_FireTimer) then
-			self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
-		end
+		if isTimer(self.m_FireTimer) then killTimer(self.m_FireTimer) end
+		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
 	end
 end
 
@@ -175,9 +174,8 @@ function FireManager:stopCurrentFire(stats)
 	self.m_CurrentFire = nil
 	self.m_NewsSent = nil
 
-	if not isTimer(self.m_FireTimer) then
-		self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
-	end
+	if isTimer(self.m_FireTimer) then killTimer(self.m_FireTimer) end
+	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
 end
 
 function FireManager:receiveFires()
