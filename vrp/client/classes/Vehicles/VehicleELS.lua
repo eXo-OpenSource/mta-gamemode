@@ -6,10 +6,19 @@
 -- *
 -- ****************************************************************************
 
-VehicleELS = inherit(Object) --gets inherited from vehicle to provide methods to vehicle object
+VehicleELS = inherit(Singleton) 
 VehicleELS.updateInterval = 200 --ms
 VehicleELS.Map = {}
 VehicleELS.ActiveMap = {}
+addRemoteEvents{"add", "remove", "toggle"}
+
+function VehicleELS:constructor()
+
+    addEventHandler("vehicleELSadd", resourceRoot, bind(VehicleELS.addVehicleELS, self))
+    addEventHandler("vehicleELSremove", resourceRoot, bind(VehicleELS.removeVehicleELS, self))
+    addEventHandler("vehicleELStoggle", resourceRoot, bind(VehicleELS.toggleVehicleELS, self))
+
+end
 
 function VehicleELS:setELSPreset(ELSPreset, hasSiren)
     self.m_ELSPreset = ELSPreset
@@ -44,7 +53,7 @@ end
 function VehicleELS:internalAddELSLights()
     if not self.m_ELSLights then
         self.m_ELSLights = {}
-        for name, data in pairs(VehicleELS.preset[self.m_ELSPreset].light) do
+        for name, data in pairs(ELS_PRESET[self.m_ELSPreset].light) do
             self.m_ELSLights[name] = CustomCorona:new(data[1], data[2], data[3], data[4], data[5], data[6], data[7], 255)
             self.m_ELSLights[name]:attachTo(self, true)
         end
@@ -68,33 +77,3 @@ function VehicleELS.update()
    -- end
 end
 VehicleELS.init()
-VehicleELS.preset = {
-    [411] = {
-        sequenceCount = 2,
-        light = {
-            --name = {x, y, z, size, r, g, b}
-            vl = {0.5, 2, 0, 0.2, 255, 0, 0},
-            vr = {-0.5, 2, 0, 0.2, 0, 0, 255},
-        },
-        sequence = {
-            [1] = {
-                vl = {
-                    enabled = true,
-                },
-                vr = {
-                    enabled = false,
-                },
-            },
-            [2] = {
-                vl = {
-                    enabled = false,
-                },
-                vr = {
-                    enabled = true,
-                },
-            },
-        },
-    },
-
-
-}

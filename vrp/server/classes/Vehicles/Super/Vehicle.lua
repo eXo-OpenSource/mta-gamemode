@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
+inherit(VehicleELS, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
