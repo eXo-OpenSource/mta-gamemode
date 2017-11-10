@@ -30,7 +30,7 @@ function WareDrawGUI:constructor(amount)
 	self.m_Height = grid("y", 12)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/3-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Male in genau %d verschiedenen Farben!", amount), true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Male in %d verschiedenen Farben!", amount), true, true, self)
 
 	self.m_DrawColors = {}
 

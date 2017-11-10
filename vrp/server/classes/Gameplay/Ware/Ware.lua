@@ -16,7 +16,7 @@ Ware.roundTimes =
 
 Ware.arenaSize = 4
 Ware.sidelength = 9
-Ware.afterRoundTime = 4000
+Ware.afterRoundTime = 2000
 Ware.arenaZ = 500
 Ware.Min_Players = 3
 function Ware:constructor( dimension )
@@ -92,7 +92,7 @@ function Ware:onPlayerChat(player, text, type)
 	if self.m_CurrentMode then
 		if self.m_CurrentMode.onChat then
 			if table.find(self.m_Players, player) then
-				self.m_CurrentMode:onChat(player, text, type)
+				return self.m_CurrentMode:onChat(player, text, type)
 			end
 		end
 	end
@@ -133,12 +133,13 @@ function Ware:afterRound()
 		local losers = self:getLosers()
 		if winners then
 			for k, player in ipairs( winners ) do
-				player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
-				if #self.m_Players > Ware.Min_Players then
-					player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
-					player:sendShortMessage(_("Kürbis erhalten!", player))
-				else
-					player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
+				if player and isElement(player) then
+					player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
+					if #self.m_Players > Ware.Min_Players then
+						player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
+					else
+						player:sendError(_("Da zu wenig Spieler teilnehmen wird diese Runde nicht gewertet!", player))
+					end
 				end
 			end
 		end
@@ -169,7 +170,7 @@ end
 function Ware:resetRound()
 	local pumpkinsEarned
 	for k, player in ipairs( self.m_Players ) do
-		pumpkinsEarned = math.floor((math.floor((player:getData("Ware:pumpkinsEarned") or 0) / 2)) / 10)
+		pumpkinsEarned = math.ceil((player:getData("Ware:pumpkinsEarned") or 0) / 10)
 		if pumpkinsEarned > 0 then
 			player:getInventory():giveItem("Kürbis", pumpkinsEarned)
 			player:sendInfo(_("Du erhälst "..pumpkinsEarned.. " Kürbisse als Belohnung!", player))
@@ -195,6 +196,7 @@ end
 function Ware:joinPlayer( player )
 	if not self:isPlayer(player) then
 		table.insert(self.m_Players, player)
+		player:createStorage(true)
 		player:setData("Ware:roundsWon", 0)
 		player:setData("Ware:pumpkinsEarned",  0)
 		player:triggerEvent("PlatformEnv:generate", 0, 0, Ware.arenaZ, Ware.arenaSize, Ware.arenaSize, self.m_Dimension, false, "files/images/Textures/Ware/waretex.jpg", "sam_camo", 3095)
@@ -204,7 +206,6 @@ function Ware:joinPlayer( player )
 		player:triggerEvent("onClientWareJoin", self.m_Gamespeed)
 		player:triggerEvent("Ware:closeGUI")
 
-		player:createStorage(true)
 		for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 			setPedStat(player, stat, stat == 69 and 900 or 1000)
 		end

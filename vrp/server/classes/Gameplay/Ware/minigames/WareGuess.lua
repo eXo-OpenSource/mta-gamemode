@@ -28,7 +28,7 @@ end
 function WareGuess:spawnCars()
 	self.m_Cars = {}
 	local x,y,z,width,height = unpack(self.m_Super.m_Arena)
-	local randomNumber = math.random(4, 25)
+	local randomNumber = math.random(4, 20)
 	local randomVehicle
 	local rx, ry, rz
 	for i = 1, randomNumber do
@@ -46,21 +46,33 @@ function WareGuess:spawnCars()
 end
 
 function WareGuess:checkWinner()
-	local nearest = 999
-	local nearestPlayers = {}
-	for player, number in pairs(self.m_Numbers) do
-		if math.abs(self.m_RightAnswer-number) < nearest then
-			nearest = number
-		end
-	end
+    local nearest = 999
+    local nearestPlayers = {}
+    local diff
+    local nearestNumber = 0
+    for player, number in pairs(self.m_Numbers) do
+        diff = math.abs(self.m_RightAnswer-number)
+        if diff < nearest then
+            nearest = diff
+            nearestNumber = number
+        end
+        if diff == 0 then
+            outputChatBox("Du hast genau richtig geraten!", player, 0, 255, 0)
+        else
+            outputChatBox("Du liegst um "..diff.." daneben!", player, 255, 0, 0)
+        end
+    end
 
-	for player, number in pairs(self.m_Numbers) do
-		if number == nearest then
-			self.m_Winners[player] = true
-		else
-			self.m_WrongPlayers[player] = true
-		end
-	end
+    for player, number in pairs(self.m_Numbers) do
+        outputChatBox("Die beste Schätzung war "..nearestNumber.."!", player, 50, 200, 255)
+
+        if number == nearestNumber then
+            self.m_Winners[player] = true
+            self.m_Super:addPlayerToWinners(player)
+        else
+            self.m_WrongPlayers[player] = true
+        end
+    end
 end
 
 function WareGuess:onChat(player, text, type)
@@ -74,19 +86,8 @@ function WareGuess:onChat(player, text, type)
 		return
 	end
 	self.m_Numbers[player] = tonumber(text)
-
-	if tonumber(text) == self.m_RightAnswer then
-		if not self.m_WrongPlayers[player] then
-			self.m_Super:addPlayerToWinners(player)
-			self.m_Winners[player] = true
-		end
-	else
-		if not self.m_Winners[player] then
-			self.m_WrongPlayers[player] = true
-			player:triggerEvent("onClientWareFail")
-		end
-	end
-	return false
+	outputChatBox("#ffffffDeine Antwort: "..tonumber(text).." #00ff00Richtig ist "..self.m_RightAnswer.."!", player, 0, 255, 0, true)
+	return true
 end
 
 function WareGuess:destructor()

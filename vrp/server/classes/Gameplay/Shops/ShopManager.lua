@@ -61,14 +61,14 @@ function ShopManager:loadShops()
 	local result = sql:queryFetch("SELECT * FROM ??_shops", sql:getPrefix())
     for k, row in ipairs(result) do
 		if not SHOP_TYPES[row.Type] then outputDebug("Error Loading Shop ID "..row.Id.." | Invalid Type") return end
-
-		--local newName = SHOP_TYPES[row.Type]["Name"].." "..getZoneName(row.PosX, row.PosY, row.PosZ)
-		--sql:queryExec("UPDATE ??_shops SET Name = ? WHERE Id = ?", sql:getPrefix(), newName ,row.Id)
-
-		local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
-		ShopManager.Map[row.Id] = instance
-		if row.Blip and row.Blip ~= "" then
-			instance:addBlip(row.Blip)
+		if not SHOP_TYPES[row.Type]["disabled"] then
+			--local newName = SHOP_TYPES[row.Type]["Name"].." "..getZoneName(row.PosX, row.PosY, row.PosZ)
+			--sql:queryExec("UPDATE ??_shops SET Name = ? WHERE Id = ?", sql:getPrefix(), newName ,row.Id)
+			local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
+			ShopManager.Map[row.Id] = instance
+			if row.Blip and row.Blip ~= "" then
+				instance:addBlip(row.Blip)
+			end
 		end
 	end
 end

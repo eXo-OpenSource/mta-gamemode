@@ -38,21 +38,20 @@ function WareMath:constructor( super )
 end
 
 function WareMath:onChat(player, text, type)
-	if tonumber(text) == self.m_RightAnswer then
+	if tonumber(text) and tonumber(text) == self.m_RightAnswer then
 		if not self.m_WrongPlayers[player] then
 			self.m_Super:addPlayerToWinners(player)
 			self.m_Winners[player] = true
-			outputChatBox("Richtig!", player, 0, 255, 0)
+			outputChatBox("#ffffffDeine Antwort: "..tonumber(text).." #00ff00Richtig!", player, 0, 255, 0, true)
 		end
 	else
 		if not self.m_Winners[player] then
 			self.m_WrongPlayers[player] = true
 			player:triggerEvent("onClientWareFail")
-			outputChatBox("Falsch! (Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0)
-
+			outputChatBox("#ffffffDeine Antwort: "..text.." #ff0000Falsch! #00ff00(Richtig wäre: "..self.m_RightAnswer..")", player, 255, 0, 0, true)
 		end
 	end
-	return
+	return true
 end
 
 function WareMath:destructor()

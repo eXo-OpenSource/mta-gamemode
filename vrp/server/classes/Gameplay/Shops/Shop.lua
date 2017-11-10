@@ -66,6 +66,7 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 			self.m_NPC:setImmortal(true)
 			self.m_NPC:setInterior(interior)
 			self.m_NPC:setDimension(dimension)
+			self.m_NPC:setFrozen(true)
 		end
 	end
 

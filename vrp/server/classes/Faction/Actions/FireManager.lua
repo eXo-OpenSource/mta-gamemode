@@ -59,6 +59,10 @@ function FireManager:checkFire()
 	outputDebug("checking for fire")
 	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
+	else
+		if not isTimer(self.m_FireTimer) then
+			self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1) --start a new fire
+		end
 	end
 end
 
@@ -155,9 +159,9 @@ function FireManager:stopCurrentFire(stats)
 					player:giveCombinedReward("Feuer gelöscht", {
 						bankMoney = score*12,
 						karma = math.round(score/45),
-						points = math.round(score/22),
+						points = math.round(score/17),
 					})
-					moneyForFaction = moneyForFaction + score*6
+					moneyForFaction = moneyForFaction + score*18
 				end
 			end
 			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")

@@ -15,11 +15,6 @@ Player.ms_ChatHook = Hook:new()
 Player.ms_ScreamHook = Hook:new()
 
 addEvent("characterInitialized")
-addEvent("introFinished", true)
-addEventHandler("introFinished", root, function()
-	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission
-	client:spawn()
-end)
 
 function Player:constructor()
 
@@ -103,7 +98,7 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	--setElementDimension(self, PRIVATE_DIMENSION_SERVER) --don't do this as it ruins the view in login panel (desyncs of other players) // (maybe add it again if it bugs for some reason)
 	setElementFrozen(self, true)
 	--[[setTimer(function()
 
@@ -1175,7 +1170,7 @@ function Player:takePoints(p, reason, bNoSound, silent) -- Overriden
 	end
 end
 
-function Player:giveCombinedReward(name, tblReward)
+function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
 		amount = tonumber(amount)
@@ -1183,40 +1178,40 @@ function Player:giveCombinedReward(name, tblReward)
 			amount = math.round(amount)
 			if name == "money" then
 				if amount > 0 then
-					self:giveMoney(amount, name, false, true)
+					self:giveMoney(amount, reason, false, true)
 					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
 				elseif amount < 0 then
-					self:takeMoney(math.abs(amount), name, false, true)
+					self:takeMoney(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s\n"):format(toMoneyString(amount))
 				end
 			elseif name == "bankMoney" then
 				if amount > 0 then
-					self:addBankMoney(amount, name, false, true)
+					self:addBankMoney(amount, reason, false, true)
 					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
 				elseif amount < 0 then
-					self:takeBankMoney(math.abs(amount), name, false, true)
+					self:takeBankMoney(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
 				end
 			elseif name == "points" then
 				if amount > 0 then
-					self:givePoints(amount, name, false, true)
+					self:givePoints(amount, reason, false, true)
 					smText = smText .. ("+%s Punkte\n"):format(amount)
 				elseif amount < 0 then
-					self:takePoints(math.abs(amount), name, false, true)
+					self:takePoints(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s Punkte\n"):format(amount)
 				end
 			elseif name == "karma" then
 				if amount > 0 then
-					self:giveKarma(amount, name, false, true)
+					self:giveKarma(amount, reason, false, true)
 					smText = smText .. ("+%s Karma\n"):format(amount)
 				elseif amount < 0 then
-					self:takeKarma(math.abs(amount), name, false, true)
+					self:takeKarma(math.abs(amount), reason, false, true)
 					smText = smText .. ("%s Karma\n"):format(amount)
 				end
 			end
 		end
 	end
-	self:sendShortMessage(smText:sub(0, #smText-1), name, {0, 94, 255}, 10000)
+	self:sendShortMessage(smText:sub(0, #smText-1), reason, {0, 94, 255}, 10000)
 end
 
 function Player:setUniqueInterior(uniqueInteriorId)
@@ -1363,6 +1358,48 @@ function Player:getPlayerAttachedObject()
 		end
 	end
 	return false
+end
+
+function Player:attachToVehicle(forceDetach)
+	if self:getPrivateSync("isAttachedToVehicle") then
+		self:setPrivateSync("isAttachedToVehicle", false)
+		self:detach()
+		return
+	end
+
+	if forceDetach or not self.contactElement or self.contactElement:getType() ~= "vehicle" then return end
+	if self.contactElement:getVehicleType() == VehicleType.Boat or VEHICLE_PICKUP[self.contactElement:getModel()] then
+		if self.contactElement:getSpeed() < 20 then
+			local px, py, pz = getElementPosition(self)
+			local vx, vy, vz = getElementPosition(self.contactElement)
+			local sx = px - vx
+			local sy = py - vy
+			local sz = pz - vz
+
+			local rotpX = 0
+			local rotpY = 0
+			local rotpZ = getPlayerRotation(self)
+
+			local rotvX, rotvY, rotvZ = getVehicleRotation(self.contactElement)
+
+			local t, p, f = math.rad(self.contactElement.rotation.x), math.rad(self.contactElement.rotation.y), math.rad(self.contactElement.rotation.z)
+			local ct, st, cp, sp, cf, sf = math.cos(t), math.sin(t), math.cos(p), math.sin(p), math.cos(f), math.sin(f)
+
+			local z = ct*cp*sz + (sf*st*cp + cf*sp)*sx + (-cf*st*cp + sf*sp)*sy
+			local x = -ct*sp*sz + (-sf*st*sp + cf*cp)*sx + (cf*st*sp + sf*cp)*sy
+			local y = st*sz - sf*ct*sx + cf*ct*sy
+
+			local rotX = rotpX - rotvX
+			local rotY = rotpY - rotvY
+			local rotZ = rotpZ - rotvZ
+
+			self:attach(self.contactElement, x, y, z, rotX, rotY, rotZ)
+			self:setPrivateSync("isAttachedToVehicle", self.contactElement)
+			self:sendShortMessage(_("Drücke 'X' um dich nicht mehr am Fahrzeug festzuhalten.", self))
+		else
+			self:sendWarning(_("Dieses Fahrzeug ist zu schnell, um sich daran festzuhalten!", self))
+		end
+	end
 end
 
 function Player:setModel( skin )

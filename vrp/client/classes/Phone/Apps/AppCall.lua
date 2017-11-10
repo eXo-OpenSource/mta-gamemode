@@ -34,6 +34,7 @@ end
 
 function AppCall:closeAll()
 	if self.m_Background then delete(self.m_Background) end
+	if self.m_WebView then delete(self.m_WebView) end
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.Clear, self.m_Form)
 end
 
@@ -217,7 +218,7 @@ function AppCall:openIncoming(caller, voiceEnabled)
 
 	self.m_CallLabel = GUILabel:new(8, 10, width, 30, _("Eingehender Anruf von \n%s", caller:getName()), parent):setMultiline(true):setAlignX("center")
 	self.m_CallLabel:setColor(Color.Black)
-	GUIWebView:new(width/2-70, 70, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, parent)
+	self.m_WebView = GUIWebView:new(width/2-70, 70, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, parent)
 	self.m_ButtonAnswer = GUIButton:new(10, height-50, 110, 30, _"Annehmen", parent)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
 	self.m_ButtonAnswer.onLeftClick = bind(self.ButtonAnswer_Click, self)
@@ -358,7 +359,6 @@ function AppCall:onClose()
 	if self.m_InCall then
 		self:ButtonReplace_Click()
 	end
-	self:openMain()
 end
 
 function AppCall:Event_callIncoming(caller, voiceEnabled)

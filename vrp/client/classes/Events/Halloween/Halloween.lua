@@ -2,10 +2,11 @@ Halloween = inherit(Singleton)
 
 function Halloween:constructor()
 
+	WareClient:new()
+
 	Blip:new("Ghost.png", 945.57, -1103.55, 400):setDisplayText("Halloween-Friedhof")
 
 	--Drawing Contest
-
 	local ped = Ped.create(151, Vector3(906.59998, -1065.7, 24.8), 270)
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
@@ -16,10 +17,9 @@ function Halloween:constructor()
 
 	ped:setData("onClickEvent",
 		function()
-			DrawContestOverviewGUI:new()
+			DrawContestOverviewGUI:getSingleton():open()
 		end
 	)
-
 
 	--Ware Ped
 	local ped = Ped.create(68, Vector3(934.79999, -1070.5, 25), 118)
@@ -51,10 +51,8 @@ function Halloween:constructor()
 		end
 	)
 
-	--    <ped id="ped (5)" dimension="0" model="77" interior="0" rotZ="160.003" alpha="255" posX="833.40002" posY="-1112.1" posZ="24.2" rotX="0" rotY="0"></ped>
-
 	--water in grave yard
-	
+
 	createWater(884, -1112, 23, 908, -1112, 23, 884, -1090, 23, 908, -1090, 23)
 	setWaveHeight(0.2)
 	local col = createColSphere(895.49, -1101.41, 24.70, 40)
@@ -70,6 +68,31 @@ function Halloween:constructor()
 
 	HalloweenSign:new()
 	HalloweenSpookyScreen:new()
+
+	self.m_TeamNameTexture = dxCreateRenderTarget(1000, 100, true)
+	dxSetRenderTarget(self.m_TeamNameTexture, true)
+	local xoffs = 0
+	local color = tocolor(200, 200, 200, 200)
+	dxDrawText("Stumpy\nHeisi\nClausus", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 55
+	dxDrawText("StiviK\nxXKing", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 58
+	dxDrawText("Chris\nLuka\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 58
+	dxDrawText("MiHawk\nDynesty\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 58
+	dxDrawText("Shimmy\nZvenskeren\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 58
+	dxDrawText("Swatbird\nAc3Freak\nToxsi", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 57
+	dxDrawText("zomb4k33l\nSlliX\nChef532", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 57
+	dxDrawText("Opposite\nHerbert", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	xoffs = xoffs + 60 + 57
+	dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+
+	xoffs = xoffs + 60 + 57
+	dxSetRenderTarget()
 	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
 end
 
@@ -88,6 +111,27 @@ function Halloween:addRandomBloodInPool()
 	end
 end
 
+function Halloween:renderDarkness() -- not to be confused with 'dankness'!
+	setTime(22,0) -- there are stars after 22 o clock
+	setFarClipDistance(300)
+	setFogDistance(-10)
+	setSkyGradient(0, 0, 0, 0, 0, 0)
+	setWeather(9)
+	setWaterColor(255, 0, 0)
+	if chance(25) then
+		if chance(50) then
+			setTrafficLightState("yellow", "yellow")
+		else
+			setTrafficLightState("disabled")
+		end
+	end
+
+	--draw team Member names on tomb stones
+	--posX="909" posY="-1056.9" posZ="24.5" rotX="0" rotY="0" rotZ="90"
+	dxDrawMaterialLine3D(909, -1057, 24.9, 909, -1057, 24.1, self.m_TeamNameTexture, 8.5, white, 909, -1058, 24.9)
+end
+
+
 HalloweenSign = inherit(GUIForm3D)
 inherit(Singleton, HalloweenSign)
 
@@ -101,24 +145,6 @@ function HalloweenSign:onStreamIn(surface)
 	self.m_Url = "http://exo-reallife.de/ingame/other/HalloweenSign.php"
 	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
 end
-
-
-function Halloween:renderDarkness() -- not to be confused with 'dankness'!
-	setTime(22,0) -- there are stars after 22 o clock
-	setFarClipDistance(200)
-	setFogDistance(-10)
-	setSkyGradient(0, 0, 0, 0, 0, 0)
-	setWeather(9)
-	setWaterColor(255, 0, 0)
-	if chance(25) then
-		if chance(50) then
-			setTrafficLightState("yellow", "yellow")
-		else
-			setTrafficLightState("disabled")
-		end
-	end
-end
-
 
 
 HalloweenSpookyScreen = inherit(GUIForm3D)

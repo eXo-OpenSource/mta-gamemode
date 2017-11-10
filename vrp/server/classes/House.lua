@@ -330,7 +330,7 @@ function House:sellHouse(player)
 	end
 end
 
-function House:clearHouse(player)
+function House:clearHouse()
 	self.m_Owner = false
 	self.m_Keys = {}
 	self.m_Money = 0
@@ -438,9 +438,9 @@ function House:ringDoorBell(player)
 				else
 					player:sendShortMessage(_("Es scheint niemand zu Hause zu sein.", player))
 				end
-			end			
+			end	
+			player.m_HouseDoorBellCooldown = false		
 		end
-		player.m_HouseDoorBellCooldown = false
 	end, timeForResponse, 1, player)
 end
 

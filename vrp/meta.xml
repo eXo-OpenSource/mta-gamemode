@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.4-9.11342" client="1.5.4-9.11342"/>
+	<min_mta_version server="1.5.5" client="1.5.5"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -120,8 +120,6 @@
 	<script src="server/classes/Inventory/StaticWorldItems.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
-	<script src="server/classes/Inventory/GrowableManager.lua" type="server"/>
-	<script src="server/classes/Inventory/Growable.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
@@ -217,6 +215,9 @@
 	<script src="server/classes/Gameplay/Chair.lua" type="server" />
 	<script src="server/classes/Gameplay/GasStation.lua" type="server"/>
 	<script src="server/classes/Gameplay/GasStationManager.lua" type="server"/>
+
+	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
@@ -754,7 +755,6 @@
 
 	<!-- Cutscenes -->
 	<script src="client/classes/Cutscene/Cutscenes/Intro.lua" type="client"/>
-	<script src="client/classes/Cutscene/Cutscenes/TutorialStage1.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/Arrest.lua" type="client"/>
 	<!--<script src="client/classes/Cutscene/Cutscenes/Hospital.lua" type="client"/>-->
 	<script src="client/classes/Cutscene/Cutscenes/ZombieSurvival.lua" type="client"/>
@@ -858,9 +858,6 @@
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
 	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
-
-	<!-- Missions -->
-	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
@@ -1359,6 +1356,10 @@
 	<vrpfile src="files/images/Nametag/gun.png"/>
 	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	<vrpfile src="files/images/Nametag/SASF.png"/>
+	<vrpfile src="files/images/Nametag/EPT.png"/>
+	<vrpfile src="files/images/Nametag/Fahrschule.png"/>
+	<vrpfile src="files/images/Nametag/San News.png"/>
+	<vrpfile src="files/images/Nametag/MT.png"/>
 
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
@@ -1415,9 +1416,10 @@
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Huntley.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Camo.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/MBT_Copcar.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SASF_Decal_Bobcat.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/PatrolDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/PoliceDec.png"/>
-	<vrpfile src="files/images/Textures/Faction/State/RamDec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/ChiefDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SAdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SWATdec.png"/>
 

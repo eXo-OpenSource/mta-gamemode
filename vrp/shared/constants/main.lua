@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.4.2"
+PROJECT_VERSION = "1.4.4"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -16,7 +16,7 @@ MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
-EVENT_HALLOWEEN = true
+EVENT_HALLOWEEN = false
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -172,6 +172,7 @@ ADMIN_RANK_PERMISSION = {
 
 	--server edit tools
 	["editHouse"] = RANK.Administrator,
+	["freeHouse"] = RANK.Administrator, -- free house from owner, tenants and house bank account money
 	["pedMenu"] = RANK.Administrator,
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,

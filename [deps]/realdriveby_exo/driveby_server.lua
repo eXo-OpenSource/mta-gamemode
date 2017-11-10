@@ -61,6 +61,7 @@ addEventHandler ( "onVehicleExit", root, destroyPed )
 addEvent ( "createPedForDrivebyFix", true )
 addEventHandler ( "createPedForDrivebyFix", root, function ( )
 	local veh = getPedOccupiedVehicle ( client )
+	local client = client
 	destroyPed ( client )
 	if isElement ( veh ) then
 		local x, y, z = getElementPosition ( client )
@@ -71,13 +72,25 @@ addEventHandler ( "createPedForDrivebyFix", root, function ( )
 		setElementInterior ( playerpeds[client], getElementInterior( client ) )
 		if getVehicleType(veh) == "BMX" or getVehicleType(veh) == "Quad" then 
 			attachElements ( playerpeds[client], veh, 100, -0.4, 0.5 )
-			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, -0.4, 0.5 )
+			setTimer(function()
+				if isElement(client) and isElement(playerpeds[client]) and isElement(veh) then
+					attachElements(playerpeds[client], veh, 0, -0.4, 0.5 )
+				end
+			end, 100, 1)
 		elseif getPedOccupiedVehicleSeat ( client ) == 0  then
 			attachElements ( playerpeds[client], veh, 100, 0.05, 0.5 )
-			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, 0.05, 0.5 )
+			setTimer(function()
+				if isElement(client) and isElement(playerpeds[client]) and isElement(veh) then
+					attachElements(playerpeds[client], veh, 0, 0.05, 0.5 )
+				end
+			end, 100, 1)
 		else
 			attachElements ( playerpeds[client], veh, 100, -0.8, 0.5 )
-			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, -0.8, 0.5 )
+			setTimer(function()
+				if isElement(client) and isElement(playerpeds[client]) and isElement(veh) then
+					attachElements(playerpeds[client], veh, -0.8, 0.5)
+				end
+			end, 100, 1)
 		end
 		triggerClientEvent ( "savePedForDrivebyFix", client, playerpeds[client], veh )
 	end

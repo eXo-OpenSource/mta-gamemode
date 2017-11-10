@@ -772,7 +772,7 @@ function WarnManagement:loadWarns(result)
 	if self.m_NoWarnLabel then delete(self.m_NoWarnLabel) end
 
 	if result or #self.m_Player:getPublicSync("Warns") > 0 then
-		self.m_WarnGrid = GUIGridList:new(10, 30, self.m_Width-20, 200, self)
+		self.m_WarnGrid = GUIGridList:new(10, 40, self.m_Width-20, 180, self)
 		self.m_WarnGrid:addColumn(_"Grund", 0.25)
 		self.m_WarnGrid:addColumn(_"Admin", 0.25)
 		self.m_WarnGrid:addColumn(_"Datum", 0.25)

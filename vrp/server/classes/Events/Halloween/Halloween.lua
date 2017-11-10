@@ -12,7 +12,7 @@ Halloween.ms_Phrases = {
 	multi = {
 		"Ihr seid mir aber eine Gruselbande!",
 		"Na mal sehen ob das für euch reicht...",
-		"Oh! Hab ich mich erschkreckt! Hier bitte!",
+		"Oh! Hab ich mich erschreckt! Hier bitte!",
 		"Wenn das nicht die Nachbargeister sind - Bitteschön!",
 		"Da brauche ich aber eine große Tüte.",
 		"Hier, die feinsten Naschereien!",
@@ -24,14 +24,14 @@ Halloween.ms_Bonus = {
 		["Text"] = "Schutzweste",
 		["Image"] = "Bonus_Vest.png",
 		["Pumpkin"] = 1,
-		["Sweets"] = 5,
+		["Sweets"] = 25,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "50 Weed",
 		["Image"] = "Bonus_Weed.png",
 		["Pumpkin"] = 5,
-		["Sweets"] = 15,
+		["Sweets"] = 75,
 		["Type"] = "Item",
 		["ItemName"] = "Weed",
 		["ItemAmount"] = 50
@@ -40,7 +40,7 @@ Halloween.ms_Bonus = {
 		["Text"] = "5 Heroin",
 		["Image"] = "Bonus_Heroin.png",
 		["Pumpkin"] = 5,
-		["Sweets"] = 20,
+		["Sweets"] = 100,
 		["Type"] = "Item",
 		["ItemName"] = "Heroin",
 		["ItemAmount"] = 5
@@ -49,7 +49,7 @@ Halloween.ms_Bonus = {
 		["Text"] = "Deagle (20 Schuss)",
 		["Image"] = "Bonus_Deagle.png",
 		["Pumpkin"] = 10,
-		["Sweets"] = 25,
+		["Sweets"] = 150,
 		["Type"] = "Weapon",
 		["WeaponId"] = 24,
 		["Ammo"] = 20
@@ -58,7 +58,7 @@ Halloween.ms_Bonus = {
 		["Text"] = "Dildo",
 		["Image"] = "Bonus_Dildo.png",
 		["Pumpkin"] = 15,
-		["Sweets"] = 25,
+		["Sweets"] = 200,
 		["Type"] = "Weapon",
 		["WeaponId"] = 10,
 		["Ammo"] = 1
@@ -67,7 +67,7 @@ Halloween.ms_Bonus = {
 		["Text"] = "5.000$",
 		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 20,
-		["Sweets"] = 75,
+		["Sweets"] = 350,
 		["Type"] = "Money",
 		["MoneyAmount"] = 5000
 	},
@@ -75,66 +75,66 @@ Halloween.ms_Bonus = {
 		["Text"] = "10.000$",
 		["Image"] = "Bonus_Money.png",
 		["Pumpkin"] = 30,
-		["Sweets"] = 100,
+		["Sweets"] = 500,
 		["Type"] = "Money",
 		["MoneyAmount"] = 10000
 	},
 	{
 		["Text"] = "Payday Bonus",
 		["Image"] = "Bonus_Payday.png",
-		["Pumpkin"] = 35,
-		["Sweets"] = 300,
+		["Pumpkin"] = 50,
+		["Sweets"] = 700,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Karma Reset",
 		["Image"] = "Bonus_Karma.png",
-		["Pumpkin"] = 50,
-		["Sweets"] = 300,
+		["Pumpkin"] = 70,
+		["Sweets"] = 1300,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Nick Change",
 		["Image"] = "Bonus_NickChange.png",
-		["Pumpkin"] = 65,
-		["Sweets"] = 275,
+		["Pumpkin"] = 75,
+		["Sweets"] = 1400,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Zombie Skin",
 		["Image"] = "Bonus_Zombie.png",
-		["Pumpkin"] = 75,
-		["Sweets"] = 300,
+		["Pumpkin"] = 100,
+		["Sweets"] = 2000,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "75.000$",
 		["Image"] = "Bonus_Money.png",
-		["Pumpkin"] = 85,
-		["Sweets"] = 499,
+		["Pumpkin"] = 125,
+		["Sweets"] = 2400,
 		["Type"] = "Money",
 		["MoneyAmount"] = 75000
 	},
 	{
 		["Text"] = "30 Tage VIP",
 		["Image"] = "Bonus_VIP.png",
-		["Pumpkin"] = 95,
-		["Sweets"] = 600,
+		["Pumpkin"] = 150,
+		["Sweets"] = 3000,
 		["Type"] = "Special"
 	},
 	{
 		["Text"] = "Romero",
 		["Image"] = "Bonus_Romero.png",
-		["Pumpkin"] = 110,
-		["Sweets"] = 850,
+		["Pumpkin"] = 240,
+		["Sweets"] = 4200,
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 442
 	},
 	{
 		["Text"] = "Bravura",
 		["Image"] = "Bonus_Bravura.png",
-		["Pumpkin"] = 125,
-		["Sweets"] = 900,
+		["Pumpkin"] = 250,
+		["Sweets"] = 4500,
 		["Type"] = "Vehicle",
 		["VehicleModel"] = 401
 	}
@@ -142,6 +142,7 @@ Halloween.ms_Bonus = {
 
 function Halloween:constructor()
 	DrawContest:new()
+	WareManager:new()
 	self.m_TrickOrTreatPIDs = {}
 
 	self.m_EventSign = createObject(1903, 1484.80, -1710.70, 12.4, 0, 0, 90)
@@ -199,7 +200,7 @@ function Halloween:registerTrickOrTreat(pId, houseId, time)
 
 				for i, v in pairs(getElementsByType("player")) do
 					self:initTTPlayer(v:getId())
-					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId then
+					if HouseManager:getSingleton().m_Houses[houseId]:isPlayerNearby(v) and not self.m_TrickOrTreatPIDs[v:getId()].currentHouseId and v:getInterior() == 0 and v:getDimension() == 0 then
 						if not self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId] or (getTickCount() - self.m_TrickOrTreatPIDs[v:getId()].visitedHouses[houseId]) > Halloween.ms_HouseTTCooldown then
 							table.insert(d.playersNearby, v:getId())
 							self.m_TrickOrTreatPIDs[v:getId()].trickStarted = getTickCount()
@@ -269,6 +270,7 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 			end
 			d.currentHouseId = nil
 			d.lastMessage = nil
+			pl.m_HouseDoorBellCooldown = false
 		end
 	end
 end
@@ -278,8 +280,8 @@ function Halloween:Event_requestBonusData()
 end
 
 function Halloween:Event_buyBonus(bonusId)
-	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten")
-	local playerPumpinks = client:getInventory():getItemAmount("Kürbis")
+	local playerSweets = client:getInventory():getItemAmount("Suessigkeiten", true)
+	local playerPumpinks = client:getInventory():getItemAmount("Kürbis", true)
 	local bonus = Halloween.ms_Bonus[bonusId]
 	if not bonus then return end
 

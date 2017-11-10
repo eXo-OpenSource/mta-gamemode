@@ -24,7 +24,7 @@ function WearableShirt:destructor()
 end
 
 function WearableShirt:use(player, itemId, bag, place, itemName)
-	local inventory = InventoryManager:getSingleton():getPlayerInventory(player)
+	local inventory = player:getInventory()
 	local value = inventory:getItemValueByBag( bag, place)
 	if value then --// for texture usage later
 

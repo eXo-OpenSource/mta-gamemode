@@ -32,16 +32,21 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	local saveRanks = false
 	if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
 	if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
+
+
 	self.m_RankNames = fromJSON(rankNames)
 	self.m_RankLoans = fromJSON(rankLoans)
 	if saveRanks == true then
 	self:saveRankSettings()
 	end
 
+
 	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
-	self:getActivity()
+	if not DEBUG then
+		self:getActivity()
+	end
 end
 
 function Group:destructor()
@@ -647,7 +652,7 @@ function Group:payDay(vehicleData)
 				end
 			end
 		else
-			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE Group = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self.getId())
+			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE `Group` = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self:getId())
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
 	end

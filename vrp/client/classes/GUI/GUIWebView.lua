@@ -24,13 +24,13 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
 end
 
-function GUIWebView:destructor()
+function GUIWebView:virtual_destructor()
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
     focusBrowser(nil)
     self.m_Browser:destroy()
 
-    GUIElement.destructor(self)
+    --GUIElement.destructor(self)
 end
 
 function GUIWebView:setAjaxHandler(handler)

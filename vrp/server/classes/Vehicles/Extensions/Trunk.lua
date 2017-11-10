@@ -100,8 +100,7 @@ end
 function Trunk:addItem(player, item, amount, value)
 	for index, slot in pairs(self.m_ItemSlot) do
 		if slot["Item"] == "none" then
-			if player:getInventory():getItemAmount(item) >= amount then
-				player:getInventory():removeItem(item, amount, value)
+			if player:getInventory():removeItem(item, amount, value) then
 				slot["Item"] = item
 				slot["Amount"] = amount
 				slot["Value"] = value

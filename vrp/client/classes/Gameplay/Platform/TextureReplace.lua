@@ -19,12 +19,12 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 			self.m_IsRawPixels = true
 			self.m_URLPath = iUrl
 			local dummy = dxCreateTexture(path)
-			if dummy then 
+			if dummy then
 				local tW, tH = dxGetMaterialSize(dummy)
 				if tW and tH then
-					if tW > 512 then tW = 512 end 
-					if tH > 512 then tH = 512 end 
-					self.m_Width = tW 
+					if tW > 512 then tW = 512 end
+					if tH > 512 then tH = 512 end
+					self.m_Width = tW
 					self.m_Height = tH
 				end
 			end
@@ -66,7 +66,7 @@ function TextureReplace:destructor()
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
 	end
-	if self.m_IsRawPixels then 
+	if self.m_IsRawPixels then
 		if isElement(self.m_PixelsTexture) then
 			destroyElement(self.m_PixelsTexture)
 		end
@@ -103,7 +103,7 @@ function TextureReplace:loadShader()
 		--self.m_Texture = dxCreateTexture(self.m_TexturePath)
 		if self.m_IsRawPixels then
 			self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, self.m_IsRawPixels, self.m_URLPath)
-		else 
+		else
 			self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, false, false)
 		end
 	else
@@ -112,7 +112,7 @@ function TextureReplace:loadShader()
 			dxSetRenderTarget(self.m_Texture)
 				if self.m_IsRawPixels then
 					dxDrawImage(0, 0, width, height,  self.m_PixelsTexture )
-				else 
+				else
 					dxDrawImage(0, 0, width, height,  path )
 				end
 			dxSetRenderTarget(nil)
@@ -155,18 +155,18 @@ end
 
 function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 	local index = md5(path):sub(1, 8)
-	if bIsRawPixels then 
+	if bIsRawPixels then
 		index = url
 	end
 	if not TextureReplace.Cache[index] then
 		--outputConsole("creating texture "..path)
 		if not bIsRawPixels then
 			if not fileExists(path) then
-				outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
+				--outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
 				--TextureReplace.downloadTexture(path)
 				return false
 			end
-		
+
 		elseif not url then
 			return false
 		end
@@ -175,7 +175,7 @@ function TextureReplace.getCachedTexture(path, bIsRawPixels, url)
 		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path); bRemoteUrl = url}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
-	
+
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter + 1
 	--outputConsole("incremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
 	return TextureReplace.Cache[index].texture
@@ -183,7 +183,7 @@ end
 
 function TextureReplace.unloadCache(path, bIsRawPixels, url)
 	local index = md5(path):sub(1, 8)
-	if bIsRawPixels then 
+	if bIsRawPixels then
 		index = url
 	end
 	if not TextureReplace.Cache[index] then return false end
@@ -216,8 +216,8 @@ function TextureReplace.downloadTexture(path, callback)
 end
 
 -- Events
-addEvent("changeElementTexture", true)
-addEventHandler("changeElementTexture", root,
+addEvent("changeElementTextureWare", true)
+addEventHandler("changeElementTextureWare", root,
 	function(vehicles)
 		for i, vehData in pairs(vehicles) do
 			local textureTab = TextureReplace.ServerElements
@@ -234,8 +234,8 @@ addEventHandler("changeElementTexture", root,
 	end
 )
 
-addEvent("removeElementTexture", true)
-addEventHandler("removeElementTexture", root,
+addEvent("removeElementTextureWare", true)
+addEventHandler("removeElementTextureWare", root,
 	function(textureName)
 		if TextureReplace.ServerElements[source] and TextureReplace.ServerElements[source][textureName] then
 			delete(TextureReplace.ServerElements[source][textureName])

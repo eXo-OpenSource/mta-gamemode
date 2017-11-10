@@ -11,7 +11,7 @@ function LoginGUI:constructor(savedName, savedPW)
 	self.m_SavedPW = savedPW
 
 	self.m_FadeTime = DEBUG_AUTOLOGIN and 50 or 250
-	self.m_Elements = {}	
+	self.m_Elements = {}
 
 	grid("reset", true)
 	self.m_W = grid("x", 10)
@@ -28,7 +28,7 @@ function LoginGUI:constructor(savedName, savedPW)
 	else
 		self:switchViews(savedName and true)
 	end
-	
+
 
 	self:bind("enter",
 		function(self)
@@ -68,14 +68,14 @@ function LoginGUI:switchViews(showLogin, deleteView, callback)
 	self.m_AnimationDummy = DxRectangle:new(self.m_AbsoluteX, self.m_AbsoluteY, self.m_W, self.m_H, Color.Background):setDrawingEnabled(true)
 	local newH = deleteView and 0 or showLogin and grid("y", 11) or grid("y", 13)
 	Animation.Move:new(self.m_AnimationDummy, self.m_FadeTime + self.m_FadeTime * 1.2, self.m_AbsoluteX, screenHeight/2 - newH/2, "InOutQuad")
-	
+
 	--this stupid code is just because the window bgcolor is sometimes changed too early (resulting in a transparent window for 1 frame. suggestions are welcome!
 	Animation.Size:new(self.m_AnimationDummy, 1, self.m_W, self.m_H, "InOutQuad").onFinish = function()
 		if self.m_Window then  self.m_Window.m_BGColor = Color.Clear end
 		Animation.Size:new(self.m_AnimationDummy, self.m_FadeTime + self.m_FadeTime * 1.2, self.m_W, newH, "InOutQuad")
 	end
-	
-	
+
+
 	setTimer(function()
 		self:deleteElements()
 
@@ -87,7 +87,7 @@ function LoginGUI:switchViews(showLogin, deleteView, callback)
 			end
 			self:fadeElements(true)
 		end
-		self.m_Window.m_BGColor = Color.Clear 
+		self.m_Window.m_BGColor = Color.Clear
 
 		setTimer(function()
 			if not deleteView then
@@ -119,10 +119,10 @@ function LoginGUI:loadLoginElements()
 	self.m_H = grid("y", 11)
 	self:centerForm()
 	self.m_LoginMode = true
-	
+
 	self.m_Window = GUIWindow:new(0, 0, self.m_W, self.m_H, _"", false, false, self)
 	self.m_Elements.logo = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
-	
+
 	self.m_Elements.window = self.m_Window
 
 	self.m_Elements.lbl1 = GUIGridLabel:new(1, 3, 9, 2, _"Herzlich willkommen auf eXo Reallife, bitte logge dich mit deinen Accountdaten ein.", self.m_Window)
@@ -156,7 +156,7 @@ function LoginGUI:loadLoginElements()
 	self.m_Elements.BtnLogin.onLeftClick = bind(function(self)
 		local name = self.m_Elements.editName:getText()
 		local pw = self.m_Elements.editPW:getText()
-		
+
 		if self.m_SavedPW and self.m_SavedPW == pw then -- User has not changed the password
 			triggerServerEvent("accountlogin", root, name, "", pw)
 		else
@@ -180,10 +180,10 @@ function LoginGUI:loadRegisterElements()
 	self.m_H = grid("y", 13)
 	self:centerForm()
 	self.m_LoginMode = false
-	
+
 	self.m_Window = GUIWindow:new(0, 0, self.m_W, self.m_H, _"", false, false, self)
 	self.m_Elements.logo = GUIGridImage:new(1, 1, 9, 2, "files/images/LogoNoFont.png", self.m_Window):fitBySize(285, 123)
-	
+
 	self.m_Elements.window = self.m_Window
 
 	self.m_Elements.lbl1 = GUIGridLabel:new(1, 3, 9, 3, _"Bitte fülle das Formular aus um einen neuen Account zu erstellen. Pro PC und Internetanschluss ist nur ein Account zugelassen.", self.m_Window)
@@ -202,7 +202,7 @@ function LoginGUI:loadRegisterElements()
 	self.m_Elements.editEmail = GUIGridEdit:new(1, 9, 9, 1, self.m_Window)
 		:setCaption(_"Email-Adresse")
 		:setIcon(FontAwesomeSymbols.Mail)
-	
+
 	self.m_Elements.checkAcceptRules = GUIGridCheckbox:new(1, 10, 7, 1, "Ich akzeptiere die Serverregeln.", self.m_Window)
 	self.m_Elements.cLblRules = GUIGridLabel:new(8, 10, 2, 1, "(ansehen)", self.m_Window)
 		:setClickable(true)
@@ -214,11 +214,11 @@ function LoginGUI:loadRegisterElements()
 	self.m_Elements.Label = GUIGridLabel:new(3, 12, 5, 1, _"(zurück zum Login)", self.m_Window)
 		:setClickable(true)
 		:setAlignX("center")
-	
+
 	self.m_Elements.Label.onLeftClick = function()
 		self:switchViews(true)
 	end
-	
+
 	self.m_Elements.ErrorLbl = GUIGridLabel:new(1, 6, 9, 4, _"error text gets loaded here", self.m_Window)
 		:setAlignX("center")
 		:setBackgroundColor(Color.Red)
@@ -232,10 +232,10 @@ function LoginGUI:loadRegisterElements()
 			if self.m_Elements.checkAcceptRules:isChecked() then
 				triggerServerEvent("accountregister", root, self.m_Elements.editName:getText(), self.m_Elements.editPW:getText(), self.m_Elements.editEmail:getText())
 				self.m_Elements.BtnRegister:setEnabled(false)
-			else 
+			else
 				triggerEvent("registerfailed",localPlayer,"Du musst den Serveregeln zustimmen!")
 			end
-		else 
+		else
 			triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
 		end
 	end, self)
@@ -317,22 +317,15 @@ addEventHandler("closeLogin", root,
 
 addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root,
-	function(pwhash, tutorialstage)
+	function(pwhash)
 		local lgi = LoginGUI:getSingleton()
 
 		if lgi.m_Elements.swSavePW:isChecked() and pwhash then
 			core:set("Login", "username", lgi.m_Elements.editName:getText())
 			core:set("Login", "password", pwhash)
 		end
-		core:afterLogin()	
+		core:afterLogin()
 		lgi:initClose()
-		
-		-- Maybe start tutorial (I dunno this doesn't seem to be used)
-		if tutorialstage == 0 then
-			setElementPosition(localPlayer, 0, 0, 5)
-			-- Temp fix?
-			triggerServerEvent("introFinished", root)
-		end	
 	end
 )
 
@@ -358,7 +351,7 @@ function LoginGUI.startCameraDrive()
 
 	localPlayer.m_LoginCamTimer = setTimer(LoginGUI.startCameraDrive, timeMS, 1)
 	localPlayer:setDimension(0)
-	
+
 	RadialShader:getSingleton():setEnabled(true)
 	--localPlayer.m_LoginShader =  LoginShader:new()
 end
@@ -392,7 +385,7 @@ function LoginRuleGUI:constructor()
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Regelwerk", true, true, self)
-	
+
 	self.m_Browser = GUIGridWebView:new(1, 1, 15, 11, "https://docs.google.com/document/d/1zIg7Xu-iqCUyZnyXPUuabvypwi41dU2zathChhh9PmA/pub?embedded=true", true, self.m_Window)
 end
 

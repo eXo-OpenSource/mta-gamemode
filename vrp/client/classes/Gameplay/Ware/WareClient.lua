@@ -139,7 +139,7 @@ function WareClient:RenderBestList(rot)
 	if self.m_TopList and showBest then
 		for i = 1,4 do
 			if i < 3 then
-				if self.m_TopList[i] then
+				if self.m_TopList[i] and isElement(self.m_TopList[i]) then
 					dxDrawText("#"..i.." "..getPlayerName(self.m_TopList[i][1])..": "..self.m_TopList[i][2],w*0.7,h*0.2+(i*(h*0.05))+1,w,h,tocolor(0,0,0,255),1,self.m_FontSmall or "default-bold","left","top",false,false,false,false,false,rot)
 					dxDrawText("#"..i.." "..getPlayerName(self.m_TopList[i][1])..": "..self.m_TopList[i][2],w*0.7,h*0.2+(i*(h*0.05)),w,h,tocolor(188, 88, 0,255),1,self.m_FontSmall or "default-bold","left","top",false,false,false,false,false,rot)
 				end

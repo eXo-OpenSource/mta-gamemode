@@ -24,6 +24,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_BackgroundColor = self.m_BackgroundNormalColor
 	self.m_Enabled = true
 	self.m_BarActivated = true
+	self.m_Blood = true --halloween
 
 	if EVENT_HALLOWEEN and math.random(1, 2) == 1 then
 		self.m_BackgroundImage = ("files/images/Events/Halloween/ButtonSplatter%d.png"):format(math.random(1,4))

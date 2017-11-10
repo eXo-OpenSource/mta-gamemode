@@ -60,8 +60,8 @@ function DrivingSchoolInstructorGUI:updateSpeed()
 		self.m_SpeedLabel:setText(_("%d km/h", speed))
 		self.m_SpeedLabel:setColor(speed > 85 and Color.Red or Color.Green)
 
-		local mileageDiff = math.round((localPlayer.vehicle:getMileage()-instructorData.startMileage)/1000)
-		self.m_DistanceLabel:setText(_("%d km", mileageDiff))
+		local mileageDiff = (localPlayer.vehicle:getMileage()-instructorData.startMileage)/1000
+		self.m_DistanceLabel:setText(_("%.1f km", mileageDiff))
 		self.m_DistanceLabel:setColor(mileageDiff < 5 and Color.Red or Color.Green)
 	end
 end

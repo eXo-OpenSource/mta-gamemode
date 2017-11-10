@@ -63,7 +63,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	local dest
 	local EvilBlipVisible = {}
 	if self.m_Type == "evil" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/8
+		self.m_AmountPerBox = math.floor(WEAPONTRUCK_MAX_LOAD/8)
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 		table.insert(EvilBlipVisible, self.m_StartFaction:getId())
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
@@ -80,7 +80,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 			end
 		end
 	elseif self.m_Type == "state" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/8
+		self.m_AmountPerBox = math.floor(WEAPONTRUCK_MAX_LOAD_STATE/8)
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
@@ -90,7 +90,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 		end
 	end
 
-	dest = self:addDestinationMarker(FactionManager:getSingleton():getFromId(1), "state") -- State
+	dest = self:addDestinationMarker(self.m_Type == "state" and self.m_StartFaction or FactionManager:getSingleton():getFromId(3), "state") -- State
 	self.m_DestinationBlips["state"] = Blip:new("Marker.png", dest.x, dest.y, {factionType = {"State", "Evil"}}, 9999, BLIP_COLOR_CONSTANTS.Red)
 	self.m_DestinationBlips["state"]:setDisplayText("Waffentruck-Abgabe (Staat)")
 
@@ -108,8 +108,10 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	addRemoteEvents{"weaponTruckDeloadBox", "weaponTruckLoadBox"}
 
-	addEventHandler("weaponTruckDeloadBox",root, bind(self.Event_DeloadBox,self))
-	addEventHandler("weaponTruckLoadBox",root, bind(self.Event_LoadBox,self))
+	self.m_Event_loadBox = bind(self.Event_DeloadBox,self)
+	self.m_Event_deloadBox = bind(self.Event_LoadBox,self)
+	addEventHandler("weaponTruckDeloadBox",root, self.m_Event_loadBox)
+	addEventHandler("weaponTruckLoadBox",root, self.m_Event_deloadBox)
 
 
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeaponTruckStartEnter,self))
@@ -126,6 +128,8 @@ end
 
 function WeaponTruck:destructor()
 	removeEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
+	removeEventHandler("weaponTruckDeloadBox",root, self.m_Event_loadBox)
+	removeEventHandler("weaponTruckLoadBox",root, self.m_Event_deloadBox)
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_Type], "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 	self.m_Truck:destroy()
@@ -242,7 +246,7 @@ function WeaponTruck:Event_onBoxClick(button, state, player)
 				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
 				player:attachPlayerObject(source)
 			else
-				player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
+				player:sendError(_("Du bist zu weit von der Kiste entfernt!", player))
 			end
 		else
 			player:sendError(_("Nur Fraktionisten können Kisten aufheben!",player))
@@ -278,7 +282,7 @@ function WeaponTruck:setBoxContent(boxId)
 			if amount > 0 then
 				for i=0,amount do
 					if typ == "Waffe" then preisString = "WaffenPreis" elseif typ == "Munition" then preisString = "MagazinPreis" end
-					if box.sum + depotInfo[weaponID][preisString] < self.m_AmountPerBox or depotInfo[weaponID][preisString] > self.m_AmountPerBox then
+					if box.sum + depotInfo[weaponID][preisString] <= self.m_AmountPerBox or depotInfo[weaponID][preisString] >= self.m_AmountPerBox then
 						if not box.content[weaponID] then box.content[weaponID] = { ["Waffe"] = 0, ["Munition"] = 0 } end
 
 						box.sum = box.sum + depotInfo[weaponID][preisString]

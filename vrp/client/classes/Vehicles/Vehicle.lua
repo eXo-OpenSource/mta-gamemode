@@ -26,6 +26,7 @@ addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlo
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
+	self.m_DiffMileagePassenger = 0
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -69,7 +70,11 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:getMileage()
-	return (getElementData(self, "mileage") or 0) + self.m_DiffMileage
+	if not localPlayer.vehicle then
+		return (getElementData(self, "mileage") or 0)
+	end
+
+	return (getElementData(self, "mileage") or 0) + (localPlayer.vehicleSeat == 0 and self.m_DiffMileage or self.m_DiffMileagePassenger)
 end
 
 function Vehicle:getFuel()
@@ -197,7 +202,7 @@ local counter = 0
 setTimer(
 	function()
 		local vehicle = localPlayer:getOccupiedVehicle()
-		if vehicle and localPlayer.vehicleSeat == 0 then
+		if vehicle then
 			if not vehicle.m_LastPosition then
 				vehicle.m_LastPosition = vehicle:getPosition()
 			end
@@ -216,10 +221,15 @@ setTimer(
 			end
 
 			vehicle.m_DiffMileage = vehicle.m_DiffMileage + posDelta
-			
+
+			if localPlayer.vehicleSeat ~= 0 then
+				vehicle.m_DiffMileagePassenger = vehicle.m_DiffMileage
+				return
+			end
+
 			-- Send current mileage every minute to the server
 			counter = counter + 1
-			if counter >= 60 or vehicle:getData("EPT_Taxi") then
+			if counter >= 60 or vehicle:getData("EPT_Taxi") or localPlayer:getPublicSync("inDrivingLession") then
 				if vehicle.m_DiffMileage > 10 then
 					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
 					vehicle.m_DiffMileage = 0
@@ -228,9 +238,7 @@ setTimer(
 				counter = 0
 			end
 		end
-	end,
-	1000,
-	0
+	end, 1000, 0
 )
 
 -- The following code prevents vehicle from exploding "fully"
@@ -370,6 +378,18 @@ addEventHandler("onClientElementStreamOut", root,
 	end
 )
 
+addEventHandler("onClientElementDataChange", root,
+	function(dataName)
+		if not localPlayer.vehicle then return end
+		if localPlayer.vehicle ~= source then return end
+		if localPlayer.vehicleSeat == 0 then return end
+
+		if dataName == "mileage" then
+			localPlayer.vehicle.m_DiffMileage = 0
+			localPlayer.vehicle.m_DiffMileagePassenger = 0
+		end
+	end
+)
 
 addEventHandler("onClientRender", root,
 	function()

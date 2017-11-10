@@ -118,7 +118,7 @@ function SelfGUI:constructor()
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
 	self.m_WarnButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", tabGeneral):setBarEnabled(true)
-	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
+	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer:getName()) end
 
 	self.m_AchievementButton = GUIButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", tabGeneral):setBarEnabled(true)
 	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)
@@ -1067,13 +1067,38 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "TextureMode", index)
 			self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[index]))
 			nextframe(function () TextureReplacer.changeLoadingMode(index) end)
+
+			if index == TEXTURE_LOADING_MODE.NONE then
+				self.m_TextureFileCheck:setEnabled(false)
+				self.m_TextureHTTPCheck:setEnabled(false)
+			else
+				self.m_TextureFileCheck:setEnabled(true)
+				self.m_TextureHTTPCheck:setEnabled(true)
+			end
 		end
 
 		self.m_InfoLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.6, self.m_Height*0.055, _"", self.m_SettingBG)
 
-		local currentMode = core:get("Other", "TextureMode", 1)
+		local currentMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
 		self.m_TextureModeChange:setIndex(currentMode, true)
 		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
+
+		self.m_TextureFileCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.5, self.m_Height*0.04, _"eXo Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureFileCheck:setFont(VRPFont(25))
+		self.m_TextureFileCheck:setFontSize(1)
+		self.m_TextureFileCheck:setChecked(core:get("Other", "FileTexturesEnabled", true))
+		self.m_TextureFileCheck.onChange = function (state)
+			core:set("Other", "FileTexturesEnabled", state)
+			TextureReplacer.forceReload()
+		end
+		self.m_TextureHTTPCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.04, _"Spieler Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureHTTPCheck:setFont(VRPFont(25))
+		self.m_TextureHTTPCheck:setFontSize(1)
+		self.m_TextureHTTPCheck:setChecked(core:get("Other", "HTTPTexturesEnabled", true))
+		self.m_TextureHTTPCheck.onChange = function (state)
+			core:set("Other", "HTTPTexturesEnabled", state)
+			TextureReplacer.forceReload()
+		end
 	elseif setting == "Sonstiges" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
 		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)

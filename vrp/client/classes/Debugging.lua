@@ -76,7 +76,7 @@ if DEBUG then
 	end
 
 	function Debugging:performance_debug(cmd, arg)
-		local arg = arg
+		local arg = arg or ""
 		if not self.m_PerformanceDebug then
 			self.m_PerformanceSM = ShortMessage:new("loading...", "Performance Stats", Color.LightBlue, 6000)
 			self.m_PerformanceTimer = setTimer(function()

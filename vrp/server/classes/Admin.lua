@@ -572,9 +572,14 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		if not reason then return end
 		duration = tonumber(duration)
 		self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+
+		local targetId = target:getId()
 		Warn.addWarn(target, admin, reason, duration*60*60*24)
-		target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
-		self:addPunishLog(admin, target, func, reason, duration*60*60*24)
+
+		if target and isElement(target) then
+			target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
+		end
+		self:addPunishLog(admin, targetId, func, reason, duration*60*60*24)
 	elseif func == "removeWarn" then
 		if not target then return end
 		self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
@@ -839,8 +844,8 @@ function Admin:toggleSupportMode(player)
         self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setPublicSync("Admin:OldSkin", player:getModel())
 		player:setModel(260)
-		player:setWalkingStyle(138)
-        self:toggleSupportArrow(player, false)
+		--player:setWalkingStyle(138)
+        self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
 		if player:getRank() >= RANK.Moderator then
 			player:triggerEvent("superman:toggle", true)
@@ -853,7 +858,7 @@ function Admin:toggleSupportMode(player)
         player:sendInfo(_("Support Modus deaktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
 		player:setModel(player:getPublicSync("Admin:OldSkin"))
-		player:setWalkingStyle(0)
+		--player:setWalkingStyle(0)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
 		if player:getRank() >= RANK.Moderator then
@@ -1352,6 +1357,7 @@ end
 function Admin:runString(player, cmd, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= ADMIN_RANK_PERMISSION["runString"] then
 		local codeString = table.concat({...}, " ")
+		StatisticsLogger:getSingleton():addDrunLog(player, codeString)
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
 	end
@@ -1369,7 +1375,9 @@ function Admin:runPlayerString(player, cmd, target, ...)
 			sendResponse = false
 		end
 		if tPlayer then
-			triggerClientEvent(tPlayer, "onServerRunString", player, table.concat({...}, " "), sendResponse)
+			local codeString = table.concat({...}, " ")
+			StatisticsLogger:getSingleton():addDrunLog(player, codeString, tPlayer)
+			triggerClientEvent(tPlayer, "onServerRunString", player, codeString, sendResponse)
 
 			--self:sendShortMessage(_("%s hat /dpcrun benutzt!\n %s", player, player:getName(), codeString))
 	  	else
