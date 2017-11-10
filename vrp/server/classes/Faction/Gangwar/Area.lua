@@ -69,7 +69,7 @@ end
 
 function Area:createCenterCol()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)
+	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE+1) --+1 because the gangwar includes 15m as inside the col, but isElementWithinCol not
 	addEventHandler("onColShapeHit",self.m_CenterSphere,bind(self.onCenterEnter,self))
 	addEventHandler("onColShapeLeave",self.m_CenterSphere,bind(self.onCenterLeave,self))
 	local tElements = getElementsWithinColShape(self.m_CenterSphere,"player")

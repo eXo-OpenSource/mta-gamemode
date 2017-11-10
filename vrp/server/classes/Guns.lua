@@ -23,16 +23,12 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "target_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "weapon_range",45) -- GTA-Std: 35
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
-		-- Uzi:
-		setWeaponProperty(28, skill, "accuracy",1.1000000238419) -- GTA-Std: 1.1000000238419
 		-- MP5:
 		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
 		-- M4:
 		setWeaponProperty(31, skill, "accuracy", 0.9) -- GTA-Std: 0.80000001192093
 		setWeaponProperty(31, skill, "weapon_range",105) -- GTA-Std: 90
 		-- Tec-9:
-		setWeaponProperty(32, skill, "weapon_range",50) -- GTA-Std: 35
-		setWeaponProperty(32, skill, "target_range",50) -- GTA-Std: 35
 		setWeaponProperty(32, skill, "accuracy",1.1999999523163) -- GTA-Std: 1.1000000238419
 		-- Rifle:
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
@@ -85,7 +81,6 @@ end
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
-
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -122,6 +117,13 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			if not target.m_SupMode and not attacker.m_SupMode then
 				target:triggerEvent("clientBloodScreen")
 				local basicDamage = WEAPON_DAMAGE[weapon]
+				if weapon == 25 or weapon == 26 then -- lower dmg for shotguns based on distance (because by default the first shot always does max dmg)
+					local dist = getDistanceBetweenPoints3D(attacker, target)
+					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
+					basicDamage = basicDamage*((maxDist-dist)/maxDist)
+				elseif getDistanceBetweenPoints3D(attacker, target) < 1 then -- disable punshing with weapons
+					loss = math.random(2, 5)
+				end
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)

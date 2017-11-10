@@ -371,7 +371,7 @@ function AttackSession:createBarricadeCars( )
 	local iCarCount = self.m_AreaObj.m_CarCount
 	local x,y,z = self.m_AreaObj.m_Position[1], self.m_AreaObj.m_Position[2], self.m_AreaObj.m_Position[3]
 	local newX, newY
-	local factionColor = factionColors[self.m_Faction1.m_Id]
+	local factionColor = factionCarColors[self.m_Faction1.m_Id]
 	for i = 1, iCarCount do
 		newX, newY = getPointFromDistanceRotation(x, y, 6, 360 * (i/5));
 		self.m_Barricades[i] = TemporaryVehicle.create(482, newX, newY, z, i* (360/iCarCount))
