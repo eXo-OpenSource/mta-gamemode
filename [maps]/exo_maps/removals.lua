@@ -36,3 +36,6 @@ removeWorldModel(4215, 77, 1777.8, -1773.9, 12.5)
 
 --Tree at 0,0,0
 removeWorldModel(672, 11, -35.71, 18.10, 3.47)
+
+-- Useless street lamp
+removeWorldModel(1297, 6, 2832.7402, -1593.3954, 10.55933)
