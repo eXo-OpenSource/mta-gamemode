@@ -52,7 +52,7 @@ function FireRoot:constructor(iX, iY, iW, iH)
 
 
 
-	FireRoot.Map = self
+	FireRoot.Map[self] = self.m_Root
 
     return self
 end

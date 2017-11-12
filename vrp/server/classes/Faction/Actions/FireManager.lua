@@ -7,8 +7,8 @@
 -- ****************************************************************************
 FireManager = inherit(Singleton)
 
-local FIRE_TIME_MIN = 45 -- in minutes
-local FIRE_TIME_MAX = 90 -- in minutes
+local FIRE_TIME_MIN = 30 -- in minutes
+local FIRE_TIME_MAX = 60 -- in minutes
 
 function FireManager:constructor()
 	self.m_CurrentFire = nil
