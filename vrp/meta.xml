@@ -18,6 +18,7 @@
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
+	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -319,6 +320,8 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -432,7 +435,7 @@
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
-	<script src="client/classes/CustomCorona.lua" type="client"/>
+	<script src="client/classes/CoronaEffect.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
@@ -822,7 +825,7 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
-	<script src="client/classes/Vehicles/Extensions/VehicleELS.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
@@ -2042,7 +2045,6 @@
 	<include resource="WetRoads" />
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
-	<include resource="custom_coronas" />
 
 	<!-- ACL Request -->
 	<aclrequest>
