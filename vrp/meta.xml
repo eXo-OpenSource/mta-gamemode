@@ -356,6 +356,9 @@
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
 
+	<!-- Christmas -->
+	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
+
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
 	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
@@ -832,7 +835,6 @@
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
 
-
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
@@ -844,6 +846,9 @@
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
+
+	<!-- Christmas -->
+	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>

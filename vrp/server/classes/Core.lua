@@ -127,8 +127,10 @@ function Core:constructor()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
-		DrawContest:new() -- Temporary for 06.11.2017
 
+		if EVENT_CHRISTMAS then
+			Christmas:new()
+		end
 
 		GPS:new()
 		Chair:new()
