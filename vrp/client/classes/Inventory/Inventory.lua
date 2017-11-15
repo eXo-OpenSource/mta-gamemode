@@ -127,6 +127,7 @@ function Inventory:addItem(place, item)
 		slot.Place = place
 		slot.ItemName = item["Objekt"]
 		slot.Amount = item["Menge"]
+		slot.Value = item["Value"]
 
 		local amountText = slot.Amount > 1 and slot.Amount or ""
 		local textWidth = VRPTextWidth(amountText, 20) + 3
@@ -253,8 +254,12 @@ function Inventory:addItemEvents(item)
 			item:setColor(Inventory.Color.ItemBackgroundHover)
 			if item.Item then
 				local itemName = item.ItemName
-				self.m_InfoText1:setText(_("%s - Menge: %d", itemName, item.Amount))
-				self.m_InfoText2:setText(self.m_ItemData[itemName]["Info"])
+				self.m_InfoText1:setText(_("%s - Menge: %s", itemName, tostring(item.Amount)))
+				if itemName == "Kleidung" and item.Value and SkinInfo[tonumber(item.Value)] then
+					self.m_InfoText2:setText(SkinInfo[tonumber(item.Value)][1])
+				else
+					self.m_InfoText2:setText(self.m_ItemData[itemName]["Info"])
+				end
 			end
 		else
 			item:setColor(Inventory.Color.ItemBackgroundHoverDelete)

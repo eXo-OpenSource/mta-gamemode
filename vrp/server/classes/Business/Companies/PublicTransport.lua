@@ -333,7 +333,7 @@ function PublicTransport:startBusTour_Driver(player, nextStation, line)
 		delete(player.Bus_Blip)
 	end
 	if not nextStation or not self.m_BusStops[nextStation] then
-		player:sendShortMessage(_("Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), dann melde dies bitte im Bugtracker"))
+		player:sendShortMessage(_("Dieser Bus hat keine Linie mehr - Wenn du weißt, was zuvor mit dem Bus passiert ist (z.B. wenn der Busfahrer Offline oder Offduty gegangen ist), dann melde dies bitte im Bugtracker", player))
 	else
 		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][nextStation]].object)
 		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
@@ -436,7 +436,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			return
 		end
 
-		if vehicle:getSpeed() > 40 then 
+		if vehicle:getSpeed() > 30 then 
 			player:sendError(_("Du fährst zu schnell!", player))
 			return false 
 		end
@@ -449,8 +449,8 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 				bankMoney = math.round(340 * (dist/1000)),-- 340 / km
 				points = math.round(5 * (dist/1000)),--5 / km
 			})
-			self:giveMoney(math.round(100 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
-			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(100 * (dist/1000)))))
+			self:giveMoney(math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
+			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(150 * (dist/1000)))))
 		end
 
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
