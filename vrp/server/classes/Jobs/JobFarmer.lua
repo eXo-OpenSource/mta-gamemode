@@ -225,7 +225,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 	local x,y,z = getElementPosition(hitElement)
 	local vehicleID = getElementModel(vehicle)
 
-	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble then
+	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble and vehicle == hitElement.jobVehicle then
 		local pos = vehicle.position + vehicle.matrix.forward * 2
 		local distance = getDistanceBetweenPoints3D(pos,createColShape.position)
 		if distance > 4 then return end
@@ -242,7 +242,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:givePoints(math.floor(1*JOB_EXTRA_POINT_FACTOR))
 		end
 	else
-		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
+		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] and vehicle == hitElement.jobVehicle then
 			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
 			local object = self.m_Plants[createColShape]
 			object.isFarmAble = false
