@@ -24,6 +24,9 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_Placer = player
 	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
+	self.m_Object:setInterior(player:getInterior())
+	self.m_Object:setDimension(player:getDimension())
+
 	self.m_AttachedElements = {}
 	self.m_Object.m_Super = self
 	--self.m_Object:setBreakable(breakable)
@@ -133,8 +136,14 @@ function WorldItem:onMove(player)
 				return false 
 			end
 			if position then -- item moved
+				self.m_Object:setCollisionsEnabled(false)
 				self.m_Object:setPosition(position)
 				self.m_Object:setRotation(0, 0, rotation)
+				self.m_Object:setInterior(player:getInterior())
+				self.m_Object:setDimension(player:getDimension())
+				nextframe(function()
+					self.m_Object:setCollisionsEnabled(true)
+				end)
 			end
 			self.m_CurrentMovingPlayer = nil
 			removeEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
