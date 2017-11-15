@@ -49,7 +49,7 @@ function TaskShootTarget:shootSingleBullet()
 	if self:checkActor() then
 		if self:checkTarget() then
 			-- Update target
-			self.m_Actor:setAimTarget(self.m_Target:getPosition())
+			self.m_Actor:setAimTarget(self.m_Target:getBonePosition(3))
 
 			-- Activate fire control for a bit to simulate key presses
 			self.m_Actor:setControlState("aim_weapon", true)

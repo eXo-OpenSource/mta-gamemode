@@ -78,7 +78,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	shop.m_Marker.m_Disable = true
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
-	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
+	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "Neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
 	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm

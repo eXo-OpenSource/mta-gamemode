@@ -520,7 +520,7 @@ function House:tryToCatchRobbers( player )
 					player:setWanteds(player:getWanteds() + 3)
 					group.m_RobReported = true
 					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))
-					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
+					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "Neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
 				end
 			end
 		end

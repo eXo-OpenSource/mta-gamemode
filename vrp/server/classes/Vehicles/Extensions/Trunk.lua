@@ -141,24 +141,23 @@ function Trunk:takeItem(player, slot)
 end
 
 function Trunk:takeWeapon(player, slot)
-	if player:getFaction() and player:isFactionDuty() then
-		player:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", player))
-		return
-	end
-
 	if player:hasTemporaryStorage() then player:sendError(_("Du kannst aktuell keine Waffen entnehmen!", player)) return end
-
+	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() --seize the weapon instead of taking it
 	if self.m_WeaponSlot[slot] then
 		if self.m_WeaponSlot[slot]["WeaponId"] > 0 then
 			--if self.m_ItemSlot[slot]["Amount"] > 0 then
 				local weaponId = self.m_WeaponSlot[slot]["WeaponId"]
 				local amount = self.m_WeaponSlot[slot]["Amount"]
-				if MIN_WEAPON_LEVELS[weaponId] <= player:getWeaponLevel() then
+				if isCopSeizing or (MIN_WEAPON_LEVELS[weaponId] <= player:getWeaponLevel()) then
 					if player:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
 						self.m_WeaponSlot[slot]["WeaponId"] = 0
 						self.m_WeaponSlot[slot]["Amount"] = 0
-						player:giveWeapon(weaponId, amount)
-						player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
+						if isCopSeizing then
+							FactionState:getSingleton():addWeaponToEvidence(player, weaponId, amount, player:getFaction():getId())
+						else
+							player:giveWeapon(weaponId, amount)
+							player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
+						end
 						self:refreshClient(player)
 						StatisticsLogger:getSingleton():addVehicleTrunkLog(self.m_Id, player, "take", "weapon", weaponId, amount, slot)
 						return
