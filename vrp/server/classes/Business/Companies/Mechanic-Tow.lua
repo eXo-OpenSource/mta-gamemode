@@ -257,6 +257,7 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 		if towTruck.getCompany and towTruck:getCompany() == self and towTruck:getModel() == 525 then
 			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) or source.burned then
 				source:toggleRespawn(false)
+				source.m_HasBeenUsed = 1 --disable despawn on logout
 			else
 				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 			end
@@ -440,6 +441,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 					towTruck:setFrozen(false)
 					towTruck.m_DisableToggleHandbrake = false
 					bike:attach(towTruck, 0, -1.1, .8, 0, 0, 90)
+					bike.m_HasBeenUsed = 1 --disable despawn on logout
 				end, 2500, 1, client.vehicle, vehicle, object
 			)
 		else

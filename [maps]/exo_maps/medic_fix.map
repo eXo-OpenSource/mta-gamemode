@@ -1,6 +1,6 @@
 <map edf:definitions="editor_main">
     <object id="object (vgsSairportland07) (1)" breakable="true" interior="0" collisions="true" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1776.04" posY="-1731.89" posZ="4.91" rotX="0" rotY="0" rotZ="92.5"></object>
-    <object id="object (vgsSairportland07) (2)" breakable="true" interior="0" collisions="true" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1833.8101" posY="-1760.5601" posZ="5.26" rotX="0" rotY="0" rotZ="89.999"></object>
+    <object id="object (vgsSairportland07) (2)" breakable="true" interior="0" collisions="true" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1833.8101" posY="-1761.85" posZ="5.26" rotX="0" rotY="0" rotZ="89.999"></object>
     <object id="object (vgsSairportland07) (3)" breakable="true" interior="0" collisions="true" alpha="0" model="8172" doublesided="false" scale="1" dimension="0" posX="1705.25" posY="-1708.1" posZ="5.26" rotX="0" rotY="0" rotZ="89.995"></object>
     <object id="object (xref_garagedoor) (1)" breakable="true" interior="0" collisions="true" alpha="0" model="2885" doublesided="false" scale="1" dimension="0" posX="1768.15" posY="-1747.74" posZ="6.86" rotX="0" rotY="88.75" rotZ="11.249"></object>
     <object id="object (xref_garagedoor) (5)" breakable="true" interior="0" collisions="true" alpha="0" model="2885" doublesided="false" scale="1" dimension="0" posX="1749.71" posY="-1749.33" posZ="11.43" rotX="0" rotY="0" rotZ="1.244"></object>

@@ -100,11 +100,13 @@ end
 
 
 function ShopManager:vehicleBuy(shopId, vehicleModel)
+	if client:isDead() then return false end
 	if not self:getFromId(shopId, true) then return end
 	self:getFromId(shopId, true):buyVehicle(client, vehicleModel)
 end
 
 function ShopManager:foodShopBuyMenu(shopId, menu)
+	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop.m_Menues[menu] then
 		if client:getMoney() >= shop.m_Menues[menu]["Price"] then
@@ -122,6 +124,7 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 end
 
 function ShopManager:buyItem(shopId, item, amount)
+	if client:isDead() then return false end
 	if not item then return end
 	if not amount then amount = 1 end
 	local shop = self:getFromId(shopId)
@@ -161,6 +164,7 @@ function ShopManager:buyItem(shopId, item, amount)
 end
 
 function ShopManager:buyClothes(shopId, typeId, clotheId)
+	if client:isDead() then return false end
 	if not typeId then return end
 	if not clotheId then return end
 	local shop = self:getFromId(shopId)
@@ -194,6 +198,7 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 end
 
 function ShopManager:buyWeapon(shopId, itemType, weaponId, amount)
+	if client:isDead() then return false end
 	if not itemType then return end
 	if not weaponId then return end
 	local shop = self:getFromId(shopId)
@@ -237,7 +242,8 @@ function ShopManager:buyWeapon(shopId, itemType, weaponId, amount)
 end
 
 function ShopManager:onTattooSelection(shopId, typeId)
-local shop = self:getFromId(shopId)
+	if client:isDead() then return false end
+	local shop = self:getFromId(shopId)
 	if shop then
 		shop:onTattoSelection(client, typeId)
 	else
@@ -249,6 +255,7 @@ end
 
 
 function ShopManager:barBuyDrink(shopId, item, amount)
+	if client:isDead() then return false end
 	if not item then return end
 	if not amount then amount = 1 end
 	local shop = self:getFromId(shopId)
@@ -276,6 +283,7 @@ function ShopManager:barBuyDrink(shopId, item, amount)
 end
 
 function ShopManager:barMusicChange(shopId, stream)
+	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:changeMusic(client, stream)
@@ -285,6 +293,7 @@ function ShopManager:barMusicChange(shopId, stream)
 end
 
 function ShopManager:barMusicStop(shopId)
+	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:stopMusic(client)
@@ -294,6 +303,7 @@ function ShopManager:barMusicStop(shopId)
 end
 
 function ShopManager:barStartStripper(shopId)
+	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:startStripper(client)
@@ -303,6 +313,7 @@ function ShopManager:barStartStripper(shopId)
 end
 
 function ShopManager:barStopStripper(shopId)
+	if client:isDead() then return false end
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:stopStripper(client)

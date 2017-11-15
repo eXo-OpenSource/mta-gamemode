@@ -76,12 +76,13 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				client:sendError("Dein Fahrzeug ist bereits vollgetankt!")
 				return
 			end
-
+			local price = math.round(price)
 			if station:isUserFuelStation() then
 				local faction = client:getFaction()
 				if faction and (faction:isEvilFaction() or client:isFactionDuty()) and instanceof(vehicle, FactionVehicle, true) then
 					if faction:getMoney() >= price then
-						faction:takeMoney(price, "Tanken")
+						faction:takeMoney(price, "Tanken", true)
+						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
@@ -96,7 +97,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				local company = client:getCompany()
 				if company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
 					if company:getMoney() >= price then
-						company:takeMoney(price, "Tanken")
+						company:takeMoney(price, "Tanken", true)
+						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
@@ -127,7 +129,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				if station:hasPlayerAccess(client) then
 					local faction = client:getFaction()
 					if faction:getMoney() >= price then
-						faction:takeMoney(price, "Tanken")
+						faction:takeMoney(price, "Tanken", true)
+						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
@@ -140,7 +143,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				if station:hasPlayerAccess(client) then
 					local company = client:getCompany()
 					if company:getMoney() >= price then
-						company:takeMoney(price, "Tanken")
+						company:takeMoney(price, "Tanken", true)
+						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 						client:triggerEvent("gasStationReset")

@@ -87,7 +87,7 @@ end
 
 function BankAccount:addMoney(money, reason, silent)
 	if isNan(money) then return end
-
+		local money = math.round(money)
   	if money > 0 then
 		self.m_Money = self.m_Money + money
 		if not silent then
@@ -105,7 +105,7 @@ end
 
 function BankAccount:takeMoney(money, reason, silent)
 	if isNan(money) then return end
-
+	local money = math.round(money)
 	if money > 0 then
 		self.m_Money = self.m_Money - money
 		if not silent then
