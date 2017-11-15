@@ -114,7 +114,7 @@ function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 	if getElementDimension(source) > 0 or getElementInterior(source) > 0 then return end
 	local slot = getSlotFromWeapon(weapon)
 	if slot > 2 and slot <= 6 and weapon ~= 23 then
-		local area = getZoneName(sx,sy,sz)
+		local area = getZoneName(ex, ey, ez)
 		if area then
 			if not self.m_AreaDistrictShoots then
 				self.m_AreaDistrictShoots = {}
