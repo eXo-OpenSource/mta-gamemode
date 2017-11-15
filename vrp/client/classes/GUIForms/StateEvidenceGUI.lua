@@ -14,10 +14,9 @@ function StateEvidenceGUI:constructor( evidenceTable )
 	self.m_Window = GUIWindow:new(0,0,500,370,_"Asservatenkammer",true,true,self)
 
 	self.m_List = GUIGridList:new(30, 50, self.m_Width-60, 270, self.m_Window)
-	self.m_List:addColumn(_"Objekt", 0.2)
-	self.m_List:addColumn(_"Menge", 0.2)
-	self.m_List:addColumn(_"Besitzer", 0.2)
-	self.m_List:addColumn(_"Von", 0.2)
+	self.m_List:addColumn(_"Objekt", 0.25)
+	self.m_List:addColumn(_"Anzahl", 0.15)
+	self.m_List:addColumn(_"Von", 0.3)
 	self.m_List:addColumn(_"Datum", 0.2)
 	self.m_EvidenceTable = evidenceTable
 
@@ -43,13 +42,13 @@ end
 
 function StateEvidenceGUI:refreshGrid()
 	self.m_List:clear()
-	local type_, var1, var2, var3, cop, timeStamp
+	local type_, var1, var2, cop, timeStamp
 	local item
 	for key,evidenceItems in ipairs(self.m_EvidenceTable) do
-		type_, var1, var2, var3, cop, timeStamp = evidenceItems[1], evidenceItems[2], evidenceItems[3], evidenceItems[4], evidenceItems[5], evidenceItems[6]
+		type_, var1, var2, cop, timeStamp = evidenceItems[1], evidenceItems[2], evidenceItems[3], evidenceItems[5], evidenceItems[6]
 		if var1 then
-			if type_ == "Waffe" then var1 = getWeaponNameFromID(var1) or "Unbekannt"end
-			item = self.m_List:addItem(var1 or "Unbekannt", var2 or 1, var3 or "Unbekannt", cop or "Unbekannt", getOpticalTimestamp(tonumber(timeStamp) or getRealTime().timestamp))
+			if type_ == "Waffe" then var1 = WEAPON_NAMES[tonumber(var1)] or "Unbekannt"end
+			item = self.m_List:addItem(var1 or "Unbekannt", var2 or 1, cop or "Unbekannt", getOpticalTimestamp(tonumber(timeStamp) or getRealTime().timestamp))
 			item.onLeftClick = function() end
 		end
 	end

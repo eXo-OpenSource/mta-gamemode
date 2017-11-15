@@ -230,9 +230,17 @@ function TrunkGUI:fromTrunk(type, id)
     end
 
     if tableName.Label:getText() ~= self.ms_SlotsSettings[type].emptyText then
-        triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
-        self.m_MyItemsGrid:setVisible(false)
-        self.m_LoadingLabel:setVisible(true)
+        if type == "weapon" and localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") then
+            QuestionBox:new(_"Du darfst im Dienst keine privaten Waffen benutzen. Möchtest du diese Waffe stattdessen konfiszieren?", function()
+                triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
+                self.m_MyItemsGrid:setVisible(false)
+                self.m_LoadingLabel:setVisible(true)
+            end)
+        else
+            triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
+            self.m_MyItemsGrid:setVisible(false)
+            self.m_LoadingLabel:setVisible(true)
+        end
     else
         ErrorBox:new(_"In diesem Slot ist kein Item!")
     end

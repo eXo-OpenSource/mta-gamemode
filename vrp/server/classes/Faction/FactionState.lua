@@ -123,25 +123,6 @@ function FactionState:constructor()
 	addEventHandler("SpeedCam:onStartClick", root, bind(self.Event_speedRadar,self))
 	addEventHandler("State:startEvidenceTruck", root, bind(self.Event_startEvidenceTruck,self))
 
-
-
-	-- Prepare the Area51
-	--[[self:createDefendActors( --these are no longer wanted (as MBT is there now)
-		{
-			{Vector3(128.396, 1954.551, 19.428), Vector3(0, 0, 354.965), 287, 31, 25};
-			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 25};
-			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 25};
-			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 25};
-			{Vector3(104.15, 1900.93, 33.90), Vector3(0, 0, 19.822), 287, 34, 80};
-			{Vector3(162.32, 1932.98, 33.90), Vector3(0, 0, 0.349), 287, 34, 80};
-			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 80};
-			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 80};
-			{Vector3(386.08, 1893.12, 33.48), Vector3(0, 0, 266.788), 287, 34, 80};
-			{Vector3(386.04, 2078.10, 33.68), Vector3(0, 0, 0), 287, 34, 80};
-			{Vector3(191.48, 2031.94, 33.68), Vector3(0, 0, 0), 287, 34, 80};
-		}
-	)]]
-
 	self.onTiedExitBind = bind(self.onTiedExit, self)
 	self.m_onSpeedColHit = bind(self.Event_OnSpeedColShapeHit, self)
 
@@ -149,6 +130,7 @@ function FactionState:constructor()
 	self.m_EvidenceRoomItems = {}
 	if row then
 		for i, v in ipairs(row) do
+			
 			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {v.Type, v.Var1, v.Var2, v.Var3, v.Cop, v.Date}
 		end
 	end
@@ -1493,7 +1475,7 @@ function FactionState:Event_friskPlayer(target)
 				return
 			end
 
-			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
+			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()))
 
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()
@@ -1551,11 +1533,12 @@ end
 
 function FactionState:Event_acceptShowLicense(player, target)
 	player:triggerEvent("showIDCard", target)
-	target:sendMessage(_("%s sieht sich deinen Führerschein an!", target, player:getName()), 255, 255, 0)
+	target:meChat(true, _("nickt."))
+	player:meChat(true, _("sieht sich den Führerschein von %s an.", target:getName()))
 end
 
 function FactionState:Event_declineShowLicense(player, target)
-	player:sendMessage(_("%s will dir seinen Führerschein nicht zeigen!", player, target:getName()), 255, 255, 0)
+	target:meChat(true, _("schüttelt den Kopf."))
 end
 
 function FactionState:Event_givePANote(target, note)
@@ -1781,7 +1764,7 @@ function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID,
 			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
 				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
 			if not noMessage then FactionState:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
-			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, Date}
+			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, timeStamp}
 		end
 	end
 end

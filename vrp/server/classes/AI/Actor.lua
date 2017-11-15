@@ -43,6 +43,7 @@ end
 
 function Actor:startPrimaryTask(taskClass, ...)
     -- Delete old primary task if available
+    if self:isDead() then return false end
     if self.m_PrimaryTask then
         triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "actorStopPrimaryTask", self)
         delete(self.m_PrimaryTask)
@@ -68,6 +69,7 @@ function Actor:getPrimaryTaskClass()
 end
 
 function Actor:startSecondaryTask(taskClass, ...)
+    if self:isDead() then return false end
     local task = taskClass:new(self, ...)
     self.m_SecondaryTasks[#self.m_SecondaryTasks + 1] = task
 

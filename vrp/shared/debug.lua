@@ -7,7 +7,7 @@
 -- ****************************************************************************
 DEBUG = GIT_BRANCH ~= "release/production"
 if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
-	DEBUG_LOAD_SAVE = true -- defines if "loaded X"-messages are outputted to the server console
+	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
 	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
 end
 
