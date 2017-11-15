@@ -130,7 +130,7 @@ function FactionState:constructor()
 	self.m_EvidenceRoomItems = {}
 	if row then
 		for i, v in ipairs(row) do
-			
+
 			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {v.Type, v.Var1, v.Var2, v.Var3, v.Cop, v.Date}
 		end
 	end
@@ -1402,10 +1402,12 @@ function FactionState:checkLogout(player)
 	local colPlayers = getElementsWithinColShape(col, "player")
 	col:destroy()
 	for index, cop in pairs(colPlayers) do
-		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
-			self:Event_JailPlayer(player, false, false, cop, false, false, true)
-			player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Kanstzeit ist dadurch länger!", 1)
-			return
+		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() and not cop:isDead() then
+			if player:getInterior() == cop:getInterior() and player:getDimension() == cop:getDimension() then
+				self:Event_JailPlayer(player, false, false, cop, false, false, true)
+				player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Kanstzeit ist dadurch länger!", 1)
+				return
+			end
 		end
 	end
 
