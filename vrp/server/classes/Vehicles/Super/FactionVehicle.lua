@@ -200,6 +200,8 @@ function FactionVehicle:hasKey(player)
 		end
 	elseif player:getFaction() and player:getFaction() == self.m_Faction then
       	return true
+	elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
+      	return true
     end
   end
 
