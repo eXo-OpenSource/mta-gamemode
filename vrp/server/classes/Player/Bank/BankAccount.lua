@@ -132,11 +132,6 @@ function BankAccount:__takeMoney(money, reason, silent)
 end
 
 --[[
-	object:transferBankMoney({toId, toType}, toBank, amount, reason, silent, category, subcategory)
-	object:transferBankMoney(toObject, toBank, amount, reason, silent, category, subcategory)
-]]
-
---[[
 	[==
 		object (Player, Faction, Company, Group, BankAccount) ||
 		{string objectName, int objectId [, bool toBank, bool silent, bool allIfToMuch} ||
