@@ -211,7 +211,6 @@ HelpTextTitles = {
 
 	};
 	Events = {
-		Deathmatch = "Event: Deathmatch";
 		DMRace = "Event: DM-Race";
 		StreetRace = "Event: Street Race";
 	};
@@ -425,9 +424,6 @@ HelpTexts = {
 
 	};
 	Events = {
-		Deathmatch = [[
-		In diesem Event geht es darum, die anderen Teilnehmer mit Waffengewalt zu eliminieren. Wer die meisten Spieler
-		eleminiert gewinnt. ]];
 		DMRace = [[
 		Der von Race Servern bekannte Gamemode mit DM Maps.
 		Ziel ist es, das Ziel vor allen anderen zu erreichen während sich auf dem Weg viele Hindernisse befinden.

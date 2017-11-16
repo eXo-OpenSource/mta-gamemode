@@ -83,7 +83,6 @@ function Core:constructor()
 		Collectables:new()
 		Achievement:new()
 		SkinShops:new()
-		--Deathmatch:new() Not finished
 		VehicleTuningShop:new()
 		VehicleCustomTextureShop:new()
 		DimensionManager:new()
