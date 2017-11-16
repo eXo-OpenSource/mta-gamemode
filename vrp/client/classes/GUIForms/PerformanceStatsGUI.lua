@@ -52,13 +52,13 @@ function PerformanceStatsGUI:constructor()
 end
 
 function PerformanceStatsGUI:refresh()
-	if isCursorShowing() then return end
 	for parentId, parent in pairs(self.m_Fields) do
 		for k, v in ipairs(parent) do
 			v.label:setText(v.func())
 		end
 	end
 
+	if isCursorShowing() then return end
 	if self.m_TabCache.m_Gridlist then
 		self.m_TabCache.m_Gridlist:clear()
 		for path, data in pairs(TextureCache.Map) do

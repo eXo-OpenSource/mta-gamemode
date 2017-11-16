@@ -113,6 +113,7 @@ function CacheArea3D:drawCached()
 	if self.m_ChangedSinceLastFrame or not self.m_RenderTarget then
 		if not self.m_RenderTarget then
 			self.m_RenderTarget = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
+			dxSetTextureEdge(self.m_RenderTarget, "clamp")
 		end
 
 		if not self.m_RenderTarget then

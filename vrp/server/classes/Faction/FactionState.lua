@@ -1535,12 +1535,12 @@ end
 
 function FactionState:Event_acceptShowLicense(player, target)
 	player:triggerEvent("showIDCard", target)
-	target:meChat(true, _("nickt."))
-	player:meChat(true, _("sieht sich den Führerschein von %s an.", target:getName()))
+	target:meChat(true, _("nickt.", target))
+	player:meChat(true, _("sieht sich den Führerschein von %s an.", player, target:getName()))
 end
 
 function FactionState:Event_declineShowLicense(player, target)
-	target:meChat(true, _("schüttelt den Kopf."))
+	target:meChat(true, _("schüttelt den Kopf.", target))
 end
 
 function FactionState:Event_givePANote(target, note)
