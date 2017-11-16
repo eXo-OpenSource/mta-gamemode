@@ -137,11 +137,11 @@ function WorldItem:onMove(player)
 			end
 			if position then -- item moved
 				self.m_Object:setCollisionsEnabled(false)
-				self.m_Object:setPosition(position)
-				self.m_Object:setRotation(0, 0, rotation)
-				self.m_Object:setInterior(player:getInterior())
-				self.m_Object:setDimension(player:getDimension())
 				nextframe(function()
+					self.m_Object:setPosition(position)
+					self.m_Object:setRotation(0, 0, rotation)
+					self.m_Object:setInterior(player:getInterior())
+					self.m_Object:setDimension(player:getDimension())
 					self.m_Object:setCollisionsEnabled(true)
 				end)
 			end

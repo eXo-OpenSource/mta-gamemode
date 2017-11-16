@@ -348,8 +348,6 @@
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
-	<script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
-	<script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
@@ -437,7 +435,6 @@
 	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
-	<script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 	<script src="client/classes/Guns.lua" type="client"/>

@@ -98,8 +98,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				local company = client:getCompany()
 				if company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
 					if company:getMoney() >= price then
-						company:takeMoney(price, "Tanken", true)
 						company:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
+						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
