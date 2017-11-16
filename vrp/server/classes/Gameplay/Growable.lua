@@ -29,6 +29,7 @@ function Growable:constructor(id, type, typeData, pos, ownerId, size, planted, l
 	self.ms_ObjectSizeSteps = typeData["ObjectSizeSteps"]
 	self.ms_TimesEarnedForDestroy = typeData["TimesEarnedForDestroy"]
 	self.ms_Illegal = typeData["Illegal"]
+	self.m_BankAccountServer = BankServer.get("faction.state")
 
 	self.m_Colshape = createColSphere(pos.x, pos.y, pos.z+1, 1)
 	addEventHandler("onColShapeHit", self.m_Colshape, bind(self.onColShapeHit, self))
@@ -81,7 +82,7 @@ function Growable:harvest(player)
 		local amount = self.m_Size*self.ms_ItemPerSize
 		if self.ms_Illegal and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 			player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
-			player:getFaction():giveMoney(amount*5, "Drogen-Asservation")
+			self.m_BankAccountServer.m_Bank:transferMoney(player:getFaction(), amount*5, "Drogen-Asservation", "Faction", "Drugs")
 			player:triggerEvent("hidePlantGUI")
 			self.m_Size = 0
 			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)

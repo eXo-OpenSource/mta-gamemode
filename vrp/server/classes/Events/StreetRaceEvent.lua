@@ -11,6 +11,7 @@ function StreetRaceEvent:constructor()
 	-- Find a random start position
 	local x, y, z, randomIndex = self.getRandomPosition()
 	self.m_StartIndex = randomIndex
+	self.m_BankAccountServer = BankServer.get("event.street_race")
 end
 
 function StreetRaceEvent:onStart()
@@ -98,7 +99,7 @@ function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
 
 		-- Give him some money
 		local moneyAmount = 100 * #self.m_Players / #self.m_Ranks
-		hitElement:giveMoney(math.ceil(moneyAmount), "Event")
+		self.m_BankAccountServer:transferMoney(hitElement, math.ceil(moneyAmount), "Event", "Event", "Streetrace")
 		hitElement:sendSuccess(_("Du hast beim Straßenrennen %d$ gewonnen!", hitElement, moneyAmount))
 
 		-- Quit the hitting player

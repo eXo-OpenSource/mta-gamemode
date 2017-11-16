@@ -36,6 +36,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_StartPlayer = driver
 	self.m_Money = money
 	self.m_MoneyBag = {}
+	self.m_BankAccountServer = BankServer.get("action.evidence_trunk")
 
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 	self.m_DestroyFunc = bind(self.Event_OnTruckDestroy,self)
@@ -200,7 +201,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 			value:destroy()
 		end
 	end
-	faction:giveMoney(totalMoney, "Geldsack (Geldtransport)")
+	self.m_BankAccountServer:transferMoney(faction, totalMoney, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
 	if self:getRemainingBagAmount() == 0 or finish == true then
 		delete(self)
 	end

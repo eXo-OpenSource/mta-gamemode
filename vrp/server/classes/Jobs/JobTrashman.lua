@@ -10,6 +10,7 @@ local MONEY_PER_CAN = 29*2 --// 15 default
 
 function JobTrashman:constructor()
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.trashman")
 
 	local availableVehicles = {"Trashmaster"}
 	self.m_VehicleSpawner1 = VehicleSpawner:new(2118.38, -2076.78, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
@@ -108,7 +109,8 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 				local points = math.floor(math.ceil(numCans/3)*JOB_EXTRA_POINT_FACTOR)
 				hitElement.m_LastJobAction = getRealTime().timestamp
 				StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTrashman", duration, moneyAmount, nil, nil, points, numCans)
-				hitElement:addBankMoney(moneyAmount, "Müll-Job")
+				
+				self.m_BankAccount:transferMoney({hitElement, true}, moneyAmount, "Müll-Job", "Job", "Trashman")
 				hitElement:givePoints(points)
 
 				hitElement:setData("Trashman:Cans", 0)

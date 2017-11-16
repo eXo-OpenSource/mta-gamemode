@@ -67,6 +67,7 @@ function Core:constructor()
 		PlayerManager:new()
 		JobManager:new()
 		BankManager:new()
+		BankServer:new()
 		BankRobberyManager:new()
 		--WantedSystem:new()
 		Provider:new()
@@ -238,6 +239,7 @@ function Core:destructor()
 		delete(Admin:getSingleton())
 		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
+		delete(BankServer:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

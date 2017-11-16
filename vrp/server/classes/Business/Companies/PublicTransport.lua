@@ -32,6 +32,7 @@ function PublicTransport:constructor()
 	InteriorEnterExit:constructor(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
 
 
+	self.m_BankAccountServer = BankServer.get("company.public_transport")
 	local safe = createObject(2332, 1236, -62.10, 1011.8, 0, 0, -90)
 	safe:setInterior(12)
 	safe:setDimension(4)
@@ -209,18 +210,18 @@ function PublicTransport:endTaxiDrive(customer)
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		if price > customer:getMoney() then price = customer:getMoney() end
-		customer:takeMoney(price, "Public Transport Taxi")
+		customer:transferMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		if price > 0 then 
 			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
-				self:giveMoney(math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), true) -- prevent players from spawning afk money
+				self.m_BankAccountServer:transferMoney({self, nil, true}, math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), "Company", "Taxi")
 			end
 			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
 		
 		if isElement(driver) then 
 			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
-			driver:giveMoney(price, "Public Transport Taxi") 
+			self.m_BankAccountServer:transferMoney({self, nil, true}, price, "Public Transport Taxi", "Company", "Taxi")
 		end
 
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
@@ -446,10 +447,17 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 			local dist = math.round(getDistanceBetweenPoints3D(self.m_BusStops[lastId].object.position, self.m_BusStops[stopId].object.position) * (math.random(998, 1002)/1000))
 	
 			player:giveCombinedReward("Busfahrer-Gehalt", {
-				bankMoney = math.round(340 * (dist/1000)),-- 340 / km
+				money = {
+					mode = "give",
+					bank = true,
+					amount = math.round(340 * (dist/1000)),-- 340 / km
+					toOrFrom = self.m_BankAccountServer,
+					category = "Company",
+					subcategory = "Bus"
+				},
 				points = math.round(5 * (dist/1000)),--5 / km
 			})
-			self:giveMoney(math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), true)
+			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Taxi")
 			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(150 * (dist/1000)))))
 		end
 

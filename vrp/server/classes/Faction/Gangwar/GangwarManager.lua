@@ -46,6 +46,7 @@ function Gangwar:constructor( )
 	end
 	self.m_Areas = {	}
 	self.m_CurrentAttack = nil
+	self.m_BankAccountServer = BankServer.get("faction.gangwar")
 	local sql_query = "SELECT * FROM ??_gangwar"
 	local rows = sql:queryFetch(sql_query, sql:getPrefix())
 	if rows then
@@ -85,7 +86,7 @@ function Gangwar:onAreaPayday()
 			if #playersOnline > 2 then
 				areaCounts[facObj] = count
 				amount = (count * (GANGWAR_PAYOUT_PER_PLAYER * #playersOnline)) + (GANGWAR_PAYOUT_PER_AREA * count)
-				facObj:giveMoney(amount+amount2, "Gangwar-Payday")
+				self.m_BankAccountServer:transferMoney(facObj, amount+amount2, "Gangwar-Payday", "Faction", "Gangwar")
 				facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $ (Pro Online-Member:"..GANGWAR_PAYOUT_PER_PLAYER.." und Pro Gebiet: "..GANGWAR_PAYOUT_PER_AREA.."$)" , 0, 200, 0, true)
 			else
 				facObj:sendMessage("Gangwar Payday: Es sind nicht genügend Spieler online für den Gangwar-Payday!" , 200, 0, 0, true)

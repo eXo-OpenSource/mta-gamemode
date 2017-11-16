@@ -11,6 +11,7 @@ local MONEY_PER_TRANSPORT_MAX = 1020*2 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.logistician")
 
 	-- Create Cranes
 		self.m_Cranes = {
@@ -138,7 +139,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 							hitElement.m_LastJobAction = getRealTime().timestamp
 							outputDebug(getDistanceBetweenPoints3D(hitElement:getData("Logistician:LastCrane").m_Object:getPosition(), crane.m_Object:getPosition()))
 							StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLogistician", duration, self.m_MoneyPerTransport, nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR), nil)
-							hitElement:addBankMoney(self.m_MoneyPerTransport, "Logistiker Job")
+							self.m_BankAccount:transferMoney({hitElement, true}, self.m_MoneyPerTransport, "Logistiker Job", "Job", "Logistician")
 							hitElement:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 						end)
 					else

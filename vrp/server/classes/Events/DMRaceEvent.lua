@@ -14,6 +14,7 @@ function DMRaceEvent:constructor()
 	self.m_Map = MapParser:new(self.getRandomMap())
 
 	self.m_EnterHandler = bind(self.Event_PressedEnter, self)
+	self.m_BankAccountServer = BankServer.get("event.dm_race")
 end
 
 function DMRaceEvent:destructor()
@@ -84,7 +85,7 @@ function DMRaceEvent:onPlayerWasted(player)
 
 	local leftPlayers = #self:getPlayers()
 	local money = self.m_StartPlayerAmount * (self.m_StartPlayerAmount-leftPlayers-1) * 40
-	player:giveMoney(money, "Event")
+	self.m_BankAccountServer:transferMoney(player, money, "Event", "Event", "Race")
 
 	-- Output the winner if he was the last player
 	if leftPlayers == 1 then

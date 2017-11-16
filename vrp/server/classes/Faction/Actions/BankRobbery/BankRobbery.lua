@@ -18,6 +18,7 @@ function BankRobbery:constructor()
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
 	self.m_MoneyBags = {}
+	self.m_BankAccountServer = BankServer.get("action.bank_robbery")
 
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
@@ -299,7 +300,7 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	local amount = math.floor(bag:getData("Money")/2)
 	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
-	FactionManager:getSingleton():getFromId(1):giveMoney(amount, "Bankrob-Geldsack")
+	self.m_BankAccountServer:transferMoney(FactionManager:getSingleton():getFromId(1), amount, "Bankrob-Geldsack", "Action", "BankRobbery")
 	player:giveKarma(5)
 	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
 	bag:destroy()
@@ -380,7 +381,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						end
 
 						if totalAmount > 0 then
-							faction:giveMoney(totalAmount, "Bankraub")
+							self.m_BankAccountServer:transferMoney(faction, totalAmount, "Bankrob-Geldsack", "Action", "BankRobbery")
 						end
 
 					end

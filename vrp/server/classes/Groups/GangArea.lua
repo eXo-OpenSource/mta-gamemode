@@ -33,6 +33,7 @@ function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistr
 	self.m_TurfingDirection = nil -- true: attacking; false: defending
 
 	self.m_ResourcesPerDistribution = resourcesPerDistribution
+	self.m_BankAccountServer = BankServer.get("group.gangarea")
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Area_Enter, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Area_Leave, self))
@@ -275,7 +276,7 @@ function GangArea:distributeResources()
 		return false
 	end
 
-	self.m_OwnerGroup:distributeMoney(self.m_ResourcesPerDistribution)
+	self.m_OwnerGroup:distributeMoney(self.m_BankAccountServer, self.m_ResourcesPerDistribution, "Gang Area", "Group", "GangArea")
 	return true
 end
 

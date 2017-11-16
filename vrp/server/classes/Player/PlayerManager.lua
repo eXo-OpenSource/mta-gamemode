@@ -509,7 +509,7 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 						if client:getFaction() and client:getFaction():isEvilFaction() then
 							factionBonus = JAIL_COSTS[wantedLevel]/2
 						end
-						killer:getFaction():giveMoney(factionBonus, "Arrest")
+						FactionState:getSingleton().m_BankAccountServer:transferMoney(killer:getFaction(), factionBonus, "Arrest", "Faction", "ArrestKill")
 						killer:giveKarma(wantedLevel)
 						killer:givePoints(wantedLevel)
 						PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", client, client:getName(), killer:getName(), jailTime, factionBonus), "Staat")
@@ -727,8 +727,7 @@ function PlayerManager:Event_playerSendMoney(amount)
 	amount = math.floor(amount)
 	if amount <= 0 then return end
 	if client:getMoney() >= amount then
-		client:takeMoney(amount, "Spieler-Zahlung")
-		source:giveMoney(amount, "Spieler-Zahlung")
+		client:transferMoney(source, amount, "Spieler-Zahlung", "Gameplay", "SendMoney")
 		source:sendShortMessage(_("Du hast %d$ von %s bekommen!", source, amount, client:getName()))
 	end
 end

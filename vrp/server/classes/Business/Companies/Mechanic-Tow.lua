@@ -27,6 +27,7 @@ function MechanicTow:constructor()
 
 	self.m_FillAccept = bind(MechanicTow.FillAccept, self)
 	self.m_FillDecline = bind(MechanicTow.FillDecline, self)
+	self.m_BankAccountServer = BankServer.get("company.mechanic")
 
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind(self.onEnterTowLot, self))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind(self.onLeaveTowLot, self))
@@ -141,18 +142,18 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
 	if source:getMoney() >= price then
 		vehicle:fix()
-		source:takeMoney(price, "Mech&Tow Reperatur")
+		source:transferMoney(self.m_BankAccountServer, price, "Mech&Tow Reperatur", "Company", "Repair")
 
 		if vehicle.PendingMechanic then
 			if source ~= vehicle.PendingMechanic then
 				self.m_PendingQuestions[vehicle.PendingMechanic] = getRealTime().timestamp
 
-				vehicle.PendingMechanic:giveMoney(math.floor(price*0.3), "Mech&Tow Reparatur")
+				self.m_BankAccountServer:transferMoney(vehicle.PendingMechanic, price*0.3, "Reperatur", "Company", "Repair")
 				vehicle.PendingMechanic:givePoints(2)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(source), price))
 				source:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", source, getPlayerName(vehicle.PendingMechanic)))
 
-				self:giveMoney(math.floor(price*0.7), "Reparatur", true)
+				self.m_BankAccountServer:transferMoney(self, price*0., "Reperatur", "Company", "Repair")
 			else
 				source:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", source))
 			end
@@ -172,19 +173,12 @@ end
 
 function MechanicTow:Event_mechanicTakeVehicle()
 	if instanceof(source, GroupVehicle, true) then
-		if client:getGroup():getMoney() >= 500 then
-			client:getGroup():takeMoney(500, "Mech&Tow")
-			self:giveMoney(500, "Fahrzeug freikauf", true)
-		else
+		if not client:getGroup():transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
 			client:sendError(_("In der Kasse deiner %s befindet sich nicht genügend Geld! (500$)", client, client:getGroup():getType()))
 			return false
 		end
 	else
-		if client:getMoney() >= 500 then
-			client:takeMoney(500, "Mech&Tow")
-			self:giveMoney(500, "Fahrzeug freikauf", true)
-
-		else
+		if not client:transferMoney(self, 500, "Fahrzeug freigekauft", "Company", "VehicleFreeBought") then
 			client:sendError(_("Du hast nicht genügend Geld! (500$)", client))
 			return false
 		end
@@ -284,7 +278,7 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 					end
 					source:destroy()
 					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
-					driver:giveMoney(200, "Fahrzeug-Wrack")
+					self.m_BankAccountServer:transferMoney(drive, 200, "Fahrzeug-Wrack", "Company", "Towed")
 				end
 			else
 				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
@@ -390,11 +384,11 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	end
 
 	if target:getMoney() >= price then
-		target:takeMoney(price, "Mech&Tow tanken")
+		target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
 		vehicle:setFuel(vehicle:getFuel() + fuel)
 
-		player:giveMoney(math.floor(price*0.3), "Mech&Tow tanken")
-		self:giveMoney(math.floor(price*0.7), "Tanken")
+		self.m_BankAccountServer(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
+		self.m_BankAccountServer(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
 
 		fuelTank:setFuel(fuelTank:getFuel() - fuel/5)
 		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())

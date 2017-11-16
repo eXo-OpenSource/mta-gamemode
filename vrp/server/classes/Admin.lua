@@ -449,22 +449,19 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 		local amount = tonumber(target)
 		if amount and amount > 0 and reason then
 			if func == "eventMoneyDeposit" then
-				if admin:getMoney() >= amount then
-					self.m_BankAccount:addMoney(amount)
+
+				if admin:transferMoney(self.m_BankAccount, amount, "Admin-Event-Kasse", "Admin", "Deposit") then
 					self.m_BankAccount:save()
-					admin:takeMoney(amount, "Admin-Event-Kasse")
-					StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("+"..amount))
+					StatisticsLogger:getSingleton():addAdminAction(admin, "eventKasse", tostring("+"..amount))
 					self:sendShortMessage(_("%s hat %d$ in die Eventkasse gelegt!", admin, admin:getName(), amount))
 					self:openAdminMenu(admin)
 				else
 					admin:sendError(_("Du hast nicht genug Geld dabei!", admin))
 				end
 			else
-				if self.m_BankAccount:getMoney() >= amount then
-					self.m_BankAccount:takeMoney(amount)
+				if self.m_BankAccount:transferMoney({admin, false}, amount, "Admin-Event-Kasse", "Admin", "Withraw") then
 					self.m_BankAccount:save()
-					admin:giveMoney(amount, "Admin-Event-Kasse")
-					StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("-"..amount))
+					StatisticsLogger:getSingleton():addAdminAction(admin, "eventKasse", tostring("-"..amount))
 					self:sendShortMessage(_("%s hat %d$ aus der Eventkasse genommen!", admin, admin:getName(), amount))
 					self:openAdminMenu(admin)
 				else

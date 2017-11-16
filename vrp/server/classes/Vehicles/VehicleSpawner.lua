@@ -132,8 +132,7 @@ function VehicleSpawner:initializeAll()
 	end
 
 	local function postSpawn(vehicle, player)
-		player:takeMoney(200, "Fahrzeugverleih")
-		CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT):giveMoney(200, "Fahrzeugverleih", true)
+		player:transferMoney({CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT), nil, true}, 200, "Fahrzeugverleih", "Gameplay", "VehicleRent")
 	end
 
 	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)

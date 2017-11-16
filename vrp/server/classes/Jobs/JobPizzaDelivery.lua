@@ -13,6 +13,7 @@ local BASE_LOAN = 14*2 --// 15
 
 function JobPizza:constructor( )
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.pizza_delivery")
 
 	self.m_VehicleSpawner = VehicleSpawner:new(2102.41, -1785.12, 12.39, {509,448}, 90, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
@@ -57,6 +58,6 @@ function JobPizza:onPizzaDeliver(distance, time)
 		end	
 
 		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, client.vehicle:getModel(), distance, points, time)
-		client:addBankMoney(pay, "Pizza-Job")
+		self.m_BankAccount:transferMoney({client, true}, "Pizza-Job", "Job", "PizzaDelivery")
 	end
 end

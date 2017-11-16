@@ -14,6 +14,16 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_BuyAble = price > 0 and true or false
 	self.m_OwnerId = owner
 	self.m_Money = money
+	self.m_BankAccountServer = BankServer.get("server.vehicle_shop")
+
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
+	
+	if not self.m_BankAccount then
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
+		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
+		self.m_Money = 0
+		self.m_BankAccount:save()
+	end
 
 	self.m_VehicleList = {}
 
@@ -75,8 +85,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
 		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, nil, false)
 		if vehicle then
-			player:takeMoney(price, "Fahrzeug-Kauf")
-			self:giveMoney(price, "Fahrzeug-Verkauf")
+			player:transferMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
 
 			setTimer(function(player, vehicle)
 				player:warpIntoVehicle(vehicle)
@@ -90,16 +99,8 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 	end
 end
 
-function VehicleShop:giveMoney(amount, reason)
-	if amount > 0 then self.m_Money = self.m_Money + amount end
-end
-
-function VehicleShop:takeMoney(amount, reason)
-	if amount > 0 then self.m_Money = self.m_Money - amount end
-end
-
 function VehicleShop:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
 
 function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot)
@@ -119,6 +120,7 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 end
 
 function VehicleShop:save()
+	self.m_BankAccount:save()
 	if sql:queryExec("UPDATE ??_vehicle_shops SET Money = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Owner, self.m_Id) then
 	else
 		outputDebug(("Failed to save Vehicle-Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))

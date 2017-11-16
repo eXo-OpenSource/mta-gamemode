@@ -11,6 +11,7 @@ local SWEEPER_MAX_LOAD = 50
 
 function JobRoadSweeper:constructor()
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.road_sweeper")
 
 	self.m_VehicleSpawner = VehicleSpawner:new(205.7, -1442.8, 12.1, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
@@ -55,7 +56,7 @@ function JobRoadSweeper:onDeliveryHit(hitElement, dim)
 
 				local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 				hitElement.m_LastJobAction = getRealTime().timestamp
-				hitElement:addBankMoney(loan, "Straßenreiniger-Job", true)
+				self.m_BankAccount:transferMoney({hitElement, true}, loan, "Straßenreiniger-Job", "Job", "RoadSweeper")
 				local points = 0
 				for i = 0, garbage do
 					if chance(15) then

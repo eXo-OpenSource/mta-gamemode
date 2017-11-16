@@ -147,6 +147,7 @@ function Halloween:constructor()
 
 	self.m_EventSign = createObject(1903, 1484.80, -1710.70, 12.4, 0, 0, 90)
 	self.m_EventSign:setDoubleSided(true)
+	self.m_BankServerAccount = BankServer.get("event.halloween")
 
 	Player.getScreamHook():register(
 		function(player, text)
@@ -316,7 +317,7 @@ function Halloween:Event_buyBonus(bonusId)
 		end
 
 	elseif bonus["Type"] == "Money" then
-		client:giveMoney(bonus["MoneyAmount"], "Halloween-Event")
+		self.m_BankServerAccount:transferMoney(client, bonus["MoneyAmount"], "Halloween-Event", "Event", "Halloween")
 	elseif bonus["Type"] == "Special" then
 		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)

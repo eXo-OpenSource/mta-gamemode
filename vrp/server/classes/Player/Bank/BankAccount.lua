@@ -12,8 +12,17 @@ function BankAccount.create(OwnerType, OwnerId)
   sql:queryExec("INSERT INTO ??_bank_accounts(OwnerType, OwnerId, Money, CreationTime) VALUES (?, ?, 0, NOW());", sql:getPrefix(), OwnerType, OwnerId)
 
   local Id = sql:lastInsertId()
-  BankAccount.Map[Id] = BankAccount:new(Id, 0)
+  BankAccount.Map[Id] = BankAccount:new(Id, 0, OwnerType, OwnerId)
   return BankAccount.Map[Id]
+end
+
+function BankAccount.loadByOwner(id, type)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_bank_accounts WHERE OwnerId = ? AND OwnerType = ?;", sql:getPrefix(), id, type)
+	
+	if not row then
+    return false
+  end
+	return BankAccount.load(row.Id)
 end
 
 function BankAccount.load(Id)
@@ -34,6 +43,7 @@ function BankAccount:constructor(Id, Money, OwnerType, OwnerId)
   self.m_Activity = ""
   self.m_OwnerType = OwnerType
   self.m_OwnerId = OwnerId
+	self.m_Negative = false
 end
 
 function BankAccount:destructor()
@@ -85,7 +95,7 @@ function BankAccount:getMoney()
   return tonumber(self.m_Money)
 end
 
-function BankAccount:addMoney(money, reason, silent)
+function BankAccount:__giveMoney(money, reason, silent)
 	if isNan(money) then return end
 		local money = math.round(money)
   	if money > 0 then
@@ -103,7 +113,7 @@ function BankAccount:addMoney(money, reason, silent)
 	end
 end
 
-function BankAccount:takeMoney(money, reason, silent)
+function BankAccount:__takeMoney(money, reason, silent)
 	if isNan(money) then return end
 	local money = math.round(money)
 	if money > 0 then
@@ -119,4 +129,111 @@ function BankAccount:takeMoney(money, reason, silent)
 		end
 		self:update()
 	end
+end
+
+--[[
+	[==
+		object (Player, Faction, Company, Group, BankAccount) ||
+		{string objectName, int objectId [, bool toBank, bool silent, bool allIfToMuch} ||
+		{object (Player, Faction, Company, Group), bool toBank [, bool silent, bool allIfToMuch]}
+	==] toObject
+	int amount
+	string reason
+	string category
+	string subcategory
+]]
+
+function BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+	if isNan(amount) then return false end
+	local amount = math.floor(amount)
+	
+	local targetObject = toObject
+	local offlinePlayer = false
+	local isPlayer = false
+	local goesToBank = false
+	local silent = false
+	local allIfToMuch = false
+
+	local toType = ""
+	local toId = 0
+	local toBank = -1
+
+	if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
+		if not (#toObject >= 2 and #toObject <= 5) then error("BankAccount.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
+
+		if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
+			targetObject = toObject[1]
+			goesToBank = toObject[2]
+			silent = toObject[3]
+			allIfToMuch = toObject[4]
+		else
+			if toObject[1] == "player" then
+				targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
+
+				if offlinePlayer then
+					targetObject:load(true)
+				end
+			elseif toObject[1] == "faction" then
+				targetObject = FactionManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "company" then
+				targetObject = CompanyManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "group" then
+				targetObject = GroupManager:getSingleton().Map[toObject[2]]
+			else
+				error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
+			end
+			goesToBank = toObject[3]
+			silent = toObject[4]
+			allIfToMuch = toObject[5]
+		end
+	end
+
+	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
+		error("BankAccount.transferMoney @ Target is missing")
+	end
+	
+	isPlayer = instanceof(targetObject, DatabasePlayer)
+
+	if self:getMoney() < amount and not self.m_Negative then
+		if allIfToMuch and self:getMoney() > 0 then
+			amount = self:getMoney()
+		else
+			return false
+		end
+	end
+
+	self:__takeMoney(amount, reason, silent)
+
+	if isPlayer then
+		toType = targetObject.m_BankAccount.m_OwnerType
+		toId = targetObject.m_BankAccount.m_OwnerId
+
+		if goesToBank then
+			targetObject:__giveBankMoney(amount, reason)
+			toBank = targetObject.m_BankAccount.m_Id
+		else
+			targetObject:__giveMoney(amount, reason)
+			toBank = 0
+		end
+	else
+		if instanceof(targetObject, BankAccount) then
+			toBank = targetObject.m_Id
+			toType = targetObject.m_OwnerType
+			toId = targetObject.m_OwnerId
+		else
+			toBank = targetObject.m_BankAccount.m_Id
+			toType = targetObject.m_BankAccount.m_OwnerType
+			toId = targetObject.m_BankAccount.m_OwnerId
+		end
+		
+		targetObject:__giveMoney(amount, reason, silent)
+	end
+
+	if offlinePlayer then
+		delete(targetObject)
+	end
+
+	StatisticsLogger:getSingleton():addMoneyLogNew(self.m_OwnerId, self.m_OwnerType, self.m_Id, toId, toType, toBank, amount, reason, category, subcategory)
+
+	return true
 end

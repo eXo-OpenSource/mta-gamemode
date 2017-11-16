@@ -13,6 +13,7 @@ function JobHeliTransport:constructor()
 	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.65, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
+	self.m_BankAccount = BankServer.get("job.heli_transport")
 
 	self.m_VehData = {}
 
@@ -92,7 +93,7 @@ function JobHeliTransport:onPickupLoad()
 			local duration = getRealTime().timestamp - client.m_LastJobAction
 			client.m_LastJobAction = getRealTime().timestamp
 			StatisticsLogger:getSingleton():addJobLog(client, "jobHeliTransport", duration, client:getData("JobHeliTransport:Money"), nil, nil, math.floor(10*JOB_EXTRA_POINT_FACTOR))
-			client:addBankMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
+			self.m_BankAccount:transferMoney({client, true}, client:getData("JobHeliTransport:Money"), "Helitransport-Job", "Job", "HeliTransport")
 			client:setData("JobHeliTransport:Money", 0)
 			client:givePoints(math.floor(10*JOB_EXTRA_POINT_FACTOR))
 		else

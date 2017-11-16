@@ -89,9 +89,8 @@ function TollStation:buyToll(player)
 	if isElement(player) then
 		if (player:getPosition() - self.m_Barrier.m_Barrier:getPosition()).length <= 10 then
 			if player:getBankMoney() >= TOLL_KEY_COSTS then
-				player:takeBankMoney(TOLL_KEY_COSTS, "Mautkosten")
+				player:transferBankMoney({FactionManager:getSingleton():getFromId(1), nil, true}, TOLL_KEY_COSTS, "Mautstation", "Gameplay", "Toll")
 				self.m_Barrier:toggleBarrier(player, true)
-				FactionManager:getSingleton():getFromId(1):giveMoney(TOLL_KEY_COSTS, "Mautstation", true)
 				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 			else
 				player:sendError(_("Du hast zu wenig Geld auf deinem Bankkonto! (%s$)", player, TOLL_KEY_COSTS))

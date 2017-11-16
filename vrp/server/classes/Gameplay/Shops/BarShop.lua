@@ -17,6 +17,7 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 	self.m_StripperPositions = SHOP_BAR_STRIP[self.m_TypeDataName] or false
 	self.m_StripperEnabled = false
 	self.m_StripperCurrent = {}
+	self.m_BankAccountServer = BankServer.get("shop.bar")
 
 	self.m_SoundUrl = ""
 
@@ -123,7 +124,7 @@ function BarShop:startStripper(player)
 	if not self.m_StripperEnabled then
 		if self.m_StripperPositions then
 			if self:getMoney() >= 15 then
-				self:takeMoney(15)
+				self.m_BankAccount:transferMoney(self.m_BankAccountServer, 15, "Stripper", "Shop", "BarStripper")
 				local skins = self.m_StripperPositions["Skins"]
 				for index, tbl in pairs(self.m_StripperPositions) do
 					if index ~= "Skins" then
@@ -133,7 +134,7 @@ function BarShop:startStripper(player)
 
 				self.m_StripperTimer = setTimer(function()
 					if self:getMoney() >= 15 then
-						self:takeMoney(15)
+						self.m_BankAccount:transferMoney(self.m_BankAccountServer, 15, "Stripper", "Shop", "BarStripper")
 					else
 						self:stopStripper(false, true)
 					end

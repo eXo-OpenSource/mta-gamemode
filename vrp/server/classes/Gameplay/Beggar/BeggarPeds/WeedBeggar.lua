@@ -10,7 +10,14 @@ function WeedBeggar:sellWeed(player, amount)
 		if self.m_Robber == player:getId() then return self:sendMessage(player, BeggarPhraseTypes.NoTrust) end
 		if player:getInventory():removeItem("Weed", amount) then
 			player:giveCombinedReward("Bettler-Handel", {
-				money = amount*15,
+				money = {
+					mode = "give",
+					bank = false,
+					amount = amount*15,
+					toOrFrom = self.m_BankAccountServer,
+					category = "Gameplay",
+					subcategory = "BeggarWeed"
+				},
 				karma = -math.ceil(amount/50),
 				points = math.ceil(20 * amount/200),
 			})

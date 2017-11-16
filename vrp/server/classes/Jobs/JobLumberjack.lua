@@ -11,6 +11,7 @@ local DUMP_POSITION = Vector3(-1969.8, -2432.6, 29.5)
 
 function JobLumberjack:constructor()
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.lumberjack")
 
 	self.m_LoadUpMarker = createMarker(1038.9, -354.2, 72.9, "corona", 4)
 	setElementVisibleTo(self.m_LoadUpMarker, root, false)
@@ -169,7 +170,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		local duration = getRealTime().timestamp - hitElement.m_LastJobAction
 		hitElement.m_LastJobAction = getRealTime().timestamp
 		StatisticsLogger:getSingleton():addJobLog(hitElement, "jobLumberjack", duration, numTrees * TREE_MONEY, nil, nil, numTrees, numTrees)
-		hitElement:addBankMoney(numTrees * TREE_MONEY, "Holzfäller-Job") --// default *20
+		self.m_BankAccount:transferMoney({hitElement, true}, numTrees * TREE_MONEY, "Holzfäller-Job", "Job", "Lumberjack")  --// default *20
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do

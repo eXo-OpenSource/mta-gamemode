@@ -14,6 +14,7 @@ function Tour:constructor()
 	addEventHandler("tourSuccess", root, bind(self.successStep, self))
 	self.m_showStep = bind(self.showStep, self)
 	self.m_TourPlayerData = {}
+	self.m_BankAccountServer = BankServer.get("gameplay.tour")
 	Player.getQuitHook():register(bind(self.save, self))
 end
 
@@ -66,7 +67,7 @@ function Tour:successStep(id)
 	if Tour.Data[id] then
 		if not self.m_TourPlayerData[client:getId()][tostring(id)] then
 			self.m_TourPlayerData[client:getId()][tostring(id)] = true
-			client:giveMoney(Tour.Data[id].Money, "Tour")
+			self.m_BankAccountServer:transferMoney(Tour.Data[id].Money, "Tour", "Gameplay", "Tour")
 		else
 			client:sendShortMessage(_("Du hast bereits die Belohnung für diesen Schritt erhalten!", client))
 		end

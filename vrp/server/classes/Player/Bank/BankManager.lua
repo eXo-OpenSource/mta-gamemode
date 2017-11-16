@@ -26,8 +26,7 @@ function BankManager:Event_Withdraw(amount)
 		return
 	end
 
-	if client:takeBankMoney(amount, "Bank Auszahlung", true, true) then
-		client:giveMoney(amount, "Bank Auszahlung")
+	if client:transferBankMoney(client, amount, "Bank Auszahlung", "Bank", "Withdraw") then
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
@@ -42,8 +41,7 @@ function BankManager:Event_Deposit(amount)
 		return
 	end
 
-	if client:addBankMoney(amount, "Bank Einzahlung", true, true) then
-		client:takeMoney(amount, "Bank Einzahlung")
+	if client:transferMoney({client, true}, "Bank Einzahlung", "Bank", "Deposit") then
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
@@ -58,42 +56,29 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 			return
 		end
 		if toPlayerName == "San News" then
-			client:takeBankMoney(amount, "Überweisung an San News)")
-			CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS):giveMoney(amount, ("Spende von %s"):format(client:getName()))
+			client:transferBankMoney(CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS), amount, ("Spende an San News von %s"):format(client:getName()), "Gameplay", "SanNewsDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 		elseif toPlayerName == "eXo Event-Team" then
-			client:takeBankMoney(amount, "Überweisung an eXo Event-Team)")
-			Admin:getSingleton().m_BankAccount:addMoney(amount, ("Spende von %s"):format(client:getName()))
+			client:transferBankMoney(Admin:getSingleton().m_BankAccount, amount, ("Spende an eXo Event-Team von %s"):format(client:getName()), "Gameplay", "SanNewsDonation")
 			client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 		else
-			Async.create(
-				function()
-					local id = Account.getIdFromName(toPlayerName)
-					if not id or id == 0 then
-						client:sendError(_("Dieser Spieler existiert nicht!", client))
-						return
-					end
+			local id = Account.getIdFromName(toPlayerName)
+			if not id or id == 0 then
+				client:sendError(_("Dieser Spieler existiert nicht!", client))
+				return
+			end
 
-					local toPlayer, offline = DatabasePlayer.get(id)
-					if offline then
-						toPlayer:load()
-					end
+			if client:transferBankMoney({"player", id, true}, amount, ("Überweisung von %s an %s"):format(client:getName(), toPlayerName)) then
 
-					if client:takeBankMoney(amount, "Überweisung (an "..toPlayerName..")") then
-						toPlayer:addBankMoney(amount, "Überweisung (von "..client:getName()..")")
-
-
-						if offline then
-							delete(toPlayer)
-						else
-							toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
-							toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!", toPlayer, client:getName(), amount))
-						end
-						client:sendShortMessage(_("Du hast an %s %d$ überwiesen!", client, toPlayerName, amount))
-						client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
-					end
+				local toPlayer, offline = DatabasePlayer.get(id)
+				if not offline then
+					toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
+					toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!", toPlayer, client:getName(), amount))
 				end
-			)()
+				
+				client:sendShortMessage(_("Du hast an %s %d$ überwiesen!", client, toPlayerName, amount))
+				client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
+			end
 		end
 	else
 		client:sendError(_("Ungültiger Betrag!", client))

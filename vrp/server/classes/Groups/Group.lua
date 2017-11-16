@@ -26,6 +26,16 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
 	self.m_MarkersAttached = false
+	self.m_BankAccountServer = BankServer.get("group")
+
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Group)
+	if not self.m_BankAccount then
+		outputServerLog("Create account for " .. self.m_Id .. " " .. inspect(self.m_BankAccount))
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.Group, self.m_Id)
+		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Group", "Migration")
+		self.m_Money = 0
+		self.m_BankAccount:save()
+	end
 
 	self.m_VehiclesSpawned = false
 
@@ -191,7 +201,6 @@ function Group:paydayPlayer(player)
 
 	if self:getMoney() < loan then loan = self:getMoney() end
 	if loan < 0 then loan = 0 end
-	self:takeMoney(loan, "Payday-Auszahlung")
 	return loan
 end
 
@@ -327,25 +336,29 @@ function Group:setPlayerLoanEnabled(playerId, state)
 end
 
 function Group:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
-
-function Group:giveMoney(amount, reason)
+--[[
+function Group:__giveMoney(amount, reason)
 	self:setMoney(self.m_Money + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
 end
 
-function Group:takeMoney(amount, reason)
+function Group:__takeMoney(amount, reason)
 	self:setMoney(self.m_Money - amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
 end
-
-function Group:setMoney(amount)
+]]
+function Group:transferMoney(toObject, amount, reason, category, subcategory)
+	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+end
+--[[
+function Group:__setMoney(amount)
 	self.m_Money = amount
 
 	sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
-
+]]
 function Group:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
@@ -431,16 +444,16 @@ function Group:sendShortMessage(text, ...)
 	end
 end
 
-function Group:distributeMoney(amount)
+function Group:distributeMoney(sender, amount, reason, category, subcategory)
 	local moneyForFund = amount * self.m_ProfitProportion
-	self:giveMoney(moneyForFund, "Gang/Firma")
+	sender:transferMoney(self, moneyForFund, reason, category, subcategory)
 
 	local moneyForPlayers = amount - moneyForFund
 	local onlinePlayers = self:getOnlinePlayers()
 	local amountPerPlayer = math.floor(moneyForPlayers / #onlinePlayers)
 
 	for k, player in pairs(onlinePlayers) do
-		player:giveMoney(amountPerPlayer, "Gang/Firma")
+		sender:transferMoney(player, amountPerPlayer, reason, category, subcategory)
 	end
 end
 
@@ -638,9 +651,9 @@ function Group:payDay(vehicleData)
 	sum = inc+out
 	table.insert(output, ("Gesamt: %d$"):format(sum))
 	if sum > 0 then
-		self:giveMoney(sum, "Payday")
+		self.m_BankAccountServer:transferMoney(self, sum, "Payday", "Group", "Payday")
 	elseif sum < 0 then
-		self:takeMoney(math.abs(sum), "Payday")
+		self:transferMoney(self.m_BankAccountServer, sum, "Payday", "Group", "Payday")
 	end
 	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then
@@ -656,4 +669,8 @@ function Group:payDay(vehicleData)
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
 	end
+end
+
+function Group:save()
+	self.m_BankAccount:save()
 end

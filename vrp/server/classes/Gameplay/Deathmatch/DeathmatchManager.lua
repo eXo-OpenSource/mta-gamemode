@@ -75,7 +75,7 @@ DeathmatchManager.Maps = {
 
 function DeathmatchManager:constructor()
 	self:loadServerLobbys()
-
+	self.m_BankServer = BankServer.get("gameplay.deathmatch")
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
@@ -181,7 +181,7 @@ end
 
 function DeathmatchManager:createPlayerLobby(map, weapon, password)
 	if client:getMoney() >= 500 then
-		client:takeMoney(500, "Deathmatch Lobby")
+		client:transferMoney(self.m_BankServer, 500, "Deathmatch Lobby", "Gameplay", "Deathmatch")
 		local lobbyName = ("%s´s Lobby"):format(client:getName())
 		self:createLobby(lobbyName, client, map, {weapon}, "default", 300, password)
 	else

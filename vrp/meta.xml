@@ -161,6 +161,7 @@
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
+	<script src="server/classes/Player/Bank/BankServer.lua" type="server"/>
 
 	<!-- UI -->
 	<script src="server/classes/UI/Blip.lua" type="server"/>

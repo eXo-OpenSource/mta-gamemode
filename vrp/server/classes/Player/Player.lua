@@ -882,6 +882,7 @@ function Player:payDay()
 		income_faction = self:getFaction():paydayPlayer(self)
 		points_total = points_total + self:getFaction():getPlayerRank(self)
 		if income_faction > 0 then
+			self:getFaction():transferMoney({self, true, true}, income_faction, ("Lohn für %s"):format(self:getName()), "Faction", "Loan")
 			income = income + income_faction
 			self:addPaydayText("income", _("%s-Lohn", self, self:getFaction():getShortName()), income_faction)
 		end
@@ -891,6 +892,7 @@ function Player:payDay()
 		points_total = points_total + self:getCompany():getPlayerRank(self)
 		if income_company > 0 then
 			income = income + income_company
+			self:getCompany():transferMoney({self, true, true}, income_company, ("Lohn für %s"):format(self:getName()), "Company", "Loan")
 			self:addPaydayText("income", _("%s-Lohn", self, self:getCompany():getShortName()), income_company)
 		end
 	end
@@ -899,12 +901,14 @@ function Player:payDay()
 		points_total = points_total + self:getGroup():getPlayerRank(self)
 		if income_group > 0 then
 			income = income + income_group
+			self:getGroup():transferMoney({self, true, true}, income_group, ("Lohn für %s"):format(self:getName()), "Group", "Loan")
 			self:addPaydayText("income", _("%s-Lohn", self, self:getGroup():getName()), income_group)
 		end
 	end
 
 	if EVENT_HALLOWEEN and self.m_HalloweenPaydayBonus then
 		income = income + self.m_HalloweenPaydayBonus
+		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus")
 		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
 	end
 
@@ -912,6 +916,7 @@ function Player:payDay()
 	if income_interest > 1500 then income_interest = 1500 end
 	if income_interest > 0 then
 		income = income + income_interest
+		BankServer.get("server.bank"):transferMoney({self, true, true}, income_interest, "Bankzinsen", "Bank", "Interest")
 		self:addPaydayText("income", _("Bankzinsen", self), income_interest)
 		points_total = points_total + math.floor(income_interest/500)
 	end
@@ -919,6 +924,7 @@ function Player:payDay()
 	--noob bonus
 	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME * 60 then
 		income = income + PAYDAY_NOOB_BONUS
+		BankServer.get("server.bank"):transferMoney({self, true, true}, PAYDAY_NOOB_BONUS, "Willkommens-Bonus", "Gameplay", "NoobBonus")
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end
 
@@ -928,6 +934,7 @@ function Player:payDay()
 	outgoing_vehicles, vehiclesTaxAmount = self:calcVehiclesTax()
 	if outgoing_vehicles > 0 then
 		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
+		self:transferBankMoney({BankServer.get("server.vehicle_tax"), nil, nil, true}, outgoing_vehicles, _("Fahrzeugsteuer", self), "Vehicle", "Tax")
 		temp_bank_money = temp_bank_money - outgoing_vehicles
 		points_total = points_total + vehiclesTaxAmount*2
 	end
@@ -936,11 +943,11 @@ function Player:payDay()
 		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
 		for index, house in pairs(houses) do
 			local rent = house:getRent()
-			if temp_bank_money - rent >= 0 then
+			if self:getBankMoney() - rent >= 0 then
 				outgoing_house = outgoing_house + rent
-				house.m_Money = house.m_Money + rent
 				temp_bank_money = temp_bank_money - rent
 				points_total = points_total + 1
+				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "Vehicle", "Tax")
 				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
@@ -954,8 +961,6 @@ function Player:payDay()
 	end
 
 	outgoing = outgoing_vehicles + outgoing_house
-
-	--FactionManager:getSingleton():getFromId(1):giveMoney(outgoing_vehicles, "Fahrzeugsteuer", true)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome", "", income)
@@ -971,12 +976,6 @@ function Player:payDay()
 	if self:getSTVO() > 0 then
 		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
 		self:setSTVO(self:getSTVO() - 1)
-	end
-
-	if total > 0 then
-		self:addBankMoney(total, "Payday", true, true)
-	else
-		self:takeBankMoney(-total, "Payday", true, true)
 	end
 
 	self:givePoints(points_total)
@@ -1033,9 +1032,9 @@ function Player:addCrime(crimeType)
 	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end
 
-function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__giveMoney(money, reason, bNoSound, silent) -- Overriden
 	if not money or money < 1 then return false end
-	local success = DatabasePlayer.giveMoney(self, money, reason)
+	local success = DatabasePlayer.__giveMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
@@ -1045,9 +1044,9 @@ function Player:giveMoney(money, reason, bNoSound, silent) -- Overriden
 	return success
 end
 
-function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__takeMoney(money, reason, bNoSound, silent) -- Overriden
 	if not money or money < 1 then return false end
-	local success = DatabasePlayer.takeMoney(self, money, reason)
+	local success = DatabasePlayer.__takeMoney(self, money, reason)
 	if success then
 		local money = math.abs(money)
 		if money ~= 0 and not silent then
@@ -1058,7 +1057,7 @@ function Player:takeMoney(money, reason, bNoSound, silent) -- Overriden
 	return success
 end
 
-function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__addBankMoney(money, reason, bNoSound, silent) -- Overriden
 	if not money or money < 1 then return false end
 	local success = DatabasePlayer.addBankMoney(self, money, reason)
 	if success then
@@ -1070,7 +1069,7 @@ function Player:addBankMoney(money, reason, bNoSound, silent) -- Overriden
 	return success
 end
 
-function Player:takeBankMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__takeBankMoney(money, reason, bNoSound, silent) -- Overriden
 	if not money or money < 1 then return false end
 	local success = DatabasePlayer.takeBankMoney(self, money, reason)
 	if success then
@@ -1173,25 +1172,25 @@ end
 function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
+		if type(amount) ~= "table" then amount = tonumber(amount) end
 		amount = tonumber(amount)
 		if amount then
-			amount = math.round(amount)
+			if type(amount) ~= "table" then amount = math.round(amount) end
 			if name == "money" then
-				if amount > 0 then
-					self:giveMoney(amount, reason, false, true)
-					smText = smText .. ("+%s\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeMoney(math.abs(amount), reason, false, true)
-					smText = smText .. ("%s\n"):format(toMoneyString(amount))
+				local prefix = amount.mode == "give" and "+" or ""
+				local bank = amount.bank and " (Konto)" or ""
+
+				if amount.mode == "give" then
+					amount.toOrFrom:transferMoney({player, amount.bank, true}, amount.amount, name, amount.cagegory, amount.subcategory)
+				else
+					if amount.bank then
+						player:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+					else
+						player:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+					end		
 				end
-			elseif name == "bankMoney" then
-				if amount > 0 then
-					self:addBankMoney(amount, reason, false, true)
-					smText = smText .. ("+%s (Konto)\n"):format(toMoneyString(amount))
-				elseif amount < 0 then
-					self:takeBankMoney(math.abs(amount), reason, false, true)
-					smText = smText .. ("%s (Konto)\n"):format(toMoneyString(amount))
-				end
+
+				smText = smText .. ("%s%s%s\n"):format(prefix, toMoneyString(amount), bank)
 			elseif name == "points" then
 				if amount > 0 then
 					self:givePoints(amount, reason, false, true)

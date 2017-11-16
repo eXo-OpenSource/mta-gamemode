@@ -16,6 +16,7 @@ function FireManager:constructor()
 	self.m_EnabledFires = {} -- just enabled fires which should be switched out randomly
 	
 	self.m_FireUpdateBind = bind(FireManager.checkFire ,self)
+	self.m_BankAccountServer = BankServer.get("action.fire")
 	self.m_FireTimer = setTimer(self.m_FireUpdateBind, 1000 * 60 * math.random(FIRE_TIME_MIN, FIRE_TIME_MAX), 1)
 
 	self.m_RandomFireStrings = { -- blablabla [...]
@@ -156,14 +157,21 @@ function FireManager:stopCurrentFire(stats)
 			for player, score in pairs(stats.pointsByPlayer) do
 				if isElement(player) then
 					player:giveCombinedReward("Feuer gelöscht", {
-						bankMoney = score*12,
+						money = {
+							mode = "give",
+							bank = true,
+							amount = score*12,
+							toOrFrom = self.m_BankAccountServer,
+							category = "Faction",
+							subcategory = "Fire"
+						},
 						karma = math.round(score/30),
 						points = math.round(score/10),
 					})
 					moneyForFaction = moneyForFaction + score*32
 				end
 			end
-			FactionRescue:getSingleton().m_Faction:giveMoney(moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht")
+			self.m_BankAccountServer(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht", "Event", "Fire")
 		end
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
