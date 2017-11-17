@@ -1942,13 +1942,19 @@
 	<vrpfile src="files/models/pumpkin.txd" />
 	<vrpfile src="files/models/pumpkin.dff" />
 	<vrpfile src="files/models/pumpkin.col" />
-	<vrpfile src="files/models/ghost.dff"/>
+	<!--<vrpfile src="files/models/ghost.dff"/>
 	<vrpfile src="files/models/ghost.txd"/>
 	<vrpfile src="files/models/headstone.txd" />
 	<vrpfile src="files/models/headstone.dff" />
 	<vrpfile src="files/models/headstone.col" />
-
+	-->
 	<!-- Halloween Event End-->
+
+	<!-- Crhistmas Event Start-->
+	<vrpfile src="files/models/XmasTree1.txd" />
+	<vrpfile src="files/models/XmasTree1.dff" />
+	<vrpfile src="files/models/XmasTree1.col" />
+	<!-- Crhistmas Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
 	<vrpfile src="files/models/fbi.dff" />
@@ -2041,6 +2047,8 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
+	<include resource="Snow" />
+
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
 

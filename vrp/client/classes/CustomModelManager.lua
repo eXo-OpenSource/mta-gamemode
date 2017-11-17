@@ -210,6 +210,12 @@ function CustomModelManager:constructor()
 		self:loadImportDFF("files/models/headstone.dff", 3878)
 	end
 
+	if EVENT_CHRISTMAS then
+		self:loadImportCOL("files/models/XmasTree1.col", 6972)
+		self:loadImportTXD("files/models/XmasTree1.txd", 6972)
+		self:loadImportDFF("files/models/XmasTree1.dff", 6972)
+	end
+
 	--Easter Event:
 	self:loadImportCOL("files/models/easter_egg.col", 1933)
 	self:loadImportTXD("files/models/easter_egg.txd", 1933)
