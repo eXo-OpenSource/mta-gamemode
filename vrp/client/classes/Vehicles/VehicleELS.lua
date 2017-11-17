@@ -47,7 +47,7 @@ function VehicleELS:internalAddELSLights(veh)
     if not veh.m_ELSLights then
         veh.m_ELSLights = {}
         for name, data in pairs(ELS_PRESET[VehicleELS.Map[veh]].light) do
-            veh.m_ELSLights[name] = createMarker(0, 0, 0, "corona", data[4], data[5], data[6], data[7], 255)-- CustomCorona:new(data[1], data[2], data[3], data[4], data[5], data[6], data[7], 255)
+            veh.m_ELSLights[name] = createMarker(0, 0, 0, "corona", data[4], data[5], data[6], data[7], data[8] or 255)
             veh.m_ELSLights[name]:attach(veh, data[1], data[2], data[3])
         end
         veh.m_ELSTimer = setTimer(VehicleELS.update, ELS_PRESET[VehicleELS.Map[veh]].sequenceDuration, 0, veh)
@@ -65,7 +65,7 @@ function VehicleELS:internalRemoveELSLights(veh)
 end
 
 function VehicleELS.update(veh)
-    if VehicleELS.ActiveMap then
+    if VehicleELS.ActiveMap[veh] then
         if not veh or not isElement(veh) then
             return VehicleELS:getSingleton():internalRemoveELSLights(veh)
         end
@@ -75,12 +75,30 @@ function VehicleELS.update(veh)
                 if tblChanges.color ~= nil then
                     veh.m_ELSLights[name]:setColor(unpack(tblChanges.color))
                 end
+                if tblChanges.alpha ~= nil then
+                    local r,g,b = veh.m_ELSLights[name]:getColor()
+                    veh.m_ELSLights[name]:setColor(r,g,b, tblChanges.alpha or 255)
+                end
                 if tblChanges.fade ~= nil then
                     if not tblChanges.fade[2] then tblChanges.fade[2] = ELS_PRESET[VehicleELS.Map[veh]].sequenceDuration end
                     CoronaEffect.add(veh.m_ELSLights[name], "fade", tblChanges.fade)
                 end
+                if tblChanges.strobe ~= nil then
+                    if not tblChanges.strobe or type(tblChanges.strobe) ~= "table" then
+                        if CoronaEffect.Map[veh.m_ELSLights[name]] then
+                            veh.m_ELSLights[name]:setColor(unpack(CoronaEffect.Map[veh.m_ELSLights[name]].color)) -- reset color
+                        end
+                        CoronaEffect.remove(veh.m_ELSLights[name])
+                    else
+                        if not tblChanges.strobe[3] then tblChanges.strobe[3] = 255 end
+                        if not tblChanges.strobe[4] then tblChanges.strobe[4] = 0 end
+                        CoronaEffect.add(veh.m_ELSLights[name], "strobe", tblChanges.strobe)
+                    end
+                end
             end
         end
         VehicleELS.ActiveMap[veh] = (VehicleELS.ActiveMap[veh]) % ELS_PRESET[VehicleELS.Map[veh]].sequenceCount  + 1
+    else
+        self:internalRemoveELSLights(veh)
     end
 end
