@@ -23,7 +23,7 @@ function LocalPlayer:constructor()
 	self.m_CurrentAFKTime = 0
 	self.m_AFKTime = 0
 	self.m_AFKStartTime = 0
-
+	self.m_LastMortemPickup = getTickCount()
 	self.m_LastPositon = self:getPosition()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	self.m_FadeOut = bind(self.fadeOutScope, self)
@@ -490,8 +490,11 @@ function LocalPlayer:renderPedNameTags()
 		end
 		if self.m_MortemWeaponPickup then -- better solution would be key-binds, but this is easy and safe
 			if getKeyState("lalt") and getKeyState("m") then
-				triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
-				self.m_MortemWeaponPickup = false
+				if self.m_LastMortemPickup < getTickCount()-4000 then
+					triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
+					self.m_MortemWeaponPickup = false
+					self.m_LastMortemPickup = getTickCount()
+				end
 			end
 		end
 	end
