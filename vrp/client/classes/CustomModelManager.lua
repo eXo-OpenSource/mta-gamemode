@@ -214,6 +214,10 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/XmasTree1.col", 6972)
 		self:loadImportTXD("files/models/XmasTree1.txd", 6972)
 		self:loadImportDFF("files/models/XmasTree1.dff", 6972)
+
+		self:loadImportCOL("files/models/XmasBox.col", 3878)
+		self:loadImportTXD("files/models/XmasBox.txd", 3878)
+		self:loadImportDFF("files/models/XmasBox.dff", 3878)
 	end
 
 	--Easter Event:

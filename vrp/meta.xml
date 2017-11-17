@@ -1950,11 +1950,15 @@
 	-->
 	<!-- Halloween Event End-->
 
-	<!-- Crhistmas Event Start-->
+	<!-- Christmas Event Start-->
 	<vrpfile src="files/models/XmasTree1.txd" />
 	<vrpfile src="files/models/XmasTree1.dff" />
 	<vrpfile src="files/models/XmasTree1.col" />
-	<!-- Crhistmas Event End-->
+
+	<vrpfile src="files/models/XmasBox.txd" />
+	<vrpfile src="files/models/XmasBox.dff" />
+	<vrpfile src="files/models/XmasBox.col" />
+	<!-- Christmas Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
 	<vrpfile src="files/models/fbi.dff" />
