@@ -89,7 +89,6 @@ function AttackClient:destructor()
 		setTimer( func, 5000, 1)
 	end
 	destroyQuestionBox() 
-	GangwarStatistics:getSingleton():sendData( self.m_GangwarDamage, self.m_AreaID)
 end 
 
 function AttackClient:synchronizeLists( pParticipants, pDisqualified )

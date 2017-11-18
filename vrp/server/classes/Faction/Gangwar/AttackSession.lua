@@ -58,12 +58,14 @@ end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
-		v.kills = 0
+		v.g_kills = 0
+		v.g_damage = 0
 		v.m_IsDeadInGangwar = false
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
-		v.kills = 0
+		v.g_kills = 0
+		v.g_damage = 0
 		v.m_IsDeadInGangwar = false
 	end
 	self:synchronizeAllParticipants( )
@@ -106,6 +108,8 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 		end
 		self:synchronizeLists( )
 		player:triggerEvent("GangwarQuestion:new")
+		player.g_damage = 0 
+		player.g_kills = 0
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 	end
@@ -186,10 +190,15 @@ end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
-		local basicDamage = WEAPON_DAMAGE[weapon]
+		local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
 		local multiplier = DAMAGE_MULTIPLIER[bpart] and DAMAGE_MULTIPLIER[bpart] or 1
 		local realLoss = basicDamage*multiplier
-		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss or loss)
+		local health = getElementHealth(target)
+		if realLoss > health then 
+			realLoss = health
+		end
+		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss)
+		source.g_damage = source.g_damage + realLoss
 	end
 end
 
@@ -220,18 +229,17 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 			if bParticipant2 then
 				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
-				self:disqualifyPlayer( player )
-				local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
-				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-				local realLoss = basicDamage*multiplier
-				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, realLoss or 0 )
-				self:onPlayerLeaveCenter( player ) -- check if the player at the attack-flag died
+				local loss = player.m_LossBeforeDead or 0
+				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
+				self:onPlayerLeaveCenter( player ) 
+				killer.g_damage = killer.g_damage + loss
 				player.m_IsDeadInGangwar = true
+				self:disqualifyPlayer( player )
 			end
-			if killer.kills then 
-				killer.kills = killer.kills + 1
+			if killer.g_kills then 
+				killer.g_kills = killer.g_kills + 1
 			else 
-				killer.kills = 1 
+				killer.g_kills = 1 
 			end
 		else
 			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
@@ -289,16 +297,16 @@ function AttackSession:notifyFactions()
 end
 
 function AttackSession:stopClients()
-	local receiveTimeout = 0
+	local allGangwarPlayers = {}
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		receiveTimeout = receiveTimeout +1
+		allGangwarPlayers[#allGangwarPlayers+1] = v
 	end
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		receiveTimeout = receiveTimeout + 1
+		allGangwarPlayers[#allGangwarPlayers+1] = v
 	end
-	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )
+	GangwarStatistics:getSingleton():collectDamage(self.m_AreaObj.m_ID, allGangwarPlayers)
 end
 
 function AttackSession:notifyFaction1( )

@@ -17,11 +17,6 @@ function GangwarStatistics:constructor()
 	addEventHandler("GangwarStatistics:clientGetMVP", localPlayer, bind( self.Event_GetMVP, self))
 end
 
-
-function GangwarStatistics:sendData( damage, areaID, kill )
-	triggerServerEvent("gwClientGetDamage", localPlayer, areaID, damage, kill)
-end
-
 function GangwarStatistics:Event_GetMVP( t )
 	self.m_MVP = t
 	if self.m_DrawingMVP then 
