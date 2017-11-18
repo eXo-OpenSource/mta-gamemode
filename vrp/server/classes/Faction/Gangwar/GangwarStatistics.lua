@@ -7,7 +7,6 @@
 -- ****************************************************************************
 
 GangwarStatistics = inherit(Singleton)
-addRemoteEvents{"gwClientGetDamage"}
 function GangwarStatistics:constructor() 
 	self.m_CollectorMap =  {}
 	self.m_CollectorTimeouts =  {}
@@ -24,7 +23,6 @@ function GangwarStatistics:constructor()
 			end
 		end
 	end
-	addEventHandler("gwClientGetDamage", root, bind( self.addDamageToCollector, self))
 end
 
 function GangwarStatistics:newCollector( mAreaID )
@@ -41,29 +39,29 @@ function GangwarStatistics:stopAndOutput( mAreaID )
 	self:addNewEntry( bestTable[1][1] )
 end
 
-function GangwarStatistics:setCollectorTimeout( mAreaID, timeout )
-	self.m_CollectorTimeouts[mAreaID] = timeout
+function GangwarStatistics:collectDamage(mAreaID, facPlayers)
+	local damage, moneyDamage, moneyKill, player, kill
+	for i = 1, #facPlayers do 
+		player = facPlayers[i]
+		if player and isElement(player) then
+			damage = math.ceil(player.g_damage or 0)
+			kill = 0
+			if player.g_kills then
+				if tonumber(player.g_kills) then 
+					kill = tonumber(player.g_kills)
+				end
+			end
+			moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
+			moneyKill = kill * GANGWAR_PAY_PER_KILL
+			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)
+			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",client,200,200,0,true)
+			player:giveMoney(moneyDamage+moneyKill,"Gangwar-Boni")
+			self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { player, damage}
+		end
+	end
+	self:stopAndOutput( mAreaID )
 end
 
-function GangwarStatistics:addDamageToCollector( mAreaID, damage )
-	if client == source then
-		local kill = 0
-		if client.kills then
-			if tonumber(client.kills) then 
-				kill = tonumber(client.kills)
-			end
-		end
-		local moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
-		local moneyKill = kill * GANGWAR_PAY_PER_KILL
-		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)
-		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",client,200,200,0,true)
-		self.m_BankAccountServer:transferMoney(client, moneyDamage+moneyKill, "Gangwar-Boni", "Faction", "GangwarBoni")
-		self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { client, damage}
-		if #self.m_CollectorMap[mAreaID] == self.m_CollectorTimeouts[mAreaID] then 
-			self:stopAndOutput( mAreaID )
-		end
-	end 
-end
 
 function GangwarStatistics:getBestOfCollector( mAreaID )
 	table.sort( self.m_CollectorMap[mAreaID] , function( a ,b ) return a[2] > b[2] end)

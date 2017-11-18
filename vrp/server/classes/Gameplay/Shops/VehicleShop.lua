@@ -95,7 +95,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
 	else
-		player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", player))
+		player:sendError(_("Du hast keinen freien Fahrzeug-Slot! Erhöhe dein Fahrzeuglevel! (%d/%d)", player, #player:getVehicles(), math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel())))
 	end
 end
 

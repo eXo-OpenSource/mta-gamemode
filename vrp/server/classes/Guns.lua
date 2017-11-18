@@ -261,6 +261,7 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setArmor(0)
 
 			if health - loss <= 0 then
+				player.m_LossBeforeDead = loss
 				self:killPed(player, attacker, weapon, bodypart)
 			else
 				player:setHealth(health-loss)
@@ -268,6 +269,7 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		end
 	else
 		if player:getHealth()-loss <= 0 then
+			player.m_LossBeforeDead = loss
 			self:killPed(player, attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)
