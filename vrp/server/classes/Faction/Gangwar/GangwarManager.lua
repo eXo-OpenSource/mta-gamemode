@@ -10,7 +10,7 @@ Gangwar = inherit(Singleton)
 
 
 --// RESET VARIABLE //
-GANGWAR_RESET_AREAS = true --// NUR IM FALLE VON GEBIET-RESET
+GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 
 
 --// Gangwar - Constants //--
