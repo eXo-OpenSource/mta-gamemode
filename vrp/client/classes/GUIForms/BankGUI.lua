@@ -48,7 +48,7 @@ function BankGUI:constructor()
 
 	local donate = {}
 	donate["San News"] = GUIButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Green):setBarEnabled(true)
-	donate["eXo Event-Team"] = GUIButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"San News", self.m_TabTransfer):setBackgroundColor(Color.Yellow):setBarEnabled(true)
+	donate["eXo Event-Team"] = GUIButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"eXo Event-Team", self.m_TabTransfer):setBackgroundColor(Color.Yellow):setBarEnabled(true)
 
 	for index, btn in pairs(donate) do
 		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
