@@ -460,7 +460,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	end
 
 	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
-		error("BankAccount.transferMoney @ Target is missing")
+		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
 	end
 	
 	isPlayer = instanceof(targetObject, DatabasePlayer)
@@ -509,8 +509,8 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	return true
 end
 
-function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory)
-	return self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory)
+function DatabasePlayer:transferBankMoney(...)
+	return self:getBankAccount():transferMoney(...)
 end
 
 function DatabasePlayer:setXP(xp)

@@ -338,17 +338,18 @@ end
 function Group:getMoney()
 	return self.m_BankAccount:getMoney()
 end
---[[
+
 function Group:__giveMoney(amount, reason)
 	self:setMoney(self.m_Money + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
+    return self.m_BankAccount:__giveMoney(amount, reason)
 end
 
 function Group:__takeMoney(amount, reason)
-	self:setMoney(self.m_Money - amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
+    return self.m_BankAccount:__takeMoney(amount, reason)
 end
-]]
+
 function Group:transferMoney(toObject, amount, reason, category, subcategory)
 	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end

@@ -303,17 +303,17 @@ end
 function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
---[[
+
 function Faction:__giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:__addMoney(amount, reason, silent)
+	return self.m_BankAccount:__giveMoney(amount, reason, silent)
 end
 
 function Faction:__takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
 	return self.m_BankAccount:__takeMoney(amount, reason, silent)
 end
-]]
+
 function Faction:transferMoney(toObject, amount, reason, category, subcategory)
 	self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end

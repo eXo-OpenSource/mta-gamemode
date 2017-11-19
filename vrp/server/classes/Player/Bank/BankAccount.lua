@@ -189,7 +189,7 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 	end
 
 	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
-		error("BankAccount.transferMoney @ Target is missing")
+		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
 	end
 	
 	isPlayer = instanceof(targetObject, DatabasePlayer)
