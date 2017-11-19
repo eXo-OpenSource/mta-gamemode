@@ -1,13 +1,23 @@
 QuestManager = inherit(Singleton)
 QuestManager.Quests = {
-
+	[2] = {
+		["Name"] = "Weihnachts-Fotograf",
+		["Description"] = "Schieße ein Foto mit mindestens 10 Spielern darauf!",
+		["Packages"] = 5,
+	}
 }
 
-function QuestManager:constructor(Id)
+function QuestManager:constructor()
 	self.m_Quests = {
 		[2] = QuestPhotography
 	}
 	self.m_CurrentQuest = false
+
+	--DEV:
+	self:startQuest(2)
+
+	addRemoteEvents{"questOnPedClick"}
+	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
 end
 
 function QuestManager:startQuest(questId)
@@ -15,6 +25,29 @@ function QuestManager:startQuest(questId)
 	if self.m_CurrentQuest then self:stopQuest() end
 
 	self.m_CurrentQuest = self.m_Quests[questId]:new(questId)
+end
+
+function QuestManager:startQuestForPlayer(player)
+	if table.find(self.m_CurrentQuest:getPlayers(), player) then
+		player:sendError("Du hast den Quest bereits gestartet!")
+		return
+	end
+	self.m_CurrentQuest:addPlayer(player)
+end
+
+function QuestManager:endQuestForPlayer(player)
+	self.m_CurrentQuest:removePlayer(removePlayer)
+end
+
+function QuestManager:onPedClick()
+	if not self.m_CurrentQuest then
+		client:sendError("Aktuell läuft kein Quest!")
+		return false
+	end
+
+	QuestionBox:new(client, client, "Development: Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." starten?", function()
+		self:startQuestForPlayer(client)
+	end)
 end
 
 function QuestManager:stopQuest()
@@ -41,7 +74,7 @@ Quest System:
 13.) Bringe ein Geschenkspapier zum Weihnachtsmann
 14.) Spiele 5x am Glücksrad
 15.) Schaffe den Parcour (gemapt)
-16.) Mache ein Foto mit mindestens 10 Spielern auf dem Bild
+16.) Mache ein Foto mit mindestens 5 Spielern mit Mütze auf dem Bild
 17.) Bringe den Weihnachtsmann an einem Punkt
 18.) Bringe das Päckchen an einen Abgabeort
 19.) Töte 3 Weihnachtsmänner (Spawnen an NPC-Positionen)

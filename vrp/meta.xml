@@ -852,6 +852,8 @@
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
