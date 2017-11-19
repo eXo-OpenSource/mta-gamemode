@@ -39,7 +39,7 @@ function GangwarStatistics:renderMVP()
 	if self.m_MVP then 
 		dxDrawImage(bx, moveBy, width,height, "files/images/Gangwar/tile.png",0,0,0,tocolor(0,200,200,alpha2))
 		dxDrawBoxShape(bx, moveBy, width,height, tocolor(0,0,0,alpha),2)
-		dxDrawImage(bx+width*0.85, moveBy-height*0.2, width*0.15,height*0.37, "files/images/Gangwar/trophy.png")
+		dxDrawImage(bx+width*0.85, moveBy-height*0.2, width*0.15,height*0.43, "files/images/Gangwar/trophy.png")
 		dxDrawShadowText("Beste Spieler:", bx+width*0.05, moveBy-self.dxFontHeight, width, self.dxFontHeight, 1,1,tocolor(150,150,150,alpha),tocolor(0,0,0,alpha),2,"default","left","top")
 		for i = 1, MVPCOUNT do 
 			if self.m_MVP[i] then 
@@ -53,7 +53,7 @@ function GangwarStatistics:renderMVP()
 			end
 		end
 	end
-	if now - self.m_DrawStartTick >= 15000 then 
+	if now - self.m_DrawStartTick >= 20000 then 
 		self.m_DrawingMVP = false
 		removeEventHandler("onClientRender", root, self.m_RenderFunc)
 	end

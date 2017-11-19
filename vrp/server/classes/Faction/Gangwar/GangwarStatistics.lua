@@ -52,8 +52,8 @@ function GangwarStatistics:collectDamage(mAreaID, facPlayers)
 			end
 			moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
 			moneyKill = kill * GANGWAR_PAY_PER_KILL
-			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)
-			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",client,200,200,0,true)
+			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",player,200,200,0,true)
+			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",player,200,200,0,true)
 			player:giveMoney(moneyDamage+moneyKill,"Gangwar-Boni")
 			self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { player, damage}
 		end

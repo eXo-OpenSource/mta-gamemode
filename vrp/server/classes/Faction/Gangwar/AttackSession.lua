@@ -35,6 +35,14 @@ function AttackSession:destructor()
 	if isTimer( self.m_WeaponBoxTimer ) then
 		killTimer( self.m_WeaponBoxTimer )
 	end
+	local bCenterTimer = isTimer( self.m_HoldCenterTimer )
+	local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
+	if bCenterTimer then
+		killTimer( self.m_HoldCenterTimer )
+	end
+	if bNotifyTimer then
+		killTimer( self.m_NotifiyAgainTimer )
+	end
 	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
@@ -198,7 +206,7 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 			realLoss = health
 		end
 		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss)
-		source.g_damage = source.g_damage + realLoss
+		source.g_damage = source.g_damage + math.floor(realLoss)
 	end
 end
 
@@ -232,7 +240,7 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 				local loss = player.m_LossBeforeDead or 0
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
 				self:onPlayerLeaveCenter( player ) 
-				killer.g_damage = killer.g_damage + loss
+				killer.g_damage = killer.g_damage + math.floor(loss)
 				player.m_IsDeadInGangwar = true
 				self:disqualifyPlayer( player )
 			end
@@ -310,7 +318,9 @@ function AttackSession:stopClients()
 end
 
 function AttackSession:notifyFaction1( )
-	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt nur noch "..math.floor(GANGWAR_CENTER_TIMEOUT/2).." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+	if self:backupCenterCheck() then 
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt nur noch "..math.floor(GANGWAR_CENTER_TIMEOUT/2).." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+	end
 end
 
 function AttackSession:checkPlayersInCenter( )
@@ -323,7 +333,7 @@ function AttackSession:checkPlayersInCenter( )
 		dim2 = getElementDimension( player )
 		int2 = getElementInterior( player )
 		if dim == dim2 and int == int2 then
-			if not isPedDead( player ) and not player.m_IsDeadInGangwar then
+			if not isPedDead( player ) and not player.m_IsDeadInGangwar and self:isParticipantInList(player) then
 				faction = player.m_Faction
 				if faction == self.m_Faction1 then
 					return true
@@ -334,14 +344,44 @@ function AttackSession:checkPlayersInCenter( )
 	return false
 end
 
+function AttackSession:backupCenterCheck() 
+	local pTable = self.m_Faction1:getOnlinePlayers()
+	local faction
+	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
+	local dim2, int2
+	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
+	local pX, pY, pZ = getElementPosition(self.m_AreaObj.m_CenterSphere)
+	local x,y,z, dist
+	for key, player in ipairs( pTable ) do
+		x,y,z = getElementPosition(player)
+		dim2 = getElementDimension( player )
+		int2 = getElementInterior( player )
+		if dim == dim2 and int == int2 then
+			if not isPedDead( player ) and not player.m_IsDeadInGangwar and self:isParticipantInList(player) then
+				faction = player.m_Faction
+				if faction == self.m_Faction1 then
+					dist = math.floor(getDistanceBetweenPoints3D(pX, pY, pZ, x, y, z))
+					if dist >  GANGWAR_CENTER_HOLD_RANGE then
+						return true
+					end
+				end
+			end
+		end
+	end
+	return false
+end
 
 function AttackSession:attackLose() --// loose for team1
+	if self.endReason == 3 then 
+		if not self:backupCenterCheck() then 
+			return
+		end
+	end
 	self:notifyFactions()
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
 		v:givePoints(20)
 	end
 	self.m_AreaObj:update()
-
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet wurde verteidigt!",0,180,40,true)
 	self:logSession(self.m_Faction2)
