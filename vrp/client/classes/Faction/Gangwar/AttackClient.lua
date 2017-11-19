@@ -11,7 +11,7 @@ local REPORT_LAST_KILL = false
 AttackClient = inherit(Object)
 local pseudoSingleton
 addRemoteEvents{"onGangwarDamage", "onGangwarKill"}
-
+local clearTimer = nil
 function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush) 
 	REPORT_LAST_KILL = false
 	self.m_Faction = faction1 
@@ -23,6 +23,9 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_GangwarKill = 0
 	self.m_NoRush = bIsNoRush
 	self.m_AreaID = pAreaID
+	if isTimer(clearTimer) then 
+		killTimer(clearTimer) 
+	end
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	self.m_DamageFunc = bind( AttackClient.addDamage, self)
 	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
@@ -86,7 +89,7 @@ end
 function AttackClient:destructor() 
 	if self.m_Display then 
 		local func = function() self.m_Display:delete() end 
-		setTimer( func, 5000, 1)
+		clearTimer = setTimer( func, 5000, 1)
 	end
 	destroyQuestionBox() 
 end 
