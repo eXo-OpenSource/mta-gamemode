@@ -1,11 +1,12 @@
 ChessSession = inherit(Singleton)
 function ChessSession:constructor( )
-	addRemoteEvents{"onClientChessStart", "onClientChessStop", "onClientChessUpdate","onClientChessPieceBeat", "onClientChessClockUpdate"}
+	addRemoteEvents{"onClientChessStart", "onClientChessStop", "onClientChessUpdate","onClientChessPieceBeat", "onClientChessClockUpdate", "onClientChessChoosePawnRank"}
 	addEventHandler("onClientChessStart", localPlayer, bind(ChessSession.Event_startGame,self))
 	addEventHandler("onClientChessUpdate", localPlayer, bind(ChessSession.Event_updateGame,self))
 	addEventHandler("onClientChessStop", localPlayer, bind(ChessSession.Event_endGame,self))
 	addEventHandler("onClientChessPieceBeat", localPlayer, bind(ChessSession.Event_onBeatPiece, self))
 	addEventHandler("onClientChessClockUpdate", localPlayer, bind (ChessSession.Event_onClockUpdate, self))
+	addEventHandler("onClientChessChoosePawnRank", localPlayer, bind (ChessSession.Event_onChessPawnRankUp, self))
 end
 
 function ChessSession:clear()
@@ -47,6 +48,13 @@ function ChessSession:Event_onClockUpdate( turn, mTable )
 		self.m_ChessGraphics.m_Clock:update( turn, mTable)
 	end
 end
+
+function ChessSession:Event_onChessPawnRankUp( pieceIndex, team ) 
+	if self.m_ChessGraphics then 
+		self.m_ChessGraphics:startPawnSelection( pieceIndex, team ) 
+	end
+end
+
 function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)
 	localPlayer.m_InChessGame = true
 	self.m_Team = localTeam

@@ -43,6 +43,17 @@ function ChessSession:movePlayerPiece( player, fromIndex, toIndex, team)
 	end
 end
 
+function ChessSession:rankUpPawn( player, toIndex, piece, team ) 
+	if self.m_LogicHandler then
+		if self.m_Turn == player then
+			self.m_LogicHandler:setIndexPiece( toIndex, piece, team)
+			self:onUpdateField(self.m_LogicHandler.m_FieldMatrix, true, toIndex, toIndex, team)
+			self:nextTurn()
+		end
+	end
+end
+
+
 function ChessSession:onUpdateField( fMatrix, sound , from, to, team)
 	if CHESS_DEBUG then
 		triggerClientEvent("onClientChessUpdate", self.m_Players[1], fMatrix)
@@ -68,7 +79,11 @@ function ChessSession:endGame( winner, reason )
 	delete(self)
 end
 
-function ChessSession:nextTurn()
+function ChessSession:nextTurn(isPawnRankUp, playerToSelect)
+	if isPawnRankUp and playerToSelect then 
+		triggerClientEvent("onClientChessChoosePawnRank", self.m_Players[playerToSelect], isPawnRankUp, playerToSelect)
+		return
+	end
 	if self.m_Turn then
 		if self.m_Players then
 			if self.m_Turn == self.m_Players[2] then
@@ -84,7 +99,7 @@ function ChessSession:nextTurn()
 		self.m_Turn = self.m_Players[1]
 		if self.m_IsSpeedChess then
 			if self.m_Players and not self.m_End then
-				if self.m_Players[1] then
+				if self.m_Players[1] then	
 					triggerClientEvent("onClientChessClockUpdate", self.m_Players[1], self.m_Turn , self.m_TimeTable)
 				end
 				if self.m_Players[2] then

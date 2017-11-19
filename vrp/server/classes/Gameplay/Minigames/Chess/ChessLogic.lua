@@ -67,10 +67,12 @@ function ChessLogic:movePiece( fromIndex, toIndex, team )
 			self:onBeatenPiece( piece2[1], piece2[2], piece[1], piece[2])
 		end
 	end
+	local isPawnRankUp = false
 	if piece[1] == 6 and ( (piece[2] == 1 and toIndex <= 8) or ( piece[2] == 2 and toIndex > 56)) then 
-		self:setIndexPiece( toIndex, piece2[1], piece[2])
+		self:setIndexPiece( toIndex, 2, piece[2])
+		isPawnRankUp = toIndex
 	end
-	self.m_Super:nextTurn()
+	self.m_Super:nextTurn(isPawnRankUp, team)
 	self.m_Super:onUpdateField(self.m_FieldMatrix, true, fromIndex, toIndex, team)
 	if piece2[1] == 1 then 
 		self.m_Super:onKingFall( piece2[2] )
