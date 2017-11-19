@@ -1,11 +1,12 @@
 ChessSessionManager = inherit(Singleton)
 
-addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline"}
+addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline", "onServerGetChessPawnSelection"}
 
 
 function ChessSessionManager:constructor()
 	self.m_Map = {	}
-	addEventHandler("onServerGetChessMove",root, bind(ChessSessionManager.Event_GetChessMove,self))
+	addEventHandler("onServerGetChessMove", root, bind(ChessSessionManager.Event_GetChessMove, self))
+	addEventHandler("onServerGetChessPawnSelection", root, bind(ChessSessionManager.Event_GetPawnSelection, self))
 	addEventHandler("onServerGetSurrender", root, bind(ChessSessionManager.Event_GetSurrender, self))
 end
 
@@ -32,6 +33,17 @@ function ChessSessionManager:Event_GetChessMove( toIndex, fromIndex, team)
 			local gObject = self:getPlayerGame( client )
 			if gObject then
 				gObject:movePlayerPiece( client, toIndex, fromIndex, team)
+			end
+		end
+	end
+end
+
+function ChessSessionManager:Event_GetPawnSelection( toIndex, pieceSelection, team ) 
+	if client then
+		if client == source then
+			local gObject = self:getPlayerGame( client )
+			if gObject then
+				gObject:rankUpPawn( client, toIndex, pieceSelection, team)
 			end
 		end
 	end

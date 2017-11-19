@@ -1,6 +1,10 @@
 ChessGraphics = inherit(Object)
 local w,h = guiGetScreenSize()
 local BEAT_ICON_SIZE = w*0.1
+local centerX = (CHESS_CONSTANT.START_X + CHESS_CONSTANT.WIDTH*0.5) 
+local centerY = (CHESS_CONSTANT.START_Y + CHESS_CONSTANT.HEIGHT*0.5)
+local imageWidth = CHESS_CONSTANT.WIDTH*0.15
+
 function ChessGraphics:constructor( team, super )
 	self.m_Super = super
 	self.m_TimeData = super.m_TimeData
@@ -65,6 +69,7 @@ function ChessGraphics:draw()
 	if self.m_EndReason and self.m_Loser then
 		self:drawEndReason()
 	end
+	self:drawPawnSelection() 
 end
 
 function ChessGraphics:drawEndReason( )
@@ -114,6 +119,23 @@ function ChessGraphics:drawButtons()
 	dxDrawImage(CHESS_CONSTANT.CLOCK_X+CHESS_CONSTANT.CLOCK_WIDTH*1.2,CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.1,CHESS_CONSTANT.TILE_SIZE*0.8,CHESS_CONSTANT.TILE_SIZE*0.8,CHESS_CONSTANT.PATH.."white-flag.png",self.m_SurrenderFlagRotation or 0,0,0,self.m_SurrenderFlagColor or tocolor(255,255,255,255))
 	if self.m_GameOver then
 		dxDrawImage(CHESS_CONSTANT.CLOCK_X-CHESS_CONSTANT.TILE_SIZE*1.1,CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.1,CHESS_CONSTANT.TILE_SIZE*0.8,CHESS_CONSTANT.TILE_SIZE*0.8,CHESS_CONSTANT.PATH.."exit.png",0,0,0,self.m_CloseFlagColor or tocolor(200,200,200,255))
+	end
+end
+
+function ChessGraphics:drawPawnSelection() 
+	if self.m_DrawPawnSelection then 
+
+		dxDrawRectangle(centerX-imageWidth*1.1, centerY-imageWidth*0.6, imageWidth*2.2, imageWidth*1.3, tocolor(0, 0, 0, 255))
+		
+		dxDrawImage(centerX-imageWidth, centerY-imageWidth*0.5,  imageWidth, imageWidth,  CHESS_CONSTANT.PATH.."tile.png", 0, 0, 0, tocolor(244, 125, 66, 255))
+		dxDrawImage(centerX-imageWidth, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH..CHESS_CONSTANT.CHESS_URL[2]..".png")
+		
+		dxDrawImage(centerX+imageWidth*0.05, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH.."tile.png", 0, 0, 0, tocolor(244, 125, 66, 255))
+		dxDrawImage(centerX+imageWidth*0.05, centerY-imageWidth*0.5,  imageWidth, imageWidth, CHESS_CONSTANT.PATH..CHESS_CONSTANT.CHESS_URL[5]..".png")
+		
+		dxDrawText("Tausche die Figur aus! (Autom. Dame)", centerX-imageWidth*1.1, centerY-imageWidth*0.7+1, centerX*2, centerY-imageWidth*0.6+1, tocolor(0, 0, 0, 255), 1, "default-bold", "left", "top")
+		dxDrawText("Tausche die Figur aus! (Autom. Dame)", centerX-imageWidth*1.1, centerY-imageWidth*0.7, centerX*2, centerY-imageWidth*0.6, tocolor(255, 255, 255, 255), 1, "default-bold", "left", "top")
+		
 	end
 end
 
@@ -191,10 +213,12 @@ function ChessGraphics:click( button, state)
 	if button == "left" and state == "up" then
 		if self.m_CurrentCursorTile then
 			self:onClick()
-			self.m_CurrentCursorTile:onClick()
-			self.m_LastClick = self.m_CurrentCursorTile
-			self:showAvailableMoves()
-			local c,r = ChessRule:getSingleton():getFieldPieceRow( self.m_CurrentCursorTile.m_Index )
+			if not self.m_DrawPawnSelection then 
+				self.m_CurrentCursorTile:onClick()
+				self.m_LastClick = self.m_CurrentCursorTile
+				self:showAvailableMoves()
+				local c,r = ChessRule:getSingleton():getFieldPieceRow( self.m_CurrentCursorTile.m_Index )
+			end
 		end
 	elseif button == "right" and state == "up" then
 		if self.m_LastClick then
@@ -214,9 +238,33 @@ function ChessGraphics:onClick()
 					self.m_Super:onSurrenderClick()
 				end
 			end
-			if cx >= CHESS_CONSTANT.CLOCK_X- CHESS_CONSTANT.TILE_SIZE*1.1 and cx <= CHESS_CONSTANT.CLOCK_X- CHESS_CONSTANT.TILE_SIZE*0.3 then
-				if cy >= CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.1 and cy <= CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.9 then
-					delete(self)
+			if self.m_GameOver then
+				if cx >= CHESS_CONSTANT.CLOCK_X- CHESS_CONSTANT.TILE_SIZE*1.1 and cx <= CHESS_CONSTANT.CLOCK_X- CHESS_CONSTANT.TILE_SIZE*0.3 then
+					if cy >= CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.1 and cy <= CHESS_CONSTANT.CLOCK_Y+CHESS_CONSTANT.TILE_SIZE*0.9 then
+						delete(self)
+					end
+				end
+			end
+			if self.m_DrawPawnSelection then 
+				local hasSelectedPawn = false 
+				local selectionPiece = 2
+				if cx >= centerX-imageWidth and cx <= centerX then
+					if cy >= centerY-imageWidth*0.5 and cy <= centerY + imageWidth*0.5 then
+						selectionPiece = 2
+						hasSelectedPawn = true
+					end
+				end
+				if cx >= centerX and cx <= centerX+imageWidth then
+					if cy >= centerY-imageWidth*0.5 and cy <= centerY + imageWidth*0.5 then
+						selectionPiece = 5
+						hasSelectedPawn = true
+					end
+				end
+				if hasSelectedPawn then 
+					if self.m_SelectionTimeout then 
+						killTimer(self.m_SelectionTimeout) 
+					end 
+					self:Event_PawnSelectionConfirm( selectionPiece ) 
 				end
 			end
 		end
@@ -369,4 +417,30 @@ function ChessGraphics:setCurrentCursorTile( tile )
 	if self.m_CurrentCursorTile ~= tile then
 		self.m_CurrentCursorTile = tile
 	end
+end
+
+function ChessGraphics:startPawnSelection( indexPiece, team )
+	self.m_DrawPawnSelection = true 
+	self.m_SelectionIndexPiece = indexPiece
+	self.m_SelectionTeam = team
+	self.m_TimerTimeoutFunction = bind(ChessGraphics.Event_ChessSelectionTimeout, self)
+	self.m_SelectionTimeout = setTimer(  self.m_TimerTimeoutFunction, 10000, 1)
+end
+
+function ChessGraphics:Event_PawnSelectionConfirm( piece ) 
+	if self.m_SelectionIndexPiece then 
+		triggerServerEvent( "onServerGetChessPawnSelection", localPlayer, self.m_SelectionIndexPiece, piece or 2, self.m_SelectionTeam)
+	end
+	self.m_DrawPawnSelection = false
+	self.m_SelectionIndexPiece = nil 
+	self.m_SelectionTeam = nil 
+end
+
+function ChessGraphics:Event_ChessSelectionTimeout( ) 
+	if self.m_SelectionIndexPiece then 
+		triggerServerEvent( "onServerGetChessPawnSelection", localPlayer, self.m_SelectionIndexPiece, 2, self.m_SelectionTeam)
+	end
+	self.m_DrawPawnSelection = false
+	self.m_SelectionIndexPiece = nil 
+	self.m_SelectionTeam = nil 
 end
