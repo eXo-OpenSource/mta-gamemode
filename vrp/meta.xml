@@ -193,6 +193,7 @@
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
@@ -920,6 +921,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/WheelOfFortune.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
 	<!-- CHESS -->
@@ -1415,6 +1417,7 @@
 	<vrpfile src="files/images/Textures/busShelter_1.png"/>
 	<vrpfile src="files/images/Textures/busShelter_2.png"/>
 	<vrpfile src="files/images/Textures/GasStation.png"/>
+	<vrpfile src="files/images/Textures/WheelOfFortune.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>

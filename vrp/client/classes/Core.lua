@@ -173,6 +173,7 @@ function Core:afterLogin()
 	Tour:new()
 	Achievement:new()
 	BindManager:new()
+	WheelOfFortune:new()
 
 	if DEBUG then
 		Debugging:new()

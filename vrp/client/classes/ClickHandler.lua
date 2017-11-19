@@ -176,6 +176,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 							self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 						elseif element:getData("onClickEvent") then
 							element:getData("onClickEvent")()
+						elseif element:getModel() == 1320 then -- Wheel of Fortune?
+							triggerServerEvent("WheelOfFortuneClicked", element)
 						end
 					end
 
