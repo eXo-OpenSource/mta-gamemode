@@ -473,7 +473,7 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
         self:setPlayerLicense(target, type, true)
         target:sendInfo(_("Du hast die %s Prüfung erfolgreich bestanden und den Schein erhalten!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s erfolgreich beendet!",client, DrivingSchool.TypeNames[type], target.name))
-    	self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s erfolgreich beendet (%s km)!"):format(DrivingSchool.TypeNames[type], target:getName(), math.round(mileageDiff/1000, 2)))
+    	self:addLog(client, "Fahrschule", ("hat die %s Prüfung mit %s erfolgreich beendet (%s km)!"):format(DrivingSchool.TypeNames[type], target:getName(), mileageDiff))
 	else
         target:sendError(_("Du hast die %s Prüfung nicht geschaft! Viel Glück beim nächsten Mal!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s abgebrochen!",client, DrivingSchool.TypeNames[type], target.name))
