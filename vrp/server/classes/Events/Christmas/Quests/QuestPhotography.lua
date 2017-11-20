@@ -14,6 +14,6 @@ end
 function QuestPhotography:onTakePhoto(playersOnPhoto)
 	if #playersOnPhoto >= 10 then
 		client:sendShortMessage("Du hast erfolgreich 10 Spieler fotografiert!")
+		self:success(client)
 	end
-	self:success(client)
 end

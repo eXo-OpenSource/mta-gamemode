@@ -28,10 +28,19 @@ function QuestManager:startQuest(questId)
 end
 
 function QuestManager:startQuestForPlayer(player)
+	if not self.m_CurrentQuest then
+		return false
+	end
 	if table.find(self.m_CurrentQuest:getPlayers(), player) then
 		player:sendError("Du hast den Quest bereits gestartet!")
 		return
 	end
+
+	if self.m_CurrentQuest:isQuestDone(player) then
+		player:sendError("Du hast den Quest bereits abgeschlossen!")
+		return
+	end
+
 	self.m_CurrentQuest:addPlayer(player)
 end
 
