@@ -42,10 +42,8 @@ end
 -- Right Click Shoot Bugfix
 
 function ScoreboardGUI:onShow()
+	toggleControl("action", false)
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
-	localPlayer:setWeaponSlot(0)
-	toggleControl("next_weapon", false)
-	toggleControl("previous_weapon", false)
 	self:refresh()
 	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
 
@@ -58,16 +56,9 @@ end
 function ScoreboardGUI:onHide()
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 
-	-- //Right Click Shoot Bugfix
-	if not getElementData(localPlayer,"no_driveby") and not FishingRod:isInstantiated() then
-		toggleControl("next_weapon", true)
-		toggleControl("previous_weapon", true)
-		setTimer(setPedWeaponSlot, 500, 1, localPlayer, self.m_OldWeaponSlot)
-	end
-
 	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
-
+	toggleControl("action", true)
 	RadioGUI:getSingleton():setControlEnabled(true)
 end
 
