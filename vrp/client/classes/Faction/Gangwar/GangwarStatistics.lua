@@ -21,7 +21,7 @@ function GangwarStatistics:Event_GetMVP( t )
 	self.m_MVP = t
 	if self.m_DrawingMVP then 
 		removeEventHandler("onClientRender",root, self.m_RenderFunc)
-	end
+	end	
 	self.m_RenderFunc = bind( self.renderMVP, self)
 	addEventHandler("onClientRender", root, self.m_RenderFunc)
 	self.m_DrawStartTick = getTickCount()
@@ -42,11 +42,11 @@ function GangwarStatistics:renderMVP()
 		dxDrawImage(bx+width*0.85, moveBy-height*0.2, width*0.15,height*0.43, "files/images/Gangwar/trophy.png")
 		dxDrawShadowText("Beste Spieler:", bx+width*0.05, moveBy-self.dxFontHeight, width, self.dxFontHeight, 1,1,tocolor(150,150,150,alpha),tocolor(0,0,0,alpha),2,"default","left","top")
 		for i = 1, MVPCOUNT do 
-			if self.m_MVP[i] then 
+			if self.m_MVP[i] and self.m_MVP[i][1].name then 
 				if i == 1 then
-					dxDrawBoxText(i..". "..self.m_MVP[i][1].name.." - "..self.m_MVP[i][2],bx, moveBy + MARGIN_MVP*(i-1), width, MARGIN_MVP, tocolor(200, 200, 0, alpha),2.2, "default-bold", "center","center")
+					dxDrawBoxText(i..". "..self.m_MVP[i][1].name.." - "..self.m_MVP[i][2] or "?",bx, moveBy + MARGIN_MVP*(i-1), width, MARGIN_MVP, tocolor(200, 200, 0, alpha),2.2, "default-bold", "center","center")
 				else 
-					dxDrawBoxText(i..". "..self.m_MVP[i][1].name.." - "..self.m_MVP[i][2],bx, moveBy + MARGIN_MVP*(i-1), width, MARGIN_MVP, tocolor(200, 200, 200, alpha3),2-(i*0.2), "default-bold", "center","center")
+					dxDrawBoxText(i..". "..self.m_MVP[i][1].name.." - "..self.m_MVP[i][2] or "?",bx, moveBy + MARGIN_MVP*(i-1), width, MARGIN_MVP, tocolor(200, 200, 200, alpha3),2-(i*0.2), "default-bold", "center","center")
 				end
 			else 
 				dxDrawBoxText(i.." -/- ", bx, moveBy + MARGIN_MVP*(i-1),width, MARGIN_MVP, tocolor(200,200,200, alpha3),2.2-(i*0.2), "default-bold", "center","center")

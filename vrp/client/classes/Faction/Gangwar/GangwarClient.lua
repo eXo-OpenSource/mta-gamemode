@@ -36,20 +36,38 @@ function GangwarClient:Event_shortMessageAttack( pArea )
 end
 
 function GangwarClient:show_AttackRequest( pArea )
-	self.m_RenderBind = bind( self.render_Window_start , self)
-	self.m_ClickBind = bind(self.clickBind,self)
-	self.m_StartTick1 = getTickCount() 
-	self.m_EndTick1 = self.m_StartTick1 + ANIM_SCALE*ANIM_TIME
-	self.m_Area = pArea
-	addEventHandler("onClientRender",root,self.m_RenderBind)
-	addEventHandler("onClientClick",root,self.m_ClickBind)
+	if not self.m_AttackDisplayShowing then
+		self.m_AttackDisplayShowing = true
+		self.m_RenderBind = bind( self.render_Window_start , self)
+		self.m_ClickBind = bind(self.clickBind,self)
+		self.m_StartTick1 = getTickCount() 
+		self.m_EndTick1 = self.m_StartTick1 + ANIM_SCALE*ANIM_TIME
+		self.m_Area = pArea
+		if self.m_RenderBind then
+			removeEventHandler("onClientRender",root,self.m_RenderBind)
+			addEventHandler("onClientRender",root,self.m_RenderBind)
+		end
+		if self.m_RenderBind2 then
+			removeEventHandler("onClientRender",root,self.m_RenderBind2)
+		end
+		if self.m_ClickBind then
+			removeEventHandler("onClientClick",root,self.m_ClickBind)
+			addEventHandler("onClientClick",root,self.m_ClickBind)
+		end
+	end
 end
  
 function GangwarClient:hide_AttackRequest( )
-	removeEventHandler("onClientRender",root,self.m_RenderBind)
-	removeEventHandler("onClientRender",root,self.m_RenderBind2)
-	removeEventHandler("onClientClick",root,self.m_ClickBind)
-	
+	if self.m_RenderBind then
+		removeEventHandler("onClientRender",root,self.m_RenderBind)
+	end
+	if self.m_RenderBind2 then
+		removeEventHandler("onClientRender",root,self.m_RenderBind2)
+	end
+	if self.m_ClickBind then
+		removeEventHandler("onClientClick",root,self.m_ClickBind)
+	end
+	self.m_AttackDisplayShowing = false
 end
 
 function GangwarClient:clickBind( b, s)

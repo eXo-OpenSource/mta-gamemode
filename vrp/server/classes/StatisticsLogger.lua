@@ -443,3 +443,12 @@ function StatisticsLogger:addHalloweenLog(player, bonus, pumpkins, sweets)
 	sqlLogs:queryExec("INSERT INTO ??_EventHalloween (UserId, Bonus, Pumpkins, Sweets, Date) VALUES (?, ?, ?, ?, NOW())", sqlLogs:getPrefix(),
 	userId, bonus, pumpkins, sweets)
 end
+
+function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)
+	if areaObj and attackSession then 
+		local areaID = areaObj.m_Name
+		sqlLogs:queryExec("INSERT INTO ??_GangwarDebugLog ( Warning, Name, Date) VALUES (?, ?, NOW())", sqlLogs:getPrefix(),
+		warning, areaID )
+	end
+end
+
