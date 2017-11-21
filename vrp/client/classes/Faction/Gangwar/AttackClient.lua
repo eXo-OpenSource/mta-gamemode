@@ -122,7 +122,9 @@ end
 
 addEvent("AttackClient:synchronizeLists",true)
 function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
-	pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )
+	if pseudoSingleton then 
+		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )
+	end
 end
 addEventHandler("AttackClient:synchronizeLists",root,AttackClient.remoteSynchronize)
 

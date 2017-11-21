@@ -148,7 +148,7 @@ end
 
 function PlayerManager:Event_OnDeathPedWasted( pPed )
 	if client then
-		if pPed then
+		if pPed and isElement(pPed) then
 			local owner = pPed:getData("NPC:DeathPedOwner")
 			if owner then
 				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
