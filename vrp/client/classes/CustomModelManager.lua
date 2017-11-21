@@ -218,6 +218,9 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/XmasBox.dff", 3878)
+
+		self:loadImportTXD("files/models/santaclaus.txd", 244)
+		self:loadImportDFF("files/models/santaclaus.dff", 244)
 	end
 
 	--Easter Event:
@@ -230,6 +233,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/pumpkin.col", 1935)
 	self:loadImportTXD("files/models/pumpkin.txd", 1935)
 	self:loadImportDFF("files/models/pumpkin.dff", 1935)
+
+	self:loadImportTXD("files/models/Wearables/ChristmasHat.txd", 1936)
+	self:loadImportDFF("files/models/Wearables/ChristmasHat.dff", 1936)
 
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")

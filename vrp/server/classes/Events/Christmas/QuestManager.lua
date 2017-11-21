@@ -1,15 +1,27 @@
 QuestManager = inherit(Singleton)
 QuestManager.Quests = {
 	[2] = {
+		["Name"] = "Weihnachtsmann-Selfie",
+		["Description"] = "Finde den Weihnachtsmann und schieße ein Foto von ihm!",
+		["Packages"] = 5,
+	},
+	[3] = {
 		["Name"] = "Weihnachts-Fotograf",
 		["Description"] = "Schieße ein Foto mit mindestens 10 Spielern darauf!",
+		["Packages"] = 5,
+	},
+	[16] = {
+		["Name"] = "Mützen-Foto",
+		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
 		["Packages"] = 5,
 	}
 }
 
 function QuestManager:constructor()
 	self.m_Quests = {
-		[2] = QuestPhotography
+		[2] = QuestPhotography,
+		[3] = QuestPhotography,
+		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false
 

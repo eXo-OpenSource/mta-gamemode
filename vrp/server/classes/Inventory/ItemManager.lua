@@ -66,6 +66,7 @@ function ItemManager:constructor()
 		["Gasmaske"] = WearableHelmet,
 		["Einsatzhelm"] = WearableHelmet,
 		["Hasenohren"] = WearableHelmet,
+		["Weihnachtsmütze"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,

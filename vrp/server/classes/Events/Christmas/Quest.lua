@@ -11,7 +11,7 @@ end
 
 function Quest:addPlayer(player)
 	table.insert(self.m_Players, player)
-	player:sendShortMessage(self.m_Description, self.m_Name, {255, 0, 0})
+	player:sendShortMessage(self.m_Description, "Quest: "..self.m_Name, {255, 0, 0}, -1)
 	player:triggerEvent("questAddPlayer", self.m_QuestId)
 end
 

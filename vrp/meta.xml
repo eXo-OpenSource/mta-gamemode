@@ -1515,7 +1515,6 @@
 	<vrpfile src="files/images/Inventory/items/Items/Mautpass.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Maske.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Helm.png" />
-	<vrpfile src="files/images/Inventory/items/Items/X-MAS-Muetze.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
@@ -1563,6 +1562,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/Hasenohren.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/Warnkegel.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/Weihnachtsmuetze.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
 
@@ -1976,6 +1976,10 @@
 	<vrpfile src="files/models/XmasBox.txd" />
 	<vrpfile src="files/models/XmasBox.dff" />
 	<vrpfile src="files/models/XmasBox.col" />
+
+	<vrpfile src="files/models/santaclaus.txd" />
+	<vrpfile src="files/models/santaclaus.dff" />
+
 	<!-- Christmas Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
@@ -2006,6 +2010,9 @@
 
 	<vrpfile src="files/models/Wearables/BunnyEars.txd" />
 	<vrpfile src="files/models/Wearables/BunnyEars.dff" />
+
+	<vrpfile src="files/models/Wearables/ChristmasHat.txd" />
+	<vrpfile src="files/models/Wearables/ChristmasHat.dff" />
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
