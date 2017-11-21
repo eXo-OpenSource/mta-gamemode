@@ -28,9 +28,10 @@ function QuestManager:constructor()
 	--DEV:
 	self:startQuest(2)
 
-	addRemoteEvents{"questOnPedClick", "questStartClick"}
+	addRemoteEvents{"questOnPedClick", "questStartClick", "questShortMessageClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
 	addEventHandler("questStartClick", root, bind(self.onStartClick, self))
+	addEventHandler("questShortMessageClick", root, bind(self.onShortMessageClick, self))
 
 
 end
@@ -60,7 +61,7 @@ function QuestManager:startQuestForPlayer(player)
 end
 
 function QuestManager:endQuestForPlayer(player)
-	self.m_CurrentQuest:removePlayer(removePlayer)
+	self.m_CurrentQuest:removePlayer(player)
 end
 
 
@@ -85,6 +86,17 @@ function QuestManager:stopQuest()
 	self.m_CurrentQuest = false
 end
 
+function QuestManager:onShortMessageClick()
+	QuestionBox:new(client, client, "Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." abbrechen? Du kannst diesen jederzeit wieder starten.",
+	function()
+		self:endQuestForPlayer(client)
+	end,
+	function()
+		self:endQuestForPlayer(client)
+		self:startQuestForPlayer(client)
+	end
+)
+end
 
 --[[
 Quest System:

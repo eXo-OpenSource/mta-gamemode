@@ -9,9 +9,16 @@ function Quest:constructor(Id)
 	self.m_Packages = QuestManager.Quests[Id]["Packages"]
 end
 
+function Quest:destructor()
+	for index, player in pairs(self:getPlayers()) do
+		self:removePlayer(player)
+	end
+end
+
+
 function Quest:addPlayer(player)
 	table.insert(self.m_Players, player)
-	player:sendShortMessage(self.m_Description, "Quest: "..self.m_Name, {255, 0, 0}, -1)
+	player:sendShortMessage(self.m_Description.."\nKlicke hier um den Quest abzubrechen!", "Quest: "..self.m_Name, {150, 0, 0}, -1, "questShortMessageClick")
 	player:triggerEvent("questAddPlayer", self.m_QuestId)
 end
 
@@ -31,13 +38,11 @@ end
 
 function Quest:onClick(player)
 	player:triggerEvent("questOpenGUI", self.m_QuestId, self.m_Name, self.m_Description, self.m_Packages)
-	--QuestionBox:new(client, client, "Development: Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." starten?", function()
-	--	self:startQuestForPlayer(client)
-	--end)
 end
 
 function Quest:success(player)
 	player:sendSuccess(_("Quest bestanden! Du erhälst %d Päckchen!", player, self.m_Packages))
 	sql:queryExec("INSERT INTO ??_quest (UserId, QuestId, Date) VALUES(?, ?, NOW())", sql:getPrefix(), player:getId(), self.m_QuestId)
 	player:getInventory():giveItem("Paeckchen", self.m_Packages)
+	self:removePlayer(player)
 end
