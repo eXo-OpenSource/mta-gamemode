@@ -9,19 +9,21 @@
 
 VehicleELS = inherit(Object) --gets inherited from vehicle to provide methods to vehicle object
 VehicleELS.Map = {}
+VehicleELS.DIMap = {}
 VehicleELS.ActiveMap = {}
 
-function VehicleELS:setELSPreset(ELSPreset, hasSiren)
+function VehicleELS:setELSPreset(ELSPreset, hasSiren, directionIndicatorData) --directionIndicatorData = {int offsetY, int offsetZ, int sizeX}
     if ELS_PRESET[ELSPreset] then     
         self.m_HasELS = true
         if hasSiren then
             removeVehicleSirens(self)
             self:addSirens(1, 1)
         end
-        VehicleELS.Map[self] = self
-        self:updateClient("init", ELSPreset, hasSiren)
+        VehicleELS.Map[self] = {ELSPreset, hasSiren, directionIndicatorData}
+        self:updateClient("init", ELSPreset, hasSiren, directionIndicatorData)
     end
 end
+
 
 function VehicleELS:removeELS()
     self.m_ELSPreset = nil
@@ -32,7 +34,7 @@ end
 
 
 function VehicleELS:toggleELS(state)
-    if state ~= self.m_ELSActive then
+    --if state ~= self.m_ELSActive then
         if state then
             VehicleELS.ActiveMap[self] = true
         else
@@ -40,7 +42,7 @@ function VehicleELS:toggleELS(state)
         end
         self.m_ELSActive = state
         self:updateClient("toggle", state)
-    end
+    --end
 end
 
 function VehicleELS:updateClient(type, data)
