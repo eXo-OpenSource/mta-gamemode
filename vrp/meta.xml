@@ -853,6 +853,7 @@
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
 
 	<!-- Factions -->
@@ -984,7 +985,8 @@
 	<file src="files/data/indicators.dat" />
 
 
-	<!-- Events -->
+	<!-- Events Start -->
+	<!--
 	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
 	<vrpfile src="files/images/Events/Easter/slotmachine2.jpg" />
 	<vrpfile src="files/images/Events/Easter/slot_1.png" />
@@ -993,6 +995,8 @@
 	<vrpfile src="files/images/Events/Easter/slot_4.png" />
 	<vrpfile src="files/images/Events/Easter/slot_5.png" />
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
+
+
 
 	<vrpfile src="files/images/Events/Halloween/blood.png" />
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
@@ -1014,8 +1018,13 @@
 	<vrpfile src="files/images/Events/Halloween/Bonus_VIP.png" />
 	<vrpfile src="files/images/Events/Halloween/Bonus_Weed.png" />
 	<vrpfile src="files/images/Events/Halloween/Bonus_Zombie.png" />
+	-->
 
-	<!-- Todo -->
+	<vrpfile src="files/images/Events/Christmas/Quest.png" />
+	<vrpfile src="files/images/Events/Christmas/QuestGray.png" />
+
+	<!-- Events End -->
+
 
 	<script src="client/Main.lua" type="client"/>
 

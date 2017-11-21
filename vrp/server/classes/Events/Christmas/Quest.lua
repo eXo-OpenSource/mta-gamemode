@@ -29,6 +29,13 @@ function Quest:removePlayer(player)
 	player:triggerEvent("questRemovePlayer", self.m_QuestId)
 end
 
+function Quest:onClick(player)
+	player:triggerEvent("questOpenGUI", self.m_QuestId, self.m_Name, self.m_Description, self.m_Packages)
+	--QuestionBox:new(client, client, "Development: Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." starten?", function()
+	--	self:startQuestForPlayer(client)
+	--end)
+end
+
 function Quest:success(player)
 	player:sendSuccess(_("Quest bestanden! Du erhälst %d Päckchen!", player, self.m_Packages))
 	sql:queryExec("INSERT INTO ??_quest (UserId, QuestId, Date) VALUES(?, ?, NOW())", sql:getPrefix(), player:getId(), self.m_QuestId)

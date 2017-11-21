@@ -16,8 +16,11 @@ function QuestManager:constructor()
 	--DEV:
 	self:startQuest(2)
 
-	addRemoteEvents{"questOnPedClick"}
+	addRemoteEvents{"questOnPedClick", "questStartClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
+	addEventHandler("questStartClick", root, bind(self.onStartClick, self))
+
+
 end
 
 function QuestManager:startQuest(questId)
@@ -48,15 +51,21 @@ function QuestManager:endQuestForPlayer(player)
 	self.m_CurrentQuest:removePlayer(removePlayer)
 end
 
+
+function QuestManager:onStartClick()
+	if not self.m_CurrentQuest then
+		client:sendError("Aktuell läuft kein Quest!")
+		return false
+	end
+	self:startQuestForPlayer(client)
+end
+
 function QuestManager:onPedClick()
 	if not self.m_CurrentQuest then
 		client:sendError("Aktuell läuft kein Quest!")
 		return false
 	end
-
-	QuestionBox:new(client, client, "Development: Möchtest du den Quest "..self.m_CurrentQuest.m_Name.." starten?", function()
-		self:startQuestForPlayer(client)
-	end)
+	self.m_CurrentQuest:onClick(client)
 end
 
 function QuestManager:stopQuest()

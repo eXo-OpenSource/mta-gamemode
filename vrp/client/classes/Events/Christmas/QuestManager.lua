@@ -8,9 +8,12 @@ function QuestManager:constructor()
 
 	self.m_CurrentQues = false
 
-	addRemoteEvents{"questAddPlayer", "questRemovePlayer"}
+	addRemoteEvents{"questAddPlayer", "questRemovePlayer", "questOpenGUI"}
 	addEventHandler("questAddPlayer", root, bind(self.addPlayer, self))
 	addEventHandler("questRemovePlayer", root, bind(self.removePlayer, self))
+	addEventHandler("questOpenGUI", root, bind(self.openGUI, self))
+
+
 
 
 end
@@ -23,5 +26,9 @@ end
 function QuestManager:removePlayer()
 	if not self.m_CurrentQuest then return end
 	delete(self.m_CurrentQuest)
+end
+
+function QuestManager:openGUI(Id, Name, Description, Packages)
+	QuestGUI:new(Id, Name, Description, Packages)
 end
 
