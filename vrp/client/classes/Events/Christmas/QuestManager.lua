@@ -2,8 +2,11 @@ QuestManager = inherit(Singleton)
 
 
 function QuestManager:constructor()
+	-- Only add if clientside script is necessary
 	self.m_Quests = {
-		[2] = QuestPhotography
+		[2] = QuestPhotography,
+		[3] = QuestPhotography,
+		[16] = QuestPhotography
 	}
 
 	self.m_CurrentQues = false

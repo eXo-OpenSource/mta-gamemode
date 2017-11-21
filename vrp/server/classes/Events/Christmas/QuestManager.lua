@@ -18,6 +18,9 @@ QuestManager.Quests = {
 }
 
 function QuestManager:constructor()
+	-- Also add it client side if the quest requires a clientside script
+	-- The client side quest automatically starts on startQuestForPlayer if the class is setted on clientside Questmanager
+
 	self.m_Quests = {
 		[2] = QuestPhotography,
 		[3] = QuestPhotography,
