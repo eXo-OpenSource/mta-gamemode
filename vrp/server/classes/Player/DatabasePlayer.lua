@@ -404,20 +404,26 @@ function DatabasePlayer:setFaction(faction)
 	end
 end
 
-function DatabasePlayer:__giveMoney(amount, reason)
+function DatabasePlayer:__giveMoney(amount, reason, silent)
 	self:setMoney(self:getMoney() + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
+	if amount ~= 0 and not silent then
+		local prefix = "+"
+		if amount < 0 then prefix = "-" end
+		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
+		self:triggerEvent("playerCashChange", false)
+	end
 	return true
 end
 
-function DatabasePlayer:__takeMoney(amount, reason)
-	return DatabasePlayer.__giveMoney(self, -amount, reason)
+function DatabasePlayer:__takeMoney(money, reason, silent)
+	return DatabasePlayer.__giveMoney(self, -amount, reason, silent)
 end
 
 function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory)
 	if isNan(amount) then return false end
 	local amount = math.floor(amount)
-	
+
 	local targetObject = toObject
 	local offlinePlayer = false
 	local isPlayer = false
@@ -451,7 +457,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 			elseif toObject[1] == "group" then
 				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
+				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))
 			end
 			goesToBank = toObject[3]
 			silent = toObject[4]
@@ -462,7 +468,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
 		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
 	end
-	
+
 	isPlayer = instanceof(targetObject, DatabasePlayer)
 
 	if self:getMoney() < amount then
@@ -480,10 +486,10 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 		toId = targetObject.m_BankAccount.m_OwnerId
 
 		if goesToBank then
-			targetObject:__giveBankMoney(amount, reason)
+			targetObject:__giveBankMoney(amount, reason, silent)
 			toBank = targetObject.m_BankAccount.m_Id
 		else
-			targetObject:__giveMoney(amount, reason)
+			targetObject:__giveMoney(amount, reason, silent)
 			toBank = 0
 		end
 	else
@@ -496,7 +502,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 			toType = targetObject.m_BankAccount.m_OwnerType
 			toId = targetObject.m_BankAccount.m_OwnerId
 		end
-		
+
 		targetObject:__giveMoney(amount, reason, silent)
 	end
 
@@ -662,9 +668,16 @@ function DatabasePlayer:decreaseAlcoholLevel(value)
 	self:setAlcoholLevel(newLevel, oldLevel)
 end
 
-function DatabasePlayer:__giveBankMoney(amount, reason)
+function DatabasePlayer:__giveBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():__giveMoney(amount)
+
+		if amount ~= 0 and not silent then
+			local prefix = "+"
+			if amount < 0 then prefix = "-" end
+			self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
+			self:triggerEvent("playerCashChange", false)
+		end
 
 		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)
@@ -676,7 +689,7 @@ function DatabasePlayer:__giveBankMoney(amount, reason)
 	return false
 end
 
-function DatabasePlayer:__takeBankMoney(amount, reason)
+function DatabasePlayer:__takeBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, -amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():__takeMoney(amount)
 		return true
