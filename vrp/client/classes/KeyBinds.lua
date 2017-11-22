@@ -41,6 +41,7 @@ function KeyBinds:constructor()
 		["KeyToggleVehicleEngine"]	= {["defaultKey"] = "x", ["name"] = "Fahrzeug Motor", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleEngine() end end, ["trigger"] = "down"};
 		["KeyToggleVehicleLight"]	= {["defaultKey"] = "l", ["name"] = "Fahrzeug Licht", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleLight() end end, ["trigger"] = "down"};
 		["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Fahrzeug Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
+		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Fahrzeug-Rundumleuchten", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) end end, ["trigger"] = "down"};
 
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};

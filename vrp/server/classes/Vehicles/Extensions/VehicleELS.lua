@@ -9,18 +9,19 @@
 
 VehicleELS = inherit(Object) --gets inherited from vehicle to provide methods to vehicle object
 VehicleELS.Map = {}
-VehicleELS.DIMap = {}
 VehicleELS.ActiveMap = {}
+addRemoteEvents {"vehicleELSToggleRequest"}
 
-function VehicleELS:setELSPreset(ELSPreset, hasSiren, directionIndicatorData) --directionIndicatorData = {int offsetY, int offsetZ, int sizeX}
+function VehicleELS:setELSPreset(ELSPreset)
     if ELS_PRESET[ELSPreset] then     
         self.m_HasELS = true
-        if hasSiren then
+        if ELS_PRESET[ELSPreset].hasSiren then
             removeVehicleSirens(self)
             self:addSirens(1, 1)
         end
-        VehicleELS.Map[self] = {ELSPreset, hasSiren, directionIndicatorData}
-        self:updateClient("init", ELSPreset, hasSiren, directionIndicatorData)
+        VehicleELS.Map[self] = ELSPreset
+        self:updateClient("init", ELSPreset)
+        addEventHandler("vehicleELSToggleRequest", self, bind(VehicleELS.toggleELS, self))
     end
 end
 
@@ -47,4 +48,10 @@ end
 
 function VehicleELS:updateClient(type, data)
 	triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "vehicleELS"..type, resourceRoot, self, data)
+end
+
+
+function VehicleELS.sendAllToClient(player)
+    outputDebug(player)
+    player:triggerEvent("vehicleELSinitAll", VehicleELS.Map, VehicleELS.ActiveMap)
 end

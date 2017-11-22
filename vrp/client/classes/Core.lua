@@ -110,8 +110,6 @@ function Core:ready()
 	DeathmatchEvent:new()
 	StreetRaceEvent:new()
 	VehicleGarages:new()
-	ELSSystem:new()
-	VehicleELS:new()
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
 	--// Gangwar

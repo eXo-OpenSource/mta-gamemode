@@ -321,7 +321,6 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -339,7 +338,6 @@
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
@@ -828,7 +826,6 @@
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
-	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>

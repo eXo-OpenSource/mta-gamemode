@@ -41,6 +41,10 @@ function Vehicle:virtual_constructor()
 		setVehicleOverrideLights(self, 1)
 	end)
 
+	if ELS_PRESET[self:getModel()] then
+		self:setELSPreset(self:getModel())
+	end
+
 	if self:getModel() == 417 then
 		self:addMagnet()
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)

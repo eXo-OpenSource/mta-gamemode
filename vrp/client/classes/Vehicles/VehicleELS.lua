@@ -17,17 +17,25 @@ VehicleELS.LightStates ={
     d1 = {1,0,1,0},
     d2 = {0,1,0,1},
 }
-addRemoteEvents{"vehicleELSinit", "vehicleELSremove", "vehicleELStoggle"}
+addRemoteEvents{"vehicleELSinitAll", "vehicleELSinit", "vehicleELSremove", "vehicleELStoggle"}
 
 function VehicleELS:constructor()
     addEventHandler("vehicleELSinit", resourceRoot, bind(VehicleELS.initELS, self))
     addEventHandler("vehicleELSremove", resourceRoot, bind(VehicleELS.removeELS, self))
     addEventHandler("vehicleELStoggle", resourceRoot, bind(VehicleELS.toggleELS, self))
-
 end
 
-function VehicleELS:initELS(veh, preset, hasSiren, directionIndicatorData)
-    VehicleELS.Map[veh] = {preset, hasSiren, directionIndicatorData}
+function VehicleELS:loadServerELS(allVehs, activeVehs)
+    for veh, preset in pairs(allVehs) do
+        self:initELS(veh, preset)
+    end
+    for veh, state in pairs(activeVehs) do
+        self:toggleELS(veh, state)
+    end
+end
+
+function VehicleELS:initELS(veh, preset)
+    VehicleELS.Map[veh] = preset
     veh.m_ELSPreset = preset
 end
 
@@ -56,12 +64,14 @@ function VehicleELS:internalAddELSLights(veh)
         veh.m_ELSLights = {}
         veh.m_ELSCache = {
             lights = veh:getOverrideLights(),
-            lcolor = veh:getHeadLightColor(),
+            lcolor = {veh:getHeadLightColor()},
         }
         for name, data in pairs(ELS_PRESET[veh.m_ELSPreset].light) do
             veh.m_ELSLights[name] = createMarker(0, 0, 0, "corona", data[4], data[5], data[6], data[7], data[8] or 255)
             veh.m_ELSLights[name]:attach(veh, data[1], data[2], data[3])
         end
+        veh:setOverrideLights(2)
+        VehicleELS.update(veh)
         veh.m_ELSTimer = setTimer(VehicleELS.update, ELS_PRESET[veh.m_ELSPreset].sequenceDuration, 0, veh)
     end
 end
@@ -73,6 +83,13 @@ function VehicleELS:internalRemoveELSLights(veh)
         end
         veh.m_ELSLights = nil
         if isTimer(veh.m_ELSTimer) then killTimer(veh.m_ELSTimer) end
+
+        veh:setOverrideLights(veh.m_ELSCache.lights)
+        veh:setHeadLightColor(unpack(veh.m_ELSCache.lcolor))
+        for i = 0, 3 do
+            setVehicleLightState(veh, i, VehicleELS.LightStates["full"][i+1]) 
+         end
+        veh.m_ELSCache = nil
     end
 end
 
@@ -94,7 +111,7 @@ function VehicleELS.update(veh)
                     setVehicleHeadLightColor(veh, unpack(color))
                 else
                     if tblChanges.fade ~= nil then
-                        if not tblChanges.fade[2] then tblChanges.fade[2] = ELS_PRESET[VehicleELS.Map[veh]].sequenceDuration end
+                        if not tblChanges.fade[2] then tblChanges.fade[2] = ELS_PRESET[veh.m_ELSPreset].sequenceDuration end
                         CoronaEffect.add(veh.m_ELSLights[name], "fade", tblChanges.fade)
                     end
                     if tblChanges.strobe ~= nil then
@@ -124,3 +141,8 @@ function VehicleELS.update(veh)
         self:internalRemoveELSLights(veh)
     end
 end
+
+
+addEventHandler("vehicleELSinitAll", root, function(allVehs, activeVehs)
+    VehicleELS:getSingleton():loadServerELS(allVehs, activeVehs)
+end)
