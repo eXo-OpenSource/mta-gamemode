@@ -416,7 +416,7 @@ function DatabasePlayer:__giveMoney(amount, reason, silent)
 	return true
 end
 
-function DatabasePlayer:__takeMoney(money, reason, silent)
+function DatabasePlayer:__takeMoney(amount, reason, silent)
 	return DatabasePlayer.__giveMoney(self, -amount, reason, silent)
 end
 
