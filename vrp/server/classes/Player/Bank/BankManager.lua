@@ -41,7 +41,7 @@ function BankManager:Event_Deposit(amount)
 		return
 	end
 
-	if client:transferMoney({client, true}, "Bank Einzahlung", "Bank", "Deposit") then
+	if client:transferMoney({client, true}, amount, "Bank Einzahlung", "Bank", "Deposit") then
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
@@ -75,7 +75,7 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 					toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
 					toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!", toPlayer, client:getName(), amount))
 				end
-				
+
 				client:sendShortMessage(_("Du hast an %s %d$ überwiesen!", client, toPlayerName, amount))
 				client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 			end
