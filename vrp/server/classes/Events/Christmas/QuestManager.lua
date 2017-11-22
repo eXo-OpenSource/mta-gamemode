@@ -2,7 +2,7 @@ QuestManager = inherit(Singleton)
 QuestManager.Quests = {
 	[2] = {
 		["Name"] = "Weihnachtsmann-Selfie",
-		["Description"] = "Finde den Weihnachtsmann und schieße ein Foto von ihm!",
+		["Description"] = "Finde den Weihnachtsmann (Er ist in Los Santos) und schieße ein Foto von ihm!",
 		["Packages"] = 5,
 	},
 	[3] = {

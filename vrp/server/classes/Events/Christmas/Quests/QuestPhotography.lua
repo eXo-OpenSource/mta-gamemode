@@ -17,6 +17,13 @@ function QuestPhotography:constructor(id)
 
 	self.m_Target = QuestPhotography.Targets[id]
 
+	if id == 2 then
+		setGarageOpen(9, true)
+		self.m_NPC = NPC:new(244, 2505.30, -1695.86, 13.55, 0)
+		self.m_NPC:setImmortal(true)
+		self.m_NPC:setFrozen(true)
+	end
+
 	self.m_TakePhotoBind = bind(self.onTakePhoto, self)
 
 	addRemoteEvents{"questPhotograpyTakePhoto"}
@@ -25,6 +32,10 @@ end
 
 function QuestPhotography:destructor(id)
 	Quest.destructor(self)
+	if self.m_NPC and isElement(self.m_NPC) then
+		setGarageOpen(9, false)
+		self.m_NPC:destroy()
+	end
 	removeEventHandler("questPhotograpyTakePhoto", root, self.m_TakePhotoBind)
 end
 
