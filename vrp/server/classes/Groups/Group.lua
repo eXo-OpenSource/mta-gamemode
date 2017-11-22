@@ -656,7 +656,7 @@ function Group:payDay(vehicleData)
 	if sum > 0 then
 		self.m_BankAccountServer:transferMoney(self, sum, "Payday", "Group", "Payday")
 	elseif sum < 0 then
-		self:transferMoney(self.m_BankAccountServer, sum, "Payday", "Group", "Payday")
+		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday")
 	end
 	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then
