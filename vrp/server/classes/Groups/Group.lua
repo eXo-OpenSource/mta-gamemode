@@ -342,7 +342,6 @@ function Group:getMoney()
 end
 
 function Group:__giveMoney(amount, reason)
-	self:setMoney(self.m_Money + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
     return self.m_BankAccount:__giveMoney(amount, reason)
 end

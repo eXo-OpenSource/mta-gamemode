@@ -407,12 +407,6 @@ end
 function DatabasePlayer:__giveMoney(amount, reason, silent)
 	self:setMoney(self:getMoney() + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
-	if amount ~= 0 and not silent then
-		local prefix = "+"
-		if amount < 0 then prefix = "-" end
-		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
-		self:triggerEvent("playerCashChange", false)
-	end
 	return true
 end
 
@@ -672,7 +666,7 @@ function DatabasePlayer:__giveBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():__giveMoney(amount)
 
-		if amount ~= 0 and not silent then
+		if amount ~= 0 and not silent and self.sendShortMessage then
 			local prefix = "+"
 			if amount < 0 then prefix = "-" end
 			self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
