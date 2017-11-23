@@ -1173,9 +1173,8 @@ function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
 		if type(amount) ~= "table" then amount = tonumber(amount) end
-		amount = tonumber(amount)
 		if amount then
-			if type(amount) ~= "table" then amount = math.round(amount) end
+			if type(amount) ~= "table" then amount.amount = math.floor(amount.amount) end
 			if name == "money" then
 				local prefix = amount.mode == "give" and "+" or ""
 				local bank = amount.bank and " (Konto)" or ""
