@@ -55,9 +55,9 @@ function JobPizza:onPizzaDeliver(distance, time)
 		if chance(30) then
 			points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
 			client:givePoints(points)
-		end	
+		end
 
 		StatisticsLogger:getSingleton():addJobLog(client, "jobPizzaDelivery", duration, pay, client.vehicle:getModel(), distance, points, time)
-		self.m_BankAccount:transferMoney({client, true}, "Pizza-Job", "Job", "PizzaDelivery")
+		self.m_BankAccount:transferMoney({client, true}, pay, "Pizza-Job", "Job", "PizzaDelivery")
 	end
 end
