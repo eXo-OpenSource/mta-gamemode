@@ -362,6 +362,7 @@
 	<script src="server/classes/Events/Christmas/Quest.lua" type="server"/>
 
 	<script src="server/classes/Events/Christmas/Quests/QuestPhotography.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestDraw.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -855,6 +856,8 @@
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestDraw.lua" type="client"/>
+
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>

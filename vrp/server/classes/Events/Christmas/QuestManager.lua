@@ -10,6 +10,16 @@ QuestManager.Quests = {
 		["Description"] = "Schieße ein Foto mit mindestens 10 Spielern darauf!",
 		["Packages"] = 5,
 	},
+	[4] = {
+		["Name"] = "Zeichne einen Weihnachtsmann",
+		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Weihnachtsmann gezeichnet hast!",
+		["Packages"] = 5,
+	},
+	[10] = {
+		["Name"] = "Zeichne einen Schneemann",
+		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Schneemann gezeichnet hast!",
+		["Packages"] = 5,
+	},
 	[16] = {
 		["Name"] = "Mützen-Foto",
 		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
@@ -24,12 +34,14 @@ function QuestManager:constructor()
 	self.m_Quests = {
 		[2] = QuestPhotography,
 		[3] = QuestPhotography,
+		[4] = QuestDraw,
+		[10] = QuestDraw,
 		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false
 
 	--DEV:
-	self:startQuest(2)
+	self:startQuest(4)
 
 	addRemoteEvents{"questOnPedClick", "questStartClick", "questShortMessageClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
