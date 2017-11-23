@@ -131,3 +131,105 @@ function QuestDrawGUI:changeColor()
 		self.m_Skribble.m_DrawColor
 	)
 end
+
+QuestDrawAdminGUI = inherit(GUIForm)
+inherit(Singleton, QuestDrawAdminGUI)
+
+function QuestDrawAdminGUI:constructor()
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 26)
+	self.m_Height = grid("y", 13)
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Draw-Quest Admin GUI", true, true, self)
+
+	self.m_ContestNameLabel = GUIGridLabel:new(1, 1, 10, 1, "Aktuelle Aufgabe: -", self.m_Window)
+
+	self.m_PlayersGrid = GUIGridGridList:new(1, 2, 5, 11, self.m_Window)
+	self.m_PlayersGrid:addColumn(_"Zeichnungen", 1)
+
+	self.m_Skribble = GUIGridSkribble:new(6, 2, 20, 10, self.m_Window)
+	self.m_Background = GUIGridRectangle:new(6, 2, 20, 10, Color.Clear, self.m_Window)
+	self.m_InfoLabel = GUIGridLabel:new(6, 2, 20, 10, "", self.m_Window):setAlign("center", "center"):setFont(VRPFont(50)):setAlpha(0)
+
+	self.m_SelectedPlayerId = 0
+	self.m_SelectedPlayerName = ""
+
+	self:showInfoText("Bestätige nur Zeichnungen, die auch die Aufgabe richtig und schön gezeichnet haben!")
+
+	self.m_AcceptDrawBtn = GUIGridButton:new(6, 12, 5, 1, "Eigenes Bild malen", self.m_Window)
+	self.m_AcceptDrawBtn.onLeftClick = function()
+		QuestionBox:new(_("Möchtest du das Bild von %s akzeptieren?", self.m_SelectedPlayerName),
+		function() triggerServerEvent("questDrawReceiveAcceptImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
+	end
+
+	triggerServerEvent("questDrawRequestPlayers", localPlayer)
+	addEventHandler("questDrawReceivePlayers", root, bind(self.onReceivePlayers, self))
+end
+
+function QuestDrawAdminGUI:showInfoText(text)
+	if not text then self:hideInfoText() return end
+	self.m_InfoLabel:setText(text)
+
+	local backgroundAlpha = self.m_Background:getAlpha()
+	if backgroundAlpha ~= 200 then
+		Animation.FadeAlpha:new(self.m_Background, 250, backgroundAlpha, 200)
+	end
+
+	local posX, posY = self.m_InfoLabel:getPosition()
+	self.m_InfoLabel:setPosition(posX, -posY)
+	Animation.Move:new(self.m_InfoLabel, 250, posX, posY, "OutQuad")
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 0, 255)
+end
+
+function QuestDrawAdminGUI:hideInfoText()
+	if self.m_InfoLabel:getText() == "" then return end
+
+	Animation.FadeAlpha:new(self.m_Background, 250, 200, 0)
+	Animation.FadeAlpha:new(self.m_InfoLabel, 250, 255, 0).onFinish =
+		function()
+			self.m_InfoLabel:setText("")
+		end
+end
+
+function QuestDrawAdminGUI:onReceivePlayers(contestName, players)
+	self.m_Contest = contestName
+	self.m_ContestNameLabel:setText(_("Aktuelle Aufgabe: %s", contestName))
+
+	self.m_PlayersGrid:clear()
+	local item
+	for id, drawing in pairs(players) do
+		item = self.m_PlayersGrid:addItem(drawing.name)
+
+		item.onLeftClick = function(item)
+			if item == self.m_SelectedDrawItem then return end
+
+			if not localPlayer.LastRequest then
+				self.m_SelectedDrawItem = item
+				self.m_SelectedDrawId = drawing.drawId
+
+				self.m_SelectedPlayerName = drawing.name
+				self.m_SelectedPlayerId = id
+
+				self:resetOverview("Das Bild wird geladen...")
+				localPlayer.LastRequest = true
+
+				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
+			else
+				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
+			end
+		end
+	end
+end
+
+function QuestDrawAdminGUI:resetOverview(labelText)
+	self.m_Skribble:clear(true)
+	self:showInfoText(labelText)
+end
+
+function QuestDrawAdminGUI:onReceiveImage(drawData)
+	localPlayer.LastRequest = false
+
+	self:hideInfoText()
+	self.m_Skribble:drawSyncData(fromJSON(drawData))
+end

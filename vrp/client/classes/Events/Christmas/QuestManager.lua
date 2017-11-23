@@ -11,7 +11,7 @@ function QuestManager:constructor()
 		[16] = QuestPhotography
 	}
 
-	self.m_CurrentQues = false
+	self.m_CurrentQuest = false
 
 	addRemoteEvents{"questAddPlayer", "questRemovePlayer", "questOpenGUI"}
 	addEventHandler("questAddPlayer", root, bind(self.addPlayer, self))
