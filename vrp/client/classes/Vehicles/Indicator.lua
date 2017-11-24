@@ -385,35 +385,47 @@ function Indicator:switchIndicatorState ( indicator )
             if getVehicleOccupant(v, 0) == localPlayer then
                 -- Switch the indicator state
                 if self.m_Enabled == true then
-					if indicator ~= "warn" and getElementData(v, "i:warn") then return end
-					if indicator == "warn" then
-						if not getElementData(v, "i:warn") then
-							setElementData(v, "i:left", true)
-							setElementData(v, "i:right", true)
-							setElementData(v, "i:warn", true)
-						else
-							setElementData(v, "i:left", false)
-							setElementData(v, "i:right", false)
-							setElementData(v, "i:warn", false)
-						end
-					elseif indicator == "left" then
-						if getElementData(v, "i:left") then
-							setElementData(v, "i:left", false)
-						else
-							setElementData(v, "i:left", true)
-							setElementData(v, "i:right", false)
-						end
-					elseif indicator == "right" then
-						if getElementData(v, "i:right") then
-							setElementData(v, "i:right", false)
-						else
-							setElementData(v, "i:right", true)
-							setElementData(v, "i:left", false)
-						end
-					end
-				else
-					outputChatBox("Du hast die Blinker deaktiviert! Aktiviere die Blinker im F2 Menü!",255,0,0)
-				end
+                    if getKeyState("lshift") and v.m_HasDI then --switch direction indicator
+                        setElementData(v, "i:left", false)
+                        setElementData(v, "i:right", false)
+                        setElementData(v, "i:warn", false)
+                        if indicator == "warn" then
+                            VehicleELS:getSingleton():toggleDIRequest(v, false)
+                        else
+                            VehicleELS:getSingleton():toggleDIRequest(v, indicator)
+                        end
+                    else
+                        if indicator ~= "warn" and getElementData(v, "i:warn") then return end
+                        VehicleELS:getSingleton():toggleDIRequest(v, false)
+                        if indicator == "warn" then
+                            if not getElementData(v, "i:warn") then
+                                setElementData(v, "i:left", true)
+                                setElementData(v, "i:right", true)
+                                setElementData(v, "i:warn", true)
+                            else
+                                setElementData(v, "i:left", false)
+                                setElementData(v, "i:right", false)
+                                setElementData(v, "i:warn", false)
+                            end
+                        elseif indicator == "left" then
+                            if getElementData(v, "i:left") then
+                                setElementData(v, "i:left", false)
+                            else
+                                setElementData(v, "i:left", true)
+                                setElementData(v, "i:right", false)
+                            end
+                        elseif indicator == "right" then
+                            if getElementData(v, "i:right") then
+                                setElementData(v, "i:right", false)
+                            else
+                                setElementData(v, "i:right", true)
+                                setElementData(v, "i:left", false)
+                            end
+                        end
+                    end
+                else
+                    outputChatBox("Du hast die Blinker deaktiviert! Aktiviere die Blinker im F2 Menü!",255,0,0)
+                end
             end
         end
     end

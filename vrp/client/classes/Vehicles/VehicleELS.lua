@@ -9,7 +9,9 @@
 VehicleELS = inherit(Singleton) 
 VehicleELS.Map = {}
 VehicleELS.ActiveMap = {}
-VehicleELS.LightStates ={
+VehicleELS.ActiveDIMap = {}
+VehicleELS.DIUpdateTime = 200
+VehicleELS.LightStates = {
     full = {0,0,0,0},
     off = {1,1,1,1},
     r = {1,0,0,1},
@@ -17,26 +19,31 @@ VehicleELS.LightStates ={
     d1 = {1,0,1,0},
     d2 = {0,1,0,1},
 }
-addRemoteEvents{"vehicleELSinitAll", "vehicleELSinit", "vehicleELSremove", "vehicleELStoggle"}
+addRemoteEvents{"vehicleELSinitAll", "vehicleELSinit", "vehicleELSremove", "vehicleELStoggle", "vehicleELStoggleDI"}
 
 function VehicleELS:constructor()
     addEventHandler("vehicleELSinit", resourceRoot, bind(VehicleELS.initELS, self))
     addEventHandler("vehicleELSremove", resourceRoot, bind(VehicleELS.removeELS, self))
     addEventHandler("vehicleELStoggle", resourceRoot, bind(VehicleELS.toggleELS, self))
+    addEventHandler("vehicleELStoggleDI", resourceRoot, bind(VehicleELS.toggleDI, self))
 end
 
-function VehicleELS:loadServerELS(allVehs, activeVehs)
+function VehicleELS:loadServerELS(allVehs, activeVehs, diVehs)
     for veh, preset in pairs(allVehs) do
         self:initELS(veh, preset)
     end
     for veh, state in pairs(activeVehs) do
         self:toggleELS(veh, state)
     end
+    for veh, mode in pairs(diVehs) do
+        self:toggleDI(veh, mode)
+    end
 end
 
 function VehicleELS:initELS(veh, preset)
     VehicleELS.Map[veh] = preset
     veh.m_ELSPreset = preset
+    veh.m_HasDI = ELS_PRESET[preset].directionIndicator
 end
 
 function VehicleELS:removeELS(veh)
@@ -70,7 +77,7 @@ function VehicleELS:internalAddELSLights(veh)
             veh.m_ELSLights[name] = createMarker(0, 0, 0, "corona", data[4], data[5], data[6], data[7], data[8] or 255)
             veh.m_ELSLights[name]:attach(veh, data[1], data[2], data[3])
         end
-        veh:setOverrideLights(2)
+        if ELS_PRESET[veh.m_ELSPreset].headlightSequence then veh:setOverrideLights(2) end
         VehicleELS.update(veh)
         veh.m_ELSTimer = setTimer(VehicleELS.update, ELS_PRESET[veh.m_ELSPreset].sequenceDuration, 0, veh)
     end
@@ -92,6 +99,61 @@ function VehicleELS:internalRemoveELSLights(veh)
         veh.m_ELSCache = nil
     end
 end
+
+
+--Direction Indicator
+
+function VehicleELS:toggleDIRequest(veh, state)
+    if state ~= VehicleELS.ActiveDIMap[veh] then 
+        triggerServerEvent("vehicleDirectionIndicatorToggleRequest", veh, state)
+    end
+end 
+
+function VehicleELS:toggleDI(veh, mode)
+    if not veh.m_HasDI then return false end
+    if mode ~= veh.m_DIMode then
+        if mode then
+            VehicleELS.ActiveDIMap[veh] = mode
+            self:internalRemoveDILights(veh)
+            self:internalAddDILights(veh)
+        else
+            self:internalRemoveDILights(veh)
+            VehicleELS.ActiveDIMap[veh] = nil
+        end
+        veh.m_DIMode = mode
+    end
+end
+
+function VehicleELS:internalAddDILights(veh)
+    if not veh.m_HasDI then return false end
+    if not veh.m_DILights then
+        local x, y, z = unpack(veh.m_HasDI)
+        veh.m_DILights = {}
+        
+        veh.m_DILights.r = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
+        veh.m_DILights.r:attach(veh, x, y, z)
+        veh.m_DILights.m = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
+        veh.m_DILights.m:attach(veh, 0, y, z)
+        veh.m_DILights.l = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
+        veh.m_DILights.l:attach(veh, -x, y, z)
+
+        VehicleELS.updateDI(veh)
+        veh.m_DITimer = setTimer(VehicleELS.updateDI, VehicleELS.DIUpdateTime, 0, veh)
+    end
+end
+
+function VehicleELS:internalRemoveDILights(veh)
+    if veh.m_DILights then
+        for name, cor in pairs(veh.m_DILights) do
+            cor:destroy()
+        end
+        veh.m_DILights = nil
+        if isTimer(veh.m_DITimer) then killTimer(veh.m_DITimer) end
+    end
+end
+
+
+--general update function
 
 function VehicleELS.update(veh)
     if VehicleELS.ActiveMap[veh] then
@@ -138,11 +200,43 @@ function VehicleELS.update(veh)
         end
         VehicleELS.ActiveMap[veh] = VehicleELS.ActiveMap[veh] % ELS_PRESET[veh.m_ELSPreset].sequenceCount  + 1
     else
-        self:internalRemoveELSLights(veh)
+        VehicleELS:getSingleton():internalRemoveELSLights(veh)
+    end
+end
+
+function VehicleELS.updateDI(veh)
+    local mode = VehicleELS.ActiveDIMap[veh]
+    if mode == "left" then
+        if veh.m_DILights.r:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime})
+        elseif veh.m_DILights.m:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime})
+        elseif veh.m_DILights.l:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime})
+        else
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0, VehicleELS.DIUpdateTime})
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0, VehicleELS.DIUpdateTime})
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0, VehicleELS.DIUpdateTime})
+        end
+    elseif mode == "right" then
+        if veh.m_DILights.l:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime})
+        elseif veh.m_DILights.m:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime})
+        elseif veh.m_DILights.r:getSize() < 0.15 then 
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime})
+        else
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0, VehicleELS.DIUpdateTime})
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0, VehicleELS.DIUpdateTime})
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0, VehicleELS.DIUpdateTime})
+        end
+    else
+        VehicleELS:getSingleton():internalRemoveELSLights(veh)
     end
 end
 
 
-addEventHandler("vehicleELSinitAll", root, function(allVehs, activeVehs)
-    VehicleELS:getSingleton():loadServerELS(allVehs, activeVehs)
+
+addEventHandler("vehicleELSinitAll", root, function(allVehs, activeVehs, diVehs)
+    VehicleELS:getSingleton():loadServerELS(allVehs, activeVehs, diVehs)
 end)

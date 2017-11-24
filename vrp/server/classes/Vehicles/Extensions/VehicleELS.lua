@@ -10,7 +10,8 @@
 VehicleELS = inherit(Object) --gets inherited from vehicle to provide methods to vehicle object
 VehicleELS.Map = {}
 VehicleELS.ActiveMap = {}
-addRemoteEvents {"vehicleELSToggleRequest"}
+VehicleELS.DIActiveMap = {} -- direction indicator
+addRemoteEvents {"vehicleELSToggleRequest", "vehicleDirectionIndicatorToggleRequest"}
 
 function VehicleELS:setELSPreset(ELSPreset)
     if ELS_PRESET[ELSPreset] then     
@@ -22,6 +23,7 @@ function VehicleELS:setELSPreset(ELSPreset)
         VehicleELS.Map[self] = ELSPreset
         self:updateClient("init", ELSPreset)
         addEventHandler("vehicleELSToggleRequest", self, bind(VehicleELS.toggleELS, self))
+        addEventHandler("vehicleDirectionIndicatorToggleRequest", self, bind(VehicleELS.toggleDI, self))
     end
 end
 
@@ -35,7 +37,7 @@ end
 
 
 function VehicleELS:toggleELS(state)
-    --if state ~= self.m_ELSActive then
+    if state ~= self.m_ELSActive then
         if state then
             VehicleELS.ActiveMap[self] = true
         else
@@ -43,7 +45,14 @@ function VehicleELS:toggleELS(state)
         end
         self.m_ELSActive = state
         self:updateClient("toggle", state)
-    --end
+    end
+end
+
+function VehicleELS:toggleDI(mode)
+    if mode ~= VehicleELS.DIActiveMap[self] then
+        VehicleELS.DIActiveMap[self] = (mode == false and nil or mode)
+        self:updateClient("toggleDI", mode)
+    end
 end
 
 function VehicleELS:updateClient(type, data)
@@ -53,5 +62,5 @@ end
 
 function VehicleELS.sendAllToClient(player)
     outputDebug(player)
-    player:triggerEvent("vehicleELSinitAll", VehicleELS.Map, VehicleELS.ActiveMap)
+    player:triggerEvent("vehicleELSinitAll", VehicleELS.Map, VehicleELS.ActiveMap, VehicleELS.DIActiveMap)
 end
