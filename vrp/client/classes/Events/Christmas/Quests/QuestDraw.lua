@@ -1,7 +1,18 @@
 QuestDraw = inherit(Object)
 
-function QuestDraw:constructor(id, name)
-	QuestDrawGUI:new(id, name)
+function QuestDraw:constructor(id, name, type)
+	self.m_Id = id
+	self.m_Name = name
+
+	addRemoteEvents{"questDrawShowSkribble", "questDrawShowAdminGUI"}
+	addEventHandler("questDrawShowSkribble", root, function()
+		QuestDrawGUI:new(self.m_Id, self.m_Name)
+	end)
+
+	addEventHandler("questDrawShowAdminGUI", root, function()
+		QuestDrawAdminGUI:new(self.m_Id, self.m_Name)
+	end)
+
 end
 
 function QuestDraw:destructor()
@@ -64,7 +75,7 @@ function QuestDrawGUI:constructor(id, name)
 				["postData"] =  ("secret=%s&playerId=%d&contest=%s&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, toJSON(self.m_Skribble:getSyncData()))
 			}
 
-			fetchRemote("https://exo-reallife.de/ingame/drawContest/addData.php", options,
+			fetchRemote(("https://exo-reallife.de/ingame/drawContest/addData.php%s"):format(DEBUG and "?debug=true" or ""), options,
 				function(responseData, responseInfo)
 					--outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)
@@ -88,7 +99,6 @@ end
 function QuestDrawGUI:virtual_destructor()
 
 end
-
 
 function QuestDrawGUI:showInfoText(text)
 	if not text then self:hideInfoText() return end
@@ -135,6 +145,8 @@ end
 QuestDrawAdminGUI = inherit(GUIForm)
 inherit(Singleton, QuestDrawAdminGUI)
 
+addEvent("questDrawReceivePlayers", true)
+
 function QuestDrawAdminGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 26)
@@ -157,12 +169,19 @@ function QuestDrawAdminGUI:constructor()
 
 	self:showInfoText("Bestätige nur Zeichnungen, die auch die Aufgabe richtig und schön gezeichnet haben!")
 
-	self.m_AcceptDrawBtn = GUIGridButton:new(6, 12, 5, 1, "Eigenes Bild malen", self.m_Window)
+	self.m_AcceptDrawBtn = GUIGridButton:new(7, 12, 4, 1, "akzeptieren", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_AcceptDrawBtn:setVisible(false)
 	self.m_AcceptDrawBtn.onLeftClick = function()
 		QuestionBox:new(_("Möchtest du das Bild von %s akzeptieren?", self.m_SelectedPlayerName),
 		function() triggerServerEvent("questDrawReceiveAcceptImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
 	end
 
+	self.m_DeclineDrawBtn = GUIGridButton:new(2, 12, 4, 1, "ablehnen", self.m_Window):setBackgroundColor(Color.Red)
+	self.m_DeclineDrawBtn:setVisible(false)
+	self.m_DeclineDrawBtn.onLeftClick = function()
+		QuestionBox:new(_("Möchtest du das Bild von %s ablehnen?", self.m_SelectedPlayerName),
+		function() triggerServerEvent("questDrawReceiveDeclineImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
+	end
 	triggerServerEvent("questDrawRequestPlayers", localPlayer)
 	addEventHandler("questDrawReceivePlayers", root, bind(self.onReceivePlayers, self))
 end
@@ -195,6 +214,8 @@ end
 function QuestDrawAdminGUI:onReceivePlayers(contestName, players)
 	self.m_Contest = contestName
 	self.m_ContestNameLabel:setText(_("Aktuelle Aufgabe: %s", contestName))
+	self.m_AcceptDrawBtn:setVisible(false)
+	self.m_DeclineDrawBtn:setVisible(false)
 
 	self.m_PlayersGrid:clear()
 	local item
@@ -214,7 +235,9 @@ function QuestDrawAdminGUI:onReceivePlayers(contestName, players)
 				self:resetOverview("Das Bild wird geladen...")
 				localPlayer.LastRequest = true
 
-				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
+				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?%splayerId=%s&contest=%s"):format(DEBUG and "debug=true&" or "", id, contestName), bind(self.onReceiveImage, self))
+				self.m_AcceptDrawBtn:setVisible(false)
+				self.m_DeclineDrawBtn:setVisible(false)
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
 			end
@@ -232,4 +255,7 @@ function QuestDrawAdminGUI:onReceiveImage(drawData)
 
 	self:hideInfoText()
 	self.m_Skribble:drawSyncData(fromJSON(drawData))
+	self.m_AcceptDrawBtn:setVisible(true)
+	self.m_DeclineDrawBtn:setVisible(true)
 end
+

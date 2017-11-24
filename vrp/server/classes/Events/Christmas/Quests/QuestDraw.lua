@@ -10,23 +10,56 @@ function QuestDraw:constructor(id)
 
 	self.m_Target = QuestPhotography.Targets[id]
 
-	self.m_ReceivePlayersBind = bind(self.requestPlayers, self)
+	self.m_RequestPlayersBind = bind(self.requestPlayers, self)
 	self.m_AcceptImageBind = bind(self.acceptImage, self)
+	self.m_DeclineImageBind = bind(self.declineImage, self)
 
-	addRemoteEvents{"questDrawReceivePlayers", "questDrawReceiveAcceptImage"}
-	addEventHandler("questDrawReceivePlayers", root, self.m_ReceivePlayersBind)
+
+	addCommandHandler("drawquest", function(player)
+		if player:getRank() >= RANK.Moderator then
+			player:triggerEvent("questDrawShowAdminGUI")
+		end
+	end)
+
+	addRemoteEvents{"questDrawRequestPlayers", "questDrawReceiveAcceptImage", "questDrawReceiveDeclineImage"}
+	addEventHandler("questDrawRequestPlayers", root, self.m_RequestPlayersBind)
 	addEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
+	addEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
+
 end
 
 function QuestDraw:destructor(id)
 	Quest.destructor(self)
 
-	removeEventHandler("questDrawReceivePlayers", root, self.m_ReceivePlayersBind)
+	removeEventHandler("questDrawRequestPlayers", root, self.m_RequestPlayersBind)
 	removeEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
+	removeEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
+
 end
 
 function QuestDraw:requestPlayers()
 	self:sendToClient(client)
+end
+
+function QuestDraw:addPlayer(player)
+	Quest.addPlayer(self, player)
+	local contestName = self.m_Name
+	local result = sql:queryFetchSingle("SELECT Accepted FROM ??_drawContest WHERE Contest = ? AND UserId = ?", sql:getPrefix(), contestName, player:getId())
+	if result then
+		if not result["Accepted"] or result["Accepted"] == 0 then -- Picture Pending
+			player:sendShortmessage("Du hast bereits ein Bild eingesendet! Dein Bild wurde noch nicht von einem Admin bestätigt!")
+		elseif result["Accepted"] == 1 then
+			player:sendShortmessage("Glückwunsch! Dein Bild wurde von einem Admin bestätigt! Hier deine Belohnung!")
+			sql:queryExec("UPDATE ??_drawContest SET Accepted = 2 WHERE Contest = ? AND UserId = ?", sql:getPrefix(), contestName, player:getId())
+			self:success(client)
+		elseif result["Accepted"] == 2 then
+			player:sendShortmessage("Du hast deine Belohnung für diesen Quest bereits erhalten!")
+		elseif result["Accepted"] == 3 then
+			player:sendShortmessage("Dein Bild wurde abgelehnt! Du hast nicht schön genug gezeichnet!")
+		end
+	else
+		player:triggerEvent("questDrawShowSkribble")
+	end
 end
 
 function QuestDraw:sendToClient(player)
@@ -52,5 +85,19 @@ function QuestDraw:acceptImage(drawId)
 
 	sql:queryExec("UPDATE ??_drawContest SET Accepted = 1 WHERE DrawId = ?", sql:getPrefix(), drawId)
 	client:sendSuccess("Du hast das Bild erfolgreich akzeptiert!")
+	self:sendToClient(client)
+end
+
+function QuestDraw:declineImage(drawId)
+	if client:getRank() < RANK.Moderator then
+		return
+	end
+
+	local contestName = self.m_Name
+	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
+
+	sql:queryExec("UPDATE ??_drawContest SET Accepted = 3 WHERE DrawId = ?", sql:getPrefix(), drawId)
+	client:sendSuccess("Du hast das Bild abgelehnt!")
+	self:sendToClient(client)
 end
 
