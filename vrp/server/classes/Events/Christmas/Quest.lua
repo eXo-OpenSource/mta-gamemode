@@ -18,7 +18,6 @@ end
 
 function Quest:addPlayer(player)
 	table.insert(self.m_Players, player)
-	player:sendShortMessage(self.m_Description.."\nKlicke hier um den Quest abzubrechen!", "Quest: "..self.m_Name, {150, 0, 0}, -1, "questShortMessageClick")
 	player:triggerEvent("questAddPlayer", self.m_QuestId, self.m_Name, self.m_Description)
 end
 

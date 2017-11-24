@@ -81,6 +81,7 @@ function QuestDrawGUI:constructor(id, name)
 					responseData = fromJSON(responseData)
 					if not responseData["error"] then
 						self:showInfoText("Das Bild wurde erfolgreich gespeichert!")
+						triggerServerEvent("questDrawPictureSaved", localPlayer)
 					else
 						if responseData["error"] == "Already sent a image" then
 							self:showInfoText("Fehler: Du hast bereits ein Bild zu dieser Aufgabe eingesendet!")

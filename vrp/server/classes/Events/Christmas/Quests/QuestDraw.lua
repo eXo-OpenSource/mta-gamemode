@@ -13,6 +13,8 @@ function QuestDraw:constructor(id)
 	self.m_RequestPlayersBind = bind(self.requestPlayers, self)
 	self.m_AcceptImageBind = bind(self.acceptImage, self)
 	self.m_DeclineImageBind = bind(self.declineImage, self)
+	self.m_PictureSavedImageBind = bind(self.savedImage, self)
+
 
 
 	addCommandHandler("drawquest", function(player)
@@ -21,10 +23,11 @@ function QuestDraw:constructor(id)
 		end
 	end)
 
-	addRemoteEvents{"questDrawRequestPlayers", "questDrawReceiveAcceptImage", "questDrawReceiveDeclineImage"}
+	addRemoteEvents{"questDrawRequestPlayers", "questDrawReceiveAcceptImage", "questDrawReceiveDeclineImage", "questDrawPictureSaved"}
 	addEventHandler("questDrawRequestPlayers", root, self.m_RequestPlayersBind)
 	addEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
 	addEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
+	addEventHandler("questDrawPictureSaved", root, self.m_PictureSavedImageBind)
 
 end
 
@@ -34,6 +37,7 @@ function QuestDraw:destructor(id)
 	removeEventHandler("questDrawRequestPlayers", root, self.m_RequestPlayersBind)
 	removeEventHandler("questDrawReceiveAcceptImage", root, self.m_AcceptImageBind)
 	removeEventHandler("questDrawReceiveDeclineImage", root, self.m_DeclineImageBind)
+	removeEventHandler("questDrawPictureSaved", root, self.m_PictureSavedImageBind)
 
 end
 
@@ -47,15 +51,19 @@ function QuestDraw:addPlayer(player)
 	local result = sql:queryFetchSingle("SELECT Accepted FROM ??_drawContest WHERE Contest = ? AND UserId = ?", sql:getPrefix(), contestName, player:getId())
 	if result then
 		if not result["Accepted"] or result["Accepted"] == 0 then -- Picture Pending
-			player:sendShortmessage("Du hast bereits ein Bild eingesendet! Dein Bild wurde noch nicht von einem Admin bestätigt!")
+			player:sendWarning("Deine eingesendete Zeichnung wurde noch nicht von einem Admin bestätigt!")
+			self:removePlayer(player)
 		elseif result["Accepted"] == 1 then
-			player:sendShortmessage("Glückwunsch! Dein Bild wurde von einem Admin bestätigt! Hier deine Belohnung!")
+			player:sendSuccess("Glückwunsch! Deine Zeichnung wurde von einem Admin bestätigt! Hier deine Belohnung!")
 			sql:queryExec("UPDATE ??_drawContest SET Accepted = 2 WHERE Contest = ? AND UserId = ?", sql:getPrefix(), contestName, player:getId())
 			self:success(client)
+
 		elseif result["Accepted"] == 2 then
-			player:sendShortmessage("Du hast deine Belohnung für diesen Quest bereits erhalten!")
+			player:sendError("Du hast deine Belohnung für diesen Quest bereits erhalten!")
+			self:removePlayer(player)
 		elseif result["Accepted"] == 3 then
-			player:sendShortmessage("Dein Bild wurde abgelehnt! Du hast nicht schön genug gezeichnet!")
+			player:sendError("Deine Zeichnung wurde abgelehnt! Du hast nicht schön genug gezeichnet!")
+			self:removePlayer(player)
 		end
 	else
 		player:triggerEvent("questDrawShowSkribble")
@@ -83,8 +91,8 @@ function QuestDraw:acceptImage(drawId)
 	local contestName = self.m_Name
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
-	sql:queryExec("UPDATE ??_drawContest SET Accepted = 1 WHERE DrawId = ?", sql:getPrefix(), drawId)
-	client:sendSuccess("Du hast das Bild erfolgreich akzeptiert!")
+	sql:queryExec("UPDATE ??_drawContest SET Accepted = 1 WHERE Id = ?", sql:getPrefix(), drawId)
+	client:sendSuccess("Du hast die Zeichnung erfolgreich akzeptiert!")
 	self:sendToClient(client)
 end
 
@@ -96,8 +104,12 @@ function QuestDraw:declineImage(drawId)
 	local contestName = self.m_Name
 	if not contestName then client:sendError("Aktuell läuft kein Zeichen-Wettbewerb!") return end
 
-	sql:queryExec("UPDATE ??_drawContest SET Accepted = 3 WHERE DrawId = ?", sql:getPrefix(), drawId)
-	client:sendSuccess("Du hast das Bild abgelehnt!")
+	sql:queryExec("UPDATE ??_drawContest SET Accepted = 3 WHERE Id = ?", sql:getPrefix(), drawId)
+	client:sendSuccess("Du hast die Zeichnung abgelehnt!")
 	self:sendToClient(client)
 end
 
+function QuestDraw:savedImage()
+	client:sendShortMessage("Deine Zeichnung muss bestätigt werden!\nKomm später wieder und starte nochmal den Quest!")
+	self:removePlayer(client)
+end
