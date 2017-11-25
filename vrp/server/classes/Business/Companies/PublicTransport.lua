@@ -221,7 +221,7 @@ function PublicTransport:endTaxiDrive(customer)
 		
 		if isElement(driver) then 
 			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
-			self.m_BankAccountServer:transferMoney({self, nil, true}, price, "Public Transport Taxi", "Company", "Taxi")
+			self.m_BankAccountServer:transferMoney(driver, price, "Public Transport Taxi", "Company", "Taxi")
 		end
 
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
