@@ -4,14 +4,12 @@ function QuestDraw:constructor(id, name, type)
 	self.m_Id = id
 	self.m_Name = name
 
-	addRemoteEvents{"questDrawShowSkribble", "questDrawShowAdminGUI"}
+	addRemoteEvents{"questDrawShowSkribble"}
 	addEventHandler("questDrawShowSkribble", root, function()
 		QuestDrawGUI:new(self.m_Id, self.m_Name)
 	end)
 
-	addEventHandler("questDrawShowAdminGUI", root, function()
-		QuestDrawAdminGUI:new(self.m_Id, self.m_Name)
-	end)
+
 
 end
 
@@ -146,7 +144,11 @@ end
 QuestDrawAdminGUI = inherit(GUIForm)
 inherit(Singleton, QuestDrawAdminGUI)
 
-addEvent("questDrawReceivePlayers", true)
+
+addEvent("questDrawShowAdminGUI", true)
+addEventHandler("questDrawShowAdminGUI", root, function()
+	QuestDrawAdminGUI:new()
+end)
 
 function QuestDrawAdminGUI:constructor()
 	GUIWindow.updateGrid()
@@ -170,19 +172,21 @@ function QuestDrawAdminGUI:constructor()
 
 	self:showInfoText("Bestätige nur Zeichnungen, die auch die Aufgabe richtig und schön gezeichnet haben!")
 
-	self.m_AcceptDrawBtn = GUIGridButton:new(7, 12, 4, 1, "akzeptieren", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_AcceptDrawBtn = GUIGridButton:new(22, 12, 4, 1, "akzeptieren", self.m_Window):setBackgroundColor(Color.Green)
 	self.m_AcceptDrawBtn:setVisible(false)
 	self.m_AcceptDrawBtn.onLeftClick = function()
 		QuestionBox:new(_("Möchtest du das Bild von %s akzeptieren?", self.m_SelectedPlayerName),
 		function() triggerServerEvent("questDrawReceiveAcceptImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
 	end
 
-	self.m_DeclineDrawBtn = GUIGridButton:new(2, 12, 4, 1, "ablehnen", self.m_Window):setBackgroundColor(Color.Red)
+	self.m_DeclineDrawBtn = GUIGridButton:new(17, 12, 4, 1, "ablehnen", self.m_Window):setBackgroundColor(Color.Red)
 	self.m_DeclineDrawBtn:setVisible(false)
 	self.m_DeclineDrawBtn.onLeftClick = function()
 		QuestionBox:new(_("Möchtest du das Bild von %s ablehnen?", self.m_SelectedPlayerName),
 		function() triggerServerEvent("questDrawReceiveDeclineImage", localPlayer, self.m_SelectedDrawId) self:resetOverview("Wähle ein Bild aus") end)
 	end
+	addEvent("questDrawReceivePlayers", true)
+
 	triggerServerEvent("questDrawRequestPlayers", localPlayer)
 	addEventHandler("questDrawReceivePlayers", root, bind(self.onReceivePlayers, self))
 end
