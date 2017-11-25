@@ -358,6 +358,7 @@ addEventHandler("onClientElementStreamIn", root,
 			end
 			GroupSaleVehicles.VehiclestreamedIn(source)
 			Indicator:getSingleton():onVehicleStreamedIn(source)
+			VehicleELS:getSingleton():onVehicleStreamedIn(source)
 			Neon.VehiclestreamedIn(source)
 		end
 	end
@@ -372,6 +373,7 @@ addEventHandler("onClientElementStreamOut", root,
 		if getElementType(source) == "vehicle" then
 			GroupSaleVehicles.VehiclestreamedOut(source)
 			Indicator:getSingleton():onVehicleStreamedOut(source)
+			VehicleELS:getSingleton():onVehicleStreamedOut(source)
 			Neon.VehiclestreamedOut(source)
 		end
 	end

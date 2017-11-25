@@ -1919,6 +1919,9 @@
 	<vrpfile src="files/models/bankDoor.dff" />
 
 	<!-- <vrpfile src="files/models/vehicles/infernus.dff"/> -->
+	<vrpfile src="files/models/vehicles/extensions/lightbar.dff"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.txd"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.col"/>
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>

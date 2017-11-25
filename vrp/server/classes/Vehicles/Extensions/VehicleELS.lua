@@ -20,6 +20,18 @@ function VehicleELS:setELSPreset(ELSPreset)
             removeVehicleSirens(self)
             self:addSirens(1, 1)
         end
+        if ELS_PRESET[ELSPreset].lightBar then
+            local l = ELS_PRESET[ELSPreset].lightBar
+            local obj = createObject(1921, 0, 0, 0)
+            obj:attach(self, l[1], l[2], l[3])
+            obj:setCollisionsEnabled(false)
+            if l[5] == "red" then
+                VehicleTexture:new(obj, "files/images/Textures/Faction/Rescue/Rescue_Copcar.png", "copcarla92interior128", true)
+            elseif l[5] == "orange" then 
+                VehicleTexture:new(obj, "files/images/Textures/Faction/State/MBT_Copcar.png", "copcarla92interior128", true)
+            end
+            if l[4] then obj:setScale(l[4]) end
+        end
         VehicleELS.Map[self] = ELSPreset
         self:updateClient("init", ELSPreset)
         addEventHandler("vehicleELSToggleRequest", self, bind(VehicleELS.toggleELS, self))

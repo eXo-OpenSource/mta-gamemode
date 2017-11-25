@@ -57,7 +57,9 @@ function VehicleELS:toggleELS(veh, state)
     if state ~= veh.m_ELSActive then
         if state then
             VehicleELS.ActiveMap[veh] = 1
-            self:internalAddELSLights(veh)
+            if isElementStreamedIn(veh) then
+                self:internalAddELSLights(veh)
+            end
         else
             self:internalRemoveELSLights(veh)
             VehicleELS.ActiveMap[veh] = nil
@@ -67,6 +69,7 @@ function VehicleELS:toggleELS(veh, state)
 end
 
 function VehicleELS:internalAddELSLights(veh)
+    if not self:isEnabled() then return false end
     if not veh.m_ELSLights then
         veh.m_ELSLights = {}
         veh.m_ELSCache = {
@@ -114,8 +117,10 @@ function VehicleELS:toggleDI(veh, mode)
     if mode ~= veh.m_DIMode then
         if mode then
             VehicleELS.ActiveDIMap[veh] = mode
-            self:internalRemoveDILights(veh)
-            self:internalAddDILights(veh)
+            if isElementStreamedIn(veh) then
+                self:internalRemoveDILights(veh)
+                self:internalAddDILights(veh)
+            end
         else
             self:internalRemoveDILights(veh)
             VehicleELS.ActiveDIMap[veh] = nil
@@ -235,6 +240,48 @@ function VehicleELS.updateDI(veh)
     end
 end
 
+
+-- stream functions
+
+function VehicleELS:onVehicleStreamedIn(veh)
+    if VehicleELS.ActiveMap[veh] then
+        self:internalAddELSLights(veh)
+    end
+    if VehicleELS.ActiveDIMap[veh] then
+        self:internalAddDILights(veh)
+    end
+end
+
+function VehicleELS:onVehicleStreamedOut(veh)
+    if VehicleELS.ActiveMap[veh] then
+        self:internalRemoveELSLights(veh)
+    end
+    if VehicleELS.ActiveDIMap[veh] then
+        self:internalRemoveDILights(veh)
+    end
+end
+
+
+--handler for settings
+
+function VehicleELS:isEnabled()
+    return core:get("Vehicles", "ELS", true)
+end
+
+function VehicleELS:handleSettingChange(enabled)
+    if self:isEnabled() ~= enabled then
+        core:set("Vehicles", "ELS", enabled)
+        if enabled then 
+            for i, v in pairs(getElementsByType("vehicle", root, true)) do
+                self:onVehicleStreamedIn(v)
+            end
+        else
+            for i, v in pairs(getElementsByType("vehicle", root, true)) do
+                self:onVehicleStreamedOut(v)
+            end
+        end
+    end
+end
 
 
 addEventHandler("vehicleELSinitAll", root, function(allVehs, activeVehs, diVehs)

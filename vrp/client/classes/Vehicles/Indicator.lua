@@ -40,7 +40,7 @@ end
 function Indicator:checkVehicles()
     -- Check all streamed in vehicles that have any indicator activated and create a state for them.
     local vehicles = getElementsByType ( 'vehicle' )
-    for k, vehicle in ipairs(vehicles) do
+    for k, vehicle in pairs(vehicles) do
         if isElementStreamedIn ( vehicle ) then
             local indicatorLeft = getElementData ( vehicle, 'i:left' )
             local indicatorRight = getElementData ( vehicle, 'i:right' )
@@ -110,7 +110,6 @@ function Indicator:createIndicator ()
                                         self.ms_Color[3],
                                         0
                                     )
-    setElementStreamable ( indicator, false )
     return indicator
 end
 

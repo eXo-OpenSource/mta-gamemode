@@ -18,10 +18,11 @@ function KeyBinds:constructor()
 	self.m_Inventory = bind(self.inventory, self)
 	self.m_CruiseControl = bind(HUDSpeedo.Bind_CruiseControl, HUDSpeedo:getSingleton())
 	self.m_VehiclePickUp = bind(LocalPlayer.vehiclePickUp, localPlayer)
+	self.m_VehicleELS = bind(self.vehicleELS, self)
 
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
-		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
+		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
 		["KeyToggleSelfGUI"]		= {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
 		["KeyToggleHelpGUI"]		= {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
 		["KeyToggleAnimationMenu"]	= {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
@@ -40,8 +41,8 @@ function KeyBinds:constructor()
 		["KeyVehiclePickUp"]	 	= {["defaultKey"] = "x", ["name"] = "An Boot/Fahrzeug attachen", ["func"] = self.m_VehiclePickUp, ["trigger"] = "down"};
 		["KeyToggleVehicleEngine"]	= {["defaultKey"] = "x", ["name"] = "Fahrzeug Motor", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleEngine() end end, ["trigger"] = "down"};
 		["KeyToggleVehicleLight"]	= {["defaultKey"] = "l", ["name"] = "Fahrzeug Licht", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleLight() end end, ["trigger"] = "down"};
-		["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Fahrzeug Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
-		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Fahrzeug-Rundumleuchten", ["func"] = function() if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) end end, ["trigger"] = "down"};
+		["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
+		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
 
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
@@ -188,6 +189,19 @@ function KeyBinds:scoreboardGUI(_, keyState)
 		ScoreboardGUI:getSingleton():setVisible(false)
 	end
 end
+
+function KeyBinds:vehicleELS(__, keyState)
+	if localPlayer.vehicle and localPlayer.vehicle.m_ELSPreset then 
+		if localPlayer.vehicleSeat == 0 then
+			if VehicleELS:getSingleton():isEnabled() then
+			triggerServerEvent("vehicleELSToggleRequest",localPlayer.vehicle, not localPlayer.vehicle.m_ELSActive) 
+			else
+				WarningBox:new(_"Um die Rundumleuchten zu sehen musst du diese in den Einstellungen (F2) aktivieren.")
+			end
+		end
+	end
+end
+
 
 --[[
 addCommandHandler("checkKeys",function()

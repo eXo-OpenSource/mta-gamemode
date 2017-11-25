@@ -123,7 +123,7 @@ ELS_PRESET = {
     [598] = { -- LVPD 
         hasSiren = true,
         headlightSequence = true,
-        directionIndicator = {0.7, -1.9, 0.3},
+        directionIndicator = {0.6, -1.7, 0.4},
         sequenceCount = 4,
         sequenceDuration = 250,
         light = {
@@ -222,7 +222,6 @@ ELS_PRESET = {
     ["LVPD_Orange"] = { -- LVPD 
         hasSiren = true,
         headlightSequence = true,
-        directionIndicator = {0.7, -1.9, 0.3},
         sequenceCount = 4,
         sequenceDuration = 300,
         light = {
@@ -490,13 +489,18 @@ ELS_PRESET = {
     [528] = { --FBI Truck
         hasSiren = true,
         headlightSequence = true,
+        lightBar = {0, 0, 1.1},
         sequenceCount = 2,
-        sequenceDuration = 600,
+        sequenceDuration = 500,
         light = {
             fbu = {0.45,    2.55,   0,    0.25,    0,  0, 255, 0},
             fbd = {0.45,    2.55,   -0.3,   0.25,    0,  0, 255, 0},
             fru = {-0.45,   2.55,   0,    0.2,    255,0, 0,   0},
             frd = {-0.45,   2.55,   -0.3,   0.2,    255,0, 0,   0},
+			r2 = {-0.6, 0, 1.15, 0, 255, 0, 0},
+            r3 = {-0.3, 0, 1.15, 0.4, 255, 0, 0},
+            b2 = {0.6, 0, 1.15, 0.4, 0, 0, 255},
+            b3 = {0.3, 0, 1.15, 0, 0, 0, 255},
         },
         sequence = {
             [1] = {
@@ -504,14 +508,24 @@ ELS_PRESET = {
                 frd = {strobe = false},
                 fru = {strobe = {100, 100, 255, 100}},
                 fbd = {strobe = {100, 100, 255, 100}},
+				r2 = {fade = {0.4}},
+				r3 = {fade = {0}},
+				b2 = {fade = {0}},
+				b3 = {fade = {0.4}},
+                vehicle_light = {"l", {255, 0, 0}},
             },
             [2] = {
                 fru = {strobe = false},
                 fbd = {strobe = false},
                 fbu = {strobe = {100, 100, 255, 100}},
                 frd = {strobe = {100, 100, 255, 100}},
+				r2 = {fade = {0}},
+				r3 = {fade = {0.4}},
+				b2 = {fade = {0.4}},
+				b3 = {fade = {0}},
+				vehicle_light = {"r", {0, 0, 255}},
             },
-        }
+        }	
     },
     [407] = { --Fire Truck
         hasSiren = true,
@@ -655,7 +669,7 @@ ELS_PRESET = {
     ["LVPD_Red"] = { -- LVPD 
         hasSiren = true,
         headlightSequence = true,
-        directionIndicator = {0.7, -1.9, 0.3},
+        directionIndicator = {0.6, -1.7, 0.4},
         sequenceCount = 4,
         sequenceDuration = 350,
         light = {
@@ -822,20 +836,27 @@ ELS_PRESET = {
     },
     [552] = { --Utility Van
         sequenceCount = 2,
+        lightBar = {0, 0.7, 1.35, 1.1, "orange"},
         sequenceDuration = 400,
         light = {
-            y1 = {0.65, 0.15, 1.5, 0, 255, 145, 0},
-            y2 = {-0.65, 0.15, 1.5, 0, 255, 145, 0},
+            r2 = {-0.7, 0.7, 1.4, 0, 255, 145, 0},
+            r3 = {-0.4, 0.7, 1.4, 0, 255, 145, 0},
+            b2 = {0.7, 0.7, 1.4, 0, 255, 145, 0},
+            b3 = {0.4, 0.7, 1.4, 0, 255, 145, 0},
         },
         sequence = {
             [1] = {
-                y1 = {fade = {0.4}},
-                y2 = {fade = {0.0}},
+				r2 = {fade = {0.3}},
+				r3 = {fade = {0}},
+				b2 = {fade = {0}},
+				b3 = {fade = {0.3}},
             },
             [2] = {
-                y1 = {fade = {0.0}},
-                y2 = {fade = {0.4}},
-            },
+				r2 = {fade = {0}},
+				r3 = {fade = {0.3}},
+				b2 = {fade = {0.3}},
+				b3 = {fade = {0}},
+            }
         },
     },
     [582] = { --News Van
@@ -852,6 +873,107 @@ ELS_PRESET = {
             [2] = {
                 top = {fade = {0.0}},
             },
+        },
+    },
+
+    ["Police_Huntley"] = { --SASF Huntley
+        hasSiren = true,
+        headlightSequence = true,
+        directionIndicator = {0.7, -2.5, 1.1},
+        lightBar = {0, -0.55, 1.3, 1.1},
+        sequenceCount = 2,
+        sequenceDuration = 500,
+        light = {
+            r1 = {-0.75, -0.55, 1.35, 0.4, 255, 0, 0, 0},
+            r2 = {-0.5, -0.55, 1.35, 0.4, 255, 0, 0, 0},
+            r3 = {-0.25, -0.55, 1.35, 0.4, 255, 0, 0, 0},
+            b1 = {0.75, -0.55, 1.35, 0.4, 0, 0, 255, 0},
+            b2 = {0.5, -0.55, 1.35, 0.4, 0, 0, 255, 0},
+            b3 = {0.25, -0.55, 1.35, 0.4, 0, 0, 255, 0},
+        },
+        sequence = {
+            [1] = {
+				r1 = {strobe = false},
+				r2 = {strobe = {100, 100, 255, 100}},
+				r3 = {strobe = false},
+				b1 = {strobe = {100, 100, 255, 100}},
+				b2 = {strobe = false},
+				b3 = {strobe = {100, 100, 255, 100}},
+                vehicle_light = {"l", {255, 0, 0}},
+            },
+            [2] = {
+				r1 = {strobe = {100, 100, 255, 100}},
+				r2 = {strobe = false},
+				r3 = {strobe = {100, 100, 255, 100}},
+				b1 = {strobe = false},
+				b2 = {strobe = {100, 100, 255, 100}},
+				b3 = {strobe = false},
+				vehicle_light = {"r", {0, 0, 255}},
+            }
+        },
+    },
+    ["Police_Bobcat"] = { --SASF Pickup
+        hasSiren = true,
+        headlightSequence = true,
+        lightBar = {0, 0, 0.85},
+        sequenceCount = 2,
+        sequenceDuration = 400,
+        light = {
+            r2 = {-0.6, 0, 0.9, 0, 255, 0, 0},
+            r3 = {-0.3, 0, 0.9, 0.4, 255, 0, 0},
+            b2 = {0.6, 0, 0.9, 0.4, 0, 0, 255},
+            b3 = {0.3, 0, 0.9, 0, 0, 0, 255},
+        },
+        sequence = {
+            [1] = {
+				r2 = {fade = {0.4}},
+				r3 = {fade = {0}},
+				b2 = {fade = {0}},
+				b3 = {fade = {0.4}},
+                vehicle_light = {"l", {255, 0, 0}},
+            },
+            [2] = {
+				r2 = {fade = {0}},
+				r3 = {fade = {0.4}},
+				b2 = {fade = {0.4}},
+				b3 = {fade = {0}},
+				vehicle_light = {"r", {0, 0, 255}},
+            }
+        },
+    },
+    ["Police_Burrito"] = { --SASF Van
+        hasSiren = true,
+        headlightSequence = true,
+		lightBar = {0, 0.7, 0.95},
+        sequenceCount = 2,
+        sequenceDuration = 300,
+        light = {
+            r1 = {-0.75, 0.7, 1, 0.3, 255, 0, 0},
+            r2 = {-0.5, 0.7, 1, 0.3, 255, 0, 0},
+            r3 = {-0.25, 0.7, 1, 0.3, 255, 0, 0},
+            b1 = {0.75, 0.7, 1, 0.3, 0, 0, 255},
+            b2 = {0.5, 0.7, 1, 0.3, 0, 0, 255},
+            b3 = {0.25, 0.7, 1, 0.3, 0, 0, 255},
+        },
+        sequence = {
+            [1] = {
+				r1 = {alpha = 0},
+				r2 = {alpha = 255},
+				r3 = {alpha = 0},
+				b1 = {alpha = 255},
+				b2 = {alpha = 0},
+				b3 = {alpha = 255},
+                vehicle_light = {"l", {255, 0, 0}},
+            },
+            [2] = {
+				r1 = {alpha = 255},
+				r2 = {alpha = 0},
+				r3 = {alpha = 255},
+				b1 = {alpha = 0},
+				b2 = {alpha = 255},
+				b3 = {alpha = 0},
+				vehicle_light = {"r", {0, 0, 255}},
+            }
         },
     },
 }

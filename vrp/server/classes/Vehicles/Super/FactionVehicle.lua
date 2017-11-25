@@ -275,6 +275,8 @@ function FactionVehicle:respawn(force)
 	self:setEngineState(false)
 	self:setSirensOn(false)
 	self:setFrozen(true)
+	self:toggleELS(false)
+	self:toggleDI(false)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setPosition(self.m_SpawnPos)

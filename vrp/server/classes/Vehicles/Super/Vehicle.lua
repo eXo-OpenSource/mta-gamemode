@@ -38,6 +38,8 @@ function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleRespawn", self, function()
 		source:setEngineState(false)
 		source:setSirensOn(false)
+		source:toggleELS(false)
+		source:toggleDI(false)
 		setVehicleOverrideLights(self, 1)
 	end)
 
@@ -491,6 +493,8 @@ function Vehicle:setBroken(state)
 	if state then
 		self:setHealth(VEHICLE_TOTAL_LOSS_HEALTH)
 		self:setEngineState(false)
+		self:toggleELS(false)
+		self:toggleDI(false)
 	end
 	self:setData("vehicleEngineBroken", state, true)
 	self:setDamageProof(state)
@@ -675,6 +679,8 @@ function Vehicle:respawnOnSpawnPosition()
 		self.m_HandBrake = true
 		self:setData("Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
+		self:toggleELS(false)
+		self:toggleDI(false)
 		self:resetIndicator()
 
 		if self.despawned then
