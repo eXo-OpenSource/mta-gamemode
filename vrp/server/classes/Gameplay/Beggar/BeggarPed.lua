@@ -3,7 +3,7 @@ BeggarPed = inherit(Object)
 function BeggarPed:new(id, classId, position, rotation, ...)
 	local class = BeggarPedManager.Classes[classId]["Class"]
 	if class then
-		local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z)
+		local ped = Ped.create(Randomizer:getRandomTableValue(BeggarSkins), position, rotation.z, true)
 		enew(ped, class, id, classId, ...)
 		return ped
 	else

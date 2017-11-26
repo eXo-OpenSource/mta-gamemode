@@ -48,7 +48,7 @@ function QuestManager:constructor()
 	addEventHandler("questStartClick", root, bind(self.onStartClick, self))
 	addEventHandler("questShortMessageClick", root, bind(self.onShortMessageClick, self))
 
-
+	self:createBot()
 end
 
 function QuestManager:startQuest(questId)
@@ -111,6 +111,11 @@ function QuestManager:onShortMessageClick()
 		self:startQuestForPlayer(client)
 	end
 )
+end
+
+function QuestManager:createBot()
+	local pos = Vector3(1476.10, -1692.99, 14.05)
+	BotManager:getSingleton():addNPC(pos)
 end
 
 --[[

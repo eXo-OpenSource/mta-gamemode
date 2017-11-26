@@ -123,6 +123,7 @@ function Core:constructor()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
+		BotManager:new()
 
 		if EVENT_HALLOWEEN then
 			Halloween:new()

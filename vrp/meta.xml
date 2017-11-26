@@ -390,6 +390,10 @@
 	<script src="server/classes/AI/DefendActor.lua" type="server"/>
 	<script src="server/classes/AI/Zombie.lua" type="server"/>
 
+	<script src="server/classes/AI/Bot/BotManager.lua" type="server"/>
+	<script src="server/classes/AI/Bot/Bot.lua" type="server"/>
+
+
 	<!-- AI tasks -->
 	<script src="server/classes/AI/Tasks/Task.lua" type="server"/>
 	<script src="server/classes/AI/Tasks/TaskGuard.lua" type="server"/>
