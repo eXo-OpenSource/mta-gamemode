@@ -8,23 +8,22 @@ Bot.Animations = {
 }
 
 function Bot:new(npcSettings)
-	outputChatBox("new")
 	local ped = Ped.create(npcSettings.skinID, npcSettings.pos, npcSettings.rot.z, true)
 	enew(ped, self, npcSettings)
 	return ped
 end
 
 function Bot:constructor(npcSettings)
-	outputChatBox("con")
 	self.m_Id = npcSettings.id
 	self.m_Position = npcSettings.pos
 	self.m_Rotation = npcSettings.rot
-
 
 	self.m_MaxLife = npcSettings.life
 	self.m_CurrentLife = npcSettings.life
 
 	self.m_Name = npcSettings.name
+
+
 
 	self.skinID = npcSettings.skinID
 	self.m_Dimension = 0
@@ -36,9 +35,13 @@ function Bot:constructor(npcSettings)
 	self.m_State = "idle"
 
 	self.m_ActionRadius = 20
-	self.m_FollowTarget = nil
+
+	self.m_StaticFollowTarget = npcSettings.followTarget or false
+	self.m_FollowTarget = self.m_StaticFollowTarget
 
 	self.m_isAlive = true
+
+	self.m_Roles = {}
 
 	self:init()
 
@@ -71,8 +74,8 @@ function Bot:init()
 end
 
 function Bot:update()
-	if (self) and (isElement(self)) then
-		if (self.m_isAlive == true) then
+	if isElement(self) then
+		if self.m_isAlive == true then
 			self:updateCoords()
 			self:updatePosition()
 
@@ -80,15 +83,15 @@ function Bot:update()
 				self.m_Distance = getDistanceBetweenPoints2D(self.m_Position.x, self.m_Position.y, self.m_TargetPos.x, self.m_TargetPos.y)
 			end
 
-			if (self.m_State == "runToFollowTarget") then
+			if self.m_State == "runToFollowTarget" then
 				self:correctPosition()
 			elseif (self.m_State == "idle") then
-				if (self.m_FollowTarget) then
+				if self.m_FollowTarget then
 					self:updateFollowTargetValues()
 				end
 			end
 
-			if (self.m_CurrentLife <= 0) then
+			if self.m_CurrentLife <= 0 then
 				self:kill()
 			end
 		end
@@ -190,6 +193,7 @@ end
 
 
 function Bot:onColShapeHit(element, dimension)
+	if self.m_StaticFollowTarget then return end
 	if (isElement(element)) and (not self.m_FollowTarget) then
 		if (element:getType() == "player") then
 			self.m_FollowTarget = element
@@ -200,6 +204,7 @@ end
 
 
 function Bot:onColShapeLeave(element, dimension)
+	if self.m_StaticFollowTarget then return end
 	if (isElement(element)) and (self.m_FollowTarget) then
 		if (element:getType() == "player") then
 			if (self.m_FollowTarget == element) then

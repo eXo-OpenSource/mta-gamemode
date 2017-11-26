@@ -1,5 +1,10 @@
 QuestManager = inherit(Singleton)
 QuestManager.Quests = {
+	[1] = {
+		["Name"] = "Weihnachts-Bodyguard",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Las Venturas!",
+		["Packages"] = 5,
+	},
 	[2] = {
 		["Name"] = "Weihnachtsmann-Selfie",
 		["Description"] = "Finde den Weihnachtsmann (Er ist in Los Santos) und schieße ein Foto von ihm!",
@@ -13,6 +18,11 @@ QuestManager.Quests = {
 	[4] = {
 		["Name"] = "Zeichne einen Weihnachtsmann",
 		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Weihnachtsmann gezeichnet hast!",
+		["Packages"] = 5,
+	},
+	[5] = {
+		["Name"] = "Weihnachts-Bodyguard",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in San Fierro!",
 		["Packages"] = 5,
 	},
 	[10] = {
@@ -32,23 +42,26 @@ function QuestManager:constructor()
 	-- The client side quest automatically starts on startQuestForPlayer if the class is setted on clientside Questmanager
 
 	self.m_Quests = {
+		[1] = QuestNPCTransport,
 		[2] = QuestPhotography,
 		[3] = QuestPhotography,
 		[4] = QuestDraw,
+		[5] = QuestNPCTransport,
 		[10] = QuestDraw,
 		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false
 
 	--DEV:
-	self:startQuest(4)
+	self:startQuest(1)
 
 	addRemoteEvents{"questOnPedClick", "questStartClick", "questShortMessageClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
 	addEventHandler("questStartClick", root, bind(self.onStartClick, self))
 	addEventHandler("questShortMessageClick", root, bind(self.onShortMessageClick, self))
 
-	self:createBot()
+	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
+	PlayerManager:getSingleton():getWastedHook():register(bind(self.onPlayerQuit, self))
 end
 
 function QuestManager:startQuest(questId)
@@ -97,6 +110,12 @@ function QuestManager:onPedClick()
 end
 
 function QuestManager:stopQuest()
+	for index, player in pairs(self.m_CurrentQuest:getPlayers()) do
+		if player and isElement(player) then
+			self:endQuestForPlayer(player)
+		end
+	end
+
 	delete(self.m_CurrentQuest)
 	self.m_CurrentQuest = false
 end
@@ -113,15 +132,16 @@ function QuestManager:onShortMessageClick()
 )
 end
 
-function QuestManager:createBot()
-	local pos = Vector3(1476.10, -1692.99, 14.05)
-	BotManager:getSingleton():addNPC(pos)
+function QuestManager:onPlayerQuit(player)
+	if table.find(self.m_CurrentQuest:getPlayers(), player) then
+		self:endQuestForPlayer(player)
+	end
 end
 
 --[[
 Quest System:
 
-1.) Löse das Rätsel
+1.) Bringe den Weihnachtsmann an einem Punkt
 2.) Fotografiere den Weihnachtsmann (Steht irgendwo auf der Map)
 3.) Mache ein Foto mit mindestens 10 Spielern auf dem Bild
 4.) Zeichne einen schönen Weihnachtsmann (Wird von Admins bestätigt)

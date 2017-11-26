@@ -363,6 +363,7 @@
 
 	<script src="server/classes/Events/Christmas/Quests/QuestPhotography.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestDraw.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestNPCTransport.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>

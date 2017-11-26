@@ -3,6 +3,7 @@ BotManager = inherit(Singleton)
 
 function BotManager:constructor()
 	self.m_NPCs = {}
+	self.m_LastInsertId = 0
 	setTimer(function()
 		self:update()
 	end, 50, 0)
@@ -17,26 +18,25 @@ function BotManager:update()
 end
 
 function BotManager:deleteNPC(id)
-	if (id) then
-		if (self.m_NPCs[id]) then
-			self.m_NPCs[id]:delete()
+	if id then
+		if self.m_NPCs[id] then
+			self.m_NPCs[id]:destroy()
 			self.m_NPCs[id] = nil
 		end
 	end
 end
 
-function BotManager:addNPC(pos, rot)
-	if pos then
+function BotManager:addNPC(skinId, pos, rot, followTarget)
+	if skinId and pos then
 		local npcSettings = {}
-		npcSettings.skinID = 0
+		npcSettings.skinID = skinId
 		npcSettings.pos = pos
 		npcSettings.rot = rot or Vector3(0, 0, math.random(0, 360))
 		npcSettings.life = 1000
-
-		npcSettings.id = #self.m_NPCs+1
-
-		if (not self.m_NPCs[npcSettings.id]) then
-			self.m_NPCs[npcSettings.id] = Bot:new(npcSettings)
-		end
+		npcSettings.followTarget = followTarget
+		self.m_LastInsertId = self.m_LastInsertId + 1
+		npcSettings.id = self.m_LastInsertId
+		self.m_NPCs[npcSettings.id] = Bot:new(npcSettings)
+		return self.m_NPCs[npcSettings.id]
 	end
 end
