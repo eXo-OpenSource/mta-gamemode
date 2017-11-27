@@ -214,8 +214,6 @@ ELS_PRESET = {
             b1 = {0.75, -0.35, 0.95, 0, 255, 150, 0},
             b2 = {0.5, -0.35, 0.95, 0.3, 255, 150, 0},
             b3 = {0.25, -0.35, 0.95, 0, 255, 150, 0},
-            rf = {-0.4, 2.5,  0.05, 0.3, 255, 150, 0, 0},
-            bf = {0.4, 2.5,  0.05, 0.3, 255, 150, 0, 0},
         },
         sequence = {
             [1] = {
@@ -225,8 +223,6 @@ ELS_PRESET = {
                 b1 = {fade = {0.3}},
                 b2 = {fade = {0}},
                 b3 = {fade = {0.3}},
-                rf = {strobe = {70, 70}},
-                bf = {strobe = {70, 70}},
 				vehicle_light = {"d2", {255, 150, 0}},
             },
             [2] = {
@@ -236,8 +232,6 @@ ELS_PRESET = {
                 b1 = {fade = {0}},
                 b2 = {fade = {0.3}},
                 b3 = {fade = {0}},
-                rf = {strobe = false},
-                bf = {strobe = false},
 				vehicle_light = {"d1", {255, 150, 0}},
             },
             [3] = {
@@ -262,37 +256,37 @@ ELS_PRESET = {
     },
     [433] = { -- Barracks
         sequenceCount = 2,
-        lightBar = {0, 1.3, 1.75, 1.2, "orange"},
+        --lightBar = {0, 1.3, 1.75, 1.2, "orange"},
         sequenceDuration = 400,
         hasSiren = true,
         headlightSequence = true,
         light = {
-            r2 = {-0.8, 1.3, 1.8, 0, 255, 145, 0},
+            --[[r2 = {-0.8, 1.3, 1.8, 0, 255, 145, 0},
             r3 = {-0.5, 1.3, 1.8, 0, 255, 145, 0},
             b2 = {0.8, 1.3, 1.8, 0, 255, 145, 0},
-            b3 = {0.5, 1.3, 1.8, 0, 255, 145, 0},
+            b3 = {0.5, 1.3, 1.8, 0, 255, 145, 0},]]
             back = {-0.65, -4.5, -0.35, 0, 255, 145, 0},
         },
         sequence = {
             [1] = {
-                r2 = {fade = {0.3}},
+                --[[r2 = {fade = {0.3}},
                 r3 = {fade = {0}},
                 b2 = {fade = {0}},
-                b3 = {fade = {0.3}},
-                back = {fade = {0.3}},
+                b3 = {fade = {0.3}},]]
+                back = {fade = {0.5}},
                 vehicle_light = {"d1", {255, 145, 0}},
             },
             [2] = {
-                r2 = {fade = {0}},
+                --[[r2 = {fade = {0}},
                 r3 = {fade = {0.3}},
                 b2 = {fade = {0.3}},
-                b3 = {fade = {0}},
+                b3 = {fade = {0}},]]
                 back = {fade = {0}},
                 vehicle_light = {"d2", {255, 145, 0}},
             }
         },
     },
-    ["Patriot_Yellow"] = { -- Patriot
+    ["Patriot_Orange"] = { -- Patriot
 		sequenceCount = 2,
 		sequenceDuration = 400,
 		hasSiren = true,
@@ -956,7 +950,7 @@ ELS_PRESET = {
             },
         },
     },
-    [552] = { --Utility Van
+    ["Fuel_Van"] = { --Utility Van
         sequenceCount = 2,
         lightBar = {0, 0.7, 1.35, 1.1, "orange"},
         sequenceDuration = 400,
@@ -981,7 +975,7 @@ ELS_PRESET = {
             }
         },
     },
-    [582] = { --News Van
+    ["Newsvan_DI"] = { --News Van
         sequenceCount = 2,
         sequenceDuration = 400,
         directionIndicator = {0.7, -3.1, 1.2},
