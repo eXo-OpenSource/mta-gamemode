@@ -25,15 +25,12 @@ QuestManager.Quests = {
 		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in San Fierro!",
 		["Packages"] = 5,
 	},
-<<<<<<< b76b7c9135248813642905f753df20a1f1ba645f
 	[7] = {
 		["Name"] = "Päckchen-Finder",
 		["Description"] = "Finde 5 Päckchen und klicke diese an!",
-=======
 	[8] = {
 		["Name"] = "Weihnachts-Morde",
 		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
->>>>>>> Finished Quest 8 for christmas [hide]
 		["Packages"] = 5,
 	},
 	[10] = {
@@ -58,11 +55,8 @@ function QuestManager:constructor()
 		[3] = QuestPhotography,
 		[4] = QuestDraw,
 		[5] = QuestNPCTransport,
-<<<<<<< b76b7c9135248813642905f753df20a1f1ba645f
 		[7] = QuestPackageFind,
-=======
 		[8] = QuestSantaKill,
->>>>>>> Finished Quest 8 for christmas [hide]
 		[10] = QuestDraw,
 		[16] = QuestPhotography
 	}
