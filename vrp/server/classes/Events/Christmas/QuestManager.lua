@@ -28,6 +28,7 @@ QuestManager.Quests = {
 	[7] = {
 		["Name"] = "Päckchen-Finder",
 		["Description"] = "Finde 5 Päckchen und klicke diese an!",
+		["Packages"] = 5,
 	},
 	[8] = {
 		["Name"] = "Weihnachts-Morde",
