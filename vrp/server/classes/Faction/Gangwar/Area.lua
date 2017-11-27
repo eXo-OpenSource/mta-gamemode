@@ -85,7 +85,8 @@ function Area:attack( faction1, faction2)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 		if self.m_AttackSession then
 			self.m_AttackSession:stopClients()
-			self.m_AttackSession:attackEnd()
+			self:attackEnd()
+			self.m_AttackSession:delete()
 			StatisticsLogger:getSingleton():addGangwarDebugLog( "Duplcate Attack-Session", self, self.m_AttackSession)
 		end
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
