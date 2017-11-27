@@ -225,7 +225,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
 				takeWeapon(player, weaponId)
 				giveWeapon(target, weaponId, amount)
-				traget:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
+				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
 			else
 				player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 				target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
