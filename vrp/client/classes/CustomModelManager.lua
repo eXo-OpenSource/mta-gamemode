@@ -179,10 +179,13 @@ function CustomModelManager:constructor()
 
 
 	--vehicles
-	-- Replace dozer/dumper dff to improve stone handling ("schubsing") :D
-	self:loadImportDFF("files/models/dozer.dff", 486)
-	self:loadImportDFF("files/models/dumper.dff", 406)
-	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
+	--vehicle extensions
+	self:loadImportCOL("files/models/vehicles/extensions/lightbar.col", 1921)
+	self:loadImportTXD("files/models/vehicles/extensions/lightbar.txd", 1921)
+	self:loadImportDFF("files/models/vehicles/extensions/lightbar.dff", 1921)
+
+	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
+	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)
 	self:loadImportTXD("files/models/vehicles/sandking.txd", 495)
 	self:loadImportDFF("files/models/vehicles/sandking.dff", 495)
 	self:loadImportTXD("files/models/vehicles/uranus.txd", 558)

@@ -211,6 +211,7 @@ function Player:loadCharacterInfo()
 	if self:isGuest() then
 		Blip.sendAllToClient(self)
 		RadarArea.sendAllToClient(self)
+		VehicleELS.sendAllToClient(self)		
 		return
 	end
 
@@ -242,6 +243,8 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
+	VehicleELS.sendAllToClient(self)
+	
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end

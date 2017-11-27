@@ -1259,8 +1259,7 @@ function SelfGUI:onSettingChange(setting)
 			:setFont(VRPFont(25)):setFontSize(1)
 		self.m_ELS:setChecked(core:get("Vehicles", "ELS", true))
 		self.m_ELS.onChange = function (bool)
-			core:set("Vehicles", "ELS", bool)
-			ELSSystem:getSingleton():toggle(bool)
+			VehicleELS:getSingleton():handleSettingChange(bool)
 		end
 
 		self.mCustomHorn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.35, self.m_Height*0.04, _"Spezialhupe", self.m_SettingBG)

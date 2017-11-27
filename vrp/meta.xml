@@ -18,6 +18,7 @@
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
+	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -321,6 +322,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -338,7 +340,6 @@
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
@@ -447,6 +448,7 @@
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
+	<script src="client/classes/CoronaEffect.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
@@ -835,9 +837,9 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
-	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
@@ -1952,6 +1954,9 @@
 	<vrpfile src="files/models/bankDoor.dff" />
 
 	<!-- <vrpfile src="files/models/vehicles/infernus.dff"/> -->
+	<vrpfile src="files/models/vehicles/extensions/lightbar.dff"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.txd"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.col"/>
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>

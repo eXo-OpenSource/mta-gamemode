@@ -197,6 +197,8 @@ function GroupVehicle:respawn(force)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
 	self:setFrozen(true)
+	self:toggleELS(false)
+	self:toggleDI(false)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()

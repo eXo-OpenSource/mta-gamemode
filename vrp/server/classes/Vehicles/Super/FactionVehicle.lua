@@ -7,7 +7,7 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel)
+function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel, ELSPreset)
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -59,17 +59,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 
-	if faction:isStateFaction() then
-		if self:getVehicleType() == VehicleType.Automobile then
-			self.m_VehELSObj = ELSSystem:new(self)
-		end
+	if ELSPreset and ELS_PRESET[ELSPreset] then
+		self:setELSPreset(ELSPreset)
 	end
-
-	if faction:isRescueFaction() then
-		if self:getVehicleType() == VehicleType.Automobile then
-			self.m_VehELSObj = ELSSystem:new(self)
-		end
-	end
+	
 	if handlingFaktor and handlingFaktor ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
 		local tHandlingTable = split(handlingFaktor, ";")
@@ -284,6 +277,8 @@ function FactionVehicle:respawn(force)
 	self:setEngineState(false)
 	self:setSirensOn(false)
 	self:setFrozen(true)
+	self:toggleELS(false)
+	self:toggleDI(false)
 	self.m_HandBrake = true
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setPosition(self.m_SpawnPos)
