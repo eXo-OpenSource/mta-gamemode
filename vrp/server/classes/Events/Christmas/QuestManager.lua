@@ -25,6 +25,11 @@ QuestManager.Quests = {
 		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in San Fierro!",
 		["Packages"] = 5,
 	},
+	[7] = {
+		["Name"] = "Päckchen-Finder",
+		["Description"] = "Finde 5 Päckchen und klicke diese an!",
+		["Packages"] = 5,
+	},
 	[10] = {
 		["Name"] = "Zeichne einen Schneemann",
 		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Schneemann gezeichnet hast!",
@@ -47,13 +52,14 @@ function QuestManager:constructor()
 		[3] = QuestPhotography,
 		[4] = QuestDraw,
 		[5] = QuestNPCTransport,
+		[7] = QuestPackageFind,
 		[10] = QuestDraw,
 		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false
 
 	--DEV:
-	self:startQuest(1)
+	self:startQuest(7)
 
 	addRemoteEvents{"questOnPedClick", "questStartClick", "questShortMessageClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))

@@ -7,6 +7,7 @@ function QuestManager:constructor()
 		[2] = QuestPhotography,
 		[3] = QuestPhotography,
 		[4] = QuestDraw,
+		[7] = QuestPackageFind,
 		[10] = QuestDraw,
 		[16] = QuestPhotography
 	}

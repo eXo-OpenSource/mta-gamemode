@@ -18,4 +18,6 @@ function Christmas:constructor()
 			triggerServerEvent("questOnPedClick", localPlayer)
 		end
 	)
+
+	QuestPackageFind.togglePackages(false)
 end
