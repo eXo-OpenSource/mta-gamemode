@@ -1,20 +1,21 @@
 QuestSantaKill = inherit(Object)
-addRemoteEvents{"onQuestSantaKillStart"}
-function QuestSantaKill:constructor()
+
+function QuestSantaKill:constructor(questId, name, description, pos)
 	self.m_PedWasted = bind(self.Event_onPedWasted, self)
 	self.m_PedDamage = bind(self.Event_onPedDamage, self)
 	self.m_QuestStart = bind(self.Event_onStartQuest, self)
 	addEventHandler("onClientPedWasted", root, self.m_PedWasted)
 	addEventHandler("onClientPedDamage", root, self.m_PedDamage)
-	addEventHandler("onQuestSantaKillStart", root, self.m_QuestStart)
+
+	self:init(pos)
 end
 
-function QuestSantaKill:Event_onStartQuest( pos ) 
-	if pos then 
-		self.m_SantaPeds = {} 
+function QuestSantaKill:init(pos)
+	if pos then
+		self.m_SantaPeds = {}
 		self.m_SantaAreas = {}
 		local santaPos, x, y, z, rx, ry
-		for i = 1, 3 do 
+		for i = 1, 3 do
 			rx = math.random(1,200)
 			ry = math.random(1,200)
 			x,y,z = unpack(pos[math.random(1,#pos)])
@@ -29,28 +30,27 @@ function QuestSantaKill:Event_onStartQuest( pos )
 	end
 	CustomModelManager:getSingleton():loadImportTXD("files/models/kobold.txd", 41)
 	CustomModelManager:getSingleton():loadImportDFF("files/models/kobold.dff", 41)
-	
+
 end
 
 function QuestSantaKill:destructor()
-	if self.m_SantaPeds then 
-		for i = 1, #self.m_SantaPeds do 
-			if self.m_SantaPeds[i] and isElement(self.m_SantaPeds[i]) then 
+	if self.m_SantaPeds then
+		for i = 1, #self.m_SantaPeds do
+			if self.m_SantaPeds[i] and isElement(self.m_SantaPeds[i]) then
 				destroyElement(self.m_SantaPeds[i])
-				if self.m_SantaAreas[i] then 
+				if self.m_SantaAreas[i] then
 					HUDRadar:getSingleton():removeArea(self.m_SantaAreas[i])
 				end
 			end
 		end
 	end
-	removeEventHandler("onQuestSantaKillStart", root, self.m_QuestStart)
 	CustomModelManager:getSingleton():restoreModel(41)
 end
 
 function  QuestSantaKill:Event_onPedWasted(killer)
-	if killer == localPlayer then 
+	if killer == localPlayer then
 		triggerServerEvent("onQuestSantaKilled", localPlayer)
-		if source.m_Area then 
+		if source.m_Area then
 			HUDRadar:getSingleton():removeArea(source.m_Area)
 		end
 		destroyElement(source)
@@ -58,9 +58,9 @@ function  QuestSantaKill:Event_onPedWasted(killer)
 end
 
 function  QuestSantaKill:Event_onPedDamage(attacker)
-	if attacker ~= localPlayer then 
-		cancelEvent() 
-	else 
+	if attacker ~= localPlayer then
+		cancelEvent()
+	else
 		setPedAnimation(source, "ped", "duck_cower", -1, true, false)
 	end
 end

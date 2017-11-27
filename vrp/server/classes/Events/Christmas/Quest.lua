@@ -16,9 +16,9 @@ function Quest:destructor()
 end
 
 
-function Quest:addPlayer(player)
+function Quest:addPlayer(player, ...)
 	table.insert(self.m_Players, player)
-	player:triggerEvent("questAddPlayer", self.m_QuestId, self.m_Name, self.m_Description)
+	player:triggerEvent("questAddPlayer", self.m_QuestId, self.m_Name, self.m_Description, ...)
 end
 
 function Quest:getPlayers()

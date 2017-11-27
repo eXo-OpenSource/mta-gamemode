@@ -17,11 +17,12 @@ QuestSantaKill.Positions = {
 	{-1354.82, 2048.56, 52.52},
 	{ -1273.64, 2723.18, 50.27,},
 	{-2912.11, 1040.22, 36.29},
-	
+
 }
 
 function QuestSantaKill:constructor(id)
 	self.m_KilledSantas = { }
+
 	Quest.constructor(self, id)
 
 	self.m_KillSantaBind = bind(self.Event_onSantaKilled, self)
@@ -37,8 +38,7 @@ end
 
 function QuestSantaKill:addPlayer(player)
 	self.m_KilledSantas[getPlayerName(player)] = 0
-	Quest.addPlayer(self, player)
-	player:triggerEvent("onQuestSantaKillStart", QuestSantaKill.Positions)
+	Quest.addPlayer(self, player, QuestSantaKill.Positions)
 end
 
 function QuestSantaKill:Event_onSantaKilled( )
@@ -49,7 +49,7 @@ function QuestSantaKill:Event_onSantaKilled( )
 		client:sendSuccess(_("Glückwunsch! Du hast alle Kobolde getötet!", client))
 		self:success(client)
 		return
-	else 
+	else
 		self.m_KilledSantas[getPlayerName(client)] = self.m_KilledSantas[getPlayerName(client)] + 1
 		client:sendSuccess(_("Noch "..(3-santaCount).." Einbrecher müssen getötet werden!", client))
 	end
