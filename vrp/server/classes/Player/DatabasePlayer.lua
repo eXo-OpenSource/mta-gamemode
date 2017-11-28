@@ -513,10 +513,12 @@ function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, su
 	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory)
 
 	if result then
+		local prefix = "+"
+		if amount < 0 then prefix = "-" end
 		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
 		self:triggerEvent("playerCashChange", false)
 	end
-	
+
 	return result
 end
 
