@@ -127,8 +127,8 @@ function RobableShop:startRob(shop, attacker, ped)
 				local rnd = math.random(10, 25)
 				if shop:getMoney() >= rnd then
 					if not self.m_Bag.Money then self.m_Bag.Money = 0 end
-					shop.m_BankAccount:transferMoney(self.m_BankAccountServer, "Raub", "Gameplay", "ShopRob")
 					self.m_Bag.Money = self.m_Bag.Money + rnd
+					shop.m_BankAccount:transferMoney(self.m_BankAccountServer, rnd, "Raub", "Gameplay", "ShopRob")
 					attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 				else
 					if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
