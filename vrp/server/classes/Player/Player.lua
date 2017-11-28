@@ -1192,7 +1192,7 @@ function Player:giveCombinedReward(reason, tblReward)
 					end
 				end
 
-				smText = smText .. ("%s%s%s\n"):format(prefix, toMoneyString(amount), bank)
+				smText = smText .. ("%s%s%s\n"):format(prefix, toMoneyString(amount.amount), bank)
 			elseif name == "points" then
 				if amount > 0 then
 					self:givePoints(amount, reason, false, true)

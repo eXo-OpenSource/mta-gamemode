@@ -509,8 +509,15 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	return true
 end
 
-function DatabasePlayer:transferBankMoney(...)
-	return self:getBankAccount():transferMoney(...)
+function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory)
+	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory)
+
+	if result then
+		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
+		self:triggerEvent("playerCashChange", false)
+	end
+	
+	return result
 end
 
 function DatabasePlayer:setXP(xp)
