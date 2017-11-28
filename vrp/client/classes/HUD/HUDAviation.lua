@@ -86,12 +86,12 @@ function HUDAviation:drawPitch()
 		pitch = pitch-360
 	end
 	local amount = pitch / 90
-	outputChatBox(amount)
 	local posX = self.m_StartX 
 	local posY = self.m_StartY 
 	local width = self.m_Width*0.2
 	local height = self.m_Height
 	local horizonPosY = 0
+	amount = amount * 2
 	if amount >= 0 then
 		amount = amount + 0.5
 		if amount >= 1 then amount = 1 end
