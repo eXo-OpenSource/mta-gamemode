@@ -296,3 +296,8 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
+
+function drawAngleLine(x, y, width, height, angle)
+	angle = angle * math.pi/180
+	return x + width * math.sin(angle), y + height * math.cos(angle);
+end

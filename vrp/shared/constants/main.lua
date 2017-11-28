@@ -469,6 +469,30 @@ VEHICLE_BIKES = {
 [510] = true,
 }
 
+PLANES_SINGLE_ENGINE = {
+[593] = true,
+[512] = true, 
+[476] = true, 
+[513] = true, 
+}
+
+PLANES_TWIN_ENGINE = {
+[511] = true, 
+[553] = true,
+}
+
+PLANES_JET = {
+[520] = true, 
+[519] = true, 
+}
+
+PLANES_JUMBO_JET = {
+[592] = true, 
+[577] = true,
+}
+
+
+
 COROUTINE_STATUS_RUNNING = "running"
 COROUTINE_STATUS_SUSPENDED = "suspended"
 COROUTINE_STATUS_DEAD = "dead"
