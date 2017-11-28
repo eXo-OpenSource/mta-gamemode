@@ -67,7 +67,7 @@ function Tour:successStep(id)
 	if Tour.Data[id] then
 		if not self.m_TourPlayerData[client:getId()][tostring(id)] then
 			self.m_TourPlayerData[client:getId()][tostring(id)] = true
-			self.m_BankAccountServer:transferMoney(Tour.Data[id].Money, "Tour", "Gameplay", "Tour")
+			self.m_BankAccountServer:transferMoney(client, Tour.Data[id].Money, "Tour", "Gameplay", "Tour")
 		else
 			client:sendShortMessage(_("Du hast bereits die Belohnung für diesen Schritt erhalten!", client))
 		end
