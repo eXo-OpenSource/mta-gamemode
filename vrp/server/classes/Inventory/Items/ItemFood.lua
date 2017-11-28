@@ -18,12 +18,13 @@ ItemFood.Settings = {
 	},
 	["Donut"] = {["Health"] = 25, ["Model"] = 1915, ["ModelScale"] = 1.2, ["Text"] = "isst einen Donut", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}, ["Attach"] = {12, 0, 0.05, 0.15, 0, -90, 90}},
 	["Keks"] = {["Health"] = 100, ["Model"] = 1915, ["ModelScale"] = 0, ["Text"] = "isst einen Keks", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}},
-	["Apfel"] = {["Health"] = 100, ["Model"] = 1915, ["ModelScale"] = 0, ["Text"] = "isst einen Apfel", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}},
+	["Apfel"] = {["Health"] = 80, ["Model"] = 1915, ["ModelScale"] = 0, ["Text"] = "isst einen Apfel", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}},
 	["Zombie-Burger"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "isst einen Zombie-Burger", ["Animation"] = {"FOOD", "EAT_Burger", 4500,
 		["CustomEvent"] = "bloodFx"}},
 	["Kuheuter mit Pommes"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "isst Kuheuter mit Pommes", ["Animation"] = {"FOOD", "EAT_Burger", 4500},
 		["CustomEvent"] = "bloodFx"},
 	["Suessigkeiten"] = {["Health"] = 15, ["Model"] = 2880, ["Text"] = "nascht leckere Süßigkeiten", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
+	["Zuckerstange"] = {["Health"] = 15, ["Model"] = 2880, ["Text"] = "nascht eine Zuckerstange", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 
 }
 

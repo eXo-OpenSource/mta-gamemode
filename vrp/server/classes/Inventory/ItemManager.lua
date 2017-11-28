@@ -26,6 +26,7 @@ function ItemManager:constructor()
 		["Kuheuter mit Pommes"] = ItemFood,
 		["Zombie-Burger"] = ItemFood,
 		["Suessigkeiten"] = ItemFood,
+		["Zuckerstange"] = ItemFood,
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
 		["Zigarette"] = ItemFood,
