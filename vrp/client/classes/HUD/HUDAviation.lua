@@ -79,10 +79,10 @@ end
 
 function HUDAviation:drawPitch() 
 	local pitch = getElementRotation( getPedOccupiedVehicle(localPlayer) )
-	if pitch >= 180 and pitch < 315  then
-			pitch = 313-360
+	if pitch >= 180 and pitch < 270  then
+			pitch = 268-360
 	end
-	if pitch > 180 then
+	if pitch > 180  then
 		pitch = pitch-360
 	end
 	local amount = pitch / 90
@@ -91,30 +91,38 @@ function HUDAviation:drawPitch()
 	local width = self.m_Width*0.2
 	local height = self.m_Height
 	local horizonPosY = 0
+	local drawHeightCorrection = 0
+	outputChatBox(pitch)
 	amount = amount * 2
 	if amount >= 0 then
 		amount = amount + 0.5
-		if amount >= 1 then amount = 1 end
+		--if amount >= 1 then amount = 1 end
+		drawHeightCorrection = height*amount
+		if drawHeightCorrection > height then drawHeightCorrection = height end
 		horizonPosY = height*amount
 		dxDrawRectangle(posX, posY, width, height, tocolor(189, 132, 8,255))
-		dxDrawRectangle(posX, posY, width, height*amount, tocolor(0, 197, 255,255))
+		dxDrawRectangle(posX, posY, width, drawHeightCorrection, tocolor(0, 197, 255,255))
 	else 
 		amount = amount - 0.5
-		if amount >= 1 then amount = 1 end
+		--if amount <= -1 then amount = -1 end
+		drawHeightCorrection = height*amount
+		if drawHeightCorrection < -1*height then drawHeightCorrection = -1*height end
 		horizonPosY = height+height*amount
 		dxDrawRectangle(posX, posY, width, height, tocolor(0, 197, 255,255))
-		dxDrawRectangle(posX, posY+height, width, height*amount, tocolor(189, 132, 8,255))
+		dxDrawRectangle(posX, posY+height, width, drawHeightCorrection, tocolor(189, 132, 8,255))
 	end
 	--//>> Horizon-Line <<//
-	dxDrawLine(posX, posY+horizonPosY, posX+width*0.3, posY+horizonPosY)
-	dxDrawLine(posX+width, posY+horizonPosY, posX+width*0.7, posY+horizonPosY)
-	dxDrawLine(posX+width*0.45, posY+horizonPosY, posX+width*0.55, posY+horizonPosY)
+	if posY+horizonPosY > posY and posY+horizonPosY < posY+height then
+		dxDrawLine(posX, posY+horizonPosY, posX+width*0.3, posY+horizonPosY)
+		dxDrawLine(posX+width, posY+horizonPosY, posX+width*0.7, posY+horizonPosY)
+		dxDrawLine(posX+width*0.45, posY+horizonPosY, posX+width*0.55, posY+horizonPosY)
+	end
 	--//>> Degree-Lines <<//
 	local degreeLine = 0
-	local degreeCount = -4
+	local degreeCount = -9
 	local degreeString = ""
 	local fontWidth
-	for i = -9, 9 do 
+	for i = -19, 19 do 
 		degreeLine = horizonPosY+height*(i/10)
 		if i ~= 0 then
 			if i % 2 == 0 then	
