@@ -25,6 +25,7 @@ ItemFood.Settings = {
 		["CustomEvent"] = "bloodFx"},
 	["Suessigkeiten"] = {["Health"] = 15, ["Model"] = 2880, ["Text"] = "nascht leckere Süßigkeiten", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 	["Zuckerstange"] = {["Health"] = 15, ["Model"] = 2880, ["Text"] = "nascht eine Zuckerstange", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
+	["Gluehwein"] = {["Health"] = 300, ["Model"] = 2880, ["Text"] = "trinkt einen heißen Glühwein", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 
 }
 

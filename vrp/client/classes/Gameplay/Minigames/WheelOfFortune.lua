@@ -11,7 +11,7 @@ addRemoteEvents{"WheelOfFortunePlaySound"}
 
 function WheelOfFortune:constructor()
     
-    self.m_WheelTexture = StaticFileTextureReplacer:new("WheelOfFortune.png", "white256")
+   -- self.m_WheelTexture = StaticFileTextureReplacer:new("WheelOfFortune.png", "white256")
     addEventHandler("WheelOfFortunePlaySound", resourceRoot, bind(WheelOfFortune.playWheelSound, self))
 end
 

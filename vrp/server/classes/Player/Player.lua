@@ -988,6 +988,12 @@ function Player:payDay()
 		self:getInventory():giveItem("Osterei", 5)
 	end
 
+	if EVENT_CHRISTMAS then
+		self:addPaydayText("info", _("Du hast 5 Zuckerstangen bekommen!", self))
+		self:getInventory():giveItem("Zuckerstange", 5)
+	end
+
+
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
 	self:setNextPayday()

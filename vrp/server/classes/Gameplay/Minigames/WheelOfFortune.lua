@@ -11,6 +11,8 @@ WheelOfFortune.Map = {}
 addRemoteEvents{"WheelOfFortuneClicked"}
 
 function WheelOfFortune:constructor(pos, rz)
+
+    self.m_BankAccountServer = BankServer.get("gameplay.wheelOfFortune")    
     self.m_FootObj = createObject(1897, pos, 0, 0, rz)
     
     local m = self.m_FootObj.matrix
@@ -18,10 +20,8 @@ function WheelOfFortune:constructor(pos, rz)
     self.m_WheelObj = createObject(1895, self.m_FootObj.position + m.forward*-0.08 + m.up*0.01, self.m_FootObj.rotation)
     self.m_WheelObj:setDoubleSided(true)
     
-    self.m_CollisonHandler = createObject(1320, self.m_FootObj.position, self.m_FootObj.rotation) -- foot
-    self.m_CollisonHandler:setAlpha(0)
-    self.m_CollisonHandler:setData("clickable", true, true)
-    addEventHandler("WheelOfFortuneClicked", self.m_CollisonHandler, bind(WheelOfFortune.onClicked, self))
+    self.m_WheelObj:setData("clickable", true, true)
+    addEventHandler("WheelOfFortuneClicked", self.m_WheelObj, bind(WheelOfFortune.onClicked, self))
 
     self.m_InUse = false
     WheelOfFortune.Map[self.m_FootObj] = self
@@ -34,6 +34,9 @@ function WheelOfFortune:onClicked()
         if not isElement(self.m_InUse) or not  self.m_InUse.isLoggedIn or not self.m_InUse:isLoggedIn() then
             self.m_InUse = false
         end
+    end
+    if not client:getInventory():removeItem("Zuckerstange", 5) then
+        return client:sendError(_("Du benötigst 5 Zuckerstangen um am Glücksrad zu drehen!", client))
     end
     --actual functions
     if not self.m_InUse then
@@ -48,80 +51,54 @@ function WheelOfFortune:start(player)
     local power = math.random(500, 1000) -- maybe replace it with some kind of power meter like the fishing rod ?
     local x,y,z=getElementPosition(self.m_WheelObj)
     triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "WheelOfFortunePlaySound", resourceRoot, x, y, z, power*10)
-    moveObject(self.m_WheelObj, power*10, x, y, z, 0, power, 0, "OutQuad")
+    moveObject(self.m_WheelObj, power*5, x, y, z, 0, math.floor(power/24)*24, 0, "OutQuad")
 
     setTimer(function(marker)
         getElementRotation(self.m_WheelObj) --MTA bug, muss bleiben
         local _,ry,_= getElementRotation(self.m_WheelObj)
-        if ry+3.3335>=360 then
-            ry=ry+3.3335-360
+        if ry+15>=360 then
+            ry=ry+15-360
         else
-            ry=ry+3.3335
+            ry=ry+15
         end
-        self:givePrice(player, WheelOfFortune.WinRotations[math.floor((ry)/6.667+1)])
+        self:givePrice(player, WheelOfFortune.WinRotations[math.floor((ry)/24) + 1])
         self.m_InUse = false
-    end,power*10+1000,1,marker)
+    end,power*5+1000,1,marker)
 end
 
 function WheelOfFortune:givePrice(player, type)
-    player:sendShortMessage(_("Du hast einen Preis vom Typ %s gewonnen.", player, type))
+    if type == "Zuckerstange" then
+        player:getInventory():giveItem("Zuckerstange", 5)
+        player:sendSuccess(_("Du hast 5 Zuckerstangen gewonnen!", player))
+    elseif type == "Gluehwein" then
+        player:getInventory():giveItem("Gluehwein", 2)
+        player:sendSuccess(_("Du hast 2 Tassen Glühwein gewonnen!", player))
+    elseif type == "500$" then 
+        self.m_BankAccountServer:transferMoney(player, 500, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+    elseif type == "1000$" then 
+        self.m_BankAccountServer:transferMoney(player, 1000, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+    elseif type == "10000$" then 
+        self.m_BankAccountServer:transferMoney(player, 10000, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+    elseif type == "Muetze" then
+        player:getInventory():giveItem("Weihnachtsmütze", 1)
+        player:sendSuccess(_("Du hast eine Weihnachtsmütze gewonnen! Ho ho ho!", player))
+    end
 end
 
-
-
 WheelOfFortune.WinRotations = {
-    [1]="1$",
-    [2]="*",
-    [3]="2$",
-    [4]="10$",
-    [5]="1$",
-    [6]="2$",
-    [7]="1$",
-    [8]="5$",
-    [9]="1$",
-    [10]="2$",
-    [11]="10$",
-    [12]="1$",
-    [13]="2$",
-    [14]="1$",
-    [15]="5$",
-    [16]="2$",
-    [17]="1$",
-    [18]="20$",
-    [19]="1$",
-    [20]="2$",
-    [21]="5$",
-    [22]="10$",
-    [23]="1$",
-    [24]="2$",
-    [25]="1$",
-    [26]="5$",
-    [27]="1$",
-    [28]="2$",
-    [29]="1$",
-    [30]="*",
-    [31]="2$",
-    [32]="1$",
-    [33]="2$",
-    [34]="1$",
-    [35]="2$",
-    [36]="5$",
-    [37]="1$",
-    [38]="2$",
-    [39]="1$",
-    [40]="5$",
-    [41]="1$",
-    [42]="20$",
-    [43]="1$",
-    [44]="10$",
-    [45]="1$",
-    [46]="2$",
-    [47]="1$",
-    [48]="5$",
-    [49]="1$",
-    [50]="2$",
-    [51]="1$",
-    [52]="5$",
-    [53]="1$",
-    [54]="2$",
+    [1]="Zuckerstange",
+    [2]="Gluehwein",
+    [3]="500$",
+    [4]="Zuckerstange",
+    [5]="Gluehwein",
+    [6]="Muetze",
+    [7]="1000$",
+    [8]="Gluehwein",
+    [9]="Zuckerstange",
+    [10]="500$",
+    [11]="Gluehwein",
+    [12]="Muetze",
+    [13]="1000$",
+    [14]="Zuckerstange",
+    [15]="10000$",
 }

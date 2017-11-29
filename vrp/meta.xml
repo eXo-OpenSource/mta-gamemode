@@ -1925,6 +1925,9 @@
 	<vrpfile src="files/models/fishshop.txd" />
 	<vrpfile src="files/models/fishshop.dff" />
 	<vrpfile src="files/models/fishshop.col" />
+	<vrpfile src="files/models/fortuneWheel.txd" />
+	<vrpfile src="files/models/fortuneWheel.dff" />
+	<vrpfile src="files/models/fortuneWheel.col" />
 	<vrpfile src="files/models/ammunation.col" />
 	<vrpfile src="files/models/ammunation.dff" />
 	<vrpfile src="files/models/ammunation_int.col" />
@@ -1940,6 +1943,13 @@
 	<vrpfile src="files/models/fuelnozzle.dff"/>
 	<vrpfile src="files/models/fuelnozzle.col"/>
 	<vrpfile src="files/models/gasstation.dff"/>
+
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.dff" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.dff" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.dff" />
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />
