@@ -1140,7 +1140,8 @@
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>
 	<vrpfile src="files/images/Speedo/indicator_right.png"/>
 	<vrpfile src="files/images/Speedo/aviation_pitch_overlay.png"/>
-	
+	<vrpfile src="files/images/Speedo/needle.png"/>
+	<vrpfile src="files/images/Speedo/heading.png"/>
 
 	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>

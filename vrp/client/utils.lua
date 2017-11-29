@@ -297,7 +297,13 @@ function isPedAiming ( thePedToCheck )
 	return false
 end
 
-function drawAngleLine(x, y, width, height, angle)
-	angle = angle * math.pi/180
-	return x + width * math.sin(angle), y + height * math.cos(angle);
+function dxDrawBoxShape( x, y, w, h , ...) 
+	dxDrawLine( x, y, x+w,y,...) 
+	dxDrawLine( x, y+h , x +w , y+h,...)
+	dxDrawLine( x , y ,x , y+h , ... )
+	dxDrawLine( x+w , y ,x+w , y+h , ...)
+end
+
+function dxDrawBoxText( text , x, y , w , h , ... ) 
+	dxDrawText( text , x , y , x + w , y + h , ... ) 
 end
