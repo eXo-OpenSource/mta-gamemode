@@ -117,28 +117,31 @@ function Inventory:addItem(place, item)
 		local tab = self.m_Tabs[self.m_CurrentTab]
 		local itemData = self.m_ItemData[item["Objekt"]]
 		local slot = tab.m_ItemSlots[place+1]
+		if itemData then
+			if slot.ItemImage then delete(slot.ItemImage) end
+			if slot.LabelBackground then delete(slot.LabelBackground) end
+			if slot.ItemLabel then delete(slot.ItemLabel) end
 
-		if slot.ItemImage then delete(slot.ItemImage) end
-		if slot.LabelBackground then delete(slot.LabelBackground) end
-		if slot.ItemLabel then delete(slot.ItemLabel) end
+			slot.Item = true
+			slot.Id = place-1
+			slot.Place = place
+			slot.ItemName = item["Objekt"]
+			slot.Amount = item["Menge"]
+			slot.Value = item["Value"]
 
-		slot.Item = true
-		slot.Id = place-1
-		slot.Place = place
-		slot.ItemName = item["Objekt"]
-		slot.Amount = item["Menge"]
-		slot.Value = item["Value"]
+			local amountText = slot.Amount > 1 and slot.Amount or ""
+			local textWidth = VRPTextWidth(amountText, 20) + 3
 
-		local amountText = slot.Amount > 1 and slot.Amount or ""
-		local textWidth = VRPTextWidth(amountText, 20) + 3
+			slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
 
-		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+			if slot.Amount > 1 then
+				slot.LabelBackground = GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-12, textWidth, 12, Color.Background, slot)
+			end
 
-		if slot.Amount > 1 then
-			slot.LabelBackground = GUIRectangle:new(slot.m_Width - textWidth, slot.m_Height-12, textWidth, 12, Color.Background, slot)
+			slot.ItemLabel = GUILabel:new(0, slot.m_Height - 12, slot.m_Width, 12, amountText, slot):setAlign("right", "center"):setFont(VRPFont(20)):setFontSize(1):setColor(Color.Orange)
+		else
+			outputDebugString("Inventory: Failed to load item-data for Item "..item)
 		end
-
-		slot.ItemLabel = GUILabel:new(0, slot.m_Height - 12, slot.m_Width, 12, amountText, slot):setAlign("right", "center"):setFont(VRPFont(20)):setFontSize(1):setColor(Color.Orange)
 	end
 end
 

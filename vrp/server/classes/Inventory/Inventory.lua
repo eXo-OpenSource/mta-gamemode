@@ -25,22 +25,26 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE PlayerId = ?", sql:getPrefix(), self.m_Owner:getId())
 	for i, row in ipairs(result) do
-		if tonumber(row["Menge"]) > 0 then
-			id = tonumber(row["id"])
-			place = tonumber(row["Platz"])
-			self.m_Items[id] = {}
-			self.m_Items[id]["Objekt"] = row["Objekt"]
-			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
-			self.m_Items[id]["Platz"] = place
-			self.m_Items[id]["Value"] = row["Value"] or ""
-			self.m_Bag[row["Tasche"]][place] = id
-			if row["Objekt"] == "Mautpass" then
-				if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
-					self:removeAllItem("Mautpass")
-					if isElement(self.m_Owner) then
-						self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+		if self.m_ItemData[row["Object"]] then
+			if tonumber(row["Menge"]) > 0 then
+				id = tonumber(row["id"])
+				place = tonumber(row["Platz"])
+				self.m_Items[id] = {}
+				self.m_Items[id]["Objekt"] = row["Objekt"]
+				self.m_Items[id]["Menge"] = tonumber(row["Menge"])
+				self.m_Items[id]["Platz"] = place
+				self.m_Items[id]["Value"] = row["Value"] or ""
+				self.m_Bag[row["Tasche"]][place] = id
+				if row["Objekt"] == "Mautpass" then
+					if not row["Value"] or not tonumber(row["Value"]) or tonumber(row["Value"]) < getRealTime().timestamp then
+						self:removeAllItem("Mautpass")
+						if isElement(self.m_Owner) then
+							self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+						end
 					end
 				end
+			else
+				self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 			end
 		else
 			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
