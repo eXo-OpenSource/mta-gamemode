@@ -84,10 +84,11 @@ function Bot:update()
 			end
 
 			if self.m_State == "runToFollowTarget" then
-				self:correctPosition()
+				self:updateFollowTargetValues()
 			elseif (self.m_State == "idle") then
 				if self.m_FollowTarget then
 					self:updateFollowTargetValues()
+					self:correctPosition()
 				end
 			end
 
@@ -118,7 +119,7 @@ function Bot:updatePosition()
 		if (self.m_Distance <= self.m_Tolerance) then
 			self:jobIdle()
 		else
-			local speed = self.m_Distance > 4 and 2 or 1
+			local speed = self.m_Distance > 10 and 2 or 1
 			self:jobRunToFollowTarget(speed)
 		end
 	end
@@ -129,9 +130,7 @@ function Bot:updateFollowTargetValues()
 	if (self.m_FollowTarget) and (isElement(self.m_FollowTarget)) then
 		local FollowTargetPos = self.m_FollowTarget:getPosition()
 
-		if (FollowTargetPos) then
-			self.m_TargetPos = FollowTargetPos
-		end
+		self.m_TargetPos = FollowTargetPos
 
 		local rotZ = findRotation(self.m_Position.x, self.m_Position.y, self.m_TargetPos.x, self.m_TargetPos.y)
 		self:setRotation(self.m_Rotation.x, self.m_Rotation.y, rotZ, "default", true)
@@ -158,14 +157,13 @@ function Bot:setTargetPosition()
 
 		if (FollowTargetPos) then
 			self.m_TargetPos = FollowTargetPos
-
 			local rotZ = findRotation(self.m_Position.x, self.m_Position.y, self.m_TargetPos.x, self.m_TargetPos.y)
 			self:setRotation(self.m_Rotation.x, self.m_Rotation.y, rotZ, "default", true)
 
 			self.m_Distance = getDistanceBetweenPoints2D(self.m_Position.x, self.m_Position.y, self.m_TargetPos.x, self.m_TargetPos.y)
 			self.m_MinDistance = getDistanceBetweenPoints2D(self.m_Position.x, self.m_Position.y, self.m_TargetPos.x, self.m_TargetPos.y)
 			local speed = self.m_Distance > 4 and 2 or 1
-			self:jobRunToFollowTarget()
+			self:jobRunToFollowTarget(speed)
 		end
 	end
 end
@@ -182,13 +180,13 @@ end
 
 
 function Bot:jobRunToFollowTarget(speed)
-	if (self.m_State ~= "runToFollowTarget") then
+	--if (self.m_State ~= "runToFollowTarget") then
 		if (self) and (isElement(self)) then
 			local anim = speed == 1 and "Walk" or "Run"
 			self:setAnimation(Bot.Animations[anim].block, Bot.Animations[anim].anim, -1, true, true, true, false, 250)
 			self.m_State = "runToFollowTarget"
 		end
-	end
+	--end
 end
 
 

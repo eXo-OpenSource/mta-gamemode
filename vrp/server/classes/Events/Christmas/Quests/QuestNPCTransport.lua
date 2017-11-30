@@ -1,8 +1,8 @@
 QuestNPCTransport = inherit(Quest)
 
 QuestNPCTransport.Targets = {
-	[1] = Vector3(2107.69, 1003.02, 10.1),
-	[5] = Vector3(-1974.25, 137.70, 26.6)
+	[1] = Vector3(1274.49, 294.03, 19),
+	[5] = Vector3(318.71, -1819.91, 3.7)
 }
 
 function QuestNPCTransport:constructor(id)
@@ -40,7 +40,7 @@ end
 
 function QuestNPCTransport:onVehicleEnter(player, seat)
 	if table.find(self:getPlayers(), player) then
-		player:sendShortMessage("Vorsicht: Der Weihnachtsmann ist zu dick um in ein Auto einzusteigen!")
+		player:sendWarning("Der Weihnachtsmann ist zu dick um in ein Auto einzusteigen!")
 	end
 end
 
@@ -48,11 +48,11 @@ function QuestNPCTransport:onMarkerHit(player, dim)
 	if player:getType() == "player" and dim then
 		if table.find(self:getPlayers(), player) then
 			if self.m_Bots[player] then
-				if (self.m_Bots[player]:getPosition() - player:getPosition()).length < 10 then
+				if (self.m_Bots[player]:getPosition() - player:getPosition()).length < 30 then
 					player:sendSuccess("Du hast den Weihnachtsmann erfolgreich abgeliefert!")
 					self:success(player)
 				else
-					player:sendWarning("Dein Weihnachtsmann ist zuweit entfernt, gehe nochmal in den Marker sobald er näher bei dir ist!")
+					player:sendWarning("Dein Weihnachtsmann ist zu weit entfernt, gehe nochmal in den Marker sobald er näher bei dir ist!")
 				end
 			end
 		end
@@ -63,12 +63,12 @@ function QuestNPCTransport:checkDistance()
 	for index, player in pairs(self:getPlayers()) do
 		if player and isElement(player) then
 			if self.m_Bots[player] then
-				if (self.m_Bots[player]:getPosition() - player:getPosition()).length > 10 then
+				if (self.m_Bots[player]:getPosition() - player:getPosition()).length > 30 then
 					if not player.christmasBotWarning then
-						player:sendWarning("Vorsicht dein Weihnachtsmann ist zuweit von dir entfernt! Bleibe bei ihm, ansonsten wird der Quest abgebrochen!")
+						player:sendWarning("Vorsicht, dein Weihnachtsmann ist zu weit von dir entfernt! Bleibe bei ihm, ansonsten wird der Quest abgebrochen!")
 						player.christmasBotWarning = true
 					else
-						player:sendError("Du hast dich zuweit von deinem Weihnachtsmann entfernt!")
+						player:sendError("Du hast dich zu weit von deinem Weihnachtsmann entfernt!")
 						self:removePlayer(player)
 						player.christmasBotWarning = nil
 					end

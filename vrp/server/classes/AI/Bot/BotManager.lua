@@ -6,7 +6,7 @@ function BotManager:constructor()
 	self.m_LastInsertId = 0
 	setTimer(function()
 		self:update()
-	end, 50, 0)
+	end, 1000, 0)
 
 end
 
