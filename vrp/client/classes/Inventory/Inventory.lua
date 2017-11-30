@@ -43,7 +43,7 @@ function Inventory:constructor()
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
 	self:addItemSlots(5, self.m_Tabs[2])
 	self.m_Tabs[3] = self:addTab("files/images/Inventory/food.png", tabArea)
-	self:addItemSlots(5, self.m_Tabs[3])
+	self:addItemSlots(6, self.m_Tabs[3])
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
 	self:addItemSlots(7, self.m_Tabs[4])
 
