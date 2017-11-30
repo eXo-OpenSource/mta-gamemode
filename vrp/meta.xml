@@ -1039,6 +1039,7 @@
 	<vrpfile src="files/images/Events/Bonus/Bonus_PizzaBoy.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Boxville.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_ChristmasSkin.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Points.png" />
 
 	<vrpfile src="files/images/Events/Christmas/Quest.png" />
 	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />

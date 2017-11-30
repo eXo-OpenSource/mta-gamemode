@@ -53,9 +53,9 @@ function BonusGUI:addBonus(index, data)
 
 	GUIGridRectangle:new(1, 4.5, 4, 1, Color.Background, self.m_BonusBG[id])
 	GUIGridImage:new(1, 4.5, 1, 1, "files/images/Inventory/items/Items/Paeckchen.png", self.m_BonusBG[id]):fitBySize(128, 128)
-	GUIGridLabel:new(2, 4.5, 1, 1, tostring(data["Pumpkin"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(25))
+	GUIGridLabel:new(2, 4.5, 1, 1, tostring(data["Packages"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(25))
 	GUIGridImage:new(3, 4.5, 1, 1, "files/images/Inventory/items/Essen/Zuckerstange.png", self.m_BonusBG[id]):fitBySize(128, 128)
-	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["Sweets"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
+	GUIGridLabel:new(4, 4.5, 1, 1, tostring(data["CandyCane"]), self.m_BonusBG[id]):setAlignX("center"):setFont(VRPFont(20))
 
 	self.m_BonusBtn[id] = GUIGridButton:new(1, 6, 4, 1, "Kaufen", self.m_BonusBG[id]):setBackgroundColor(Color.Red)
 	self.m_BonusBtn[id].onLeftClick = function() triggerServerEvent("eventBuyBonus", localPlayer, id) end
