@@ -387,8 +387,8 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 		target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
 		vehicle:setFuel(vehicle:getFuel() + fuel)
 
-		self.m_BankAccountServer(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
-		self.m_BankAccountServer(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
+		self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
+		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
 
 		fuelTank:setFuel(fuelTank:getFuel() - fuel/5)
 		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())
