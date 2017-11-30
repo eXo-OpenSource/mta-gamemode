@@ -159,8 +159,10 @@ function QuestManager:onShortMessageClick()
 end
 
 function QuestManager:onPlayerQuit(player)
-	if table.find(self.m_CurrentQuest:getPlayers(), player) then
-		self:endQuestForPlayer(player)
+	if self.m_CurrentQuest then
+		if table.find(self.m_CurrentQuest:getPlayers(), player) then
+			self:endQuestForPlayer(player)
+		end
 	end
 end
 
