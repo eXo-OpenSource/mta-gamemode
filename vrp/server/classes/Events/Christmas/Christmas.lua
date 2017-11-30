@@ -57,7 +57,7 @@ Christmas.ms_Bonus = {
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "Weihnachtsmann Skin",
+		["Text"] = "Weihnachts-Skin",
 		["Image"] = "Bonus_ChristmasSkin.png",
 		["Packages"] = 120,
 		["CandyCane"] = 150,
