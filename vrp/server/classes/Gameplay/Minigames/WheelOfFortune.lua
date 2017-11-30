@@ -35,11 +35,13 @@ function WheelOfFortune:onClicked()
             self.m_InUse = false
         end
     end
-    if not client:getInventory():removeItem("Zuckerstange", 1) then
-        return client:sendError(_("Du benötigst eine Zuckerstange um am Glücksrad zu drehen!", client))
-    end
+
     --actual functions
-    if not self.m_InUse then
+	if not self.m_InUse then
+		if not client:getInventory():removeItem("Zuckerstange", 1) then
+			return client:sendError(_("Du benötigst eine Zuckerstange um am Glücksrad zu drehen!", client))
+		end
+
         self.m_InUse = client
         self:start(client)
     else
