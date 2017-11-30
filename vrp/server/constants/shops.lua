@@ -234,7 +234,7 @@ SHOP_ITEMS = {
 		["Zombie-Burger"] = 15,
 	},
 	["Weihnachtsmarkt"] = {
-		["Glühwein"] = 15,
+		["Gluehwein"] = 15,
 		["Shot"] = 20,
 		["Lebkuchen"] = 15,
 		["Wuerstchen"] = 25,

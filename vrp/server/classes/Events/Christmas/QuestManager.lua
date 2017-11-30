@@ -74,6 +74,10 @@ function QuestManager:constructor()
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
 	PlayerManager:getSingleton():getWastedHook():register(bind(self.onPlayerQuit, self))
+	PlayerManager:getSingleton():getAFKHook():register(bind(self.onPlayerQuit, self))
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.getTodayQuest, self), "Christmas-Quests", nil, 00, 5)
+
 end
 
 function QuestManager:startQuest(questId)
@@ -81,6 +85,12 @@ function QuestManager:startQuest(questId)
 	if self.m_CurrentQuest then self:stopQuest() end
 
 	self.m_CurrentQuest = self.m_Quests[questId]:new(questId)
+end
+
+function QuestManager:getTodayQuest()
+	local day = getRealTime().monthday
+	if not self.m_Quests[day] then return end
+	self:startQuest(day)
 end
 
 function QuestManager:startQuestForPlayer(player)
