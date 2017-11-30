@@ -17,6 +17,9 @@ function HUDAviation:constructor()
 	self.m_Height = screenHeight*0.2 
 	self.m_StartX = screenWidth*0.5 - ((self.m_Width*0.9)/2 )
 	self.m_StartY = screenHeight - self.m_Height*1.2
+	self.m_PitchRenderTarget = dxCreateRenderTarget(self.m_Width*0.2, self.m_Height)
+	dxSetTextureEdge(self.m_PitchRenderTarget, "clamp")
+	self.m_PitchRenderHorizon = dxCreateRenderTarget(self.m_Width*0.2, self.m_Height)
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 or seat == 1 then
@@ -124,27 +127,45 @@ function HUDAviation:drawPitchDisplay(posX, posY, width, height)
 	local amount = pitch / 90
 	local horizonPosY = 0
 	amount = amount * 2
+	local _amount = amount
+	dxSetRenderTarget(self.m_PitchRenderHorizon)
+	local _posX, _posY = posX, posY 
+	posX = 0
+	posY = 0 
 	if amount >= 0 then
+		amount = amount *0.25
 		amount = amount + 0.5
 		drawHeightCorrection = height*amount
 		if drawHeightCorrection > height then drawHeightCorrection = height end
+		amount = _amount+0.5
 		horizonPosY = height*amount
 		dxDrawRectangle(posX, posY, width, height, tocolor(147, 69, 21,255))
 		dxDrawRectangle(posX, posY, width, drawHeightCorrection, tocolor(0, 126, 183,255))
+		dxDrawLine(0, drawHeightCorrection, width, drawHeightCorrection, tocolor(0, 0, 0, 255))
 	else 
+		amount = amount * 0.25
 		amount = amount - 0.5
 		drawHeightCorrection = height*amount
 		if drawHeightCorrection < -1*height then drawHeightCorrection = -1*height end
+		amount = _amount-0.5
 		horizonPosY = height+height*amount
 		dxDrawRectangle(posX, posY, width, height, tocolor(0, 126, 183,255))
 		dxDrawRectangle(posX, posY+height, width, drawHeightCorrection, tocolor(147, 69, 21,255))
+		dxDrawLine(0, height+drawHeightCorrection, width, height+drawHeightCorrection, tocolor(0, 0, 0, 255))
 	end
+	posX = _posX 
+	posY = _posY
 	--//>> Horizon-Line <<//
 	if posY+horizonPosY > posY and posY+horizonPosY < posY+height then
 		dxDrawLine(posX, posY+horizonPosY, posX+width*0.3, posY+horizonPosY)
 		dxDrawLine(posX+width, posY+horizonPosY, posX+width*0.7, posY+horizonPosY)
 		dxDrawLine(posX+width*0.45, posY+horizonPosY, posX+width*0.55, posY+horizonPosY)
 	end
+	dxSetRenderTarget()
+	dxSetRenderTarget(self.m_PitchRenderTarget)
+		dxDrawImage(-width*0.25, 0, width*1.5, height, self.m_PitchRenderHorizon, yaw)
+	dxSetRenderTarget()
+	dxDrawImage(posX, posY, width, height, self.m_PitchRenderTarget)
 	--//>> Degree-Lines <<//
 	local degreeLine = 0
 	local degreeCount = -9
