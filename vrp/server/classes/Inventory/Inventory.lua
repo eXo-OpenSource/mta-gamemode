@@ -25,7 +25,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE PlayerId = ?", sql:getPrefix(), self.m_Owner:getId())
 	for i, row in ipairs(result) do
-		if self.m_ItemData[row["Object"]] then
+		--if self.m_ItemData[row["Object"]] then
 			if tonumber(row["Menge"]) > 0 then
 				id = tonumber(row["id"])
 				place = tonumber(row["Platz"])
@@ -46,9 +46,9 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			else
 				self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 			end
-		else
-			self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
-		end
+		--else
+		--	self:removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
+		--end
 	end
 
 	triggerClientEvent(self.m_Owner, "loadPlayerInventarClient", self.m_Owner, self.m_InventorySlots, self.m_ItemData)
