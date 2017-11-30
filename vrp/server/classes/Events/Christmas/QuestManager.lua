@@ -64,8 +64,6 @@ function QuestManager:constructor()
 	}
 	self.m_CurrentQuest = false
 
-	--DEV:
-	self:startQuest(7)
 
 	addRemoteEvents{"questOnPedClick", "questStartClick", "questShortMessageClick"}
 	addEventHandler("questOnPedClick", root, bind(self.onPedClick, self))
@@ -76,6 +74,8 @@ function QuestManager:constructor()
 	PlayerManager:getSingleton():getWastedHook():register(bind(self.onPlayerQuit, self))
 	PlayerManager:getSingleton():getAFKHook():register(bind(self.onPlayerQuit, self))
 
+
+	self:getTodayQuest()
 	GlobalTimer:getSingleton():registerEvent(bind(self.getTodayQuest, self), "Christmas-Quests", nil, 00, 5)
 
 end
@@ -89,7 +89,11 @@ end
 
 function QuestManager:getTodayQuest()
 	local day = getRealTime().monthday
+	local month = getRealTime().month+1
+
+	if month ~= 12 then	return end
 	if not self.m_Quests[day] then return end
+
 	self:startQuest(day)
 end
 
