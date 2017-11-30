@@ -23,9 +23,13 @@ function ItemManager:constructor()
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
 		["Burger"] = ItemFood,
+		["Lebkuchen"] = ItemFood,
+		["Wuerstchen"] = ItemFood,
+
 		["Kuheuter mit Pommes"] = ItemFood,
 		["Zombie-Burger"] = ItemFood,
 		["Suessigkeiten"] = ItemFood,
+		["Zuckerstange"] = ItemFood,
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
 		["Zigarette"] = ItemFood,
@@ -58,6 +62,7 @@ function ItemManager:constructor()
 		["Monster"] = ItemAlcohol,
 		["Shot"] = ItemAlcohol,
 		["Cuba-Libre"] = ItemAlcohol,
+		["Gluehwein"] = ItemAlcohol,
 
 		--//Wearables
 		["Helm"] = WearableHelmet,
@@ -66,6 +71,7 @@ function ItemManager:constructor()
 		["Gasmaske"] = WearableHelmet,
 		["Einsatzhelm"] = WearableHelmet,
 		["Hasenohren"] = WearableHelmet,
+		["Weihnachtsmütze"] = WearableHelmet,
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,

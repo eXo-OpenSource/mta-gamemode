@@ -25,7 +25,7 @@ function VehicleCustomTextureShop:constructor()
 
 	self.m_Info = createPickup(1844.30, -1861.05, 13.38, 3, 1239, 0)
 	addEventHandler("onPickupHit", self.m_Info, bind(self.onInfoPickupHit, self))
-
+	self.m_BankAccountServer = BankServer.get("vehicle.texture")
 
     for garageId, info in pairs(self.m_GarageInfo) do
         local position = info[1]
@@ -200,7 +200,7 @@ end
 function VehicleCustomTextureShop:Event_vehicleTextureBuy(id, url, color1, color2)
 	if client:getMoney() >= 120000 then
 		--Todo Add Money Funcs/Checks
-		client:takeMoney(120000, "Custom-Texture")
+		client:transferMoney(self.m_BankAccountServer, 120000, "Custom-Texture", "Vehicle", "Texture")
 		local textureName = VEHICLE_SPECIAL_TEXTURE[source:getModel()] or "vehiclegrunge256"
 		source.OldTexture = {[textureName] = url}
 		source.OldColor1 = color1

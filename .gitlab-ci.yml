@@ -13,9 +13,6 @@ stages:
   - build_docker
   - deploy
 
-before_script:
-  - docker info
-  
 # Build jobs
 build_app_job:
   tags:
@@ -43,6 +40,7 @@ build_docker_job:
   script:
     - wget -q -O build/workerserver https://do-not.press/exo/workerserver # Built by deploy-workerunit project
     - wget -q -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
+    - docker info
     - docker build -t exo-rl-mta .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)

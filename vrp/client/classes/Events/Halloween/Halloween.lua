@@ -8,6 +8,8 @@ function Halloween:constructor()
 
 	--Drawing Contest
 	local ped = Ped.create(151, Vector3(906.59998, -1065.7, 24.8), 270)
+	--DrawContest.createPed(151, Vector3(1488.87, -1777.00, 13.55), 0, "Halloween", "Zeichen-Wettbewerb") -- Temporary for 06.11.2017
+
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
 	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Zeichen-Wettbewerb")

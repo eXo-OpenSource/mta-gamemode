@@ -10,6 +10,7 @@ VendingMachine.Map = {}
 
 function VendingMachine:constructor(model, x, y, z, rotation)
 	self.m_LastRobTime = 0
+	self.m_BankAccountServer = BankServer.get("gameplay.vending_machine")
 
 	local object = createObject(model, x, y, z, 0, 0, rotation)
 	VendingMachine.Map[object] = self
@@ -52,8 +53,8 @@ function VendingMachine.Event_vendingRob()
 		-- Give wage
 		client:giveWanteds(1)
 		client:sendMessage("Verbrechen begangen: Automaten-Raub, 1 Wanted", 255, 255, 0)
-		client:giveMoney(math.random(10, 100), "Automaten-Raub")
-		client:giveKarma(-1)
+		BankServer.get("gameplay.vending_machine"):transferMoney(client, math.random(10, 100), "Automaten-Raub", "Gameplay", "VendingMachineRob")
+		client:takeKarma(1)
 
 		-- give Achievement
 		client:giveAchievement(19)
@@ -71,7 +72,7 @@ function VendingMachine.Event_vendingBuySnack()
 			client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
 			client:setHealth(client:getHealth() + 10)
 			StatisticsLogger:getSingleton():addHealLog(client, 10, "VendingMachine")
-			client:takeMoney(20, "Automat")
+			client:transferMoney(BankServer.get("gameplay.vending_machine"), 20, "Automat", "Gameplay", "VendingMachine")
 		else
 			client:sendError(_("Du hast nicht genügend Geld!", client))
 		end

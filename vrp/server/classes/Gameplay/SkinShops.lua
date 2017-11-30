@@ -17,6 +17,7 @@ function SkinShops:constructor()
 	local blip = Blip:new("Skinshop.png", 477.996, -1534.395,root,600)
 	blip:setDisplayText("Kleidungsgeschäft", BLIP_CATEGORY.Shop)
 	blip:setOptionalColor({217, 240, 224})
+	self.m_BankAccountServer = BankServer.get("shop.skin")
 
 	addEvent("skinBuy", true)
 	addEventHandler("skinBuy", root, bind(SkinShops.Event_skinBuy, self))
@@ -28,7 +29,7 @@ function SkinShops:Event_skinBuy(skinId)
 
 	if source:getMoney() >= price then
 		source:setSkin(skinId)
-		source:takeMoney(price, "Kleidungs-Kauf")
+		source:transferMoney(self.m_BankAccountServer, price, "Kleidungs-Kauf", "Gameplay", "Skin")
 
 		source:triggerEvent("skinBought", skinId)
 		source:giveAchievement(23)

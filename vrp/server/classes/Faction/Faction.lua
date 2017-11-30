@@ -304,14 +304,18 @@ function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function Faction:giveMoney(amount, reason, silent)
+function Faction:__giveMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:addMoney(amount, reason, silent)
+	return self.m_BankAccount:__giveMoney(amount, reason, silent)
 end
 
-function Faction:takeMoney(amount, reason, silent)
+function Faction:__takeMoney(amount, reason, silent)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
-	return self.m_BankAccount:takeMoney(amount, reason, silent)
+	return self.m_BankAccount:__takeMoney(amount, reason, silent)
+end
+
+function Faction:transferMoney(toObject, amount, reason, category, subcategory)
+	return self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
 end
 
 function Faction:setRankLoan(rank,amount)
@@ -325,7 +329,6 @@ function Faction:paydayPlayer(player)
 
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
-	self:takeMoney(loan, "Lohn von "..player:getName())
 	return loan
 end
 

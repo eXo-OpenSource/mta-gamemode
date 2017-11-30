@@ -48,7 +48,7 @@ function InventoryManager:loadItems()
 	local itemData = {}
 	local itemName
 	for i, row in ipairs(result) do
-		itemName = utf8.escape(row["Objektname"])
+		itemName = row["Objektname"]
 		itemData[itemName] = {}
 		itemData[itemName]["Name"] = itemName
 		itemData[itemName]["Info"] = utf8.escape(row["Info"])
@@ -180,8 +180,7 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 			player:getInventory():removeItem(item, amount, value)
 			WearableManager:getSingleton():removeWearable( player, item, value )
 			target:getInventory():giveItem(item, amount, value)
-			target:takeMoney(money, "Handel")
-			player:giveMoney(money, "Handel")
+			target:transferMoney(player, money, "Handel", "Gameplay", "Trade")
 			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money, amount)
 
 			if item == "Osterei" and money == 0 then
@@ -226,8 +225,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 				target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst eine/n %s mit %d Schuss für %d$!", target, player:getName(), WEAPON_NAMES[weaponId], amount, money))
 				takeWeapon(player, weaponId)
 				giveWeapon(target, weaponId, amount)
-				target:takeMoney(money, "Waffen-Handel")
-				player:giveMoney(money, "Waffen-Handel")
+				target:transferMoney(player, money, "Waffen-Handel", "Gameplay", "WeaponTrade")
 			else
 				player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 				target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))

@@ -19,7 +19,7 @@ ItemAlcohol.Settings = {
 	["Monster"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Monster Cocktail", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 2.1},
 	["Shot"] =			{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Shot", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.4},
 	["Cuba-Libre"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Cuba Libre", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.8},
-
+	["Gluehwein"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Glühwein", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.4},
 }
 
 function ItemAlcohol:constructor()

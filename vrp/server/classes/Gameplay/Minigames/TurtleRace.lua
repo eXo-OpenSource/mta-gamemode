@@ -32,7 +32,8 @@ function TurtleRace:constructor()
 	self.m_Blip = Blip:new("Turtle.png", 318, -1820)
 	self.m_Blip:setDisplayText("Schildkröten Rennen", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({50, 170, 20})
-
+	self.m_BankAccountServer = BankServer.get("gameplay.turtle_race")
+	
 	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 10, 00)
 	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 13, 00)
 	GlobalTimer:getSingleton():registerEvent(TurtleRace.infoMessage, "TurtleRaceInfo", nil, 16, 00)
@@ -215,7 +216,7 @@ function TurtleRace:checkWinner()
 				if isOffline then player:load() end
 
 				local win = tonumber(row["Bet"]) * 6
-				player:giveMoney(win, "Schildkrötenrennen")
+				self.m_BankAccountServer:transferMoney(player, win, "Schildkrötenrennen", "Gameplay", "TurtleRace")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then
@@ -244,7 +245,7 @@ function TurtleRace:addBet(turtleId, money)
 	local row = sql:queryFetchSingle("SELECT * FROM ??_turtle_bets WHERE UserId = ?;", sql:getPrefix(), client:getId())
 	if row then client:sendError("Du hast bereits eine Wette am laufen!") return end
 
-	client:takeMoney(money, "Turtle-Race")
+	client:transferMoney(self.m_BankAccountServer, money, "Schildkrötenrennen", "Gameplay", "TurtleRace")
 	client:sendShortMessage(_("Du hast %s auf Schildkröte %s gesetzt!", client, money, turtleId), _("Schildkrötenrennen", client), {50, 170, 20})
 	sql:queryExec("INSERT INTO ??_turtle_bets (UserId, Bet, TurtleId) VALUES (?, ?, ?)", sql:getPrefix(), client:getId(), money, turtleId)
 

@@ -7,7 +7,8 @@ function HorseRace:constructor()
 	self.m_Divisor = 500
 	self.m_Players = {}
 	self:reset()
-
+	self.m_BankAccountServer = BankServer.get("event.horse_race")
+	
 	self.m_refreshSpeedBind = bind(self.refreshSpeed, self)
 	self.m_CalcBind = bind(self.calc, self)
 
@@ -211,7 +212,7 @@ function HorseRace:checkWinner(winningHorse)
 				if isOffline then player:load() end
 
 				local win = tonumber(row["Bet"])*3
-				player:giveMoney(win, "Pferde-Wetten")
+				self.m_BankAccountServer:transferMoney(player, win, "Pferde-Wetten", "Event", "HorseRace")
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then
@@ -239,7 +240,7 @@ function HorseRace:addBet(horse, bet)
 			if client:getMoney() >= bet then
 				local row = sql:queryFetchSingle("SELECT * FROM ??_horse_bets WHERE UserId = ?;", sql:getPrefix(), client:getId())
 				if not row then
-					client:takeMoney(bet, "Horse-Race")
+					client:transferMoney(self.m_BankAccountServer, bet, "Horse-Race", "Event", "HorseRace")
 					sql:queryExec("INSERT INTO ??_horse_bets (UserId, Bet, Horse) VALUES (?, ?, ?)", sql:getPrefix(), client:getId(), bet, horse)
 					client:sendShortMessage(_("Du hast %d$ auf Pferd %d gesetzt!", client, bet, horse), _("Pferde-Wetten", client), {255, 150, 255})
 					self.m_Stats["Incoming"] = self.m_Stats["Incoming"]+bet

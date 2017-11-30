@@ -40,7 +40,14 @@ function StaticWorldItems:constructor()
 end
 
 function StaticWorldItems:destructor()
-
+	for id, object in pairs(self.m_Objects) do
+		if isElement(object) then
+			object:destroy()
+			self.m_Objects[id] = nil
+		else
+			self.m_Objects[id] = nil
+		end
+	end
 end
 
 function StaticWorldItems:addPosition(player, cmd, type, dontSave)

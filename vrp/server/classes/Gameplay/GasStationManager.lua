@@ -21,7 +21,8 @@ function GasStationManager:constructor()
 	end
 
 	PlayerManager:getSingleton():getQuitHook():register(bind(self.onPlayerQuit, self))
-
+	self.m_BankAccountServer = BankServer.get("vehicle.gasstation")
+	
 	addEventHandler("gasStationTakeFuelNozzle", root, bind(GasStationManager.takeFuelNozzle, self))
 	addEventHandler("gasStationRejectFuelNozzle", root, bind(GasStationManager.rejectFuelNozzle, self))
 	--addEventHandler("gasStationStartTransaction", root, bind(GasStationManager.startTransaction, self))
@@ -81,8 +82,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				local faction = client:getFaction()
 				if faction and (faction:isEvilFaction() or client:isFactionDuty()) and instanceof(vehicle, FactionVehicle, true) then
 					if faction:getMoney() >= price then
-						faction:takeMoney(price, "Tanken", true)
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
+						faction:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
@@ -97,7 +98,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				local company = client:getCompany()
 				if company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
 					if company:getMoney() >= price then
-						company:takeMoney(price, "Tanken", true)
+						company:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
@@ -111,14 +112,14 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				end
 
 				if client:getMoney() >= price then
-					client:takeMoney(price, "Tanken")
+					client:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 					vehicle:setFuel(vehicle:getFuel() + fuel)
 
 					client:triggerEvent("gasStationReset")
 
 					if station:getShop() then
 						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-						station:getShop():giveMoney(price/5, "Betankung")
+						self.m_BankAccountServer:transferMoney(station:getShop().m_BankAccount, price/5, "Betankung", "Vehicle", "Refill")
 					end
 				else
 					client:sendError("Du hast nicht genügend Geld dabei!")
@@ -129,8 +130,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				if station:hasPlayerAccess(client) then
 					local faction = client:getFaction()
 					if faction:getMoney() >= price then
-						faction:takeMoney(price, "Tanken", true)
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
+						faction:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 						faction:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
@@ -143,8 +144,8 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 				if station:hasPlayerAccess(client) then
 					local company = client:getCompany()
 					if company:getMoney() >= price then
-						company:takeMoney(price, "Tanken", true)
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
+						company:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 						company:addLog(client, "Tanken", ("hat das Fahrzeug %s (%s) für %s$ betankt!"):format(vehicle:getName(), vehicle:getPlateText(), price))
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 						client:triggerEvent("gasStationReset")
@@ -171,7 +172,7 @@ function GasStationManager:serviceStationRepairVehicle(element)
 		end
 
 		client.vehicle:fix()
-		client:getFaction():takeMoney(price, "Fahrzeug-Reparatur")
+		client:getFaction():transferMoney(self.m_BankAccountServer, price, "Fahrzeug-Reparatur", "Vehicle", "Repair")
 	end
 end
 

@@ -38,7 +38,7 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 	return false
 end
 
-function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage, fuel)
+function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage, fuel, ELSPreset)
 	self.m_Id = Id
 	self.m_Company = company
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -66,6 +66,9 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		setVehicleColor(self, r, g, b, r, g, b)
 	end
 
+	if ELSPreset and ELS_PRESET[ELSPreset] then
+		self:setELSPreset(ELSPreset)
+	end
 
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
@@ -241,6 +244,8 @@ function CompanyVehicle:respawn(force)
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setTaxiLightOn(false)
+	self:toggleELS(false)
+	self:toggleDI(false)
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)
 	self:fix()

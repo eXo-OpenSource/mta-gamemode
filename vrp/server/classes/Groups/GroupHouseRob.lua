@@ -41,6 +41,7 @@ function GroupHouseRob:constructor()
 	self.m_SellerPeds = {}
 	self.m_OnSellerClick = bind(self.Event_onClickPed, self)
 	self.m_OnColShapeHit = bind(self.Event_onColHit, self)
+	self.m_BankServerAccount = BankServer.get("action.house_rob")
 	addEventHandler("GroupRob:SellRobItems", root, bind(self.Event_OnSellAccept, self))
 	local pedPos, pedName, vehPos, skin, ped, sellvehicle, greetText
 	for i = 1,#sellerPeds do
@@ -83,7 +84,7 @@ function GroupHouseRob:Event_OnSellAccept()
 				local randomPrice = math.random( 50,100)
 				local pay = amount * randomPrice
 				inv:removeAllItem("Diebesgut")
-				client:giveMoney(pay, "Verkauf von Diebeswaren",false)
+				self.m_BankServerAccount:transferMoney(client, pay, "Verkauf von Diebesware", "Group", "HouseRob")
 				client:meChat(true, "streckt seine Hand aus und nimmt einen Umschlag mit Scheinen entgegen!")
 				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäft. Komm wieder wenn du mehr hast!")
 			end

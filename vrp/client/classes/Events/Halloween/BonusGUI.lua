@@ -45,7 +45,7 @@ function BonusGUI:addBonus(index, data)
 	self.m_BonusBG[id] = GUIGridImage:new(self.m_Column, self.m_Row, 4, 6, "files/images/Events/Halloween/Bonus_BG.png", self.m_ScrollArea)
 
 	if data["Image"] then
-		GUIGridImage:new(1, 1, 4, 6, ("files/images/Events/Halloween/%s"):format(data["Image"]), self.m_BonusBG[id])
+		GUIGridImage:new(1, 1, 4, 6, ("files/images/Events/Bonus/%s"):format(data["Image"]), self.m_BonusBG[id])
 	end
 
 	GUIGridRectangle:new(1, 1, 4, 1, Color.Background, self.m_BonusBG[id])

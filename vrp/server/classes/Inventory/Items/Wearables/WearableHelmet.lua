@@ -15,7 +15,9 @@ WearableHelmet.objectTable =
 	["Einsatzhelm"] = {3911,0.1, 0.05, 0.95, 10, 180, "Einsatzhelm",false},
 	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske",true},
 	["Hasenohren"] = {1934, 0, 0, 1, 0, 180, "Hasenohren", true},
+	["Weihnachtsmütze"] = {1936, 0.14, 0, 1, 0, 90, "Weihnachtsmütze", true},
 }
+
 
 function WearableHelmet:constructor()
 	self.m_Helmets = {}

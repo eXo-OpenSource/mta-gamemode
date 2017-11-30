@@ -26,6 +26,7 @@ function SprayWall:constructor(Id, wallPosition, resourcesPerDistribution)
 	setElementID(self.m_ColShape, "SprayWall"..Id)
 
 	self.m_ResourcesPerDistribution = resourcesPerDistribution
+	self.m_BankAccountServer = BankServer.get("group.spraywall")
 end
 
 function SprayWall:destructor()
@@ -59,7 +60,7 @@ function SprayWall:distributeResources()
 		return false
 	end
 
-	self.m_OwnerGroup:distributeMoney(self.m_ResourcesPerDistribution)
+	self.m_OwnerGroup:distributeMoney(self.m_BankAccountServer, self.m_ResourcesPerDistribution, "Spray Wall", "Group", "SprayWall")
 	return true
 end
 

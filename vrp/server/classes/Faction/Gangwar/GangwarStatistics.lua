@@ -12,6 +12,7 @@ function GangwarStatistics:constructor()
 	self.m_CollectorTimeouts =  {}
 	self.sqlMostDamage = {}
 	self.runtimeMostDamage = {}
+	self.m_BankAccountServer = BankServer.get("faction.gangwar")
 	local result = sql:queryFetch("SELECT * FROM ??_gangwar_stats;", sql:getPrefix())
 	for i, row in pairs(result) do
 		if row.type == "mvp" then

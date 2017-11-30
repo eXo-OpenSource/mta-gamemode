@@ -25,6 +25,7 @@ function JobGravel:constructor()
 
 	self.m_Jobber = {}
 	self.m_Gravel = {}
+	self.m_BankAccount = BankServer.get("job.gravel")
 
 	self.m_DumpLoadMarker = {
 		createMarker(544.3, 919.9, -44, "cylinder", 6, 250, 130, 0, 100),
@@ -238,7 +239,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			local duration = getRealTime().timestamp - client.m_LastJobAction
 			client.m_LastJobAction = getRealTime().timestamp
 			local points = 0
-			client:addBankMoney(times*LOAN_MINING, "Kiesgruben-Job")
+			self.m_BankAccount:transferMoney({client, true}, times*LOAN_MINING, "Kiesgruben-Job", "job", "gravel.mining")
 			if chance(6) then
 				points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
 				client:givePoints(points)
@@ -292,7 +293,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 								points = math.floor(1*JOB_EXTRA_POINT_FACTOR)
 								client:givePoints(points)
 							end
-							source.vehicle:getOccupant():addBankMoney(loan, ("Kiesgruben-Job (%d Steine)"):format(self.m_DozerDropStones[client]))
+							self.m_BankAccount:transferMoney({source.vehicle:getOccupant(), true}, loan, ("Kiesgruben-Job (%d Steine)"):format(self.m_DozerDropStones[client]), "job", "gravel.dozer")
 							StatisticsLogger:getSingleton():addJobLog(client, "jobGravel.dozer", duration, loan, nil, nil, points, self.m_DozerDropStones[client])
 							self.m_DozerDropStones[client] = nil
 							self.m_DozerDropTimer[client] = nil
@@ -411,7 +412,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	local points = math.floor(math.floor(amount/2)*JOB_EXTRA_POINT_FACTOR)
 	player.m_LastJobAction = getRealTime().timestamp
 	StatisticsLogger:getSingleton():addJobLog(player, "jobGravel.dumper", duration, loan, nil, nil, points)
-	player:addBankMoney(loan, ("Kiesgruben-Job (%d Steine)"):format(amount))
+	self.m_BankAccount:transferMoney({player, true}, loan, ("Kiesgruben-Job (%d Steine)"):format(amount), "job", "gravel.dumper")
 	self:destroyDumperGravel(player)
 	self.m_DumperDeliverTimer[player] = nil
 	self.m_DumperDeliverStones[player] =  nil

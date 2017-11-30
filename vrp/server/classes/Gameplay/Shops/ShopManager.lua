@@ -112,8 +112,7 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 		if client:getMoney() >= shop.m_Menues[menu]["Price"] then
 			client:setHealth(client:getHealth() + shop.m_Menues[menu]["Health"])
 			StatisticsLogger:getSingleton():addHealLog(client, shop.m_Menues[menu]["Health"], "Shop "..shop.m_Menues[menu]["Name"])
-			client:takeMoney(shop.m_Menues[menu]["Price"], "Essen")
-			shop:giveMoney(shop.m_Menues[menu]["Price"], "Kunden-Einkauf")
+			client:transferMoney(shop.m_BankAccount, shop.m_Menues[menu]["Price"], "Essen", "Gameplay", "Food")
 			client:sendInfo(_("%s wünscht guten Appetit!", client, shop.m_Name))
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
@@ -146,9 +145,8 @@ function ShopManager:buyItem(shopId, item, amount)
 			end
 
 			if client:getInventory():giveItem(item, amount, value) then
-				client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
+				client:transferMoney(shop.m_BankAccount, shop.m_Items[item]*amount, "Item-Einkauf", "Gameplay", "Item")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
-				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 			else
 				--client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
 				return
@@ -180,8 +178,7 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 				client:giveAchievement(23)
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				if clothesData.Price > 0 then
-					client:takeMoney(clothesData.Price, "Kleidungs-Kauf")
-					shop:giveMoney(clothesData.Price, "Kunden-Einkauf")
+					client:transferMoney(shop.m_BankAccount, clothesData.Price, "Kleidungs-Kauf", "Gameplay", "Clothes")
 				end
 			else
 				client:sendError(_("Du hast nicht genug Geld dabei!", client))
@@ -226,8 +223,7 @@ function ShopManager:buyWeapon(shopId, itemType, weaponId, amount)
 				end
 
 				StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = weaponAmount}), price)
-				client:takeMoney(price, "Ammunation-Einkauf")
-				shop:giveMoney(price, "Kunden-Einkauf")
+				client:transferMoney(shop.m_BankAccount, price, "Ammunation-Einkauf", "Gameplay", "Weapon")
 			else
 				client:sendError(_("Du hast nicht genug Geld dabei!", client))
 				return
@@ -261,9 +257,8 @@ function ShopManager:barBuyDrink(shopId, item, amount)
 	local shop = self:getFromId(shopId)
 	if shop.m_Items[item] then
 		if client:getMoney() >= shop.m_Items[item]*amount then
-			client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
+			client:transferMoney(shop.m_BankAccount, shop.m_Items[item]*amount, "Item-Einkauf", "Gameplay", "Item")
 			client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
-			shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 
 			local instance = ItemManager.Map[item]
 			if instance.use then
@@ -350,8 +345,7 @@ function ShopManager:deposit(amount, shopId)
 			return
 		end
 
-		client:takeMoney(amount, "Shop-Einlage")
-		shop:giveMoney(amount, "Shop-Einlage")
+		client:transferMoney(shop.m_BankAccount, amount, "Shop-Einlage", "Shop", "Deposit")
 		shop.m_Owner:addLog(client, "Kasse", "hat "..toMoneyString(amount).." in die Shop-Kasse gelegt! ("..shop:getName()..")")
 		shop:refreshBankGui(client)
 	else
@@ -375,8 +369,7 @@ function ShopManager:withdraw(amount, shopId)
 			return
 		end
 
-		shop:takeMoney(amount, "Shop-Auslage")
-		client:giveMoney(amount, "Shop-Auslage")
+		shop.m_BankAccount:transferMoney(client, amount, "Shop-Auslage", "Shop", "Deposit")
 		shop.m_Owner:addLog(client, "Kasse", "hat "..toMoneyString(amount).." aus der Shop-Kasse genommen! ("..shop:getName()..")")
 		shop:refreshBankGui(client)
 	else
@@ -428,7 +421,8 @@ function ShopManager:onAmmunationAppOrder(weaponTable)
 	if canBuyWeapons then
 		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				client:takeBankMoney(totalAmount, "AmmuNation Bestellung")
+				
+				client:transferBankMoney(BankServer.get("shop.ammunation"), totalAmount, "AmmuNation Bestellung", "Shop", "Ammunation")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
 			else

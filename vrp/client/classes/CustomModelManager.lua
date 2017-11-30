@@ -80,6 +80,14 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/ammunation2.dff", 5106)
 	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
 	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
+	--ferris wheel
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", 15050)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", 15050)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", 15052)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", 15052)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", 15051)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", 15051)
+	
 
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
@@ -179,10 +187,13 @@ function CustomModelManager:constructor()
 
 
 	--vehicles
-	-- Replace dozer/dumper dff to improve stone handling ("schubsing") :D
-	self:loadImportDFF("files/models/dozer.dff", 486)
-	self:loadImportDFF("files/models/dumper.dff", 406)
-	--self:loadImportDFF("files/models/vehicles/infernus.dff", 411)
+	--vehicle extensions
+	self:loadImportCOL("files/models/vehicles/extensions/lightbar.col", 1921)
+	self:loadImportTXD("files/models/vehicles/extensions/lightbar.txd", 1921)
+	self:loadImportDFF("files/models/vehicles/extensions/lightbar.dff", 1921)
+
+	self:loadImportDFF("files/models/vehicles/dozer.dff", 486)
+	self:loadImportDFF("files/models/vehicles/dumper.dff", 406)
 	self:loadImportTXD("files/models/vehicles/sandking.txd", 495)
 	self:loadImportDFF("files/models/vehicles/sandking.dff", 495)
 	self:loadImportTXD("files/models/vehicles/uranus.txd", 558)
@@ -210,6 +221,19 @@ function CustomModelManager:constructor()
 		self:loadImportDFF("files/models/headstone.dff", 3878)
 	end
 
+	if EVENT_CHRISTMAS then
+		self:loadImportCOL("files/models/XmasTree1.col", 6972)
+		self:loadImportTXD("files/models/XmasTree1.txd", 6972)
+		self:loadImportDFF("files/models/XmasTree1.dff", 6972)
+
+		self:loadImportCOL("files/models/XmasBox.col", 3878)
+		self:loadImportTXD("files/models/XmasBox.txd", 3878)
+		self:loadImportDFF("files/models/XmasBox.dff", 3878)
+
+		self:loadImportTXD("files/models/santaclaus.txd", 244)
+		self:loadImportDFF("files/models/santaclaus.dff", 244)
+	end
+
 	--Easter Event:
 	self:loadImportCOL("files/models/easter_egg.col", 1933)
 	self:loadImportTXD("files/models/easter_egg.txd", 1933)
@@ -220,6 +244,13 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/pumpkin.col", 1935)
 	self:loadImportTXD("files/models/pumpkin.txd", 1935)
 	self:loadImportDFF("files/models/pumpkin.dff", 1935)
+
+	self:loadImportTXD("files/models/Wearables/ChristmasHat.txd", 1936)
+	self:loadImportDFF("files/models/Wearables/ChristmasHat.dff", 1936)
+
+	self:loadImportCOL("files/models/fortuneWheel.col", 1895)
+	self:loadImportTXD("files/models/fortuneWheel.txd", 1895)
+	self:loadImportDFF("files/models/fortuneWheel.dff", 1895)
 
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")

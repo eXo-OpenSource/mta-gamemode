@@ -33,6 +33,7 @@ function Kart:constructor()
 	self.m_Players = {}
 	self.m_MapIndex = {}
 	self.m_Maps = {}
+	self.m_BankAccount = BankServer.get("gameplay.kart")
 
 	-- Create and validate map instances
 	for k, v in pairs(Kart.Maps) do
@@ -305,7 +306,7 @@ function Kart:startTimeRace(laps, index)
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
-	client:takeMoney(price, ("Kart Zeitrennen (%s Runden)"):format(laps))
+	client:transferMoney(self.m_BankAccount, price, ("Kart Zeitrennen (%s Runden)"):format(laps), "Gameplay", "Kart")
 	client:triggerEvent("showKartGUI", false)
 
 	local spawnpoint = self:getRandomSpawnpoint()

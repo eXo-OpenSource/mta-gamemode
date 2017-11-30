@@ -15,6 +15,7 @@ function VehicleManager:constructor()
 	self.m_GroupVehicles = {}
 	self.m_FactionVehicles = {}
 	self.m_VehiclesWithEngineOn = {}
+	self.m_BankAccountServer = BankServer.get("server.vehicle")
 	self:setSpeedLimits()
 
 	-- Add events
@@ -260,7 +261,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel)
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.ELSPreset)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 		count = count + 1
 	end
@@ -271,7 +272,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if FactionManager:getFromId(row.Faction) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal), row.Fuel)
+			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal), row.Fuel, row.ELSPreset)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 			count = count + 1
 		end
@@ -805,7 +806,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 			local group = client:getGroup()
 			if group:getMoney() >= 100 then
-				group:takeMoney(100, "Fahrzeug-Respawn")
+				group:transferMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 				group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			else
 				client:sendError(_("In eurer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
@@ -834,7 +835,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		source.m_EngineState = false
 		source:setSirensOn(false)
 		if source:getOwner() == client:getId() then
-			client:takeBankMoney(100, "Fahrzeug Respawn")
+			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		end
 		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
@@ -847,7 +848,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 
 	if source:respawn(garageOnly) then
 		if source:getOwner() == client:getId() then
-			client:takeBankMoney(100, "Fahrzeug-Respawn")
+			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		end
 		source:fix()
 		setVehicleOverrideLights(source, 1)
@@ -898,8 +899,8 @@ function VehicleManager:Event_vehicleRespawnWorld()
 	end
 
  	if source:getPositionType() == VehiclePositionType.World then
- 		if source:getOwner() == client:getId() then
-			client:takeBankMoney(100, "Fahrzeug Respawn")
+		 if source:getOwner() == client:getId() then
+			client:transferBankMoney(self.m_BankAccountServer, 100, "Fahrzeug-Respawn", "Vehicle", "Respawn")
 		elseif client:getRank() >= ADMIN_RANK_PERMISSION["respawnVehicle"] then
 			Admin:getSingleton():sendShortMessage(_("%s hat das Fahrzeug %s von %s respawnt.", client, client:getName(), source:getName(), getElementData(source, "OwnerName") or "Unknown"))
 		end
@@ -999,7 +1000,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 
 	if price then
 		veh:purge()
-		source:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
+		self.m_BankAccountServer:transferMoney(source, math.floor(price * 0.75), "Fahrzeug-Verkauf", "Vehicle", "SellToServer")
 
 		self:Event_vehicleRequestInfo(source)
 
@@ -1019,7 +1020,8 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
 			if client:getBankMoney() >= price then
-				client:takeBankMoney(price, "Garagen-Upgrade")
+				
+				client:transferBankMoney(self.m_BankAccountServer, price, "Garagen-Upgrade", "Vehicle", "GarageUpgrade")
 				client:setGarageType(currentGarage + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
@@ -1040,7 +1042,7 @@ function VehicleManager:Event_vehicleUpgradeHangar()
 		local price = HANGAR_UPGRADES_COSTS[currentHangar + 1]
 		if price then
 			if client:getMoney() >= price then
-				client:takeBankMoney(price, "Hangar-Upgrade")
+				client:transferBankMoney(self.m_BankAccountServer, price, "Hangar-Upgrade", "Vehicle", "HangarUpgrade")
 				client:setHangarType(currentHangar + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())

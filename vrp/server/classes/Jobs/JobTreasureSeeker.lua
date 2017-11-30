@@ -9,6 +9,7 @@ JobTreasureSeeker = inherit(Job)
 
 function JobTreasureSeeker:constructor()
 	Job.constructor(self)
+	self.m_BankAccount = BankServer.get("job.treasure_seeker")
 	local availableVehicles = {"Reefer"}
 	self.m_VehicleSpawner = VehicleSpawner:new(715.41, -1706.50, 1.3, availableVehicles, 135, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner:setSpawnPosition(Vector3(719.79, -1705.18, -0.34), 180)
@@ -87,7 +88,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local points = math.floor(5*JOB_EXTRA_POINT_FACTOR)
 						hitElement.m_LastJobAction = getRealTime().timestamp
 						StatisticsLogger:getSingleton():addJobLog(hitElement, "jobTreasureSeeker", duration, loan, nil, nil, points)
-						hitElement:addBankMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
+						self.m_BankAccount:transferMoney({hitElement, true}, loan, "Schatzsucher-Job", "Job", "TreasureSeeker")  --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
 						hitElement:givePoints(points)

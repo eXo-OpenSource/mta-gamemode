@@ -167,6 +167,14 @@ SHOP_TYPES = {
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
 		["disabled"] = not EVENT_HALLOWEEN
+	},
+	[24] = {
+		["Name"] = "Weihnachtsmarkt",
+		["Marker"] = Vector3(1473.05, -1676.86, 13.1),
+		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop,
+		["disabled"] = not EVENT_CHRISTMAS
 	}
 
 }
@@ -224,6 +232,12 @@ SHOP_ITEMS = {
 	["Halloween Shop"] = {
 		["Kuheuter mit Pommes"] = 25,
 		["Zombie-Burger"] = 15,
+	},
+	["Weihnachtsmarkt"] = {
+		["Gluehwein"] = 15,
+		["Shot"] = 20,
+		["Lebkuchen"] = 15,
+		["Wuerstchen"] = 25,
 	}
 }
 

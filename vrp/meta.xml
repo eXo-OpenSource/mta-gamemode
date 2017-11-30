@@ -18,6 +18,7 @@
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
+	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -161,6 +162,7 @@
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
+	<script src="server/classes/Player/Bank/BankServer.lua" type="server"/>
 
 	<!-- UI -->
 	<script src="server/classes/UI/Blip.lua" type="server"/>
@@ -192,6 +194,7 @@
 	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
@@ -319,6 +322,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -336,7 +340,6 @@
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleCategory.lua" type="server"/>
@@ -350,9 +353,20 @@
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
-	<!-- Halloween -->
+	<!-- Halloween
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
+	-->
+	<!-- Christmas -->
+	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/QuestManager.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quest.lua" type="server"/>
+
+	<script src="server/classes/Events/Christmas/Quests/QuestPhotography.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestSantaKill.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestDraw.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestNPCTransport.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestPackageFind.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -379,6 +393,10 @@
 	<script src="server/classes/AI/ShopActor.lua" type="server"/>
 	<script src="server/classes/AI/DefendActor.lua" type="server"/>
 	<script src="server/classes/AI/Zombie.lua" type="server"/>
+
+	<script src="server/classes/AI/Bot/BotManager.lua" type="server"/>
+	<script src="server/classes/AI/Bot/Bot.lua" type="server"/>
+
 
 	<!-- AI tasks -->
 	<script src="server/classes/AI/Tasks/Task.lua" type="server"/>
@@ -430,6 +448,7 @@
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
+	<script src="client/classes/CoronaEffect.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
 	<script src="client/classes/TippManager.lua" type="client"/>
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
@@ -818,9 +837,9 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
-	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
@@ -828,7 +847,6 @@
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>
-
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -838,9 +856,22 @@
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
+	<!--
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
+	-->
+
+	<!-- Christmas -->
+	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestSantaKill.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestDraw.lua" type="client"/>
+	<script src="client/classes/Events/Christmas/Quests/QuestPackageFind.lua" type="client"/>
+
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Faction.lua" type="client"/>
@@ -910,6 +941,7 @@
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Roulette.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/WheelOfFortune.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/TurtleRace.lua" type="client"/>
 
 	<!-- CHESS -->
@@ -970,7 +1002,8 @@
 	<file src="files/data/indicators.dat" />
 
 
-	<!-- Events -->
+	<!-- Events Start -->
+	<!--
 	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
 	<vrpfile src="files/images/Events/Easter/slotmachine2.jpg" />
 	<vrpfile src="files/images/Events/Easter/slot_1.png" />
@@ -980,6 +1013,8 @@
 	<vrpfile src="files/images/Events/Easter/slot_5.png" />
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
 
+
+
 	<vrpfile src="files/images/Events/Halloween/blood.png" />
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
@@ -987,21 +1022,31 @@
 	<vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
 
 	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Bravura.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Deagle.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Dildo.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Heroin.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Karma.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_NickChange.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Money.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Payday.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Romero.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Vest.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_VIP.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Weed.png" />
-	<vrpfile src="files/images/Events/Halloween/Bonus_Zombie.png" />
+	-->
+	<vrpfile src="files/images/Events/Bonus/Bonus_Bravura.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Deagle.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Dildo.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Heroin.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Karma.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_NickChange.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Money.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Payday.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Romero.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Vest.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_VIP.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Weed.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Zombie.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_PizzaBoy.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Comet.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_ChristmasSkin.png" />
+	<vrpfile src="files/images/Events/Bonus/Bonus_Points.png" />
 
-	<!-- Todo -->
+	<vrpfile src="files/images/Events/Christmas/Quest.png" />
+	<vrpfile src="files/images/Events/Christmas/Bonus_BG.png" />
+	<vrpfile src="files/images/Events/Christmas/QuestGray.png" />
+
+	<!-- Events End -->
+
 
 	<script src="client/Main.lua" type="client"/>
 
@@ -1405,6 +1450,7 @@
 	<vrpfile src="files/images/Textures/busShelter_1.png"/>
 	<vrpfile src="files/images/Textures/busShelter_2.png"/>
 	<vrpfile src="files/images/Textures/GasStation.png"/>
+	<vrpfile src="files/images/Textures/WheelOfFortune.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/State/FBIdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/FBI_Logo.png"/>
@@ -1491,7 +1537,6 @@
 	<vrpfile src="files/images/Inventory/items/Items/Mautpass.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Maske.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Helm.png" />
-	<vrpfile src="files/images/Inventory/items/Items/X-MAS-Muetze.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
@@ -1526,6 +1571,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Cocktail.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/ItemDonutBox.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/ItemDonut.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Zuckerstange.png" />
 
 	<vrpfile src="files/images/Inventory/items/Objekte/helm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/crosshelmet.png" />
@@ -1539,6 +1585,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/Hasenohren.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/Warnkegel.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/Weihnachtsmuetze.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
 
@@ -1845,6 +1892,8 @@
 	<vrpfile src="files/models/kartpark.txd" />
 	<vrpfile src="files/models/kartpark.dff" />
 	<vrpfile src="files/models/kartpark.col" />
+	<vrpfile src="files/models/kobold.dff" />
+	<vrpfile src="files/models/kobold.txd" />
 	<vrpfile src="files/models/piss.dff" />
 	<vrpfile src="files/models/bed.txd" />
 	<vrpfile src="files/models/bed.dff" />
@@ -1880,6 +1929,9 @@
 	<vrpfile src="files/models/fishshop.txd" />
 	<vrpfile src="files/models/fishshop.dff" />
 	<vrpfile src="files/models/fishshop.col" />
+	<vrpfile src="files/models/FortuneWheel.txd" />
+	<vrpfile src="files/models/FortuneWheel.dff" />
+	<vrpfile src="files/models/FortuneWheel.col" />
 	<vrpfile src="files/models/ammunation.col" />
 	<vrpfile src="files/models/ammunation.dff" />
 	<vrpfile src="files/models/ammunation_int.col" />
@@ -1895,6 +1947,13 @@
 	<vrpfile src="files/models/fuelnozzle.dff"/>
 	<vrpfile src="files/models/fuelnozzle.col"/>
 	<vrpfile src="files/models/gasstation.dff"/>
+
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.dff" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.dff" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.col" />
+	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.dff" />
 
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />
@@ -1914,6 +1973,9 @@
 	<vrpfile src="files/models/bankDoor.dff" />
 
 	<!-- <vrpfile src="files/models/vehicles/infernus.dff"/> -->
+	<vrpfile src="files/models/vehicles/extensions/lightbar.dff"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.txd"/>
+	<vrpfile src="files/models/vehicles/extensions/lightbar.col"/>
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>
@@ -1936,13 +1998,27 @@
 	<vrpfile src="files/models/pumpkin.txd" />
 	<vrpfile src="files/models/pumpkin.dff" />
 	<vrpfile src="files/models/pumpkin.col" />
-	<vrpfile src="files/models/ghost.dff"/>
+	<!--<vrpfile src="files/models/ghost.dff"/>
 	<vrpfile src="files/models/ghost.txd"/>
 	<vrpfile src="files/models/headstone.txd" />
 	<vrpfile src="files/models/headstone.dff" />
 	<vrpfile src="files/models/headstone.col" />
-
+	-->
 	<!-- Halloween Event End-->
+
+	<!-- Christmas Event Start-->
+	<vrpfile src="files/models/XmasTree1.txd" />
+	<vrpfile src="files/models/XmasTree1.dff" />
+	<vrpfile src="files/models/XmasTree1.col" />
+
+	<vrpfile src="files/models/XmasBox.txd" />
+	<vrpfile src="files/models/XmasBox.dff" />
+	<vrpfile src="files/models/XmasBox.col" />
+
+	<vrpfile src="files/models/santaclaus.txd" />
+	<vrpfile src="files/models/santaclaus.dff" />
+
+	<!-- Christmas Event End-->
 
 	<vrpfile src="files/models/fbi.txd" />
 	<vrpfile src="files/models/fbi.dff" />
@@ -1972,6 +2048,9 @@
 
 	<vrpfile src="files/models/Wearables/BunnyEars.txd" />
 	<vrpfile src="files/models/Wearables/BunnyEars.dff" />
+
+	<vrpfile src="files/models/Wearables/ChristmasHat.txd" />
+	<vrpfile src="files/models/Wearables/ChristmasHat.dff" />
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
@@ -2035,6 +2114,8 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
+	<include resource="Snow" />
+
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
 

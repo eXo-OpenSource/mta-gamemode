@@ -33,7 +33,7 @@ function TimedPulse:removeHandler(callbackFunc)
 	if not idx then
 		return false
 	end
-	
+
 	table.remove(self.m_Handlers, idx)
 	return true
 end

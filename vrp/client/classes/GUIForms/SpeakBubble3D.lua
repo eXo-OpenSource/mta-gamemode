@@ -1,11 +1,11 @@
 SpeakBubble3D = inherit(GUIForm3D)
 SpeakBubble3D.Map = {}
 
-function SpeakBubble3D:constructor(element, text, description, rotPlus)
+function SpeakBubble3D:constructor(element, text, description, rotPlus, zOffset)
 	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
 
 	local pos = element:getPosition()
-	pos.z = pos.z + 1.5
+	pos.z = pos.z + (zOffset or 1.5)
 
 	self.m_Text = text
 	self.m_Description = description

@@ -67,6 +67,7 @@ function Core:constructor()
 		PlayerManager:new()
 		JobManager:new()
 		BankManager:new()
+		BankServer:new()
 		BankRobberyManager:new()
 		--WantedSystem:new()
 		Provider:new()
@@ -122,12 +123,15 @@ function Core:constructor()
 		ClientStatistics:new()
 		SkribbleManager:new()
 		TSConnect:new()
+		BotManager:new()
 
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
-		DrawContest:new() -- Temporary for 06.11.2017
 
+		if EVENT_CHRISTMAS then
+			Christmas:new()
+		end
 
 		GPS:new()
 		Chair:new()
@@ -235,6 +239,7 @@ function Core:destructor()
 		delete(Admin:getSingleton())
 		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
+		delete(BankServer:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

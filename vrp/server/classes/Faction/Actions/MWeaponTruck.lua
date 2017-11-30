@@ -14,6 +14,7 @@ function MWeaponTruck:constructor()
 	self:createStartPoint(117.28, 1884.58, 17, "state")
 	self.m_CurrentWT = false
 	self.m_CurrentType = ""
+	self.m_BankAccount = BankServer.get("action.trucks")
 	addRemoteEvents{"onWeaponTruckLoad"}
 	addEventHandler("onWeaponTruckLoad", root, bind(self.Event_onWeaponTruckLoad, self))
 end
@@ -122,13 +123,13 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 					if ActionsCheck:getSingleton():isActionAllowed(client) then
 
 						if self.m_CurrentType == "evil" then
-							faction:takeMoney(totalAmount, "Waffen-Truck")
+							faction:transferMoney(self.m_BankAccount, totalAmount, "Waffen-Truck", "Action", "WeaponTruck")
 						elseif self.m_CurrentType == "state" then
 							if not client:isFactionDuty() then
 								client:sendError(_("Du bist nicht im Dienst!",client))
 								return
 							end
-							faction:takeMoney(totalAmount, "Waffen-Truck")
+							faction:transferMoney(self.m_BankAccount, totalAmount, "Waffen-Truck", "Action", "WeaponTruck")
 						end
 						ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
 						FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)

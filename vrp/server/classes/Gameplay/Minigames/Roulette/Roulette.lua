@@ -3,7 +3,8 @@ Roulette = inherit(Object)
 function Roulette:constructor(player)
     self.m_Player = player
     self.m_Player:triggerEvent("rouletteOpen")
-	self.m_Player:setFrozen(true)
+    self.m_Player:setFrozen(true)
+    self.m_BankAccountServer = BankServer.get("gameplay.roulett")    
 end
 
 function Roulette:destructor()
@@ -31,7 +32,7 @@ function Roulette:spin(bets)
 		return false
 	end
 
-	self.m_Player:takeMoney(bet, "Roulette-Einsatz")
+    self.m_Player:transferMoney(self.m_BankAccountServer, bet, "Roulette-Einsatz", "Gameplay", "Roulett")
 	RouletteManager:getSingleton():setStats(-bet, true)
 	self.m_Random = math.random(0, 36)
 	self.m_Player:triggerEvent("rouletteStartSpin", self.m_Random)
@@ -67,7 +68,7 @@ function Roulette:spinDone(clientNumber)
 
 	if win > 0 then
 		self.m_Player:sendShortMessage(_("Du hast %s gewonnen!", self.m_Player, toMoneyString(win)), "Roulette")
-		self.m_Player:giveMoney(win, "Roulette-Gewinn")
+        self.m_BankAccountServer:transferMoney(self.m_Player, win, "Roulette-Gewinn", "Gameplay", "Roulett")
 		RouletteManager:getSingleton():setStats(win, false)
 	else
 		self.m_Player:sendShortMessage(_("Du hast nichts gewonnen!", self.m_Player), "Roulette")

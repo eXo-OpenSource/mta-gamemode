@@ -69,8 +69,14 @@ function DatabasePlayer:virtual_destructor()
 	end
 end
 
-function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT * FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+function DatabasePlayer:load(sync)
+	local row
+	if sync then
+		row = sql:queryFetchSingle("SELECT * FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	else
+		row = sql:asyncQueryFetchSingle("SELECT * FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	end
+
 	if not row then
 		return false
 	end
@@ -398,14 +404,122 @@ function DatabasePlayer:setFaction(faction)
 	end
 end
 
-function DatabasePlayer:giveMoney(amount, reason)
+function DatabasePlayer:__giveMoney(amount, reason, silent)
 	self:setMoney(self:getMoney() + amount)
 	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
 	return true
 end
 
-function DatabasePlayer:takeMoney(amount, reason)
-	return DatabasePlayer.giveMoney(self, -amount, reason)
+function DatabasePlayer:__takeMoney(amount, reason, silent)
+	return DatabasePlayer.__giveMoney(self, -amount, reason, silent)
+end
+
+function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory)
+	if isNan(amount) then return false end
+	local amount = math.floor(amount)
+
+	local targetObject = toObject
+	local offlinePlayer = false
+	local isPlayer = false
+	local goesToBank = false
+	local silent = false
+	local allIfToMuch = false
+
+	local toType = ""
+	local toId = 0
+	local toBank = -1
+
+	if type(toObject) == "table" and not toObject.m_Id and not instanceof(targetObject, BankAccount) then
+		if not (#toObject >= 2 and #toObject <= 5) then error("DatabasePlayer.transferMoney @ Invalid parameter at position 1, Reason: " .. tostring(reason)) end
+
+		if type(toObject[1]) == "table" or type(toObject[1]) == "userdata" then
+			targetObject = toObject[1]
+			goesToBank = toObject[2]
+			silent = toObject[3]
+			allIfToMuch = toObject[4]
+		else
+			if toObject[1] == "player" then
+				targetObject, offlinePlayer = DatabasePlayer.get(toObject[2])
+
+				if offlinePlayer then
+					targetObject:load(true)
+				end
+			elseif toObject[1] == "faction" then
+				targetObject = FactionManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "company" then
+				targetObject = CompanyManager:getSingleton().Map[toObject[2]]
+			elseif toObject[1] == "group" then
+				targetObject = GroupManager:getSingleton().Map[toObject[2]]
+			else
+				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))
+			end
+			goesToBank = toObject[3]
+			silent = toObject[4]
+			allIfToMuch = toObject[5]
+		end
+	end
+
+	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
+		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
+	end
+
+	isPlayer = instanceof(targetObject, DatabasePlayer)
+
+	if self:getMoney() < amount then
+		if allIfToMuch and self:getMoney() > 0 then
+			amount = self:getMoney()
+		else
+			return false
+		end
+	end
+
+	self:__takeMoney(amount, reason, silent)
+
+	if isPlayer then
+		toType = targetObject.m_BankAccount.m_OwnerType
+		toId = targetObject.m_BankAccount.m_OwnerId
+
+		if goesToBank then
+			targetObject:__giveBankMoney(amount, reason, silent)
+			toBank = targetObject.m_BankAccount.m_Id
+		else
+			targetObject:__giveMoney(amount, reason, silent)
+			toBank = 0
+		end
+	else
+		if instanceof(targetObject, BankAccount) then
+			toBank = targetObject.m_Id
+			toType = targetObject.m_OwnerType
+			toId = targetObject.m_OwnerId
+		else
+			toBank = targetObject.m_BankAccount.m_Id
+			toType = targetObject.m_BankAccount.m_OwnerType
+			toId = targetObject.m_BankAccount.m_OwnerId
+		end
+
+		targetObject:__giveMoney(amount, reason, silent)
+	end
+
+	if offlinePlayer then
+		delete(targetObject)
+	end
+
+	StatisticsLogger:getSingleton():addMoneyLogNew(self.m_Id, 1, 0, toId, toType, toBank, amount, reason, category, subcategory)
+
+	return true
+end
+
+function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory)
+	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory)
+
+	if result then
+		local prefix = "+"
+		if amount < 0 then prefix = "-" end
+		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
+		self:triggerEvent("playerCashChange", false)
+	end
+
+	return result
 end
 
 function DatabasePlayer:setXP(xp)
@@ -557,9 +671,16 @@ function DatabasePlayer:decreaseAlcoholLevel(value)
 	self:setAlcoholLevel(newLevel, oldLevel)
 end
 
-function DatabasePlayer:addBankMoney(amount, reason)
+function DatabasePlayer:__giveBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
-		self:getBankAccount():addMoney(amount)
+		self:getBankAccount():__giveMoney(amount)
+
+		if amount ~= 0 and not silent and self.sendShortMessage then
+			local prefix = "+"
+			if amount < 0 then prefix = "-" end
+			self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
+			self:triggerEvent("playerCashChange", false)
+		end
 
 		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)
@@ -571,9 +692,9 @@ function DatabasePlayer:addBankMoney(amount, reason)
 	return false
 end
 
-function DatabasePlayer:takeBankMoney(amount, reason)
+function DatabasePlayer:__takeBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, -amount, reason or "Unbekannt", 1) then
-		self:getBankAccount():takeMoney(amount)
+		self:getBankAccount():__takeMoney(amount)
 		return true
 	end
 	return false

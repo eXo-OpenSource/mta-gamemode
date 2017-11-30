@@ -109,7 +109,6 @@ function Core:ready()
 	DMRaceEvent:new()
 	StreetRaceEvent:new()
 	VehicleGarages:new()
-	ELSSystem:new()
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
 	--// Gangwar
@@ -128,6 +127,7 @@ function Core:ready()
 	Plant.initalize()
 	ItemSellContract:new()
 	Neon.initalize()
+	CoronaEffect.initalize()
 	GroupSaleVehicles.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
@@ -152,7 +152,11 @@ function Core:ready()
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end
-	DrawContest.createPed(151, Vector3(1488.87, -1777.00, 13.55), 0, "Halloween", "Zeichen-Wettbewerb") -- Temporary for 06.11.2017
+
+	if EVENT_CHRISTMAS then
+		Christmas:new()
+	end
+
 end
 
 function Core:afterLogin()
@@ -169,6 +173,7 @@ function Core:afterLogin()
 	Tour:new()
 	Achievement:new()
 	BindManager:new()
+	WheelOfFortune:new()
 
 	if DEBUG then
 		Debugging:new()

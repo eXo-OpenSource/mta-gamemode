@@ -30,6 +30,7 @@ function BoxManager:constructor()
 
 	self.m_BoxHallCol = createColSphere(761.66, 5.27, 1000, 30)
 	self.m_BoxHallCol:setInterior(5)
+	self.m_BankAccountServer = BankServer.get("gameplay.boxing")
 
 	addRemoteEvents{"boxingRequestFight", "boxingAcceptFight", "boxingDeclineFight"}
 	addEventHandler("boxingRequestFight", root, bind(self.requestFight, self))
@@ -150,7 +151,7 @@ function BoxManager:startFight(player1, player2, money)
 		playeritem:setHealth(100)
 		playeritem:setModel(data["Skin"])
 		setPedFightingStyle(playeritem, 5)
-		playeritem:takeMoney(money, "Boxkampf-Einsatz")
+		playeritem:transferMoney(self.m_BankAccountServer, money, "Boxkampf-Einsatz", "Gameplay", "BoxingEntry")
 		playeritem.boxing = true
 	end
 	self:sendShortMessage(_("%s und %s haben einen Boxkampf gestartet!", player1, player1:getName(), player2:getName()))
@@ -187,7 +188,7 @@ function BoxManager:onWasted(looser)
 	local winner = self:getOpponent(looser)
 	winner:sendMessage(_("Du hast den Boxkampf gegen %s gewonnen!", winner, looser:getName()), 0, 255, 0)
 	looser:sendMessage(_("Du hast den Boxkampf gegen %s verloren!", looser, winner:getName()), 0, 255, 0)
-	winner:giveMoney(self.m_BoxFight["money"]*2, "Boxkampf-Gewinn")
+	self.m_BankAccountServer:transferMoney(winner, self.m_BoxFight["money"]*2, "Boxkampf-Gewinn", "Gampleay", "BoxingWin")
 	self:sendShortMessage(_("%s hat den Boxkampf gegen %s gewonnen!", winner, winner:getName(), looser:getName()))
 
 	self:resetFight()

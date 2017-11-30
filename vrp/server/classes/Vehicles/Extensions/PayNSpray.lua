@@ -5,6 +5,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y, root, 600)
 	self.m_Blip:setDisplayText("Pay'N'Spray Autoreparatur", BLIP_CATEGORY.VehicleMaintenance)
 	self.m_Blip:setOptionalColor({67, 121, 98})
+	self.m_BankAccountServer = BankServer.get("vehicle.paynspray")
 	if garageId then
 		setGarageOpen(garageId, true)
 	elseif isElement(self.m_CustomDoor) then
@@ -42,7 +43,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 				setElementFrozen(vehicle, true)
 
 				-- Give money to the Owner (TODO: Improve this -> complete Repair ~4.58$ (310% Vehicle Health) -> is it okay?)
-				self.m_Company:giveMoney(math.floor(costs*0.5), "Pay N Spray", true)
+				self.m_BankAccountServer:transferMoney({self.m_Company, nil, true}, math.floor(costs*0.5), "Pay N Spray", "Vehicle", "Repair")
 				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()
@@ -50,7 +51,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 						if hitElement:getBankMoney() >= costs then
 							vehicle:fix()
 							vehicle:setWheelStates(0, 0, 0, 0)
-							hitElement:takeBankMoney(costs, "Pay'N'Spray")
+							hitElement:transferBankMoney(self.m_BankAccountServer, costs, "Pay'N'Spray", "Vehicle", "Repair")
 						else
 							hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
 						end

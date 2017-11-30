@@ -18,7 +18,8 @@ function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interi
 	self.m_Shop = shop
 	self.m_LastRob = 0
 	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
-
+	self.m_BankAccountServer = BankServer.get("gameplay.shop_rob")
+	
 	-- Respawn ped after a while (if necessary)
 	addEventHandler("onPedWasted", self.m_Ped,
 	function()
@@ -126,8 +127,8 @@ function RobableShop:startRob(shop, attacker, ped)
 				local rnd = math.random(10, 25)
 				if shop:getMoney() >= rnd then
 					if not self.m_Bag.Money then self.m_Bag.Money = 0 end
-					shop:takeMoney(rnd, "Raub")
 					self.m_Bag.Money = self.m_Bag.Money + rnd
+					shop.m_BankAccount:transferMoney(self.m_BankAccountServer, rnd, "Raub", "Gameplay", "ShopRob")
 					attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 				else
 					if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
@@ -162,8 +163,8 @@ function RobableShop:m_onExpire()
 
 	local money = self.m_Bag.Money or 0
 	local stateMoney = math.floor(money/3)
-	FactionManager:getSingleton():getFromId(1):giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3", true)
-	self.m_Shop:giveMoney(stateMoney*2, "Shop Raub Sicherstellung 2/3")
+	self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
+	self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney*2, "Shop Raub Sicherstellung 2/3", "Gameplay", "ShopRob")
 	self.m_Bag:destroy()
 
 	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
@@ -355,14 +356,14 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
 		if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(hitElement) then
 			local money = self.m_Bag.Money
 			if source == self.m_EvilMarker and hitElement:getGroup() == self.m_Gang then
-				hitElement:giveMoney(money, "Shop-Raub")
+				self.m_BankAccountServer:transferMoney(hitElement, money, "Shop-Raub", "Gameplay", "ShopRob")
 				hitElement:sendInfo(_("Du hast durch den Raub %d$ erhalten!", hitElement, money))
 				PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit der Beute entkommen!", self.m_Shop:getName())
 			elseif source == self.m_StateMarker and hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 				local stateMoney = math.floor(money/3)
-				hitElement:giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3")
-				hitElement:getFaction():giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3")
-				self.m_Shop:giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3")
+				self.m_BankAccountServer:transferMoney(hitElement, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
+				self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
+				self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 				hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
 				PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
 				FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Shop Raub Beute sichergestellt!")

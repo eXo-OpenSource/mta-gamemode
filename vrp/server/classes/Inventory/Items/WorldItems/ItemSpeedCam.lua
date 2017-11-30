@@ -84,8 +84,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 						costs = player:getBankMoney()
 					end
 
-					player:takeBankMoney(costs, "Blitzer-Strafe", nil, true)
-					FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe", true)
+					player:transferBankMoney({FactionManager:getSingleton():getFromId(1), nil, true}, costs, "Blitzer-Strafe", "Gameplay", "Speedcam")
 					player:sendShortMessage(_("Du wurdest mit %d km/h geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
 
 					player:giveAchievement(62)

@@ -22,7 +22,8 @@ function VehicleTuningShop:constructor()
     createObject(11326, 2511.3999, -1775.7, 14.9, 0, 0, 180)
     createObject(5779, 1041.4, -1025.2, 35.5, 0, 19, 90)
     setGarageOpen(10, true)
-	setGarageOpen(33, true)
+    setGarageOpen(33, true)
+    self.m_BankAccountServer = BankServer.get("vehicle.tuning")
 
     -- Create garages
     self.m_GarageInfo = {
@@ -203,7 +204,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         return
     end
 
-    client:takeMoney(overallPrice, "Tuningshop")
+    client:transferMoney(self.m_BankAccountServer, overallPrice, "Tuningshop", "Vehicle", "Tuning")
 
     for slot, upgradeId in pairs(cartContent) do
         if type(slot) == "number" and slot >= 0 then
