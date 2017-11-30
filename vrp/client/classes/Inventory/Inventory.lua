@@ -140,7 +140,7 @@ function Inventory:addItem(place, item)
 
 			slot.ItemLabel = GUILabel:new(0, slot.m_Height - 12, slot.m_Width, 12, amountText, slot):setAlign("right", "center"):setFont(VRPFont(20)):setFontSize(1):setColor(Color.Orange)
 		else
-			outputDebugString("Inventory: Failed to load item-data for Item "..item)
+			outputDebugString(("Inventory: Failed to load item-data for Item %s"):format(item["Objekt"] or  "Unknown"))
 		end
 	end
 end
