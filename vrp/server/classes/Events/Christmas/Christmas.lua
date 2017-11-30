@@ -99,7 +99,7 @@ function Christmas:constructor()
 end
 
 function Christmas:Event_requestBonusData()
-	client:triggerEvent("eventReceiveBonusData", Halloween.ms_Bonus)
+	client:triggerEvent("eventReceiveBonusData", Christmas.ms_Bonus)
 end
 
 function Christmas:Event_buyBonus(bonusId)
@@ -140,7 +140,7 @@ function Christmas:Event_buyBonus(bonusId)
 		end
 
 	elseif bonus["Type"] == "Money" then
-		self.m_BankServerAccount:transferMoney(client, bonus["MoneyAmount"], "Halloween-Event", "Event", "Halloween")
+		self.m_BankServerAccount:transferMoney(client, bonus["MoneyAmount"], "Weihnachts-Event", "Event", "Weihnachten")
 	elseif bonus["Type"] == "Points" then
 		client:givePoints(bonus["PointsAmount"])
 		client:sendShortMessage(_("%d Punkte erhalten!", client, bonus["PointsAmount"]))
@@ -150,18 +150,11 @@ function Christmas:Event_buyBonus(bonusId)
 	elseif bonus["Type"] == "Special" then
 		if bonus["Text"] == "Schutzweste" then
 			client:setArmor(100)
-		elseif bonus["Text"] == "Payday Bonus" then
-			if not client.m_HalloweenPaydayBonus then
-				client.m_HalloweenPaydayBonus = 2000
-			else
-				client:sendError(_("Du hast den Payday Bonus bereits aktiviert!", client))
-				return
-			end
 		elseif bonus["Text"] == "Karma Reset" then
 			client:setKarma(0)
 		elseif bonus["Text"] == "Nick Change" then
 			outputChatBox("Bitte schreib ein Ticket um den Nick-Change von einem Admin durchführen zu lassen.", client, 0, 255, 0)
-			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Halloween Event kostenlos erhälst!", client, 0, 255, 0)
+			outputChatBox("Schreib unbedingt dazu, dass du diesen durchs Weichnachts Event kostenlos erhälst!", client, 0, 255, 0)
 		elseif bonus["Text"] == "30 Tage VIP" then
 			if DEBUG then
 				client:sendError(_("Im DEBUG Modus (Testserver) nicht verfügbar!", client))
