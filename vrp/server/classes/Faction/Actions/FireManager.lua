@@ -171,7 +171,7 @@ function FireManager:stopCurrentFire(stats)
 					moneyForFaction = moneyForFaction + score*32
 				end
 			end
-			self.m_BankAccountServer(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht", "Event", "Fire")
+			self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht", "Event", "Fire")
 		end
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
