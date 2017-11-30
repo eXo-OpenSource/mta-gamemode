@@ -30,7 +30,6 @@ GANGWAR_PAY_PER_DAMAGE = 5
 GANGWAR_PAY_PER_KILL = 1000
 PAYDAY_ACTION_BONUS = 2500
 --//
-
 addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientRequestAttack", "GangwarQuestion:disqualify", "gangwarGetAreas" }
 
 --[[
@@ -54,13 +53,38 @@ function Gangwar:constructor( )
 			addEventHandler("onPickupHit", self.m_Areas[#self.m_Areas].m_Pickup, bind(Gangwar.Event_OnPickupHit, self))
 		end
 	end
-	addEventHandler("onLoadCharacter", root, bind(self.onPlayerJoin, self))
-	addEventHandler("onDeloadCharacter", root, bind(self.onPlayerQuit, self))
-	addEventHandler("Gangwar:onClientRequestAttack", root, bind(self.attackReceiveCMD, self))
-	addEventHandler("onClientWasted", root, bind( self.onPlayerWasted, self))
-	addEventHandler("GangwarQuestion:disqualify", root, bind(self.onPlayerAbort, self))
-	addEventHandler("gangwarGetAreas", root, bind(self.getAreas, self))
-	GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
+	self.m_BindLoadCharacter = bind(self.onPlayerJoin, self)
+	addEventHandler("onLoadCharacter", root, self.m_BindLoadCharacter)
+	
+	self.m_BindDeloadCharacter = bind(self.onPlayerQuit, self)
+	addEventHandler("onDeloadCharacter", root, self.m_BindDeloadCharacter )
+	
+	self.m_BindAttackRequest = bind(self.attackReceiveCMD, self)
+	addEventHandler("Gangwar:onClientRequestAttack", root, self.m_BindAttackRequest)
+	
+	self.m_BindPlayerWasted = bind( self.onPlayerWasted, self)
+	addEventHandler("onClientWasted", root, self.m_BindPlayerWasted )
+	
+	self.m_BindPlayerAbort = bind(self.onPlayerAbort, self)
+	addEventHandler("GangwarQuestion:disqualify", root, self.m_BindPlayerAbort)
+	
+	self.m_BindGetAreas = bind(self.getAreas, self)
+	addEventHandler("gangwarGetAreas", root, self.m_BindGetAreas)
+	
+	self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
+end
+
+function Gangwar:destructor( )
+	for index = 1,  #self.m_Areas do
+		self.m_Areas[index]:delete()
+	end
+	removeEventHandler("onLoadCharacter", root, self.m_BindLoadCharacter)
+	removeEventHandler("onDeloadCharacter", root, self.m_BindDeloadCharacter )
+	removeEventHandler("Gangwar:onClientRequestAttack", root, self.m_BindAttackRequest)
+	removeEventHandler("onClientWasted", root, self.m_BindPlayerWasted )
+	removeEventHandler("GangwarQuestion:disqualify", root, self.m_BindPlayerAbort)
+	removeEventHandler("gangwarGetAreas", root, self.m_BindGetAreas)
+	GlobalTimer:getSingleton().m_Events[self.m_GlobalTimerId] = nil
 end
 
 function Gangwar:onAreaPayday()
@@ -123,11 +147,6 @@ function Gangwar:RESET()
 	outputDebugString("Gangwar-areas were reseted!")
 end
 
-function Gangwar:destructor( )
-	for index = 1,  #self.m_Areas do
-		self.m_Areas[index]:delete()
-	end
-end
 
 function Gangwar:isPlayerInGangwar(player)
 	local active, disq = self:getCurrentGangwarPlayers()

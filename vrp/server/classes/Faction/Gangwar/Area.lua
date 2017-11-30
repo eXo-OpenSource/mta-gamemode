@@ -23,7 +23,10 @@ function Area:constructor( dataset, pGManager )
 end
 
 function Area:destructor( )
-
+	if self.m_Pickup and isElement(self.m_Pickup) then destroyElement(self.m_Pickup) end
+	if self.m_RadarArea then delete(self.m_RadarArea) end
+	if self.m_CenterSphere and isElement(self.m_CenterSphere) then destroyElement(self.m_CenterSphere) end
+	if self.m_AttackSession then self.m_AttackSession:stopClients( true ); self.m_AttackSession:delete() end
 end
 
 function Area:getName()
@@ -80,15 +83,14 @@ end
 
 function Area:attack( faction1, faction2)
 	if not self.m_IsAttacked then
-		self.m_IsAttacked = true
-		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
-		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 		if self.m_AttackSession then
-			self.m_AttackSession:stopClients()
-			self:attackEnd()
+			self.m_AttackSession:stopClients( true )
 			self.m_AttackSession:delete()
 			StatisticsLogger:getSingleton():addGangwarDebugLog( "Duplcate Attack-Session", self, self.m_AttackSession)
 		end
+		self.m_IsAttacked = true
+		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
+		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:delete()
@@ -144,10 +146,6 @@ end
 function Area:update()
 	local sql_query = "UPDATE ??_gangwar SET Besitzer=?,lastAttack=? WHERE ID=?"
 	sql:queryFetch(sql_query,sql:getPrefix(),self.m_Owner,self.m_LastAttack,self.m_ID)
-end
-
-function Area:destructor()
-	self:update()
 end
 
 function Area:isUnderAttack( )

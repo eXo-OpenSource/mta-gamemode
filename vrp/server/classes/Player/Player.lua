@@ -1520,7 +1520,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 end
 
 function Player:isInGangwar()
-	 return Gangwar:getSingleton():isPlayerInGangwar(self)
+	return Gangwar:getSingleton():isPlayerInGangwar(self)
 end
 
 -- Override mta function
