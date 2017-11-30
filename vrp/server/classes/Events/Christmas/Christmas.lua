@@ -40,7 +40,7 @@ Christmas.ms_Bonus = {
 		["Packages"] = 3,
 		["CandyCane"] = 10,
 		["Type"] = "Points",
-		["Pointsmount"] = 100
+		["PointsAmount"] = 100
 	},
 	{
 		["Text"] = "Neutrales Karma",
@@ -72,12 +72,12 @@ Christmas.ms_Bonus = {
 		["Type"] = "Special"
 	},
 	{
-		["Text"] = "Boxville",
-		["Image"] = "Bonus_Boxville.png",
+		["Text"] = "Comet",
+		["Image"] = "Bonus_Comet.png",
 		["Packages"] = 350,
 		["CandyCane"] = 500,
 		["Type"] = "Vehicle",
-		["VehicleModel"] = 498
+		["VehicleModel"] = 480
 	},
 	{
 		["Text"] = "Pizza-Boy",
@@ -91,6 +91,9 @@ Christmas.ms_Bonus = {
 
 function Christmas:constructor()
 	self.m_QuestManager = QuestManager:new()
+
+	self.m_BankServerAccount = BankServer.get("event.halloween")
+
 	WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0)
 
 	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
@@ -129,7 +132,7 @@ function Christmas:Event_buyBonus(bonusId)
 			return
 		end
 	elseif bonus["Type"] == "Vehicle" then
-		local vehicle = PermanentVehicle.create(client, bonus["VehicleModel"], 956.881, -1115.489, 23.398, 0, 0, 180, nil, false)
+		local vehicle = PermanentVehicle.create(client, bonus["VehicleModel"], 1492.67, -1724.68, 13.23, 0, 0, 270, nil, false)
 		if vehicle then
 			setTimer(function(player, vehicle)
 				player:warpIntoVehicle(vehicle)
