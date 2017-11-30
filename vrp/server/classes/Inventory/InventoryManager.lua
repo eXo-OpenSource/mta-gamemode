@@ -48,7 +48,7 @@ function InventoryManager:loadItems()
 	local itemData = {}
 	local itemName
 	for i, row in ipairs(result) do
-		itemName = utf8.escape(row["Objektname"])
+		itemName = row["Objektname"]
 		itemData[itemName] = {}
 		itemData[itemName]["Name"] = itemName
 		itemData[itemName]["Info"] = utf8.escape(row["Info"])
