@@ -2,7 +2,7 @@ QuestManager = inherit(Singleton)
 QuestManager.Quests = {
 	[1] = {
 		["Name"] = "Weihnachts-Bodyguard",
-		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Las Venturas!",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Montgomery!",
 		["Packages"] = 5,
 	},
 	[2] = {
@@ -22,7 +22,7 @@ QuestManager.Quests = {
 	},
 	[5] = {
 		["Name"] = "Weihnachts-Bodyguard",
-		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in San Fierro!",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Los Santos!",
 		["Packages"] = 5,
 	},
 	[7] = {
