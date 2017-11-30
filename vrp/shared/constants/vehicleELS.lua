@@ -13,32 +13,41 @@ ELS_PRESET = {
             b1 = {0.75, -0.35, 0.95, 0.3, 0, 50, 255, 0},
             b2 = {0.5, -0.35, 0.95, 0.3, 0, 50, 255, 0},
             b3 = {0.25, -0.35, 0.95, 0.3, 0, 50, 255, 0},
-			w = {0, -0.35, 0.95, 0.4, 255, 255, 200, 10, 0},
         },
         sequence = {
             [1] = {
-				r1 = {alpha = 0},
+				r1 = {alpha = 255},
 				r2 = {alpha = 0},
-				r3 = {alpha = 0},
+				r3 = {alpha = 255},
+				b1 = {alpha = 0},
 				b2 = {alpha = 255},
-				w = {strobe = false},
+				b3 = {alpha = 0},
                 vehicle_light = {"d2", {200, 10, 0}},
             },
             [2] = {
-				r3 = {alpha = 255},
+				r1 = {alpha = 0},
+				r2 = {alpha = 255},
+				r3 = {alpha = 0},
 				b1 = {alpha = 255},
+				b2 = {alpha = 0},
+				b3 = {alpha = 255},
             },
             [3] = {
+				r1 = {alpha = 255},
 				r2 = {alpha = 255},
+				r3 = {alpha = 255},
 				b1 = {alpha = 0},
 				b2 = {alpha = 0},
 				b3 = {alpha = 0},
                 vehicle_light = {"d1", {0, 50, 255}},
             },
 			[4] = {
-				r1 = {alpha = 255},
+				r1 = {alpha = 0},
+				r2 = {alpha = 0},
+				r3 = {alpha = 0},
+				b1 = {alpha = 255},
+				b2 = {alpha = 255},
 				b3 = {alpha = 255},
-				w = {strobe = {50, 50, 255, 100}},
 			}
         },
     },
@@ -198,6 +207,21 @@ ELS_PRESET = {
                 fl = {strobe = {50, 50}},
                 br = {strobe = false},
                 bl = {strobe = {100, 100, 255, 100}},
+            },
+        },
+    },
+    [523] = { -- Police Bike
+        hasSiren = true,
+        headlightSequence = true,
+        sequenceCount = 2,
+        sequenceDuration = 100,
+        light = {},
+        sequence = {
+            [1] = {
+                vehicle_light = {"d2", {200, 10, 0}},
+            },
+            [2] = {
+                vehicle_light = {"d1", {0, 50, 255}},
             },
         },
     },
@@ -1092,4 +1116,48 @@ ELS_PRESET = {
             }
         },
     },
+    [574] = { --Sweeper
+        sequenceCount = 2,
+        sequenceDuration = 300,
+        light = {
+            r1 = {-0.35, 0.45, 1.35, 0, 200, 10, 0},
+            r2 = {0.35, 0.45, 1.35, 0.3, 200, 10, 0},
+        },
+        sequence = {
+            [1] = {
+                r1 = {fade = {0.3}},
+                r2 = {fade = {0}},
+            },
+            [2] = {
+                r1 = {fade = {0}},
+                r2 = {fade = {0.3}},
+            }
+        },
+    },
+    --[[[408] = { --Trashmaster
+        lightBar = {0, 0.7, 0.95},
+        sequenceCount = 2,
+        lightBar = {0, 0.7, 1.35, 1.1, "orange"},
+        sequenceDuration = 400,
+        light = {
+            r2 = {-0.7, 0.7, 1.4, 0, 255, 145, 0},
+            r3 = {-0.4, 0.7, 1.4, 0, 255, 145, 0},
+            b2 = {0.7, 0.7, 1.4, 0, 255, 145, 0},
+            b3 = {0.4, 0.7, 1.4, 0, 255, 145, 0},
+        },
+        sequence = {
+            [1] = {
+                r2 = {fade = {0.3}},
+                r3 = {fade = {0}},
+                b2 = {fade = {0}},
+                b3 = {fade = {0.3}},
+            },
+            [2] = {
+                r2 = {fade = {0}},
+                r3 = {fade = {0.3}},
+                b2 = {fade = {0.3}},
+                b3 = {fade = {0}},
+            }
+        },
+    },]]
 }
