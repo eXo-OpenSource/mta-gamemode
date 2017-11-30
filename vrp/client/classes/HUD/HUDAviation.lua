@@ -8,13 +8,14 @@
 HUDAviation = inherit(Singleton)
 local displayFontHeight = dxGetFontHeight(1,"default")
 local needleTex = dxCreateTexture("files/images/Speedo/needle.png", "argb", true, "clamp")
+local engineCirlce = dxCreateTexture("files/images/Speedo/aviation_engine_circle.png", "argb", true, "clamp")
 local METER_TO_FEET = 3.28084
 local KMH_TO_KNOTS = 0.539957
 function HUDAviation:constructor()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Width = screenWidth*0.4
 	self.m_Height = screenHeight*0.2 
-	self.m_StartX = screenWidth*0.5 - self.m_Width/2 
+	self.m_StartX = screenWidth*0.5 - ((self.m_Width*0.9)/2 )
 	self.m_StartY = screenHeight - self.m_Height*1.2
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(vehicle, seat)
@@ -77,11 +78,13 @@ function HUDAviation:draw()
 	if aircraft then
 		if getVehicleEngineState(aircraft) then
 			if self.m_Started then 
+				self:drawBorder(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width, self.m_Height)
 				self:drawPitchDisplay(self.m_StartX, self.m_StartY, self.m_Width*0.2, self.m_Height)
 				self:drawAltitudeDisplay(self.m_StartX+self.m_Width*0.2, self.m_StartY, self.m_Width*0.1, self.m_Height)
 				self:drawSpeed(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width*0.1, self.m_Height)
 				self:drawInfoPanel(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.2)
 				self:drawHeading(self.m_StartX+self.m_Width*0.3, self.m_StartY+self.m_Height*0.2, self.m_Width*0.3, self.m_Height*0.8)
+				self:drawEngineInfo(self.m_StartX+self.m_Width*0.6, self.m_StartY, self.m_Width*0.3, self.m_Height)
 			else
 				if not self.m_StartTime then
 					self.m_StartTime = getTickCount() + 3000 
@@ -89,11 +92,13 @@ function HUDAviation:draw()
 					if getTickCount() >= self.m_StartTime then 
 						self.m_Started = true 
 					else 
+						self:drawBorder(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width*1, self.m_Height)
 						self:drawStartUpDisplay(self.m_StartX, self.m_StartY, self.m_Width*0.2, self.m_Height)
 						self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.2, self.m_StartY, self.m_Width*0.1, self.m_Height)
 						self:drawStartUpDisplay(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width*0.1, self.m_Height)
 						self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.3, self.m_StartY+self.m_Height*0.2, self.m_Width*0.3, self.m_Height*0.8)
 						self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.2)
+						self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.6, self.m_StartY, self.m_Width*0.3, self.m_Height)
 					end
 				end
 			end
@@ -237,7 +242,7 @@ function HUDAviation:drawHeading( posX, posY, width, height)
 	local _, _, rz = getElementRotation(aircraft) 
 	local headingString = string.format("%03d", math.floor(rz))
 	dxDrawRectangle(posX, posY, width, height, tocolor( 0, 0, 0, 255)) 
-	dxDrawImage(posX+width*0.2, posY+height*0.1, width*0.6, width*0.6, "files/images/Speedo/heading.png", rz, 0, 0, tocolor(10, 97, 34, 255) )
+	dxDrawImage(posX+width*0.2, posY+height*0.1, width*0.6, width*0.6, "files/images/Speedo/heading.png", rz+180, 0, 0, tocolor(10, 97, 34, 255) )
 	dxDrawLine(posX+width*0.5, posY+height*0.1+width*0.3, posX+width*0.5, posY+height*0.1+width*0.1, tocolor(10, 97, 34, 255), 2)
 	dxDrawBoxText(headingString, posX+width*0.72,posY+height*0.1, width*0.15, height*0.1, tocolor(10, 97, 34, 255), 1, "sans", "center", "top")
 	dxDrawBoxShape(posX+width*0.72,posY+height*0.1, width*0.15, height*0.1, tocolor(10, 97, 34, 255))
@@ -268,6 +273,13 @@ function HUDAviation:drawInfoPanel( posX, posY, width, height)
 		dxDrawBoxText("FIRE", posX+width*0.7, posY+height*0.1, width*0.2, height*0.4, tocolor(200, 0, 0, 255), 1, "sans", "center", "center")
 	end
 	dxDrawBoxShape(posX+width*0.7, posY+height*0.1, width*0.2, height*0.4, tocolor(10, 97, 34, 255), 1)
+	local isBrakeApplied = getElementData( aircraft, "Handbrake" ) or getControlState("handbrake") or isElementFrozen(aircraft)
+	if not isBrakeApplied then 
+		dxDrawBoxText("BRAKE", posX+width*0.4, posY+height*0.55, width*0.2, height*0.4, tocolor(10, 97, 34, 255), 0.9, "sans", "center", "center")
+	else 
+		dxDrawBoxText("BRAKE", posX+width*0.4, posY+height*0.55, width*0.2, height*0.4, tocolor(200, 0, 0, 255), 0.9, "sans", "center", "center")
+	end
+	dxDrawBoxShape(posX+width*0.4, posY+height*0.55, width*0.2, height*0.4, tocolor(10, 97, 34, 255), 1)
 end
 
 function HUDAviation:checkDoors( aircraft ) 
@@ -281,12 +293,88 @@ function HUDAviation:checkDoors( aircraft )
 	return true
 end
 
+function HUDAviation:drawBorder(posX, posY, width, height)
+	dxDrawRectangle((posX-width*0.01), (posY-width*0.01), (width*1.02), (height+width*0.02), tocolor(186, 184, 169, 255))
+	dxDrawBoxShape((posX-width*0.01)-2, (posY-width*0.01)-2, (width*1.02)+4, (height+width*0.02)+4, tocolor(0, 0, 0, 255), 4)
+end
+
+function HUDAviation:drawEngineInfo(posX, posY, width, height) 
+	local aircraft = getPedOccupiedVehicle( localPlayer ) 
+	if not aircraft then return end 
+	dxDrawRectangle(posX, posY, width, height, tocolor(0, 0, 0, 255))
+	dxDrawImage(posX+width*0.3, posY+height*0.1, width*0.4, width*0.4, engineCirlce)
+	local startAngle = -28
+	local maxExtendAngle = 200
+	local fuel = aircraft:getData("fuel") or 0
+	local degFuel = maxExtendAngle * (math.floor(fuel)/100) 
+	local sx,sy = getLineAngle( posX+width*0.5, posY+height*0.1+width*0.2, width*0.2, startAngle-30)
+	local ex,ey = getLineAngle( posX+width*0.5, posY+height*0.1+width*0.2, width*0.2, startAngle-120)
+	local x,y = getLineAngle( posX+width*0.5, posY+height*0.1+width*0.2, width*0.2, startAngle+degFuel)
+	dxDrawLine(posX+width*0.5, posY+height*0.1+width*0.2, x, y, tocolor(10, 97, 34, 255), 2)
+	dxDrawBoxText(math.floor(fuel), sx, sy, width*0.1, height*0.07, tocolor(10, 97, 34, 255), 0.9, "sans", "center", "center")
+	dxDrawBoxShape(sx, sy, width*0.1, height*0.07,  tocolor(10, 97, 34, 255))
+	
+	local fuelLoss = self:checkFuelLoss(fuel)
+	local fuelString = string.format("%.1f", self.m_CurrentFuelLoss or 1)
+	dxDrawBoxText(fuelString or "0.0", ex, ey, width*0.1, height*0.07, tocolor(10, 97, 34, 255), 0.9, "sans", "center", "center")
+	dxDrawBoxShape(ex, ey, width*0.1, height*0.07,  tocolor(10, 97, 34, 255))
+	dxDrawBoxText("FUEL", posX+width*0.3, posY+height*0.1, width*0.4, width*0.4, tocolor(10, 97, 34, 255), 1, "sans", "left", "top")
+	
+	local engineWork = self:checkAcceleration( aircraft ) or 0
+	local e1x, e1y = getLineAngle( posX+width*0.4, posY+height*0.1+width*0.6, width*0.1, startAngle+(engineWork*maxExtendAngle))
+	local eN1x,eN1y = getLineAngle( posX+width*0.4, posY+height*0.1+width*0.6, width*0.1, startAngle-120)
+	local eN2x,eN2y = getLineAngle( posX+width*0.65, posY+height*0.1+width*0.6, width*0.1, startAngle-120)
+	dxDrawImage(posX+width*0.3, posY+height*0.1+width*0.5, width*0.2, width*0.2, engineCirlce)
+	dxDrawLine(posX+width*0.4, posY+height*0.1+width*0.6, e1x, e1y, tocolor(10, 97, 34, 255), 2)
+	dxDrawBoxText("N1", eN1x, eN1y, width*0.1, height*0.07, tocolor(10, 97, 34, 255), 1, "sans", "left", "top")
+	dxDrawBoxText("N2", eN2x, eN2y, width*0.1, height*0.07, tocolor(10, 97, 34, 255), 1, "sans", "left", "top")
+	local e2x, e2y
+	if self.m_AviationType > 1 then
+		e2x, e2y = getLineAngle( posX+width*0.65, posY+height*0.1+width*0.6, width*0.1, startAngle+(engineWork*maxExtendAngle))
+		dxDrawImage(posX+width*0.55, posY+height*0.1+width*0.5, width*0.2, width*0.2, engineCirlce)
+		dxDrawLine(posX+width*0.65, posY+height*0.1+width*0.6, e2x, e2y, tocolor(10, 97, 34, 255), 2)
+	else 
+		e2x, e2y = getLineAngle( posX+width*0.65, posY+height*0.1+width*0.6, width*0.1, startAngle)
+		dxDrawImage(posX+width*0.55, posY+height*0.1+width*0.5, width*0.2, width*0.2, engineCirlce, 0, 0, 0, tocolor(40, 40, 40, 255))
+		dxDrawLine(posX+width*0.65, posY+height*0.1+width*0.6, e2x, e2y, tocolor(40, 40, 40, 255), 2)
+	end
+end
+
+function HUDAviation:checkFuelLoss( fuel ) 
+	local now = getTickCount()
+	if not self.m_LastCheck then self.m_LastCheck = now end
+	if now - self.m_LastCheck >= 2000 then 
+		if self.m_LastFuel then
+			local dxfuel = self.m_LastFuel / fuel
+			self.m_LastFuel = fuel
+			self.m_LastCheck = now
+			self.m_CurrentFuelLoss = math.floor((dxfuel*100))/100
+			return self.m_CurrentFuelLoss
+		else 
+			self.m_LastFuel = fuel
+			self.m_LastCheck = now
+			self.m_CurrentFuelLoss = 0
+			return self.m_CurrentFuelLoss
+		end
+	end
+end
+
+function HUDAviation:checkAcceleration( aircraft ) 
+	if not aircraft then return end
+	local vx, vy, vz = getElementVelocity(aircraft)
+	local speedVector = (vx^2 + vy^2 + vz^2)^(0.5)
+	return (speedVector*180)/180
+end
+
 function HUDAviation:drawStartUpDisplay( posX, posY, width, height)
 	if posX and posY and width and height then 
 		local now = getTickCount() 
 		dxDrawRectangle(posX, posY, width, height, tocolor(0, 0, 0, 255))
 		if now % 1000 >= 500 then
+			local setupWidth = dxGetTextWidth("SETUP", 1, "clear")
+			local setupHeight = dxGetFontHeight(1, "clears")
 			dxDrawBoxText("SETUP", posX, posY, width, height, tocolor(10, 97, 34, 255), 1, "clear", "center", "center")
+			dxDrawBoxShape((posX+width*0.5)-(setupWidth*0.6), (posY+height*0.5)-(setupHeight*0.5), setupWidth*1.1, setupHeight, tocolor(10, 97, 34, 255))
 		end
 	end
 end

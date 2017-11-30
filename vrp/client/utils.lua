@@ -307,3 +307,9 @@ end
 function dxDrawBoxText( text , x, y , w , h , ... ) 
 	dxDrawText( text , x , y , x + w , y + h , ... ) 
 end
+
+function getLineAngle( cx, cy, r, t)
+	local x = r*math.cos(math.rad(t)) + cx;
+	local y = r*math.sin(math.rad(t)) + cy;
+	return x,y
+end
