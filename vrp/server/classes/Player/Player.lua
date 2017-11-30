@@ -211,7 +211,7 @@ function Player:loadCharacterInfo()
 	if self:isGuest() then
 		Blip.sendAllToClient(self)
 		RadarArea.sendAllToClient(self)
-		VehicleELS.sendAllToClient(self)		
+		VehicleELS.sendAllToClient(self)
 		return
 	end
 
@@ -244,7 +244,7 @@ function Player:loadCharacterInfo()
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
 	VehicleELS.sendAllToClient(self)
-	
+
 	if HouseManager:isInstantiated() then
 		HouseManager:getSingleton():loadBlips(self)
 	end
@@ -989,8 +989,8 @@ function Player:payDay()
 	end
 
 	if EVENT_CHRISTMAS then
-		self:addPaydayText("info", _("Du hast 5 Zuckerstangen bekommen!", self))
-		self:getInventory():giveItem("Zuckerstange", 5)
+		self:addPaydayText("info", _("Du hast 3 Zuckerstangen bekommen!", self))
+		self:getInventory():giveItem("Zuckerstange", 3)
 	end
 
 
