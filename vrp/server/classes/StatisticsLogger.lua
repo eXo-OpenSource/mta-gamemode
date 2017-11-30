@@ -33,7 +33,7 @@ function StatisticsLogger:addDrunLog(user, command, target)
     local targetId = 0
 	if user then elementId = user:getId() end
 	if target and target ~= root then targetId = target:getId() elseif target == root then targetId = -1 end
-	
+
     if sqlLogs:queryExec("INSERT INTO ??_AdminDrun (UserId, Command, TargetId, Date) VALUES (?, ?, ?, NOW())",
         sqlLogs:getPrefix(), elementId, command, targetId) then
 		return true
@@ -53,7 +53,7 @@ end
 
 function StatisticsLogger:addMoneyLogNew(fromId, fromType, fromBank, toId, toType, toBank, amount, reason, category, subcategory)
 	-- Create new table for all new transactions
-	-- 
+	--
 	--outputChatBox(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
 	outputServerLog(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
     if sqlLogs:queryExec("INSERT INTO ??_MoneyNew (FromId, FromType, FromBank, ToId, ToType, ToBank, Amount, Reason, Category, Subcategory, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
@@ -445,7 +445,7 @@ function StatisticsLogger:addHalloweenLog(player, bonus, pumpkins, sweets)
 end
 
 function StatisticsLogger:addGangwarDebugLog( warning, areaObj, attackSession)
-	if areaObj and attackSession then 
+	if areaObj and attackSession then
 		local areaID = areaObj.m_Name
 		sqlLogs:queryExec("INSERT INTO ??_GangwarDebugLog ( Warning, Name, Date) VALUES (?, ?, NOW())", sqlLogs:getPrefix(),
 		warning, areaID )
