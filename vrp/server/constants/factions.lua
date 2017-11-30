@@ -211,7 +211,7 @@ factionRankNames[10] = {
 [3] = "Veterano",
 [4] = "Derecha",
 [5] = "Guerriero",
-[6] = "Jeffe Boss"
+[6] = "Jefe Boss"
 }
 factionColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170}
 factionCarColors[10] = {["r"] = 255,["g"] = 252,["b"] = 170, ["r1"] = 255,["g1"] = 252,["b1"] = 170}
