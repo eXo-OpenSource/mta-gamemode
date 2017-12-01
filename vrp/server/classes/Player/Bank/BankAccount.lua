@@ -141,10 +141,16 @@ end
 	string reason
 	string category
 	string subcategory
+
+	table options = {
+		slient = false,
+		allowNegative = false
+	}
 ]]
 
-function BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+function BankAccount:transferMoney(toObject, amount, reason, category, subcategory, options)
 	if isNan(amount) then return false end
+	if not options then options = {} end
 	local amount = math.floor(amount)
 	
 	local targetObject = toObject
@@ -194,7 +200,7 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 	
 	isPlayer = instanceof(targetObject, DatabasePlayer)
 
-	if self:getMoney() < amount and not self.m_Negative then
+	if self:getMoney() < amount and not self.m_Negative and not options.allowNegative then
 		if allIfToMuch and self:getMoney() > 0 then
 			amount = self:getMoney()
 		else
@@ -202,17 +208,17 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 		end
 	end
 
-	self:__takeMoney(amount, reason, silent)
+	self:__takeMoney(amount, reason, options.silent)
 
 	if isPlayer then
 		toType = targetObject.m_BankAccount.m_OwnerType
 		toId = targetObject.m_BankAccount.m_OwnerId
 
 		if goesToBank then
-			targetObject:__giveBankMoney(amount, reason)
+			targetObject:__giveBankMoney(amount, reason, silent)
 			toBank = targetObject.m_BankAccount.m_Id
 		else
-			targetObject:__giveMoney(amount, reason)
+			targetObject:__giveMoney(amount, reason, silent)
 			toBank = 0
 		end
 	else

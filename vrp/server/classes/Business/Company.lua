@@ -142,8 +142,8 @@ function Company:__takeMoney(amount, reason, silent)
     return self.m_BankAccount:__takeMoney(amount, reason, silent)
 end
 
-function Company:transferMoney(toObject, amount, reason, category, subcategory)
-	return self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+function Company:transferMoney(...)
+	return self.m_BankAccount:transferMoney(...)
 end
 
 function Company:getPhoneNumber()

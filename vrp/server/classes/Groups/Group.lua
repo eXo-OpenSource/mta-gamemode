@@ -341,18 +341,18 @@ function Group:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function Group:__giveMoney(amount, reason)
+function Group:__giveMoney(amount, reason, slient)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
-    return self.m_BankAccount:__giveMoney(amount, reason)
+    return self.m_BankAccount:__giveMoney(amount, reason, slient)
 end
 
-function Group:__takeMoney(amount, reason)
+function Group:__takeMoney(amount, reason, slient)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
-    return self.m_BankAccount:__takeMoney(amount, reason)
+    return self.m_BankAccount:__takeMoney(amount, reason, slient)
 end
 
-function Group:transferMoney(toObject, amount, reason, category, subcategory)
-	return self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+function Group:transferMoney(...)
+	return self.m_BankAccount:transferMoney(...)
 end
 --[[
 function Group:__setMoney(amount)
@@ -627,8 +627,8 @@ function Group:payDay(vehicleData)
 	local outgoing = {}
 	local interest = 0
 	local output = {}
-	if self.m_Money > 0 then
-		interest = self.m_Money > 300000 and math.floor(300000*0.0005) or math.floor(self.m_Money*0.0005)
+	if self:getMoney() > 0 then
+		interest = self:getMoney() > 300000 and math.floor(300000*0.0005) or math.floor(self:getMoney()*0.0005)
 	end
 
 	outgoing["Fahrzeugsteuern"] = self:calculateVehicleTax(vehicleData)*-1
@@ -653,9 +653,9 @@ function Group:payDay(vehicleData)
 	sum = inc+out
 	table.insert(output, ("Gesamt: %d$"):format(sum))
 	if sum > 0 then
-		self.m_BankAccountServer:transferMoney(self, sum, "Payday", "Group", "Payday")
+		self.m_BankAccountServer:transferMoney({self, nil, true}, sum, "Payday", "Group", "Payday")
 	elseif sum < 0 then
-		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday")
+		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 	if self:getMoney() < 0 then

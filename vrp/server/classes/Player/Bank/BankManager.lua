@@ -26,7 +26,7 @@ function BankManager:Event_Withdraw(amount)
 		return
 	end
 
-	if client:transferBankMoney(client, amount, "Bank Auszahlung", "Bank", "Withdraw") then
+	if client:transferBankMoney(client, amount, "Bank Auszahlung", "Bank", "Withdraw", {bank = true}) then
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
@@ -41,7 +41,7 @@ function BankManager:Event_Deposit(amount)
 		return
 	end
 
-	if client:transferMoney({client, true}, amount, "Bank Einzahlung", "Bank", "Deposit") then
+	if client:transferMoney({client, true, true}, amount, "Bank Einzahlung", "Bank", "Deposit") then
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
