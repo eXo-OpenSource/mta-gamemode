@@ -1189,12 +1189,12 @@ function Player:giveCombinedReward(reason, tblReward)
 				local bank = amount.bank and " (Konto)" or ""
 
 				if amount.mode == "give" then
-					amount.toOrFrom:transferMoney({self, amount.bank}, amount.amount, name, amount.cagegory, amount.subcategory)
+					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, name, amount.cagegory, amount.subcategory)
 				else
 					if amount.bank then
-						self:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+						self:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
 					else
-						self:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+						self:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
 					end
 				end
 
