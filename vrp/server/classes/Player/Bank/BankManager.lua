@@ -68,7 +68,7 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 				return
 			end
 
-			if client:transferBankMoney({"player", id, true}, amount, ("Überweisung von %s an %s"):format(client:getName(), toPlayerName)) then
+			if client:transferBankMoney({"player", id, true}, amount, ("Überweisung von %s an %s"):format(client:getName(), toPlayerName), "Bank", "Transfer") then
 
 				local toPlayer, offline = DatabasePlayer.get(id)
 				if not offline then
