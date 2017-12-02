@@ -314,8 +314,8 @@ function Faction:__takeMoney(amount, reason, silent)
 	return self.m_BankAccount:__takeMoney(amount, reason, silent)
 end
 
-function Faction:transferMoney(toObject, amount, reason, category, subcategory)
-	return self.m_BankAccount:transferMoney(toObject, amount, reason, category, subcategory)
+function Faction:transferMoney(...)
+	return self.m_BankAccount:transferMoney(...)
 end
 
 function Faction:setRankLoan(rank,amount)

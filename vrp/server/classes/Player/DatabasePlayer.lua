@@ -414,8 +414,9 @@ function DatabasePlayer:__takeMoney(amount, reason, silent)
 	return DatabasePlayer.__giveMoney(self, -amount, reason, silent)
 end
 
-function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory)
+function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory, options)
 	if isNan(amount) then return false end
+	if not options then options = {} end
 	local amount = math.floor(amount)
 
 	local targetObject = toObject
@@ -465,7 +466,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 
 	isPlayer = instanceof(targetObject, DatabasePlayer)
 
-	if self:getMoney() < amount then
+	if self:getMoney() < amount and not options.allowNegative then
 		if allIfToMuch and self:getMoney() > 0 then
 			amount = self:getMoney()
 		else
@@ -473,7 +474,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 		end
 	end
 
-	self:__takeMoney(amount, reason, silent)
+	self:__takeMoney(amount, reason, options.silent)
 
 	if isPlayer then
 		toType = targetObject.m_BankAccount.m_OwnerType
@@ -509,14 +510,15 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	return true
 end
 
-function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory)
-	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory)
+function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory, options)
+	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory, options)
 
 	if result then
-		local prefix = "+"
-		if amount < 0 then prefix = "-" end
-		self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
-		self:triggerEvent("playerCashChange", false)
+		local options = options and options or {}
+		if money ~= 0 and not silent then
+			self:sendShortMessage(("%s$%s"):format("-"..amount, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
+		end
+		self:triggerEvent("playerCashChange", options.silent)
 	end
 
 	return result
@@ -674,13 +676,13 @@ end
 function DatabasePlayer:__giveBankMoney(amount, reason, silent)
 	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():__giveMoney(amount)
-
+--[[
 		if amount ~= 0 and not silent and self.sendShortMessage then
 			local prefix = "+"
 			if amount < 0 then prefix = "-" end
 			self:sendShortMessage(("%s%s"):format(prefix..toMoneyString(amount), reason ~= nil and " - "..reason or ""), "SA National Bank (Bank)", {0, 94, 255}, 3000)
 			self:triggerEvent("playerCashChange", false)
-		end
+		end]]
 
 		if self:getBankAccount():getMoney() >= 10000000 then
 			self:giveAchievement(40)

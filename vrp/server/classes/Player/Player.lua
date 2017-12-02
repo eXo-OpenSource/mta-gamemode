@@ -885,7 +885,7 @@ function Player:payDay()
 		income_faction = self:getFaction():paydayPlayer(self)
 		points_total = points_total + self:getFaction():getPlayerRank(self)
 		if income_faction > 0 then
-			self:getFaction():transferMoney({self, true, true}, income_faction, ("Lohn für %s"):format(self:getName()), "Faction", "Loan")
+			self:getFaction():transferMoney({self, true, true}, income_faction, ("Lohn für %s"):format(self:getName()), "Faction", "Loan", {silent = true})
 			income = income + income_faction
 			self:addPaydayText("income", _("%s-Lohn", self, self:getFaction():getShortName()), income_faction)
 		end
@@ -895,7 +895,7 @@ function Player:payDay()
 		points_total = points_total + self:getCompany():getPlayerRank(self)
 		if income_company > 0 then
 			income = income + income_company
-			self:getCompany():transferMoney({self, true, true}, income_company, ("Lohn für %s"):format(self:getName()), "Company", "Loan")
+			self:getCompany():transferMoney({self, true, true}, income_company, ("Lohn für %s"):format(self:getName()), "Company", "Loan", {silent = true})
 			self:addPaydayText("income", _("%s-Lohn", self, self:getCompany():getShortName()), income_company)
 		end
 	end
@@ -904,14 +904,14 @@ function Player:payDay()
 		points_total = points_total + self:getGroup():getPlayerRank(self)
 		if income_group > 0 then
 			income = income + income_group
-			self:getGroup():transferMoney({self, true, true}, income_group, ("Lohn für %s"):format(self:getName()), "Group", "Loan")
+			self:getGroup():transferMoney({self, true, true}, income_group, ("Lohn für %s"):format(self:getName()), "Group", "Loan", {silent = true})
 			self:addPaydayText("income", _("%s-Lohn", self, self:getGroup():getName()), income_group)
 		end
 	end
 
 	if EVENT_HALLOWEEN and self.m_HalloweenPaydayBonus then
 		income = income + self.m_HalloweenPaydayBonus
-		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus")
+		BankServer.get("event.halloween"):transferMoney({self, true, true}, self.m_HalloweenPaydayBonus, "Halloween-Bonus", "Event", "HalloweenBonus", {silent = true})
 		self:addPaydayText("income", _("Halloween-Bonus", self), self.m_HalloweenPaydayBonus)
 	end
 
@@ -919,7 +919,7 @@ function Player:payDay()
 	if income_interest > 1500 then income_interest = 1500 end
 	if income_interest > 0 then
 		income = income + income_interest
-		BankServer.get("server.bank"):transferMoney({self, true, true}, income_interest, "Bankzinsen", "Bank", "Interest")
+		BankServer.get("server.bank"):transferMoney({self, true, true}, income_interest, "Bankzinsen", "Bank", "Interest", {silent = true})
 		self:addPaydayText("income", _("Bankzinsen", self), income_interest)
 		points_total = points_total + math.floor(income_interest/500)
 	end
@@ -927,7 +927,7 @@ function Player:payDay()
 	--noob bonus
 	if self:getPlayTime() <= PAYDAY_NOOB_BONUS_MAX_PLAYTIME * 60 then
 		income = income + PAYDAY_NOOB_BONUS
-		BankServer.get("server.bank"):transferMoney({self, true, true}, PAYDAY_NOOB_BONUS, "Willkommens-Bonus", "Gameplay", "NoobBonus")
+		BankServer.get("server.bank"):transferMoney({self, true, true}, PAYDAY_NOOB_BONUS, "Willkommens-Bonus", "Gameplay", "NoobBonus", {silent = true})
 		self:addPaydayText("income", _("Willkommens-Bonus", self), PAYDAY_NOOB_BONUS)
 	end
 
@@ -937,7 +937,7 @@ function Player:payDay()
 	outgoing_vehicles, vehiclesTaxAmount = self:calcVehiclesTax()
 	if outgoing_vehicles > 0 then
 		self:addPaydayText("outgoing", _("Fahrzeugsteuer", self), outgoing_vehicles)
-		self:transferBankMoney({BankServer.get("server.vehicle_tax"), nil, nil, true}, outgoing_vehicles, _("Fahrzeugsteuer", self), "Vehicle", "Tax")
+		self:transferBankMoney({BankServer.get("server.vehicle_tax"), nil, nil, true}, outgoing_vehicles, _("Fahrzeugsteuer", self), "Vehicle", "Tax", {silent = true, allowNegative = true})
 		temp_bank_money = temp_bank_money - outgoing_vehicles
 		points_total = points_total + vehiclesTaxAmount*2
 	end
@@ -950,7 +950,7 @@ function Player:payDay()
 				outgoing_house = outgoing_house + rent
 				temp_bank_money = temp_bank_money - rent
 				points_total = points_total + 1
-				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "Vehicle", "Tax")
+				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "Vehicle", "Tax", {silent = true})
 				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
@@ -1041,19 +1041,19 @@ function Player:addCrime(crimeType)
 	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end
 
-function Player:__giveMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__giveMoney(money, reason, silent) -- Overriden
 	if not money or money < 1 then return false end
 	local success = DatabasePlayer.__giveMoney(self, money, reason)
 	if success then
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s%s"):format("+"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end
-		self:triggerEvent("playerCashChange", bNoSound)
+		self:triggerEvent("playerCashChange", silent)
 	end
 	return success
 end
 
-function Player:__takeMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__takeMoney(money, reason, silent) -- Overriden
 	if not money or money < 1 then return false end
 	local success = DatabasePlayer.__takeMoney(self, money, reason)
 	if success then
@@ -1061,14 +1061,14 @@ function Player:__takeMoney(money, reason, bNoSound, silent) -- Overriden
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s%s"):format("-"..toMoneyString(money), reason ~= nil and " - "..reason or ""), "SA National Bank (Bar)", {0, 94, 255}, 3000)
 		end
-		self:triggerEvent("playerCashChange", bNoSound)
+		self:triggerEvent("playerCashChange", silent)
 	end
 	return success
 end
 
-function Player:__addBankMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__giveBankMoney(money, reason, silent) -- Overriden
 	if not money or money < 1 then return false end
-	local success = DatabasePlayer.addBankMoney(self, money, reason)
+	local success = DatabasePlayer.__giveBankMoney(self, money, reason, silent)
 	if success then
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s$%s"):format("+"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
@@ -1078,9 +1078,9 @@ function Player:__addBankMoney(money, reason, bNoSound, silent) -- Overriden
 	return success
 end
 
-function Player:__takeBankMoney(money, reason, bNoSound, silent) -- Overriden
+function Player:__takeBankMoney(money, reason, silent) -- Overriden
 	if not money or money < 1 then return false end
-	local success = DatabasePlayer.takeBankMoney(self, money, reason)
+	local success = DatabasePlayer.__takeBankMoney(self, money, reason, silent)
 	if success then
 		if money ~= 0 and not silent then
 			self:sendShortMessage(("%s$%s"):format("-"..money, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
@@ -1189,12 +1189,12 @@ function Player:giveCombinedReward(reason, tblReward)
 				local bank = amount.bank and " (Konto)" or ""
 
 				if amount.mode == "give" then
-					amount.toOrFrom:transferMoney({self, amount.bank}, amount.amount, name, amount.cagegory, amount.subcategory)
+					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, name, amount.cagegory, amount.subcategory)
 				else
 					if amount.bank then
-						self:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+						self:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
 					else
-						self:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory)
+						self:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
 					end
 				end
 

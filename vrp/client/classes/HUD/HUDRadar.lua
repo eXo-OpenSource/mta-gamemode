@@ -33,9 +33,6 @@ function HUDRadar:constructor()
 	if core:get("HUD", "showRadar", nil) == nil then
 		core:set("HUD", "showRadar", true)
 	end
-	if core:get("HUD", "drawGangAreas", nil) == nil then
-		core:set("HUD", "drawGangAreas", true)
-	end
 	if core:get("HUD", "drawBlips", nil) == nil then
 		core:set("HUD", "drawBlips", true)
 	end
@@ -129,17 +126,15 @@ function HUDRadar:updateMapTexture(checkForDesign)
 	end
 
 	-- Draw radar areas
-	if core:get("HUD", "drawGangAreas", true) then
-		for k, rect in pairs(self.m_Areas) do
-			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
-			local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
+	for k, rect in pairs(self.m_Areas) do
+		local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+		local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
 
-			if rect.flashing then
-				dxDrawRectangle(mapX, mapY, width, height, Color.Red)
-				dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
-			else
-				dxDrawRectangle(mapX, mapY, width, height, rect.color)
-			end
+		if rect.flashing then
+			dxDrawRectangle(mapX, mapY, width, height, Color.Red)
+			dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
+		else
+			dxDrawRectangle(mapX, mapY, width, height, rect.color)
 		end
 	end
 

@@ -94,7 +94,11 @@ function Christmas:constructor()
 
 	self.m_BankServerAccount = BankServer.get("event.halloween")
 
-	WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0)
+	WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
+	WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
+	WheelOfFortune:new(Vector3(1475.10, -1779.37, 13.6), 0) 
+	WheelOfFortune:new(Vector3(1486.00, -1779.34, 13.6), 0)
+
 
 	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
 	addEventHandler("eventRequestBonusData", root, bind(self.Event_requestBonusData, self))

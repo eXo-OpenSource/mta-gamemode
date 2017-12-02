@@ -30,7 +30,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 
 	local pos = vehicle:getPosition()
 	local __,__,__,__,__,bbz2 = vehicle:getBoundingBox()
-	pos = pos + vehicle.matrix.up*bbz2
+	pos = pos + vehicle.matrix.up*(bbz2 + 0.5)
 	GUIForm3D.constructor(self, pos, vehicle:getRotation(), Vector2(1, 0.34), Vector2(200,70), 30, true)
 	ShortMessage:new(_("Linke Maustaste gedrückt halten zum tanken%s", confirmWithSpace and "\nLeertaste zum übernehmen" or ""), "Fahrzeug befüllen", {230, 100, 0})
 

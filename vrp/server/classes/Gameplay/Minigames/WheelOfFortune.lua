@@ -76,11 +76,11 @@ function WheelOfFortune:givePrice(player, type)
         player:getInventory():giveItem("Gluehwein", 2)
         player:sendSuccess(_("Du hast 2 Tassen Glühwein gewonnen!", player))
     elseif type == "500$" then
-        self.m_BankAccountServer:transferMoney(player, 500, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+        self.m_BankAccountServer:transferMoney(player, 500, "Glücksrad-Gewinn", "Gameplay", "WheelOfFortune")
     elseif type == "1000$" then
-        self.m_BankAccountServer:transferMoney(player, 1000, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+        self.m_BankAccountServer:transferMoney(player, 1000, "Glücksrad-Gewinn", "Gameplay", "WheelOfFortune")
     elseif type == "10000$" then
-        self.m_BankAccountServer:transferMoney(player, 10000, "Glücksrad-Gewinn", "Gameplay", "Wheel Of Fortune")
+        self.m_BankAccountServer:transferMoney(player, 10000, "Glücksrad-Gewinn", "Gameplay", "WheelOfFortune")
     elseif type == "Muetze" then
         player:getInventory():giveItem("Weihnachtsmütze", 1)
         player:sendSuccess(_("Du hast eine Weihnachtsmütze gewonnen! Ho ho ho!", player))

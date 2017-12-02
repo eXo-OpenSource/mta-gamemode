@@ -13,7 +13,9 @@ NoDm.Zones = {
 if EVENT_HALLOWEEN then
 	NoDm.Zones[8] = {Vector3(807.48, -1130.5, 20), Vector3(145, 75, 40)} --grave yard
 end
-
+if EVENT_CHRISTMAS then
+	NoDm.Zones[9] = {Vector3(1441.15, -1720.72, 12), Vector3(76.71, 116.84, 40)} --pershing square
+end
 function NoDm:constructor()
 	self.m_NoDmZones = {}
 	self.m_NoDmRadarAreas = {}
