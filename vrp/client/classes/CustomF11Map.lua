@@ -179,18 +179,16 @@ function CustomF11Map:draw()
 	dxDrawText(_"Informationen zur Bedienung der Karte findest du im F1-Hilfemenü", screenWidth/2, 15, nil, nil, Color.White, 1, VRPFont(25), "center", "center")
 
 	-- Draw gang areas
-	if core:get("HUD", "drawGangAreas", true) then
-		for i, v in pairs(HUDRadar:getSingleton().m_Areas) do
-			local mapX, mapY = self:worldToMapPosition(v.X, v.Y)
-			local width, height = v.Width/(6000/height), v.Height/(6000/height)
-			local r, g, b = fromcolor(v.color)
+	for i, v in pairs(HUDRadar:getSingleton().m_Areas) do
+		local mapX, mapY = self:worldToMapPosition(v.X, v.Y)
+		local width, height = v.Width/(6000/height), v.Height/(6000/height)
+		local r, g, b = fromcolor(v.color)
 
-			if v.flashing then
-				dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, Color.Red)
-				dxDrawRectangle(centerPosX + mapX + 2, centerPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
-			else
-				dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
-			end
+		if v.flashing then
+			dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, Color.Red)
+			dxDrawRectangle(centerPosX + mapX + 2, centerPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
+		else
+			dxDrawRectangle(centerPosX + mapX, centerPosY + mapY,  width, height, tocolor(r, g, b, core:get("HUD","mapOpacity", 0.7)*165))
 		end
 	end
 
