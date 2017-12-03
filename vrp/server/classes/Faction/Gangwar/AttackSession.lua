@@ -234,14 +234,16 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 		if killer then
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
-				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
-				local loss = player.m_LossBeforeDead or 0
-				triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
-				self:onPlayerLeaveCenter( player ) 
-				killer.g_damage = killer.g_damage + math.floor(loss)
-				player.m_IsDeadInGangwar = true
-				self:disqualifyPlayer( player )
+				if player and isElement(player) then 
+					player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+					killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
+					local loss = player.m_LossBeforeDead or 0
+					triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
+					self:onPlayerLeaveCenter( player ) 
+					killer.g_damage = killer.g_damage + math.floor(loss)
+					player.m_IsDeadInGangwar = true
+					self:disqualifyPlayer( player )
+				end
 			end
 			if killer.g_kills then 
 				killer.g_kills = killer.g_kills + 1
