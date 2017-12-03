@@ -461,7 +461,7 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
-	
+
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
 
@@ -2117,7 +2117,7 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
-	<include resource="Snow" />
+	<!-- <include resource="Snow" /> Seems to produce windows crashes  -->
 
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />

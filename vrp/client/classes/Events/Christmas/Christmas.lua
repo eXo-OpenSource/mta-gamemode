@@ -1,7 +1,7 @@
 Christmas = inherit(Singleton)
 
 function Christmas:constructor()
-	SHADERS["Schnee"] = {["event"] = "switchSnow", ["enabled"] = true}
+	--SHADERS["Schnee"] = {["event"] = "switchSnow", ["enabled"] = true} -- Seems to produce windows crashes
 	self.m_QuestManager = QuestManager:new()
 
 	self.m_Music = playSound3D("http://exo-reallife.de/ingame/JingleBells.mp3",1479.16, -1697.60, 14.05 , true)
