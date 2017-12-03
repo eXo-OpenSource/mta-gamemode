@@ -303,7 +303,7 @@ function AttackSession:notifyFactions()
 	end
 end
 
-function AttackSession:stopClients()
+function AttackSession:stopClients( bNoOutput )
 	local allGangwarPlayers = {}
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
@@ -313,7 +313,9 @@ function AttackSession:stopClients()
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v
 	end
-	GangwarStatistics:getSingleton():collectDamage(self.m_AreaObj.m_ID, allGangwarPlayers)
+	if not bNoOutput then
+		GangwarStatistics:getSingleton():collectDamage(self.m_AreaObj.m_ID, allGangwarPlayers)
+	end
 end
 
 function AttackSession:notifyFaction1( )

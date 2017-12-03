@@ -45,4 +45,5 @@ function GlobalTimer:registerEvent(callback, name, weekday, hour, minute, ...)
 		["active"] = true,
 		["args"] = {...},
 	}
+	return id
 end
