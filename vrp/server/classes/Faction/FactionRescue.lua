@@ -342,10 +342,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 					if deadPlayer:giveReviveWeapons() then
 						outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
 					end
-					if deadPlayer.m_RescueDefibrillatorFunction then
-						deadPlayer.m_RescueDefibrillatorFunction()
-						deadPlayer.m_RescueDefibrillatorFunction = nil
-					end
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end
@@ -358,19 +354,43 @@ function FactionRescue:removeStretcher(player, vehicle)
 end
 
 function FactionRescue:getDefibrillator(player, vehicle)
-	vehicle:setDoorState(1, 0)
-	vehicle:setDoorOpenRatio(1, 1)
-	player.m_RescueDefibrillator = true
+	if not vehicle.m_RescueDefibrillator then
+		vehicle:setDoorState(1, 0)
+		vehicle:setDoorOpenRatio(1, 1)
+		vehicle.m_RescueDefibrillator = client
+		player.m_RescueDefibrillator = true
+
+		vehicle.m_RescueDefibrillatorTimer = setTimer(function()
+			if vehicle then
+				vehicle.m_RescueDefibrillator = nil
+			end
+			if player then
+				player.m_RescueDefibrillator = nil
+			end
+		end, 2 * 60 * 1000, 1)
+	else
+		player:sendError("Aus diesem Fahrzeug wurde bereit ein Defibrillator entladen!")
+	end
 end
 
 function FactionRescue:removeDefibrillator(player, vehicle)
-	vehicle:setDoorOpenRatio(1, 0)
-	player.m_RescueDefibrillator = false
+	if vehicle.m_RescueDefibrillator == player then
+		vehicle:setDoorOpenRatio(1, 0)
+		player.m_RescueDefibrillator = false
+		vehicle.m_RescueDefibrillator = nil
+
+		if vehicle.m_RescueDefibrillatorTimer then
+			killTimer(vehicle.m_RescueDefibrillatorTimer)
+			vehicle.m_RescueDefibrillatorTimer = nil
+		end
+	else
+		player:sendError("Der Defibrillator gehört nicht in dieses Fahrzeug!")
+	end
 end
 
 function FactionRescue:useDefibrillator(player, target)
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(_("%s versucht %s vor dem verbluten zu Retten, ein RTW wird drigend benötigt!\nPosition: %s - %s", player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true), rescuePlayer))
+		rescuePlayer:sendShortMessage(_("%s versucht %s vor dem verbluten zu Retten, ein RTW wird drigend benötigt!\nPosition: %s - %s", rescuePlayer, player:getName(), target:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 	end
 
 	local abort = function()
@@ -410,7 +430,7 @@ function FactionRescue:createDeathPickup(player, ...)
 	player.m_DeathPickup.money = money
 
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(("%s ist gestorben. %s \nPosition: %s - %s"):format(player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
+		rescuePlayer:sendShortMessage(_("%s ist gestorben. %s \nPosition: %s - %s", rescuePlayer, player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
 
@@ -423,6 +443,10 @@ function FactionRescue:createDeathPickup(player, ...)
 					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
+								if player.m_RescueDefibrillatorFunction then
+									player.m_RescueDefibrillatorFunction()
+									player.m_RescueDefibrillatorFunction = nil
+								end
 								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 								setElementAlpha(player,255)
 								if isElement(player.ped_deadDouble) then
