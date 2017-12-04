@@ -139,6 +139,7 @@
 	<script src="server/classes/Inventory/Items/ItemPumpkin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
 
 	<!-- Wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
