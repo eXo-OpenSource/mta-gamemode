@@ -26,6 +26,7 @@ function Area:destructor( )
 	if self.m_Pickup and isElement(self.m_Pickup) then destroyElement(self.m_Pickup) end
 	if self.m_RadarArea then delete(self.m_RadarArea) end
 	if self.m_CenterSphere and isElement(self.m_CenterSphere) then destroyElement(self.m_CenterSphere) end
+	if self.m_BlipImage then self.m_BlipImage:delete() end
 	if self.m_AttackSession then self.m_AttackSession:stopClients( true ); self.m_AttackSession:delete() end
 end
 
