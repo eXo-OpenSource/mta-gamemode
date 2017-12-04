@@ -9,7 +9,7 @@ FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
 	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
-	"factionRescueReviveAbort", "factionRescueToggleLadder"
+	"factionRescueReviveAbort", "factionRescueToggleLadder", "factionRescueToggleDefibrillator"
 }
 
 function FactionRescue:constructor()
