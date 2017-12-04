@@ -65,7 +65,8 @@ function VehicleInteraction:render()
     if DEBUG then ExecTimeRecorder:getSingleton():startRecording("UI/HUD/VehicleInteraction") end
 	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = localPlayer:getWorldVehicle()
-    if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
+	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
+		local vehicleModel = self.m_lookAtVehicle:getModel()
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
             if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
                 local vehPos = self.m_lookAtVehicle:getPosition()
@@ -89,16 +90,21 @@ function VehicleInteraction:render()
                             if doorId == 1 then
                                 if getElementData(self.m_lookAtVehicle, "OwnerType") == "group" or getElementData(self.m_lookAtVehicle, "OwnerType") == "player" then
                                     self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!", self.m_actionButton), 1)
-                                end
+								end
+								if vehicleModel == 596 or vehicleModel == 598 or vehicleModel == 599 then
+									if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+										self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen des Defibrillators!", self.m_actionButton), 1)
+									end
+								end
                             elseif doorId == 0 then
                                 self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
-                            elseif self.m_lookAtVehicle:getModel() == 416 then
+                            elseif vehicleModel == 416 then
                                 if doorId == 4 or doorId == 5 then
-                                    if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
-                                        self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
+									if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+										self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
                                     end
-                                end
-                            end
+								end
+							end
                         end
                     else
                         self:drawTextBox(_("#FF0000 Fahrzeug ist verschlossen!", self.m_lockButton), 0)
@@ -167,24 +173,35 @@ end
 
 function VehicleInteraction:action()
 	if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and self:getDoor() then
+		local vehicleModel = self.m_lookAtVehicle:getModel()
         if getTickCount() - self.m_LastInteraction > self.m_InteractionTimeout then
             local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
-            local door = tonumber(self:getDoor())
-            if door == 0 or door == 1 then
-                local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
+			local door = tonumber(self:getDoor())
+			local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, door)
+			if door == 0 or door == 1 then
+				if vehicleModel == 596 or vehicleModel == 598 or vehicleModel == 599 then
+					if doorRatio > 0 and localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+						self.m_LastInteraction = getTickCount()
+						triggerServerEvent("factionRescueToggleDefibrillator", localPlayer, self.m_lookAtVehicle)
+						return
+					end
+				end
+
                 if doorRatio > 0 or checkDoor == 4 then
                     if not isVehicleLocked(self.m_lookAtVehicle) then
                         if not isPedInVehicle(localPlayer) then
                             self.m_LastInteraction = getTickCount()
-                            triggerServerEvent("onActionVehicleDoor", localPlayer, door)
+							triggerServerEvent("onActionVehicleDoor", localPlayer, door)
+							return
                         end
                     end
                 end
-            elseif (door == 4 or door == 5) and self.m_lookAtVehicle:getModel() == 416 then
-                if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
-                    self.m_LastInteraction = getTickCount()
-                    triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)
-                end
+			elseif (door == 4 or door == 5) and (vehicleModel == 416 or vehicleModel == 596 or vehicleModel == 598 or vehicleModel == 599) then
+                if doorRatio > 0 and localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+					self.m_LastInteraction = getTickCount()
+					triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)
+					return
+				end
             end
         end
     end

@@ -602,10 +602,12 @@ DEATH_TIME = 30000
 DEATH_TIME_PREMIUM = 0
 DEATH_TIME_ADMIN = 0
 
+
 if DEBUG then
-	MEDIC_TIME = 10000
+	MEDIC_TIME = 25000
 	DEATH_TIME = 0
 end
+
 
 VRP_RADIO = {
 	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},

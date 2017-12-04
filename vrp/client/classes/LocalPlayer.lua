@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -27,6 +27,7 @@ function LocalPlayer:constructor()
 	self.m_LastPositon = self:getPosition()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	self.m_FadeOut = bind(self.fadeOutScope, self)
+	self.m_OnDeathTimerUp = bind(self.onDeathTimerUp, self)
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
@@ -98,9 +99,9 @@ function LocalPlayer:fadeOutScope()
 	end
 end
 
-function LocalPlayer:Event_OnObjectBrake( attacker ) 
+function LocalPlayer:Event_OnObjectBrake( attacker )
 	if attacker == localPlayer then
-		if getElementModel(source) == 1224 then 
+		if getElementModel(source) == 1224 then
 			triggerServerEvent("onCrateDestroyed",localPlayer,source)
 		end
 	end
@@ -249,6 +250,78 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	end
 end
 
+function LocalPlayer:onDeathTimerUp()
+	self.m_Death = false
+	if self.m_DeathMessage then
+		delete(self.m_DeathMessage)
+	end
+	if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
+	triggerServerEvent("factionRescueReviveAbort", self, self)
+	self.m_CanBeRevived = false
+	if isElement(self.m_DeathAudio) then
+		destroyElement(self.m_DeathAudio)
+	end
+
+	local soundLength = 20 -- Length of Halleluja in Seconds
+	if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
+		self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
+		soundLength = self.m_Halleluja:getLength()
+	end
+	triggerServerEvent("destroyPlayerWastedPed",localPlayer)
+	ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
+
+	-- render camera drive
+	self.m_Add = 0
+	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+	fadeCamera(false, soundLength)
+
+	setTimer(
+		function()
+			-- stop moving
+			removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+			fadeCamera(true, 0.5)
+
+			-- now death gui
+			DeathGUI:new(self:getPublicSync("DeathTime"),
+				function()
+					HUDRadar:getSingleton():show()
+					HUDUI:getSingleton():show()
+					showChat(true)
+					-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
+					triggerServerEvent("factionRescueWastedFinished", localPlayer)
+				end
+			)
+		end, soundLength*1000, 1
+	)
+end
+
+function LocalPlayer:createWastedTimer()
+	local start = getTickCount()
+	self.m_WastedTimer = setTimer(
+		function()
+			local timeGone = getTickCount() - start
+			if timeGone >= MEDIC_TIME-500 then
+				self.m_OnDeathTimerUp()
+			else
+				if localPlayer:isPremium() then
+					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((MEDIC_TIME - timeGone)/1000))
+				else
+					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...", math.floor((MEDIC_TIME - timeGone)/1000))
+				end
+				self.m_DeathMessage:anyChange()
+			end
+		end, 1000, MEDIC_TIME/1000
+	)
+end
+
+function LocalPlayer:createDeathShortMessage()
+	if localPlayer:isPremium() then
+		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", MEDIC_TIME/1000), nil, nil, MEDIC_TIME, SMClick)
+	else
+		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...", MEDIC_TIME/1000), nil, nil, MEDIC_TIME)
+	end
+end
+
 function LocalPlayer:Event_playerWasted()
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
@@ -257,53 +330,10 @@ function LocalPlayer:Event_playerWasted()
 	showChat(false)
 	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
-	local funcA = function()
-		self.m_Death = false
-		if self.m_DeathMessage then
-			delete(self.m_DeathMessage)
-		end
-		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
-		triggerServerEvent("factionRescueReviveAbort", self, self)
-		self.m_CanBeRevived = false
-		if isElement(self.m_DeathAudio) then
-			destroyElement(self.m_DeathAudio)
-		end
 
-		local soundLength = 20 -- Length of Halleluja in Seconds
-		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
-			self.m_Halleluja = playSound("files/audio/Halleluja.mp3")
-			soundLength = self.m_Halleluja:getLength()
-		end
-		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
-		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nBut... have a good flight to heaven!", (soundLength-1)*1000)
-
-		-- render camera drive
-		self.m_Add = 0
-		addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
-		fadeCamera(false, soundLength)
-
-		setTimer(
-			function()
-				-- stop moving
-				removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
-				fadeCamera(true, 0.5)
-
-				-- now death gui
-				DeathGUI:new(self:getPublicSync("DeathTime"),
-					function()
-						HUDRadar:getSingleton():show()
-						HUDUI:getSingleton():show()
-						showChat(true)
-						-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
-						triggerServerEvent("factionRescueWastedFinished", localPlayer)
-					end
-				)
-			end, soundLength*1000, 1
-		)
-	end
 	local SMClick = function()
 		if self.m_Death then
-			funcA()
+			self.m_OnDeathTimerUp()
 		else
 			ErrorBox:new(_"Du bist nicht mehr tot!")
 			return
@@ -318,35 +348,31 @@ function LocalPlayer:Event_playerWasted()
 	setTimer(setGameSpeed,5000,1,1)
 	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
-		funcA()
+		self.m_OnDeathTimerUp()
 		return
 	end
 
-	local deathTime = MEDIC_TIME
-	local start = getTickCount()
-
-	if localPlayer:isPremium() then
-		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
-	else
-		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...", deathTime/1000), nil, nil, deathTime)
-	end
-
 	self.m_CanBeRevived = true
-	self.m_WastedTimer = setTimer(
-		function()
-			local timeGone = getTickCount() - start
-			if timeGone >= deathTime-500 then
-				funcA()
-			else
-				if localPlayer:isPremium() then
-					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
-				else
-					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...", math.floor((deathTime - timeGone)/1000))
-				end
-				self.m_DeathMessage:anyChange()
-			end
-		end, 1000, deathTime/1000
-	)
+	self:createDeathShortMessage()
+	self:createWastedTimer()
+end
+
+function LocalPlayer:stopDeathBleeding()
+	if self.m_WastedTimer then
+		killTimer(self.m_WastedTimer)
+	end
+	if self.m_DeathMessage then
+		delete(self.m_DeathMessage)
+	end
+	self.m_DeathBleedingMessage = ShortMessage:new(_"Ein Arzt schützt dich vor dem verbluten bis ein Rettungswagen eintrifft!", nil, nil, math.huge)
+end
+
+function LocalPlayer:restartDeathBleeding()
+	if self.m_DeathBleedingMessage then
+		delete(self.m_DeathBleedingMessage)
+	end
+	self:createDeathShortMessage()
+	self:createWastedTimer()
 end
 
 function LocalPlayer:deathRender(deltaTime)
@@ -360,6 +386,7 @@ function LocalPlayer:abortDeathGUI(force)
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if self.m_Halleluja and isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		if self.m_DeathBleedingMessage then delete(self.m_DeathBleedingMessage) end
 		if isElement(self.m_DeathAudio) then destroyElement(self.m_DeathAudio) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()

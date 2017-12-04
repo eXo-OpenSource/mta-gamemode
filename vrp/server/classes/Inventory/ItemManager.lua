@@ -54,6 +54,7 @@ function ItemManager:constructor()
 		["Ausweis"] = ItemIDCard,
 		["Benzinkanister"] = ItemFuelcan,
 		["Reparaturkit"] = ItemRepairKit,
+		["Medikit"] = ItemHealpack,
 		--Alcohol
 		["Bier"] = ItemAlcohol,
 		["Whiskey"] = ItemAlcohol,
