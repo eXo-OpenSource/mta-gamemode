@@ -27,7 +27,7 @@ QuestManager.Quests = {
 	},
 	[6] = {
 		["Name"] = "Päckchen-Transport",
-		["Description"] = "Liefere das Päckchen an den angezeigten Ort! Verliere es nicht!",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
 		["Packages"] = 5,
 	},
 	[7] = {

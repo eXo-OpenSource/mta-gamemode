@@ -1,15 +1,15 @@
 QuestPackageTransport = inherit(Quest)
 
 QuestPackageTransport.Targets = {
-	--[6] = Vector3(626.15, -601.29, 16),
-	[6] = Vector3(1481.21, -1753.55, 13.55),
+	[6] = Vector3(626.15, -601.29, 16),
+	--[6] = Vector3(1481.21, -1753.55, 13.55),
 
 
 }
 
 function QuestPackageTransport:constructor(id)
 	Quest.constructor(self, id)
-	self.m_Packages = {}
+	self.m_Boxes = {}
 	self.m_Vehicles = {}
 	self.m_Trailers = {}
 
@@ -42,15 +42,15 @@ function QuestPackageTransport:addPlayer(player)
 	self.m_Vehicles[player].christmas = true
 	self.m_Trailers[player] = TemporaryVehicle.create(607, 1480.57, -1722, 13.20, 270)
 	self.m_Trailers[player]:setVariant(255, 255)
-	self.m_Packages[player] = {}
+	self.m_Boxes[player] = {}
 	setTimer(function()
 		player:warpIntoVehicle(self.m_Vehicles[player])
 		self.m_Vehicles[player]:attachTrailer(self.m_Trailers[player])
 		for i=1, 3 do
-			self.m_Packages[player][i] = createObject(3878, 1484.88, -1721.95, 14.60)
-			self.m_Packages[player][i]:setScale(0.4)
-			self.m_Packages[player][i]:setCollisionsEnabled(false)
-			self.m_Packages[player][i]:attach(self.m_Trailers[player], 0 ,-2+i, 0)
+			self.m_Boxes[player][i] = createObject(3878, 1484.88, -1721.95, 14.60)
+			self.m_Boxes[player][i]:setScale(0.4)
+			self.m_Boxes[player][i]:setCollisionsEnabled(false)
+			self.m_Boxes[player][i]:attach(self.m_Trailers[player], 0 ,-2+i, 0)
 		end
 	end, 500, 1)
 
@@ -63,7 +63,7 @@ function QuestPackageTransport:removePlayer(player)
 	Quest.removePlayer(self, player)
 	if isElement(self.m_Vehicles[player]) then self.m_Vehicles[player]:destroy() end
 	if isElement(self.m_Trailers[player]) then self.m_Trailers[player]:destroy() end
-	for i, package in pairs(self.m_Packages[player]) do
+	for i, package in pairs(self.m_Boxes[player]) do
 		if isElement(package) then package:destroy() end
 	end
 
