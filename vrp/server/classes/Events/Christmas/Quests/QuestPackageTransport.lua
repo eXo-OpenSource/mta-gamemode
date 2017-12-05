@@ -88,7 +88,7 @@ function QuestPackageTransport:exit(vehicle)
 end
 
 function QuestPackageTransport:onMarkerHit(player, dim)
-	if player:getType() == "player" and dim then
+	if player and isElement(player) and player:getType() == "player" and dim then
 		if table.find(self:getPlayers(), player) then
 			if player.vehicle and self.m_Trailers[player] and player.vehicle.christmas and player.vehicle:getTowedByVehicle() == self.m_Trailers[player] then
 				player:sendSuccess("Du hast die Päckchen erfolgreich abgeliefert!")
