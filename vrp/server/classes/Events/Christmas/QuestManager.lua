@@ -25,6 +25,11 @@ QuestManager.Quests = {
 		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Los Santos!",
 		["Packages"] = 5,
 	},
+	[6] = {
+		["Name"] = "Päckchen-Transport",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
+		["Packages"] = 5,
+	},
 	[7] = {
 		["Name"] = "Päckchen-Finder",
 		["Description"] = "Finde 5 Päckchen und klicke diese an!",
@@ -57,6 +62,7 @@ function QuestManager:constructor()
 		[3] = QuestPhotography,
 		[4] = QuestDraw,
 		[5] = QuestNPCTransport,
+		[6] = QuestPackageTransport,
 		[7] = QuestPackageFind,
 		[8] = QuestSantaKill,
 		[10] = QuestDraw,
@@ -76,6 +82,7 @@ function QuestManager:constructor()
 
 
 	self:getTodayQuest()
+	--self:startQuest(6)
 	GlobalTimer:getSingleton():registerEvent(bind(self.getTodayQuest, self), "Christmas-Quests", nil, 00, 5)
 
 end

@@ -526,13 +526,14 @@ function Player:respawn(position, rotation, bJailSpawn)
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
-
+	self:setOnFire(false)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
 	FactionState:getSingleton():uncuffPlayer( self )
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
+
 	if isElement(self.ped_deadDouble) then
 		destroyElement(self.ped_deadDouble)
 	end

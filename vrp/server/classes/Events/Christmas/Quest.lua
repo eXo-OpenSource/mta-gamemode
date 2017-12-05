@@ -7,6 +7,7 @@ function Quest:constructor(Id)
 	self.m_Name = QuestManager.Quests[Id]["Name"]
 	self.m_Description = QuestManager.Quests[Id]["Description"]
 	self.m_Packages = QuestManager.Quests[Id]["Packages"]
+
 end
 
 function Quest:destructor()
