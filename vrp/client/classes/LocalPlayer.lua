@@ -318,7 +318,16 @@ end
 
 function LocalPlayer:createDeathShortMessage()
 	if localPlayer:isPremium() then
-		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", MEDIC_TIME/1000), nil, nil, MEDIC_TIME, SMClick)
+		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", MEDIC_TIME/1000), nil, nil, MEDIC_TIME,
+			function()
+				if self.m_Death then
+					self.m_OnDeathTimerUp()
+				else
+					ErrorBox:new(_"Du bist nicht mehr tot!")
+					return
+				end
+			end
+		)
 	else
 		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...", MEDIC_TIME/1000), nil, nil, MEDIC_TIME)
 	end
@@ -333,14 +342,6 @@ function LocalPlayer:Event_playerWasted()
 	self.m_Death = true
 	triggerServerEvent("Event_setPlayerWasted", self)
 
-	local SMClick = function()
-		if self.m_Death then
-			self.m_OnDeathTimerUp()
-		else
-			ErrorBox:new(_"Du bist nicht mehr tot!")
-			return
-		end
-	end
 	setGameSpeed(0.1)
 	self.m_DeathAudio = playSound("files/audio/death_ahead.mp3")
 	setSoundVolume(self.m_DeathAudio,1)
