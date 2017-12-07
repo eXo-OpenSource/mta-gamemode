@@ -18,7 +18,8 @@ function FerrisGond:constructor(wheel, id)
     self.m_Wheel = wheel
     self.m_Id = id
     self.m_Offset = (360/FerrisWheelManager.GondAmount * id) + 18
-    self.m_ClientEnterHandler = bind(FerrisGond.clientEnterTry, self)
+    self.m_ClientGondHandler = bind(FerrisGond.clientGond, self)
+    self.m_Occupants = {}
     self:createObject()
 end
 
@@ -26,7 +27,7 @@ function FerrisGond:createObject()
     if not self.m_Object then
         local wheel = self.m_Wheel.m_WheelObj
         self.m_Object = createObject(FERRIS_IDS.Gond, self:getAttachedPositionVertical(), wheel.rotation)
-        addEventHandler("onFerrisWheelGondClicked", self.m_Object, self.m_ClientEnterHandler)
+        addEventHandler("onFerrisWheelGondClicked", self.m_Object, self.m_ClientGondHandler)
     end
 end
 
@@ -36,10 +37,37 @@ function FerrisGond:update(rot, time, movingState)
     self.m_Object:move(time, self:getAttachedPositionVertical(), Vector3(0,0,0), movingState)
 end
 
-function FerrisGond:clientEnterTry()
-    outputDebug(client, self.m_Id)
-    if self.m_Wheel.m_MovingState then
-        return  client:sendWarning(_("Warte, bis die Gondel anhält!",client))
+function FerrisGond:clientGond()
+    return outputDebug(self.m_Id)
+    --[[if self.m_Wheel.m_MovingState then
+        return client:sendWarning(_("Warte, bis die Gondel anhält!",client))
+    end
+    if client.m_FerrisGond then 
+        return client.m_FerrisGond:removePlayer(client)
+    elseif table.size(self.m_Occupants) > 2 then 
+        return client:sendWarning(_("Diese Gondel ist bereits voll!",client))
+    elseif client:getMoney() <= 10 then
+        return client:sendError(_("Du benötigst 10$!",client))
+    end
+
+    client:transferMoney(FerrisWheelManager:getSingleton():getBankAccount(), 10, "Riesenrad", "Gameplay", "FerrisWheel")
+    client:sendShortMessage(_("Bewege deine Kamera mit der Maus, zoome mit dem Mausrad. Du kannst frühzeitig aussteigen, wenn du bei angehaltenem Riesenrad auf eine Gondel klickst.", client), _("Riesenrad", client), {0, 50, 100}, 10000)
+    self.m_Occupants[client] = getTickCount()
+    client.m_FerrisGond = self
+    client:attach(self.m_Object, 0, table.size(self.m_Occupants) == 1 and 0.4 or -0.4, -1.4)
+    client:triggerEvent("startCenteredFreecam", self.m_Object, 20)]]
+end
+
+function FerrisGond:removePlayer(player)
+    if self.m_Occupants[player] then
+        self.m_Occupants[player] = nil
+        player.m_FerrisGond = nil
+        player:detach(self.m_Object)
+        player:triggerEvent("stopCenteredFreecam")
+        self.m_Wheel:setPlayerToExitPosition(player, self.m_Id)
+        player:sendShortMessage(_("Vielen Dank für die Mitfahrt, auf wiedersehen!", client), _("Riesenrad", client), {0, 50, 100})
+    else
+        outputDebugString("gond for player "..inspect(player).." not found!")
     end
 end
 

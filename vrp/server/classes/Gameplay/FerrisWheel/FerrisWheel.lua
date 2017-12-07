@@ -52,11 +52,18 @@ function FerrisWheel:update()
     end
 end
 
+function FerrisWheel:setPlayerToExitPosition(player, gondId)
+    player:setPosition(self.m_BaseObj.position + self.m_BaseObj.matrix.right*(gondId % 2 == 0 and -3.5 or 3.5) + self.m_BaseObj.matrix.forward*(5) + self.m_BaseObj.matrix.up*(-13))
+    player:setRotation(self.m_BaseObj.rotation)
+end
+
 
 function FerrisWheel:setPaused()
     self.m_MovingState = false
     self.m_RotSinceLastStop = 0
     FerrisWheelManager:getSingleton():unregisterUpdate(self)
+    local rot = self.m_WheelObj.rotation.x
+    outputDebug((math.floor((-rot/FerrisWheelManager.GondAmount)/FerrisWheelManager.GondAmount)))
     setTimer(function()
         FerrisWheelManager:getSingleton():registerUpdate(self)
     end, FerrisWheelManager.PauseInterval, 1)

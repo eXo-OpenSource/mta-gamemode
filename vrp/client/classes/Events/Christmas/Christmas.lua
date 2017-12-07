@@ -48,4 +48,20 @@ function Christmas:constructor()
 	local wheelBubble = SpeakBubble3D:new(wheelDummy, "Weihnachten", "Glücksrad", 180, 1.5)
 	wheelBubble:setBorderColor(Color.LightRed)
 	wheelBubble:setTextColor(Color.LightRed)
+
+
+	--Ferris Wheel ped
+	local ped = Ped.create(189, Vector3(1484.46, -1672.26, 14.05), 149.23)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Riesenrad", 0, 1.3)
+	ped.SpeakBubble:setBorderColor(Color.LightRed)
+	ped.SpeakBubble:setTextColor(Color.LightRed)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			FerrisWheelGUI:new()
+		end
+	)
 end

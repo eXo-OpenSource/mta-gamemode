@@ -16,9 +16,11 @@ FerrisWheelManager.Map = {}
 FerrisWheelManager.UpdateMap = {}
 
 function FerrisWheelManager:constructor()
-    
-    FerrisWheelManager.Map[1] = FerrisWheel:new(Vector3(1479.35, -1665.9, 26.5), 0)
+    self.m_BankAccountServer = BankServer.get("gameplay.ferris_wheel")
+    FerrisWheelManager.Map[1] = FerrisWheel:new(Vector3(1479.35, -1665.9, 26.5), 0) -- christmas
+    FerrisWheelManager.Map[2] = FerrisWheel:new(Vector3(391.100, -2028.580, 19.95), -90)
     self:registerUpdate(FerrisWheelManager.Map[1])
+    self:registerUpdate(FerrisWheelManager.Map[2])
 end
 
 function FerrisWheelManager:registerUpdate(wheel)
@@ -31,6 +33,10 @@ function FerrisWheelManager:registerUpdate(wheel)
         )
 
     end
+end
+
+function FerrisWheelManager:getBankAccount()
+    return self.m_BankAccountServer
 end
 
 function FerrisWheelManager:unregisterUpdate(wheel)
