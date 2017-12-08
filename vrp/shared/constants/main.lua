@@ -721,6 +721,12 @@ FISHING_LEVELS = {
 	[10] = 22500,
 }
 
+FERRIS_IDS = {
+	Base = 6461,
+	Gond = 3752,
+	Wheel = 6298,
+}
+
 SPAWN_LOCATIONS = {
 	DEFAULT = 0,
 	NOOBSPAWN = 1,
