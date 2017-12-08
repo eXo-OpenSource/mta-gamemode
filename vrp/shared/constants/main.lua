@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.4.5"
+PROJECT_VERSION = "1.5"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -695,6 +695,12 @@ FISHING_LEVELS = {
 	[8] = 14400,
 	[9] = 18225,
 	[10] = 22500,
+}
+
+FERRIS_IDS = {
+	Base = 6461,
+	Gond = 3752,
+	Wheel = 6298,
 }
 
 SPAWN_LOCATIONS = {

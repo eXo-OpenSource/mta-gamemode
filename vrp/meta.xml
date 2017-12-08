@@ -223,6 +223,10 @@
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/FerrisWheel/FerrisWheel.lua" type="server"/>
+	<script src="server/classes/Gameplay/FerrisWheel/FerrisGond.lua" type="server"/>
+	<script src="server/classes/Gameplay/FerrisWheel/FerrisWheelManager.lua" type="server"/>
+
 	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
@@ -910,6 +914,7 @@
 	<script src="client/classes/Gameplay/Jail.lua" type="client"/>
 	<script src="client/classes/Gameplay/Prison.lua" type="client"/>
 	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
+	<script src="client/classes/Gameplay/FerrisWheel.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>

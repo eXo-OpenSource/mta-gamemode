@@ -81,13 +81,13 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
 	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
 	--ferris wheel
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", 15050)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", 15050)
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", 15052)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", 15052)
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", 15051)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", 15051)
-	
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", FERRIS_IDS.Base)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", FERRIS_IDS.Base)
+	self:loadImportTXD("files/models/objects/ferrisWheel/ferris.txd", FERRIS_IDS.Gond)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", FERRIS_IDS.Gond)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", FERRIS_IDS.Gond)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", FERRIS_IDS.Wheel)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", FERRIS_IDS.Wheel)
 
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
@@ -268,7 +268,15 @@ end
 function CustomModelManager:loadImportTXD(filePath, modelId)
 	local txd = engineLoadTXD(filePath)
 	self.m_TXDMap[modelId] = txd
-	return txd and engineImportTXD(txd, modelId), txd
+	if type(modelId) == "table" then
+		if not txd then return false, txd end
+		for i, id in pairs(modelId) do
+			engineImportTXD(txd, id)
+		end
+		return true, txd
+	else
+		return txd and engineImportTXD(txd, modelId), txd
+	end
 end
 
 function CustomModelManager:loadImportCOL(filePath, modelId)

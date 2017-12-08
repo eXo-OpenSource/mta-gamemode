@@ -1254,6 +1254,7 @@ function FactionState:Event_toggleDuty(wasted)
 					client:takeAllWeapons()
 				else
 					self:Event_storageWeapons(client)
+					client:takeAllWeapons()
 				end
 				client:setDefaultSkin()
 				client:setFactionDuty(false)

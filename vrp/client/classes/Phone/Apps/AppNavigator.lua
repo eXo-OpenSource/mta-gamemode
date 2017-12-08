@@ -68,7 +68,7 @@ AppNavigator.Positions = {
 		["Schatzsucher"] = Vector3(706.22, -1699.38, 3.12),
 		["Gabelstapler"] = Vector3(93.67, -205.68,  1.23),
 		["Kiesgruben-Job"] = Vector3(590.71, 868.91, -42.50),
-		["Holzfäller"] = Vector3(1104.27, -298.06, 73.99)
+		["Holzfäller"] = Vector3(1026.51, -437.73, 54.24)
 	},
 	["Unternehmen"] = {
 		["San News"] =     Vector3(762.05, -1343.33, 13.20),
@@ -79,12 +79,12 @@ AppNavigator.Positions = {
 	["Fraktionen"] = {
 		--["Grove Street"] =   Vector3(2492.43, -1664.58, 13.34),
 		--["Cosa Nostra"] =     Vector3(722.84, -1196.875, 19.123),
-		["Yakuza"] =     Vector3(2414.449, -2090.311, 13.426),
+		["Yakuza"] =     Vector3(1454.00, -1328.68, 13.38),
 		["Vatos Locos"] =     Vector3(2828.332, -2111.481, 12.206),
 		["Rescue Team"] =  Vector3(1727.42, -1738.01, 13.14),
-		["FBI"] =     Vector3(1534.83, -1440.72, 13.16),
-		["Police Department"] =      Vector3(1536.06, -1675.63, 13.11),
-		["SA Army Base"] =    Vector3(134.53, 1929.06,  18.89),
+		["FBI"] =     Vector3(1206.00, -1743.18, 13.59),
+		["Police Department"] = Vector3(1536.06, -1675.63, 13.11),
+		["SASF"] =    Vector3(134.53, 1929.06,  18.89),
 		["Ballas"] =  Vector3(2213.78, -1435.18, 23.83),
 		["Outlaws MC"] =   Vector3(684.82, -485.55, 16.19),
 	}
