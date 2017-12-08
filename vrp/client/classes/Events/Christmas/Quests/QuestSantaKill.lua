@@ -3,9 +3,6 @@ QuestSantaKill = inherit(Object)
 function QuestSantaKill:constructor(questId, name, description, pos)
 	self.m_PedWasted = bind(self.Event_onPedWasted, self)
 	self.m_PedDamage = bind(self.Event_onPedDamage, self)
-	addEventHandler("onClientPedWasted", root, self.m_PedWasted)
-	addEventHandler("onClientPedDamage", root, self.m_PedDamage)
-
 	self:init(pos)
 end
 
@@ -47,7 +44,7 @@ function QuestSantaKill:destructor()
 end
 
 function  QuestSantaKill:Event_onPedWasted(killer)
-	if killer == localPlayer then
+	if killer == localPlayer and source:getModel() == 41 then
 		triggerServerEvent("onQuestSantaKilled", localPlayer)
 		if source.m_Area then
 			HUDRadar:getSingleton():removeArea(source.m_Area)
@@ -59,7 +56,7 @@ end
 function  QuestSantaKill:Event_onPedDamage(attacker)
 	if attacker ~= localPlayer then
 		cancelEvent()
-	else
+	elseif source:getModel() == 41 then
 		setPedAnimation(source, "ped", "duck_cower", -1, true, false)
 	end
 end
