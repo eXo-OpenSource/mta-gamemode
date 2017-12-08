@@ -11,6 +11,7 @@ ItemManager.Map = {}
 function ItemManager:constructor()
 	addRemoteEvents{"onClientBreakItem"}
 	self.m_ClassItems = {
+		["Keypad"] = ItemKeyPad,
 		["Barrikade"] = ItemBarricade,
 		["Warnkegel"] = ItemBarricade,
 		["Sky Beam"] = ItemSkyBeam,
@@ -77,6 +78,7 @@ function ItemManager:constructor()
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
 		["Kleidung"] = WearableClothes,
+		
 	}
 
 	self.m_Properties = {
@@ -97,6 +99,12 @@ function ItemManager:constructor()
 	end
 
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
+end
+
+function ItemManager:updateOnQuit() 
+	if ItemManager.Map["Keypad"] then 
+		ItemManager.Map["Keypad"]:delete() 
+	end
 end
 
 function ItemManager:Event_onItemBreak()
