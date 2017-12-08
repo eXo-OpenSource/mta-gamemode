@@ -29,6 +29,12 @@ function StaticWorldItems:constructor()
 			["chance"] = 33,
 			["enabled"] = EVENT_HALLOWEEN
 		},
+		["Keypad"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Keypad"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(60*60*1000)
@@ -77,6 +83,7 @@ function StaticWorldItems:addPosition(player, cmd, type, dontSave)
     end
 end
 
+
 function StaticWorldItems:removePosition(player)
     if player:getRank() < RANK.Moderator then
 		player:sendError(_("Du bist nicht berechtigt!", player))
@@ -122,7 +129,7 @@ function StaticWorldItems:reload()
 			for i, row in pairs(result) do
 				if row.Typ and self.m_Items[row.Typ] then
 					if DEBUG or chance(data["chance"]) then
-						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
+						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), Vector3(0, 0, row.RotationZ))
 						count = count+1
 					end
 				else

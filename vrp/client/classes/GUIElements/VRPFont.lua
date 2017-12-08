@@ -122,6 +122,7 @@ FontAwesomeSymbols = {
 	Edit = "",
 	Ban = "",
 	Bell = "",
+	Accept = ""
 }
 
 Fonts = {
