@@ -11,6 +11,12 @@ FerrisWheel = inherit(Object)
 function FerrisWheel:constructor(pos, rotz)
     self.m_BaseObj = createObject(FERRIS_IDS.Base, pos, Vector3(0, 0, rotz))
     self.m_WheelObj = createObject(FERRIS_IDS.Wheel, pos + Vector3(0, 0, 2.2), Vector3(0, 0, rotz+90))
+    self.m_AntiAFKCol = createColSphere(pos + Vector3(0, 0, 14.5), 3)
+    addEventHandler("onColShapeHit", self.m_AntiAFKCol, function(hit)
+        if isElement(hit) and getElementType(hit) == "player" then
+            self:setPlayerToExitPosition(hit, 1)
+        end
+    end)
     
     self.m_BaseObj:setDoubleSided(true)
     self.m_WheelObj:setDoubleSided(true)
