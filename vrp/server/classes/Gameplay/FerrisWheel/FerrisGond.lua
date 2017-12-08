@@ -33,13 +33,12 @@ end
 
 function FerrisGond:update(rot, time, movingState)
     local wheel = self.m_Wheel.m_WheelObj
-    self.m_Offset = self.m_Offset - rot
+    self.m_Offset = (self.m_Offset - rot) % 360
     self.m_Object:move(time, self:getAttachedPositionVertical(), Vector3(0,0,0), movingState)
 end
 
 function FerrisGond:clientGond()
-    return outputDebug(self.m_Id)
-    --[[if self.m_Wheel.m_MovingState then
+    if self.m_Wheel.m_MovingState then
         return client:sendWarning(_("Warte, bis die Gondel anhält!",client))
     end
     if client.m_FerrisGond then 
@@ -55,21 +54,30 @@ function FerrisGond:clientGond()
     self.m_Occupants[client] = getTickCount()
     client.m_FerrisGond = self
     client:attach(self.m_Object, 0, table.size(self.m_Occupants) == 1 and 0.4 or -0.4, -1.4)
-    client:triggerEvent("startCenteredFreecam", self.m_Object, 20)]]
+    client:triggerEvent("startCenteredFreecam", self.m_Object, 20)
 end
 
 function FerrisGond:removePlayer(player)
     if self.m_Occupants[player] then
         self.m_Occupants[player] = nil
         player.m_FerrisGond = nil
-        player:detach(self.m_Object)
-        player:triggerEvent("stopCenteredFreecam")
-        self.m_Wheel:setPlayerToExitPosition(player, self.m_Id)
-        player:sendShortMessage(_("Vielen Dank für die Mitfahrt, auf wiedersehen!", client), _("Riesenrad", client), {0, 50, 100})
+        if isElement(player) then
+            player:detach(self.m_Object)
+            player:triggerEvent("stopCenteredFreecam")
+            self.m_Wheel:setPlayerToExitPosition(player, self.m_Id)
+            player:sendShortMessage(_("Vielen Dank für die Mitfahrt, auf wiedersehen!", player), _("Riesenrad", player), {0, 50, 100})
+        end
     else
         outputDebugString("gond for player "..inspect(player).." not found!")
     end
 end
+
+function FerrisGond:forceRemovePlayers()
+    for i,v in pairs(self.m_Occupants) do
+        self:removePlayer(i)
+    end
+end
+
 
 
 function FerrisGond:getAttachedPositionVertical()

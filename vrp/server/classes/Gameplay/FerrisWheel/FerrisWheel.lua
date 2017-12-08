@@ -19,7 +19,6 @@ function FerrisWheel:constructor(pos, rotz)
     self:addGonds()
 end
 
-
 function FerrisWheel:addGonds()
     self.m_Gonds = {}
     for i = 1, FerrisWheelManager.GondAmount do
@@ -57,13 +56,16 @@ function FerrisWheel:setPlayerToExitPosition(player, gondId)
     player:setRotation(self.m_BaseObj.rotation)
 end
 
-
 function FerrisWheel:setPaused()
     self.m_MovingState = false
     self.m_RotSinceLastStop = 0
     FerrisWheelManager:getSingleton():unregisterUpdate(self)
     local rot = self.m_WheelObj.rotation.x
-    outputDebug((math.floor((-rot/FerrisWheelManager.GondAmount)/FerrisWheelManager.GondAmount)))
+    for i,v in pairs(self.m_Gonds) do
+        if isRotationEqual(v.m_Offset, 180, 20) then
+            v:forceRemovePlayers()
+        end
+    end
     setTimer(function()
         FerrisWheelManager:getSingleton():registerUpdate(self)
     end, FerrisWheelManager.PauseInterval, 1)

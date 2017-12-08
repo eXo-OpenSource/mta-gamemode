@@ -67,3 +67,15 @@ function math.percent(value, max)
 	if not max then max = 100 end
 	return math.clamp(0, value/max*100, 100)
 end
+
+function isRotationEqual(r1, r2, offset)
+    if not tonumber(offset) then offset = 0 end
+    r1 = tonumber(r1)
+    r2 = tonumber(r2)
+    if r1 and r2 then
+        local d = r2 - r1
+        d = (d + 180) % 360 - 180
+        return math.abs(d) < offset
+    end
+    return false
+end

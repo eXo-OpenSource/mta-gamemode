@@ -81,14 +81,13 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
 	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
 	--ferris wheel
-	
 	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", FERRIS_IDS.Base)
 	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", FERRIS_IDS.Base)
+	self:loadImportTXD("files/models/objects/ferrisWheel/ferris.txd", FERRIS_IDS.Gond)
 	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", FERRIS_IDS.Gond)
 	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", FERRIS_IDS.Gond)
 	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", FERRIS_IDS.Wheel)
 	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", FERRIS_IDS.Wheel)
-	self:loadImportTXD("files/models/objects/ferrisWheel/ferris.txd", FERRIS_IDS.Gond)
 
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
