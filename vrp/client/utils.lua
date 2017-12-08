@@ -296,3 +296,20 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
+
+function dxDrawBoxShape( x, y, w, h , ...) 
+	dxDrawLine( x, y, x+w,y,...) 
+	dxDrawLine( x, y+h , x +w , y+h,...)
+	dxDrawLine( x , y ,x , y+h , ... )
+	dxDrawLine( x+w , y ,x+w , y+h , ...)
+end
+
+function dxDrawBoxText( text , x, y , w , h , ... ) 
+	dxDrawText( text , x , y , x + w , y + h , ... ) 
+end
+
+function getLineAngle( cx, cy, r, t)
+	local x = r*math.cos(math.rad(t)) + cx;
+	local y = r*math.sin(math.rad(t)) + cy;
+	return x,y
+end
