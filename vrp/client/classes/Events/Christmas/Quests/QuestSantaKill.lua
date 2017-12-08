@@ -3,7 +3,6 @@ QuestSantaKill = inherit(Object)
 function QuestSantaKill:constructor(questId, name, description, pos)
 	self.m_PedWasted = bind(self.Event_onPedWasted, self)
 	self.m_PedDamage = bind(self.Event_onPedDamage, self)
-	self.m_QuestStart = bind(self.Event_onStartQuest, self)
 	addEventHandler("onClientPedWasted", root, self.m_PedWasted)
 	addEventHandler("onClientPedDamage", root, self.m_PedDamage)
 
