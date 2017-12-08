@@ -7,13 +7,15 @@
 -- ****************************************************************************
 HUDAviation = inherit(Singleton)
 local displayFontHeight = dxGetFontHeight(1,"default")
-local needleTex = dxCreateTexture("files/images/Speedo/needle.png", "argb", true, "clamp")
-local engineCirlce = dxCreateTexture("files/images/Speedo/aviation_engine_circle.png", "argb", true, "clamp")
+local needleTex
+local engineCirlce
 local METER_TO_FEET = 3.28084
 local KMH_TO_KNOTS = 0.539957
 function HUDAviation:constructor()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Width = screenWidth*0.4
+	engineCirlce = dxCreateTexture("files/images/Speedo/aviation_engine_circle.png", "argb", true, "clamp")
+	needleTex = dxCreateTexture("files/images/Speedo/needle.png", "argb", true, "clamp")
 	self.m_Height = screenHeight*0.2 
 	self.m_StartX = screenWidth*0.5 - ((self.m_Width*0.9)/2 )
 	self.m_StartY = screenHeight - self.m_Height*1.2
