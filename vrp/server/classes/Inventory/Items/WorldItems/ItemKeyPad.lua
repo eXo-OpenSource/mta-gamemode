@@ -23,7 +23,6 @@ function ItemKeyPad:destructor()
 	for id , obj in pairs(self.m_Keypads) do 
 		if obj.UpdatePin then 
 			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), obj.Pin, obj.Id )
-			outputChatBox("Updated "..obj.Id..", "..obj.Pin)
 		end
 	end
 end
@@ -31,12 +30,10 @@ end
 
 function ItemKeyPad:addObject(Id, pos, rot, value)
 	local pin, updatePin
-	outputChatBox(tostring(value))
 	if not value or tostring(value) == "####" then 
 		pin = "####"
 		updatePin = true
 	else 
-		outputChatBox("pin:"..value)
 		pin = tostring(value)
 		updatePin = false
 	end
@@ -71,7 +68,8 @@ function ItemKeyPad:onKeyPadClick(button, state, player)
 	if button == "left" and state == "up" then
         if source:getModel() == self.m_Model then
 			player.m_LastKeyPadID = source.Id
-			player:triggerEvent("promptKeyPad")
+			player:triggerEvent("promptKeyPad", source.Id)
+			triggerClientEvent(root, "playKeyPadSound", root, source, "keypad_access")
         end
 	elseif button == "right" and state == "up" then 
 		if player.m_SupMode then 
@@ -92,8 +90,11 @@ function ItemKeyPad:Event_onAskForAccess( pin )
 			else 
 				if cKeyPad.Pin == pin then 
 					client:sendInfo(_("Code akzeptiert!", client))
+					triggerClientEvent(root, "playKeyPadSound", root, cKeyPad, "keypad_success")
+					self:sendSignal( cKeyPad )
 				else 
 					client:sendError(_("Falscher Code!", client))
+					triggerClientEvent(root, "playKeyPadSound", root, cKeyPad, "keypad_error")
 				end
 			end
 		end
@@ -136,6 +137,13 @@ function ItemKeyPad:Event_onDeleteCommand( source, cmd, id)
 				outputChatBox("Der Keypad mit der ID "..id.." wurde gelöscht!", source, 0, 200, 0)
 			end
 		end
+	end
+end
+
+
+function ItemKeyPad:sendSignal( object ) 
+	if object then
+		triggerEvent("onKeyPadSignal", object)
 	end
 end
 
