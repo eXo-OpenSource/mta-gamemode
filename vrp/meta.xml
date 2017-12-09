@@ -2110,7 +2110,8 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	<map src="files/maps/ls-airport.map"/>
+	
+	<!--map src="files/maps/ls-airport.map"/-->
 	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

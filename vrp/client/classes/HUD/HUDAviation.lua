@@ -108,11 +108,21 @@ function HUDAviation:draw()
 				end
 			end
 		else 
-			self.m_Started = false
-			self.m_StartTime = false
+			self:drawBorder(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width*1, self.m_Height)
+			self:drawStartUpDisplay(self.m_StartX, self.m_StartY, self.m_Width*0.2, self.m_Height)
+			self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.2, self.m_StartY, self.m_Width*0.1, self.m_Height)
+			self:drawStartUpDisplay(self.m_StartX-self.m_Width*0.1, self.m_StartY, self.m_Width*0.1, self.m_Height)
+			self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.3, self.m_StartY+self.m_Height*0.2, self.m_Width*0.3, self.m_Height*0.8)
+			self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.3, self.m_StartY, self.m_Width*0.3, self.m_Height*0.2)
+			self:drawStartUpDisplay(self.m_StartX+self.m_Width*0.6, self.m_StartY, self.m_Width*0.3, self.m_Height)
+			self:drawStartInfo(self.m_StartX-self.m_Width*0.1, self.m_StartY+self.m_Height*0.02, self.m_Width*1, self.m_Height ) 
 		end
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("UI/HUD/Speedo", 1, 1) end
+end
+
+function HUDAviation:drawStartInfo( posX, posY, width, height ) 
+	dxDrawBoxText("START ENGINE!", posX+width*0.05, posY, width, height, tocolor(10, 97, 34, 255), 1, "sans", "left", "top")
 end
 
 function HUDAviation:drawPitchDisplay(posX, posY, width, height) 

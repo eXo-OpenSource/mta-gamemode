@@ -91,7 +91,7 @@ function HUDSpeedo:draw()
 	--dxSetBlendMode("add")
 	-- draw the main speedo
 	local isPlane = false
-	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
+	if vehicleType ~= VehicleType.Plane then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	else
 		isPlane = true
