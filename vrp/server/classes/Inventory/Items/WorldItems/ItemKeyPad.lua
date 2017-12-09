@@ -20,7 +20,6 @@ function ItemKeyPad:constructor()
 end
 
 function ItemKeyPad:destructor()
-	outputChatBox("DESTRUCT")
 	for id , obj in pairs(self.m_Keypads) do 
 		if obj.UpdatePin then 
 			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), obj.Pin, obj.Id )
@@ -32,10 +31,12 @@ end
 
 function ItemKeyPad:addObject(Id, pos, rot, value)
 	local pin, updatePin
+	outputChatBox(tostring(value))
 	if not value or tostring(value) == "####" then 
 		pin = "####"
 		updatePin = true
 	else 
+		outputChatBox("pin:"..value)
 		pin = tostring(value)
 		updatePin = false
 	end
