@@ -129,7 +129,7 @@ function StaticWorldItems:reload()
 			for i, row in pairs(result) do
 				if row.Typ and self.m_Items[row.Typ] then
 					if DEBUG or chance(data["chance"]) then
-						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), Vector3(0, 0, row.RotationZ))
+						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), Vector3(0, 0, row.RotationZ), row.Value)
 						count = count+1
 					end
 				else
