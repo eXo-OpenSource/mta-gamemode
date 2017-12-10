@@ -55,11 +55,11 @@ function ItemKeyPad:use(player)
 	function(item, position, rotation)
 		if item ~= self or not position then return end
 		player:getInventory():removeItem(self:getName(), 1)
-		self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation))
 		player:sendInfo(_("%s hinzugefügt!", player, "Keypad"))
 		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Keypad", position.x..","..position.y..","..position.z)
 		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Keypad", position.x, position.y, position.z, rotation, "####", getZoneName(position).."/"..getZoneName(position, true), player:getId())
+		self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation))
 	end)
 end
 

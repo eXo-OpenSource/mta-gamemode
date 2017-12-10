@@ -12,6 +12,7 @@ function ItemManager:constructor()
 	addRemoteEvents{"onClientBreakItem"}
 	self.m_ClassItems = {
 		["Keypad"] = ItemKeyPad,
+		["Tor"] = ItemDoor,
 		["Barrikade"] = ItemBarricade,
 		["Warnkegel"] = ItemBarricade,
 		["Sky Beam"] = ItemSkyBeam,
@@ -104,6 +105,9 @@ end
 function ItemManager:updateOnQuit() 
 	if ItemManager.Map["Keypad"] then 
 		ItemManager.Map["Keypad"]:delete() 
+	end
+	if ItemManager.Map["Tor"] then 
+		ItemManager.Map["Tor"]:delete() 
 	end
 end
 
