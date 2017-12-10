@@ -22,13 +22,17 @@ addEventHandler("playKeyPadSound", root,
 )
 
 function ItemKeyPad:constructor( id )
-	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, 350, 130, false)
+	GUIWindow.updateGrid()        
+	self.m_Width = grid("x", 9) 
+	self.m_Height = grid("y", 3) 
+
+	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, self.m_Width, self.m_Height, true)	
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Keypad", true, false, self)
-	GUIRectangle:new(0, 30, self.m_Width, self.m_Height, tocolor(10, 0, 0, 150), self.m_Window)	
-	self.m_KeyPadCode = GUIEdit:new(0,40,self.m_Width, 40, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setMaxLength(4):setMasked("*"):setFont(VRPFont(20, Fonts.Digital))
-	self.m_AcceptButton = GUIButton:new(350/2 - 120, 90, 90, 30, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(140, 0, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
+	--GUIGridRectangle:new(0, 0, 9, 4, tocolor(10, 0, 0, 150), self.m_Window)	
+	self.m_KeyPadCode = GUIGridEdit:new(1,1,8,1, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setMaxLength(4):setMasked("*"):setFont(VRPFont(20, Fonts.Digital))
+	self.m_AcceptButton = GUIGridButton:new(1, 2, 4, 1, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(140, 0, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_AcceptButton.onLeftClick = bind(self.closeForm, self)
-	self.m_DeclineButton = GUIButton:new(350/2+30, 90, 90, 30, FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
+	self.m_DeclineButton = GUIGridButton:new(5, 2, 4, 1,  FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_DeclineButton.onLeftClick = bind(self.submitForm, self)
 	self:setIdLabel( id ) 
 end
