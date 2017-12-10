@@ -374,6 +374,7 @@
 	<script src="server/classes/Events/Christmas/Quests/QuestPackageFind.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestPackageTransport.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestFortuneWheel.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestFerrisRide.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -2132,7 +2133,8 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
-	<!-- <include resource="Snow" /> Seems to produce windows crashes  -->
+	<include resource="SnowFlakes" />
+	<include resource="SnowGround" />
 
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />

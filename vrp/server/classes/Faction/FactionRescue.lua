@@ -615,7 +615,7 @@ end
 function FactionRescue:onLadderTruckReset(veh)
 	if veh.Ladder then
 		veh.Ladder["main"]:setAttachedOffsets(0, 0.5, 1.1)
-		veh.Ladder["ladder1"]:setAttachedOffsets(0, 0, 0)
+		veh.Ladder["ladder1"]:setAttachedOffsets(-0.08, 0, 0)
 		veh.Ladder["ladder2"]:setAttachedOffsets(0, -0.5, 0.1)
 		veh.Ladder["ladder3"]:setAttachedOffsets(0, -0.5, 0.1)
 		veh.LadderEnabled = false
@@ -633,7 +633,7 @@ function FactionRescue:onLadderTruckReset(veh)
 		veh.Ladder["mainAttachOffset"] = Vector3(0, 0.5, 1.1)
 
 		veh.Ladder["ladder1"] = createObject(1931, veh:getPosition())
-		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], 0, 0, 0)
+		veh.Ladder["ladder1"]:attach(veh.Ladder["main"], -0.08, 0, 0)
 
 		veh.Ladder["ladder2"] = createObject(1931, veh:getPosition())
 		veh.Ladder["ladder2"]:setScale(0.92)

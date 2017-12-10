@@ -55,6 +55,11 @@ QuestManager.Quests = {
 		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
 		["Packages"] = 5,
 	},
+	[12] = {
+		["Name"] = "Riesenradfahrer",
+		["Description"] = "Fahre zwei Runden mit dem Riesenrad (die Gondel muss wieder an den Treppen anhalten)!",
+		["Packages"] = 5,
+	},
 	[16] = {
 		["Name"] = "Mützen-Foto",
 		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
@@ -78,6 +83,7 @@ function QuestManager:constructor()
 		[9] = QuestFortuneWheel,
 		[10] = QuestDraw,
 		[11] = QuestPackageTransport,
+		[12] = QuestFerrisRide,
 		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false

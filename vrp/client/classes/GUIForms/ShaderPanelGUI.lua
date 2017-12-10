@@ -69,7 +69,8 @@ Shaders = {}
 function Shaders.load()
 	local setting
 	for name, key in pairs(SHADERS) do
-       	setting = core:get("Shaders", name) or key["enabled"]
+        setting = core:get("Shaders", name) 
+        if setting == nil then setting = key["enabled"] core:set("Shaders", name, key["enabled"]) end 
 		triggerEvent(key["event"], root, setting)
 	end
 end
