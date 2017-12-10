@@ -63,7 +63,8 @@ function WheelOfFortune:start(player)
         else
             ry=ry+15
         end
-        self:givePrice(player, WheelOfFortune.WinRotations[math.floor((ry)/24) + 1])
+		self:givePrice(player, WheelOfFortune.WinRotations[math.floor((ry)/24) + 1])
+		triggerEvent("onFortuneWheelPlay", player) -- For Quest
         self.m_InUse = false
     end,power*5+1000,1,marker)
 end

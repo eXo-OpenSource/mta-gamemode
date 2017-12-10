@@ -45,7 +45,7 @@ function FerrisGond:clientGond()
         return client.m_FerrisGond:removePlayer(client)
     elseif table.size(self.m_Occupants) > 2 then 
         return client:sendWarning(_("Diese Gondel ist bereits voll!",client))
-    elseif client:getMoney() <= 10 then
+    elseif client:getMoney() < 10 then
         return client:sendError(_("Du benötigst 10$!",client))
     end
 
@@ -65,6 +65,7 @@ function FerrisGond:removePlayer(player)
             player:detach(self.m_Object)
             player:triggerEvent("stopCenteredFreecam")
             self.m_Wheel:setPlayerToExitPosition(player, self.m_Id)
+            triggerEvent("onFerrisWheelRide", player) -- For Quest
             player:sendShortMessage(_("Vielen Dank für die Mitfahrt, auf wiedersehen!", player), _("Riesenrad", player), {0, 50, 100})
         end
     else

@@ -16,7 +16,8 @@ local snowApplyList = {
 --List of textures to remove the shader from
 local snowRemoveList = {
 	"",												-- unnamed
-
+	"greengrad32",
+	"bluegrad32",
 	"vehicle*", "?emap*", "?hite*",					-- vehicles
 	"*92*", "*wheel*", "*interior*",				-- vehicles
 	"*handle*", "*body*", "*decal*",				-- vehicles
@@ -42,7 +43,7 @@ local treeApplyList = {
 	"veg_*", "*largefur*", "hazelbr*", "weeelm",
 	"*branch*", "cypress*",
 	"*bark*", "gen_log", "trunk5",
-	"bchamae", "vegaspalm01_128",
+	"bchamae", "vegaspalm01_128", "*agave*", "sm_minipalm?"
 }
 local naughtyTreeApplyList = {
 	"planta256", "sm_josh_leaf", "kbtree4_test", "trunk3",					-- naughty trees and shrubs
@@ -53,13 +54,16 @@ local naughtyTreeApplyList = {
 
 --This function enables the shader. Returns true if successfull, false otherwise.
 local function enableShader()
-
+	if isEffectEnabled then
+		return false
+	end
+	
 	if tonumber(dxGetStatus().VideoCardPSVersion) < 2.0 then
 		return false
 	end
 	
 	--Create shaders
-	snowShader = dxCreateShader ("snow_ground.fx", 0, maxEffectDistance)
+	snowShader = dxCreateShader ("snow_ground.fx", 0, maxEffectDistance, false, "world")
 	treeShader = dxCreateShader("snow_trees.fx" )
 	naughtyTreeShader = dxCreateShader("snow_naughty_trees.fx")
 	noiseTexture = dxCreateTexture("smallnoise3d.dds")
@@ -67,6 +71,7 @@ local function enableShader()
 	if not snowShader or not treeShader or not naughtyTreeShader or not noiseTexture then
 		return false
 	end
+	enableSnow()
 
 	--Set shader values.
 	dxSetShaderValue(treeShader, "sNoiseTexture", noiseTexture)
@@ -89,8 +94,8 @@ local function enableShader()
 		engineApplyShaderToWorldTexture(naughtyTreeShader, applyMatch)
 	end
 	
-	setSkyGradient(175, 175, 175, 175, 175, 175)
-	
+	savedWeather = getWeather()
+	setWeather(12)
 	updateTimer = setTimer(processShader, 2500, 0)
 	
 	isEffectEnabled = true
@@ -109,8 +114,8 @@ local function disableShader()
 		destroyElement(naughtyTreeShader)
 		destroyElement(noiseTexture)
 	end
-	
-	resetSkyGradient()
+	setWeather(savedWeather)
+	disableSnow()
 	
 	if isTimer(updateTimer) then
 		killTimer(updateTimer)
@@ -128,6 +133,7 @@ function processShader()
 		dxSetShaderValue(snowShader, "sFadeEnd", maxEffectDistance)
 		dxSetShaderValue(snowShader, "sFadeStart", maxEffectDistance - getFogDistance())
 	end
+	setWeather(12)
 end
 
 --This function sets the shader status. EXPORTED!
@@ -144,13 +150,8 @@ function isShaderEnabled()
 	return (isEffectEnabled and isElement(snowShader))
 end
 
-function switchSnow( bOn )
-	if not isShaderEnabled() then
-		enableShader()
-	else
-		disableShader()
-	end
-end
 
-addEvent( "switchSnow", true )
-addEventHandler( "switchSnow", resourceRoot, switchSnow )
+addEvent("switchSnowGround")
+addEventHandler("switchSnowGround", root, function(on)
+	setShaderEnabled(on)
+end)

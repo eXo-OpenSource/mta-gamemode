@@ -40,9 +40,24 @@ QuestManager.Quests = {
 		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
 		["Packages"] = 5,
 	},
+	[9] = {
+		["Name"] = "Glücksrad-Master",
+		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Packages"] = 5,
+	},
 	[10] = {
 		["Name"] = "Zeichne einen Schneemann",
 		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Schneemann gezeichnet hast!",
+		["Packages"] = 5,
+	},
+	[11] = {
+		["Name"] = "Päckchen-Transport",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
+		["Packages"] = 5,
+	},
+	[12] = {
+		["Name"] = "Riesenradfahrer",
+		["Description"] = "Fahre zwei Runden mit dem Riesenrad (die Gondel muss wieder an den Treppen anhalten)!",
 		["Packages"] = 5,
 	},
 	[16] = {
@@ -65,7 +80,10 @@ function QuestManager:constructor()
 		[6] = QuestPackageTransport,
 		[7] = QuestPackageFind,
 		[8] = QuestSantaKill,
+		[9] = QuestFortuneWheel,
 		[10] = QuestDraw,
+		[11] = QuestPackageTransport,
+		[12] = QuestFerrisRide,
 		[16] = QuestPhotography
 	}
 	self.m_CurrentQuest = false

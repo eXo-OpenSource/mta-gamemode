@@ -373,8 +373,8 @@
 	<script src="server/classes/Events/Christmas/Quests/QuestNPCTransport.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestPackageFind.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestPackageTransport.lua" type="server"/>
-
-
+	<script src="server/classes/Events/Christmas/Quests/QuestFortuneWheel.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestFerrisRide.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -593,6 +593,7 @@
 	<script src="client/classes/HUD/HUDKart.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
+	<script src="client/classes/HUD/HUDAviation.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 	<script src="client/classes/HUD/TreasureRadar.lua" type="client"/>
@@ -1195,7 +1196,11 @@
 	<vrpfile src="files/images/Speedo/fuel_needle_trailer.png"/>
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>
 	<vrpfile src="files/images/Speedo/indicator_right.png"/>
-
+	<vrpfile src="files/images/Speedo/aviation_pitch_overlay.png"/>
+	<vrpfile src="files/images/Speedo/needle.png"/>
+	<vrpfile src="files/images/Speedo/heading.png"/>
+	<vrpfile src="files/images/Speedo/aviation_engine_circle.png"/>
+	
 	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
 	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
@@ -2106,7 +2111,9 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-
+	
+	<!--map src="files/maps/ls-airport.map"/-->
+	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 
@@ -2126,7 +2133,8 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
-	<!-- <include resource="Snow" /> Seems to produce windows crashes  -->
+	<include resource="SnowFlakes" />
+	<include resource="SnowGround" />
 
 	<include resource="Weapon_Attach" />
 	<include resource="superman" />
