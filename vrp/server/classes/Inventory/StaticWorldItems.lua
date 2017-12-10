@@ -35,6 +35,12 @@ function StaticWorldItems:constructor()
 			["chance"] = 100,
 			["enabled"] = true
 		},
+		["Tor"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Tor"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(60*60*1000)

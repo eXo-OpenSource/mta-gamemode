@@ -1596,6 +1596,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/keypad.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/door.png" />
 	
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
