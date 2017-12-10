@@ -8,7 +8,7 @@ addEventHandler("promptDoorOption", localPlayer,
 		if not instance then
 			instance = ItemDoor:new(id, pos)
 		else 
-			instance:setIdLabel( id )
+			--instance:setIdLabel( id )
 			instance:setPosLabel ( pos ) 
 		end
 	end
@@ -16,20 +16,23 @@ addEventHandler("promptDoorOption", localPlayer,
 
 
 function ItemDoor:constructor( id, pos )
-	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, 350, 200, false)
+	GUIWindow.updateGrid()        
+	self.m_Width = grid("x", 10) 
+	self.m_Height = grid("y", 5) 
+	GUIForm.constructor(self, screenWidth/2-(350/2)/2, 300, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Keypad", true, false, self)
-	GUIRectangle:new(0, 30, self.m_Width, self.m_Height, tocolor(10, 0, 0, 150), self.m_Window)	
-	self.m_CoordLabel = GUILabel:new(0,35, self.m_Width, 20, "Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3], self.m_Window)
-	self.m_DoorPosX = GUIEdit:new(2,60, self.m_Width*0.333 - 4, 40, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(20, Fonts.Digital)):setCaption("X-Position")
-	self.m_DoorPosY = GUIEdit:new(self.m_Width*0.333 + 2 ,60, self.m_Width*0.333 - 4, 40, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(20, Fonts.Digital)):setCaption("Y-Position")
-	self.m_DoorPosZ = GUIEdit:new(self.m_Width*0.666 + 2,60, self.m_Width*0.333 - 4, 40, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(20, Fonts.Digital)):setCaption("Z-Position")
-	self.m_EditKeyPadLink = GUIEdit:new(self.m_Width*0.15, 110, self.m_Width*0.3, 40, self.m_Window):setNumeric(true, true):setFont(VRPFont(20, Fonts.Digital)):setCaption("Keypad ID")
-	self.m_EditModel = GUIEdit:new(self.m_Width*0.55, 110, self.m_Width*0.3, 40, self.m_Window):setNumeric(true, true):setFont(VRPFont(20, Fonts.Digital)):setCaption("Model")
-	self.m_AcceptButton = GUIButton:new(350/2 - 120, 200-35, 90, 30, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(140, 0, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
+	self.m_CoordLabel = GUIGridLabel:new(1, 1, 12, 1, "Koordinate: "..pos[1].." , "..pos[2].." , "..pos[3], self.m_Window):setFont(VRPFont(18, Fonts.EkMukta))
+	self.m_DoorPosX = GUIGridEdit:new(1, 3, 3, 1, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(18, Fonts.EkMukta)):setCaption("X-Position")
+	self.m_DoorPosY = GUIGridEdit:new(4, 3, 3, 1, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(20, Fonts.EkMukta)):setCaption("Y-Position")
+	self.m_DoorPosZ = GUIGridEdit:new(7, 3, 3, 1, self.m_Window):setColorRGB(0, 60, 0, 255):setNumeric(true, true):setFont(VRPFont(20, Fonts.EkMukta)):setCaption("Z-Position")
+	self.m_EditKeyPadLink = GUIGridEdit:new(1, 2, 3, 1, self.m_Window):setNumeric(true, true):setFont(VRPFont(20, Fonts.EkMukta)):setCaption("+Keypad ID")
+	self.m_RemoveKeyPadLink = GUIGridEdit:new(4, 2, 3, 1, self.m_Window):setNumeric(true, true):setFont(VRPFont(20, Fonts.EkMukta)):setCaption("-Keypad ID")
+	self.m_EditModel = GUIGridEdit:new(7, 2, 3, 1, self.m_Window):setNumeric(true, true):setFont(VRPFont(20, Fonts.EkMukta)):setCaption("Model")
+	self.m_AcceptButton = GUIGridButton:new(1, 4, 4, 1, FontAwesomeSymbols.Close, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(140, 0, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_AcceptButton.onLeftClick = bind(self.closeForm, self)
-	self.m_DeclineButton = GUIButton:new(350/2+30, 200-35, 90, 30, FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
+	self.m_DeclineButton = GUIGridButton:new(6, 4, 4, 1, FontAwesomeSymbols.Accept, self.m_Window):setFont(FontAwesome(20)):setColor(tocolor(0, 140, 0, 255)):setBarEnabled(false):setBackgroundColor(tocolor(90, 90, 90, 255))
 	self.m_DeclineButton.onLeftClick = bind(self.submitForm, self)
-	self:setIdLabel( id ) 
+	--self:setIdLabel( id ) 
 end
 
 
@@ -58,8 +61,9 @@ function ItemDoor:submitForm()
 	local posX = self.m_DoorPosX:getText()
 	local posY = self.m_DoorPosY:getText()
 	local posZ = self.m_DoorPosZ:getText()
-	local keyPad = self.m_EditKeyPadLink:getText()
+	local addKeyPad = self.m_EditKeyPadLink:getText()
+	local removeKeyPad = self.m_RemoveKeyPadLink:getText()
 	local model = self.m_EditModel:getText()
-	triggerServerEvent("onDoorDataChange", localPlayer, posX, posY, posZ, keyPad, model)
+	triggerServerEvent("onDoorDataChange", localPlayer, posX, posY, posZ, addKeyPad, removeKeyPad, model)
 	delete(self)
 end

@@ -86,7 +86,7 @@ function ItemKeyPad:Event_onAskForAccess( pin )
 			local pinNotSet = cKeyPad.Pin:find("#")
 			if pinNotSet then 
 				cKeyPad.Pin = pin
-				outputChatBox("Du hast den Pin des Keypads eingestellt: "..pin, client, 0, 200, 0)
+				client:sendShortMessage(_("Du hast den Pin des Keypads eingestellt: %s", client, pin))
 			else 
 				if cKeyPad.Pin == pin then 
 					client:sendInfo(_("Code akzeptiert!", client))
@@ -104,7 +104,7 @@ end
 function ItemKeyPad:Event_onConfirmKeyPadDelete( id ) 
 	if source.m_KeypadQuestionDeleteId then 
 		self:removeObject( source.m_KeypadQuestionDeleteId )
-		outputChatBox("Der Keypad mit der ID "..id.." wurde gelöscht!", source, 0, 200, 0)
+		source:sendInfo(_("Der Keypad mit der ID %s wurde gelöscht!", source, id))
 	end
 end
 
@@ -134,7 +134,7 @@ function ItemKeyPad:Event_onDeleteCommand( source, cmd, id)
 			local sourcePos = source:getPosition() 
 			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then 
 				self:removeObject( tonumber(id) ) 
-				outputChatBox("Der Keypad mit der ID "..id.." wurde gelöscht!", source, 0, 200, 0)
+				source:sendInfo(_("Der Keypad mit der ID %s wurde gelöscht!", source, id))
 			end
 		end
 	end

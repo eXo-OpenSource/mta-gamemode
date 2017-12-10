@@ -22,16 +22,16 @@ end
 
 
 function ItemDoor:addObject(Id, pos, rot, value)
-	local linkKeyPadID, model, oX, oY, oZ, updateDoor
+	local linkedKeyPadList, model, oX, oY, oZ, updateDoor
 	if not value or tostring(value) == "" then 
-		linkKeyPadID = "#"
+		linkedKeyPadList = "#"
 		model = self.m_Model
 		oX = pos.x
 		oY = pos.y 
 		oZ = pos.z - 2
 		updateDoor = true
 	else 
-		linkKeyPadID = tonumber(gettok(value, 1, ":")) or "#"
+		linkedKeyPadList = gettok(value, 1, ":") or "#"
 		model = tonumber(gettok(value, 2, ":"))
 		oX = tonumber(gettok(value, 3, ":"))
 		oY = tonumber(gettok(value, 4, ":"))
@@ -48,9 +48,7 @@ function ItemDoor:addObject(Id, pos, rot, value)
 		self.m_Doors[Id].closedPos = self.m_Doors[Id]:getPosition()
 		self.m_Doors[Id].UpdateDoor = updateDoor
 		self.m_Doors[Id].m_Closed = true
-		self.m_Doors[Id].LinkedKeyPad = linkKeyPadID
-		if not self.m_KeyPadLinks[linkKeyPadID] then self.m_KeyPadLinks[linkKeyPadID] = {} end 
-		table.insert(self.m_KeyPadLinks[linkKeyPadID], self.m_Doors[Id])
+		self:seperateLinkedKeypads( self.m_Doors[Id], linkedKeyPadList)
 		self.m_Doors[Id]:setData("clickable", true, true)
 		self:createColshapes(getElementModel(self.m_Doors[Id]), self.m_Doors[Id], pos, rot, Vector3(0,0,0))
 		self.m_BindKeyClick = bind(self.onDoorClick, self)
@@ -61,8 +59,40 @@ function ItemDoor:addObject(Id, pos, rot, value)
 	end
 end
 
+function ItemDoor:seperateLinkedKeypads( door, keypadString ) 
+	local count = 1
+	local sepString
+	local list = {}
+	if #keypadString > 1 then
+		while gettok(keypadString, count, "+") do 
+			sepString = gettok(keypadString, count, "+") 
+			if tonumber(sepString) then 
+				if not self.m_KeyPadLinks[tonumber(sepString)] then self.m_KeyPadLinks[tonumber(sepString)] = {} end 
+				table.insert(list, tonumber(sepString))
+				table.insert(self.m_KeyPadLinks[tonumber(sepString)], door)
+			end
+			count = count + 1
+		end
+	end
+	door.LinkedKeyPad = list
+end
+
+function ItemDoor:rebuildLinkedKeypads( keypadList ) 
+	local keypadId
+	local listString = ""
+	for i = 1, #keypadList do 
+		keypadId = keypadList[i]
+		listString = listString.."+"..keypadId
+	end
+	return listString
+end
+
 function ItemDoor:removeKeyPadLink( id, keyPadId) 
 	if id and keyPadId then 
+		if not self.m_KeyPadLinks[keyPadId] then 
+			self.m_KeyPadLinks[keyPadId] = {} 
+			return true 
+		end
 		if type(keyPadId) == "number" then
 			for i = 1, #self.m_KeyPadLinks[keyPadId] do
 				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then 
@@ -74,6 +104,53 @@ function ItemDoor:removeKeyPadLink( id, keyPadId)
 	return false
 end
 
+function ItemDoor:addKeyPadLink( id, keyPadId) 
+	if id and keyPadId then 
+		if not self.m_KeyPadLinks[keyPadId] then 
+			self.m_KeyPadLinks[keyPadId] = {}
+			return table.insert( self.m_KeyPadLinks[keyPadId], self.m_Doors[id])
+		end
+		if type(keyPadId) == "number" then
+			for i = 1, #self.m_KeyPadLinks[keyPadId] do
+				if self.m_KeyPadLinks[keyPadId][i] == self.m_Doors[id] then 
+					return
+				end
+			end
+		end
+		return table.insert( self.m_KeyPadLinks[keyPadId], self.m_Doors[id])
+	end
+	return false
+end
+
+function ItemDoor:addLinkKey( id, keyPadId) 
+	if id and keyPadId then 
+		if type(keyPadId) == "number" and self.m_Doors[id] then
+			for i = 1, #self.m_Doors[id].LinkedKeyPad do
+				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then 
+					return
+				end
+			end
+		end
+	end
+	return table.insert( self.m_Doors[id].LinkedKeyPad, keyPadId)
+end
+
+
+function ItemDoor:removeLinkKey( id, keyPadId) 
+	if id and keyPadId then 
+		if type(keyPadId) == "number" and self.m_Doors[id] then
+			for i = 1, #self.m_Doors[id].LinkedKeyPad do
+				if self.m_Doors[id].LinkedKeyPad[i] == keyPadId then 
+					return table.remove(self.m_Doors[id].LinkedKeyPad, i)
+				end
+			end
+		end
+	end
+	return false
+end
+
+
+
 function ItemDoor:Event_onKeyPadSignal( ) 
 	local keypad = source
 	if keypad and isElement(keypad) and keypad.Id then
@@ -82,7 +159,7 @@ function ItemDoor:Event_onKeyPadSignal( )
 			local dx, dy, dz
 			for id, obj in ipairs(self.m_KeyPadLinks[keypad.Id] ) do 
 				dx, dy, dz = getElementPosition(obj) 
-				if getDistanceBetweenPoints3D(dx, dy, dz, x, y, z) <= 15 then 
+				if getDistanceBetweenPoints3D(dx, dy, dz, x, y, z) <= 30 then 
 					self:openDoor( obj )
 				end
 			end
@@ -93,11 +170,11 @@ end
 function ItemDoor:Event_onConfirmDoorDelete( id ) 
 	if source.m_DoorQuestionDeleteId then 
 		self:removeObject( source.m_DoorQuestionDeleteId )
-		outputChatBox("Das Tor mit der ID "..id.." wurde gelöscht!", source, 0, 200, 0)
+		source:sendSuccess(_("Das Tor mit der ID %s wurde gelöscht!", source, id))
 	end
 end
 
-function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, model) 
+function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, removePadId, model) 
 	if client then 
 		if client.m_LastDoorId then 
 			if self.m_Doors[client.m_LastDoorId] then 
@@ -109,17 +186,18 @@ function ItemDoor:Event_onDoorDataChange( posX, posY, posZ, padId, model)
 					door.openPos.z = tonumber(posZ) or door.openPos.z
 					door.openPos = Vector3(door.openPos.x, door.openPos.y, door.openPos.z)
 					if padId and tonumber(padId) then
-						if not self.m_KeyPadLinks[door.LinkedKeyPad] then self.m_KeyPadLinks[door.LinkedKeyPad] = {} end 
-						self:removeKeyPadLink( door.Id , door.LinkKeyPad)
-						door.LinkKeyPad = tonumber(padId) or door.LinkKeyPad
-						if not self.m_KeyPadLinks[door.LinkKeyPad] then self.m_KeyPadLinks[door.LinkKeyPad] = {} end 
-						table.insert(self.m_KeyPadLinks[door.LinkKeyPad], self.m_Doors[door.Id])
+						self:addKeyPadLink(door.Id, tonumber(padId))
+						self:addLinkKey(door.Id, tonumber(padId))
+					end
+					if removePadId and tonumber(removePadId) then 
+						self:removeKeyPadLink(door.Id, tonumber(removePadId))
+						self:removeLinkKey(door.Id, tonumber(removePadId))
 					end
 					if model and tonumber(model) then 
 						setElementModel(door, tonumber(model))
 					end
 					door.UpdateDoor = true
-					outputChatBox("Tor wurde aktualisiert!", client, 244, 182, 66) 
+					client:sendSuccess(_("Tor wurde aktualisiert!", client))
 				end
 			end
 		end
@@ -136,7 +214,6 @@ function ItemDoor:openDoor(door)
 			door:move((door.position - door.openPos).length * 800, door.openPos, 0, 0, 0, "InOutQuad")
 			triggerClientEvent("itemRadioChangeURLClient", door, "files/audio/gate_open.mp3")
 			door.m_Closed = false
-			self.m_Timers[door] = setTimer(bind(self.openDoor, self, player, true), 5000, 1)
 		else
 			door:move((door.position - door.closedPos).length * 800, door.closedPos, 0, 0, 0, "InOutQuad")
 			triggerClientEvent("itemRadioChangeURLClient", door, "files/audio/gate_open.mp3")
@@ -197,9 +274,11 @@ end
 function ItemDoor:onDoorClick(button, state, player)
     if source.Type ~= "Tor" then return end
 	if button == "left" and state == "up" then
-		player.m_LastDoorId = source.Id
-		local pos = {getElementPosition(source)}
-		player:triggerEvent("promptDoorOption", source.LinkedKeyPad, pos)
+		if player.m_SupMode then
+			player.m_LastDoorId = source.Id
+			local pos = {getElementPosition(source)}
+			player:triggerEvent("promptDoorOption", source.LinkedKeyPad, pos)
+		end
 	elseif button == "right" and state == "up" then 
 		if player.m_SupMode then 
 			player.m_DoorQuestionDeleteId = source.Id
@@ -220,11 +299,11 @@ end
 
 
 function ItemDoor:destructor()
+	local rebuildKeyListString = ""
 	for id , obj in pairs(self.m_Doors) do 
-		outputChatBox("lol")
 		if obj.UpdateDoor then 
-			outputChatBox("updating")
-			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), obj.LinkKeyPad..":"..getElementModel(obj)..":"..obj.openPos.x..":"..obj.openPos.y..":"..obj.openPos.z, obj.Id )
+			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
+			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..obj.openPos.x..":"..obj.openPos.y..":"..obj.openPos.z, obj.Id )
 		end
 	end
 end
