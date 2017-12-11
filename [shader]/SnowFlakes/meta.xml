@@ -1,0 +1,7 @@
+<meta>
+    <info author="Remp" name="Snow" version="1.0.3" type="misc"/>
+	
+	<file src="flakes/cartoon_tile.png"/>
+	<file src="flakes/real_tile.png"/>
+	<script src="snow.lua" type="client"/>
+</meta>

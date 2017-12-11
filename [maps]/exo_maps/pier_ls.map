@@ -1,0 +1,14 @@
+<map edf:definitions="editor_main">
+    <removeWorldObject id="removeWorldObject (ferris01_LAw2) (1)" radius="21.144135" interior="0" model="6298" lodModel="6463" posX="389.77344" posY="-2028.4687" posZ="19.80469" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (1)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2035.3828" posZ="29.95313" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (2)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2039.6562" posZ="24.10938" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (3)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2028.5" posZ="32.22656" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (4)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2039.6406" posZ="16.84375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (5)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2035.3984" posZ="10.94531" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (6)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2028.5156" posZ="8.78125" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (7)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2021.6328" posZ="10.98438" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (8)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2017.4297" posZ="16.85156" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferris01Tr_LAw2) (1)" radius="21.309917" interior="0" model="6461" lodModel="0" posX="389.77344" posY="-2028.5" posZ="20.10938" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (9)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2017.4531" posZ="24.03125" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (ferseat01_LAx) (10)" radius="4.4774079" interior="0" model="3752" lodModel="3751" posX="389.875" posY="-2021.6406" posZ="29.92969" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+</map>

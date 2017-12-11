@@ -626,6 +626,11 @@ SHADERS = {
 	["DoF"] = {["event"] = "switchDoF"},
 }
 
+if EVENT_CHRISTMAS then
+	SHADERS["Schneedecke"] = {["event"] = "switchSnowGround", ["enabled"] = true} 
+	SHADERS["Schneeflocken"] = {["event"] = "switchSnowFlakes", ["enabled"] = true} 
+end
+
 
 GUNBOX_CRATES = {
 	createObject(2977, 1366.06, -1286.34, 12.4),

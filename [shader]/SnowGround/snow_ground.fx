@@ -112,11 +112,11 @@ float4 PixelShaderFunction(PSInput PS) : COLOR0
     float4 texel = tex2D(Sampler0, PS.TexCoord);
     float3 texelNoise = tex3D(SamplerNoise, float3(PS.NoiseCoord.xy,1)).rgb;
 
-    float4 texelSnow = texel.g * 2.2;
+    float4 texelSnow = texel.g * 2;
 
     float distFade = saturate( PS.DistFade.x );
 
-    float amount = texelNoise.y * texelNoise.y * 2.8;
+    float amount = texelNoise.y * texelNoise.y * 2;
     amount *= distFade;
     float4 finalColor = lerp( texel, texelSnow, amount );
 

@@ -14,6 +14,7 @@ function CustomModelManager:constructor()
 	self.m_TextureReplaces = {}
 	--self:loadImportDFF("files/models/dead_tree_18.dff", 846)
 
+	self:createObjectsForMods()
 
 	--world objects
 	self:loadImportCOL("files/models/mech.col", 7520)
@@ -81,13 +82,13 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/ammunation2_int.col", 18033)
 	self:loadImportDFF("files/models/ammunation2_int.dff", 18033)
 	--ferris wheel
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", 15050)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", 15050)
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", 15052)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", 15052)
-	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", 15051)
-	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", 15051)
-	
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisBase.col", FERRIS_IDS.Base)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisBase.dff", FERRIS_IDS.Base)
+	self:loadImportTXD("files/models/objects/ferrisWheel/ferris.txd", FERRIS_IDS.Gond)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisGond.col", FERRIS_IDS.Gond)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", FERRIS_IDS.Gond)
+	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", FERRIS_IDS.Wheel)
+	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", FERRIS_IDS.Wheel)
 
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
@@ -268,7 +269,15 @@ end
 function CustomModelManager:loadImportTXD(filePath, modelId)
 	local txd = engineLoadTXD(filePath)
 	self.m_TXDMap[modelId] = txd
-	return txd and engineImportTXD(txd, modelId), txd
+	if type(modelId) == "table" then
+		if not txd then return false, txd end
+		for i, id in pairs(modelId) do
+			engineImportTXD(txd, id)
+		end
+		return true, txd
+	else
+		return txd and engineImportTXD(txd, modelId), txd
+	end
 end
 
 function CustomModelManager:loadImportCOL(filePath, modelId)
@@ -325,6 +334,25 @@ end
 
 function CustomModelManager:destructor()
 	self:unloadAllModels()
+end
+
+function CustomModelManager:createObjectsForMods()
+	local objs = {
+		--objid, lodid, radius, x, y, z
+		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
+		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police 
+		{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
+		{4600, 85.356903, 1453.6016, -989.48437, 34.4375, 4625}, --bank
+		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central
+	}
+	for i,v in pairs(objs) do
+		removeWorldModel(v[1], v[2], v[3], v[4], v[5])
+		local obj = createObject(v[1], v[3], v[4], v[5])
+		if v[6] then --lod
+			removeWorldModel(v[6], v[2], v[3], v[4], v[5])
+			setLowLODElement(obj, createObject(v[6], v[3], v[4], v[5], 0, 0, 0, true))
+		end
+	end
 end
 
 
