@@ -28,7 +28,7 @@ function ItemKeyPad:destructor()
 end
 
 
-function ItemKeyPad:addObject(Id, pos, rot, value)
+function ItemKeyPad:addObject(Id, pos, rot, int, dim, value)
 	local pin, updatePin
 	if not value or tostring(value) == "####" then 
 		pin = "####"
@@ -37,7 +37,11 @@ function ItemKeyPad:addObject(Id, pos, rot, value)
 		pin = tostring(value)
 		updatePin = false
 	end
+	int = tostring(int) or 0 
+	dim = tostring(dim) or 0
 	self.m_Keypads[Id] = createObject(self.m_Model, pos)
+	setElementDimension(self.m_Keypads[Id], dim)
+	setElementInterior(self.m_Keypads[Id], int)
 	setElementDoubleSided(self.m_Keypads[Id], true)
 	self.m_Keypads[Id]:setRotation( rot ) 
 	self.m_Keypads[Id].Id = Id
@@ -56,10 +60,12 @@ function ItemKeyPad:use(player)
 		if item ~= self or not position then return end
 		player:getInventory():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Keypad"))
+		local int = getElementInterior(player) 
+		local dim = getElementDimension(player)
 		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Keypad", position.x..","..position.y..","..position.z)
-		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Keypad", position.x, position.y, position.z, rotation, "####", getZoneName(position).."/"..getZoneName(position, true), player:getId())
-		self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation))
+		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Keypad", position.x, position.y, position.z, rotation, int, dim, "####", getZoneName(position).."/"..getZoneName(position, true), player:getId())
+		self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), int, dim)
 	end)
 end
 

@@ -21,7 +21,7 @@ function ItemDoor:constructor()
 end
 
 
-function ItemDoor:addObject(Id, pos, rot, value)
+function ItemDoor:addObject(Id, pos, rot, int, dim, value)
 	local linkedKeyPadList, model, oX, oY, oZ, updateDoor
 	if not value or tostring(value) == "" then 
 		linkedKeyPadList = "#"
@@ -38,8 +38,12 @@ function ItemDoor:addObject(Id, pos, rot, value)
 		oZ = tonumber(gettok(value, 5, ":"))
 		updateDoor = false
 	end
+	int = tostring(int) or 0 
+	dim = tostring(dim) or 0
 	self.m_Doors[Id] = createObject(model or self.m_Model, pos)
 	if self.m_Doors[Id] then
+		setElementDimension(self.m_Doors[Id], dim)
+		setElementInterior(self.m_Doors[Id], int)
 		setElementDoubleSided(self.m_Doors[Id], true)
 		self.m_Doors[Id]:setRotation( rot ) 
 		self.m_Doors[Id].Id = Id
@@ -262,10 +266,12 @@ function ItemDoor:use(player, itemId, bag, place, itemName)
 		local valueString = (value or "#:"..self.m_Model)
 		player:getInventory():removeItem(self:getName(), 1)
 		player:sendInfo(_("%s hinzugefügt!", player, "Tor Modell ("..model..")"))
+		local dim = getElementDimension(player) 
+		local int = getElementInterior(player)
 		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Keypad", position.x..","..position.y..","..position.z)
-		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Tor", position.x, position.y, position.z, rotation, valueString , getZoneName(position).."/"..getZoneName(position, true), player:getId())
-		if not self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), valueString ) then 
+		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension,  Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Tor", position.x, position.y, position.z, rotation, int, dim, valueString , getZoneName(position).."/"..getZoneName(position, true), player:getId())
+		if not self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), int, dim, valueString ) then 
 			sql:queryExec("DELETE FROM ??_word_objects WHERE Id=?", sql:getPrefix(), sql:lastInsertId())	
 		end
 	end, false, model)
