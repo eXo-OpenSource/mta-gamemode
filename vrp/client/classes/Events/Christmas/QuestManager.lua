@@ -10,6 +10,7 @@ function QuestManager:constructor()
 		[7] = QuestPackageFind,
 		[8] = QuestSantaKill,
 		[10] = QuestDraw,
+		[13] = QuestSantaKill,
 		[16] = QuestPhotography
 	}
 
