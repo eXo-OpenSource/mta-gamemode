@@ -45,7 +45,7 @@ function StaticWorldItems:constructor()
 		},
 	}
 
-	self.m_TimedPulse = TimedPulse:new(30000)
+	self.m_TimedPulse = TimedPulse:new(1000*60*60)
 	self.m_TimedPulse:registerHandler(bind(self.reload, self))
     self:reload(true)
 
