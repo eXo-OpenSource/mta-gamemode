@@ -65,11 +65,61 @@ QuestManager.Quests = {
 		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
 		["Packages"] = 5,
 	},
-	[16] = {
+	[14] = {
 		["Name"] = "Mützen-Foto",
 		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
 		["Packages"] = 5,
-	}
+	},
+	[15] = {
+		["Name"] = "Weihnachts-Bodyguard",
+		["Description"] = "Bringe den Weihnachtsmann zum markierten Ort in Los Santos!",
+		["Packages"] = 5,
+	},
+	[16] = {
+		["Name"] = "Päckchen-Transport",
+		["Description"] = "Liefere die Päckchen an den angezeigten Ort! Pass gut auf den Anhänger auf!",
+		["Packages"] = 5,
+	},
+	[17] = {
+		["Name"] = "Zeichne einen Weihnachtsbaum",
+		["Description"] = "Admins bestätigen dein Bild wenn du einen schönen Weihnachtsbaum gezeichnet hast!",
+		["Packages"] = 5,
+	},
+	[18] = {
+		["Name"] = "Glücksrad-Master",
+		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Packages"] = 5,
+	},
+	[19] = {
+		["Name"] = "Päckchen-Finder",
+		["Description"] = "Finde 5 Päckchen und klicke diese an!",
+		["Packages"] = 5,
+	},
+	[20] = {
+		["Name"] = "Administriver Fotograf",
+		["Description"] = "Schieße ein Foto mit mindestens 2 Teammitgliedern!",
+		["Packages"] = 5,
+	},
+	[21] = {
+		["Name"] = "Riesenradfahrer",
+		["Description"] = "Fahre zwei Runden mit dem Riesenrad (die Gondel muss wieder an den Treppen anhalten)!",
+		["Packages"] = 5,
+	},
+	[22] = {
+		["Name"] = "Weihnachts-Morde",
+		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
+		["Packages"] = 5,
+	},
+	[23] = {
+		["Name"] = "Glücksrad-Master",
+		["Description"] = "Spiele 3 mal am Glücksrad! Der Quest muss während dessen von dir gestartet sein!",
+		["Packages"] = 5,
+	},
+	[24] = {
+		["Name"] = "Familientag",
+		["Description"] = "Wir wollen dich heute nicht weiter aufhalten! Hier deine Belonung!",
+		["Packages"] = 5,
+	},
 }
 
 function QuestManager:constructor()
@@ -90,8 +140,17 @@ function QuestManager:constructor()
 		[11] = QuestPackageTransport,
 		[12] = QuestFerrisRide,
 		[13] = QuestSantaKill,
-		[16] = QuestPhotography,
-
+		[14] = QuestPhotography,
+		[15] = QuestNPCTransport,
+		[16] = QuestPackageTransport,
+		[17] = QuestDraw,
+		[18] = QuestFortuneWheel,
+		[19] = QuestPackageFind,
+		[20] = QuestPhotography,
+		[21] = QuestFerrisRide,
+		[22] = QuestSantaKill,
+		[23] = QuestFortuneWheel,
+		[24] = QuestNoQuest,
 	}
 	self.m_CurrentQuest = false
 

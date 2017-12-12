@@ -7,8 +7,11 @@ QuestPhotography.Targets = {
 	[3] = {
 		["Players"] = 10,
 	},
-	[16] = {
+	[14] = {
 		["PlayersWithHat"] = 5,
+	},
+	[20] = {
+		["Admins"] = 2,
 	}
 }
 
@@ -72,12 +75,27 @@ function QuestPhotography:onTakePhoto(playersOnPhoto, pedsOnPhoto)
 					count = count +1
 				end
 			end
-			if count > self.m_Target["PlayersWithHat"] then
+			if count >= self.m_Target["PlayersWithHat"] then
 				client:sendSuccess(_("Du hast erfolgreich 5 Spieler mit Weihnachtsmütze fotografiert!", client))
 				self:success(client)
 				return
 			else
 				client:sendError(_("Auf deinem Foto sind zuwenig Spieler mit Weihnachtsmütze! (%d/%d)", client, count, self.m_Target["PlayersWithHat"]))
+				return
+			end
+		elseif self.m_Target["Admins"] then
+			local count = 0
+			for index, player in pairs(playersOnPhoto) do
+				if player:getRank() > 0 then
+					count = count +1
+				end
+			end
+			if count >= self.m_Target["Admins"] then
+				client:sendSuccess(_("Du hast erfolgreich 2 Teammitglieder fotografiert!", client))
+				self:success(client)
+				return
+			else
+				client:sendError(_("Auf deinem Foto sind zuwenig Teammitglieder! (%d/%d)", client, count, self.m_Target["Admins"]))
 				return
 			end
 		end

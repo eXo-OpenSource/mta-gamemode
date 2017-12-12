@@ -2,7 +2,8 @@ QuestDraw = inherit(Quest)
 
 QuestDraw.Targets = {
 	[4] = "SantaClaus",
-	[10] = "SnowMan"
+	[10] = "SnowMan",
+	[17] = "ChristmasTree"
 }
 
 function QuestDraw:constructor(id)
