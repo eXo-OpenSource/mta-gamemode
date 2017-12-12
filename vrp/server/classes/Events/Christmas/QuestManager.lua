@@ -60,6 +60,11 @@ QuestManager.Quests = {
 		["Description"] = "Fahre zwei Runden mit dem Riesenrad (die Gondel muss wieder an den Treppen anhalten)!",
 		["Packages"] = 5,
 	},
+	[13] = {
+		["Name"] = "Weihnachts-Morde",
+		["Description"] = "Suche die Einbrecher in den orange markierten Gegenden und bringe sie um!",
+		["Packages"] = 5,
+	},
 	[16] = {
 		["Name"] = "Mützen-Foto",
 		["Description"] = "Schieße ein Foto mit mindestens 5 Spielern die eine Weihnachtsmütze auf haben!",
@@ -84,7 +89,9 @@ function QuestManager:constructor()
 		[10] = QuestDraw,
 		[11] = QuestPackageTransport,
 		[12] = QuestFerrisRide,
-		[16] = QuestPhotography
+		[13] = QuestSantaKill,
+		[16] = QuestPhotography,
+
 	}
 	self.m_CurrentQuest = false
 

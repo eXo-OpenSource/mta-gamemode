@@ -42,16 +42,17 @@ function QuestSantaKill:addPlayer(player)
 end
 
 function QuestSantaKill:Event_onSantaKilled( )
+	if table.find(self:getPlayers(), client) then
 
-	local santaCount = self.m_KilledSantas[getPlayerName(client)]
-	santaCount = santaCount + 1
-	if santaCount >= 3 then
-		client:sendSuccess(_("Glückwunsch! Du hast alle Kobolde getötet!", client))
-		self:success(client)
-		return
-	else
-		self.m_KilledSantas[getPlayerName(client)] = self.m_KilledSantas[getPlayerName(client)] + 1
-		client:sendSuccess(_("Noch "..(3-santaCount).." Einbrecher müssen getötet werden!", client))
+		local santaCount = self.m_KilledSantas[getPlayerName(client)]
+		santaCount = santaCount + 1
+		if santaCount >= 3 then
+			client:sendSuccess(_("Glückwunsch! Du hast alle Kobolde getötet!", client))
+			self:success(client)
+			return
+		else
+			self.m_KilledSantas[getPlayerName(client)] = self.m_KilledSantas[getPlayerName(client)] + 1
+			client:sendSuccess(_("Noch "..(3-santaCount).." Einbrecher müssen getötet werden!", client))
+		end
 	end
-
 end
