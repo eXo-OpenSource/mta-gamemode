@@ -109,7 +109,8 @@
 	<script src="server/classes/Player/PremiumPlayer.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
-
+	<script src="server/classes/Player/PlayerTexture.lua" type="server"/>
+	
 	<!-- Inventory System -->
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>

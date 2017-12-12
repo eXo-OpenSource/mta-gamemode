@@ -91,7 +91,7 @@ function TextureReplacer:attach()
 	if not self.m_Texture or not isElement(self.m_Texture) then return TextureReplacer.Status.FAILURE end
 	if self.m_Shader then return TextureReplacer.Status.FAILURE end
 
-	self.m_Shader = DxShader("files/shader/texreplace.fx")
+	self.m_Shader = DxShader("files/shader/texreplace.fx", 0, 0, false, "all")
 	if not self.m_Shader then
 		self.m_Active = false
 		error(("Error @ TextureReplacer:attach, shader failed to create! [Element: %s]"):format(inspect(self.m_Element or "STATIC")))
@@ -278,18 +278,18 @@ addEvent("changeElementTexture", true)
 addEventHandler("changeElementTexture", root,
 	function(vehicles)
 		for i, vehData in pairs(vehicles) do
-			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle] = {}
+			if not TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player] then
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player] = {}
 			end
 
-			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] then
-				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName])
+			if TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player][vehData.textureName] then
+				delete(TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player][vehData.textureName])
 			end
 			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
 			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle or vehData.player, vehData.texturePath, vehData.textureName)
 			else
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle or vehData.player][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle or vehData.player, vehData.texturePath, vehData.textureName)
 			end
 		end
 

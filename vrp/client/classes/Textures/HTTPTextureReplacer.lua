@@ -1,14 +1,22 @@
 HTTPTextureReplacer = inherit(TextureReplacer)
 HTTPTextureReplacer.BasePath = "http://picupload.pewx.de/textures/"
+HTTPTextureReplacer.BasePath2 = "http://i.imgur.com/"
 HTTPTextureReplacer.ClientPath = "files/images/Textures/remote/%s"
 HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
 function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
-	assert(fileName and fileName:len() > 0 and fileName:find(HTTPTextureReplacer.BasePath), "Bad Argument @ HTTPTextureReplacer:constructor #2")
+	assert(fileName and fileName:len() > 0 and fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.BasePath2), "Bad Argument @ HTTPTextureReplacer:constructor #2")
 	TextureReplacer.constructor(self, element, textureName, options)
-
-	self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
+	
+	if fileName:find(HTTPTextureReplacer.BasePath) then
+		self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath, "")
+		self.m_BasePathID = 1
+	else 
+		self.m_FileName = fileName:gsub(HTTPTextureReplacer.BasePath2, "")
+		self.m_BasePathID = 2
+	end
+	outputChatBox(self.m_FileName)
 	self.m_PixelFileName = ("%s.pixels"):format(self.m_FileName)
 end
 
@@ -37,7 +45,11 @@ function HTTPTextureReplacer:downloadTexture()
 	Async.create(
 		function()
 			local dgi = HTTPMinimalDownloadGUI:new()
-			local provider = HTTPProvider:new(HTTPTextureReplacer.BasePath, dgi)
+			local basePath = HTTPTextureReplacer.BasePath
+			if self.m_BasePathID == 2 then 
+				basePath = HTTPTextureReplacer.BasePath2 
+			end
+			local provider = HTTPProvider:new(basePath, dgi)
 			if provider:startCustom(self.m_FileName, HTTPTextureReplacer.ClientPath:sub(0, -3), false, true) then
 				delete(dgi)
 
