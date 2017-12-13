@@ -213,7 +213,7 @@ function ItemEntrance:enter( player, id )
 		if HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID] then
 			local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
 			local _, _, rz = getElementRotation( player )
-			self:teleportPlayer(player, Vector3(x, y, z), rz, int, 0)
+			self:teleportPlayer(player, Vector3(x, y, z), rz, int, id)
 			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
 		end
 	else 
@@ -233,7 +233,7 @@ function ItemEntrance:teleportPlayer( player, pos, rotation, interior, dimension
 			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)
-			setElementDimension(player,dimension)
+			setElementDimension(player, dimension)
 			player:setCameraTarget(player)
 			fadeCamera(player, true)
 			setTimer(function() 
