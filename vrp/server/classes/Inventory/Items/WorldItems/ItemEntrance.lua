@@ -203,7 +203,8 @@ function ItemEntrance:enter( player, id )
 	if self.m_Entrances[id].HouseID then 
 		if HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID] then
 			local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
-			self:teleportPlayer(player, Vector3(x, y, z), player:getRotation(), int, 0)
+			local _, _, rz = getElementRotation( player )
+			self:teleportPlayer(player, Vector3(x, y, z), rz, int, 0)
 		end
 	else 
 		if self.m_Entrances[id].OutPos then 
