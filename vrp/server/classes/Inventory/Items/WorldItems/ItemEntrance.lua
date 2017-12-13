@@ -185,6 +185,7 @@ function ItemEntrance:changeLock( entrance )
 end
 function ItemEntrance:Event_onConfirmEntranceDelete( id ) 
 	if source.m_EntranceQuestionDeleteId then 
+		if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 		self:removeObject( source.m_EntranceQuestionDeleteId )
 		source:sendSuccess(_("Der Eingang mit der ID %s wurde gelöscht!", source, id))
 	end
