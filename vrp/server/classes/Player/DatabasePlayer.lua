@@ -415,7 +415,7 @@ function DatabasePlayer:__takeMoney(amount, reason, silent)
 end
 
 function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory, options)
-	if isNan(amount) then return false end
+	if amount == nil or not tonumber(amount) or isNan(amount) then error("DatabasePlayer.transferMoney @ Invalid parameter at position 2, Reason: " .. tostring(reason)) return false end
 	if not options then options = {} end
 	local amount = math.floor(amount)
 
