@@ -109,6 +109,7 @@ end
 
 function ItemKeyPad:Event_onConfirmKeyPadDelete( id )
 	if source.m_KeypadQuestionDeleteId then 
+		if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 		self:removeObject( source.m_KeypadQuestionDeleteId )
 		source:sendInfo(_("Der Keypad mit der ID %s wurde gelöscht!", source, id))
 	end

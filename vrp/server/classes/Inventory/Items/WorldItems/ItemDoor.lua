@@ -175,6 +175,7 @@ end
 
 function ItemDoor:Event_onConfirmDoorDelete( id ) 
 	if source.m_DoorQuestionDeleteId then 
+		if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 		self:removeObject( source.m_DoorQuestionDeleteId )
 		source:sendSuccess(_("Das Tor mit der ID %s wurde gelöscht!", source, id))
 	end
