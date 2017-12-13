@@ -14,6 +14,8 @@ function ItemDoor:constructor()
 	addEventHandler("confirmDoorDelete", root, bind(self.Event_onConfirmDoorDelete, self))
 	addEventHandler("onDoorDataChange", root, bind(self.Event_onDoorDataChange, self))
 	addEventHandler("onKeyPadSignal", root, bind(self.Event_onKeyPadSignal, self))
+	addCommandHandler("nearbydoors", bind(self.Event_onNearbyCommand, self))
+	addCommandHandler("deldoor", bind(self.Event_onDeleteCommand, self))
 	self.m_Model = 1493
 	self.m_Doors = {}
 	self.m_Timers = {}
@@ -313,3 +315,39 @@ function ItemDoor:destructor()
 		end
 	end
 end
+
+
+function ItemDoor:Event_onNearbyCommand( source, cmd) 
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
+	local position = source:getPosition()
+	local objectPosition, dist
+	outputChatBox("** Tore in deiner Nähe **", source, 244, 182, 66)
+	local count = 0
+	for id , obj in pairs(self.m_Doors) do 
+		count = count + 1
+		objectPosition = obj:getPosition()
+		dist = getDistanceBetweenPoints2D(objectPosition.x, objectPosition.y, position.x, position.y)
+		if dist <= 10 then  
+			outputChatBox(" #ID "..obj.Id.." Model: "..getElementModel(obj).." Distanz: "..dist , source, 244, 182, 66)
+		end
+	end
+	if count == 0 then outputChatBox(" Keine in der Nähe",  source, 244, 182, 66) end
+end
+
+function ItemDoor:Event_onDeleteCommand( source, cmd, id)
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
+	local position = source:getPosition()
+	local objectPosition, dist
+	if id and tonumber(id) then
+		local obj = self.m_Doors[tonumber(id)] 
+		if obj then 
+			local objPos = obj:getPosition() 
+			local sourcePos = source:getPosition() 
+			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then 
+				self:removeObject( tonumber(id) ) 
+				source:sendInfo(_("Das Tor mit der ID %s wurde gelöscht!", source, id))
+			end
+		end
+	end
+end
+

@@ -178,7 +178,8 @@ ADMIN_RANK_PERMISSION = {
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
 
-	--
+	--keypad-system 
+	["placeKeypadObjects"] = RANK.Administrator -- ItemKeyPad, ItemEntrance, ItemDoor
 }
 
 GroupRank = {

@@ -10,11 +10,14 @@ ItemEntrance.Map = {}
 
 
 function ItemEntrance:constructor()
-	addRemoteEvents{"confirmEntranceDelete", "onEntranceDataChange", "onKeyPadSignal", "confirmEntranceEnter"}
+	addRemoteEvents{"confirmEntranceDelete", "onEntranceDataChange", "onKeyPadSignal", "confirmEntranceEnter", "cancelEntranceEnter"}
 	addEventHandler("confirmEntranceDelete", root, bind(self.Event_onConfirmEntranceDelete, self))
 	addEventHandler("onEntranceDataChange", root, bind(self.Event_onEntranceDataChange, self))
 	addEventHandler("confirmEntranceEnter", root, bind(self.Event_onEntranceConfirm, self))
+	addEventHandler("cancelEntranceEnter", root, bind(self.Event_onEntranceCancel, self))
 	addEventHandler("onKeyPadSignal", root, bind(self.Event_onKeyPadSignal, self))
+	addCommandHandler("nearbyentrances", bind(self.Event_onNearbyCommand, self))
+	addCommandHandler("delentrance", bind(self.Event_onDeleteCommand, self))
 	self.m_Model = 2986
 	self.m_Entrances = {}
 	self.m_Timers = {}
@@ -197,6 +200,11 @@ function ItemEntrance:Event_onEntranceConfirm( id )
 			end
 		end
 	end
+	source.m_EntranceQuestionVisible = false
+end
+
+function ItemEntrance:Event_onEntranceCancel( id ) 
+	source.m_EntranceQuestionVisible = false
 end
 
 function ItemEntrance:enter( player, id ) 
@@ -205,11 +213,13 @@ function ItemEntrance:enter( player, id )
 			local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
 			local _, _, rz = getElementRotation( player )
 			self:teleportPlayer(player, Vector3(x, y, z), rz, int, 0)
+			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
 		end
 	else 
 		if self.m_Entrances[id].OutPos then 
 			local _, _, rz = getElementRotation( player )
 			self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  0, 0)
+			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
 		end
 	end
 end
@@ -295,8 +305,11 @@ function ItemEntrance:onEntranceClick(button, state, player)
 			player:triggerEvent("promptEntranceOption", source.LinkedKeyPad, pos)
 			player:sendShortMessage(_("Beachte X-,Y- und Z-Position nur angeben wenn im Interior ein Eingang nach draußen platziert wird!", player))
 		else 
-			player.m_EntranceQuestionId = source.Id
-			QuestionBox:new(player, player, _("Eintreten?", player), "confirmEntranceEnter", nil, source.Id)
+			if not player.m_EntranceQuestionVisible then
+				player.m_EntranceQuestionVisible = true
+				player.m_EntranceQuestionId = source.Id
+				QuestionBox:new(player, player, _("Eintreten?", player), "confirmEntranceEnter", "cancelEntranceEnter", source.Id)
+			end
 		end
 	elseif button == "right" and state == "up" then 
 		if player.m_SupMode then 
@@ -334,6 +347,47 @@ function ItemEntrance:destructor()
 				z = "#"
 			end
 			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z, obj.Id )
+		end
+	end
+end
+
+
+function ItemEntrance:Event_onNearbyCommand( source, cmd) 
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
+	local position = source:getPosition()
+	local objectPosition, dist
+	outputChatBox("** Eingänge in deiner Nähe **", source, 244, 182, 66)
+	local count = 0
+	local house = ""
+	for id , obj in pairs(self.m_Entrances) do 
+		count = count + 1
+		objectPosition = obj:getPosition()
+		dist = getDistanceBetweenPoints2D(objectPosition.x, objectPosition.y, position.x, position.y)
+		if dist <= 10 then  
+			if obj.HouseID then 
+				house = obj.HouseID 
+			else 
+				house = "Keins"
+			end
+			outputChatBox(" #ID "..obj.Id.." Model: "..getElementModel(obj).." Haus-ID: "..house.." Distanz: "..dist , source, 244, 182, 66)
+		end
+	end
+	if count == 0 then outputChatBox(" Keine in der Nähe",  source, 244, 182, 66) end
+end
+
+function ItemEntrance:Event_onDeleteCommand( source, cmd, id) 
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
+	local position = source:getPosition()
+	local objectPosition, dist
+	if id and tonumber(id) then
+		local obj = self.m_Entrances[tonumber(id)] 
+		if obj then 
+			local objPos = obj:getPosition() 
+			local sourcePos = source:getPosition() 
+			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then 
+				self:removeObject( tonumber(id) ) 
+				source:sendInfo(_("Der Eingang mit der ID %s wurde gelöscht!", source, id))
+			end
 		end
 	end
 end
