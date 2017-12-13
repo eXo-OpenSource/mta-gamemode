@@ -43,6 +43,13 @@ function StaticWorldItems:constructor()
 			["enabled"] = true,
 			["notReload"] = true,
 		},
+		["Eingang"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Eingang"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true,
+			["notReload"] = true,
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(1000*60*60)

@@ -269,7 +269,7 @@ function ItemDoor:use(player, itemId, bag, place, itemName)
 		local dim = getElementDimension(player) 
 		local int = getElementInterior(player)
 		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
-		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Keypad", position.x..","..position.y..","..position.z)
+		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Tor", position.x..","..position.y..","..position.z)
 		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension,  Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Tor", position.x, position.y, position.z, rotation, int, dim, valueString , getZoneName(position).."/"..getZoneName(position, true), player:getId())
 		if not self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), int, dim, valueString ) then 
 			sql:queryExec("DELETE FROM ??_word_objects WHERE Id=?", sql:getPrefix(), sql:lastInsertId())	
