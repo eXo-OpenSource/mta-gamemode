@@ -46,6 +46,7 @@ build_docker_job:
     - docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && docker tag exo-rl-mta $CI_REGISTRY_IMAGE:latest'
     - docker push "$CI_REGISTRY_IMAGE"
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   only:
     - master
     - release/pre-production
@@ -99,7 +100,6 @@ deploy_job_production:
     - dind
   stage: deploy
   script:
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production

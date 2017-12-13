@@ -2,7 +2,8 @@ QuestNPCTransport = inherit(Quest)
 
 QuestNPCTransport.Targets = {
 	[1] = Vector3(1274.49, 294.03, 19),
-	[5] = Vector3(318.71, -1819.91, 3.7)
+	[5] = Vector3(318.71, -1819.91, 3.7),
+	[15] = Vector3(-63.79, -1584.69, 1.6)
 }
 
 function QuestNPCTransport:constructor(id)
