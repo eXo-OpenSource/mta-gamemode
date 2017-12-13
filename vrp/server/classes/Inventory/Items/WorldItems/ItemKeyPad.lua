@@ -107,7 +107,7 @@ function ItemKeyPad:Event_onAskForAccess( pin )
 	end
 end
 
-function ItemKeyPad:Event_onConfirmKeyPadDelete( id ) 
+function ItemKeyPad:Event_onConfirmKeyPadDelete( id )
 	if source.m_KeypadQuestionDeleteId then 
 		self:removeObject( source.m_KeypadQuestionDeleteId )
 		source:sendInfo(_("Der Keypad mit der ID %s wurde gelöscht!", source, id))
@@ -115,6 +115,7 @@ function ItemKeyPad:Event_onConfirmKeyPadDelete( id )
 end
 
 function ItemKeyPad:Event_onNearbyCommand( source, cmd) 
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 	local position = source:getPosition()
 	local objectPosition, dist
 	outputChatBox("** Keypads in deiner Nähe **", source, 244, 182, 66)
@@ -131,6 +132,7 @@ function ItemKeyPad:Event_onNearbyCommand( source, cmd)
 end
 
 function ItemKeyPad:Event_onDeleteCommand( source, cmd, id) 
+	if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
 	local position = source:getPosition()
 	local objectPosition, dist
 	if id and tonumber(id) then

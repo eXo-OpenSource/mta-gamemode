@@ -33,6 +33,19 @@ addEventHandler("itemEntrancePlayLock", root,
 	end
 )
 
+addEvent("itemEntrancePlayEnter", true)
+addEventHandler("itemEntrancePlayEnter", root,
+	function()
+		if isElement(source.Sound) then
+			source.Sound:destroy()
+		end
+		local sound = Sound3D.create("files/audio/Items/doorGoThru.mp3", source:getPosition())
+		sound:setInterior(source:getInterior())
+		sound:setDimension(source:getDimension())
+		sound:attach(source)
+		source.Sound = sound
+	end
+)
 function ItemEntrance:constructor( id, pos )
 	GUIWindow.updateGrid()        
 	self.m_Width = grid("x", 10) 

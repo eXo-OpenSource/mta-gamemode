@@ -1004,6 +1004,8 @@
 	<vrpfile src="files/audio/Items/keypad_error.ogg" />
 	<vrpfile src="files/audio/Items/doorLockSound.mp3" />
 	<vrpfile src="files/audio/Items/doorUnlockSound.mp3" />
+	<vrpfile src="files/audio/Items/doorGoThru.mp3" />
+	
 	
 	<vrpfile src="files/images/warning.png" />
 
