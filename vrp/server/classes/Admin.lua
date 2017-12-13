@@ -921,7 +921,7 @@ function Admin:onlineList(player)
 		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
 		local admins = table.copy(self.m_OnlineAdmins)
 		table.sort(admins, function(a, b) return self.m_RankNames[a] < self.m_RankNames[b] end)
-		for key, value in pairs(admins) do
+		for key, value in ipairs(admins) do
 			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
 		end
 	else
