@@ -93,7 +93,7 @@
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
-
+	<map src="sewer.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 	<map src="tokyotown.map" dimension="0" />
 
