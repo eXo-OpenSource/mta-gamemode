@@ -34,6 +34,7 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		posX = false 
 		posY = false 
 		posZ = false
+		linkedToEntrance = false
 		updateEntrance = true
 	else 
 		linkedKeyPadList = gettok(value, 1, ":") or "#"
@@ -42,6 +43,7 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		posX = tonumber(gettok(value, 4, ":")) 
 		posY = tonumber(gettok(value, 5, ":")) 
 		posZ = tonumber(gettok(value, 6, ":")) 
+		linkedToEntrance = tonumber(gettok( value, 7, ":"))
 		updateEntrance	= false
 	end
 	int = tostring(int) or 0 
@@ -58,6 +60,9 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		if posX and posY and posZ then
 			self.m_Entrances[Id].OutPos = Vector3(posX, posY, posZ)
 			self.m_Entrances[Id].HouseID = false
+			if linkedToEntrance then 
+				self.m_Entrances[Id].LinkToEntrance = linkedToEntrance
+			end
 		end
 		self.m_Entrances[Id].UpdateEntrance = updateEntrance
 		self.m_Entrances[Id].m_Closed = true
@@ -219,7 +224,13 @@ function ItemEntrance:enter( player, id )
 	else 
 		if self.m_Entrances[id].OutPos then 
 			local _, _, rz = getElementRotation( player )
-			self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  0, 0)
+			local int, dim = 0, 0
+			if self.m_Entrances[id].LinkToEntrance then 
+				if self.m_Entrances[self.m_Entrances[id].LinkToEntrance] and isElement(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]) then
+					int, dim = getElementInterior(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]), getElementDimension(self.m_Entrances[self.m_Entrances[id].LinkToEntrance])
+				end
+			end
+			self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  int, dim)
 			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
 		end
 	end
@@ -246,7 +257,7 @@ function ItemEntrance:teleportPlayer( player, pos, rotation, interior, dimension
 	triggerEvent("onElementDimensionChange", player, dimension)
 end
 
-function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, posX, posY, posZ) 
+function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, posX, posY, posZ, entranceLink) 
 	if client then 
 		if client.m_LastEntranceId then 
 			if self.m_Entrances[client.m_LastEntranceId] then 
@@ -263,6 +274,9 @@ function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, p
 					if tonumber(posX) and tonumber(posY) and tonumber(posZ) then 
 						entrance.OutPos = Vector3(tonumber(posX), tonumber(posY), tonumber(posZ))
 						entrance.HouseID = false
+						if tonumber(entranceLink) then 
+							entrance.LinkToEntrance = tonumber(entranceLink)
+						end
 					end
 					if tonumber(houseId) then 
 						entrance.HouseID = tonumber(houseId)
@@ -337,17 +351,19 @@ function ItemEntrance:destructor()
 		if obj.UpdateEntrance then 
 			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
 			local houseId = obj.HouseID or "#"
-			local x,y,z 
+			local x,y,z, linkToEntrance
 			if obj.OutPos then 
 				x = obj.OutPos.x or "#"
 				y = obj.OutPos.y or "#"
 				z = obj.OutPos.z or "#"
+				linkToEntrance = obj.LinkToEntrance or "#"
 			else 
 				x = "#"
 				y = "#" 
 				z = "#"
+				linkToEntrance = "#"
 			end
-			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z, obj.Id )
+			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance, obj.Id )
 		end
 	end
 end
