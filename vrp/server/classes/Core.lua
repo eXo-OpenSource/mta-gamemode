@@ -241,7 +241,6 @@ function Core:destructor()
 		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
 		delete(BankServer:getSingleton())
-		ItemManager:updateOnQuit()
 		delete(sql) -- Very slow
 	end
 end

@@ -46,14 +46,14 @@ function Item:place(owner, pos, rotation, amount)
 	return worldItem
 end
 
-function Item:startObjectPlacing(player, callback, hideObject, customModel)
+function Item:startObjectPlacing(player, callback, hideObject)
 	if player.m_PlacingInfo then
 		player:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", player))
 		return false
 	end
 
 	-- Start the object placer on the client
-	player:triggerEvent("objectPlacerStart", customModel or self:getModelId(), "itemPlaced", hideObject)
+	player:triggerEvent("objectPlacerStart", self:getModelId(), "itemPlaced", hideObject)
 	player.m_PlacingInfo = {item = self, callback = callback}
 	return true
 end
