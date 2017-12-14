@@ -5,7 +5,12 @@ function SpeakBubble3D:constructor(element, text, description, rotPlus, zOffset)
 	addEventHandler("onElementDestroy", element, function () delete(self) end, false)
 
 	local pos = element:getPosition()
-	pos.z = pos.z + (zOffset or 1.5)
+	if getElementType(element) == "vehicle" then -- calculate it with the bounding box
+		local __,__,__,__,__,bbz2 = element:getBoundingBox()
+		pos = pos + element.matrix.up*(bbz2 + 0.5)
+	else
+		pos.z = pos.z + (zOffset or 1.5)
+	end
 
 	self.m_Text = text
 	self.m_Description = description

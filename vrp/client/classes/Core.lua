@@ -9,6 +9,7 @@ function Core:constructor()
 
 	self.m_Config = ConfigXML:new("@config.xml")
 	Version:new()
+	TinyInfoLabel:new()
 	Provider:new()
 
 	Cursor = GUICursor:new()

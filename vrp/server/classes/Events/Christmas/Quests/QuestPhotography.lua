@@ -48,7 +48,7 @@ function QuestPhotography:addPlayer(player)
 end
 
 function QuestPhotography:onTakePhoto(playersOnPhoto, pedsOnPhoto)
-	if table.find(self:getPlayers(), player) then
+	if table.find(self:getPlayers(), client) then
 		if self.m_Target["SantaClaus"] then
 			for index, ped in pairs(pedsOnPhoto) do
 				if ped:getModel() == 244 then

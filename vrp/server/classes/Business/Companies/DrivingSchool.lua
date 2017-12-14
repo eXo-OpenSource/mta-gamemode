@@ -144,12 +144,12 @@ function DrivingSchool:Event_startAutomaticTest(type)
 	if not valid[type] then return end
 
 	if type == "car" and client.m_HasDrivingLicense then
-		client:sendWarning(_("Du hast beretis den Autoführerschein", client))
+		client:sendWarning(_("Du hast bereits den Autoführerschein", client))
 		return
 	end
 
 	if type == "bike" and client.m_HasBikeLicense then
-		client:sendWarning(_("Du hast beretis den Motorradführerschein", client))
+		client:sendWarning(_("Du hast bereits den Motorradführerschein", client))
 		return
 	end
 
