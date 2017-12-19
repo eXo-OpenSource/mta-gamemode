@@ -82,8 +82,8 @@ function VehicleFuel:handleClick(__, state)
 		if self.m_Vehicle:getFuelType() ~= "universal" and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") and localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then
 			WarningBox:new(_("In diesen Tank solltest du nur %s füllen.", FUEL_NAME[self.m_Vehicle:getFuelType()])) return end
 
-		local time = self.m_Vehicle:getFuelTankSize()
-		self.m_FuelProgress:startAnimation(time*150 - (self.m_Fuel + self.m_FuelOffset) *time, "Linear", 100 - self.m_FuelOffset)
+		local time = self.m_Vehicle:getFuelTankSize()*0.1
+		self.m_FuelProgress:startAnimation(-(self.m_Fuel - self.m_FuelOffset) *(time/0.05), "Linear", 100 - self.m_FuelOffset)
 		toggleAllControls(false, true, false)
 	else
 		self:stopInteraction(true)

@@ -291,7 +291,7 @@ function Inventory:addItemEvents(item)
 					self.m_ItemPromptReference = item
 					self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
 				else
-					outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+					ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
 				end
 			end
 		end
@@ -319,7 +319,7 @@ function Inventory:acceptPrompt( bObj )
 					if bThrowAway then
 						triggerServerEvent("throwItem", localPlayer, item, bag, id, place, name)
 					else
-						outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+						ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
 					end
 				end
 			end

@@ -392,7 +392,7 @@ function WeaponTruck:Event_DeloadBox(veh)
 					client:sendError(_("Du hast bereits ein Objekt dabei!",client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!",client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!",client))
@@ -440,7 +440,7 @@ function WeaponTruck:Event_LoadBox(veh)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!",client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!",client))
