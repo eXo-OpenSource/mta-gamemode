@@ -629,7 +629,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin:setCameraInterior(target.interior)
 		admin:setDimension(target.dimension)
 
-		admin:triggerEvent("startCenteredFreecam", target, 100)
+		admin:triggerEvent("startCenteredFreecam", target, 100, true)
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)

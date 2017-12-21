@@ -40,15 +40,15 @@ function Nametag:draw()
 			local bDistance = getDistanceBetweenPoints3D(cx,cy,cz, pX, pY, pZ)
 			if bRifleCheck == player then bDistance = 10 end -- fix the distance if the localPlayer aims at the specific player
 			if not localPlayer:isLoggedIn() then return false end
-			if (bDistance <= maxDistance) then
+			if (bDistance <= maxDistance) or localPlayer:getPrivateSync("isSpecting") then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
 					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
-					if bLineOfSight then
+					if bLineOfSight or localPlayer:getPrivateSync("isSpecting") then
 						local drawName = getPlayerName(player)
 						local wanteds = player:getWanteds()
 						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
-						local alpha = math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
+						local alpha = localPlayer:getPrivateSync("isSpecting") and 255 or math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
 						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
 						local textWidth = dxGetTextWidth(drawName, 1.5*size, Nametag.font)
 						local fontHeight = dxGetFontHeight(1.5*size,Nametag.font)

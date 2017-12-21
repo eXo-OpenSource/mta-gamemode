@@ -1967,6 +1967,7 @@
 	<vrpfile src="files/models/fuelnozzle.col"/>
 	<vrpfile src="files/models/gasstation.dff"/>
 
+	<vrpfile src="files/models/objects/ferrisWheel/ferris.txd" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.col" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.dff" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.col" />

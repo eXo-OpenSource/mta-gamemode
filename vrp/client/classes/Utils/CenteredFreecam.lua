@@ -34,7 +34,8 @@ end
 function CenteredFreecam:handleScroll(btn)
     if btn == "mouse_wheel_up" or btn == "mouse_wheel_down" then
         local z = self.m_ZoomData[1]
-        z = math.clamp(1, btn == "mouse_wheel_up" and z - 1 or z + 1, self.m_MaxZoom)
+        local delta = getKeyState("lshift") and 5 or 1
+        z = math.clamp(1, btn == "mouse_wheel_up" and z - delta or z + delta, self.m_MaxZoom)
         self.m_ZoomData[1] = z
     end
 end
