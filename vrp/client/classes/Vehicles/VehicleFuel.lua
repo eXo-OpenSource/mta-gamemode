@@ -23,6 +23,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	self.m_FuelProgress = CAnimation:new(self, "m_Fuel")
 
 	self.m_HandleClick = bind(VehicleFuel.handleClick, self)
+	self.m_HandleShift = bind(VehicleFuel.handleShift, self)
 	self.m_Confirm = bind(VehicleFuel.confirm, self)
 	self.m_StopInteraction = bind(VehicleFuel.stopInteraction, self)
 
@@ -35,6 +36,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	ShortMessage:new(_("Linke Maustaste gedrückt halten zum tanken%s", confirmWithSpace and "\nLeertaste zum übernehmen" or ""), "Fahrzeug befüllen", {230, 100, 0})
 
 	bindKey("mouse1", "both", self.m_HandleClick)
+	bindKey("lshift", "both", self.m_HandleShift)
 	if confirmWithSpace then bindKey("space", "down", self.m_Confirm) end
 end
 
@@ -42,6 +44,7 @@ function VehicleFuel:virtual_destructor()
 	if not self.m_ConfirmWithSpace then self:confirm() end
 	unbindKey("space", "down", self.m_Confirm)
 	unbindKey("mouse1", "both", self.m_HandleClick)
+	unbindKey("lshift", "both", self.m_HandleShift)
 	toggleAllControls(true, true, false)
 
 	Cursor:getHook():unregister(self.m_StopInteraction)
@@ -82,12 +85,23 @@ function VehicleFuel:handleClick(__, state)
 		if self.m_Vehicle:getFuelType() ~= "universal" and not localPlayer:getPrivateSync("hasMechanicFuelNozzle") and localPlayer:getPrivateSync("hasGasStationFuelNozzle") ~= self.m_Vehicle:getFuelType() then
 			WarningBox:new(_("In diesen Tank solltest du nur %s füllen.", FUEL_NAME[self.m_Vehicle:getFuelType()])) return end
 
-		local time = self.m_Vehicle:getFuelTankSize()*0.1
-		self.m_FuelProgress:startAnimation(-(self.m_Fuel - self.m_FuelOffset) *(time/0.05), "Linear", 100 - self.m_FuelOffset)
+		local time = self.m_Vehicle:getFuelTankSize()*1.5
+		self.m_FuelProgress:startAnimation((100-(self.m_FuelOffset+self.m_Fuel))*time, "Linear", 100 - self.m_FuelOffset)
 		toggleAllControls(false, true, false)
 	else
 		self:stopInteraction(true)
 	end
+end
+
+function VehicleFuel:handleShift(__, state)
+	if isCursorShowing() then return end
+	local ele = self.m_Vehicle
+	if state == "down" then
+		ele = self.m_GasStation
+	end
+	local pos = ele:getPosition()
+	local __,__,__,__,__,bbz2 = ele:getBoundingBox()
+	self:setPosition(pos + ele.matrix.up*(bbz2 + 0.5))
 end
 
 function VehicleFuel:stopInteraction(state)

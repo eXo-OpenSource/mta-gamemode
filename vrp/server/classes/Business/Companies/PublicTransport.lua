@@ -210,7 +210,7 @@ function PublicTransport:endTaxiDrive(customer)
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		if price > customer:getMoney() then price = customer:getMoney() end
-		customer:transferMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
+		customer:transferBankMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		if price > 0 then 
 			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then

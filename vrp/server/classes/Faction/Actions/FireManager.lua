@@ -152,6 +152,7 @@ end
 
 function FireManager:stopCurrentFire(stats)
 	if stats then 
+		local playersByID = {}
 		if stats.activeRescuePlayers and stats.activeRescuePlayers > 0 then
 			local moneyForFaction = 0
 			for player, score in pairs(stats.pointsByPlayer) do
@@ -168,11 +169,13 @@ function FireManager:stopCurrentFire(stats)
 						karma = math.round(score/30),
 						points = math.round(score/10),
 					})
+					playersByID[player:getId()] = score
 					moneyForFaction = moneyForFaction + score*32
 				end
 			end
-			self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Feuer gelöscht", "Event", "Fire")
+			self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * ((stats.activeRescuePlayers + table.size(stats.pointsByPlayer))/2), "Feuer gelöscht", "Event", "Fire")
 		end
+		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (stats.activeRescuePlayers and stats.activeRescuePlayers > 0) and 1 or 0)
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end

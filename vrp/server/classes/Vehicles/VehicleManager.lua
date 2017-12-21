@@ -504,7 +504,7 @@ function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
 			local cons = ((curVel/50 * consumptionMultiplicator) + mass/5000) --basic consumption based on speed and mass (in liter)
 			local vehFuelSize = veh:getFuelTankSize() or 1
 			veh:setFuel(veh:getFuel() - cons/vehFuelSize*100)
-			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass)
+			--outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass)
 			self.m_VehiclesWithEngineOn[veh] = veh:getMileage()
 		else --garbage collection
 			self.m_VehiclesWithEngineOn[veh] = nil
