@@ -48,7 +48,7 @@ function Nametag:draw()
 						local drawName = getPlayerName(player)
 						local wanteds = player:getWanteds()
 						local size = math.max(0.5, 1 - bDistance/maxDistance)*0.9
-						local alpha = localPlayer:getPrivateSync("isSpecting") and 255 or math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
+						local alpha = localPlayer:getPrivateSync("isSpecting") and 1 or math.min(1, 1 - (bDistance - maxDistance*0.5)/(maxDistance - maxDistance*0.5))
 						local r,g,b =  self:getColorFromHP(getElementHealth(player), getPedArmor(player))
 						local textWidth = dxGetTextWidth(drawName, 1.5*size, Nametag.font)
 						local fontHeight = dxGetFontHeight(1.5*size,Nametag.font)
