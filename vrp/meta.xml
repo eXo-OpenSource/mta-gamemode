@@ -1975,6 +1975,9 @@
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.col" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.dff" />
 
+	<vrpfile src="files/models/buildings/prison_ls.col" />
+	<vrpfile src="files/models/buildings/prison_ls.txd" />
+
 	<vrpfile src="files/models/PD_Garage.col" />
 	<vrpfile src="files/models/PD_Garage.dff" />
 	<vrpfile src="files/models/PD_int.col" />

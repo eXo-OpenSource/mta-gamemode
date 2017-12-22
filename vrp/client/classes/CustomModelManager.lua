@@ -89,6 +89,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisGond.dff", FERRIS_IDS.Gond)
 	self:loadImportCOL("files/models/objects/ferrisWheel/ferrisWheel.col", FERRIS_IDS.Wheel)
 	self:loadImportDFF("files/models/objects/ferrisWheel/ferrisWheel.dff", FERRIS_IDS.Wheel)
+	
+	self:loadImportTXD("files/models/buildings/prison_ls.txd", 4000)
+	self:loadImportCOL("files/models/buildings/prison_ls.col", 4000)
+	
 
 	--fence (?)
 	self:loadImportCOL("files/models/fence.col", 1866)
@@ -338,7 +342,7 @@ end
 
 function CustomModelManager:createObjectsForMods()
 	local objs = {
-		--objid, lodid, radius, x, y, z
+		--objid, radius, x, y, z, lodid
 		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
 		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police 
 		{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
