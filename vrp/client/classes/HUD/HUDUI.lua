@@ -146,19 +146,19 @@ function HUDUI:drawLevelRect()
 
 	-- Joblevel
 	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0095), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
-	dxDrawText(self:getLocalTarget():getJobLevel(), screenWidth*0.83, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
+	dxDrawText(localPlayer:getJobLevel(), screenWidth*0.83, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 
 	-- Weaponlevel
 	dxDrawImage(f(screenWidth*0.855), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
-	dxDrawText(self:getLocalTarget():getWeaponLevel(), screenWidth*0.875, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
+	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.875, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 
 	-- Vehiclelevel
 	dxDrawImage(f(screenWidth*0.905), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/VehicleLevel.png")
-	dxDrawText(self:getLocalTarget():getVehicleLevel(), screenWidth*0.925, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
+	dxDrawText(localPlayer:getVehicleLevel(), screenWidth*0.925, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 
 	-- Skinlevel
 	dxDrawImage(f(screenWidth*0.955), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/SkinLevel.png")
-	dxDrawText(self:getLocalTarget():getSkinLevel(), screenWidth*0.975, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
+	dxDrawText(localPlayer:getSkinLevel(), screenWidth*0.975, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 end
 
 function HUDUI:drawTimeRect()
@@ -505,7 +505,7 @@ function HUDUI:drawChart()
 	drawCol(1, oxygen, oxygenColor, dsc and math.ceil(oxygen).."% Atemluft" or math.ceil(oxygen), FontAwesomeSymbols.Comment, Color.HUD_Blue_D, "oxygen", oxygen == 100)
 	drawCol(1, math.percent(math.abs(karma), 150), Color.HUD_Cyan, dsc and karma.." Karma" or karma, FontAwesomeSymbols.Circle_O_Notch, Color.HUD_Cyan_D, "karma")
 	drawCol(1, 0, Color.Clear, toMoneyString(self:getLocalTarget():getMoney()), FontAwesomeSymbols.Money, Color.HUD_Green_D, "money")
-	drawCol(1, 0, Color.Clear, dsc and self:getLocalTarget():getPoints().." Punkte" or self:getLocalTarget():getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(1, 0, Color.Clear, dsc and localPlayer:getPoints().." Punkte" or localPlayer:getPoints(), FontAwesomeSymbols.Points, Color.HUD_Lime_D, "points", not core:get("HUD", "chartPointLevelVisible", true))
 	drawCol(1, 0, Color.Clear, getZoneName(self:getLocalTarget().position), FontAwesomeSymbols.Waypoint, Color.HUD_Brown_D, "zone", self:getLocalTarget():getInterior() ~= 0 or not core:get("HUD", "chartZoneVisible", true))
 
 	drawCol(2, 0, Color.Clear, ("%02d:%02d"):format(getRealTime().hour, getRealTime().minute), false, Color.Clear, "clock")
@@ -520,12 +520,12 @@ function HUDUI:drawChart()
 	drawCol(2, 0, Color.Clear, ("%d-%d"):format(getPlayerPing(self:getLocalTarget()), getNetworkStats().packetlossLastSecond), false, Color.Clear, "net", not DEBUG_NET)
 	drawCol(2, 0, Color.Clear, ("%dh"):format(math.floor(self:getLocalTarget():getPlayTime()/60)), false, Color.Clear, "playtime", not core:get("HUD", "chartPlaytimeVisible", false))
 	drawCol(2, 0, Color.Clear, self:getLocalTarget():getWanteds(), FontAwesomeSymbols.Star, Color.HUD_Orange_D, "wanted", self:getLocalTarget():getWanteds() == 0)
-	drawCol(2, 0, Color.Clear, self:getLocalTarget():getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(2, 0, Color.Clear, self:getLocalTarget():getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(2, 0, Color.Clear, self:getLocalTarget():getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(2, 0, Color.Clear, self:getLocalTarget():getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(2, 0, Color.Clear, self:getLocalTarget():getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level", not core:get("HUD", "chartPointLevelVisible", true))
-	drawCol(2, 0, Color.Clear, math.min(60, self:getLocalTarget().FPS.frames + 1), FontAwesomeSymbols.Desktop, Color.Clear, "fps", not core:get("HUD", "chartFPSVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getVehicleLevel(), FontAwesomeSymbols.Car, Color.Clear, "veh-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getSkinLevel(), FontAwesomeSymbols.Player, Color.Clear, "skin-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getWeaponLevel(), FontAwesomeSymbols.Bullseye, Color.Clear, "weapon-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getJobLevel(), FontAwesomeSymbols.Suitcase, Color.Clear, "job-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, localPlayer:getFishingLevel(), FontAwesomeSymbols.Anchor, Color.Clear, "fishing-level", not core:get("HUD", "chartPointLevelVisible", true))
+	drawCol(2, 0, Color.Clear, math.min(60, localPlayer.FPS.frames + 1), FontAwesomeSymbols.Desktop, Color.Clear, "fps", not core:get("HUD", "chartFPSVisible", true))
 
 	--weapons
 	local weaponIconPath = WeaponIcons[self:getLocalTarget():getWeapon()]
