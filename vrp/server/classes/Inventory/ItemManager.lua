@@ -65,6 +65,15 @@ function ItemManager:constructor()
 		["Cuba-Libre"] = ItemAlcohol,
 		["Gluehwein"] = ItemAlcohol,
 
+		--Firework
+		["Rakete"] = ItemFirework,
+		["Rohrbombe"] = ItemFirework,
+		["Raketen Batterie"] = ItemFirework,
+		["Römische Kerze"] = ItemFirework,
+		["Römische Kerzen Batterie"] = ItemFirework,
+		["Kugelbombe"] = ItemFirework,
+		["Böller"] = ItemFirework,
+
 		--//Wearables
 		["Helm"] = WearableHelmet,
 		["Motorcross-Helm"] = WearableHelmet,

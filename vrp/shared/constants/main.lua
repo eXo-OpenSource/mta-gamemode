@@ -18,6 +18,7 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = false
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = true
+FIREWORK_ENABLED = true
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -472,23 +473,23 @@ VEHICLE_BIKES = {
 
 PLANES_SINGLE_ENGINE = {
 [593] = true,
-[512] = true, 
-[476] = true, 
-[513] = true, 
+[512] = true,
+[476] = true,
+[513] = true,
 }
 
 PLANES_TWIN_ENGINE = {
-[511] = true, 
+[511] = true,
 [553] = true,
 }
 
 PLANES_JET = {
-[520] = true, 
-[519] = true, 
+[520] = true,
+[519] = true,
 }
 
 PLANES_JUMBO_JET = {
-[592] = true, 
+[592] = true,
 [577] = true,
 }
 
