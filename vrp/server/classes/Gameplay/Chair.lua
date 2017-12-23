@@ -21,7 +21,7 @@ Chair.Map = {
 	[1753] = {seats = 3, offsetPosition = Vector3(.3, -.7), seatMultiplier = Vector3(.8)},
 	[1713] = {seats = 2, offsetPosition = Vector3(.3, -.7)},
 	[1712] = {seats = 2, offsetPosition = Vector3(.2, -.7), seatMultiplier = Vector3(1.1)},
-	[1710] =  {seats = 4, offsetPosition = Vector3(.2, -.7), seatMultiplier = Vector3(1.1)},
+	[1710] = {seats = 4, offsetPosition = Vector3(.2, -.7), seatMultiplier = Vector3(1.1)},
 	[1706] = {seats = 2, offsetPosition = Vector3(0, -.6)},
 	[1703] = {seats = 2, offsetPosition = Vector3(.6, -.6), seatMultiplier = Vector3(.8)},
 	[1702] = {seats = 2, offsetPosition = Vector3(.6, -.6), seatMultiplier = Vector3(.8)},

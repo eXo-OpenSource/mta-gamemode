@@ -196,6 +196,8 @@
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
+	
+	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
@@ -967,6 +969,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
+	
+	<script src="client/classes/Gameplay/Places/Atrium.lua" type="client"/>
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />

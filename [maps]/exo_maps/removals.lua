@@ -40,8 +40,9 @@ removeWorldModel(672, 11, -35.71, 18.10, 3.47)
 -- Useless street lamp
 removeWorldModel(1297, 6, 2832.7402, -1593.3954, 10.55933)
 
---Atrium
+--Atrium LS
 removeWorldModel(1533, 20, 1727.1863, -1637.4822, 20.4211)
 removeWorldModel(1533, 20, 1700.1775, -1667.5017, 20.4211)
 removeWorldModel(1537, 20, 1700.1775, -1669.4219, 20.4211)
 removeWorldModel(1537, 20, 1725.1775, -1637.4219, 20.4211)
+removeWorldModel(643, 20, 1725.1775, -1637.4219, 20.4211)
