@@ -47,8 +47,9 @@ function ItemFireworkRocket:constructor(pos, pipeBomb, pipeBombSound)
 end
 
 function ItemFireworkRocket:destructor()
-	if(self.m_FRR) then self.m_FRE:destructor() end
-	self.m_FRR:destructor();
+	if self.m_FRR then delete(self.m_FRR) end
+	if self.m_FRE then delete(self.m_FRE) end
+
 --	destroyElement(self.m_uRocket);
 
 	if(self.m_uAbschuss) then

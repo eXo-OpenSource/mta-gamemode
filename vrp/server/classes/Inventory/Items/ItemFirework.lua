@@ -32,7 +32,7 @@ function ItemFirework:use(player, itemId, bag, place, itemName)
 					return
 				end
 			end
-			player.fireworkCooldown[itemName] = getRealTime()
+			player.fireworkCooldown[itemName] = getRealTime().timestamp
 		end
 
 		local rnd = 0
