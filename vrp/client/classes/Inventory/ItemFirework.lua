@@ -1,5 +1,5 @@
 addEvent("onClientFireworkStart", true)
-addEventHandler("onClientFireworkStart", getLocalPlayer(), function(firework, position, rnd)
+addEventHandler("onClientFireworkStart", root, function(firework, position, rnd)
 	if isElementStreamedIn(source) then
 		local pos   = normaliseVector(position);
 		if firework == "Rakete" then
