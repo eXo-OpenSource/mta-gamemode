@@ -7,6 +7,10 @@
 -- ****************************************************************************
 ItemFirework = inherit(Item)
 
+ItemFirework.Cooldown = { -- in Seconds
+	["Römische Kerzen Batterie"] = 20
+}
+
 function ItemFirework:constructor()
 end
 
@@ -20,11 +24,22 @@ function ItemFirework:use(player, itemId, bag, place, itemName)
 	end
 
 	if player:getInterior() == 0 and player:getDimension() == 0 then
+		if ItemFirework.Cooldown[itemName] then
+			if not player.fireworkCooldown then player.fireworkCooldown = {} end
+			if player.fireworkCooldown[itemName] then
+				if not timestampCoolDown(player.fireworkCooldown[itemName], ItemFirework.Cooldown[itemName]) then
+					player:sendError(_("Du kannst die %s nicht so knapp hintereinander nutzen!", player, itemName))
+					return
+				end
+			end
+			player.fireworkCooldown[itemName] = getRealTime()
+		end
 
 		local rnd = 0
+
 		if itemName == "Raketen Batterie" then rnd = math.random(5, 8)
 		elseif itemName == "Römische Kerze" then rnd = math.random(10, 15)
-		elseif itemName == "Römische Kerzen Batterie" then rnd = math.random(10, 15)
+		elseif itemName == "Römische Kerzen Batterie" then rnd = math.random(7, 12)
 		end
 		triggerClientEvent(root, "onClientFireworkStart", player, itemName, serialiseVector(player:getPosition()), rnd)
 		player:getInventory():removeItem(itemName, 1)
