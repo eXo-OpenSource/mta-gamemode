@@ -138,6 +138,10 @@ end
 
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon)
+	local killer = killer
+	if getElementType(killer) == "vehicle" then 
+		killer = vehicle.controller
+	end
 	if killer and isElement(killer) and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
 	end
@@ -147,7 +151,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 			destroyElement(source.ped_deadDouble)
 		end
 	end
-	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
+	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
 		source:setReviveWeapons()
 
 		local pos = source:getPosition()
@@ -183,7 +187,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 
 		local sourceFaction = source:getFaction()
 
-		if killer and isElement(killer) and sourceFaction and killer:getFaction() then
+		if killer and isElement(killer) and sourceFaction and killer:getFaction() and not killer:isDead() then
 			local killerFaction = killer:getFaction()
 			if sourceFaction.m_Id ~= 4 then
 				if sourceFaction:isStateFaction() and source:isFactionDuty() then
@@ -192,7 +196,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 					end
 				else
 					if killerFaction:isStateFaction() then
-						killer:givePoints(15)
+						outputDebug(killer)
 					end
 				end
 			end
