@@ -1137,6 +1137,14 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "HitSoundBell", state)
 		end
 
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
+		self.m_HitSound:setFont(VRPFont(25))
+		self.m_HitSound:setFontSize(1)
+		self.m_HitSound:setChecked(core:get("Other", "Fireworks", true))
+		self.m_HitSound.onChange = function (state)
+			core:set("Other", "Fireworks", state)
+		end
+
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
 		--	self.m_StartIntro:setFontSize(1)
