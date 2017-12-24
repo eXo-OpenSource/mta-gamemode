@@ -139,8 +139,8 @@ end
 
 function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 	local killer = killer
-	if getElementType(killer) == "vehicle" then 
-		killer = vehicle.controller
+	if isElement(killer) and getElementType(killer) == "vehicle" then 
+		killer = killer.controller
 	end
 	if killer and isElement(killer) and weapon then
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
