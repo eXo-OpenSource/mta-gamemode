@@ -31,19 +31,23 @@ end
 function WheelOfFortune:onClicked()
     --garbage collection
     if self.m_InUse then
-        if not isElement(self.m_InUse) or not  self.m_InUse.isLoggedIn or not self.m_InUse:isLoggedIn() then
+        if not isElement(self.m_InUse) or not self.m_InUse.isLoggedIn or not self.m_InUse:isLoggedIn() then
             self.m_InUse = false
         end
     end
 
     --actual functions
-	if not self.m_InUse then
-		if not client:getInventory():removeItem("Zuckerstange", 1) then
-			return client:sendError(_("Du benötigst eine Zuckerstange um am Glücksrad zu drehen!", client))
-		end
+    if not self.m_InUse then
+        if not client.m_IsUsingWheel then
+            if not client:getInventory():removeItem("Zuckerstange", 1) then
+                return client:sendError(_("Du benötigst eine Zuckerstange um am Glücksrad zu drehen!", client))
+            end
 
-        self.m_InUse = client
-        self:start(client)
+            self.m_InUse = client
+            self:start(client)
+        else
+            client:sendError(_("Du drehst bereits an einem Glücksrad.", client))
+        end
     else
         client:sendWarning(_("Das Glücksrad wird gerade von %s verwendet.", client, self.m_InUse:getName()))
     end
@@ -54,7 +58,7 @@ function WheelOfFortune:start(player)
     local x,y,z=getElementPosition(self.m_WheelObj)
     triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "WheelOfFortunePlaySound", resourceRoot, x, y, z, power*10)
     moveObject(self.m_WheelObj, power*5, x, y, z, 0, math.floor(power/24)*24, 0, "OutQuad")
-
+    player.m_IsUsingWheel = true
     setTimer(function(marker)
         getElementRotation(self.m_WheelObj) --MTA bug, muss bleiben
         local _,ry,_= getElementRotation(self.m_WheelObj)
@@ -63,6 +67,7 @@ function WheelOfFortune:start(player)
         else
             ry=ry+15
         end
+        player.m_IsUsingWheel = nil
 		self:givePrice(player, WheelOfFortune.WinRotations[math.floor((ry)/24) + 1])
 		triggerEvent("onFortuneWheelPlay", player) -- For Quest
         self.m_InUse = false
