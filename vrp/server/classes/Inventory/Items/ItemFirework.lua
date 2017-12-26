@@ -23,6 +23,11 @@ function ItemFirework:use(player, itemId, bag, place, itemName)
 		return
 	end
 
+	if player.vehicle then
+		player:sendError("Du kannst kein Feuerwerk in einem Fahrzeug zünden!")
+		return
+	end
+
 	if player:getInterior() == 0 and player:getDimension() == 0 then
 		if ItemFirework.Cooldown[itemName] then
 			if not player.fireworkCooldown then player.fireworkCooldown = {} end

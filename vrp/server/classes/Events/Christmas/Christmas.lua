@@ -90,14 +90,18 @@ Christmas.ms_Bonus = {
 }
 
 function Christmas:constructor()
-	self.m_QuestManager = QuestManager:new()
+	--self.m_QuestManager = QuestManager:new()
 
 	self.m_BankServerAccount = BankServer.get("event.halloween")
 
-	WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
-	WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
-	WheelOfFortune:new(Vector3(1475.10, -1779.37, 13.6), 0) 
+	--WheelOfFortune:new(Vector3(1479, -1700.3, 14.2), 0) -- in front of tree
+	--WheelOfFortune:new(Vector3(1479, -1692.3, 14.2), 180) -- in back of tree
+	WheelOfFortune:new(Vector3(1475.10, -1779.37, 13.6), 0)
 	WheelOfFortune:new(Vector3(1486.00, -1779.34, 13.6), 0)
+
+
+	createObject(3861, 1485.83, -1794.58, 13.72, 0, 0, 180) --BonusShop (after Event)
+	createObject(3861, 1474.87, -1794.77, 13.72, 0, 0, 180) --Firework Shop
 
 
 	addRemoteEvents{"eventRequestBonusData", "eventBuyBonus"}
