@@ -20,8 +20,8 @@ function ItemFireworkRocket:constructor(pos, pipeBomb, pipeBombSound)
 
 	end
 
-	self.m_FRR              = false; --ItemFireworkRocketSchweif:new(self);
-	self.m_FRE              = false; --ItemFireworkRocketExplosion:new(self);
+	self.m_Tail = false
+	self.m_Explosion = false; --ItemFireworkRocketExplosion:new(self);
 	self.m_bRohrBombe       = pipeBomb;
 
 	self.m_bRohrBombenSound = pipeBombSound;
@@ -47,8 +47,8 @@ function ItemFireworkRocket:constructor(pos, pipeBomb, pipeBombSound)
 end
 
 function ItemFireworkRocket:destructor()
-	if self.m_FRR then delete(self.m_FRR) end
-	if self.m_FRE then delete(self.m_FRE) end
+	if self.m_Tail then delete(self.m_Tail) end
+	if self.m_Explosion then delete(self.m_Explosion) end
 
 --	destroyElement(self.m_uRocket);
 
@@ -64,11 +64,11 @@ function ItemFireworkRocket:render()
 		fxAddSparks(self.m_Position, 0,0, 1, 1, 1)
 	elseif(self.m_iState == 1) then
 		-- Luft
-		self.m_FRR:render();
+		self.m_Tail:render();
 	elseif(self.m_iState == 2) then
 		-- Explosion
-		if(self.m_FRE.render) then
-			self.m_FRE:render();
+		if(self.m_Explosion.render) then
+			self.m_Explosion:render();
 		end
 	end
 end
@@ -77,19 +77,19 @@ function ItemFireworkRocket:launchRocket()
 	self.m_iState = 1;
 
 	if(self.m_bRohrBombe) or (self.m_bRohrBombenSound) then
-		self.m_FRR              = FireworkPipebombTail:new(self);
+		self.m_Tail              = FireworkPipebombTail:new(self);
 	else
-		self.m_FRR              = FireworkRocketTail:new(self);
+		self.m_Tail              = FireworkRocketTail:new(self);
 	end
 end
 
 function ItemFireworkRocket:doExplosion()
 	self.m_iState = 2;
-	if(self.m_FRR) then delete(self.m_FRR) end
+	if(self.m_Tail) then delete(self.m_Tail) end
 	if(self.m_bRohrBombe) then
-		self.m_FRE              = FireworkPipebombExplosion:new(self);
+		self.m_Explosion              = FireworkPipebombExplosion:new(self);
 	else
-		self.m_FRE              = FireworkExplosionSimple:new(self);
+		self.m_Explosion              = FireworkExplosionSimple:new(self);
 
 	end
 

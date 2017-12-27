@@ -11,22 +11,22 @@ function ItemPipeBomb:constructor(pos)
 	setObjectScale(self.m_uAbschuss, 0.3);
 	setElementCollisionsEnabled(self.m_uAbschuss, false);
 
-	self.m_FRR              = false; --ItemPipeBombSchweif:new(self);
-	self.m_FRE              = false; --ItemPipeBombExplosion:new(self);
+	self.m_Tail = false
+	self.m_Explosion = false
 
-	self.m_bLaunched        = false;
-	self.m_iState           = 0; -- am Boden
+	self.m_bLaunched = false;
+	self.m_iState = 0; -- am Boden
 
-	self.m_tblTimer         = {};
-	self.m_timer            = {};
+	self.m_tblTimer = {};
+	self.m_timer = {};
 
 	-- Funktionen --
 
-	self.m_funcRender       = bind(self.render, self)
+	self.m_funcRender = bind(self.render, self)
 
-	self.bindedFunc_launchRocket        = function(...) self:launchRocket() end
-	self.bindedFunc_doExplosion         = function(...) self:doExplosion() end
-	self.bindedFunc_destructor          = function(...) self:destructor() end
+	self.bindedFunc_launchRocket = bind(self.launchRocket, self)
+	self.bindedFunc_doExplosion = bind(self.doExplosion, self)
+	self.bindedFunc_destructor = function(...) delete(self) end
 
 	self:initTimer();
 
@@ -34,8 +34,8 @@ function ItemPipeBomb:constructor(pos)
 end
 
 function ItemPipeBomb:destructor()
-	self.m_FRE:destructor()
-	self.m_FRR:destructor();
+	self.m_Explosion:destructor()
+	self.m_Tail:destructor();
 
 	destroyElement(self.m_uRocket);
 	destroyElement(self.m_uAbschuss, true);
@@ -49,11 +49,11 @@ function ItemPipeBomb:render()
 		fxAddSparks(self.m_Position, 0,0, 1, 1, 1)
 	elseif(self.m_iState == 1) then
 		-- Luft
-		self.m_FRR:render();
+		self.m_Tail:render();
 	elseif(self.m_iState == 2) then
 		-- Explosion
-		if(self.m_FRE.render) then
-			self.m_FRE:render();
+		if(self.m_Explosion.render) then
+			self.m_Explosion:render();
 		end
 	end
 end
@@ -61,14 +61,14 @@ end
 function ItemPipeBomb:launchRocket()
 	self.m_iState = 1;
 
-	self.m_FRR              = FireworkPipebombTail:new(self);
+	self.m_Tail              = FireworkPipebombTail:new(self);
 end
 
 function ItemPipeBomb:doExplosion()
 	self.m_iState = 2;
-	self.m_FRR:destructor();
+	self.m_Tail:destructor();
 
-	self.m_FRE              = FireworkPipebombExplosion:new(self);
+	self.m_Explosion              = FireworkPipebombExplosion:new(self);
 end
 
 function ItemPipeBomb:initTimer()

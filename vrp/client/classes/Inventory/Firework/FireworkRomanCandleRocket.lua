@@ -8,7 +8,7 @@ function FireworkRomanCandleRocket:constructor(pos)
 	setElementFrozen(self.m_uRocket, true);
 	setElementAlpha(self.m_uRocket, 0)
 
-	self.m_FRR              = false; --FireworkRomanCandleRocketSchweif:new(self);
+	self.m_Tail              = false; --FireworkRomanCandleRocketSchweif:new(self);
 
 	self.m_bLaunched        = false;
 	self.m_iState           = 0; -- am Boden
@@ -30,7 +30,7 @@ function FireworkRomanCandleRocket:constructor(pos)
 end
 
 function FireworkRomanCandleRocket:destructor()
-	self.m_FRR:destructor();
+	delete(self.m_Tail)
 
 	destroyElement(self.m_uRocket);
 
@@ -43,14 +43,14 @@ function FireworkRomanCandleRocket:event_render()
 
 	elseif(self.m_iState == 1) then
 		-- Luft
-		self.m_FRR:render();
+		self.m_Tail:render();
 	end
 end
 
 function FireworkRomanCandleRocket:launchRocket()
 	self.m_iState = 1;
 
-	self.m_FRR              = FireworkRomanCandleTail:new(self);
+	self.m_Tail              = FireworkRomanCandleTail:new(self);
 end
 
 function FireworkRomanCandleRocket:initTimer()
