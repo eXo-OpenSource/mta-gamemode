@@ -17,7 +17,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_BankAccountServer = BankServer.get("server.vehicle_shop")
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
-	
+
 	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
 		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
@@ -34,9 +34,9 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_Blip:setDisplayText("Autohaus", BLIP_CATEGORY.Shop)
 	self.m_Blip:setOptionalColor({37, 78, 108})
 	local npcData = split(npc,",")
-	self.m_NPC = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
-	self.m_NPC:setImmortal(true)
-	self.m_NPC:toggleWanteds(true)
+	self.m_Ped = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
+	self.m_Ped:setImmortal(true)
+	self.m_Ped:toggleWanteds(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
