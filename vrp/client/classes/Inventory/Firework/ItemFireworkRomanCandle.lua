@@ -34,7 +34,7 @@ end
 
 
 function ItemFireworkRomanCandle:render()
-	fxAddSparks(self.m_Position, 0,0, 1, 1, 1)
+	fxAddSparks(self.m_Position - Vector3(0, 0, 0.5), 0,0, 1, 1, 1)
 
 	if(self.m_iCur == self.m_iAm) then
 		self:destructor()

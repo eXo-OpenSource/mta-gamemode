@@ -6,10 +6,9 @@ function FireworkRomanCandleTail:constructor(uRocket)
 
 	self.m_uMarker      = false;
 
-	self.m_iHeight      = 0.5;       -- Hoehe
 	self.m_iAlpha       = 255;
 
-	self.m_iDuration    = math.random(1500, 2000);
+	self.m_iDuration    = math.random(2500, 4000);
 
 	self.m_iStartTick   = getTickCount()
 
@@ -37,17 +36,21 @@ function FireworkRomanCandleTail:destructor()
 	if (isElement(self.m_uMarker)) then
 		destroyElement(self.m_uMarker)
 	end
-
+	if (isElement(self.m_uLight)) then
+		destroyElement(self.m_uLight)
+	end
 end
 
 function FireworkRomanCandleTail:render()
 	if(self.b_enabled) then
-		local pos = Vector3(getElementPosition(self.m_uRocket.m_uRocket));
-		local rot = Vector3(getElementRotation(self.m_uRocket.m_uRocket));
+		local pos = self.m_uRocket:getPosition()
+		local rot = Vector3(0, 0, 0);
 
 
 		if(self.m_bSparks) then
 			setElementPosition(self.m_uSparkEffect, pos:getX(), pos:getY(), pos:getZ());
+			setElementPosition(self.m_uMarker, pos:getX(), pos:getY(), pos:getZ());
+			setElementPosition(self.m_uLight, pos:getX(), pos:getY(), pos:getZ());
 			setElementRotation(self.m_uSparkEffect, rot:getX()+90, rot:getY(), rot:getZ());
 		end
 
@@ -64,29 +67,24 @@ function FireworkRomanCandleTail:render()
 			--	self:destructor();
 			end
 			setMarkerColor(self.m_uMarker, self.m_cLightColor[1], self.m_cLightColor[2], self.m_cLightColor[3], self.m_Alpha)
+			setLightRadius(self.m_uLight, self.m_Alpha/10)
 		end
 	end
 end
 
 function FireworkRomanCandleTail:launch()
 
-	local x, y, z = getElementPosition(self.m_uRocket.m_uRocket);
+	--local x, y, z = getElementPosition(self.m_uRocket.m_uRocket);
 
 	if(self.m_bSparks) then
-		self.m_uSparkEffect     = createEffect("prt_spark", getElementPosition(self.m_uRocket.m_uRocket));
+		self.m_uSparkEffect     = createEffect("prt_spark", self.m_uRocket:getPosition());
 		setEffectSpeed(self.m_uSparkEffect, 1)
 		setElementRotation(self.m_uSparkEffect, 0, -90, 0);
 	end
-
 	if(self.m_bLight) then
-		local x, y, z = getElementPosition(self.m_uRocket.m_uRocket)
-		self.m_uMarker = createMarker(x, y, z, "corona", math.random(10, 15)/10, unpack(self.m_cLightColor));
-		attachElements(self.m_uMarker, self.m_uRocket.m_uRocket);
+		self.m_uMarker = createMarker(self.m_uRocket:getPosition(), "corona", math.random(10, 15)/10, unpack(self.m_cLightColor));
+		self.m_uLight = createLight(0, self.m_uRocket:getPosition(), math.random(10, 15)/10, unpack(self.m_cLightColor));
 	end
-
-	setElementPosition(self.m_uRocket.m_uRocket, x, y, z+1)
-	setElementFrozen(self.m_uRocket.m_uRocket, false);
-	setElementVelocity(self.m_uRocket.m_uRocket, (math.random(-10, 10)/100), (math.random(-10, 10)/100), self.m_iHeight)
 
 	self.m_uRocket:playSound("launch_motar_"..math.random(1, 2)..".ogg", 150, true);
 end
