@@ -91,7 +91,7 @@ function HUDSpeedo:draw()
 	--dxSetBlendMode("add")
 	-- draw the main speedo
 	local isPlane = false
-	if vehicleType ~= VehicleType.Plane then
+	if vehicleType ~= VehicleType.Plane or vehicle:getModel() == 539 then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	else
 		isPlane = true
@@ -118,13 +118,13 @@ function HUDSpeedo:draw()
 			if not self:allOccupantsBuckeled() and getVehicleEngineState(vehicle) then
 				if getTickCount()%1000 > 500 then
 					dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Red)
-				end	
+				end
 			elseif getVehicleEngineState(vehicle) then
 				dxDrawImage(drawX + 128 - 48, drawY + 120, 24, 24, "files/images/Speedo/seatbelt.png", 0, 0, 0, Color.Green)
 			end
 		end
-	
-		if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then	
+
+		if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 		end
 
