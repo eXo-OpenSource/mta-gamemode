@@ -46,6 +46,8 @@ function ItemFirework:use(player, itemId, bag, place, itemName)
 		elseif itemName == "Römische Kerze" then rnd = math.random(10, 15)
 		elseif itemName == "Römische Kerzen Batterie" then rnd = math.random(7, 12)
 		end
+		player:meChat(true, _("zündet eine/n %s!", player, itemName))
+
 		triggerClientEvent(root, "onClientFireworkStart", player, itemName, serialiseVector(player:getPosition()), rnd)
 		player:getInventory():removeItem(itemName, 1)
 	else
