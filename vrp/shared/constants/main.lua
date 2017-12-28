@@ -560,6 +560,11 @@ WEAPON_NAMES = {
 	[46] = "Fallschrirm"
 }
 
+WEAPON_CLIPS = {
+	[25] = 6,
+	[33] = 5,
+	[34] = 4
+}
 
 MIN_WEAPON_LEVELS = {
 	[0] = 0, -- Faust

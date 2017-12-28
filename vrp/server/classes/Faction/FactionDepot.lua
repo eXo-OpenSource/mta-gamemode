@@ -141,6 +141,8 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				local clipAmmo = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
+				if WEAPON_CLIPS[weaponID] then clipAmmo = WEAPON_CLIPS[weaponID] end
+
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
 						slot = getSlotFromWeapon(weaponID)
@@ -176,9 +178,6 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 							if bIsStorageWeapon then
 								ammoStorage[weaponID] = ammoStorage[weaponID]+amount*clipAmmo
 							end
-							if weaponID == 25 then amount = amount * 6 end
-							if weaponID == 33 then amount = amount * 5 end
-							if weaponID == 34 then amount = amount * 4 end
 							giveWeapon(player, weaponID, amount*clipAmmo)
 							outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
 						else
