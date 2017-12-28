@@ -43,6 +43,7 @@ BankAccountTypes = {
   Shop = 6;
   House = 7;
   Group = 8;
+  VehicleShop = 9;
 }
 
 AFK_POSITIONS = {
