@@ -19,7 +19,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
 
 	if not self.m_BankAccount then
-		self.m_BankAccount = BankAccount.create(BankAccountTypes.Shop, self.m_Id)
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.VehicleShop, self.m_Id)
 		self.m_BankAccountServer:transferMoney(self.m_BankAccount, self.m_Money, "Migration", "Shop", "Migration")
 		self.m_Money = 0
 		self.m_BankAccount:save()
@@ -30,9 +30,11 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local markerPos = split(marker,",")
 	self.m_Marker = createMarker(markerPos[1], markerPos[2], markerPos[3]+0.5, "cylinder", 1, 255, 255, 0, 200)
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onMarkerHit, self))
+
 	self.m_Blip = Blip:new("CarShop.png", markerPos[1], markerPos[2],root,400)
 	self.m_Blip:setDisplayText("Autohaus", BLIP_CATEGORY.Shop)
 	self.m_Blip:setOptionalColor({37, 78, 108})
+
 	local npcData = split(npc,",")
 	self.m_Ped = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
 	self.m_Ped:setImmortal(true)
@@ -41,6 +43,13 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
 	self.m_NonCollissionCol:setData("NonCollidingSphere", true, true)
+
+	self.m_Ped:setData("clickable",true,true)
+	addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+		if button =="left" and state == "down" then
+			self:onMarkerHit(player, true)
+		end
+	end)
 end
 
 function VehicleShop:getName()

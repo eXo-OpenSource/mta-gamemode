@@ -194,7 +194,7 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 		end
 	end
 
-	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
+	if not targetObject or (not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney) then
 		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
 	end
 	

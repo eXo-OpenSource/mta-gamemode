@@ -982,7 +982,8 @@ function Player:payDay()
 		self:setSTVO(self:getSTVO() - 1)
 	end
 
-	self:givePoints(points_total)
+	self:givePoints(points_total, "Payday", true, true)
+	self:addPaydayText("info", _("Du hast %s Punkte bekommen.", self, points_total))
 
 	if EVENT_EASTER then
 		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
