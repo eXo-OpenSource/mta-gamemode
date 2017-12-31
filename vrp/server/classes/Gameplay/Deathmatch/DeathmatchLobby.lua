@@ -109,12 +109,6 @@ function DeathmatchLobby:isValidWeapon(weapon)
 	return false
 end
 
-function DeathmatchLobby:refreshGUI()
-	for player, data in pairs(self:getPlayers()) do
-		player:triggerEvent("deathmatchRefreshGUI", self.m_Players)
-	end
-end
-
 function DeathmatchLobby:increaseKill(player, weapon)
 	if not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Kills"] = self.m_Players[player]["Kills"] + 1
@@ -128,22 +122,37 @@ function DeathmatchLobby:increaseDead(player, weapon)
 end
 
 function DeathmatchLobby:addPlayer(player)
-	self.m_Players[player] = {
-		["Kills"] = 0,
-		["Deaths"] = 0
-	}
 	player:createStorage(true)
 	player:setData("isInDeathMatch",true)
-	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
 	end
 
-	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
-	self:refreshGUI()
+end
+
+function DeathmatchLobby:removePlayer(player, isServerStop)
+	if isElement(player) then
+		player:restoreStorage()
+		player:setDimension(0)
+		player:setInterior(0)
+		player:setPosition(1325.21, -1559.48, 13.54)
+		player:setData("isInDeathMatch",false)
+		player:setHeadless(false)
+		player:setAlpha(255)
+		player.deathmatchLobby = nil
+
+		if not isServerStop then
+			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
+			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})
+		end
+	end
+
+	if self.m_Type == DeathmatchLobby.Types[2] and self:getPlayerCount() == 0 then
+		delete(self)
+	end
 end
 
 function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
@@ -182,33 +191,6 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 	end
 end
 
-function DeathmatchLobby:removePlayer(player, isServerStop)
-	self.m_Players[player] = nil
-	if isElement(player) then
-		player:restoreStorage()
-		player:setDimension(0)
-		player:setInterior(0)
-		player:setPosition(1325.21, -1559.48, 13.54)
-		player:setData("isInDeathMatch",false)
-		player:setHeadless(false)
-		player:setAlpha(255)
-		player.deathmatchLobby = nil
-
-		if not isServerStop then
-			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
-			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})
-			player:triggerEvent("deathmatchCloseGUI")
-		end
-	end
-
-	if self.m_Type == DeathmatchLobby.Types[2] and self:getPlayerCount() == 0 then
-		delete(self)
-	end
-
-	if not isServerStop then
-		self:refreshGUI()
-	end
-end
 
 function DeathmatchLobby:onColshapeLeave(player, dim)
 	if dim and player.deathmatchLobby then
