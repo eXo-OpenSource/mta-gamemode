@@ -99,7 +99,7 @@ addEventHandler("onDebugMessage", root,
 				local info = debug.getinfo(traceLevel, "Sl")
 				if not info then break end
 				if info.what ~= "C" and info.source then -- skip c functions as they don't have info
-					if info.source:find("tail call") then break end -- break if the stack is in a loop
+					--if info.source:find("tail call") then break end -- break if the stack is in a loop
 					if not info.source:find("classlib.lua") then -- skip classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
 						if trace[1][1] ~= info.source:gsub("@", "") then -- for some reason messages get duplicated, but we need to collect the message from file, line as it skips it sometimes in traceback
 							table.insert(trace, {info.source, info.currentline or "not specified"})

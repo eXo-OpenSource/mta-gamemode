@@ -17,10 +17,9 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 	self.m_Hover  = false
 end
 
-function GUIElement:destructor()
---	outputDebug("destructed element", DxHelper:getSingleton():getElementClassName(self), self.getText and self:getText(), self.m_TooltipText)
+function GUIElement:destructor(...)
 	self:updateTooltip(false) 
-	DxElement.destructor(self)
+	DxElement.destructor(self, ...)
 end
 
 function GUIElement:performChecks(mouse1, mouse2, cx, cy)
