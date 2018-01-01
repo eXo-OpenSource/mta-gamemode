@@ -130,10 +130,9 @@ function GroupGUI:constructor()
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 	self.m_LeaderTab = false
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog", "groupRetriveBusinessInfo"}
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetriveBusinessInfo"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 	addEventHandler("groupRetriveBusinessInfo", root, bind(self.Event_retriveBusinessInfo, self))
 end
