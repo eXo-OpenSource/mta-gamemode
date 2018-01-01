@@ -30,18 +30,14 @@ end
 
 function LogGUI:updateLog()
 	self.m_Log = {}
-
 	local options = {}
 	fetchRemote(self.m_Url, options,
 			function(responseData, responseInfo)
-				outputConsole(responseData)
 				self.m_Log = fromJSON(responseData)
-				ShortMessage:new(inspect(self.m_Log))
+				self.m_Log = table.setIndexToInteger(self.m_Log)
 				self:refreshGrid()
 			end
 		)
-
-
 end
 
 function LogGUI:addBackButton(callBack)
@@ -55,8 +51,6 @@ function LogGUI:refreshGrid()
 	self.m_LogGrid:clear()
 	local item
 	for i, row in ipairs(self.m_Log) do
-		outputConsole(inspect(row))
-		outputChatBox(i)
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
 
 		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
