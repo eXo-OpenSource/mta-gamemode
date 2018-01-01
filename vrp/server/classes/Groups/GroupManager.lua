@@ -128,7 +128,7 @@ function GroupManager:sendInfosToClient(player)
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		player:triggerEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
