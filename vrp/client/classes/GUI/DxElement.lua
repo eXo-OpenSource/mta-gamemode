@@ -57,9 +57,11 @@ end
 
 function DxElement:destructor(keepParent)
 	if self.onHide then self:onHide() end
+	--outputDebug("called destructor for ", DxHelper:getSingleton():getElementClassName(self) or "", self.getText and self:getText() or "")
 
 	-- Delete the children (--> call their destructor)
 	for k, v in ipairs(self.m_Children) do
+		--outputDebug("called child destructor of ", DxHelper:getSingleton():getElementClassName(v) or "", v.getText and v:getText() or "")
 		delete(v, true)
 	end
 

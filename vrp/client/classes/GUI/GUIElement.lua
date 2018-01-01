@@ -18,9 +18,8 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 end
 
 function GUIElement:destructor()
-	if self.m_TooltipActive then
-		self:updateTooltip() 
-	end
+--	outputDebug("destructed element", DxHelper:getSingleton():getElementClassName(self), self.getText and self:getText(), self.m_TooltipText)
+	self:updateTooltip(false) 
 	DxElement.destructor(self)
 end
 
