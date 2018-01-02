@@ -17,6 +17,15 @@ function Ammunation:constructor(id, name, position, rotation, typeData, dimensio
 	self:loadWeapons()
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onAmmunationMarkerHit, self))
+
+	if self.m_Ped then
+		self.m_Ped:setData("clickable",true,true)
+		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+			if button =="left" and state == "down" then
+				self:onAmmunationMarkerHit(player, true)
+			end
+		end)
+	end
 end
 
 function Ammunation:loadWeapons()

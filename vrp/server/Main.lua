@@ -99,7 +99,7 @@ addEventHandler("onDebugMessage", root,
 				local info = debug.getinfo(traceLevel, "Sl")
 				if not info then break end
 				if info.what ~= "C" and info.source then -- skip c functions as they don't have info
-					if info.source:find("tail call") then break end -- break if the stack is in a loop
+					--if info.source:find("tail call") then break end -- break if the stack is in a loop
 					if not info.source:find("classlib.lua") then -- skip classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
 						if trace[1][1] ~= info.source:gsub("@", "") then -- for some reason messages get duplicated, but we need to collect the message from file, line as it skips it sometimes in traceback
 							table.insert(trace, {info.source, info.currentline or "not specified"})
@@ -113,3 +113,61 @@ addEventHandler("onDebugMessage", root,
 		end
 	end
 )
+
+
+-- Debug performance view
+
+
+local function sendPerformanceOverview(percent, tfinish)
+	if GIT_BRANCH == "release/production" then
+		local json = toJSON({
+			color = "3ABAF2",
+			pretext = ("lua timing is ~%s%%, trigger at %s%%"):format(percent, PERFORMANCE_HOOK_TRIGGER_PERCENT),
+			fields = {
+				{
+					title = "full timing overview (lua timing option d)",
+					value = tfinish,
+					short = false
+				},
+			},
+		}, true)
+		json = json:sub(2, #json-1)
+		local status = callRemote('https://exo-reallife.de/slack_performance.php', function (...) end, json)
+		if status then
+			outputDebugString("[Performance-Listener] Reported Performance Overview to Slack!", 3)
+		else
+			outputDebugString("[Performance-Listener] Reporting Performance Overview to Slack failed!", 3)
+		end
+	else
+		outputDebugString(("performance alert, currently max. %s%% on lua timing, details in server console"):format(percent), 2)
+		outputServerLog(tfinish)
+	end
+end
+
+
+local startTime = getTickCount()
+local function startPerformanceRecording()
+	setTimer(function()
+		if getTickCount() - startTime > 60000 then -- let the server start up at least 60 seconds
+			local send = false
+			local highestPercent = 0
+			local tfinish = ""
+			local __, f = getPerformanceStats("Lua timing", "d")
+			for i, data in ipairs(f) do
+				local percent = data[2]:gsub("%%", "")
+				if tonumber(percent) and tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT then 
+					send = true 
+					highestPercent = (tonumber(percent) > highestPercent and tonumber(percent) or highestPercent)
+				end
+				if data[2] ~= "-" then
+					tfinish = tfinish .. ("\n%s - %s (%s s)"):format(data[2], data[1], data[3])
+				end
+			end
+			if send then
+				sendPerformanceOverview(highestPercent, tfinish)
+			end
+		end
+	end, 5000, 0)
+
+end
+startPerformanceRecording()

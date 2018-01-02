@@ -951,7 +951,7 @@ function Player:payDay()
 				outgoing_house = outgoing_house + rent
 				temp_bank_money = temp_bank_money - rent
 				points_total = points_total + 1
-				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "Vehicle", "Tax", {silent = true})
+				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "House", "Rent", {silent = true})
 				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
@@ -982,7 +982,8 @@ function Player:payDay()
 		self:setSTVO(self:getSTVO() - 1)
 	end
 
-	self:givePoints(points_total)
+	self:givePoints(points_total, "Payday", true, true)
+	self:addPaydayText("info", _("Du hast %s Punkte bekommen.", self, points_total))
 
 	if EVENT_EASTER then
 		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
@@ -1190,12 +1191,12 @@ function Player:giveCombinedReward(reason, tblReward)
 				local bank = amount.bank and " (Konto)" or ""
 
 				if amount.mode == "give" then
-					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, reason, amount.cagegory, amount.subcategory)
+					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, reason, amount.category, amount.subcategory)
 				else
 					if amount.bank then
-						self:transferBankMoney(amount.toOrFrom, amount.amount, reason, amount.cagegory, amount.subcategory, {silent = true})
+						self:transferBankMoney(amount.toOrFrom, amount.amount, reason, amount.category, amount.subcategory, {silent = true})
 					else
-						self:transferMoney(amount.toOrFrom, amount.amount, reason, amount.cagegory, amount.subcategory, {silent = true})
+						self:transferMoney(amount.toOrFrom, amount.amount, reason, amount.category, amount.subcategory, {silent = true})
 					end
 				end
 

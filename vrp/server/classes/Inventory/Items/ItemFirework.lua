@@ -8,7 +8,12 @@
 ItemFirework = inherit(Item)
 
 ItemFirework.Cooldown = { -- in Seconds
-	["Römische Kerzen Batterie"] = 20
+	["Römische Kerzen Batterie"] = 20,
+	["Raketen Batterie"] = 20,
+	["Rakete"] = 1,
+	["Römische Kerze"] = 5,
+	["Rohrbombe"] = 5,
+	["Kugelbombe"] = 5,
 }
 
 function ItemFirework:constructor()

@@ -13,14 +13,14 @@ function FireworkPipebombBatteryRocket:constructor(pos)
 	setObjectScale(self.m_uAbschuss, 0.3);
 	setElementCollisionsEnabled(self.m_uAbschuss, false);
 
-	self.m_FRR              = false; --FireworkPipebombBatteryRocketSchweif:new(self);
-	self.m_FRE              = false; --FireworkPipebombBatteryRocketExplosion:new(self);
+	self.m_Tail = false
+	self.m_Explosion = false
 
-	self.m_bLaunched        = false;
-	self.m_iState           = 0; -- am Boden
+	self.m_bLaunched = false;
+	self.m_iState = 0; -- am Boden
 
-	self.m_tblTimer         = {};
-	self.m_timer            = {};
+	self.m_tblTimer = {};
+	self.m_timer = {};
 
 	-- Funktionen --
 
@@ -37,8 +37,8 @@ function FireworkPipebombBatteryRocket:constructor(pos)
 end
 
 function FireworkPipebombBatteryRocket:destructor()
-	delete(self.m_FRE)
-	delete(self.m_FRR)
+	delete(self.m_Explosion)
+	delete(self.m_Tail)
 
 	destroyElement(self.m_uRocket);
 	destroyElement(self.m_uAbschuss, true);
@@ -52,11 +52,11 @@ function FireworkPipebombBatteryRocket:render()
 		fxAddSparks(self.m_Position.x, self.m_Position.y, self.m_Position.z-0.5, 0,0, 1, 1, 1)
 	elseif(self.m_iState == 1) then
 		-- Luft
-		self.m_FRR:render();
+		self.m_Tail:render();
 	elseif(self.m_iState == 2) then
 		-- Explosion
-		if(self.m_FRE.render) then
-			self.m_FRE:render();
+		if(self.m_Explosion.render) then
+			self.m_Explosion:render();
 		end
 	end
 end
@@ -64,14 +64,14 @@ end
 function FireworkPipebombBatteryRocket:launchRocket()
 	self.m_iState = 1;
 
-	self.m_FRR              = FireworkDynamicRocketTail:new(self);
+	self.m_Tail = FireworkDynamicRocketTail:new(self);
 end
 
 function FireworkPipebombBatteryRocket:doExplosion()
 	self.m_iState = 2;
-	self.m_FRR:destructor();
+	delete(self.m_Tail)
 
-	self.m_FRE              = FireworkExplosionSimple:new(self);
+	self.m_Explosion = FireworkExplosionSimple:new(self);
 end
 
 function FireworkPipebombBatteryRocket:initTimer()

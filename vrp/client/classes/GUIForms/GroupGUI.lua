@@ -130,10 +130,9 @@ function GroupGUI:constructor()
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 	self.m_LeaderTab = false
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog", "groupRetriveBusinessInfo"}
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetriveBusinessInfo"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 	addEventHandler("groupRetriveBusinessInfo", root, bind(self.Event_retriveBusinessInfo, self))
 end
@@ -152,24 +151,22 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabBusiness.TabIndex then
 		triggerServerEvent("groupRequestBusinessInfo", root)
 	elseif tabId == self.m_TabLogs.TabIndex then
-		triggerServerEvent("groupRequestLog", root)
+		local url = ("https://exo-reallife.de/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
+		if not self.m_LogGUI then
+			self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
+		else
+			self.m_LogGUI:updateLog()
+		end
 	else
 		triggerServerEvent("groupRequestInfo", root)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveLog(players, logs)
-	if not self.m_LogGUI then
-		self.m_LogGUI = LogGUI:new(self.m_TabLogs, logs, players)
-	else
-		self.m_LogGUI:updateLog(players, logs)
-	end
-end
-
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
 	self:adjustGroupTab(rank or false)
 
-	if name then
+	if id then
+		self.m_Id = id
 		local karma = math.floor(karma)
 		local x, y = self.m_GroupsNameLabel:getPosition()
 		self.m_TuningEnabled = tuningEnabled

@@ -24,11 +24,6 @@ function PayNSpray:constructor(x, y, z, garageId)
 				if vehicle.m_IsAutoLesson then
 					return hitElement:sendError(_("Du kannst dieses Fahrzeug nicht reparieren!", hitElement))
 				end
-				if vehicle:getHealth() > 999 then
-					hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
-					return
-				end
-
 				local costs = (100 - vehicle:getHealthInPercent()) * 5 -- max. 500$, maybe improve this later to get higher costs based on maxHealth (armor)
 				if hitElement:getBankMoney() < costs then
 					hitElement:sendError(_("Du benötigst %d$ auf deinem Bankkonto um dein Fahrzeug zu reparieren", hitElement, costs))
