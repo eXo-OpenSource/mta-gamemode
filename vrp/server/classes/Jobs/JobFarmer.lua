@@ -214,7 +214,7 @@ function JobFarmer:createPlant (colId, colPos, vehicle)
 	local colX, colY, colZ = unpack(colPos)
 	if self.m_Plants[colId] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[colId].isFarmAble and vehicle == client.jobVehicle then
 		local pos = vehicle.position + vehicle.matrix.forward * 2
-		local distance = getDistanceBetweenPoints3D(pos, colPos)
+		local distance = getDistanceBetweenPoints3D(pos, colX, colY, colZ)
 		if distance > 4 then return end
 		destroyElement (self.m_Plants[colId])
 		self.m_Plants[colId] = nil
