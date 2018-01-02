@@ -15,11 +15,10 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
-	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
 	addEventHandler("factionWithdraw", root, bind(self.Event_factionWithdraw, self))
@@ -96,13 +95,6 @@ end
 
 function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
-end
-
-function FactionManager:Event_factionRequestLog()
-	local faction = client:getFaction()
-	if faction then
-		triggerLatentClientEvent(client, "factionRetrieveLog", 50000, false, client, faction:getPlayers(), faction:getLog())
-	end
 end
 
 function FactionManager:sendInfosToClient(client)
