@@ -14,6 +14,7 @@ import argparse
 # Instantiate the parser
 parser = argparse.ArgumentParser()
 parser.add_argument('--no_files', action='store_true')
+parser.add_argument('--branch')
 args = parser.parse_args()
 
 start = time.time()
@@ -24,7 +25,7 @@ if platform.system() == "Windows":
 	compiler_length = 18
 rootdir = "vrp/"
 outdir = "vrp_build/"
-branch = sys.argv[1] if len(sys.argv) > 1 else ""
+branch = args.branch
 includeFiles = not args.no_files
 externalFiles = False
 	
