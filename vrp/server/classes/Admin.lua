@@ -602,6 +602,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 					end
 				end
 				admin:triggerEvent("stopCenteredFreecam")
+				admin:triggerEvent("stopWeaponRecorder")
 				self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 				unbindKey(admin, "space", "down")
 
@@ -630,6 +631,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin:setDimension(target.dimension)
 
 		admin:triggerEvent("startCenteredFreecam", target, 100, true)
+		admin:triggerEvent("startWeaponRecorder")
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)

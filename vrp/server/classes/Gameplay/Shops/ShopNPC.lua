@@ -17,7 +17,7 @@ end
 
 addEventHandler("onPlayerTarget", root,
 function(targettedElement)
-	if isElement(targettedElement) and getElementType(targettedElement) == "ped" then
+	if isElement(targettedElement) and getElementType(targettedElement) == "ped" and instanceof(targettedElement, ShopNPC) then
 		if not targettedElement.m_InTarget and source:getWeapon() ~= 0 then
 			targettedElement:setAnimation("ped", "handsup", -1, false)
 			targettedElement.m_InTarget = true

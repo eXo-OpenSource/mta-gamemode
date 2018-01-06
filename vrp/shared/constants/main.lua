@@ -17,8 +17,10 @@ MAX_WANTED_LEVEL = 12
 -- EVENTS:
 EVENT_EASTER = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = true
-FIREWORK_ENABLED = true
+EVENT_CHRISTMAS = false
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
+FIREWORK_ENABLED = true -- can users use firework ?
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`? 
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar

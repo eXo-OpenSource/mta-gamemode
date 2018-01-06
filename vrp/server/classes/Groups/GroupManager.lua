@@ -114,13 +114,13 @@ end
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
-	if group then
+	if group then --use triggerLatentEvent to improve serverside performance 
 		local vehicles = {}
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 
-		player:triggerEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
