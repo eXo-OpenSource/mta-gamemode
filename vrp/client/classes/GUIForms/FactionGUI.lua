@@ -88,9 +88,8 @@ function FactionGUI:constructor()
 
 	self.m_TabDiplomacy = self.m_TabPanel:addTab(_"Diplomatie")
 
-	addRemoteEvents{"factionRetrieveInfo", "factionRetrieveLog", "gangwarLoadArea", "factionRetrieveDiplomacy"}
+	addRemoteEvents{"factionRetrieveInfo", "gangwarLoadArea", "factionRetrieveDiplomacy"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
-	addEventHandler("factionRetrieveLog", root, bind(self.Event_factionRetrieveLog, self))
 	addEventHandler("factionRetrieveDiplomacy", root, bind(self.Event_retrieveDiplomacy, self))
 	addEventHandler("gangwarLoadArea", root, bind(self.Event_gangwarLoadArea, self))
 end
@@ -116,12 +115,6 @@ function FactionGUI:TabPanel_TabChanged(tabId)
 	else
 		triggerServerEvent("factionRequestInfo", root)
 	end
-end
-
-function FactionGUI:Event_factionRetrieveLog(players, logs)
-	if self.m_LogGUI then delete(self.m_LogGUI) end
-	self.m_LogGUI = LogGUI:new(nil, logs, players)
-	self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 end
 
 function FactionGUI:addLeaderTab()
@@ -627,5 +620,7 @@ end
 
 function FactionGUI:ShowLogs()
 	self:close()
-	triggerServerEvent("factionRequestLog", root)
+	local url = ("https://exo-reallife.de/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("faction", self.m_Id)
+	self.m_LogGUI = LogGUI:new(nil, url)
+	self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 end

@@ -22,7 +22,7 @@ build_app_job:
   script:
     - 'echo "GIT_VERSION=\"$(git rev-parse HEAD)\" ; GIT_BRANCH=\"$CI_BUILD_REF_NAME\"" >> vrp/buildinfo.lua'
     - python3 build/lint.py
-    - python3 build/buildscript.py $CI_BUILD_REF_NAME
+    - python3 build/buildscript.py --branch $CI_BUILD_REF_NAME
     - python3 build/packAssets.py
     - ./build/make_archives.sh
   artifacts:

@@ -12,11 +12,10 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
-	addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
 	addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
 	addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
 	addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
@@ -71,13 +70,6 @@ end
 
 function CompanyManager:removeRef(ref)
 	CompanyManager.Map[ref:getId()] = nil
-end
-
-function CompanyManager:Event_companyRequestLog()
-    local company = client:getCompany()
-	if company then
-		client:triggerEvent("companyRetrieveLog", company:getPlayers(), company:getLog())
-	end
 end
 
 function CompanyManager:Event_companyRequestInfo()

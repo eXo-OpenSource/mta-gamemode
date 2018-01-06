@@ -17,6 +17,15 @@ function GasStationShop:constructor(id, name, position, rotation, typeData, dime
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onGasStationMarkerHit, self))
 	end
 
+	if self.m_Ped then
+		self.m_Ped:setData("clickable",true,true)
+		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+			if button =="left" and state == "down" then
+				self:onGasStationMarkerHit(player, true)
+			end
+		end)
+	end
+
 	if GasStationManager.Shops[self.m_Name] then
 		GasStationManager.Shops[self.m_Name]:addShopRef(self)
 		self.m_GasBlip = Blip:new("Fuelstation.png", position.x, position.y, root, 300):setDisplayText("Tankstelle", BLIP_CATEGORY.VehicleMaintenance):setOptionalColor({0, 150, 136})

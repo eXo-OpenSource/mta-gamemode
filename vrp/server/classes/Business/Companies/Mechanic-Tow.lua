@@ -278,7 +278,7 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 					end
 					source:destroy()
 					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
-					self.m_BankAccountServer:transferMoney(drive, 200, "Fahrzeug-Wrack", "Company", "Towed")
+					self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
 				end
 			else
 				driver:sendWarning(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))

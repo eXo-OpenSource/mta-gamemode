@@ -161,9 +161,10 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 end
 
 function GUIScrollableArea:onInternalMouseWheelUp()
+	local scroll_dist = getKeyState("lshift") and SCROLL_DISTANCE*2 or SCROLL_DISTANCE
 	if self.m_ScrollY < 0 then
-		local diff = SCROLL_DISTANCE
-		if -self.m_ScrollY < SCROLL_DISTANCE then
+		local diff = scroll_dist
+		if -self.m_ScrollY < scroll_dist then
 			diff = -self.m_ScrollY
 		end
 
@@ -172,15 +173,16 @@ function GUIScrollableArea:onInternalMouseWheelUp()
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
+	local scroll_dist = getKeyState("lshift") and SCROLL_DISTANCE*2 or SCROLL_DISTANCE
 	local diff = self.m_DocumentHeight - self.m_Height + self.m_ScrollY
 	if diff <= 0 then
 		return
 	end
 
-	if diff >= SCROLL_DISTANCE then
-		diff = SCROLL_DISTANCE
+	if diff >= scroll_dist then
+		diff = scroll_dist
 	else
-		diff = diff % SCROLL_DISTANCE
+		diff = diff % scroll_dist
 	end
 
 	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - diff)

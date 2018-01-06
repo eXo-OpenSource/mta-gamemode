@@ -174,7 +174,15 @@ SHOP_TYPES = {
 		["Ped"] = {205, Vector3(1472.5, -1675, 14.75), 200},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
-		["disabled"] = not EVENT_CHRISTMAS
+		["disabled"] = true--not EVENT_CHRISTMAS
+	},
+	[25] = {
+		["Name"] = "Feuerwerks-Shop",
+		["Marker"] = Vector3(1485.77, -1792.85, 12.7),
+		["Ped"] = {32, Vector3(1485.78, -1794.96, 13.55), 0},
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Class"] = ItemShop,
+		["disabled"] = not FIREWORK_ENABLED
 	}
 
 }
@@ -238,6 +246,15 @@ SHOP_ITEMS = {
 		["Shot"] = 20,
 		["Lebkuchen"] = 15,
 		["Wuerstchen"] = 25,
+	},
+	["Feuerwerks-Shop"] = {
+		["Rakete"] = 100,
+		["Rohrbombe"] = 100,
+		["Raketen Batterie"] = 200,
+		["Römische Kerze"] = 150,
+		["Römische Kerzen Batterie"] = 250,
+		["Kugelbombe"] = 100,
+		["Böller"] = 50,
 	}
 }
 

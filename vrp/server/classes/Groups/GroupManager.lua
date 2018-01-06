@@ -19,10 +19,9 @@ function GroupManager:constructor()
 	GlobalTimer:getSingleton():registerEvent(bind(self.payDay, self), "Group Payday", nil, nil, 00) -- Every Hour
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
-	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
 	addEventHandler("groupQuit", root, bind(self.Event_Quit, self))
 	addEventHandler("groupDelete", root, bind(self.Event_Delete, self))
@@ -112,13 +111,6 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
-function GroupManager:Event_RequestLog()
-	local group = client:getGroup()
-	if group then
-		client:triggerEvent("groupRetrieveLog", group:getPlayerNamesFromLog(), group:getLog())
-	end
-end
-
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
@@ -128,7 +120,7 @@ function GroupManager:sendInfosToClient(player)
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		player:triggerEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")

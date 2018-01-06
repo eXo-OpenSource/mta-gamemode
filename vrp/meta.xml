@@ -140,6 +140,7 @@
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 
 	<!-- wearables -->
 	<script src="server/classes/Inventory/Items/wearables/WearableManager.lua" type="server"/>
@@ -473,6 +474,7 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
+	<script src="client/classes/WeaponRecorder.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -557,8 +559,27 @@
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemFirework.lua" type="client"/>
 
 	<script src="client/classes/Inventory/Wearable/WearableHelmet.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRocket.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemPipeBomb.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkBattery.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRomanCandle.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRomanCandleBattery.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkGroundShell.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkBanger.lua" type="client"/>
+
+
+	<script src="client/classes/Inventory/Firework/FireworkExplosionSimple.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRocketTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombExplosion.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombBatteryRocket.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkDynamicRocketTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRomanCandleTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRomanCandleRocket.lua" type="client"/>
+
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -1573,6 +1594,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -1745,6 +1767,24 @@
 	<vrpfile src="files/audio/GoJump/average.wav" />
 	<vrpfile src="files/audio/GoJump/highscore.wav" />
 
+	<vrpfile src="files/audio/Firework/explode_firecracker_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_firecracker_2.ogg" />
+	<vrpfile src="files/audio/Firework/explode_firecracker_3.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_2.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_3.ogg" />
+	<vrpfile src="files/audio/Firework/explode_rocket_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_rocket_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_3.ogg" />
+	<vrpfile src="files/audio/Firework/launch_motar_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_motar_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_3.ogg" />
+
 	<!-- 2Cars -->
 	<vrpfile src="files/audio/2Cars/die1.mp3"/>
 	<vrpfile src="files/audio/2Cars/die2.mp3"/>
@@ -1873,6 +1913,9 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/taser.txd"/>
 	<vrpfile src="files/models/taser.dff"/>
+	<vrpfile src="files/models/firework.col"/>
+	<vrpfile src="files/models/firework.dff"/>
+	<vrpfile src="files/models/firework.txd"/>
 
 	<!--Buildings-->
 	<vrpfile src="files/models/buildings/ammunation.col" />

@@ -1,6 +1,7 @@
 Christmas = inherit(Singleton)
 
 function Christmas:constructor()
+	--[[
 	self.m_QuestManager = QuestManager:new()
 
 	self.m_Music = playSound3D("http://exo-reallife.de/ingame/JingleBells.mp3",1479.16, -1697.60, 14.05 , true)
@@ -27,19 +28,7 @@ function Christmas:constructor()
 	QuestPackageFind.togglePackages(false)
 
 	--Bonus Ped
-	local ped = Ped.create(221, Vector3(1488.31, -1707.28, 14.05), 90)
-	ped:setData("NPC:Immortal", true)
-	ped:setFrozen(true)
-	ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Prämien-Shop", 0, 1.3)
-	ped.SpeakBubble:setBorderColor(Color.LightRed)
-	ped.SpeakBubble:setTextColor(Color.LightRed)
-	setElementData(ped, "clickable", true)
 
-	ped:setData("onClickEvent",
-		function()
-			BonusGUI:new()
-		end
-	)
 
 	--Bubble for Wheel of Fortune
 	local wheelDummy = createElement("d") -- this element is only available serverside as its rotation is synced
@@ -61,6 +50,21 @@ function Christmas:constructor()
 	ped:setData("onClickEvent",
 		function()
 			FerrisWheelGUI:new()
+		end
+	)
+	]]
+
+	local ped = Ped.create(221, Vector3( 1474.90, -1795.35, 13.55), 0)
+	ped:setData("NPC:Immortal", true)
+	ped:setFrozen(true)
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Weihnachten", "Prämien-Shop", 0, 1.3)
+	ped.SpeakBubble:setBorderColor(Color.LightRed)
+	ped.SpeakBubble:setTextColor(Color.LightRed)
+	setElementData(ped, "clickable", true)
+
+	ped:setData("onClickEvent",
+		function()
+			BonusGUI:new()
 		end
 	)
 end
