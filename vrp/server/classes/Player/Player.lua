@@ -113,8 +113,14 @@ function Player:sendNews()
 end
 
 function Player:triggerEvent(ev, ...)
-	if self then
+	if self and isElement(self) then
 		triggerClientEvent(self, ev, self, ...)
+	end
+end
+
+function Player:triggerLatentEvent(ev, ...)
+	if self and isElement(self) then
+		triggerLatentClientEvent(self, ev, self, ...)
 	end
 end
 

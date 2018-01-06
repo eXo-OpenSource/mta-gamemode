@@ -99,8 +99,7 @@ addEventHandler("onDebugMessage", root,
 				local info = debug.getinfo(traceLevel, "Sl")
 				if not info then break end
 				if info.what ~= "C" and info.source then -- skip c functions as they don't have info
-					--if info.source:find("tail call") then break end -- break if the stack is in a loop
-					if not info.source:find("classlib.lua") then -- skip classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
+					if not info.source:find("classlib.lua") and not info.source:find("tail call") then -- skip tail calls and classlib traceback (e.g. pre-calling destructor) as it is useless for debugging
 						if trace[1][1] ~= info.source:gsub("@", "") then -- for some reason messages get duplicated, but we need to collect the message from file, line as it skips it sometimes in traceback
 							table.insert(trace, {info.source, info.currentline or "not specified"})
 						end
@@ -118,11 +117,11 @@ addEventHandler("onDebugMessage", root,
 -- Debug performance view
 
 
-local function sendPerformanceOverview(percent, tfinish)
+local function sendPerformanceOverview(type, percent, tfinish)
 	if GIT_BRANCH == "release/production" then
 		local json = toJSON({
 			color = "3ABAF2",
-			pretext = ("lua timing is ~%s%%, trigger at %s%%"):format(percent, PERFORMANCE_HOOK_TRIGGER_PERCENT),
+			pretext = (type == "resource" and ("resource lua timing is ~%s%%, trigger at %s%%"):format(percent, PERFORMANCE_HOOK_TRIGGER_PERCENT) or ("function lua timing is ~%s%%, trigger at %s%%"):format(percent, PERFORMANCE_HOOK_TRIGGER_PERCENT_FUNC)),
 			fields = {
 				{
 					title = "full timing overview (lua timing option d)",
@@ -139,7 +138,7 @@ local function sendPerformanceOverview(percent, tfinish)
 			outputDebugString("[Performance-Listener] Reporting Performance Overview to Slack failed!", 3)
 		end
 	else
-		outputDebugString(("performance alert, currently max. %s%% on lua timing, details in server console"):format(percent), 2)
+		outputDebugString(("performance alert, currently max. %s%% on %s lua timing, details in server console"):format(type, percent), 2)
 		outputServerLog(tfinish)
 	end
 end
@@ -150,21 +149,28 @@ local function startPerformanceRecording()
 	setTimer(function()
 		if getTickCount() - startTime > 60000 then -- let the server start up at least 60 seconds
 			local send = false
-			local highestPercent = 0
+			local highestResPercent = 0
+			local highestFuncPercent = 0
 			local tfinish = ""
 			local __, f = getPerformanceStats("Lua timing", "d")
 			for i, data in ipairs(f) do
 				local percent = data[2]:gsub("%%", "")
-				if tonumber(percent) and tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT then 
-					send = true 
-					highestPercent = (tonumber(percent) > highestPercent and tonumber(percent) or highestPercent)
+				if tonumber(percent) then
+					if tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT then --if a resource is over PERFORMANCE_HOOK_TRIGGER_PERCENT
+						send = "resource" 
+						highestResPercent = (tonumber(percent) > highestResPercent and tonumber(percent) or highestResPercent)
+					elseif (data[1]:sub(0,1) == ".") and (tonumber(percent) > PERFORMANCE_HOOK_TRIGGER_PERCENT_FUNC) and (not data[1]:find("classlib")) then  --if a single function is over 1%, skip classlib because this it reflects other values
+						send = "function" 
+						highestFuncPercent = (tonumber(percent) > highestFuncPercent and tonumber(percent) or highestFuncPercent)
+					end
 				end
+				
 				if data[2] ~= "-" then
 					tfinish = tfinish .. ("\n%s - %s (%s s)"):format(data[2], data[1], data[3])
 				end
 			end
 			if send then
-				sendPerformanceOverview(highestPercent, tfinish)
+				sendPerformanceOverview(send, send == "resource" and highestResPercent or highestFuncPercent, tfinish)
 			end
 		end
 	end, 5000, 0)

@@ -215,6 +215,8 @@ function CustomModelManager:constructor()
 	-- Zombie
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)
+	self:loadImportTXD("files/models/santaclaus.txd", 244)
+	self:loadImportDFF("files/models/santaclaus.dff", 244)
 
 	-- Halloween Smode
 	if EVENT_HALLOWEEN then
@@ -234,9 +236,6 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/XmasBox.dff", 3878)
-
-		self:loadImportTXD("files/models/santaclaus.txd", 244)
-		self:loadImportDFF("files/models/santaclaus.dff", 244)
 	end
 
 	--Easter Event:

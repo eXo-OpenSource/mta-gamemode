@@ -182,7 +182,7 @@ SHOP_TYPES = {
 		["Ped"] = {32, Vector3(1485.78, -1794.96, 13.55), 0},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop,
-		["disabled"] = not FIREWORK_ENABLED
+		["disabled"] = not FIREWORK_SHOP_ACTIVE
 	}
 
 }

@@ -79,8 +79,8 @@ end
 function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
-	if company then
-        client:triggerEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
+	if company then --use triggerLatentEvent to improve serverside performance 
+        client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end
