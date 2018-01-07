@@ -166,3 +166,7 @@ function GUIGridList:drawThis()
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
 end
+
+function GUIGridList:onScrollDown(callbackFunction)
+	self.m_ScrollArea.m_OnScrollDownFunction = callbackFunction
+end

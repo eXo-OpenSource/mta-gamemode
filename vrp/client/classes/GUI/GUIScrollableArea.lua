@@ -93,6 +93,7 @@ function GUIScrollableArea:setScrollPosition(x, y)
 	local oldScrollX, oldScrollY = self.m_ScrollX, self.m_ScrollY
 	self.m_ScrollX, self.m_ScrollY = x, y
 
+
 	if self.m_VerticalScrollbar then
 		self.m_VerticalScrollbar:setScrollPosition(-self.m_ScrollY / (self.m_DocumentHeight-self.m_Height))
 	end
@@ -179,13 +180,20 @@ function GUIScrollableArea:onInternalMouseWheelDown()
 		return
 	end
 
+	local scrollX, scrollY = self.m_ScrollX, self.m_ScrollY
+
+	if self.m_OnScrollDownFunction and diff - scroll_dist <= 0 then
+		self:setScrollPosition(0, 0)
+		self.m_OnScrollDownFunction()
+	end
+
 	if diff >= scroll_dist then
 		diff = scroll_dist
 	else
 		diff = diff % scroll_dist
 	end
 
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - diff)
+	self:setScrollPosition(scrollX, scrollY - diff)
 end
 
 function GUIScrollableArea:updateGrid()
