@@ -18,8 +18,8 @@ function CompanyManager:constructor()
 	addEventHandler("loadClientCompany", root, bind(self.loadCompany, self))
 end
 
-function CompanyManager:loadCompany(Id, name, name_short)
-	CompanyManager.Map[Id] = Company:new(Id, name, name_short)
+function CompanyManager:loadCompany(Id, name, name_short, rankNames)
+	CompanyManager.Map[Id] = Company:new(Id, name, name_short, rankNames)
 end
 
 function CompanyManager:getFromId(id)
@@ -28,10 +28,11 @@ end
 
 Company = inherit(Object)
 
-function Company:constructor(Id, name, name_short)
+function Company:constructor(Id, name, name_short, rankNames)
 	self.m_Id = Id
 	self.m_Name = name
 	self.m_NameShort = name_short
+	self.m_RankNames = rankNames
 end
 
 function Company:getId()
