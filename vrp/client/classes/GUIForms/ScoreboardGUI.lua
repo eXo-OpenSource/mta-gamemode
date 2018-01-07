@@ -42,7 +42,10 @@ end
 -- Right Click Shoot Bugfix
 
 function ScoreboardGUI:onShow()
+	toggleControl("next_weapon", false)
+	toggleControl("previous_weapon", false)
 	toggleControl("action", false)
+	setControlState("action", false)
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 	self:refresh()
 	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
@@ -55,10 +58,13 @@ end
 
 function ScoreboardGUI:onHide()
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
-
+	if not NoDm:getSingleton().m_NoDm then
+		toggleControl("next_weapon", true)
+		toggleControl("previous_weapon", true)
+		toggleControl("action", true)
+	end
 	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
-	toggleControl("action", true)
 	RadioGUI:getSingleton():setControlEnabled(true)
 end
 
@@ -181,7 +187,7 @@ function ScoreboardGUI:insertPlayers()
 			gname = "-Keine-"
 		end
 		local item = self.m_Grid:addItem(
-			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
+			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Textures/Other/trans.png",
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keins -",
