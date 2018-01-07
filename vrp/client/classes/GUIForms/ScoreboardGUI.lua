@@ -27,7 +27,7 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:addColumn(_"Karma", 0.08)
 	self.m_Grid:addColumn(_"Ping", 0.11)
 
-	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
+	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, Color.Accent, self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
 	self.m_PlayerCount:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05))
 	self.m_Ping = GUILabel:new(self.m_Width/2, self.m_Height*0.65, self.m_Width/2-self.m_Width*0.05, self.m_Height*0.05, "", self.m_Rect)

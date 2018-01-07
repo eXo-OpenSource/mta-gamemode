@@ -54,7 +54,7 @@ factionRankNames[1] = {
 [6] = "Chief of Police"
 }
 
-factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
+factionColors[1] = {["r"] = 0,["g"] = 200,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
@@ -71,7 +71,7 @@ factionRankNames[2] = {
 [5] = "Deputy Director",
 [6] = "FBI-Director"
 }
-factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
+factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
 factionWeapons[2] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
