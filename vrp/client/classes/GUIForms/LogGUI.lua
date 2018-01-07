@@ -1,4 +1,5 @@
 LogGUI = inherit(GUIForm)
+LogGUI.AmountPerLoad = 50
 
 function LogGUI:constructor(parent, url)
 	local yOffset = 0
@@ -25,17 +26,20 @@ function LogGUI:constructor(parent, url)
 	self.m_LogGrid:setItemHeight(20)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
-	self:updateLog()
+	self.m_LogGrid:onScrollDown(bind(self.onScrollDown, self))
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
-function LogGUI:updateLog()
-	self.m_Log = {}
+function LogGUI:updateLog(start, amount)
+	self.m_Cache = {}
 	local options = {}
-	fetchRemote(self.m_Url, options,
+	local url = ("%s&start=%d&amount=%d"):format(self.m_Url, start, amount)
+	outputChatBox( url)
+	fetchRemote(url, options,
 			function(responseData, responseInfo)
-				self.m_Log = fromJSON(responseData)
-				if self.m_Log then
-					self.m_Log = table.setIndexToInteger(self.m_Log)
+				self.m_Cache = fromJSON(responseData)
+				if self.m_Cache then
+					self.m_Cache = table.setIndexToInteger(self.m_Cache)
 					self:refreshGrid()
 				end
 			end
@@ -48,23 +52,26 @@ function LogGUI:addBackButton(callBack)
 	end
 end
 
+function LogGUI:onScrollDown()
+	self:updateLog(#self.m_LogGrid:getItems(), LogGUI.AmountPerLoad)
+end
+
 
 function LogGUI:refreshGrid()
-	self.m_LogGrid:clear()
 	local item
-	for i, row in ipairs(self.m_Log) do
+	for i, row in ipairs(self.m_Cache) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
 
 		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
 
 		if self:checkCatFilter(row.Category) then
-			if self:checkSeachFilter(row) and #self.m_LogGrid:getItems() < 150 then -- Todo: add user limit or pages?
+			if self:checkSeachFilter(row) then
 				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(row.UserName, row.Description))
 				item:setFont(VRPFont(20))
 			end
 		end
 	end
-
+	self.m_Cache = {}
 	if not self.m_FilterLoaded then
 		self:loadFilter()
 	end
@@ -84,7 +91,8 @@ function LogGUI:setSearch()
 	else
 		self.m_SeachFilter = self.m_Search:getText()
 	end
-	self:refreshGrid()
+	self.m_LogGrid:clear()
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
 function LogGUI:checkSeachFilter(row)
@@ -117,7 +125,8 @@ function LogGUI:setFilter(text)
 	else
 		self.m_CatFilter = text
 	end
-	self:refreshGrid()
+	self.m_LogGrid:clear()
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
 
