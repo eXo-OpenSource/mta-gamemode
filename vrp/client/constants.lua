@@ -626,9 +626,9 @@ SHADERS = {
 	["DoF"] = {["event"] = "switchDoF"},
 }
 
-if EVENT_CHRISTMAS then
-	SHADERS["Schneedecke"] = {["event"] = "switchSnowGround", ["enabled"] = true} 
-	SHADERS["Schneeflocken"] = {["event"] = "switchSnowFlakes", ["enabled"] = true} 
+if SNOW_SHADERS_ENABLED then
+	SHADERS["Schneedecke"] = {["event"] = "switchSnowGround", ["enabled"] = EVENT_CHRISTMAS} --only force enable them during christmas
+	SHADERS["Schneeflocken"] = {["event"] = "switchSnowFlakes", ["enabled"] = EVENT_CHRISTMAS} 
 end
 
 

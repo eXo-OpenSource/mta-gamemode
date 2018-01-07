@@ -42,7 +42,7 @@ function ItemBeggar:buyItem(player, item)
 					money = {
 						mode = "take",
 						bank = false,
-						amount = money,
+						amount = price,
 						toOrFrom = self.m_BankAccountServer,
 						category = "Gameplay",
 						subcategory = "BeggarTrade"

@@ -206,11 +206,17 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/vehicles/topfun.txd", 459)
 	self:loadImportDFF("files/models/vehicles/topfun.dff", 459)
 
+	-- Firework
+	self:loadImportCOL("files/models/firework.col", 1941)
+	self:loadImportTXD("files/models/firework.txd", 1941)
+	self:loadImportDFF("files/models/firework.dff", 1941)
 
 	--skins
 	-- Zombie
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)
+	self:loadImportTXD("files/models/santaclaus.txd", 244)
+	self:loadImportDFF("files/models/santaclaus.dff", 244)
 
 	-- Halloween Smode
 	if EVENT_HALLOWEEN then
@@ -230,9 +236,6 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/XmasBox.dff", 3878)
-
-		self:loadImportTXD("files/models/santaclaus.txd", 244)
-		self:loadImportDFF("files/models/santaclaus.dff", 244)
 	end
 
 	--Easter Event:
@@ -340,7 +343,7 @@ function CustomModelManager:createObjectsForMods()
 	local objs = {
 		--objid, lodid, radius, x, y, z
 		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
-		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police 
+		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police
 		{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
 		{4600, 85.356903, 1453.6016, -989.48437, 34.4375, 4625}, --bank
 		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central

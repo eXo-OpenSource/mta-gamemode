@@ -55,7 +55,7 @@ function StatisticsLogger:addMoneyLogNew(fromId, fromType, fromBank, toId, toTyp
 	-- Create new table for all new transactions
 	--
 	--outputChatBox(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
-	outputServerLog(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
+	--outputServerLog(inspect({fromId = fromId, fromType = fromType, fromBank = fromBank, toId = toId, toType = toType, toBank = toBank, amount = amount, reason = reason, category = category, subcategory = subcategory}))
     if sqlLogs:queryExec("INSERT INTO ??_MoneyNew (FromId, FromType, FromBank, ToId, ToType, ToBank, Amount, Reason, Category, Subcategory, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())",
 		sqlLogs:getPrefix(), fromId, fromType, fromBank, toId, toType, toBank, amount, reason, category, subcategory) then
 		return true
@@ -262,6 +262,11 @@ function StatisticsLogger:addItemDepotLog(player, depot, item, amount)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_ItemDepot (UserId, DepotId,  Item, Amount, Date) VALUES(?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, depot, item, amount)
+end
+
+function StatisticsLogger:addFireLog(fireId, duration, tblPlayers, success)
+	sqlLogs:queryExec("INSERT INTO ??_FireManager (FireId, Duration, Players, Success, Date) VALUES(?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), fireId, duration, tblPlayers, success)
 end
 
 function StatisticsLogger:addLogin( player, name, logintype)

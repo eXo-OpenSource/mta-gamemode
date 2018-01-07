@@ -17,7 +17,10 @@ MAX_WANTED_LEVEL = 12
 -- EVENTS:
 EVENT_EASTER = false
 EVENT_HALLOWEEN = false
-EVENT_CHRISTMAS = true
+EVENT_CHRISTMAS = false
+SNOW_SHADERS_ENABLED = true -- disable them during summer time
+FIREWORK_ENABLED = true -- can users use firework ?
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`? 
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -432,7 +435,7 @@ VEHICLE_SPECIAL_TEXTURE = {
 	[460] = "skimmer92body128",
 	[469] = "sparrow92body128",
 	[481] = "vehiclegeneric256", --bmx
-	[483] = "#emapcamperbody256",
+	[483] = "remapcamperbody256",
 	[487] = "maverick92body128",
 	[488] = "polmavbody128a",
 	[497] = "polmavbody128a",
@@ -472,23 +475,23 @@ VEHICLE_BIKES = {
 
 PLANES_SINGLE_ENGINE = {
 [593] = true,
-[512] = true, 
-[476] = true, 
-[513] = true, 
+[512] = true,
+[476] = true,
+[513] = true,
 }
 
 PLANES_TWIN_ENGINE = {
-[511] = true, 
+[511] = true,
 [553] = true,
 }
 
 PLANES_JET = {
-[520] = true, 
-[519] = true, 
+[520] = true,
+[519] = true,
 }
 
 PLANES_JUMBO_JET = {
-[592] = true, 
+[592] = true,
 [577] = true,
 }
 
@@ -559,6 +562,11 @@ WEAPON_NAMES = {
 	[46] = "Fallschrirm"
 }
 
+WEAPON_CLIPS = {
+	[25] = 6,
+	[33] = 5,
+	[34] = 4
+}
 
 MIN_WEAPON_LEVELS = {
 	[0] = 0, -- Faust

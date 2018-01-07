@@ -254,6 +254,7 @@ end
 
 
 function drawSnow()	
+	if getElementInterior(localPlayer) ~= 0 then return false end
 	local tick = getTickCount()
 	
 	local cx,cy,cz = getCameraMatrix()

@@ -584,7 +584,7 @@ function FactionRescue:onLadderTruckEnter(player, seat)
 	if not source.LadderEnabled then
 		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu bedienen!", player))
 	else
-		player:sendShortMessage(_("Klicke auf das Fahrzeug um die Leiter zu deaktivieren!", player))
+		player:sendShortMessage(_("Du befindest dich im Leiter-Modus. Bedienung:\nW, A, S, D - Leiter drehen, hoch/herunterfahren\nSTRG, SHIFT - Leiter ein/ausfahren\nMausrad - Kamera-Zoom ändern\nKlick auf die Leiter - Modus beenden", player), _("Leiterwagen", player), {0, 50, 100}, 10000)
 		self:toggleLadder(source, player, true)
 	end
 end
@@ -685,7 +685,7 @@ function FactionRescue:toggleLadder(veh, player, force)
 		triggerClientEvent("rescueLadderUpdateCollision", veh, false)
 	else
 		if (veh.rotation.x < 5 or veh.rotation.x > 355) and (veh.rotation.y < 10 or veh.rotation.y > 350) then
-			player:sendShortMessage(_("Leiter aktiviert! Bediene die Leiter mit W,A,S,D; STRG und SHIFT!", player))
+			player:sendShortMessage(_("Du befindest dich im Leiter-Modus. Bedienung:\nW, A, S, D - Leiter drehen, hoch/herunterfahren\nSTRG, SHIFT - Leiter ein/ausfahren\nMausrad - Kamera-Zoom ändern\nKlick auf die Leiter - Modus beenden", player), _("Leiterwagen", player), {0, 50, 100}, 10000)
 			veh.LadderEnabled = true
 			bindKey(player, "w", "both", self.m_LadderBind)
 			bindKey(player, "a", "both", self.m_LadderBind)

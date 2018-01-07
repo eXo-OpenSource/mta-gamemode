@@ -203,7 +203,7 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 	end
 end
 
-function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
+--[[function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 	if source.ped_deadDouble then
 		if isElement(source.ped_deadDouble) then
 			destroyElement(source.ped_deadDouble)
@@ -267,7 +267,7 @@ function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
 			end
 		end
 	end
-end
+end]]
 
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()

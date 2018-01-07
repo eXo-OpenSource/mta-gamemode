@@ -26,7 +26,7 @@ Inventory.Tabs = {
 }
 
 function Inventory:constructor()
-	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+40)/2, 330, (80+106+40))
+	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106+80)/2, 330, (80+106+80))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, false, self)
 	self.m_Tabs = {}
 	self.m_CurrentTab = 1
@@ -39,7 +39,7 @@ function Inventory:constructor()
 	self.m_Tabs = {}
 	-- Tabs
 	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
-	self:addItemSlots(14, self.m_Tabs[1])
+	self:addItemSlots(21, self.m_Tabs[1])
 	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
 	self:addItemSlots(5, self.m_Tabs[2])
 	self.m_Tabs[3] = self:addTab("files/images/Inventory/food.png", tabArea)
@@ -291,7 +291,7 @@ function Inventory:addItemEvents(item)
 					self.m_ItemPromptReference = item
 					self.m_InventoryActionPrompt = InventoryActionGUI:new("Löschen")
 				else
-					outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+					ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
 				end
 			end
 		end
@@ -319,7 +319,7 @@ function Inventory:acceptPrompt( bObj )
 					if bThrowAway then
 						triggerServerEvent("throwItem", localPlayer, item, bag, id, place, name)
 					else
-						outputChatBox("Du kannst dieses Item nicht zerstören!", 200,0,0)
+						ErrorBox:new(_"Du kannst dieses Item nicht zerstören!")
 					end
 				end
 			end

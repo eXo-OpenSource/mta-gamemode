@@ -601,8 +601,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 						table.remove(target.spectBy, i)
 					end
 				end
-
-				setCameraTarget(admin, admin)
+				admin:triggerEvent("stopCenteredFreecam")
+				admin:triggerEvent("stopWeaponRecorder")
 				self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 				unbindKey(admin, "space", "down")
 
@@ -630,10 +630,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin:setCameraInterior(target.interior)
 		admin:setDimension(target.dimension)
 
-		-- this will probably fix the camera issue
-		local position = target.position
-		setCameraMatrix(admin, position)
-		setCameraTarget(admin, target)
+		admin:triggerEvent("startCenteredFreecam", target, 100, true)
+		admin:triggerEvent("startWeaponRecorder")
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)

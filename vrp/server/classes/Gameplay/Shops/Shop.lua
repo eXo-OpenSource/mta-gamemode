@@ -69,13 +69,14 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
 		if robable == 1 then
-			RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
+			self.m_Robable = RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
+			self.m_Ped = self.m_Robable.m_Ped
 		else
-			self.m_NPC = NPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
-			self.m_NPC:setImmortal(true)
-			self.m_NPC:setInterior(interior)
-			self.m_NPC:setDimension(dimension)
-			self.m_NPC:setFrozen(true)
+			self.m_Ped = NPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
+			self.m_Ped:setImmortal(true)
+			self.m_Ped:setInterior(interior)
+			self.m_Ped:setDimension(dimension)
+			self.m_Ped:setFrozen(true)
 		end
 	end
 

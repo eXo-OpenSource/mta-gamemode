@@ -118,6 +118,7 @@ function enableSnow()
 			engineRemoveShaderFromWorldTexture ( part, "corugwall_sandy" )
 			engineRemoveShaderFromWorldTexture ( part, "ws_whitewall2_top" )
 			engineRemoveShaderFromWorldTexture ( part, "ws_whitewall2_*" )
+			engineRemoveShaderFromWorldTexture ( part, "*crosshair*" )
 			
 			
 			engineRemoveShaderFromWorldTexture ( part, "tx*" )

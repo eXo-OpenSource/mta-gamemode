@@ -132,8 +132,8 @@ function DeathmatchLobby:addPlayer(player)
 		["Kills"] = 0,
 		["Deaths"] = 0
 	}
-
 	player:createStorage(true)
+	player:setData("isInDeathMatch",true)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
@@ -189,6 +189,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(1325.21, -1559.48, 13.54)
+		player:setData("isInDeathMatch",false)
 		player:setHeadless(false)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil

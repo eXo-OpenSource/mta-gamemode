@@ -10,7 +10,7 @@ end
 
 function QuestNoQuest:addPlayer(player)
 	Quest.addPlayer(self, player)
-	self:success()
+	self:success(player)
 end
 
 function QuestNoQuest:removePlayer(player)

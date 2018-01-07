@@ -28,6 +28,15 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
 	end
 
+	if self.m_Ped then
+		self.m_Ped:setData("clickable",true,true)
+		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+			if button =="left" and state == "down" then
+				self:onBarMarkerHit(player, true)
+			end
+		end)
+	end
+
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
 			if self:isPlayerInBar(player) then

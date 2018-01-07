@@ -180,7 +180,7 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 			self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(fileName))
 		end
 	else
-		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		self.ms_GUIInstance:setStatus("failed", "Kann den Download-Server nicht erreichen! (User-Access denied)")
 		return false
 	end
 end
@@ -202,7 +202,7 @@ function HTTPProvider:fetchAsync(...)
 end
 
 function HTTPProvider:requestAccess(callback)
-	self.ms_GUIInstance:setStatus("waiting", "Please accept the prompt, to download the required files!")
+	self.ms_GUIInstance:setStatus("waiting", "Lädt...")
 
 	if Browser.isDomainBlocked(self.ms_URL, true) then
 		-- hack fix, requestDomains callback isnt working (so we cant detect a deny)

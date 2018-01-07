@@ -44,9 +44,6 @@ ADD build/config/* /var/lib/mtasa/mods/deathmatch/
 ADD build/modules/* /var/lib/mtasa/x64/modules/
 ADD vrp/server/config/config.json.dist /var/lib/mtasa/config.json.dist
 
-# Add required libraries
-ADD build/libs/libmysqlclient.so.16 /usr/lib/
-
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
 
