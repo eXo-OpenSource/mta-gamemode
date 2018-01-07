@@ -44,6 +44,8 @@ end
 function ScoreboardGUI:onShow()
 	toggleControl("next_weapon", false)
 	toggleControl("previous_weapon", false)
+	toggleControl("action", false)
+	setControlState("action", false)
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 	self:refresh()
 	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
@@ -56,11 +58,13 @@ end
 
 function ScoreboardGUI:onHide()
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
-	toggleControl("next_weapon", true)
-	toggleControl("previous_weapon", true)
+	if not NoDm:getSingleton().m_NoDm then
+		toggleControl("next_weapon", true)
+		toggleControl("previous_weapon", true)
+		toggleControl("action", true)
+	end
 	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
-	toggleControl("action", true)
 	RadioGUI:getSingleton():setControlEnabled(true)
 end
 
