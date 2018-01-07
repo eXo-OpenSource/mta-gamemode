@@ -73,7 +73,7 @@ function SelfGUI:constructor()
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
-	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
+	addRemoteEvents{"companyInvitationRetrieve"}
 	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
 
 	-- FACTION
@@ -88,7 +88,7 @@ function SelfGUI:constructor()
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
 
-	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
+	addRemoteEvents{"factionInvitationRetrieve"}
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 
 	-- GROUP
@@ -103,7 +103,7 @@ function SelfGUI:constructor()
 	--self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	--self.m_GroupInvitationsLabel:setVisible(false)
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
+	addRemoteEvents{"groupInvitationRetrieve"}
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
@@ -425,27 +425,6 @@ function SelfGUI:loadStatistics()
 	end
 end
 
-function SelfGUI:Event_companyRetrieveInfo(id, name, rank, __, __, __, rankNames)
-	self:adjustGeneralTab(name)
-
-	if name then
-		self.m_CompanyNameLabel:setText(name)
-		self.m_CompanyRankLabel:setText(rankNames[rank])
-
-		if rank >= 5 then
-			self.m_CompanyEditLabel:setText(_"(verwalten)")
-		else
-			self.m_CompanyEditLabel:setText(_"(anzeigen)")
-		end
-		local x, y = self.m_CompanyNameLabel:getPosition()
-		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
-	else
-		self.m_CompanyNameLabel:setText("-")
-		self.m_CompanyRankLabel:setText("-")
-	end
-end
-
-
 function SelfGUI:setCompanyInfo()
 	local company = localPlayer:getCompany()
 	if company then
@@ -609,29 +588,6 @@ function SelfGUI:GroupInvitationsDeclineButton_Click(groupId)
 	end
 end
 
-
-function SelfGUI:Event_groupRetrieveInfo(id, name, rank, __, __, __, __, rankNames)
-	local x, y = self.m_GroupNameLabel:getPosition()
-	if rank and rank >= 0 then
-		self.m_GroupNameLabel:setText(name)
-		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
-		self.m_GroupMenuButton:setVisible(true)
-		self.m_HasGroupInvation = false
-
-		if rank >= 5 then
-			self.m_GroupMenuButton:setText(_"(verwalten)")
-		else
-			self.m_GroupMenuButton:setText(_"(anzeigen)")
-		end
-		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-	else
-		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
-		self.m_GroupRankLabel:setText("-")
-		self.m_GroupMenuButton:setVisible(false)
-		--self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-	end
-end
-
 function SelfGUI:setGroupInfo()
 	local x, y = self.m_GroupNameLabel:getPosition()
 	if localPlayer:getPublicSync("GroupId") and localPlayer:getPublicSync("GroupId") ~= 0 then 
@@ -658,27 +614,6 @@ function SelfGUI:setGroupInfo()
 	end
 end
 
-function SelfGUI:Event_groupRetrieveInfo(id, name, rank, __, __, __, __, rankNames)
-	local x, y = self.m_GroupNameLabel:getPosition()
-	if rank and rank >= 0 then
-		self.m_GroupNameLabel:setText(name)
-		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
-		self.m_GroupMenuButton:setVisible(true)
-		self.m_HasGroupInvation = false
-
-		if rank >= 5 then
-			self.m_GroupMenuButton:setText(_"(verwalten)")
-		else
-			self.m_GroupMenuButton:setText(_"(anzeigen)")
-		end
-		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-	else
-		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
-		self.m_GroupRankLabel:setText("-")
-		self.m_GroupMenuButton:setVisible(false)
-		--self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-	end
-end
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
