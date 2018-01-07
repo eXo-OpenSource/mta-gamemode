@@ -91,8 +91,7 @@ function DatabasePlayer:load(sync)
 	self.m_SavedInterior = row.Interior
 	self.m_SavedDimension = row.Dimension
 	self.m_Skin = row.Skin
-	self.m_SkinData = {}
-	self.m_CJData = fromJSON(row.CJClothes) or {}
+	self.m_SkinData = fromJSON(row.CJClothes) or {}
 	self.m_AltSkin = row.AltSkin
 	if self.m_AltSkin == 0 then
 		self.m_AltSkin = self.m_Skin
