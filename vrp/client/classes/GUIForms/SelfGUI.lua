@@ -429,12 +429,10 @@ function SelfGUI:setCompanyInfo()
 	local company = localPlayer:getCompany()
 	if company then
 		local rank = localPlayer:getPublicSync("CompanyRank")
-		local rankName = localPlayer:getPublicSync("CompanyRankName")
-		if rank and rankName then
+		if rank then
 			self:adjustGeneralTab(company:getName())
 			self.m_CompanyNameLabel:setText(company:getName())
-			self.m_CompanyRankLabel:setText(rankName)
-
+			self.m_CompanyRankLabel:setText(company.m_RankNames[rank])
 			if rank >= 5 then
 				self.m_CompanyEditLabel:setText(_"(verwalten)")
 			else
@@ -506,10 +504,9 @@ function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)
 	local faction = localPlayer:getFaction()
 	if faction then
 		local rank = localPlayer:getPublicSync("FactionRank")
-		local rankName = localPlayer:getPublicSync("FactionRankName")
-		if rank and rankName then
+		if rank then
 			self.m_FactionNameLabel:setText(faction:getName())
-			self.m_FactionRankLabel:setText(rankName)
+			self.m_FactionRankLabel:setText(faction.m_RankNames[rank])
 			self.m_FactionMenuButton:setVisible(true)
 			self.m_InvationFactionId = 0
 

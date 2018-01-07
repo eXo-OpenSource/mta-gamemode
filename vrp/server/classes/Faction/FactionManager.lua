@@ -330,6 +330,7 @@ function FactionManager:Event_factionRankUp(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+							player:setPublicSync("FactionRank", playerRank+1 or 0)
 						end
 					end
 					self:sendInfosToClient(client)
@@ -375,6 +376,7 @@ function FactionManager:Event_factionRankDown(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+							player:setPublicSync("FactionRank", playerRank-1 or 0)
 						end
 					end
 					self:sendInfosToClient(client)

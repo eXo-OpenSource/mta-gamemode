@@ -258,6 +258,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+				player:setPublicSync("CompanyRank", playerRank+1 or 0)
 			end
 			self:sendInfosToClient(client)
 		else
@@ -292,6 +293,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+				player:setPublicSync("CompanyRank", playerRank-1 or 0)
 			end
 			self:sendInfosToClient(client)
 		else
@@ -401,6 +403,6 @@ end
 
 function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
-		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
+		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames)
 	end
 end
