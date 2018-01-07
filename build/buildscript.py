@@ -42,9 +42,8 @@ rm_r(outdir)
 os.mkdir(outdir)
 os.mkdir(outdir+"server")
 os.mkdir(outdir+"server/http")
-os.mkdir(outdir+"server/config")
 shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
-shutil.copyfile(rootdir+"server/config/config.json.dist", outdir+"server/config/config.json.dist")
+shutil.copytree(rootdir+"server/config", outdir+"server/config")
 
 # Get files
 print("Copying required files...")
