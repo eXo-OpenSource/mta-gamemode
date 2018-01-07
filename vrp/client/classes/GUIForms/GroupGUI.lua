@@ -158,7 +158,7 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 			self.m_LogGUI:updateLog()
 		end
 	else
-		triggerServerEvent("groupRequestInfo", root)
+		triggerLatentServerEvent("groupRequestInfo", root)
 	end
 end
 

@@ -392,7 +392,8 @@ function SelfGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabGeneral.TabIndex then
 		triggerServerEvent("companyRequestInfo", root)
 		triggerServerEvent("factionRequestInfo", root)
-		triggerServerEvent("groupRequestInfo", root)
+		--triggerLatentServerEvent("groupRequestInfo", root)
+		self:setGroupInfo()
 	elseif tabId == self.m_TabVehicles.TabIndex then
 		triggerServerEvent("vehicleRequestInfo", root)
 	end
@@ -595,6 +596,53 @@ function SelfGUI:Event_groupRetrieveInfo(id, name, rank, __, __, __, __, rankNam
 	end
 end
 
+function SelfGUI:setGroupInfo()
+	local x, y = self.m_GroupNameLabel:getPosition()
+	if localPlayer:getPublicSync("GroupId") and localPlayer:getPublicSync("GroupId") ~= 0 then 
+		local name = localPlayer:getPublicSync("GroupName")
+		local rank = localPlayer:getPublicSync("GroupRank")
+		if rank and rank >= 0 then
+			local rankNames = localPlayer:getPublicSync("GroupRankNames")
+			self.m_GroupNameLabel:setText(name)
+			self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
+			self.m_GroupMenuButton:setVisible(true)
+			self.m_HasGroupInvation = false
+
+			if rank >= 5 then
+				self.m_GroupMenuButton:setText(_"(verwalten)")
+			else
+				self.m_GroupMenuButton:setText(_"(anzeigen)")
+			end
+			self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
+		end
+	else 
+		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
+		self.m_GroupRankLabel:setText("-")
+		self.m_GroupMenuButton:setVisible(false)
+	end
+end
+
+function SelfGUI:Event_groupRetrieveInfo(id, name, rank, __, __, __, __, rankNames)
+	local x, y = self.m_GroupNameLabel:getPosition()
+	if rank and rank >= 0 then
+		self.m_GroupNameLabel:setText(name)
+		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
+		self.m_GroupMenuButton:setVisible(true)
+		self.m_HasGroupInvation = false
+
+		if rank >= 5 then
+			self.m_GroupMenuButton:setText(_"(verwalten)")
+		else
+			self.m_GroupMenuButton:setText(_"(anzeigen)")
+		end
+		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
+	else
+		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
+		self.m_GroupRankLabel:setText("-")
+		self.m_GroupMenuButton:setVisible(false)
+		--self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
+	end
+end
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()

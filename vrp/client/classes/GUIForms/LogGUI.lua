@@ -34,8 +34,10 @@ function LogGUI:updateLog()
 	fetchRemote(self.m_Url, options,
 			function(responseData, responseInfo)
 				self.m_Log = fromJSON(responseData)
-				self.m_Log = table.setIndexToInteger(self.m_Log)
-				self:refreshGrid()
+				if self.m_Log then
+					self.m_Log = table.setIndexToInteger(self.m_Log)
+					self:refreshGrid()
+				end
 			end
 		)
 end

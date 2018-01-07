@@ -119,7 +119,6 @@ function GroupManager:sendInfosToClient(player)
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
-
 		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
@@ -491,6 +490,7 @@ function GroupManager:Event_SaveRank(rank,name,loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")
+		group:updateRankNameSync()
 		self:sendInfosToClient(client)
 	end
 end

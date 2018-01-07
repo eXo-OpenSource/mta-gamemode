@@ -341,6 +341,8 @@ function DatabasePlayer:setGroup(group)
 		self:setPublicSync("GroupId", group and group:getId() or 0)
 		self:setPublicSync("GroupName", group and group:getName() or "")
 		self:setPublicSync("GroupType", group and group:getType() or false)
+		self:setPublicSync("GroupRank", group and group:getPlayerRank(self))
+		self:setPublicSync("GroupRankNames", group and group.m_RankNames)
 	end
 end
 
