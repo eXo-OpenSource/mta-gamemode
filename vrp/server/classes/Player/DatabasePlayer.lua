@@ -390,6 +390,8 @@ function DatabasePlayer:setCompany(company)
 	if self:isActive() then
 		self:setPublicSync("CompanyId", company and company:getId() or 0)
 		self:setPublicSync("CompanyName", company and company:getName() or "")
+		self:setPublicSync("CompanyRank", company and company:getPlayerRank(self) or 0)
+		self:setPublicSync("CompanyRankName", company and company:getRankName(company:getPlayerRank(self)) or "")
 		self:setPublicSync("ShortCompanyName", company and company:getShortName() or "")
 
 	end
@@ -399,6 +401,8 @@ function DatabasePlayer:setFaction(faction)
 	self.m_Faction = faction
 	if self:isActive() then
 		self:setPublicSync("FactionId", faction and faction:getId() or 0)
+		self:setPublicSync("FactionRank", faction and faction:getPlayerRank(self) or 0)
+		self:setPublicSync("FactionRankName", faction and faction:getRankName(faction:getPlayerRank(self) or ""))
 		--if faction and faction:isStateFaction() then
 		--	bindKey(self, "m", "down", "chatbox", "BeamtenChat")
 		--end
