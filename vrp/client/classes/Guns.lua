@@ -49,6 +49,9 @@ function Guns:constructor()
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
+	
+	self.m_MeleeCache = {}
+	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 end
 
 function Guns:destructor()
@@ -61,6 +64,7 @@ function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 	end
 end
 
+MELEE_CACHE_CHECK = 2000
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	if weapon == 9 then -- Chainsaw
@@ -84,8 +88,8 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 					bPlaySound = true
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
 				else
-					bPlaySound = true
-					triggerServerEvent("gunsLogMeleeDamage",attacker, source, weapon, bodypart, loss)
+					bPlaySound = false
+					self:addMeleeDamage( source, weapon, bodypart, loss)
 				end
 			end
 		elseif localPlayer == source then
@@ -98,6 +102,40 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
+	end
+end
+
+function Guns:addMeleeDamage( player, weapon , bodypart, loss ) 
+	if self.m_MeleeCache then 
+		if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then 
+			self.m_MeleeCache["Loss"] = self.m_MeleeCache["Loss"] + loss
+		else 
+			self.m_MeleeCache["Weapon"] = weapon 
+			self.m_MeleeCache["Target"] = player 
+			self.m_MeleeCache["Tick"] = getTickCount() 
+			self.m_MeleeCache["Bodypart"] = bodypart
+			self.m_MeleeCache["Loss"] = 0
+			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+				playSound("files/audio/hitsound.wav")
+			end
+		end
+	end
+end
+
+function Guns:sendMeleeDamage() 
+	if self.m_MeleeCache then 
+		triggerServerEvent("gunsLogMeleeDamage", localPlayer, self.m_MeleeCache["Target"], self.m_MeleeCache["Weapon"], self.m_MeleeCache["Bodypart"], self.m_MeleeCache["Loss"])
+		self.m_MeleeCache = {}
+	end
+end
+
+function Guns:checkMeleeCache() 
+	if self.m_MeleeCache then 
+		if self.m_MeleeCache["Tick"] then
+			if getTickCount() > self.m_MeleeCache["Tick"] + MELEE_CACHE_CHECK then 
+				self:sendMeleeDamage()
+			end
+		end
 	end
 end
 
