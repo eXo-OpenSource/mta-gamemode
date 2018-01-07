@@ -33,7 +33,7 @@ function VehicleFuel:constructor(vehicle, confirmCallback, confirmWithSpace, gas
 	local __,__,__,__,__,bbz2 = vehicle:getBoundingBox()
 	pos = pos + vehicle.matrix.up*(bbz2 + 0.5)
 	GUIForm3D.constructor(self, pos, vehicle:getRotation(), Vector2(1, 0.34), Vector2(200,70), 30, true)
-	ShortMessage:new(_("Linke Maustaste gedrückt halten zum tanken%s", confirmWithSpace and "\nLeertaste zum übernehmen" or ""), "Fahrzeug befüllen", {230, 100, 0})
+	self.m_ShortMessage = ShortMessage:new(_("Halte die Linke Maustaste gedrückt und schaue dabei auf das Fahrzeug, um zu tanken (der Mauszeiger darf nicht aktiv sein). %s", confirmWithSpace and "\nDrücke die Leertaste, um den Kunden zum Bezahlen aufzufordern." or ""), "Fahrzeug befüllen", {230, 100, 0}, -1)
 
 	bindKey("mouse1", "both", self.m_HandleClick)
 	bindKey("lshift", "both", self.m_HandleShift)
@@ -46,7 +46,7 @@ function VehicleFuel:virtual_destructor()
 	unbindKey("mouse1", "both", self.m_HandleClick)
 	unbindKey("lshift", "both", self.m_HandleShift)
 	toggleAllControls(true, true, false)
-
+	self.m_ShortMessage:delete()
 	Cursor:getHook():unregister(self.m_StopInteraction)
 end
 
