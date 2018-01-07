@@ -176,4 +176,4 @@ local function startPerformanceRecording()
 	end, 5000, 0)
 
 end
-startPerformanceRecording()
+--startPerformanceRecording()

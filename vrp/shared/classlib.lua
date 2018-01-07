@@ -203,6 +203,10 @@ function __removeElementIndex()
 end
 
 function instanceof(self, class, direct)
+	if not self or not class then outputDebug(debug.traceback()) end
+	assert(self, "Attempt to call instanceof on an invalid object")
+	assert(class, "Attempt to call instanceof on an invalid class")
+	assert(super(self), "Attempt to call instanceof on an object without superclass")
 	for k, v in pairs(super(self)) do
 		if v == class then return true end
 	end
