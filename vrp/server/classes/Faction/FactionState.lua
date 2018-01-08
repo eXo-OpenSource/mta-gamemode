@@ -28,7 +28,7 @@ function FactionState:constructor()
 	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
 	self.m_BankAccountServer = BankServer.get("faction.state")
 
-	addEventHandler("onColShapeLeave", root, function(element)
+	addEventHandler("onColShapeLeave", self.m_ArmySepcialVehicleCol, function(element)
 		if element and isElement(element) and element:getType() == "player" and element.vehicle then
 			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
 				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
