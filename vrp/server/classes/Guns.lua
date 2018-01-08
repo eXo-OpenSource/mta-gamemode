@@ -147,38 +147,11 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 		StatisticsLogger:getSingleton():addKillLog(killer, source, weapon)
 	end
 
-	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
-	end
+	if source:getExecutionPed() then delete(source:getExecutionPed()) end
+	
 	if not killer or (not source:getData("isInDeathMatch") and not killer:getData("isInDeathmatch") and not source:getData("inWare")) then
-		source:setReviveWeapons()
-
-		local pos = source:getPosition()
-		local dim = source:getDimension()
-		local int = source:getInterior()
-
-		source.ped_deadDouble = createPed(source:getModel(), pos)
-		source.ped_deadDouble:setDimension(dim)
-		source.ped_deadDouble:setInterior(int)
-
-		if weapon == 34 then
-			setPedHeadless(source.ped_deadDouble, true)
-		end
-		local randAnim = math.random(1,5)
-		if randAnim == 5 then
-			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
-		else
-			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
-		end
-		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
-		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
-		setElementHealth(source.ped_deadDouble, 20)
-		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
-		setElementAlpha(source,0)
-
 		local inv = source:getInventory()
+		ExecutionPed:new( source, weapon, bodypart)
 		if inv then
 			if inv:getItemAmount("Diebesgut") > 0 then
 				inv:removeAllItem("Diebesgut")
@@ -187,7 +160,6 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 		end
 
 		local sourceFaction = source:getFaction()
-
 		if killer and isElement(killer) and sourceFaction and killer:getFaction() and not killer:isDead() then
 			local killerFaction = killer:getFaction()
 			if sourceFaction.m_Id ~= 4 then

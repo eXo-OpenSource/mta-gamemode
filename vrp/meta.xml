@@ -108,6 +108,7 @@
 	<script src="server/classes/Player/Player.lua" type="server"/>
 	<script src="server/classes/Player/PremiumPlayer.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
+	<script src="server/classes/Player/ExecutionPed.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
