@@ -237,8 +237,8 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 					else
 						self:getStretcher(client, vehicle)
 						setElementAlpha(client,255)
-						if isElement(client.ped_deadDouble) then
-							destroyElement(client.ped_deadDouble)
+						if client:getExecutionPed() then
+							destroyElement( client:getExecutionPed() ) 
 						end
 					end
 				else
@@ -286,9 +286,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
 	setElementAlpha(player,255)
-	if isElement(player.ped_deadDouble) then
-		destroyElement(player.ped_deadDouble)
-	end
+	if player:getExecutionPed() then delete(player:getExecutionPed()) end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
 	player:setFrozen(true)
@@ -296,16 +294,14 @@ function FactionRescue:getStretcher(player, vehicle)
 	setTimer(
 		function (player)
 			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
-			if isElement(player.ped_deadDouble) then
-				player.m_RescueStretcher:attach(player.ped_deadDouble, Vector3(0, 1.4, -0.5))
+			if player:getExecutionPed() then
+				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher ) 
 			end
 			player:toggleControlsWhileObjectAttached(false)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
 			setElementAlpha(player,255)
-			if isElement(player.ped_deadDouble) then
-				destroyElement(player.ped_deadDouble)
-			end
+			if player:getExecutionPed() then delete(player:getExecutionPed()) end
 		end, 3000, 1, player
 	)
 end
@@ -449,9 +445,7 @@ function FactionRescue:createDeathPickup(player, ...)
 								end
 								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 								setElementAlpha(player,255)
-								if isElement(player.ped_deadDouble) then
-									destroyElement(player.ped_deadDouble)
-								end
+								if player:getExecutionPed() then delete(player:getExecutionPed()) end
 								hitPlayer.m_RescueStretcher.player = player
 								if source.money and source.money > 0 then
 									self.m_BankAccountServerCorpse:transferMoney(hitPlayer, source.money, "verlorenes Geld zurückbekommen", "Player", "Corpse")

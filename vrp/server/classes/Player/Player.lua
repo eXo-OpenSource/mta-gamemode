@@ -540,9 +540,8 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 
-	if isElement(self.ped_deadDouble) then
-		destroyElement(self.ped_deadDouble)
-	end
+	if self:getExecutionPed() then delete(self:getExecutionPed()) end
+	
 	WearableManager:getSingleton():removeAllWearables(self)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
@@ -1601,4 +1600,8 @@ end
 
 function Player:hasTemporaryStorage()
 	return type(self.m_Storage) == "table"
+end
+
+function Player:getExecutionPed() 
+	return ExecutionPed.Map[self]
 end
