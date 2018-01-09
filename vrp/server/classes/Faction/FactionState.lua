@@ -222,7 +222,7 @@ function FactionState:loadFBI(factionId)
 	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
-	local safe = createObject(2332, 294.43, -22.71, 1032)
+	local safe = createObject(2332, 294.43, -22.6, 1031.7)
 	safe:setInterior(10)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 

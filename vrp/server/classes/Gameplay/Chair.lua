@@ -97,10 +97,12 @@ function Chair:trySitDown(object, position, rotation)
 
 	if Chair.Map[object] then
 		local objectId = object + position.length	-- unique id cause we interact with MTA elements and gta world objects
-		local seat = self:addPlayer(object, objectId, client)
-		if seat then
-			client.sittingOn = objectId
-			self:sitDown(client, object, position, rotation, seat)
+		if position.length > 0 then -- disable "invalid" positions that are at the center of the map
+			local seat = self:addPlayer(object, objectId, client)
+			if seat then
+				client.sittingOn = objectId
+				self:sitDown(client, object, position, rotation, seat)
+			end
 		end
 	end
 end
