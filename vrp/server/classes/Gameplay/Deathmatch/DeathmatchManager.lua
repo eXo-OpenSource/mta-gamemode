@@ -73,8 +73,15 @@ DeathmatchManager.Maps = {
 	}
 }
 
+
+
 function DeathmatchManager:constructor()
+	self.ms_Modes = {
+		["default"] = DeathmatchDefault,
+	}
+
 	self:loadServerLobbys()
+
 	self.m_BankServer = BankServer.get("gameplay.deathmatch")
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
@@ -133,20 +140,22 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-
 	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveLobby", "deathmatchRequestCreateData", "deathmatchCreateLobby"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
 	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
 	addEventHandler("deathmatchLeaveLobby", root, bind(self.leaveLobby, self))
 	addEventHandler("deathmatchRequestCreateData", root, bind(self.requestCreateData, self))
 	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
-
-
 end
 
 function DeathmatchManager:createLobby(name, owner, map, weapons, mode, maxPlayer, password)
+	if not self.ms_Modes[mode] then
+		outputDebugString("DM-Mode not found!", 1)
+		return
+	end
+
 	local id = #DeathmatchManager.Lobbys+1
-	DeathmatchManager.Lobbys[id] = DeathmatchLobby:new(id, name, owner, map, weapons, mode, maxPlayer, password)
+	DeathmatchManager.Lobbys[id] = self.ms_Modes[mode]:new(id, name, owner, map, weapons, mode, maxPlayer, password)
 end
 
 function DeathmatchManager:loadServerLobbys()
