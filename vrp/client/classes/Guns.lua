@@ -22,6 +22,16 @@ local TOGGLE_WEAPONS =
 	[23] = true,
 	[22] = true,
 }
+
+local WEAPON_CACHE_MELEE_DAMAGE = 
+{
+	[17] = true, 
+	[18] = true,
+	[37] = true,
+	[53] = true,
+	[41] = true,
+}
+
 function Guns:constructor()
 
 	self.m_Blood = false
@@ -107,14 +117,21 @@ end
 
 function Guns:addMeleeDamage( player, weapon , bodypart, loss ) 
 	if self.m_MeleeCache then 
-		if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then 
-			self.m_MeleeCache["Loss"] = self.m_MeleeCache["Loss"] + loss
+		if WEAPON_CACHE_MELEE_DAMAGE[weapon] then
+			if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then 
+				self.m_MeleeCache["Loss"] = self.m_MeleeCache["Loss"] + loss
+			else 
+				self.m_MeleeCache["Weapon"] = weapon 
+				self.m_MeleeCache["Target"] = player 
+				self.m_MeleeCache["Tick"] = getTickCount() 
+				self.m_MeleeCache["Bodypart"] = bodypart
+				self.m_MeleeCache["Loss"] = 0
+				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+					playSound("files/audio/hitsound.wav")
+				end
+			end
 		else 
-			self.m_MeleeCache["Weapon"] = weapon 
-			self.m_MeleeCache["Target"] = player 
-			self.m_MeleeCache["Tick"] = getTickCount() 
-			self.m_MeleeCache["Bodypart"] = bodypart
-			self.m_MeleeCache["Loss"] = 0
+			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
 			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
 				playSound("files/audio/hitsound.wav")
 			end

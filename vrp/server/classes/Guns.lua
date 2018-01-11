@@ -10,7 +10,7 @@ _giveWeapon = giveWeapon
 _takeWeapon = takeWeapon
 _takeAllWeapons = takeAllWeapons
 Guns = inherit(Singleton)
-GUN_CACHE_EMPTY_INTERVAL = 5000
+GUN_CACHE_EMPTY_INTERVAL = 1000*60
 function Guns:constructor()
 	local weaponSkills = {"std","pro","poor"}
 
@@ -267,6 +267,15 @@ function Guns:addDamageLog( player, loss, attacker, weapon, bodypart)
 			if weapon == cacheWeapon and player == cacheTarget then 
 				cacheTable["TotalLoss"] = cacheTable["TotalLoss"] + loss
 				cacheTable["HitCount"] = cacheTable["HitCount"] + 1
+			else 
+				self:forceDamageLogCache( attacker ) 
+				self.m_DamageLogCache[attacker.m_Id]  = {}
+				self.m_DamageLogCache[attacker.m_Id]["CacheTime"] = getTickCount() 
+				self.m_DamageLogCache[attacker.m_Id]["Timestamp"] = getRealTime().timestamp
+				self.m_DamageLogCache[attacker.m_Id]["Weapon"] = weapon 
+				self.m_DamageLogCache[attacker.m_Id]["Target"] = player
+				self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss 
+				self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
 			end
 		else 
 			self:forceDamageLogCache( attacker ) 
