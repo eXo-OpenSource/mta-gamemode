@@ -230,6 +230,7 @@ function Core:destructor()
 		if HouseManager:isInstantiated() then
 			delete(HouseManager:getSingleton())
 		end
+		delete(Guns:getSingleton())
 		delete(FactionManager:getSingleton())
 		delete(CompanyManager:getSingleton())
 		delete(InventoryManager:getSingleton())

@@ -10,7 +10,7 @@ _giveWeapon = giveWeapon
 _takeWeapon = takeWeapon
 _takeAllWeapons = takeAllWeapons
 Guns = inherit(Singleton)
-GUN_CACHE_EMPTY_INTERVAL = 1000*60
+GUN_CACHE_EMPTY_INTERVAL = 1000*60 * 2
 function Guns:constructor()
 	local weaponSkills = {"std","pro","poor"}
 
@@ -48,7 +48,9 @@ end
 
 
 function Guns:destructor()
-
+	for id, cacheObj in pairs(self.m_DamageLogCache) do 
+		self:forceDamageLogCache(  id ) 
+	end
 end
 
 function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
