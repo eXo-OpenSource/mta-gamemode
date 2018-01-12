@@ -215,9 +215,7 @@ function GangwarDisplay:drawParticipantOverview()
 	for key, player in ipairs(getElementsByType("player")) do 
 		if player:getPublicSync("gangwarParticipant") then
 			if player:getFactionId() == localFaction then 
-				for i = 1, 5 do
-					factionPlayers1[#factionPlayers1+1] = player
-				end
+				factionPlayers1[#factionPlayers1+1] = player
 			end
 		end
 	end
