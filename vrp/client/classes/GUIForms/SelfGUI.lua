@@ -1160,6 +1160,14 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "Fireworks", state)
 		end
+			
+		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
+		self.m_GangwarTabView:setFont(VRPFont(25))
+		self.m_GangwarTabView:setFontSize(1)
+		self.m_GangwarTabView:setChecked(core:get("Other", "GangwarTabView", true))
+		self.m_GangwarTabView.onChange = function (state)
+			core:set("Other", "GangwarTabView", state)
+		end
 
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
