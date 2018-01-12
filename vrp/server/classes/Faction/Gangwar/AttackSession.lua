@@ -331,10 +331,12 @@ function AttackSession:stopClients( bNoOutput )
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v
+		v:setPublicSync("gangwarParticipant", false) 
 	end
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
 		allGangwarPlayers[#allGangwarPlayers+1] = v
+		v:setPublicSync("gangwarParticipant", false) 
 	end
 	if not bNoOutput then
 		GangwarStatistics:getSingleton():collectDamage(self.m_AreaObj.m_ID, allGangwarPlayers)
