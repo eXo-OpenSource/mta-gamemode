@@ -336,6 +336,7 @@ function WeaponTruck:Event_OnWeaponTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnWeaponTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der %s wurde zerstört!", WEAPONTRUCK_NAME[self.m_Type])
+		Discord:getSingleton():outputBreakingNews(string.format("Der %s wurde zerstört!", WEAPONTRUCK_NAME[self.m_Type]))
 		self:delete()
 	end
 end
