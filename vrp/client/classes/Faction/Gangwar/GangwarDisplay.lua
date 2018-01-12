@@ -11,8 +11,21 @@ GangwarDisplay = inherit(Object)
 local w,h = guiGetScreenSize()
 local width, height = w*0.2,h*0.1
 local startX,startY = w- width*1.1, h*0.5-(height/2)
-local overViewHeight = h*0.4
-local overViewWidth = w*0.15
+local overViewHeight = h*0.4 / ASPECT_RATIO_MULTIPLIER
+local overViewWidth =  screenWidth/2-(screenWidth*0.65/2) / ASPECT_RATIO_MULTIPLIER
+local overViewStartHeight = h*0.5-h*0.3+(screenWidth*0.65)*0.06
+local overViewHealthWidth = dxGetTextWidth("200", 1, "default-bold")
+local gradientTexture = dxCreateTexture( "files/images/Gangwar/gradient.png", "argb", true, "clamp")
+local overViewLocationSize = 1
+local overViewNameSize = 1
+if w < 1280 and h < 850 then 
+	overViewLocationSize = 0.4 
+	overViewNameSize = 0.4
+	if w < 900 then 
+		overViewLocationSize = 0 
+		overViewNameSize = 0.5
+	end
+end
 local moveStateImages = 
 {
 	["stand"] = "stand_icon", 
@@ -126,7 +139,7 @@ function GangwarDisplay:rend_Display( )
 	self:dxDrawBoxShape(startX,startY,width,height,tocolor(0,0,0,150))
 	
 	self:rend_Flag() 
-	if ScoreboardGUI and ScoreboardGUI:getSingleton().m_Showing then
+	if ScoreboardGUI and ScoreboardGUI:getSingleton().m_Showing and core:get("Other", "GangwarTabView", true) then
 		self:drawParticipantOverview()
 	end
 end
@@ -198,6 +211,7 @@ function GangwarDisplay:drawParticipantOverview()
 	local factionPlayers1 = {}
 	local factionPlayers2 = {}
 	local localFaction = localPlayer:getFactionId()
+	local localFactionObject = localPlayer:getFaction()
 	for key, player in ipairs(getElementsByType("player")) do 
 		if player:getPublicSync("gangwarParticipant") then
 			if player:getFactionId() == localFaction then 
@@ -205,19 +219,18 @@ function GangwarDisplay:drawParticipantOverview()
 			end
 		end
 	end
-	self:drawAttackerOverview( factionPlayers1, self.m_Faction1.m_Color["r"], self.m_Faction1.m_Color["g"], self.m_Faction1.m_Color["b"] ) 
+	self:drawAttackerOverview( factionPlayers1, localFactionObject.m_Color["r"], localFactionObject.m_Color["g"], localFactionObject.m_Color["b"] ) 
 end
 
 function GangwarDisplay:drawAttackerOverview( playerTable, r, g, b ) 
 	local heightPerElement =  overViewHeight / #playerTable
-	if heightPerElement >= h*0.1 then heightPerElement = h*0.1 end
-	local sy = h*0.2
-	for i = 0, #playerTable -1 do 
-		self:drawPlayerOverview(playerTable[i+1], 0, sy+(heightPerElement*i), overViewWidth, heightPerElement, r, g, b) 
+	if heightPerElement >= h*0.06 then heightPerElement = h*0.06 end
+	for i = 0, #playerTable -1, 1 do
+		self:drawPlayerOverview(playerTable[i+1], 0, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r, g, b, i) 
 	end
 end
 
-function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b) 
+function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b, i) 
 	local health = getElementHealth( player ) 
 	local armor = getPedArmor( player ) 
 	local weapon = getPedWeapon(player)
@@ -225,11 +238,15 @@ function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b
 	local px,py,pz = getElementPosition(player) 
 	local zoneName = getZoneName(px, py, pz)
 	local moveState = getPedMoveState(player)
-	dxDrawRectangle(x, y+height*0.05, width, height*0.9, tocolor( 0, 0, 0, 100))
-	dxDrawRectangle(x, y+height*0.05, width*healthbar, height*0.45, tocolor(r, g, b, 50))
-	dxDrawText("#EEEEEE"..math.ceil(health+armor).." #FFFFFF"..getPlayerName(player), x+width*0.01, y+height*0.05, x+width, y+height*0.45, tocolor(255, 255, 255, 255), 1, "default-bold", "left", "top", false, false, false, true )
-	dxDrawText(zoneName, x+width*0.01, y+height*0.55, x+width, y+height, tocolor( 200, 200, 200, 255), 1, "default-bold")
-	dxDrawImage( x+width - height*0.3, y+height*0.1, height*0.3, height*0.3, "files/images/Gangwar/"..(moveStateImages[moveState] or "stand_icon")..".png")
-	dxDrawImage(x+width, y+height*0.25, height*0.5, height*0.5, "files/images/Weapons/"..(getWeaponNameFromID(weapon) or "Fist")..".png")
+
+	dxDrawRectangle(x, y+height*0.05, width- height*0.5, height*0.9, tocolor( 0, 0, 0, 100))
+	dxDrawImage(x, y+height*0.05, (width-height*0.5)*healthbar, height*0.45, gradientTexture, 0, 0, 0, tocolor(r*0.6, g*0.6, b*0.6, 200))
+	
+	dxDrawText("#e8f0ff"..math.ceil(health+armor), x+width*0.01+height*0.3, y+height*0.05, x+width*0.01+height*0.3+overViewHealthWidth, y+height*0.45, tocolor(255, 255, 255, 255),  1, "default-bold", "left", "center", false, false, false, true )
+	dxDrawImage(x+width*0.01, y+height*0.125, height*0.25, height*0.25, "files/images/Gangwar/armor.png")
+	dxDrawText(getPlayerName(player)..i, x+overViewHealthWidth+height*0.3+width*0.08, y+height*0.05, x+width*0.15, y+height*0.45, tocolor(255, 255, 255, 255), overViewNameSize, "default-bold", "left", "center", false, false, false, true )
+	dxDrawText(zoneName, x+width*0.01, y+height*0.55, x+width, y+height, tocolor( 200, 200, 200, 255), overViewLocationSize, "default-bold")
+	dxDrawImage(x+width - height*0.8, y+height*0.1, height*0.3, height*0.3, "files/images/Gangwar/"..(moveStateImages[moveState] or "stand_icon")..".png")
+	dxDrawImage(x+width-height*0.5, y+height*0.25, height*0.5, height*0.5, "files/images/Weapons/"..(getWeaponNameFromID(weapon) or "Fist")..".png")
 end
 

@@ -429,6 +429,7 @@ function AttackSession:createBarricadeCars( )
 	for i = 1, iCarCount do
 		newX, newY = getPointFromDistanceRotation(x, y, 6, 360 * (i/5));
 		self.m_Barricades[i] = TemporaryVehicle.create(482, newX, newY, z, i* (360/iCarCount))
+		self.m_Barricades[i]:setData("isGangwarVehicle", true)
 		self.m_Barricades[i]:disableRespawn(true)
 		setElementData( self.m_Barricades[i] , "breakCar", true)
 		setVehicleDamageProof( self.m_Barricades[i], true )
