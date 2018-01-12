@@ -49,7 +49,7 @@ function ScoreboardGUI:onShow()
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 	self:refresh()
 	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
-
+	self.m_Showing = true
 	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
 
@@ -66,6 +66,7 @@ function ScoreboardGUI:onHide()
 	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
 	RadioGUI:getSingleton():setControlEnabled(true)
+	self.m_Showing = false
 end
 
 function ScoreboardGUI:onScoreBoardScroll(key)

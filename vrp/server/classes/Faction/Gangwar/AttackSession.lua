@@ -17,8 +17,6 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_Participants = {	}
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_BreakFunc = bind(  self.onBreakCMD , self)
-	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	self.m_DamageFunc = bind(  self.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
@@ -43,7 +41,6 @@ function AttackSession:destructor()
 	if bNotifyTimer then
 		killTimer( self.m_NotifiyAgainTimer )
 	end
-	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
@@ -68,13 +65,13 @@ function AttackSession:setupSession ( )
 		self.m_Participants[#self.m_Participants + 1] = v
 		v.g_kills = 0
 		v.g_damage = 0
-		v.m_IsDeadInGangwar = false
+		v:setPublicSync("gangwarParticipant", true) 
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
 		v.g_kills = 0
 		v.g_damage = 0
-		v.m_IsDeadInGangwar = false
+		v:setPublicSync("gangwarParticipant", true) 
 	end
 	self:synchronizeAllParticipants( )
 end
@@ -104,6 +101,7 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
+		player:setPublicSync("gangwarParticipant", true) 
 		if not bLateJoin then
 			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
 		else
@@ -137,6 +135,7 @@ function AttackSession:removeParticipant( player )
 			table.remove( self.m_Participants, index )
 		end
 	end
+	player:setPublicSync("gangwarParticipant", false) 
 	self:synchronizeLists( )
 	self:sessionCheck()
 end
@@ -185,16 +184,6 @@ function AttackSession:onPurposlyDisqualify( player, bAfk )
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
 end
 
-function AttackSession:onPlayerLeaveCenter( player )
-	local faction = player.m_Faction
-	if faction == self.m_Faction1 then
-		local isAnyoneInside = self:checkPlayersInCenter( )
-		if not isAnyoneInside then
-			self:setCenterCountdown()
-		end
-	end
-end
-
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
 		local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
@@ -241,7 +230,6 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 					triggerClientEvent("onGangwarKill", killer, player, weapon, bodypart, loss )
 					self:onPlayerLeaveCenter( player ) 
 					killer.g_damage = killer.g_damage + math.floor(loss)
-					player.m_IsDeadInGangwar = true
 					self:disqualifyPlayer( player )
 				end
 			end
@@ -253,6 +241,7 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 		else
 			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 			self:disqualifyPlayer( player )
+			self:onPlayerLeaveCenter( player ) 
 		end
 	end
 end
@@ -269,6 +258,38 @@ function AttackSession:onPlayerEnterCenter( player )
 			killTimer( self.m_NotifiyAgainTimer )
 		end
 	end
+end
+
+function AttackSession:onPlayerLeaveCenter( player )
+	local faction = player.m_Faction
+	if faction == self.m_Faction1 then
+		local isAnyoneInside = self:checkPlayersInCenter( )
+		if not isAnyoneInside then
+			self:setCenterCountdown()
+		end
+	end
+end
+
+function AttackSession:checkPlayersInCenter( )
+	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
+	local faction, executionPedCheck
+	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
+	local dim2, int2
+	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
+	for key, player in ipairs( pTable ) do
+		dim2 = getElementDimension( player )
+		int2 = getElementInterior( player )
+		executionPedCheck = player.getExecutionPed and not player:getExecutionPed()
+		if dim == dim2 and int == int2 then
+			if not isPedDead( player ) and executionPedCheck and self:isParticipantInList(player) and getElementHealth(player) ~= 0 then
+				faction = player.m_Faction
+				if faction == self.m_Faction1 then
+					return true
+				end
+			end
+		end
+	end
+	return false
 end
 
 function AttackSession:setCenterCountdown()
@@ -321,30 +342,10 @@ function AttackSession:stopClients( bNoOutput )
 end
 
 function AttackSession:notifyFaction1( )
-	if self:backupCenterCheck() then 
+	if not self:backupCenterCheck() then 
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt nur noch "..math.floor(GANGWAR_CENTER_TIMEOUT/2).." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFEure Gegner haben nur noch "..math.floor(GANGWAR_CENTER_TIMEOUT/2).." Sekunden Zeit die Flagge zu erreichen!",0,200,0,true)
 	end
-end
-
-function AttackSession:checkPlayersInCenter( )
-	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
-	local faction
-	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
-	local dim2, int2
-	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
-	for key, player in ipairs( pTable ) do
-		dim2 = getElementDimension( player )
-		int2 = getElementInterior( player )
-		if dim == dim2 and int == int2 then
-			if not isPedDead( player ) and not player.m_IsDeadInGangwar and self:isParticipantInList(player) then
-				faction = player.m_Faction
-				if faction == self.m_Faction1 then
-					return true
-				end
-			end
-		end
-	end
-	return false
 end
 
 function AttackSession:backupCenterCheck() 
@@ -360,11 +361,11 @@ function AttackSession:backupCenterCheck()
 		dim2 = getElementDimension( player )
 		int2 = getElementInterior( player )
 		if dim == dim2 and int == int2 then
-			if not isPedDead( player ) and not player.m_IsDeadInGangwar and self:isParticipantInList(player) then
+			if not isPedDead( player ) and ( player.getExecutionPed and not player:getExecutionPed()) and self:isParticipantInList(player) and getElementHealth(player) ~= 0 then
 				faction = player.m_Faction
 				if faction == self.m_Faction1 then
 					dist = math.floor(getDistanceBetweenPoints3D(pX, pY, pZ, x, y, z))
-					if dist >  GANGWAR_CENTER_HOLD_RANGE then
+					if dist <= GANGWAR_CENTER_HOLD_RANGE then
 						return true
 					end
 				end
@@ -376,7 +377,7 @@ end
 
 function AttackSession:attackLose() --// loose for team1
 	if self.endReason == 3 then 
-		if not self:backupCenterCheck() then 
+		if self:backupCenterCheck() then 
 			return
 		end
 	end
@@ -444,26 +445,10 @@ function AttackSession:onVehicleEnter( pEnter )
 	end
 end
 
-function AttackSession:onBreakCMD( cmdstring )
-	if cmdstring == "fbrake" then
-		if source.m_Faction == self.m_Faction1 then
-			local pOcc = getPedOccupiedVehicle( source )
-			if pOcc then
-				if getElementData( pOcc, "breakCar") then
-					local bState = not isElementFrozen( pOcc )
-					setElementFrozen( pOcc, bState)
-					source:triggerEvent("AttackClient:sendBreakMsg", bState)
-				end
-			end
-		end
-	end
-end
-
 function AttackSession:destroyBarricadeCars( )
 	for i = 1, #self.m_Barricades do
 		destroyElement( self.m_Barricades[i] )
 	end
-	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 end
 
 function AttackSession:createWeaponBox()

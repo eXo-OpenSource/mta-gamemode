@@ -1476,7 +1476,9 @@
 	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
 	<vrpfile src="files/images/Gangwar/gw_time.png"/>
 	<vrpfile src="files/images/Gangwar/trophy.png"/>
-
+	<vrpfile src="files/images/Gangwar/run_icon.png"/>
+	<vrpfile src="files/images/Gangwar/stand_icon.png"/>
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
