@@ -95,7 +95,7 @@
 	<script src="server/classes/BindManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
 	<script src="server/classes/ClientStatistics.lua" type="server"/>
-
+	<script src="server/classes/Discord.lua" type="server"/>
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
 	<script src="server/classes/Super/Root.lua" type="server"/>

@@ -45,6 +45,7 @@ function WeedTruck:constructor(driver)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
+	Discord:getSingleton():outputBreakingNews("Ein Weed-Transport wurde soeben gestartet!")
 	FactionState:getSingleton():sendWarning("Ein Weed-Transport wurde gestartet!", "Neuer Einsatz", true, serialiseVector(WeedTruck.spawnPos))
 
 	self.m_Blip = Blip:new("Marker.png", WeedTruck.Destination.x, WeedTruck.Destination.y, {faction = self.m_StartFaction:getId(), factionType = "State"}, 9999, BLIP_COLOR_CONSTANTS.Red)
@@ -98,6 +99,7 @@ function WeedTruck:Event_OnWeedTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnWeedTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Weed-LKW wurde soeben zerstört!")
+		Discord:getSingleton():outputBreakingNews("Der Weed-LKW wurde soeben zerstört!")
 		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Weedtruck verhindert!")
 		delete(self)
 	end
@@ -127,6 +129,7 @@ function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 		if faction and faction:isEvilFaction() then
 			if isPedInVehicle(hitElement) and hitElement:getOccupiedVehicle() == self.m_Truck then
 				PlayerManager:getSingleton():breakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
+				Discord:getSingleton():outputBreakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
 				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
 				faction:giveKarmaToOnlineMembers(-10, "Weed-Truck abgegeben!")
 				hitElement:getInventory():giveItem("Weed", WeedTruck.Weed)

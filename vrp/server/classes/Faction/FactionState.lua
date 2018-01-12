@@ -1813,6 +1813,7 @@ function FactionState:Event_startEvidenceTruck()
 				FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
 				StateEvidenceTruck:new(client, totalMoney)
 				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+				Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
 				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
 				self.m_EvidenceRoomItems = {}

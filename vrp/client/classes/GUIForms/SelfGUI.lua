@@ -88,7 +88,7 @@ function SelfGUI:constructor()
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
 
-	addRemoteEvents{"factionInvitationRetrieve"}
+	addRemoteEvents{"factionInvitationRetrieve", "factionRetrieveInfo"}
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 
 	-- GROUP

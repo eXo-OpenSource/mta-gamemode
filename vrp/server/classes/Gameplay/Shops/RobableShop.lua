@@ -79,6 +79,8 @@ function RobableShop:startRob(shop, attacker, ped)
 	shop.m_Marker.m_Disable = true
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
+	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", shop:getName()))
+	
 	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "Neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
 	shop.m_LastRob = getRealTime().timestamp
 
@@ -365,6 +367,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
 				self.m_BankAccountServer:transferMoney({FactionManager:getSingleton():getFromId(1), nil, true}, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 				self.m_BankAccountServer:transferMoney(self.m_Shop.m_BankAccount, stateMoney, "Shop Raub Sicherstellung 1/3", "Gameplay", "ShopRob")
 				hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
+				Discord:getSingleton():outputBreakingNews(string.format("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName()))
 				PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
 				FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Shop Raub Beute sichergestellt!")
 			else

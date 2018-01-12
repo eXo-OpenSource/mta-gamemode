@@ -161,6 +161,7 @@ end
 
 function WeaponTruck:timeUp()
 	PlayerManager:getSingleton():breakingNews("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type])
+	Discord:getSingleton():outputBreakingNews(string.format("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type]))
 	if self.m_Type == "evil" then
 		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
 	elseif self.m_Type == "state" then

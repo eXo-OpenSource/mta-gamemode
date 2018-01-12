@@ -183,6 +183,7 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 		else
 			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Geld-Transport abgegeben!")
 			PlayerManager:getSingleton():breakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
+			Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
 		end
 		finish = true
 	elseif hitElement:getPlayerAttachedObject() then
@@ -219,6 +220,7 @@ function StateEvidenceTruck:Event_OnTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Geldtransporter wurde zerstört!")
+		Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
 		self:delete()
 	end
 end
