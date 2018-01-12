@@ -156,13 +156,13 @@ function StatisticsLogger:addKillLog(player, target, weapon)
         sqlLogs:getPrefix(), userId, targetId, weapon, range, self:getZone(target))
 end
 
-function StatisticsLogger:addDamageLog(player, target, weapon, startTime, totalLoss, hitCount)
+function StatisticsLogger:addDamageLog(player, target, weapon, startTime, totalLoss, hitCount, zone)
 	local userId = 0
     if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(target) then targetId = target:getId() else targetId = target or 0 end
 	local startTimeData = getRealTime(startTime)
 	sqlLogs:queryExec("INSERT INTO ??_Damage (UserId, TargetId, Position, Weapon, Damage, Hits, StartTime, Date) VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), NOW())",
-        sqlLogs:getPrefix(), userId, targetId, self:getZone(target), weapon, totalLoss, hitCount, tostring(startTime))
+        sqlLogs:getPrefix(), userId, targetId, zone or "Unknown", weapon, totalLoss, hitCount, tostring(startTime))
 end
 
 function StatisticsLogger:addHealLog(player, heal, reason)

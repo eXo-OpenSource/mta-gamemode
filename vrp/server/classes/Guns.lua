@@ -10,7 +10,7 @@ _giveWeapon = giveWeapon
 _takeWeapon = takeWeapon
 _takeAllWeapons = takeAllWeapons
 Guns = inherit(Singleton)
-GUN_CACHE_EMPTY_INTERVAL = 1000*60 * 2
+GUN_CACHE_EMPTY_INTERVAL = 60*1000*2
 function Guns:constructor()
 	local weaponSkills = {"std","pro","poor"}
 
@@ -278,6 +278,7 @@ function Guns:addDamageLog( player, loss, attacker, weapon, bodypart)
 				self.m_DamageLogCache[attacker.m_Id]["Target"] = player
 				self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss 
 				self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
+				self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 			end
 		else 
 			self:forceDamageLogCache( attacker ) 
@@ -288,6 +289,7 @@ function Guns:addDamageLog( player, loss, attacker, weapon, bodypart)
 			self.m_DamageLogCache[attacker.m_Id]["Target"] = player
 			self.m_DamageLogCache[attacker.m_Id]["TotalLoss"] = loss 
 			self.m_DamageLogCache[attacker.m_Id]["HitCount"] = 1
+			self.m_DamageLogCache[attacker.m_Id]["Zone"] = StatisticsLogger:getSingleton():getZone(attacker)
 		end
 	end
 end
@@ -308,7 +310,8 @@ function Guns:forceDamageLogCache( player )
 			local hitCount = cacheTable["HitCount"]
 			local target = cacheTable["Target"]
 			local startTime = cacheTable["Timestamp"]
-			StatisticsLogger:getSingleton():addDamageLog(player, target, cacheWeapon, startTime, totalLoss, hitCount)
+			local zone = cacheTable["Zone"]
+			StatisticsLogger:getSingleton():addDamageLog(player, target, cacheWeapon, startTime, totalLoss, hitCount, zone)
 			if self.m_DamageLogCache[playerId]  then 
 				self.m_DamageLogCache[playerId] = nil 
 			end
