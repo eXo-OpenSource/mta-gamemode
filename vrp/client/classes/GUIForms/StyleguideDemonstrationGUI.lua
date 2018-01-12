@@ -34,9 +34,9 @@ function StyleguideDemonstrationGUI:constructor()
 	end
 	sggrid:onScrollDown(
 		function()
-			--for i = 1, 15 do
+			for i = 1, 15 do
 				sggrid:addItem(getRandomUniqueNick(), 1337)
-			--end
+			end
 		end
 	)
 
