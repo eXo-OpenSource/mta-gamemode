@@ -54,14 +54,13 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
 	self.m_NetworkInteruptFreeze = false
-	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
+	self.HookDrawAttention = bind(self.Event_NetworkInterupt, self)
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
-	
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 end
@@ -76,13 +75,23 @@ function Guns:Event_NetworkInterupt( status, ticks )
 			setElementFrozen(localPlayer, true) 
 			self.m_NetworkInteruptFreeze = true
 		end
+		addEventHandler( "onClientPlayerNetworkStatus", root, self.HookDrawAttention)
 		outputDebugString( "interruption began " .. ticks .. " ticks ago" )
 	elseif (status == 1) then
 		if (self.m_NetworkInteruptFreeze) then
 			setElementFrozen(localPlayer, false) 
 			self.m_NetworkInteruptFreeze = false
 		end
+		removeEventHandler( "onClientPlayerNetworkStatus", root, self.HookDrawAttention)
 		outputDebugString( "interruption began " .. ticks .. " ticks ago and has just ended" )
+	end
+end
+
+function Guns:drawNetworkInterupt() 
+	if getTickCount() % 1000 <= 750 then
+		dxDrawImage(w*0.3-w*0.035, h*0.01, w*0.035, w*0.035, "files/images/warning.png")
+		dxDrawText("Netzwerkprobleme!", w*0.31, h*0.01+1, w, (h*0.01+w*0.035)+1, tocolor(0, 0, 0, 255), 2, "clear", "left", "center")
+		dxDrawText("Netzwerkprobleme!", w*0.31, h*0.01, w, h*0.01+w*0.035, tocolor(200, 0, 0, 255), 2, "clear", "left", "center")
 	end
 end
 
