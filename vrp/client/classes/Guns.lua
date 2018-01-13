@@ -53,6 +53,8 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
+	self.m_NetworkInteruptFreeze = false
+	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
@@ -66,6 +68,22 @@ end
 
 function Guns:destructor()
 
+end
+
+function Guns:Event_NetworkInterupt( status, ticks )
+	if (status == 0) then
+		if (not isElementFrozen(localPlayer)) then
+			setElementFrozen(localPlayer, true) 
+			self.m_NetworkInteruptFreeze = true
+		end
+		outputDebugString( "interruption began " .. ticks .. " ticks ago" )
+	elseif (status == 1) then
+		if (self.m_NetworkInteruptFreeze) then
+			setElementFrozen(localPlayer, false) 
+			self.m_NetworkInteruptFreeze = false
+		end
+		outputDebugString( "interruption began " .. ticks .. " ticks ago and has just ended" )
+	end
 end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
