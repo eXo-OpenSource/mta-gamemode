@@ -55,6 +55,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
 	self.m_NetworkInteruptFreeze = false
 	self.HookDrawAttention = bind(self.Event_NetworkInterupt, self)
+	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
