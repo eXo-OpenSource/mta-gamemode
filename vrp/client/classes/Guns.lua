@@ -110,7 +110,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					bPlaySound = true
