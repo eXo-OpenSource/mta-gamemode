@@ -125,7 +125,7 @@ function Core:constructor()
 		SkribbleManager:new()
 		TSConnect:new()
 		BotManager:new()
-
+		PickupWeaponManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end

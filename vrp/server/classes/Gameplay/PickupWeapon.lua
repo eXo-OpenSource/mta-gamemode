@@ -12,11 +12,12 @@ function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner)
 				self.m_OwnerFaction = owner:getFaction()
 			end
 		end
-		self.m_Entity = createPickup(x, y, z, 3, WEAPON_MODELS_WORLD[weapon], -1)
+		self.m_Entity = createPickup(x, y, z, 3, WEAPON_MODELS_WORLD[weapon], 0)
 		setElementDoubleSided(self.m_Entity, true)
 		setElementDimension(self.m_Entity, dim)
 		setElementInterior(self.m_Entity, int)
 		self.m_Entity.m_DroppedWeapon = true
+		setElementData( self.m_Entity, "pickupWeapon", true) -- just for client check-purposes
 		PickupWeaponManager.Map[self.m_Entity] = self
 	end
 end
@@ -32,8 +33,9 @@ function PickupWeapon:pickup( player )
 				outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer reingelegt.", player, 200,200,0)
 			end
 			player:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
-			setPedAnimation( player, PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME, 200, false, false, false)
-			setTimer(setPedAnimation, 1000, 1, player, nil)
+			setPedAnimation( player, PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME, 500, false, false, false)
+			setTimer(setPedAnimation, 1000, 1, player, "carry", "crry_prtial", 200, false )
+			setTimer(setPedAnimation, 1200, 1, player, false)
 			delete(self)
 		else
 			player:sendError("Du hast zu wenig Spielstunden!")

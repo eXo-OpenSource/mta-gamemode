@@ -15,8 +15,10 @@ function PickupWeaponManager:Event_onPickupHit( player, dimension)
 	if dimension then 
 		if getElementType(player) == "player" then 
 			if not getPedOccupiedVehicle(player) then 
-				self.m_HitWeaponPickup = source
-				ShortMessage:new("Drücke Links-Alt + M um die Waffe aufzuheben!", "Waffe auf dem Boden")
+				if getElementData(source, "pickupWeapon") then
+					self.m_HitWeaponPickup = source
+					ShortMessage:new("Drücke Links-Alt + M um die Waffe aufzuheben!", "Waffe auf dem Boden")
+				end
 			end
 		end
 	end
