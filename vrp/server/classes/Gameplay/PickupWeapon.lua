@@ -2,7 +2,7 @@ PickupWeapon = inherit(Object)
 PickupWeapon.Map = { }
 local PICKUP_ANIMATION_BLOCK, PICKUP_ANIMATION_NAME = "misc", "pickup_box"
 
-function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner) 
+function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner, ignoreHours) 
 	if WEAPON_MODELS_WORLD[weapon] then
 		self.m_WeaponID = weapon 
 		self.m_Ammo = ammo
@@ -17,6 +17,7 @@ function PickupWeapon:constructor( x, y, z, int, dim, weapon, ammo, owner)
 		setElementDimension(self.m_Entity, dim)
 		setElementInterior(self.m_Entity, int)
 		self.m_Entity.m_DroppedWeapon = true
+		self.m_IgnoreHoursPlayed = ignoreHours
 		setElementData( self.m_Entity, "pickupWeapon", true) -- just for client check-purposes
 		PickupWeaponManager.Map[self.m_Entity] = self
 	end
@@ -24,7 +25,7 @@ end
 
 function PickupWeapon:pickup( player ) 
 	if player and isElement(player) then 
-		if (player:getPlayTime() / 60) >=  3 then
+		if ((player:getPlayTime() / 60) >=  3) or self.m_IgnoreHoursPlayed then
 			if not ( player:isFactionDuty() and player:getFaction():isStateFaction()) then
 				giveWeapon(player, self.m_WeaponID, self.m_Ammo, true)
 				outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
