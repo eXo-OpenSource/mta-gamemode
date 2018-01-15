@@ -225,8 +225,8 @@
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
 	
-	<script src="server/classes/Gameplay/PickupManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Pickup.lua" type="server"/>
+	<script src="server/classes/Gameplay/PickupWeaponManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/PickupWeapon.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisWheel.lua" type="server"/>
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisGond.lua" type="server"/>
