@@ -551,43 +551,25 @@ function Player:respawn(position, rotation, bJailSpawn)
 end
 
 function Player:clearReviveWeapons()
-	self.m_ReviveWeapons = false
+	self.m_ReviveWeaponsInfo = nil
 end
 
 function Player:dropReviveWeapons()
-	self:destroyDropWeapons()
-	if self.m_ReviveWeapons then
-		self.m_WorldObjectWeapons =  {}
-		local obj, weapon, ammo, model, x, y, z, dim, int, playerFaction
+	if self.m_ReviveWeaponsInfo then
+		self.m_ReviveWeapons =  {}
+		local pickupWeapon, weapon, ammo, model, x, y, z, dim, int
 		for i = 1, 12 do
-			if self.m_ReviveWeapons[i] then
+			if self.m_ReviveWeaponsInfo[i] then
 				x,y,z = getElementPosition(self)
+				x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				int = getElementInterior(self)
 				dim = getElementDimension(self)
-				weapon =  self.m_ReviveWeapons[i][1]
-				ammo = self.m_ReviveWeapons[i][2]
-				model = WEAPON_MODELS_WORLD[weapon]
-				playerFaction = self:getFaction()
-				if not playerFaction then
-					playerFaction = "Keine"
-				else
-					playerFaction:getShortName()
-				end
-				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
-				if model then
-					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
-						obj = createPickup(x,y,z-0.5, 3, model, 1 )
-						if obj then
-							setElementDoubleSided(obj,true)
-							setElementDimension(obj, dim)
-							setElementInterior(obj, int)
-							obj:setData("weaponId", weapon)
-							obj:setData("ammoInWeapon", ammo)
-							obj:setData("weaponOwner", self)
-							obj:setData("factionName", playerFaction)
-							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
-							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
-						end
+				weapon =  self.m_ReviveWeaponsInfo[i][1]
+				ammo = self.m_ReviveWeaponsInfo[i][2]
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
+					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self)
+					if pickupWeapon then
+						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
 					end
 				end
 			end
@@ -597,45 +579,31 @@ function Player:dropReviveWeapons()
 end
 
 function Player:destroyDropWeapons()
-	if self.m_WorldObjectWeapons then
-		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] and isElement(self.m_WorldObjectWeapons[i]) then
-				destroyElement(self.m_WorldObjectWeapons[i])
-			end
-		end
-	end
-end
-
-function Player:Event_onPlayerReviveWeaponHit( player )
-	if player then
-		if source then
-			local weapon = source:getData("weaponId")
-			local ammo = source:getData("ammoInWeapon")
-			if weapon and ammo then
-				player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
-				player:triggerEvent("onTryPickupWeapon", source)
-			end
+	if self.m_ReviveWeapons then
+		for i = 1, #self.m_ReviveWeapons do
+			delete(self.m_ReviveWeapons[i])
 		end
 	end
 end
 
 function Player:setReviveWeapons()
-	self.m_ReviveWeapons = {}
+	self.m_ReviveWeaponsInfo = {}
 	local weaponInSlot, ammoInSlot
 	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
 		ammoInSlot = getPedTotalAmmo(self, i )
-		self.m_ReviveWeapons[i] = {weaponInSlot, ammoInSlot}
+		self.m_ReviveWeaponInfo[i] = {weaponInSlot, ammoInSlot}
 	end
 end
 
 function Player:giveReviveWeapons()
-	if self.m_ReviveWeapons then
+	if self.m_ReviveWeaponsInfo then
 		for i = 1, 12 do
-			if self.m_ReviveWeapons[i] then
-				giveWeapon( self, self.m_ReviveWeapons[i][1], self.m_ReviveWeapons[i][2], true)
+			if self.m_ReviveWeaponsInfo[i] then
+				giveWeapon( self, self.m_ReviveWeaponsInfo[i][1], self.m_ReviveWeaponsInfo[i][2], true)
 			end
 		end
+		self:destroyDropWeapons()
 		return true
 	else
 		return false
