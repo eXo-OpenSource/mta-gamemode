@@ -592,7 +592,7 @@ function Player:setReviveWeapons()
 	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
 		ammoInSlot = getPedTotalAmmo(self, i )
-		self.m_ReviveWeaponInfo[i] = {weaponInSlot, ammoInSlot}
+		self.m_ReviveWeaponsInfo[i] = {weaponInSlot, ammoInSlot}
 	end
 end
 

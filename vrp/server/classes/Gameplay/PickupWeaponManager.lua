@@ -8,8 +8,10 @@ end
 
 function PickupWeaponManager:Event_onPlayerPickupWeaponUse( pickup ) 
 	if client then 
-		if PickupWeaponManager.Map[pickup] then 
-			PickupWeaponManager.Map[pickup]:pickup( client ) 
+		if not isPedDead(client) and getElementHealth(client) ~= 0 and ( client.getExecutionPed and not client:getExecutionPed()) then
+			if PickupWeaponManager.Map[pickup] then 
+				PickupWeaponManager.Map[pickup]:pickup( client ) 
+			end
 		end
 	end
 end
