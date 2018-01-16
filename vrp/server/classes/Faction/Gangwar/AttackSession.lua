@@ -186,15 +186,17 @@ end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
-		local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
-		local multiplier = DAMAGE_MULTIPLIER[bpart] and DAMAGE_MULTIPLIER[bpart] or 1
-		local realLoss = basicDamage*multiplier
-		local health = getElementHealth(target)
-		if realLoss > health then 
-			realLoss = health
+		if target:getFaction() ~= source:getFaction() then
+			local basicDamage = WEAPON_DAMAGE[weapon] or getWeaponProperty(weapon, "poor", "damage") or 1
+			local multiplier = DAMAGE_MULTIPLIER[bpart] and DAMAGE_MULTIPLIER[bpart] or 1
+			local realLoss = basicDamage*multiplier
+			local health = getElementHealth(target)
+			if realLoss > health then 
+				realLoss = health
+			end
+			triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss)
+			source.g_damage = source.g_damage + math.floor(realLoss)
 		end
-		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss)
-		source.g_damage = source.g_damage + math.floor(realLoss)
 	end
 end
 
