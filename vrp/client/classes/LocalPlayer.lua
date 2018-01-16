@@ -518,15 +518,6 @@ function LocalPlayer:renderPedNameTags()
 				end
 			end
 		end
-		if self.m_MortemWeaponPickup then -- better solution would be key-binds, but this is easy and safe
-			if getKeyState("lalt") and getKeyState("m") then
-				if self.m_LastMortemPickup < getTickCount()-4000 then
-					triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
-					self.m_MortemWeaponPickup = false
-					self.m_LastMortemPickup = getTickCount()
-				end
-			end
-		end
 	end
 	if DEBUG then ExecTimeRecorder:getSingleton():endRecording("3D/PedNameTag") end
 end

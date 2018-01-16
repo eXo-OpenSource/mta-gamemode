@@ -224,6 +224,9 @@
 
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
+	
+	<script src="server/classes/Gameplay/PickupWeaponManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/PickupWeapon.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisWheel.lua" type="server"/>
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisGond.lua" type="server"/>
@@ -945,7 +948,9 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
-
+	
+	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
+	
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />

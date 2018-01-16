@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -61,7 +61,6 @@ function PlayerManager:constructor()
 		cancelEvent()
 	end)
 
-	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -153,49 +152,6 @@ function PlayerManager:Event_OnDeathPedWasted( pPed )
 				setElementData(pPed, "NPC:isDyingPed", false)
 				owner:dropReviveWeapons()
 				owner:clearReviveWeapons()
-			end
-		end
-	end
-end
-
-function PlayerManager:Event_onAttemptPickupWeapon( pickup )
-	if client then
-		local weapon = pickup:getData("weaponId")
-		local ammo = pickup:getData("ammoInWeapon")
-		local owner = pickup:getData("weaponOwner")
-		local factionName = pickup:getData("factionName") or "Keine"
-		local px,py,pz = getElementPosition(pickup)
-		local x,y,z = getElementPosition(client)
-		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
-		local owner = source:getData("weaponOwner")
-		if weapon and ammo then
-			if dist <= 5 then
-				if (client:getPlayTime() / 60) >=  3 then
-					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
-						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(function(player)
-							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-						end, 1000, 1, client)
-
-						destroyElement(pickup)
-						giveWeapon(client,weapon,ammo,true)
-						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
-						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
-					else
-						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(function(player)
-							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-						end, 1000, 1, client)
-						destroyElement(pickup)
-						--giveWeapon(client,weapon,ammo,true)
-						--FactionState:
-						FactionState:getSingleton():addWeaponToEvidence( client, weapon, ammo, factionName or "Keine")
-						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
-						outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer transportiert.", client, 200,200,0)
-					end
-				else
-					client:sendError("Du hast zu wenig Spielstunden!")
-				end
 			end
 		end
 	end

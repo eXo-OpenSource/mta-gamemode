@@ -149,7 +149,7 @@ function Core:ready()
 	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
-
+	PickupWeaponManager:new()
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end

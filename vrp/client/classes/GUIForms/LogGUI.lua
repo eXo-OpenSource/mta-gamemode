@@ -1,5 +1,5 @@
 LogGUI = inherit(GUIForm)
-LogGUI.AmountPerLoad = 50
+LogGUI.AmountPerLoad = 150
 
 function LogGUI:constructor(parent, url)
 	local yOffset = 0
@@ -27,14 +27,18 @@ function LogGUI:constructor(parent, url)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self.m_LogGrid:onScrollDown(bind(self.onScrollDown, self))
-	self:updateLog(0, LogGUI.AmountPerLoad)
+	self:updateLog(0, 100)
 end
 
 function LogGUI:updateLog(start, amount)
 	self.m_Cache = {}
-	local options = {}
+
+	local options = {
+		["postData"] =  ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
+	}
+
 	local url = ("%s&start=%d&amount=%d"):format(self.m_Url, start, amount)
-	outputChatBox( url)
+	--outputChatBox( url)
 	fetchRemote(url, options,
 			function(responseData, responseInfo)
 				self.m_Cache = fromJSON(responseData)
@@ -61,7 +65,6 @@ function LogGUI:refreshGrid()
 	local item
 	for i, row in ipairs(self.m_Cache) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
-
 		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
 
 		if self:checkCatFilter(row.Category) then
