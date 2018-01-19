@@ -621,6 +621,15 @@ function LocalPlayer:Event_setAdmin(player, rank)
 				end
 			end
 		end)
+		
+		self:setPublicSyncChangeHandler("gangwarParticipant", function(state)
+			if state then
+				if ego.Active then
+					delete(ego:getSingleton())
+					ego.Active = false
+				end
+			end
+		end)
 		--[[bindKey("f5", "down",
 			function()
 				if self:getRank() >= RANK.Moderator then
