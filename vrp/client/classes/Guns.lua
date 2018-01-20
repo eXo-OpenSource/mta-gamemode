@@ -126,8 +126,12 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 					bPlaySound = true
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
 				else
-					bPlaySound = false
-					self:addMeleeDamage( source, weapon, bodypart, loss)
+					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
+						bPlaySound = false
+						self:addMeleeDamage( source, weapon, bodypart, loss)
+					else 
+						cancelEvent()
+					end
 				end
 			end
 		elseif localPlayer == source then

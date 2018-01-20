@@ -1276,6 +1276,7 @@
 	<vrpfile src="files/images/Weapons/Cue.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
+	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Textures/Other/trans.png"/>
 	<vrpfile src="files/images/Textures/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
@@ -1717,6 +1718,7 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
+	<vrpfile src="files/audio/gasmask.ogg"/>
 	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
