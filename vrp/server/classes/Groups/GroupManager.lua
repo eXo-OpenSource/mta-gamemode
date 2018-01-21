@@ -386,7 +386,7 @@ function GroupManager:Event_RankUp(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
-				player:setPublicSync("GroupRank", playerRank+1 or 0)
+				player:setPublicSync("GroupRank", group:getPlayerRank(playerId)) or 0)
 			end
 			self:sendInfosToClient(client)
 		else
