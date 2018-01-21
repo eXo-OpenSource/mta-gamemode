@@ -78,6 +78,7 @@ function FactionEvil:createInterior(Id, faction)
 		createObject(2358, 2820.2, -1165.1, 1025.3),
 		createObject(2358, 2820.2, -1165.1, 1025.5, 0, 0, 348),
 		createObject(349, 2818.8999, -1167.7, 1025.8, 90, 0, 0),
+		createObject(349, 2818.8999, -1167.7, 1025.8, 90, 0, 0),
 		createObject(2977, 2819.3, -1170.6, 1024.4, 0, 0, 30.5),
 		createObject(2332, 2814.6001, -1173.8, 1026.6, 0, 0, 180)
 	}
@@ -169,15 +170,15 @@ end
 function FactionEvil:loadYakGates(factionId)
 
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1402.4599609375, -1450.0500488281, 9.6000003814697), Vector3(0, 0, 86), Vector3(1402.4599609375, -1450.0500488281, 5.6))
+	lcnGates[1] = Gate:new(2933, Vector3(907.40002, -1704.5, 14.5), Vector3(0, 0, 90), Vector3(907.40002, -1693.8812255859, 14.5))
+	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)
 	end
-	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1413.57, -1355.19, 8.93))
-	elevator:addStation("Hinterhof", Vector3(1423.35, -1356.26, 13.57))
-	elevator:addStation("Dach", Vector3(1418.78, -1329.92, 23.99))
+	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
+	--// ps: have I told you that I hate this new faction-base?
+	removeWorldModel(759, 400, 874.47, -1706.86, 13.34)
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
