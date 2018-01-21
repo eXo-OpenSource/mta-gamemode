@@ -102,7 +102,9 @@ function ego.toggle()
 		delete(ego:getSingleton())
 		ego.Active = false
 	else
-		ego:new()
+		if not localPlayer:getPublicSync("gangwarParticipant") then
+			ego:new()
+		end
 	end
 end
 addCommandHandler("ego", ego.toggle)

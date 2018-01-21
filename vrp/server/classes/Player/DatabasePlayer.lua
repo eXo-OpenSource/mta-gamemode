@@ -455,7 +455,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 			elseif toObject[1] == "group" then
 				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))
+				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]) .. ", Reason: " .. tostring(reason))
 			end
 			goesToBank = toObject[3]
 			silent = toObject[4]
