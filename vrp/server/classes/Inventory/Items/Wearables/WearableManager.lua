@@ -104,6 +104,7 @@ function WearableManager:removeAllWearables( player )
 		destroyElement(player.m_Helmet)
 		player.m_IsWearingHelmet = false
 		player.m_Helmet = false
+		player:triggerEvent("onClientToggleHelmet", false, "Gasmaske")
 		player:setData("isFaceConcealed", false)
 	end
 	if player.m_Shirt then 
