@@ -48,14 +48,17 @@ function WorldItemMouseMenu:constructor(posX, posY, element)
 	end
 
 	if self:hasPermissionTo("moveWorldItem", element, true) then
-		self:addItem(_"Bewegungsmelder",
-			function()
-				if self:getElement() then
-					triggerServerEvent("onSlamToggleLaser", localPlayer, element)
+		if getElementData(element, "detonatorSlam") then
+			self:addItem(_"Bewegungsmelder",
+				function()
+					if self:getElement() then
+						triggerServerEvent("onSlamToggleLaser", localPlayer, element)
+					end
 				end
-			end
-		):setIcon(FontAwesomeSymbols.Bomb)
+			):setIcon(FontAwesomeSymbols.Bomb)
+		end
 	end
+	
 	if self:hasPermissionTo("showWorldItemInformation", element) then
         self:addItem(_"Informationen >>>",
 			function()
