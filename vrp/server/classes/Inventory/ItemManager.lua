@@ -40,6 +40,7 @@ function ItemManager:constructor()
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
+		["SLAM"] = ItemSlam;
 
 		["Wuerfel"] = ItemDice,
 		["Angelrute"] = ItemFishing,
