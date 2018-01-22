@@ -178,7 +178,7 @@ function FactionEvil:loadYakGates(factionId)
 	end
 	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
 	--// ps: have I told you that I hate this new faction-base?
-	removeWorldModel(759, 400, 874.47, -1706.86, 13.34)
+	--// removed removeModel ;)
 end
 
 function FactionEvil:onBarrierGateHit(player, gate)
