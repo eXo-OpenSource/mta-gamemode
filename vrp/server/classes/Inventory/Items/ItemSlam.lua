@@ -38,6 +38,7 @@ function ItemSlam:detonateSlam( instance, detonatedBy )
 	if instance then 
 		local x,y,z = getElementPosition( instance.m_Object )
 		createExplosion( x, y, z, 8, detonatedBy)
+		createExplosion( x, y, z, 8, detonatedBy)
 		delete(ItemSlam.Map[instance.m_Object])
 	end
 end
