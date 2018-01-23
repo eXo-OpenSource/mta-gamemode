@@ -226,11 +226,11 @@ function GangwarDisplay:drawAttackerOverview( playerTable, r, g, b )
 	local heightPerElement =  overViewHeight / #playerTable
 	if heightPerElement >= h*0.06 then heightPerElement = h*0.06 end
 	for i = 0, #playerTable -1, 1 do
-		self:drawPlayerOverview(playerTable[i+1], 0, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r, g, b, i) 
+		self:drawPlayerOverview(playerTable[i+1], 0, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r, g, b) 
 	end
 end
 
-function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b, i) 
+function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b) 
 	local health = getElementHealth( player ) 
 	local armor = getPedArmor( player ) 
 	local weapon = getPedWeapon(player)
@@ -244,7 +244,7 @@ function GangwarDisplay:drawPlayerOverview( player, x, y, width, height, r, g, b
 	
 	dxDrawText("#e8f0ff"..math.ceil(health+armor), x+width*0.01+height*0.3, y+height*0.05, x+width*0.01+height*0.3+overViewHealthWidth, y+height*0.45, tocolor(255, 255, 255, 255),  1, "default-bold", "left", "center", false, false, false, true )
 	dxDrawImage(x+width*0.01, y+height*0.125, height*0.25, height*0.25, "files/images/Gangwar/armor.png")
-	dxDrawText(getPlayerName(player)..i, x+overViewHealthWidth+height*0.3+width*0.08, y+height*0.05, x+width*0.15, y+height*0.45, tocolor(255, 255, 255, 255), overViewNameSize, "default-bold", "left", "center", false, false, false, true )
+	dxDrawText(getPlayerName(player), x+overViewHealthWidth+height*0.3+width*0.08, y+height*0.05, x+width*0.15, y+height*0.45, tocolor(255, 255, 255, 255), overViewNameSize, "default-bold", "left", "center", false, false, false, true )
 	dxDrawText(zoneName, x+width*0.01, y+height*0.55, x+width, y+height, tocolor( 200, 200, 200, 255), overViewLocationSize, "default-bold")
 	dxDrawImage(x+width - height*0.8, y+height*0.1, height*0.3, height*0.3, "files/images/Gangwar/"..(moveStateImages[moveState] or "stand_icon")..".png")
 	dxDrawImage(x+width-height*0.5, y+height*0.25, height*0.5, height*0.5, "files/images/Weapons/"..(getWeaponNameFromID(weapon) or "Fist")..".png")
