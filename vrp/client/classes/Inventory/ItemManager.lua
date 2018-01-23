@@ -64,6 +64,8 @@ function ItemManager:loadEffectItems( )
   self.m_Items["Weed-Samen"] = Plant:new();
 
   ItemDestructable:new();
+  ItemSlam:new();
+  ItemSmokeGrenade:new();
 end
 
 function ItemManager:initWearables()
