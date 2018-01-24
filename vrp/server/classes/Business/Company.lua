@@ -206,7 +206,19 @@ function Company:getOnlinePlayers()
 	return players
 end
 
+function Company:getRankName(rank)
+	return self.m_RankNames[rank]
+end
+
+
 function Company:sendChatMessage(sourcePlayer,message)
+	local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return
+	end
+	sourcePlayer:setLastChatMessage(message)
+	
 	local playerId = sourcePlayer:getId()
 	local rank = self.m_Players[playerId]
 	local rankName = self.m_RankNames[rank]

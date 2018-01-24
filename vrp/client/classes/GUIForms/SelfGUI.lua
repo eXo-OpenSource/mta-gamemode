@@ -73,8 +73,7 @@ function SelfGUI:constructor()
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
-	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
-	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
+	addRemoteEvents{"companyInvitationRetrieve"}
 	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
 
 	-- FACTION
@@ -89,8 +88,7 @@ function SelfGUI:constructor()
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
 
-	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
-	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+	addRemoteEvents{"factionInvitationRetrieve", "factionRetrieveInfo"}
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 
 	-- GROUP
@@ -105,8 +103,7 @@ function SelfGUI:constructor()
 	--self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	--self.m_GroupInvitationsLabel:setVisible(false)
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
-	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
+	addRemoteEvents{"groupInvitationRetrieve"}
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen", tabGeneral)
@@ -390,9 +387,11 @@ end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabGeneral.TabIndex then
-		triggerServerEvent("companyRequestInfo", root)
-		triggerServerEvent("factionRequestInfo", root)
-		triggerServerEvent("groupRequestInfo", root)
+		self:setFactionInfo()
+		self:setCompanyInfo()
+		--triggerServerEvent("factionRequestInfo", root)
+		--triggerLatentServerEvent("groupRequestInfo", root)
+		self:setGroupInfo()
 	elseif tabId == self.m_TabVehicles.TabIndex then
 		triggerServerEvent("vehicleRequestInfo", root)
 	end
@@ -426,21 +425,28 @@ function SelfGUI:loadStatistics()
 	end
 end
 
-function SelfGUI:Event_companyRetrieveInfo(id, name, rank, __, __, __, rankNames)
-	self:adjustGeneralTab(name)
-
-	if name then
-		self.m_CompanyNameLabel:setText(name)
-		self.m_CompanyRankLabel:setText(rankNames[rank])
-
-		if rank >= 5 then
-			self.m_CompanyEditLabel:setText(_"(verwalten)")
-		else
-			self.m_CompanyEditLabel:setText(_"(anzeigen)")
+function SelfGUI:setCompanyInfo()
+	local company = localPlayer:getCompany()
+	if company then
+		local rank = localPlayer:getPublicSync("CompanyRank")
+		if rank then
+			self:adjustGeneralTab(company:getName())
+			self.m_CompanyNameLabel:setText(company:getName())
+			self.m_CompanyRankLabel:setText(company.m_RankNames[rank])
+			if rank >= 5 then
+				self.m_CompanyEditLabel:setText(_"(verwalten)")
+			else
+				self.m_CompanyEditLabel:setText(_"(anzeigen)")
+			end
+			local x, y = self.m_CompanyNameLabel:getPosition()
+			self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
+		else 
+			self:adjustGeneralTab(nil)
+			self.m_CompanyNameLabel:setText("-")
+			self.m_CompanyRankLabel:setText("-")
 		end
-		local x, y = self.m_CompanyNameLabel:getPosition()
-		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
 	else
+		self:adjustGeneralTab(nil)
 		self.m_CompanyNameLabel:setText("-")
 		self.m_CompanyRankLabel:setText("-")
 	end
@@ -494,21 +500,28 @@ function SelfGUI:ShaderButton_Click()
 	ShaderPanel:getSingleton():open()
 end
 
-function SelfGUI:Event_factionRetrieveInfo(id, name, rank, __, __, __, rankNames)
-	if rank then
-		local faction = FactionManager:getSingleton():getFromId(id)
-		self.m_FactionNameLabel:setText(faction:getName())
-		self.m_FactionRankLabel:setText(rankNames[rank])
-		self.m_FactionMenuButton:setVisible(true)
-		self.m_InvationFactionId = 0
+function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)
+	local faction = localPlayer:getFaction()
+	if faction then
+		local rank = localPlayer:getPublicSync("FactionRank")
+		if rank then
+			self.m_FactionNameLabel:setText(faction:getName())
+			self.m_FactionRankLabel:setText(faction.m_RankNames[rank])
+			self.m_FactionMenuButton:setVisible(true)
+			self.m_InvationFactionId = 0
 
-		if rank >= 5 then
-			self.m_FactionMenuButton:setText(_"(verwalten)")
-		else
-			self.m_FactionMenuButton:setText(_"(anzeigen)")
+			if rank >= 5 then
+				self.m_FactionMenuButton:setText(_"(verwalten)")
+			else
+				self.m_FactionMenuButton:setText(_"(anzeigen)")
+			end
+			local x, y = self.m_FactionNameLabel:getPosition()
+			self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
+		else 
+			self.m_FactionNameLabel:setText(_"- keine Fraktion -")
+			self.m_FactionRankLabel:setText("-")
+			self.m_FactionMenuButton:setVisible(false)
 		end
-		local x, y = self.m_FactionNameLabel:getPosition()
-		self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
 	else
 		self.m_FactionNameLabel:setText(_"- keine Fraktion -")
 		self.m_FactionRankLabel:setText("-")
@@ -572,26 +585,29 @@ function SelfGUI:GroupInvitationsDeclineButton_Click(groupId)
 	end
 end
 
-
-function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
+function SelfGUI:setGroupInfo()
 	local x, y = self.m_GroupNameLabel:getPosition()
-	if rank and rank >= 0 then
-		self.m_GroupNameLabel:setText(name)
-		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
-		self.m_GroupMenuButton:setVisible(true)
-		self.m_HasGroupInvation = false
+	if localPlayer:getPublicSync("GroupId") and localPlayer:getPublicSync("GroupId") ~= 0 then 
+		local name = localPlayer:getPublicSync("GroupName")
+		local rank = localPlayer:getPublicSync("GroupRank")
+		if rank and rank >= 0 then
+			local rankNames = localPlayer:getPublicSync("GroupRankNames")
+			self.m_GroupNameLabel:setText(name)
+			self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
+			self.m_GroupMenuButton:setVisible(true)
+			self.m_HasGroupInvation = false
 
-		if rank >= 5 then
-			self.m_GroupMenuButton:setText(_"(verwalten)")
-		else
-			self.m_GroupMenuButton:setText(_"(anzeigen)")
+			if rank >= 5 then
+				self.m_GroupMenuButton:setText(_"(verwalten)")
+			else
+				self.m_GroupMenuButton:setText(_"(anzeigen)")
+			end
+			self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 		end
-		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-	else
+	else 
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupRankLabel:setText("-")
 		self.m_GroupMenuButton:setVisible(false)
-		--self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 	end
 end
 
@@ -1135,6 +1151,22 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "HitSoundBell", state)
+		end
+
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
+		self.m_HitSound:setFont(VRPFont(25))
+		self.m_HitSound:setFontSize(1)
+		self.m_HitSound:setChecked(core:get("Other", "Fireworks", true))
+		self.m_HitSound.onChange = function (state)
+			core:set("Other", "Fireworks", state)
+		end
+			
+		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
+		self.m_GangwarTabView:setFont(VRPFont(25))
+		self.m_GangwarTabView:setFontSize(1)
+		self.m_GangwarTabView:setChecked(core:get("Other", "GangwarTabView", true))
+		self.m_GangwarTabView.onChange = function (state)
+			core:set("Other", "GangwarTabView", state)
 		end
 
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)

@@ -601,8 +601,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 						table.remove(target.spectBy, i)
 					end
 				end
-
-				setCameraTarget(admin, admin)
+				admin:triggerEvent("stopCenteredFreecam")
+				admin:triggerEvent("stopWeaponRecorder")
 				self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 				unbindKey(admin, "space", "down")
 
@@ -630,10 +630,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin:setCameraInterior(target.interior)
 		admin:setDimension(target.dimension)
 
-		-- this will probably fix the camera issue
-		local position = target.position
-		setCameraMatrix(admin, position)
-		setCameraTarget(admin, target)
+		admin:triggerEvent("startCenteredFreecam", target, 100, true)
+		admin:triggerEvent("startWeaponRecorder")
 
 		addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 		addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
@@ -1043,7 +1041,7 @@ local tpTable = {
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
 		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
-		["yakuza"] =        {["pos"] = Vector3(1441.33, -1329.08, 13.55),  	["typ"] = "Fraktionen"},
+		["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},

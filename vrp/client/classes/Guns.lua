@@ -22,6 +22,16 @@ local TOGGLE_WEAPONS =
 	[23] = true,
 	[22] = true,
 }
+
+local WEAPON_CACHE_MELEE_DAMAGE = 
+{
+	[17] = true, 
+	[18] = true,
+	[37] = true,
+	[53] = true,
+	[41] = true,
+}
+
 function Guns:constructor()
 
 	self.m_Blood = false
@@ -43,16 +53,47 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
+	self.m_NetworkInteruptFreeze = false
+	self.HookDrawAttention = bind(self.drawNetworkInterupt, self)
+	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
 	addEventHandler("onClientRender",root, bind(self.Event_checkFadeIn, self))
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
+	self.m_MeleeCache = {}
+	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 end
 
 function Guns:destructor()
 
+end
+
+function Guns:Event_NetworkInterupt( status, ticks )
+	if (status == 0) then
+		if (not isElementFrozen(localPlayer)) then
+			setElementFrozen(localPlayer, true) 
+			self.m_NetworkInteruptFreeze = true
+		end
+		addEventHandler( "onClientRender", root, self.HookDrawAttention)
+		outputDebugString( "interruption began " .. ticks .. " ticks ago" )
+	elseif (status == 1) then
+		if (self.m_NetworkInteruptFreeze) then
+			setElementFrozen(localPlayer, false) 
+			self.m_NetworkInteruptFreeze = false
+		end
+		removeEventHandler( "onClientRender", root, self.HookDrawAttention)
+		outputDebugString( "interruption began " .. ticks .. " ticks ago and has just ended" )
+	end
+end
+
+function Guns:drawNetworkInterupt() 
+	if getTickCount() % 1000 <= 750 then
+		dxDrawImage(w*0.3-w*0.035, h*0.01, w*0.035, w*0.035, "files/images/warning.png")
+		dxDrawText("Netzwerkprobleme!", w*0.31, h*0.01+1, w, (h*0.01+w*0.035)+1, tocolor(0, 0, 0, 255), 2, "clear", "left", "center")
+		dxDrawText("Netzwerkprobleme!", w*0.31, h*0.01, w, h*0.01+w*0.035, tocolor(200, 0, 0, 255), 2, "clear", "left", "center")
+	end
 end
 
 function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
@@ -61,6 +102,7 @@ function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 	end
 end
 
+MELEE_CACHE_CHECK = 2000
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
 	if weapon == 9 then -- Chainsaw
@@ -78,14 +120,18 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					bPlaySound = true
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
 				else
-					bPlaySound = true
-					triggerServerEvent("gunsLogMeleeDamage",attacker, source, weapon, bodypart, loss)
+					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
+						bPlaySound = false
+						self:addMeleeDamage( source, weapon, bodypart, loss)
+					else 
+						cancelEvent()
+					end
 				end
 			end
 		elseif localPlayer == source then
@@ -98,6 +144,47 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
+	end
+end
+
+function Guns:addMeleeDamage( player, weapon , bodypart, loss ) 
+	if self.m_MeleeCache then 
+		if WEAPON_CACHE_MELEE_DAMAGE[weapon] then
+			if self.m_MeleeCache["Weapon"] and self.m_MeleeCache["Weapon"] == weapon and self.m_MeleeCache["Target"] and self.m_MeleeCache["Target"] == player then 
+				self.m_MeleeCache["Loss"] = self.m_MeleeCache["Loss"] + loss
+			else 
+				self.m_MeleeCache["Weapon"] = weapon 
+				self.m_MeleeCache["Target"] = player 
+				self.m_MeleeCache["Tick"] = getTickCount() 
+				self.m_MeleeCache["Bodypart"] = bodypart
+				self.m_MeleeCache["Loss"] = 0
+				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+					playSound("files/audio/hitsound.wav")
+				end
+			end
+		else 
+			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
+			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
+				playSound("files/audio/hitsound.wav")
+			end
+		end
+	end
+end
+
+function Guns:sendMeleeDamage() 
+	if self.m_MeleeCache then 
+		triggerServerEvent("gunsLogMeleeDamage", localPlayer, self.m_MeleeCache["Target"], self.m_MeleeCache["Weapon"], self.m_MeleeCache["Bodypart"], self.m_MeleeCache["Loss"])
+		self.m_MeleeCache = {}
+	end
+end
+
+function Guns:checkMeleeCache() 
+	if self.m_MeleeCache then 
+		if self.m_MeleeCache["Tick"] then
+			if getTickCount() > self.m_MeleeCache["Tick"] + MELEE_CACHE_CHECK then 
+				self:sendMeleeDamage()
+			end
+		end
 	end
 end
 

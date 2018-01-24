@@ -5,7 +5,7 @@ function Gate:constructor(model, pos, rot, openPos, customOffset)
 	self.m_Closed = true
 
 	self:addGate(model, pos, rot, openPos)
-    self:createColshapes(model, pos, rot, customOffset)
+    --self:createColshapes(model, pos, rot, customOffset)
 
     --addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
     --addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
@@ -49,9 +49,9 @@ function Gate:createColshapes(model, pos, rot, customOffset)
 end
 
 function Gate:addCustomShapes(pos1, pos2)
-	self.m_ColShape1:setPosition(pos1)
+	--self.m_ColShape1:setPosition(pos1)
 	--self.m_Marker1:setPosition(pos1)
-	self.m_ColShape2:setPosition(pos2)
+	--self.m_ColShape2:setPosition(pos2)
 	--self.m_Marker2:setPosition(pos2)
 end
 

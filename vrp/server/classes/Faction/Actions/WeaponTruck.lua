@@ -161,6 +161,7 @@ end
 
 function WeaponTruck:timeUp()
 	PlayerManager:getSingleton():breakingNews("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type])
+	Discord:getSingleton():outputBreakingNews(string.format("Der %s ist fehlgeschlagen! (Zeit abgelaufen)", WEAPONTRUCK_NAME[self.m_Type]))
 	if self.m_Type == "evil" then
 		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
 	elseif self.m_Type == "state" then
@@ -335,6 +336,7 @@ function WeaponTruck:Event_OnWeaponTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnWeaponTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der %s wurde zerstört!", WEAPONTRUCK_NAME[self.m_Type])
+		Discord:getSingleton():outputBreakingNews(string.format("Der %s wurde zerstört!", WEAPONTRUCK_NAME[self.m_Type]))
 		self:delete()
 	end
 end
@@ -392,7 +394,7 @@ function WeaponTruck:Event_DeloadBox(veh)
 					client:sendError(_("Du hast bereits ein Objekt dabei!",client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!",client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!",client))
@@ -440,7 +442,7 @@ function WeaponTruck:Event_LoadBox(veh)
 					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
 				end
 			else
-				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+				client:sendError(_("Du bist zu weit vom Truck entfernt!",client))
 			end
 		else
 			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!",client))

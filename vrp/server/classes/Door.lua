@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Door.lua
+-- *  PURPOSE:     Door class
+-- *
+-- ****************************************************************************
 Door = inherit(Object)
 
 function Door:constructor(model, pos, rot, customOffset)

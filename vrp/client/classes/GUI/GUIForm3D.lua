@@ -14,6 +14,7 @@ function GUIForm3D:constructor(position, rotation, size, resolution, streamdista
 	self.m_CacheArea = false
 	self.m_Resolution, self.m_Size = resolution, size
 	self.m_Follow = follow
+	self.m_Rotation = rotation
 
 	-- Create streaming stuff
 	self.m_StreamArea = createColSphere(position, streamdistance or 150)
@@ -41,6 +42,21 @@ function GUIForm3D:destructor()
 
 	if self.m_CacheArea then
 		delete(self.m_CacheArea)
+	end
+end
+
+function GUIForm3D:setPosition(vec)
+	if vec and vec.x then 
+		self.m_StartPosition, self.m_EndPosition, self.m_Normal = math.getPlaneInfoFromEuler(vec, self.m_Rotation, self.m_Size)
+		self.m_StreamArea:setPosition(vec)
+		self:StreamArea_Leave(localPlayer, true)
+		nextframe(
+			function()
+				if self.m_StreamArea and isElement(self.m_StreamArea) and localPlayer:isWithinColShape(self.m_StreamArea) then
+					self:StreamArea_Hit(localPlayer, true)
+				end
+			end
+		)
 	end
 end
 

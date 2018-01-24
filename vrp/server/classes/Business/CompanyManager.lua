@@ -12,11 +12,10 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
-	addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
 	addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
 	addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
 	addEventHandler("companyAddPlayer", root, bind(self.Event_companyAddPlayer, self))
@@ -73,13 +72,6 @@ function CompanyManager:removeRef(ref)
 	CompanyManager.Map[ref:getId()] = nil
 end
 
-function CompanyManager:Event_companyRequestLog()
-    local company = client:getCompany()
-	if company then
-		client:triggerEvent("companyRetrieveLog", company:getPlayers(), company:getLog())
-	end
-end
-
 function CompanyManager:Event_companyRequestInfo()
 	self:sendInfosToClient(client)
 end
@@ -87,8 +79,8 @@ end
 function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
-	if company then
-        client:triggerEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
+	if company then --use triggerLatentEvent to improve serverside performance 
+        client:triggerLatentEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end
@@ -266,6 +258,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+				player:setPublicSync("CompanyRank", playerRank+1 or 0)
 			end
 			self:sendInfosToClient(client)
 		else
@@ -300,6 +293,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
+				player:setPublicSync("CompanyRank", playerRank-1 or 0)
 			end
 			self:sendInfosToClient(client)
 		else
@@ -409,6 +403,6 @@ end
 
 function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
-		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
+		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames)
 	end
 end

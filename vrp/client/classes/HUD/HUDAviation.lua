@@ -54,8 +54,12 @@ function HUDAviation:show( isSER, isTE, isJET, isJumboJET)
 		self.m_AviationType = 3 
 	elseif isJumboJET then 
 		self.m_AviationType = 4
+	else 
+		self.m_AviationType = 0
 	end
-	addEventHandler("onClientRender", root, self.m_Draw, true, "high+10")
+	if self.m_AviationType and  self.m_AviationType > 0 then 
+		addEventHandler("onClientRender", root, self.m_Draw, true, "high+10")
+	end
 end
 
 function HUDAviation:hide()

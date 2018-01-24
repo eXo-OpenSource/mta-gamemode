@@ -27,8 +27,8 @@ function FactionState:constructor()
 
 	self.m_ArmySepcialVehicleCol = createColRectangle(self.m_ArmySpecialVehicleBorder.x, self.m_ArmySpecialVehicleBorder.y, self.m_ArmySpecialVehicleBorder.sizeX, self.m_ArmySpecialVehicleBorder.sizeY)
 	self.m_BankAccountServer = BankServer.get("faction.state")
-	
-	addEventHandler("onColShapeLeave", root, function(element)
+
+	addEventHandler("onColShapeLeave", self.m_ArmySepcialVehicleCol, function(element)
 		if element and isElement(element) and element:getType() == "player" and element.vehicle then
 			if element.vehicle:getModel() == 432 or element.vehicle:getModel() == 520 or element.vehicle:getModel() == 425 then
 				if element:getFaction().m_Id ~= 3 or element:getFaction():getPlayerRank(element) == 0 then
@@ -1343,6 +1343,10 @@ function FactionState:Event_storageWeapons(player)
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
 					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1
+					if WEAPON_CLIPS[weaponId] then
+						clipAmmo = WEAPON_CLIPS[weaponId]
+					end
+
 					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)-1
 
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
@@ -1352,7 +1356,7 @@ function FactionState:Event_storageWeapons(player)
 						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
 							depot:addMagazineD(weaponId, magazines)
 						else
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
+							--client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
 						end
 						takeWeapon(client, weaponId)
 						client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
@@ -1809,6 +1813,7 @@ function FactionState:Event_startEvidenceTruck()
 				FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)
 				StateEvidenceTruck:new(client, totalMoney)
 				PlayerManager:getSingleton():breakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
+				Discord:getSingleton():outputBreakingNews("Ein Geld-Transporter ist unterwegs! Bitte bleiben Sie vom Transport fern!")
 				self:sendShortMessage(client:getName().." hat einen Geldtransport gestartet!",10000)
 				sql:queryExec("TRUNCATE TABLE ??_StateEvidence",sql:getPrefix())
 				self.m_EvidenceRoomItems = {}

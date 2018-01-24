@@ -47,7 +47,7 @@ function PhoneInteraction:callStart(player, voiceEnabled)
 	end
 
 	if client:getHealth() == 0 or player:getHealth() == 0 then
-		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar TOT!", client, player.name))
+		client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!", client, player.name))
 		client:triggerEvent("callReplace", player)
 		return
 	end
@@ -131,7 +131,7 @@ function PhoneInteraction:abortCall(player)
 			setPlayerVoiceBroadcastTo(partner, nil)
 			partner:setPhonePartner(nil)
 			partner:triggerEvent("callReplace", player)
-			partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
+			partner:sendWarning(_("Knack... Das Telefonat wurde abgebrochen!", partner))
 
 			if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
 			if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
@@ -185,7 +185,8 @@ function PhoneInteraction:callSendLocation()
 		end
 
 		local pos = client:getPosition()
-		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000)
+		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
+		self.m_LocationBlips[client]:setDisplayText("Position von "..client:getName())
 	end
 end
 

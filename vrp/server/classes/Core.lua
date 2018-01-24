@@ -125,7 +125,7 @@ function Core:constructor()
 		SkribbleManager:new()
 		TSConnect:new()
 		BotManager:new()
-
+		PickupWeaponManager:new()
 		if EVENT_HALLOWEEN then
 			Halloween:new()
 		end
@@ -163,6 +163,8 @@ function Core:constructor()
 		GroupHouseRob:new()
 
 		BindManager:new()
+		
+		Discord:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
@@ -230,6 +232,7 @@ function Core:destructor()
 		if HouseManager:isInstantiated() then
 			delete(HouseManager:getSingleton())
 		end
+		delete(Guns:getSingleton())
 		delete(FactionManager:getSingleton())
 		delete(CompanyManager:getSingleton())
 		delete(InventoryManager:getSingleton())

@@ -123,7 +123,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	local model = getElementModel(element)
 	local playerX, playerY, playerZ = getElementPosition(localPlayer)
 	local x, y, z = getElementPosition(element)
-	local range = getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
+	local range = localPlayer:getPrivateSync("isSpecting") and 0 or getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
 
 	-- Phase 1: Check per-element handlers
 	if element == localPlayer then

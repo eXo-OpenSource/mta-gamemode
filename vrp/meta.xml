@@ -95,7 +95,7 @@
 	<script src="server/classes/BindManager.lua" type="server"/>
 	<script src="server/classes/NonCollisionArea.lua" type="server"/>
 	<script src="server/classes/ClientStatistics.lua" type="server"/>
-
+	<script src="server/classes/Discord.lua" type="server"/>
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
 	<script src="server/classes/Super/Root.lua" type="server"/>
@@ -108,6 +108,7 @@
 	<script src="server/classes/Player/Player.lua" type="server"/>
 	<script src="server/classes/Player/PremiumPlayer.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
+	<script src="server/classes/Player/ExecutionPed.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
@@ -124,6 +125,8 @@
 
 	<script src="server/classes/Inventory/Items/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemBomb.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemSlam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemSmokeGrenade.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDice.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
@@ -140,6 +143,7 @@
 	<script src="server/classes/Inventory/Items/ItemTaser.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Plant.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 
 	<!-- Wearables -->
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
@@ -225,6 +229,9 @@
 
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
+	
+	<script src="server/classes/Gameplay/PickupWeaponManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/PickupWeapon.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisWheel.lua" type="server"/>
 	<script src="server/classes/Gameplay/FerrisWheel/FerrisGond.lua" type="server"/>
@@ -378,6 +385,7 @@
 	<script src="server/classes/Events/Christmas/Quests/QuestPackageTransport.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestFortuneWheel.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/Quests/QuestFerrisRide.lua" type="server"/>
+	<script src="server/classes/Events/Christmas/Quests/QuestNoQuest.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -434,6 +442,7 @@
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
+	<script src="client/classes/HUD/TinyInfoLabel.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/AntiClickSpam.lua" type="client"/>
@@ -472,6 +481,7 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/BindManager.lua" type="client"/>
 	<script src="client/classes/ClientStatistics.lua" type="client"/>
+	<script src="client/classes/WeaponRecorder.lua" type="client"/>
 
 	<!-- Utils -->
 	<script src="client/classes/Utils/CenteredFreecam.lua" type="client"/>
@@ -557,10 +567,31 @@
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemSlam.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemSmokeGrenade.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemFirework.lua" type="client"/>
 
 	<script src="client/classes/Inventory/Wearable/WearableHelmet.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRocket.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemPipeBomb.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkBattery.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRomanCandle.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkRomanCandleBattery.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkGroundShell.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/ItemFireworkBanger.lua" type="client"/>
+
+
+	<script src="client/classes/Inventory/Firework/FireworkExplosionSimple.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRocketTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombExplosion.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkPipebombBatteryRocket.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkDynamicRocketTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRomanCandleTail.lua" type="client"/>
+	<script src="client/classes/Inventory/Firework/FireworkRomanCandleRocket.lua" type="client"/>
+
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -927,7 +958,9 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
-
+	
+	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
+	
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
@@ -1004,7 +1037,8 @@
 	<vrpfile src="files/audio/Items/doorLockSound.mp3" />
 	<vrpfile src="files/audio/Items/doorUnlockSound.mp3" />
 	<vrpfile src="files/audio/Items/doorGoThru.mp3" />
-	
+
+	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 	
 	<vrpfile src="files/images/warning.png" />
 
@@ -1092,6 +1126,8 @@
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
 
+	<file src="files/images/bullethitsmoke.png"/>
+	
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/jquery-3.2.1.min.js" />
@@ -1214,7 +1250,7 @@
 	<vrpfile src="files/images/Speedo/needle.png"/>
 	<vrpfile src="files/images/Speedo/heading.png"/>
 	<vrpfile src="files/images/Speedo/aviation_engine_circle.png"/>
-	
+
 	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
 	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
@@ -1222,6 +1258,7 @@
 	<vrpfile src="files/images/Weapons/Cane.png"/>
 	<vrpfile src="files/images/Weapons/Chainsaw.png"/>
 	<vrpfile src="files/images/Weapons/CountryRifle.png"/>
+	<vrpfile src="files/images/Weapons/Rifle.png"/>
 	<vrpfile src="files/images/Weapons/Deagle.png"/>
 	<vrpfile src="files/images/Weapons/Dildo.png"/>
 	<vrpfile src="files/images/Weapons/DildoSmall.png"/>
@@ -1260,6 +1297,7 @@
 	<vrpfile src="files/images/Weapons/Cue.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
+	<vrpfile src="files/images/Other/gasmask.png"/>
 	<vrpfile src="files/images/Textures/Other/trans.png"/>
 	<vrpfile src="files/images/Textures/Other/garage.jpg"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
@@ -1466,7 +1504,11 @@
 	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
 	<vrpfile src="files/images/Gangwar/gw_time.png"/>
 	<vrpfile src="files/images/Gangwar/trophy.png"/>
-
+	<vrpfile src="files/images/Gangwar/run_icon.png"/>
+	<vrpfile src="files/images/Gangwar/stand_icon.png"/>
+	<vrpfile src="files/images/Gangwar/armor.png"/>
+	<vrpfile src="files/images/Gangwar/gradient.png"/>
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
@@ -1571,6 +1613,8 @@
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Slam.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Smokegrenade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kanne.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
@@ -1581,6 +1625,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Bait.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -1698,6 +1743,8 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
+	<vrpfile src="files/audio/gasmask.ogg"/>
+	<vrpfile src="files/audio/smoke_explode.ogg"/>
 	<vrpfile src="files/audio/door_bell.wav"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
@@ -1754,6 +1801,24 @@
 	<vrpfile src="files/audio/GoJump/button.wav" />
 	<vrpfile src="files/audio/GoJump/average.wav" />
 	<vrpfile src="files/audio/GoJump/highscore.wav" />
+
+	<vrpfile src="files/audio/Firework/explode_firecracker_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_firecracker_2.ogg" />
+	<vrpfile src="files/audio/Firework/explode_firecracker_3.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_2.ogg" />
+	<vrpfile src="files/audio/Firework/explode_kugelbombe_3.ogg" />
+	<vrpfile src="files/audio/Firework/explode_rocket_1.ogg" />
+	<vrpfile src="files/audio/Firework/explode_rocket_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_kugelbombe_3.ogg" />
+	<vrpfile src="files/audio/Firework/launch_motar_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_motar_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_1.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_2.ogg" />
+	<vrpfile src="files/audio/Firework/launch_rocket_3.ogg" />
 
 	<!-- 2Cars -->
 	<vrpfile src="files/audio/2Cars/die1.mp3"/>
@@ -1980,7 +2045,11 @@
 	<vrpfile src="files/models/fuelnozzle.dff"/>
 	<vrpfile src="files/models/fuelnozzle.col"/>
 	<vrpfile src="files/models/gasstation.dff"/>
+	<vrpfile src="files/models/firework.col"/>
+	<vrpfile src="files/models/firework.dff"/>
+	<vrpfile src="files/models/firework.txd"/>
 
+	<vrpfile src="files/models/objects/ferrisWheel/ferris.txd" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.col" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.dff" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.col" />
@@ -2129,7 +2198,7 @@
 	<map src="files/maps/TuningGarages.map"/>
 	
 	<!--map src="files/maps/ls-airport.map"/-->
-	
+
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 

@@ -73,6 +73,5 @@ end
 
 
 function VehicleELS.sendAllToClient(player)
-    outputDebug(player)
     player:triggerEvent("vehicleELSinitAll", VehicleELS.Map, VehicleELS.ActiveMap, VehicleELS.DIActiveMap)
 end

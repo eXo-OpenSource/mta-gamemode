@@ -9,6 +9,13 @@ from subprocess import call
 import platform
 import time
 import sys
+import argparse
+
+# Instantiate the parser
+parser = argparse.ArgumentParser()
+parser.add_argument('--no_files', action='store_true')
+parser.add_argument('--branch')
+args = parser.parse_args()
 
 start = time.time()
 compiler = "tools/luac_mta"
@@ -18,9 +25,10 @@ if platform.system() == "Windows":
 	compiler_length = 18
 rootdir = "vrp/"
 outdir = "vrp_build/"
-branch = sys.argv[1] if len(sys.argv) > 1 else ""
+branch = args.branch
+includeFiles = not args.no_files
 externalFiles = False
-
+	
 # Build vrp_build structure
 print("Creating build structure...")
 
@@ -74,8 +82,11 @@ if externalFiles:
 	for child in root.findall("vrpfile"):
 		root.remove(child)
 else:
-	# Copy all files
-	shutil.copytree(rootdir+"files", outdir+"files")
+	if includeFiles:
+		# Copy all files
+		shutil.copytree(rootdir+"files", outdir+"files")
+	else:
+		print("Ingoring files.")
 
 serverNode = ET.SubElement(root, "script")
 serverNode.set("src", "server.luac")

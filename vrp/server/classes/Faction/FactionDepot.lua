@@ -141,6 +141,8 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				local clipAmmo = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
+				if WEAPON_CLIPS[weaponID] then clipAmmo = WEAPON_CLIPS[weaponID] end
+
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
 						slot = getSlotFromWeapon(weaponID)
@@ -176,9 +178,6 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 							if bIsStorageWeapon then
 								ammoStorage[weaponID] = ammoStorage[weaponID]+amount*clipAmmo
 							end
-							if weaponID == 25 then amount = amount * 6 end
-							if weaponID == 33 then amount = amount * 5 end
-							if weaponID == 34 then amount = amount * 4 end
 							giveWeapon(player, weaponID, amount*clipAmmo)
 							outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
 						else
@@ -200,15 +199,20 @@ function Depot:addItem(player, item, amount)
 	for i=1, 6 do
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
 		if self.m_Items[i]["Item"] == 0 then
-			if player:getInventory():removeItem(item, amount) then
-				self.m_Items[i]["Item"] = item
-				self.m_Items[i]["Amount"] = amount
-				player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
-				player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
-				StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
-				return
+			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
+				if player:getInventory():removeItem(item, amount) then
+					self.m_Items[i]["Item"] = item
+					self.m_Items[i]["Amount"] = amount
+					player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
+					player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+					StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
+					return
+				else
+					player:sendError(_("Du hast nicht genug %s!", player, item))
+					return
+				end
 			else
-				player:sendError(_("Du hast nicht genug %s!", player, item))
+				player:sendError(_("Du kannst dieses Item nicht einlagern!", player, item))
 				return
 			end
 		end

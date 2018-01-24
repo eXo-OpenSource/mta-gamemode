@@ -29,10 +29,12 @@
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
 	<map src="fraktionen/insurgent_storage.map" />
+	<map src="fraktionen/yakuza_v2.map"/>
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
+
 	
 	<!--<map src="events/halloween.map" />-->
 
@@ -64,8 +66,8 @@
 	<map src="jobs/dumper.map" />
 
 	<map src="noobroom.map" />
-	<map src="noobspawn_christmas.map" />
-	<!--<map src="noobspawn.map" />-->
+	<!--<map src="noobspawn_christmas.map" />-->
+	<map src="noobspawn.map" />
 	<map src="prison.map" />
 	
 	<map src="shop/ammunation.map" />

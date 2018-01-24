@@ -17,11 +17,9 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 	self.m_Hover  = false
 end
 
-function GUIElement:destructor()
-	if self.m_TooltipActive then
-		self:updateTooltip() 
-	end
-	DxElement.destructor(self)
+function GUIElement:destructor(...)
+	self:updateTooltip(false) 
+	DxElement.destructor(self, ...)
 end
 
 function GUIElement:performChecks(mouse1, mouse2, cx, cy)

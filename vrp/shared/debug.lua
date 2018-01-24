@@ -114,6 +114,7 @@ local function prepareRunStringVars(runPlayer)
 	runStringSavedVars.player = player
 	runStringSavedVars.cprint = cprint
 	runStringSavedVars.pastebin = pastebin
+	runStringSavedVars.hastebin = hastebin
 
 	me = runPlayer
 	my = runPlayer
@@ -141,6 +142,24 @@ local function prepareRunStringVars(runPlayer)
 			outputChatBox("Invalid Pastebin Id!", runPlayer, 255, 0, 0)
 		end
 	end
+	hastebin = function(id)
+		if id and type(id) == "string" then
+			fetchRemote("https://hastebin.com/raw/"..id, {},
+				function(response, responseInfo)
+					if responseInfo.success == true then
+						loadstring(response)()
+						outputChatBox("Hastebin "..id.." successfully loaded!", runPlayer, 0, 255, 0)
+						outputDebugString("Hastebin "..id.." successfully loaded by "..runPlayer:getName().."!", 0, 0, 255, 0)
+					else
+						outputChatBox("Hastebin "..id.." failed to loaded! (Error: "..responseInfo.statusCode..")", runPlayer, 255, 0, 0)
+						outputDebugString("Hastebin "..id.."  failed to load by "..runPlayer:getName().."! (Error: "..responseInfo.statusCode..")", 0, 0, 255, 0)
+					end
+				end
+			)
+		else
+			outputChatBox("Invalid Hastebin Id!", runPlayer, 255, 0, 0)
+		end
+	end
 
 end
 
@@ -151,6 +170,7 @@ local function restoreRunStringVars()
 	cprint = runStringSavedVars.cprint
 	player = runStringSavedVars.player
 	pastebin = runStringSavedVars.pastebin
+	hastebin = runStringSavedVars.hastebin
 
 	runStringSavedVars = {}
 end

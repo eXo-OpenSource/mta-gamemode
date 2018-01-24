@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -61,7 +61,6 @@ function PlayerManager:constructor()
 		cancelEvent()
 	end)
 
-	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
 	addEventHandler("toggleSeatBelt", root, bind(self.Event_onToggleSeatBelt, self))
 	addEventHandler("onPlayerTryGateOpen",root, bind(self.Event_onRequestGateOpen, self))
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -130,11 +129,9 @@ function PlayerManager:Event_OnWeaponFire(weapon, ex, ey, ez, hE, sx, sy, sz)
 end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
-	if isElement(source.ped_deadDouble) then
-		destroyElement(source.ped_deadDouble)
-		setElementAlpha(source, 255)
-		source:clearReviveWeapons()
-	end
+	source:dropReviveWeapons()
+	source:clearReviveWeapons()
+	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 end
 
 function PlayerManager:Event_onToggleSeatBelt( )
@@ -149,121 +146,12 @@ end
 function PlayerManager:Event_OnDeathPedWasted( pPed )
 	if client then
 		if pPed and isElement(pPed) then
-			local owner = pPed:getData("NPC:DeathPedOwner")
+			local owner = pPed.m_ExecutedPlayer
 			if owner then
 				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
 				setElementData(pPed, "NPC:isDyingPed", false)
 				owner:dropReviveWeapons()
 				owner:clearReviveWeapons()
-			end
-		end
-	end
-end
-
-function PlayerManager:Event_onAttemptPickupWeapon( pickup )
-	if client then
-		local weapon = pickup:getData("weaponId")
-		local ammo = pickup:getData("ammoInWeapon")
-		local owner = pickup:getData("weaponOwner")
-		local factionName = pickup:getData("factionName") or "Keine"
-		local px,py,pz = getElementPosition(pickup)
-		local x,y,z = getElementPosition(client)
-		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
-		local owner = source:getData("weaponOwner")
-		if weapon and ammo then
-			if dist <= 5 then
-				if (client:getPlayTime() / 60) >=  3 then
-					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
-						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(function(player)
-							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-						end, 1000, 1, client)
-
-						destroyElement(pickup)
-						giveWeapon(client,weapon,ammo,true)
-						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
-						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
-					else
-						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
-						setTimer(function(player)
-							player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-						end, 1000, 1, client)
-						destroyElement(pickup)
-						--giveWeapon(client,weapon,ammo,true)
-						--FactionState:
-						FactionState:getSingleton():addWeaponToEvidence( client, weapon, ammo, factionName or "Keine")
-						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
-						outputChatBox("Du hast die Waffe konfesziert! Sie wird in die Asservatenkammer transportiert.", client, 200,200,0)
-					end
-				else
-					client:sendError("Du hast zu wenig Spielstunden!")
-				end
-			end
-		end
-	end
-end
-
-function PlayerManager:Event_OnWasted(tAmmo, k_, kWeapon)
-	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
-	end
-	if not source:getData("isInDeathMatch") and not source:getData("inWare") then
-		local x,y,z = getElementPosition(source)
-		local dim = getElementDimension(source)
-		local int = getElementInterior(source)
-		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
-		setElementDimension(source.ped_deadDouble,dim)
-		setElementInterior(source.ped_deadDouble, int)
-		if kWeapon == 34 then
-			setPedHeadless(source.ped_deadDouble, true)
-		end
-		local randAnim = math.random(1,5)
-		if randAnim == 5 then
-			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
-		else
-			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
-		end
-		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
-		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
-		setElementHealth(source.ped_deadDouble, 20)
-		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
-		setElementAlpha(source,0)
-	end
-	local inv = source:getInventory()
-	if inv then
-		if inv:getItemAmount("Diebesgut") > 0 then
-			inv:removeAllItem("Diebesgut")
-			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
-		end
-	end
-	if not source:getData("isInDeathMatch") then
-		local facSource = source:getFaction()
-		if k_ then
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if facSource:isStateFaction() and source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if not facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
-			end
-			if facSource then
-				if facSource.m_Id ~= 4 then
-					if not facSource:isStateFaction() and not source:isFactionDuty()  then
-						local facKiller = k_:getFaction()
-						if facKiller then
-							if facKiller:isStateFaction() then
-								k_:givePoints(15)
-							end
-						end
-					end
-				end
 			end
 		end
 	end
@@ -446,11 +334,7 @@ function PlayerManager:playerQuit()
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
-	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then
-			destroyElement(source.ped_deadDouble)
-		end
-	end
+	if source:getExecutionPed() then delete(source:getExecutionPed()) end
 	if source.m_SpeedCol then
 		destroyElement(source.m_SpeedCol)
 	end

@@ -113,8 +113,14 @@ function Player:sendNews()
 end
 
 function Player:triggerEvent(ev, ...)
-	if self then
+	if self and isElement(self) then
 		triggerClientEvent(self, ev, self, ...)
+	end
+end
+
+function Player:triggerLatentEvent(ev, ...)
+	if self and isElement(self) then
+		triggerLatentClientEvent(self, ev, self, ...)
 	end
 end
 
@@ -186,7 +192,7 @@ function Player:loadCharacter()
 	if self.m_Skin == 0 then
 		for i = 0, #CJ_CLOTHE_TYPES, 1 do
 			self:removeClothes(i)
-			local data = self.m_CJData[tostring(i)]
+			local data = self.m_SkinData[tostring(i)]
 			if data then
 				self:addClothes(data.texture, data.model, i)
 			end
@@ -534,9 +540,8 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setPedAnimation(self,false)
 	setElementAlpha(self,255)
 
-	if isElement(self.ped_deadDouble) then
-		destroyElement(self.ped_deadDouble)
-	end
+	if self:getExecutionPed() then delete(self:getExecutionPed()) end
+	
 	WearableManager:getSingleton():removeAllWearables(self)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
@@ -546,43 +551,25 @@ function Player:respawn(position, rotation, bJailSpawn)
 end
 
 function Player:clearReviveWeapons()
-	self.m_ReviveWeapons = false
+	self.m_ReviveWeaponsInfo = nil
 end
 
 function Player:dropReviveWeapons()
-	self:destroyDropWeapons()
-	if self.m_ReviveWeapons then
-		self.m_WorldObjectWeapons =  {}
-		local obj, weapon, ammo, model, x, y, z, dim, int, playerFaction
+	if self.m_ReviveWeaponsInfo then
+		self.m_ReviveWeapons =  {}
+		local pickupWeapon, weapon, ammo, model, x, y, z, dim, int
 		for i = 1, 12 do
-			if self.m_ReviveWeapons[i] then
+			if self.m_ReviveWeaponsInfo[i] then
 				x,y,z = getElementPosition(self)
+				x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				int = getElementInterior(self)
 				dim = getElementDimension(self)
-				weapon =  self.m_ReviveWeapons[i][1]
-				ammo = self.m_ReviveWeapons[i][2]
-				model = WEAPON_MODELS_WORLD[weapon]
-				playerFaction = self:getFaction()
-				if not playerFaction then
-					playerFaction = "Keine"
-				else
-					playerFaction:getShortName()
-				end
-				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
-				if model then
-					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
-						obj = createPickup(x,y,z-0.5, 3, model, 1 )
-						if obj then
-							setElementDoubleSided(obj,true)
-							setElementDimension(obj, dim)
-							setElementInterior(obj, int)
-							obj:setData("weaponId", weapon)
-							obj:setData("ammoInWeapon", ammo)
-							obj:setData("weaponOwner", self)
-							obj:setData("factionName", playerFaction)
-							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
-							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
-						end
+				weapon =  self.m_ReviveWeaponsInfo[i][1]
+				ammo = self.m_ReviveWeaponsInfo[i][2]
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
+					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self)
+					if pickupWeapon then
+						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
 					end
 				end
 			end
@@ -592,45 +579,31 @@ function Player:dropReviveWeapons()
 end
 
 function Player:destroyDropWeapons()
-	if self.m_WorldObjectWeapons then
-		for i = 1, #self.m_WorldObjectWeapons do
-			if self.m_WorldObjectWeapons[i] and isElement(self.m_WorldObjectWeapons[i]) then
-				destroyElement(self.m_WorldObjectWeapons[i])
-			end
-		end
-	end
-end
-
-function Player:Event_onPlayerReviveWeaponHit( player )
-	if player then
-		if source then
-			local weapon = source:getData("weaponId")
-			local ammo = source:getData("ammoInWeapon")
-			if weapon and ammo then
-				player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
-				player:triggerEvent("onTryPickupWeapon", source)
-			end
+	if self.m_ReviveWeapons then
+		for i = 1, #self.m_ReviveWeapons do
+			delete(self.m_ReviveWeapons[i])
 		end
 	end
 end
 
 function Player:setReviveWeapons()
-	self.m_ReviveWeapons = {}
+	self.m_ReviveWeaponsInfo = {}
 	local weaponInSlot, ammoInSlot
 	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
 		ammoInSlot = getPedTotalAmmo(self, i )
-		self.m_ReviveWeapons[i] = {weaponInSlot, ammoInSlot}
+		self.m_ReviveWeaponsInfo[i] = {weaponInSlot, ammoInSlot}
 	end
 end
 
 function Player:giveReviveWeapons()
-	if self.m_ReviveWeapons then
+	if self.m_ReviveWeaponsInfo then
 		for i = 1, 12 do
-			if self.m_ReviveWeapons[i] then
-				giveWeapon( self, self.m_ReviveWeapons[i][1], self.m_ReviveWeapons[i][2], true)
+			if self.m_ReviveWeaponsInfo[i] then
+				giveWeapon( self, self.m_ReviveWeaponsInfo[i][1], self.m_ReviveWeaponsInfo[i][2], true)
 			end
 		end
+		self:destroyDropWeapons()
 		return true
 	else
 		return false
@@ -951,7 +924,7 @@ function Player:payDay()
 				outgoing_house = outgoing_house + rent
 				temp_bank_money = temp_bank_money - rent
 				points_total = points_total + 1
-				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "Vehicle", "Tax", {silent = true})
+				self:transferBankMoney({house.m_BankAccount, nil, nil, true}, outgoing_house, _("Miete an %s von %s", self, Account.getNameFromId(house:getOwner()), self:getName()), "House", "Rent", {silent = true})
 				self:addPaydayText("outgoing", _("Miete an %s", self, Account.getNameFromId(house:getOwner())), rent)
 			else
 				self:addPaydayText("info", _("Du konntest die Miete von %s's Haus nicht bezahlen.", self, Account.getNameFromId(house:getOwner())))
@@ -982,7 +955,8 @@ function Player:payDay()
 		self:setSTVO(self:getSTVO() - 1)
 	end
 
-	self:givePoints(points_total)
+	self:givePoints(points_total, "Payday", true, true)
+	self:addPaydayText("info", _("Du hast %s Punkte bekommen.", self, points_total))
 
 	if EVENT_EASTER then
 		self:addPaydayText("info", _("Du hast 5 Ostereier bekommen!", self))
@@ -1190,12 +1164,12 @@ function Player:giveCombinedReward(reason, tblReward)
 				local bank = amount.bank and " (Konto)" or ""
 
 				if amount.mode == "give" then
-					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, name, amount.cagegory, amount.subcategory)
+					amount.toOrFrom:transferMoney({self, amount.bank, true}, amount.amount, reason, amount.category, amount.subcategory)
 				else
 					if amount.bank then
-						self:transferBankMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
+						self:transferBankMoney(amount.toOrFrom, amount.amount, reason, amount.category, amount.subcategory, {silent = true})
 					else
-						self:transferMoney(amount.toOrFrom, amount.amount, name, amount.cagegory, amount.subcategory, {silent = true})
+						self:transferMoney(amount.toOrFrom, amount.amount, reason, amount.category, amount.subcategory, {silent = true})
 					end
 				end
 
@@ -1594,4 +1568,8 @@ end
 
 function Player:hasTemporaryStorage()
 	return type(self.m_Storage) == "table"
+end
+
+function Player:getExecutionPed() 
+	return ExecutionPed.Map[self]
 end

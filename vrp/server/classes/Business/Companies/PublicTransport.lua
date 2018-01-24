@@ -10,7 +10,7 @@ PublicTransport.ms_BusLineData = { --this information can't be parsed out of the
 	},
 }
 
-local TAXI_PRICE_PER_KM = 30
+local TAXI_PRICE_PER_KM = 40
 
 function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
@@ -209,8 +209,8 @@ function PublicTransport:endTaxiDrive(customer)
 		local driverName = self.m_TaxiCustomer[customer]["driverName"]
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
-		if price > customer:getMoney() then price = customer:getMoney() end
-		customer:transferMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
+		if price > customer:getBankMoney() then price = customer:getBankMoney() end
+		customer:transferBankMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		if price > 0 then 
 			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
@@ -240,7 +240,7 @@ function PublicTransport:updateTaxometer(customer)
 		end
 		customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
-		if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] and not self.m_TaxiCustomer[customer]["moneyWarningSent"] then
+		if customer:getBankMoney() < self.m_TaxiCustomer[customer]["price"] and not self.m_TaxiCustomer[customer]["moneyWarningSent"] then
 			self.m_TaxiCustomer[customer]["moneyWarningSent"] = true
 			customer:sendWarning(_("Du hast nicht mehr genügend Geld dabei!", customer))
 			self.m_TaxiCustomer[customer]["driver"]:sendWarning(_("Der Spieler hat nicht mehr genügend Geld dabei!", customer))

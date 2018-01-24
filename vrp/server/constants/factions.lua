@@ -92,7 +92,7 @@ factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 --factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionCarColors[3] = {["r"] = 110,["g"] = 95,["b"] = 73, ["r1"] = 110,["g1"] = 95,["b1"] = 73}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true, [70]=true}
-factionWeapons[3] = {[6]=true,[22]=true,[24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
+factionWeapons[3] = {[6]=true,[22]=true,[24]=true,[25]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true, [34]=true}
 factionWTDestination[3] = Vector3(2741.90, -2405.60, 12.6)
 factionSpawnpoint[3] = {Vector3(221.49, 1865.97, 13.14), 0, 0}
 
@@ -108,7 +108,7 @@ factionRankNames[4] = {
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
 factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
-factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true, [70]=true}
+factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [76]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
 factionSpawnpoint[4] = {Vector3(1752.10, -1785.50, 13.57), 0, 0}
 
@@ -145,9 +145,9 @@ factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionCarColors[6] = {["r"] = 40,["g"] = 0,["b"] = 0, ["r1"] = 40,["g1"] = 0,["b1"] = 0}
 factionSkins[6] = {[121]=true, [123]=true, [203]=true, [122]=true, [186]=true, [294]=true, [228]=true,[224]=true, [49]=true, [141]=true}
 factionWeapons[6] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[6] = Vector3( 1419.80, -1353.06, 13.56)
-factionWTDestination[6] = Vector3( 1418.18, -1240.70, 12.5)
-factionSpawnpoint[6] = {Vector3(1423.37, -1341.78, 13.57), 0, 0}
+evilFactionInteriorEnter[6] = Vector3(851.623, -1687.150, 14.95)
+factionWTDestination[6] = Vector3(  917.71, -1705.45, 12.6)
+factionSpawnpoint[6] = {Vector3(877.38, -1709.13, 13.54), 0, 0}
 
 -- ID 7 = Grove
 factionRankNames[7] = {

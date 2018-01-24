@@ -43,7 +43,9 @@ function ItemManager:constructor()
 		["Osterei"] = ItemEasteregg;
 		["Kürbis"] = ItemPumpkin;
 		["Taser"] = ItemTaser;
-
+		["SLAM"] = ItemSlam;
+		["Rauchgranate"] = ItemSmokeGrenade;
+		
 		["Wuerfel"] = ItemDice,
 		["Angelrute"] = ItemFishing,
 		["Kleine Kühltasche"] = ItemFishing,
@@ -67,6 +69,15 @@ function ItemManager:constructor()
 		["Shot"] = ItemAlcohol,
 		["Cuba-Libre"] = ItemAlcohol,
 		["Gluehwein"] = ItemAlcohol,
+
+		--Firework
+		["Rakete"] = ItemFirework,
+		["Rohrbombe"] = ItemFirework,
+		["Raketen Batterie"] = ItemFirework,
+		["Römische Kerze"] = ItemFirework,
+		["Römische Kerzen Batterie"] = ItemFirework,
+		["Kugelbombe"] = ItemFirework,
+		["Böller"] = ItemFirework,
 
 		--//Wearables
 		["Helm"] = WearableHelmet,

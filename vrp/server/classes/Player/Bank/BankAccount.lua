@@ -186,7 +186,7 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 			elseif toObject[1] == "group" then
 				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-				error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]))	
+				error("BankAccount.transferMoney @ Unsupported type " .. tostring(toObject[1]) .. ", Reason: " .. tostring(reason))
 			end
 			goesToBank = toObject[3]
 			silent = toObject[4]
@@ -194,7 +194,7 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 		end
 	end
 
-	if not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney then
+	if not targetObject or (not instanceof(targetObject, BankAccount) and not targetObject.__giveMoney) then
 		error("BankAccount.transferMoney @ Target is missing (" .. tostring(reason) .."/" .. tostring(category) .."/" .. tostring(subcategory) ..")")
 	end
 	

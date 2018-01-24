@@ -1,6 +1,7 @@
 LogGUI = inherit(GUIForm)
+LogGUI.AmountPerLoad = 150
 
-function LogGUI:constructor(parent, log, players)
+function LogGUI:constructor(parent, url)
 	local yOffset = 0
 	if not parent then
 		GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
@@ -10,9 +11,8 @@ function LogGUI:constructor(parent, log, players)
 		yOffset = 40
 	end
 
-	self.m_Log = log
-	self.m_Players = players
-	
+	self.m_Url = url
+
 	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
 	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02+yOffset, parent.m_Width*0.25, parent.m_Height*0.07, parent)
 	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
@@ -26,13 +26,28 @@ function LogGUI:constructor(parent, log, players)
 	self.m_LogGrid:setItemHeight(20)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
-	self:refresh()
+	self.m_LogGrid:onScrollDown(bind(self.onScrollDown, self))
+	self:updateLog(0, 100)
 end
 
-function LogGUI:updateLog(players, log)
-	self.m_Log = log
-	self.m_Players = players
-	self:refresh()
+function LogGUI:updateLog(start, amount)
+	self.m_Cache = {}
+
+	local options = {
+		["postData"] =  ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
+	}
+
+	local url = ("%s&start=%d&amount=%d"):format(self.m_Url, start, amount)
+	--outputChatBox( url)
+	fetchRemote(url, options,
+			function(responseData, responseInfo)
+				self.m_Cache = fromJSON(responseData)
+				if self.m_Cache then
+					self.m_Cache = table.setIndexToInteger(self.m_Cache)
+					self:refreshGrid()
+				end
+			end
+		)
 end
 
 function LogGUI:addBackButton(callBack)
@@ -41,27 +56,25 @@ function LogGUI:addBackButton(callBack)
 	end
 end
 
+function LogGUI:onScrollDown()
+	self:updateLog(#self.m_LogGrid:getItems(), LogGUI.AmountPerLoad)
+end
 
-function LogGUI:refresh()
-	self.m_LogGrid:clear()
+
+function LogGUI:refreshGrid()
 	local item
-	for _, row in ipairs(self.m_Log) do
+	for i, row in ipairs(self.m_Cache) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
-
-		local playerName = "[?]"
 		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
-		if self.m_Players[row.UserId] then
-			playerName = self.m_Players[row.UserId].name
-		end
 
 		if self:checkCatFilter(row.Category) then
-			if self:checkSeachFilter(playerName, row) and #self.m_LogGrid:getItems() < 150 then -- Todo: add user limit or pages?
-				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
+			if self:checkSeachFilter(row) then
+				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(row.UserName, row.Description))
 				item:setFont(VRPFont(20))
 			end
 		end
 	end
-
+	self.m_Cache = {}
 	if not self.m_FilterLoaded then
 		self:loadFilter()
 	end
@@ -75,24 +88,19 @@ function LogGUI:loadFilter()
 	self.m_FilterLoaded = true
 end
 
-function LogGUI:addLine(playerName, row)
-	timeOptical = self:getOpticalTimestamp(row.Timestamp)
-
-	self.m_Text = self.m_Text..timeOptical.." - "..playerName.." "..row.Description.."\n"
-end
-
 function LogGUI:setSearch()
 	if self.m_Search:getText() == "" then
 		self.m_SeachFilter = nil
 	else
 		self.m_SeachFilter = self.m_Search:getText()
 	end
-	self:refresh()
+	self.m_LogGrid:clear()
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
-function LogGUI:checkSeachFilter(playerName, row)
+function LogGUI:checkSeachFilter(row)
 	if self.m_SeachFilter then
-		if string.find(string.lower(row.Description), string.lower(self.m_SeachFilter)) or string.find(string.lower(playerName), string.lower(self.m_SeachFilter)) then
+		if string.find(string.lower(row.Description), string.lower(self.m_SeachFilter)) or string.find(string.lower(row.UserName), string.lower(self.m_SeachFilter)) then
 			return true
 		end
 	else
@@ -120,7 +128,8 @@ function LogGUI:setFilter(text)
 	else
 		self.m_CatFilter = text
 	end
-	self:refresh()
+	self.m_LogGrid:clear()
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
 

@@ -28,7 +28,17 @@ function StyleguideDemonstrationGUI:constructor()
 
 
 	GUIGridLabel:new(11, 1, 9, 1, "Eine super tolle Liste!", self.m_Tabs[1]):setHeader("sub")
-	GUIGridGridList:new(11, 2, 9, 10, self.m_Tabs[1]):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.PrimaryNoClick)
+	sggrid = GUIGridGridList:new(11, 2, 9, 10, self.m_Tabs[1]):addColumn(_"Name", 0.4):addColumn(_"Position", 0.6):setColumnBackgroundColor(Color.PrimaryNoClick)
+	for i = 1, 15 do
+		sggrid:addItem(getRandomUniqueNick(), i)
+	end
+	sggrid:onScrollDown(
+		function()
+			for i = 1, 15 do
+				sggrid:addItem(getRandomUniqueNick(), 1337)
+			end
+		end
+	)
 
 	GUIGridIconButton:new(19, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1])
 

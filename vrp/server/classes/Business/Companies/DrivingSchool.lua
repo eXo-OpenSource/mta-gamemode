@@ -144,12 +144,12 @@ function DrivingSchool:Event_startAutomaticTest(type)
 	if not valid[type] then return end
 
 	if type == "car" and client.m_HasDrivingLicense then
-		client:sendWarning(_("Du hast beretis den Autoführerschein", client))
+		client:sendWarning(_("Du hast bereits den Autoführerschein", client))
 		return
 	end
 
 	if type == "bike" and client.m_HasBikeLicense then
-		client:sendWarning(_("Du hast beretis den Motorradführerschein", client))
+		client:sendWarning(_("Du hast bereits den Motorradführerschein", client))
 		return
 	end
 
@@ -465,8 +465,8 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
 		local startMileage = self.m_CurrentLessions[client].startMileage
 		local mileageDiff = math.round((vehicle:getMileage()-startMileage)/1000, 1)
 
-		if mileageDiff < 5 then
-			client:sendWarning("Du musst mindestens 5km mit dem Fahrschüler fahren!")
+		if mileageDiff < 2 then
+			client:sendWarning("Du musst mindestens 2km mit dem Fahrschüler fahren!")
 			return
 		end
 

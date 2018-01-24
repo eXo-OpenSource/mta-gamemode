@@ -10,7 +10,12 @@ function QuestManager:constructor()
 		[7] = QuestPackageFind,
 		[8] = QuestSantaKill,
 		[10] = QuestDraw,
-		[16] = QuestPhotography
+		[13] = QuestSantaKill,
+		[14] = QuestPhotography,
+		[17] = QuestDraw,
+		[19] = QuestPackageFind,
+		[20] = QuestPhotography,
+		[22] = QuestSantaKill
 	}
 
 	self.m_CurrentQuest = false

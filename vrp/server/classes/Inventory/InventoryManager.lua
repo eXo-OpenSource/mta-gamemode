@@ -10,7 +10,7 @@ InventoryManager = inherit(Singleton)
 function InventoryManager:constructor()
 
 	self.m_Slots={
-		["Items"] = 14,
+		["Items"] = 21,
 		["Objekte"] = 5,
 		["Essen"] = 6,
 		["Drogen"] = 7,

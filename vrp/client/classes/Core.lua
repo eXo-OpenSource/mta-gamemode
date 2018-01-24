@@ -9,6 +9,7 @@ function Core:constructor()
 
 	self.m_Config = ConfigXML:new("@config.xml")
 	Version:new()
+	TinyInfoLabel:new()
 	Provider:new()
 
 	Cursor = GUICursor:new()
@@ -148,7 +149,7 @@ function Core:ready()
 	Help:new()
 	ClientStatistics:new()
 	Nametag:new()
-
+	PickupWeaponManager:new()
 	if EVENT_HALLOWEEN then
 		Halloween:new()
 	end

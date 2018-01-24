@@ -57,6 +57,8 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	if not DEBUG then
 		self:getActivity()
 	end
+	
+	self:updateRankNameSync()
 end
 
 function Group:destructor()
@@ -194,6 +196,13 @@ function Group:setRankLoan(rank, amount)
 	self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
 end
 
+function Group:updateRankNameSync() 
+	local ranks = table.copy(self.m_RankNames)
+	for key, player in ipairs(self:getOnlinePlayers()) do 
+		player:setPublicSync("GroupRankNames", ranks)
+	end
+end
+
 function Group:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
 	local loanEnabled = self:isPlayerLoanEnabled(player:getId())
@@ -245,6 +254,7 @@ function Group:addPlayer(playerId, rank)
 	end
 
 	self:getActivity(true)
+	
 end
 
 function Group:removePlayer(playerId)
@@ -419,6 +429,13 @@ function Group:getOnlinePlayers()
 end
 
 function Group:sendChatMessage(sourcePlayer, message)
+	local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
+	if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+		cancelEvent()
+		return
+	end
+	sourcePlayer:setLastChatMessage(message)
+
     local playerId = sourcePlayer:getId()
     local rank = self.m_Players[playerId]
     local rankName = self.m_RankNames[tostring(rank)]

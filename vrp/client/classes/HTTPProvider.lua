@@ -3,132 +3,135 @@ HTTPProvider = inherit(Object)
 function HTTPProvider:constructor(url, dgi)
 	self.ms_URL = url
 	self.ms_GUIInstance = dgi
+	self.m_FileList = Queue:new()
+	self.m_Archives = Queue:new()
 end
 
---[[
-	index.xml structure
-	<files>
-		<file
-			name="Texture1"
-			path="files/folder1/Texture1.png" (Path on the http server to the file)
-			target_path = "textures/texture1.png" (Path on the client where the file should get saved)
-		/>
-	</files>
-]]
+function HTTPProvider:addFile(fileNode)
+	self.m_FileList:push({path = xmlNodeGetAttribute(fileNode, "path"), target_path = xmlNodeGetAttribute(fileNode, "target_path")})
+end
 
-function HTTPProvider:start(force)
-	-- request url access for download
+function HTTPProvider:collectFiles()
 	if self:requestAccessAsync() then
-		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
-		outputDebug(self.ms_URL.."index.xml")
 		local responseData, responseInfo = self:fetchAsync("index.xml")
 		if not responseInfo["success"] == true then
-			outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
 			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
 			return false
 		end
 
-		outputDebug(responseData)
 		if responseData ~= "" then
-			local tempFile = fileCreate("files.tmp")
+			local tempFile = fileCreate("index.tmp")
 			tempFile:write(responseData)
 			tempFile:close()
 
-			local xml = xmlLoadFile("files.tmp")
-			local files = {}
-			for k, v in pairs(xmlNodeGetChildren(xml)) do
-				if xmlNodeGetName(v) == "file" then
-					--files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
-					--outputTable(files[#files])
-					local filePath = xmlNodeGetAttribute(v, "target_path")
-					local expectedHash = xmlNodeGetAttribute(v, "hash")
-					local forceFileDownload = false
-					if fileExists(filePath) and expectedHash ~= nil then
-						outputDebug("checking file hash")
-						local file = fileOpen(filePath, true)
-						if file then
-							if force then
-								forceFileDownload = true
-							else
-								if hash("md5", file:read(file:getSize())) ~= expectedHash then
-									forceFileDownload = true
-								end
-								fileClose(file)
-							end
-						else
-							forceFileDownload = true
-						end
+			local xml = xmlLoadFile("index.tmp")
+			for _, archive in pairs(xmlNodeGetChildren(xml)) do
+				if xmlNodeGetName(archive) == "archive" then
+					if not self.checkFile(xmlNodeGetAttribute(archive, "target_path"), xmlNodeGetAttribute(archive, "hash")) then
+						self:addFile(archive)
 					else
-						forceFileDownload = true
-					end
-
-					if forceFileDownload then
-						files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
+						for _, file in pairs(xmlNodeGetChildren(archive)) do
+							if xmlNodeGetName(file) == "file" then
+								if not self.checkFile(xmlNodeGetAttribute(file, "target_path"), xmlNodeGetAttribute(file, "hash")) then
+									self:addFile(file)
+								end
+							end
+						end
 					end
 				end
 			end
-			xmlUnloadFile(xml)
+		end
 
-			self.ms_GUIInstance:setStatus("file count", table.getn(files))
+		self.ms_GUIInstance:setStatus("file count", self.m_FileList:size())
+		fileDelete("index.tmp")
+	else
+		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		return false
+	end
+	return true
+end
 
-			local archives = {}
-			for i, v in ipairs(files) do
-				self.ms_GUIInstance:setStatus("current file", v.path)
-				outputDebug(v.path)
-				local responseData, responseInfo = self:fetchAsync(v.path)
-				if not responseInfo["success"] == true then
-					outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
-					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
-					return false
-				end
-
-				if responseData ~= "" then
-					local filePath = v.target_path
-					if v.target_path:sub(-4, #v.target_path) == ".tar" then
-						archives[#archives+1] = filePath
-					end
-					if fileExists(filePath) then
-						fileDelete(filePath)
-					end
-					local file = fileCreate(filePath)
-					if file then
-						file:write(responseData)
-						file:close()
-					end
-					-- continue
-				else
-					self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(v.path))
-					-- continue
-				end
+function HTTPProvider:downloadFiles()
+	if self:requestAccessAsync() then
+		while(not self.m_FileList:empty()) do
+			local element = self.m_FileList:pop()
+			self.ms_GUIInstance:setStatus("current file", element.path)
+			outputDebug(element.path)
+			local responseData, responseInfo = self:fetchAsync(element.path)
+			if not responseInfo["success"] == true then
+				outputDebug("HttpProvider Error: "..responseInfo["statusCode"])
+				self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(responseInfo["statusCode"]))
+				return false
 			end
 
-			for i, path in ipairs(archives) do
-				outputConsole("unpacking: "..path)
-				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the archives... (%d / %d archives)"):format(i, table.getn(files)))
-				local status, err = untar(path, "/")
-				if not status then
-					self.ms_GUIInstance:setStatus("failed", ("Failed to unpack archive %s! (Error: %s)"):format(path, err))
-
-					for i, path in ipairs(archives) do
-						fileDelete(path)
-					end
-					return false
+			if responseData ~= "" then
+				local filePath = element.target_path
+				if filePath:sub(-4, #filePath) == ".tar" then
+					self.m_Archives:push(filePath)
+				end
+				if fileExists(filePath) then
+					fileDelete(filePath)
+				end
+				local file = fileCreate(filePath)
+				if file then
+					file:write(responseData)
+					file:close()
 				end
 			end
-
-			-- remove temp file
-			fileDelete("files.tmp")
-
-			-- success
-			return true
-		else
-			self.ms_GUIInstance:setStatus("failed", "Got empty index file!")
-			return false
 		end
 	else
 		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
 		return false
 	end
+	return true
+end
+
+function HTTPProvider:processArchives()
+	local size = self.m_Archives:size()
+	while(not self.m_Archives:empty()) do
+		self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the archives... (%d / %d archives)"):format(self.m_Archives:size(), size))
+		local archive = self.m_Archives:pop()
+		local status, err = untar(archive, "/")
+		outputDebug(archive)
+		if not status then
+			self.ms_GUIInstance:setStatus("failed", ("Failed to unpack archive %s! (Error: %s)"):format(archive, err))
+			return false
+		end
+	end
+	return true
+end
+
+function HTTPProvider.checkFile(filePath, expectedHash)
+	if fileExists(filePath) then
+		local file = fileOpen(filePath)
+		if file then
+			if hash("md5", file:read(file:getSize())) == expectedHash then
+				file:close()
+				return true
+			end
+			file:close()
+		end
+	end
+	return false
+end
+
+function HTTPProvider:start()
+	local status = true
+	self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
+	status = self:collectFiles()
+	if not status then
+		return status
+	end
+
+	status = self:downloadFiles()
+	if not status then
+		return status
+	end
+	status = self:processArchives()
+	if not status then
+		return status
+	end
+	return status
 end
 
 function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
@@ -177,7 +180,7 @@ function HTTPProvider:startCustom(fileName, targetPath, encrypt, raw)
 			self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(fileName))
 		end
 	else
-		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		self.ms_GUIInstance:setStatus("failed", "Kann den Download-Server nicht erreichen! (User-Access denied)")
 		return false
 	end
 end
@@ -199,7 +202,7 @@ function HTTPProvider:fetchAsync(...)
 end
 
 function HTTPProvider:requestAccess(callback)
-	self.ms_GUIInstance:setStatus("waiting", "Please accept the prompt, to download the required files!")
+	self.ms_GUIInstance:setStatus("waiting", "Lädt...")
 
 	if Browser.isDomainBlocked(self.ms_URL, true) then
 		-- hack fix, requestDomains callback isnt working (so we cant detect a deny)

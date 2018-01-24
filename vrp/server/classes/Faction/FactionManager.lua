@@ -15,11 +15,10 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
-	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
 	addEventHandler("factionWithdraw", root, bind(self.Event_factionWithdraw, self))
@@ -98,18 +97,11 @@ function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
 end
 
-function FactionManager:Event_factionRequestLog()
-	local faction = client:getFaction()
-	if faction then
-		triggerLatentClientEvent(client, "factionRetrieveLog", 50000, false, client, faction:getPlayers(), faction:getLog())
-	end
-end
-
 function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
-	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
+	if faction then --use triggerLatentEvent to improve serverside performance 
+		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -338,6 +330,7 @@ function FactionManager:Event_factionRankUp(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+							player:setPublicSync("FactionRank", playerRank+1 or 0)
 						end
 					end
 					self:sendInfosToClient(client)
@@ -383,6 +376,7 @@ function FactionManager:Event_factionRankDown(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+							player:setPublicSync("FactionRank", faction:getPlayerRank(playerId) or 0)
 						end
 					end
 					self:sendInfosToClient(client)

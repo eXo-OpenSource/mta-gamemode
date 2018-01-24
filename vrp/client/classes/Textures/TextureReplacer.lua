@@ -195,8 +195,7 @@ function TextureReplacer:addToLoadingQeue()
 		TextureReplacer.Queue.m_Count = (TextureReplacer.Queue.m_Count or 0) + 1
 
 		TextureReplacer.Queue.m_CurrentLoaded = 0
-		if TextureReplacer.Queue.m_ShortMessage then delete(TextureReplacer.Queue.m_ShortMessage) end
-		TextureReplacer.Queue.m_ShortMessage = ShortMessage:new(_("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: 0 / 1 Textur(en)"), nil, nil, -1)
+		TinyInfoLabel:getSingleton():setText(_"Achtung: 0 / 1 Custom Textur(en) werden geladen")
 
 		local thread = Thread:new(TextureReplacer.loadTextures, 75)
 		nextframe(function() thread:start() end)
@@ -216,8 +215,7 @@ function TextureReplacer.loadTextures()
 			end
 
 			TextureReplacer.Queue.m_CurrentLoaded = TextureReplacer.Queue.m_CurrentLoaded + 1
-			TextureReplacer.Queue.m_ShortMessage.m_Text = _("Achtung: Custom Texturen werden geladen, dies kann einen kleinen Lag verursachen!\nStatus: %s / %s Textur(en)", TextureReplacer.Queue.m_CurrentLoaded, TextureReplacer.Queue.m_Count)
-			TextureReplacer.Queue.m_ShortMessage:anyChange()
+			TinyInfoLabel:getSingleton():setText(_("Achtung: %s / %s Custom Textur(en) werden geladen", TextureReplacer.Queue.m_CurrentLoaded, TextureReplacer.Queue.m_Count))
 
 			Thread.pause()
 		end
@@ -225,7 +223,7 @@ function TextureReplacer.loadTextures()
 
 	TextureReplacer.Queue.m_CurrentLoaded = 0
 	TextureReplacer.Queue.m_Count = 0
-	delete(TextureReplacer.Queue.m_ShortMessage)
+	TinyInfoLabel:getSingleton():clearText()
 end
 
 --// Static Helper

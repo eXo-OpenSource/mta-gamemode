@@ -38,6 +38,7 @@ def rm_r(path):
 rm_r(outdir)
 os.mkdir(outdir)
 os.mkdir(outdir+"/archives")
+os.mkdir(outdir+"/files")
 
 # Copy files
 print("Copying required files...")
@@ -46,25 +47,38 @@ main_tree = ET.parse(rootdir + "meta.xml")
 main_root = main_tree.getroot()
 asset_root = ET.Element("files")
 archives = {}
+files = {}
 
 for child in main_root.findall("vrpfile"):
 
 	# get filename
-	filename = child.attrib["src"]
+    filename = child.attrib["src"]
 
 	# get dirname
-	dirname = find_between(filename, "files/", "/")
-	if not dirname in archives:
-		archives[dirname] = tarfile.open("vrp_assets/archives/%s.tar" % dirname, 'w')
+    dirname = find_between(filename, "files/", "/")
+    if not dirname in archives:
+        archives[dirname] = tarfile.open(outdir + "/archives/%s.tar" % dirname, 'w')
+        files[archives[dirname]] = {}
 
 	# add the files to the archive
-	archives[dirname].add(rootdir+filename, arcname=(rootdir+filename)[4:])
+    archives[dirname].add(rootdir+filename, arcname=(rootdir+filename)[4:])
+
+    Path(outdir + os.path.dirname(filename)).mkdir(parents=True, exist_ok=True)
+    shutil.copy2(rootdir + filename, outdir + filename)
+
+    files[archives[dirname]][len(files[archives[dirname]])+1] = filename
 
 for index, archive in archives.items():
-	# close the archive
-	archive.close()
+    # close the archive
+    archive.close()
 
-	ET.SubElement(asset_root, "file", name="%s.tar" % index, path="archives/%s.tar" % index, target_path="cache/%s.tar" % index, hash=md5(outdir+"archives/%s.tar" % index))
+    element = ET.SubElement(asset_root, "archive", name="%s.tar" % index,
+	                        path="archives/%s.tar" % index,
+                            target_path="cache/%s.tar" % index,
+		                   	hash=md5(outdir+"archives/%s.tar" % index))
+    for _, file in files[archive].items():
+        ET.SubElement(element, "file", path=file, target_path=file, hash=md5(rootdir+file))
+
 
 asset_tree = ET.ElementTree(asset_root)
 asset_tree.write(outdir+"index.xml")

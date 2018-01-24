@@ -192,6 +192,7 @@ end
 function BankRobbery:timeUp()
 	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert!")
 	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
+	Discord:getSingleton():outputBreakingNews("Der Banküberfall ist beendet! Die Täter haben sich zu viel Zeit gelassen!")
 	self:destroyRob()
 end
 
@@ -389,6 +390,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 					if self.m_SafeDoor.m_Open then
 						if self:getRemainingBagAmount() == 0 then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
+							Discord:getSingleton():outputBreakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 							source:destroy()
 							self:destroyRob()

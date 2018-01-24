@@ -23,4 +23,12 @@ function RustyBrown:constructor(id, name, position, rotation, typeData, dimensio
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))
 
+	if self.m_Ped then
+		self.m_Ped:setData("clickable",true,true)
+		addEventHandler("onElementClicked", self.m_Ped, function(button, state, player)
+			if button =="left" and state == "down" then
+				self:onFoodMarkerHit(player, true)
+			end
+		end)
+	end
 end

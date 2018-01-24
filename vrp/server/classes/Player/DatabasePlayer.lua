@@ -91,8 +91,7 @@ function DatabasePlayer:load(sync)
 	self.m_SavedInterior = row.Interior
 	self.m_SavedDimension = row.Dimension
 	self.m_Skin = row.Skin
-	self.m_SkinData = {}
-	self.m_CJData = fromJSON(row.CJClothes) or {}
+	self.m_SkinData = fromJSON(row.CJClothes) or {}
 	self.m_AltSkin = row.AltSkin
 	if self.m_AltSkin == 0 then
 		self.m_AltSkin = self.m_Skin
@@ -341,6 +340,8 @@ function DatabasePlayer:setGroup(group)
 		self:setPublicSync("GroupId", group and group:getId() or 0)
 		self:setPublicSync("GroupName", group and group:getName() or "")
 		self:setPublicSync("GroupType", group and group:getType() or false)
+		self:setPublicSync("GroupRank", group and group:getPlayerRank(self))
+		self:setPublicSync("GroupRankNames", group and group.m_RankNames)
 	end
 end
 
@@ -389,6 +390,7 @@ function DatabasePlayer:setCompany(company)
 	if self:isActive() then
 		self:setPublicSync("CompanyId", company and company:getId() or 0)
 		self:setPublicSync("CompanyName", company and company:getName() or "")
+		self:setPublicSync("CompanyRank", company and company:getPlayerRank(self) or 0)
 		self:setPublicSync("ShortCompanyName", company and company:getShortName() or "")
 
 	end
@@ -398,6 +400,7 @@ function DatabasePlayer:setFaction(faction)
 	self.m_Faction = faction
 	if self:isActive() then
 		self:setPublicSync("FactionId", faction and faction:getId() or 0)
+		self:setPublicSync("FactionRank", faction and faction:getPlayerRank(self) or 0)
 		--if faction and faction:isStateFaction() then
 		--	bindKey(self, "m", "down", "chatbox", "BeamtenChat")
 		--end
@@ -415,7 +418,7 @@ function DatabasePlayer:__takeMoney(amount, reason, silent)
 end
 
 function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcategory, options)
-	if isNan(amount) then return false end
+	if amount == nil or not tonumber(amount) or isNan(amount) then error("DatabasePlayer.transferMoney @ Invalid parameter at position 2, Reason: " .. tostring(reason)) return false end
 	if not options then options = {} end
 	local amount = math.floor(amount)
 
@@ -452,7 +455,7 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 			elseif toObject[1] == "group" then
 				targetObject = GroupManager:getSingleton().Map[toObject[2]]
 			else
-				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]))
+				error("DatabasePlayer.transferMoney @ Unsupported type " .. tostring(toObject[1]) .. ", Reason: " .. tostring(reason))
 			end
 			goesToBank = toObject[3]
 			silent = toObject[4]
@@ -515,7 +518,8 @@ function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, su
 
 	if result then
 		local options = options and options or {}
-		if money ~= 0 and not silent then
+		outputDebug(reason, options)
+		if money ~= 0 and not options.silent then
 			self:sendShortMessage(("%s$%s"):format("-"..amount, reason ~= nil and " - "..reason or ""), "SA National Bank (Konto)", {0, 94, 255}, 3000)
 		end
 		self:triggerEvent("playerCashChange", options.silent)

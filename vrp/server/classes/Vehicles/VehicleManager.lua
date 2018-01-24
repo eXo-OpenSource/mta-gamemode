@@ -67,7 +67,7 @@ function VehicleManager:constructor()
 		function()
 			if client.vehicleSeat ~= 0 then return end
 
-			if client.vehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
+			if client.vehicle:hasKey(client)  or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= RANK.Moderator  then
 				client.vehicle:toggleHandBrake(client)
 			else
 				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
@@ -504,7 +504,7 @@ function VehicleManager:updateFuelOfPermanentVehicles() -- gets called every min
 			local cons = ((curVel/50 * consumptionMultiplicator) + mass/5000) --basic consumption based on speed and mass (in liter)
 			local vehFuelSize = veh:getFuelTankSize() or 1
 			veh:setFuel(veh:getFuel() - cons/vehFuelSize*100)
-			outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass)
+			--outputDebug(veh, "liter", cons, "curVel", curVel, "mass", mass)
 			self.m_VehiclesWithEngineOn[veh] = veh:getMileage()
 		else --garbage collection
 			self.m_VehiclesWithEngineOn[veh] = nil

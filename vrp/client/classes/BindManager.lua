@@ -41,7 +41,7 @@ function BindManager:Event_OnClientKey(button, pressOrRelease)
 	if table.find(KeyBindings.DisallowedKeys, button:lower()) then return end
 	self.m_PressedKeys[button] = pressOrRelease
 
-	if self:CheckForBind() then
+	if self:CheckForBind(button) then
         cancelEvent()
     end
 end
@@ -94,21 +94,20 @@ function BindManager:editBind(index, action, parameters)
 end
 
 
-function BindManager:CheckForBind()
+function BindManager:CheckForBind(key)
     local bindTrigerred = false
 
     for k, v in pairs(self.m_Binds) do
-       	if #v.keys > 0 then
-			local allKeysPressed = true
-
+       	if #v.keys > 0 and table.find(v.keys, key) then
+			local allKeysPressed = 0
 
 			for _, key in pairs(v.keys) do
-				if not self.m_PressedKeys[key] then
-					allKeysPressed = false
+				if self.m_PressedKeys[key] then
+					allKeysPressed = allKeysPressed + 1
 				end
 			end
 
-			if allKeysPressed then
+			if allKeysPressed == table.size(v.keys) then
 				bindTrigerred = true
 
 				triggerServerEvent("bindTrigger", localPlayer, v.action.name, v.action.parameters)

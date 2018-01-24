@@ -426,6 +426,13 @@ end
 
 function Faction:sendChatMessage(sourcePlayer, message)
 	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
+		local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
+		if getTickCount()-msgTimeSent < (message == lastMsg and CHAT_SAME_MSG_REPEAT_COOLDOWN or CHAT_MSG_REPEAT_COOLDOWN) then -- prevent chat spam
+			cancelEvent()
+			return
+		end
+		sourcePlayer:setLastChatMessage(message)
+		
 		local playerId = sourcePlayer:getId()
 		local rank = self.m_Players[playerId]
 		local rankName = self.m_RankNames[rank]
