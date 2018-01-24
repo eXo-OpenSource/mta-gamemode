@@ -29,11 +29,32 @@ function StaticWorldItems:constructor()
 			["chance"] = 33,
 			["enabled"] = EVENT_HALLOWEEN
 		},
+		["Keypad"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Keypad"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true,
+			["notReload"] = true,
+		},
+		["Tor"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Tor"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true,
+			["notReload"] = true,
+		},
+		["Eingang"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Eingang"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true,
+			["notReload"] = true,
+		},
 	}
 
-	self.m_TimedPulse = TimedPulse:new(60*60*1000)
+	self.m_TimedPulse = TimedPulse:new(1000*60*60)
 	self.m_TimedPulse:registerHandler(bind(self.reload, self))
-    self:reload()
+    self:reload(true)
 
 	addCommandHandler("addWorldObject", bind(self.addPosition, self))
 	addCommandHandler("remWorldObject", bind(self.removePosition, self))
@@ -77,6 +98,7 @@ function StaticWorldItems:addPosition(player, cmd, type, dontSave)
     end
 end
 
+
 function StaticWorldItems:removePosition(player)
     if player:getRank() < RANK.Moderator then
 		player:sendError(_("Du bist nicht berechtigt!", player))
@@ -102,11 +124,13 @@ function StaticWorldItems:removePosition(player)
     end
 end
 
-function StaticWorldItems:reload()
-	for id, object in pairs(self.m_Objects) do
+function StaticWorldItems:reload(firstLoad)
+	for id, object in pairs(self.m_Objects) do	
 		if isElement(object) then
-			object:destroy()
-			self.m_Objects[id] = nil
+			if not object.m_NotReload then
+				object:destroy()
+				self.m_Objects[id] = nil
+			end
 		else
 			self.m_Objects[id] = nil
 		end
@@ -114,15 +138,15 @@ function StaticWorldItems:reload()
 	self.m_Objects = {}
 
    	local result
-
 	for typ, data in pairs(self.m_Items) do
-		if data["enabled"] == true then
+		if data["enabled"] == true and ( firstLoad or not data["notReload"] ) then
 			local st, count = getTickCount(), 0
 			result = sql:queryFetch("SELECT * FROM ??_word_objects WHERE Typ = ?;", sql:getPrefix(), typ)
 			for i, row in pairs(result) do
 				if row.Typ and self.m_Items[row.Typ] then
 					if DEBUG or chance(data["chance"]) then
-						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
+						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), Vector3(0, 0, row.RotationZ), tonumber(row.Interior) or 0 , tonumber(row.Dimension) or 0, row.Value)
+						self.m_Objects[row.Id].m_NotReload = data["notReload"]
 						count = count+1
 					end
 				else

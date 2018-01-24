@@ -28,7 +28,11 @@
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
+	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/yakuza_v2.map"/>
+	<map src="fraktionen/terroristtown.map" />
+	<map src="fraktionen/terrorist_int.map" />
+	
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
@@ -95,7 +99,7 @@
 	<map src="stuntfix.map"/>
 
 	<map src="shop/fishshop.map"/>
-
+	<map src="sewer.map"/>
 	<map src="minigamescafe.map" dimension="2" />
 	<map src="tokyotown.map" dimension="0" />
 

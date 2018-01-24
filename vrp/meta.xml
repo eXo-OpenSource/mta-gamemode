@@ -160,6 +160,9 @@
 	<!--WorldItems-->
 	<script src="server/classes/Inventory/Items/WorldItems/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemSpeedCam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemKeyPad.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemEntrance.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemDoor.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemNails.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemSkyBeam.lua" type="server"/>
@@ -555,6 +558,9 @@
 	<script src="client/classes/Inventory/Plant.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemKeyPad.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemEntrance.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemDoor.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
@@ -1024,6 +1030,13 @@
 	<vrpfile src="files/audio/Ware/done.mp3" />
 	<vrpfile src="files/audio/Ware/fail.mp3" />
 	<vrpfile src="files/fonts/SuperMario256.ttf" />
+	
+	<vrpfile src="files/audio/Items/keypad_success.ogg" />
+	<vrpfile src="files/audio/Items/keypad_access.ogg" />
+	<vrpfile src="files/audio/Items/keypad_error.ogg" />
+	<vrpfile src="files/audio/Items/doorLockSound.mp3" />
+	<vrpfile src="files/audio/Items/doorUnlockSound.mp3" />
+	<vrpfile src="files/audio/Items/doorGoThru.mp3" />
 
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
 	
@@ -1643,7 +1656,9 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
-
+	<vrpfile src="files/images/Inventory/items/Objekte/keypad.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/door.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/entrance.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/Hasenohren.png" />
