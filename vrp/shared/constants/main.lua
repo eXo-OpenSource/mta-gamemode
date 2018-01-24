@@ -808,6 +808,7 @@ HOUSE_INTERIOR_TABLE = {
 	[24] = {21, 1530.05, 1475.21, 13.20}; -- sewers2
 	[25] = {17, -959.65, 1954.80, 9.5}; -- dam generator
 	[26] = {9, 313.95544, 957.64325, 2009.87683}; -- terror storage
+	[27] = {0, 506.76, -1521.03, 32.11}; -- terror office
 }
 
 VEHICLE_PICKUP = {
