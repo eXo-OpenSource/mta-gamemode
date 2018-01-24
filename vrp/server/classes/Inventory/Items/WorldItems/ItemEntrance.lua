@@ -320,7 +320,6 @@ function ItemEntrance:onEntranceClick(button, state, player)
 			player.m_LastEntranceId = source.Id
 			local pos = {getElementPosition(source)}
 			player:triggerEvent("promptEntranceOption", source.LinkedKeyPad, pos)
-			player:sendShortMessage(_("Beachte X-,Y- und Z-Position nur angeben wenn im Interior ein Eingang nach draußen platziert wird!", player))
 		else 
 			if not player.m_EntranceQuestionVisible then
 				player.m_EntranceQuestionVisible = true

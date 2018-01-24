@@ -30,6 +30,8 @@
 	<map src="fraktionen/vatos.map" />
 	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/yakuza_v2.map"/>
+	<map src="fraktionen/cartelisland2.map" />
+	
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
