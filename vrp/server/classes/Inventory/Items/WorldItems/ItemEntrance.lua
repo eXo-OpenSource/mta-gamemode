@@ -175,9 +175,11 @@ function ItemEntrance:Event_onKeyPadSignal( )
 			local x,y,z = getElementPosition(keypad)
 			local dx, dy, dz
 			for id, obj in ipairs(self.m_KeyPadLinks[keypad.Id] ) do 
-				dx, dy, dz = getElementPosition(obj) 
-				if getDistanceBetweenPoints3D(dx, dy, dz, x, y, z) <= 30 then 
-					self:changeLock( obj )
+				if obj and isElement(obj) then
+					dx, dy, dz = getElementPosition(obj) 
+					if getDistanceBetweenPoints3D(dx, dy, dz, x, y, z) <= 30 then 
+						self:changeLock( obj )
+					end
 				end
 			end
 		end
