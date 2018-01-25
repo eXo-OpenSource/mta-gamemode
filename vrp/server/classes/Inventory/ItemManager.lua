@@ -14,6 +14,7 @@ function ItemManager:constructor()
 		["Keypad"] = ItemKeyPad,
 		["Tor"] = ItemDoor,
 		["Eingang"] = ItemEntrance,
+		["Transmitter"] = ItemTransmitter,
 		["Barrikade"] = ItemBarricade,
 		["Warnkegel"] = ItemBarricade,
 		["Sky Beam"] = ItemSkyBeam,
@@ -123,6 +124,9 @@ function ItemManager:updateOnQuit()
 	end
 	if ItemManager.Map["Eingang"] then 
 		ItemManager.Map["Eingang"]:delete() 
+	end
+	if ItemManager.Map["Transmitter"] then 
+		ItemManager.Map["Transmitter"]:delete() 
 	end
 end
 
