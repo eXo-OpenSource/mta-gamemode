@@ -29,6 +29,7 @@
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
 	<map src="fraktionen/insurgent_storage.map" />
+	<!--map src="fraktionen/island_airport.map" /-->
 	<map src="fraktionen/yakuza_v2.map"/>
 	<!--map src="fraktionen/terroristtown.map" /-->
 	<map src="fraktionen/terrorist_int.map" />
