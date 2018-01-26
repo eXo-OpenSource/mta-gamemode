@@ -1,0 +1,15 @@
+<map edf:definitions="editor_main">
+    <object id="object (freighter_sfe) (3)" breakable="true" interior="0" alpha="255" model="10230" doublesided="true" scale="1" dimension="0" posX="-4916.7715" posY="1939.4778" posZ="7.65" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (freightboxes) (1)" breakable="true" interior="0" alpha="255" model="10231" doublesided="false" scale="1" dimension="0" posX="-1422.53906" posY="1489.35156" posZ="8.45313" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (freightboxes) (2)" breakable="true" interior="0" alpha="255" model="10231" doublesided="false" scale="1" dimension="0" posX="-4918.2393" posY="1940.3997" posZ="9.0351" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (lxr_motel_doorsim) (1)" breakable="true" interior="0" alpha="255" model="2987" doublesided="false" scale="1" dimension="0" posX="-4916.1729" posY="1892.218" posZ="11.9938" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (helipad) (1)" breakable="true" interior="0" alpha="255" model="3928" doublesided="false" scale="1" dimension="0" posX="-4917.9683" posY="1988.3304" posZ="7.9641" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (bollardlight) (1)" breakable="true" interior="0" alpha="255" model="1215" doublesided="false" scale="1" dimension="0" posX="-4913.1772" posY="1992.9426" posZ="9.5534" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollard) (1)" breakable="true" interior="0" alpha="255" model="1214" doublesided="false" scale="1" dimension="0" posX="-4913.1733" posY="1992.9362" posZ="7.9391" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollard) (2)" breakable="true" interior="0" alpha="255" model="1214" doublesided="false" scale="1" dimension="0" posX="-4913.501" posY="1982.6136" posZ="7.9391" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollardlight) (2)" breakable="true" interior="0" alpha="255" model="1215" doublesided="false" scale="1" dimension="0" posX="-4913.5054" posY="1982.6134" posZ="9.5534" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollard) (3)" breakable="true" interior="0" alpha="255" model="1214" doublesided="false" scale="1" dimension="0" posX="-4923.4531" posY="1982.9244" posZ="7.9391" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollardlight) (3)" breakable="true" interior="0" alpha="255" model="1215" doublesided="false" scale="1" dimension="0" posX="-4923.4687" posY="1982.9213" posZ="9.5534" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollard) (4)" breakable="true" interior="0" alpha="255" model="1214" doublesided="false" scale="1" dimension="0" posX="-4923.3706" posY="1992.7412" posZ="7.9391" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (bollardlight) (4)" breakable="true" interior="0" alpha="255" model="1215" doublesided="false" scale="1" dimension="0" posX="-4923.4062" posY="1992.7239" posZ="9.5534" rotX="0" rotY="0" rotZ="0"></object>
+</map>
