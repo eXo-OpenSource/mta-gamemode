@@ -16,7 +16,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_Money = money
 	self.m_BankAccountServer = BankServer.get("server.vehicle_shop")
 
-	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Shop)
+	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.VehicleShop)
 
 	if not self.m_BankAccount then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.VehicleShop, self.m_Id)
