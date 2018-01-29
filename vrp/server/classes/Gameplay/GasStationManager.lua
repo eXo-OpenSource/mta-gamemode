@@ -122,7 +122,7 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 
 				if station:getShop() then
 					local shopMoney = price * GAS_STATION_SHOP_PLAYER_PAYMENT / 100
-					if playedPayed then
+					if not playedPayed then
 						shopMoney = price * GAS_STATION_SHOP_FCT_CMP_PAYMENT / 100
 					end
 					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
