@@ -768,3 +768,48 @@ function getColorNameFromVehicle(c1, c2)
 		return color1
 	end
 end
+
+function attachRotationAdjusted ( from, to )
+    -- Note: Objects being attached to ('to') should have at least two of their rotations set to zero
+    --       Objects being attached ('from') should have at least one of their rotations set to zero
+    -- Otherwise it will look all funny
+
+    local frPosX, frPosY, frPosZ = getElementPosition( from )
+    local frRotX, frRotY, frRotZ = getElementRotation( from )
+    local toPosX, toPosY, toPosZ = getElementPosition( to )
+    local toRotX, toRotY, toRotZ = getElementRotation( to )
+    local offsetPosX = frPosX - toPosX
+    local offsetPosY = frPosY - toPosY
+    local offsetPosZ = frPosZ - toPosZ
+    local offsetRotX = frRotX - toRotX
+    local offsetRotY = frRotY - toRotY
+    local offsetRotZ = frRotZ - toRotZ
+
+    offsetPosX, offsetPosY, offsetPosZ = applyInverseRotation ( offsetPosX, offsetPosY, offsetPosZ, toRotX, toRotY, toRotZ )
+
+    attachElements( from, to, offsetPosX, offsetPosY, offsetPosZ, offsetRotX, offsetRotY, offsetRotZ )
+end
+
+
+function applyInverseRotation ( x,y,z, rx,ry,rz )
+    -- Degress to radians
+    local DEG2RAD = (math.pi * 2) / 360
+    rx = rx * DEG2RAD
+    ry = ry * DEG2RAD
+    rz = rz * DEG2RAD
+
+    -- unrotate each axis
+    local tempY = y
+    y =  math.cos ( rx ) * tempY + math.sin ( rx ) * z
+    z = -math.sin ( rx ) * tempY + math.cos ( rx ) * z
+
+    local tempX = x
+    x =  math.cos ( ry ) * tempX - math.sin ( ry ) * z
+    z =  math.sin ( ry ) * tempX + math.cos ( ry ) * z
+
+    tempX = x
+    x =  math.cos ( rz ) * tempX + math.sin ( rz ) * y
+    y = -math.sin ( rz ) * tempX + math.cos ( rz ) * y
+
+    return x, y, z
+end

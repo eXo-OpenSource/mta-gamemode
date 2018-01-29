@@ -40,6 +40,7 @@ function FactionManager:constructor()
 
 	FactionState:new()
 	FactionRescue:new()
+	FactionInsurgent:new()
 	FactionEvil:new(self.EvilFactions)
 end
 

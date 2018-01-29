@@ -9,6 +9,9 @@ GasStationManager = inherit(Singleton)
 GasStationManager.Shops = {}
 addRemoteEvents{"gasStationTakeFuelNozzle", "gasStationRejectFuelNozzle", "gasStationStartTransaction", "gasStationConfirmTransaction", "gasStationRepairVehicle"}
 
+GAS_STATION_SHOP_PLAYER_PAYMENT = 20
+GAS_STATION_SHOP_FCT_CMP_PAYMENT = 10
+
 function GasStationManager:constructor()
 	self.m_PendingTransaction = {}
 
@@ -79,7 +82,9 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 			end
 			local price = math.round(price)
 			if station:isUserFuelStation() then
+				local playedPayed = false
 				local faction = client:getFaction()
+				local company = client:getCompany()
 				if faction and (faction:isEvilFaction() or client:isFactionDuty()) and instanceof(vehicle, FactionVehicle, true) then
 					if faction:getMoney() >= price then
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
@@ -88,15 +93,11 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
 						client:triggerEvent("gasStationReset")
-						return
 					else
 						client:sendError("In der Fraktionskasse ist nicht genug Geld!")
 						return
 					end
-				end
-
-				local company = client:getCompany()
-				if company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
+				elseif company and client:isCompanyDuty() and instanceof(vehicle, CompanyVehicle, true) then
 					if company:getMoney() >= price then
 						company:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 						client:sendInfo(_("Das Fahrzeug wurde getankt!", client))
@@ -104,25 +105,28 @@ function GasStationManager:confirmTransaction(vehicle, fuel, station, opticalFue
 						vehicle:setFuel(vehicle:getFuel() + fuel)
 
 						client:triggerEvent("gasStationReset")
-						return
 					else
 						client:sendError("In der Unternehmenskasse ist nicht genug Geld!")
 						return
 					end
-				end
-
-				if client:getMoney() >= price then
+				elseif client:getMoney() >= price then
+					playedPayed = true
 					client:transferMoney(self.m_BankAccountServer, price, "Tanken", "Vehicle", "Refill")
 					vehicle:setFuel(vehicle:getFuel() + fuel)
 
 					client:triggerEvent("gasStationReset")
-
-					if station:getShop() then
-						client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
-						self.m_BankAccountServer:transferMoney(station:getShop().m_BankAccount, price/5, "Betankung", "Vehicle", "Refill")
-					end
 				else
 					client:sendError("Du hast nicht genügend Geld dabei!")
+					return
+				end
+
+				if station:getShop() then
+					local shopMoney = price * GAS_STATION_SHOP_PLAYER_PAYMENT / 100
+					if not playedPayed then
+						shopMoney = price * GAS_STATION_SHOP_FCT_CMP_PAYMENT / 100
+					end
+					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, station:getName()))
+					self.m_BankAccountServer:transferMoney(station:getShop().m_BankAccount, shopMoney, "Betankung", "Vehicle", "Refill")
 				end
 			elseif station:isFactionFuelStation() then
 				if not instanceof(vehicle, FactionVehicle, true) then client:sendWarning("Dieses Fahrzeug darf hier nicht getankt werden!") return end

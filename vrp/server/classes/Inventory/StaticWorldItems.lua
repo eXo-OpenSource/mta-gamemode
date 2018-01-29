@@ -50,6 +50,13 @@ function StaticWorldItems:constructor()
 			["enabled"] = true,
 			["notReload"] = true,
 		},
+		["Transmitter"] = {
+			["class"] = ItemManager:getSingleton():getInstance("Transmitter"),
+			["offsetZ"] = 0,
+			["chance"] = 100,
+			["enabled"] = true,
+			["notReload"] = true,
+		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(1000*60*60)
