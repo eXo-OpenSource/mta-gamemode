@@ -401,9 +401,9 @@ end
 function LocalPlayer:checkAFK()
 	if not self:isLoggedIn() then return end
 	if DEBUG then return end
-	if self:getPublicSync("gangwarParticipant") then return end
 
 	if not self:getPublicSync("AFK") == true then
+		if self:getPublicSync("gangwarParticipant") then return end
 		local pos = self:getPosition()
 		local distance = getDistanceBetweenPoints3D(pos, self.m_LastPositon) or 0
 		self.m_LastPositon = pos
