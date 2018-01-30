@@ -140,6 +140,9 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 					cancelEvent()
 				end
 			end
+		elseif attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and self.m_NetworkInteruptFreeze then
+			cancelEvent()
+			outputDebugString("Canceling Damage ;)")
 		end
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
