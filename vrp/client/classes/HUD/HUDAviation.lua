@@ -310,7 +310,7 @@ function HUDAviation:drawInfoPanel( posX, posY, width, height)
 		dxDrawBoxText("FIRE", posX+width*0.7, posY+height*0.1, width*0.2, height*0.4, tocolor(200, 0, 0, 255), 1, "sans", "center", "center")
 	end
 	dxDrawBoxShape(posX+width*0.7, posY+height*0.1, width*0.2, height*0.4, tocolor(10, 97, 34, 255), 1)
-	local isBrakeApplied = getElementData( aircraft, "Handbrake" ) or getControlState("handbrake") or isElementFrozen(aircraft)
+	local isBrakeApplied = getElementData( aircraft, "Handbrake" ) or getPedControlState("handbrake") or isElementFrozen(aircraft)
 	if not isBrakeApplied then 
 		dxDrawBoxText("BRAKE", posX+width*0.4, posY+height*0.55, width*0.2, height*0.4, tocolor(10, 97, 34, 255), 0.9, "sans", "center", "center")
 	else 

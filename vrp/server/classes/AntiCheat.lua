@@ -54,6 +54,12 @@ function AntiCheat:constructor()
 			setElementData(source, name, oldValue)
 		end
 	)
+
+	addEventHandler("onPlayerACInfo", root, bind(self.Event_playerAcInfo, self))
+end
+
+function AntiCheat:Event_playerAcInfo(detectedACList, d3d9Size, d3d9MD5, d3d9SHA256)
+	-- TODO implement whitelist for wine and vm's
 end
 
 function AntiCheat:report(player, name, severity)

@@ -129,8 +129,8 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 end
 
 function VehicleShop:save()
-	self.m_BankAccount:save()
-	if sql:queryExec("UPDATE ??_vehicle_shops SET Money = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Owner, self.m_Id) then
+	
+	if self.m_BankAccount:save() then
 	else
 		outputDebug(("Failed to save Vehicle-Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
 	end

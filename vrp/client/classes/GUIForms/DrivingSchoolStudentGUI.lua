@@ -65,9 +65,9 @@ function DrivingSchoolStudentGUI:changeDirection(direction, arg)
 		if arg == "down" then
 			toggleControl("accelerate", false)
 			toggleControl("brake_reverse", false)
-			setControlState("brake_reverse", true)
+			setPedControlState("brake_reverse", true)
 		else
-			setControlState("brake_reverse", false)
+			setPedControlState("brake_reverse", false)
 			toggleControl("brake_reverse", true)
 			toggleControl("accelerate", true)
 		end

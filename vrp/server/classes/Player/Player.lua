@@ -1360,7 +1360,7 @@ function Player:attachToVehicle(forceDetach)
 
 			local rotpX = 0
 			local rotpY = 0
-			local rotpZ = getPlayerRotation(self)
+			local rotpZ = getPedRotation(self)
 
 			local rotvX, rotvY, rotvZ = getVehicleRotation(self.contactElement)
 

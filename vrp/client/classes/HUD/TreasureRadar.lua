@@ -73,11 +73,11 @@ end
 
 function TreasureRadar:preRender()
 	if localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getModel() == 453 then
-		if vehicle and (getControlState("vehicle_look_behind") or getControlState("vehicle_look_left") or getControlState("vehicle_look_right")) then
+		if vehicle and (getPedControlState("vehicle_look_behind") or getPedControlState("vehicle_look_left") or getPedControlState("vehicle_look_right")) then
 			local element = vehicle or localPlayer
 			local _, _, rotation = getElementRotation(element)
 			self.m_Rotation = rotation
-		elseif getControlState("look_behind") then
+		elseif getPedControlState("look_behind") then
 			self.m_Rotation = -getPedRotation(localPlayer)
 		else
 			local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
