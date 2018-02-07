@@ -660,6 +660,9 @@ VRP_RADIO = {
 	{"Lounge FM Austria", "http://digital.lounge.fm"},
 	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
 	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
+	{"I Love Radio", "http://www.iloveradio.de/iloveradio.m3u"},
+	{"1Live", "http://www.wdr.de/wdrlive/media/einslive.m3u"},
+	{"1Live diggi", "http://www.wdr.de/wdrlive/media/einslivedigi.m3u"},
 	{"FFS (nicht 24/7 online)", "http://ffs-gaming.com:8008/ffs.ogg"},
 
 
