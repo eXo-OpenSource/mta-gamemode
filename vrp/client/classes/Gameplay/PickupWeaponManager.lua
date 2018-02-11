@@ -13,7 +13,7 @@ end
 
 function PickupWeaponManager:Event_onPickupHit( player, dimension) 
 	if dimension then 
-		if getElementType(player) == "player" then 
+		if getElementType(player) == "player" and player == localPlayer then 
 			if not getPedOccupiedVehicle(player) then 
 				if getElementData(source, "pickupWeapon") then
 					self.m_HitWeaponPickup = source
@@ -42,7 +42,7 @@ end
 function PickupWeaponManager:Event_checkForPickup() 
 	if self.m_HitWeaponPickup and isElement(self.m_HitWeaponPickup ) then 
 		local now = getTickCount()
-		if getKeyState("lalt") and getKeyState("m") then
+		if getKeyState("lalt") and getKeyState("m") and not getPedOccupiedVehicle(localPlayer) then
 			if not self.m_LastBindCheck or (self.m_LastBindCheck+LAST_BIND_CHECK <= now ) then
 				self.m_LastBindCheck = now
 				self:Event_onTryPickupWeapon()

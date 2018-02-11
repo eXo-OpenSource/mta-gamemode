@@ -1,20 +1,28 @@
 ItemSlam = inherit(Singleton) 
 
 function ItemSlam:constructor() 
+	self.m_Slams = {}
+	addRemoteEvents{"syncItemSlams"}
+	triggerServerEvent("onRequestSlams", localPlayer)
 	addEventHandler("onClientRender", root, bind(self.Event_Render, self))
+	addEventHandler("syncItemSlams", root, bind(self.Event_onReceiveSlams, self))
 end
 
 function ItemSlam:destructor() 
 
 end
 
+function ItemSlam:Event_onReceiveSlams( tbl ) 
+	self.m_Slams = tbl 
+end
+
 function ItemSlam:Event_Render( ) 
-	local objects = getElementsByType("object", root, true)
+	local objects = self.m_Slams
 	local x,y,z, x2, y2, rot, _, vec3
 	local px, py, pz = getElementPosition(localPlayer)
 	local hit, hitx, hity, hitz, hitElement
-	for key, obj in ipairs(objects) do 
-		if getElementData(obj, "detonatorSlam") then 
+	for key, obj in pairs(objects) do 
+		if obj and isElement(obj) and getElementData(obj, "detonatorSlam") then 
 			x,y,z = getElementPosition(obj) 
 			if getDistanceBetweenPoints3D( x, y, z, px, py, pz ) <= 20 then
 				_, _, rot = getElementRotation(obj)

@@ -7,11 +7,12 @@
 -- ****************************************************************************
 ItemSlam = inherit(Item)
 ItemSlam.Map = { }
-
+ItemSlam.EntityMap = {}
 function ItemSlam:constructor()
-	addRemoteEvents{"onSlamTouchLine", "onSlamToggleLaser"}
+	addRemoteEvents{"onSlamTouchLine", "onSlamToggleLaser", "onRequestSlams"}
 	addEventHandler("onSlamTouchLine", root, bind(self.Event_onTouchLine, self))
 	addEventHandler("onSlamToggleLaser", root, bind(self.Event_onSlamToggleLaser, self))
+	addEventHandler("onRequestSlams", root, bind(self.Event_onRequestSlams, self))
 end
 
 function ItemSlam:Event_onSlamToggleLaser( object ) 
@@ -37,9 +38,15 @@ end
 function ItemSlam:detonateSlam( instance, detonatedBy ) 
 	if instance then 
 		local x,y,z = getElementPosition( instance.m_Object )
-		createExplosion( x, y, z, 8, detonatedBy)
-		createExplosion( x, y, z, 8, detonatedBy)
+		createExplosion( x, y, z, 8)
+		createExplosion( x, y, z, 8)
 		delete(ItemSlam.Map[instance.m_Object])
+	end
+end
+
+function ItemSlam:Event_onRequestSlams( ) 
+	if client then 
+		client:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
 	end
 end
 
@@ -53,6 +60,10 @@ function ItemSlam:use(player)
 		setElementFrozen(worldItem.m_Object, true)
 		setElementData( worldItem.m_Object, "detonatorSlam", true)
 		ItemSlam.Map[worldItem.m_Object] = worldItem
+		ItemSlam.EntityMap[#ItemSlam.EntityMap+1] = worldItem.m_Object --// Table that is synced with the client containing the actual slam gtasa-objects
+		for key, player in ipairs(getElementsByType("player")) do 
+			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
+		end
 	end)
 end
 
