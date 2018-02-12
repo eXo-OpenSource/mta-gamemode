@@ -40,8 +40,24 @@ function ItemSlam:detonateSlam( instance, detonatedBy )
 		local x,y,z = getElementPosition( instance.m_Object )
 		createExplosion( x, y, z, 8)
 		createExplosion( x, y, z, 8)
+		local id = self:getSlamIDFromObj( instance.m_Object ) 
+		if id then 
+			table.remove(self.EntityMap, id)
+		end
+		for key, player in ipairs(getElementsByType("player")) do 
+			player:triggerEvent("syncItemSlams", ItemSlam.EntityMap)
+		end
 		delete(ItemSlam.Map[instance.m_Object])
 	end
+end
+
+function ItemSlam:getSlamIDFromObj( instance ) 
+	for i = 1, #ItemSlam.EntityMap do 
+		if ItemSlam.EntityMap[i] == instance then
+			return i 
+		end
+	end
+	return false
 end
 
 function ItemSlam:Event_onRequestSlams( ) 
