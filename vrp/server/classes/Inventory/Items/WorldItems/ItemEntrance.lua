@@ -18,6 +18,8 @@ function ItemEntrance:constructor()
 	addEventHandler("onKeyPadSignal", root, bind(self.Event_onKeyPadSignal, self))
 	addCommandHandler("nearbyentrances", bind(self.Event_onNearbyCommand, self))
 	addCommandHandler("delentrance", bind(self.Event_onDeleteCommand, self))
+	self.m_ColShapeBind = bind(self.Event_onColShapeHit, self)
+	self.m_ColShapeBind2 = bind(self.Event_onColShapeLeave, self)
 	self.m_Model = 2986
 	self.m_Entrances = {}
 	self.m_Timers = {}
@@ -26,7 +28,7 @@ end
 
 
 function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
-	local linkedKeyPadList, houseID, model, posX, posY, posZ
+	local linkedKeyPadList, houseID, model, posX, posY, posZ, title, desc
 	if not value or tostring(value) == "" then 
 		linkedKeyPadList = "#"
 		houseID = "#"
@@ -34,6 +36,8 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		posX = false 
 		posY = false 
 		posZ = false
+		title = "" 
+		desc = ""
 		linkedToEntrance = false
 		updateEntrance = true
 	else 
@@ -44,19 +48,30 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		posY = tonumber(gettok(value, 5, ":")) 
 		posZ = tonumber(gettok(value, 6, ":")) 
 		linkedToEntrance = tonumber(gettok( value, 7, ":"))
+		title = gettok(value, 8, ":")
+		desc = gettok(value, 9, ":")
 		updateEntrance	= false
 	end
 	int = tostring(int) or 0 
 	dim = tostring(dim) or 0
 	self.m_Entrances[Id] = createObject(model or self.m_Model, pos.x, pos.y, pos.z, 3)
 	if self.m_Entrances[Id] and houseID then
-		setElementDimension(self.m_Entrances[Id], dim)
-		setElementInterior(self.m_Entrances[Id], int)
+		setElementDimension(self.m_Entrances[Id], tonumber(dim))
+		setElementInterior(self.m_Entrances[Id], tonumber(int))
 		setElementDoubleSided(self.m_Entrances[Id], true)
 		self.m_Entrances[Id]:setRotation( rot ) 
+		self.m_Entrances[Id].m_ColShape = createColSphere(pos.x, pos.y, pos.z, 3)
+		self.m_Entrances[Id].m_ColShape.m_EntranceID = Id
+		setElementInterior(self.m_Entrances[Id].m_ColShape, tonumber(int))
+		setElementDimension(self.m_Entrances[Id].m_ColShape, tonumber(dim))
+		self.m_Entrances[Id].m_ColShape.m_EntranceObject = self.m_Entrances[Id]
+		addEventHandler("onColShapeHit", self.m_Entrances[Id].m_ColShape, self.m_ColShapeBind)
+		addEventHandler("onColShapeLeave", self.m_Entrances[Id].m_ColShape, self.m_ColShapeBind2)
 		self.m_Entrances[Id].Id = Id
 		self.m_Entrances[Id].Type = "Eingang"
 		self.m_Entrances[Id].HouseID = houseID
+		self.m_Entrances[Id].Title = title 
+		self.m_Entrances[Id].Description = desc
 		if posX and posY and posZ then
 			self.m_Entrances[Id].OutPos = Vector3(posX, posY, posZ)
 			self.m_Entrances[Id].HouseID = false
@@ -73,6 +88,26 @@ function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
 		return self.m_Entrances[Id]
 	else 
 		return nil 
+	end
+end
+
+function ItemEntrance:Event_onColShapeHit(hE, bDim)
+	if bDim then 
+		if hE and isElement(hE) and getElementType(hE) == "player" then 
+			hE:setPrivateSync("EntranceId", source.m_EntranceID)
+			hE:setPrivateSync("EntranceObject", source.m_EntranceObject)
+			triggerLatentClientEvent("drawEntranceTitleDesc", 50000, false, hE, true, source.m_EntranceObject.Title, source.m_EntranceObject.Description)
+		end
+	end
+end
+
+function ItemEntrance:Event_onColShapeLeave( hE, bDim) 
+	if bDim then
+		if hE and isElement(hE) and getElementType(hE) == "player" then 
+			triggerLatentClientEvent("drawEntranceTitleDesc", 50000, false, hE, false)
+			hE:setPrivateSync("EntranceId", false)
+			hE:setPrivateSync("EntranceObject", false)
+		end
 	end
 end
 
@@ -199,41 +234,44 @@ function ItemEntrance:Event_onConfirmEntranceDelete( id )
 end
 
 function ItemEntrance:Event_onEntranceConfirm( id ) 
-	if source.m_EntranceQuestionId then 
-		if self.m_Entrances[id] and isElement(self.m_Entrances[id]) then 
+	local obj = self.m_Entrances[id]
+	if obj and isElement(obj) and not getPedOccupiedVehicle(client) then
+		if client.m_EntranceQuestionId or isElementWithinColShape(client, obj.m_ColShape) then 
 			if not self.m_Entrances[id].m_Closed then 
 				self:enter( source, id )
 			else 
-				source:sendError(_("Der Eingang ist verschlossen!", source))
+				client:sendError(_("Der Eingang ist verschlossen!", client))
 			end
 		end
 	end
-	source.m_EntranceQuestionVisible = false
 end
 
 function ItemEntrance:Event_onEntranceCancel( id ) 
-	source.m_EntranceQuestionVisible = false
 end
 
 function ItemEntrance:enter( player, id ) 
-	if self.m_Entrances[id].HouseID then 
-		if HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID] then
-			local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
-			local _, _, rz = getElementRotation( player )
-			self:teleportPlayer(player, Vector3(x, y, z), rz, int, id)
-			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
-		end
-	else 
-		if self.m_Entrances[id].OutPos then 
-			local _, _, rz = getElementRotation( player )
-			local int, dim = 0, 0
-			if self.m_Entrances[id].LinkToEntrance then 
-				if self.m_Entrances[self.m_Entrances[id].LinkToEntrance] and isElement(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]) then
-					int, dim = getElementInterior(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]), getElementDimension(self.m_Entrances[self.m_Entrances[id].LinkToEntrance])
-				end
+	local pDim, pInt = getElementDimension(player), getElementInterior(player)
+	local eDim, eInt = getElementDimension(self.m_Entrances[id]), getElementInterior(self.m_Entrances[id])
+	if pDim == eDim and pInt == eInt then 
+		if self.m_Entrances[id].HouseID then 
+			if HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID] then
+				local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
+				local _, _, rz = getElementRotation( player )
+				self:teleportPlayer(player, Vector3(x, y, z), rz, int, id)
+				triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
 			end
-			self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  int, dim)
-			triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
+		else 
+			if self.m_Entrances[id].OutPos then 
+				local _, _, rz = getElementRotation( player )
+				local int, dim = 0, 0
+				if self.m_Entrances[id].LinkToEntrance then 
+					if self.m_Entrances[self.m_Entrances[id].LinkToEntrance] and isElement(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]) then
+						int, dim = getElementInterior(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]), getElementDimension(self.m_Entrances[self.m_Entrances[id].LinkToEntrance])
+					end
+				end
+				self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  int, dim)
+				triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
+			end
 		end
 	end
 end
@@ -259,7 +297,7 @@ function ItemEntrance:teleportPlayer( player, pos, rotation, interior, dimension
 	triggerEvent("onElementDimensionChange", player, dimension)
 end
 
-function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, posX, posY, posZ, entranceLink) 
+function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, posX, posY, posZ, entranceLink, title, desc) 
 	if client then 
 		if client.m_LastEntranceId then 
 			if self.m_Entrances[client.m_LastEntranceId] then 
@@ -282,6 +320,12 @@ function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, p
 					end
 					if tonumber(houseId) then 
 						entrance.HouseID = tonumber(houseId)
+					end
+					if title then 
+						entrance.Title = title
+					end
+					if desc then 
+						entrance.Description = desc
 					end
 					entrance.UpdateEntrance = true
 					client:sendSuccess(_("Der Eingang wurde aktualisiert!", client))
@@ -320,12 +364,6 @@ function ItemEntrance:onEntranceClick(button, state, player)
 			player.m_LastEntranceId = source.Id
 			local pos = {getElementPosition(source)}
 			player:triggerEvent("promptEntranceOption", source.LinkedKeyPad, pos)
-		else 
-			if not player.m_EntranceQuestionVisible then
-				player.m_EntranceQuestionVisible = true
-				player.m_EntranceQuestionId = source.Id
-				QuestionBox:new(player, player, _("Eintreten?", player), "confirmEntranceEnter", "cancelEntranceEnter", source.Id)
-			end
 		end
 	elseif button == "right" and state == "up" then 
 		if player.m_SupMode then 
@@ -353,6 +391,8 @@ function ItemEntrance:destructor()
 			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
 			local houseId = obj.HouseID or "#"
 			local x,y,z, linkToEntrance
+			local title = obj.Title or ""
+			local desc = obj.Description or ""
 			if obj.OutPos then 
 				x = obj.OutPos.x or "#"
 				y = obj.OutPos.y or "#"
@@ -364,7 +404,7 @@ function ItemEntrance:destructor()
 				z = "#"
 				linkToEntrance = "#"
 			end
-			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance, obj.Id )
+			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance..":"..title..":"..desc, obj.Id )
 		end
 	end
 end

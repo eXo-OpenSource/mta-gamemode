@@ -19,7 +19,7 @@ function KeyBinds:constructor()
 	self.m_CruiseControl = bind(HUDSpeedo.Bind_CruiseControl, HUDSpeedo:getSingleton())
 	self.m_VehiclePickUp = bind(LocalPlayer.vehiclePickUp, localPlayer)
 	self.m_VehicleELS = bind(self.vehicleELS, self)
-
+	self.m_Entrance = bind(self.tryEnterEntrance, self)
 	self.m_Keys = {
 		["KeyTogglePhone"]			= {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 		["KeyTogglePolicePanel"]	= {["defaultKey"] = "F4", ["name"] = "Polizei-Computer", ["func"] = self.m_PolicePanel};
@@ -44,6 +44,7 @@ function KeyBinds:constructor()
 		["KeyToggleVehicleBrake"]	= {["defaultKey"] = "g", ["name"] = "Handbremse", ["func"] = function() if localPlayer.vehicle then localPlayer.vehicle:toggleHandbrake() end end, ["trigger"] = "down"};
 		["KeyToggleVehicleELS"]		= {["defaultKey"] = "z", ["name"] = "Rundumleuchten", ["func"] = self.m_VehicleELS, ["trigger"] = "down"};
 		["KeyToggleReddot"]			= {["defaultKey"] =  "N/A", ["name"] = "Reddot Umschalten", ["func"] = function() HUDUI:getSingleton().m_RedDot = not HUDUI:getSingleton().m_RedDot end, ["trigger"] = "up"};
+		["KeyEntranceUse"]			= {["defaultKey"] =  "f", ["name"] = "Betreten", ["func"] = self.m_Entrance, ["trigger"] = "up"};
 		--Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
 	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
@@ -204,6 +205,9 @@ function KeyBinds:vehicleELS(__, keyState)
 	end
 end
 
+function KeyBinds:tryEnterEntrance( __, keystate) 
+	triggerEvent("onTryEnterance", localPlayer)
+end
 
 --[[
 addCommandHandler("checkKeys",function()
