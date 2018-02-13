@@ -6,7 +6,7 @@ local fontHeight = dxGetFontHeight(3, "default-bold")
 local fontHeight2 = dxGetFontHeight(1.5, "default-bold")
 local lastEntranceTry = getTickCount()
 addEvent("drawEntranceTitleDesc", true)
-addEventHandler("drawEntranceTitleDesc", root, function(state, title, desc) 
+addEventHandler("drawEntranceTitleDesc", localPlayer, function(state, title, desc) 
 	if not state then 
 		removeEventHandler("onClientRender", root, ItemEntrance.Event_OnRender)
 	else 
