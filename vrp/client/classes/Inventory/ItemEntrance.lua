@@ -75,13 +75,13 @@ addEventHandler("itemEntrancePlayEnter", root,
 
 function ItemEntrance:Event_OnRender() 
 	if lastTitle and lastDesc then 
-		local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
 		dxDrawText(lastTitle, 0, 0, w, h*0.9+1, tocolor(0, 0, 0, 255), 3, "default-bold", "center", "bottom")
 		dxDrawText(lastTitle, 0, 0, w, h*0.9, tocolor(255, 255, 255, 255), 3, "default-bold", "center", "bottom")
 		dxDrawText(lastDesc, 0, 0, w, (h*0.9+fontHeight)+1, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
 		dxDrawText(lastDesc, 0, 0, w, h*0.9+fontHeight, tocolor(255, 255, 255, 255), 1.5, "default-bold", "center", "bottom")
-		dxDrawText(("Drücke %s zum Eintreten!"):format(key:upper()), 0, 0, w, h*0.9+fontHeight*1.1+fontHeight2*1.1, tocolor(255, 255, 255, 255), 1, "default-bold", "center", "bottom")
 	end
+	local key = core:get("KeyBindings", "KeyEntranceUse", KeyBinds:getSingleton().m_Keys["KeyEntranceUse"]["defaultKey"])
+	dxDrawText(("Drücke %s zum Eintreten!"):format(key:upper()), 0, 0, w, h*0.9+fontHeight*1.1+fontHeight2*1.1, tocolor(255, 255, 255, 255), 1, "default-bold", "center", "bottom")
 end
 
 function ItemEntrance:constructor( id, pos )
