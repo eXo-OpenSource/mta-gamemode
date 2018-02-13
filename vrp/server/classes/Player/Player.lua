@@ -349,7 +349,10 @@ function Player:save()
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
-		DatabasePlayer.save(self)
+		DatabasePlayer.save(self)		
+		if self:getGroup() then
+			self:getGroup():save()
+		end
 		outputServerLog("Saved Data for Player "..self:getName())
 		outputDebugString("Saved Data for Player "..self:getName())
 	end
