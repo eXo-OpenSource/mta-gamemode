@@ -243,23 +243,3 @@ function BankAccount:transferMoney(toObject, amount, reason, category, subcatego
 
 	return true
 end
-
-function BankAccount:getLogBalance(callback)
-	local sql = "SELECT ((SELECT SUM(Amount) FROM ??_MoneyNew WHERE ToBank = ?) - (SELECT SUM(Amount) FROM ??_MoneyNew WHERE FromBank = ?)) AS Money"
-
-	if callback then
-		sqlLogs:queryFetchSingle(function(result)
-			if result then
-				callback(result["Money"])
-				return
-			end
-			callback(false)
-		end, sql, sqlLogs:getPrefix(), self.m_Id, sqlLogs:getPrefix(), self.m_Id)
-	else
-		local result = sqlLogs:queryFetchSingle(sql, sqlLogs:getPrefix(), self.m_Id, sqlLogs:getPrefix(), self.m_Id)
-		if result then
-			return result["Money"]
-		end
-		return false
-	end
-end

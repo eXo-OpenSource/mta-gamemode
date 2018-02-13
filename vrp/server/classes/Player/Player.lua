@@ -350,9 +350,6 @@ function Player:save()
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
 		DatabasePlayer.save(self)
-		if self:getGroup() then
-			self:getGroup():save()
-		end
 		outputServerLog("Saved Data for Player "..self:getName())
 		outputDebugString("Saved Data for Player "..self:getName())
 	end

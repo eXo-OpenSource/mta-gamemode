@@ -172,7 +172,7 @@ function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(2933, Vector3(907.40002, -1712.5, 14.5), Vector3(0, 0, 90), Vector3(907.40002, -1701.8812255859, 14.5))
 	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
-	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
+	setObjectBreakable(lcnGates[1].m_Gates[1], false)
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)

@@ -513,26 +513,6 @@ function DatabasePlayer:transferMoney(toObject, amount, reason, category, subcat
 	return true
 end
 
-function DatabasePlayer:getLogBalance(callback)
-	local sql = "SELECT ((SELECT SUM(Amount) FROM ??_MoneyNew WHERE ToId = ? AND ToType = 1) - (SELECT SUM(Amount) FROM ??_MoneyNew WHERE FromId = ? AND FromType = 1)) AS Money"
-
-	if callback then
-		sqlLogs:queryFetchSingle(function(result)
-			if result then
-				callback(result["Money"])
-				return
-			end
-			callback(false)
-		end, sql, sqlLogs:getPrefix(), self.m_Id, sqlLogs:getPrefix(), self.m_Id)
-	else
-		local result = sqlLogs:queryFetchSingle(sql, sqlLogs:getPrefix(), self.m_Id, sqlLogs:getPrefix(), self.m_Id)
-		if result then
-			return result["Money"]
-		end
-		return false
-	end
-end
-
 function DatabasePlayer:transferBankMoney(toObject, amount, reason, category, subcategory, options)
 	local result = self:getBankAccount():transferMoney(toObject, amount, reason, category, subcategory, options)
 
