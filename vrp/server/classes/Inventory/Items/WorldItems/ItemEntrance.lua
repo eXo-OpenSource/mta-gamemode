@@ -96,7 +96,7 @@ function ItemEntrance:Event_onColShapeHit(hE, bDim)
 		if hE and isElement(hE) and getElementType(hE) == "player" then 
 			hE:setPrivateSync("EntranceId", source.m_EntranceID)
 			hE:setPrivateSync("EntranceObject", source.m_EntranceObject)
-			triggerLatentClientEvent("drawEntranceTitleDesc", 50000, false, hE, true, source.m_EntranceObject.Title, source.m_EntranceObject.Description)
+			triggerLatentClientEvent(hE, "drawEntranceTitleDesc", 50000, false, root, true, source.m_EntranceObject.Title, source.m_EntranceObject.Description)
 		end
 	end
 end
@@ -104,7 +104,7 @@ end
 function ItemEntrance:Event_onColShapeLeave( hE, bDim) 
 	if bDim then
 		if hE and isElement(hE) and getElementType(hE) == "player" then 
-			triggerLatentClientEvent("drawEntranceTitleDesc", 50000, false, hE, false)
+			triggerLatentClientEvent(hE, "drawEntranceTitleDesc", 50000, false, root, false)
 			hE:setPrivateSync("EntranceId", false)
 			hE:setPrivateSync("EntranceObject", false)
 		end
