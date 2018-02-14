@@ -146,11 +146,11 @@
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 
 	<!-- wearables -->
-	<script src="server/classes/Inventory/Items/wearables/WearableManager.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/wearables/WearableHelmet.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/wearables/wearableshirt.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/wearables/WearablePortables.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/wearables/WearableClothes.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Wearables/WearableShirt.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Wearables/WearablePortables.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/Wearables/WearableClothes.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
@@ -2094,21 +2094,20 @@
 	<!-- Halloween Event End-->
 
 	<!-- Christmas Event Start-->
-	<vrpfile src="files/models/objects/XmasTree1.txd" />
+	<!--<vrpfile src="files/models/objects/XmasTree1.txd" />
 	<vrpfile src="files/models/objects/XmasTree1.dff" />
 	<vrpfile src="files/models/objects/XmasTree1.col" />
 
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
-	<vrpfile src="files/models/objects/XmasBox.col" />
+	<vrpfile src="files/models/objects/XmasBox.col" />-->
+	<!-- Christmas Event End-->
 
 	<!--Skins-->
 	<vrpfile src="files/models/skins/zombie.dff"/>
 	<vrpfile src="files/models/skins/zombie.txd"/>
 	<vrpfile src="files/models/skins/santaclaus.txd" />
 	<vrpfile src="files/models/skins/santaclaus.dff" />
-
-	<!-- Christmas Event End-->
 
 	<!--Wearables-->
 	<vrpfile src="files/models/wearables/helmet.txd" />
