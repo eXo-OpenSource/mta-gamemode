@@ -113,6 +113,19 @@ function GUIGridList:getSelectedItem()
 	return self.m_SelectedItem
 end
 
+function GUIGridList:setSelectedItem(itemIndex)
+	if not itemIndex or not self.m_ScrollArea.m_Children[itemIndex] then
+		for k, item in ipairs(self:getItems()) do
+			item:setBackgroundColor(Color.Clear)
+		end
+		self.m_SelectedItem = nil
+		self:anyChange()
+	else
+		self:onInternalSelectItem(self.m_ScrollArea.m_Children[itemIndex])
+	end
+end
+
+
 function GUIGridList:clear()
 	self.m_SelectedItem = nil
 
