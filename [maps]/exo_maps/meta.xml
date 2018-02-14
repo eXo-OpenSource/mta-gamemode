@@ -25,7 +25,8 @@
 	<map src="fraktionen/lspd-int.map" />
 	<map src="fraktionen/sfpd_int.map" />
 	<map src="fraktionen/sfpd_out.map" />
-	<map src="fraktionen/fbi.map" />
+	<map src="fraktionen/FBI.map" />
+	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
 	<map src="fraktionen/vatos.map" />
 	<map src="fraktionen/insurgent_storage.map" />
@@ -76,6 +77,7 @@
 	
 	<map src="shop/ammunation.map" />
 	<map src="shop/ammunation2.map" />
+	<map src="shop/atrium.map" />
 	<map src="shop/gaertnerei.map" />
 	<map src="knast.map" />
 	<map src="premium.map" />

@@ -218,22 +218,6 @@ function PlatformEnvironment:Event_OnColShapeLeave()
 end
 
 function PlatformEnvironment:spawnIntoPlatform()
-	--[[
-	if self.m_Shader then
-		delete(self.m_Shader)
-	end
-	self.m_Shader =  CylinderShader:new()
-	--]]
-	--setSkyGradient(0, 0, 0, 0, 0, 0)
-	--setFarClipDistance(300)
-	--setWeather(20)
-	--setCloudsEnabled(false)
-	--[[
-	local txd = engineLoadTXD("files/models/fbi.txd")
-	engineImportTXD(txd,7)
-	local dff = engineLoadDFF("files/models/fbi.dff")
-	engineReplaceModel(dff,7)
-	]]
 	local x,y,z = unpack(self.m_CenterPos)
 	setElementAlpha(localPlayer, 255)
 	setElementPosition(localPlayer, x,y,z+2 )

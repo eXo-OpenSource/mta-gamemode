@@ -216,22 +216,20 @@ function FactionState:loadLSPD(factionId)
 end
 
 function FactionState:loadFBI(factionId)
-	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
+	self:createDutyPickup(275.85, -40.26, 1032.20, 10) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
 	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
-	local safe = createObject(2332, 226.80, 128.50, 1010.20)
+	local safe = createObject(2332, 294.43, -22.6, 1031.7)
 	safe:setInterior(10)
-	safe:setDimension(23)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	local elevator = Elevator:new()
 	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270)
-	elevator:addStation("Erdgeschoss", Vector3(266.70, 107.80, 1008.80), 0, 10, 23)
-	elevator:addStation("Parkplatz", Vector3(1219.147, -1811.706, 16.594), 180)
-
+	elevator:addStation("Erdgeschoss", Vector3(296.49, -36.23, 1032.20), 90, 10)
+	
 	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
 
 	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
@@ -249,7 +247,8 @@ function FactionState:loadFBI(factionId)
 		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
 	end
 
-	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(238.3, 114.9, 1010.207), 0, 0, 10, 23) -- main entrance
+	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(267.03, -23.87, 1032.20), 220, 0, 10) -- main entrance
+	InteriorEnterExit:new(Vector3(1219.20, -1812.25, 16.59), Vector3(259.91, -74.91, 1037.35), 0, 180, 10) -- back entrance / parking lot
 end
 
 function FactionState:loadArmy(factionId)

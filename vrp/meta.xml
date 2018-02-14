@@ -145,12 +145,12 @@
 	<script src="server/classes/Inventory/Items/ItemHealpack.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFirework.lua" type="server"/>
 
-	<!-- Wearables -->
-	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Wearables/WearableShirt.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Wearables/WearablePortables.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/Wearables/WearableClothes.lua" type="server"/>
+	<!-- wearables -->
+	<script src="server/classes/Inventory/Items/wearables/WearableManager.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/wearables/WearableHelmet.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/wearables/wearableshirt.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/wearables/WearablePortables.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/wearables/WearableClothes.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
@@ -204,6 +204,8 @@
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
+	
+	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
@@ -1007,6 +1009,8 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
+	
+	<script src="client/classes/Gameplay/Places/Atrium.lua" type="client"/>
 
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
@@ -1947,112 +1951,63 @@
 	<vrpfile src="files/audio/sniper.ogg" />
 
 	<!-- Models -->
-	<vrpfile src="files/models/dead_tree_18.dff"/>
-	<vrpfile src="files/models/mech.dff"/>
-	<vrpfile src="files/models/mech.col"/>
-	<vrpfile src="files/models/blitzer.col"/>
-	<vrpfile src="files/models/blitzer.dff"/>
-	<vrpfile src="files/models/blitzer.txd"/>
-	<vrpfile src="files/models/exo_logo.col"/>
-	<vrpfile src="files/models/exo_logo.dff"/>
-	<vrpfile src="files/models/exo_logo.txd"/>
-	<vrpfile src="files/models/repair.txd"/>
-	<vrpfile src="files/models/repair.dff"/>
-	<vrpfile src="files/models/taser.txd"/>
-	<vrpfile src="files/models/taser.dff"/>
-	<vrpfile src="files/models/nitro.txd"/>
-	<vrpfile src="files/models/nitro.dff"/>
-	<vrpfile src="files/models/vehiclechange.txd"/>
-	<vrpfile src="files/models/vehiclechange.dff"/>
-	<vrpfile src="files/models/mushrooms.txd"/>
-	<vrpfile src="files/models/mushroom01.dff"/>
-	<vrpfile src="files/models/mushroom01.col"/>
-	<vrpfile src="files/models/mushroom02.dff"/>
-	<vrpfile src="files/models/mushroom02.col"/>
-	<vrpfile src="files/models/zombie.dff"/>
-	<vrpfile src="files/models/zombie.txd"/>
-	<vrpfile src="files/models/waterCan.txd" />
-	<vrpfile src="files/models/waterCan.dff" />
-	<vrpfile src="files/models/waluigi.txd" />
-	<vrpfile src="files/models/waluigi.dff" />
-	<vrpfile src="files/models/waterCan.col" />
-	<vrpfile src="files/models/mostWanted.txd" />
-	<vrpfile src="files/models/mostWanted.dff" />
-	<vrpfile src="files/models/mostWanted.col" />
-	<vrpfile src="files/models/medic.txd" />
-	<vrpfile src="files/models/medic.dff" />
-	<vrpfile src="files/models/medic.col" />
-	<vrpfile src="files/models/medicLOD.txd" />
-	<vrpfile src="files/models/medicLOD.dff" />
-	<vrpfile src="files/models/medicLOD.col" />
-	<vrpfile src="files/models/holzstamm.txd" />
-	<vrpfile src="files/models/holzstamm.dff" />
-	<vrpfile src="files/models/holzstamm.col" />
-	<vrpfile src="files/models/kart.txd" />
-	<vrpfile src="files/models/kart.dff" />
-	<vrpfile src="files/models/kart.col" />
-	<vrpfile src="files/models/kartpark.txd" />
-	<vrpfile src="files/models/kartpark.dff" />
-	<vrpfile src="files/models/kartpark.col" />
-	<vrpfile src="files/models/kobold.dff" />
-	<vrpfile src="files/models/kobold.txd" />
 	<vrpfile src="files/models/piss.dff" />
-	<vrpfile src="files/models/bed.txd" />
-	<vrpfile src="files/models/bed.dff" />
-	<vrpfile src="files/models/bed.col" />
 	<vrpfile src="files/models/scary.txd"/>
 	<vrpfile src="files/models/scary.dff"/>
-	<vrpfile src="files/models/tardis.txd"/>
-	<vrpfile src="files/models/tardis.dff"/>
-	<vrpfile src="files/models/pickaxe.txd" />
-	<vrpfile src="files/models/pickaxe.dff" />
-	<vrpfile src="files/models/pickaxe.col" />
-	<vrpfile src="files/models/donut.txd"/>
-	<vrpfile src="files/models/donut.dff"/>
-	<vrpfile src="files/models/donut.col"/>
-	<vrpfile src="files/models/FishingRod.txd"/>
-	<vrpfile src="files/models/FishingRod.dff"/>
-	<vrpfile src="files/models/FishingRod.col"/>
-	<vrpfile src="files/models/a51fencing.col"/>
-	<vrpfile src="files/models/a51fencing.dff"/>
-	<vrpfile src="files/models/a51fencing.txd"/>
-	<vrpfile src="files/models/a51fensin.col"/>
-	<vrpfile src="files/models/a51fensin.dff"/>
-	<vrpfile src="files/models/fire_ledder.txd" />
-	<vrpfile src="files/models/fire_ledder.dff" />
-	<vrpfile src="files/models/fire_ledder.col" />
-	<vrpfile src="files/models/fire_main.txd" />
-	<vrpfile src="files/models/fire_main.dff" />
-	<vrpfile src="files/models/fire_main.col" />
-	<vrpfile src="files/models/academi.dff" />
-	<vrpfile src="files/models/academi.col" />
-	<vrpfile src="files/models/hedge01_law.col" />
-	<vrpfile src="files/models/hedge01_law.dff" />
-	<vrpfile src="files/models/fishshop.txd" />
-	<vrpfile src="files/models/fishshop.dff" />
-	<vrpfile src="files/models/fishshop.col" />
-	<vrpfile src="files/models/FortuneWheel.txd" />
-	<vrpfile src="files/models/FortuneWheel.dff" />
-	<vrpfile src="files/models/FortuneWheel.col" />
-	<vrpfile src="files/models/ammunation.col" />
-	<vrpfile src="files/models/ammunation.dff" />
-	<vrpfile src="files/models/ammunation_int.col" />
-	<vrpfile src="files/models/ammunation_int.dff" />
-	<vrpfile src="files/models/ammunation2.col" />
-	<vrpfile src="files/models/ammunation2.dff" />
-	<vrpfile src="files/models/ammunation2_int.col" />
-	<vrpfile src="files/models/ammunation2_int.dff" />
-	<vrpfile src="files/models/fence.txd" />
-	<vrpfile src="files/models/fence.dff" />
-	<vrpfile src="files/models/fence.col" />
-	<vrpfile src="files/models/fuelnozzle.txd"/>
-	<vrpfile src="files/models/fuelnozzle.dff"/>
-	<vrpfile src="files/models/fuelnozzle.col"/>
-	<vrpfile src="files/models/gasstation.dff"/>
+	<vrpfile src="files/models/taser.txd"/>
+	<vrpfile src="files/models/taser.dff"/>
 	<vrpfile src="files/models/firework.col"/>
 	<vrpfile src="files/models/firework.dff"/>
 	<vrpfile src="files/models/firework.txd"/>
 
+	<!--Buildings-->
+	<vrpfile src="files/models/buildings/ammunation.col" />
+	<vrpfile src="files/models/buildings/ammunation.dff" />
+	<vrpfile src="files/models/buildings/ammunation_int.col" />
+	<vrpfile src="files/models/buildings/ammunation_int.dff" />
+	<vrpfile src="files/models/buildings/ammunation2.col" />
+	<vrpfile src="files/models/buildings/ammunation2.dff" />
+	<vrpfile src="files/models/buildings/ammunation2_int.col" />
+	<vrpfile src="files/models/buildings/ammunation2_int.dff" />
+	<vrpfile src="files/models/buildings/academi.dff" />
+	<vrpfile src="files/models/buildings/academi.col" />
+	<vrpfile src="files/models/buildings/prison_ls.col" />
+	<vrpfile src="files/models/buildings/prison_ls.txd" />
+	<vrpfile src="files/models/buildings/PD_Garage.col" />
+	<vrpfile src="files/models/buildings/PD_Garage.dff" />
+	<vrpfile src="files/models/buildings/PD_int.col" />
+	<vrpfile src="files/models/buildings/PD_int.dff" />
+	<vrpfile src="files/models/buildings/PD_main.col" />
+	<vrpfile src="files/models/buildings/PD_main.dff" />
+	<vrpfile src="files/models/buildings/bank.txd" />
+	<vrpfile src="files/models/buildings/bank.col" />
+	<vrpfile src="files/models/buildings/bank.dff" />
+	<vrpfile src="files/models/buildings/fishshop.txd" />
+	<vrpfile src="files/models/buildings/fishshop.dff" />
+	<vrpfile src="files/models/buildings/fishshop.col" />
+	<vrpfile src="files/models/buildings/mech.dff"/>
+	<vrpfile src="files/models/buildings/mech.col"/>
+	<vrpfile src="files/models/buildings/medic.txd" />
+	<vrpfile src="files/models/buildings/medic.dff" />
+	<vrpfile src="files/models/buildings/medic.col" />
+	<vrpfile src="files/models/buildings/medicLOD.txd" />
+	<vrpfile src="files/models/buildings/medicLOD.dff" />
+	<vrpfile src="files/models/buildings/medicLOD.col" />
+	<vrpfile src="files/models/buildings/kart.txd" />
+	<vrpfile src="files/models/buildings/kart.dff" />
+	<vrpfile src="files/models/buildings/kart.col" />
+
+	<!--Pickups-->
+	<vrpfile src="files/models/pickups/arrow.txd" />
+	<vrpfile src="files/models/pickups/arrow.dff" />
+	<vrpfile src="files/models/pickups/exo_logo.dff"/>
+	<vrpfile src="files/models/pickups/exo_logo.txd"/>
+	<!--<vrpfile src="files/models/pickups/repair.txd"/>
+	<vrpfile src="files/models/pickups/repair.dff"/>
+	<vrpfile src="files/models/pickups/nitro.txd"/>
+	<vrpfile src="files/models/pickups/nitro.dff"/>-->
+
+	<!--Objects-->
 	<vrpfile src="files/models/objects/ferrisWheel/ferris.txd" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.col" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisBase.dff" />
@@ -2060,34 +2015,60 @@
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisGond.dff" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.col" />
 	<vrpfile src="files/models/objects/ferrisWheel/ferrisWheel.dff" />
+	<vrpfile src="files/models/objects/bed.txd" />
+	<vrpfile src="files/models/objects/bed.dff" />
+	<vrpfile src="files/models/objects/bed.col" />
+	<vrpfile src="files/models/objects/a51fencing.col"/>
+	<vrpfile src="files/models/objects/a51fencing.dff"/>
+	<vrpfile src="files/models/objects/a51fencing.txd"/>
+	<vrpfile src="files/models/objects/a51fensin.col"/>
+	<vrpfile src="files/models/objects/a51fensin.dff"/>
+	<vrpfile src="files/models/objects/hedge01_law.col" />
+	<vrpfile src="files/models/objects/hedge01_law.dff" />
+	<vrpfile src="files/models/objects/FortuneWheel.txd" />
+	<vrpfile src="files/models/objects/FortuneWheel.dff" />
+	<vrpfile src="files/models/objects/FortuneWheel.col" />
+	<vrpfile src="files/models/objects/bankServer.txd" />
+	<vrpfile src="files/models/objects/bankServer.col" />
+	<vrpfile src="files/models/objects/bankServer.dff" />
+	<vrpfile src="files/models/objects/bankDoor.txd" />
+	<vrpfile src="files/models/objects/bankDoor.col" />
+	<vrpfile src="files/models/objects/bankDoor.dff" />
+	<vrpfile src="files/models/objects/blitzer.col"/>
+	<vrpfile src="files/models/objects/blitzer.dff"/>
+	<vrpfile src="files/models/objects/blitzer.txd"/>
+	<vrpfile src="files/models/objects/worldItems/mushrooms.txd"/>
+	<vrpfile src="files/models/objects/worldItems/mushroom01.dff"/>
+	<vrpfile src="files/models/objects/worldItems/mushroom01.col"/>
+	<vrpfile src="files/models/objects/worldItems/mushroom02.dff"/>
+	<vrpfile src="files/models/objects/worldItems/mushroom02.col"/>
+	<vrpfile src="files/models/objects/mostWanted.txd" />
+	<vrpfile src="files/models/objects/mostWanted.dff" />
+	<vrpfile src="files/models/objects/mostWanted.col" />
+	<vrpfile src="files/models/objects/holzstamm.txd" />
+	<vrpfile src="files/models/objects/holzstamm.dff" />
+	<vrpfile src="files/models/objects/holzstamm.col" />
+	<vrpfile src="files/models/objects/tardis.txd"/>
+	<vrpfile src="files/models/objects/tardis.dff"/>
+	<vrpfile src="files/models/objects/fence.txd" />
+	<vrpfile src="files/models/objects/fence.dff" />
+	<vrpfile src="files/models/objects/fence.col" />
+	<vrpfile src="files/models/objects/gasstation.dff"/>
 
-	<vrpfile src="files/models/PD_Garage.col" />
-	<vrpfile src="files/models/PD_Garage.dff" />
-	<vrpfile src="files/models/PD_int.col" />
-	<vrpfile src="files/models/PD_int.dff" />
-	<vrpfile src="files/models/PD_main.col" />
-	<vrpfile src="files/models/PD_main.dff" />
-
-	<vrpfile src="files/models/bank.txd" />
-	<vrpfile src="files/models/bank.col" />
-	<vrpfile src="files/models/bank.dff" />
-	<vrpfile src="files/models/bankServer.txd" />
-	<vrpfile src="files/models/bankServer.col" />
-	<vrpfile src="files/models/bankServer.dff" />
-	<vrpfile src="files/models/bankDoor.txd" />
-	<vrpfile src="files/models/bankDoor.col" />
-	<vrpfile src="files/models/bankDoor.dff" />
-
-	<!-- <vrpfile src="files/models/vehicles/infernus.dff"/> -->
+	<!--Vehicles-->
 	<vrpfile src="files/models/vehicles/extensions/lightbar.dff"/>
 	<vrpfile src="files/models/vehicles/extensions/lightbar.txd"/>
 	<vrpfile src="files/models/vehicles/extensions/lightbar.col"/>
+	<vrpfile src="files/models/vehicles/extensions/fire_ladder.txd" />
+	<vrpfile src="files/models/vehicles/extensions/fire_ladder.dff" />
+	<vrpfile src="files/models/vehicles/extensions/fire_ladder.col" />
+	<vrpfile src="files/models/vehicles/extensions/fire_main.txd" />
+	<vrpfile src="files/models/vehicles/extensions/fire_main.dff" />
+	<vrpfile src="files/models/vehicles/extensions/fire_main.col" />
 	<vrpfile src="files/models/vehicles/sandking.txd"/>
 	<vrpfile src="files/models/vehicles/sandking.dff"/>
 	<vrpfile src="files/models/vehicles/uranus.txd"/>
 	<vrpfile src="files/models/vehicles/uranus.dff"/>
-	<vrpfile src="files/models/vehicles/supergt.txd"/>
-	<vrpfile src="files/models/vehicles/supergt.dff"/>
 	<vrpfile src="files/models/vehicles/dft30.dff"/>
 	<vrpfile src="files/models/vehicles/topfun.txd"/>
 	<vrpfile src="files/models/vehicles/topfun.dff"/>
@@ -2095,68 +2076,76 @@
 	<vrpfile src="files/models/vehicles/dumper.dff" />
 
 	<!-- Easter Event Start-->
-	<file src="files/models/easter_egg.txd" />
-	<file src="files/models/easter_egg.dff" />
-	<file src="files/models/easter_egg.col" />
+	<file src="files/models/objects/worldItems/easter_egg.txd" />
+	<file src="files/models/objects/worldItems/easter_egg.dff" />
+	<file src="files/models/objects/worldItems/easter_egg.col" />
 	<!-- Easter Event End-->
 
 	<!-- Halloween Event Start-->
-	<vrpfile src="files/models/pumpkin.txd" />
-	<vrpfile src="files/models/pumpkin.dff" />
-	<vrpfile src="files/models/pumpkin.col" />
-	<!--<vrpfile src="files/models/ghost.dff"/>
-	<vrpfile src="files/models/ghost.txd"/>
-	<vrpfile src="files/models/headstone.txd" />
-	<vrpfile src="files/models/headstone.dff" />
-	<vrpfile src="files/models/headstone.col" />
+	<vrpfile src="files/models/objects/worldItems/pumpkin.txd" />
+	<vrpfile src="files/models/objects/worldItems/pumpkin.dff" />
+	<vrpfile src="files/models/objects/worldItems/pumpkin.col" />
+	<!--<vrpfile src="files/models/skins/ghost.dff"/>
+	<vrpfile src="files/models/skins/ghost.txd"/>
+	<vrpfile src="files/models/objects/headstone.txd" />
+	<vrpfile src="files/models/objects/headstone.dff" />
+	<vrpfile src="files/models/objects/headstone.col" />
 	-->
 	<!-- Halloween Event End-->
 
 	<!-- Christmas Event Start-->
-	<vrpfile src="files/models/XmasTree1.txd" />
-	<vrpfile src="files/models/XmasTree1.dff" />
-	<vrpfile src="files/models/XmasTree1.col" />
+	<vrpfile src="files/models/objects/XmasTree1.txd" />
+	<vrpfile src="files/models/objects/XmasTree1.dff" />
+	<vrpfile src="files/models/objects/XmasTree1.col" />
 
-	<vrpfile src="files/models/XmasBox.txd" />
-	<vrpfile src="files/models/XmasBox.dff" />
-	<vrpfile src="files/models/XmasBox.col" />
+	<vrpfile src="files/models/objects/XmasBox.txd" />
+	<vrpfile src="files/models/objects/XmasBox.dff" />
+	<vrpfile src="files/models/objects/XmasBox.col" />
 
-	<vrpfile src="files/models/santaclaus.txd" />
-	<vrpfile src="files/models/santaclaus.dff" />
+	<!--Skins-->
+	<vrpfile src="files/models/skins/zombie.dff"/>
+	<vrpfile src="files/models/skins/zombie.txd"/>
+	<vrpfile src="files/models/skins/santaclaus.txd" />
+	<vrpfile src="files/models/skins/santaclaus.dff" />
 
 	<!-- Christmas Event End-->
 
-	<vrpfile src="files/models/fbi.txd" />
-	<vrpfile src="files/models/fbi.dff" />
-
-	<vrpfile src="files/models/Wearables/helmet.txd" />
-	<vrpfile src="files/models/Wearables/helmet.dff" />
-
-	<vrpfile src="files/models/Wearables/crosshelmet.txd" />
-	<vrpfile src="files/models/Wearables/crosshelmet.dff" />
-	<vrpfile src="files/models/Wearables/crosshelmet.col" />
-
-	<vrpfile src="files/models/Wearables/bikerhelmet.txd" />
-	<vrpfile src="files/models/Wearables/bikerhelmet.dff" />
-
-	<vrpfile src="files/models/Wearables/gasmask.txd" />
-	<vrpfile src="files/models/Wearables/gasmask.dff" />
-
-	<vrpfile src="files/models/Wearables/kevlar.txd" />
-	<vrpfile src="files/models/Wearables/kevlar.dff" />
-
-	<vrpfile src="files/models/Wearables/dufflebag.txd" />
-	<vrpfile src="files/models/Wearables/dufflebag.dff" />
-
-	<vrpfile src="files/models/Wearables/riot_shield.txd" />
-	<vrpfile src="files/models/Wearables/riot_shield.dff" />
-	<vrpfile src="files/models/Wearables/riot_shield.col" />
-
-	<vrpfile src="files/models/Wearables/BunnyEars.txd" />
-	<vrpfile src="files/models/Wearables/BunnyEars.dff" />
-
-	<vrpfile src="files/models/Wearables/ChristmasHat.txd" />
-	<vrpfile src="files/models/Wearables/ChristmasHat.dff" />
+	<!--Wearables-->
+	<vrpfile src="files/models/wearables/helmet.txd" />
+	<vrpfile src="files/models/wearables/helmet.dff" />
+	<vrpfile src="files/models/wearables/crosshelmet.txd" />
+	<vrpfile src="files/models/wearables/crosshelmet.dff" />
+	<vrpfile src="files/models/wearables/crosshelmet.col" />
+	<vrpfile src="files/models/wearables/bikerhelmet.txd" />
+	<vrpfile src="files/models/wearables/bikerhelmet.dff" />
+	<vrpfile src="files/models/wearables/gasmask.txd" />
+	<vrpfile src="files/models/wearables/gasmask.dff" />
+	<vrpfile src="files/models/wearables/kevlar.txd" />
+	<vrpfile src="files/models/wearables/kevlar.dff" />
+	<vrpfile src="files/models/wearables/dufflebag.txd" />
+	<vrpfile src="files/models/wearables/dufflebag.dff" />
+	<vrpfile src="files/models/wearables/riot_shield.txd" />
+	<vrpfile src="files/models/wearables/riot_shield.dff" />
+	<vrpfile src="files/models/wearables/riot_shield.col" />
+	<vrpfile src="files/models/wearables/BunnyEars.txd" />
+	<vrpfile src="files/models/wearables/BunnyEars.dff" />
+	<vrpfile src="files/models/wearables/ChristmasHat.txd" />
+	<vrpfile src="files/models/wearables/ChristmasHat.dff" />
+	<vrpfile src="files/models/wearables/fuelnozzle.txd"/>
+	<vrpfile src="files/models/wearables/fuelnozzle.dff"/>
+	<vrpfile src="files/models/wearables/fuelnozzle.col"/>
+	<vrpfile src="files/models/wearables/pickaxe.txd" />
+	<vrpfile src="files/models/wearables/pickaxe.dff" />
+	<vrpfile src="files/models/wearables/pickaxe.col" />
+	<vrpfile src="files/models/wearables/donut.txd"/>
+	<vrpfile src="files/models/wearables/donut.dff"/>
+	<vrpfile src="files/models/wearables/donut.col"/>
+	<vrpfile src="files/models/wearables/FishingRod.txd"/>
+	<vrpfile src="files/models/wearables/FishingRod.dff"/>
+	<vrpfile src="files/models/wearables/FishingRod.col"/>
+	<vrpfile src="files/models/wearables/waterCan.txd" />
+	<vrpfile src="files/models/wearables/waterCan.dff" />
+	<vrpfile src="files/models/wearables/waterCan.col" />
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>

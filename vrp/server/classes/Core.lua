@@ -136,6 +136,7 @@ function Core:constructor()
 
 		GPS:new()
 		Chair:new()
+		Atrium:new()
 
 		Help:new()
 

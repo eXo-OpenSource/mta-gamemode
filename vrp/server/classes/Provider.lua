@@ -41,7 +41,7 @@ function Provider:refreshProgress()
 end
 
 function Provider:offerFile(path)
-	assert(fileExists(path))
+	assert(fileExists(path), path.." does not exist")
 	local fh = fileOpen(path)
 
 	self.m_Files[path] = {
