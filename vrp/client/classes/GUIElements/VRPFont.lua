@@ -76,6 +76,7 @@ FontAwesomeSymbols = {
 	SignOut = "",
 	Star = "",
 	Wrench = "",
+	Cog = "",
 	Cogs = "",
 	List = "",
 	Bug = "",

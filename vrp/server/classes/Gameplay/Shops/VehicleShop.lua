@@ -38,7 +38,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local npcData = split(npc,",")
 	self.m_Ped = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
 	self.m_Ped:setImmortal(true)
-	self.m_Ped:toggleWanteds(true)
+	self.m_Ped:setFrozen(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
@@ -96,6 +96,9 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		if vehicle then
 			player:transferMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
 
+			vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
+			vehicle.m_Tunings:saveColors()
+			vehicle:save()
 			setTimer(function(player, vehicle)
 				player:warpIntoVehicle(vehicle)
 				player:triggerEvent("vehicleBought")
@@ -125,7 +128,6 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	veh:setFrozen(true)
 	veh:toggleRespawn(false)
 	setVehicleDamageProof( veh , true)
-	veh:setColor(math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255))
 end
 
 function VehicleShop:save()

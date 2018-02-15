@@ -1020,7 +1020,7 @@ local tpTable = {
         ["quadshop"] =      {["pos"] = Vector3(117.53, -165.56,  1.31),  	["typ"] = "Shops"},
         ["infernusshop"] =  {["pos"] = Vector3(545.20, -1278.90, 16.97),  	["typ"] = "Shops"},
         ["tampashop"] =     {["pos"] = Vector3(1098.83, -1240.20, 15.55),  	["typ"] = "Shops"},
-        ["bulletshop"] =    {["pos"] = Vector3(1135.19, -1688.71, 13.51),  	["typ"] = "Shops"},
+        ["bulletshop"] =    {["pos"] = Vector3(-1629.03, 1226.92, 7.19),  	["typ"] = "Shops"},
         ["ammunation"] =    {["pos"] = Vector3(1357.56, -1280.08, 13.30),  	["typ"] = "Shops"},
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
