@@ -4,7 +4,9 @@ local LAST_BIND_CHECK = 2000
 
 function PickupWeaponManager:constructor() 
 	addEventHandler("onClientPickupHit", root, bind(self.Event_onPickupHit, self))
-	addEventHandler("onClientRender", root, bind(self.Event_checkForPickup, self))
+	self.m_KeyBind = bind(self.checkKey, self)
+	bindKey("m", "down", self.m_KeyBind)	-- for m+alt
+	bindKey("lalt", "down", self.m_KeyBind) -- for alt+m
 end
 
 function PickupWeaponManager:destructor() 
@@ -24,6 +26,14 @@ function PickupWeaponManager:Event_onPickupHit( player, dimension)
 	end
 end
 
+function PickupWeaponManager:checkKey(key)
+	if ( key == "m" and getKeyState("lalt")) or (key == "lalt" and getKeyState("m"))  then
+		if self.m_HitWeaponPickup and isElement(self.m_HitWeaponPickup ) and not getPedOccupiedVehicle(localPlayer) then 
+			self:Event_onTryPickupWeapon()
+		end
+	end
+end
+
 function PickupWeaponManager:Event_onTryPickupWeapon() 
 	if self.m_HitWeaponPickup and isElement(self.m_HitWeaponPickup) then 
 		local x, y, z = getElementPosition(localPlayer) 
@@ -34,18 +44,6 @@ function PickupWeaponManager:Event_onTryPickupWeapon()
 			if not self.m_LastPickup or ( self.m_LastPickup+LAST_USE_CHECK <= now ) then
 				triggerServerEvent("onPlayerHitPickupWeapon", localPlayer, self.m_HitWeaponPickup)
 				self.m_LastPickup = now
-			end
-		end
-	end
-end
-
-function PickupWeaponManager:Event_checkForPickup() 
-	if self.m_HitWeaponPickup and isElement(self.m_HitWeaponPickup ) then 
-		local now = getTickCount()
-		if getKeyState("lalt") and getKeyState("m") and not getPedOccupiedVehicle(localPlayer) then
-			if not self.m_LastBindCheck or (self.m_LastBindCheck+LAST_BIND_CHECK <= now ) then
-				self.m_LastBindCheck = now
-				self:Event_onTryPickupWeapon()
 			end
 		end
 	end
