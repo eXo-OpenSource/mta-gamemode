@@ -258,7 +258,7 @@ function SelfGUI:constructor()
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
 
-	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
+	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.52, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
 	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sonstiges"}
 	local item
@@ -269,6 +269,8 @@ function SelfGUI:constructor()
 		end
 	end
 
+	self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.3, self.m_Height*0.07, _"Radiostationen", tabSettings):setBarEnabled(true)
+	self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
 
 	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shadereinstellungen", tabSettings):setBarEnabled(true)
 	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
@@ -498,6 +500,12 @@ end
 function SelfGUI:ShaderButton_Click()
 	self:close()
 	ShaderPanel:getSingleton():open()
+end
+
+function SelfGUI:RadioStationButton_Click()
+	self:close()
+	RadioStationEditGUI:getSingleton():open()
+	RadioStationEditGUI:getSingleton():setMainWindow(self)
 end
 
 function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)

@@ -72,7 +72,10 @@ function RadioStationManager:getStations()
 end
 
 
-function RadioStationManager:saveStations()
+function RadioStationManager:saveStations(newStations)
+	if newStations and type(newStations) == "table" then
+		self.m_Stations = newStations
+	end
     local node = xmlCreateFile(RadioStationManager.FilePath, "stations") --override the old file
 	for i, v in ipairs(self.m_Stations) do
 		local newChild = node:createChild("station")

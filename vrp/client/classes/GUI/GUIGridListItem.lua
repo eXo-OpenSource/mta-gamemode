@@ -25,15 +25,6 @@ function GUIGridListItem:setColumnText(columnIndex, value, alignX)
 	return self
 end
 
-function GUIGridListItem:setItemData(value) -- temporary storage
-	self.m_Data = value
-	return self
-end
-
-function GUIGridListItem:getItemData()
-	return self.m_Data
-end
-
 function GUIGridListItem:getColumnText(columnIndex)
 	return self.m_Columns[columnIndex].text
 end

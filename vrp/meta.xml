@@ -646,7 +646,7 @@
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/RadioStreamEditGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RadioStationEditGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellAcceptGUI.lua" type="client"/>
