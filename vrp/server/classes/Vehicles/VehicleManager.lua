@@ -1344,13 +1344,13 @@ function VehicleManager:migrate()
 		`RotY` float NULL DEFAULT 0,
 		`RotZ` float NULL DEFAULT 0,
 		`Health` smallint UNSIGNED NOT NULL DEFAULT 1000,
-		`Keys` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "??",
+		`Keys` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 		`PositionType` tinyint UNSIGNED NOT NULL DEFAULT 0,
 		`Fuel` tinyint NOT NULL DEFAULT 100,
 		`Mileage` bigint UNSIGNED NOT NULL DEFAULT 0,
 		`Premium` int UNSIGNED NOT NULL DEFAULT 0,
 		`TrunkId` int NOT NULL DEFAULT 0,
-		`Tunings` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "??",
+		`Tunings` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 		`LastUsed` datetime NULL DEFAULT NOW(),
 		`SalePrice` int NOT NULL DEFAULT 0,
 		`Handling` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "",
@@ -1358,7 +1358,7 @@ function VehicleManager:migrate()
 		`Deleted` datetime NULL DEFAULT NULL,
 		PRIMARY KEY (`Id`) USING BTREE
 		);
-	]], sql:getPrefix(), "[[]]", "[[]]")
+	]], sql:getPrefix())
 
 	local vehicles = sql:queryFetch("SELECT * FROM ??_vehicles_old", sql:getPrefix())
 
