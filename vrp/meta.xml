@@ -333,6 +333,7 @@
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 	<script src="server/classes/HistoryPlayer.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
+	<script src="server/classes/Faction/Gangwar/GangwarGuard.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/AttackSession.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarStatistics.lua" type="server"/>

@@ -73,6 +73,8 @@ function Gangwar:constructor( )
 	addEventHandler("gangwarGetAreas", root, self.m_BindGetAreas)
 	
 	self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
+	
+	self.m_GangwarGuard = GangwarGuard:new() 
 end
 
 function Gangwar:destructor( )
@@ -86,6 +88,7 @@ function Gangwar:destructor( )
 	removeEventHandler("GangwarQuestion:disqualify", root, self.m_BindPlayerAbort)
 	removeEventHandler("gangwarGetAreas", root, self.m_BindGetAreas)
 	GlobalTimer:getSingleton().m_Events[self.m_GlobalTimerId] = nil
+	self.m_GangwarGuard:delete()
 end
 
 function Gangwar:onAreaPayday()
@@ -238,6 +241,7 @@ end
 function Gangwar:removeAreaFromAttacks()
 	if self.m_CurrentAttack then
 		self.m_CurrentAttack = false
+		self.m_GangwarGuard:setLockedTime(30) 
 	end
 end
 
@@ -272,15 +276,20 @@ function Gangwar:attackArea( player )
 					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
 						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
 							local activeGangwar = self:getCurrentGangwar()
+							local isGangwarLocked, remainingTime = self.m_GangwarGuard:isGangwarLocked()
 							local acFaction1,  acFaction2
 							if not activeGangwar then
-								local lastAttack = mArea.m_LastAttack
-								local currentTimestamp = getRealTime().timestamp
-								local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
-								if nextAttack <= currentTimestamp then
-									mArea:attack(faction, faction2)
-								else
-									player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
+								if not isGangwarLocked then
+									local lastAttack = mArea.m_LastAttack
+									local currentTimestamp = getRealTime().timestamp
+									local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
+									if nextAttack <= currentTimestamp then
+										mArea:attack(faction, faction2)
+									else
+										player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
+									end
+								else 
+									player:sendError(_("Der Gangwar ist noch für "..remainingTime.." Sekunden im Cooldown!",  player))
 								end
 							else
 								player:sendError(_("Es läuft zurzeit ein Gangwar!",  player))
