@@ -108,7 +108,11 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 end
 
 function PermanentVehicle:destructor()
+	self:save()
+end
 
+function PermanentVehicle:virtual_destructor()
+	PermanentVehicle.destructor(self)
 end
 
 function PermanentVehicle:virtual_constructor(data)

@@ -42,7 +42,6 @@ function FactionVehicle:constructor(data)
 		addVehicleUpgrade(self, v)
 	end
 	
-	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
 	self:setMileage(mileage)
 	self:setFuel(fuel or 100)
 	self:setFrozen(true)
@@ -118,7 +117,10 @@ function FactionVehicle:constructor(data)
 		self:setMaxHealth(1500, true)
 		self:setDoorsUndamageable(true)
 	end
+	
+	self:setPlateText((self.m_Faction.m_ShorterName .. " " .. tostring(math.floor(math.random() * 100000000))):sub(0,8))
 
+	self:setLocked(false) -- Unlock faction vehicles
 end
 
 function FactionVehicle:destructor()

@@ -128,6 +128,10 @@ function CompanyVehicle:constructor(data)
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
+
+	self:setPlateText((self.m_Company.m_ShorterName .. " " .. tostring(math.floor(math.random() * 100000000))):sub(0,8))
+
+	self:setLocked(false) -- Unlock company vehicles
 end
 
 function CompanyVehicle:destructor()

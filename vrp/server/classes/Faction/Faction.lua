@@ -10,9 +10,10 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
+	self.m_ShorterName = name_shorter
 	self.m_Name = name
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]

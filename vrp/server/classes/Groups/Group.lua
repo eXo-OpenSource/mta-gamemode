@@ -693,6 +693,7 @@ end
 
 function Group:save()
 	self.m_BankAccount:save()
-	outputServerLog("Saved Data for Group "..self:getName())
-	outputDebugString("Saved Data for Group "..self:getName())
+	if DEBUG_LOAD_SAVE then
+		outputDebugString("Saved Data for Group "..self:getName())
+	end
 end

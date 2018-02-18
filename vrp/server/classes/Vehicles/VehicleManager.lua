@@ -129,8 +129,9 @@ function VehicleManager:constructor()
 	self.NonOptionalTextures = --// Textures that cant be toggled off
 	{
 		FactionVehicle,
-		CompanyVehicle,
+		CompanyVehicle,l
 	}
+
 	--[[
 	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles", sql:getPrefix())
 	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles_old", sql:getPrefix())
@@ -148,38 +149,42 @@ end
 function VehicleManager:destructor()
 	local st, count = getTickCount(), 0
 	for ownerId, vehicles in pairs(self.m_Vehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_Vehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s private_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for companyId, vehicles in pairs(self.m_CompanyVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_CompanyVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for groupId, vehicles in pairs(self.m_GroupVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_GroupVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s group_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for factionId, vehicles in pairs(self.m_FactionVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_FactionVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
@@ -1491,4 +1496,23 @@ function VehicleManager:migrate()
 	outputDebugString(("Migrated %s company vehicles"):format(#vehicles))
 
 	outputDebugString(("Finished migration in %sms"):format(getTickCount()-st))
+
+	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
+		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			UPDATE ??_factions SET Name_Shorter = 'PD' WHERE Id = 1;
+			UPDATE ??_factions SET Name_Shorter = 'FB' WHERE Id = 2;
+			UPDATE ??_factions SET Name_Shorter = 'SF' WHERE Id = 3;
+			UPDATE ??_factions SET Name_Shorter = 'RT' WHERE Id = 4;
+			UPDATE ??_factions SET Name_Shorter = 'LC' WHERE Id = 5;
+			UPDATE ??_factions SET Name_Shorter = 'YK' WHERE Id = 6;
+			UPDATE ??_factions SET Name_Shorter = 'GS' WHERE Id = 7;
+			UPDATE ??_factions SET Name_Shorter = 'BA' WHERE Id = 8;
+			UPDATE ??_factions SET Name_Shorter = 'OM' WHERE Id = 9;
+			UPDATE ??_factions SET Name_Shorter = 'VL' WHERE Id = 10;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(),
+			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
+
 end

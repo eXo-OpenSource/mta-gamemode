@@ -33,9 +33,9 @@ function MTAElement:getData(key)
 end
 
 function MTAElement:setDimension(dimension)
-	setElementDimension(self, dimension)
+	return setElementDimension(self, dimension)
 end
 
 function MTAElement:setInterior(interior, x, y, z)
-	setElementInterior(self, interior, x, y, z)
+	return setElementInterior(self, interior, x, y, z)
 end

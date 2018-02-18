@@ -353,8 +353,10 @@ function Player:save()
 		if self:getGroup() then
 			self:getGroup():save()
 		end
-		outputServerLog("Saved Data for Player "..self:getName())
-		outputDebugString("Saved Data for Player "..self:getName())
+		
+		if DEBUG_LOAD_SAVE then
+			outputDebugString("Saved Data for Player "..self:getName())
+		end
 	end
 end
 

@@ -11,6 +11,25 @@ FactionManager.Map = {}
 
 
 function FactionManager:constructor()
+	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
+		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			UPDATE ??_factions SET Name_Shorter = 'PD' WHERE Id = 1;
+			UPDATE ??_factions SET Name_Shorter = 'FB' WHERE Id = 2;
+			UPDATE ??_factions SET Name_Shorter = 'SF' WHERE Id = 3;
+			UPDATE ??_factions SET Name_Shorter = 'RT' WHERE Id = 4;
+			UPDATE ??_factions SET Name_Shorter = 'LC' WHERE Id = 5;
+			UPDATE ??_factions SET Name_Shorter = 'YK' WHERE Id = 6;
+			UPDATE ??_factions SET Name_Shorter = 'GS' WHERE Id = 7;
+			UPDATE ??_factions SET Name_Shorter = 'BA' WHERE Id = 8;
+			UPDATE ??_factions SET Name_Shorter = 'OM' WHERE Id = 9;
+			UPDATE ??_factions SET Name_Shorter = 'VL' WHERE Id = 10;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(),
+			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
+
+
 	self:loadFactions()
 
   -- Events
@@ -61,7 +80,7 @@ function FactionManager:loadFactions()
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end

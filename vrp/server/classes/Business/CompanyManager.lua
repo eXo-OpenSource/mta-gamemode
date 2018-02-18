@@ -8,7 +8,17 @@
 CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
-function CompanyManager:constructor()
+function CompanyManager:constructor()	
+	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_companies WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
+		sql:queryExec([[ALTER TABLE ??_companies ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			UPDATE ??_companies SET Name_Shorter = 'DS' WHERE Id = 1;
+			UPDATE ??_companies SET Name_Shorter = 'MT' WHERE Id = 2;
+			UPDATE ??_companies SET Name_Shorter = 'SN' WHERE Id = 3;
+			UPDATE ??_companies SET Name_Shorter = 'PT' WHERE Id = 4;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
 	self:loadCompanies()
 
 	-- Events
@@ -49,7 +59,7 @@ function CompanyManager:loadCompanies()
 		end
 
 		if Company.DerivedClasses[row.Id] then
-			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Name_Shorter, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
 		else
 			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
 			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
