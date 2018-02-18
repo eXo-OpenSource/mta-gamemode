@@ -131,13 +131,13 @@ function VehicleManager:constructor()
 		FactionVehicle,
 		CompanyVehicle,
 	}
-
+	--[[
 	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles", sql:getPrefix())
 	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles_old", sql:getPrefix())
 
 	sql:queryExec("CREATE TABLE ??_vehicles LIKE ??_vehicles_test; INSERT ??_vehicles SELECT * FROM ??_vehicles_test;",
 		sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
-
+	]]
 
 	if sql:queryFetchSingle("SHOW COLUMNS FROM ??_vehicles WHERE Field = 'Owner';", sql:getPrefix()) then
 		self:migrate()
