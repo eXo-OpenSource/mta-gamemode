@@ -25,6 +25,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
+	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
 

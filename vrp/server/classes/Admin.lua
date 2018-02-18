@@ -49,8 +49,8 @@ function Admin:constructor()
     addCommandHandler("tp", bind(self.teleportTo, self))
     addCommandHandler("getVeh", bind(self.getVehFromId, self))
 
-    addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
-    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
+    --addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self)) -> Wont work after update :)
+    --addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self)) -> Wont work after update :)
 
     local adminCommandBind = bind(self.command, self)
 	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)

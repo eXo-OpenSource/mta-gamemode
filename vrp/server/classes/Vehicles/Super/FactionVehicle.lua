@@ -7,7 +7,9 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel, ELSPreset)
+function FactionVehicle:constructor(data)
+	-- Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel, ELSPreset
+	--[[
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -39,6 +41,22 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
+	
+	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
+	self:setMileage(mileage)
+	self:setFuel(fuel or 100)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
+	]]
+	self.m_Faction = FactionManager:getFromId(data.OwnerId)
+	if #self.m_Faction:getName() <= 29 then
+		setElementData(self, "OwnerName", self.m_Faction:getName())
+	else
+		setElementData(self, "OwnerName", self.m_Faction:getShortName())
+	end
+	setElementData(self, "OwnerType", "faction")
+	setElementData(self, "StateVehicle", self.m_Faction:isStateFaction())
 
     addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
@@ -52,20 +70,13 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		table.insert(self.m_Faction.m_Vehicles, self)
 	end
 
-	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
-	self:setMileage(mileage)
-	self:setFuel(fuel or 100)
-	self:setFrozen(true)
-	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
-
-	if ELSPreset and ELS_PRESET[ELSPreset] then
-		self:setELSPreset(ELSPreset)
+	if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
+		self:setELSPreset(data.ELSPreset)
 	end
 	
-	if handlingFaktor and handlingFaktor ~= "" then
+	if data.Handling and data.Handling ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
-		local tHandlingTable = split(handlingFaktor, ";")
+		local tHandlingTable = split(data.Handling, ";")
 		for k,v in ipairs( tHandlingTable ) do
 			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
 			local oldValue = handling[property]
@@ -79,11 +90,13 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		end
 	end
 
+	--[[
 	if decal then
 		for i, v in pairs(decal) do
 			self:setTexture(v, i)
 		end
 	end
+	]]
 
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)
@@ -155,7 +168,7 @@ function FactionVehicle:onEnter(player, seat)
 		end
 	end
 end
-
+--[[
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if sql:queryExec("INSERT INTO ??_faction_vehicles (Faction, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Faction:getId(), model, posX, posY, posZ, rotation) then
@@ -166,21 +179,21 @@ function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	end
 	return false
 end
-
+]]
 function FactionVehicle:purge()
-	if sql:queryExec("DELETE FROM ??_faction_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
 		destroyElement(self)
 		return true
 	end
 	return false
 end
-
+--[[
 function FactionVehicle:save()
 	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Fuel = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
 		sql:getPrefix(), self:getMileage(), self:getFuel(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
-
+]]
 function FactionVehicle:hasKey(player)
   if self:isPermanent() and self.m_Faction then
     if player:getFaction() and self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then

@@ -60,7 +60,7 @@ function PremiumPlayer:takeVehicle(model)
 	if row and row.ID then
 		if #self.m_Player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*self.m_Player:getVehicleLevel()) then
 			sqlPremium:queryExec("UPDATE premium_veh SET abgeholt = 1, Timestamp_abgeholt = ? WHERE ID = ?;", getRealTime().timestamp, row.ID)
-			local vehicle = PermanentVehicle.create(self.m_Player, model, 1268.63, -2069.85, 59.49, 0, 0, 0, nil, true)
+			local vehicle = VehicleManager:getSingleton():createNewVehicle(self.m_Player, VehicleTypes.Player, model, 1268.63, -2069.85, 59.49, 0, 0, 0, 1)
 			if vehicle then
 				warpPedIntoVehicle(self.m_Player, vehicle)
 				self.m_Player:triggerEvent("vehicleBought")

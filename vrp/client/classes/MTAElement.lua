@@ -20,3 +20,11 @@ end
 function MTAElement:getData(key)
 	return self.m_Data[key] or getElementData(self, key)
 end
+
+function MTAElement:setDimension(dimension)
+	setElementDimension(self, dimension)
+end
+
+function MTAElement:setInterior(interior, x, y, z)
+	setElementInterior(self, interior, x, y, z)
+end
