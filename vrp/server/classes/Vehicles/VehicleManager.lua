@@ -1353,8 +1353,8 @@ function VehicleManager:migrate()
 		`Tunings` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 		`LastUsed` datetime NULL DEFAULT NOW(),
 		`SalePrice` int NOT NULL DEFAULT 0,
-		`Handling` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "",
-		`ELSPreset` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT "",
+		`Handling` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		`ELSPreset` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
 		`Deleted` datetime NULL DEFAULT NULL,
 		PRIMARY KEY (`Id`) USING BTREE
 		);
