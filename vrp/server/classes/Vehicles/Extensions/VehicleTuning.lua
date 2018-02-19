@@ -26,7 +26,7 @@ function VehicleTuning:constructor(vehicle, tuningJSON)
 end
 
 function VehicleTuning:getJSON()
-	return toJSON(self.m_Tuning)
+	return toJSON(self.m_Tuning, true)
 end
 
 function VehicleTuning:getTunings()

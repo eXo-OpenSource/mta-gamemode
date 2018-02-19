@@ -8,46 +8,6 @@
 FactionVehicle = inherit(PermanentVehicle)
 
 function FactionVehicle:constructor(data)
-	-- Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel, ELSPreset
-	--[[
-	self.m_Id = Id
-	self.m_Faction = faction
-	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_SpawnPos = self:getPosition()
-	self.m_SpawnRot = self:getRotation()
-	self.m_HandlingFactor = handlingFaktor
-	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
-	if #faction:getName() <= 29 then
-		setElementData(self, "OwnerName", faction:getName())
-	else
-		setElementData(self, "OwnerName", faction:getShortName())
-	end
-	setElementData(self, "OwnerType", "faction")
-	setElementData(self, "StateVehicle", faction:isStateFaction())
-	if health then
-		if health <= VEHICLE_TOTAL_LOSS_HEALTH then
-			self:setBroken(true)
-		else
-			self:setHealth(health)
-		end
-	end
-	if color and fromJSON(color) then
-		setVehicleColor(self, fromJSON(color))
-	elseif factionCarColors[self.m_Faction:getId()] then
-		local color = factionCarColors[self.m_Faction:getId()]
-		setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
-	end
-
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
-	
-	self:setMileage(mileage)
-	self:setFuel(fuel or 100)
-	self:setFrozen(true)
-	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
-	]]
 	self.m_Faction = FactionManager:getFromId(data.OwnerId)
 	if #self.m_Faction:getName() <= 29 then
 		setElementData(self, "OwnerName", self.m_Faction:getName())
@@ -68,34 +28,6 @@ function FactionVehicle:constructor(data)
 	if self.m_Faction.m_Vehicles then
 		table.insert(self.m_Faction.m_Vehicles, self)
 	end
-
-	if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
-		self:setELSPreset(data.ELSPreset)
-	end
-	
-	if data.Handling and data.Handling ~= "" then
-		local handling = getOriginalHandling(getElementModel(self))
-		local tHandlingTable = split(data.Handling, ";")
-		for k,v in ipairs( tHandlingTable ) do
-			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
-			local oldValue = handling[property]
-			if oldValue then
-				if type( oldValue) == "number" then
-					setVehicleHandling(self,property,oldValue*faktor)
-				else
-					setVehicleHandling(self,property,faktor)
-				end
-			end
-		end
-	end
-
-	--[[
-	if decal then
-		for i, v in pairs(decal) do
-			self:setTexture(v, i)
-		end
-	end
-	]]
 
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
 		FactionRescue:getSingleton():onLadderTruckReset(self)

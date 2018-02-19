@@ -95,6 +95,26 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 		health = 300
   end
 
+	if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
+		self:setELSPreset(data.ELSPreset)
+	end
+	
+	if data.Handling and data.Handling ~= "" then
+		local handling = getOriginalHandling(getElementModel(self))
+		local tHandlingTable = split(data.Handling, ";")
+		for k,v in ipairs( tHandlingTable ) do
+			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
+			local oldValue = handling[property]
+			if oldValue then
+				if type( oldValue) == "number" then
+					setVehicleHandling(self,property,oldValue*faktor)
+				else
+					setVehicleHandling(self,property,faktor)
+				end
+			end
+		end
+	end
+
 	self:setFrozen(true)
 	self.m_HandBrake = true
 	self:setData("Handbrake", self.m_HandBrake, true)
