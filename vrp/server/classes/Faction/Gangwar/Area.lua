@@ -68,7 +68,7 @@ end
 
 function Area:createCenterPickup()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
+	self.m_Pickup = createPickup( x,y,z-1 ,3,2993,5)
 end
 
 function Area:createCenterCol()
