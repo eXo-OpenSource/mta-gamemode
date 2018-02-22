@@ -8,6 +8,7 @@ function AdminEventManager:constructor()
 	self.m_EventVehiclesAmount = 0
 
 	addCommandHandler("teilnehmen", bind(self.joinEvent, self))
+	addCommandHandler("bieten", bind(self.bidEvent, self))
 
 	addRemoteEvents{"adminEventRequestData", "adminEventToggle", "adminEventTrigger", "adminEventAllVehiclesAction", "adminEventCreateVehicles"}
 	addEventHandler("adminEventRequestData", root, bind(self.requestData, self))
@@ -59,9 +60,30 @@ end
 function AdminEventManager:joinEvent(player)
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		player:sendError(_("Es läuft aktuell kein Event!", player))
+		return
 	end
 
 	self.m_CurrentEvent:joinEvent(player)
+end
+
+function AdminEventManager:bidEvent(cmdPlayer, cmd, text)
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		cmdPlayer:sendError(_("Es läuft aktuell kein Event!", cmdPlayer))
+		return
+	end
+	if self.m_CurrentEvent:isPlayerInEvent(cmdPlayer) then
+		if not tonumber(text) then
+			return cmdPlayer:sendError("Dein Gebot darf nur aus einer Zahl (ohne Trennzeichen oä.) bestehen.")
+		end	
+		for index, player in pairs(self.m_CurrentEvent.m_Players) do
+			if player ~= cmdPlayer then
+				player:sendMessage("%s bietet %s.", 58, 186, 242, cmdPlayer:getName(), toMoneyString(tonumber(text)))
+			end
+		end
+		cmdPlayer:sendMessage("Du hast %s geboten!", 11, 102, 8, toMoneyString(tonumber(text)))
+	else
+		cmdPlayer:sendError(_("Du musst zuerst dem Event teilnehmen (/teilnehmen)!", cmdPlayer))
+	end
 end
 
 function AdminEventManager:toggle()

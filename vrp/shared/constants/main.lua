@@ -74,6 +74,7 @@ BLIP_COLOR_CONSTANTS = {
 	Red = {200, 0, 0},
 	Orange = {255, 150, 0},
 	Yellow = {200, 200, 0},
+	Green = {20, 255, 50},
 }
 
 BLIP_CATEGORY_ORDER = {
