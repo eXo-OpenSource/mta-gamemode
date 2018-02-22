@@ -81,8 +81,8 @@ function AppAmmunation:onOpen(form)
 	self.m_OrderBtnCart:setBackgroundColor(Color.Green)
 	self.m_OrderBtnCart.onLeftClick = bind(self.order,self)
 	self:getPlayerWeapons()
-
-
+	ShortMessage:new(_("Links-Shift halten um 10-fache Muniton zu bestellen."), _"Ammunation App", {0, 102, 102})
+	
 end
 
 function AppAmmunation:addItemToCart(typ)
@@ -92,7 +92,13 @@ function AppAmmunation:addItemToCart(typ)
 		return
 	end
 	if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
-	if typ == "munition" then self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 end
+	if typ == "munition" then 
+		if not getKeyState("lshift") then
+			self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 
+		else 
+			self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+10
+		end
+	end
 
 	self:updateCart()
 end

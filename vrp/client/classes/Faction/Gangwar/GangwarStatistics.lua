@@ -24,6 +24,7 @@ function GangwarStatistics:Event_GetMVP( t )
 	end	
 	self.m_RenderFunc = bind( self.renderMVP, self)
 	addEventHandler("onClientRender", root, self.m_RenderFunc)
+	self.m_DrawingMVP = true
 	self.m_DrawStartTick = getTickCount()
 	self.m_EndTick = getTickCount() + 2000
 	self.dxFontHeight = dxGetFontHeight( 2, "default")

@@ -38,56 +38,14 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 	return false
 end
 
-function CompanyVehicle:constructor(Id, company, color, health, positionType, tunings, mileage, fuel, ELSPreset)
-	self.m_Id = Id
-	self.m_Company = company
-	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_SpawnPos = self:getPosition()
-	self.m_SpawnRot = self:getRotation()
-	self:setFrozen(true)
-	self:setFuel(fuel or 100)
-	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
+function CompanyVehicle:constructor(data)
+	self.m_Company = CompanyManager:getSingleton():getFromId(data.OwnerId)
 	setElementData(self, "OwnerName", self.m_Company:getName())
 	setElementData(self, "OwnerType", "company")
-	if health then
-		if health <= 300 then
-			self:setHealth(health)
-		end
-	end
-	self:setLocked(false)
-	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
-
-	if color and fromJSON(color) then
-		setVehicleColor(self, fromJSON(color))
-	else
-		local companyId = self.m_Company:getId()
-		local r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
-		setVehicleColor(self, r, g, b, r, g, b)
-	end
-
-	if ELSPreset and ELS_PRESET[ELSPreset] then
-		self:setELSPreset(ELSPreset)
-	end
-
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
-
-	if self.m_PositionType ~= VehiclePositionType.World then
-		-- Move to unused dimension | Todo: That's probably a bad solution
-		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-	end
-	self:setMileage(mileage)
-
+	
 	if self.m_Company.m_Vehicles then
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
-
-	--addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
-	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
-	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
 
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(
@@ -97,17 +55,13 @@ function CompanyVehicle:constructor(Id, company, color, health, positionType, tu
 		3000, 1, source)
 	end)
 
-	if self.m_Company.m_VehicleTexture then
-		if self.m_Company.m_VehicleTexture[self:getModel()] and self.m_Company.m_VehicleTexture[self:getModel()] then
-			local textureData = self.m_Company.m_VehicleTexture[self:getModel()]
-			if textureData.shaderEnabled then
-				local texturePath, textureName = textureData.texturePath, textureData.textureName
-				if texturePath and #texturePath > 3 then
-					self:setTexture(texturePath, textureName)
-				end
-			end
-		end
-	end
+	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
+	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
+
+	self:setPlateText((self.m_Company.m_ShorterName .. " " .. tostring(math.floor(math.random() * 100000000))):sub(0,8))
+
+	self:setLocked(false) -- Unlock company vehicles
 end
 
 function CompanyVehicle:destructor()
@@ -163,7 +117,7 @@ function CompanyVehicle:onExit(player, seat)
 		self:getCompany():onVehiceExit(source, player, seat)
 	end
 end
-
+--[[
 function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health) VALUES(?, ?, ?, ?, ?, ?, 1000)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
@@ -174,23 +128,23 @@ function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	end
 	return false
 end
-
+]]
 function CompanyVehicle:purge()
-	if sql:queryExec("DELETE FROM ??_company_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
 		destroyElement(self)
 		return true
 	end
 	return false
 end
-
+--[[
 function CompanyVehicle:save()
 	local tunings = getVehicleUpgrades(self) or {}
 
 	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Fuel = ?, Mileage = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?", sql:getPrefix(),
 		self.m_Company:getId(), toJSON(tunings), self:getFuel(), self:getMileage(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
-
+]]
 function CompanyVehicle:hasKey(player)
   if self:isPermanent() then
     if player:getCompany() == self:getCompany() then

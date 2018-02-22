@@ -12,10 +12,11 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
+function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins)
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_ShortName = ShortName
+	self.m_ShorterName = ShorterName
 	self.m_Creator = Creator
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]

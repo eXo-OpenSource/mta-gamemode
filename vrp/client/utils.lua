@@ -313,3 +313,17 @@ function getLineAngle( cx, cy, r, t)
 	local y = r*math.sin(math.rad(t)) + cy;
 	return x,y
 end
+
+addEvent("onClientElementInteriorChange", true )
+_setElementInterior = setElementInterior
+function setElementInterior(element, interior, x, y, z)
+	_setElementInterior(element, interior, x, y, z)
+	triggerEvent("onClientElementInteriorChange", element, interior)
+end
+
+addEvent("onClientElementDimensionChange", true )
+_setElementDimension = setElementDimension
+function setElementDimension(element, dimension)
+	_setElementDimension(element, dimension)
+	triggerEvent("onClientElementDimensionChange", element, dimension)
+end

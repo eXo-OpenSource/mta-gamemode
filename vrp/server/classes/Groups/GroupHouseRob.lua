@@ -24,10 +24,10 @@ local findItems =
 
 local sellerPeds =
 {
-	{{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
-	{{ 2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
-	{ { 2275.59, -1031.20, 51.43,244}, "Machiavelli Johnson", { 2274.86, -1027.57, 52.17,14}, 143, "Komm mal ran, du willst doch sicherlich n' bisschen Geld hu?"},
-	{ {1730.60, -2148.86, 13.55,109}, "Carlos Peralta", {1734.09, -2147.95, 13.68,280}, 114, "Ese, zeig deine Sachen oder verschwinde."},
+   {{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
+   {{2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
+   {{2046.80, -1987.59, 13.80}, "Machiavelli Johnson", {2046.59, -1991.5, 13.5}, 143, "Komm mal ran, du willst doch sicherlich n' bisschen Geld oder?"},
+   {{1730.60, -2148.86, 13.55,109}, "Carlos Peralta", {1734.09, -2147.95, 13.68,280}, 114, "Ese, zeig deine Sachen oder verschwinde."},
 }
 
 GroupHouseRob = inherit( Singleton )

@@ -138,7 +138,7 @@ end
 addEventHandler("AttackClient:launchClient",localPlayer,AttackClient.newClient)
 
 addEvent("AttackClient:stopClient",true)
-function AttackClient.stopClient(   )
+function AttackClient.stopClient()
 	if pseudoSingleton then 
 		pseudoSingleton:delete()
 	end

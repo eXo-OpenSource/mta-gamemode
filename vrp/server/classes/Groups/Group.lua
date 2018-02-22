@@ -25,6 +25,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
+	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
 
@@ -692,6 +693,7 @@ end
 
 function Group:save()
 	self.m_BankAccount:save()
-	outputServerLog("Saved Data for Group "..self:getName())
-	outputDebugString("Saved Data for Group "..self:getName())
+	if DEBUG_LOAD_SAVE then
+		outputDebugString("Saved Data for Group "..self:getName())
+	end
 end

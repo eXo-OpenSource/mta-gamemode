@@ -63,7 +63,7 @@ function Vehicle:virtual_destructor()
 	end
 	VehicleManager:getSingleton():removeRef(self, not self:isPermanent())
 
-	if self.m_Magnet then
+	if self.m_Magnet and self.m_Magnet.type == "object" then
 		self.m_Magnet:destroy()
 	end
 

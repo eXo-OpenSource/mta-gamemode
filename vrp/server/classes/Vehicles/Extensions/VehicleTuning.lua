@@ -8,11 +8,15 @@
 VehicleTuning = inherit(Object)
 VehicleTuning.Map = {}
 
-function VehicleTuning:constructor(vehicle, tuningJSON, disableTextureForce)
+function VehicleTuning:constructor(vehicle, tuningJSON)
 	self.m_Vehicle = vehicle
 	if tuningJSON then
 		self.m_Tuning = fromJSON(tuningJSON)
-		self:applyTuning(disableTextureForce or false)
+		if self.m_Tuning then
+			self:applyTuning(self.m_Tuning["TextureForce"] or false)
+		else
+			self:createNew()
+		end
 	else
 		self:createNew()
 	end
@@ -22,7 +26,7 @@ function VehicleTuning:constructor(vehicle, tuningJSON, disableTextureForce)
 end
 
 function VehicleTuning:getJSON()
-	return toJSON(self.m_Tuning)
+	return toJSON(self.m_Tuning, true)
 end
 
 function VehicleTuning:getTunings()
@@ -30,10 +34,45 @@ function VehicleTuning:getTunings()
 end
 
 function VehicleTuning:applyTuning(disableTextureForce)
-	local r1, g1, b1 = unpack(self.m_Tuning["Color1"])
-	local r2, g2, b2 = unpack(self.m_Tuning["Color2"])
-	self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
-	local rh, gh, bh = unpack(self.m_Tuning["ColorLight"])
+
+	if self.m_Tuning["Color1"] then 
+		local colors = {}
+		local r, g, b = unpack(self.m_Tuning["Color1"])
+		
+		table.insert(colors, r)
+		table.insert(colors, g)
+		table.insert(colors, b)
+
+		if self.m_Tuning["Color2"] then 
+			local r, g, b = unpack(self.m_Tuning["Color2"])
+			
+			table.insert(colors, r)
+			table.insert(colors, g)
+			table.insert(colors, b)
+
+			if self.m_Tuning["Color3"] then 
+				local r, g, b = unpack(self.m_Tuning["Color3"])
+				
+				table.insert(colors, r)
+				table.insert(colors, g)
+				table.insert(colors, b)
+
+				if self.m_Tuning["Color4"] then 
+					local r, g, b = unpack(self.m_Tuning["Color4"])
+					
+					table.insert(colors, r)
+					table.insert(colors, g)
+					table.insert(colors, b)
+				end
+			end
+		end
+		
+		self.m_Vehicle:setColor(unpack(colors))
+	end
+
+
+	local rh, gh, bh = 255, 255, 255
+	if self.m_Tuning["ColorLight"] then rh, gh, bh =  unpack(self.m_Tuning["ColorLight"]) end
 	self.m_Vehicle:setHeadLightColor(rh, gh, bh)
 
 	for _, v in pairs(self.m_Vehicle.upgrades) do
@@ -46,23 +85,24 @@ function VehicleTuning:applyTuning(disableTextureForce)
 
 	self:updateNeon()
 
-	if self.m_Tuning["Special"] > 0 then
+	if self.m_Tuning["Special"] and self.m_Tuning["Special"] > 0 then
 		self:setSpecial(self.m_Tuning["Special"])
 	end
 
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
 	--{"vehiclegrunge256" = "files/images/...", "..." = "files/images/..."}
-	if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
+	--[[if type(self.m_Tuning["Texture"]) == "string" then -- backward compatibility (remove if the json @ all vehicles is correct in db)
 		local texture = self.m_Tuning["Texture"]
 		self.m_Tuning["Texture"] = {["vehiclegrunge256"] = texture}
-	end
-
-	for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
-		if #texturePath > 3 then
-			self.m_Vehicle:setTexture(texturePath, textureName, not disableTextureForce)
-		else
-			self.m_Tuning["Texture"][textureName] = nil
+	end]]
+	if self.m_Tuning["Texture"] then
+		for textureName, texturePath in pairs(self.m_Tuning["Texture"]) do
+			if #texturePath > 3 then
+				self.m_Vehicle:setTexture(texturePath, textureName, not disableTextureForce)
+			else
+				self.m_Tuning["Texture"][textureName] = nil
+			end
 		end
 	end
 end
@@ -129,37 +169,46 @@ function VehicleTuning:setSpecial(special)
 	self.m_Vehicle:setData("Special", special, true)
 	if special == VehicleSpecial.Soundvan then
 		if self.m_Vehicle:getModel() == 535 then
-			self.m_Vehicle.speakers = {}
-			self.m_Vehicle.speakers["Left"] = createObject(2229, 0, 0, 0)
-			self.m_Vehicle.speakers["Right"] = createObject(2229, 0, 0, 0)
-			self.m_Vehicle.speakers["Middle"] = createObject(1841, 0, 0, 0)
-			self.m_Vehicle.speakers["Middle"]:setScale(1.5)
+			if self.m_Vehicle.m_Speakers then
+				for _, v in pairs(self.m_Vehicle.m_Speakers) do
+					if isElement(v) then
+						v:destroy()
+					end
+				end
+			end
 
-			self.m_Vehicle.speakers["Left"]:attach(self.m_Vehicle, -0.3, -1.5, 0, -55, 0, 0)
-			self.m_Vehicle.speakers["Right"]:attach(self.m_Vehicle, 1, -1.5, 0, -55, 0, 0)
-			self.m_Vehicle.speakers["Middle"]:attach(self.m_Vehicle, 0, -0.8, 0.4, 0, 0, 90)
+			self.m_Vehicle.m_Speakers = {}
+			self.m_Vehicle.m_Speakers["Left"] = createObject(2229, 0, 0, 0)
+			self.m_Vehicle.m_Speakers["Right"] = createObject(2229, 0, 0, 0)
+			self.m_Vehicle.m_Speakers["Middle"] = createObject(1841, 0, 0, 0)
+			self.m_Vehicle.m_Speakers["Middle"]:setScale(1.5)
 
-			for index, element in pairs(self.m_Vehicle.speakers) do
+			for index, element in pairs(self.m_Vehicle.m_Speakers) do
 				element:setCollisionsEnabled(false)
 			end
 
-			local refreshSpeaker =
+			self.refreshSpeaker =
 				function()
-					for index, element in pairs(self.m_Vehicle.speakers) do
+					for index, element in pairs(self.m_Vehicle.m_Speakers) do
 						if isElement(self.m_Vehicle) then
 							element:setDimension(self.m_Vehicle:getDimension())
 							element:setInterior(self.m_Vehicle:getInterior())
+							element:setPosition(self.m_Vehicle:getPosition())
 						end
 					end
+
+					self.m_Vehicle.m_Speakers["Left"]:attach(self.m_Vehicle, -0.3, -1.5, 0, -55, 0, 0)
+					self.m_Vehicle.m_Speakers["Right"]:attach(self.m_Vehicle, 1, -1.5, 0, -55, 0, 0)
+					self.m_Vehicle.m_Speakers["Middle"]:attach(self.m_Vehicle, 0, -0.8, 0.4, 0, 0, 90)
 
 					if self.m_Vehicle.m_SoundURL then
 						triggerClientEvent("soundvanChangeURLClient", self.m_Vehicle, self.m_Vehicle.m_SoundURL)
 					end
 				end
 
-			local destroySpeaker =
+			self.destroySpeaker =
 				function()
-					for index, element in pairs(self.m_Vehicle.speakers) do
+					for index, element in pairs(self.m_Vehicle.m_Speakers) do
 						if isElement(element) then
 							element:destroy()
 						end
@@ -170,12 +219,12 @@ function VehicleTuning:setSpecial(special)
 					end
 				end
 
-			refreshSpeaker()
-			addEventHandler("onElementDimensionChange", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onElementInteriorChange", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onVehicleExplode", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onVehicleRespawn", self.m_Vehicle, refreshSpeaker)
-			addEventHandler("onElementDestroy", self.m_Vehicle, destroySpeaker, false)
+			self.refreshSpeaker()
+			addEventHandler("onElementDimensionChange", self.m_Vehicle, self.refreshSpeaker)
+			addEventHandler("onElementInteriorChange", self.m_Vehicle, self.refreshSpeaker)
+			addEventHandler("onVehicleExplode", self.m_Vehicle, self.refreshSpeaker)
+			addEventHandler("onVehicleRespawn", self.m_Vehicle, self.refreshSpeaker)
+			addEventHandler("onElementDestroy", self.m_Vehicle, self.destroySpeaker, false)
 		end
 	end
 end

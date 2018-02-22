@@ -68,7 +68,7 @@ end
 
 function Area:createCenterPickup()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
+	self.m_Pickup = createPickup( x,y,z-1 ,3,2993,5)
 end
 
 function Area:createCenterCol()
@@ -84,11 +84,6 @@ end
 
 function Area:attack( faction1, faction2)
 	if not self.m_IsAttacked then
-		if self.m_AttackSession then
-			self.m_AttackSession:stopClients( true )
-			self.m_AttackSession:delete()
-			StatisticsLogger:getSingleton():addGangwarDebugLog( "Duplcate Attack-Session", self, self.m_AttackSession)
-		end
 		self.m_IsAttacked = true
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)

@@ -99,6 +99,7 @@ function TextureReplacer:attach()
 
 	self.m_Shader:setValue("gTexture", self.m_Texture)
 	if self.m_Element then
+		if not self.m_Element.isElement then return TextureReplacer.Status.FAILURE end
 		return self.m_Shader:applyToWorldTexture(self.m_TextureName, self.m_Element) and TextureReplacer.Status.SUCCESS or TextureReplacer.Status.FAILURE
 	else
 		return self.m_Shader:applyToWorldTexture(self.m_TextureName) and TextureReplacer.Status.SUCCESS or TextureReplacer.Status.FAILURE

@@ -8,13 +8,28 @@
 PermanentVehicle = inherit(Vehicle)
 
 -- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
-function PermanentVehicle.convertVehicle(vehicle, player, Group)
+function PermanentVehicle.convertVehicle(vehicle, player, group)
 	if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		return false -- Apply vehilce limit
 	end
 
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
+			local id = vehicle:getId()
+			local premium = vehicle.m_Premium and 1 or 0
+
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+	
+			VehicleManager:getSingleton():removeRef(vehicle)
+			vehicle.m_Owner = player:getId()
+			vehicle.m_OwnerType = VehicleTypes.Player
+
+			vehicle:save()
+			destroyElement(vehicle)
+			local veh = VehicleManager:getSingleton():createVehicle(id)
+
+			return true, veh
+			--[[
 			local position = vehicle:getPosition()
 			local rotation = vehicle:getRotation()
 			local model = vehicle:getModel()
@@ -30,7 +45,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			local trunkId = trunk:getId()
 
 			if vehicle:purge() then
-				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, trunkId, premium)
+				local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, model, position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, premium)
 				vehicle:setHealth(health)
 				vehicle:setMileage(milage)
 				vehicle:setFuel(fuel)
@@ -39,46 +54,31 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
 				end
 				return vehicle:save(), vehicle
-			end
+			
+				
+			end]]
 		end
 	end
 
 	return false
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium)
-	rotation = tonumber(rotation) or 0
-	if type(owner) == "userdata" then
-		owner = owner:getId()
-	end
+function PermanentVehicle:constructor(data)	self.m_Id = data.Id
+	self.m_Owner = data.OwnerId
+	self.m_OwnerType = data.OwnerType
+	self.m_Premium = data.Premium ~= 0
+	self.m_PremiumId = data.Premium
 
-	if trunkId == 0 or trunkId == nil then
-		trunkId = Trunk.create()
-	end
+	self:setCurrentPositionAsSpawn(data.PositionType)
 
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium) then
-		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, 1000, VehiclePositionType.World, nil, nil, trunkId, premium)
-		VehicleManager:getSingleton():addRef(vehicle)
-		return vehicle
-	end
-	return false
-end
+	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
+	setElementData(self, "OwnerType", VehicleTypeName[ownerType])
 
-function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mileage, fuel, trunkId, premium, tuningJSON)
-	self.m_Id = Id
-	self.m_Owner = owner
-	self.m_Premium = premium and toboolean(premium) or false
+	self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
+	self.m_PositionType = data.PositionType or VehiclePositionType.World
 
-	self:setCurrentPositionAsSpawn(positionType)
-
-	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
-	setElementData(self, "OwnerType", "player")
-	self.m_Keys = keys or {}
-	self.m_PositionType = positionType or VehiclePositionType.World
-
-	if trunkId == 0 or trunkId == nil then
-		trunkId = Trunk.create()
+	if data.TrunkId == 0 or data.TrunkId == nil and (self.m_OwnerType == VehicleTypes.Player or self.m_OwnerType == VehicleTypes.Group) then
+		data.TrunkId = Trunk.create()
 	end
 
 	if self.m_PositionType ~= VehiclePositionType.World then
@@ -86,31 +86,63 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	end
 
-	self.m_Trunk = Trunk.load(trunkId)
-	self.m_TrunkId = trunkId
+	if data.TrunkId ~= 0 then
+		self.m_Trunk = Trunk.load(data.TrunkId)
+		self.m_TrunkId = data.TrunkId
+	end
 
 	if health and health <= 300 then
 		health = 300
-  	end
+  end
+
+	if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
+		self:setELSPreset(data.ELSPreset)
+	end
+	
+	if data.Handling and data.Handling ~= "" then
+		local handling = getOriginalHandling(getElementModel(self))
+		local tHandlingTable = split(data.Handling, ";")
+		for k,v in ipairs( tHandlingTable ) do
+			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
+			local oldValue = handling[property]
+			if oldValue then
+				if type( oldValue) == "number" then
+					setVehicleHandling(self,property,oldValue*faktor)
+				else
+					setVehicleHandling(self,property,faktor)
+				end
+			end
+		end
+	end
 
 	self:setFrozen(true)
 	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
-	self:setFuel(fuel or 100)
+	self:setData("Handbrake", self.m_HandBrake, true)
+	self:setFuel(data.Fuel or 100)
 	self:setLocked(true)
-	self:setMileage(mileage or 0)
-	self.m_Tunings = VehicleTuning:new(self, tuningJSON, true)
+	self:setMileage(data.Mileage or 0)
+	self.m_Tunings = VehicleTuning:new(self, data.Tunings)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
 	self.m_HasBeenUsed = 0
 end
 
 function PermanentVehicle:destructor()
+	self:save()
+end
 
+function PermanentVehicle:virtual_destructor()
+	PermanentVehicle.destructor(self)
+end
+
+function PermanentVehicle:virtual_constructor(data)
+	if data and type(data) == "table" then
+		PermanentVehicle.constructor(self, data)
+	end
 end
 
 function PermanentVehicle:purge()
-  if sql:queryExec("DELETE FROM ??_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+  if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
     VehicleManager:getSingleton():removeRef(self)
     destroyElement(self)
     return true
@@ -122,8 +154,8 @@ function PermanentVehicle:save()
   local health = getElementHealth(self)
   if self.m_Trunk then self.m_Trunk:save() end
 
-  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, `Keys` = ?, PositionType = ?, TuningsNew = ?, Mileage = ?, Fuel = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, toJSON(self.m_Keys), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET OwnerId = ?, OwnerType = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotZ = ?, Health = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, TrunkId = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_OwnerType, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, toJSON(self.m_Keys, true), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_SalePrice or 0, self.m_Id)
 end
 
 function PermanentVehicle:getId()
