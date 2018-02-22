@@ -20,6 +20,10 @@ function AdminEvent:joinEvent(player)
 	player:sendInfo(_("Du nimmst am Admin-Event teil! Bitte warte auf weitere Anweisungen!", player))
 end
 
+function AdminEvent:isPlayerInEvent(player)
+    return table.find(self.m_Players, player)
+end
+
 function AdminEvent:teleportPlayers(eventManager)
 	if not self.m_TeleportPoint then
 		eventManager:sendError(_("Du hast keinen Event-Teleport Punkt gesetzt!", eventManager))

@@ -38,6 +38,11 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 
 end
 
+function InteriorEnterExit:destructor()
+	if isElement(self.m_EnterMarker) then self.m_EnterMarker:destroy() end
+	if isElement(self.m_ExitMarker) then self.m_ExitMarker:destroy() end
+end
+
 function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimension)
 	if player.LastPort and not timestampCoolDown(player.LastPort, 4) then
 		return
@@ -54,11 +59,11 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 			player:setPosition(pos)
 			setElementDimension(player,dimension)
 			player:setCameraTarget(player)
-
 			fadeCamera(player, true)
 			
 			setTimer(function() --map glitch fix
 				setElementFrozen( player, false)
+				player:triggerEvent("checkNoDm")
 			end, 1000, 1)
 
 			if type == "enter" then

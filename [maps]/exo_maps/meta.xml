@@ -42,6 +42,7 @@
 
 	
 	<!--<map src="events/halloween.map" />-->
+	<map src="events/auction.map" />
 
 	<!--fixes-->
 	<map src="mapfixes/CrackPalace.map" />

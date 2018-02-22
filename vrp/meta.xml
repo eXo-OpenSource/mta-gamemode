@@ -370,6 +370,7 @@
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
+	<script src="server/classes/Events/AuctionEvent.lua" type="server"/>
 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>

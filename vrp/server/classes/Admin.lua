@@ -1003,6 +1003,8 @@ local tpTable = {
 		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Orte"},
 		["friedhof"] =   	{["pos"] = Vector3(908.84, -1102.33, 24.30),  	["typ"] = "Orte"},
+		["lsforum"] =   	{["pos"] = Vector3(2798.93, -1830.34, 9.88),	["typ"] = "Orte"},
+		["auktion"] =   	{["pos"] = Vector3(1538.71, -1337.00, 23237.90),["typ"] = "Orte", ["interior"] = 1},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
@@ -1047,7 +1049,7 @@ local tpTable = {
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
-        ["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
+		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
 	}
 
 	local x,y,z = 0,0,0
@@ -1057,10 +1059,11 @@ local tpTable = {
 				if ort == k then
 					if player:isInVehicle() then
 						player:getOccupiedVehicle():setPosition(v["pos"])
+						player:getOccupiedVehicle():setInterior(v["interior"] or 0)
 					else
-						setElementInterior(player,0)
 						setElementDimension(player,0)
 						player:setPosition(v["pos"])
+						player:setInterior(v["interior"] or 0)
 					end
 					StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
 					self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
