@@ -790,6 +790,28 @@ VEHICLE_PICKUP = {
 	[600] = true,
 }
 
+VEHICLE_OBJECT_ATTACH_POSITIONS = {
+	[428] = { --vehicle model, securicar in this case
+		loadMarkerPos = Vector3(0, -3.5, 0),
+		vehicleDoors = {4, 5},
+		objectId = 1550, -- money bag
+		objectNames = {"Geldsack", "Geldsäcke"},
+        randomRotation = true, --random z-rotaion on attach to provide some variety
+        positions = { -- in loading order, e.g. the first row is the first object position to load 
+            Vector3(0.3, -1, 0.2),
+            Vector3(-0.3, -1, 0.2),
+            Vector3(0.7, -1.61, 0.2),
+            Vector3(-0.7, -1.59, 0.2),
+            Vector3(0.21, -1.6, 0.2),
+            Vector3(-0.21, -1.58, 0.2),
+            Vector3(0.7, -2.51, 0.2),
+            Vector3(-0.7, -2.52, 0.2),
+            Vector3(0.21, -2.51, 0.2),
+            Vector3(-0.21, -2.49, 0.2),
+        }
+    }
+}
+
 CompanyStaticId = {
 	DRIVINGSCHOOL = 1,
 	MECHANIC = 2,

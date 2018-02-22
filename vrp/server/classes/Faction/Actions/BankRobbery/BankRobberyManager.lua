@@ -8,7 +8,8 @@ function BankRobberyManager:constructor()
 	self.m_CircuitBreakerPlayers = {}
 
 	self.m_Banks["Palomino"] = BankPalomino:new()
-	self.m_Banks["LosSantos"] = BankLosSantos:new()
+	--self.m_Banks["LosSantos"] = BankLosSantos:new()
+	self.m_Banks["Caligulas"] = CasinoHeist:new()
 
 	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 

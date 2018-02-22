@@ -1184,6 +1184,9 @@ function VehicleManager:Event_LoadObject(veh, type)
 		model = 1550
 		name = "keinen Geldsack"
 	end
+	if veh:canObjectBeLoaded(model) then
+		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
+	end
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -1224,7 +1227,9 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 		model = 1550
 		name = "kein Geldsack"
 	end
-
+	if veh:canObjectBeLoaded(model) then
+		return veh:tryUnloadObject(client)
+	end
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then

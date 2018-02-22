@@ -321,8 +321,9 @@
 	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobbery.lua" type="server"/>
-	<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>
+	<!--<script src="server/classes/Faction/Actions/BankRobbery/BankLosSantos.lua" type="server"/>-->
 	<script src="server/classes/Faction/Actions/BankRobbery/BankPalomino.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery/CasinoHeist.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery/BankRobberyManager.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
@@ -341,6 +342,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
@@ -1963,6 +1965,14 @@
 	<vrpfile src="files/models/firework.txd"/>
 
 	<!--Buildings-->
+	<vrpfile src="files/models/buildings/casino_heist/bank_fence.col" />
+	<vrpfile src="files/models/buildings/casino_heist/bank_fence.txd" />
+	<vrpfile src="files/models/buildings/casino_heist/bank_int.col" />
+	<vrpfile src="files/models/buildings/casino_heist/bank_int.txd" />
+	<vrpfile src="files/models/buildings/casino_heist/bank_int2.col" />
+	<vrpfile src="files/models/buildings/casino_heist/bank_int3.col" />
+	<vrpfile src="files/models/buildings/casino_heist/bank.col" />
+	<vrpfile src="files/models/buildings/casino_heist/bank.txd" />
 	<vrpfile src="files/models/buildings/ammunation.col" />
 	<vrpfile src="files/models/buildings/ammunation.dff" />
 	<vrpfile src="files/models/buildings/ammunation_int.col" />

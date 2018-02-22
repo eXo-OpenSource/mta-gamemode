@@ -14,6 +14,8 @@
 	<map src="medic_fix.map" />
 	<!--<map src="fun/boxarena.map" />/-->
 
+	<map src="aktionen/casino_heist.map" />
+	<map src="aktionen/bankPalomino.map" />
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
 	<map src="fraktionen/army_shooting_town.map" />
@@ -81,8 +83,7 @@
 	<map src="skydive.map" />
 	<map src="pier_ls.map" />
 
-	<map src="bankLS.map" />
-	<map src="bankPalomino.map" />
+	<!--<map src="bankLS.map" />-->
 
 	<map src="shop/Tankstellen.map"/>
 	<map src="shop/tankstellen_removals.map" />

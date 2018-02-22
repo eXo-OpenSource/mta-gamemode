@@ -15,6 +15,7 @@ function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
 	self.m_RobPlayer = nil
 	self.m_RobFaction = nil
+	self.m_Trucks = {}
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
 	self.m_MoneyBags = {}
@@ -260,17 +261,19 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 				local position = source:getPosition()
 				local rotation = source:getRotation()
 				local model = source:getModel()
-				source:destroy()
 				if model == 2332 then
+					source:destroy()
 					local obj = createObject(1829, position, rotation)
 					addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
 					table.insert(self.m_Safes, obj)
 					obj:setData("clickable", true, true)
-				elseif model == 1829 then
-					local obj = createObject(2003, position, rotation)
-					local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
-					self:addMoneyToBag(player, money)
-					table.insert(self.m_Safes, obj)
+				elseif model == 1829 then	
+					if self:addMoneyToBag(player, money) then
+						source:destroy()
+						local obj = createObject(2003, position, rotation)
+						local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
+						table.insert(self.m_Safes, obj)
+					end
 				end
 			else
 				player:sendError(_("Derzeit läuft kein Bankraub!", player))
@@ -312,12 +315,12 @@ function BankRobbery:addMoneyToBag(player, money)
 		if bag:getData("Money") + money < self.ms_MoneyPerBag then
 			bag:setData("Money", bag:getData("Money") + money, true)
 			player:sendShortMessage(_("%d$ in den Geldsack %d gepackt!", player, money, i))
-			return
+			return true
 		end
 	end
 	if not self.ms_BagSpawns[#self.m_MoneyBags+1] then
 		player:sendError(_("Ihr habt bereits die maximale Anzahl an Geldsäcken!", player))
-		return
+		return false
 	end
 	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
@@ -326,9 +329,48 @@ function BankRobbery:addMoneyToBag(player, money)
 	newBag:setData("Money", money, true)
 	newBag:setData("MoneyBag", true, true)
 	addEventHandler("onElementClicked", newBag, self.m_Event_onBagClickFunc)
-	player:sendShortMessage(_("%d$ in eine Geldsack %d gepackt!", player, money, #self.m_MoneyBags))
+	player:sendShortMessage(_("%d$ in den Geldsack %d gepackt!", player, money, #self.m_MoneyBags))
 	self.m_MoneyBagCount = #self.m_MoneyBags
+	return true
 end
+
+function BankRobbery:createTruck(x, y, z, rz)
+	local truck = TemporaryVehicle.create(428, x, y, z, rz)
+	truck:setData("BankRobberyTruck", true, true)
+	truck:toggleRespawn(false)
+	truck:setMaxHealth(1500, true)
+	truck:setBulletArmorLevel(2)
+	truck:setRepairAllowed(false)
+	truck:setVariant(0,0)
+	truck:setAlwaysDamageable(true)
+	self:setTruckActive(truck, false)
+	self.m_Trucks[truck] = true
+
+	addEventHandler("onElementDestroy", truck, function()
+		if self.m_Trucks[truck] then
+			self.m_Trucks[truck] = nil
+			outputDebug(truck, "got destroyed")
+		end
+	end)
+	return truck
+end
+
+function BankRobbery:setTruckActive(truck, active)
+	if isElement(truck) then
+		truck:setDamageProof(not active)
+		truck:setLocked(not active)
+		truck:setFrozen(not active)
+	end
+end
+
+function BankRobbery:setAllTrucksActive(active)
+	if active then
+		for i,v in pairs(self.m_Trucks) do
+			self:setTruckActive(v, active)
+		end
+	end
+end
+
 
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
 	if seat == 0 and player:getFaction() ~= self.m_RobFaction then

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
+inherit(VehicleObjectLoadExtension, Vehicle)
 inherit(VehicleELS, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
@@ -52,6 +53,8 @@ function Vehicle:virtual_constructor()
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
 	end
+
+	self:initObjectLoading()
 end
 
 function Vehicle:virtual_destructor()
@@ -205,6 +208,7 @@ function Vehicle:onPlayerExit(player, seat)
 			local ground = isVehicleOnGround( self )
 			if ground then
 				setElementFrozen(self, true)
+				self:switchObjectLoadingMarker(true)
 				setVehicleDoorOpenRatio(self, 2, 0, 350)
 			else
 				self.m_HandBrake = false
@@ -404,6 +408,7 @@ function Vehicle:toggleHandBrake(player, preferredState)
 		self.m_HandBrake = false
 		setControlState(player, "handbrake", false)
 		if isElementFrozen(self) then
+			self:switchObjectLoadingMarker(false)
 			setElementFrozen(self, false)
 		end
 		player:triggerEvent("vehicleHandbrake")

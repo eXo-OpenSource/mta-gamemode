@@ -58,15 +58,29 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/buildings/PD_main.col", 3976)
 	self:loadImportDFF("files/models/buildings/PD_main.dff", 3976)
 	--bank
-	self:loadImportCOL("files/models/buildings/bank.col", 4600)
+	
+	--[[self:loadImportCOL("files/models/buildings/bank.col", 4600)
 	self:loadImportTXD("files/models/buildings/bank.txd", 4600)
 	self:loadImportDFF("files/models/buildings/bank.dff", 4600)
+	self:loadImportCOL("files/models/objects/bankDoor.col", 1930)
+	self:loadImportTXD("files/models/objects/bankDoor.txd", 1930)
+	self:loadImportDFF("files/models/objects/bankDoor.dff", 1930)]]
 	self:loadImportCOL("files/models/objects/bankServer.col", 1880)
 	self:loadImportTXD("files/models/objects/bankServer.txd", 1880)
 	self:loadImportDFF("files/models/objects/bankServer.dff", 1880)
-	self:loadImportCOL("files/models/objects/bankDoor.col", 1930)
-	self:loadImportTXD("files/models/objects/bankDoor.txd", 1930)
-	self:loadImportDFF("files/models/objects/bankDoor.dff", 1930)
+	
+
+
+	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
+	self:loadImportCOL("files/models/buildings/casino_heist/bank_fence.col", 8481)
+	self:loadImportTXD("files/models/buildings/casino_heist/bank_int.txd", 14592)
+	self:loadImportCOL("files/models/buildings/casino_heist/bank_int.col", 14592)
+	self:loadImportCOL("files/models/buildings/casino_heist/bank_int2.col", 14577)
+	self:loadImportCOL("files/models/buildings/casino_heist/bank_int3.col", 14576)
+	self:loadImportTXD("files/models/buildings/casino_heist/bank.txd", 9037)
+	self:loadImportCOL("files/models/buildings/casino_heist/bank.col", 9037)
+
+
 	--fishing shop
 	self:loadImportCOL("files/models/buildings/fishshop.col", 6289)
 	self:loadImportTXD("files/models/buildings/fishshop.txd", 6289)
@@ -333,7 +347,7 @@ function CustomModelManager:createObjectsForMods()
 		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
 		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police
 		{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
-		{4600, 85.356903, 1453.6016, -989.48437, 34.4375, 4625}, --bank
+		--{4600, 85.356903, 1453.6016, -989.48437, 34.4375, 4625}, --bank
 		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central
 	}
 	for i,v in pairs(objs) do

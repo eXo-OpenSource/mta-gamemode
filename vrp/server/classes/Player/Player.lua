@@ -1283,12 +1283,14 @@ function Player:attachPlayerObject(object, allowWeapons)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+			return true
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
 	else
 		--self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
+	return false
 end
 
 function Player:refreshAttachedObject(instant)
