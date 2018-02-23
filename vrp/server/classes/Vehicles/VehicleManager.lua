@@ -212,7 +212,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 			if not self.m_Vehicles[id] then
 				self.m_Vehicles[id] = {}
 			end
-			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), id)
+			local result = sql:queryFetch("SELECT * FROM ??_vehicles_old WHERE Owner = ?", sql:getPrefix(), id)
 			local vehicleObj
 			local skip = false
 			for i, row in pairs( result ) do
