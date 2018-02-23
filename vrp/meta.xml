@@ -911,6 +911,7 @@
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
+	<script src="client/classes/Events/AdminEvent.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
