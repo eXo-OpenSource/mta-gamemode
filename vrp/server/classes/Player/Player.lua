@@ -188,17 +188,6 @@ function Player:loadCharacter()
 	-- Premium
 	self.m_Premium = PremiumPlayer:new(self)
 
-	-- CJ Skin
-	if self.m_Skin == 0 then
-		for i = 0, #CJ_CLOTHE_TYPES, 1 do
-			self:removeClothes(i)
-			local data = self.m_SkinData[tostring(i)]
-			if data then
-				self:addClothes(data.texture, data.model, i)
-			end
-		end
-	end
-
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
 
 	if self:getGroup() then
@@ -341,15 +330,16 @@ function Player:save()
 		local dimension = 0
 		local sHealth = self:getHealth()
 		local sArmor = self:getArmor()
-		local sSkin = self:getModel()
+		local sSkin = self.m_Skin
 		if interior > 0 then dimension = self:getDimension() end
 		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
-		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+		DatabasePlayer.save(self)
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
-		DatabasePlayer.save(self)		
+				
 		if self:getGroup() then
 			self:getGroup():save()
 		end
@@ -428,9 +418,6 @@ function Player:spawn()
 			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		end
 
-		-- Update Skin
-		self:setDefaultSkin()
-
 		-- Teleport player into a "unique interior"
 		if self.m_UniqueInterior ~= 0 then
 			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
@@ -441,17 +428,10 @@ function Player:spawn()
 		self:setHealth(math.max(self.m_Health, 1))
 		self:setArmor(self.m_Armor)
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
-
+		-- Update Skin
+		self:setCorrectSkin()
 		self:setPublicSync("Faction:Duty",false)
 
-		if self:getFaction() and self:getFaction():isEvilFaction() then
-			if self.m_SpawnWithFactionSkin then
-				self:getFaction():changeSkin(self)
-			else
-				setElementModel( self, self.m_AltSkin or self.m_Skin)
-			end
-			setPedArmor(self, 100)
-		end
 		if self.m_PrisonTime > 0 then
 			self:setPrison(self.m_PrisonTime, true)
 		end
@@ -522,14 +502,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 		end
 	end
 
-	if self:getFaction() and self:getFaction():isEvilFaction() then
-		if self.m_SpawnWithFactionSkin then
-			self:getFaction():changeSkin(self)
-		else
-			setElementModel( self, self.m_AltSkin or self.m_Skin)
-		end
-		setPedArmor(self, 100)
-	end
+	self:setCorrectSkin()
 
 	if self:isPremium() then
 		self:setArmor(100)
@@ -675,9 +648,28 @@ function Player:reportCrime(crimeType)
 	--JobPolice:getSingleton():reportCrime(self, crimeType)
 end
 
-function Player:setSkin(skin)
+function Player:setSkin(skin) -- use this only to save a skin (not to set a temporary skin)
 	self.m_Skin = skin
 	self:setModel(skin)
+end
+
+function Player:setCorrectSkin() -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
+	if self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin then --evil faction spawn	
+		self:getFaction():changeSkin(self)
+		setPedArmor(self, 100)
+	else
+		self:setModel(self.m_Skin or 0)
+	end
+	-- CJ Skin
+	if self.m_Skin == 0 then
+		for i = 0, #CJ_CLOTHE_TYPES, 1 do
+			self:removeClothes(i)
+			local data = self.m_SkinData[tostring(i)]
+			if data then
+				self:addClothes(data.texture, data.model, i)
+			end
+		end
+	end
 end
 
 function Player:isFactionDuty()
@@ -703,25 +695,7 @@ function Player:setJobDutySkin(skin)
 		self.m_JobDutySkin = skin
 		self:setModel(skin)
 	else
-		self:setModel(self.m_Skin)
-	end
-end
-
-function Player:setDefaultSkin()
-	if self:getFaction() then
-			if self:getFaction():isEvilFaction() then
-				if self.m_SpawnWithFactionSkin then
-					self:getFaction():changeSkin(self)
-				else
-					setElementModel( self, self.m_AltSkin or self.m_Skin)
-				end
-				return
-			end
-		end
-	if self.m_SpawnWithFactionSkin then
-		self:setModel(self.m_Skin or self.m_AltSkin or 0)
-	else
-		setElementModel( self, self.m_AltSkin or self.m_Skin or 0)
+		self:setCorrectSkin()
 	end
 end
 
@@ -1483,7 +1457,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		setElementInterior(self, 0)
 		setElementDimension(self, 0)
 		self:setRotation(0, 0, 90)
-		self:setSkin(self.m_Skin)
+		self:setModel(self.m_Skin)
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)
 		self:toggleControl("aim_weapon ", false)

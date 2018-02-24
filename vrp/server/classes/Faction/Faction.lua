@@ -158,27 +158,6 @@ function Faction:changeSkin(player)
 	end
 end
 
-function Faction:changeSkin_old(player)
-	local curskin = getElementModel(player)
-	suc = false
-	for i = curskin+1, 313 do
-		if self.m_Skins[i] then
-			suc = true
-			player:setSkin(i)
-			break
-		end
-	end
-	if suc == false then
-		for i = 0, curskin do
-			if self.m_Skins[i] then
-				suc = true
-				player:setSkin(i)
-				break
-			end
-		end
-	end
-end
-
 function Faction:updateStateFactionDutyGUI(player)
 	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Faction:Swat"))
 end
@@ -222,7 +201,7 @@ function Faction:removePlayer(playerId)
 		player:giveAchievement(67)
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
-			player:setDefaultSkin()
+			player:setCorrectSkin()
 			player:setFactionDuty(false)
 			player:setPublicSync("Faction:Duty",false)
 			player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
