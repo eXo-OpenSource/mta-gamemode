@@ -34,6 +34,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 	self.m_StartPlayer = driver
+	self.m_StartFaction = driver:getFaction()
 	self.m_Money = money
 	self.m_MoneyBag = {}
 	self.m_BankAccountServer = BankServer.get("action.evidence_trunk")
@@ -60,9 +61,9 @@ function StateEvidenceTruck:constructor(driver, money)
 end
 
 function StateEvidenceTruck:destructor()
-	removeEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
+	removeEventHandler("onElementDestroy",self.m_Truck, self.m_DestroyFunc)
 	ActionsCheck:getSingleton():endAction()
-	StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "stop", self.m_StartPlayer, self.m_StartPlayer:getFaction(), "faction")
+	StatisticsLogger:getSingleton():addActionLog("Geld-Transport", "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 	self.m_Truck:destroy()
 
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end

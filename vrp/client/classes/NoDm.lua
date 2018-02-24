@@ -8,7 +8,7 @@ NoDm.Zones = {
 	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}}, -- Rescue
 	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
 	[7] = {Vector3(2091.23, -1824.72, 12), Vector3(40, 45, 20)},
-	[8] = {Vector3(2713.39, -1880.29, 8), Vector3(104, 80, 50)}, -- Auction Event	
+	--[8] = {Vector3(2713.39, -1880.29, 8), Vector3(104, 80, 50)}, -- Auction Event	
 	[9] = {Vector3(1503.79, -1387.92,  23234), Vector3(151, 101, 30), 1}, -- Auction Event Interior
 }
 

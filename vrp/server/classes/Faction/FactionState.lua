@@ -72,7 +72,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{
 	"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer", "playerSelfArrestConfirm",
-	"factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
+	"factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket", "factionStateStartAlcoholTest",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
@@ -91,7 +91,6 @@ function FactionState:constructor()
 	addCommandHandler("stvo",bind(self.Command_stvo, self))
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
-	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -1208,16 +1207,6 @@ function FactionState:freePlayer(player)
 	player:triggerEvent("checkNoDm")
 end
 
-function FactionState:Event_FactionChangeSkin()
-	if client:isFactionDuty() then
-		if client.m_SpawnWithFactionSkin then
-			client:getFaction():changeSkin(client)
-		else
-			setElementModel( self, self.m_AltSkin or self.m_Skin)
-		end
-	end
-end
-
 function FactionState:Event_FactionRearm()
 	if client:isFactionDuty() then
 		client.m_WeaponStoragePosition = client.position
@@ -1255,7 +1244,7 @@ function FactionState:Event_toggleDuty(wasted)
 					self:Event_storageWeapons(client)
 					client:takeAllWeapons()
 				end
-				client:setDefaultSkin()
+				client:setCorrectSkin()
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 				client:setPublicSync("Faction:Swat",false)

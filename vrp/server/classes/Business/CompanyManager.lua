@@ -353,7 +353,7 @@ function CompanyManager:Event_toggleDuty(wasted)
 	if company then
 		if getDistanceBetweenPoints3D(client.position, company.m_DutyPickup.position) <= 10 or wasted then
 			if client:isCompanyDuty() then
-				client:setDefaultSkin()
+				client:setCorrectSkin()
 				client:setCompanyDuty(false)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
