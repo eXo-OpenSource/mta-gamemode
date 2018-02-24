@@ -78,6 +78,7 @@ function Core:onDownloadComplete()
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
+	 
 end
 
 function Core:ready()
@@ -158,7 +159,7 @@ function Core:ready()
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
-
+	ItemSmokeGrenade:new();
 end
 
 function Core:afterLogin()
