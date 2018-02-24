@@ -162,7 +162,7 @@ function BoxManager:resetFight()
 	for index, playeritem in pairs(self.m_BoxFight["players"]) do
 		if playeritem and isElement(playeritem) then
 			if not playeritem:isDead() then
-				playeritem:setDefaultSkin()
+				playeritem:setCorrectSkin()
 				setPedFightingStyle(playeritem, 4)
 				playeritem:setPosition(BoxManager.Data[index]["SpawnPos"])
 				playeritem:restoreStorage()
@@ -202,7 +202,7 @@ function BoxManager:respawnPlayer(player, killer)
 	player:setAlpha(255)
 	setTimer(function()
 		spawnPlayer(player, Vector3(765.34, 5.67, 1000.72), 0, 0, 5, 0)
-		player:setDefaultSkin()
+		player:setCorrectSkin()
 		player:setHealth(100)
 		player:setArmor(0)
 		player:setHeadless(false)
