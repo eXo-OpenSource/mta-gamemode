@@ -65,7 +65,6 @@ function ItemManager:loadEffectItems( )
 
   ItemDestructable:new();
   ItemSlam:new();
-  ItemSmokeGrenade:new();
 end
 
 function ItemManager:initWearables()
