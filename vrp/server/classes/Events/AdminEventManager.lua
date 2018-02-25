@@ -8,6 +8,8 @@ function AdminEventManager:constructor()
 	self.m_EventVehiclesAmount = 0
 
 	addCommandHandler("teilnehmen", bind(self.joinEvent, self))
+	addCommandHandler("bieten", bind(self.bidEvent, self))
+	addCommandHandler("ergebnis", bind(self.showAuctionResults, self))
 
 	addRemoteEvents{"adminEventRequestData", "adminEventToggle", "adminEventTrigger", "adminEventAllVehiclesAction", "adminEventCreateVehicles"}
 	addEventHandler("adminEventRequestData", root, bind(self.requestData, self))
@@ -17,7 +19,7 @@ function AdminEventManager:constructor()
 	addEventHandler("adminEventCreateVehicles", root, bind(self.createVehicles, self))
 end
 
-function AdminEventManager:onEventTrigger(func)
+function AdminEventManager:onEventTrigger(func, ...)
 	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		client:sendError(_("Es läuft aktuell kein Event!", client))
@@ -27,6 +29,12 @@ function AdminEventManager:onEventTrigger(func)
 		self.m_CurrentEvent:setTeleportPoint(client)
 	elseif func == "teleportPlayers" then
 		self.m_CurrentEvent:teleportPlayers(client)
+	elseif func == "startAuction" then
+		self.m_CurrentEvent:startAuction(client, ...)
+	elseif func == "removeHighestAuctionBid" then
+		self.m_CurrentEvent:removeHighestBid(client, ...)
+	elseif func == "stopAuction" then
+		self.m_CurrentEvent:stopAuction(client, ...)
 	end
 	self:sendData(client)
 end
@@ -59,9 +67,36 @@ end
 function AdminEventManager:joinEvent(player)
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		player:sendError(_("Es läuft aktuell kein Event!", player))
+		return
 	end
 
 	self.m_CurrentEvent:joinEvent(player)
+end
+
+function AdminEventManager:bidEvent(cmdPlayer, cmd, text)
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		cmdPlayer:sendError(_("Es läuft aktuell kein Event!", cmdPlayer))
+		return
+	end
+	if self.m_CurrentEvent:isPlayerInEvent(cmdPlayer) then
+		if not tonumber(text) then
+			return cmdPlayer:sendError("Dein Gebot darf nur aus einer Zahl (ohne Trennzeichen oä.) bestehen.")
+		end	
+		if tonumber(text) < 1 then
+			return cmdPlayer:sendError("Dein Gebot muss mindestens 1$ sein.")
+		end	
+		return self.m_CurrentEvent:registerBid(cmdPlayer, tonumber(text))
+	else
+		cmdPlayer:sendError(_("Du musst zuerst dem Event teilnehmen (/teilnehmen)!", cmdPlayer))
+	end
+end
+
+function AdminEventManager:showAuctionResults(cmdPlayer, cmd, text)
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		cmdPlayer:sendError(_("Es läuft aktuell kein Event!", cmdPlayer))
+		return
+	end
+	self.m_CurrentEvent:outputAuctionDataToPlayer(cmdPlayer)
 end
 
 function AdminEventManager:toggle()

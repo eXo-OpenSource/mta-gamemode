@@ -33,7 +33,6 @@ function SkinShops:Event_skinBuy(skinId)
 
 		source:triggerEvent("skinBought", skinId)
 		source:giveAchievement(23)
-		source.m_AltSkin = skinId
 		self:giveClothItem(source, skinId)
 	else
 		source:sendError(_("Du hast nicht genügend Geld!", source))

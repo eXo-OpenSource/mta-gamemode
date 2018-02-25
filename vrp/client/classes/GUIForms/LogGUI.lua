@@ -15,11 +15,10 @@ function LogGUI:constructor(parent, url)
 
 	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
 	self.m_Filter = GUIChanger:new(parent.m_Width*0.15, parent.m_Height*0.02+yOffset, parent.m_Width*0.25, parent.m_Height*0.07, parent)
-	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
-	self.m_Search = GUIEdit:new(parent.m_Width*0.55, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.07, parent)
-	self.m_SearchButton = GUIButton:new(parent.m_Width*0.78, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.07, _"Suchen", parent):setBarEnabled(true)
-	self.m_SearchButton.onLeftClick = function() self:setSearch() end
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
+	GUILabel:new(parent.m_Width*0.44, parent.m_Height*0.02+yOffset, parent.m_Width*0.2, parent.m_Height*0.08, _"Suche:", parent)
+	self.m_Search = GUIEdit:new(parent.m_Width*0.57, parent.m_Height*0.02+yOffset, parent.m_Width*0.4, parent.m_Height*0.07, parent)
+	self.m_Search.onChange = function() self:setSearch() end
 	self.m_Categories = {}
 	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1+yOffset, parent.m_Width*0.96, parent.m_Height*0.87-yOffset, parent)
 	self.m_LogGrid:setFont(VRPFont(20))
@@ -27,7 +26,7 @@ function LogGUI:constructor(parent, url)
 	self.m_LogGrid:addColumn("Zeit", 0.2)
 	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self.m_LogGrid:onScrollDown(bind(self.onScrollDown, self))
-	self:updateLog(0, 100)
+	self:updateLog(0, LogGUI.AmountPerLoad)
 end
 
 function LogGUI:updateLog(start, amount)
@@ -37,7 +36,17 @@ function LogGUI:updateLog(start, amount)
 		["postData"] =  ("secret=%s"):format("8H041OAyGYk8wEpIa1Fv")
 	}
 
-	local url = ("%s&start=%d&amount=%d"):format(self.m_Url, start, amount)
+	local filter = "";
+	if (self.m_Search:getText() ~= "") then
+		filter = "&filter="..self.m_Search:getText();
+	end
+
+	local cat = ""
+	if (self.m_CatFilter) then
+		cat = "&cat="..self.m_CatFilter;
+	end
+
+	local url = ("%s&start=%d&amount=%d%s%s"):format(self.m_Url, start, amount, filter, cat)
 	--outputChatBox( url)
 	fetchRemote(url, options,
 			function(responseData, responseInfo)
@@ -65,14 +74,8 @@ function LogGUI:refreshGrid()
 	local item
 	for i, row in ipairs(self.m_Cache) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
-		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
-
-		if self:checkCatFilter(row.Category) then
-			if self:checkSeachFilter(row) then
-				item = self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(row.UserName, row.Description))
-				item:setFont(VRPFont(20))
-			end
-		end
+		item = self.m_LogGrid:addItem(row.Date, ("%s %s"):format(row.UserName, row.Description))
+		item:setFont(VRPFont(20))
 	end
 	self.m_Cache = {}
 	if not self.m_FilterLoaded then
@@ -89,37 +92,8 @@ function LogGUI:loadFilter()
 end
 
 function LogGUI:setSearch()
-	if self.m_Search:getText() == "" then
-		self.m_SeachFilter = nil
-	else
-		self.m_SeachFilter = self.m_Search:getText()
-	end
 	self.m_LogGrid:clear()
 	self:updateLog(0, LogGUI.AmountPerLoad)
-end
-
-function LogGUI:checkSeachFilter(row)
-	if self.m_SeachFilter then
-		if string.find(string.lower(row.Description), string.lower(self.m_SeachFilter)) or string.find(string.lower(row.UserName), string.lower(self.m_SeachFilter)) then
-			return true
-		end
-	else
-		return true
-	end
-
-	return false
-end
-
-function LogGUI:checkCatFilter(cat)
-	if self.m_CatFilter then
-		if self.m_CatFilter == cat then
-			return true
-		end
-	else
-		return true
-	end
-
-	return false
 end
 
 function LogGUI:setFilter(text)
@@ -130,12 +104,4 @@ function LogGUI:setFilter(text)
 	end
 	self.m_LogGrid:clear()
 	self:updateLog(0, LogGUI.AmountPerLoad)
-end
-
-
-function LogGUI:getOpticalTimestamp(ts)
-	local time = getRealTime(ts)
-	local month = time.month+1
-	local year = time.year-100
-	return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
 end

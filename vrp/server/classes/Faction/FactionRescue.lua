@@ -193,7 +193,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				client:setDefaultSkin()
+				client:setCorrectSkin()
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 				client:setPublicSync("Faction:Duty",false)

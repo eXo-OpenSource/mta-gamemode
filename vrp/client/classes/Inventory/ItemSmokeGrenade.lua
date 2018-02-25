@@ -1,8 +1,8 @@
 ItemSmokeGrenade = inherit(Singleton) 
 
 function ItemSmokeGrenade:constructor() 
-	self.m_ReplaceShader = dxCreateShader("files/shader/texreplace.fx")
-	self.m_RenderTarget = dxCreateRenderTarget(8, 8, true)
+	--[[self.m_ReplaceShader = dxCreateShader("files/shader/texreplace.fx")
+	self.m_RenderTarget = dxCreateRenderTarget(8, 7, true)
 	dxSetRenderTarget(self.m_RenderTarget) 
 		dxDrawImage(0,0,8,8, "files/images/bullethitsmoke.png")
 	dxSetRenderTarget()
@@ -20,7 +20,7 @@ function ItemSmokeGrenade:constructor()
 				engineApplyShaderToWorldTexture(self.m_ReplaceShader, "bullethitsmoke")
 			end
 		end
-	end)
+	end)]]
 end
 
 function ItemSmokeGrenade:destructor() 
