@@ -650,7 +650,7 @@ end
 
 function Player:setSkin(skin) -- use this only to save a skin (not to set a temporary skin)
 	self.m_Skin = skin
-	self:setModel(skin)
+    self:setCorrectSkin()
 end
 
 function Player:setCorrectSkin() -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
@@ -663,10 +663,10 @@ function Player:setCorrectSkin() -- use this function to set the correct skin fo
 	-- CJ Skin
 	if self.m_Skin == 0 then
 		for i = 0, #CJ_CLOTHE_TYPES, 1 do
-			self:removeClothes(i)
+            removePedClothes(self, i)
 			local data = self.m_SkinData[tostring(i)]
 			if data then
-				self:addClothes(data.texture, data.model, i)
+                addPedClothes(self, data.texture, data.model, i)
 			end
 		end
 	end
@@ -1483,19 +1483,17 @@ function Player:isInGangwar()
 end
 
 -- Override mta function
-function Player:removeClothes(typeId)
+function Player:removeClothesPermanently(typeId) -- only use this for saving the clothes
 	if self:getSkin() ~= 0 then return false end
 	removePedClothes(self, typeId)
-
-	self.m_SkinData[typeId] = nil
+    self.m_SkinData[tostring(typeId)] = nil
 end
 
 -- Override mta function
-function Player:addClothes(texture, model, typeId)
+function Player:addClothesPermanently(texture, model, typeId) -- only use this for saving the clothes
 	if self:getSkin() ~= 0 then return false end
 	addPedClothes(self, texture, model, typeId)
-
-	self.m_SkinData[typeId] = {texture = texture, model = model}
+    self.m_SkinData[tostring(typeId)] = {texture = texture, model = model}
 end
 
 -- Temporary player storage

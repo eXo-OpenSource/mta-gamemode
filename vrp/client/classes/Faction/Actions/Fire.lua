@@ -223,7 +223,7 @@ function Fire:createFireElement(iSize, uPed)
 	local iX, iY, iZ = getElementPosition(uPed)
 	self.m_Fires[uPed] = {}
 	self.m_Fires[uPed].iSize = iSize
-	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ-5,-90, 0, 0, Fire.Settings["fireRenderDistance"])
+	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollisionsEnabled(uPed, false) --temporary until stream in
 	self:checkForFireGroundInfo(uPed)
