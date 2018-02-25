@@ -69,7 +69,7 @@ function NoDm:setPlayerNoDm(state)
 			toggleControl ("vehicle_fire", false)
 			setElementData(localPlayer, "no_driveby", true)
 			setPedWeaponSlot(localPlayer, 0)
-			if getPedWeapon ( localPlayer, 9 ) == 43 then
+			if (getPedWeapon ( localPlayer, 9 ) == 42) or (getPedWeapon ( localPlayer, 9 ) == 43) then -- fire extinguisher, camera
 				if not isPedInVehicle(localPlayer) then
 					setPedWeaponSlot(localPlayer,9)
 					toggleControl ("aim_weapon", true)
@@ -114,7 +114,7 @@ function NoDm:renderNoDmImage()
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
 	end
-	if localPlayer:getFactionId() ~= 1 and localPlayer:getFactionId() ~= 2 and localPlayer:getFactionId() ~= 3 and getPedWeapon ( localPlayer, 9 ) ~= 43 then
+	if localPlayer:getFactionId() ~= 1 and localPlayer:getFactionId() ~= 2 and localPlayer:getFactionId() ~= 3 and getPedWeapon ( localPlayer, 9 ) ~= 43 and getPedWeapon ( localPlayer, 9 ) ~= 42 then
 		setPedWeaponSlot(localPlayer,0)
 	end
 end
@@ -147,9 +147,8 @@ function NoDm:checkNoDm()
 end
 
 addEventHandler("checkNoDm", localPlayer, function()
-	for index, koords in pairs(NoDm:getSingleton().Zones) do
-		local cols = NoDm:getSingleton().m_NoDmZones[index]
-		if isElementWithinColShape(localPlayer, cols) then
+	for index, shape in pairs(NoDm:getSingleton().m_NoDmZones) do
+		if isElementWithinColShape(localPlayer, shape) then
 			NoDm:getSingleton():setPlayerNoDm(true)
 			break
 		else

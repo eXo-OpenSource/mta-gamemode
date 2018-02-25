@@ -170,10 +170,10 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 	if shop then
 		if clothesData then
 			if client:getMoney() >= clothesData.Price then
-				client:removeClothes(typeId)
+				client:removeClothesPermanently(typeId)
 				if clotheId >= 0 then
 					local texture, model = getClothesByTypeIndex(typeId, clotheId)
-					client:addClothes(texture, model, typeId)
+					client:addClothesPermanently(texture, model, typeId)
 				end
 				client:giveAchievement(23)
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))

@@ -20,20 +20,20 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	self.m_Money = money
 	self.m_Price = price
 
-	GUIWindow.updateGrid()	
-	self.m_Width = grid("x", self.m_isOwner and 13 or 7) 
-	self.m_Height = grid("y", self.m_isOwner and 10 or 8) 
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", self.m_isOwner and 13 or 7)
+	self.m_Height = grid("y", self.m_isOwner and 10 or 8)
 
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Hausmenü (Hausnr. %d)", houseId), true, true, self)
-	
+
 	self.m_OwnerLbl = GUIGridLabel:new(1, 1, 6, 1, _("Besitzer: %s", ownerName or "Niemand"), self.m_Window)
 	self.m_PriceLbl = GUIGridLabel:new(1, 2, 5, 1, _("Preis: %s", toMoneyString(price)), self.m_Window)
-	
+
 	if not ownerName then
 		self.m_BuyBtn = GUIGridButton:new(1, 3, 6, 1, _"Haus kaufen", self.m_Window):setBackgroundColor(Color.Green)
 		self.m_BuyBtn.onLeftClick = bind(HouseGUI.buyHouse, self)
-	elseif self.m_isRentEnabled then
+	elseif self.m_isRentEnabled or self.m_isTenant then
 		self.m_RentPriceLbl = GUIGridLabel:new(1, 3, 4, 1, _("Mietpreis: %s", toMoneyString(rentprice)), self.m_Window)
 		self.m_RentBtn = GUIGridButton:new(4, 3, 3, 1, self.m_isTenant and _"Ausmieten" or _"Einmieten", self.m_Window):setEnabled(not self.m_isOwner)
 
@@ -52,7 +52,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 	self.m_SpawnBtn = GUIGridButton:new(1, 5, 6, 1, _"als Spawnpunkt festlegen", self.m_Window):setEnabled(hasKey)
 	self.m_RobBtn = GUIGridButton:new(1, 6, 6, 1, _"Raub starten", self.m_Window):setBackgroundColor(Color.Orange):setEnabled(isValidRob)
 	self.m_EnterLeaveBtn = GUIGridButton:new(1, 7, self.m_isInside and 6 or 5, 1, self.m_isInside and _"Verlassen" or (ownerName and _"Betreten" or _"Besichtigen"), self.m_Window):setBarEnabled(false)
-	if not self.m_isInside then 
+	if not self.m_isInside then
 		self.m_DoorBellBtn = GUIGridIconButton:new(6, 7, FontAwesomeSymbols.Bell, self.m_Window):setTooltip(_"an der Tür klingeln", "bottom")
 		self.m_DoorBellBtn.onLeftClick = function()
 			triggerServerEvent("houseRingDoor",root)
@@ -86,7 +86,7 @@ function HouseGUI:constructor(ownerName, price, rentprice, isValidRob, isClosed,
 			HouseEditGUI:new()
 		end
 	end
-	
+
 	if self.m_isOwner then
 		self:loadOwnerOptions()
 	end
@@ -175,7 +175,7 @@ end
 
 function HouseGUI:saveRent(disable)
 	local amount = disable == true and 0 or tonumber(self.m_EditRent:getText()) or 0
-	
+
 	if disable ~= true and math.clamp(1, amount, 500) ~= amount then
 		return WarningBox:new("Die Miete muss zwischen 1$ und 500$ liegen")
 	end

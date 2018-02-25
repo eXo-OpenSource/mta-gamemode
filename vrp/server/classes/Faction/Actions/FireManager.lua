@@ -57,7 +57,6 @@ function FireManager:loadFirePlaces()
 end
 
 function FireManager:checkFire()
-	outputDebug("checking for fire")
 	if FactionRescue:getSingleton():countPlayers() >= 3 and not self.m_CurrentFire then
 		self:startRandomFire()
 	else
