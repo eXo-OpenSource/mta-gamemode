@@ -648,13 +648,14 @@ function Player:reportCrime(crimeType)
 	--JobPolice:getSingleton():reportCrime(self, crimeType)
 end
 
-function Player:setSkin(skin) -- use this only to save a skin (not to set a temporary skin)
+function Player:setSkin(skin, ignoreFactionSkin) -- use this only to save a skin (not to set a temporary skin)
 	self.m_Skin = skin
-    self:setCorrectSkin()
+    self:setCorrectSkin(ignoreFactionSkin)
 end
 
-function Player:setCorrectSkin() -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
-	if self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin then --evil faction spawn	
+function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
+	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
+	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn	
 		self:getFaction():changeSkin(self)
 		setPedArmor(self, 100)
 	else
