@@ -68,12 +68,12 @@ end
 
 function Area:createCenterPickup()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_Pickup = createPickup( x,y,z-1 ,3,2993,5)
+	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
 end
 
 function Area:createCenterCol()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE+1) --+1 because the gangwar includes 15m as inside the col, but isElementWithinCol not
+	self.m_CenterSphere = createColSphere(x,y,z-1,GANGWAR_CENTER_HOLD_RANGE+1) --+1 because the gangwar includes 15m as inside the col, but isElementWithinCol not
 	addEventHandler("onColShapeHit",self.m_CenterSphere,bind(self.onCenterEnter,self))
 	addEventHandler("onColShapeLeave",self.m_CenterSphere,bind(self.onCenterLeave,self))
 	local tElements = getElementsWithinColShape(self.m_CenterSphere,"player")
@@ -127,7 +127,8 @@ end
 function Area:attackEnd(  )
 	if self.m_IsAttacked then
 		self.m_RadarArea:setFlashing(false)
-		self.m_AttackSession:delete()
+		delete(self.m_AttackSession)
+		self.m_AttackSession = nil
 		self.m_IsAttacked = false
 		self.m_RadarArea:delete()
 		self:createRadar()

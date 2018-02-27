@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 GangwarStatistics = inherit(Singleton)
+local secondsPerDay = (60*60)*24
 function GangwarStatistics:constructor() 
 	self.m_CollectorMap =  {}
 	self.m_CollectorTimeouts =  {}
@@ -23,10 +24,29 @@ function GangwarStatistics:constructor()
 			end
 		end
 	end
+	self:prepareAttackLog( )
+end
+
+function GangwarStatistics:prepareAttackLog() 
+	self.m_AttackLog = {}
+	local result = StatisticsLogger:getSingleton():getGangwarAttackLog( 20 ) 
+	if result then 
+		for k, row in pairs(result) do 
+			self.m_AttackLog[#self.m_AttackLog+1] = {row["Gebiet"], row["Angreifer"], row["Besitzer"], row["StartZeit"], row["EndZeit"], row["Gewinner"]}
+		end
+	end
 end
 
 function GangwarStatistics:newCollector( mAreaID )
 	self.m_CollectorMap[mAreaID] = {}
+end
+
+function GangwarStatistics:getAttackLog() 
+	return self.m_AttackLog
+end
+
+function GangwarStatistics:addAttackLog( area, attacker, owner, start, endTime, winner)
+	table.insert(self.m_AttackLog, 1, {area, attacker, owner, start, endTime, winner})
 end
 
 function GangwarStatistics:stopAndOutput( mAreaID )

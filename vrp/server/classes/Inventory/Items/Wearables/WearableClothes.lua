@@ -22,7 +22,7 @@ function WearableClothes:use(player, itemId, bag, place, itemName)
 		local skinID = tonumber(value)
 		if skinID then
 			if not player:isFactionDuty() then
-				player:setSkin(skinID)
+				player:setSkin(skinID, true)
 				player:meChat(true, "wechselt seine Kleidung.")
 			else
 				player:sendError(_("Du kannst im Dienst nicht deine Kleidung wechseln!", player))

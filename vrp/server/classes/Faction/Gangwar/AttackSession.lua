@@ -21,6 +21,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
+	self.m_Active = true
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -41,6 +42,7 @@ function AttackSession:destructor()
 	if bNotifyTimer then
 		killTimer( self.m_NotifiyAgainTimer )
 	end
+	self.m_Active = false
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
 end
 
@@ -59,6 +61,7 @@ function AttackSession:logSession(winner)
 		winner = winner.m_Name
 	end
 	StatisticsLogger:getSingleton():addGangwarLog(self.m_AreaObj.m_Name, attackerFaction, ownerFaction, attackStart, attackEnd, winner)
+	GangwarStatistics:getSingleton():addAttackLog( self.m_AreaObj.m_Name, attackerFaction, ownerFaction, attackStart, attackEnd, winner)
 end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
@@ -249,57 +252,67 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 end
 
 function AttackSession:onPlayerEnterCenter( player )
-	local faction = player.m_Faction
-	if faction == self.m_Faction1 then
-		local bCenterTimer = isTimer( self.m_HoldCenterTimer )
-		local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
-		if bCenterTimer then
-			killTimer( self.m_HoldCenterTimer )
-		end
-		if bNotifyTimer then
-			killTimer( self.m_NotifiyAgainTimer )
+	if self.m_Active then
+		local faction = player.m_Faction
+		if faction == self.m_Faction1 then
+			local bCenterTimer = isTimer( self.m_HoldCenterTimer )
+			local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
+			if bCenterTimer then
+				killTimer( self.m_HoldCenterTimer )
+			end
+			if bNotifyTimer then
+				killTimer( self.m_NotifiyAgainTimer )
+			end
 		end
 	end
 end
 
 function AttackSession:onPlayerLeaveCenter( player )
-	local faction = player.m_Faction
-	if faction == self.m_Faction1 then
-		local isAnyoneInside = self:checkPlayersInCenter( )
-		if not isAnyoneInside then
-			self:setCenterCountdown()
+	if self.m_Active then
+		local faction = player.m_Faction
+		if faction == self.m_Faction1 then
+			local isAnyoneInside = self:checkPlayersInCenter( )
+			if not isAnyoneInside then
+				self:setCenterCountdown()
+			end
 		end
 	end
 end
 
 function AttackSession:checkPlayersInCenter( )
-	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
-	local faction, executionPedCheck
-	local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
-	local dim2, int2
-	local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
-	for key, player in ipairs( pTable ) do
-		dim2 = getElementDimension( player )
-		int2 = getElementInterior( player )
-		executionPedCheck = player.getExecutionPed and not player:getExecutionPed()
-		if dim == dim2 and int == int2 then
-			if not isPedDead( player ) and executionPedCheck and self:isParticipantInList(player) and getElementHealth(player) ~= 0 then
-				faction = player.m_Faction
-				if faction == self.m_Faction1 then
-					return true
+	if self.m_Active then
+		local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
+		local faction, executionPedCheck
+		local dim = getElementDimension( self.m_AreaObj.m_CenterSphere )
+		local dim2, int2
+		local int = getElementInterior( self.m_AreaObj.m_CenterSphere )
+		for key, player in ipairs( pTable ) do
+			dim2 = getElementDimension( player )
+			int2 = getElementInterior( player )
+			executionPedCheck = player.getExecutionPed and not player:getExecutionPed()
+			if dim == dim2 and int == int2 then
+				if not isPedDead( player ) and executionPedCheck and self:isParticipantInList(player) and getElementHealth(player) ~= 0 then
+					faction = player.m_Faction
+					if faction == self.m_Faction1 then
+						return true
+					end
 				end
 			end
 		end
+		return false
 	end
-	return false
 end
 
 function AttackSession:setCenterCountdown()
-	self.endReason = 3
-	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
-	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFEure Gegner haben noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",0,200,0,true)
-	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
-	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
+	if self.m_Active then
+		self.endReason = 3
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFEure Gegner haben noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",0,200,0,true)
+		if self.m_HoldCenterTimer and isTimer(self.m_HoldCenterTimer) then killTimer(self.m_HoldCenterTimer) end 
+		if self.m_NotifiyAgainTimer and isTimer(self.m_NotifiyAgainTimer) then killTimer(self.m_NotifiyAgainTimer) end 
+		self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
+		self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
+	end
 end
 	
 function AttackSession:notifyFactions()

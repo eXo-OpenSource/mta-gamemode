@@ -78,6 +78,11 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
     return result
 end
 
+function StatisticsLogger:getGangwarAttackLog( rows ) 
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_Gangwar ORDER BY Id DESC LIMIT ?", sqlLogs:getPrefix(), rows)
+    return result
+end
+
 function StatisticsLogger:getGroupLogUserIDs(groupType, groupId)
 	local days = 7
 	local since = getRealTime().timestamp-days*24*60*60
