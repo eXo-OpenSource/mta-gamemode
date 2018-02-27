@@ -185,9 +185,11 @@ function Gangwar:getCurrentGangwarPlayers()
 end
 
 function Gangwar:getAreas()
+	local sendTable = {}
 	for index, area in pairs(self.m_Areas) do
 		client:triggerEvent("gangwarLoadArea", area:getName(), area:getPosition(), area:getOwnerId(), area:getLastAttack(), area:getId())
 	end
+	client:triggerEvent("gangwarLoadAttackLog", GangwarStatistics:getSingleton():getAttackLog())
 end
 
 function Gangwar:onPlayerJoin()
