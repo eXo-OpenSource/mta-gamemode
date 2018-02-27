@@ -471,7 +471,7 @@ function FactionGUI:onGangwarItemSelect(item)
 		self.m_GangAttackLogGrid:addColumn(_"Angreif.", 0.2)
 		if self.m_GangwarAttackLog then 
 			for i = 1, #self.m_GangwarAttackLog do 
-				self.m_GangAttackLogGrid:addItem(self.m_GangwarAttackLog[i][1]:sub(1, 15), getOpticalTimestamp(self.m_GangwarAttackLog[i][4]), self.m_GangwarAttackLog[i][2]:sub(1,5)..".", self.m_GangwarAttackLog[i][3]:sub(1,5)..".")
+				self.m_GangAttackLogGrid:addItem(self.m_GangwarAttackLog[i][1]:sub(1, 15), getOpticalTimestamp(self.m_GangwarAttackLog[i][4]), self.m_GangwarAttackLog[i][3]:sub(1,5)..".", self.m_GangwarAttackLog[i][2]:sub(1,5)..".")
 			end
 		end
 	else
