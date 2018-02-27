@@ -298,6 +298,8 @@ function AttackSession:setCenterCountdown()
 	self.endReason = 3
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFEure Gegner haben noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",0,200,0,true)
+	if self.m_HoldCenterTimer and isTimer(self.m_HoldCenterTimer) then killTimer(self.m_HoldCenterTimer) end 
+	if self.m_NotifiyAgainTimer and isTimer(self.m_NotifiyAgainTimer) then killTimer(self.m_NotifiyAgainTimer) end 
 	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
 	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
 end
