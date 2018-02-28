@@ -42,6 +42,8 @@ function GroupGUI:constructor()
 	--self.m_GroupMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabGroups):setCaption(_"Betrag")
 	--self.m_GroupMoneyDepositButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", tabGroups):setBarEnabled(true)
 	--self.m_GroupMoneyWithdrawButton = GUIButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", tabGroups):setBarEnabled(true)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, _"Payday:", tabGroups)
+	self.m_GroupPayDayLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.3, self.m_Width*0.25, self.m_Height*0.06, "test", tabGroups)
 	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.5, self.m_Height*0.5, tabGroups)
 	self.m_GroupPlayersGrid:addColumn(_"", 0.06)
 	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.49)
@@ -162,12 +164,13 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
 	self:adjustGroupTab(rank or false)
 
 	if id then
 		self.m_Id = id
 		local karma = math.floor(karma)
+		local nextPayDay = 60 - (playTime % 60)
 		local x, y = self.m_GroupsNameLabel:getPosition()
 		self.m_TuningEnabled = tuningEnabled
 		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
@@ -175,6 +178,7 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, players, karma,
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMoneyLabel:setText(toMoneyString(money))
+		self.m_GroupPayDayLabel:setText(_("in %s Minuten", nextPayDay))
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
 		self.m_VehicleConvertToGroupButton:setText(_("Fahrzeug zur\n%s hinzufügen", type))
@@ -189,9 +193,9 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, players, karma,
 			item.Id = info.playerId
 
 			item.onLeftClick =
-				function()
-					self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
-				end
+			function()
+				self.m_GroupToggleLoanButton:setText(("Gehalt %saktivieren"):format(info.loanEnabled == 1 and "de" or ""))
+			end
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames
@@ -433,7 +437,7 @@ function GroupGUI:addLeaderTab()
 		self.m_TypeChange.onLeftClick = function ()
 			local newType = localPlayer:getGroupType() == "Firma" and "Gang" or "Firma"
 			QuestionBox:new(_("Möchtest du wirklich deine %s in eine %s umwandeln? Kosten: 20.000$", localPlayer:getGroupType(), newType),
-			function() 	triggerServerEvent("groupChangeType", root) end
+			    function() 	triggerServerEvent("groupChangeType", root) end
 			)
 		end
 		self.m_TypeChange.onHover = function () self.m_TypeChange:setColor(Color.White) end
@@ -468,7 +472,7 @@ function GroupGUI:refreshRankGrid()
 	end
 	for rank, name in ipairs(tab) do
 		local rank = rank - 1
-	--
+
 		local item = self.m_FactionRangGrid:addItem(rank, name)
 		item.Id = rank
 		item.onLeftClick = function()

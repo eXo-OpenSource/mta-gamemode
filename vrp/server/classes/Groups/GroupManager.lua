@@ -7,6 +7,7 @@
 -- ****************************************************************************
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
+GroupManager.ActiveMap = {}
 GroupManager.GroupCosts = 100000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
@@ -16,7 +17,6 @@ end
 function GroupManager:constructor()
 	self:loadGroups()
 	self.m_BankAccountServer = BankServer.get("group")
-	GlobalTimer:getSingleton():registerEvent(bind(self.payDay, self), "Group Payday", nil, nil, 00) -- Every Hour
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
@@ -46,6 +46,8 @@ function GroupManager:constructor()
 	addEventHandler("groupChangeType", root, bind(self.Event_ChangeType, self))
 	addEventHandler("groupToggleLoan", root, bind(self.Event_ToggleLoan, self))
 
+	self.m_PaydayPulse = TimedPulse:new(60000)
+	self.m_PaydayPulse:registerHandler(bind(self.checkPayDay, self))
 end
 
 function GroupManager:destructor()
@@ -57,7 +59,7 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 
 
@@ -68,7 +70,7 @@ function GroupManager:loadGroups()
 			playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
 		end
 
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
 		count = count + 1
 	end
@@ -114,12 +116,12 @@ end
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
-	if group then --use triggerLatentEvent to improve serverside performance 
+	if group then --use triggerLatentEvent to improve serverside performance
 		local vehicles = {}
 		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
-		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
+		player:triggerLatentEvent("groupRetrieveInfo", group:getId(), group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayTime(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
@@ -207,7 +209,7 @@ function GroupManager:Event_Delete()
 		client:sendError(_("Du bist nicht berechtigt die Firma/Gang zu löschen!", client))
 		-- Todo: Report possible cheat attempt
 		return
-  end
+	end
 
 	local leaderCount = 0
 	for i, playerRank in pairs(group.m_Players) do
@@ -216,28 +218,28 @@ function GroupManager:Event_Delete()
 		end
 	end
 
-  local money = group:getMoney()
-  local leaderAmount = money/(1 + leaderCount)
-  money = money - leaderAmount
-  local memberAmount = 0
-  local groupSize = table.size(group.m_Players)
-  if groupSize == leaderAmount then
-      leaderAmount = (leaderAmount + money)/leaderCount
-  else
-      memberAmount = money/(groupSize - leaderCount)
-  end
-
-	-- Distribute group's money
-  for playerId, playerRank in pairs(group.m_Players) do
-	local amount = memberAmount
-
-	if playerRank == GroupRank.Leader then
-		amount = leaderAmount
+	local money = group:getMoney()
+	local leaderAmount = money/(1 + leaderCount)
+	money = money - leaderAmount
+	local memberAmount = 0
+	local groupSize = table.size(group.m_Players)
+	if groupSize == leaderAmount then
+		leaderAmount = (leaderAmount + money)/leaderCount
+	else
+		memberAmount = money/(groupSize - leaderCount)
 	end
 
-	group:transferMoney({"player", playerId, true}, amount, "Gang/Firmen Auflösung", "Group", "Delete")
-  end
-  	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
+	-- Distribute group's money
+	for playerId, playerRank in pairs(group.m_Players) do
+		local amount = memberAmount
+
+		if playerRank == GroupRank.Leader then
+			amount = leaderAmount
+		end
+
+		group:transferMoney({"player", playerId, true}, amount, "Gang/Firmen Auflösung", "Group", "Delete")
+	end
+	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
 	client:sendShortMessage(_("Deine "..group:getType().." wurde soeben gelöscht", client))
 	group:purge()
@@ -692,17 +694,20 @@ function GroupManager:Event_ToggleLoan(playerId)
 	group:addLog(client, "Gang/Firma", ("hat das Gehalt von Spieler %s %saktiviert!"):format(Account.getNameFromId(playerId), current and "de" or ""))
 end
 
-function GroupManager:payDay()
-	local result = sql:queryFetch("SELECT vh.Group AS GroupId, (SELECT Category FROM ??_vehicle_model_data vmd WHERE vmd.Model = vh.Model) AS VCategory, COUNT(Id) AS Amount FROM ??_group_vehicles vh WHERE vh.Premium = 0 GROUP BY vh.`Group`, VCategory", sql:getPrefix(), sql:getPrefix())
-	local groups = {}
-	for k, row in pairs(result) do
-		if not groups[row.GroupId] then groups[row.GroupId] = {} end
-		groups[row.GroupId][row.VCategory] = row.Amount
-	end
+function GroupManager:checkPayDay()
+	for id, group in pairs(GroupManager.ActiveMap) do
+		local time = group:addPlayTime(1)
 
-	for groupId, data in pairs(groups) do
-		if GroupManager.Map[groupId] then
-			GroupManager.Map[groupId]:payDay(data)
+		if time % 60 == 0 then
+			group:payDay()
 		end
 	end
+end
+
+function GroupManager:addActiveGroup(group)
+	table.insert(GroupManager.ActiveMap, group:getId(), group)
+end
+
+function GroupManager:removeActiveGroup(group)
+	table.remove(GroupManager.ActiveMap, group:getId())
 end

@@ -82,6 +82,7 @@ function Player:destructor()
 
 	if self:getGroup() then
 		self:getGroup():checkDespawnVehicle()
+		self:getGroup():onPlayerQuit(self)
 	end
 
 	--// gangwar
@@ -272,8 +273,8 @@ end
 
 function Player:initialiseBinds()
 	if self:getFaction() then
- 		bindKey(self, "y", "down", "chatbox", "Fraktion")
- 	end
+		bindKey(self, "y", "down", "chatbox", "Fraktion")
+	end
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -339,11 +340,11 @@ function Player:save()
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
-				
+
 		if self:getGroup() then
 			self:getGroup():save()
 		end
-		
+
 		if DEBUG_LOAD_SAVE then
 			outputDebugString("Saved Data for Player "..self:getName())
 		end
@@ -410,8 +411,8 @@ function Player:spawn()
 					local position = companySpawnpoint[self:getCompany():getId()]
 					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
-			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 			end
 		end
 
@@ -519,7 +520,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setElementAlpha(self,255)
 
 	if self:getExecutionPed() then delete(self:getExecutionPed()) end
-	
+
 	WearableManager:getSingleton():removeAllWearables(self)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
@@ -657,7 +658,7 @@ end
 
 function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
-	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn	
+	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
 		self:getFaction():changeSkin(self)
 		setPedArmor(self, 100)
 	else
@@ -676,11 +677,11 @@ function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set th
 end
 
 function Player:isFactionDuty()
-  return self.m_FactionDuty
+	return self.m_FactionDuty
 end
 
 function Player:isCompanyDuty()
-  return self.m_CompanyDuty
+	return self.m_CompanyDuty
 end
 
 function Player:setFactionDuty(state)
@@ -1137,9 +1138,9 @@ function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
 		if amount then
-		    if type(amount) ~= "table" then amount = tonumber(amount) end
+			if type(amount) ~= "table" then amount = tonumber(amount) end
 			if name == "money" then
-			    if type(amount) ~= "table" then amount.amount = math.floor(amount.amount) end
+				if type(amount) ~= "table" then amount.amount = math.floor(amount.amount) end
 				local prefix = amount.mode == "give" and "+" or ""
 				local bank = amount.bank and " (Konto)" or ""
 
@@ -1208,7 +1209,7 @@ function Player:getPlayersInChatRange( irange)
 	local elementTable = getElementsByType("player")
 	local player,dimension,interior,check
 	for index = 1,#elementTable do
-	    if (pos - elementTable[index]:getPosition()).length <= range then
+		if (pos - elementTable[index]:getPosition()).length <= range then
 			player = elementTable[index]
 			dimension = player.dimension
 			interior = player.interior
@@ -1409,8 +1410,8 @@ function Player:meChat(system, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 255,105,180)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 
 	end
 end
@@ -1428,8 +1429,8 @@ function Player:sendPedChatMessage( name, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 220,220,220)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 
 	end
 end
@@ -1447,8 +1448,8 @@ function Player:districtChat(...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index],192, 196, 194)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 	end
 end
 
@@ -1550,6 +1551,6 @@ function Player:hasTemporaryStorage()
 	return type(self.m_Storage) == "table"
 end
 
-function Player:getExecutionPed() 
+function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
 end
