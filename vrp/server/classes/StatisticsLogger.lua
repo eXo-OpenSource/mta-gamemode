@@ -83,6 +83,21 @@ function StatisticsLogger:getGangwarAttackLog( rows )
     return result
 end
 
+function StatisticsLogger:getGangwarTopDamage( rows ) 
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Damage DESC LIMIT ?", sqlLogs:getPrefix(), rows)
+	return result
+end
+
+function StatisticsLogger:getGangwarTopKill( rows ) 
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY Kills DESC LIMIT ?", sqlLogs:getPrefix(), rows)
+	return result
+end
+
+function StatisticsLogger:getGangwarTopMVP( rows ) 
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_GangwarTopList ORDER BY MVP DESC LIMIT ?", sqlLogs:getPrefix(), rows)
+	return result
+end
+
 function StatisticsLogger:getGroupLogUserIDs(groupType, groupId)
 	local days = 7
 	local since = getRealTime().timestamp-days*24*60*60

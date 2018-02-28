@@ -143,7 +143,6 @@ function GangwarDisplay:drawParticipantOverview()
 	local localFactionObject = localPlayer:getFaction()
 	local enemyFaction, enemyFactionObject
 	for key, player in ipairs(getElementsByType("player")) do 	
-		for i = 1, 10 do 
 		if player:getPublicSync("gangwarParticipant") then
 			if player:getFactionId() == localFaction then 
 				factionPlayers1[#factionPlayers1+1] = player
@@ -155,9 +154,12 @@ function GangwarDisplay:drawParticipantOverview()
 				end
 			end
 		end
-		end
 	end
-	self:drawAttackerOverview( factionPlayers1, factionPlayers2, localFactionObject.m_Color["r"], localFactionObject.m_Color["g"], localFactionObject.m_Color["b"], enemyFactionObject.m_Color["r"], enemyFactionObject.m_Color["g"], enemyFactionObject.m_Color["b"] ) 
+	if enemyFaction and enemyFactionObject then
+		self:drawAttackerOverview( factionPlayers1, factionPlayers2, localFactionObject.m_Color["r"], localFactionObject.m_Color["g"], localFactionObject.m_Color["b"], enemyFactionObject.m_Color["r"], enemyFactionObject.m_Color["g"], enemyFactionObject.m_Color["b"] )
+	else 
+		self:drawAttackerOverview( factionPlayers1, factionPlayers2, localFactionObject.m_Color["r"], localFactionObject.m_Color["g"], localFactionObject.m_Color["b"])
+	end
 end
 
 function GangwarDisplay:drawAttackerOverview( playerTable, enemyTable, r, g, b, r2, g2, b2 ) 
@@ -166,8 +168,10 @@ function GangwarDisplay:drawAttackerOverview( playerTable, enemyTable, r, g, b, 
 	for i = 0, #playerTable -1, 1 do
 		self:drawPlayerOverview(playerTable[i+1], 0, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r, g, b) 
 	end
-	for i = 0, #enemyTable -1, 1 do
-		self:drawEnemyOverview(enemyTable[i+1], overViewScoreboardEnd*1+overViewWidth*0.05, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r2, g2, b2) 
+	if r2 and g2 and b2 then
+		for i = 0, #enemyTable -1, 1 do
+			self:drawEnemyOverview(enemyTable[i+1], overViewScoreboardEnd*1+overViewWidth*0.05, overViewStartHeight+(heightPerElement*i), overViewWidth, heightPerElement, r2, g2, b2) 
+		end	
 	end
 end
 

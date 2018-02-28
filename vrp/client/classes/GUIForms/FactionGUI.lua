@@ -88,11 +88,12 @@ function FactionGUI:constructor()
 
 	self.m_TabDiplomacy = self.m_TabPanel:addTab(_"Diplomatie")
 
-	addRemoteEvents{"factionRetrieveInfo", "gangwarLoadArea", "factionRetrieveDiplomacy", "gangwarLoadAttackLog"}
+	addRemoteEvents{"factionRetrieveInfo", "gangwarLoadArea", "factionRetrieveDiplomacy", "gangwarLoadAttackLog", "gangwarLoadTopList"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionRetrieveDiplomacy", root, bind(self.Event_retrieveDiplomacy, self))
 	addEventHandler("gangwarLoadArea", root, bind(self.Event_gangwarLoadArea, self))
 	addEventHandler("gangwarLoadAttackLog", root, bind(self.Event_gangwarLoadAttackLog, self))
+	addEventHandler("gangwarLoadTopList", root, bind(self.Event_gangwarLoadTopList, self))
 end
 
 function FactionGUI:destructor()
@@ -246,11 +247,13 @@ end
 function FactionGUI:loadGangwarTab()
 	if self.m_GangAreasGrid then delete(self.m_GangAreasGrid) end
 	self.m_GangAreasGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.85, self.m_tabGangwar)
-	self.m_GangAreasGrid:addColumn(_"Gebiet", 0.7)
+	self.m_GangAreasGrid:addColumn(_"Gangwar-Info", 0.7)
 	self.m_GangAreasOverviewItem = self.m_GangAreasGrid:addItem(_"Übersicht")
 	self.m_GangAreasOverviewItem.onLeftClick = function() self:onGangwarItemSelect(self.m_GangAreasOverviewItem) end
 	self.m_GangAttackLogItem = self.m_GangAreasGrid:addItem(_"Attack-Log")
 	self.m_GangAttackLogItem.onLeftClick = function() self:onGangwarItemSelect(self.m_GangAttackLogItem) end
+	self.m_GangAttackBestLog = self.m_GangAreasGrid:addItem(_"Bestenliste")
+	self.m_GangAttackBestLog.onLeftClick = function() self:onGangwarItemSelect(self.m_GangAttackBestLog) end
 	self.m_GangAreasGrid:addItemNoClick(_"Gebiete")
 	self.m_GangwarAreas = {}
 	triggerServerEvent("gangwarGetAreas", localPlayer)
@@ -460,7 +463,7 @@ function FactionGUI:onGangwarItemSelect(item)
 	if self.m_NextAttack then delete(self.m_NextAttack) end
 	if self.m_Map then delete(self.m_Map) end
 	if self.m_GangAttackLogGrid then delete(self.m_GangAttackLogGrid) end
-
+	if self.m_GangAttackTab then delete(self.m_GangAttackTab) end
 	if item == self.m_GangAreasOverviewItem then
 		self.m_GangwarChart = GUIWebView:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.64, self.m_Height*0.9, "http://exo-reallife.de/ingame/other/gangwar.php", true, self.m_tabGangwar)
 	elseif item == self.m_GangAttackLogItem then
@@ -474,6 +477,36 @@ function FactionGUI:onGangwarItemSelect(item)
 				self.m_GangAttackLogGrid:addItem(self.m_GangwarAttackLog[i][1]:sub(1, 15), getOpticalTimestamp(self.m_GangwarAttackLog[i][4]), self.m_GangwarAttackLog[i][3]:sub(1,5)..".", self.m_GangwarAttackLog[i][2]:sub(1,5)..".")
 			end
 		end
+	elseif item == self.m_GangAttackBestLog then 
+		self.m_GangAttackTab = GUITabPanel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.62, self.m_Height*0.85, self.m_tabGangwar)
+		local tabWidth, tabHeight = self.m_GangAttackTab:getSize()
+		self.m_GangAttackDamageTab = self.m_GangAttackTab:addTab(_("Schaden"))
+			self.m_GangAttackDamageGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackDamageTab)
+			self.m_GangAttackDamageGrid:addColumn(_"Name", 0.6)
+			self.m_GangAttackDamageGrid:addColumn(_"Damage", 0.4)
+			if self.m_GangwarTopDamageTable then 
+				for i = 1, #self.m_GangwarTopDamageTable do 
+					self.m_GangAttackDamageGrid:addItem( self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] ) 
+				end
+			end
+		self.m_GangAttackKillTab = self.m_GangAttackTab:addTab(_("Tötungen"))
+			self.m_GangAttackKillGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackKillTab)
+			self.m_GangAttackKillGrid:addColumn(_"Name", 0.6)
+			self.m_GangAttackKillGrid:addColumn(_"Kills", 0.4)
+			if self.m_GangwarTopKillTable then 
+				for i = 1, #self.m_GangwarTopKillTable do 
+					self.m_GangAttackKillGrid:addItem( self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] ) 
+				end
+			end
+		self.m_GangAttackMVPTab = self.m_GangAttackTab:addTab(_("MVP"))
+			self.m_GangAttackMVPGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackMVPTab)
+			self.m_GangAttackMVPGrid:addColumn(_"Name", 0.6)
+			self.m_GangAttackMVPGrid:addColumn(_"Sterne", 0.4)
+			if self.m_GangwarTopMVPTable then 
+				for i = 1, #self.m_GangwarTopKillTable do 
+					self.m_GangAttackMVPGrid:addItem( self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] ) 
+				end
+			end
 	else
 		if item then
 			self.m_AreaName = GUILabel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.08, item.name, self.m_tabGangwar)
@@ -488,15 +521,26 @@ function FactionGUI:onGangwarItemSelect(item)
 	end
 end
 
-function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack)
+function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack, isAttackable)
 	self.m_GangwarAreas[name] = {["name"] = name, ["posX"] = position[1], ["posY"] = position[2], ["posZ"] = posZ, ["owner"] = owner, ["lastAttack"] = lastAttack}
 
 	local item = self.m_GangAreasGrid:addItem(name)
+	if isAttackable then 
+		item:setColor(Color.Green)
+	else 
+		item:setColor(Color.Red)
+	end
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
 end
 
 function FactionGUI:Event_gangwarLoadAttackLog( aTable )
 	self.m_GangwarAttackLog = aTable
+end
+
+function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp)
+	self.m_GangwarTopDamageTable = damage 
+	self.m_GangwarTopKillTable = kills 
+	self.m_GangwarTopMVPTable = mvp
 end
 
 function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
