@@ -43,7 +43,7 @@ function GangwarDebugGUI:Event_refresh()
 	triggerServerEvent("gangwarGetAreas", localPlayer)	
 end
 
-function GangwarDebugGUI:Event_gangwarLoadArea(name, position, owner, lastAttack, id)
+function GangwarDebugGUI:Event_gangwarLoadArea(name, position, owner, lastAttack, attackable, id)
 	self.m_GangwarAreas[name] = {["name"] = name, ["posX"] = position[1], ["posY"] = position[2], ["posZ"] = posZ, ["owner"] = owner, ["lastAttack"] = lastAttack, ["id"] = id}
 	local item = self.m_GangAreasGrid:addItem(name)
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
