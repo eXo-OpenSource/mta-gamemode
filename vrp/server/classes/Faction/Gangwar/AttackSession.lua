@@ -13,7 +13,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_AreaObj = pAreaObj
 	self.m_Faction1 = faction1
 	self.m_Faction2 = faction2
-	self.m_Disqualified = {	} --//
+	self.m_Disqualified = {	}
 	self.m_Participants = {	}
 	self:setupSession( )
 	self:createBarricadeCars( )
@@ -229,6 +229,11 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
 				if player and isElement(player) then 
+					if killer.g_kills then 
+						killer.g_kills = killer.g_kills + 1
+					else 
+						killer.g_kills = 1 
+					end
 					player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 					killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 					local loss = player.m_LossBeforeDead or 0
@@ -237,11 +242,6 @@ function AttackSession:onPlayerWasted( player, killer,  weapon, bodypart )
 					killer.g_damage = killer.g_damage + math.floor(loss)
 					self:disqualifyPlayer( player )
 				end
-			end
-			if killer.g_kills then 
-				killer.g_kills = killer.g_kills + 1
-			else 
-				killer.g_kills = 1 
 			end
 		else
 			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
@@ -486,7 +486,7 @@ function AttackSession:createWeaponBox()
 end
 
 function AttackSession:generateWeapons( )
-	self.m_BoxWeapons ={	}
+	self.m_BoxWeapons =	{	}
 	for i = 1, 2 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {31,200}
 	end
@@ -557,7 +557,6 @@ function AttackSession:refreshWeaponBox(  )
 		self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:refreshItems", self.m_BoxWeapons )
 	end
 end
-
 
 function AttackSession:destroyWeaponBox()
 	if isElement( self.m_WeaponBox ) then

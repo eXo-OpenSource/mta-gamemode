@@ -5,26 +5,19 @@
 -- *  PURPOSE:     Gangwar-Statistics Class
 -- *
 -- ****************************************************************************
-
 GangwarStatistics = inherit(Singleton)
 local secondsPerDay = (60*60)*24
+local CACHE_TIME = (60*1000)*15
+
+GangwarStatistics.CacheStats = { }
 function GangwarStatistics:constructor() 
 	self.m_CollectorMap =  {}
 	self.m_CollectorTimeouts =  {}
-	self.sqlMostDamage = {}
+	self.m_SQLStats = {}
 	self.runtimeMostDamage = {}
 	self.m_BankAccountServer = BankServer.get("faction.gangwar")
-	local result = sql:queryFetch("SELECT * FROM ??_gangwar_stats;", sql:getPrefix())
-	for i, row in pairs(result) do
-		if row.type == "mvp" then
-			if not self.mostDamage[row.Name] then 
-				self.mostDamage[row.Name] = 1
-			else 
-				self.mostDamage[row.Name] = self.mostDamage[row.Name] + 1
-			end
-		end
-	end
 	self:prepareAttackLog( )
+	self:getTopTenList( )
 end
 
 function GangwarStatistics:prepareAttackLog() 
@@ -56,7 +49,9 @@ function GangwarStatistics:stopAndOutput( mAreaID )
 	end
 	self.m_CollectorMap[mAreaID] = {}
 	self.m_CollectorTimeouts[mAreaID] = {}
-	self:addNewEntry( bestTable[1][1] )
+	self:addNewMVP( bestTable[1][1] )
+	self:flushSQLTable()
+	self:getTopTenList() 
 end
 
 function GangwarStatistics:collectDamage(mAreaID, facPlayers)
@@ -77,30 +72,84 @@ function GangwarStatistics:collectDamage(mAreaID, facPlayers)
 			outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",player,200,200,0,true)
 			self.m_BankAccountServer:transferMoney(player, moneyDamage + moneyKill, "Gangwar-Boni", "Faction", "GangwarBoni")
 			self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { player, damage}
+			self.m_SQLStats[#self.m_SQLStats+1] = {player:getId(), "Damage", damage, player:getName()}
+			self.m_SQLStats[#self.m_SQLStats+1] = {player:getId(), "Kill", kill, player:getName()}
 		end
 	end
 	self:stopAndOutput( mAreaID )
 end
-
 
 function GangwarStatistics:getBestOfCollector( mAreaID )
 	table.sort( self.m_CollectorMap[mAreaID] , function( a ,b ) return a[2] > b[2] end)
 	return self.m_CollectorMap[mAreaID]
 end
 
-function GangwarStatistics:addNewEntry( player )
-	if not self.runtimeMostDamage[player] then 
-		self.runtimeMostDamage[player] = 1 
-	else 
-		self.runtimeMostDamage[player] = self.runtimeMostDamage[player] + 1 
+function GangwarStatistics:addNewMVP( player )
+	self.m_SQLStats[#self.m_SQLStats+1] = {player:getId(), "MVP", 1, player:getName()}
+	
+end
+
+function GangwarStatistics:flushSQLTable() 
+	local count = 0
+	if self.m_SQLStats then 
+		local user, type, amount
+		for i = 1, #self.m_SQLStats do 
+			user, type, amount, name = self.m_SQLStats[i][1], self.m_SQLStats[i][2], self.m_SQLStats[i][3], self.m_SQLStats[i][4]
+			count = count + 1
+			sqlLogs:queryExec("INSERT INTO ??_GangwarStatistics (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sqlLogs:getPrefix(), user, type, amount or 1)
+			if type == "Damage" then 
+				sqlLogs:queryExec("INSERT INTO ??_GangwarTopList (UserId, Name, Damage, Kills, MVP ) VALUES(?, ?, ?, 0, 0) ON DUPLICATE KEY UPDATE Damage = Damage + ?, Name = ?", sqlLogs:getPrefix(), user, name, amount, amount, name)
+			elseif type == "Kill" then
+				sqlLogs:queryExec("INSERT INTO ??_GangwarTopList (UserId, Name, Damage, Kills, MVP ) VALUES(?, ?, 0, ?, 0) ON DUPLICATE KEY UPDATE Kills = Kills + ?, Name = ?", sqlLogs:getPrefix(), user, name, amount, amount, name)
+			else
+				sqlLogs:queryExec("INSERT INTO ??_GangwarTopList (UserId, Name, Damage, Kills, MVP ) VALUES(?, ?, 0, 0, 1) ON DUPLICATE KEY UPDATE MVP = MVP + 1, Name = ?", sqlLogs:getPrefix(), user, name, name)
+			end
+		end
+	end
+	outputDebugString(("-- Flushed Gangwar-Statistics into SQL (%s entries) --"):format(count))
+	self.m_SQLStats = {}
+end
+
+function GangwarStatistics:getPlayerStats( player )  
+	if player then
+		local user = player:getId() 
+		local now = getTickCount()
+		if not GangwarStatistics.CacheStats[user] then
+			local result = sqlLogs:queryFetchSingle("SELECT * FROM ??_GangwarTopList WHERE UserId = ?", sqlLogs:getPrefix(), user)
+			GangwarStatistics.CacheStats[user] = { getTickCount(), result.Damage, result.Kills, result.MVP }
+			return GangwarStatistics.CacheStats[user]
+		else
+			local lastUpdated = GangwarStatistics[user][1]
+			if not lastUpdated or ( now >= lastUpdated+CACHE_TIME) then 
+				local result = sqlLogs:queryFetchSingle("SELECT * FROM ??_GangwarTopList WHERE UserId = ?", sqlLogs:getPrefix(), user)
+				GangwarStatistics.CacheStats[user] = { now, result.Damage, result.Kills, result.MVP }
+				return GangwarStatistics.CacheStats[user]
+			end
+		end
+	end
+	return false
+end
+
+function GangwarStatistics:getTopTenList( ) 
+	GangwarStatistics.TopStats = { }
+	local result = StatisticsLogger:getSingleton():getGangwarTopDamage( 10 ) 
+	GangwarStatistics.TopStats["Damage"] = { }
+	for k, row in pairs(result) do
+		GangwarStatistics.TopStats["Damage"][#GangwarStatistics.TopStats["Damage"]+1] = {row.Name, row.Damage}
+	end
+	GangwarStatistics.TopStats["Kill"] = { }
+	local result = StatisticsLogger:getSingleton():getGangwarTopKill( 10 ) 
+	for k, row in pairs(result) do
+		GangwarStatistics.TopStats["Kill"][#GangwarStatistics.TopStats["Kill"]+1] = {row.Name, row.Kills}
+	end
+	GangwarStatistics.TopStats["MVP"] = { }
+	local result = StatisticsLogger:getSingleton():getGangwarTopMVP( 10 ) 
+	for k, row in pairs(result) do
+		GangwarStatistics.TopStats["MVP"][#GangwarStatistics.TopStats["MVP"]+1] = {row.Name, row.MVP}
 	end
 end
 
+
 function GangwarStatistics:destructor()	
-	--[[ NEEDS better sql operation
-	sqlQuery = "INSERT OR REPLACE INTO ??_gangwar_stats(Name, Typ, MVP) VALUES(?,?,?)"
-	for player, value in pairs( self.runtimeMostDamage ) do 
-		sql:queryExec(sqlQuery, sql:getPrefix(), player.name, "MVP", value)
-	end
-	--]]
+	self:flushSQLTable()
 end
