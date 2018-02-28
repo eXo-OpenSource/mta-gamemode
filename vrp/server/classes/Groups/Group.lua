@@ -671,6 +671,8 @@ function Group:payDay()
 	local output = {}
 
 	incoming["Zinsen"] = 0
+	incoming["Spieler (offline)"] = 0
+	incoming["Spieler (online)"] = 0
 	outgoing["Fahrzeugsteuern"] = 0
 
 	if self:getMoney() > 0 then
@@ -682,11 +684,7 @@ function Group:payDay()
 	end
 
 	if incoming["Zinsen"] < outgoing["Fahrzeugsteuern"] then
-		local players = self:getOnlinePlayers()
-
-		incoming["Spieler (online)"] = #players * 100
-
-		for id, player in pairs(players) do
+		for id, player in pairs(self:getPlayers()) do
 			if not player:isActive() then
 				local money = self.m_PlayerActivity[player:getId()] * 10
 
@@ -695,16 +693,22 @@ function Group:payDay()
 				end
 
 				incoming["Spieler (offline)"] = incoming["Spieler (offline)"] + money
+			else
+				incoming["Spieler (online)"] = incoming["Spieler (online)"] + 100
 			end
 		end
 	end
 
 	for name, amount in pairs(incoming) do
-		table.insert(output, ("%s: %d$"):format(name, amount))
+		if not amount == 0 then
+			table.insert(output, ("%s: %d$"):format(name, amount))
+		end
 	end
 
 	for name, amount in pairs(outgoing) do
-		table.insert(output, ("%s: %d$"):format(name, amount))
+		if not amount == 0 then
+			table.insert(output, ("%s: %d$"):format(name, amount))
+		end
 	end
 
 	local sum, inc, out = 0, 0, 0

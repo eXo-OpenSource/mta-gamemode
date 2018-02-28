@@ -181,6 +181,8 @@ function GroupManager:Event_Create(name, type)
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
 		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)
+
+		self:addActiveGroup(group)
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))
 	end
@@ -197,6 +199,11 @@ function GroupManager:Event_Quit()
 	group:sendMessage(_("%s hat soeben eure %s verlassen!", client, getPlayerName(client), group:getType()))
 	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." verlassen!")
 	group:removePlayer(client)
+
+	if #group:getOnlinePlayers() == 0 then
+		self:removeActiveGroup(group)
+	end
+
 	client:sendSuccess(_("Du hast die Firma/Gang erfolgreich verlassen!", client))
 	self:sendInfosToClient(client)
 end
@@ -242,6 +249,8 @@ function GroupManager:Event_Delete()
 	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
 	client:sendShortMessage(_("Deine "..group:getType().." wurde soeben gelöscht", client))
+
+	self:removeActiveGroup(group)
 	group:purge()
 	client:triggerEvent("groupRetrieveInfo")
 end
@@ -705,9 +714,9 @@ function GroupManager:checkPayDay()
 end
 
 function GroupManager:addActiveGroup(group)
-	table.insert(GroupManager.ActiveMap, group:getId(), group)
+	GroupManager.ActiveMap[group:getId()] = group
 end
 
 function GroupManager:removeActiveGroup(group)
-	table.remove(GroupManager.ActiveMap, group:getId())
+	GroupManager.ActiveMap[group:getId()] = nil
 end
