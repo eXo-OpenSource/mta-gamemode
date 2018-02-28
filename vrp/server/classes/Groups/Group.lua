@@ -666,58 +666,71 @@ function Group:calculateVehicleTax(data)
 end
 
 function Group:payDay()
-	local incoming = {}
-	local outgoing = {}
+	local incomingPermanently = {}
+	local incomingBonus = {}
+	local outgoingPermanently = {}
 	local output = {}
 
-	incoming["Zinsen"] = 0
-	incoming["Spieler (offline)"] = 0
-	incoming["Spieler (online)"] = 0
-	outgoing["Fahrzeugsteuern"] = 0
+	incomingPermanently["Zinsen"] = 0
+	incomingBonus["Spieler (offline)"] = 0
+	incomingBonus["Spieler (online)"] = 0
+	outgoingPermanently["Fahrzeugsteuern"] = 0
 
 	if self:getMoney() > 0 then
-		incoming["Zinsen"] = self:getMoney() > 300000 and math.floor(300000 * 0.0005) or math.floor(self:getMoney() * 0.0005)
+		incomingPermanently["Zinsen"] = self:getMoney() > 300000 and math.floor(300000 * 0.0005) or math.floor(self:getMoney() * 0.0005)
 	end
 
 	for index, vehicle in pairs(self:getVehicles()) do
-		outgoing["Fahrzeugsteuern"] = outgoing["Fahrzeugsteuern"] + vehicle:getTax()
+		outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getTax()
 	end
 
-	if incoming["Zinsen"] < outgoing["Fahrzeugsteuern"] then
-		for id, player in pairs(self:getPlayers()) do
-			if not player:isActive() then
-				local money = self.m_PlayerActivity[player:getId()] * 10
+	if incomingPermanently["Zinsen"] < outgoingPermanently["Fahrzeugsteuern"] then
+		for id in pairs(self:getPlayers()) do
+			local player = Player.getFromId(id)
 
-				if money > 100 then
-					money = 100
+			if player then
+				if not player:isLoggedIn() then
+					local money = self.m_PlayerActivity[player:getId()] * 10
+
+					if money > 100 then
+						money = 100
+					end
+
+					incomingBonus["Spieler (offline)"] = incomingBonus["Spieler (offline)"] + money
+				else
+					incomingBonus["Spieler (online)"] = incomingBonus["Spieler (online)"] + 100
 				end
-
-				incoming["Spieler (offline)"] = incoming["Spieler (offline)"] + money
-			else
-				incoming["Spieler (online)"] = incoming["Spieler (online)"] + 100
 			end
 		end
 	end
 
-	for name, amount in pairs(incoming) do
-		if not amount == 0 then
+	table.insert(output, "Payday:")
+
+	for name, amount in pairs(incomingPermanently) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
+	end
+
+	for name, amount in pairs(incomingBonus) do
+		if amount ~= 0 then
 			table.insert(output, ("%s: %d$"):format(name, amount))
 		end
 	end
 
-	for name, amount in pairs(outgoing) do
-		if not amount == 0 then
-			table.insert(output, ("%s: %d$"):format(name, amount))
-		end
+	for name, amount in pairs(outgoingPermanently) do
+		table.insert(output, ("%s: %d$"):format(name, amount))
 	end
 
 	local sum, inc, out = 0, 0, 0
 
-	for name, amount in pairs(incoming) do
+	for name, amount in pairs(incomingPermanently) do
 		inc = inc + amount
 	end
 
-	for name, amount in pairs(outgoing) do
+	for name, amount in pairs(incomingBonus) do
+		inc = inc + amount
+	end
+
+	for name, amount in pairs(outgoingPermanently) do
 		out = out + amount
 	end
 
@@ -746,7 +759,9 @@ function Group:payDay()
 			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE `Group` = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self:getId())
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
-	end
+	elseif self:getMoney() < (outgoingPermanently["Fahrzeugsteuern"] * 3) then
+		self:sendShortMessage("Bei den derzeitigen Finanzen kann die Fahrzeugsteuer bald nicht mehr bezahlt werden!")
+ 	end
 end
 
 function Group:save()
