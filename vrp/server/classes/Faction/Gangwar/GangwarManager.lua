@@ -188,7 +188,7 @@ function Gangwar:getAreas()
 	local sendTable = {}
 	local nowTimestamp = getRealTime().timestamp
 	for index, area in pairs(self.m_Areas) do
-		client:triggerEvent("gangwarLoadArea", area:getName(), area:getPosition(), area:getOwnerId(), area:getLastAttack(), nowTimestamp >= area:getLastAttack()+( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))
+		client:triggerEvent("gangwarLoadArea", area:getName(), area:getPosition(), area:getOwnerId(), area:getLastAttack(), nowTimestamp >= area:getLastAttack()+( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS), area:getId())
 	end
 	client:triggerEvent("gangwarLoadAttackLog", GangwarStatistics:getSingleton():getAttackLog())
 	client:triggerEvent("gangwarLoadTopList", GangwarStatistics.TopStats["Damage"], GangwarStatistics.TopStats["Kill"], GangwarStatistics.TopStats["MVP"])
