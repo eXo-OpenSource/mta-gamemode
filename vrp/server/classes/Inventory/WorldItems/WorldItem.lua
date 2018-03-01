@@ -16,13 +16,19 @@ addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "wo
 
 WorldItem.constructor = pure_virtual
 
-function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player)
+function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked)
 	self.m_Item = item
 	self.m_ItemName = item:getName()
 	self.m_ModelId = item:getModelId()
 	self.m_Owner = owner
 	self.m_Placer = player
-	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
+	if not isPermanent then 
+		self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
+	end
+	
+	self.m_IsPermanent = isPermanent 
+	self.m_Locked = locked
+	self.m_DatabaseId = 0
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
 	self.m_Object:setInterior(player:getInterior())
 	self.m_Object:setDimension(player:getDimension())
@@ -43,7 +49,8 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	if not WorldItem.Map[owner][self.m_ModelId] then
 		WorldItem.Map[owner][self.m_ModelId] = {}
 	end
-	WorldItem.Map[owner][self.m_ModelId][self.m_Object] = self
+	WorldItem.Map[owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
+	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff 	
 end
 
 function WorldItem:attach(ele, offsetPos, offsetRot)
@@ -175,6 +182,47 @@ end
 
 function WorldItem:getItem()
 	return self.m_Item
+end
+
+function WorldItem:getDimension() 
+	return isElement(self.m_Object) and self.m_Object:getDimension()
+end
+
+function WorldItem:setDimension(dim) 
+	return isElement(self.m_Object) and self.m_Object:setDimension(dim)
+end
+
+function WorldItem:getInterior() 
+	return isElement(self.m_Object) and self.m_Object:getInterior()
+end
+
+function WorldItem:setInterior(int) 
+	return isElement(self.m_Object) and self.m_Object:setInterior(int)
+end
+
+function WorldItem:isPermanent()
+	return self.m_IsPermanent
+end
+
+function WorldItem:hasChanged() 
+	return self.m_HasChanged
+end
+
+function WorldItem:isLocked() 
+	return self.m_Locked
+end
+
+function WorldItem:setDataBaseId(id) 
+	WorldItemManager.Map[self] = id
+	self.m_DatabaseId = id
+end
+
+function WorldItem:getDataBaseId() 
+	return self.m_DatabaseId
+end
+
+function WorldItem:isBreakable() 
+	return self:getObject() and isElement(self:getObject()) and isObjectBreakable(self:getObject())
 end
 
 function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
