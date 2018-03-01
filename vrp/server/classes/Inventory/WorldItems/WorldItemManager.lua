@@ -28,7 +28,7 @@ function WorldItemManager:destructor()
 				pos = obj:getObject():getPosition()
 				rot = obj:getObject():getRotation()
 				if id > 0 then
-					sql:queryExec("UPDATE ??_WorldItems SET PosX=?, PosY=?, PosZ=?, Rotation=?, Locked=?", sql:getPrefix(), pos.x, pos.y, pos.z, rot.z, obj:isLocked())
+					sql:queryExec("UPDATE ??_WorldItems SET PosX=?, PosY=?, PosZ=?, Rotation=?, Locked=? WHERE Id=?", sql:getPrefix(), pos.x, pos.y, pos.z, rot.z, obj:isLocked(), id)
 				else 
 					sql:queryExec("INSERT INTO ??_WorldItems (Item, Model, Owner, PosX, posY, posZ, Rotation, Interior, Dimension, Breakable, Locked, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", sql:getPrefix(),
 					obj:getItem():getName() or "Generic", obj:getModel(), obj:getOwner(), pos.x, pos.y, pos.z, rot.z, obj:getInterior(), obj:getDimension(), obj:isBreakable(), obj:isLocked())

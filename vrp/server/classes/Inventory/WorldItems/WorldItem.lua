@@ -22,13 +22,13 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_ModelId = item:getModelId()
 	self.m_Owner = owner
 	self.m_Placer = player
-	if not isPermanent then 
-		self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
-	end
 	
-	self.m_IsPermanent = isPermanent 
-	self.m_Locked = locked
-	self.m_DatabaseId = 0
+	self.m_OnMovePlayerDisconnectFunc = bind(WorldItem.Event_OnMovePlayerDisconnect, self)
+	
+	self.m_IsPermanent = isPermanent -- This indicates wether the item should be saved when the server shutsdown/restarts
+	self.m_HasChanged = true -- This boolean will indicate if a database update is really necessary or if the Item has not changed since the last db-update (should save performance when there are many items to save)
+	self.m_Locked = locked -- This indicates wether the Item was locked by an admin so no user can pick it up
+	self.m_DatabaseId = 0 -- This represents the database-id from teh vrp_WorldItems table
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
 	
 	if type(owner) == "userdata" and getElementType(owner) == "player" then
@@ -38,15 +38,22 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 		self.m_Object:setData("Placer", player:getName() or "Unknown", true)
 		self.m_Owner = owner:getId()
 		self.m_Placer = player:getId()
-	else 
+	elseif type(owner) == "number" then
 		local ownerName = Account.getNameFromId(owner)
 		local placerName = Account.getNameFromId(player)
 		self.m_Object:setData("Owner", ownerName or owner, true)
 		self.m_Object:setData("Placer", placerName or player, true)
+	elseif type(owner) == "table" then 
+		self.m_Object:setInterior(player:getInterior())
+		self.m_Object:setDimension(player:getDimension())
+		self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
+		self.m_Object:setData("Placer", player:getName() or "Unknown", true)
+		self.m_Placer = player:getId()
 	end
+	
 	self.m_AttachedElements = {}
 	self.m_Object.m_Super = self
-	--self.m_Object:setBreakable(breakable)
+	
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
 	
 	self.m_Object:setData("Name", self.m_ItemName or "Unknown", true)
@@ -59,7 +66,7 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	if not WorldItem.Map[self.m_Owner][self.m_ModelId] then
 		WorldItem.Map[self.m_Owner][self.m_ModelId] = {}
 	end
-	outputChatBox(self.m_Owner)
+	
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
 	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff 	
 end
@@ -70,6 +77,7 @@ function WorldItem:attach(ele, offsetPos, offsetRot)
 		ele:attach(self.m_Object, offsetPos or Vector3(0, 0, 0), offsetRot or Vector3(0, 0, 0))
 		if getElementType(ele) == "object" then
 			setElementData(ele, "worlditem_attachment", self.m_Object)
+			self.m_HasChanged = true
 		end
 		return ele
 	end
@@ -115,6 +123,7 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		end
 		delete(self)
 		self.m_Delete = true
+		self.m_HasChanged = true
 		if resendList then WorldItem.sendItemListToPlayer(id, typ, player) end
 		return true
 	end
@@ -137,6 +146,8 @@ function WorldItem:onDelete(player, resendList, id, type)
 	end
 	if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
 	delete(self)
+	self.m_Delete = true
+	self.m_HasChanged = true
 end
 
 function WorldItem:onMove(player)
@@ -167,6 +178,7 @@ function WorldItem:onMove(player)
 					self.m_Object:setInterior(player:getInterior())
 					self.m_Object:setDimension(player:getDimension())
 					self.m_Object:setCollisionsEnabled(true)
+					self.m_HasChanged = true
 				end)
 			end
 			self.m_CurrentMovingPlayer = nil
@@ -225,8 +237,7 @@ function WorldItem:isPermanent()
 end
 
 function WorldItem:hasChanged() 
-	--return self.m_HasChanged
-	return true
+	return self.m_HasChanged
 end
 
 function WorldItem:isLocked() 
@@ -236,6 +247,9 @@ end
 function WorldItem:setDataBaseId(id) 
 	WorldItemManager.Map[self] = id
 	self.m_DatabaseId = id
+	if id > 0 then
+		self.m_HasChanged = false
+	end
 end
 
 function WorldItem:getDataBaseId() 
@@ -243,7 +257,7 @@ function WorldItem:getDataBaseId()
 end
 
 function WorldItem:isBreakable() 
-	return false -- for now since there is no way to get check breakability
+	return false -- for now since there is no way to check breakability
 end
 
 function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
