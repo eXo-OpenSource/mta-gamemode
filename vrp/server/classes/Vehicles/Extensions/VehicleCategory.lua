@@ -14,7 +14,11 @@ function VehicleCategory:constructor()
         [611] = {
             fuelTankSize = 500,
             fuelType = "universal"
-        }
+        },
+		[584] = {
+			fuelTankSize = 1500,
+			fuelType = "universal"
+		}
     } --temporary until there is a useful database structure
 
     local result = sql:queryFetch("SELECT * FROM ??_vehicle_category_data", sql:getPrefix())
