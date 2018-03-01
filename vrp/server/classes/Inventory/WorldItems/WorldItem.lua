@@ -29,8 +29,14 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_HasChanged = true -- This boolean will indicate if a database update is really necessary or if the Item has not changed since the last db-update (should save performance when there are many items to save)
 	self.m_Locked = locked -- This indicates wether the Item was locked by an admin so no user can pick it up
 	self.m_DatabaseId = 0 -- This represents the database-id from teh vrp_WorldItems table
-	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
+	self.m_MaxAccessRange = 0 -- This is the range at which the object can be picked up via the placedObjects-GUI ( 0 stands for infinite )
+	self.m_AccessIntDim = false -- If set to true the player must be in the same dimension/interior as the item in order to pick it up
+
 	
+	
+	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
+	self.m_Object:setData("WorldItem:AccessRange", 0, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
+	self.m_Object:setData("WorldItem:IntDimCheck", false, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
 	if type(owner) == "userdata" and getElementType(owner) == "player" then
 		self.m_Object:setInterior(player:getInterior())
 		self.m_Object:setDimension(player:getDimension())
@@ -43,6 +49,11 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 		local placerName = Account.getNameFromId(player)
 		self.m_Object:setData("Owner", ownerName or owner, true)
 		self.m_Object:setData("Placer", placerName or player, true)
+		local placerObject = DatabasePlayer.getFromId(player) 
+		if placerObject and isElement(placerObject) then 
+			self.m_Object:setInterior(placerObject:getInterior())
+			self.m_Object:setDimension(placerObject:getDimension())
+		end
 	elseif type(owner) == "table" then 
 		self.m_Object:setInterior(player:getInterior())
 		self.m_Object:setDimension(player:getDimension())
@@ -244,6 +255,24 @@ function WorldItem:isLocked()
 	return self.m_Locked
 end
 
+function WorldItem:setAccessRange(range)
+	self.m_MaxAccessRange = range
+	self.m_Object:setData("WorldItem:AccessRange", range, true)
+end
+
+function WorldItem:getAccessRange() 
+	return self.m_MaxAccessRange
+end
+
+function WorldItem:setAccessIntDimCheck(state) 
+	self.m_AccessIntDim = state
+	self.m_Object:setData("WorldItem:IntDimCheck", state, true)
+end
+
+function WorldItem:getAccessIntDimCheck() 
+	return self.m_AccessIntDim
+end
+
 function WorldItem:setDataBaseId(id) 
 	WorldItemManager.Map[self] = id
 	self.m_DatabaseId = id
@@ -295,6 +324,33 @@ function WorldItem.sendItemListToPlayer(id, type, player)
 	end
 end
 
+function WorldItem.isAccessible( player, object) 
+	if object and object.getObject and isElement(object:getObject()) then
+		if object:getAccessRange() > 0 then 
+			local x,y,z = getElementPosition(player) 
+			local ox, oy, oz = getElementPosition(object:getObject())
+			local dist = getDistanceBetweenPoints3D(x, y, z, ox, oy, oz) <= object:getAccessRange()
+			if dist then 
+				if object:getAccessIntDimCheck() then 
+					local int, dim = player:getInterior(), player:getDimension() 
+					local oInt, oDim = object:getObject():getInterior(), object:getObject():getDimension()
+					if (int == oInt) and (dim == oDim) then 
+						return true
+					else 
+						return false
+					end
+				else 
+					return true
+				end
+			else 
+				return false
+			end
+		else 
+			return true
+		end
+	end
+end
+
 addEventHandler("worldItemMove", root,
 	function(...)
 		if source.m_Super then
@@ -313,14 +369,26 @@ addEventHandler("worldItemCollect", root,
 
 addEventHandler("worldItemMassCollect", root,
 	function(tblObjects, ...)
+		local accessViolation = false
 		for i, object in pairs(tblObjects) do
 			if object.m_Super then
 				if i == #tblObjects then
-					object.m_Super:onCollect(client, ...)
+					if WorldItem.isAccessible( client, object.m_Super) then
+						object.m_Super:onCollect(client, ...)
+					else 
+						accessViolation = true
+					end
 				else
-					object.m_Super:onCollect(client)
+					if WorldItem.isAccessible( client, object.m_Super) then
+						object.m_Super:onCollect(client)
+					else 
+						accessViolation = true
+					end
 				end
 			end
+		end
+		if accessViolation then 
+			client:sendError(_("Einige Objekte konnten nicht aufgehoben werden, da sie zu weit von dir entfernt sind!", client)) 
 		end
 	end
 )

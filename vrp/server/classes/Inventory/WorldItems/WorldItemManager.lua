@@ -16,6 +16,8 @@ function WorldItemManager:constructor()
 		posX, posY, posZ, rot = row.PosX, row.PosY, row.PosZ, row.Rotation
 		worldItemInstance = PlayerWorldItem:new(ItemManager.Map[item], owner, Vector3(posX, posY, posZ), rot, breakable, owner, true, locked)
 		worldItemInstance:setDataBaseId(id)
+		worldItemInstance:setInterior(interior) 
+		worldItemInstance:setDimension(dimension)
 	end
 end
 
