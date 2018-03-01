@@ -297,8 +297,7 @@ function FactionRescue:getStretcher(player, vehicle)
 			if player:getExecutionPed() then
 				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher ) 
 			end
-			player:toggleControlsWhileObjectAttached(false)
-			toggleControl(player, "jump", true) -- But allow jumping
+			player:toggleControlsWhileObjectAttached(false, true, true, false, true)
 			player:setFrozen(false)
 			setElementAlpha(player,255)
 			if player:getExecutionPed() then delete(player:getExecutionPed()) end
@@ -315,7 +314,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 	moveObject(player.m_RescueStretcher, 3000, vehicle:getPosition() + vehicle.matrix.forward*-2, Vector3(0, 0, vehicle:getRotation().z - player:getRotation().z), "InOutQuad")
 	setElementAlpha(player,255)
 	-- Enable Controls
-	player:toggleControlsWhileObjectAttached(true)
+	player:toggleControlsWhileObjectAttached(true, true, true, false, true)
 
 	setTimer(
 		function(vehicle, player)

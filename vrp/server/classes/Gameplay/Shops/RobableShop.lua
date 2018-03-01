@@ -225,7 +225,7 @@ end
 function RobableShop:giveBag(player)
 	self.m_Bag:setInterior(player:getInterior())
 	self.m_Bag:setDimension(player:getDimension())
-	player:attachPlayerObject(self.m_Bag, true)
+	player:attachPlayerObject(self.m_Bag)
 	if self.m_BagBlip then delete(self.m_BagBlip) end
 	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, {85, 58, 38})
 	self.m_BagBlip:setDisplayText("Shopraub-Beute")

@@ -21,8 +21,9 @@ function BankRobbery:constructor()
 	self.m_MoneyBags = {}
 	self.m_BankAccountServer = BankServer.get("action.bank_robbery")
 
-	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
-	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
+	self.m_OnSafeClickFunction = bind(BankRobbery.Event_onSafeClicked, self)
+	self.m_Event_onBagClickFunc = bind(BankRobbery.Event_onBagClick, self)
+	self.m_Event_OnTruckStartEnterFunc = bind(BankRobbery.Event_OnTruckStartEnter, self)
 end
 
 function BankRobbery:virtual_constructor(...)
@@ -166,6 +167,7 @@ function BankRobbery:startRobGeneral(player)
 	for markerIndex, destination in pairs(self.ms_FinishMarker) do
 		self.m_Blip[#self.m_Blip+1] = Blip:new("Marker.png", destination.x, destination.y, {faction = self.m_RobFaction:getId(), factionType = "State"}, 1000, BLIP_COLOR_CONSTANTS.Red)
 		self.m_Blip[#self.m_Blip]:setDisplayText("Bankraub-Abgabe")
+		self.m_Blip[#self.m_Blip]:setZ(destination.z)
 		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end
@@ -260,18 +262,16 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 			if self.m_IsBankrobRunning then
 				local position = source:getPosition()
 				local rotation = source:getRotation()
+				local interior = source:getInterior()
 				local model = source:getModel()
 				if model == 2332 then
-					source:destroy()
-					local obj = createObject(1829, position, rotation)
-					addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
-					table.insert(self.m_Safes, obj)
-					obj:setData("clickable", true, true)
+					source:setModel(1829)
 				elseif model == 1829 then	
+					local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
 					if self:addMoneyToBag(player, money) then
 						source:destroy()
 						local obj = createObject(2003, position, rotation)
-						local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
+						obj:setInterior(interior)
 						table.insert(self.m_Safes, obj)
 					end
 				end
@@ -300,6 +300,15 @@ function BankRobbery:Event_onBagClick(button, state, player)
 	end
 end
 
+function BankRobbery:isPlayerParticipant(player)
+	if not player or not isElement(player) then return false end
+	if not player:getFaction() then return false end
+	if player:getFaction() == self.m_RobFaction then return true end
+	if player:getFaction() == self.m_RobFaction:getAllianceFaction() then return true end
+	if player:getFaction():isStateFaction() and player:isFactionDuty() then return true end
+	return false
+end
+
 function BankRobbery:statePeopleClickBag(player, bag)
 	local amount = math.floor(bag:getData("Money")/2)
 	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
@@ -324,6 +333,9 @@ function BankRobbery:addMoneyToBag(player, money)
 	end
 	local pos = self.ms_BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
+	if self.ms_BagSpawnInterior then
+		newBag:setInterior(self.ms_BagSpawnInterior)
+	end
 	newBag.DeloadHook = bind(self.deloadBag, self)
 	table.insert(self.m_MoneyBags, newBag)
 	newBag:setData("Money", money, true)
@@ -338,14 +350,14 @@ function BankRobbery:createTruck(x, y, z, rz)
 	local truck = TemporaryVehicle.create(428, x, y, z, rz)
 	truck:setData("BankRobberyTruck", true, true)
 	truck:toggleRespawn(false)
-	truck:setMaxHealth(1500, true)
+	truck:setMaxHealth(3000, true)
 	truck:setBulletArmorLevel(2)
 	truck:setRepairAllowed(false)
 	truck:setVariant(0,0)
 	truck:setAlwaysDamageable(true)
 	self:setTruckActive(truck, false)
 	self.m_Trucks[truck] = true
-
+	addEventHandler("onVehicleStartEnter", truck, self.m_Event_OnTruckStartEnterFunc)
 	addEventHandler("onElementDestroy", truck, function()
 		if self.m_Trucks[truck] then
 			self.m_Trucks[truck] = nil
@@ -373,7 +385,7 @@ end
 
 
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
-	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
+	if seat == 0 and player:getFaction() then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
 	end
@@ -412,7 +424,6 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						elseif hitElement:getPlayerAttachedObject() then
 							bags = {hitElement:getPlayerAttachedObject()}
 							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-							hitElement:toggleControlsWhileObjectAttached(true)
 							hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 						end
 						for key, value in pairs (bags) do

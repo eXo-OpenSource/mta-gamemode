@@ -73,12 +73,12 @@ function CustomModelManager:constructor()
 
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
 	self:loadImportCOL("files/models/buildings/casino_heist/bank_fence.col", 8481)
-	self:loadImportTXD("files/models/buildings/casino_heist/bank_int.txd", 14592)
-	self:loadImportCOL("files/models/buildings/casino_heist/bank_int.col", 14592)
-	self:loadImportCOL("files/models/buildings/casino_heist/bank_int2.col", 14577)
-	self:loadImportCOL("files/models/buildings/casino_heist/bank_int3.col", 14576)
-	self:loadImportTXD("files/models/buildings/casino_heist/bank.txd", 9037)
-	self:loadImportCOL("files/models/buildings/casino_heist/bank.col", 9037)
+	--self:loadImportTXD("files/models/buildings/casino_heist/bank_int.txd", 14592)
+	--self:loadImportCOL("files/models/buildings/casino_heist/bank_int.col", 14592)
+	--self:loadImportCOL("files/models/buildings/casino_heist/bank_int2.col", 14577)
+	--self:loadImportCOL("files/models/buildings/casino_heist/bank_int3.col", 14576)
+	--self:loadImportTXD("files/models/buildings/casino_heist/bank.txd", 9037)
+	--self:loadImportCOL("files/models/buildings/casino_heist/bank.col", 9037)
 
 
 	--fishing shop

@@ -35,7 +35,8 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
 
-	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
+	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
+	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
 end
 
 function Player:destructor()
@@ -194,7 +195,7 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
-	self:toggleControlsWhileObjectAttached(true)
+	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
 end
 
@@ -1223,44 +1224,48 @@ function Player:getPlayersInChatRange( irange)
 	return playersInRange
 end
 
-function Player:toggleControlsWhileObjectAttached(bool)
-	if bool then
-		if not getElementData(self,"schutzzone") then
-			toggleControl(self, "jump", bool )
-			toggleControl(self, "fire", bool )
-			toggleControl(self, "sprint", bool )
-			toggleControl(self, "next_weapon", bool )
-			toggleControl(self, "previous_weapon", bool )
-			toggleControl(self, "enter_exit", bool )
-			toggleControl(self, "enter_passenger", bool )
-		end
-	else
-		toggleControl(self, "jump", bool )
+function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprint, blockJump, blockVehicle)
+	--if bool == true --enable controls, else, disable controls
+	if (bool and (blockWeapons and not getElementData(self,"schutzzone")) or (not bool and blockWeapons)) then		
 		toggleControl(self, "fire", bool )
-		toggleControl(self, "sprint", bool )
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
-		toggleControl(self, "enter_exit", bool )
-		toggleControl(self, "enter_passenger", bool )
 	end
+	if blockSprint then		toggleControl(self, "sprint", bool)	end
+	if blockJump then	toggleControl(self, "jump", bool)	end
+	if blockVehicle then
+		toggleControl(self, "enter_exit", bool)
+		toggleControl(self, "enter_passenger", bool)
+	end
+	
 end
 
-function Player:attachPlayerObject(object, allowWeapons)
+function Player:attachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		if not self:getPlayerAttachedObject() then
 			local settings = PlayerAttachObjects[model]
-			object:setCollisionsEnabled(false)
-			object:attach(self, settings["pos"], settings["rot"])
-			if not allowWeapons then
-				self:toggleControlsWhileObjectAttached(false)
+			if settings.blockVehicle and self.vehicle then
+				self:sendError(_("Mit diesem Objekt kannst du nicht in Fahrzeuge einsteigen!", self))
+				return false
 			end
+			object:setCollisionsEnabled(false)
+			object:setDoubleSided(true)
+			if settings["bone"] then
+				exports.bone_attach:attachElementToBone(object, self, settings["bone"], settings["pos"].x, settings["pos"].y, settings["pos"].z, settings["rot"].x, settings["rot"].y, settings["rot"].z)
+			else
+				object:attach(self, settings["pos"], settings["rot"])
+			end
+			
+			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+			
 			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
 			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+			addEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
 			return true
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
@@ -1291,25 +1296,36 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 end
 
 function Player:detachPlayerObject(object, collisionNextFrame)
-	if not self:isLoggedIn() then return end
-	local model = object.model
-	if PlayerAttachObjects[model] then
-		object:detach(self)
-		object:setPosition(self.position + self.matrix.forward)
-		if collisionNextFrame then
-			nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
+	if not isElement(self) or not self:isLoggedIn() then return end
+	if isElement(object) then
+		local model = object.model
+		if PlayerAttachObjects[model] then
+			local settings = PlayerAttachObjects[model]
+			self:toggleControlsWhileObjectAttached(true, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+			object:detach(self)
+			if settings["bone"] then
+				exports.bone_attach:detachElementFromBone(object)
+			else
+				object:detach(self)
+			end
+			object:setPosition(self.position + self.matrix.forward)
+			if collisionNextFrame then
+				nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
+					object:setCollisionsEnabled(true)
+				end)
+			else
 				object:setCollisionsEnabled(true)
-			end)
-		else
-			object:setCollisionsEnabled(true)
+			end
 		end
-		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
-		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-		self:toggleControlsWhileObjectAttached(true)
-		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
-		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
-		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+	else
+		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
 	end
+	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
+	self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+	removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
+	removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+	removeEventHandler("onElementDestroy", self, self.m_detachPlayerObjectFunc)
+	removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 end
 
 function Player:getPlayerAttachedObject()

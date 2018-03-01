@@ -103,16 +103,7 @@ function BankPalomino:startRob(player)
 	self.m_BackDoor:setFrozen(false)
 
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
-	self.m_Truck = TemporaryVehicle.create(428, 2337.54, 16.67, 26.61, 0)
-	self.m_Truck:setData("BankRobberyTruck", true, true)
-    self.m_Truck:setColor(0, 0, 0)
-    self.m_Truck:setLocked(false)
-	self.m_Truck:toggleRespawn(false)
-	self.m_Truck:setMaxHealth(1500, true)
-	self.m_Truck:setBulletArmorLevel(2)
-	self.m_Truck:setRepairAllowed(false)
-	self.m_Truck:setAlwaysDamageable(true)
-	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
+	self:createTruck(2337.54, 16.67, 26.61, 0)
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 end

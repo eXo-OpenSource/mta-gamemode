@@ -1,6 +1,6 @@
 BankRobberyManager = inherit(Singleton)
 BANKROB_VAULT_OPEN_TIME = 3*(60*1000)
-
+--BankRobberyManager:getSingleton().m_Banks["Caligulas"]
 function BankRobberyManager:constructor()
 	self.m_Banks = {}
 	self.m_CurrentBank = false

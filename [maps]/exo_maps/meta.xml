@@ -13,8 +13,8 @@
 
 	<map src="medic_fix.map" />
 	<!--<map src="fun/boxarena.map" />/-->
+	<map src="fun/FourDragons.map" />/
 
-	<map src="aktionen/casino_heist.map" />
 	<map src="aktionen/bankPalomino.map" />
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
