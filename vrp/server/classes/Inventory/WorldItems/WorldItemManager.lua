@@ -9,7 +9,7 @@ WorldItemManager = inherit(Singleton)
 WorldItemManager.Map = {}
 
 function WorldItemManager:constructor() 
-	local result = sql:queryFetch("SELECT * FROM ??_WorldItems")
+	local result = sql:queryFetch("SELECT * FROM ??_WorldItems", sql:getPrefix())
 	local model, item, obj, interior, dimension, posX, posY, posZ, owner, id, worldItemInstance
 	for k, obj in pairs(result) do 
 	
