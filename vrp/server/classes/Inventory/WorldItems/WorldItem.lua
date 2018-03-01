@@ -30,26 +30,37 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_Locked = locked
 	self.m_DatabaseId = 0
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
-	self.m_Object:setInterior(player:getInterior())
-	self.m_Object:setDimension(player:getDimension())
-
+	
+	if type(owner) == "userdata" and getElementType(owner) == "player" then
+		self.m_Object:setInterior(player:getInterior())
+		self.m_Object:setDimension(player:getDimension())
+		self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
+		self.m_Object:setData("Placer", player:getName() or "Unknown", true)
+		self.m_Owner = owner:getId()
+		self.m_Placer = player:getId()
+	else 
+		local ownerName = Account.getNameFromId(owner)
+		local placerName = Account.getNameFromId(player)
+		self.m_Object:setData("Owner", ownerName or owner, true)
+		self.m_Object:setData("Placer", placerName or player, true)
+	end
 	self.m_AttachedElements = {}
 	self.m_Object.m_Super = self
 	--self.m_Object:setBreakable(breakable)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
-	self.m_Object:setData("Owner", ((owner.getShortName and owner:getShortName()) or (owner.getName and owner:getName())) or "Unknown", true)
+	
 	self.m_Object:setData("Name", self.m_ItemName or "Unknown", true)
-	self.m_Object:setData("Placer", player:getName() or "Unknown", true)
 	self.m_Object:setData("PlacedTimestamp", getRealTime().timestamp, true)
 
 	-- Add an entry to the map
-	if not WorldItem.Map[owner] then
-		WorldItem.Map[owner] = {}
+	if not WorldItem.Map[self.m_Owner] then
+		WorldItem.Map[self.m_Owner] = {}
 	end
-	if not WorldItem.Map[owner][self.m_ModelId] then
-		WorldItem.Map[owner][self.m_ModelId] = {}
+	if not WorldItem.Map[self.m_Owner][self.m_ModelId] then
+		WorldItem.Map[self.m_Owner][self.m_ModelId] = {}
 	end
-	WorldItem.Map[owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
+	outputChatBox(self.m_Owner)
+	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = self -- this is for keeping track of players and objects for in-game usage
 	WorldItemManager.Map[self] = 0 -- this is for keeping track of database-related stuff 	
 end
 
@@ -79,7 +90,7 @@ function WorldItem:virtual_destructor()
 	WorldItem.Map[self.m_Owner][self.m_ModelId][self.m_Object] = nil
 end
 
-function WorldItem:onCollect(player, resendList, id, type)
+function WorldItem:onCollect(player, resendList, id, typ)
 	if self:getMovingPlayer() then 
 		player:sendError(_("Dieses Objekt wird von %s verwendet.", player, self:getMovingPlayer():getName())) 
 		return false 
@@ -96,9 +107,15 @@ function WorldItem:onCollect(player, resendList, id, type)
 		if self.m_Item.removeFromWorld then
 			self.m_Item:removeFromWorld(player, self, self.m_Object)
 		end
-		if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
+		if type(self.m_Owner) ~= "number" then
+			if not self.m_Owner.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
+		else 
+			local ownerObj = DatabasePlayer.getFromId(self.m_Owner) 
+			if not ownerObj.m_Disconnecting then player:sendShortMessage(_("%s aufgehoben.", player, self.m_ItemName), nil, nil, 1000) end
+		end
 		delete(self)
-		if resendList then WorldItem.sendItemListToPlayer(id, type, player) end
+		self.m_Delete = true
+		if resendList then WorldItem.sendItemListToPlayer(id, typ, player) end
 		return true
 	end
 	return false
@@ -184,6 +201,9 @@ function WorldItem:getItem()
 	return self.m_Item
 end
 
+function WorldItem:getModel() 
+	return self:getObject() and self:getObject():getModel()
+end
 function WorldItem:getDimension() 
 	return isElement(self.m_Object) and self.m_Object:getDimension()
 end
@@ -205,7 +225,8 @@ function WorldItem:isPermanent()
 end
 
 function WorldItem:hasChanged() 
-	return self.m_HasChanged
+	--return self.m_HasChanged
+	return true
 end
 
 function WorldItem:isLocked() 
@@ -222,7 +243,7 @@ function WorldItem:getDataBaseId()
 end
 
 function WorldItem:isBreakable() 
-	return self:getObject() and isElement(self:getObject()) and isObjectBreakable(self:getObject())
+	return false -- for now since there is no way to get check breakability
 end
 
 function WorldItem:hasPlayerPermissionTo(player, action) --override this with group specific permissions, but always check for admin rights
@@ -244,16 +265,19 @@ function WorldItem.collectAllFromOwner(owner)
 end
 
 function WorldItem.sendItemListToPlayer(id, type, player)
-	local owner
-	if type == "player" then
-		owner = DatabasePlayer.getFromId(id)	
+	local owner = id
+	local name
+	if type == "player" then 
+		name = Account.getNameFromId(id)
 	elseif type == "faction" then
 		owner = FactionManager:getSingleton():getFromId(id)
+		name = owner:getName()
 	elseif type == "company" then
 		owner = FactionManager:getSingleton():getFromId(id)
+		name = owner:getName()
 	end
 	if owner then
-		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, owner:getName(), WorldItem.Map[owner] or {}, id, type)
+		triggerClientEvent(player, "recieveWorldItemListOfOwner", root, name, WorldItem.Map[owner] or {}, id, type)
 	end
 end
 
