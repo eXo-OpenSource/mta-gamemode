@@ -109,7 +109,7 @@ function WorldItemMouseMenu:hasPermissionTo(action, element, ownerPriority)
 		or (localPlayer:getCompany() and localPlayer:getCompany():getName() == superUserName)
 	)
 	if ADMIN_RANK_PERMISSION[action] then --specified action
-		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] then --if allowed
+		if localPlayer:getRank() >= ADMIN_RANK_PERMISSION[action] and localPlayer:getPublicSync("supportMode") then --if allowed
 			return true 
 		end
 
