@@ -41,6 +41,9 @@ function ItemEntrance:addWorldObjectCallback(Id, worldObject)
 		linkedToEntrance, title, desc = tonumber(gettok( value, 7, ":")), gettok(value, 8, ":"), gettok(value, 9, ":")
 	end
 	worldObject:setModel(model)
+	worldObject:setAnonymous(true)
+	worldObject:setAccessRange(10)
+	worldObject:setAccessIntDimCheck(true) 
 	self.m_Entrances[Id] = worldObject
 	if self.m_Entrances[Id] and houseID then
 		object = worldObject:getObject()

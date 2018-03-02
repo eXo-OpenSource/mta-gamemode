@@ -37,6 +37,9 @@ function ItemKeyPad:addWorldObjectCallback(Id, worldObject)
 		pin, updatePin = value, false
 	end
 	self.m_Keypads[Id] = worldObject
+	worldObject:setAnonymous(true)
+	worldObject:setAccessRange(10)
+	worldObject:setAccessIntDimCheck(true) 
 	if self.m_Keypads[Id] and self.m_Keypads[Id].getObject and isElement(self.m_Keypads[Id]:getObject()) then
 		object = self.m_Keypads[Id]:getObject()
 		object:setDoubleSided(true)

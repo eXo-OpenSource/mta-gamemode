@@ -45,6 +45,9 @@ function ItemDoor:addWorldObjectCallback(Id, worldObject)
 		linkedKeyPadList, model, oX, oY, oZ = gettok(value, 1, ":") or "#", tonumber(gettok(value, 2, ":")), tonumber(gettok(value, 3, ":")), tonumber(gettok(value, 4, ":")), tonumber(gettok(value, 5, ":"))
 	end
 	worldObject:setModel(model)
+	worldObject:setAnonymous(true)
+	worldObject:setAccessRange(10)
+	worldObject:setAccessIntDimCheck(true) 
 	self.m_Doors[Id] = worldObject
 	if self.m_Doors[Id] then
 		local object = self.m_Doors[Id]:getObject()
