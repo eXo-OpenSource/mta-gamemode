@@ -16,7 +16,7 @@ addRemoteEvents{"worldItemMove", "worldItemCollect", "worldItemMassCollect", "wo
 
 WorldItem.constructor = pure_virtual
 
-function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked)
+function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, player, isPermanent, locked, value)
 	self.m_Item = item
 	self.m_ItemName = item:getName()
 	self.m_ModelId = item:getModelId()
@@ -31,12 +31,12 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_DatabaseId = 0 -- This represents the database-id from teh vrp_WorldItems table
 	self.m_MaxAccessRange = 0 -- This is the range at which the object can be picked up via the placedObjects-GUI ( 0 stands for infinite )
 	self.m_AccessIntDim = false -- If set to true the player must be in the same dimension/interior as the item in order to pick it up
-
-	
+	self.m_Value = value or "" -- This will be used to store meta-info about the world-item
 	
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
 	self.m_Object:setData("WorldItem:AccessRange", 0, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
 	self.m_Object:setData("WorldItem:IntDimCheck", false, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
+	
 	if type(owner) == "userdata" and getElementType(owner) == "player" then
 		self.m_Object:setInterior(player:getInterior())
 		self.m_Object:setDimension(player:getDimension())
@@ -139,6 +139,39 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		return true
 	end
 	return false
+end
+
+function WorldItem:forceSave() 
+	if self:isPermanent() and self:getDataBaseId() <= 0 then 
+		local pos = self:getObject():getPosition()
+		local rot = self:getObject():getRotation()
+		sql:queryExec("INSERT INTO ??_WorldItems (Item, Model, Owner, PosX, posY, posZ, Rotation, Value, Interior, Dimension, Breakable, Locked, Date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())", sql:getPrefix(),
+		self:getItem():getName() or "Generic", self:getModel(), self:getOwner(), pos.x, pos.y, pos.z, rot.z, self:getValue(), self:getInterior(), self:getDimension(), self:isBreakable(), self:isLocked())
+		self.m_HasChanged = false
+		local rowId = sql:lastInsertId()
+		self:setDataBaseId(rowId)
+		outputDebugString("-- Force Saved WorldItem "..rowId.." into Database! --")
+		return rowId
+	end
+	return false
+end
+
+function WorldItem:forceDelete() 
+	if self:isPermanent() then 
+		if self:getDataBaseId() > 0 then
+			local id = self:getDataBaseId()
+			self:setDataBaseId(0)
+			sql:queryExec("DELETE FROM ??_WorldItems WHERE Id=?", sql:getPrefix(), id)
+			outputDebugString("-- Force Deleted WorldItem "..id.." from Database! --")
+		end
+		delete(self)
+		self.m_Delete = true
+		self.m_HasChanged = true
+	else 
+		delete(self)
+		self.m_Delete = true
+		self.m_HasChanged = true
+	end
 end
 
 function WorldItem:onDelete(player, resendList, id, type)
@@ -247,6 +280,10 @@ function WorldItem:isPermanent()
 	return self.m_IsPermanent
 end
 
+function WorldItem:setPermanent(state)
+	self.m_IsPermanent = state
+end
+
 function WorldItem:hasChanged() 
 	return self.m_HasChanged
 end
@@ -281,8 +318,24 @@ function WorldItem:setDataBaseId(id)
 	end
 end
 
+function WorldItem:setValue(value) 
+	self.m_Value = value
+end
+
+function WorldItem:getValue()
+	return self.m_Value
+end
+ 
 function WorldItem:getDataBaseId() 
 	return self.m_DatabaseId
+end
+
+function WorldItem:setModel(model)
+	return self.getObject and isElement(self:getObject()) and self:getObject():setModel(model)
+end
+
+function WorldItem:getModel() 
+	return self.getObject and isElement(self:getObject()) and self:getObject():getModel()
 end
 
 function WorldItem:isBreakable() 

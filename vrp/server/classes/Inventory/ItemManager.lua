@@ -116,18 +116,7 @@ function ItemManager:constructor()
 end
 
 function ItemManager:updateOnQuit() 
-	if ItemManager.Map["Keypad"] then 
-		ItemManager.Map["Keypad"]:delete() 
-	end
-	if ItemManager.Map["Tor"] then 
-		ItemManager.Map["Tor"]:delete() 
-	end
-	if ItemManager.Map["Eingang"] then 
-		ItemManager.Map["Eingang"]:delete() 
-	end
-	if ItemManager.Map["Transmitter"] then 
-		ItemManager.Map["Transmitter"]:delete() 
-	end
+
 end
 
 function ItemManager:Event_onItemBreak()
