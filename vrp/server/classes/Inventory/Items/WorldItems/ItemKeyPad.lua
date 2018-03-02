@@ -23,7 +23,7 @@ function ItemKeyPad:destructor()
 	for id , obj in pairs(self.m_Keypads) do 
 		if obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdatePin then 
 			obj:setValue(obj:getObject().Pin)
-			obj.m_HasChanged = true
+			obj:onChanged()
 		end
 	end
 end

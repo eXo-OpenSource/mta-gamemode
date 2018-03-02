@@ -389,7 +389,7 @@ function ItemEntrance:destructor()
 				x, y, z, linkToEntrance = "#", "#", "#", "#"
 			end
 			obj:setValue(rebuildKeyListString..":"..obj:getModel()..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance..":"..title..":"..desc, obj:getObject().Id)
-			obj.m_HasChanged = true
+			obj:onChanged()
 		end
 	end
 end

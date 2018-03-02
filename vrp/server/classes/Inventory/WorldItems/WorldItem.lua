@@ -89,7 +89,7 @@ function WorldItem:attach(ele, offsetPos, offsetRot)
 		ele:attach(self.m_Object, offsetPos or Vector3(0, 0, 0), offsetRot or Vector3(0, 0, 0))
 		if getElementType(ele) == "object" then
 			setElementData(ele, "worlditem_attachment", self.m_Object)
-			self.m_HasChanged = true
+			self:onChanged()
 		end
 		return ele
 	end
@@ -135,7 +135,7 @@ function WorldItem:onCollect(player, resendList, id, typ)
 		end
 		delete(self)
 		self.m_Delete = true
-		self.m_HasChanged = true
+		self:onChanged()
 		if resendList then WorldItem.sendItemListToPlayer(id, typ, player) end
 		return true
 	end
@@ -167,11 +167,9 @@ function WorldItem:forceDelete()
 		end
 		delete(self)
 		self.m_Delete = true
-		self.m_HasChanged = true
 	else 
 		delete(self)
 		self.m_Delete = true
-		self.m_HasChanged = true
 	end
 end
 
@@ -223,7 +221,7 @@ function WorldItem:onMove(player)
 					self.m_Object:setInterior(player:getInterior())
 					self.m_Object:setDimension(player:getDimension())
 					self.m_Object:setCollisionsEnabled(true)
-					self.m_HasChanged = true
+					self:onChanged()
 				end)
 			end
 			self.m_CurrentMovingPlayer = nil
@@ -292,6 +290,10 @@ end
 
 function WorldItem:getAnonymous( ) 
 	return self.m_Anonymous
+end
+
+function WorldItem:onChanged() 
+	self.m_HasChanged = true
 end
 
 function WorldItem:hasChanged() 

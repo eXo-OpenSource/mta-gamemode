@@ -28,7 +28,7 @@ function ItemDoor:destructor()
 		if obj and obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdateDoor then 
 			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
 			obj:setValue(rebuildKeyListString..":"..getElementModel(obj:getObject())..":"..obj:getObject().openPos.x..":"..obj:getObject().openPos.y..":"..obj:getObject().openPos.z)
-			obj.m_HasChanged = true
+			obj:onChanged()
 		end
 	end
 end

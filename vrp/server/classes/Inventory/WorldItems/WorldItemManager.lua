@@ -1,15 +1,15 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Inventory/WorldItems/PermanentWorldItem.lua
--- *  PURPOSE:     This class represents an item in the world (drop and collectable)
+-- *  FILE:        server/classes/Inventory/WorldItems/WorldItemManager.lua
+-- *  PURPOSE:     This class manages WorldItems
 -- *
 -- ****************************************************************************
 WorldItemManager = inherit(Singleton) 
 WorldItemManager.Map = {}
 
 function WorldItemManager:constructor() 
-	self.m_CallbackMap = 
+	self.m_CallbackMap = -- functions that are called once a specific world-item is created for an item
 	{
 		["Tor"] =  ItemManager:getSingleton():getInstance("Tor").addWorldObjectCallback, 
 		["Keypad"] =  ItemManager:getSingleton():getInstance("Keypad").addWorldObjectCallback,
@@ -37,9 +37,7 @@ function WorldItemManager:destructor()
 	for obj, id in pairs(WorldItemManager.Map) do 
 		if not obj.m_Delete then
 			if obj and obj:isPermanent() then 
-				pos = obj:getObject():getPosition()
-				rot = obj:getObject():getRotation()
-				value = obj:getValue()
+				pos, rot, value = obj:getObject():getPosition(), obj:getObject():getRotation(), obj:getValue()
 				if id > 0 then
 					if obj:hasChanged() then
 						sql:queryExec("UPDATE ??_WorldItems SET PosX=?, PosY=?, PosZ=?, Rotation=?, Value=?, Locked=? WHERE Id=?", sql:getPrefix(), pos.x, pos.y, pos.z, rot.z, obj:getValue(), obj:isLocked(), id)
