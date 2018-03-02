@@ -36,6 +36,7 @@ function WorldItem:virtual_constructor(item, owner, pos, rotation, breakable, pl
 	self.m_Object = createObject(self.m_ModelId, pos, 0, 0, rotation)
 	self.m_Object:setData("WorldItem:AccessRange", 0, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
 	self.m_Object:setData("WorldItem:IntDimCheck", false, true) -- this will be used at the client WorldItemOverViewGUI to filter out elements that are not in reach
+	self.m_Object:setData("WorldItem:anonymousInfo", false, true) -- this will be used to hide infomration from users if wished
 	
 	if type(owner) == "userdata" and getElementType(owner) == "player" then
 		self.m_Object:setInterior(player:getInterior())
@@ -282,6 +283,15 @@ end
 
 function WorldItem:setPermanent(state)
 	self.m_IsPermanent = state
+end
+
+function WorldItem:setAnonymous( state ) 
+	self.m_Anonymous = state
+	self.m_Object:setData("WorldItem:anonymousInfo", state, true)
+end
+
+function WorldItem:getAnonymous( ) 
+	return self.m_Anonymous
 end
 
 function WorldItem:hasChanged() 

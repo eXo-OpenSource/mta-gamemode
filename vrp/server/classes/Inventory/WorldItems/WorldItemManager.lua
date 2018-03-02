@@ -25,6 +25,7 @@ function WorldItemManager:constructor()
 		worldItemInstance:setValue(value)
 		worldItemInstance:setInterior(interior) 
 		worldItemInstance:setDimension(dimension)
+		worldItemInstance:setAnonymous(true)
 		if self.m_CallbackMap[item] then 
 			self.m_CallbackMap[item](ItemManager:getSingleton():getInstance(item), id, worldItemInstance)
 		end

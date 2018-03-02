@@ -10,9 +10,11 @@ WorldItemInformationMouseMenu = inherit(GUIMouseMenu)
 
 function WorldItemMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1)
-
-    self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
-	
+	if not element:getData("WorldItem:anonymousInfo") then
+		self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
+	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then 
+		self:addItem(_("Besitzer: %s", tostring(element:getData("Owner")))):setTextColor(Color.Red)
+	end
 	self:addItem(_("Objekt: %s", tostring(element:getData("Name")))):setTextColor(Color.LightBlue)
 
 	self:addModelSpecificItems(element)
@@ -136,9 +138,12 @@ end
 
 function WorldItemInformationMouseMenu:constructor(posX, posY, element)
     GUIMouseMenu.constructor(self, posX, posY, 300, 1)
-
-    self:addItem(_("Ersteller: %s", element:getData("Placer"))):setTextColor(Color.White)
-    self:addItem(_("Zeit: %s", getOpticalTimestamp(element:getData("PlacedTimestamp")))):setTextColor(Color.White)
+	if not element:getData("WorldItem:anonymousInfo") then
+		self:addItem(_("Ersteller: %s", element:getData("Placer"))):setTextColor(Color.White)
+	elseif localPlayer:getRank() > 4 and localPlayer:getPublicSync("supportMode") then 
+		self:addItem(_("Ersteller: %s", element:getData("Placer"))):setTextColor(Color.White)
+    end
+	self:addItem(_("Zeit: %s", getOpticalTimestamp(element:getData("PlacedTimestamp")))):setTextColor(Color.White)
     self:addItem(_("min. Rang: %s", element:getData("MinRank") or 0)):setTextColor(Color.White)
     self:addItem(_("Superowner: %s", element:getData("SuperOwner") and element:getData("Owner") or element:getData("Placer"))):setTextColor(Color.White)
 	self:addItem(_("Model: %s", tostring(getElementModel(element)))):setTextColor(Color.White)
