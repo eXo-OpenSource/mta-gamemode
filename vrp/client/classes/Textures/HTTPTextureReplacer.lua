@@ -5,9 +5,9 @@ HTTPTextureReplacer.ClientPath = "files/images/Textures/remote/%s"
 HTTPTextureReplacer.Queue = Queue:new()
 
 -- normal methods
-function HTTPTextureReplacer:constructor(element, fileName, textureName, options)
+function HTTPTextureReplacer:constructor(element, fileName, textureName, options, force)
 	assert(fileName and fileName:len() > 0 and (fileName:find(HTTPTextureReplacer.BasePath) or fileName:find(HTTPTextureReplacer.ExternalPath)), "Bad Argument @ HTTPTextureReplacer:constructor #2")
-	TextureReplacer.constructor(self, element, textureName, options)
+	TextureReplacer.constructor(self, element, textureName, options, force)
 	self.m_PathType = 1 
 	if fileName:find(HTTPTextureReplacer.ExternalPath) then self.m_PathType = 2 end
 	if self.m_PathType == 2 then
