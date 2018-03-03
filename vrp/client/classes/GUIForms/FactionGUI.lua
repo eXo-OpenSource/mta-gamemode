@@ -478,33 +478,46 @@ function FactionGUI:onGangwarItemSelect(item)
 			end
 		end
 	elseif item == self.m_GangAttackBestLog then 
+		ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 		self.m_GangAttackTab = GUITabPanel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.62, self.m_Height*0.85, self.m_tabGangwar)
 		local tabWidth, tabHeight = self.m_GangAttackTab:getSize()
 		self.m_GangAttackDamageTab = self.m_GangAttackTab:addTab(_("Schaden"))
 			self.m_GangAttackDamageGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackDamageTab)
+			self.m_GangAttackDamageGrid:addColumn(_"", 0.1)
 			self.m_GangAttackDamageGrid:addColumn(_"Name", 0.6)
-			self.m_GangAttackDamageGrid:addColumn(_"Damage", 0.4)
+			self.m_GangAttackDamageGrid:addColumn(_"Damage", 0.3)
 			if self.m_GangwarTopDamageTable then 
+				if self.m_GangwarLocalTopTable then 
+					self.m_GangAttackDamageGrid:addItem( "#"..self.m_GangwarLocalTopTable[5], "- Du -", self.m_GangwarLocalTopTable[2] ):setColor(Color.LightBlue)
+				end
 				for i = 1, #self.m_GangwarTopDamageTable do 
-					self.m_GangAttackDamageGrid:addItem( self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] ) 
+					self.m_GangAttackDamageGrid:addItem( "#"..i,self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] ) 
 				end
 			end
 		self.m_GangAttackKillTab = self.m_GangAttackTab:addTab(_("Tötungen"))
 			self.m_GangAttackKillGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackKillTab)
+			self.m_GangAttackKillGrid:addColumn(_"", 0.1)
 			self.m_GangAttackKillGrid:addColumn(_"Name", 0.6)
-			self.m_GangAttackKillGrid:addColumn(_"Kills", 0.4)
+			self.m_GangAttackKillGrid:addColumn(_"Kills", 0.3)
 			if self.m_GangwarTopKillTable then 
+				if self.m_GangwarLocalTopTable then 
+					self.m_GangAttackKillGrid:addItem( "#"..self.m_GangwarLocalTopTable[6], "- Du -", self.m_GangwarLocalTopTable[3] ):setColor(Color.LightBlue)
+				end
 				for i = 1, #self.m_GangwarTopKillTable do 
-					self.m_GangAttackKillGrid:addItem( self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] ) 
+					self.m_GangAttackKillGrid:addItem( "#"..i, self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] ) 
 				end
 			end
 		self.m_GangAttackMVPTab = self.m_GangAttackTab:addTab(_("MVP"))
 			self.m_GangAttackMVPGrid = GUIGridList:new(tabWidth*0.025, tabHeight*0.05, tabWidth*0.93, tabHeight*0.85, self.m_GangAttackMVPTab)
+			self.m_GangAttackMVPGrid:addColumn(_"", 0.1)
 			self.m_GangAttackMVPGrid:addColumn(_"Name", 0.6)
-			self.m_GangAttackMVPGrid:addColumn(_"Sterne", 0.4)
+			self.m_GangAttackMVPGrid:addColumn(_"Sterne", 0.3)
 			if self.m_GangwarTopMVPTable then 
+				if self.m_GangwarLocalTopTable then 
+					self.m_GangAttackMVPGrid:addItem( "#"..self.m_GangwarLocalTopTable[7], "- Du -", self.m_GangwarLocalTopTable[4] ):setColor(Color.LightBlue)
+				end
 				for i = 1, #self.m_GangwarTopKillTable do 
-					self.m_GangAttackMVPGrid:addItem( self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] ) 
+					self.m_GangAttackMVPGrid:addItem( "#"..i, self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] ) 
 				end
 			end
 	else
@@ -537,10 +550,11 @@ function FactionGUI:Event_gangwarLoadAttackLog( aTable )
 	self.m_GangwarAttackLog = aTable
 end
 
-function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp)
+function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp, localToplist)
 	self.m_GangwarTopDamageTable = damage 
 	self.m_GangwarTopKillTable = kills 
 	self.m_GangwarTopMVPTable = mvp
+	self.m_GangwarLocalTopTable = localToplist
 end
 
 function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
