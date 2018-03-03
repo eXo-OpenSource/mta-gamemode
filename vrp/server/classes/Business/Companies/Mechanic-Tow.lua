@@ -328,7 +328,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 		exports.bone_attach:attachElementToBone(client.mechanic_fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
 		client:setPrivateSync("hasMechanicFuelNozzle", vehicle)
-		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel())
+		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel(), vehicle:getFuelTankSize(true))
 		toggleControl(client, "fire", false)
 	end
 end
@@ -364,7 +364,8 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 	end
 
 	local fuelTank = client:getPrivateSync("hasMechanicFuelNozzle")
-	if fuel > fuelTank:getFuel()*5 then
+	local fuelTrailer = vehicle:getModel()
+	if (fuelTrailer == 611 and fuel > fuelTank:getFuel()*5) or (fuelTrailer == 584 and fuel > fuelTank:getFuel()*15) then
 		client:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
 	end
@@ -378,7 +379,9 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
 	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
-	if fuel > fuelTank:getFuel()*5 then
+	local fuelTrailer = vehicle:getModel()
+
+	if (fuelTrailer == 611 and fuel > fuelTank:getFuel()*5) or (fuelTrailer == 584 and fuel > fuelTank:getFuel()*15) then
 		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
 	end
@@ -390,7 +393,14 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 		self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
 		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
 
-		fuelTank:setFuel(fuelTank:getFuel() - fuel/5)
+		local fuelDiff
+		if fuelTrailer == 611 then
+			fuelDiff = fuel / 5
+		elseif fuelDiff == 584 then
+			fuelDiff = fuel / 15
+		end
+
+		fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
 		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())
 	else
 		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))

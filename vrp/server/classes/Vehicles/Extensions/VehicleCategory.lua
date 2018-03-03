@@ -63,8 +63,16 @@ function VehicleCategory:getCategoryFuelType(category)
     return self.m_CategoryData[category].fuelType
 end
 
-function VehicleCategory:getCategoryFuelTankSize(category)
-    if not self.m_CategoryData[category] then return false end
+function VehicleCategory:getCategoryFuelTankSize(category, model)
+    if not self.m_CategoryData[category] then
+		local customData = self:getCustomModelData(model)
+
+		if customData then
+			return customData.fuelTankSize
+		end
+
+		return false
+	end
     return self.m_CategoryData[category].fuelTankSize
 end
 

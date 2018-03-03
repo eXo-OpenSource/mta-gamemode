@@ -58,7 +58,7 @@ function MechanicTow:renderFuelHose()
 
 				if localPlayer:getPrivateSync("hasMechanicFuelNozzle") then
 					local worldVehicle = localPlayer:getWorldVehicle()
-					if worldVehicle and (worldVehicle:getModel() ~= 611 or worldVehicle:getModel() ~= 584) and worldVehicle ~= localPlayer.lastWorldVehicle and worldVehicle:getFuelType() ~= "nofuel" then
+					if worldVehicle and worldVehicle:getModel() ~= 611 and worldVehicle:getModel() ~= 584 and worldVehicle ~= localPlayer.lastWorldVehicle and worldVehicle:getFuelType() ~= "nofuel" then
 						localPlayer.lastWorldVehicle = worldVehicle
 
 						VehicleFuel.forceClose()
