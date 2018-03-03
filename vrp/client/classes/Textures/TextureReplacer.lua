@@ -91,7 +91,7 @@ function TextureReplacer:attach()
 	if not self.m_Texture or not isElement(self.m_Texture) then return TextureReplacer.Status.FAILURE end
 	if self.m_Shader then return TextureReplacer.Status.FAILURE end
 
-	self.m_Shader = DxShader("files/shader/texreplace.fx")
+	self.m_Shader = DxShader("files/shader/texreplace.fx", 0, 0, false, "all")
 	if not self.m_Shader then
 		self.m_Active = false
 		error(("Error @ TextureReplacer:attach, shader failed to create! [Element: %s]"):format(inspect(self.m_Element or "STATIC")))
