@@ -23,14 +23,19 @@ TextureReplacer.load   = pure_virtual
 TextureReplacer.unload = pure_virtual
 
 -- normal methods
-function TextureReplacer:constructor(element, textureName, options)
+function TextureReplacer:constructor(element, textureName, options, force)
 	assert(textureName and textureName:len() > 0, "Bad Argument @ TextureReplacer:constructor #2")
-
 	self.m_Element     = element
 	self.m_TextureName = textureName
-	self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
+	self.m_Force = force
+	
+	if self.m_Force then
+		self.m_LoadingMode = TEXTURE_LOADING_MODE.PERMANENT
+	else 
+		self.m_LoadingMode = core:get("Other", "TextureMode", TEXTURE_LOADING_MODE.DEFAULT)
+	end
+	
 	self.m_Active      = true
-
 	self.m_OnElementDestroy   = bind(delete, self)
 	self.m_OnElementStreamIn  = bind(self.onStreamIn, self)
 	self.m_OnElementStreamOut = bind(self.onStreamOut, self)
@@ -50,7 +55,6 @@ function TextureReplacer:constructor(element, textureName, options)
 			self.m_Active = false
 		end
 	end
-
 	-- Save instance to map
 	TextureReplacer.addRef(self)
 end
@@ -117,29 +121,31 @@ function TextureReplacer:detach()
 end
 
 function TextureReplacer:setLoadingMode(loadingMode)
-	if loadingMode == self.m_LoadingMode then return false end
-	self.m_Active = true
-	self:unload()
+	if not self.m_Force then
+		if loadingMode == self.m_LoadingMode then return false end
+		self.m_Active = true
+		self:unload()
 
-	if self.m_Element then
-		if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
-			removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
-			removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
-		end
-
-		if loadingMode == TEXTURE_LOADING_MODE.STREAM then
-			addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
-			addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
-			if isElementStreamedIn(self.m_Element) then
-				self:onStreamIn()
+		if self.m_Element then
+			if self.m_LoadingMode == TEXTURE_LOADING_MODE.STREAM then
+				removeEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+				removeEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 			end
-		elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
-			self:addToLoadingQeue()
-		elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
-			self.m_Active = false
+	
+			if loadingMode == TEXTURE_LOADING_MODE.STREAM then
+				addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
+				addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+				if isElementStreamedIn(self.m_Element) then
+					self:onStreamIn()
+				end
+			elseif loadingMode == TEXTURE_LOADING_MODE.PERMANENT then
+				self:addToLoadingQeue()
+			elseif loadingMode == TEXTURE_LOADING_MODE.NONE then
+				self.m_Active = false
+			end
 		end
+		self.m_LoadingMode = loadingMode
 	end
-	self.m_LoadingMode = loadingMode
 end
 
 function TextureReplacer.addRef(instance)
@@ -181,13 +187,15 @@ end
 
 --// Queue
 function TextureReplacer:addToLoadingQeue()
-	if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", true) then
-		self:unload()
-		return false
-	end
-	if instanceof(self, HTTPTextureReplacer) and not core:get("Other", "HTTPTexturesEnabled", true) then
-		self:unload()
-		return false
+	if not self.m_Force then
+		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", true) then
+			self:unload()
+			return false
+		end
+		if instanceof(self, HTTPTextureReplacer) and not core:get("Other", "HTTPTexturesEnabled", true) then
+			self:unload()
+			return false
+		end
 	end
 
 	if TextureReplacer.Queue:empty() then
@@ -285,9 +293,9 @@ addEventHandler("changeElementTexture", root,
 			end
 			--outputDebug("new texture for "..inspect(vehData.vehicle).." optional: "..inspect(vehData.optional))
 			if string.find(vehData.texturePath, "https://") or string.find(vehData.texturePath, "http://") then
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = HTTPTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture)
 			else
-				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName)
+				TextureReplacer.Map.SERVER_ELEMENTS[vehData.vehicle][vehData.textureName] = FileTextureReplacer:new(vehData.vehicle, vehData.texturePath, vehData.textureName, {}, vehData.forceTexture)
 			end
 		end
 

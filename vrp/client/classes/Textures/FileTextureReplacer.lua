@@ -1,9 +1,9 @@
 FileTextureReplacer = inherit(TextureReplacer)
 FileTextureReplacer.ClientPath = "files/images/Textures/%s"
 
-function FileTextureReplacer:constructor(element, fileName, textureName, options)
+function FileTextureReplacer:constructor(element, fileName, textureName, options, force)
 	assert(fileName and fileName:len() > 0, "Bad Argument @ FileTextureReplacer:constructor #2")
-	TextureReplacer.constructor(self, element, textureName, options)
+	TextureReplacer.constructor(self, element, textureName, options, force)
 
 	self.m_FileName = fileName:gsub("files/images/Textures/", "")
 end
