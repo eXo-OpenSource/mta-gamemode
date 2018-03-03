@@ -488,7 +488,9 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackDamageGrid:addColumn(_"Damage", 0.3)
 			if self.m_GangwarTopDamageTable then 
 				if self.m_GangwarLocalTopTable then 
-					self.m_GangAttackDamageGrid:addItem( "#"..self.m_GangwarLocalTopTable[5], "- Du -", self.m_GangwarLocalTopTable[2] ):setColor(Color.LightBlue)
+					if self.m_GangwarLocalTopTable[5] and self.m_GangwarLocalTopTable[2] then
+						self.m_GangAttackDamageGrid:addItem( "#"..self.m_GangwarLocalTopTable[5], "- Du -", self.m_GangwarLocalTopTable[2] ):setColor(Color.LightBlue)
+					end
 				end
 				for i = 1, #self.m_GangwarTopDamageTable do 
 					self.m_GangAttackDamageGrid:addItem( "#"..i,self.m_GangwarTopDamageTable[i][1], self.m_GangwarTopDamageTable[i][2] ) 
@@ -501,7 +503,9 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackKillGrid:addColumn(_"Kills", 0.3)
 			if self.m_GangwarTopKillTable then 
 				if self.m_GangwarLocalTopTable then 
-					self.m_GangAttackKillGrid:addItem( "#"..self.m_GangwarLocalTopTable[6], "- Du -", self.m_GangwarLocalTopTable[3] ):setColor(Color.LightBlue)
+					if self.m_GangwarLocalTopTable[6] and self.m_GangwarLocalTopTable[3] then
+						self.m_GangAttackKillGrid:addItem( "#"..self.m_GangwarLocalTopTable[6], "- Du -", self.m_GangwarLocalTopTable[3] ):setColor(Color.LightBlue)
+					end
 				end
 				for i = 1, #self.m_GangwarTopKillTable do 
 					self.m_GangAttackKillGrid:addItem( "#"..i, self.m_GangwarTopKillTable[i][1], self.m_GangwarTopKillTable[i][2] ) 
@@ -514,7 +518,9 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_GangAttackMVPGrid:addColumn(_"Sterne", 0.3)
 			if self.m_GangwarTopMVPTable then 
 				if self.m_GangwarLocalTopTable then 
-					self.m_GangAttackMVPGrid:addItem( "#"..self.m_GangwarLocalTopTable[7], "- Du -", self.m_GangwarLocalTopTable[4] ):setColor(Color.LightBlue)
+					if self.m_GangwarLocalTopTable[7] and self.m_GangwarLocalTopTable[4] then
+						self.m_GangAttackMVPGrid:addItem( "#"..self.m_GangwarLocalTopTable[7], "- Du -", self.m_GangwarLocalTopTable[4] ):setColor(Color.LightBlue)
+					end
 				end
 				for i = 1, #self.m_GangwarTopKillTable do 
 					self.m_GangAttackMVPGrid:addItem( "#"..i, self.m_GangwarTopMVPTable[i][1], self.m_GangwarTopMVPTable[i][2] ) 

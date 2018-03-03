@@ -116,26 +116,46 @@ function GangwarStatistics:getPlayerStats( player )
 		local user = player:getId() 
 		if not GangwarStatistics.CacheStats[user] then
 			local result = sqlLogs:queryFetchSingle("SELECT * FROM ??_GangwarTopList WHERE UserId = ?", sqlLogs:getPrefix(), user)
-			GangwarStatistics.CacheStats[user] = { getTickCount(), result.Damage, result.Kills, result.MVP }
-			local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Damage >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), result.Damage, sqlLogs:getPrefix(), user)
-			table.insert(GangwarStatistics.CacheStats[user], result.Position)
-			local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Kills >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][3], sqlLogs:getPrefix(), user)
-			table.insert(GangwarStatistics.CacheStats[user], result.Position)
-			local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE MVP >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][4], sqlLogs:getPrefix(), user)
-			table.insert(GangwarStatistics.CacheStats[user], result.Position)
+			if result then
+				GangwarStatistics.CacheStats[user] = { getTickCount(), result.Damage, result.Kills, result.MVP }
+				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Damage >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), result.Damage, sqlLogs:getPrefix(), user)
+				if result then
+					table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+				end
+				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Kills >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][3], sqlLogs:getPrefix(), user)
+				if result then
+					table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+				end
+				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE MVP >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][4], sqlLogs:getPrefix(), user)
+				if result then
+					table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+				end
+			else 
+				GangwarStatistics.CacheStats[user] = { getTickCount(), 0, 0, 0, "-", "-", "-" }
+			end
 			return GangwarStatistics.CacheStats[user]
 		else
 			local user = player:getId() 
 			local lastUpdated = GangwarStatistics.CacheStats[user][1]
 			if not lastUpdated or ( now >= lastUpdated+CACHE_TIME) then 
 				local result = sqlLogs:queryFetchSingle("SELECT * FROM ??_GangwarTopList WHERE UserId = ?", sqlLogs:getPrefix(), user)
-				GangwarStatistics.CacheStats[user] = { getTickCount(), result.Damage, result.Kills, result.MVP }
-				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Damage >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), result.Damage, sqlLogs:getPrefix(), player)
-				table.insert(GangwarStatistics.CacheStats[user], result.Position)
-				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Kills >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][3], sqlLogs:getPrefix(), user)
-				table.insert(GangwarStatistics.CacheStats[user], result.Position)
-				local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE MVP >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][4], sqlLogs:getPrefix(), user)
-				table.insert(GangwarStatistics.CacheStats[user], result.Position)
+				if result then
+					GangwarStatistics.CacheStats[user] = { getTickCount(), result.Damage, result.Kills, result.MVP }
+					local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Damage >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), result.Damage, sqlLogs:getPrefix(), user)
+					if result then
+						table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+					end
+					local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE Kills >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][3], sqlLogs:getPrefix(), user)
+					if result then
+						table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+					end
+					local result = sqlLogs:queryFetchSingle("SELECT (SELECT COUNT(*) FROM ??_GangwarTopList WHERE MVP >= ?) AS Position FROM ??_GangwarTopList WHERE UserId=?", sqlLogs:getPrefix(), GangwarStatistics.CacheStats[user][4], sqlLogs:getPrefix(), user)
+					if result then
+						table.insert(GangwarStatistics.CacheStats[user], result.Position or "-")
+					end
+				else 
+					GangwarStatistics.CacheStats[user] = { getTickCount(), 0, 0, 0, "-", "-", "-" }
+				end
 				return GangwarStatistics.CacheStats[user]
 			else 
 				return GangwarStatistics.CacheStats[user]
