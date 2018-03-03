@@ -379,9 +379,9 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
 	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
-	local fuelTrailer = vehicle:getModel()
+	local fuelTrailerId = fuelTank:getModel()
 
-	if (fuelTrailer == 611 and fuel > fuelTank:getFuel()*5) or (fuelTrailer == 584 and fuel > fuelTank:getFuel()*15) then
+	if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
 		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
 	end
@@ -394,14 +394,14 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
 
 		local fuelDiff
-		if fuelTrailer == 611 then
+		if fuelTrailerId == 611 then
 			fuelDiff = fuel / 5
-		elseif fuelDiff == 584 then
+		elseif fuelTrailerId == 584 then
 			fuelDiff = fuel / 15
 		end
 
 		fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
-		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())
+		player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
 	else
 		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
 		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
