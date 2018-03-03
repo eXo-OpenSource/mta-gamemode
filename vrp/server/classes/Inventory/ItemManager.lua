@@ -13,6 +13,7 @@ function ItemManager:constructor()
 	self.m_ClassItems = {
 		["Keypad"] = ItemKeyPad,
 		["Tor"] = ItemDoor,
+		["Einrichtung"] = ItemFurniture,
 		["Eingang"] = ItemEntrance,
 		["Transmitter"] = ItemTransmitter,
 		["Barrikade"] = ItemBarricade,

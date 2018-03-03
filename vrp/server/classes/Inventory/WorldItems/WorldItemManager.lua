@@ -14,6 +14,7 @@ function WorldItemManager:constructor()
 		["Tor"] =  ItemManager:getSingleton():getInstance("Tor").addWorldObjectCallback, 
 		["Keypad"] =  ItemManager:getSingleton():getInstance("Keypad").addWorldObjectCallback,
 		["Eingang"] =  ItemManager:getSingleton():getInstance("Eingang").addWorldObjectCallback,
+		["Einrichtung"] = ItemManager:getSingleton():getInstance("Einrichtung").addWorldObjectCallback,
 	}
 	local result = sql:queryFetch("SELECT * FROM ??_WorldItems", sql:getPrefix())
 	local model, item, obj, value, interior, dimension, posX, posY, posZ, owner, id, worldItemInstance
