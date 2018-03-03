@@ -478,7 +478,6 @@ function FactionGUI:onGangwarItemSelect(item)
 			end
 		end
 	elseif item == self.m_GangAttackBestLog then 
-		ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 		self.m_GangAttackTab = GUITabPanel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.62, self.m_Height*0.85, self.m_tabGangwar)
 		local tabWidth, tabHeight = self.m_GangAttackTab:getSize()
 		self.m_GangAttackDamageTab = self.m_GangAttackTab:addTab(_("Schaden"))
@@ -561,6 +560,7 @@ function FactionGUI:Event_gangwarLoadTopList( damage, kills, mvp, localToplist)
 	self.m_GangwarTopKillTable = kills 
 	self.m_GangwarTopMVPTable = mvp
 	self.m_GangwarLocalTopTable = localToplist
+	ShortMessage:new(_("Achtung! Deine eigenen Statistiken werden nur alle 30 Minuten aktualisiert (sofern nicht in den Top-Ten)!"), _"Bestenliste" , {180, 130, 0})
 end
 
 function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, actionStatus)
