@@ -87,7 +87,7 @@ function Core:ready()
 
 	-- Request Browser Domains
 	Browser.requestDomains{"exo-reallife.de"}
-
+	Browser.requestDomains{"i.imgur.com"}
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
