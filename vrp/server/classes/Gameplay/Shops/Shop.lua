@@ -248,7 +248,7 @@ end
 
 
 function Shop:addBlip(blip)
-	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600)
+	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 400)
 	if blip == "Bar.png" then
 		b:setDisplayText("Bar / Club", BLIP_CATEGORY.Leisure)
 		b:setOptionalColor({245, 160, 199})

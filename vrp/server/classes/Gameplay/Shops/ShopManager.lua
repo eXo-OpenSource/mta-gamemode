@@ -67,7 +67,11 @@ function ShopManager:loadShops()
 			local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
 			ShopManager.Map[row.Id] = instance
 			if row.Blip and row.Blip ~= "" then
-				instance:addBlip(row.Blip)
+				local b = instance:addBlip(row.Blip)
+				if row.Type == 1 then b:setOptionalColor({252,235,184}) end --Burger Shot
+				if row.Type == 2 then b:setOptionalColor({186, 142, 98}) end --Cluckin Bell
+				if row.Type == 3 then b:setOptionalColor({170, 150, 100}) end --Pizza Stack
+				if row.Type == 4 then b:setOptionalColor({123, 63, 0}) end --Rusty Brown
 			end
 		end
 	end

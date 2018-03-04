@@ -1378,7 +1378,6 @@
 	<vrpfile src="files/images/Shops/Autobahn.jpg"/>
 	<vrpfile src="files/images/Shops/CouttAndSchutz.jpg"/>
 	<vrpfile src="files/images/Shops/CustomTexture.jpg"/>
-
 	<vrpfile src="files/images/Shops/BankHeader.png"/>
 
 	<vrpfile src="files/images/RockPaperScissors/paper.png"/>
@@ -1391,6 +1390,9 @@
 	<vrpfile src="files/images/Radar/Radar_Monochrome/Radar-small.jpg"/>
 	<!-- Blips -->
 	<vrpfile src="files/images/Radar/Blips/Alarm.png"/>
+	<vrpfile src="files/images/Radar/Blips/BurgerShot.png"/>
+	<vrpfile src="files/images/Radar/Blips/CluckinBell.png"/>
+	<vrpfile src="files/images/Radar/Blips/Donut.png"/>
 	<vrpfile src="files/images/Radar/Blips/Ghost.png"/>
 	<vrpfile src="files/images/Radar/Blips/Evil.png"/>
 	<vrpfile src="files/images/Radar/Blips/LocalPlayer.png"/>
@@ -2040,9 +2042,6 @@
 	<vrpfile src="files/models/objects/a51fensin.dff"/>
 	<vrpfile src="files/models/objects/hedge01_law.col" />
 	<vrpfile src="files/models/objects/hedge01_law.dff" />
-	<vrpfile src="files/models/objects/FortuneWheel.txd" />
-	<vrpfile src="files/models/objects/FortuneWheel.dff" />
-	<vrpfile src="files/models/objects/FortuneWheel.col" />
 	<vrpfile src="files/models/objects/bankServer.txd" />
 	<vrpfile src="files/models/objects/bankServer.col" />
 	<vrpfile src="files/models/objects/bankServer.dff" />
@@ -2112,7 +2111,9 @@
 	<!--<vrpfile src="files/models/objects/XmasTree1.txd" />
 	<vrpfile src="files/models/objects/XmasTree1.dff" />
 	<vrpfile src="files/models/objects/XmasTree1.col" />
-
+	<vrpfile src="files/models/objects/FortuneWheel.txd" />
+	<vrpfile src="files/models/objects/FortuneWheel.dff" />
+	<vrpfile src="files/models/objects/FortuneWheel.col" />
 	<vrpfile src="files/models/objects/XmasBox.txd" />
 	<vrpfile src="files/models/objects/XmasBox.dff" />
 	<vrpfile src="files/models/objects/XmasBox.col" />-->

@@ -45,6 +45,8 @@ function LocalPlayer:constructor()
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addEventHandler("onServerRunString", root, bind(self.Event_RunString, self))
 	addEventHandler("playSound", root, bind(self.Event_PlaySound, self))
+	addEventHandler("playSFX", root, bind(self.Event_PlaySFX, self))
+	addEventHandler("playSFX3D", root, bind(self.Event_PlaySFX3D, self))
 	addEventHandler("stopBleeding", root, bind(self.stopDeathBleeding, self))
 	addEventHandler("restartBleeding", root, bind(self.restartDeathBleeding, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
@@ -684,6 +686,14 @@ function LocalPlayer:Event_PlaySound(path)
 	if type(path) == "string" then
 		playSound(path)
 	end
+end
+
+function LocalPlayer:Event_PlaySFX(container, bankId, soundId, looped)
+	playSFX(container, bankId, soundId, looped)
+end
+
+function LocalPlayer:Event_PlaySFX3D(container, bankId, soundId, x, y, z, looped)
+	playSFX3D(container, bankId, soundId, x, y, z, looped)
 end
 
 function LocalPlayer:getAchievements ()

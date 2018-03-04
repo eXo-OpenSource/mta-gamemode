@@ -224,7 +224,6 @@ function CustomModelManager:constructor()
 	if EVENT_HALLOWEEN then
 		self:loadImportTXD("files/models/skins/ghost.txd", 260)
 		self:loadImportDFF("files/models/skins/ghost.dff", 260)
-
 		self:loadImportCOL("files/models/objects/headstone.col", 3878)
 		self:loadImportTXD("files/models/objects/headstone.txd", 3878)
 		self:loadImportDFF("files/models/objects/headstone.dff", 3878)
@@ -234,10 +233,12 @@ function CustomModelManager:constructor()
 		self:loadImportCOL("files/models/objects/XmasTree1.col", 6972)
 		self:loadImportTXD("files/models/objects/XmasTree1.txd", 6972)
 		self:loadImportDFF("files/models/objects/XmasTree1.dff", 6972)
-
 		self:loadImportCOL("files/models/objects/XmasBox.col", 3878)
 		self:loadImportTXD("files/models/objects/XmasBox.txd", 3878)
 		self:loadImportDFF("files/models/objects/XmasBox.dff", 3878)
+		self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
+		self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
+		self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
 	end
 
 	--Easter Event:
@@ -253,10 +254,6 @@ function CustomModelManager:constructor()
 
 	self:loadImportTXD("files/models/wearables/ChristmasHat.txd", 1936)
 	self:loadImportDFF("files/models/wearables/ChristmasHat.dff", 1936)
-
-	self:loadImportCOL("files/models/objects/fortuneWheel.col", 1895)
-	self:loadImportTXD("files/models/objects/fortuneWheel.txd", 1895)
-	self:loadImportDFF("files/models/objects/fortuneWheel.dff", 1895)
 
 	--shader
 	self:loadShader("RoadSigns/parking1.png", "noparking2_128")
