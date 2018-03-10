@@ -10,7 +10,6 @@ FactionMoneyBagHoverGUI = inherit(GUIRectangle)
 inherit(Singleton, FactionMoneyBagHoverGUI)
 
 function FactionMoneyBagHoverGUI:constructor(bag)
-	outputDebug(inspect(bag))
 	GUIRectangle.constructor(self, screenWidth-200, screenHeight/2-60/2, 160, 60, false)
 	self:setColor(tocolor(0,0,0,150))
 	GUILabel:new(0, 0, self.m_Width, 30, "Geldsack Inhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.LightBlue)

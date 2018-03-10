@@ -73,7 +73,6 @@
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
-	<script src="server/classes/Karma.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
@@ -352,6 +351,7 @@
 	<script src="server/classes/Vehicles/Super/FactionVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/GroupVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleTeleporter.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>

@@ -21,15 +21,13 @@ function VehicleDataExtension:getCategoryName()
 end
 
 function VehicleDataExtension:getFuelType()
-    return VehicleCategory:getSingleton():getCategoryFuelType(self:getCategory())
+    local custom = VehicleCategory:getSingleton():getCustomModelData(self:getModel())
+    return custom and custom.fuelType or VehicleCategory:getSingleton():getCategoryFuelType(self:getCategory())
 end
 
-function VehicleDataExtension:getFuelTankSize(isCustomModel)
-	if isCustomModel then
-		return VehicleCategory:getSingleton():getCategoryFuelTankSize(nil, self:getModel())
-	end
-
-    return VehicleCategory:getSingleton():getCategoryFuelTankSize(self:getCategory())
+function VehicleDataExtension:getFuelTankSize()
+    local custom = VehicleCategory:getSingleton():getCustomModelData(self:getModel())
+    return custom and custom.fuelTankSize or VehicleCategory:getSingleton():getCategoryFuelTankSize(self:getCategory())
 end
 
 function VehicleDataExtension:getFuelConsumptionMultiplicator()
@@ -40,4 +38,10 @@ function VehicleDataExtension:getTax()
     return VehicleCategory:getSingleton():getCategoryTax(self:getCategory())
 end
 
+function VehicleDataExtension:getBaseHeight(asVector)
+    if asVector then
+        return Vector3(0, 0, VehicleCategory:getSingleton():getModelBaseHeight(self:getModel()))
+    end
+    return VehicleCategory:getSingleton():getModelBaseHeight(self:getModel())
+end
 

@@ -29,14 +29,14 @@ function VehicleTuningShop:constructor()
     self.m_GarageInfo = {
         -- Entrance - Exit (pos, rot) - Interior
         {
-            Vector3(1041.4, -1017.5, 31.3), -- LS Temple
-            {Vector3(1041.9, -1031.5, 31.8), 180},
+            Vector3(1041.4, -1017.5, 31), -- LS Temple
+            {Vector3(1041.9, -1031.5, 31.2), 180},
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
         },
 		{
-            Vector3(1448.12, -2438.56, 13.55), -- LS Temple
-            {Vector3(1461.07, -2493.30, 13.71), 270},
-            Vector3(1448.12, -2438.56, 14.7),
+            Vector3(1448.12, -2438.56, 13), -- LS Airport
+            {Vector3(1494.73, -2455.32, 13), 180},
+            Vector3(1448.12, -2438.56, 13),
 			"AirportPainter"
         }
     }
@@ -75,7 +75,7 @@ function VehicleTuningShop:openFor(player, vehicle, garageId, specialType)
     vehicle:setFrozen(true)
     player:setFrozen(true)
     local position = self.m_GarageInfo[garageId][3]
-    vehicle:setPosition(position)
+    vehicle:setPosition(position + vehicle:getBaseHeight(true))
     setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
 
@@ -92,7 +92,7 @@ function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
         local position, rotation = unpack(self.m_GarageInfo[garageId][2])
         if vehicle then
             vehicle:setFrozen(false)
-            vehicle:setPosition(position)
+            vehicle:setPosition(position + vehicle:getBaseHeight(true))
             vehicle:setRotation(0, 0, rotation)
         end
 

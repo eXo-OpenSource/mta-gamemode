@@ -23,6 +23,7 @@ function VehicleObjectLoadExtension:canObjectBeLoaded(objId)
 end
 
 function VehicleObjectLoadExtension:switchObjectLoadingMarker(state)
+    if not VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()] then return false end
     if self.m_LoadingMarkerActive ~= state then
         if state then
             local markerOffset = VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()].loadMarkerPos
@@ -70,7 +71,6 @@ end
 function VehicleObjectLoadExtension:Event_OnLoadingMarkerHit(hitEle, dim)
     if not dim then return false end
     if getElementType(hitEle) == "player" then
-        outputDebug(hitEle:getPlayerAttachedObject())
         if hitEle:getPlayerAttachedObject() then
             self:tryLoadObject(hitEle, hitEle:getPlayerAttachedObject())
         else

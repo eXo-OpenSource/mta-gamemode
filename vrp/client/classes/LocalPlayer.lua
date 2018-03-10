@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -49,6 +49,7 @@ function LocalPlayer:constructor()
 	addEventHandler("playSFX3D", root, bind(self.Event_PlaySFX3D, self))
 	addEventHandler("stopBleeding", root, bind(self.stopDeathBleeding, self))
 	addEventHandler("restartBleeding", root, bind(self.restartDeathBleeding, self))
+	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
@@ -398,6 +399,10 @@ function LocalPlayer:abortDeathGUI(force)
 		showChat(true)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 	end
+end
+
+function LocalPlayer:serverSetCanBeKnockedOffBike(state)
+	setPedCanBeKnockedOffBike(self, state)
 end
 
 function LocalPlayer:checkAFK()

@@ -19,6 +19,8 @@ function BankPalomino:constructor()
 		Vector3(2561.50, -949.89, 81.77),
 		Vector3(1935.24, 169.98, 36.28)
 	}
+	self.ms_StateFinishMarker = Vector3(2278.23, -82.70, 25.53)
+	self.ms_MinBankrobStateMembers = DEBUG and 0 or 3 
 
 	self.ms_BagSpawns = {
 		Vector3(2307.25, 17.90, 26),
@@ -42,6 +44,7 @@ function BankPalomino:constructor()
 	}
 
 	self.ms_MoneyPerBag = 3000
+	self.ms_VaultOpenTime = 3*(60*1000)
 
 	self:build()
 end
@@ -55,6 +58,7 @@ function BankPalomino:build()
 	self.m_SafeDoor.m_Open = false
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
+	self.m_CurrentMoney = math.random(50000, 60000)
 
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
@@ -121,6 +125,10 @@ function BankPalomino:spawnGuards()
 		end
 
 	end)
+end
+
+function BankPalomino:getDifficulty() -- fixed 1 = 3 cops must be online
+    return 1
 end
 
 function BankPalomino:openSafeDoor()

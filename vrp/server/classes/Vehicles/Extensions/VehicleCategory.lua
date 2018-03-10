@@ -11,11 +11,11 @@ function VehicleCategory:constructor()
     self.m_CategoryData = {}
     self.m_ModelData = {}
     self.m_CustomModels = {
-        [611] = {
+        [611] = { --small fuel trailer
             fuelTankSize = 500,
             fuelType = "universal"
         },
-		[584] = {
+		[584] = { --large fuel trailer
 			fuelTankSize = 1500,
 			fuelType = "universal"
 		}
@@ -36,6 +36,7 @@ function VehicleCategory:constructor()
 		self.m_ModelData[row.Model] = {
             name = row.Name,
 			category = row.Category,
+			baseHeight = row.BaseHeight,
 		}
 	end
 end
@@ -63,16 +64,7 @@ function VehicleCategory:getCategoryFuelType(category)
     return self.m_CategoryData[category].fuelType
 end
 
-function VehicleCategory:getCategoryFuelTankSize(category, model)
-    if not self.m_CategoryData[category] then
-		local customData = self:getCustomModelData(model)
-
-		if customData then
-			return customData.fuelTankSize
-		end
-
-		return false
-	end
+function VehicleCategory:getCategoryFuelTankSize(category)
     return self.m_CategoryData[category].fuelTankSize
 end
 
@@ -90,4 +82,9 @@ end
 function VehicleCategory:getModelCategory(model)
     if not self.m_ModelData[model] then return false end
     return self.m_ModelData[model].category
+end
+
+function VehicleCategory:getModelBaseHeight(model)
+    if not self.m_ModelData[model] then return false end
+    return self.m_ModelData[model].baseHeight
 end

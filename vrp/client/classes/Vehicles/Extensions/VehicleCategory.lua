@@ -60,6 +60,10 @@ function VehicleCategory:getModelCategory(model)
     return self.m_ModelData[model].category
 end
 
+function VehicleCategory:getModelBaseHeight(model)
+    if not self.m_ModelData[model] then return false end
+    return self.m_ModelData[model].baseHeight
+end
 
 addEventHandler("onVehicleCategoryDataReceive", root, function(categoryData, modelData, customModels)
     VehicleCategory:getSingleton():loadData(categoryData, modelData, customModels)

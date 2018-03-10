@@ -38,4 +38,11 @@ function VehicleDataExtension:getTax()
     return VehicleCategory:getSingleton():getCategoryTax(self:getCategory())
 end
 
+function VehicleDataExtension:getBaseHeight(asVector)
+    if asVector then
+        return Vector3(0, 0, VehicleCategory:getSingleton():getModelBaseHeight(self:getModel()))
+    end
+    return VehicleCategory:getSingleton():getModelBaseHeight(self:getModel())
+end
+
 

@@ -8,11 +8,13 @@
 CircuitBreaker = inherit(Singleton)
 addRemoteEvents{"startCircuitBreaker", "forceCircuitBreakerClose"}
 
-function CircuitBreaker:constructor(callbackEvent)
+function CircuitBreaker:constructor(callbackEvent, callbackEventStepFailed)
 	self.WIDTH, self.HEIGHT = 1080, 650
 	self.m_Textures = {}
 	self.m_HeaderHeight = screenHeight/10
 	self.m_CallBackEvent = callbackEvent
+	self.m_CallBackEventStepFailed = callbackEventStepFailed
+	outputDebug(callbackEventStepFailed)
 
 	--Render targets
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
@@ -294,6 +296,9 @@ function CircuitBreaker:setState(state)
 		self.m_State = "failed"
 		self.m_LineColor = tocolor(220, 0, 0)
 		self:updateRenderTarget()
+		if self.m_CallBackEventStepFailed then
+			triggerServerEvent(self.m_CallBackEventStepFailed, localPlayer)
+		end
 	end
 end
 
@@ -586,13 +591,13 @@ function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, heigh
 end
 
 addEventHandler("startCircuitBreaker", root,
-    function(callbackEvent)
+    function(...)
 		if CircuitBreaker:isInstantiated() then
 			outputChatBox("instantiated")
 			delete(CircuitBreaker:getSingleton())
 		end
 
-   		CircuitBreaker:new(callbackEvent)
+   		CircuitBreaker:new(...)
     end
 )
 

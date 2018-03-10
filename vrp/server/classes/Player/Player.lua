@@ -1249,6 +1249,7 @@ function Player:attachPlayerObject(object)
 				self:sendError(_("Mit diesem Objekt kannst du nicht in Fahrzeuge einsteigen!", self))
 				return false
 			end
+			self.m_PlayerAttachedObject = object
 			object:setCollisionsEnabled(false)
 			object:setDoubleSided(true)
 			if settings["bone"] then
@@ -1280,6 +1281,7 @@ function Player:refreshAttachedObject(instant)
 	local func = function()
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
+			outputDebug(object, self:getInterior(), self:getName())
 			if self:isDead() then
 				self:detachPlayerObject(object)
 			end
@@ -1297,12 +1299,13 @@ end
 
 function Player:detachPlayerObject(object, collisionNextFrame)
 	if not isElement(self) or not self:isLoggedIn() then return end
-	if isElement(object) then
+	if isElement(object) and (self:getPlayerAttachedObject() == object) then
 		local model = object.model
 		if PlayerAttachObjects[model] then
 			local settings = PlayerAttachObjects[model]
 			self:toggleControlsWhileObjectAttached(true, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
 			object:detach(self)
+			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
 			if settings["bone"] then
 				exports.bone_attach:detachElementFromBone(object)
 			else
@@ -1320,25 +1323,22 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 	else
 		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
 	end
+	
 	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 	self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-	removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
-	removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
-	removeEventHandler("onElementDestroy", self, self.m_detachPlayerObjectFunc)
-	removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+	if self.m_PlayerAttachedObject then
+		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+		self.m_PlayerAttachedObject = nil
+	end
 end
 
 function Player:getPlayerAttachedObject()
-	local model
-	for key, value in pairs (getAttachedElements(self)) do
-		if value and isElement(value) then
-			model = value:getModel()
-			if PlayerAttachObjects[model] then
-				return value
-			end
-		end
+	if not isElement(self.m_PlayerAttachedObject) or not PlayerAttachObjects[self.m_PlayerAttachedObject:getModel()] then
+		self:detachPlayerObject(self.m_PlayerAttachedObject)
 	end
-	return false
+	return self.m_PlayerAttachedObject
 end
 
 function Player:attachToVehicle(forceDetach)

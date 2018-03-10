@@ -179,7 +179,7 @@ function PlayerManager:Event_switchSpawnWithFaction( state )
 end
 
 function PlayerManager:destructor()
-	for k, v in ipairs(getElementsByType("player")) do
+	for k, v in pairs(getElementsByType("player")) do
 		delete(v)
 	end
 end
@@ -231,7 +231,7 @@ end
 
 function PlayerManager:getPlayerFromId(userId)
 	if userId then
-		for i, v in ipairs(getElementsByType('player')) do
+		for i, v in pairs(getElementsByType('player')) do
 			if v:getId() == userId then
 				return v
 			end
@@ -243,7 +243,7 @@ end
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	if name and sourcePlayer then
 		local matches = {}
-		for i, v in ipairs(getElementsByType('player')) do
+		for i, v in pairs(getElementsByType('player')) do
 			if getPlayerName(v) == name then
 				return v
 			end

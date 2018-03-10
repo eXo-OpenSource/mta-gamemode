@@ -31,6 +31,8 @@ function CasinoHeist:constructor()
 		Vector3(2919.82, 2117.94, 17), -- water pump east
 		Vector3(2200.73, 2793.33, 10), -- north garage near burger shot
 	}
+	self.ms_StateFinishMarker = Vector3(2299.06, 2475.52, 2.27)
+	self.ms_MinBankrobStateMembers = DEBUG and 0 or 3 
 
 	self.ms_BagSpawns = {
 		Vector3(2141.81, 1628.31, 992.97),
@@ -56,14 +58,18 @@ function CasinoHeist:constructor()
 		Vector3(2141.53, 1634.42, 992.97),
 	}
 	self.ms_BagSpawnInterior = 1
-    
-    self.m_SecuriCarSaveColshape = createColCuboid(2252.6, 1680.01, 0, 64.6, 83, 18)
-    self.m_SecuricarsById = {}
 
-    self.m_CurrentMoney = math.random(2000, 5000)
+    --self.m_SecuriCarSaveColshape = createColCuboid(2252.6, 1680.01, 0, 64.6, 83, 18)
+	self.m_SecuricarsById = {}
+	
+	self.ms_VaultOpenTime = 3000 --3 secs
+
     self.ms_MoneyPerBag = 3000
     self.m_MaxBagsPerTruck = #VEHICLE_OBJECT_ATTACH_POSITIONS[428].positions
 	self:build()
+
+	self.m_UpdateDifficultyPulse = TimedPulse:new(5*60*1000) -- 15 minutes
+	self.m_UpdateDifficultyPulse:registerHandler(bind(CasinoHeist.updateDifficulty, self))
 end
 
 function CasinoHeist:build()
@@ -71,7 +77,7 @@ function CasinoHeist:build()
 	self.m_HackableComputer:setInterior(1)
 	self.m_HackableComputer:setData("clickable", true, true)
 	self.m_HackableComputer:setData("bankPC", true, true)
-
+	self.m_CurrentMoney = math.random(1000, 10000)
 
 	self.m_SafeDoor = createObject(2634, 2144.19, 1627.13, 994.3, 0, 0, 180)
 	self.m_SafeDoor.m_Open = false
@@ -88,9 +94,6 @@ function CasinoHeist:build()
 	--self:spawnGuards()
 	self:createSafes()
 
-    self.m_TruckLeaveColBind = bind(CasinoHeist.Event_OnTruckLeaveCol, self)
-    addEventHandler("onColShapeLeave", self.m_SecuriCarSaveColshape, self.m_TruckLeaveColBind)
-
     self:spawnPed(295, Vector3(2151.26, 1605.34, 1006.18), 0) --ped inside security room
 	self.m_Ped:setInterior(1)
 
@@ -101,79 +104,71 @@ function CasinoHeist:build()
     local elevInside = Elevator:new()
     elevInside:addStation("Dach", Vector3(2266.42, 1647.51, 1084.23), 270, 1, 0)
     elevInside:addStation("Casino", Vector3(2136.40, 1599.46, 1008.36), 270, 1, 0)
-    elevInside:addStation("Verwaltung", Vector3(2155.91, 1598.01, 999.97), 270, 1, 0)
 end
 
-function CasinoHeist:updateMoneyAmount()
-    
-    self:updateVehicles()
+function CasinoHeist:updateDifficulty(debugDiff)
+	if not self.m_IsBankrobRunning then
+		if debugDiff then 
+			self.m_Difficulty = debugDiff
+		else
+			--update money based on time (more money 18 o clock)
+			local timeAsFactor = getRealTime().hour + getRealTime().minute/60
+			local diff = math.max(0, math.sin((timeAsFactor + 12)/12*math.pi)+0.5) --between 0 (2-10 o clock) and 1.5 (18 o clock) in sinus wave
+			self.m_CurrentMoney = self.m_CurrentMoney + diff*3000
+			local moneyPerTruck = self.ms_MoneyPerBag * self.m_MaxBagsPerTruck --max money a truck can carry
+			local min_money = moneyPerTruck/2 --minimal money to start a rob
+			local difficulty =  math.ceil((self.m_CurrentMoney) / moneyPerTruck)
+			--TODO recalculate with the online state members
+			self.m_Difficulty = math.min((self.m_CurrentMoney > min_money) and difficulty or 0, 5)
+			if not DEBUG then
+				self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
+			end
+			outputDebug("updating casino difficulty, currentMoney: ", self.m_CurrentMoney, ", added ", diff*3000, ", new difficulty: ", self.m_Difficulty)
+		end
+		self:updateVehicles()
+	end
 end
 
 function CasinoHeist:getDifficulty() -- 0-5, 0 = no heist available, 5 = 5 securicars are there
-    local moneyPerTruck = self.ms_MoneyPerBag * self.m_MaxBagsPerTruck
-    local min_money = moneyPerTruck/2
-    local difficulty =  math.ceil((self.m_CurrentMoney) / moneyPerTruck)
-    --TODO recalculate with the online state members
-    return math.min((self.m_CurrentMoney > min_money) and difficulty or 0, 5)
+    return self.m_Difficulty or 0
 end
 
 function CasinoHeist:updateVehicles()
-    --if difficulty got higher
-    if #self.m_SecuricarsById < self:getDifficulty() then
-        for i = (#self.m_SecuricarsById)+1, self:getDifficulty() do
-            outputDebug(i, self:getDifficulty())
-            local truck = self:createTruck(unpack(CasinoHeist.SecuricarSpawns[i]))
-            self:setTruckActive(truck, true)
-            table.insert(self.m_SecuricarsById, truck)
-        end
-    else
-        for i = #self.m_SecuricarsById, self:getDifficulty()+1, -1 do
-            local truck = table.remove(self.m_SecuricarsById, i)
-            truck:destroy()
-        end
-    end
+	--if difficulty got higher
+	if #self.m_SecuricarsById < self:getDifficulty() then
+		for i = (#self.m_SecuricarsById)+1, self:getDifficulty() do
+			local truck = self:createTruck(unpack(CasinoHeist.SecuricarSpawns[i]))
+			table.insert(self.m_SecuricarsById, truck)
+		end
+	else
+		for i = #self.m_SecuricarsById, self:getDifficulty()+1, -1 do
+			local truck = table.remove(self.m_SecuricarsById, i)
+			truck:destroy()
+		end
+	end
 end
 
 function CasinoHeist:startRob(player)
 	self:startRobGeneral(player)
 
-	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
-	Discord:getSingleton():outputBreakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
-	FactionState:getSingleton():sendWarning("Die Bank von Palomino Creek wird überfallen!", "Neuer Einsatz", true, {2318.43, 11.37, 26.48})
-
 	local pos = self.m_BankDoor:getPosition()
 	self.m_BankDoor:move(1500, pos.x, pos.y, pos.z, 0, 0, -120, "InOutQuad")
-
-	triggerClientEvent("bankAlarm", root, 2282.03, 1726.15, 11.04) --back
-    triggerClientEvent("bankAlarm", root, 2193.39, 1677.15, 12.37) --front
 	
 	--addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
 
     self.m_HackMarker = createMarker(self.m_HackableComputer.position + Vector3(0, 0, 3), "arrow", 0.8, 255, 255, 0)
-    self.m_HackMarker:setInterior(1)
-    
+	self.m_HackMarker:setInterior(1)
+	self.m_VehicleTeleporter = VehicleTeleporter:new(Vector3(2288.69, 1725.94, 9.95), Vector3(2208.04, 1551.67, 1006.72), Vector3(340.24, 0, 270.56), Vector3(0, 0, 270), 1)
 end
 
-function CasinoHeist:spawnGuards()
-	--[[self.m_GuardPed1 = GuardActor:new(Vector3(2315.25, 20.34, 26.53))
-	self.m_GuardPed1:setRotation(270, 0, 270, "default", true)
-	self.m_GuardPed1:setFrozen(true)
-	self.m_GuardPed1.Colshape = createColCuboid(2314.4 ,1.15 ,25 ,2.5 ,21.45 , 4)
-	addEventHandler("onColShapeHit", self.m_GuardPed1.Colshape, function(hitElement, dim)
-		if dim and hitElement.type == "player" then
-			if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
-				self.m_GuardPed1:startShooting(hitElement)
-			end
-		end
-
-	end)]]
+function CasinoHeist:startAlarm()
+	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt Caligula's Casino!")
+	Discord:getSingleton():outputBreakingNews("Eine derzeit unbekannte Fraktion überfällt Caligula's Casino!")
+	FactionState:getSingleton():sendWarning("Caligula's Casino wird überfallen!", "Neuer Einsatz", true, {2193.39, 1677.15, 12.37})
+	triggerClientEvent("bankAlarm", root, 2282.03, 1726.15, 11.04) --back
+    triggerClientEvent("bankAlarm", root, 2193.39, 1677.15, 12.37) --front
 end
 
-function CasinoHeist:onRoofMarkerHit(hitEle, dim)
-    if isElement(hitEle) and dim then
-
-    end
-end
 
 
 function CasinoHeist:openSafeDoor()
@@ -183,15 +178,8 @@ function CasinoHeist:openSafeDoor()
 end
 
 function CasinoHeist:createSafes()
-
-	self.m_Safes = {} --72
+	self.m_Safes = {} --90
 	--left side
-	--[[
-		2140.99, 1635.64, 993.04
-Rotation: 0, 0, 90.00
-Vector3(2147.37, 1635.64, 993.04
-Rotation: 0, 0, 270.00
-	]]
 	for w = 0, 8 do
 		for h = 0, 4 do 
 			local safe = createObject(2332, 2140.99, 1635.64 + w * 0.86, 993.04 + h * 0.88, 0, 0, 90)
@@ -213,46 +201,4 @@ Rotation: 0, 0, 270.00
 			addEventHandler( "onElementClicked", safe, self.m_OnSafeClickFunction)
 		end
 	end
-end
-
-function CasinoHeist:Event_OnTruckLeaveCol(hitEle, dim)
-    if not hitEle:getData("BankRobberyTruck") then return end
-    if not dim then return end
-    if hitEle:getController() then
-        outputDebug(hitEle:getController():getName(), "klaut ein Securicar")
-    else
-        hitEle:respawn()
-    end
-end
-
-function CasinoHeist:BombArea_Place(bombArea, player)
-	--[[if not player:getFaction() then
-		player:sendError(_("Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist", player))
-		return false
-	end
-
-	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
-
-	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können müssen mindestens 5 Staats-Fraktionisten online sein!", player))
-		return false
-	end
-
-	for k, player in pairs(getElementsWithinColShape(self.m_BombColShape, "player")) do
-		player:triggerEvent("Countdown", BOMB_TIME/1000, "Bombe zündet")
-
-		local faction = player:getFaction()
-		if faction and faction:isEvilFaction() then
-			player:reportCrime(Crime.BankRobbery)
-
-		end
-	end
-	return true]]
-end
-
-function CasinoHeist:BombArea_Explode(bombArea, player)
-	--[[self:startRob(player)
-	for index, brick in pairs(self.m_BombableBricks) do
-		brick:destroy()
-	end]]
 end

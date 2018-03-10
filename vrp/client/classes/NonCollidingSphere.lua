@@ -21,6 +21,9 @@ function NonCollidingSphere:onHit(hitElement, matchingDimension)
 		for k, v in pairs(getElementsByType("vehicle")) do
 			setElementCollidableWith(hitElement, v, false)
 		end
+		for k, v in pairs(getElementsByType("player")) do
+			setElementCollidableWith(hitElement, v, false)
+		end
 		setElementAlpha(hitElement, 200)
 	end
 end
@@ -28,6 +31,9 @@ end
 function NonCollidingSphere:onLeave(hitElement, matchingDimension)
 	if getElementType(hitElement) == "vehicle" and matchingDimension then
 		for k, v in pairs(getElementsByType("vehicle")) do
+			setElementCollidableWith(hitElement, v, true)
+		end
+		for k, v in pairs(getElementsByType("player")) do
 			setElementCollidableWith(hitElement, v, true)
 		end
 		setElementAlpha(hitElement, 255)
