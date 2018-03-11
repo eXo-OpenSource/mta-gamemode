@@ -9,7 +9,7 @@ ScoreboardGUI = inherit(GUIForm)
 inherit(Singleton, ScoreboardGUI)
 
 function ScoreboardGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.65/2) / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.65, screenHeight*0.6, false, true)
+	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.65/2), screenHeight/2-screenHeight*0.3, screenWidth*0.65, screenHeight*0.6, false, true)
 
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
 	self.m_Logo = GUIImage:new(self.m_Width-self.m_Width*0.18, self.m_Height*0.83, self.m_Width*0.180, self.m_Width*0.078, "files/images/LogoNoFont.png", self)

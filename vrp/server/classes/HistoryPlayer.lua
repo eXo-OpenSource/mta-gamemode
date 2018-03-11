@@ -54,7 +54,7 @@ function HistoryPlayer:Event_SearchPlayerHistory(name)
 	local company = client:getCompany()
 	if not name then return end
 
-    if not ((faction and faction:getPlayerRank(client) > FactionRank.Manager) or (company and company:getPlayerRank(client) > CompanyRank.Manager) or (client:getRank() >= RANK.Supporter)) then
+    if not ((faction and faction:getPlayerRank(client) >= FactionRank.Manager) or (company and company:getPlayerRank(client) >= CompanyRank.Manager) or (client:getRank() >= RANK.Supporter)) then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
