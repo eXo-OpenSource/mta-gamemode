@@ -212,12 +212,13 @@ function PublicTransport:endTaxiDrive(customer)
 		if price > customer:getBankMoney() then price = customer:getBankMoney() end
 		customer:transferBankMoney(self.m_BankAccountServer, price, "Public Transport Taxi", "Company", "Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
-		if price > 0 then 
+		local priceForEPT = price*2
+		if priceForEPT > 0 then 
 			if not customer:getCompany() or customer:getCompany():getId() ~= CompanyStaticId.EPT then
-				self.m_BankAccountServer:transferMoney({self, nil, true}, math.min(price, 5000), ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), "Company", "Taxi")
+				self.m_BankAccountServer:transferMoney({self, nil, true}, priceForEPT, ("Taxifahrt von %s mit %s"):format(driverName, customer:getName()), "Company", "Taxi")
 			end
-			self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(price)))
 		end
+		self:addLog(driver, "Taxi", (" hat %s gefahren (+%s)"):format(customer:getName(), toMoneyString(priceForEPT)))
 		
 		if isElement(driver) then 
 			driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
@@ -326,6 +327,10 @@ function PublicTransport:stopBusTour_Driver(player) --also gets triggered when p
 		delete(player.Bus_Blip)
 		player.Bus_Blip = nil
 	end
+	if player.Bus_Statistics then
+		self:addLog(player, "Bus", (" hat Linie %d bedient (%s Stationen, +%s$)!"):format(player.Bus_Statistics.line, player.Bus_Statistics.stations, player.Bus_Statistics.money))
+		player.Bus_Statistics = nil
+	end
 	player:setPublicSync("EPT:BusDuty", false)
 end
 
@@ -338,8 +343,14 @@ function PublicTransport:startBusTour_Driver(player, nextStation, line)
 	else
 		local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][nextStation]].object)
 		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
+		player.Bus_Blip:setZ(z)
 		player.Bus_Blip:setDisplayText("Bushaltestelle")
 		player:setPublicSync("EPT:BusDuty", true)
+		player.Bus_Statistics = {
+			line = line,
+			money = 0,
+			stations = 0,
+		}
 	end
 end
 
@@ -457,8 +468,9 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 				},
 				points = math.round(5 * (dist/1000)),--5 / km
 			})
-			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Taxi")
-			self:addLog(player, "Bus", (" hat Linie %d bedient (+%s)!"):format(line, toMoneyString(math.round(150 * (dist/1000)))))
+			self.m_BankAccountServer:transferMoney({self, nil, true}, math.round(150 * (dist/1000)), ("Busfahrt Linie %d von %s"):format(line, player:getName()), "Company", "Bus")
+			player.Bus_Statistics.money = player.Bus_Statistics.money + math.round(150 * (dist/1000))
+			player.Bus_Statistics.stations = player.Bus_Statistics.stations + 1
 		end
 
 		local newDestinationId = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
@@ -467,6 +479,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		local x, y, z = getElementPosition(self.m_BusStops[nextStopId].object)
 		delete(player.Bus_Blip)
 		player.Bus_Blip = Blip:new("Marker.png", x, y, player, 9999, PublicTransport.ms_BusLineData[line].color)
+		player.Bus_Blip:setZ(z)
 		player.Bus_Blip:setDisplayText("Bushaltestelle")
 
 		if isElement(self.m_BusStops[stopId].marker[vehicle]) then

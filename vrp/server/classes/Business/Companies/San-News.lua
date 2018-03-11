@@ -165,9 +165,9 @@ function SanNews:Event_advertisement(senderIndex, text, color, duration)
 
 		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
 
-		if client:getMoney() >= costs then
+		if client:getBankMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
-				client:transferMoney({self, nil, true}, costs, "San News Ad", "Company", "Ads")
+				client:transferBankMoney({self, nil, true}, costs, "San News Ad", "Company", "Ads")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				StatisticsLogger:getSingleton():addAdvert(client, text)
 

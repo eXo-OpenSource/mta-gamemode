@@ -244,6 +244,11 @@ function CompanyManager:Event_companyRankUp(playerId)
 		return
 	end
 
+	if client:getId() == playerId then
+		client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+		return
+	end
+
 	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
@@ -258,7 +263,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
-				player:setPublicSync("CompanyRank", playerRank+1 or 0)
+				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
 		else
@@ -279,6 +284,11 @@ function CompanyManager:Event_companyRankDown(playerId)
 		return
 	end
 
+	if client:getId() == playerId then
+		client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+		return
+	end
+
 	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
@@ -293,7 +303,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
-				player:setPublicSync("CompanyRank", playerRank-1 or 0)
+				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
 		else
