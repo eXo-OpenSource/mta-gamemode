@@ -291,6 +291,11 @@ function FactionManager:Event_factionRankUp(playerId)
 				return
 			end
 
+			if client:getId() == playerId then
+				client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+				return
+			end
+
 			if faction:getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				-- Todo: Report possible cheat attempt
@@ -331,7 +336,7 @@ function FactionManager:Event_factionRankUp(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
-							player:setPublicSync("FactionRank", playerRank+1 or 0)
+							player:setPublicSync("FactionRank", faction:getPlayerRank(client))
 						end
 					end
 					self:sendInfosToClient(client)
@@ -358,6 +363,11 @@ function FactionManager:Event_factionRankDown(playerId)
 				return
 			end
 
+			if client:getId() == playerId then
+				client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+				return
+			end
+
 			if faction:getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				-- Todo: Report possible cheat attempt
@@ -377,7 +387,7 @@ function FactionManager:Event_factionRankDown(playerId)
 					else
 						if isElement(player) then
 							player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
-							player:setPublicSync("FactionRank", faction:getPlayerRank(playerId) or 0)
+							player:setPublicSync("FactionRank", faction:getPlayerRank(playerId))
 						end
 					end
 					self:sendInfosToClient(client)
