@@ -172,6 +172,10 @@ function PermanentVehicle:isPermanent()
   return true
 end
 
+function PermanentVehicle:getTunings()
+	return self.m_Tunings
+end
+
 function PermanentVehicle:getKeyNameList()
   local names = {}
   for k, v in ipairs(self.m_Keys) do

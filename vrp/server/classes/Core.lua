@@ -4,7 +4,11 @@ addEvent("Core.onClientInternalError", true)
 function Core:constructor()
 	outputServerLog("Initializing core...")
 	nextframe(function() --small hack to override the name meta-name
-		setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
+		if DEBUG then 
+			setGameType(("%s @ %s"):format(PROJECT_NAME, getOpticalTimestamp()))
+		else
+			setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
+		end
 	end)
 
 	-- Small hack to get the global core immediately

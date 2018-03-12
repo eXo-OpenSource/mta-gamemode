@@ -1432,8 +1432,16 @@ function VehicleManager:migrate()
 				tunings["Color1"] = {c1, c2, c3}
 				if c4 then
 					tunings["Color2"] = {c4, c5, c6}
+				else
+					tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
 				end
+			else
+				tunings["Color1"] = {factionCarColors[v["Faction"]].r, factionCarColors[v["Faction"]].g, factionCarColors[v["Faction"]].b}
+				tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
 			end
+		else
+			tunings["Color1"] = {factionCarColors[v["Faction"]].r, factionCarColors[v["Faction"]].g, factionCarColors[v["Faction"]].b}
+			tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
 		end
 
 		if v["decal"] then
@@ -1469,15 +1477,17 @@ function VehicleManager:migrate()
 				tunings["Color1"] = {c1, c2, c3}
 				if c4 then
 					tunings["Color2"] = {c4, c5, c6}
+				else
+					tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
 				end
+			else
+				tunings["Color1"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+				tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
 			end
 		else
-			if companyColors[v["Company"]] then
-				local r, g, b = companyColors[v["Company"]]["r"], companyColors[v["Company"]]["g"], companyColors[v["Company"]]["b"]
-				tunings["Color1"] = {r, g, b}
-			end
+			tunings["Color1"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+			tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
 		end
-
 		if companyVehicleShaders[v["Company"]] then
 			if companyVehicleShaders[v["Company"]][v["Model"]] then
 				local tex = companyVehicleShaders[v["Company"]][v["Model"]]

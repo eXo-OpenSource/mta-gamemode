@@ -1347,7 +1347,8 @@ function FactionState:Event_storageWeapons(player)
 							--client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
 						end
 						takeWeapon(client, weaponId)
-						client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
+						self:addLog(player, "Waffenlager", ("hat eine/n %s mit %s Magazin(en) in das Waffenlager gelegt!"):format(WEAPON_NAMES[weaponId], magazines))
+						client:sendMessage(_("Du hast eine/n %s mit %s Magazin(en) ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
