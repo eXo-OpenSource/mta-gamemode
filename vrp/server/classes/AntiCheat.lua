@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 AntiCheat = inherit(Singleton)
-addRemoteEvents{"AntiCheat:ReportBlip"}
+addRemoteEvents{"AntiCheat:ReportBlip", "AntiCheat:ReportFarmerTeleport"}
 
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
@@ -70,5 +70,11 @@ end
 addEventHandler("AntiCheat:ReportBlip", root,
 	function(blipCount)
 		AntiCheat:getSingleton():report(client, ("Invalid Blip Count: %s"):format(tostring(blipCount)), CheatSeverity.High)
+	end
+)
+
+addEventHandler("AntiCheat:ReportFarmerTeleport", root,
+	function(dist)
+		AntiCheat:getSingleton():report(client, ("used teleport bug on farmer job (%sm)"):format(dist), CheatSeverity.High)
 	end
 )
