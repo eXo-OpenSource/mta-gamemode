@@ -61,6 +61,10 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 	if not self:isValidPort(player, isVehicle, vehicle) then return false end
 	if player.LastPort and not timestampCoolDown(player.LastPort, 4) then
 		return
+	end
+	if isVehicle and not vehicle:isLandVehicle() then
+		player:sendError("Du kannst diesen Eingang nur zu Fuß oder mit Bodenfahrzeugen benutzen.")
+		return
     end
 
 	fadeCamera(player,false,1,0,0,0)

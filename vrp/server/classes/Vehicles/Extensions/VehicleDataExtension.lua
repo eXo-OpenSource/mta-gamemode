@@ -45,3 +45,15 @@ function VehicleDataExtension:getBaseHeight(asVector)
     return VehicleCategory:getSingleton():getModelBaseHeight(self:getModel())
 end
 
+function VehicleDataExtension:isAirVehicle()
+    return VehicleCategory:getSingleton():hasCategoryAirVehicles(self:getCategory())
+end
+
+function VehicleDataExtension:isWaterVehicle()
+    return VehicleCategory:getSingleton():hasCategoryWaterVehicles(self:getCategory())
+end
+
+function VehicleDataExtension:isLandVehicle()
+    return VehicleCategory:getSingleton():hasCategoryLandVehicles(self:getCategory())
+end
+

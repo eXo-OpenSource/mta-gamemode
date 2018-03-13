@@ -381,8 +381,9 @@ function Faction:sendMessage(text, r, g, b, ...)
 end
 
 function Faction:sendShortMessage(text, ...)
+	local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
 	for k, player in pairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_(text, player), self:getName(), {11, 102, 8}, ...)
+		player:sendShortMessage(_(text, player), self:getName(), color, ...)
 	end
 end
 

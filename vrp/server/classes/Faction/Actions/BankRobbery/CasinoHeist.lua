@@ -70,6 +70,9 @@ function CasinoHeist:constructor()
 
 	self.m_UpdateDifficultyPulse = TimedPulse:new(5*60*1000) -- 15 minutes
 	self.m_UpdateDifficultyPulse:registerHandler(bind(CasinoHeist.updateDifficulty, self))
+
+	self.m_Name = "Casino"
+	self.m_MarkedPosition = {2282.03, 1726.15, 11.04} -- the marked position where action blips and so on will be located
 end
 
 function CasinoHeist:build()
@@ -165,8 +168,7 @@ function CasinoHeist:startAlarm()
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt Caligula's Casino!")
 	Discord:getSingleton():outputBreakingNews("Eine derzeit unbekannte Fraktion überfällt Caligula's Casino!")
 	FactionState:getSingleton():sendWarning("Caligula's Casino wird überfallen!", "Neuer Einsatz", true, {2193.39, 1677.15, 12.37})
-	triggerClientEvent("bankAlarm", root, 2282.03, 1726.15, 11.04) --back
-    triggerClientEvent("bankAlarm", root, 2193.39, 1677.15, 12.37) --front
+	triggerClientEvent("bankAlarm", root, unpack(self.m_MarkedPosition)) --back
 end
 
 

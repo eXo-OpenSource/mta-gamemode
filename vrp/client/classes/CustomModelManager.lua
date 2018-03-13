@@ -64,10 +64,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/buildings/bank.dff", 4600)
 	self:loadImportCOL("files/models/objects/bankDoor.col", 1930)
 	self:loadImportTXD("files/models/objects/bankDoor.txd", 1930)
-	self:loadImportDFF("files/models/objects/bankDoor.dff", 1930)]]
+	self:loadImportDFF("files/models/objects/bankDoor.dff", 1930)
 	self:loadImportCOL("files/models/objects/bankServer.col", 1880)
 	self:loadImportTXD("files/models/objects/bankServer.txd", 1880)
-	self:loadImportDFF("files/models/objects/bankServer.dff", 1880)
+	self:loadImportDFF("files/models/objects/bankServer.dff", 1880)]]
 	
 
 

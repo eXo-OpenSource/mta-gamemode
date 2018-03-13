@@ -47,6 +47,9 @@ function BankPalomino:constructor()
 	self.ms_VaultOpenTime = 3*(60*1000)
 
 	self:build()
+
+	self.m_Name = "Bank"
+	self.m_MarkedPosition = {2318.43, 11.37, 26.48} -- the marked position where action blips and so on will be located
 end
 
 function BankPalomino:build()
@@ -96,6 +99,8 @@ function BankPalomino:build()
 end
 
 function BankPalomino:startRob(player)
+
+	self:createTruck(2337.54, 16.67, 26.61, 0) --this first ad startRobGeneral unfreezes the truck
 	self:startRobGeneral(player)
 
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
@@ -106,8 +111,7 @@ function BankPalomino:startRob(player)
 	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_BackDoor:setFrozen(false)
 
-	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
-	self:createTruck(2337.54, 16.67, 26.61, 0)
+	triggerClientEvent("bankAlarm", root, unpack(self.m_MarkedPosition))
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 end

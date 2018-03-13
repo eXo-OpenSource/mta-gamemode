@@ -28,6 +28,8 @@ function VehicleObjectLoadExtension:switchObjectLoadingMarker(state)
         if state then
             local markerOffset = VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()].loadMarkerPos
             self.m_LoadingMarker = createMarker(self.position + self.matrix.forward * markerOffset.y + self.matrix.up * markerOffset.z + self.matrix.right * markerOffset.x, "corona", 1, 58, 186, 242, 50)
+            self.m_LoadingMarker:setInterior(self:getInterior())
+            self.m_LoadingMarker:setDimension(self:getDimension())
             addEventHandler("onMarkerHit", self.m_LoadingMarker, bind(VehicleObjectLoadExtension.Event_OnLoadingMarkerHit, self))
         else
             if isElement(self.m_LoadingMarker) then
