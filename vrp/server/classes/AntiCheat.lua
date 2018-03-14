@@ -64,7 +64,7 @@ function AntiCheat:report(player, name, severity)
 	end
 	outputServerLog(("AntiCheat:report(%s, %s, %i)"):format(player:getName(), name, severity))
 
-	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity) VALUES(?, ?, ?)", sql:getPrefix(), player:getId(), name, severity)
+	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), player:getId(), name, severity)
 end
 
 addEventHandler("AntiCheat:ReportBlip", root,
