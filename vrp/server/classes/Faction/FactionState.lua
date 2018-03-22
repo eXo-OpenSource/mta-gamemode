@@ -989,7 +989,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 						player:transferMoney(self.m_BankAccountServer, factionBonus, "Knaststrafe (Bar)", "Faction", "Arrest")
 					end
 
-					player:giveKarma(-wantedLevel)
+					player:takeKarma(wantedLevel)
 					player:setJailTime(jailTime)
 					player:setWanteds(0)
 					player:moveToJail(CUTSCENE)
@@ -1060,7 +1060,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		else
 			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
-		player:giveKarma(-wantedLevel)
+		player:takeKarma(wantedLevel)
 		player:setJailTime(jailTime)
 		player:setWanteds(0)
 		player:moveToJail(CUTSCENE)

@@ -10,7 +10,6 @@ local findItems =
 	"TV-Reciever",
 	"Handy",
 	"Armbanduhr",
-	"Bargeld",
 	"Kreditkarte",
 	"Radio",
 	"Schmuckkette",
@@ -81,7 +80,7 @@ function GroupHouseRob:Event_OnSellAccept()
 			local inv = client:getInventory()
 			if inv then
 				local amount = inv:getItemAmount("Diebesgut")
-				local randomPrice = math.random( 50,100)
+				local randomPrice = math.random( 500,1000)
 				local pay = amount * randomPrice
 				inv:removeAllItem("Diebesgut")
 				self.m_BankServerAccount:transferMoney(client, pay, "Verkauf von Diebesware", "Group", "HouseRob")

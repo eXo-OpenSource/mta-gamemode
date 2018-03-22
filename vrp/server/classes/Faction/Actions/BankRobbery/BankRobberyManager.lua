@@ -96,7 +96,7 @@ function BankRobberyManager:Event_onHackSuccessful() --all three steps
 		end
 	end
 	self.m_CircuitBreakerPlayers = {}
-	client:giveKarma(-5)
+	client:takeKarma(5)
 	self.m_CurrentBank:loadDestinationsAndInformState()
 	local brobFaction = client:getFaction()
 	local openTime = self.m_CurrentBank.ms_VaultOpenTime

@@ -1130,7 +1130,7 @@ function VehicleManager:Event_vehicleHotwire()
 		end
 		client:sendInfo(_("Schließe kurz...", client), 20000)
 		client:reportCrime(Crime.Hotwire)
-		client:giveKarma(-0.1)
+		client:takeKarma(0.1)
 
 		setTimer(
 			function(source)

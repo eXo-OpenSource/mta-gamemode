@@ -26,7 +26,7 @@ function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, st
 		--killer:reportCrime(Crime.Kill)
 
 		-- Take karma
-		killer:giveKarma(-0.15)
+		killer:takeKarma(0.15)
 	end
 end
 

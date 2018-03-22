@@ -527,9 +527,9 @@ function House:tryToCatchRobbers( player )
 				end
 				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then
 					player.m_HasAlreadyHouseWanteds = true
-					player:setWanteds(player:getWanteds() + 3)
+					--[[player:setWanteds(player:getWanteds() + 3) -- do not notify the player, but he also got no wanteds, so yeah
 					group.m_RobReported = true
-					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))
+					player:sendWarning(_("Ein Nachbar rief die Polizei an, beeil dich!", player))]]
 					FactionState:getSingleton():sendWarning("Hauseinbruch gemeldet - die Täterbeschreibung bisher passt auf %s!", "Neuer Einsatz", false, serialiseVector(self.m_Pickup:getPosition()), player.name)
 				end
 			end
