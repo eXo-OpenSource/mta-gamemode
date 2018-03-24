@@ -898,7 +898,7 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel(), target:getSTVO_NEW()
+		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel(), target:getSTVO()
 	)
 end
 

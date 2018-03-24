@@ -77,12 +77,8 @@ function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
 end
 
-function Player:getSTVO_NEW(category)
-	return self:getPublicSync("STVO_NEW")[category]
-end
-
-function Player:getSTVO()
-	return self:getPublicSync("STVO") or 0
+function Player:getSTVO(category)
+	return self:getPublicSync("STVO")[category]
 end
 
 function Player:getGroupType()

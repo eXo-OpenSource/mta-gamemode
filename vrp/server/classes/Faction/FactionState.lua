@@ -809,8 +809,8 @@ function FactionState:Command_stvo(player, cmd, target, category, amount,...)
 				if string.len(reason) > 2 and string.len(reason) < 50 then
 					category = self:getFullCategoryFromShurtcut(category)
 					if category then
-						local newSTVO = target:getSTVO_NEW(category) + amount
-						target:setSTVO_NEW(category, newSTVO)
+						local newSTVO = target:getSTVO(category) + amount
+						target:setSTVO(category, newSTVO)
 						outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
 						outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 
@@ -837,10 +837,10 @@ function FactionState:Event_giveSTVO(target, category, amount, reason)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			outputChatBox("Kategorie: " ..category)
-			outputChatBox("STVO bevor: " ..target:getSTVO_NEW(category))
-			local newSTVO = target:getSTVO_NEW(category) + amount
+			outputChatBox("STVO bevor: " ..target:getSTVO(category))
+			local newSTVO = target:getSTVO(category) + amount
 			outputChatBox("STVO danach: " ..newSTVO)
-			target:setSTVO_NEW(category, newSTVO)
+			target:setSTVO(category, newSTVO)
 			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0)
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(client:getName(),target:getName(),amount, reason)
@@ -855,7 +855,7 @@ function FactionState:Event_setSTVO(target, category, amount, reason)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			local newSTVO = tonumber(amount)
-			target:setSTVO_NEW(category, newSTVO)
+			target:setSTVO(category, newSTVO)
 			outputChatBox(("%s hat deine STVO-Punkt/e auf %d gesetzt!"):format(client:getName(), newSTVO), target, 255, 255, 0 )
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat die STVO-Punkte von %s auf %d gesetzt! Grund: %s"):format(client:getName(),target:getName(),amount, reason)

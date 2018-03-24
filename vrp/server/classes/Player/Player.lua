@@ -932,11 +932,6 @@ function Player:payDay()
 		self:takeWanteds(1)
 	end
 
-	if self:getSTVO() > 0 then
-		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
-		self:setSTVO(self:getSTVO() - 1)
-	end
-
 	self:givePoints(points_total, "Payday", true, true)
 	self:addPaydayText("info", _("Du hast %s Punkte bekommen.", self, points_total))
 
@@ -1226,7 +1221,7 @@ end
 
 function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprint, blockJump, blockVehicle)
 	--if bool == true --enable controls, else, disable controls
-	if (bool and (blockWeapons and not getElementData(self,"schutzzone")) or (not bool and blockWeapons)) then		
+	if (bool and (blockWeapons and not getElementData(self,"schutzzone")) or (not bool and blockWeapons)) then
 		toggleControl(self, "fire", bool )
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
@@ -1237,7 +1232,7 @@ function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprin
 		toggleControl(self, "enter_exit", bool)
 		toggleControl(self, "enter_passenger", bool)
 	end
-	
+
 end
 
 function Player:attachPlayerObject(object)
@@ -1256,9 +1251,9 @@ function Player:attachPlayerObject(object)
 			else
 				object:attach(self, settings["pos"], settings["rot"])
 			end
-			
+
 			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
-			
+
 			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
 			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)

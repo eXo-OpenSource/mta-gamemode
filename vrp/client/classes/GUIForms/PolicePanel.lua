@@ -317,10 +317,10 @@ function PolicePanel:onSelectPlayer(player)
 	local phone = "Ausgeschaltet"
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
-	self.m_STVODriving:setText(_("STVO-Auto: %d", player:getSTVO_NEW("Driving")))
-	self.m_STVOBike:setText(_("STVO-Motorrad: %d", player:getSTVO_NEW("Bike")))
-	self.m_STVOTruck:setText(_("STVO-Lastkraftwagen: %d", player:getSTVO_NEW("Truck")))
-	self.m_STVOPilot:setText(_("STVO-Pilot: %d", player:getSTVO_NEW("Pilot")))
+	self.m_STVODriving:setText(_("STVO-Auto: %d", player:getSTVO("Driving")))
+	self.m_STVOBike:setText(_("STVO-Motorrad: %d", player:getSTVO("Bike")))
+	self.m_STVOTruck:setText(_("STVO-Lastkraftwagen: %d", player:getSTVO("Truck")))
+	self.m_STVOPilot:setText(_("STVO-Pilot: %d", player:getSTVO("Pilot")))
 
 	--self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end

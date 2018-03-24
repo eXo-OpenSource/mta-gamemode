@@ -96,8 +96,7 @@ function DatabasePlayer:load(sync)
 	self:setKarma(row.Karma)
 	self:setPoints(row.Points)
 	self:setMoney(row.Money, true)
-	self:setSTVO(row.STVO)
-	self:setSTVO_NEW(nil, fromJSON(row.STVO_NEW))
+	self:setSTVO(nil, fromJSON(row.STVO))
 
 	if tonumber(row.SpawnWithFacSkin) == 1 then
 		self.m_SpawnWithFactionSkin = true
@@ -206,8 +205,8 @@ function DatabasePlayer:save()
 			self:getPlayTime() - self.m_StartTime, row.Id)
 		end
 
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, STVO_NEW=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, toJSON(self.m_STVO_NEW, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, toJSON(self.m_STVO, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
 	end
 	return false
 end
@@ -260,7 +259,6 @@ function DatabasePlayer:hasDrivingLicense() return self.m_HasDrivingLicense end
 function DatabasePlayer:hasBikeLicense() return self.m_HasBikeLicense end
 function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getPaNote() return self.m_PaNote end
-function DatabasePlayer:getSTVO() return self.m_STVO end
 function DatabasePlayer:getBail() return self.m_Bail end
 function DatabasePlayer:isStateCuffed() return self.m_StateCuffed end
 function DatabasePlayer:getFishingSkill() return self.m_FishingSkill end
@@ -990,40 +988,22 @@ function DatabasePlayer:getOfflineMessages( text, typ)
 	end
 end
 
-function DatabasePlayer:setSTVO(stvo)
-	self.m_STVO = stvo or 0
-
-	if self.m_STVO >= 20 then
-		self.m_HasDrivingLicense = false
-		self.m_STVO = 0
-		if self:isActive() then
-			self:sendMessage(_("Du hast 20 STVO Punkte! Dein Auto-Führerschein wurde abgenommen!", self), 255, 0, 0)
-		else
-			self:addOfflineMessage( "Du hattest 20 STVO Punkte dein Führerschein wurde abgenommen!", 1)
-		end
+function DatabasePlayer:getSTVO(category)
+	if category then
+		return self.m_STVO[category]
 	end
 
-	if self:isActive() then
-		self:setPublicSync("STVO", self.m_STVO)
-	end
+	return self.m_STVO
 end
 
-function DatabasePlayer:getSTVO_NEW(category)
+function DatabasePlayer:setSTVO(category, stvo)
 	if category then
-		return self.m_STVO_NEW[category]
-	end
-
-	return self.m_STVO_NEW
-end
-
-function DatabasePlayer:setSTVO_NEW(category, stvo)
-	if category then
-		self.m_STVO_NEW[category] = stvo
+		self.m_STVO[category] = stvo
 
 		if stvo >= 20 then
-			self.m_STVO_NEW[category] = 0
+			self.m_STVO[category] = 0
 			if self:isActive() then
-				self:sendMessage(_("Du hast 20 STVO Punkte! Dein Auto-Führerschein wurde abgenommen!", self), 255, 0, 0)
+				self:sendMessage(_("Du hast 20 STVO Punkte! Dein Führerschein wurde abgenommen!", self), 255, 0, 0)
 			else
 				self:addOfflineMessage(_"Du hattest 20 STVO Punkte dein Führerschein wurde abgenommen!", 1)
 			end
@@ -1039,11 +1019,11 @@ function DatabasePlayer:setSTVO_NEW(category, stvo)
 			end
 		end
 	else
-		self.m_STVO_NEW = stvo
+		self.m_STVO = stvo
 	end
 
 	if self:isActive() then
-		self:setPublicSync("STVO_NEW", self.m_STVO_NEW)
+		self:setPublicSync("STVO", self.m_STVO)
 	end
 end
 
