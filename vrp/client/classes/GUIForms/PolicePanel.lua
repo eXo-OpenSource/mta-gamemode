@@ -418,7 +418,7 @@ function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
 	if item then
 		local player = item.player
-		GiveWantedSTVOBox:new(player, 1, MAX_WANTED_LEVEL, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
+		GiveWantedBox:new(player, 1, MAX_WANTED_LEVEL, "Wanteds geben", function(player, amount, reason) triggerServerEvent("factionStateGiveWanteds", localPlayer, player, amount, reason) end)
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end
@@ -429,23 +429,23 @@ function PolicePanel:giveSTVO(action)
 	if item then
 		local player = item.player
 		if action == "give" then
-			GiveWantedSTVOBox:new(player, 1, 6, "STVO-Punkte geben", function(player, amount, reason) triggerServerEvent("factionStateGiveSTVO", localPlayer, player, amount, reason) end)
+			GiveSTVOBox:new(player, 1, 6, "STVO-Punkte geben", function(player, category, amount, reason) triggerServerEvent("factionStateGiveSTVO", localPlayer, player, category, amount, reason) end)
 		elseif action == "set" then
-			GiveWantedSTVOBox:new(player, 0, 20, "STVO-Punkte setzen", function(player, amount, reason) triggerServerEvent("factionStateSetSTVO", localPlayer, player, amount, reason) end)
+			GiveSTVOBox:new(player, 0, 20, "STVO-Punkte setzen", function(player, category, amount, reason) triggerServerEvent("factionStateSetSTVO", localPlayer, player, category, amount, reason) end)
 		end
 	else
 		ErrorBox:new(_"Kein Spieler ausgewählt!")
 	end
 end
 
+GiveWantedBox = inherit(GUIForm)
 
-GiveWantedSTVOBox = inherit(GUIForm)
-
-function GiveWantedSTVOBox:constructor(player, min, max, title, callback)
+function GiveWantedBox:constructor(player, min, max, title, callback)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, "Anzahl:", self.m_Window)
+
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, _"Anzahl:", self.m_Window)
 	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
 	for i = min, max do
 		self.m_Changer:addItem(tostring(i))
@@ -456,6 +456,48 @@ function GiveWantedSTVOBox:constructor(player, min, max, title, callback)
 	self.m_SubmitButton.onLeftClick =
 	function()
 		callback(player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
+		delete(self)
+	end
+end
+
+GiveSTVOBox = inherit(GUIForm)
+
+function GiveSTVOBox:constructor(player, min, max, title, callback)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
+
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, _"Kategorie:", self.m_Window)
+	self.m_STVOCategories = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
+	self.m_STVOCategories:addItem(_"Auto")
+	self.m_STVOCategories:addItem(_"Motorrad")
+	self.m_STVOCategories:addItem(_"Lastkraftwagen")
+	self.m_STVOCategories:addItem(_"Pilot")
+
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Anzahl:", self.m_Window)
+	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
+	for i = min, max do
+		self.m_Changer:addItem(tostring(i))
+	end
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.68, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
+	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.68, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
+	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.8, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+	self.m_SubmitButton.onLeftClick =
+	function()
+		local categoryName, categoryIndex = self.m_STVOCategories:getIndex()
+		local category
+
+		if categoryIndex == 1 then
+			category = "Driving"
+		elseif categoryIndex == 2 then
+			category = "Bike"
+		elseif categoryIndex == 3 then
+			category = "Truck"
+		elseif categoryIndex == 4 then
+			category = "Pilot"
+		end
+
+		callback(player, category, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
 		delete(self)
 	end
 end

@@ -97,6 +97,7 @@ function DatabasePlayer:load(sync)
 	self:setPoints(row.Points)
 	self:setMoney(row.Money, true)
 	self:setSTVO(row.STVO)
+	self:setSTVO_NEW(nil, fromJSON(row.STVO_NEW))
 
 	if tonumber(row.SpawnWithFacSkin) == 1 then
 		self.m_SpawnWithFactionSkin = true
@@ -205,8 +206,8 @@ function DatabasePlayer:save()
 			self:getPlayTime() - self.m_StartTime, row.Id)
 		end
 
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, Job=?, SpawnLocation=?, SpawnLocationProperty = ?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, STVO=?, STVO_NEW=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AlcoholLevel = ?, CJClothes = ?, FishingSkill = ?, FishingLevel = ?, FishSpeciesCaught = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, 0, self.m_SpawnLocation, toJSON(self.m_SpawnLocationProperty or ""), self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self.m_STVO, toJSON(self.m_STVO_NEW, true), self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self.m_FishingSkill  or 0, self.m_FishingLevel or 0, toJSON(self.m_FishSpeciesCaught), self:getId())
 	end
 	return false
 end
@@ -1004,6 +1005,45 @@ function DatabasePlayer:setSTVO(stvo)
 
 	if self:isActive() then
 		self:setPublicSync("STVO", self.m_STVO)
+	end
+end
+
+function DatabasePlayer:getSTVO_NEW(category)
+	if category then
+		return self.m_STVO_NEW[category]
+	end
+
+	return self.m_STVO_NEW
+end
+
+function DatabasePlayer:setSTVO_NEW(category, stvo)
+	if category then
+		self.m_STVO_NEW[category] = stvo
+
+		if stvo >= 20 then
+			self.m_STVO_NEW[category] = 0
+			if self:isActive() then
+				self:sendMessage(_("Du hast 20 STVO Punkte! Dein Auto-Führerschein wurde abgenommen!", self), 255, 0, 0)
+			else
+				self:addOfflineMessage(_"Du hattest 20 STVO Punkte dein Führerschein wurde abgenommen!", 1)
+			end
+
+			if category == "Driving" then
+				self.m_HasDrivingLicense = false
+			elseif category == "Bike" then
+				self.m_HasBikeLicense = false
+			elseif category == "Truck" then
+				self.m_HasTruckLicense = false
+			elseif category == "Pilot" then
+				self.m_HasPilotLicense = false
+			end
+		end
+	else
+		self.m_STVO_NEW = stvo
+	end
+
+	if self:isActive() then
+		self:setPublicSync("STVO_NEW", self.m_STVO_NEW)
 	end
 end
 

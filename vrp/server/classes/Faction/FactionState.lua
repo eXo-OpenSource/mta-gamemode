@@ -228,7 +228,7 @@ function FactionState:loadFBI(factionId)
 	local elevator = Elevator:new()
 	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270)
 	elevator:addStation("Erdgeschoss", Vector3(296.49, -36.23, 1032.20), 90, 10)
-	
+
 	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
 
 	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
@@ -574,6 +574,28 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 	end)
 end
 
+function FactionState:getFullCategoryFromShurtcut(category)
+	local bMatch = false
+
+	if string.lower(category) == "auto" or string.lower(category) == "pkw" then
+		category = "Driving"
+		bMatch = true
+	elseif string.lower(category) == "motorrad" or string.lower(category) == "mt" then
+		category = "Bike"
+		bMatch = true
+	elseif string.lower(category) == "lastkraftwagen" or string.lower(category) == "lkw" then
+		category = "Truck"
+		bMatch = true
+	elseif string.lower(category) == "pilot" or string.lower(category) == "flug" then
+		category = "Pilot"
+		bMatch = true
+	end
+
+	if bMatch then
+		return category
+	end
+end
+
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
@@ -651,7 +673,7 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
         amount = 6
-    elseif  string.lower(reason) == "stellen" then
+    elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
         amount = 12
 	end
@@ -777,7 +799,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Command_stvo(player,cmd,target,amount,...)
+function FactionState:Command_stvo(player, cmd, target, category, amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
 		if amount and amount >= 1 and amount <= 6 then
@@ -785,14 +807,19 @@ function FactionState:Command_stvo(player,cmd,target,amount,...)
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if string.len(reason) > 2 and string.len(reason) < 50 then
-					local newSTVO = target:getSTVO() + amount
-					target:setSTVO(newSTVO)
-					outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
-					outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+					category = self:getFullCategoryFromShurtcut(category)
+					if category then
+						local newSTVO = target:getSTVO_NEW(category) + amount
+						target:setSTVO_NEW(category, newSTVO)
+						outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
+						outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 
-					local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
-					player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
-					self:sendMessage(msg, 255,0,0)
+						local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+						player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
+						self:sendMessage(msg, 255,0,0)
+					else
+						player:sendError(_("Die Kategorie ist ungültig!", player))
+					end
 				else
 					player:sendError(_("Der Grund ist ungültig!", player))
 				end
@@ -805,13 +832,16 @@ function FactionState:Command_stvo(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Event_giveSTVO(target, amount, reason)
+function FactionState:Event_giveSTVO(target, category, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			local newSTVO = target:getSTVO() + amount
-			target:setSTVO(newSTVO)
-			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0 )
+			outputChatBox("Kategorie: " ..category)
+			outputChatBox("STVO bevor: " ..target:getSTVO_NEW(category))
+			local newSTVO = target:getSTVO_NEW(category) + amount
+			outputChatBox("STVO danach: " ..newSTVO)
+			target:setSTVO_NEW(category, newSTVO)
+			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0)
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(client:getName(),target:getName(),amount, reason)
 			client:getFaction():addLog(client, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
@@ -820,12 +850,12 @@ function FactionState:Event_giveSTVO(target, amount, reason)
 	end
 end
 
-function FactionState:Event_setSTVO(target, amount, reason)
+function FactionState:Event_setSTVO(target, category, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			local newSTVO = tonumber(amount)
-			target:setSTVO(newSTVO)
+			target:setSTVO_NEW(category, newSTVO)
 			outputChatBox(("%s hat deine STVO-Punkt/e auf %d gesetzt!"):format(client:getName(), newSTVO), target, 255, 255, 0 )
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat die STVO-Punkte von %s auf %d gesetzt! Grund: %s"):format(client:getName(),target:getName(),amount, reason)
