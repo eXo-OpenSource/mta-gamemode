@@ -33,12 +33,15 @@ function PolicePanel:constructor()
 
 	--self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
 
-	self.m_PlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabSpieler)
-	self.m_PlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabSpieler)
-	self.m_PlayerCompanyLabel = GUILabel:new(320, 200, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
-	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
-	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
-	self.m_STVO = 				GUILabel:new(320, 275, 180, 20, _"STVO-Punkte: -", self.m_TabSpieler)
+	self.m_PlayerNameLabel = 	GUILabel:new(320, 50, 180, 20, _"Spieler: -", self.m_TabSpieler)
+	self.m_PlayerFactionLabel = GUILabel:new(320, 75, 180, 20, _"Fraktion: -", self.m_TabSpieler)
+	self.m_PlayerCompanyLabel = GUILabel:new(320, 100, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
+	self.m_PlayerGroupLabel = 	GUILabel:new(320, 125, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
+	self.m_PhoneStatus = 		GUILabel:new(320, 150, 180, 20, _"Handy: -", self.m_TabSpieler)
+	self.m_STVODriving = 		GUILabel:new(320, 175, 180, 20, _"STVO-Auto: -", self.m_TabSpieler)
+	self.m_STVOBike = 			GUILabel:new(320, 200, 180, 20, _"STVO-Motorrad: -", self.m_TabSpieler)
+	self.m_STVOTruck = 			GUILabel:new(320, 225, 180, 20, _"STVO-Lastkraftwagen: -", self.m_TabSpieler)
+	self.m_STVOPilot = 			GUILabel:new(320, 250, 180, 20, _"STVO-Pilot: -", self.m_TabSpieler)
 
 	self.m_GPS = GUICheckbox:new(490, 275, 100, 20, "GPS", self.m_TabSpieler)
 	self.m_GPS:setChecked(GPSEnabled)
@@ -314,7 +317,10 @@ function PolicePanel:onSelectPlayer(player)
 	local phone = "Ausgeschaltet"
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
-	self.m_STVO:setText(_("STVO-Punkte: %d", player:getSTVO()))
+	self.m_STVODriving:setText(_("STVO-Auto: %d", player:getSTVO_NEW("Driving")))
+	self.m_STVOBike:setText(_("STVO-Motorrad: %d", player:getSTVO_NEW("Bike")))
+	self.m_STVOTruck:setText(_("STVO-Lastkraftwagen: %d", player:getSTVO_NEW("Truck")))
+	self.m_STVOPilot:setText(_("STVO-Pilot: %d", player:getSTVO_NEW("Pilot")))
 
 	--self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
