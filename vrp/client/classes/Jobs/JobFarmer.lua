@@ -20,6 +20,11 @@ function JobFarmer:onInfo()
 		return
 	end
 
+	if (localPlayer.position - Vector3(-62.62, 76.34, 3.12)).length > 10 then
+		triggerServerEvent("AntiCheat:ReportFarmerTeleport", localPlayer, (localPlayer.position - Vector3(-62.62, 76.34, 3.12)).length)
+		outputDebug("fuck this")
+	end
+
 	setCameraMatrix(-1.8428000211716, 135.26879882813, 35.644901275635, -2.3047368526459, 134.49794006348, 35.206272125244, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Es gibt verschiedene Aufgaben auf der Farm.",255,255,255,true)
 	-- ### 1

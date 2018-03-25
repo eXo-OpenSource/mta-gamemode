@@ -23,6 +23,7 @@
 local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
+Account.REGISTRATION_ACTIVATED = true
 
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
@@ -196,6 +197,11 @@ end)
 function Account.register(player, username, password, email)
 	if player:getAccount() then return false end
 	if not username or not password then return false end
+
+	if not Account.REGISTRATION_ACTIVATED then
+		player:triggerEvent("registerfailed", _("Registration ist vorübergehend deaktiviert. Bitte versuchen es später erneut.", player))
+		return false
+	end
 
 	-- Some sanity checks on the username
 	-- Require at least 1 letter and a length of 3
