@@ -183,7 +183,9 @@ ADMIN_RANK_PERMISSION = {
 	["eventGangwarMenu"] = RANK.Administrator,
 
 	--keypad-system 
-	["placeKeypadObjects"] = RANK.Administrator -- ItemKeyPad, ItemEntrance, ItemDoor
+	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
+
+	["disablereg"] = RANK.Servermanager --disablereg, enablereg
 }
 
 GroupRank = {

@@ -69,6 +69,8 @@ function Admin:constructor()
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
 	addCommandHandler("cookie", adminCommandBind)
+	addCommandHandler("disablereg", adminCommandBind)
+	addCommandHandler("enablereg", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
@@ -356,6 +358,16 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 			self:Event_adminTriggerFunction("respawnRadius", targetName, nil, nil, admin)
 		else
 			admin:sendError("Radius ungültig: /crespawn [radius]")
+		end
+	elseif cmd == "disablereg" then
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["disablereg"] then
+			self:sendShortMessage(_("%s hat die Registration deaktiviert!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "register", "Register disabled")
+		end
+	elseif cmd == "enablereg" then
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["disablereg"] then
+			self:sendShortMessage(_("%s hat die Registration aktiviert!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "register", "Register enabled")
 		end
     else
 		if targetName then
