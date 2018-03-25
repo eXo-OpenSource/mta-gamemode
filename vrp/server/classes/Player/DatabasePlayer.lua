@@ -1023,7 +1023,7 @@ function DatabasePlayer:setSTVO(category, stvo)
 	end
 
 	if self:isActive() then
-		self:setPublicSync("STVO", self.m_STVO)
+		self:setPublicSync("STVO", toJSON(self.m_STVO))
 	end
 end
 

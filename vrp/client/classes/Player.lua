@@ -78,7 +78,7 @@ function Player:getGroupName()
 end
 
 function Player:getSTVO(category)
-	return self:getPublicSync("STVO")[category]
+	return fromJSON(self:getPublicSync("STVO"))[category]
 end
 
 function Player:getGroupType()

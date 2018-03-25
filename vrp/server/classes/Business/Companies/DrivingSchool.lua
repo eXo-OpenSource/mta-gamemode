@@ -37,7 +37,8 @@ DrivingSchool.testRoute =
 	{1372.90, -1648.60, 13.04},
 }
 
-addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "drivingSchoolPassTheory", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker",	"drivingSchoolStartLessionQuestion", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand"}
+addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "drivingSchoolPassTheory", "drivingSchoolStartAutomaticTest", "drivingSchoolHitRouteMarker",	"drivingSchoolStartLessionQuestion", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand", "drivingSchoolReduceSTVO"}
+
 function DrivingSchool:constructor()
     InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
 	VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = bind(self.onBarrierHit, self)
@@ -67,6 +68,7 @@ function DrivingSchool:constructor()
 
     addEventHandler("drivingSchoolEndLession", root, bind(DrivingSchool.Event_endLession, self))
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(DrivingSchool.Event_receiveTurnCommand, self))
+	addEventHandler("drivingSchoolReduceSTVO", root, bind(DrivingSchool.Event_reduceSTVO, self))
 end
 
 function DrivingSchool:destructor()
@@ -112,7 +114,7 @@ function DrivingSchool:Event_startTheory()
 				player:sendError(_("Du hast nicht genug Geld dabei!", player))
 				return
 			end
-			
+
 			player:triggerEvent("showDrivingSchoolTest")
 		end,
 		function() end,
@@ -410,7 +412,7 @@ function DrivingSchool:startLession(instructor, target, type)
 							["vehicle"] = false,
 							["startMileage"] = false,
 						}
-						
+
 						target:transferMoney(self.m_BankAccountServer, costs, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
 						self.m_BankAccountServer:transferMoney({self, nil, true}, costs*0.7, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
 						self.m_BankAccountServer:transferMoney(instructor, costs*0.15, ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]), "Company", "License")
@@ -493,4 +495,21 @@ function DrivingSchool:Event_receiveTurnCommand(turnCommand, arg)
     if target then
         target:triggerEvent("drivingSchoolChangeDirection", turnCommand, arg)
     end
+end
+
+function DrivingSchool:Event_reduceSTVO(category, amount)
+	if tonumber(client:getSTVO(category)) < tonumber(amount) then
+		client:sendError(_("Du hast nicht so viele STVO-Punkte!", client))
+		return false
+	end
+
+	local stvoPricing = 250 * amount
+
+	if not client:transferMoney(self.m_BankAccountServer, stvoPricing, "STVO-Punkte abbauen", "Driving School", "ReduceSTVO") then
+		client:sendError(_("Du hast nicht genügend Geld! ("..tostring(stvoPricing).."$)", client))
+		return false
+	end
+
+	client:setSTVO(category, client:getSTVO(category) - amount)
+	triggerClientEvent(client, "hideDrivingSchoolReduceSTVO", resourceRoot)
 end
