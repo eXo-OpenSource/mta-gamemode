@@ -836,10 +836,7 @@ function FactionState:Event_giveSTVO(target, category, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			outputChatBox("Kategorie: " ..category)
-			outputChatBox("STVO bevor: " ..target:getSTVO(category))
 			local newSTVO = target:getSTVO(category) + amount
-			outputChatBox("STVO danach: " ..newSTVO)
 			target:setSTVO(category, newSTVO)
 			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0)
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
