@@ -447,7 +447,7 @@ end
 GiveWantedBox = inherit(GUIForm)
 
 function GiveWantedBox:constructor(player, min, max, title, callback)
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
+	--[[GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
 
@@ -459,6 +459,24 @@ function GiveWantedBox:constructor(player, min, max, title, callback)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
 	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
 	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+	]]
+	
+	GUIWindow.updateGrid()			
+	self.m_Width = grid("x", 8) 	
+	self.m_Height = grid("y", 4) 	
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
+	
+	GUIGridLabel:new(1, 1, 3, 1, _"Anzahl", self.m_Window)
+	self.m_Changer = GUIGridChanger:new(4, 1, 4, 1, self.m_Window)
+	for i = min, max do
+		self.m_Changer:addItem(tostring(i))
+	end
+	
+	GUIGridLabel:new(1, 2, 3, 1, _"Grund", self.m_Window)
+	self.m_ReasonBox = GUIGridEdit:new(4, 2, 4, 1, self.m_Window)
+	self.m_SubmitButton = GUIGridButton:new(1, 3, 7, 1, _"Bestätigen", self.m_Window):setBarEnabled(false)
 	self.m_SubmitButton.onLeftClick =
 	function()
 		callback(player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
@@ -469,7 +487,7 @@ end
 GiveSTVOBox = inherit(GUIForm)
 
 function GiveSTVOBox:constructor(player, min, max, title, callback)
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
+	--[[GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s %s", player:getName(), title), true, true, self)
 
@@ -488,6 +506,30 @@ function GiveSTVOBox:constructor(player, min, max, title, callback)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.68, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
 	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.68, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
 	self.m_SubmitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.8, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", self.m_Window):setBackgroundColor(Color.Green):setBarEnabled(true)
+	]]
+	GUIWindow.updateGrid()			
+	self.m_Width = grid("x", 8) 	
+	self.m_Height = grid("y", 5) 	
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height,  _("%s %s", player:getName(), title), true, true, self)
+	
+	GUIGridLabel:new(1, 1, 3, 1, _"Kategorie", self.m_Window)
+	self.m_STVOCategories = GUIGridChanger:new(4, 1, 4, 1, self.m_Window)
+	self.m_STVOCategories:addItem(_"Auto")
+	self.m_STVOCategories:addItem(_"Motorrad")
+	self.m_STVOCategories:addItem(_"LKW")
+	self.m_STVOCategories:addItem(_"Pilot")
+	
+	GUIGridLabel:new(1, 2, 3, 1, _"Anzahl", self.m_Window)
+	self.m_Changer = GUIGridChanger:new(4, 2, 4, 1, self.m_Window)
+	for i = min, max do
+		self.m_Changer:addItem(tostring(i))
+	end
+	
+	GUIGridLabel:new(1, 3, 3, 1, _"Grund", self.m_Window)
+	self.m_ReasonBox = GUIGridEdit:new(4, 3, 4, 1, self.m_Window)
+	self.m_SubmitButton = GUIGridButton:new(1, 4, 7, 1, _"Bestätigen", self.m_Window):setBarEnabled(false)
 	self.m_SubmitButton.onLeftClick =
 	function()
 		local categoryName, categoryIndex = self.m_STVOCategories:getIndex()
