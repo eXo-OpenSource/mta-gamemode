@@ -263,3 +263,7 @@ function FactionVehicle:respawn(force)
 
 	return true
 end
+
+function FactionVehicle:sendOwnerMessage(msg)
+	self:getFaction():sendShortMessage(msg)
+end

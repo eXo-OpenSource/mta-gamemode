@@ -218,3 +218,7 @@ function CompanyVehicle:respawn(force)
 
 	return true
 end
+
+function CompanyVehicle:sendOwnerMessage(msg)
+	self:getCompany():sendShortMessage(msg)
+end

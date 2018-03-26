@@ -89,6 +89,7 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 	if data.TrunkId ~= 0 then
 		self.m_Trunk = Trunk.load(data.TrunkId)
 		self.m_TrunkId = data.TrunkId
+		self.m_Trunk:setVehicle(self)
 	end
 
 	if health and health <= 300 then
@@ -302,3 +303,14 @@ function PermanentVehicle:respawn(garageOnly)
 
 end
 
+function PermanentVehicle:sendOwnerMessage(msg)
+	local delTarget, isOffline = DatabasePlayer.get(self.m_Owner)
+	if delTarget then
+		if isOffline then
+			delTarget:addOfflineMessage(msg)
+			delete(delTarget)
+		else
+			delTarget:sendInfo(_(msg, client))
+		end
+	end
+end

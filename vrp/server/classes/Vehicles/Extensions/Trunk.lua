@@ -93,6 +93,10 @@ function Trunk:destructor()
   self:save()
 end
 
+function Trunk:setVehicle(veh) --only for display purposes, not to actually change the owner
+	self.m_Vehicle = veh
+end
+
 function Trunk:save()
 	return sql:queryExec("UPDATE ??_vehicle_trunks SET ItemSlot1 = ?, ItemSlot2 = ?, ItemSlot3 = ?, ItemSlot4 = ?, WeaponSlot1 = ?, WeaponSlot2 = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_ItemSlot[1]), toJSON(self.m_ItemSlot[2]), toJSON(self.m_ItemSlot[3]), toJSON(self.m_ItemSlot[4]), toJSON(self.m_WeaponSlot[1]), toJSON(self.m_WeaponSlot[2]), self.m_Id)
 end
@@ -117,12 +121,16 @@ function Trunk:addItem(player, item, amount, value)
 end
 
 function Trunk:takeItem(player, slot)
+	local isCopSeizing = player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() --TODO: add the item to state-evidence
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
 			local item = self.m_ItemSlot[slot]["Item"]
 			local amount = self.m_ItemSlot[slot]["Amount"]
 
 			if player:getInventory():giveItem(item, amount, self.m_ItemSlot[slot]["Value"]) then
+				if isCopSeizing then
+					self.m_Vehicle:sendOwnerMessage(_("%s hat %d %s aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), amount, item, self.m_Vehicle:getName()))
+				end
 				self.m_ItemSlot[slot]["Item"] = "none"
 				self.m_ItemSlot[slot]["Amount"] = 0
 
@@ -154,6 +162,7 @@ function Trunk:takeWeapon(player, slot)
 						self.m_WeaponSlot[slot]["Amount"] = 0
 						if isCopSeizing then
 							FactionState:getSingleton():addWeaponToEvidence(player, weaponId, amount, player:getFaction():getId())
+							self.m_Vehicle:sendOwnerMessage(_("%s hat eine/n %s mit %d Schuss aus dem Kofferraum deines Fahrzeuges %s konfisziert!", player, player:getName(), WEAPON_NAMES[weaponId], amount, self.m_Vehicle:getName()))
 						else
 							player:giveWeapon(weaponId, amount)
 							player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
