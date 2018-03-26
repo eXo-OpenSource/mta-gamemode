@@ -19,7 +19,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 			local premium = vehicle.m_Premium and 1 or 0
 
 			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
-	
+
 			VehicleManager:getSingleton():removeRef(vehicle)
 			vehicle.m_Owner = player:getId()
 			vehicle.m_OwnerType = VehicleTypes.Player
@@ -54,8 +54,8 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
 				end
 				return vehicle:save(), vehicle
-			
-				
+
+
 			end]]
 		end
 	end
@@ -89,7 +89,7 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 	if data.TrunkId ~= 0 then
 		self.m_Trunk = Trunk.load(data.TrunkId)
 		self.m_TrunkId = data.TrunkId
-		self.m_Trunk:setVehicle(self)
+		--self.m_Trunk:setVehicle(self)
 	end
 
 	if health and health <= 300 then
@@ -99,7 +99,7 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 	if data.ELSPreset and ELS_PRESET[data.ELSPreset] then
 		self:setELSPreset(data.ELSPreset)
 	end
-	
+
 	if data.Handling and data.Handling ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
 		local tHandlingTable = split(data.Handling, ";")
