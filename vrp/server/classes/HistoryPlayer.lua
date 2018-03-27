@@ -77,14 +77,14 @@ function HistoryPlayer:Event_PlayerHistory(userId)
 	local company = client:getCompany()
 	if not userId then return end
 
-	if not ( (faction and faction:getPlayerRank(client) >= FactionRank.Manager) or (company and company:getPlayerRank(client) >= CompanyRank.Manager) or (client:getRank() >= RANK.Supporter) ) then
+	if not ((faction and faction:getPlayerRank(client) >= FactionRank.Manager) or (company and company:getPlayerRank(client) >= CompanyRank.Manager) or (client:getRank() >= RANK.Supporter)) then
 		client:sendError(_("Dazu bist du nicht berechtigt!", client))
 		return
 	end
 
 	if not client.m_LastFileRequest or client.m_LastFileRequest > getTickCount() - 500 then
         local playerFile = {}
-        local result = sql:queryFetch("SELECT Id, InviterId, HighestRank, UninviteRank, UninviterId, ElementType, ElementId, DATE_FORMAT(JoinDate, '%d.%m.%Y') AS JoinDate, DATE_FORMAT(LeaveDate, '%d.%m.%Y') AS LeaveDate, InternalReason, ExternalReason FROM ??_player_history WHERE UserId = ?;", sql:getPrefix(), userId)
+        local result = sql:queryFetch("SELECT Id, InviterId, HighestRank, UninviteRank, UninviterId, ElementType, ElementId, DATE_FORMAT(JoinDate, '%d.%m.%Y %T') AS JoinDate, DATE_FORMAT(LeaveDate, '%d.%m.%Y %T') AS LeaveDate, InternalReason, ExternalReason FROM ??_player_history WHERE UserId = ?;", sql:getPrefix(), userId)
         for i, row in pairs(result) do
 
             playerFile[row.Id] = {
