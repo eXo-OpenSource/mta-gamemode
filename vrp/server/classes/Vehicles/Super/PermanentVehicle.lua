@@ -89,7 +89,7 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 	if data.TrunkId ~= 0 then
 		self.m_Trunk = Trunk.load(data.TrunkId)
 		self.m_TrunkId = data.TrunkId
-		--self.m_Trunk:setVehicle(self)
+		self.m_Trunk:setVehicle(self)
 	end
 
 	if health and health <= 300 then

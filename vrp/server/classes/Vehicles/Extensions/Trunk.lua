@@ -39,7 +39,7 @@ function Trunk.load(Id)
 		Trunk.Map[row.Id] = Trunk:new(row.Id, row.ItemSlot1, row.ItemSlot2, row.ItemSlot3, row.ItemSlot4, row.WeaponSlot1, row.WeaponSlot2)
 		return Trunk.Map[row.Id]
 	else
-		Trunk.load(0)
+		return Trunk.load(0)
 	end
 end
 

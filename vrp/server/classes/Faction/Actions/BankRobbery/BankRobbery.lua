@@ -189,11 +189,13 @@ end
 function BankRobbery:loadDestinationsAndInformState()
 	if not self.m_AlarmTriggered then
 		for markerIndex, destination in pairs(self.ms_FinishMarker) do
-			self.m_Blip[#self.m_Blip+1] = Blip:new("Marker.png", destination.x, destination.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Red)
-			self.m_Blip[#self.m_Blip]:setDisplayText("Bankraub-Abgabe")
-			self.m_Blip[#self.m_Blip]:setZ(destination.z)
-			self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8, 200, 0, 0, 100)
-			addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
+			if #self.m_Blip <= self:getDifficulty() then
+				self.m_Blip[#self.m_Blip+1] = Blip:new("Marker.png", destination.x, destination.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Red)
+				self.m_Blip[#self.m_Blip]:setDisplayText("Bankraub-Abgabe")
+				self.m_Blip[#self.m_Blip]:setZ(destination.z)
+				self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8, 200, 0, 0, 100)
+				addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
+			end
 		end
 		--state finish
 		self.m_Blip[#self.m_Blip+1] = Blip:new("Marker.png", self.ms_StateFinishMarker.x, self.ms_StateFinishMarker.y, self:getBlipVisibleTo(), 9999, BLIP_COLOR_CONSTANTS.Blue)
@@ -415,6 +417,7 @@ function BankRobbery:createTruck(x, y, z, rz)
 	truck:setRepairAllowed(false)
 	truck:setVariant(0,0)
 	truck:setAlwaysDamageable(true)
+	truck:initObjectLoading()
 	self:setTruckActive(truck, false)
 	self.m_Trucks[truck] = true
 	addEventHandler("onVehicleStartEnter", truck, self.m_Event_OnTruckStartEnterFunc)

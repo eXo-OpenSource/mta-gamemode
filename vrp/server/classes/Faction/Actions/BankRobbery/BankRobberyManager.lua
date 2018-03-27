@@ -30,8 +30,6 @@ function BankRobberyManager:startRob(bank)
 end
 
 function BankRobberyManager:stopRob()
-	self.m_IsBankrobRunning = false
-	self.m_CurrentBank = false
 
 	if self.m_CircuitBreakerPlayers then
 		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
@@ -46,12 +44,14 @@ function BankRobberyManager:stopRob()
 		if isTimer(self.m_OpenVaulTimer) then
 			killTimer(self.m_OpenVaulTimer)
 			if self.m_RobFaction then
-				for k, pl in ipairs(self.m_RobFaction:getOnlinePlayers()) do
+				for k, pl in pairs(self.m_CurrentBank:getEvilPeople()) do
 					pl:triggerEvent("CountdownStop","Safe offen:")
 				end
 			end
 		end
 	end
+	self.m_IsBankrobRunning = false
+	self.m_CurrentBank = false
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 end
@@ -80,7 +80,7 @@ end
 
 function BankRobberyManager:Event_onHackStepFailed() --somebody hit the wall
 	if not self.m_CurrentBank.m_AlarmTriggered then
-		for k, player in pairs(client:getFaction():getOnlinePlayers()) do
+		for k, player in pairs(self.m_CurrentBank:getEvilPeople()) do
 			player:sendWarning(_("%s war unvorsichtig und hat beim Hacken die Polizei alarmiert!", player, client:getName()))
 		end
 		self.m_CurrentBank:loadDestinationsAndInformState()
@@ -100,7 +100,7 @@ function BankRobberyManager:Event_onHackSuccessful() --all three steps
 	self.m_CurrentBank:loadDestinationsAndInformState()
 	local brobFaction = client:getFaction()
 	local openTime = self.m_CurrentBank.ms_VaultOpenTime
-	for k, player in pairs(brobFaction:getOnlinePlayers()) do
+	for k, player in pairs(self.m_CurrentBank:getEvilPeople()) do
 		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
 		player:triggerEvent("Countdown", (openTime/1000), "Safe offen:")
 	end

@@ -1245,6 +1245,7 @@ function Player:attachPlayerObject(object)
 				return false
 			end
 			self.m_PlayerAttachedObject = object
+			self:setPrivateSync("attachedObject", object)
 			object:setCollisionsEnabled(false)
 			object:setDoubleSided(true)
 			if settings["bone"] then
@@ -1326,6 +1327,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 		self.m_PlayerAttachedObject = nil
+		self:setPrivateSync("attachedObject", nil)
 	end
 end
 
