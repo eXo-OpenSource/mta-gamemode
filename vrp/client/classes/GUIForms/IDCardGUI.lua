@@ -69,7 +69,7 @@ function IDCardGUI:constructor(player)
 	addEventHandler("Event_receiveIDCardData", root, bind(self.Event_receiveIDCardData, self))
 end
 
-function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, jobLevel, weaponLevel, vehicleLevel, skinLevel, stvoLevels)
+function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, jobLevel, weaponLevel, vehicleLevel, skinLevel, wantedLevel, stvoLevels)
 	local carSymbol, carColor = self:getSymbol(car)
 	self.m_LicenseLabels["car"]:setText(carSymbol)
 	self.m_LicenseLabels["car"]:setColor(carColor)
@@ -88,11 +88,12 @@ function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, jobLevel, we
 	self.m_LevelLabels["vehicle"]:setText(tostring(vehicleLevel))
 	self.m_LevelLabels["skin"]:setText(tostring(skinLevel))
 
+	self.m_Wanteds:setText(tostring(wantedLevel))
+
 	self.m_STVODriving:setText(stvoLevels["Driving"])
 	self.m_STVOBike:setText(stvoLevels["Bike"])
 	self.m_STVOTruck:setText(stvoLevels["Truck"])
 	self.m_STVOPilot:setText(stvoLevels["Pilot"])
-	self.m_Wanteds:setText(tostring(weaponLevel))
 end
 
 function IDCardGUI:getSymbol(bool)

@@ -1020,7 +1020,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					player:setJailTime(jailTime)
 					player:setWanteds(0)
 					player:moveToJail(CUTSCENE)
-					self:uncuffPlayer( player)
+					self:uncuffPlayer(player)
 					player:clearCrimes()
 
 					local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
@@ -1216,8 +1216,8 @@ function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
 	setElementDimension(player,0)
 	setElementInterior(player,0)
-	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-	player:setRotation(0, 0, 90)
+	player:setPosition(1564.86, -1672.57, 16.2)
+	player:setRotation(0, 0, 180)
 	player:setWanteds(0)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
@@ -1230,6 +1230,7 @@ function FactionState:freePlayer(player)
 	player.m_JailStart = nil
 	player:setJailTime(0)
 	player.m_Bail = 0
+	player:setCorrectSkin()
 	player:triggerEvent("playerLeftJail")
 	player:triggerEvent("checkNoDm")
 end
