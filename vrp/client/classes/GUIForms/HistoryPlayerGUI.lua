@@ -73,7 +73,6 @@ function HistoryPlayerGUI:Event_OnPlayerHistoryReceived(infos)
 			end
 
 			ShortMessage:new(text, "Spielerakte")
-			iprint(info)
 		end
 	end
 end
