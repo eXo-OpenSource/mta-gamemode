@@ -222,7 +222,7 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
-function VehicleManager:createNewVehicle(ownerId, ownerType, posX, posY, posZ, rotX, rotY, rotZ, premium)
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium)
 	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
 	if type(ownerId) == "userdata" then
 		ownerId = ownerId:getId()
@@ -235,9 +235,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, posX, posY, posZ, r
 	local rotZ = rotZ or 0
 	local premium = premium or 0
 
-
-
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), ownerId, ownerType, posX, posY, posZ, rotX, rotY, rotZ, premium) then
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
 		return self:createVehicle(sql:lastInsertId())
 	end
 	return false
@@ -1085,7 +1083,7 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
 			if client:getBankMoney() >= price then
-				
+
 				client:transferBankMoney(self.m_BankAccountServer, price, "Garagen-Upgrade", "Vehicle", "GarageUpgrade")
 				client:setGarageType(currentGarage + 1)
 
@@ -1376,22 +1374,22 @@ function VehicleManager:migrate()
 		end
 
 		sql:queryExec([[
-			INSERT INTO 
-				??_vehicles 
+			INSERT INTO
+				??_vehicles
 				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
 				PosX, PosY, PosZ, RotX,
 				RotY, RotZ, Health, PositionType,
 				Fuel, Mileage, Premium, TrunkId,
-				Tunings, `Keys`) 
+				Tunings, `Keys`)
 				VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-			]], sql:getPrefix(), v["Id"], v["CreationTime"], v["Model"], v["Owner"], VehicleTypes.Player, v["PosX"], v["PosY"], v["PosZ"], 
+			]], sql:getPrefix(), v["Id"], v["CreationTime"], v["Model"], v["Owner"], VehicleTypes.Player, v["PosX"], v["PosY"], v["PosZ"],
 			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["PositionType"], v["Fuel"],
 			v["Mileage"], v["Premium"], v["TrunkId"], toJSON(tunings, true), v["Keys"])
 	end
 
 	outputDebugString(("Migrated %s player vehicles"):format(#vehicles))
 
-	
+
 
 	local vehicles = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
 
@@ -1404,15 +1402,15 @@ function VehicleManager:migrate()
 		end
 
 		sql:queryExec([[
-			INSERT INTO 
-				??_vehicles 
+			INSERT INTO
+				??_vehicles
 				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
 				PosX, PosY, PosZ, RotX,
 				RotY, RotZ, Health, PositionType,
 				Fuel, Mileage, Premium, TrunkId,
-				Tunings, SalePrice) 
+				Tunings, SalePrice)
 				VALUES (?, 2, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-			]], sql:getPrefix(), v["Id"], v["Model"], v["Group"], VehicleTypes.Group, v["PosX"], v["PosY"], v["PosZ"], 
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Group"], VehicleTypes.Group, v["PosX"], v["PosY"], v["PosZ"],
 			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["PositionType"], v["Fuel"],
 			v["Mileage"], v["Premium"], v["TrunkId"], toJSON(tunings, true), v["SalePrice"])
 	end
@@ -1427,7 +1425,7 @@ function VehicleManager:migrate()
 
 		if v["Color"] and type(v["Color"]) == "string" then
 			local c1, c2, c3, c4, c5, c6 = fromJSON(v["Color"])
-			
+
 			if c1 then
 				tunings["Color1"] = {c1, c2, c3}
 				if c4 then
@@ -1450,14 +1448,14 @@ function VehicleManager:migrate()
 		end
 
 		sql:queryExec([[
-			INSERT INTO 
-				??_vehicles 
+			INSERT INTO
+				??_vehicles
 				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
 				PosX, PosY, PosZ, RotX,
 				RotY, RotZ, Health,
-				Fuel, Mileage, Tunings, Handling, ELSPreset) 
+				Fuel, Mileage, Tunings, Handling, ELSPreset)
 				VALUES (?, 3, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-			]], sql:getPrefix(), v["Id"], v["Model"], v["Faction"], VehicleTypes.Faction, v["PosX"], v["PosY"], v["PosZ"], 
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Faction"], VehicleTypes.Faction, v["PosX"], v["PosY"], v["PosZ"],
 			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["Fuel"],
 			v["Mileage"], toJSON(tunings, true), v["handling"], v["ELSPreset"])
 	end
@@ -1472,7 +1470,7 @@ function VehicleManager:migrate()
 
 		if v["Color"] and type(v["Color"]) == "string" then
 			local c1, c2, c3, c4, c5, c6 = fromJSON(v["Color"])
-			
+
 			if c1 then
 				tunings["Color1"] = {c1, c2, c3}
 				if c4 then
@@ -1496,14 +1494,14 @@ function VehicleManager:migrate()
 		end
 
 		sql:queryExec([[
-			INSERT INTO 
-				??_vehicles 
+			INSERT INTO
+				??_vehicles
 				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
 				PosX, PosY, PosZ, RotX,
 				RotY, RotZ, Health,
-				Fuel, Mileage, Tunings, ELSPreset) 
+				Fuel, Mileage, Tunings, ELSPreset)
 				VALUES (?, 4, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-			]], sql:getPrefix(), v["Id"], v["Model"], v["Company"], VehicleTypes.Company, v["PosX"], v["PosY"], v["PosZ"], 
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Company"], VehicleTypes.Company, v["PosX"], v["PosY"], v["PosZ"],
 			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["Fuel"],
 			v["Mileage"], toJSON(tunings, true), v["ELSPreset"])
 	end
