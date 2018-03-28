@@ -159,6 +159,9 @@ function Core:ready()
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
+	if EVENT_EASTER then
+		Easter.updateTextures() 
+	end
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 end
 

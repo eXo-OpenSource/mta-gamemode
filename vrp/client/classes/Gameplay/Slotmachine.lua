@@ -26,8 +26,8 @@ addEventHandler("onSlotmachineJackpot", localPlayer, function(x, y, z)
 	end, 300, 10)
 end)
 
-if EVENT_EASTER then
-	Easter = {}
+Easter = {}
+function Easter.updateTextures() 
 	Easter.Textures = {}
 	function Easter.updateTexture(texname, file, object)
 		if not Easter.Textures[file] then
@@ -53,3 +53,4 @@ if EVENT_EASTER then
 		end
 	end
 end
+
