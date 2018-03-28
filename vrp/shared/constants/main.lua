@@ -15,12 +15,12 @@ MAX_FISHING_LEVEL = 10
 MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
-EVENT_EASTER = false
+EVENT_EASTER = true
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false
 SNOW_SHADERS_ENABLED = true -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`? 
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -183,7 +183,7 @@ ADMIN_RANK_PERMISSION = {
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
 
-	--keypad-system 
+	--keypad-system
 	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
 
 	["disablereg"] = RANK.Servermanager --disablereg, enablereg
@@ -801,7 +801,7 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
 		objectId = 1550, -- money bag
 		objectNames = {"Geldsack", "Geldsäcke"},
         randomRotation = true, --random z-rotaion on attach to provide some variety
-        positions = { -- in loading order, e.g. the first row is the first object position to load 
+        positions = { -- in loading order, e.g. the first row is the first object position to load
             Vector3(0.3, -1, 0.2),
             Vector3(-0.3, -1, 0.2),
             Vector3(0.7, -1.61, 0.2),

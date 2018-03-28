@@ -203,7 +203,7 @@
 	<script src="server/classes/Gameplay/Minigames/Catch.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/TurtleRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/WheelOfFortune.lua" type="server"/>
-	
+
 	<script src="server/classes/Gameplay/Places/Atrium.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
@@ -231,7 +231,7 @@
 
 	<script src="server/classes/Gameplay/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Growable.lua" type="server"/>
-	
+
 	<script src="server/classes/Gameplay/PickupWeaponManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/PickupWeapon.lua" type="server"/>
 
@@ -970,9 +970,9 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
-	
+
 	<script src="client/classes/Gameplay/PickupWeaponManager.lua" type="client"/>
-	
+
 	<script src="client/classes/Gameplay/Platform/PlatformEnvironment.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Platform/TextureReplace.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Ware/WareClient.lua" type="client" cache="true" />
@@ -1016,7 +1016,7 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Skribble/Skribble.lua" type="client" cache="true" />
-	
+
 	<script src="client/classes/Gameplay/Places/Atrium.lua" type="client"/>
 
 	<!-- white pieces -->
@@ -1044,7 +1044,7 @@
 	<vrpfile src="files/audio/Ware/done.mp3" />
 	<vrpfile src="files/audio/Ware/fail.mp3" />
 	<vrpfile src="files/fonts/SuperMario256.ttf" />
-	
+
 	<vrpfile src="files/audio/Items/keypad_success.ogg" />
 	<vrpfile src="files/audio/Items/keypad_access.ogg" />
 	<vrpfile src="files/audio/Items/keypad_error.ogg" />
@@ -1053,7 +1053,7 @@
 	<vrpfile src="files/audio/Items/doorGoThru.mp3" />
 
 	<vrpfile src="files/audio/Items/slam_arm.ogg" />
-	
+
 	<vrpfile src="files/images/warning.png" />
 
 	<!-- board piece -->
@@ -1078,26 +1078,26 @@
 
 
 	<!-- Events Start -->
-	<!--
+
 	<vrpfile src="files/images/Events/Easter/slotmachine1.jpg" />
 	<vrpfile src="files/images/Events/Easter/slotmachine2.jpg" />
 	<vrpfile src="files/images/Events/Easter/slot_1.png" />
 	<vrpfile src="files/images/Events/Easter/slot_2.png" />
-	<vrpfile src="files/images/Events/Easter/slot_3.png" />
+	<!--<vrpfile src="files/images/Events/Easter/slot_3.png" />-->
 	<vrpfile src="files/images/Events/Easter/slot_4.png" />
 	<vrpfile src="files/images/Events/Easter/slot_5.png" />
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
+	<vrpfile src="files/images/Events/Easter/slot_7.png" />
 
+	<!--
+        <vrpfile src="files/images/Events/Halloween/blood.png" />
+        <vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
+        <vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
+        <vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
+        <vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
 
-
-	<vrpfile src="files/images/Events/Halloween/blood.png" />
-	<vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
-	<vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
-	<vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
-	<vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
-
-	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
-	-->
+        <vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
+        -->
 	<vrpfile src="files/images/Events/Bonus/Bonus_Bravura.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Deagle.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Dildo.png" />
@@ -1141,7 +1141,7 @@
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/bullethitsmoke.png"/>
-	
+
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
 	<file src="files/html/js/jquery-3.2.1.min.js" />
@@ -1524,7 +1524,7 @@
 	<vrpfile src="files/images/Gangwar/stand_icon.png"/>
 	<vrpfile src="files/images/Gangwar/armor.png"/>
 	<vrpfile src="files/images/Gangwar/gradient.png"/>
-	
+
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
@@ -2204,7 +2204,7 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	
+
 	<!--map src="files/maps/ls-airport.map"/-->
 
 	<!-- Data maps (IMPORTANT) -->
