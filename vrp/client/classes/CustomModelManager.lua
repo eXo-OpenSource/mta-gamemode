@@ -20,14 +20,6 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/buildings/mech.col", 7520)
 	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
-	--rescue base
-	self:loadImportCOL("files/models/buildings/medic.col", 4027)
-	self:loadImportTXD("files/models/buildings/medic.txd", 4027)
-	self:loadImportDFF("files/models/buildings/medic.dff", 4027)
-	self:setLODDistance(4027, 500)
-	self:loadImportCOL("files/models/buildings/medicLOD.col", 4076)
-	self:loadImportTXD("files/models/buildings/medicLOD.txd", 4076)
-	self:loadImportDFF("files/models/buildings/medicLOD.dff", 4076)
 	--Kart-Track
 	self:loadImportCOL("files/models/kart.col", 13083)
 	self:loadImportTXD("files/models/kart.txd", 13083)

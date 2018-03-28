@@ -263,13 +263,11 @@ function FactionState:loadArmy(factionId)
 	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
 	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
 	areaGate.m_Gates[1]:setDoubleSided(true)
-	areaGate:addCustomShapes(Vector3(135.37, 1948.77, 19.38), Vector3(135.25, 1934.15, 19.25))
 	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
 
 
 	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
 	areaGarage.m_Gates[1]:setDoubleSided(true)
-	areaGarage:addCustomShapes(Vector3(277.25, 1821.42, 17.67), Vector3( 290.66, 1821.49, 17.64))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 
 	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)

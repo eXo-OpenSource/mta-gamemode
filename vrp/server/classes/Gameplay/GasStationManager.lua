@@ -415,8 +415,7 @@ GAS_STATIONS = {
 	{
 		name = "Rescue Service Station",
 		stations = {
-			{Vector3(1798.14, -1743.11, 6.8), 180, 1}, -- Rescue #1
-			{Vector3(1713.32, -1780.45, 14.08), 0, 1}, -- Rescue #2
+			{Vector3(1134.9, -1369.9, 14.1), 180, 1}
 		},
 		accessible =  {1, FactionStaticId.RESCUE},
 		nonInterior = true,

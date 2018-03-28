@@ -1254,6 +1254,10 @@ function Player:attachPlayerObject(object)
 				object:attach(self, settings["pos"], settings["rot"])
 			end
 
+			if settings["animationData"] then
+				self:setAnimation(unpack(settings["animationData"]))
+			end
+
 			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
 
 			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
@@ -1327,7 +1331,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 		self.m_PlayerAttachedObject = nil
-		self:setPrivateSync("attachedObject", nil)
+		self:setPrivateSync("attachedObject", false)
 	end
 end
 

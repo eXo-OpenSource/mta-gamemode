@@ -383,7 +383,7 @@ end
 
 function VehicleMouseMenu:getAttachedElement(model, element)
 	if getElementType(element) == "player" then
-		return localPlayer:getPrivateSync("attachedObject") and localPlayer:getPrivateSync("attachedObject"):getModel() == model and {localPlayer:getPrivateSync("attachedObject")} or {}
+		return (localPlayer:getPrivateSync("attachedObject") and localPlayer:getPrivateSync("attachedObject"):getModel() == model and {localPlayer:getPrivateSync("attachedObject")}) or {}
 	end
 	local boxes = {}
 	for key,value in pairs(element:getAttachedElements()) do

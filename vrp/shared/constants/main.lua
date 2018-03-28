@@ -428,7 +428,7 @@ WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
 	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(-0.09, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true}
+	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}}
 }
 
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
@@ -659,8 +659,8 @@ for i, v in pairs(BeggarTypes) do
 	BeggarTypeNames[v] = i
 end
 
-HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
-HOSPITAL_ROTATION = Vector3(0, 0, 180)
+HOSPITAL_POSITION = Vector3(1177.80, -1323.94, 14.09)
+HOSPITAL_ROTATION = Vector3(0, 0, 270)
 
 WEAPON_LEVEL = {
 	[1] = {["costs"] = 500, ["hours"] = 1},
@@ -813,7 +813,7 @@ VEHICLE_OBJECT_ATTACH_POSITIONS = {
             Vector3(0.21, -2.51, 0.2),
             Vector3(-0.21, -2.49, 0.2),
         }
-    }
+	}
 }
 
 CompanyStaticId = {

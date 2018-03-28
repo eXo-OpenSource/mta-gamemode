@@ -2004,12 +2004,6 @@
 	<vrpfile src="files/models/buildings/fishshop.col" />
 	<vrpfile src="files/models/buildings/mech.dff"/>
 	<vrpfile src="files/models/buildings/mech.col"/>
-	<vrpfile src="files/models/buildings/medic.txd" />
-	<vrpfile src="files/models/buildings/medic.dff" />
-	<vrpfile src="files/models/buildings/medic.col" />
-	<vrpfile src="files/models/buildings/medicLOD.txd" />
-	<vrpfile src="files/models/buildings/medicLOD.dff" />
-	<vrpfile src="files/models/buildings/medicLOD.col" />
 	<vrpfile src="files/models/buildings/kart.txd" />
 	<vrpfile src="files/models/buildings/kart.dff" />
 	<vrpfile src="files/models/buildings/kart.col" />

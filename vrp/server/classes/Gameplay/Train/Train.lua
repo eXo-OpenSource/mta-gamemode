@@ -57,7 +57,6 @@ end
 
 function Train:destructor()
 	self.m_Manager:removeRef(self)
-    self.m_RenderCol:destroy()
 	if self.m_Visible then
         self:toggleVisibleTrain(false)
     end

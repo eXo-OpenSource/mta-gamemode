@@ -14,8 +14,7 @@ addRemoteEvents{
 
 function FactionRescue:constructor()
 	-- Duty Pickup
-	self:createDutyPickup(1721.06, -1752.76, 13.55, 0) -- Base
-	self:createDutyPickup(1760.72, -1744.20, 6, 0) -- Garage
+	self:createDutyPickup(1076.30, -1374.01, 13.65, 0) -- Garage
 
 	self.m_VehicleFires = {}
 
@@ -28,23 +27,27 @@ function FactionRescue:constructor()
 	self.m_BankAccountServerCorpse = BankServer.get("player.corpse")
 
 	-- Barriers
-	--VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
-	--VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.40), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
-	--VehicleBarrier:new(Vector3(1811.50, -1761.50, 13.40), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierHit, self)
+	VehicleBarrier:new(Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
+	VehicleBarrier:new(Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
 
+	--Garage doors
+	
+	Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1125.7, -1381.9, 17), Vector3(180, -88, 270)) --one
+	Gate:new(3037, Vector3(1125.7, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1125.7, -1374.2, 17), Vector3(180, -88, 90)) --one back
+
+	Gate:new(3037, Vector3(1113.9, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1113.9, -1381.9, 17), Vector3(180, -88, 270)) --two
+	Gate:new(3037, Vector3(1113.9, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1113.9, -1374.2, 17), Vector3(180, -88, 90)) --two back
+
+	Gate:new(3037, Vector3(1102.1, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1102.1, -1381.9, 17), Vector3(180, -88, 270)) --three
+	Gate:new(3037, Vector3(1102.1, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1102.1, -1374.2, 17), Vector3(180, -88, 90)) --three back
+
+	Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1090.3, -1381.9, 17), Vector3(180, -88, 270)) --four
+	Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1090.3, -1374.2, 17), Vector3(180, -88, 90)) --four back
 	local elevator = Elevator:new()
+	elevator:addStation("Heliport", Vector3(1161.74, -1329.84, 31.49))
+	elevator:addStation("Vordereingang", Vector3(1172.45, -1325.44, 15.41), 270)
+	elevator:addStation("Hintereingang", Vector3(1144.70, -1322.30, 13.57), 90)
 
-	elevator:addStation("UG Garage", Vector3(1756.40, -1747.44, 6.22))
-	elevator:addStation("Erdgeschoss", Vector3(1744.63, -1752.5, 13.57))
-	elevator:addStation("1.Obergeschoss", Vector3(1744.63, -1751.69, 18.81))
-	elevator:addStation("2.Obergeschoss", Vector3(1744.63, -1751.69, 23.533))
-	elevator:addStation("3.OG Heliport 1", Vector3(1778.19, -1786.69, 46.18))
-	elevator:addStation("3.OG Heliport 2", Vector3(1785.10, -1788.13, 46.18))
-
-	local terraceElevator = Elevator:new()
-	terraceElevator:addStation("2.Obergeschoss", Vector3(1720.411, -1753.330, 23.539))
-	terraceElevator:addStation("Terrasse unten", Vector3(1743.533, -1765.879, 31.322))
-	terraceElevator:addStation("Terrasse oben", Vector3( 1743.533, -1765.879, 36.891))
 
 	self.m_Faction = FactionManager.Map[4]
 
@@ -60,7 +63,7 @@ function FactionRescue:constructor()
 		end
 	)
 
-	local blip = Blip:new("Rescue.png", 1720, -1752.40, root, 400)
+	local blip = Blip:new("Rescue.png", 1172.08, -1323.38, root, 400)
 	blip:setOptionalColor({factionColors[4].r, factionColors[4].g, factionColors[4].b})
 	blip:setDisplayText(self.m_Faction:getName(), BLIP_CATEGORY.Faction)
 

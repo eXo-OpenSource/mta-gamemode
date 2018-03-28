@@ -1,5 +1,5 @@
 <map edf:definitions="vrp_editortools">
-    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1,2" name="LS Unity Krankenhaus" alpha="255" interior="0" posX="1727.7227" posY="-1725.0967" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
+    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1,2" name="Little Mexico" alpha="255" interior="0" posX="1727.7227" posY="-1725.0967" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
     <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1,2" name="Pershing Square" alpha="255" interior="0" posX="1477.6377" posY="-1725.332" posZ="13.80656" rotX="0" rotY="0" rotZ="89.753"></bus_stop>
 
     <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="Conference Center" alpha="255" interior="0" posX="1155.9758" posY="-1845.2539" posZ="13.84247" rotX="0" rotY="0" rotZ="89.007"></bus_stop>
@@ -15,7 +15,7 @@
     <bus_stop id="bus_stop (14)" markerdistance="4.5" lines="1" name="Conference Center" alpha="255" interior="0" posX="1160.14" posY="-1859.3146" posZ="13.80499" rotX="0" rotY="0" rotZ="270.055"></bus_stop>
     
     <bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" name="Commerce" posX="1457.4009" posY="-1486.7881" posZ="13.78156" rotX="0" rotY="0" rotZ="346"></bus_stop>
-    <bus_stop id="bus_stop (16)" markerdistance="4.5" lines="2" name="Market Einkaufszentrum" alpha="255" interior="0" posX="1124.0219" posY="-1388.2064" posZ="13.98375" rotX="0" rotY="0" rotZ="89.844"></bus_stop>
+    <bus_stop id="bus_stop (16)" markerdistance="4.5" lines="2" name="Market" alpha="255" interior="0" posX="1166.48" posY="-1388.2064" posZ="13.98375" rotX="0" rotY="0" rotZ="89.844"></bus_stop>
     <bus_stop id="bus_stop (17)" markerdistance="4.5" lines="2" name="Market Station" alpha="255" interior="0" posX="871.00958" posY="-1313.2692" posZ="13.81602" rotX="0" rotY="0" rotZ="90.014"></bus_stop>
     <bus_stop id="bus_stop (18)" markerdistance="4.5" lines="2" name="Dillimore" posX="688.81384" posY="-553.82568" posZ="16.57062" rotX="0" rotY="0" rotZ="0"></bus_stop>
     <bus_stop id="bus_stop (19)" markerdistance="4.5" lines="2" name="Hilltop Farm" posX="1032.559" posY="-462.92233" posZ="51.75039" rotX="0" rotY="0" rotZ="292.702"></bus_stop>
@@ -23,11 +23,11 @@
     <bus_stop id="bus_stop (21)" markerdistance="4.5" lines="2" name="Hilltop Farm" alpha="255" interior="0" posX="1040.0696" posY="-443.34528" posZ="51.99516" rotX="0" rotY="0" rotZ="110.416"></bus_stop>
     <bus_stop id="bus_stop (22)" markerdistance="4.5" lines="2" name="Dillimore" alpha="255" interior="0" posX="674.37848" posY="-553.8252" posZ="16.57062" rotX="0" rotY="0" rotZ="179.718"></bus_stop>
     <bus_stop id="bus_stop (23)" markerdistance="4.5" lines="2" name="Market Station" alpha="255" interior="0" posX="871.00977" posY="-1334.0345" posZ="13.79102" rotX="0" rotY="0" rotZ="269.729"></bus_stop>
-    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="2" name="Market Einkaufszentrum" alpha="255" interior="0" posX="1102.7715" posY="-1413.0061" posZ="13.88375" rotX="0" rotY="0" rotZ="269.559"></bus_stop>
+    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="2" name="Market" alpha="255" interior="0" posX="1166.48" posY="-1413.0061" posZ="13.88375" rotX="0" rotY="0" rotZ="269.559"></bus_stop>
     <bus_stop id="bus_stop (25)" markerdistance="4.5" lines="2" name="Commerce" alpha="255" interior="0" posX="1443.5764" posY="-1483.5631" posZ="13.78156" rotX="0" rotY="0" rotZ="165.716"></bus_stop>
 
     <bus_stop id="bus_stop (50)" markerdistance="4.5" lines="1,2" name="Pershing Square" posX="1477.7627" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
-    <bus_stop id="bus_stop (51)" markerdistance="4.5" lines="1,2" name="LS Unity Krankenhaus" alpha="255" interior="0" posX="1717.7227" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
+    <bus_stop id="bus_stop (51)" markerdistance="4.5" lines="1,2" name="Little Mexico" alpha="255" interior="0" posX="1727.7227" posY="-1739.0469" posZ="13.80656" rotX="0" rotY="0" rotZ="270.038"></bus_stop>
     
     <bus_stop id="bus_stop (52)" markerdistance="4.5" lines="1" name="Idlewood" alpha="255" interior="0" posX="2138.2627" posY="-1759.3618" posZ="13.80656" rotX="0" rotY="0" rotZ="270.043"></bus_stop>
     <bus_stop id="bus_stop (53)" markerdistance="4.5" lines="1" name="Jefferson" alpha="255" interior="0" posX="2188.7527" posY="-1377.2513" posZ="24.25656" rotX="0" rotY="0" rotZ="90.32"></bus_stop>

@@ -137,5 +137,5 @@ function VehicleSpawner:initializeAll()
 
 	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
-	VehicleSpawner:new(1742.06, -1742.61, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
+	VehicleSpawner:new(1182.59, -1331.99, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 end

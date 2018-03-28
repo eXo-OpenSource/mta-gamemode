@@ -91,19 +91,24 @@ function PlayerManager:Event_onRequestGateOpen()
 	if client then
 		if Gate.Map then
 			local obj
+			local openGate
+			local closestDist = math.huge
 			for i = 1,#Gate.Map do
 				obj = Gate.Map[i]
 				local int, dim = obj:getInterior(), obj:getDimension()
 				if int == client:getInterior() and dim == client:getDimension() then
 					if obj:getPosition() and client:getPosition() then
-						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then
-							local instance = obj.m_Super
-							if instance and obj.m_Id == 1 then
-								instance:Event_onColShapeHit(client, true)
+						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 and getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) < closestDist then
+							if obj.m_Super and obj.m_Id == 1 then
+								openGate = obj.m_Super
+								closestDist = getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) 
 							end
 						end
 					end
 				end
+			end
+			if openGate then
+				openGate:triggerMovement(client)
 			end
 		end
 	end
