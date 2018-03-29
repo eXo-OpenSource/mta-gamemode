@@ -4,7 +4,7 @@ addEvent("Core.onClientInternalError", true)
 function Core:constructor()
 	outputServerLog("Initializing core...")
 	nextframe(function() --small hack to override the name meta-name
-		if DEBUG then 
+		if DEBUG then
 			setGameType(("%s @ %s"):format(PROJECT_NAME, getOpticalTimestamp()))
 		else
 			setGameType(("%s %s"):format(PROJECT_NAME, PROJECT_VERSION))
@@ -58,6 +58,7 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		ServerSettings:new()
 		AntiCheat:new()
 		ModdingCheck:new()
 		TranslationManager:new()
@@ -169,7 +170,7 @@ function Core:constructor()
 		GroupHouseRob:new()
 
 		BindManager:new()
-		
+
 		Discord:new()
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
