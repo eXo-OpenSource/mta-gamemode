@@ -10,8 +10,12 @@ ServerSettings = inherit(Singleton)
 function ServerSettings:constructor()
 	local result = sql:queryFetch("SELECT * FROM ??_settings", sql:getPrefix())
 	for index, row in pairs(result) do
-		if row.Index == "ServerPassword" and row.Value then
-			setServerPassword(row.Value)
+		if row.Index == "ServerPassword" then
+			if (row.Value) then
+				setServerPassword(row.Value)
+			else
+				setServerPassword()
+			end
 		end
 	end
 end
