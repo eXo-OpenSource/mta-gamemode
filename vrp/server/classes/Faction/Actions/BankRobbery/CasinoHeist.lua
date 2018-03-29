@@ -118,7 +118,7 @@ function CasinoHeist:updateDifficulty(debugDiff)
 			--update money based on time (more money 18 o clock)
 			local timeAsFactor = getRealTime().hour + getRealTime().minute/60
 			local diff = math.max(0, math.sin((timeAsFactor + 12)/12*math.pi)+0.5) --between 0 (2-10 o clock) and 1.5 (18 o clock) in sinus wave
-			self.m_CurrentMoney = self.m_CurrentMoney + diff*3000
+			self.m_CurrentMoney = math.min(self.m_CurrentMoney + diff*3000, 150000)
 			local moneyPerTruck = self.ms_MoneyPerBag * self.m_MaxBagsPerTruck --max money a truck can carry
 			local min_money = moneyPerTruck/2 --minimal money to start a rob
 			local difficulty =  math.ceil((self.m_CurrentMoney) / moneyPerTruck)
