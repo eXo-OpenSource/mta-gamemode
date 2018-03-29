@@ -127,7 +127,7 @@ function PermanentVehicle:constructor(data)
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
 	self.m_HasBeenUsed = 0
-	self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(0,5)):sub(0,8))
+	self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
 end
 
 function PermanentVehicle:destructor()
