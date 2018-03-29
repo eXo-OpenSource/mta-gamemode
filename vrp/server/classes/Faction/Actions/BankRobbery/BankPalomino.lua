@@ -45,6 +45,7 @@ function BankPalomino:constructor()
 
 	self.ms_MoneyPerBag = 3000
 	self.ms_VaultOpenTime = 3*(60*1000)
+	self.ms_BankRobGeneralTime = 60*1000*12
 
 	self:build()
 

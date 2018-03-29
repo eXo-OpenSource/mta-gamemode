@@ -302,7 +302,6 @@ end
 function GroupProperty:Event_RemoveAll( client )
 	self.m_ChangeKeyMap = {}
 	for k, obj in ipairs(self.m_Keys) do
-		count = count + 1
 		self.m_ChangeKeyMap[#self.m_ChangeKeyMap+1] = {"remove",obj.Owner,self.m_Id,Account.getNameFromId(obj.Owner)}
 	end
 	self:Event_RefreshPlayer( client )

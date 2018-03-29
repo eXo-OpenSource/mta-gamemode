@@ -9,7 +9,6 @@ BankRobbery = inherit(Object)
 --Info 68 Tresors
 local MONEY_PER_SAFE_MIN = 1000
 local MONEY_PER_SAFE_MAX = 2000
-local BANKROB_TIME = 60*1000*12
 
 function BankRobbery:constructor()
 	self.m_IsBankrobRunning = false
@@ -205,10 +204,10 @@ function BankRobbery:loadDestinationsAndInformState()
 		addEventHandler("onMarkerHit", self.m_StateDestinationMarker, bind(self.Event_onStateDestinationMarkerHit, self))
 		
 		if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
-		self.m_Timer = setTimer(bind(self.timeUp, self), BANKROB_TIME, 1)
+		self.m_Timer = setTimer(bind(self.timeUp, self), self.ms_BankRobGeneralTime, 1)
 		for index, playeritem in pairs(self:getEvilPeople()) do
 			playeritem:triggerEvent("CountdownStop", "Hack-Zeitfenster")
-			playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
+			playeritem:triggerEvent("Countdown", math.floor(self.ms_BankRobGeneralTime/1000), "Bank-Überfall")
 		end
 		self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
 		FactionState:getSingleton():sendMoveRequest(TSConnect.Channel.STATE)

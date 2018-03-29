@@ -6,6 +6,10 @@
 -- *
 -- ****************************************************************************
 ElevatorGUI = inherit(GUIButtonMenu)
+ElevatorGUI.Objects = {
+	createObject(3051, 1710.8086, -1643.141, 20.58095),
+	createObject(3051, 1709.9536, -1643.9614, 20.58095, 0, 0, 180)
+}
 
 addRemoteEvents{"showElevatorGUI"}
 
@@ -36,8 +40,13 @@ function ElevatorGUI:itemCallback(stationId, station)
 		fadeCamera(false,1,0,0,0)
 		setTimer( function()
 			triggerServerEvent("elevatorStartDrive", localPlayer, self.m_ElevatorId, stationId)
-			setElementDimension(localPlayer,0)
+			local dim = math.random(1, 1000)
+			setElementDimension(localPlayer,dim)
 			setElementInterior(localPlayer,18)
+			for i,v in pairs(ElevatorGUI.Objects) do
+				v:setInterior(18)
+				v:setDimension(dim)
+			end
 			localPlayer:setPosition(1709.42, -1643.27, 20.23)
 			localPlayer:setRotation(0, 0, 245)
 			localPlayer:setFrozen(true)
@@ -96,9 +105,3 @@ addEventHandler("showElevatorGUI", root,
 			end
 		end
 	)
-
-	createObject(3051, 1710.8086, -1643.141, 20.58095):setInterior(18)
-	createObject(3051, 1709.9536, -1643.9614, 20.58095, 0, 0, 180):setInterior(18)
-	--[[<object id="object (lift_dr) (1)" breakable="true" interior="18" alpha="255" model="3051" doublesided="false" scale="1" dimension="0" posX="1710.8086" posY="-1643.141" posZ="20.58095" rotX="0" rotY="0" rotZ="0"></object>
-	<object id="object (lift_dr) (2)" breakable="true" interior="18" alpha="255" model="3051" doublesided="false" scale="1" dimension="0" posX="1709.9536" posY="-1643.9614" posZ="20.58095" rotX="0" rotY="0" rotZ="180"></object>
-]]

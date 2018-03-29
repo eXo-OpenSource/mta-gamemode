@@ -63,6 +63,7 @@ function CasinoHeist:constructor()
 	self.m_SecuricarsById = {}
 	
 	self.ms_VaultOpenTime = 3000 --3 secs
+	self.ms_BankRobGeneralTime = 60*1000*20
 
     self.ms_MoneyPerBag = 3000
     self.m_MaxBagsPerTruck = #VEHICLE_OBJECT_ATTACH_POSITIONS[428].positions

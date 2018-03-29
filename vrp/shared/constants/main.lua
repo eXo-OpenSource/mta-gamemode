@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.5"
+PROJECT_VERSION = "1.6"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -18,7 +18,7 @@ MAX_WANTED_LEVEL = 12
 EVENT_EASTER = true
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = true -- disable them during summer time
+SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
 FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
