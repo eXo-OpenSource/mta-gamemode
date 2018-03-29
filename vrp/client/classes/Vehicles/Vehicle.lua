@@ -420,3 +420,27 @@ addEventHandler("onClientRender", root,
 	end
 )
 
+local VehiclesToDisableShooting = {
+	[476] = true, -- Rustler
+	[447] = true, -- Seasparrow
+}
+local function disableShootingOfVehicles()
+	toggleControl("vehicle_secondary_fire", false)
+end
+
+addEventHandler("onClientVehicleEnter", root, function(player, seat)
+	if seat == 0 and VehiclesToDisableShooting[source:getModel()] then
+		if not isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then
+			addEventHandler("onClientRender", root, disableShootingOfVehicles)
+		end
+	end
+end)
+
+addEventHandler("onClientVehicleExit", root, function(player, seat)
+	if seat == 0 and VehiclesToDisableShooting[source:getModel()] then
+		if isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then
+			removeEventHandler("onClientRender", root, disableShootingOfVehicles)
+			toggleControl("vehicle_secondary_fire", true)
+		end
+	end
+end)
