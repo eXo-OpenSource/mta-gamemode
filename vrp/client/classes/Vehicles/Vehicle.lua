@@ -429,7 +429,7 @@ local function disableShootingOfVehicles()
 end
 
 addEventHandler("onClientVehicleEnter", root, function(player, seat)
-	if seat == 0 and VehiclesToDisableShooting[source:getModel()] then
+	if seat == 0 and VehiclesToDisableShooting[source:getModel()] and player == localPlayer then
 		if not isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then
 			addEventHandler("onClientRender", root, disableShootingOfVehicles)
 		end
@@ -437,7 +437,7 @@ addEventHandler("onClientVehicleEnter", root, function(player, seat)
 end)
 
 addEventHandler("onClientVehicleExit", root, function(player, seat)
-	if seat == 0 and VehiclesToDisableShooting[source:getModel()] then
+	if seat == 0 and VehiclesToDisableShooting[source:getModel()] and player == localPlayer then
 		if isEventHandlerAdded("onClientRender", root, disableShootingOfVehicles) then
 			removeEventHandler("onClientRender", root, disableShootingOfVehicles)
 			toggleControl("vehicle_secondary_fire", true)
