@@ -63,7 +63,8 @@ function PermanentVehicle.convertVehicle(vehicle, player, group)
 	return false
 end
 
-function PermanentVehicle:constructor(data)	self.m_Id = data.Id
+function PermanentVehicle:constructor(data)	
+	self.m_Id = data.Id
 	self.m_Owner = data.OwnerId
 	self.m_OwnerType = data.OwnerType
 	self.m_Premium = data.Premium ~= 0
@@ -126,6 +127,7 @@ function PermanentVehicle:constructor(data)	self.m_Id = data.Id
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
 	self.m_HasBeenUsed = 0
+	self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(0,5)):sub(0,8))
 end
 
 function PermanentVehicle:destructor()

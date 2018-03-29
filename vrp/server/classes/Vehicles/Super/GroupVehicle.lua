@@ -120,7 +120,7 @@ end
 ]]
 
 function GroupVehicle:isGroupPremiumVehicle()
-	return self.m_Premium ~= 0
+	return self:isPremiumVehicle()
 end
 
 function GroupVehicle:hasKey(player)
