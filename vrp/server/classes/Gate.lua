@@ -21,6 +21,7 @@ function Gate:addGate(model, pos, rot, openPos, openRot, playSound)
 end
 
 function Gate:triggerMovement(hitEle)
+    if not hitEle or not isElement(hitEle) then return false end
     if hitEle:getType() == "player" then
         local player = hitEle
         if player:isInVehicle() and player:getOccupiedVehicleSeat() ~= 0 then

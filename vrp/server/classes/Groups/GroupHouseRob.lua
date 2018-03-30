@@ -30,11 +30,9 @@ local sellerPeds =
 }
 
 GroupHouseRob = inherit( Singleton )
-GroupHouseRob.MAX_ROBS_PER_GROUP = 5
 GroupHouseRob.COOLDOWN_TIME = 1000*60*15
 addRemoteEvents{"GroupRob:SellRobItems"}
 function GroupHouseRob:constructor()
-	self.m_GroupsRobbed = {}
 	self.m_GroupsRobCooldown = {}
 	self.m_HousesRobbed = {}
 	self.m_SellerPeds = {}
@@ -131,34 +129,25 @@ function GroupHouseRob:startNewRob( house, player )
 		local group = player:getGroup()
 		if group then
 			if group:getType() == "Gang" then
-				if not self.m_GroupsRobbed[group] then
-					self.m_GroupsRobbed[group] = 0
-				end
-
 				if FactionState:getSingleton():countPlayers() < HOUSEROB_MIN_MEMBERS then
 					player:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
 					return false
 				end
 
-				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then
-					if not self.m_HousesRobbed[house] then
-						local tick = getTickCount()
-						if not self.m_GroupsRobCooldown[group] then
-							self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
-						end
-						if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
-							self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
-							self.m_GroupsRobCooldown[group]  = tick
-							self.m_HousesRobbed[house] = true
-							return true
-						else
-							player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
-						end
+				if not self.m_HousesRobbed[house] then
+					local tick = getTickCount()
+					if not self.m_GroupsRobCooldown[group] then
+						self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
+					end
+					if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
+						self.m_GroupsRobCooldown[group]  = tick
+						self.m_HousesRobbed[house] = true
+						return true
 					else
-						player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
+						player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
 					end
 				else
-					player:sendError(_("Ihr habt schon zu viele Häuser heute ausgeraubt!", player))
+					player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
 				end
 			end
 		end

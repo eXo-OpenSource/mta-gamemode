@@ -27,7 +27,7 @@ function RadioStationEditGUI:constructor()
 	self.m_InfoLabel2 = GUIGridLabel:new(1, 9, 11, 1, "Füge hier einen neuen Sender mit einer Stream-URL hinzu.", self.m_Window)
 	self.m_HelpLabel = GUIGridLabel:new(11, 9, 5, 1, "(Wo finde ich die URLs?)", self.m_Window):setAlignX("right"):setClickable(true)
 	self.m_HelpLabel.onLeftClick = function()
-        ShortMessage:new("TODO")
+        ShortMessage:new("Radiostationen besitzen heutzutage meistens Webstreams. Diese findest du auf der Web-Seite des Radios oder auch in sog. Stream-Listen im Internet. Wichtig ist, dass der Link möglichst direkt zu dem Audio-Player führt bzw die Musik direkt beginnt. Du kannst auch eine URL eines bestehenden Radiosenders in deinen Browser einfügen und dir somit ein Beispiel anzeigen lassen.")
         --GUIWebWindowForm:new(screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, "Das ist ganz einfach", "https://lmddgtfy.net/?q=radio%20stream%20liste", true, true)
 	end
 	

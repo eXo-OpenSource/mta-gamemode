@@ -193,6 +193,10 @@ function GroupVehicle:respawn(force)
 	return true
 end
 
+function GroupVehicle:isForSale()
+	return self.m_ForSale
+end
+
 function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
@@ -208,6 +212,10 @@ function GroupVehicle:setForSale(sale, price)
 	end
 	setElementData(self, "forSale", self.m_ForSale, true)
 	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
+end
+
+function GroupVehicle:getSalePrice()
+	return self.m_SalePrice
 end
 
 function GroupVehicle:buy(player)

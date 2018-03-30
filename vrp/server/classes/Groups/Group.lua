@@ -681,7 +681,9 @@ function Group:payDay()
 	end
 
 	for index, vehicle in pairs(self:getVehicles()) do
-		outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getTax()
+		if not vehicle:isPremiumVehicle() or not (vehicle:isForSale() and vehicle:getSalePrice() <= 500000) then
+			outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getTax()
+		end
 	end
 
 	if incomingPermanently["Zinsen"] < outgoingPermanently["Fahrzeugsteuern"] then
