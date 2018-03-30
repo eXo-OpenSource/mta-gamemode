@@ -167,7 +167,7 @@ end
 
 function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
-	local bags = {}
+	local bag = false
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		hitElement:sendInfo(_("Bitte steig aus um die Kisten zu entladen!", hitElement))
@@ -187,15 +187,17 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 			Discord:getSingleton():outputBreakingNews("Der Geldtransporter wurde erfolgreich abgegeben!")
 		end
 		finish = true
-	elseif hitElement:getPlayerAttachedObject() then
-			bags = getAttachedElements(hitElement)
+	elseif hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject():getModel() == 1550 then
+			--bags = getAttachedElements(hitElement)
 			PlayerManager:getSingleton():breakingNews("%d von %d Geldsäcke wurden abgegeben!", #StateEvidenceTruck.MoneyBagSpawns-self:getRemainingBagAmount()+1, #StateEvidenceTruck.MoneyBagSpawns)
 			hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben!",hitElement))
-			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
+			bag = hitElement:getPlayerAttachedObject()
+			hitElement:detachPlayerObject(bag)
 	elseif hitElement:getOccupiedVehicle() then
 		hitElement:sendInfo(_("Du musst die Geldsäcke per Hand abladen!", hitElement))
 		return
 	end
+	--[[
 	local totalMoney = 0
 	for key, value in pairs (bags) do
 		if value and isElement(value) and value:getModel() == 1550 then
@@ -203,7 +205,10 @@ function StateEvidenceTruck:onDestinationMarkerHit(hitElement)
 			value:destroy()
 		end
 	end
-	self.m_BankAccountServer:transferMoney(faction, totalMoney, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
+	]]
+
+	self.m_BankAccountServer:transferMoney(faction, bag.money, "Geldsack (Geldtransport)", "Action", "EvidenceTruck")
+	bag:destroy()
 	if self:getRemainingBagAmount() == 0 or finish == true then
 		delete(self)
 	end
