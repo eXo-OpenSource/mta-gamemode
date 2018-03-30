@@ -12,7 +12,7 @@ function DeathGUI:constructor(time, callback)
 
 	if localPlayer:getInterior() > 0 then setElementInterior(localPlayer,0) end
 
-	setCameraMatrix(1735.42, -1749.98, 18.81, 1739.40, -1745.78, 19.65)
+	setCameraMatrix(1228.87, -1410.61, 43.25, 1228.11, -1410.08, 42.88)
 
 	self.m_Callback = callback
 end

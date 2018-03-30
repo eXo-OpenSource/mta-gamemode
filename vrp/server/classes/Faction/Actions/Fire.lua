@@ -25,7 +25,7 @@ function Fire:constructor(iX, iY, iZ, iSize, bDecaying, uFireRoot, iRoot_i, iRoo
 		self:setFireDecaying(bDecaying)
 		self.m_ExtinguishCallbackMap = {}
 		self.m_SizeDecreaseCallbackMap = {}
-		triggerClientEvent("fireElements:onFireCreate", self.m_Ped, iSize)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "fireElements:onFireCreate", self.m_Ped, iSize)
 		Fire.Map[self.m_Ped] = self
 		return self
 	end
@@ -66,7 +66,7 @@ function Fire:decreaseFireSize(responsiblePlayer)
 	if self.m_Size > 1 then
 		self.m_Size = self.m_Size -1
 		setElementHealth(self.m_Ped, 100) -- renew fire
-		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, self.m_Size)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "fireElements:onFireChangeSize", self.m_Ped, self.m_Size)
 		if self.m_FireRoot then
 			self.m_FireRoot:updateFire(self.m_Root_i, self.m_Root_v, self.m_Size, true)
 		end
@@ -84,7 +84,7 @@ function Fire:setFireSize(iSize)
 	if self.m_Ped and isElement(self.m_Ped) then
 		self.m_Size = iSize
 		setElementHealth(self.m_Ped, 100) -- renew fire
-		triggerClientEvent("fireElements:onFireChangeSize", self.m_Ped, iSize)
+		triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "fireElements:onFireChangeSize", self.m_Ped, iSize)
 		--dont update the fire root because this may cause an endless loop
 		return true
 	end

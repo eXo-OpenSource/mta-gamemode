@@ -11,7 +11,7 @@ addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
 local ROBSHOP_PAUSE = 30*60 --in Sec
-local ROBSHOP_PAUSE_SAME_SHOP = 3*60*60 -- 3h in Sec
+local ROBSHOP_PAUSE_SAME_SHOP = 6*60*60 -- 6h in Sec
 local ROBSHOP_MAX_MONEY = 15000
 ROBSHOP_LAST_ROB = 0
 
@@ -258,6 +258,7 @@ function RobableShop:stopRob(player)
 	end
 	self.m_Attacker = nil
 	self.m_AttackerGroup = nil
+	self.m_Ped.onTargetRefresh = nil
 end
 
 function RobableShop:giveBag(player)
