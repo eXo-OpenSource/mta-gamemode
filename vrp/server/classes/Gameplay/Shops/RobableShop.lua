@@ -11,12 +11,14 @@ addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
 local ROBSHOP_PAUSE = 30*60 --in Sec
+local ROBSHOP_PAUSE_SAME_SHOP = 3*60*60 -- 3h in Sec
+local ROBSHOP_MAX_MONEY = 15000
 ROBSHOP_LAST_ROB = 0
 
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
 	self.m_Shop = shop
-	self.m_LastRob = 0
+	self.m_LastRob = self.m_LastRob or 0
 	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	self.m_BankAccountServer = BankServer.get("gameplay.shop_rob")
 	
@@ -49,6 +51,11 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			if not attacker:isFactionDuty() then
 				if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
 					attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+					return false
+				end
+
+				if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE_SAME_SHOP) then
+					attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
 					return false
 				end
 
@@ -148,7 +155,7 @@ function RobableShop:startRob(shop, attacker, ped)
 		end
 		if hasAnyoneBag then
 			local rnd = math.random(40*realCount, 100*realCount)
-			if shop:getMoney() >= rnd then
+			if shop:getMoney() >= rnd and rnd <= ROBSHOP_MAX_MONEY then
 				if not self.m_Bag.Money then self.m_Bag.Money = 0 end
 				self.m_Bag.Money = self.m_Bag.Money + rnd
 				self.m_Bag:setData("Money", self.m_Bag.Money, true)
