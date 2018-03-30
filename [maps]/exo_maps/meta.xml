@@ -16,6 +16,7 @@
 	<map src="fun/FourDragons.map" />/
 
 	<map src="aktionen/bankPalomino.map" />
+	<map src="aktionen/casinoHeist.map" />
 	<map src="fraktionen/army.map" />
 	<!--<map src="fraktionen/army_lsbase.map" />-->
 	<map src="fraktionen/army_shooting_town.map" />

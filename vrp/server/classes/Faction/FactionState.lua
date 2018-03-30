@@ -468,6 +468,12 @@ function FactionState:Event_CuffSuccess( target )
 	end
 end
 
+function FactionState:addLog(player, category, text)
+	FactionManager:getSingleton().Map[1]:addLog(player, category, text)
+	FactionManager:getSingleton().Map[2]:addLog(player, category, text)
+	FactionManager:getSingleton().Map[3]:addLog(player, category, text)
+end
+
 function FactionState:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = self:getFactions()
 	local players = {}

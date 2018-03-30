@@ -498,8 +498,9 @@ end
 
 function BankRobbery:handleBagDelivery(faction, player)
 	local bag = player:getPlayerAttachedObject()
+	if not bag then return end
 	local money = bag:getData("Money")
-	if bag and bag:getModel() == 1550 and money and money > 0 then
+	if bag:getModel() == 1550 and money and money > 0 then
 		self.m_BankAccountServer:transferMoney({"faction", faction:getId(), true}, money, "Bankrob-Geldsack", "Action", "BankRobbery", {silent = true})
 		if faction:isStateFaction() then
 			FactionState:getSingleton():sendShortMessage(_("%s hat %s Beute sichergestellt!", player, player:getName(), toMoneyString(money)))
