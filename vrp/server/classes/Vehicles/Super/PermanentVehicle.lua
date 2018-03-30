@@ -73,7 +73,7 @@ function PermanentVehicle:constructor(data)
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
-	setElementData(self, "OwnerType", VehicleTypeName[ownerType])
+	setElementData(self, "OwnerType", VehicleTypeName[self.m_OwnerType])
 
 	self.m_Keys = data.Keys and fromJSON(data.Keys) or {} -- TODO: check if this works?
 	self.m_PositionType = data.PositionType or VehiclePositionType.World
