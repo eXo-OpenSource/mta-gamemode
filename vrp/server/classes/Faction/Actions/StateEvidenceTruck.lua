@@ -21,6 +21,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	self.m_Truck:setData("State Evidence Truck", true, true)
     self.m_Truck:setColor(0, 50, 0, 0, 50, 0)
 	self.m_Truck:setFrozen(true)
+	self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setMaxHealth(1500, true)
 	self.m_Truck:setBulletArmorLevel(2)
@@ -107,6 +108,8 @@ end
 function StateEvidenceTruck:loadBag(player, veh, bag)
 	if #getAttachedElements(self.m_Truck) >= #StateEvidenceTruck.MoneyBagSpawns then
 		self.m_Truck:setFrozen(false)
+		self.m_Truck.m_DisableToggleHandbrake = false
+		self.m_Truck:setLocked(false)
 		FactionState:getSingleton():sendShortMessage("Der Geldtransporter wurde fertig beladen!")
 	end
 end
