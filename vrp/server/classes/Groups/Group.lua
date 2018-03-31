@@ -748,7 +748,7 @@ function Group:payDay()
 	if self:getMoney() < 0 then
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
-			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
+			for index, vehicle in pairs(self:getVehicles()) do
 				if not vehicle:getPositionType() == VehiclePositionType.Mechanic then
 					mechanic:respawnVehicle(vehicle)
 				end
