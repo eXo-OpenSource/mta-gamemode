@@ -687,8 +687,12 @@ function Group:payDay()
 	end
 
 	if incomingPermanently["Zinsen"] < outgoingPermanently["Fahrzeugsteuern"] then
-		for id, player in pairs(self:getPlayers()) do
-			if not player:isLoggedIn() then
+		for id in pairs(self:getPlayers()) do
+			local player = Player.getFromId(id)
+
+			if player then
+				incomingBonus["Spieler (online)"] = incomingBonus["Spieler (online)"] + 100
+			else
 				local money = self.m_PlayerActivity[player:getId()] * 10
 
 				if money > 100 then
@@ -696,8 +700,6 @@ function Group:payDay()
 				end
 
 				incomingBonus["Spieler (offline)"] = incomingBonus["Spieler (offline)"] + money
-			else
-				incomingBonus["Spieler (online)"] = incomingBonus["Spieler (online)"] + 100
 			end
 		end
 	end
