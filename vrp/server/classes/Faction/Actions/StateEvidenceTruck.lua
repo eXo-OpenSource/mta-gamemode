@@ -59,6 +59,7 @@ function StateEvidenceTruck:constructor(driver, money)
 	end
 	self:addDestinationMarker(1, "state") -- State
 	self:spawnMoneyBags()
+	TollStation.openAll()
 end
 
 function StateEvidenceTruck:destructor()
@@ -85,6 +86,8 @@ function StateEvidenceTruck:destructor()
 		 	value:destroy()
 		end
 	end
+
+	TollStation.closeAll()
 end
 
 function StateEvidenceTruck:timeUp()

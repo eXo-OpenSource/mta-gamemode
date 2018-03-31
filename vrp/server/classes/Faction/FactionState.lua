@@ -623,6 +623,9 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "wt" then
         reason = "Waffen-Truck"
         amount = 5
+	elseif string.lower(reason) == "gt" then
+        reason = "Geldtransport-Überfall"
+        amount = 5
     elseif string.lower(reason) == "dt" then
         reason = "Drogen-Truck"
         amount = 5
