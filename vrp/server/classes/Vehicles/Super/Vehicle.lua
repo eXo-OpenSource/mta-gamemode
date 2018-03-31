@@ -53,8 +53,6 @@ function Vehicle:virtual_constructor()
 		self.m_MagnetUp = bind(Vehicle.magnetMoveUp, self)
 		self.m_MagnetDown = bind(Vehicle.magnetMoveDown, self)
 	end
-
-	self:initObjectLoading()
 end
 
 function Vehicle:virtual_destructor()

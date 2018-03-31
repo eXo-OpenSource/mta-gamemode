@@ -749,7 +749,7 @@ function Group:payDay()
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
 			for index, vehicle in pairs(self:getVehicles()) do
-				if not vehicle:getPositionType() == VehiclePositionType.Mechanic then
+				if not (vehicle:getPositionType() == VehiclePositionType.Mechanic) then
 					mechanic:respawnVehicle(vehicle)
 				end
 			end
