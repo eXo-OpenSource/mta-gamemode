@@ -299,7 +299,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		local vehicleData = vehicles[math.random(1, 2)]
 
 		player:sendInfo("Du hast einen " .. vehicleData.name .. " gewonnen! Gückwunsch!")
-		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleData.id, vehicleData.spawnPosX, vehicleData.spawnPosY, vehicleData.spawnPosZ, vehicleData.spawnPosXR, vehicleData.spawnPosYR, vehicleData.spawnPosZR, 1)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleData.id, vehicleData.spawnPosX, vehicleData.spawnPosY, vehicleData.spawnPosZ, vehicleData.spawnPosXR, vehicleData.spawnPosYR, vehicleData.spawnPosZR, 0)
 		if vehicle then
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")
