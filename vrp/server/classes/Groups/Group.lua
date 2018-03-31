@@ -693,7 +693,7 @@ function Group:payDay()
 			if player then
 				incomingBonus["Spieler (online)"] = incomingBonus["Spieler (online)"] + 100
 			else
-				local money = self.m_PlayerActivity[player:getId()] * 10
+				local money = self.m_PlayerActivity[id] * 10
 
 				if money > 100 then
 					money = 100
