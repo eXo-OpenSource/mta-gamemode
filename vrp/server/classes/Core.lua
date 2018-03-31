@@ -164,7 +164,7 @@ function Core:constructor()
 		MWeedTruck:new()
 
 		--// Gangwar
-		Gangwar:new()
+		--Gangwar:new() --lol fooled
 		GangwarStatistics:new()
 		--SprayWallManager:new()
 		GroupHouseRob:new()

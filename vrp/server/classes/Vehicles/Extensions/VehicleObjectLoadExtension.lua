@@ -24,6 +24,7 @@ end
 
 function VehicleObjectLoadExtension:switchObjectLoadingMarker(state)
     if not VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()] then return false end
+    if not self.m_LoadedObjects then return false end
     if self.m_LoadingMarkerActive ~= state then
         if state then
             local markerOffset = VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()].loadMarkerPos
@@ -63,7 +64,7 @@ function VehicleObjectLoadExtension:isValidObjectToLoad(object)
 end
 
 function VehicleObjectLoadExtension:getMaxObjects()
-    if self.m_LoadedObjects then return #VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()].positions end
+    if self.m_LoadedObjects then return #VEHICLE_OBJECT_ATTACH_POSITIONS[self:getModel()].positions else return 0 end
 end
 
 function VehicleObjectLoadExtension:getObjectCount()

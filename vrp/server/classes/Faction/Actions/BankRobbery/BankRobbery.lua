@@ -123,6 +123,7 @@ function BankRobbery:destroyRob()
 	if self.m_Blip then
 		for index, blip in pairs(self.m_Blip) do delete(blip) end
 	end
+	self.m_Blip = {}
 
 	if self.m_HelpColShape then
 		removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_HelpColFunc)
