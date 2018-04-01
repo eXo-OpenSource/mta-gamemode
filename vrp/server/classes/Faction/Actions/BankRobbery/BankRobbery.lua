@@ -131,6 +131,7 @@ function BankRobbery:destroyRob()
 	end
 
 	self.m_AlarmTriggered = false
+	self.m_IsBankrobRunning = false
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 	self:build()
