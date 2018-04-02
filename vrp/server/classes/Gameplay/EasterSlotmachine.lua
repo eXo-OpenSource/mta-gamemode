@@ -282,7 +282,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, 20)
 	elseif name == "Premium" then
 		player:sendInfo("Du hast einen Monat Premium gewonnen! Gratulation!")
-		player.m_Premium:giveEasterMonth()
+		player.m_Premium:giveEventMonth()
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_jackpot")
 		StatisticsLogger:addCasino(player, name, 1)
