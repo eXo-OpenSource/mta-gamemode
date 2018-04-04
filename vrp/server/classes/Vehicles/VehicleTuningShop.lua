@@ -39,7 +39,13 @@ function VehicleTuningShop:constructor()
             {Vector3(1494.73, -2455.32, 13), 180},
             Vector3(1448.12, -2438.56, 13),
 			"AirportPainter"
-        }
+        },
+		{
+			Vector3(2364, -2570, 1), -- LS Boot
+			{Vector3(2351, -2570, 1), 90},
+			Vector3(2260, -5880, 1),
+			"BoatsPainter"
+		}
     }
 
     for garageId, info in pairs(self.m_GarageInfo) do
@@ -47,10 +53,18 @@ function VehicleTuningShop:constructor()
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
         local blip = Blip:new("TuningGarage.png", position.x, position.y,root,600)
-        blip:setDisplayText("Tuninggarage"..(info[4] == "AirportPainter" and " (Flugzeuge)" or ""), BLIP_CATEGORY.VehicleMaintenance)
+		local blipText = "Tuninggarage"
+
+		if info[4] == "AirportPainter" then
+			blipText = blipText.." (Flugzeuge)"
+		elseif info[4] == "BoatsPainter" then
+			blipText = blipText.." (Boote)"
+		end
+
+		blip:setDisplayText(blipText, BLIP_CATEGORY.VehicleMaintenance)
         blip:setOptionalColor({3, 169, 244})
 
-		if info[4] and info[4] == "AirportPainter" then
+		if info[4] and (info[4] == "AirportPainter" or info[4] == "BoatsPainter") then
 			createMarker(position.x, position.y, position.z-1.2, "cylinder", 6, 50, 200, 255)
 			colshape.Type = info[4]
 		end
@@ -141,7 +155,6 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
                 return
             end
         else
-            --hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
 			hitElement:sendError(_("Du kannst dieses Fahrzeug nicht tunen!", hitElement))
 			return
         end
@@ -156,6 +169,8 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
         local vehicleType = vehicle:getVehicleType()
         if source.Type and source.Type == "AirportPainter" and (vehicleType == VehicleType.Helicopter or vehicleType == VehicleType.Plane) then
 			 self:openFor(hitElement, vehicle, garageId, source.Type)
+		elseif source.Type and source.Type == "BoatsPainter" and vehicleType == VehicleType.Boat then
+			self:openFor(hitElement, vehicle, garageId, source.Type)
 		elseif vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
             self:openFor(hitElement, vehicle, garageId)
         else
