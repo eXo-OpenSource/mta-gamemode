@@ -64,7 +64,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						car:setOwner( client )
 						car:setData("OwnerName", client.name, true)
 						VehicleManager:getSingleton():addRef( car, false)
-						client:transferMoney(player, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade")
+						client:transferBankMoney(player, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade")
 						car.m_Keys = {}
 						VehicleManager:getSingleton():syncVehicleInfo( player )
 						VehicleManager:getSingleton():syncVehicleInfo( client )

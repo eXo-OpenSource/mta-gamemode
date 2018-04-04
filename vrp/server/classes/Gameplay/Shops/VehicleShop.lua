@@ -94,7 +94,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
 		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation)
 		if vehicle then
-			player:transferMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
+			player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
 
 			vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
 			vehicle.m_Tunings:saveColors()
@@ -131,7 +131,7 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 end
 
 function VehicleShop:save()
-	
+
 	if self.m_BankAccount:save() then
 	else
 		outputDebug(("Failed to save Vehicle-Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
