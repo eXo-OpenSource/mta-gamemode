@@ -415,8 +415,9 @@ function Player:spawn()
 				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
-				if self:getGroup() then
-					GroupPropertyManager:getSingleton():getPropsForPlayer(self)[1]:setInside(self)
+				local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
+				if self:getGroup() and #groupProperties > 0 then
+					groupProperties[1]:setInside(self)
 					spawnSuccess = true
 				end
 			end
