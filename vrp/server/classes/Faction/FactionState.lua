@@ -18,6 +18,8 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
+	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
+
 	self.m_ArmySpecialVehicleBorder = {
 		x = -179.915,
 		y = 1614.156,
@@ -1030,7 +1032,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					self:uncuffPlayer(player)
 					player:clearCrimes()
 
-					local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+					local DrugItems = self.ms_IllegalItems
 					local inv = player:getInventory()
 					for index, item in pairs(DrugItems) do
 						if inv:getItemAmount(item) > 0 then
@@ -1507,7 +1509,7 @@ function FactionState:Event_friskPlayer(target)
 
 			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()))
 
-			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+			local DrugItems = self.ms_IllegalItems
 			local inv = target:getInventory()
 			local targetDrugs = {}
 			for index, item in pairs(DrugItems) do
@@ -1603,9 +1605,9 @@ function FactionState:Event_takeDrugs(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
-			client:sendMessage(_("Du hast %s folgende Drogen abgenommen:", client, target:getName()), 255, 255, 0)
-			target:sendMessage(_("%s hat dir folgende Drogen abgenommen:", target, client:getName()), 255, 255, 0)
+			local DrugItems = self.ms_IllegalItems
+			client:sendMessage(_("Du hast %s folgende illegale Items abgenommen:", client, target:getName()), 255, 255, 0)
+			target:sendMessage(_("%s hat dir folgende illegale Items abgenommen:", target, client:getName()), 255, 255, 0)
 			local drugsTaken = false
 			local amount = 0
 			local inv = target:getInventory()
