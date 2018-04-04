@@ -400,7 +400,7 @@ function Faction:sendWarning(text, header, withOffDuty, pos, ...)
 			blip:setZ(pos[3])
 		end
 		setTimer(function()
-			blip:destroy()
+			blip:delete()
 		end, 30000, 1)
 	end
 end

@@ -279,6 +279,13 @@ function GroupProperty:closeForPlayer(player)
 	end
 end
 
+function Group:addLog(player, category, text)
+	if self.m_Owner then
+		assert(self.m_Owner.addLog, "group property owner has no log function")
+		self.m_Owner:addLog(player, category, text)
+	end
+end
+
 --// now the so-called EVENT-ZONE //
 function GroupProperty:Event_ChangeDoor( client )
 	if self.m_Open == 1 then

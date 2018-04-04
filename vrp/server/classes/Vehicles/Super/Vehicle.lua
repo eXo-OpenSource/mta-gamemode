@@ -227,10 +227,12 @@ end
 
 function Vehicle:onInteriorChange()
 	self:removeAttachedPlayers()
+	self:refreshLoadedObjects()
 end
 
 function Vehicle:onDimensionChange()
 	self:removeAttachedPlayers()
+	self:refreshLoadedObjects()
 end
 
 function Vehicle:removeAttachedPlayers()

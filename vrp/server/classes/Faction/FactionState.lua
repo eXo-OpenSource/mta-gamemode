@@ -157,7 +157,7 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
 			if getElementType(hE) == "player" then
-				if hE:getWanteds() > 0 then
+				if hE:getWanteds() > 0 and not (hE:getFaction() and hE:getFaction():isStateFaction() and hE:isFactionDuty()) then
 					hE:triggerEvent("playerSelfArrest")
 				end
 			end

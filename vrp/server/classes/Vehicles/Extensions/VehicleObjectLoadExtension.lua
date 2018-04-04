@@ -108,7 +108,7 @@ function VehicleObjectLoadExtension:tryUnloadObject(player)
     if self:getObjectCount() > 0 then
         if not player:getPlayerAttachedObject() then
             if cooled then
-                VehicleObjectLoadExtension.getLoadHook():call(self, player, object)
+                VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
                 self:internalUnloadObject(player)
                 self.m_LastInteraction = getTickCount()
             end 
@@ -118,7 +118,6 @@ function VehicleObjectLoadExtension:tryUnloadObject(player)
     else
         player:sendError("Dieses Fahrzeug ist leer!")
     end
-    VehicleObjectLoadExtension.getUnloadHook():call(self, player, object)
 end
 
 function VehicleObjectLoadExtension:internalLoadObject(player, object)
@@ -133,7 +132,15 @@ function VehicleObjectLoadExtension:internalUnloadObject(player)
     local object = table.remove(self.m_LoadedObjects, #self.m_LoadedObjects)
     object:detach()
     player:attachPlayerObject(object)
-    
+end
+
+function VehicleObjectLoadExtension:refreshLoadedObjects()
+    if self.m_LoadedObjects then
+        for i, obj in pairs(self.m_LoadedObjects) do
+            obj:setInterior(self:getInterior())
+            obj:setDimension(self:getDimension())
+        end
+    end
 end
 
 function VehicleObjectLoadExtension.getLoadHook()
@@ -142,17 +149,4 @@ end
 
 function VehicleObjectLoadExtension.getUnloadHook()
     return VehicleObjectLoadExtension.ms_UnloadHook
-end
-
-
-if DEBUG then
-    addCommandHandler("geld", function(player)
-        local newBag = createObject(1550, player.position + Vector3(0, 1, 0))
-        newBag:setData("Money", 1337, true)
-        newBag:setData("MoneyBag", true, true)
-        player:attachPlayerObject(newBag)
-        addEventHandler("onElementClicked", newBag, function(btn, state, player)
-            player:attachPlayerObject(source)
-        end)
-    end)
 end

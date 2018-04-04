@@ -1407,7 +1407,7 @@ function Player:endPrison()
 	end
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
-	if self.m_JailTime > 0 then
+	if self.m_JailTime and self.m_JailTime > 0 then
 		self:moveToJail(false,false)
 	end
 end

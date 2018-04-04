@@ -67,7 +67,7 @@ function VehicleManager:constructor()
 		function()
 			if client.vehicleSeat ~= 0 then return end
 
-			if client.vehicle:hasKey(client)  or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= RANK.Moderator  then
+			if client.vehicle:hasKey(client) or client.vehicle:canObjectBeLoaded() or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)
 			else
 				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))

@@ -48,32 +48,36 @@ function RobableShop:Ped_Targetted(ped, attacker)
 	if attacker:getGroup() then
 		if attacker:getGroup() == self.m_AttackerGroup then return false end -- prevent error toasts when the robbers of the current rob attack the shop ped
 		if attacker:getGroup():getType() == "Gang" then
-			if not attacker:isFactionDuty() then
-				if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
-					attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
-					return false
-				end
+			if not (attacker:getFaction() and attacker:getFaction():isStateFaction()) then
+				if not attacker:isFactionDuty() then
+					if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
+						attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+						return false
+					end
 
-				if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE_SAME_SHOP) then
-					attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
-					return false
-				end
+					if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE_SAME_SHOP) then
+						attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+						return false
+					end
 
-				if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
-					attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
-					return false
-				end
-				local shop = ped.Shop
-				self.m_Shop = shop
-				if shop:getMoney() >= 250 then
-					self.m_LastRob = getRealTime().timestamp
-					ROBSHOP_LAST_ROB = getRealTime().timestamp
-					self:startRob(shop, attacker, ped)
+					if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
+						attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
+						return false
+					end
+					local shop = ped.Shop
+					self.m_Shop = shop
+					if shop:getMoney() >= 250 then
+						self.m_LastRob = getRealTime().timestamp
+						ROBSHOP_LAST_ROB = getRealTime().timestamp
+						self:startRob(shop, attacker, ped)
+					else
+						attacker:sendError(_("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker))
+					end
 				else
-					attacker:sendError(_("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker))
+					attacker:sendError(_("Du bist im Dienst, du darfst keinen Überfall machen!", attacker))
 				end
 			else
-				attacker:sendError(_("Du bist im Dienst, du darfst keinen Überfall machen!", attacker))
+				attacker:sendError(_("Du bist Polizist, du darfst keinen Überfall machen!", attacker))
 			end
 		else
 			attacker:sendError(_("Du bist Mitglied einer privaten Firma! Nur Gangs können überfallen!", attacker))
@@ -99,7 +103,7 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
-	attacker:takeKarma(5)
+	attacker:sendInfo(_("Ziele mit deinen Komplizen weiter auf den Verkäufer, um immer mehr Geld zu bekommen!", attacker))
 
 	self.m_Attacker = attacker
 	self.m_AttackerGroup = attacker:getGroup()
@@ -151,6 +155,7 @@ function RobableShop:startRob(shop, attacker, ped)
 			end
 			if attacker:getGroup() == self.m_AttackerGroup then
 				realCount = realCount + 1
+				if chance(2) then attacker:takeKarma(1, "Shop-Überfall") end
 			end
 		end
 		if hasAnyoneBag then

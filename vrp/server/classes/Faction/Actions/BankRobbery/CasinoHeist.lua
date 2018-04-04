@@ -127,7 +127,6 @@ function CasinoHeist:updateDifficulty(debugDiff)
 			if not DEBUG then
 				self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
 			end
-			outputDebug("updating casino difficulty, currentMoney: ", self.m_CurrentMoney, ", added ", diff*3000, ", new difficulty: ", self.m_Difficulty)
 		end
 		self:updateVehicles()
 	end

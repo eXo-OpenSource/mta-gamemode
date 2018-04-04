@@ -31,11 +31,11 @@ function ShopNPC:onInternalTargetted(playerBy)
 		self.m_TargettedBy[playerBy] = true
 		local targetTimer = setTimer(function(playerBy)
 			if playerBy:getTarget() == self then
-				playerBy:sendInfo(_("Ziele mit deinen Komplizen weiter auf den Verkäufer, um immer mehr Geld zu bekommen!", playerBy))
 				self.m_StartingPlayer = playerBy
 				self:onTargetted(playerBy)
 				self.m_RefreshTimer = setTimer(self.m_RefreshAttackersFunc, 1000, 0)
 			else
+				self:setAnimation()
 				self.m_InTarget = false
 			end
 		end, 5000, 1, playerBy)
@@ -56,6 +56,7 @@ function ShopNPC:refreshAttackers()
 		-- disable targetting
 		outputDebug("targetting finished")
 		self.m_InTarget = false
+		self:setAnimation()
 		self.m_StartingPlayer = nil
 		if isTimer(self.m_RefreshTimer) then killTimer(self.m_RefreshTimer) end
 	else

@@ -567,7 +567,7 @@ function DatabasePlayer:giveKarma(value, reason) -- TODO: maybe log it?
 end
 
 function DatabasePlayer:takeKarma(value, reason)
-	DatabasePlayer.giveKarma(self, -value, reason)
+	return DatabasePlayer.giveKarma(self, -value, reason)
 end
 
 function DatabasePlayer:setKarma(karma, reason)
