@@ -21,7 +21,7 @@ function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interi
 	self.m_LastRob = self.m_LastRob or 0
 	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	self.m_BankAccountServer = BankServer.get("gameplay.shop_rob")
-	
+
 	-- Respawn ped after a while (if necessary)
 	addEventHandler("onPedWasted", self.m_Ped,
 	function()
@@ -88,7 +88,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", shop:getName()))
-	
+
 	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "Neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
 	shop.m_LastRob = getRealTime().timestamp
 
@@ -96,7 +96,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	local pos = ped:getPosition()
 	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
 	triggerClientEvent("shopRobbed", attacker, self.m_Shop.m_Position.x, self.m_Shop.m_Position.y, self.m_Shop.m_Position.z, 0)
-	
+
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
 	attacker:takeKarma(5)
@@ -113,7 +113,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	local evilPosis = {self:getNearestMarker(self.m_Shop.m_Position, ROBABLE_SHOP_EVIL_TARGETS)}
 	local evilPos = evilPosis[math.random(2, 3)]
 	local statePos = self:getNearestMarker(self.m_Shop.m_Position, ROBABLE_SHOP_STATE_TARGETS)
-	
+
 
 	self.m_Gang = attacker:getGroup()
 	self.m_Gang:attachPlayerMarkers()
@@ -145,19 +145,20 @@ function RobableShop:startRob(shop, attacker, ped)
 		local realCount = 0
 		for attacker in pairs(attackers) do
 			if attacker:getPlayerAttachedObject() == self.m_Bag then
-				if (attacker:getPosition()-self.m_Ped:getPosition()).length < 50 then 
+				if (attacker:getPosition()-self.m_Ped:getPosition()).length < 50 then
 					hasAnyoneBag = attacker
 				end
 			end
-			if attacker:getGroup() == self.m_AttackerGroup then 
+			if attacker:getGroup() == self.m_AttackerGroup then
 				realCount = realCount + 1
 			end
 		end
 		if hasAnyoneBag then
 			local rnd = math.random(40*realCount, 100*realCount)
-			if shop:getMoney() >= rnd and rnd <= ROBSHOP_MAX_MONEY then
+			local rob = self.m_Bag.Money + rnd
+			if shop:getMoney() >= rnd and rob <= ROBSHOP_MAX_MONEY then
 				if not self.m_Bag.Money then self.m_Bag.Money = 0 end
-				self.m_Bag.Money = self.m_Bag.Money + rnd
+				self.m_Bag.Money = rob
 				self.m_Bag:setData("Money", self.m_Bag.Money, true)
 				shop.m_BankAccount:transferMoney(self.m_BankAccountServer, rnd, "Raub", "Gameplay", "ShopRob")
 				hasAnyoneBag:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", hasAnyoneBag, rnd, self.m_Bag.Money))
