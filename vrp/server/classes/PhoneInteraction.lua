@@ -128,19 +128,21 @@ function PhoneInteraction:abortCall(player)
 	if player and isElement(player) and player.getPhonePartner then
 		if player:getPhonePartner() then
 			local partner = player:getPhonePartner()
-			setPlayerVoiceBroadcastTo(partner, nil)
-			partner:setPhonePartner(nil)
-			partner:triggerEvent("callReplace", player)
-			partner:sendWarning(_("Knack... Das Telefonat wurde abgebrochen!", partner))
-
-			if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
-			if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
+			if partner and isElement(partner) then
+				setPlayerVoiceBroadcastTo(partner, nil)
+				partner:setPhonePartner(nil)
+				partner:triggerEvent("callReplace", player)
+				partner:sendWarning(_("Knack... Das Telefonat wurde abgebrochen!", partner))
+				partner.IncomingCall = false
+			end
 
 			setPlayerVoiceBroadcastTo(player, nil)
 			player:setPhonePartner(nil)
 			player:triggerEvent("callReplace", partner)
 			player.IncomingCall = false
-			partner.IncomingCall = false
+			
+			if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
+			if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
 		end
 	end
 end
