@@ -442,7 +442,7 @@ function SelfGUI:setCompanyInfo()
 			end
 			local x, y = self.m_CompanyNameLabel:getPosition()
 			self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
-		else 
+		else
 			self:adjustGeneralTab(nil)
 			self.m_CompanyNameLabel:setText("-")
 			self.m_CompanyRankLabel:setText("-")
@@ -525,7 +525,7 @@ function SelfGUI:setFactionInfo(id, name, rank, __, __, __, rankNames)
 			end
 			local x, y = self.m_FactionNameLabel:getPosition()
 			self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
-		else 
+		else
 			self.m_FactionNameLabel:setText(_"- keine Fraktion -")
 			self.m_FactionRankLabel:setText("-")
 			self.m_FactionMenuButton:setVisible(false)
@@ -595,7 +595,7 @@ end
 
 function SelfGUI:setGroupInfo()
 	local x, y = self.m_GroupNameLabel:getPosition()
-	if localPlayer:getPublicSync("GroupId") and localPlayer:getPublicSync("GroupId") ~= 0 then 
+	if localPlayer:getPublicSync("GroupId") and localPlayer:getPublicSync("GroupId") ~= 0 then
 		local name = localPlayer:getPublicSync("GroupName")
 		local rank = localPlayer:getPublicSync("GroupRank")
 		if rank and rank >= 0 then
@@ -612,7 +612,7 @@ function SelfGUI:setGroupInfo()
 			end
 			self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 		end
-	else 
+	else
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupRankLabel:setText("-")
 		self.m_GroupMenuButton:setVisible(false)
@@ -1039,11 +1039,20 @@ function SelfGUI:onSettingChange(setting)
 		self.m_Noobspawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.35, self.m_Height*0.04, _"Usertreff", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_FactionBase = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.24, self.m_Width*0.35, self.m_Height*0.04, _"Fraktionsbase", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 		self.m_CompanyBase = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Unternehmensbase", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
-		self.m_House = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.35, self.m_Height*0.04, _"Haus", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
-		self.m_Vehicle = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.04, _"Wohnwagen/Boot", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_GroupBase = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.35, self.m_Height*0.04, _"Firma/Gang", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_House = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.04, _"Haus", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
+		self.m_Vehicle = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.35, self.m_Height*0.04, _"Wohnwagen/Boot", self.m_SettingBG):setFont(VRPFont(25)):setFontSize(1)
 
 		self.m_FactionBase:setEnabled(localPlayer:getFaction() and true or false)
 		self.m_CompanyBase:setEnabled(localPlayer:getCompany() and true or false)
+
+		if localPlayer:getGroupId() == 0 then
+			self.m_GroupBase:setEnabled(false)
+		else
+			self.m_GroupBase:setEnabled(true)
+		end
+
+		self.m_GroupBase:setEnabled(localPlayer:getCompany() and true or false)
 		self.m_House:setEnabled(false)
 		self.m_Vehicle:setEnabled(false)
 
@@ -1056,6 +1065,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_Noobspawn.onChange = function() uncheckAll() self.m_Noobspawn:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.NOOBSPAWN) end
 		self.m_FactionBase.onChange = function() uncheckAll() self.m_FactionBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.FACTION_BASE) end
 		self.m_CompanyBase.onChange = function() uncheckAll() self.m_CompanyBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.COMPANY_BASE) end
+		self.m_GroupBase.onChange = function() uncheckAll() self.m_GroupBase:setChecked(true) triggerServerEvent("onPlayerUpdateSpawnLocation", localPlayer, SPAWN_LOCATIONS.GROUP_BASE) end
 
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.7, self.m_Height*0.055, _"Nutze das Klicksystem bzw. das Hausmenü um den Spawnpunkt für ein Fahrzeug oder Haus festzulegen!", self.m_SettingBG)
 	elseif setting == "Nametag/Reddot" then
@@ -1168,7 +1178,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HitSound.onChange = function (state)
 			core:set("Other", "Fireworks", state)
 		end
-			
+
 		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
 		self.m_GangwarTabView:setFont(VRPFont(25))
 		self.m_GangwarTabView:setFontSize(1)

@@ -414,6 +414,11 @@ function Player:spawn()
 				end
 				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
+				if self:getGroup() then
+					GroupPropertyManager:getSingleton():getPropsForPlayer(self)[1]:setInside(self)
+					spawnSuccess = true
+				end
 			end
 		end
 
@@ -1323,7 +1328,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 	else
 		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
 	end
-	
+
 	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 	self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 	if self.m_PlayerAttachedObject then
