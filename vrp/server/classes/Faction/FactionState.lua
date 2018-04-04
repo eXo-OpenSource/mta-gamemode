@@ -1615,8 +1615,8 @@ function FactionState:Event_takeDrugs(target)
 				if inv:getItemAmount(item) > 0 then
 					amount = inv:getItemAmount(item)
 					drugsTaken = true
-					client:sendMessage(_("%dg %s", client, amount, item), 255, 125, 0)
-					target:sendMessage(_("%dg %s", target, amount, item), 255, 125, 0)
+					client:sendMessage(_("%d %s", client, amount, item), 255, 125, 0)
+					target:sendMessage(_("%d %s", target, amount, item), 255, 125, 0)
 					inv:removeAllItem(item)
 				end
 			end
