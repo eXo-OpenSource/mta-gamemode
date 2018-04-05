@@ -90,7 +90,15 @@ function GasStation:takeFuelNozzle(player, element, fuelType)
 		return
 	end
 
-	if table.size(self.m_Stations[element].players) >= self.m_Stations[element].maxHoses then
+	local playersInUse = 0
+	for i, v in pairs(self.m_Stations[element].players) do
+		if isElement(i) then
+			playersInUse = playersInUse + 1
+		else
+			self.m_Stations[element].players[i] = nil
+		end
+	end
+	if playersInUse >= self.m_Stations[element].maxHoses then
 		player:sendError("Diese Zapfsäule ist bereits belegt!")
 		return
 	end

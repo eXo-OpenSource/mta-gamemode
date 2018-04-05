@@ -40,8 +40,38 @@ end
 function Plant:onUse(plant)
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
-	local hit, _, _, _, _, _, _, _, surface = processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz-0.5, true, false, false)
-	triggerServerEvent("plant:getClientCheck", localPlayer, plant, IsMatInMaterialType(surface), gz, self:isUnderWater())
+	local surfaceClear = true
+	local surfaceRightType = true 
+	if math.abs(pos.z - gz) < 2 then  
+		local base, __, __, __, __, __, __, __, surface = processLineOfSight(pos.x, pos.y, pos.z, pos.x, pos.y, gz-0.5, true, false, false)
+		if base then
+			local edges = {
+				top = {processLineOfSight(pos.x + 1, pos.y, pos.z, pos.x + 1, pos.y, gz-0.5, true, false, false)},
+				left = {processLineOfSight(pos.x, pos.y + 1, pos.z, pos.x, pos.y + 1, gz-0.5, true, false, false)},
+				bottom = {processLineOfSight(pos.x - 1, pos.y, pos.z, pos.x - 1, pos.y, gz-0.5, true, false, false)},
+				right = {processLineOfSight(pos.x, pos.y - 1, pos.z, pos.x, pos.y - 1, gz-0.5, true, false, false)},
+			}
+			for i,v in pairs(edges) do
+				if v[1] then 
+					if not IsMatInMaterialType(v[9]) then
+						surfaceRightType = false
+						break
+					end
+				else
+					surfaceClear = false
+					break
+				end
+			end
+			if not IsMatInMaterialType(surface) then
+				surfaceRightType = false
+			end
+		else	
+			surfaceClear = false
+		end
+	else	
+		surfaceClear = false
+	end
+	triggerServerEvent("plant:getClientCheck", localPlayer, plant, surfaceClear and surfaceRightType, gz, self:isUnderWater())
 end
 
 function Plant:Render()

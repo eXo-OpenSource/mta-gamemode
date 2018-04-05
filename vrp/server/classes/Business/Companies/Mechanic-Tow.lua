@@ -189,15 +189,16 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
-
-	if source:getVehicleType() == VehicleType.Plane then
-		x, y, z, rotation = 871.285, -1264.624, 15.5, 0
-	elseif source:getVehicleType() == VehicleType.Helicopter then
-		x, y, z, rotation =  912.602, -1252.053, 16, 0
+	if source:isAirVehicle() then
+		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
+	elseif source:isWaterVehicle() then
+		x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
 	end
 
-	source:setPosition(x, y, z)
+	source:setPosition(x, y, z + source:getBaseHeight())
 	source:setRotation(0, 0, rotation)
+
+	client:sendSuccess(_("Fahrzeug freigekauft! Das Geld wurde vom Konto abgezogen.", client))
 end
 
 function MechanicTow:onEnterTowLot(hitElement)
@@ -484,8 +485,8 @@ function MechanicTow:checkLeviathanTowing(player, vehicle)
 end
 
 MechanicTow.SpawnPositions = {
-	{904.833, -1183.605, 16.65, 180},
-	{900.833, -1183.605, 16.65, 180},
+	{904.833, -1183.605, 16, 180},
+	{900.833, -1183.605, 16, 180},
 	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--
