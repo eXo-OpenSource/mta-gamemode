@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
+function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans)
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
@@ -23,13 +23,13 @@ function Group:constructor(Id, name, type, money, playTime, players, karma, last
 	self.m_Invitations = {}
 	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange or 0
-	self.m_VehiclesCanBeModified = vehicleTuning or false
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
 	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
+	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Group, Id)
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Group)
 	if not self.m_BankAccount then
@@ -154,7 +154,7 @@ function Group:getVehicles()
 end
 
 function Group:canVehiclesBeModified()
-	return self.m_VehiclesCanBeModified
+	return true
 end
 
 function Group:setName(name)
@@ -764,6 +764,8 @@ end
 
 function Group:save()
 	self.m_BankAccount:save()
-
+	if self.m_Settings then
+		self.m_Settings:save()
+	end
 	sql:queryExec("UPDATE ??_groups SET PlayTime = ? WHERE Id = ?", sql:getPrefix(), self:getPlayTime(), self:getId())
 end

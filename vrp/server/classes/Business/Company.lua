@@ -38,6 +38,7 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_RankSkins = fromJSON(rankSkins)
 
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
+	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Company, Id)
 
 	sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
@@ -64,7 +65,9 @@ function Company:save()
     local Settings = {
       VehiclesCanBeModified = self.m_VehiclesCanBeModified
     }
-
+	if self.m_Settings then
+		self.m_Settings:save()
+	end
     sql:queryExec("UPDATE ??_companies SET RankLoans = ?, RankSkins = ?, Settings = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(Settings),self.m_Id)
 end
 
