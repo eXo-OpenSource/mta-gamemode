@@ -101,6 +101,24 @@ function Faction:isEvilFaction()
 	return false
 end
 
+function Faction:setSetting(category, key, value, responsiblePlayer)
+	local allowed = true
+	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
+		if not responsiblePlayer:getFaction() then allowed = false end 
+		if responsiblePlayer:getFaction() ~= self then allowed = false end 
+		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end 
+	end
+	if allowed then
+		self.m_Settings:setSetting(category, key, value)
+	else
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Fraktion %s können deren Einstellungen ändern!", responsiblePlayer, FactionRank.Leader, self:getShortName()))
+	end
+end
+
+function Faction:getSetting(category, key, defaultValue)
+	return self.m_Settings:getSetting(category, key, defaultValue)
+end
+
 function Faction:giveKarmaToOnlineMembers(karma, reason)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		player:giveKarma(karma)

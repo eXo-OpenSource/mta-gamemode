@@ -150,6 +150,24 @@ function Company:transferMoney(...)
 	return self.m_BankAccount:transferMoney(...)
 end
 
+function Company:setSetting(category, key, value, responsiblePlayer)
+	local allowed = true
+	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
+		if not responsiblePlayer:getCompany() then allowed = false end 
+		if responsiblePlayer:getCompany() ~= self then allowed = false end 
+		if self:getPlayerRank(responsiblePlayer) ~= CompanyRank.Leader then allowed = false end 
+	end
+	if allowed then
+		self.m_Settings:setSetting(category, key, value)
+	else
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) des Unternehmens %s können deren Einstellungen ändern!", responsiblePlayer, CompanyRank.Leader, self:getShortName()))
+	end
+end
+
+function Company:getSetting(category, key, defaultValue)
+	return self.m_Settings:getSetting(category, key, defaultValue)
+end
+
 function Company:getPhoneNumber()
 	return self.m_PhoneNumber:getNumber()
 end

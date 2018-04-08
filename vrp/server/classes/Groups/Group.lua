@@ -390,6 +390,25 @@ end
 function Group:transferMoney(...)
 	return self.m_BankAccount:transferMoney(...)
 end
+
+function Group:setSetting(category, key, value, responsiblePlayer)
+	local allowed = true
+	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
+		if not responsiblePlayer:getGroup() then allowed = false end 
+		if responsiblePlayer:getGroup() ~= self then allowed = false end 
+		if self:getPlayerRank(responsiblePlayer) ~= GroupRank.Leader then allowed = false end 
+	end
+	if allowed then
+		self.m_Settings:setSetting(category, key, value)
+	else
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!", responsiblePlayer, GroupRank.Leader, self:getShortName()))
+	end
+end
+
+function Group:getSetting(category, key, defaultValue)
+	return self.m_Settings:getSetting(category, key, defaultValue)
+end
+
 --[[
 function Group:__setMoney(amount)
 	self.m_Money = amount

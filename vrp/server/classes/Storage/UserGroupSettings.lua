@@ -34,7 +34,7 @@ function UserGroupSettings:save()
             elseif value == nil then -- delete garbage
                 sql:queryExec("DELETE FROM ??_user_group_settings WHERE Id = ?;", sql:getPrefix(), id)
             else --update
-                sql:queryExec("UPDATE ??_user_group_settings SET Value = ? WHERE Id = ?;", sql:getPrefix(), value, id)
+                sql:queryExec("UPDATE ??_user_group_settings SET Value = ? WHERE Id = ?;", sql:getPrefix(), tostring(value), id)
             end
         end
     end
@@ -42,6 +42,7 @@ end
 
 
 function UserGroupSettings:setSetting(category, key, value)
+    local category, key = tostring(category), tostring(key)
     if self.m_Settings[category] and self.m_Settings[category][key] ~= nil then -- update row
         self.m_Settings[category][key][1] = value
     else -- create new row
@@ -51,6 +52,7 @@ function UserGroupSettings:setSetting(category, key, value)
 end
 
 function UserGroupSettings:getSetting(category, key, default)
+    local category, key = tostring(category), tostring(key)
     if not self.m_Settings[category] then return default end
     return self.m_Settings[category][key] or default 
 end
