@@ -62,7 +62,7 @@ function Casino:constructor()
     Slotmachine:new(1957.1981, 987.87317, 993.01453, 0, 0, 213.529, 10)
     Slotmachine:new(1957.6958, 986.97644, 993.01453, 0, 0, 33.243, 10)
 
-	if EVENT_EASTER then
+	if EVENT_EASTER_SLOTMACHINES_ACTIVE then
 		EasterSlotmachine:new(1484.71, -1779.22, 14, 0, 0, 0, 0, 0)
 		EasterSlotmachine:new(1496.80, -1779.20, 14, 0, 0, 0, 0, 0)
 		EasterSlotmachine:new(1496.69, -1796.03, 14, 0, 0, 180, 0, 0)

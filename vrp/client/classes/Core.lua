@@ -159,7 +159,7 @@ function Core:ready()
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
-	if EVENT_EASTER then
+	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
 		Easter.updateTextures() 
 	end
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
