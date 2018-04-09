@@ -163,13 +163,13 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineUnPrison", "aus Prison entlassen", self.onOfflineButtonClick, 410, 410, 180, 30, Color.Orange, tabOffline)
 
 	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
-	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	local url = (INGAME_WEB_PATH .. "/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
 	self.m_TicketsBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, self.m_TicketTab)
 
 	self:refreshOnlinePlayers()
 
 	local tabWeb = self.m_TabPanel:addTab(_"WebPanel")
-	local webPanelUrl = ("https://exo-reallife.de/index.php?page=admin&site=ingame&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	local webPanelUrl = (INGAME_WEB_PATH .. "/index.php?page=admin&site=ingame&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
 	self.m_WebPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, webPanelUrl, true, tabWeb)
 	self.m_FullScreen = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabWeb):setFont(FontAwesome(15))
 	self.m_FullScreen.onLeftClick = function ()

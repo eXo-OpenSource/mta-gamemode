@@ -29,9 +29,9 @@ function PolicePanel:constructor()
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
-	--self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
+	--self.m_FactionLogo = GUIWebView:new(360, 10, 100, 135, INGAME_WEB_PATH .. "/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
 
-	--self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
+	--self.m_Skin = GUIWebView:new(490, 10, 100, 220, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
 
 	self.m_PlayerNameLabel = 	GUILabel:new(320, 50, 180, 20, _"Spieler: -", self.m_TabSpieler)
 	self.m_PlayerFactionLabel = GUILabel:new(320, 75, 180, 20, _"Fraktion: -", self.m_TabSpieler)
@@ -85,9 +85,9 @@ function PolicePanel:constructor()
 	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
 
-	--self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
+	--self.m_FactionLogo2 = GUIWebView:new(360, 10, 100, 135, INGAME_WEB_PATH .. "/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
 
-	--self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
+	--self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
 
 	self.m_JailPlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabJail)
 	self.m_JailPlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabJail)
@@ -154,7 +154,7 @@ function PolicePanel:constructor()
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
-	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+	self.m_WantedRules = GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, INGAME_WEB_PATH .. "/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
@@ -322,7 +322,7 @@ function PolicePanel:onSelectPlayer(player)
 	self.m_STVOTruck:setText(_("STVO-Lastkraftwagen: %d", player:getSTVO("Truck")))
 	self.m_STVOPilot:setText(_("STVO-Pilot: %d", player:getSTVO("Pilot")))
 
-	--self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+	--self.m_Skin:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:onSelectJailPlayer(player)
@@ -335,7 +335,7 @@ function PolicePanel:onSelectJailPlayer(player)
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_JailPhoneStatus:setText(_("Handy: %s", phone))
 
-	--self.m_JailSkin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+	--self.m_JailSkin:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:locatePlayer()

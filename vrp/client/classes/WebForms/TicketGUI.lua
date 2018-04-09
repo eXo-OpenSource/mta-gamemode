@@ -13,7 +13,7 @@ function TicketGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"eXo Ticket-System", true, true, self)
 	self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)
-	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, ("http://exo-reallife.de/ingame/ticketSystem/user.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self.m_Window)
+	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, (INGAME_WEB_PATH .. "/ingame/ticketSystem/user.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self.m_Window)
 	addCommandHandler("report", bind(self.show, self))
 	addCommandHandler("tickets", bind(self.show, self))
 	addCommandHandler("ticket", bind(self.show, self))

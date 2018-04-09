@@ -17,7 +17,7 @@ function MostWanted:onStreamIn(surface)
 end
 
 function MostWanted:generateUrl()
-	local url = "http://exo-reallife.de/ingame/other/mostWanted.php?size=1"
+	local url = INGAME_WEB_PATH .. "/ingame/other/mostWanted.php?size=1"
 	local i = 1
 	for Id, player in pairs(Element.getAllByType("player")) do
 		if i < 8 then

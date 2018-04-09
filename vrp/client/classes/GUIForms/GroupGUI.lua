@@ -153,7 +153,7 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabBusiness.TabIndex then
 		triggerServerEvent("groupRequestBusinessInfo", root)
 	elseif tabId == self.m_TabLogs.TabIndex then
-		local url = ("https://exo-reallife.de/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
+		local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("group", self.m_Id)
 		if not self.m_LogGUI then
 			self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
 		else

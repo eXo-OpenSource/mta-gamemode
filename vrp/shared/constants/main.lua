@@ -5,6 +5,8 @@ PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playin
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
+INGAME_WEB_PATH = "https://ingame.exo-reallife.de"			
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
