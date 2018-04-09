@@ -279,7 +279,7 @@ function GroupProperty:closeForPlayer(player)
 	end
 end
 
-function Group:addLog(player, category, text)
+function GroupProperty:addLog(player, category, text)
 	if self.m_Owner then
 		assert(self.m_Owner.addLog, "group property owner has no log function")
 		self.m_Owner:addLog(player, category, text)

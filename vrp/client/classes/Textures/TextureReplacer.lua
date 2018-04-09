@@ -189,11 +189,11 @@ end
 --// Queue
 function TextureReplacer:addToLoadingQeue()
 	if not self.m_Force then
-		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", true) then
+		if instanceof(self, FileTextureReplacer) and not core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE) then
 			self:unload()
 			return false
 		end
-		if instanceof(self, HTTPTextureReplacer) and not core:get("Other", "HTTPTexturesEnabled", true) then
+		if instanceof(self, HTTPTextureReplacer) and not core:get("Other", "HTTPTexturesEnabled", HTTP_TEXTURE_DEFAULT_STATE) then
 			self:unload()
 			return false
 		end

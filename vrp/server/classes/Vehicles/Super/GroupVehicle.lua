@@ -71,7 +71,9 @@ function GroupVehicle:constructor(data)
 	
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
-			veh:respawn(true)
+			if isElement(veh) then
+				veh:respawn(true)
+			end
 		end, 10000, 1, source)
 	end)
 	--[[

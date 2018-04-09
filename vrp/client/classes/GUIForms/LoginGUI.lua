@@ -352,6 +352,10 @@ function LoginGUI.startCameraDrive()
 	localPlayer.m_LoginCamTimer = setTimer(LoginGUI.startCameraDrive, timeMS, 1)
 	localPlayer:setDimension(0)
 
+	for i,player in pairs(getElementsByType("player")) do
+		setPlayerNametagShowing(player, false)
+	end
+
 	RadialShader:getSingleton():setEnabled(true)
 	--localPlayer.m_LoginShader =  LoginShader:new()
 end
