@@ -99,6 +99,13 @@ function AttackClient:synchronizeLists( pParticipants, pDisqualified )
 	self.m_Disqualified = pDisqualified
 end
 
+function AttackClient:synchronizeTime( time ) 
+	if self.m_Display then 
+		outputDebugString("Synchronized Time by "..self.m_Display.m_TimeLeft-time.." seconds!", 0, 200, 200, 0)
+		self.m_Display.m_TimeLeft = time
+	end
+end
+
 function AttackClient:getFactionParticipants( pFac )
 	local table_ = { }
 	for k, v in ipairs( self.m_Participants ) do 
@@ -127,6 +134,14 @@ function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
 	end
 end
 addEventHandler("AttackClient:synchronizeLists",root,AttackClient.remoteSynchronize)
+
+addEvent("AttackClient:synchronizeTime",true)
+function AttackClient.remoteSynchronizeTime( pTime )
+	if pseudoSingleton then 
+		pseudoSingleton:synchronizeTime( pTime )
+	end
+end
+addEventHandler("AttackClient:synchronizeTime",root,AttackClient.remoteSynchronizeTime)
 
 addEvent("AttackClient:launchClient",true)
 function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID  )

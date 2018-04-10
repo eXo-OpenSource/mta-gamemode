@@ -20,6 +20,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_DamageFunc = bind(  self.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
+	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
@@ -33,6 +34,9 @@ function AttackSession:destructor()
 	end
 	if isTimer( self.m_WeaponBoxTimer ) then
 		killTimer( self.m_WeaponBoxTimer )
+	end
+	if isTimer( self.m_SynchronizeTime ) then 
+		killTimer(self.m_SynchronizeTime)
 	end
 	local bCenterTimer = isTimer( self.m_HoldCenterTimer )
 	local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
@@ -95,10 +99,16 @@ function AttackSession:synchronizeLists( )
 	end
 end
 
-function AttackSession:synchronizePlayerList( player )
-	player:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
+function AttackSession:synchronizeTime( )
+	local timeLeft = getTimerDetails( self.m_BattleTime )
+	timeLeft = math.ceil(timeLeft /1000)
+	for k,v in ipairs( self.m_Faction1:getOnlinePlayers()) do
+		v:triggerEvent("AttackClient:synchronizeTime", timeLeft)
+	end
+	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
+		v:triggerEvent("AttackClient:synchronizeTime", timeLeft)
+	end
 end
-
 
 function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
