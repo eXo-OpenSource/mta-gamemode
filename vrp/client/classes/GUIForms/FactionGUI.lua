@@ -133,10 +133,10 @@ function FactionGUI:addLeaderTab()
 		self.m_LeaderLoan:setNumeric(true, true)
 		self.m_SkinLabel = GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
-		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabLeader)
+		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabLeader)
 
 		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, self.m_TabLeader)
-		self.m_SkinChanger.onChange = function(text, index) self.m_SkinPreviewBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
+		self.m_SkinChanger.onChange = function(text, index) self.m_SkinPreviewBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..text) end
 
 		if self.m_Id == 4 then -- If Rescue
 			self.m_SkinLabel:setVisible(false)
@@ -465,7 +465,7 @@ function FactionGUI:onGangwarItemSelect(item)
 	if self.m_GangAttackLogGrid then delete(self.m_GangAttackLogGrid) end
 	if self.m_GangAttackTab then delete(self.m_GangAttackTab) end
 	if item == self.m_GangAreasOverviewItem then
-		self.m_GangwarChart = GUIWebView:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.64, self.m_Height*0.9, "http://exo-reallife.de/ingame/other/gangwar.php", true, self.m_tabGangwar)
+		self.m_GangwarChart = GUIWebView:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.64, self.m_Height*0.9, INGAME_WEB_PATH .. "/ingame/other/gangwar.php", true, self.m_tabGangwar)
 	elseif item == self.m_GangAttackLogItem then
 		self.m_GangAttackLogGrid = GUIGridList:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.62, self.m_Height*0.85, self.m_tabGangwar)
 		self.m_GangAttackLogGrid:addColumn(_"Gebiet", 0.3)
@@ -703,7 +703,7 @@ end
 
 function FactionGUI:ShowLogs()
 	self:close()
-	local url = ("https://exo-reallife.de/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("faction", self.m_Id)
+	local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("faction", self.m_Id)
 	self.m_LogGUI = LogGUI:new(nil, url)
 	self.m_LogGUI:addBackButton(function() FactionGUI:getSingleton():show() end)
 end

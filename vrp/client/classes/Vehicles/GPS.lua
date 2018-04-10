@@ -44,10 +44,10 @@ function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 	if not soundDisabled then
 		if not isRecalculate then
 			ShortMessage:new(_"Route wird berechnet...", _"Navigation")
-			self:playAnnouncement("https://exo-reallife.de/ingame/sounds/RouteWirdBerechnet.mp3")
+			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/RouteWirdBerechnet.mp3")
 		else
 			ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
-			self:playAnnouncement("https://exo-reallife.de/ingame/sounds/RouteWirdNeuBerechnet.mp3")
+			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/RouteWirdNeuBerechnet.mp3")
 		end
 	end
 
@@ -117,7 +117,7 @@ function GPS:Event_retrieveRoute(nodes)
 					if #self.m_Nodes == 1 then
 						self:stopNavigation()
 						ShortMessage:new(_"Du hast dein Ziel erreicht!", "Navigation")
-						self:playAnnouncement("https://exo-reallife.de/ingame/sounds/SieHabenIhrZielErreicht.mp3")
+						self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/SieHabenIhrZielErreicht.mp3")
 						return
 					end
 
@@ -179,9 +179,9 @@ function GPS:processWaypoint(nodeIndex)
 	if angle > 45 and angle < 135 then
 		-- The up-component is either down or up
 		if cross.z < 0 then
-			self:playAnnouncement("https://exo-reallife.de/ingame/sounds/BitteBiegenSieRechtsAb.mp3")
+			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/BitteBiegenSieRechtsAb.mp3")
 		else
-			self:playAnnouncement("https://exo-reallife.de/ingame/sounds/BitteBiegenSieLinksAb.mp3")
+			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/BitteBiegenSieLinksAb.mp3")
 		end
 	end
 end

@@ -5,6 +5,12 @@ PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playin
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
+INGAME_WEB_PATH = "https://ingame.exo-reallife.de"			
+
+if DEBUG then
+	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"	
+end
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
@@ -16,7 +22,7 @@ MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
-EVENT_EASTER_SLOTMACHINES_ACTIVE = true
+EVENT_EASTER_SLOTMACHINES_ACTIVE = false
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false
 SNOW_SHADERS_ENABLED = false -- disable them during summer time

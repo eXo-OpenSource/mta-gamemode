@@ -36,7 +36,7 @@ function phpSDKSendActivationMailCallback(answer)
 end
 
 function phpSDKSendActivationMail(userID, username)
-	callRemote("http://exo-reallife.de/ingame/boardActivation.php", phpSDKSendActivationMailCallback, userID, username)
+	callRemote(INGAME_WEB_PATH .. "/ingame/boardActivation.php", phpSDKSendActivationMailCallback, userID, username)
 end
 
 function phpSDKSendOnlinePlayers()

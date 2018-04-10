@@ -284,7 +284,7 @@ function Account.asyncCallAPI(func, postData)
 		["connectionAttempts"] = 1,
 		["postData"] = postData
 	}
-	fetchRemote(("https://exo-reallife.de/ingame/userApi/api.php?func=%s"):format(func), options, Async.waitFor())
+	fetchRemote((INGAME_WEB_PATH .. "/ingame/userApi/api.php?func=%s"):format(func), options, Async.waitFor())
 	return Async.wait()
 end
 

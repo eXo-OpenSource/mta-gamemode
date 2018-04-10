@@ -133,7 +133,7 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes, mapID)
 				Kart.LastRequest = true
 				self.m_DisableGhost:setVisible(true)
 
-				fetchRemote(("https://exo-reallife.de/ingame/kart/getGhost.php?playerId=%s&mapId=%s"):format(item.playerId, self.m_MapID), Kart.receiveGhostDriver)
+				fetchRemote((INGAME_WEB_PATH .. "/ingame/kart/getGhost.php?playerId=%s&mapId=%s"):format(item.playerId, self.m_MapID), Kart.receiveGhostDriver)
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
 			end

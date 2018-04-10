@@ -62,7 +62,7 @@ function DrawContestGUI:constructor(contest)
 				["postData"] =  ("secret=%s&playerId=%d&contest=%s&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), contest, toJSON(self.m_Skribble:getSyncData()))
 			}
 
-			fetchRemote("https://exo-reallife.de/ingame/drawContest/addData.php", options,
+			fetchRemote(INGAME_WEB_PATH .. "/ingame/drawContest/addData.php", options,
 				function(responseData, responseInfo)
 					--outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)

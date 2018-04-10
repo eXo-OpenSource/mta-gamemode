@@ -143,7 +143,7 @@ function Kart.uploadGhostDriver()
 		["postData"] =  ("secret=%s&playerId=%d&mapId=%d&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), Kart.MapId, toJSON(Kart.requestedRecord))
 	}
 
-	fetchRemote("https://exo-reallife.de/ingame/kart/addGhost.php", options,
+	fetchRemote(INGAME_WEB_PATH .. "/ingame/kart/addGhost.php", options,
 		function(responseData, responseInfo)
 			Kart.requestedRecord = false
 			--outputConsole(inspect({data = responseData, info = responseInfo}))

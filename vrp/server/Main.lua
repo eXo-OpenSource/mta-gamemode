@@ -49,7 +49,7 @@ local function sendSlackMessage(msg, level, stackTrace)
 		}, true)
 		json = json:sub(2, #json-1)
 
-		local status = callRemote('https://exo-reallife.de/slack.php', function (...) end, json)
+		local status = callRemote(INGAME_WEB_PATH .. "/slack.php", function (...) end, json)
 		if status then
 			outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
 		else
@@ -131,7 +131,7 @@ local function sendPerformanceOverview(type, percent, tfinish)
 			},
 		}, true)
 		json = json:sub(2, #json-1)
-		local status = callRemote('https://exo-reallife.de/slack_performance.php', function (...) end, json)
+		local status = callRemote(INGAME_WEB_PATH .. "/slack_performance.php", function (...) end, json)
 		if status then
 			outputDebugString("[Performance-Listener] Reported Performance Overview to Slack!", 3)
 		else

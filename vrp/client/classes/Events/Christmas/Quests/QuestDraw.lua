@@ -73,7 +73,7 @@ function QuestDrawGUI:constructor(id, name)
 				["postData"] =  ("secret=%s&playerId=%d&contest=%s&data=%s"):format("8H041OAyGYk8wEpIa1Fv", localPlayer:getPrivateSync("Id"), name, toJSON(self.m_Skribble:getSyncData()))
 			}
 
-			fetchRemote(("https://exo-reallife.de/ingame/drawContest/addData.php%s"):format(DEBUG and "?debug=true" or ""), options,
+			fetchRemote((INGAME_WEB_PATH .. "/ingame/drawContest/addData.php%s"):format(DEBUG and "?debug=true" or ""), options,
 				function(responseData, responseInfo)
 					--outputConsole(inspect({data = responseData, info = responseInfo}))
 					responseData = fromJSON(responseData)
@@ -240,7 +240,7 @@ function QuestDrawAdminGUI:onReceivePlayers(contestName, players)
 				self:resetOverview("Das Bild wird geladen...")
 				localPlayer.LastRequest = true
 
-				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?%splayerId=%s&contest=%s"):format(DEBUG and "debug=true&" or "", id, contestName), bind(self.onReceiveImage, self))
+				fetchRemote((INGAME_WEB_PATH .. "/ingame/drawContest/getData.php?%splayerId=%s&contest=%s"):format(DEBUG and "debug=true&" or "", id, contestName), bind(self.onReceiveImage, self))
 				self.m_AcceptDrawBtn:setVisible(false)
 				self.m_DeclineDrawBtn:setVisible(false)
 			else

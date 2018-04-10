@@ -27,7 +27,7 @@ end
 
 function HTTPDownloadGUI:launchMusic()
 	if not self:isVisible() then return end
-	self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+	self.m_Music = playSound(INGAME_WEB_PATH .. "/ingame/DownloadMusic.mp3", true)
 	self.m_Music:setVolume(0.3)
 	self.m_StopMusicFunc = function()
 		if self.m_Music then
@@ -38,7 +38,7 @@ function HTTPDownloadGUI:launchMusic()
 	end
 	self.m_StartMusicFunc = function()
 		if not self.m_Music then
-			self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+			self.m_Music = playSound(INGAME_WEB_PATH .. "/ingame/DownloadMusic.mp3", true)
 			self.m_Music:setVolume(0.3)
 			self:bind("m", self.m_StopMusicFunc)
 		end
