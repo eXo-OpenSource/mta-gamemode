@@ -162,6 +162,7 @@ function Fire:changeFireSize(iSize)
 		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 		self.m_Fires[source].uBurningCol = createColSphere(iX, iY, iZ + (self.m_Fires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
 		addEventHandler("onClientColShapeHit", self.m_Fires[source].uBurningCol, bind(self.burnPlayer, self))
+		self.m_Fires[source].bCorrectPlaced = false -- force recalculate the height
 		self:checkForFireGroundInfo(source)
 	end
 end

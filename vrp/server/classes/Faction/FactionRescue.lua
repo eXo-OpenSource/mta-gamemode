@@ -777,7 +777,7 @@ function FactionRescue:addVehicleFire(veh)
 	local pos = veh:getPosition()
 	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
 	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
-	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 6, 6)
+	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 8, 8)
 
 	if veh.controller then
 		veh.controller:sendWarning(_("Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!", veh.controller))
@@ -804,7 +804,7 @@ function FactionRescue:addVehicleFire(veh)
 		self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 		self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
 
-		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rx, ry, rz)
+		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rz)
 		tempVehicle:setHealth(300)
 		tempVehicle:setColor(r1, g1, b1, r2, g2, b2)
 		tempVehicle:disableRespawn(true)
@@ -824,8 +824,8 @@ function FactionRescue:addVehicleFire(veh)
 
 	self.m_VehicleFires[veh]:setOnFinishHook(function(stats)
 		self.m_VehicleFires[veh].Blip:delete()
-		self.m_VehicleFires[veh] = nil
 		local moneyForFaction = 0
+		local playersByID = {}
 		for player, score in pairs(stats.pointsByPlayer) do
 			if isElement(player) then
 				player:giveCombinedReward("Fahrzeugbrand gelöscht", {
@@ -840,9 +840,13 @@ function FactionRescue:addVehicleFire(veh)
 					karma = math.random(1,4),
 					points = math.random(5, 10)
 				})
+				playersByID[player:getId()] = score
 				moneyForFaction = moneyForFaction + score*120
 			end
 		end
 		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
+		StatisticsLogger:getSingleton():addFireLog(-1, math.floor(self.m_VehicleFires[veh]:getTimeSinceStart()/1000), toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
+	
+		self.m_VehicleFires[veh] = nil
 	end, zone)
 end
