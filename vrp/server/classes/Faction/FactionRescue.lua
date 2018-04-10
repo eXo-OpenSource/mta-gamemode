@@ -784,8 +784,9 @@ function FactionRescue:addVehicleFire(veh)
 	end
 
 	local model = veh:getModel()
-	local pos, rot = veh:getPosition(), veh:getRotation()
-	local r1, g1, b1, r2, g2, b2 = veh:getColor()
+	local pos = veh:getPosition()
+	local rx, ry, rz = getElementRotation(veh)
+	local r1, g1, b1, r2, g2, b2 = veh:getColor(true)
 	setTimer(function(veh)
 		if instanceof(veh, FactionVehicle) or instanceof(veh, CompanyVehicle) then
 			local occs = veh:getOccupants()
@@ -803,11 +804,12 @@ function FactionRescue:addVehicleFire(veh)
 		self.m_VehicleFires[veh].Blip:setOptionalColor(BLIP_COLOR_CONSTANTS.Orange)
 		self.m_VehicleFires[veh].Blip:setDisplayText("Verkehrsbehinderung")
 
-		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rot.x, rot.y, rot.z)
+		local tempVehicle = TemporaryVehicle.create(model, pos.x, pos.y, pos.z, rx, ry, rz)
 		tempVehicle:setHealth(300)
 		tempVehicle:setColor(r1, g1, b1, r2, g2, b2)
 		tempVehicle:disableRespawn(true)
 		tempVehicle:setLocked(true)
+		tempVehicle:setData("Burned", true, true)
 		tempVehicle.burned = true
 		tempVehicle.Blip = Blip:new("CarShop.png", 0, 0, {company = CompanyStaticId.MECHANIC}, 400)
 		tempVehicle.Blip:setColor({150, 150, 150}) -- gets deleted on tow
@@ -823,24 +825,24 @@ function FactionRescue:addVehicleFire(veh)
 	self.m_VehicleFires[veh]:setOnFinishHook(function(stats)
 		self.m_VehicleFires[veh].Blip:delete()
 		self.m_VehicleFires[veh] = nil
-		if stats.activeRescuePlayers and stats.activeRescuePlayers > 0 then
-			local moneyForFaction = 0
-			for player, score in pairs(stats.pointsByPlayer) do
-				if isElement(player) then
-					player:giveCombinedReward("Fahrzeugbrand gelöscht", {
-						money = {
-							mode = "give",
-							bank = true,
-							amount = score*120,
-							toOrFrom = self.m_BankAccountServer,
-							category = "Faction",
-							subcategory = "Fire"
-						}
-					})
-					moneyForFaction = moneyForFaction + score*60
-				end
+		local moneyForFaction = 0
+		for player, score in pairs(stats.pointsByPlayer) do
+			if isElement(player) then
+				player:giveCombinedReward("Fahrzeugbrand gelöscht", {
+					money = {
+						mode = "give",
+						bank = true,
+						amount = score*120,
+						toOrFrom = self.m_BankAccountServer,
+						category = "Faction",
+						subcategory = "Fire"
+					},
+					karma = math.random(1,4),
+					points = math.random(5, 10)
+				})
+				moneyForFaction = moneyForFaction + score*120
 			end
-			FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * stats.activeRescuePlayers, "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		end
+		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 	end, zone)
 end

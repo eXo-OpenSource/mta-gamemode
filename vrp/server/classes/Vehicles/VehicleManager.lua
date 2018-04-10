@@ -93,6 +93,9 @@ function VehicleManager:constructor()
 			if source:isAttached() then -- If the vehicle is attached to a magnet helicopter
 				return cancelEvent()
 			end
+			if source:getData("Burned") then -- if the vehicle is left from a fire
+				return cancelEvent()
+			end
 
 			if seat == 0 then
 				self:checkVehicle(source)

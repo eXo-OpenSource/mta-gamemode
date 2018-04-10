@@ -152,29 +152,28 @@ end
 function FireManager:stopCurrentFire(stats)
 	if stats then 
 		local playersByID = {}
-		if stats.activeRescuePlayers and stats.activeRescuePlayers > 0 then
-			local moneyForFaction = 0
-			for player, score in pairs(stats.pointsByPlayer) do
-				if isElement(player) then
-					player:giveCombinedReward("Feuer gelöscht", {
-						money = {
-							mode = "give",
-							bank = true,
-							amount = score*12,
-							toOrFrom = self.m_BankAccountServer,
-							category = "Faction",
-							subcategory = "Fire"
-						},
-						karma = math.round(score/30),
-						points = math.round(score/10),
-					})
-					playersByID[player:getId()] = score
-					moneyForFaction = moneyForFaction + score*32
-				end
+		local moneyForFaction = 0
+		for player, score in pairs(stats.pointsByPlayer) do
+			if isElement(player) then
+				player:giveCombinedReward("Feuer gelöscht", {
+					money = {
+						mode = "give",
+						bank = true,
+						amount = score*12,
+						toOrFrom = self.m_BankAccountServer,
+						category = "Faction",
+						subcategory = "Fire"
+					},
+					karma = math.round(score/30),
+					points = math.round(score/10),
+				})
+				playersByID[player:getId()] = score
+				moneyForFaction = moneyForFaction + score*32
 			end
-			self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * ((stats.activeRescuePlayers + table.size(stats.pointsByPlayer))/2), "Feuer gelöscht", "Event", "Fire")
 		end
-		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (stats.activeRescuePlayers and stats.activeRescuePlayers > 0) and 1 or 0)
+		self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Feuer gelöscht", "Event", "Fire")
+
+		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0)
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end

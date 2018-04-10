@@ -180,7 +180,7 @@ function FireRoot:update()
 	end
 
 	self.m_Statistics.activeRescuePlayers = self:countUsersAtSight(true)
-	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 then -- let the fire decay if the fire limit is reached anyways
+	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 and self:getTimeSinceStart() < self:getTimeEstimate()/2  then -- let the fire decay if the fire limit is reached anyways
 		--PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
 	end
@@ -250,10 +250,10 @@ function FireRoot:updateFire(i, v, iNewSize, bDontDestroyElement)
 					
 					fire:addSizeDecreaseCallback(function(player, size)
 						if isElement(player) then
-							local timeEstimateForFinish =  math.sqrt(self.m_Width*self.m_Height)/4 * 60 * 1000 -- estimated time to extinguish the fire (in ms)
-							local p = player.vehicle and size or size*2 -- give more points if fire got deleted by "hand"
-							if self:isFireDecaying() or (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish/2 then p = p/2 end -- give less points if fire is already decaying
-							if (getTickCount() - self.m_Statistics.startTime) > timeEstimateForFinish then p = 0 end
+							local timeEstimateForFinish =  self:getTimeEstimate() -- estimated time to extinguish the fire (in ms)
+							local p = math.random(1, size)
+							if self:isFireDecaying() or self:getTimeSinceStart() > timeEstimateForFinish/2 then p = p/2 end -- give less points if fire is already decaying
+							if self:getTimeSinceStart() > timeEstimateForFinish then p = 0 end
 							if not self.m_Statistics.pointsByPlayer[player] then
 								self.m_Statistics.pointsByPlayer[player] = 0
 							end
@@ -278,8 +278,16 @@ function FireRoot:getFireSize(i, v)
 	end
 end
 
+function FireRoot:getTimeEstimate() -- in ms
+	return math.sqrt(self.m_Width*self.m_Height)/4 * 60 * 1000 + (5 * 60 * 1000) -- add size dependent time to 5 minutes
+end
+
+function FireRoot:getTimeSinceStart() -- in ms
+	return (getTickCount() - self.m_Statistics.startTime)
+end
+
 function FireRoot:triggerStatistics()
-	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, getTickCount(), self.m_Width, self.m_Height)
+	triggerClientEvent(FactionRescue:getSingleton():getOnlinePlayers(true, true), "refreshFireStatistics", resourceRoot, self.m_Statistics, self:getTimeSinceStart(), self:getTimeEstimate(), self.m_Width, self.m_Height)
 end
 
 function FireRoot:countUsersAtSight(rescueOnly)
