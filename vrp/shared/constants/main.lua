@@ -7,6 +7,10 @@ PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 
 INGAME_WEB_PATH = "https://ingame.exo-reallife.de"			
 
+if DEBUG then
+	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"	
+end
+
 -- LEVELS
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
