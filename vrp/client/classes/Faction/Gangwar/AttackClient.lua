@@ -101,8 +101,12 @@ end
 
 function AttackClient:synchronizeTime( time ) 
 	if self.m_Display then 
-		outputDebugString("Synchronized Time by "..self.m_Display.m_TimeLeft-time.." seconds!", 0, 200, 200, 0)
-		self.m_Display.m_TimeLeft = time
+		if self.m_Display.m_TimeLeft then
+			if (self.m_Display.m_TimeLeft - time) > 2 then
+				outputDebugString("Synchronized Time by "..self.m_Display.m_TimeLeft-time.." seconds!", 0, 200, 200, 0)
+			end
+			self.m_Display.m_TimeLeft = time
+		end
 	end
 end
 
@@ -133,7 +137,7 @@ function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
 		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )
 	end
 end
-addEventHandler("AttackClient:synchronizeLists",root,AttackClient.remoteSynchronize)
+addEventHandler("AttackClient:synchronizeLists", root,AttackClient.remoteSynchronize)
 
 addEvent("AttackClient:synchronizeTime",true)
 function AttackClient.remoteSynchronizeTime( pTime )
@@ -141,7 +145,7 @@ function AttackClient.remoteSynchronizeTime( pTime )
 		pseudoSingleton:synchronizeTime( pTime )
 	end
 end
-addEventHandler("AttackClient:synchronizeTime",root,AttackClient.remoteSynchronizeTime)
+addEventHandler("AttackClient:synchronizeTime", root,AttackClient.remoteSynchronizeTime)
 
 addEvent("AttackClient:launchClient",true)
 function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID  )
