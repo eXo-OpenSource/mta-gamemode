@@ -150,9 +150,6 @@ function DatabasePlayer:load(sync)
 
 	if self:isActive() then
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
-
-		-- Generate Session Id
-		self:setSessionId(hash("md5", self:getSerial()..self:getName()..self.m_Account:getLastLogin()))
 	end
 
 	self:setSpawnLocation(row.SpawnLocation)

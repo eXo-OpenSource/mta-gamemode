@@ -605,7 +605,7 @@ function Player:isActive() return true end
 function Player:isPremium() return self.m_Premium:isPremium() end
 
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
-function DatabasePlayer:setSessionId(hash) self.m_SessionId = string.upper(hash) if self:isActive() then self:setPrivateSync("SessionID", self.m_SessionId) end end
+function DatabasePlayer:setSessionId(hash) self.m_SessionId = hash if self:isActive() then self:setPrivateSync("SessionID", self.m_SessionId) end end
 
 function Player:getInventory()
 	return self.m_Inventory

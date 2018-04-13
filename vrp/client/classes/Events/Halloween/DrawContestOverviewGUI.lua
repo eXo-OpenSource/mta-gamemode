@@ -155,7 +155,7 @@ function DrawContestOverviewGUI:onReceivePlayers(contestName, contestType, playe
 				localPlayer.LastRequest = true
 
 				triggerServerEvent("drawContestRequestRating", localPlayer, drawing.drawId)
-				fetchRemote(("https://exo-reallife.de/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
+				fetchRemote((INGAME_WEB_PATH .. "/ingame/drawContest/getData.php?playerId=%s&contest=%s"):format(id, contestName), bind(self.onReceiveImage, self))
 			else
 				WarningBox:new("Bitte warte bis die letzte Anfrage verarbeitet wurde")
 			end

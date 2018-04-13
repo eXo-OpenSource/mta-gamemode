@@ -403,11 +403,11 @@ function HUDUI:getSkinBrowserSave(skinid, w, h) -- get the correct skin texture 
 		self.m_BrowserW = w
 		self.m_BrowserH = h
 		addEventHandler("onClientBrowserCreated", self.m_SkinBrowser, function()
-			self.m_SkinBrowser:loadURL("https://exo-reallife.de/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
+			self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
 		end)
 	end
 	if skinid ~= self.m_SkinID then
-		self.m_SkinBrowser:loadURL("https://exo-reallife.de/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
+		self.m_SkinBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreviewChartUI.php?skin="..skinid)
 		self.m_SkinID = skinid
 	end
 	if w ~= self.m_BrowserW or h ~= self.m_BrowserH then

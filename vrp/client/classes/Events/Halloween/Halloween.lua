@@ -144,7 +144,7 @@ function HalloweenSign:constructor()
 end
 
 function HalloweenSign:onStreamIn(surface)
-	self.m_Url = "http://exo-reallife.de/ingame/other/HalloweenSign.php"
+	self.m_Url = INGAME_WEB_PATH .. "/ingame/other/HalloweenSign.php"
 	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
 end
 

@@ -9,6 +9,10 @@ VehicleMouseMenu = inherit(GUIMouseMenu)
 
 function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
+	if element:getData("Burned") then
+		self:addItem(_"Fahrzeug-Wrack"):setTextColor(Color.Red)
+		return
+	end
 	local owner = getElementData(element, "OwnerName")
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)

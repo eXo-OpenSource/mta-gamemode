@@ -284,9 +284,9 @@ function StatisticsLogger:addItemDepotLog(player, depot, item, amount)
         sqlLogs:getPrefix(), userId, depot, item, amount)
 end
 
-function StatisticsLogger:addFireLog(fireId, duration, tblPlayers, success)
-	sqlLogs:queryExec("INSERT INTO ??_FireManager (FireId, Duration, Players, Success, Date) VALUES(?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), fireId, duration, tblPlayers, success)
+function StatisticsLogger:addFireLog(fireId, duration, tblPlayers, success, moneyForFaction)
+	sqlLogs:queryExec("INSERT INTO ??_FireManager (FireId, Duration, MoneyForFaction, Players, Success, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), fireId, duration, moneyForFaction, tblPlayers, success)
 end
 
 function StatisticsLogger:addLogin( player, name, logintype)

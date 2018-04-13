@@ -10,7 +10,7 @@ TSConnect = inherit(Singleton)
 ]]
 
 function TSConnect:constructor()
-	self.m_APIUrl = "https://exo-reallife.de/ingame/TSConnect/ts_connect.php"
+	self.m_APIUrl = INGAME_WEB_PATH .. "/ingame/TSConnect/ts_connect.php"
 	self.m_Secret = "8H041OAyGYk8wEpIa1Fv"
 
 	self.m_MoveRequests = {}

@@ -3,7 +3,7 @@ Fire.Settings = {
 	["smoke"] = true,
 	["smokeRenderDistance"] = 100,
 	["fireRenderDistance"] = 50,
-	["extinguishTime"] = 10,
+	["extinguishTime"] = 50,
 	["extraEffects"] = true,
 }
 
@@ -107,7 +107,7 @@ function Fire:handlePedDamage(uAttacker, iWeap)
 	if self.m_Fires[source] then
 		if iWeap == 42 then -- extinguisher
 			self:handleSmoke(source)
-			if uAttacker == localPlayer and math.random(1, Fire.Settings["extinguishTime"]*5) == 1 then
+			if uAttacker == localPlayer and math.random(1, Fire.Settings["extinguishTime"]) == 1 then
 				triggerServerEvent("fireElements:requestFireDeletion", source, self.m_Fires[source].iSize)
 			end
 		end
@@ -162,6 +162,7 @@ function Fire:changeFireSize(iSize)
 		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 		self.m_Fires[source].uBurningCol = createColSphere(iX, iY, iZ + (self.m_Fires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
 		addEventHandler("onClientColShapeHit", self.m_Fires[source].uBurningCol, bind(self.burnPlayer, self))
+		self.m_Fires[source].bCorrectPlaced = false -- force recalculate the height
 		self:checkForFireGroundInfo(source)
 	end
 end
@@ -239,7 +240,7 @@ function Fire:createFireElement(iSize, uPed)
 	end)
 end
 
-function Fire:updateStatistics(tblStats, serverTick, w, h)
+function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 	if not self.m_ShortmessageLoaded then
 		self.m_ShortmessageLoaded = true
 		self.m_StatisticShortMessage = ShortMessage:new("", "Brand-Übersicht", Color.Orange, 6000, nil, function()
@@ -247,13 +248,13 @@ function Fire:updateStatistics(tblStats, serverTick, w, h)
 		end)
 	end
 
-	local t = ("Zeit seit Ausbruch: %s\nFlammen: %s aktiv, %s seit Ausbruch\n\nbeteiligte Einsatzkräfte:"):format(string.duration((serverTick - tblStats.startTime)/1000), tblStats.firesActive, tblStats.firesTotal)
+	local t = ("Zeit seit Ausbruch: %s\nFlammen: %s aktiv, %s seit Ausbruch\n\nbeteiligte Einsatzkräfte:"):format(string.duration((timeSinceStart)/1000), tblStats.firesActive, tblStats.firesTotal)
 
 	for i, v in pairs(tblStats.pointsByPlayer) do
 		t = t.. ("\n %s - %s Punkte (%s Feuer gelöscht)"):format(i:getName(), v, tblStats.firesByPlayer[i] or 0)
 	end
 	if DEBUG then
-		t = t.. ("\n\n~~~DEBUG~~~\nDimension (w,h): %s, %s\ngeschätzte Lösch-Zeit (min): %s"):format(w, h, math.sqrt(w*h)/4)
+		t = t.. ("\n\n~~~DEBUG~~~\nDimension (w,h): %s, %s\ngeschätzte Lösch-Zeit (min): %s"):format(w, h, string.duration((timeEstimated)/1000))
 	end
 	self.m_StatisticShortMessage:setText(t)
 	self.m_StatisticShortMessage:resetTimeout()

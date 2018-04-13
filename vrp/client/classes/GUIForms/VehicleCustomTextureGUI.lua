@@ -30,7 +30,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
 				self.m_Music = nil
 				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOff)
 			else
-				self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+				self.m_Music = Sound.create(INGAME_WEB_PATH .. "/ingame/GarageMusic.mp3", true)
 				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOn)
 			end
 
@@ -83,7 +83,7 @@ function VehicleCustomTextureGUI:constructor(vehicle, path, textures)
     showChat(false)
 	HUDRadar:getSingleton():hide()
 
-	--self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+	--self.m_Music = Sound.create(INGAME_WEB_PATH .. "/ingame/GarageMusic.mp3", true)
 	self.m_CarRadioVolume = RadioGUI:getSingleton():getVolume() or 0
 	RadioGUI:getSingleton():setVolume(0)
     self.m_Vehicle:setOverrideLights(2)

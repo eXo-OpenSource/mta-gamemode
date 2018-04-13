@@ -4,11 +4,11 @@ function Christmas:constructor()
 	--[[
 	self.m_QuestManager = QuestManager:new()
 
-	self.m_Music = playSound3D("http://exo-reallife.de/ingame/JingleBells.mp3",1479.16, -1697.60, 14.05 , true)
+	self.m_Music = playSound3D(INGAME_WEB_PATH .. "/ingame/JingleBells.mp3",1479.16, -1697.60, 14.05 , true)
 	self.m_Music:setVolume(1)
 	self.m_Music:setMaxDistance(100)
 
-	table.insert(VRP_RADIO, {"Jinglebells", "http://exo-reallife.de/ingame/JingleBells.mp3"})
+	table.insert(VRP_RADIO, {"Jinglebells", INGAME_WEB_PATH .. "/ingame/JingleBells.mp3"})
 
 	-- Quest Ped
 	local ped = Ped.create(68, Vector3(1468.66, -1706.78, 14.05), 270)

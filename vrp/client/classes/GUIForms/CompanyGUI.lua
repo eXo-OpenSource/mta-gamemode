@@ -101,7 +101,7 @@ end
 
 function CompanyGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabLogs.TabIndex then
-		local url = ("https://exo-reallife.de/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("company", self.m_Id)
+		local url = (INGAME_WEB_PATH .. "/ingame/logs/groupLogs.php?groupType=%s&groupId=%d"):format("company", self.m_Id)
 		if not self.m_LogGUI then
 			self.m_LogGUI = LogGUI:new(self.m_TabLogs, url)
 		else
@@ -125,10 +125,10 @@ function CompanyGUI:addLeaderTab()
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
 		GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
-		self.m_SkinVorschauBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, tabLeader)
+		self.m_SkinVorschauBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, tabLeader)
 
 		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
-		self.m_SkinChanger.onChange = function(text, index) self.m_SkinVorschauBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
+		self.m_SkinChanger.onChange = function(text, index) self.m_SkinVorschauBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..text) end
 
 		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
