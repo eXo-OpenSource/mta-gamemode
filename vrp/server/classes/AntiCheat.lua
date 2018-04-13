@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 AntiCheat = inherit(Singleton)
-addRemoteEvents{"AntiCheat:ReportBlip"}
+addRemoteEvents{"AntiCheat:ReportBlip", "AntiCheat:ReportFarmerTeleport"}
 
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
@@ -54,6 +54,12 @@ function AntiCheat:constructor()
 			setElementData(source, name, oldValue)
 		end
 	)
+
+	addEventHandler("onPlayerACInfo", root, bind(self.Event_playerAcInfo, self))
+end
+
+function AntiCheat:Event_playerAcInfo(detectedACList, d3d9Size, d3d9MD5, d3d9SHA256)
+	-- TODO implement whitelist for wine and vm's
 end
 
 function AntiCheat:report(player, name, severity)
@@ -64,11 +70,17 @@ function AntiCheat:report(player, name, severity)
 	end
 	outputServerLog(("AntiCheat:report(%s, %s, %i)"):format(player:getName(), name, severity))
 
-	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity) VALUES(?, ?, ?)", sql:getPrefix(), player:getId(), name, severity)
+	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), player:getId(), name, severity)
 end
 
 addEventHandler("AntiCheat:ReportBlip", root,
 	function(blipCount)
 		AntiCheat:getSingleton():report(client, ("Invalid Blip Count: %s"):format(tostring(blipCount)), CheatSeverity.High)
+	end
+)
+
+addEventHandler("AntiCheat:ReportFarmerTeleport", root,
+	function(dist)
+		AntiCheat:getSingleton():report(client, ("used teleport bug on farmer job (%sm)"):format(dist), CheatSeverity.High)
 	end
 )

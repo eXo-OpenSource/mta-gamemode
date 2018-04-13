@@ -8,10 +8,11 @@
 VehicleTexture = inherit(Object)
 VehicleTexture.Map = {}
 
-function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player)
+function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player, forceTexture)
 	if vehicle and isElement(vehicle) then
 		self.m_Id = #VehicleTexture.Map+1
 		self.m_Optional = not self:checkOptional(vehicle)
+		self.m_Force = forceTexture
 		self.m_Vehicle = vehicle
 		self.m_Path = path
 		if texture then
@@ -26,9 +27,9 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pl
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
 				if not isPreview then
-					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
+					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
 				else
-					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false}})
+					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
 				end
 			end
 		end
@@ -72,7 +73,7 @@ function VehicleTexture.requestTextures(target)
 	local vehicleTab = {}
 	for index, instance in pairs(VehicleTexture.Map) do
 		if instance.m_Vehicle and isElement(instance.m_Vehicle) then
-			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional, isRequested = true}
+			vehicleTab[#vehicleTab+1] = {vehicle = instance.m_Vehicle, textureName = instance.m_Texture, texturePath = instance.m_Path, optional = instance.m_Optional, isRequested = true, forceTexture = instance.m_Force}
 		end
 	end
 	VehicleTexture.sendToClient(target, vehicleTab)

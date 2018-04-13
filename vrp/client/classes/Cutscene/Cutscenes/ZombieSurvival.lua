@@ -100,14 +100,14 @@ CutscenePlayer:getSingleton():registerCutscene("ZombieSurvivalCutscene", {
 			anim = nil;
 		};
 		{
-			action = "Ped.setControlState";
+			action = "Ped.setPedControlState";
 			starttick = 4250;
 			id = "localPlayer";
 			control = "forwards";
 			state = true
 		};
 		{
-			action = "Ped.setControlState";
+			action = "Ped.setPedControlState";
 			starttick = 6450;
 			id = "localPlayer";
 			control = "forwards";

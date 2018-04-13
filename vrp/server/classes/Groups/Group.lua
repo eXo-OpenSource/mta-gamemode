@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
+function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
@@ -17,6 +17,8 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_LastActivityUpdate = 0
 	self.m_Name = name
 	self.m_Money = money or 0
+	self.m_PlayTime = playTime or 0
+	self.m_IsActive = false
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
 	self.m_Karma = karma or 0
@@ -25,6 +27,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
+	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
 
@@ -47,7 +50,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	self.m_RankNames = fromJSON(rankNames)
 	self.m_RankLoans = fromJSON(rankLoans)
 	if saveRanks == true then
-	self:saveRankSettings()
+		self:saveRankSettings()
 	end
 
 
@@ -57,7 +60,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
 	if not DEBUG then
 		self:getActivity()
 	end
-	
+
 	self:updateRankNameSync()
 end
 
@@ -124,16 +127,26 @@ function Group:setType(type, player)
 end
 
 function Group:onPlayerJoin(player)
-    self:sendShortMessage(_("%s ist gejoint!", player, player:getName()))
-    if self.m_MarkersAttached == true then
-        self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
-        self.m_Markers[player]:setDimension(player:getDimension())
-        self.m_Markers[player]:setInterior(player:getInterior())
-        self.m_Markers[player]:attach(player,0,0,1.5)
-        self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
-        addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-        addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-    end
+	self.m_IsActive = true
+	self:sendShortMessage(_("%s ist gejoint!", player, player:getName()))
+	if self.m_MarkersAttached == true then
+		self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+		self.m_Markers[player]:setDimension(player:getDimension())
+		self.m_Markers[player]:setInterior(player:getInterior())
+		self.m_Markers[player]:attach(player,0,0,1.5)
+		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	end
+
+	GroupManager:getSingleton():addActiveGroup(self)
+end
+
+function Group:onPlayerQuit(player)
+	if not self:getOnlinePlayers() then
+		self.m_IsActive = false
+		GroupManager:getSingleton():removeActiveGroup(self)
+	end
 end
 
 function Group:getVehicles()
@@ -174,8 +187,22 @@ function Group:saveRankSettings()
 	return true
 end
 
+function Group:getId()
+	return self.m_Id
+end
+
 function Group:getName()
 	return self.m_Name
+end
+
+function Group:getPlayTime()
+	return self.m_PlayTime
+end
+
+function Group:addPlayTime(time)
+	self.m_PlayTime = self:getPlayTime() + time
+
+	return self.m_PlayTime
 end
 
 function Group:getKarma()
@@ -196,9 +223,9 @@ function Group:setRankLoan(rank, amount)
 	self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
 end
 
-function Group:updateRankNameSync() 
+function Group:updateRankNameSync()
 	local ranks = table.copy(self.m_RankNames)
-	for key, player in ipairs(self:getOnlinePlayers()) do 
+	for key, player in ipairs(self:getOnlinePlayers()) do
 		player:setPublicSync("GroupRankNames", ranks)
 	end
 end
@@ -254,7 +281,6 @@ function Group:addPlayer(playerId, rank)
 	end
 
 	self:getActivity(true)
-	
 end
 
 function Group:removePlayer(playerId)
@@ -283,11 +309,11 @@ function Group:removePlayer(playerId)
 end
 
 function Group:invitePlayer(player)
-  client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
+	client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
 
-  player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
+	player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 
-  self.m_Invitations[player] = client.m_Id
+	self.m_Invitations[player] = client.m_Id
 end
 
 function Group:removeInvitation(player)
@@ -353,12 +379,12 @@ end
 
 function Group:__giveMoney(amount, reason, slient)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
-    return self.m_BankAccount:__giveMoney(amount, reason, slient)
+	return self.m_BankAccount:__giveMoney(amount, reason, slient)
 end
 
 function Group:__takeMoney(amount, reason, slient)
 	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
-    return self.m_BankAccount:__takeMoney(amount, reason, slient)
+	return self.m_BankAccount:__takeMoney(amount, reason, slient)
 end
 
 function Group:transferMoney(...)
@@ -392,7 +418,7 @@ end
 
 function Group:getPlayers(getIDsOnly)
 	if getIDsOnly then
-	return self.m_Players
+		return self.m_Players
 	end
 
 	self:getActivity()
@@ -436,19 +462,19 @@ function Group:sendChatMessage(sourcePlayer, message)
 	end
 	sourcePlayer:setLastChatMessage(message)
 
-    local playerId = sourcePlayer:getId()
-    local rank = self.m_Players[playerId]
-    local rankName = self.m_RankNames[tostring(rank)]
-    local receivedPlayers = {}
+	local playerId = sourcePlayer:getId()
+	local rank = self.m_Players[playerId]
+	local rankName = self.m_RankNames[tostring(rank)]
+	local receivedPlayers = {}
 	message = message:gsub("%%", "%%%%")
-    local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
-    for k, player in ipairs(self:getOnlinePlayers()) do
-        player:sendMessage(text, 0, 255, 150)
-        if player ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = player
-        end
-    end
-    StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, receivedPlayers)
+	local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, 0, 255, 150)
+		if player ~= sourcePlayer then
+			receivedPlayers[#receivedPlayers+1] = player
+		end
+	end
+	StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, receivedPlayers)
 end
 
 function Group:sendMessage(text, r, g, b, ...)
@@ -477,17 +503,17 @@ function Group:distributeMoney(sender, amount, reason, category, subcategory)
 end
 
 function Group:attachPlayerMarkers()
-    self.m_MarkersAttached = true
-    self.m_Markers = {}
-    for k, player in ipairs(self:getOnlinePlayers()) do
-        self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
-        self.m_Markers[player]:setDimension(player:getDimension())
-        self.m_Markers[player]:setInterior(player:getInterior())
-        self.m_Markers[player]:attach(player,0,0,1.5)
-        self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
-        addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-        addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-    end
+	self.m_MarkersAttached = true
+	self.m_Markers = {}
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+		self.m_Markers[player]:setDimension(player:getDimension())
+		self.m_Markers[player]:setInterior(player:getInterior())
+		self.m_Markers[player]:attach(player,0,0,1.5)
+		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	end
 end
 
 function Group:attachPlayerMarker(player)
@@ -502,13 +528,13 @@ function Group:attachPlayerMarker(player)
 end
 
 function Group:removePlayerMarkers()
-    self.m_MarkersAttached = false
-    for k, player in ipairs(self:getOnlinePlayers()) do
-        if self.m_Markers[player] then self.m_Markers[player]:destroy() end
-        removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-        removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-    end
-    self.m_Markers = {}
+	self.m_MarkersAttached = false
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if self.m_Markers[player] then self.m_Markers[player]:destroy() end
+		removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+		removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	end
+	self.m_Markers = {}
 end
 
 function Group:removePlayerMarker(player)
@@ -556,7 +582,7 @@ function Group:phoneCallAbbort(caller)
 end
 
 function Group:phoneTakeOff(player, key, state, caller)
-  	if player.m_PhoneOn == false then
+	if player.m_PhoneOn == false then
 		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
 		return
 	end
@@ -639,47 +665,89 @@ function Group:calculateVehicleTax(data)
 	return sum
 end
 
-function Group:payDay(vehicleData)
-	local incoming = {}
-	local outgoing = {}
-	local interest = 0
+function Group:payDay()
+	local incomingPermanently = {}
+	local incomingBonus = {}
+	local outgoingPermanently = {}
 	local output = {}
+
+	incomingPermanently["Zinsen"] = 0
+	incomingBonus["Spieler (offline)"] = 0
+	incomingBonus["Spieler (online)"] = 0
+	outgoingPermanently["Fahrzeugsteuern"] = 0
+
 	if self:getMoney() > 0 then
-		interest = self:getMoney() > 300000 and math.floor(300000*0.0005) or math.floor(self:getMoney()*0.0005)
+		incomingPermanently["Zinsen"] = self:getMoney() > 300000 and math.floor(300000 * 0.0005) or math.floor(self:getMoney() * 0.0005)
 	end
 
-	outgoing["Fahrzeugsteuern"] = self:calculateVehicleTax(vehicleData)*-1
-	incoming["Zinsen"] = interest
-	table.insert(output, ("%s-Payday:"):format(self.m_Type == "Firma" and "Firmen" or self.m_Type))
-	--table.insert(output, "Einkommen:\n")
-	for name, amount in pairs(incoming) do
+	for index, vehicle in pairs(self:getVehicles()) do
+		outgoingPermanently["Fahrzeugsteuern"] = outgoingPermanently["Fahrzeugsteuern"] + vehicle:getVehicleTaxForGroup()
+	end
+
+	for id in pairs(self:getPlayers()) do
+		local player = Player.getFromId(id)
+
+		if player then
+			incomingBonus["Spieler (online)"] = incomingBonus["Spieler (online)"] + 100
+		else
+			local money = self.m_PlayerActivity[id] * 10
+
+			if money > 100 then
+				money = 100
+			end
+
+			incomingBonus["Spieler (offline)"] = incomingBonus["Spieler (offline)"] + money
+		end
+	end
+
+	table.insert(output, "Payday:")
+
+	for name, amount in pairs(incomingPermanently) do
 		table.insert(output, ("%s: %d$"):format(name, amount))
 	end
-	--table.insert(output, "\nAusgaben:\n")
-	for name, amount in pairs(outgoing) do
+
+	for name, amount in pairs(incomingBonus) do
+		if amount ~= 0 then
+			table.insert(output, ("%s: %d$"):format(name, amount))
+		end
+	end
+
+	for name, amount in pairs(outgoingPermanently) do
 		table.insert(output, ("%s: %d$"):format(name, amount))
 	end
 
 	local sum, inc, out = 0, 0, 0
-	for name, amount in pairs(incoming) do
-		inc = inc+amount
+
+	for name, amount in pairs(incomingPermanently) do
+		inc = inc + amount
 	end
-	for name, amount in pairs(outgoing) do
-		out = out+amount
+
+	for name, amount in pairs(incomingBonus) do
+		inc = inc + amount
 	end
-	sum = inc+out
+
+	for name, amount in pairs(outgoingPermanently) do
+		out = out + amount
+	end
+
+	sum = inc - out
 	table.insert(output, ("Gesamt: %d$"):format(sum))
+
 	if sum > 0 then
 		self.m_BankAccountServer:transferMoney({self, nil, true}, sum, "Payday", "Group", "Payday")
 	elseif sum < 0 then
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
+
 	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
+
+	self:save()
+
 	if self:getMoney() < 0 then
 		if self.m_VehiclesSpawned then
 			local mechanic = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC)
-			for index, vehicle in pairs(VehicleManager:getSingleton().m_GroupVehicles[self:getId()]) do
-				if not vehicle:getPositionType() == VehiclePositionType.Mechanic then
+			for index, vehicle in pairs(self:getVehicles()) do
+				if not (vehicle:getPositionType() == VehiclePositionType.Mechanic) then
 					mechanic:respawnVehicle(vehicle)
 				end
 			end
@@ -687,9 +755,13 @@ function Group:payDay(vehicleData)
 			sql:queryExec("UPDATE ??_group_vehicles SET `PositionType` = ? WHERE `Group` = ?", sql:getPrefix(), VehiclePositionType.Mechanic, self:getId())
 		end
 		self:sendShortMessage("Alle eure Fahrzeuge wurden abgeschleppt, da euer Kontostand im Minus ist!")
-	end
+	elseif self:getMoney() < (outgoingPermanently["Fahrzeugsteuern"] * 3) then
+		self:sendShortMessage("Bei den derzeitigen Finanzen kann die Fahrzeugsteuer bald nicht mehr bezahlt werden!")
+ 	end
 end
 
 function Group:save()
 	self.m_BankAccount:save()
+
+	sql:queryExec("UPDATE ??_groups SET PlayTime = ? WHERE Id = ?", sql:getPrefix(), self:getPlayTime(), self:getId())
 end

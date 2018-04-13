@@ -54,7 +54,7 @@ factionRankNames[1] = {
 [6] = "Chief of Police"
 }
 
-factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
+factionColors[1] = {["r"] = 0,["g"] = 200,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
@@ -71,7 +71,7 @@ factionRankNames[2] = {
 [5] = "Deputy Director",
 [6] = "FBI-Director"
 }
-factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
+factionColors[2] = {["r"] = 50,["g"] = 100,["b"] = 150}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
 factionWeapons[2] = {[3]=true,[22]=true,[24]=true, [25]=true, [29]=true, [31]=true, [34]=true}
@@ -110,7 +110,7 @@ factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
 factionCarColors[4] = {["r"] = 178, ["g"] = 35, ["b"] = 33, ["r1"] = 255, ["g1"] = 255, ["b1"] = 255}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [76]=true, [276]=true, [70]=true}
 factionWeapons[4] = {[9]=true}
-factionSpawnpoint[4] = {Vector3(1752.10, -1785.50, 13.57), 0, 0}
+factionSpawnpoint[4] = {Vector3(1076.01, -1380.27, 13.71), 0, 0}
 
 -- ID 5 = La Cosa Nostra:
 factionRankNames[5] = {
@@ -160,7 +160,7 @@ factionRankNames[7] = {
 [6] = "Junkie"
 }
 factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
-factionCarColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52, ["r1"] = 18,["g1"] = 140,["b1"] = 52}
+factionCarColors[7] = {["r"] = 20,["g"] = 90,["b"] = 10, ["r1"] = 20,["g1"] = 90,["b1"] = 10}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.4)

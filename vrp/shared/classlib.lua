@@ -35,6 +35,13 @@ function enew(element, class, ...)
 
 	oop.elementInfo[element] = instance
 
+	
+	for k, v in ripairs(superAll(instance)) do
+		if rawget(v, "virtual_constructor") then
+			rawget(v, "virtual_constructor")(element, ...)
+		end
+	end
+--[[
 	local callDerivedConstructor;
 	callDerivedConstructor = function(parentClasses, instance, ...)
 		for k, v in pairs(parentClasses) do
@@ -46,8 +53,11 @@ function enew(element, class, ...)
 		end
 	end
 
-	callDerivedConstructor(super(instance), element, ...)
-
+	if element.type and element.type == "vehicle" then
+	else
+		callDerivedConstructor(super(instance), element, ...)
+	end
+]]
 	-- Call constructor
 	if rawget(class, "constructor") then
 		rawget(class, "constructor")(element, ...)
@@ -92,6 +102,12 @@ function new(class, ...)
 		})
 
 	-- Call derived constructors
+	for k, v in ripairs(superAll(instance)) do
+		if rawget(v, "virtual_constructor") then
+			rawget(v, "virtual_constructor")(instance, ...)
+		end
+	end
+	--[[
 	local callDerivedConstructor;
 	callDerivedConstructor = function(self, instance, ...)
 		for k, v in pairs(self) do
@@ -103,7 +119,7 @@ function new(class, ...)
 		end
 	end
 
-	callDerivedConstructor(super(class), instance, ...)
+	callDerivedConstructor(super(class), instance, ...)]]
 
 	-- Call constructor
 	if rawget(class, "constructor") then
@@ -149,6 +165,47 @@ function super(self)
 	if metatable then return metatable.__super
 	else
 		return {}
+	end
+end
+
+function superAll(self)
+	local supers = {}
+	local s = superMultiple(self)
+
+	if s then
+		for _, v in ipairs(s) do
+			table.insert(supers, v)
+		end
+
+		for _, v in ipairs(s) do
+			local hS = superAll(v)
+
+			for _, v2 in ipairs(hS) do
+				table.insert(supers, v2)
+			end
+		end
+	end
+	
+	return supers
+end
+
+function superMultiple(self)
+	if isElement(self) then
+		assert(oop.elementInfo[self], "Cannot get the superclass of this element") -- at least: not yet
+		self = oop.elementInfo[self]
+	end
+	
+	local metatable = getmetatable(self)
+	if not metatable then
+		return {}
+	end
+	
+	if metatable.__class then -- we're dealing with a class object
+		return superMultiple(metatable.__class)
+	end
+	
+	if metatable.__super then -- we're dealing with a class
+		return metatable.__super or {}
 	end
 end
 

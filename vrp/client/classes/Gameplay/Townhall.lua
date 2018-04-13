@@ -57,14 +57,14 @@ function Townhall:constructor()
 	local itemSpawnerPed = Ped.create(171, Vector3(1806.72, -1293.27, 13.61))
 	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
-	itemSpawnerPed.Description = _"Fahrzeug 200$ ausleihen!"
+	itemSpawnerPed.Description = _"Fahrzeug für 200$ ausleihen!"
 	itemSpawnerPed.FuLnc = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
 
 	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))
 	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
 	itemSpawnerPed2.Name = _"Fahrzeugverleih"
-	itemSpawnerPed2.Description = _"Fahrzeug 200$ ausleihen!"
+	itemSpawnerPed2.Description = _"Fahrzeug für 200$ ausleihen!"
 	itemSpawnerPed2.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
 
@@ -87,18 +87,19 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed4
 
 
-	local itemSpawnerPed5 = Ped.create(171, Vector3(1742.07, -1744.15, 13.55))
-	itemSpawnerPed5:setRotation(Vector3(0, 0, 0))
+	--// VEHICLE SPAWNER RESCUE
+	local itemSpawnerPed5 = Ped.create(171, Vector3(1180.90, -1331.90, 13.58))
+	itemSpawnerPed5:setRotation(Vector3(0, 0, 270))
 	itemSpawnerPed5.Name = _"Fahrzeugverleih"
-	itemSpawnerPed5.Description = _"Fahrzeug 200$ ausleihen!"
+	itemSpawnerPed5.Description = _"Fahrzeug für 200$ ausleihen!"
 	itemSpawnerPed5.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
 
 	--// RESCUE BASE HEAL PED
 
-	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.356, -1752.185, 13.555))
-	itemSpawnerPed6:setRotation(Vector3(0, 0, 0))
-	itemSpawnerPed6.Name = _"Rescue Base Heilung"
+	local itemSpawnerPed6 = Ped.create(70, Vector3(1172.33, -1321.48, 15.40))
+	itemSpawnerPed6:setRotation(Vector3(0, 0, 270))
+	itemSpawnerPed6.Name = _"Erste Hilfe"
 	itemSpawnerPed6.Description = _"Klicke mich für Heilung an!"
 	itemSpawnerPed6.Func = function() triggerServerEvent("factionRescuePlayerHealBase", localPlayer) end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed6

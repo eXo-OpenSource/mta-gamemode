@@ -123,7 +123,6 @@ end
 function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		player:giveKarma(karma)
-		player:sendShortMessage(_("%s\nDu hast %d Karma erhalten!", player, reason, karma), "Karma")
 	end
 end
 

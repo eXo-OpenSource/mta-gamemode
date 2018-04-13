@@ -1,6 +1,0 @@
-<map edf:definitions="editor_main">
-    <object id="object (lhroofst14) (2)" interior="0" alpha="255" doublesided="false" model="5822" scale="1" dimension="0" posX="2615" posY="-1080.8000488281" posZ="70.099998474121" rotX="0" rotY="0" rotZ="3.5"></object>
-    <object id="object (sm_des_josh_sm2) (1)" interior="0" alpha="255" doublesided="false" model="681" scale="1" dimension="0" posX="2633.1000976563" posY="-1057.6999511719" posZ="68.599998474121" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (sm_des_josh_sm2) (2)" interior="0" alpha="255" doublesided="false" model="681" scale="1" dimension="0" posX="2630.3000488281" posY="-1104.5999755859" posZ="67.800003051758" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (sm_veg_tree4) (1)" interior="0" alpha="255" doublesided="false" model="669" scale="1" dimension="0" posX="2608.3000488281" posY="-1065.0999755859" posZ="68.599998474121" rotX="0" rotY="0" rotZ="0"></object>
-</map>

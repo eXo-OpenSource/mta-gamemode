@@ -38,7 +38,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local npcData = split(npc,",")
 	self.m_Ped = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
 	self.m_Ped:setImmortal(true)
-	self.m_Ped:toggleWanteds(true)
+	self.m_Ped:setFrozen(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
@@ -92,10 +92,13 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 	end
 	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
-		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, nil, false)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation)
 		if vehicle then
 			player:transferMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
 
+			vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
+			vehicle.m_Tunings:saveColors()
+			vehicle:save()
 			setTimer(function(player, vehicle)
 				player:warpIntoVehicle(vehicle)
 				player:triggerEvent("vehicleBought")
@@ -125,12 +128,11 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	veh:setFrozen(true)
 	veh:toggleRespawn(false)
 	setVehicleDamageProof( veh , true)
-	veh:setColor(math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255))
 end
 
 function VehicleShop:save()
-	self.m_BankAccount:save()
-	if sql:queryExec("UPDATE ??_vehicle_shops SET Money = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Owner, self.m_Id) then
+	
+	if self.m_BankAccount:save() then
 	else
 		outputDebug(("Failed to save Vehicle-Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
 	end

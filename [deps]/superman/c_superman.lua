@@ -238,7 +238,7 @@ end
 local jump, oldJump = false, false
 function Superman_processControls()
   if not isPlayerFlying(localPlayer) then
-    jump, oldJump = getControlState("jump"), jump
+    jump, oldJump = getPedControlState("jump"), jump
     if isSupermanEnabled and not oldJump and jump then 
       Superman_onJump()
     end
@@ -246,15 +246,15 @@ function Superman_processControls()
   end
 
   local Direction = Vector3D:new(0, 0, 0)
-  if getControlState("forwards") then
+  if getPedControlState("forwards") then
     Direction.y = 1
-  elseif getControlState("backwards") then
+  elseif getPedControlState("backwards") then
     Direction.y = -1
   end
 
-  if getControlState("left") then
+  if getPedControlState("left") then
     Direction.x = 1
-  elseif getControlState("right") then
+  elseif getPedControlState("right") then
     Direction.x = -1
   end
   Direction:Normalize()
@@ -263,17 +263,17 @@ function Superman_processControls()
   local cameraX, cameraY, cameraZ, lookX, lookY, lookZ = getCameraMatrix()
   local SightDirection = Vector3D:new((lookX - cameraX), (lookY - cameraY), (lookZ - cameraZ))
   SightDirection:Normalize()
-  if getControlState("look_behind") then
+  if getPedControlState("look_behind") then
     SightDirection = SightDirection:Mul(-1)
   end
 
   -- Calculate the current max speed and acceleration values
   local maxSpeed = MAX_SPEED
   local acceleration = ACCELERATION
-  if getControlState("sprint") then
+  if getPedControlState("sprint") then
     maxSpeed = MAX_SPEED * EXTRA_SPEED_FACTOR
     acceleration = acceleration * EXTRA_ACCELERATION_FACTOR
-  elseif getControlState("walk") then
+  elseif getPedControlState("walk") then
     maxSpeed = MAX_SPEED * LOW_SPEED_FACTOR
     acceleration = acceleration * LOW_ACCELERATION_FACTOR
   end
@@ -415,7 +415,7 @@ function Superman_processIdleFlight(player)
     local cameraX, cameraY, cameraZ, lookX, lookY, lookZ = getCameraMatrix()
     local Sight = Vector3D:new(lookX - cameraX, lookY - cameraY, lookZ - cameraZ)
     Sight:Normalize()
-    if getControlState("look_behind") then
+    if getPedControlState("look_behind") then
       Sight = Sight:Mul(-1)
     end
 

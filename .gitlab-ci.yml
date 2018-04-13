@@ -38,8 +38,10 @@ build_docker_job:
     - dind
   stage: build_docker
   script:
-    - wget -q -O build/workerserver https://do-not.press/exo/workerserver # Built by deploy-workerunit project
-    - wget -q -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
+    #- wget -q --no-check-certificate -O build/workerserver https://do-not.press/exo/workerserver # Built by deploy-workerunit project
+    #- wget -q --no-check-certificate -O build/ml_gps.so https://do-not.press/exo/ml_gps.so # Built by mta-module-gps project
+    - wget -q --no-check-certificate -O build/workerserver https://download.exo-reallife.de/build/workerserver # Built by deploy-workerunit project
+    - wget -q --no-check-certificate -O build/ml_gps.so https://download.exo-reallife.de/build/ml_gps.so # Built by mta-module-gps project
     - docker info
     - docker build -t exo-rl-mta .
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -74,7 +76,7 @@ deploy_job_develop:
   stage: deploy
   script:
     #- curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz http://ts.exo-reallife.de/upload/upload.php
-    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
+    - curl http://$DEPLOYRON_IP:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
     url: http://mta.exo-reallife.de:5002/
@@ -87,7 +89,7 @@ deploy_job_testing:
     - dind
   stage: deploy
   script:
-    - curl http://192.168.122.20:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
+    - curl http://$DEPLOYRON_IP:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
   environment:
     name: testing
     url: http://mta.exo-reallife.de:5001/
@@ -100,7 +102,7 @@ deploy_job_production:
     - dind
   stage: deploy
   script:
-    - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
+    - curl http://$DEPLOYRON_IP:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production
     url: http://mta.exo-reallife.de:5000/

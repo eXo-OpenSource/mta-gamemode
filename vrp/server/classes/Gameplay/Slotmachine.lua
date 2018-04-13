@@ -99,7 +99,7 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- Lever ( Hebel )
 
 	self.m_Objects.hebel = createObject(1319, x, y, z)
-	attachElements(self.m_Objects.hebel, self.m_Objects.slotmachine, 0.9, -0.3, 0, 50, 0, rz*(360)/90)
+	attachElements(self.m_Objects.hebel, self.m_Objects.slotmachine, 0.9, -0.3, 0, 50, 0, 0)
 	setElementFrozen(self.m_Objects.hebel, true)
 	setElementData(self.m_Objects.hebel, "SLOTMACHINE:LEVER", true)
 	self.m_Objects.hebel:setData("clickable", true, true)
@@ -379,7 +379,7 @@ function Slotmachine:startPlayer(player)
 			self:start(player)
 		end
 	else
-		player:sendError(_("Dir fehlen %d$ um an dieser Slotmachine zu spielen!", player, self.m_Prices.bet))
+		player:sendError(_("Du benötigst %d$ um an dieser Slotmachine zu spielen!", player, self.m_Prices.bet))
 
 	end
 end

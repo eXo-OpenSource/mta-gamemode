@@ -26,6 +26,8 @@ function VehicleELS:constructor()
     addEventHandler("vehicleELSremove", resourceRoot, bind(VehicleELS.removeELS, self))
     addEventHandler("vehicleELStoggle", resourceRoot, bind(VehicleELS.toggleELS, self))
     addEventHandler("vehicleELStoggleDI", resourceRoot, bind(VehicleELS.toggleDI, self))
+    self.m_InteriorChangeFunc = bind(VehicleELS.Event_OnVehicleInteriorChange, self)
+    self.m_DimensionChangeFunc = bind(VehicleELS.Event_OnVehicleDimensionChange, self)
 end
 
 function VehicleELS:loadServerELS(allVehs, activeVehs, diVehs)
@@ -44,11 +46,15 @@ function VehicleELS:initELS(veh, preset)
     VehicleELS.Map[veh] = preset
     veh.m_ELSPreset = preset
     veh.m_HasDI = ELS_PRESET[preset].directionIndicator
+    addEventHandler("onClientElementInteriorChange", veh, self.m_InteriorChangeFunc)
+    addEventHandler("onClientElementDimensionChange", veh, self.m_DimensionChangeFunc)
 end
 
 function VehicleELS:removeELS(veh)
     if VehicleELS.Map[veh] then
         VehicleELS.Map[veh] = nil
+        removeEventHandler("onClientElementInteriorChange", veh, self.m_InteriorChangeFunc)
+        removeEventHandler("onClientElementDimensionChange", veh, self.m_DimensionChangeFunc)
     end
 end
 
@@ -76,9 +82,12 @@ function VehicleELS:internalAddELSLights(veh)
             lights = veh:getOverrideLights(),
             lcolor = {veh:getHeadLightColor()},
         }
+        local int, dim = veh:getInterior(), veh:getDimension()
         for name, data in pairs(ELS_PRESET[veh.m_ELSPreset].light) do
             veh.m_ELSLights[name] = createMarker(0, 0, 0, "corona", data[4], data[5], data[6], data[7], data[8] or 255)
             veh.m_ELSLights[name]:attach(veh, data[1], data[2], data[3])
+            veh.m_ELSLights[name]:setInterior(int)
+            veh.m_ELSLights[name]:setDimension(dim)
         end
         if ELS_PRESET[veh.m_ELSPreset].headlightSequence then veh:setOverrideLights(2) end
         VehicleELS.update(veh)
@@ -103,6 +112,31 @@ function VehicleELS:internalRemoveELSLights(veh)
     end
 end
 
+function VehicleELS:Event_OnVehicleInteriorChange()
+    if source.m_ELSLights then
+        for name, cor in pairs(veh.m_ELSLights) do
+            cor:setInterior(source:getInterior())
+        end
+    end
+    if source.m_DILights then
+        for name, cor in pairs(veh.m_DILights) do
+            cor:setInterior(source:getInterior())
+        end
+    end
+end
+
+function VehicleELS:Event_OnVehicleDimensionChange()
+    if source.m_ELSLights then
+        for name, cor in pairs(veh.m_ELSLights) do
+            cor:setDimension(source:getDimension())
+        end
+    end
+    if source.m_DILights then
+        for name, cor in pairs(veh.m_DILights) do
+            cor:setDimension(source:getDimension())
+        end
+    end
+end
 
 --Direction Indicator
 
@@ -133,14 +167,21 @@ function VehicleELS:internalAddDILights(veh)
     if not veh.m_HasDI then return false end
     if not veh.m_DILights then
         local x, y, z = unpack(veh.m_HasDI)
+        local int, dim = veh:getInterior(), veh:getDimension()
         veh.m_DILights = {}
         
         veh.m_DILights.r = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
         veh.m_DILights.r:attach(veh, x, y, z)
+        veh.m_DILights.r:setInterior(int)
+        veh.m_DILights.r:setDimension(dim)
         veh.m_DILights.m = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
         veh.m_DILights.m:attach(veh, 0, y, z)
+        veh.m_DILights.m:setInterior(int)
+        veh.m_DILights.m:setDimension(dim)
         veh.m_DILights.l = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
         veh.m_DILights.l:attach(veh, -x, y, z)
+        veh.m_DILights.l:setInterior(int)
+        veh.m_DILights.l:setDimension(dim)
 
         VehicleELS.updateDI(veh)
         veh.m_DITimer = setTimer(VehicleELS.updateDI, VehicleELS.DIUpdateTime, 0, veh)

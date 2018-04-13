@@ -1,0 +1,16 @@
+<map edf:definitions="editor_main">
+    <object id="object (paperchase02) (1)" breakable="true" interior="0" alpha="255" model="14595" doublesided="false" scale="1" dimension="2" posX="-2008.5" posY="-73.8" posZ="1050.6" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (LOW_BED_1) (1)" breakable="true" interior="0" alpha="255" model="1800" doublesided="false" scale="1" dimension="2" posX="-2019.3" posY="-52.6" posZ="1046.6" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_TROLLY1) (2)" breakable="true" interior="0" alpha="255" model="2146" doublesided="false" scale="1" dimension="2" posX="-2010.4" posY="-50.7" posZ="1047.2" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_TROLLY1) (3)" breakable="true" interior="0" alpha="255" model="2146" doublesided="false" scale="1" dimension="2" posX="-2008.8" posY="-50.7" posZ="1047.2" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (LOW_BED_1) (2)" breakable="true" interior="0" alpha="255" model="1800" doublesided="false" scale="1" dimension="2" posX="-2022.1" posY="-52.6" posZ="1046.6" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (LOW_BED_1) (3)" breakable="true" interior="0" alpha="255" model="1800" doublesided="false" scale="1" dimension="2" posX="-2016.5" posY="-52.6" posZ="1046.6" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (LOW_BED_1) (4)" breakable="true" interior="0" alpha="255" model="1800" doublesided="false" scale="1" dimension="2" posX="-2013.5" posY="-52.6" posZ="1046.6" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (Shop_set_1_Table) (1)" breakable="true" interior="0" alpha="255" model="2370" doublesided="false" scale="1" dimension="2" posX="-2023.4" posY="-55.8" posZ="1046.8" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (POLCE_DESK1) (1)" breakable="true" interior="0" alpha="255" model="2605" doublesided="false" scale="1" dimension="2" posX="-2011.9" posY="-59.2" posZ="1047.1" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (POLCE_DESK2) (1)" breakable="true" interior="0" alpha="255" model="2607" doublesided="false" scale="1" dimension="2" posX="-2013.3" posY="-58.1" posZ="1047.1" rotX="0" rotY="0" rotZ="180"></object>
+    <object id="object (CJ_PIZZA_CHAIR) (1)" breakable="true" interior="0" alpha="255" model="2636" doublesided="false" scale="1" dimension="2" posX="-2023.1" posY="-56.8" posZ="1047.3" rotX="0" rotY="0" rotZ="258"></object>
+    <object id="object (CJ_PIZZA_CHAIR) (2)" breakable="true" interior="0" alpha="255" model="2636" doublesided="false" scale="1" dimension="2" posX="-2023.4" posY="-54.4" posZ="1047.3" rotX="0" rotY="0" rotZ="129.997"></object>
+    <object id="object (swivelchair_A) (1)" breakable="true" interior="0" alpha="255" model="1671" doublesided="false" scale="1" dimension="2" posX="-2013" posY="-59.4" posZ="1047.1" rotX="0" rotY="0" rotZ="140"></object>
+    <object id="object (MED_OFFICE5_DESK_2) (1)" breakable="true" interior="0" alpha="255" model="2181" doublesided="false" scale="1" dimension="2" posX="-2019.2" posY="-59.6" posZ="1046.6" rotX="0" rotY="0" rotZ="180"></object>
+</map>

@@ -11,15 +11,17 @@ addRemoteEvents{"robableShopGiveBagFromCrash"}
 
 local ROBSHOP_TIME = 15*60*1000
 local ROBSHOP_PAUSE = 30*60 --in Sec
-local ROBSHOP_LAST_ROB = 0
+local ROBSHOP_PAUSE_SAME_SHOP = 6*60*60 -- 6h in Sec
+local ROBSHOP_MAX_MONEY = 15000
+ROBSHOP_LAST_ROB = 0
 
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
 	self.m_Shop = shop
-	self.m_LastRob = 0
+	self.m_LastRob = self.m_LastRob or 0
 	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	self.m_BankAccountServer = BankServer.get("gameplay.shop_rob")
-	
+
 	-- Respawn ped after a while (if necessary)
 	addEventHandler("onPedWasted", self.m_Ped,
 	function()
@@ -44,28 +46,38 @@ end
 
 function RobableShop:Ped_Targetted(ped, attacker)
 	if attacker:getGroup() then
+		if attacker:getGroup() == self.m_AttackerGroup then return false end -- prevent error toasts when the robbers of the current rob attack the shop ped
 		if attacker:getGroup():getType() == "Gang" then
-			if not attacker:isFactionDuty() then
-				if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
-					attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
-					return false
-				end
+			if not (attacker:getFaction() and attacker:getFaction():isStateFaction()) then
+				if not attacker:isFactionDuty() then
+					if not timestampCoolDown(ROBSHOP_LAST_ROB, ROBSHOP_PAUSE) then
+						attacker:sendError(_("Der nächste Shop-Überfall ist am/um möglich: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+						return false
+					end
 
-				if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
-					attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
-					return false
-				end
-				self.m_LastRob = getRealTime().timestamp
-				ROBSHOP_LAST_ROB = getRealTime().timestamp
-				local shop = ped.Shop
-				self.m_Shop = shop
-				if shop:getMoney() >= 250 then
-					self:startRob(shop, attacker, ped)
+					if not timestampCoolDown(self.m_LastRob, ROBSHOP_PAUSE_SAME_SHOP) then
+						attacker:sendError(_("Dieser Shop kann erst am/um überfallen werden: %s!", attacker, getOpticalTimestamp(ROBSHOP_LAST_ROB+ROBSHOP_PAUSE)))
+						return false
+					end
+
+					if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
+						attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
+						return false
+					end
+					local shop = ped.Shop
+					self.m_Shop = shop
+					if shop:getMoney() >= 250 then
+						self.m_LastRob = getRealTime().timestamp
+						ROBSHOP_LAST_ROB = getRealTime().timestamp
+						self:startRob(shop, attacker, ped)
+					else
+						attacker:sendError(_("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker))
+					end
 				else
-					attacker:sendError(_("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker))
+					attacker:sendError(_("Du bist im Dienst, du darfst keinen Überfall machen!", attacker))
 				end
 			else
-				attacker:sendError(_("Du bist im Dienst, du darfst keinen Überfall machen!", attacker))
+				attacker:sendError(_("Du bist Polizist, du darfst keinen Überfall machen!", attacker))
 			end
 		else
 			attacker:sendError(_("Du bist Mitglied einer privaten Firma! Nur Gangs können überfallen!", attacker))
@@ -80,35 +92,41 @@ function RobableShop:startRob(shop, attacker, ped)
 	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	Discord:getSingleton():outputBreakingNews(string.format("%s meldet einen Überfall durch eine Straßengang!", shop:getName()))
-	
+
 	FactionState:getSingleton():sendWarning("Die Alarmanlage von %s meldet einen Überfall!", "Neuer Einsatz", false, serialiseVector(shop.m_Position), shop:getName())
 	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm
 	local pos = ped:getPosition()
 	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
+	triggerClientEvent("shopRobbed", attacker, self.m_Shop.m_Position.x, self.m_Shop.m_Position.y, self.m_Shop.m_Position.z, 0)
 
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
-	attacker:giveKarma(-5)
-	attacker:giveWanteds(3)
-	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
+	attacker:sendInfo(_("Ziele mit deinen Komplizen weiter auf den Verkäufer, um immer mehr Geld zu bekommen!", attacker))
 
 	self.m_Attacker = attacker
+	self.m_AttackerGroup = attacker:getGroup()
 
 	self.m_Bag = createObject(1550, pos)
+	self.m_Bag:setData("MoneyBag", true, true)
+	self.m_Bag:setData("Money", 0, true)
 	self.m_Bag.Money = 0
 	addEventHandler("onElementClicked", self.m_Bag, bind(self.onBagClick, self))
 
-	local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
-	local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
+	local evilPosis = {self:getNearestMarker(self.m_Shop.m_Position, ROBABLE_SHOP_EVIL_TARGETS)}
+	local evilPos = evilPosis[math.random(2, 3)]
+	local statePos = self:getNearestMarker(self.m_Shop.m_Position, ROBABLE_SHOP_STATE_TARGETS)
+
 
 	self.m_Gang = attacker:getGroup()
 	self.m_Gang:attachPlayerMarkers()
 	self.m_EvilBlip = Blip:new("Marker.png", evilPos.x, evilPos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Red)
 	self.m_EvilBlip:setDisplayText("Beute-Abgabepunkt")
+	self.m_EvilBlip:setZ(evilPos.z)
 	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, BLIP_COLOR_CONSTANTS.Yellow)
 	self.m_StateBlip:setDisplayText("Beute-Abgabe (Staat)")
+	self.m_StateBlip:setZ(statePos.z)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
 	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
@@ -122,25 +140,40 @@ function RobableShop:startRob(shop, attacker, ped)
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
 
 	self:giveBag(attacker)
-
-	self.m_TargetTimer = setTimer(function()
-		if isElement(attacker) then
-			if attacker:getTarget() == ped then
-				local rnd = math.random(10, 25)
-				if shop:getMoney() >= rnd then
-					if not self.m_Bag.Money then self.m_Bag.Money = 0 end
-					self.m_Bag.Money = self.m_Bag.Money + rnd
-					shop.m_BankAccount:transferMoney(self.m_BankAccountServer, rnd, "Raub", "Gameplay", "ShopRob")
-					attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
-				else
-					if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
-					attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
+	self.m_Ped.onTargetRefresh = function(count, startingPlayer)
+		outputDebug(count)
+		if count == 0 then return false end
+		local attackers = self.m_Ped:getAttackers()
+		local hasAnyoneBag = false
+		local eyeryoneInRange = true
+		local realCount = 0
+		for attacker in pairs(attackers) do
+			if attacker:getPlayerAttachedObject() == self.m_Bag then
+				if (attacker:getPosition()-self.m_Ped:getPosition()).length < 50 then
+					hasAnyoneBag = attacker
 				end
 			end
-			return
+			if attacker:getGroup() == self.m_AttackerGroup then
+				realCount = realCount + 1
+				if chance(2) then attacker:takeKarma(1, "Shop-Überfall") end
+			end
 		end
-		if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
-	end, 1000, 0)
+		if hasAnyoneBag then
+			local rnd = math.random(40*realCount, 100*realCount)
+			local rob = self.m_Bag.Money + rnd
+			if shop:getMoney() >= rnd and rob <= ROBSHOP_MAX_MONEY then
+				if not self.m_Bag.Money then self.m_Bag.Money = 0 end
+				self.m_Bag.Money = rob
+				self.m_Bag:setData("Money", self.m_Bag.Money, true)
+				shop.m_BankAccount:transferMoney(self.m_BankAccountServer, rnd, "Raub", "Gameplay", "ShopRob")
+				hasAnyoneBag:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", hasAnyoneBag, rnd, self.m_Bag.Money))
+			else
+				hasAnyoneBag:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", hasAnyoneBag))
+			end
+		else
+			startingPlayer:sendWarning(_("Mindestens ein Gang-Mitglied muss den Verkäufer bedrohen und dabei den Geldsack dabei haben!", startingPlayer))
+		end
+	end
 
 	self.m_Func = bind(RobableShop.m_onExpire, self)
 	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1)
@@ -174,7 +207,7 @@ function RobableShop:m_onExpire()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
-	if isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
+	self.m_Ped.onTargetRefresh = nil
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
 	self.m_Gang:removePlayerMarkers()
@@ -185,6 +218,15 @@ function RobableShop:m_onExpire()
 	if self.m_Attacker and isElement(self.m_Attacker) then
 		self.m_Attacker:triggerEvent("CountdownStop", "Shop Überfall")
 	end
+	self.m_Attacker = nil
+	self.m_AttackerGroup = nil
+end
+
+function RobableShop:getNearestMarker(position, markerPositions)
+	table.sort(markerPositions, function(a, b)
+		return getDistanceBetweenPoints3D(a, position) < getDistanceBetweenPoints3D(b, position)
+	end)
+	return markerPositions[1], markerPositions[2], markerPositions[3]
 end
 
 function RobableShop:stopRob(player)
@@ -220,12 +262,15 @@ function RobableShop:stopRob(player)
 	if self.m_Attacker and isElement(self.m_Attacker) then
 		self.m_Attacker:triggerEvent("CountdownStop", "Shop Überfall")
 	end
+	self.m_Attacker = nil
+	self.m_AttackerGroup = nil
+	self.m_Ped.onTargetRefresh = nil
 end
 
 function RobableShop:giveBag(player)
 	self.m_Bag:setInterior(player:getInterior())
 	self.m_Bag:setDimension(player:getDimension())
-	player:attachPlayerObject(self.m_Bag, true)
+	player:attachPlayerObject(self.m_Bag)
 	if self.m_BagBlip then delete(self.m_BagBlip) end
 	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0, {factionType = "State", duty = true, group = self.m_Gang:getId()}, 2000, {85, 58, 38})
 	self.m_BagBlip:setDisplayText("Shopraub-Beute")
@@ -296,7 +341,7 @@ function RobableShop:characterInitialized()
 		return
 	end
 	if self.m_Gang.m_Id == source:getGroup().m_Id then
-		Group:attachPlayerMarker(source)
+		source:getGroup():attachPlayerMarker(source)
 	end
 end
 
@@ -359,7 +404,6 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
 			local money = self.m_Bag.Money
 			if source == self.m_EvilMarker and hitElement:getGroup() == self.m_Gang then
 				self.m_BankAccountServer:transferMoney(hitElement, money, "Shop-Raub", "Gameplay", "ShopRob")
-				hitElement:sendInfo(_("Du hast durch den Raub %d$ erhalten!", hitElement, money))
 				PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit der Beute entkommen!", self.m_Shop:getName())
 			elseif source == self.m_StateMarker and hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
 				local stateMoney = math.floor(money/3)

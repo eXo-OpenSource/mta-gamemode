@@ -49,6 +49,17 @@ function VehicleCategory:getCategoryFuelConsumptionMultiplicator(category)
     return self.m_CategoryData[category].fuelConsumption
 end
 
+function VehicleCategory:hasCategoryLandVehicles(category)
+    return self.m_CategoryData[category].vehicleType == 0
+end
+
+function VehicleCategory:hasCategoryAirVehicles(category)
+    return self.m_CategoryData[category].vehicleType == 1
+end
+
+function VehicleCategory:hasCategoryWaterVehicles(category)
+    return self.m_CategoryData[category].vehicleType == 2
+end
 
 function VehicleCategory:getModelName(model)
     if not self.m_ModelData[model] then return false end
@@ -60,6 +71,10 @@ function VehicleCategory:getModelCategory(model)
     return self.m_ModelData[model].category
 end
 
+function VehicleCategory:getModelBaseHeight(model)
+    if not self.m_ModelData[model] then return false end
+    return self.m_ModelData[model].baseHeight
+end
 
 addEventHandler("onVehicleCategoryDataReceive", root, function(categoryData, modelData, customModels)
     VehicleCategory:getSingleton():loadData(categoryData, modelData, customModels)

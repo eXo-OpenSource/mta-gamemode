@@ -51,4 +51,6 @@
     <object id="object (kmb_atm48)" breakable="false" interior="0" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2850.5" posY="-1537.19995" posZ="10.7" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (kmb_atm49)" breakable="false" interior="0" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="1358.80005" posY="-1662.30005" posZ="13.2" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (kmb_atm50)" breakable="false" interior="0" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="1122.5" posY="-1200.80005" posZ="17.3" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (kmb_atm51)" breakable="false" interior="0" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="-2232" posY="-2559.2" posZ="31.6" rotX="0" rotY="0" rotZ="240.5"></object>
+    <object id="object (kmb_atm52)" breakable="false" interior="1" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2216.977" posY="1674.056" posZ="1008" rotX="0" rotY="0" rotZ="100"></object>
 </map>

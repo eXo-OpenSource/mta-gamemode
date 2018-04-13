@@ -19,8 +19,7 @@ function VehicleShopGUI:constructor()
 	self.m_VehicleList:addColumn("", 0.05)
 	self.m_VehicleList:addColumn("", 0.3)
 	self.m_ShopImage = GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/CouttSchutz.png", self.m_Window)
-	GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
-	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
+	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center")
 
 	self.m_VehicleBought = bind(self.Event_VehicleBought, self)
 	addEventHandler("vehicleBought", root, self.m_VehicleBought)
@@ -82,7 +81,9 @@ function VehicleShopGUI:updateMatrix()
 	if not isElement(self.m_CurrentVehicle) then return false end
 	self.m_CurrentMatrix = {getCameraMatrix(localPlayer)}
 	local pos = self.m_CurrentVehicle:getPosition()
-	local offsetX, offsetY, offsetZ = getPositionFromElementOffset(self.m_CurrentVehicle, 5, 5, 5)
+	local x0, y0, z0, x1, y1, z1 = getElementBoundingBox(self.m_CurrentVehicle)
+	local dist = math.sqrt((math.abs(x0) + math.abs(x1))^2 + (math.abs(y0) + math.abs(y1))^2)/1.5
+	local offsetX, offsetY, offsetZ = getPositionFromElementOffset(self.m_CurrentVehicle, dist, dist, dist)
 	local fadeMatrix = {offsetX, offsetY, offsetZ, pos.x, pos.y, pos.z, -25, 90}
 
 	if self.m_CameraInstance then
@@ -129,29 +130,67 @@ VehicleShopInfoGUI = inherit(GUIForm)
 inherit(Singleton, VehicleShopInfoGUI)
 
 function VehicleShopInfoGUI:constructor()
-	GUIForm.constructor(self, screenWidth-250, screenHeight-200, 250, 200)
+	GUIWindow.updateGrid()			
+	self.m_Width = grid("x", 7) 	
+	self.m_Height = grid("y", 7) 	
 
+	GUIForm.constructor(self, screenWidth-self.m_Width*1.5, screenHeight-self.m_Height*1.5, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Buffalo", true, false, self)
+	self.m_Label = GUIGridLabel:new(1, 1, 6, 5, "Muscle-Car\n1200kg Leergewicht\nrund 230 km/h Spitze\n5-Gang-Getriebe\nHeck-Antrieb", self.m_Window)
+	
+	self.m_LightButton = GUIGridIconButton:new(1, 6, FontAwesomeSymbols.Lightbulb, self.m_Window):setTooltip("Licht an/aus", "bottom")
+	self.m_EngineButton = GUIGridIconButton:new(2, 6, FontAwesomeSymbols.Cogs, self.m_Window):setTooltip("Motor an/aus", "bottom")
+	self.m_DoorButton = GUIGridIconButton:new(3, 6, FontAwesomeSymbols.Key, self.m_Window):setTooltip("Türen auf/zu", "bottom")
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Fahrzeug", true, false, self)
-	self.m_Gears = GUILabel:new(10, 35, self.m_Width-20, 20, "" , self.m_Window)
-	self.m_Weight = GUILabel:new(10, 55, self.m_Width-20, 20, "", self.m_Window)
-	self.m_MaxSpeed = GUILabel:new(10, 75, self.m_Width-20, 20, "", self.m_Window)
-	self.m_DriveType = GUILabel:new(10, 95, self.m_Width-20, 20, "", self.m_Window)
-	self.m_Seats = GUILabel:new(10, 115, self.m_Width-20, 20, "", self.m_Window)
-	self.m_ABS = GUILabel:new(10, 135, self.m_Width-20, 20, "", self.m_Window)
-
-	showChat(false)
+	self.m_LightButton.onLeftClick = function()
+		if isElement(self.m_Veh) then
+			self.m_Veh:setOverrideLights(self.m_Veh:getOverrideLights() == 2 and 1 or 2)
+		end
+	end
+	self.m_EngineButton.onLeftClick = function()
+		if isElement(self.m_Veh) then
+			self.m_Veh:setEngineState(not self.m_Veh:getEngineState())
+		end
+	end
+	self.m_DoorButton.onLeftClick = function()
+		if isElement(self.m_Veh) then
+			for i=0,5 do
+				setVehicleDoorOpenRatio ( self.m_Veh, i, getVehicleDoorOpenRatio ( self.m_Veh, i ) == 1 and 0 or 1, 500 )
+			end
+		end
+	end
 end
 
 function VehicleShopInfoGUI:updateVehicle(veh)
+	self:resetOldVehicle()
+	
 	local handling = veh:getHandling()
 	local driveType = {["fwd"] = _"Front-Antrieb", ["rwd"] = _"Heck-Antrieb", ["awd"] = _"Allrad-Antrieb"}
-
+	self.m_Veh = veh
 	self.m_Window:setTitleBarText(veh:getName())
-	self.m_Gears:setText(_("%d Gang Getriebe", handling["numberOfGears"]))
-	self.m_Weight:setText(_("%d kg Leergewicht", handling["mass"]))
-	self.m_MaxSpeed:setText(_("~ %d km/H Höchstgeschwindigkeit" , handling["maxVelocity"]))
-	self.m_DriveType:setText(_("%s", driveType[handling["driveType"]]))
-	self.m_Seats:setText(_("%d Sitzplätze", veh:getMaxPassengers()+1))
-	self.m_ABS:setText(handling["ABS"] and "ABS" or "")
+	self.m_Label:setText(("- %s\n- %s%s\n- %s-Gang Getriebe\n- %s kg Leergewicht\n~ %s km/h Höchstgeschw.\n- %s\n- %s Sitzplätze"):format(
+		veh:getCategoryName(),
+		(veh:getFuelType() ~= "nofuel" and veh:getFuelTankSize().."-Liter-" or ""),
+		(veh:getFuelType() == "nofuel" and "kein Tank" or "Tank ("..FUEL_NAME[veh:getFuelType()]..")"),
+		handling["numberOfGears"],
+		handling["mass"],
+		handling["maxVelocity"],
+		driveType[handling["driveType"]],
+		veh:getMaxPassengers()+1
+	))
+end
+
+function VehicleShopInfoGUI:resetOldVehicle()
+	if isElement(self.m_Veh) then
+		self.m_Veh:setEngineState(false)
+		self.m_Veh:setOverrideLights(1)
+		for i=0,5 do
+			setVehicleDoorOpenRatio ( self.m_Veh, i, 0, 500 )
+		end
+	end
+end
+
+function VehicleShopInfoGUI:destructor()
+	self:resetOldVehicle()
+	GUIForm.destructor(self)
 end

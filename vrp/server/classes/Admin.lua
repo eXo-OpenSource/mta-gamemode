@@ -49,8 +49,8 @@ function Admin:constructor()
     addCommandHandler("tp", bind(self.teleportTo, self))
     addCommandHandler("getVeh", bind(self.getVehFromId, self))
 
-    addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
-    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
+    --addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self)) -> Wont work after update :)
+    --addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self)) -> Wont work after update :)
 
     local adminCommandBind = bind(self.command, self)
 	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
@@ -69,6 +69,8 @@ function Admin:constructor()
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
 	addCommandHandler("cookie", adminCommandBind)
+	addCommandHandler("disablereg", adminCommandBind)
+	addCommandHandler("enablereg", adminCommandBind)
 
 	addCommandHandler("drun", bind(self.runString, self))
 	addCommandHandler("dpcrun", bind(self.runPlayerString, self))
@@ -356,6 +358,16 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 			self:Event_adminTriggerFunction("respawnRadius", targetName, nil, nil, admin)
 		else
 			admin:sendError("Radius ungültig: /crespawn [radius]")
+		end
+	elseif cmd == "disablereg" then
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["disablereg"] then
+			self:sendShortMessage(_("%s hat die Registration deaktiviert!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "register", "Register disabled")
+		end
+	elseif cmd == "enablereg" then
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["disablereg"] then
+			self:sendShortMessage(_("%s hat die Registration aktiviert!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "register", "Register enabled")
 		end
     else
 		if targetName then
@@ -980,13 +992,14 @@ local tpTable = {
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
         ["angeln"] =        {["pos"] = Vector3(382.74, -1897.72, 7.52),  	["typ"] = "Orte"},
-        ["casino"] =        {["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
+        ["casino"] =      	{["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
+        ["caligulas"] =     {["pos"] = Vector3(2156.73, 1677.19, 10.70),  	["typ"] = "Orte"},
         ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
         ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},
         ["flughafensf"] =   {["pos"] = Vector3(-1559.40, -445.55,  5.73),  	["typ"] = "Orte"},
         ["stadthalle"] =    {["pos"] = Vector3(1802.17, -1284.10, 13.33),  	["typ"] = "Orte"},
         ["bankpc"] =        {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
-        ["bankls"] =        {["pos"] = Vector3(1461.12, -998.87, 26.51),   	["typ"] = "Orte"},
+        ["bankls"] =        {["pos"] = Vector3(1463.00, -1033.99, 23.66),   ["typ"] = "Orte"},
         ["garten"] =        {["pos"] = Vector3(2450.16, 110.44, 26.16),  	["typ"] = "Orte"},
         ["premium"] =       {["pos"] = Vector3(1246.52, -2055.33, 59.53),  	["typ"] = "Orte"},
 		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
@@ -1000,7 +1013,6 @@ local tpTable = {
 		["lsdocks"] =       {["pos"] = Vector3(2711.48, -2405.28, 13.49),	["typ"] = "Orte"},
 		["pferderennen"] =  {["pos"] = Vector3(1631.56, -1166.35, 23.66),  	["typ"] = "Orte"},
 		["boxhalle"] =  	{["pos"] = Vector3(2225.24, -1724.91, 13.24),  	["typ"] = "Orte"},
-		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Orte"},
 		["friedhof"] =   	{["pos"] = Vector3(908.84, -1102.33, 24.30),  	["typ"] = "Orte"},
 		["lsforum"] =   	{["pos"] = Vector3(2798.93, -1830.34, 9.88),	["typ"] = "Orte"},
 		["auktion"] =   	{["pos"] = Vector3(1556.03, -1353.56, 23237.37),["typ"] = "Orte", ["interior"] = 1},
@@ -1022,7 +1034,7 @@ local tpTable = {
         ["quadshop"] =      {["pos"] = Vector3(117.53, -165.56,  1.31),  	["typ"] = "Shops"},
         ["infernusshop"] =  {["pos"] = Vector3(545.20, -1278.90, 16.97),  	["typ"] = "Shops"},
         ["tampashop"] =     {["pos"] = Vector3(1098.83, -1240.20, 15.55),  	["typ"] = "Shops"},
-        ["bulletshop"] =    {["pos"] = Vector3(1135.19, -1688.71, 13.51),  	["typ"] = "Shops"},
+        ["bulletshop"] =    {["pos"] = Vector3(-1629.03, 1226.92, 7.19),  	["typ"] = "Shops"},
         ["ammunation"] =    {["pos"] = Vector3(1357.56, -1280.08, 13.30),  	["typ"] = "Shops"},
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
@@ -1034,8 +1046,9 @@ local tpTable = {
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-        --["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
-        ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
+		--["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
+        ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},

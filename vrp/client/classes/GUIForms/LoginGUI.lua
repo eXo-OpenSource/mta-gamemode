@@ -332,7 +332,7 @@ addEventHandler("loginsuccess", root,
 function LoginGUI.startCameraDrive()
 	local positions = { -- from, to - use /cammat
 		{1513.67, -1730.51, 30.08, 1513.17, -1731.26, 29.63, 1448.87, -1729.30, 29.87, 1449.27, -1730.09, 29.40}, --Usertreff
-		{1705.56, -1705.53, 17.76, 1706.14, -1706.30, 18.02, 1706.79, -1709.58, 51.88, 1707.31, -1710.32, 51.45}, --Rescue Base
+		{1207.93, -1396.98, 36.71, 1207.22, -1396.39, 36.32, 1209.52, -1270.38, 26.66, 1208.81, -1271.06, 26.50}, --Rescue Base
 		{1823.10, -1886.26, 34.70, 1822.36, -1886.72, 34.21, 1809.02, -1943.21, 18.81, 1808.39, -1942.46, 18.99}, --EPT
 		{334.18, -2145.09, 32.20, 334.43, -2144.12, 32.16, 329.64, -1845.51, 12.24, 330.36, -1844.82, 12.33}, --Pier
 		{-202.24, -346.63, 41.28, -202.20, -345.66, 41.03, -326.57, -18.33, 49.76, -325.65, -18.07, 49.46}, --Farm
@@ -351,6 +351,10 @@ function LoginGUI.startCameraDrive()
 
 	localPlayer.m_LoginCamTimer = setTimer(LoginGUI.startCameraDrive, timeMS, 1)
 	localPlayer:setDimension(0)
+
+	for i,player in pairs(getElementsByType("player")) do
+		setPlayerNametagShowing(player, false)
+	end
 
 	RadialShader:getSingleton():setEnabled(true)
 	--localPlayer.m_LoginShader =  LoginShader:new()

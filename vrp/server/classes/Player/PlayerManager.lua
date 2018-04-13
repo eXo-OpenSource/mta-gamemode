@@ -91,19 +91,24 @@ function PlayerManager:Event_onRequestGateOpen()
 	if client then
 		if Gate.Map then
 			local obj
+			local openGate
+			local closestDist = math.huge
 			for i = 1,#Gate.Map do
 				obj = Gate.Map[i]
 				local int, dim = obj:getInterior(), obj:getDimension()
 				if int == client:getInterior() and dim == client:getDimension() then
 					if obj:getPosition() and client:getPosition() then
-						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 then
-							local instance = obj.m_Super
-							if instance and obj.m_Id == 1 then
-								instance:Event_onColShapeHit(client, true)
+						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 and getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) < closestDist then
+							if obj.m_Super and obj.m_Id == 1 then
+								openGate = obj.m_Super
+								closestDist = getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) 
 							end
 						end
 					end
 				end
+			end
+			if openGate then
+				openGate:triggerMovement(client)
 			end
 		end
 	end
@@ -179,7 +184,7 @@ function PlayerManager:Event_switchSpawnWithFaction( state )
 end
 
 function PlayerManager:destructor()
-	for k, v in ipairs(getElementsByType("player")) do
+	for k, v in pairs(getElementsByType("player")) do
 		delete(v)
 	end
 end
@@ -231,7 +236,7 @@ end
 
 function PlayerManager:getPlayerFromId(userId)
 	if userId then
-		for i, v in ipairs(getElementsByType('player')) do
+		for i, v in pairs(getElementsByType('player')) do
 			if v:getId() == userId then
 				return v
 			end
@@ -243,7 +248,7 @@ end
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	if name and sourcePlayer then
 		local matches = {}
-		for i, v in ipairs(getElementsByType('player')) do
+		for i, v in pairs(getElementsByType('player')) do
 			if getPlayerName(v) == name then
 				return v
 			end
@@ -898,8 +903,7 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getRegistrationDate(), target:getPaNote(), target:getSTVO(),
-		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
+		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel(), target:getWanteds(), target:getSTVO()
 	)
 end
 

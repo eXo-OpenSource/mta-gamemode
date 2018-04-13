@@ -283,8 +283,6 @@ function ItemEntrance:teleportPlayer( player, pos, rotation, interior, dimension
 		end, 1500, 1
 	)
 
-	triggerEvent("onElementInteriorChange", player, interior)
-	triggerEvent("onElementDimensionChange", player, dimension)
 end
 
 function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, posX, posY, posZ, entranceLink, title, desc) 

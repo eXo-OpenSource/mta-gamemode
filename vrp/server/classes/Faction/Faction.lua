@@ -10,9 +10,10 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
+	self.m_ShorterName = name_shorter
 	self.m_Name = name
 	self.m_Players = players[1]
 	self.m_PlayerLoans = players[2]
@@ -380,8 +381,9 @@ function Faction:sendMessage(text, r, g, b, ...)
 end
 
 function Faction:sendShortMessage(text, ...)
+	local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
 	for k, player in pairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_(text, player), self:getName(), {11, 102, 8}, ...)
+		player:sendShortMessage(_(text, player), self:getName(), color, ...)
 	end
 end
 
@@ -398,7 +400,7 @@ function Faction:sendWarning(text, header, withOffDuty, pos, ...)
 			blip:setZ(pos[3])
 		end
 		setTimer(function()
-			blip:destroy()
+			blip:delete()
 		end, 30000, 1)
 	end
 end

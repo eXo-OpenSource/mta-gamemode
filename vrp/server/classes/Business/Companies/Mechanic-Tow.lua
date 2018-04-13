@@ -189,15 +189,16 @@ function MechanicTow:Event_mechanicTakeVehicle()
 	source:setPositionType(VehiclePositionType.World)
 	source:setDimension(0)
 	local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
-
-	if source:getVehicleType() == VehicleType.Plane then
-		x, y, z, rotation = 871.285, -1264.624, 15.5, 0
-	elseif source:getVehicleType() == VehicleType.Helicopter then
-		x, y, z, rotation =  912.602, -1252.053, 16, 0
+	if source:isAirVehicle() then
+		x, y, z, rotation = 2008.82, -2453.75, 13, 120 -- ls airport east
+	elseif source:isWaterVehicle() then
+		x, y, z, rotation = 2350.26, -2523.06, 0, 180 -- ls docks
 	end
 
-	source:setPosition(x, y, z)
+	source:setPosition(x, y, z + source:getBaseHeight())
 	source:setRotation(0, 0, rotation)
+
+	client:sendSuccess(_("Fahrzeug freigekauft! Das Geld wurde vom Konto abgezogen.", client))
 end
 
 function MechanicTow:onEnterTowLot(hitElement)
@@ -328,7 +329,7 @@ function MechanicTow:Event_mechanicTakeFuelNozzle(vehicle)
 		exports.bone_attach:attachElementToBone(client.mechanic_fuelNozzle, client, 12, -0.03, 0.02, 0.05, 180, 320, 0)
 
 		client:setPrivateSync("hasMechanicFuelNozzle", vehicle)
-		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel())
+		client:triggerEvent("showFuelTankGUI", vehicle, vehicle:getFuel(), vehicle:getFuelTankSize(true))
 		toggleControl(client, "fire", false)
 	end
 end
@@ -364,7 +365,8 @@ function MechanicTow:Event_mechanicVehicleRequestFill(vehicle, fuel)
 	end
 
 	local fuelTank = client:getPrivateSync("hasMechanicFuelNozzle")
-	if fuel > fuelTank:getFuel()*5 then
+	local fuelTrailer = vehicle:getModel()
+	if (fuelTrailer == 611 and fuel > fuelTank:getFuel()*5) or (fuelTrailer == 584 and fuel > fuelTank:getFuel()*15) then
 		client:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
 	end
@@ -378,7 +380,9 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
 	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
-	if fuel > fuelTank:getFuel()*5 then
+	local fuelTrailerId = fuelTank:getModel()
+
+	if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
 		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
 		return
 	end
@@ -390,8 +394,15 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 		self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
 		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
 
-		fuelTank:setFuel(fuelTank:getFuel() - fuel/5)
-		player:triggerEvent("updateFuelTankGUI", fuelTank:getFuel())
+		local fuelDiff
+		if fuelTrailerId == 611 then
+			fuelDiff = fuel / 5
+		elseif fuelTrailerId == 584 then
+			fuelDiff = fuel / 15
+		end
+
+		fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
+		player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
 	else
 		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
 		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
@@ -474,8 +485,8 @@ function MechanicTow:checkLeviathanTowing(player, vehicle)
 end
 
 MechanicTow.SpawnPositions = {
-	{904.833, -1183.605, 16.65, 180},
-	{900.833, -1183.605, 16.65, 180},
+	{904.833, -1183.605, 16, 180},
+	{900.833, -1183.605, 16, 180},
 	--{833.2, -1198.1, 17.70, 180},
 	--{1091.7, -1198.3, 17.70, 180},
 	--

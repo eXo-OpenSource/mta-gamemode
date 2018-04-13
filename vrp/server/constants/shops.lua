@@ -312,12 +312,34 @@ SHOP_BAR_STRIP = {
 
 SHOP_BAR_STRIP_ANIMATIONS = {"STR_Loop_A", "STR_Loop_A", "STR_Loop_C"}
 
-ROBABLE_SHOP_STATE_TARGETS = {Vector3(1579, -1629.14, 12.4)}
+ROBABLE_SHOP_STATE_TARGETS = {
+	Vector3(1579, -1629.14, 12.4), -- Los Santos
+	Vector3(2303.26, 2426.27, 9.32), --Las venturas
+	Vector3(-215.92, 986.28, 17.91), --Fort Carson
+	Vector3(-1390.90, 2625.33, 54.98), --El Quebrados
+	Vector3(-1622.05, 720.31, 13.61), --San Fierro
+	Vector3(-2160.18, -2390.22, 29.63), --Whetstone
+	Vector3(611.82, -589.71, 16.23), --Dillimore
+}
+
 ROBABLE_SHOP_EVIL_TARGETS = {
-	Vector3(2862.30, -1439.80, 9),
-	Vector3(1955.00, -1095.44, 24.3),
-	Vector3(432.80, -1749.60, 7.5),
-	Vector3(1225.90, -2346.14, 11.90)
+	Vector3(2862.30, -1439.80, 9), -- east beach
+	Vector3(1955.00, -1095.44, 24.3), -- glen park
+	Vector3(432.80, -1749.60, 7.5), -- santa maria beach 
+	Vector3(1225.90, -2346.14, 11.90), -- ls airport pond
+	Vector3(797.73, -611.71, 15.34), -- dillimore camp
+	Vector3(-2737.16, 132.01, 3.39), -- ocean flats garages
+	Vector3(-2623.68, 1410.34, 6.09), -- battery point
+	Vector3(-2380.17, -579.20, 131.11), -- missionary hill
+	Vector3(-2518.65, 247.70, 10.09), -- queens
+	Vector3(-1706.03, 13.11, 2.55), -- easter basin
+	Vector3(1633.11, 666.71, 9.82), -- randoplh industrial estate
+	Vector3(1097.93, 1605.59, 11.55), -- blackfield stadium
+	Vector3(1064.40, 2345.10, 9.82), -- whitewood estates
+	Vector3(1649.13, 1974.64, 9.82), -- redsands west
+	Vector3(2497.33, 2320.85, 9.82), -- roca escalante
+	Vector3(-1664.56, 2486.70, 86.14), -- tierra robada
+	Vector3(-796.35, 1557.02, 26.12), -- las barrancas
 }
 
 CJ_CLOTHE_TYPES = {

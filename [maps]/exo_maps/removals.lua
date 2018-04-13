@@ -28,14 +28,16 @@ removeWorldModel(1278,20,-533.5390625,-559.6953125,38.546875)
 removeWorldModel(1278,20,-573.0546875,-559.6953125,38.5234375)
 --KNAST REMOVALS ENDE
 
---FACTION REMOVALS START
-removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
-removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
-removeWorldModel(4215, 77, 1777.8, -1773.9, 12.5)
---FACTION REMOVALS ENDE
 
 --Tree at 0,0,0
 removeWorldModel(672, 11, -35.71, 18.10, 3.47)
 
 -- Useless street lamp
 removeWorldModel(1297, 6, 2832.7402, -1593.3954, 10.55933)
+
+--Atrium LS
+removeWorldModel(1533, 20, 1727.1863, -1637.4822, 20.4211, 0)
+removeWorldModel(1533, 20, 1700.1775, -1667.5017, 20.4211, 0)
+removeWorldModel(1537, 20, 1700.1775, -1669.4219, 20.4211, 0)
+removeWorldModel(1537, 20, 1725.1775, -1637.4219, 20.4211, 0)
+removeWorldModel(643, 20, 1725.1775, -1637.4219, 20.4211, 0)

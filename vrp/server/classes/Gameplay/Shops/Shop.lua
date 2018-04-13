@@ -248,7 +248,7 @@ end
 
 
 function Shop:addBlip(blip)
-	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 600)
+	local b = Blip:new(blip, self.m_Position.x, self.m_Position.y, root, 400)
 	if blip == "Bar.png" then
 		b:setDisplayText("Bar / Club", BLIP_CATEGORY.Leisure)
 		b:setOptionalColor({245, 160, 199})
@@ -273,7 +273,7 @@ end
 
 function Shop:save()
 	self.m_BankAccount:save()
-	if sql:queryExec("UPDATE ??_shops SET Money = ?, LastRob = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_LastRob, self.m_OwnerId, self.m_Id) then
+	if sql:queryExec("UPDATE ??_shops SET LastRob = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_LastRob, self.m_OwnerId, self.m_Id) then
 	else
 		outputDebug(("Failed to save Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
 	end

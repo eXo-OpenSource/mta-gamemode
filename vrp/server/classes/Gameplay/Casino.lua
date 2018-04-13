@@ -24,10 +24,15 @@ function Casino:constructor()
 	addEventHandler("acceptMultiplayerGame", root, bind(self.acceptMultiplayerGame, self))
 	addEventHandler("declineMultiplayerGame", root, bind(self.declineMultiplayerGame, self))
 
+	--Four Dragons Casino
+	InteriorEnterExit:new(Vector3(2019.85, 1007.72, 10.82), Vector3(2018.48, 1017.86, 996.88), 90, 270, 10)
+	self.m_Blip = Blip:new("Casino.png", 2019.85, 1007.72, root, 300)
+	self.m_Blip:setDisplayText("Casino", BLIP_CATEGORY.Leisure)
+	self.m_Blip:setOptionalColor({238, 226, 200})
 
-	-- Big Casino
-	InteriorEnterExit:new(Vector3(1471.36, -1178.09, 23.92), Vector3(2233.99, 1714.685, 1012.38), 180, 0, 1)
-	self.m_Blip = Blip:new("Casino.png", 1471.36, -1178.09,root,300)
+	-- Caligulas Casino
+	InteriorEnterExit:new(Vector3(2196.34, 1677.16, 12.37), Vector3(2233.99, 1714.685, 1012.38), 180, 90, 1)
+	self.m_Blip = Blip:new("Casino.png", 2196.34, 1677.16, root, 300)
 	self.m_Blip:setDisplayText("Casino", BLIP_CATEGORY.Leisure)
 	self.m_Blip:setOptionalColor({238, 226, 200})
 
@@ -43,8 +48,21 @@ function Casino:constructor()
 	Slotmachine:new(2214.33984375, 1632.1474609375, 1008.959375, 0, 0, 360,1)
 	Slotmachine:new(2223.2060546875, 1571.296875, 1008.959375, 0, 0, 120,1)
 	Slotmachine:new(2229.0947265625, 1563.3232421875, 1008.959375, 0, 0, 120,1)
+	--Four Dragons
+	Slotmachine:new(1957.8083, 1048.6704, 993.01453, 0, 0, 144.97, 10)
+    Slotmachine:new(1957.1588, 1047.8843, 993.01453, 0, 0, 324.683, 10)
+    Slotmachine:new(1961.726, 1043.1682, 993.01453, 0, 0, 303.471, 10)
+    Slotmachine:new(1962.623, 1043.6582, 993.01453, 0, 0, 123.188, 10)
+    Slotmachine:new(1965.338, 1037.3625, 993.01453, 0, 0, 101.337, 10)
+    Slotmachine:new(1964.3151, 1037.2369, 993.01453, 0, 0, 281.614, 10)
+    Slotmachine:new(1964.3154, 998.3501, 993.01453, 0, 0, 258.756, 10)
+    Slotmachine:new(1965.3025, 998.07861, 993.01453, 0, 0, 79.037, 10)
+    Slotmachine:new(1962.6294, 991.72491, 993.01453, 0, 0, 54.838, 10)
+    Slotmachine:new(1961.8351, 992.38422, 993.01453, 0, 0, 235.115, 10)
+    Slotmachine:new(1957.1981, 987.87317, 993.01453, 0, 0, 213.529, 10)
+    Slotmachine:new(1957.6958, 986.97644, 993.01453, 0, 0, 33.243, 10)
 
-	if EVENT_EASTER then
+	if EVENT_EASTER_SLOTMACHINES_ACTIVE then
 		EasterSlotmachine:new(1484.71, -1779.22, 14, 0, 0, 0, 0, 0)
 		EasterSlotmachine:new(1496.80, -1779.20, 14, 0, 0, 0, 0, 0)
 		EasterSlotmachine:new(1496.69, -1796.03, 14, 0, 0, 180, 0, 0)

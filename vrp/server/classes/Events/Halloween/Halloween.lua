@@ -306,7 +306,7 @@ function Halloween:Event_buyBonus(bonusId)
 			return
 		end
 	elseif bonus["Type"] == "Vehicle" then
-		local vehicle = PermanentVehicle.create(client, bonus["VehicleModel"], 956.881, -1115.489, 23.398, 0, 0, 180, nil, false)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(client, VehicleTypes.Player, bonus["VehicleModel"], 956.881, -1115.489, 23.398, 0, 0, 180)
 		if vehicle then
 			setTimer(function(player, vehicle)
 				player:warpIntoVehicle(vehicle)

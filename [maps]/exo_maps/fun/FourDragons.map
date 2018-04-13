@@ -1,0 +1,20 @@
+<map edf:definitions="editor_main">
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (1)" radius="50" interior="0" model="2325" lodModel="0" posX="1962.7422" posY="1043.7786" posZ="992.55304" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (2)" radius="50" interior="0" model="2325" lodModel="0" posX="1962.0612" posY="1042.9706" posZ="992.44684" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (3)" radius="50" interior="0" model="2325" lodModel="0" posX="1962.6238" posY="1043.9558" posZ="992.60724" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (4)" radius="50" interior="0" model="2325" lodModel="0" posX="1961.7334" posY="1042.9813" posZ="993.50641" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (5)" radius="50" interior="0" model="2325" lodModel="0" posX="1957.085" posY="1047.6934" posZ="992.78857" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (6)" radius="50" interior="0" model="2325" lodModel="0" posX="1957.7771" posY="1048.7767" posZ="992.51129" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (7)" radius="50" interior="0" model="2325" lodModel="0" posX="1965.4144" posY="1037.613" posZ="992.8645" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (8)" radius="50" interior="0" model="2325" lodModel="0" posX="1964.4327" posY="1037.6249" posZ="992.82495" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (9)" radius="50" interior="0" model="2325" lodModel="0" posX="1965.0289" posY="997.95245" posZ="992.75323" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (10)" radius="50" interior="0" model="2325" lodModel="0" posX="1964.4966" posY="998.05933" posZ="992.44562" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (11)" radius="50" interior="0" model="2325" lodModel="0" posX="1962.8223" posY="991.83099" posZ="992.5285" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (12)" radius="50" interior="0" model="2325" lodModel="0" posX="1962.2557" posY="992.43628" posZ="992.61682" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (13)" radius="50" interior="0" model="2325" lodModel="0" posX="1958.1276" posY="987.30457" posZ="992.97797" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <removeWorldObject id="removeWorldObject (kb_bandit_U) (14)" radius="50" interior="0" model="2325" lodModel="0" posX="1957.7494" posY="987.8642" posZ="992.83917" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <object id="object (kmb_atm1) (1)" breakable="true" interior="10" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2015.5385" posY="1029.8168" posZ="996.51593" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (kmb_atm1) (2)" breakable="true" interior="10" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2013.9583" posY="1029.8164" posZ="996.51593" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (kmb_atm1) (4)" breakable="true" interior="10" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2015.5381" posY="1005.8612" posZ="996.51593" rotX="0" rotY="0" rotZ="180"></object>
+    <object id="object (kmb_atm1) (5)" breakable="true" interior="10" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="2013.958" posY="1005.8734" posZ="996.51593" rotX="0" rotY="0" rotZ="180"></object>
+</map>

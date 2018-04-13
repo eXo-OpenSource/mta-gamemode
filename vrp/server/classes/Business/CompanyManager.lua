@@ -8,7 +8,17 @@
 CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
-function CompanyManager:constructor()
+function CompanyManager:constructor()	
+	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_companies WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
+		sql:queryExec([[ALTER TABLE ??_companies ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			UPDATE ??_companies SET Name_Shorter = 'DS' WHERE Id = 1;
+			UPDATE ??_companies SET Name_Shorter = 'MT' WHERE Id = 2;
+			UPDATE ??_companies SET Name_Shorter = 'SN' WHERE Id = 3;
+			UPDATE ??_companies SET Name_Shorter = 'PT' WHERE Id = 4;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
 	self:loadCompanies()
 
 	-- Events
@@ -49,7 +59,7 @@ function CompanyManager:loadCompanies()
 		end
 
 		if Company.DerivedClasses[row.Id] then
-			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
+			self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Name_Short, row.Name_Shorter, row.Creator, {players, playerLoans}, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
 		else
 			outputServerLog(("Company class for Id %s not found!"):format(row.Id))
 			--self:addRef(Company:new(row.Id, row.Name, row.Name_Short, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
@@ -244,6 +254,11 @@ function CompanyManager:Event_companyRankUp(playerId)
 		return
 	end
 
+	if client:getId() == playerId then
+		client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+		return
+	end
+
 	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
@@ -258,7 +273,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
-				player:setPublicSync("CompanyRank", playerRank+1 or 0)
+				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
 		else
@@ -279,6 +294,11 @@ function CompanyManager:Event_companyRankDown(playerId)
 		return
 	end
 
+	if client:getId() == playerId then
+		client:sendError(_("Du kannst nicht deinen eigenen Rang verändern!", client))
+		return
+	end
+
 	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
@@ -293,7 +313,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
-				player:setPublicSync("CompanyRank", playerRank-1 or 0)
+				player:setPublicSync("CompanyRank", company:getPlayerRank(playerId))
 			end
 			self:sendInfosToClient(client)
 		else

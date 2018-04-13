@@ -35,7 +35,8 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self.m_LastJobAction = 0
 
-	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
+	self.m_detachPlayerObjectBindFunc = bind(Player.detachPlayerObjectBind, self)
+	self.m_detachPlayerObjectFunc = bind(Player.detachPlayerObject, self)
 end
 
 function Player:destructor()
@@ -82,6 +83,7 @@ function Player:destructor()
 
 	if self:getGroup() then
 		self:getGroup():checkDespawnVehicle()
+		self:getGroup():onPlayerQuit(self)
 	end
 
 	--// gangwar
@@ -193,7 +195,7 @@ function Player:loadCharacter()
 	if self:getGroup() then
 		self:getGroup():spawnVehicles()
 	end
-	self:toggleControlsWhileObjectAttached(true)
+	--self:toggleControlsWhileObjectAttached(true) maybe not needed anymore and deprecated code
 	triggerEvent("characterInitialized", self)
 end
 
@@ -272,8 +274,8 @@ end
 
 function Player:initialiseBinds()
 	if self:getFaction() then
- 		bindKey(self, "y", "down", "chatbox", "Fraktion")
- 	end
+		bindKey(self, "y", "down", "chatbox", "Fraktion")
+	end
 end
 
 function Player:buckleSeatBelt(vehicle)
@@ -339,12 +341,14 @@ function Player:save()
 			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_IsDead or 0, self.m_Id)
 
 		VehicleManager:getSingleton():savePlayerVehicles(self)
-				
+
 		if self:getGroup() then
 			self:getGroup():save()
 		end
-		outputServerLog("Saved Data for Player "..self:getName())
-		outputDebugString("Saved Data for Player "..self:getName())
+
+		if DEBUG_LOAD_SAVE then
+			outputDebugString("Saved Data for Player "..self:getName())
+		end
 	end
 end
 
@@ -408,8 +412,8 @@ function Player:spawn()
 					local position = companySpawnpoint[self:getCompany():getId()]
 					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
 				end
-			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 			end
 		end
 
@@ -517,7 +521,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setElementAlpha(self,255)
 
 	if self:getExecutionPed() then delete(self:getExecutionPed()) end
-	
+
 	WearableManager:getSingleton():removeAllWearables(self)
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
@@ -542,7 +546,7 @@ function Player:dropReviveWeapons()
 				dim = getElementDimension(self)
 				weapon =  self.m_ReviveWeaponsInfo[i][1]
 				ammo = self.m_ReviveWeaponsInfo[i][2]
-				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
+				if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 and weapon ~= 9 then
 					pickupWeapon = PickupWeapon:new(x, y, z, int , dim, weapon, ammo, self)
 					if pickupWeapon then
 						self.m_ReviveWeapons[#self.m_ReviveWeapons+1] = pickupWeapon
@@ -655,7 +659,7 @@ end
 
 function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
-	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn	
+	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
 		self:getFaction():changeSkin(self)
 		setPedArmor(self, 100)
 	else
@@ -674,11 +678,11 @@ function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set th
 end
 
 function Player:isFactionDuty()
-  return self.m_FactionDuty
+	return self.m_FactionDuty
 end
 
 function Player:isCompanyDuty()
-  return self.m_CompanyDuty
+	return self.m_CompanyDuty
 end
 
 function Player:setFactionDuty(state)
@@ -928,11 +932,6 @@ function Player:payDay()
 		self:takeWanteds(1)
 	end
 
-	if self:getSTVO() > 0 then
-		self:addPaydayText("info", _("Dir wurde ein StVO Punkt erlassen!", self))
-		self:setSTVO(self:getSTVO() - 1)
-	end
-
 	self:givePoints(points_total, "Payday", true, true)
 	self:addPaydayText("info", _("Du hast %s Punkte bekommen.", self, points_total))
 
@@ -1135,9 +1134,9 @@ function Player:giveCombinedReward(reason, tblReward)
 	local smText = ""
 	for name, amount in pairs(tblReward) do
 		if amount then
-		    if type(amount) ~= "table" then amount = tonumber(amount) end
+			if type(amount) ~= "table" then amount = tonumber(amount) end
 			if name == "money" then
-			    if type(amount) ~= "table" then amount.amount = math.floor(amount.amount) end
+				if type(amount) ~= "table" then amount.amount = math.floor(amount.amount) end
 				local prefix = amount.mode == "give" and "+" or ""
 				local bank = amount.bank and " (Konto)" or ""
 
@@ -1206,7 +1205,7 @@ function Player:getPlayersInChatRange( irange)
 	local elementTable = getElementsByType("player")
 	local player,dimension,interior,check
 	for index = 1,#elementTable do
-	    if (pos - elementTable[index]:getPosition()).length <= range then
+		if (pos - elementTable[index]:getPosition()).length <= range then
 			player = elementTable[index]
 			dimension = player.dimension
 			interior = player.interior
@@ -1220,56 +1219,69 @@ function Player:getPlayersInChatRange( irange)
 	return playersInRange
 end
 
-function Player:toggleControlsWhileObjectAttached(bool)
-	if bool then
-		if not getElementData(self,"schutzzone") then
-			toggleControl(self, "jump", bool )
-			toggleControl(self, "fire", bool )
-			toggleControl(self, "sprint", bool )
-			toggleControl(self, "next_weapon", bool )
-			toggleControl(self, "previous_weapon", bool )
-			toggleControl(self, "enter_exit", bool )
-			toggleControl(self, "enter_passenger", bool )
-		end
-	else
-		toggleControl(self, "jump", bool )
+function Player:toggleControlsWhileObjectAttached(bool, blockWeapons, blockSprint, blockJump, blockVehicle)
+	--if bool == true --enable controls, else, disable controls
+	if (bool and (blockWeapons and not getElementData(self,"schutzzone")) or (not bool and blockWeapons)) then
 		toggleControl(self, "fire", bool )
-		toggleControl(self, "sprint", bool )
 		toggleControl(self, "next_weapon", bool )
 		toggleControl(self, "previous_weapon", bool )
-		toggleControl(self, "enter_exit", bool )
-		toggleControl(self, "enter_passenger", bool )
 	end
+	if blockSprint then		toggleControl(self, "sprint", bool)	end
+	if blockJump then	toggleControl(self, "jump", bool)	end
+	if blockVehicle then
+		toggleControl(self, "enter_exit", bool)
+		toggleControl(self, "enter_passenger", bool)
+	end
+
 end
 
-function Player:attachPlayerObject(object, allowWeapons)
+function Player:attachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		if not self:getPlayerAttachedObject() then
 			local settings = PlayerAttachObjects[model]
-			object:setCollisionsEnabled(false)
-			object:attach(self, settings["pos"], settings["rot"])
-			if not allowWeapons then
-				self:toggleControlsWhileObjectAttached(false)
+			if settings.blockVehicle and self.vehicle then
+				self:sendError(_("Mit diesem Objekt kannst du nicht in Fahrzeuge einsteigen!", self))
+				return false
 			end
+			self.m_PlayerAttachedObject = object
+			self:setPrivateSync("attachedObject", object)
+			object:setCollisionsEnabled(false)
+			object:setDoubleSided(true)
+			if settings["bone"] then
+				exports.bone_attach:attachElementToBone(object, self, settings["bone"], settings["pos"].x, settings["pos"].y, settings["pos"].z, settings["rot"].x, settings["rot"].y, settings["rot"].z)
+			else
+				object:attach(self, settings["pos"], settings["rot"])
+			end
+
+			if settings["animationData"] then
+				self:setAnimation(unpack(settings["animationData"]))
+			end
+
+			self:toggleControlsWhileObjectAttached(false, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+
 			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
 			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+			addEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
+			return true
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
 	else
 		--self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
+	return false
 end
 
 function Player:refreshAttachedObject(instant)
 	local func = function()
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
+			outputDebug(object, self:getInterior(), self:getName())
 			if self:isDead() then
 				self:detachPlayerObject(object)
 			end
@@ -1286,38 +1298,48 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 end
 
 function Player:detachPlayerObject(object, collisionNextFrame)
-	if not self:isLoggedIn() then return end
-	local model = object.model
-	if PlayerAttachObjects[model] then
-		object:detach(self)
-		object:setPosition(self.position + self.matrix.forward)
-		if collisionNextFrame then
-			nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
+	if not isElement(self) or not self:isLoggedIn() then return end
+	if isElement(object) and (self:getPlayerAttachedObject() == object) then
+		local model = object.model
+		if PlayerAttachObjects[model] then
+			local settings = PlayerAttachObjects[model]
+			self:toggleControlsWhileObjectAttached(true, settings["blockWeapons"], settings["blockSprint"], settings["blockJump"], settings["blockVehicle"])
+			object:detach(self)
+			removeEventHandler("onElementDestroy", object, self.m_detachPlayerObjectFunc)
+			if settings["bone"] then
+				exports.bone_attach:detachElementFromBone(object)
+			else
+				object:detach(self)
+			end
+			object:setPosition(self.position + self.matrix.forward)
+			if collisionNextFrame then
+				nextframe(function() --to "prevent" it from spawning in another player / vehicle (added for RTS)
+					object:setCollisionsEnabled(true)
+				end)
+			else
 				object:setCollisionsEnabled(true)
-			end)
-		else
-			object:setCollisionsEnabled(true)
+			end
 		end
-		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
-		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-		self:toggleControlsWhileObjectAttached(true)
+	else
+		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
+	end
+	
+	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
+	self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+	if self.m_PlayerAttachedObject then
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
+		self.m_PlayerAttachedObject = nil
+		self:setPrivateSync("attachedObject", false)
 	end
 end
 
 function Player:getPlayerAttachedObject()
-	local model
-	for key, value in pairs (getAttachedElements(self)) do
-		if value and isElement(value) then
-			model = value:getModel()
-			if PlayerAttachObjects[model] then
-				return value
-			end
-		end
+	if not isElement(self.m_PlayerAttachedObject) or not PlayerAttachObjects[self.m_PlayerAttachedObject:getModel()] then
+		self:detachPlayerObject(self.m_PlayerAttachedObject)
 	end
-	return false
+	return self.m_PlayerAttachedObject
 end
 
 function Player:attachToVehicle(forceDetach)
@@ -1338,7 +1360,7 @@ function Player:attachToVehicle(forceDetach)
 
 			local rotpX = 0
 			local rotpY = 0
-			local rotpZ = getPlayerRotation(self)
+			local rotpZ = getPedRotation(self)
 
 			local rotvX, rotvY, rotvZ = getVehicleRotation(self.contactElement)
 
@@ -1385,7 +1407,7 @@ function Player:endPrison()
 	end
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
-	if self.m_JailTime > 0 then
+	if self.m_JailTime and self.m_JailTime > 0 then
 		self:moveToJail(false,false)
 	end
 end
@@ -1405,8 +1427,8 @@ function Player:meChat(system, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 255,105,180)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 
 	end
 end
@@ -1424,8 +1446,8 @@ function Player:sendPedChatMessage( name, ...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 220,220,220)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 
 	end
 end
@@ -1443,8 +1465,8 @@ function Player:districtChat(...)
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index],192, 196, 194)
 		if playersToSend[index] ~= self then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
-        end
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+		end
 	end
 end
 
@@ -1546,6 +1568,6 @@ function Player:hasTemporaryStorage()
 	return type(self.m_Storage) == "table"
 end
 
-function Player:getExecutionPed() 
+function Player:getExecutionPed()
 	return ExecutionPed.Map[self]
 end

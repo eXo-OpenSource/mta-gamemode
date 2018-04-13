@@ -1,5 +1,5 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.5"
+PROJECT_VERSION = "1.6"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -16,11 +16,12 @@ MAX_WANTED_LEVEL = 12
 
 -- EVENTS:
 EVENT_EASTER = false
+EVENT_EASTER_SLOTMACHINES_ACTIVE = true
 EVENT_HALLOWEEN = false
 EVENT_CHRISTMAS = false
-SNOW_SHADERS_ENABLED = true -- disable them during summer time
+SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
-FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`? 
+FIREWORK_SHOP_ACTIVE = false -- can users buy firework at the user meetup point`?
 
 -- BONI:
 PAYDAY_NOOB_BONUS = 500 -- dollar
@@ -75,6 +76,7 @@ BLIP_COLOR_CONSTANTS = {
 	Orange = {255, 150, 0},
 	Yellow = {200, 200, 0},
 	Green = {20, 255, 50},
+	Blue = {20, 70, 200},
 }
 
 BLIP_CATEGORY_ORDER = {
@@ -182,8 +184,10 @@ ADMIN_RANK_PERMISSION = {
 	["fireMenu"] = RANK.Administrator,
 	["eventGangwarMenu"] = RANK.Administrator,
 
-	--keypad-system 
-	["placeKeypadObjects"] = RANK.Administrator -- ItemKeyPad, ItemEntrance, ItemDoor
+	--keypad-system
+	["placeKeypadObjects"] = RANK.Administrator, -- ItemKeyPad, ItemEntrance, ItemDoor
+
+	["disablereg"] = RANK.Servermanager --disablereg, enablereg
 }
 
 GroupRank = {
@@ -424,8 +428,8 @@ WEAPONTRUCK_MAX_LOAD = 60000
 WEAPONTRUCK_MAX_LOAD_STATE = 60000
 
 PlayerAttachObjects = {
-	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.3, 0.3), ["rot"] = Vector3(0, 0, 180)},
-	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(-0.09, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0)}
+	[1550] = {["model"] = 1550, ["name"] = "Geldsack", ["pos"] = Vector3(0, -0.2, 0), ["rot"] = Vector3(0, 0, 180), ["blockJump"] = true, ["bone"] = 3},
+	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}}
 }
 
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
@@ -643,42 +647,6 @@ if DEBUG then
 end
 
 
-VRP_RADIO = {
-	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
-	{"181.FM", "http://www.181.fm/winamp.pls?station=181-power&style=mp3&description=Power%20181%20(Top%2040)&file=181-power.pls"},
-	{"RMF Dance", "http://files.kusmierz.be/rmf/rmfdance-3.mp3"},
-	{"Kronehit", "http://onair-ha1.krone.at/kronehit-hd.mp3.m3u"},
-	{"Life Radio", "http://94.136.28.10:8000/liferadio.m3u"},
-	{"OE3", "http://mp3stream7.apasf.apa.at:8000"},
-	{"FM 4", "http://mp3stream1.apasf.apa.at:8000/listen.pls"},
-	{"NSW-LiVE", "http://nsw-radio.de"},
-	{"Technobase.fm", "http://listen.technobase.fm/dsl.asx"},
-	{"Hardbase.fm", "http://listen.hardbase.fm/tunein-dsl-asx"},
-	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
-	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
-	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
-	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
-	{"Lounge FM Austria", "http://digital.lounge.fm"},
-	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
-	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
-	{"FFS (nicht 24/7 online)", "http://ffs-gaming.com:8008/ffs.ogg"},
-
-
-	-- GTA channels
-	{"Playback FM", 1},
-	{"K-Rose", 2},
-	{"K-DST", 3},
-	{"Bounce FM", 4},
-	{"SF-UR", 5},
-	{"Radio Los Santos", 6},
-	{"Radio X", 7},
-	{"CSR 103.9", 8},
-	{"K-Jah West", 9},
-	{"Master Sounds 98.3", 10},
-	{"WCTR", 11},
-	{"User Track Player", 12}
-}
-
 BeggarTypes = { -- Important: Do not change order! Only add a new one below!
 	Money = 1;
 	Food = 2;
@@ -692,8 +660,8 @@ for i, v in pairs(BeggarTypes) do
 	BeggarTypeNames[v] = i
 end
 
-HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
-HOSPITAL_ROTATION = Vector3(0, 0, 180)
+HOSPITAL_POSITION = Vector3(1177.80, -1323.94, 14.09)
+HOSPITAL_ROTATION = Vector3(0, 0, 270)
 
 WEAPON_LEVEL = {
 	[1] = {["costs"] = 500, ["hours"] = 1},
@@ -827,6 +795,28 @@ VEHICLE_PICKUP = {
 	[600] = true,
 }
 
+VEHICLE_OBJECT_ATTACH_POSITIONS = {
+	[428] = { --vehicle model, securicar in this case
+		loadMarkerPos = Vector3(0, -3.5, 0),
+		vehicleDoors = {4, 5},
+		objectId = 1550, -- money bag
+		objectNames = {"Geldsack", "Geldsäcke"},
+        randomRotation = true, --random z-rotaion on attach to provide some variety
+        positions = { -- in loading order, e.g. the first row is the first object position to load
+            Vector3(0.3, -1, 0.2),
+            Vector3(-0.3, -1, 0.2),
+            Vector3(0.7, -1.61, 0.2),
+            Vector3(-0.7, -1.59, 0.2),
+            Vector3(0.21, -1.6, 0.2),
+            Vector3(-0.21, -1.58, 0.2),
+            Vector3(0.7, -2.51, 0.2),
+            Vector3(-0.7, -2.52, 0.2),
+            Vector3(0.21, -2.51, 0.2),
+            Vector3(-0.21, -2.49, 0.2),
+        }
+	}
+}
+
 CompanyStaticId = {
 	DRIVINGSCHOOL = 1,
 	MECHANIC = 2,
@@ -840,7 +830,7 @@ FactionStaticId = {
 	MBT = 3,
 	RESCUE = 4,
 	LCN = 5,
-	YAKUZZA = 6,
+	YAKUZA = 6,
 	GROVE = 7,
 	BALLAS = 8,
 	OUTLAWS = 9,

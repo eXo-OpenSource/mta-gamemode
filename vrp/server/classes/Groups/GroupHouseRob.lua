@@ -10,7 +10,6 @@ local findItems =
 	"TV-Reciever",
 	"Handy",
 	"Armbanduhr",
-	"Bargeld",
 	"Kreditkarte",
 	"Radio",
 	"Schmuckkette",
@@ -24,18 +23,16 @@ local findItems =
 
 local sellerPeds =
 {
-	{{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
-	{{ 2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
-	{ { 2275.59, -1031.20, 51.43,244}, "Machiavelli Johnson", { 2274.86, -1027.57, 52.17,14}, 143, "Komm mal ran, du willst doch sicherlich n' bisschen Geld hu?"},
-	{ {1730.60, -2148.86, 13.55,109}, "Carlos Peralta", {1734.09, -2147.95, 13.68,280}, 114, "Ese, zeig deine Sachen oder verschwinde."},
+   {{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
+   {{2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
+   {{2046.80, -1987.59, 13.80}, "Machiavelli Johnson", {2046.59, -1991.5, 13.5}, 143, "Komm mal ran, du willst doch sicherlich n' bisschen Geld oder?"},
+   {{1730.60, -2148.86, 13.55,109}, "Carlos Peralta", {1734.09, -2147.95, 13.68,280}, 114, "Ese, zeig deine Sachen oder verschwinde."},
 }
 
 GroupHouseRob = inherit( Singleton )
-GroupHouseRob.MAX_ROBS_PER_GROUP = 5
 GroupHouseRob.COOLDOWN_TIME = 1000*60*15
 addRemoteEvents{"GroupRob:SellRobItems"}
 function GroupHouseRob:constructor()
-	self.m_GroupsRobbed = {}
 	self.m_GroupsRobCooldown = {}
 	self.m_HousesRobbed = {}
 	self.m_SellerPeds = {}
@@ -81,7 +78,7 @@ function GroupHouseRob:Event_OnSellAccept()
 			local inv = client:getInventory()
 			if inv then
 				local amount = inv:getItemAmount("Diebesgut")
-				local randomPrice = math.random( 50,100)
+				local randomPrice = math.random( 500,1000)
 				local pay = amount * randomPrice
 				inv:removeAllItem("Diebesgut")
 				self.m_BankServerAccount:transferMoney(client, pay, "Verkauf von Diebesware", "Group", "HouseRob")
@@ -132,34 +129,25 @@ function GroupHouseRob:startNewRob( house, player )
 		local group = player:getGroup()
 		if group then
 			if group:getType() == "Gang" then
-				if not self.m_GroupsRobbed[group] then
-					self.m_GroupsRobbed[group] = 0
-				end
-
 				if FactionState:getSingleton():countPlayers() < HOUSEROB_MIN_MEMBERS then
 					player:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
 					return false
 				end
 
-				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then
-					if not self.m_HousesRobbed[house] then
-						local tick = getTickCount()
-						if not self.m_GroupsRobCooldown[group] then
-							self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
-						end
-						if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
-							self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
-							self.m_GroupsRobCooldown[group]  = tick
-							self.m_HousesRobbed[house] = true
-							return true
-						else
-							player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
-						end
+				if not self.m_HousesRobbed[house] then
+					local tick = getTickCount()
+					if not self.m_GroupsRobCooldown[group] then
+						self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
+					end
+					if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
+						self.m_GroupsRobCooldown[group]  = tick
+						self.m_HousesRobbed[house] = true
+						return true
 					else
-						player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
+						player:sendError(_("Ihr könnt noch nicht wieder ein Haus ausrauben!", player))
 					end
 				else
-					player:sendError(_("Ihr habt schon zu viele Häuser heute ausgeraubt!", player))
+					player:sendError(_("Dieses Haus wurde bereits ausgeraubt!", player))
 				end
 			end
 		end

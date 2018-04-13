@@ -67,7 +67,7 @@ function VehicleManager:constructor()
 		function()
 			if client.vehicleSeat ~= 0 then return end
 
-			if client.vehicle:hasKey(client)  or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= RANK.Moderator  then
+			if client.vehicle:hasKey(client) or client.vehicle:canObjectBeLoaded() or client.vehicle:getData("isGangwarVehicle") or client:getRank() >= ADMIN_RANK_PERMISSION["looseVehicleHandbrake"]  then
 				client.vehicle:toggleHandBrake(client)
 			else
 				client:sendError(_("Du hast kein Schlüssel für das Fahrzeug!", client))
@@ -129,49 +129,66 @@ function VehicleManager:constructor()
 	self.NonOptionalTextures = --// Textures that cant be toggled off
 	{
 		FactionVehicle,
-		CompanyVehicle,
+		CompanyVehicle,l
 	}
+
+	--[[
+	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles", sql:getPrefix())
+	sql:queryExec("DROP TABLE IF EXISTS ??_vehicles_old", sql:getPrefix())
+
+	sql:queryExec("CREATE TABLE ??_vehicles LIKE ??_vehicles_test; INSERT ??_vehicles SELECT * FROM ??_vehicles_test;",
+		sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	]]
+
+	if sql:queryFetchSingle("SHOW COLUMNS FROM ??_vehicles WHERE Field = 'Owner';", sql:getPrefix()) then
+		self:migrate()
+	end
+
 end
 
 function VehicleManager:destructor()
 	local st, count = getTickCount(), 0
 	for ownerId, vehicles in pairs(self.m_Vehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_Vehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s private_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for companyId, vehicles in pairs(self.m_CompanyVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_CompanyVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for groupId, vehicles in pairs(self.m_GroupVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_GroupVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s group_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
 	for factionId, vehicles in pairs(self.m_FactionVehicles) do
-		for k, vehicle in pairs(vehicles) do
-			vehicle:save()
+		for k, vehicle in ipairs(table.reverse(vehicles)) do
+			vehicle:destroy()
 			count = count + 1
 		end
 	end
+	self.m_FactionVehicles = {}
 	if DEBUG_LOAD_SAVE then outputServerLog(("Saved %s faction_vehicles in %sms"):format(count, getTickCount()-st)) end
 end
 
-function VehicleManager:Event_OnRadioChange( vehicle, radio)
+function VehicleManager:Event_OnRadioChange(vehicle, radio)
 	if vehicle and radio then
 
 	end
@@ -205,6 +222,53 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium)
+	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
+	if type(ownerId) == "userdata" then
+		ownerId = ownerId:getId()
+		ownerType = VehicleTypes.Player
+	end
+
+	assert(VehicleTypeName[ownerType], "Invalid vehicle type")
+	local rotX = rotX or 0
+	local rotY = rotY or 0
+	local rotZ = rotZ or 0
+	local premium = premium or 0
+
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
+		return self:createVehicle(sql:lastInsertId())
+	end
+	return false
+end
+
+function VehicleManager:createVehicle(idOrData)
+	local data = {}
+	if type(idOrData) == "number" then
+		data = sql:queryFetchSingle("SELECT * FROM ??_vehicles WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), idOrData)
+	else
+		data = idOrData
+	end
+
+	if data then
+		local vehicle = createVehicle(data.Model, data.PosX, data.PosY, data.PosZ, data.RotX or 0, data.RotY or 0, data.RotZ or 0)
+		local typeClass = PermanentVehicle
+
+		if data.OwnerType == VehicleTypes.Faction then
+			typeClass = FactionVehicle
+		elseif data.OwnerType == VehicleTypes.Company then
+			typeClass = CompanyVehicle
+		elseif data.OwnerType == VehicleTypes.Group then
+			typeClass = GroupVehicle
+		end
+
+		enew(vehicle, typeClass, data)
+		self:addRef(vehicle, false)
+		return vehicle
+	else
+		return false
+	end
+end
+
 function VehicleManager:createVehiclesForPlayer(player)
 	if player then
 		local id = player:getId()
@@ -212,7 +276,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 			if not self.m_Vehicles[id] then
 				self.m_Vehicles[id] = {}
 			end
-			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), id)
+			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE OwnerId = ? AND OwnerType = ? AND Deleted IS NULL", sql:getPrefix(), id, VehicleTypes.Player)
 			local vehicleObj
 			local skip = false
 			for i, row in pairs( result ) do
@@ -225,9 +289,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 					end
 				end
 				if not skip then
-					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX or 0, row.RotY or 0, row.Rotation or 0)
-					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.Premium, row.TuningsNew)
-					VehicleManager:getSingleton():addRef(vehicle, false)
+					self:createVehicle(row)
 				end
 				skip = false
 			end
@@ -258,22 +320,25 @@ end
 
 function VehicleManager.loadVehicles()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
+	local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE OwnerType = ? AND Deleted IS NULL", sql:getPrefix(), VehicleTypes.Company)
 	for i, row in pairs(result) do
+		VehicleManager:getSingleton():createVehicle(row)
+		--[[
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.ELSPreset)
-		VehicleManager:getSingleton():addRef(vehicle, false)
+		VehicleManager:getSingleton():addRef(vehicle, false)]]
 		count = count + 1
 	end
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s company_vehicles in %sms"):format(count, getTickCount()-st)) end
 
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
+	local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE OwnerType = ? AND Deleted IS NULL", sql:getPrefix(), VehicleTypes.Faction)
 	for i, row in pairs(result) do
-		if FactionManager:getFromId(row.Faction) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
+		if FactionManager:getFromId(row.OwnerId) then
+			VehicleManager:getSingleton():createVehicle(row)
+			--[[local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
 			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.handling, fromJSON(row.decal), row.Fuel, row.ELSPreset)
-			VehicleManager:getSingleton():addRef(vehicle, false)
+			VehicleManager:getSingleton():addRef(vehicle, false)]]
 			count = count + 1
 		end
 	end
@@ -480,14 +545,12 @@ function VehicleManager:loadGroupVehicles(group)
 		return
 	end
 
-	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
+	local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE OwnerId = ? AND OwnerType = ? AND Deleted IS NULL", sql:getPrefix(), groupId, VehicleTypes.Group)
 	for i, row in pairs(result) do
-		if GroupManager:getFromId(row.Group) then
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, row.RotX, row.RotY, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium, nil, nil, row.ForSale, row.SalePrice)
-			VehicleManager:getSingleton():addRef(vehicle, false)
+		if GroupManager:getFromId(row.OwnerId) then
+			self:createVehicle(row)
 		else
-			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
+			sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
 end
@@ -1020,7 +1083,7 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
 			if client:getBankMoney() >= price then
-				
+
 				client:transferBankMoney(self.m_BankAccountServer, price, "Garagen-Upgrade", "Vehicle", "GarageUpgrade")
 				client:setGarageType(currentGarage + 1)
 
@@ -1065,7 +1128,7 @@ function VehicleManager:Event_vehicleHotwire()
 		end
 		client:sendInfo(_("Schließe kurz...", client), 20000)
 		client:reportCrime(Crime.Hotwire)
-		client:giveKarma(-0.1)
+		client:takeKarma(0.1)
 
 		setTimer(
 			function(source)
@@ -1184,6 +1247,9 @@ function VehicleManager:Event_LoadObject(veh, type)
 		model = 1550
 		name = "keinen Geldsack"
 	end
+	if veh:canObjectBeLoaded(model) then
+		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
+	end
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -1224,7 +1290,9 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 		model = 1550
 		name = "kein Geldsack"
 	end
-
+	if veh:canObjectBeLoaded(model) then
+		return veh:tryUnloadObject(client)
+	end
 	if client:getFaction() then
 		if vehicleObjects[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
@@ -1253,4 +1321,211 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	else
 		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
+end
+
+function VehicleManager:migrate()
+	local st = getTickCount()
+	outputDebugString("========================================")
+	outputDebugString("       STARTING VEHICLE MIGRATION       ")
+	outputDebugString("========================================")
+
+	sql:queryExec("RENAME TABLE ??_vehicles TO ??_vehicles_old", sql:getPrefix(), sql:getPrefix())
+
+	sql:queryExec([[
+		CREATE TABLE ??_vehicles  (
+		`Id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+		`OldId` int UNSIGNED NULL DEFAULT NULL,
+		`OldTable` tinyint NULL DEFAULT NULL,
+		`CreationTime` datetime NULL DEFAULT NOW(),
+		`Model` smallint UNSIGNED NOT NULL,
+		`OwnerId` int UNSIGNED NOT NULL,
+		`OwnerType` tinyint UNSIGNED NOT NULL,
+		`PosX` float NULL DEFAULT 0,
+		`PosY` float NULL DEFAULT 0,
+		`PosZ` float NULL DEFAULT 0,
+		`RotX` float NULL DEFAULT 0,
+		`RotY` float NULL DEFAULT 0,
+		`RotZ` float NULL DEFAULT 0,
+		`Health` smallint UNSIGNED NOT NULL DEFAULT 1000,
+		`Keys` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		`PositionType` tinyint UNSIGNED NOT NULL DEFAULT 0,
+		`Fuel` tinyint NOT NULL DEFAULT 100,
+		`Mileage` bigint UNSIGNED NOT NULL DEFAULT 0,
+		`Premium` int UNSIGNED NOT NULL DEFAULT 0,
+		`TrunkId` int NOT NULL DEFAULT 0,
+		`Tunings` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		`LastUsed` datetime NULL DEFAULT NOW(),
+		`SalePrice` int NOT NULL DEFAULT 0,
+		`Handling` text CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		`ELSPreset` varchar(256) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+		`Deleted` datetime NULL DEFAULT NULL,
+		PRIMARY KEY (`Id`) USING BTREE
+		);
+	]], sql:getPrefix())
+
+	local vehicles = sql:queryFetch("SELECT * FROM ??_vehicles_old", sql:getPrefix())
+
+	for _, v in ipairs(vehicles) do
+		local tunings = v["TuningsNew"] and fromJSON(v["TuningsNew"]) or {}
+
+		if tunings["Texture"] and type(tunings["Texture"]) == "string" then
+			local texture = tunings["Texture"]
+			tunings["Texture"] = {["vehiclegrunge256"] = texture}
+		end
+
+		sql:queryExec([[
+			INSERT INTO
+				??_vehicles
+				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
+				PosX, PosY, PosZ, RotX,
+				RotY, RotZ, Health, PositionType,
+				Fuel, Mileage, Premium, TrunkId,
+				Tunings, `Keys`)
+				VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+			]], sql:getPrefix(), v["Id"], v["CreationTime"], v["Model"], v["Owner"], VehicleTypes.Player, v["PosX"], v["PosY"], v["PosZ"],
+			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["PositionType"], v["Fuel"],
+			v["Mileage"], v["Premium"], v["TrunkId"], toJSON(tunings, true), v["Keys"])
+	end
+
+	outputDebugString(("Migrated %s player vehicles"):format(#vehicles))
+
+
+
+	local vehicles = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
+
+	for _, v in ipairs(vehicles) do
+		local tunings = v["TuningsNew"] and fromJSON(v["TuningsNew"]) or {}
+
+		if tunings["Texture"] and type(tunings["Texture"]) == "string" then
+			local texture = tunings["Texture"]
+			tunings["Texture"] = {["vehiclegrunge256"] = texture}
+		end
+
+		sql:queryExec([[
+			INSERT INTO
+				??_vehicles
+				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
+				PosX, PosY, PosZ, RotX,
+				RotY, RotZ, Health, PositionType,
+				Fuel, Mileage, Premium, TrunkId,
+				Tunings, SalePrice)
+				VALUES (?, 2, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Group"], VehicleTypes.Group, v["PosX"], v["PosY"], v["PosZ"],
+			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["PositionType"], v["Fuel"],
+			v["Mileage"], v["Premium"], v["TrunkId"], toJSON(tunings, true), v["SalePrice"])
+	end
+
+	outputDebugString(("Migrated %s group vehicles"):format(#vehicles))
+
+
+	local vehicles = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
+
+	for _, v in ipairs(vehicles) do
+		local tunings = {}
+
+		if v["Color"] and type(v["Color"]) == "string" then
+			local c1, c2, c3, c4, c5, c6 = fromJSON(v["Color"])
+
+			if c1 then
+				tunings["Color1"] = {c1, c2, c3}
+				if c4 then
+					tunings["Color2"] = {c4, c5, c6}
+				else
+					tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
+				end
+			else
+				tunings["Color1"] = {factionCarColors[v["Faction"]].r, factionCarColors[v["Faction"]].g, factionCarColors[v["Faction"]].b}
+				tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
+			end
+		else
+			tunings["Color1"] = {factionCarColors[v["Faction"]].r, factionCarColors[v["Faction"]].g, factionCarColors[v["Faction"]].b}
+			tunings["Color2"] = {factionCarColors[v["Faction"]].r1, factionCarColors[v["Faction"]].g1, factionCarColors[v["Faction"]].b1}
+		end
+
+		if v["decal"] then
+			tunings["Texture"] = fromJSON(v["decal"])
+			tunings["TextureForce"] = true
+		end
+
+		sql:queryExec([[
+			INSERT INTO
+				??_vehicles
+				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
+				PosX, PosY, PosZ, RotX,
+				RotY, RotZ, Health,
+				Fuel, Mileage, Tunings, Handling, ELSPreset)
+				VALUES (?, 3, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Faction"], VehicleTypes.Faction, v["PosX"], v["PosY"], v["PosZ"],
+			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["Fuel"],
+			v["Mileage"], toJSON(tunings, true), v["handling"], v["ELSPreset"])
+	end
+
+	outputDebugString(("Migrated %s faction vehicles"):format(#vehicles))
+
+
+	local vehicles = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
+
+	for _, v in ipairs(vehicles) do
+		local tunings = {}
+
+		if v["Color"] and type(v["Color"]) == "string" then
+			local c1, c2, c3, c4, c5, c6 = fromJSON(v["Color"])
+
+			if c1 then
+				tunings["Color1"] = {c1, c2, c3}
+				if c4 then
+					tunings["Color2"] = {c4, c5, c6}
+				else
+					tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+				end
+			else
+				tunings["Color1"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+				tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+			end
+		else
+			tunings["Color1"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+			tunings["Color2"] = {companyColors[v["Company"]].r, companyColors[v["Company"]].g, companyColors[v["Company"]].b}
+		end
+		if companyVehicleShaders[v["Company"]] then
+			if companyVehicleShaders[v["Company"]][v["Model"]] then
+				local tex = companyVehicleShaders[v["Company"]][v["Model"]]
+				tunings["Texture"] = {[tex.textureName] = tex.texturePath}
+			end
+		end
+
+		sql:queryExec([[
+			INSERT INTO
+				??_vehicles
+				(OldId, OldTable, CreationTime, Model, OwnerId, OwnerType,
+				PosX, PosY, PosZ, RotX,
+				RotY, RotZ, Health,
+				Fuel, Mileage, Tunings, ELSPreset)
+				VALUES (?, 4, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+			]], sql:getPrefix(), v["Id"], v["Model"], v["Company"], VehicleTypes.Company, v["PosX"], v["PosY"], v["PosZ"],
+			v["RotX"], v["RotY"], v["Rotation"], v["Health"], v["Fuel"],
+			v["Mileage"], toJSON(tunings, true), v["ELSPreset"])
+	end
+
+	outputDebugString(("Migrated %s company vehicles"):format(#vehicles))
+
+	outputDebugString(("Finished migration in %sms"):format(getTickCount()-st))
+
+	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
+		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
+
+		sql:queryExec([[
+			UPDATE ??_factions SET Name_Shorter = 'PD' WHERE Id = 1;
+			UPDATE ??_factions SET Name_Shorter = 'FB' WHERE Id = 2;
+			UPDATE ??_factions SET Name_Shorter = 'SF' WHERE Id = 3;
+			UPDATE ??_factions SET Name_Shorter = 'RT' WHERE Id = 4;
+			UPDATE ??_factions SET Name_Shorter = 'LC' WHERE Id = 5;
+			UPDATE ??_factions SET Name_Shorter = 'YK' WHERE Id = 6;
+			UPDATE ??_factions SET Name_Shorter = 'GS' WHERE Id = 7;
+			UPDATE ??_factions SET Name_Shorter = 'BA' WHERE Id = 8;
+			UPDATE ??_factions SET Name_Shorter = 'OM' WHERE Id = 9;
+			UPDATE ??_factions SET Name_Shorter = 'VL' WHERE Id = 10;
+		]], sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(),
+			sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix(), sql:getPrefix())
+	end
+
 end

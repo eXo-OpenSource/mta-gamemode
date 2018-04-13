@@ -38,7 +38,7 @@ function StreamGUI:constructor(title, playCallback, stopCallback, stream)
 
 	self.m_Streams = {}
 
-	for index, radio in pairs(VRP_RADIO) do
+	for index, radio in pairs(RadioStationManager:getSingleton():getStations()) do
 		local name, url = unpack(radio)
 		if type(url) == "string" then
 			self.m_StreamList:addItem(name)

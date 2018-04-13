@@ -13,7 +13,8 @@ local CLUCKIN_BELL = {
 	["Rot"] = Vector3(334, 25, 74),
 	["CameraMatrixPos"] =  Vector3(370.09591674805, -6.1112585067749, 1002.5751953125),
 	["CameraMatrixLookAt"] = Vector3(370.86077880859, 73.279449462891, 941.77612304688),
-	["Objects"] = {["Small"] = 2215, ["Middle"] = 2216, ["Big"] = 2217, ["Healthy"] = 2353}
+	["Objects"] = {["Small"] = 2215, ["Middle"] = 2216, ["Big"] = 2217, ["Healthy"] = 2353},
+	["SFX"] = {container = 15, enter = {29, 30, 31, 32, 33, 34, 36}, buy = {5, 8, 37, 10}, leave = {7, 4}}
 }
 
 local PIZZA_STACK = {
@@ -21,7 +22,8 @@ local PIZZA_STACK = {
 	["Rot"] = Vector3(334, 25, 73),
 	["CameraMatrixPos"] =  Vector3(375.52822875977, -119.26042175293, 1002.2143554688),
 	["CameraMatrixLookAt"] = Vector3(382.27285766602, -31.187650680542, 955.33477783203),
-	["Objects"] = {["Small"] = 2218, ["Middle"] = 2219, ["Big"] = 2220, ["Healthy"] = 2355}
+	["Objects"] = {["Small"] = 2218, ["Middle"] = 2219, ["Big"] = 2220, ["Healthy"] = 2355},
+	["SFX"] = {container = 17, enter = {33, 36, 37, 41}, buy = {6, 13}, leave = {7, 8, 11}}
 }
 
 local BURGER_SHOT = {
@@ -29,7 +31,8 @@ local BURGER_SHOT = {
 	["Rot"] = Vector3(334, 25, 72.25),
 	["CameraMatrixPos"] =  Vector3(377.15213012695, -67.673896789551, 1002.1579589844),
 	["CameraMatrixLookAt"] = Vector3(376.87426757813, 21.821876525879, 957.54370117188),
-	["Objects"] = {["Small"] = 2213, ["Middle"] = 2214, ["Big"] = 2212, ["Healthy"] = 2354}
+	["Objects"] = {["Small"] = 2213, ["Middle"] = 2214, ["Big"] = 2212, ["Healthy"] = 2354},
+	["SFX"] = {container = 11, enter = {30, 32}, buy = {3, 6}, leave = {5, 26, 27}}
 }
 
 local RUSTY_BROWN = {
@@ -38,6 +41,13 @@ local RUSTY_BROWN = {
 	["CameraMatrixPos"] = Vector3(378.86856079102, -188.8207244873, 1001.381652832),
 	["CameraMatrixLookAt"] = Vector3(468.87298583984, -191.9049987793, 957.9110717773),
 	["Objects"] = {["Small"] = 2221, ["Middle"] = 2223, ["Big"] = 2222}
+}
+
+local typeTable = {
+	["CluckinBell"] = CLUCKIN_BELL,
+	["PizzaStack"] =  PIZZA_STACK,
+	["BurgerShot"] =  BURGER_SHOT,
+	["RustyBrown"] = RUSTY_BROWN
 }
 
 -- 0 70
@@ -52,7 +62,13 @@ function FoodShopGUI:constructor()
 	self.m_FoodList:addColumn(_"Preis", 0.25)
 	self.m_Buy = GUIButton:new(5, 315, self.m_Width-10, 30, "Kaufen", self):setBackgroundColor(Color.Green)
 	self.m_Buy.onLeftClick = function() self:buy() end
-	addEventHandler("refreshFoodShopMenu", root, bind(self.refreshFoodShopMenu, self))
+	self.m_RefreshBind = bind(self.refreshFoodShopMenu, self)
+	addEventHandler("refreshFoodShopMenu", root, self.m_RefreshBind)
+end
+
+function FoodShopGUI:destructor()
+	self:playSFX("leave")
+	return GUIForm.destructor(self)
 end
 
 function FoodShopGUI:onHide()
@@ -61,10 +77,13 @@ function FoodShopGUI:onHide()
 		setCameraTarget(localPlayer)
 		self.m_CamaraMatrix = false
 	end
+	removeEventHandler("refreshFoodShopMenu", root, self.m_RefreshBind)
 end
 
 function FoodShopGUI:refreshFoodShopMenu(shopId, type, menues, items)
 	self.m_Shop = shopId
+	self.m_ShopType = type
+	self:playSFX("enter")
 	local item
 	self.m_FoodList:clear()
 	self.m_FoodList:addItemNoClick("zum hier essen", "")
@@ -87,8 +106,16 @@ function FoodShopGUI:refreshFoodShopMenu(shopId, type, menues, items)
 	end
 end
 
+function FoodShopGUI:playSFX(type)
+	local table = typeTable[self.m_ShopType]
+	if table["SFX"] and table["SFX"][type] then
+		playSFX("spc_fa", table["SFX"].container, table["SFX"][type][math.random(1, #table["SFX"][type])], false)
+	end
+end
+
 function FoodShopGUI:buy()
 	local item = self.m_FoodList:getSelectedItem()
+	self:playSFX("buy")
 	if  item.Type == "Menu" then
 		triggerServerEvent("foodShopBuyMenu", resourceRoot, self.m_Shop, item.Id)
 	else
@@ -97,12 +124,6 @@ function FoodShopGUI:buy()
 end
 
 function FoodShopGUI:onSelectMenu(menu, type)
-	local typeTable = {
-		["CluckinBell"] = CLUCKIN_BELL,
-		["PizzaStack"] =  PIZZA_STACK,
-		["BurgerShot"] =  BURGER_SHOT,
-		["RustyBrown"] = RUSTY_BROWN
-	}
 	local table = typeTable[type]
 	setCameraMatrix(table["CameraMatrixPos"], table["CameraMatrixLookAt"], 0, 70)
 	self.m_CamaraMatrix = true

@@ -39,16 +39,16 @@ Action.Ped.warpIntoVehicle.trigger = function(self)
 end
 
 -- setControlState
-Action.Ped.setControlState = inherit(Object)
-Action.Ped.setControlState.duration = false;
-Action.Ped.setControlState.constructor = function(self, data, scene)
+Action.Ped.setPedControlState = inherit(Object)
+Action.Ped.setPedControlState.duration = false;
+Action.Ped.setPedControlState.constructor = function(self, data, scene)
 	self.id = data.id
 	self.control = data.control
 	self.state = data.state
 	self.cutscene = scene:getCutscene()
 end
 
-Action.Ped.setControlState.trigger = function(self)
+Action.Ped.setPedControlState.trigger = function(self)
 	local ped = self.cutscene.m_Elements[self.id]
 	setPedControlState(ped, self.control, self.state)
 end

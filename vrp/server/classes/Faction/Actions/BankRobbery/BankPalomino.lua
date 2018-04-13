@@ -19,6 +19,8 @@ function BankPalomino:constructor()
 		Vector3(2561.50, -949.89, 81.77),
 		Vector3(1935.24, 169.98, 36.28)
 	}
+	self.ms_StateFinishMarker = Vector3(2278.23, -82.70, 25.53)
+	self.ms_MinBankrobStateMembers = DEBUG and 0 or 3 
 
 	self.ms_BagSpawns = {
 		Vector3(2307.25, 17.90, 26),
@@ -42,8 +44,13 @@ function BankPalomino:constructor()
 	}
 
 	self.ms_MoneyPerBag = 3000
+	self.ms_VaultOpenTime = 3*(60*1000)
+	self.ms_BankRobGeneralTime = 60*1000*12
 
 	self:build()
+
+	self.m_Name = "Bank"
+	self.m_MarkedPosition = {2318.43, 11.37, 26.48} -- the marked position where action blips and so on will be located
 end
 
 function BankPalomino:build()
@@ -55,6 +62,7 @@ function BankPalomino:build()
 	self.m_SafeDoor.m_Open = false
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
+	self.m_CurrentMoney = math.random(50000, 60000)
 
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
@@ -92,6 +100,8 @@ function BankPalomino:build()
 end
 
 function BankPalomino:startRob(player)
+
+	self:createTruck(2337.54, 16.67, 26.61, 0) --this first ad startRobGeneral unfreezes the truck
 	self:startRobGeneral(player)
 
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
@@ -102,17 +112,7 @@ function BankPalomino:startRob(player)
 	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_BackDoor:setFrozen(false)
 
-	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
-	self.m_Truck = TemporaryVehicle.create(428, 2337.54, 16.67, 26.61, 0)
-	self.m_Truck:setData("BankRobberyTruck", true, true)
-    self.m_Truck:setColor(0, 0, 0)
-    self.m_Truck:setLocked(false)
-	self.m_Truck:toggleRespawn(false)
-	self.m_Truck:setMaxHealth(1500, true)
-	self.m_Truck:setBulletArmorLevel(2)
-	self.m_Truck:setRepairAllowed(false)
-	self.m_Truck:setAlwaysDamageable(true)
-	addEventHandler("onVehicleStartEnter", self.m_Truck, bind(self.Event_OnTruckStartEnter, self))
+	triggerClientEvent("bankAlarm", root, unpack(self.m_MarkedPosition))
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 end
@@ -130,6 +130,10 @@ function BankPalomino:spawnGuards()
 		end
 
 	end)
+end
+
+function BankPalomino:getDifficulty() -- fixed 1 = 3 cops must be online
+    return 1
 end
 
 function BankPalomino:openSafeDoor()

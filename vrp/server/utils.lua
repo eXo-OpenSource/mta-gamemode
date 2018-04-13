@@ -39,13 +39,17 @@ end
 addEvent("onElementInteriorChange", true )
 _setElementInterior = setElementInterior
 function setElementInterior(element, interior, x, y, z)
-	_setElementInterior(element, interior, x, y, z)
-	triggerEvent("onElementInteriorChange", element, interior)
+	if isElement(element) then
+		_setElementInterior(element, interior, x, y, z)
+		triggerEvent("onElementInteriorChange", element, interior)
+	end
 end
 
 addEvent("onElementDimensionChange", true )
 _setElementDimension = setElementDimension
 function setElementDimension(element, dimension)
-	_setElementDimension(element, dimension)
-	triggerEvent("onElementDimensionChange", element, dimension)
+	if isElement(element) then
+		_setElementDimension(element, dimension)
+		triggerEvent("onElementDimensionChange", element, dimension)
+	end
 end

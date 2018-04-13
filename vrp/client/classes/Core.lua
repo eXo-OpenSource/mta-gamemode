@@ -87,7 +87,7 @@ function Core:ready()
 
 	-- Request Browser Domains
 	Browser.requestDomains{"exo-reallife.de"}
-
+	Browser.requestDomains{"i.imgur.com"}
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
@@ -100,6 +100,7 @@ function Core:ready()
 	JobManager:new()
 	TippManager:new()
 	--JailBreak:new()
+	RadioStationManager:new()
 	DimensionManager:new()
 	Inventory:new()
 	Guns:new()
@@ -158,6 +159,9 @@ function Core:ready()
 	if EVENT_CHRISTMAS then
 		Christmas:new()
 	end
+	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
+		Easter.updateTextures() 
+	end
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 end
 
@@ -177,6 +181,7 @@ function Core:afterLogin()
 	Achievement:new()
 	BindManager:new()
 	WheelOfFortune:new()
+	--Atrium:new()
 
 	if DEBUG then
 		Debugging:new()

@@ -247,7 +247,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				):setIcon(FontAwesomeSymbols.Wrench)
 			end
-			if getElementData(element, "Handbrake") == true and element:getModel() ~= 611 then
+			if getElementData(element, "Handbrake") == true and (element:getModel() ~= 611 or element:getModel() ~= 584) then
 				self:addItem(_"Mechaniker: Handbremse lösen",
 					function()
 						if self:getElement() then
@@ -281,7 +281,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 
-			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and element:getModel() == 611 and not localPlayer:getPrivateSync("hasGasStationFuelNozzle") then -- fuel tank
+			if not localPlayer.vehicle and element.towingVehicle and not element.towingVehicle.controller ~= localPlayer and (element:getModel() == 611 or element:getModel() == 584) and not localPlayer:getPrivateSync("hasGasStationFuelNozzle") then -- fuel tank
 				self:addItem(_("Mechaniker: Zapfpistole %s", localPlayer:getPrivateSync("hasMechanicFuelNozzle") and "einhängen" or "nehmen"),
 					function()
 						if self:getElement() then
@@ -382,6 +382,9 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 end
 
 function VehicleMouseMenu:getAttachedElement(model, element)
+	if getElementType(element) == "player" then
+		return (localPlayer:getPrivateSync("attachedObject") and localPlayer:getPrivateSync("attachedObject"):getModel() == model and {localPlayer:getPrivateSync("attachedObject")}) or {}
+	end
 	local boxes = {}
 	for key,value in pairs(element:getAttachedElements()) do
 		if value.model == model then

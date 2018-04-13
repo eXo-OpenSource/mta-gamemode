@@ -83,7 +83,8 @@ function RadioGUI:onVehicleDestroyOrExplode()
 end
 
 function RadioGUI:setRadioStation(station)
-	assert(VRP_RADIO[station] or station == 0, "Bad argument @ RadioGUI.setRadioStation")
+	local stations = RadioStationManager:getSingleton():getStations()
+	assert(stations[station] or station == 0, "Bad argument @ RadioGUI.setRadioStation")
 
 	self.m_CurrentStation = station
 
@@ -105,7 +106,7 @@ function RadioGUI:setRadioStation(station)
 		self.m_Sound = nil
 	end
 
-	local radioName, radioUrl = unpack(VRP_RADIO[self.m_CurrentStation])
+	local radioName, radioUrl = unpack(stations[self.m_CurrentStation])
 	if type(radioUrl) == "string" then
 		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 		setRadioChannel(0)
@@ -161,7 +162,7 @@ function RadioGUI:nextStation()
 	if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 
 	self.m_CurrentStation = self.m_CurrentStation + 1
-	if self.m_CurrentStation > #VRP_RADIO then
+	if self.m_CurrentStation > #RadioStationManager:getSingleton():getStations() then
 		self.m_CurrentStation = 0
 	end
 	self:setRadioStation(self.m_CurrentStation)
@@ -184,7 +185,7 @@ function RadioGUI:previousStation()
 
 	self.m_CurrentStation = self.m_CurrentStation - 1
 	if self.m_CurrentStation < 0 then
-		self.m_CurrentStation = #VRP_RADIO
+		self.m_CurrentStation = #RadioStationManager:getSingleton():getStations()
 	end
 	self:setRadioStation(self.m_CurrentStation)
 
@@ -196,7 +197,7 @@ end
 
 function RadioGUI:getStation()
 	-- Returns: ID von der Station, Name der Station, URL der Station
-	return self.m_CurrentStation, VRP_RADIO[self.m_CurrentStation][1], VRP_RADIO[self.m_CurrentStation][2]
+	return self.m_CurrentStation, RadioStationManager:getSingleton():getStations()[self.m_CurrentStation][1], RadioStationManager:getSingleton():getStations()[self.m_CurrentStation][2]
 end
 
 function RadioGUI:toggle()

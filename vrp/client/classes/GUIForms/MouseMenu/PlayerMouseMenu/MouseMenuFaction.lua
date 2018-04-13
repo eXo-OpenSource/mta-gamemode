@@ -60,7 +60,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 			end
 		):setIcon(FontAwesomeSymbols.IDCard)
 
-		self:addItem(_"Fraktion: Drogen abnehmen",
+		self:addItem(_"Fraktion: illegales abnehmen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateTakeDrugs", localPlayer, self:getElement())

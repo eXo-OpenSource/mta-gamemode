@@ -21,7 +21,6 @@ function ItemSmokeGrenade:constructor()
 			end
 		end
 	end)
-
 end
 
 function ItemSmokeGrenade:destructor() 

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 inherit(VehicleDataExtension, Vehicle)
+inherit(VehicleObjectLoadExtension, Vehicle)
 inherit(VehicleELS, Vehicle)
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
@@ -60,7 +61,7 @@ function Vehicle:virtual_destructor()
 	end
 	VehicleManager:getSingleton():removeRef(self, not self:isPermanent())
 
-	if self.m_Magnet then
+	if self.m_Magnet and self.m_Magnet.type == "object" then
 		self.m_Magnet:destroy()
 	end
 
@@ -205,6 +206,7 @@ function Vehicle:onPlayerExit(player, seat)
 			local ground = isVehicleOnGround( self )
 			if ground then
 				setElementFrozen(self, true)
+				self:switchObjectLoadingMarker(true)
 				setVehicleDoorOpenRatio(self, 2, 0, 350)
 			else
 				self.m_HandBrake = false
@@ -225,10 +227,12 @@ end
 
 function Vehicle:onInteriorChange()
 	self:removeAttachedPlayers()
+	self:refreshLoadedObjects()
 end
 
 function Vehicle:onDimensionChange()
 	self:removeAttachedPlayers()
+	self:refreshLoadedObjects()
 end
 
 function Vehicle:removeAttachedPlayers()
@@ -404,6 +408,7 @@ function Vehicle:toggleHandBrake(player, preferredState)
 		self.m_HandBrake = false
 		setControlState(player, "handbrake", false)
 		if isElementFrozen(self) then
+			self:switchObjectLoadingMarker(false)
 			setElementFrozen(self, false)
 		end
 		player:triggerEvent("vehicleHandbrake")

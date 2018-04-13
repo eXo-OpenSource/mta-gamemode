@@ -9,7 +9,7 @@ EasterSlotmachine = inherit(Object)
 EasterSlotmachine.Slots = {
 	[1] = "VIP",
 	[2] = "Easter_Egg",
-	[3] = "Mr. Whoopee",
+	[3] = "Vehicle",
 	[4] = "Money",
 	[5] = "Easter_Eggs",
 	[6] = "Bunny_Ears",
@@ -134,7 +134,7 @@ function EasterSlotmachine:reset()
 end
 
 -- Premium
--- Mr.Whoopee
+-- Vehicle
 -- 20 Ostereier
 -- Geld (20k)
 -- 5 Ostereier
@@ -143,8 +143,8 @@ end
 function EasterSlotmachine:calculateSpin()
 	local spinTable = {
 		1100, -- Premium -- "increased"
-		1800, -- Mr.Whoopee
-		1800, -- Mr.Whoopee
+		1800, -- Vehicle
+		1800, -- Vehicle
 		2140, -- 20 Ostereier
 		2140, -- 20 Ostereier
 		2140, -- 20 Ostereier
@@ -282,7 +282,7 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 		StatisticsLogger:addCasino(player, name, 20)
 	elseif name == "Premium" then
 		player:sendInfo("Du hast einen Monat Premium gewonnen! Gratulation!")
-		player.m_Premium:giveEasterMonth()
+		player.m_Premium:giveEventMonth()
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_jackpot")
 		StatisticsLogger:addCasino(player, name, 1)
@@ -291,9 +291,15 @@ function EasterSlotmachine:giveWin(player, name, x, y, z)
 
 		triggerClientEvent(root, "onSlotmachineSoundPlay", root, x, y, z, "win_stuff")
 		StatisticsLogger:addCasino(player, name, 1)
-	elseif name == "MrWhoopee" then
-		player:sendInfo("Du hast einen Mr. Whoopee gewonnen! Gückwunsch!")
-		local vehicle = PermanentVehicle.create(player, 423, 1513.77, -1771.50, 13.57, 0, 0, 0, nil, true)
+	elseif name == "Vehicle" then
+		local vehicles = {
+			{ id=447, name="Seasparrow", 	spawnPosX=1902, spawnPosY=-2630.7, spawnPosZ=13.8, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }, 	-- Seasparrow
+			{ id=476, name="Rustler", 		spawnPosX=1902, spawnPosY=-2630.7, spawnPosZ=13.3, spawnPosXR=0, spawnPosYR=0, spawnPosZR=0 }	-- Rustler
+		}
+		local vehicleData = vehicles[math.random(1, 2)]
+
+		player:sendInfo("Du hast einen " .. vehicleData.name .. " gewonnen! Gückwunsch!")
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleData.id, vehicleData.spawnPosX, vehicleData.spawnPosY, vehicleData.spawnPosZ, vehicleData.spawnPosXR, vehicleData.spawnPosYR, vehicleData.spawnPosZR, 0)
 		if vehicle then
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")
@@ -324,15 +330,15 @@ function EasterSlotmachine:doResult(ergebnis, player)
 		self:giveWin(player, "Premium", x, y, z)
 	elseif result["Easter_Egg"] == 3 then
 		self:giveWin(player, "Ostereier5", x, y, z)
-	elseif result["Mr. Whoopee"] == 3 then
-		self:giveWin(player, "MrWhoopee", x, y, z)
+	elseif result["Vehicle"] == 3 then
+		self:giveWin(player, "Vehicle", x, y, z)
 	elseif result["Money"] == 3 then
 		self:giveWin(player, "Money", x, y, z)
 	elseif result["Easter_Eggs"] == 3 then
 		self:giveWin(player, "Ostereier20", x, y, z)
 	elseif result["Bunny_Ears"] == 3 then
 		self:giveWin(player, "HasenOhren", x, y, z)
-	elseif result["VIP"] == 2 or result["Easter_Egg"] == 2 or result["Mr. Whoopee"] == 2 or result["Money"] == 2 or result["Easter_Eggs"] == 2 or result["Bunny_Ears"] == 2 then
+	elseif result["VIP"] == 2 or result["Easter_Egg"] == 2 or result["Vehicle"] == 2 or result["Money"] == 2 or result["Easter_Eggs"] == 2 or result["Bunny_Ears"] == 2 then
 		self:giveWin(player, "Trostpreis", x, y, z)
 	else
 		player:sendInfo(_("Du hast leider nichts gewonnen!", player))

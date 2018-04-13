@@ -113,6 +113,24 @@ function GUIGridList:getSelectedItem()
 	return self.m_SelectedItem
 end
 
+function GUIGridList:setSelectedItem(itemIndex)
+	if not itemIndex or not self.m_ScrollArea.m_Children[itemIndex] then
+		for k, item in ipairs(self:getItems()) do
+			item:setBackgroundColor(Color.Clear)
+		end
+		self.m_SelectedItem = nil
+		self:anyChange()
+	else
+		self:onInternalSelectItem(self.m_ScrollArea.m_Children[itemIndex])
+		self:scrollToItem(itemIndex)
+	end
+end
+
+function GUIGridList:scrollToItem(itemIndex)
+	local max_scroll_down = -self.m_ScrollArea.m_DocumentHeight + self.m_Height - self.m_ItemHeight
+	self.m_ScrollArea:setScrollPosition(self.m_ScrollArea.m_ScrollX, math.clamp(max_scroll_down, -self.m_ItemHeight*itemIndex + self.m_Height/2, 0))
+end
+
 function GUIGridList:clear()
 	self.m_SelectedItem = nil
 

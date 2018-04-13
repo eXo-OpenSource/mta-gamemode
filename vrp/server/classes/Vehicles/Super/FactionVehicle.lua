@@ -7,38 +7,15 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal, fuel, ELSPreset)
-	self.m_Id = Id
-	self.m_Faction = faction
-	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_SpawnPos = self:getPosition()
-	self.m_SpawnRot = self:getRotation()
-	self.m_HandlingFactor = handlingFaktor
-	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
-	if #faction:getName() <= 29 then
-		setElementData(self, "OwnerName", faction:getName())
+function FactionVehicle:constructor(data)
+	self.m_Faction = FactionManager:getFromId(data.OwnerId)
+	if #self.m_Faction:getName() <= 29 then
+		setElementData(self, "OwnerName", self.m_Faction:getName())
 	else
-		setElementData(self, "OwnerName", faction:getShortName())
+		setElementData(self, "OwnerName", self.m_Faction:getShortName())
 	end
 	setElementData(self, "OwnerType", "faction")
-	setElementData(self, "StateVehicle", faction:isStateFaction())
-	if health then
-		if health <= VEHICLE_TOTAL_LOSS_HEALTH then
-			self:setBroken(true)
-		else
-			self:setHealth(health)
-		end
-	end
-	if color and fromJSON(color) then
-		setVehicleColor(self, fromJSON(color))
-	elseif factionCarColors[self.m_Faction:getId()] then
-		local color = factionCarColors[self.m_Faction:getId()]
-		setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
-	end
-
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
+	setElementData(self, "StateVehicle", self.m_Faction:isStateFaction())
 
     addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
     --addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
@@ -50,39 +27,6 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	if self.m_Faction.m_Vehicles then
 		table.insert(self.m_Faction.m_Vehicles, self)
-	end
-
-	self:setPlateText(self:getPlateText():sub(0,5)..self.m_Id)
-	self:setMileage(mileage)
-	self:setFuel(fuel or 100)
-	self:setFrozen(true)
-	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
-
-	if ELSPreset and ELS_PRESET[ELSPreset] then
-		self:setELSPreset(ELSPreset)
-	end
-	
-	if handlingFaktor and handlingFaktor ~= "" then
-		local handling = getOriginalHandling(getElementModel(self))
-		local tHandlingTable = split(handlingFaktor, ";")
-		for k,v in ipairs( tHandlingTable ) do
-			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
-			local oldValue = handling[property]
-			if oldValue then
-				if type( oldValue) == "number" then
-					setVehicleHandling(self,property,oldValue*faktor)
-				else
-					setVehicleHandling(self,property,faktor)
-				end
-			end
-		end
-	end
-
-	if decal then
-		for i, v in pairs(decal) do
-			self:setTexture(v, i)
-		end
 	end
 
 	if self:getModel() == 544 and self.m_Faction:isRescueFaction() then
@@ -105,7 +49,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		self:setMaxHealth(1500, true)
 		self:setDoorsUndamageable(true)
 	end
+	
+	self:setPlateText((self.m_Faction.m_ShorterName .. " " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
 
+	self:setLocked(false) -- Unlock faction vehicles
 end
 
 function FactionVehicle:destructor()
@@ -155,7 +102,7 @@ function FactionVehicle:onEnter(player, seat)
 		end
 	end
 end
-
+--[[
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if sql:queryExec("INSERT INTO ??_faction_vehicles (Faction, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Faction:getId(), model, posX, posY, posZ, rotation) then
@@ -166,21 +113,21 @@ function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	end
 	return false
 end
-
+]]
 function FactionVehicle:purge()
-	if sql:queryExec("DELETE FROM ??_faction_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
 		destroyElement(self)
 		return true
 	end
 	return false
 end
-
+--[[
 function FactionVehicle:save()
 	return sql:queryExec("UPDATE ??_faction_vehicles SET Mileage = ?, Fuel = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ? WHERE Id = ?",
 		sql:getPrefix(), self:getMileage(), self:getFuel(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, self.m_Id)
 end
-
+]]
 function FactionVehicle:hasKey(player)
   if self:isPermanent() and self.m_Faction then
     if player:getFaction() and self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then
@@ -315,4 +262,8 @@ function FactionVehicle:respawn(force)
 	end
 
 	return true
+end
+
+function FactionVehicle:sendOwnerMessage(msg)
+	self:getFaction():sendShortMessage(msg)
 end

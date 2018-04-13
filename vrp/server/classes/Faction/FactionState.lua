@@ -18,6 +18,8 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
+	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
+
 	self.m_ArmySpecialVehicleBorder = {
 		x = -179.915,
 		y = 1614.156,
@@ -157,7 +159,7 @@ function FactionState:createSelfArrestMarker( pos, int, dim )
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
 		if getElementDimension(hE) == getElementDimension(source) then
 			if getElementType(hE) == "player" then
-				if hE:getWanteds() > 0 then
+				if hE:getWanteds() > 0 and not (hE:getFaction() and hE:getFaction():isStateFaction() and hE:isFactionDuty()) then
 					hE:triggerEvent("playerSelfArrest")
 				end
 			end
@@ -215,21 +217,19 @@ function FactionState:loadLSPD(factionId)
 end
 
 function FactionState:loadFBI(factionId)
-	self:createDutyPickup(219.6, 115, 1010.22571, 10, 23) -- FBI Interior
+	self:createDutyPickup(275.85, -40.26, 1032.20, 10) -- FBI Interior
 	self:createDutyPickup(1214.813, -1813.902, 16.594) -- FBI backyard
 
 	local blip = Blip:new("Police.png", 1209.32, -1748.02, {factionType = "State"}, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
-	local safe = createObject(2332, 226.80, 128.50, 1010.20)
+	local safe = createObject(2332, 294.43, -22.6, 1031.7)
 	safe:setInterior(10)
-	safe:setDimension(23)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	local elevator = Elevator:new()
 	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270)
-	elevator:addStation("Erdgeschoss", Vector3(266.70, 107.80, 1008.80), 0, 10, 23)
-	elevator:addStation("Parkplatz", Vector3(1219.147, -1811.706, 16.594), 180)
+	elevator:addStation("Erdgeschoss", Vector3(296.49, -36.23, 1032.20), 90, 10)
 
 	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
 
@@ -248,7 +248,8 @@ function FactionState:loadFBI(factionId)
 		VehicleTexture:new(v, "files/images/Textures/Faction/State/FBI_Logo.png", "ws_airsecurity", true)
 	end
 
-	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(238.3, 114.9, 1010.207), 0, 0, 10, 23) -- main entrance
+	InteriorEnterExit:new(Vector3(1211.5996, -1750.0996, 13.6), Vector3(267.03, -23.87, 1032.20), 220, 0, 10) -- main entrance
+	InteriorEnterExit:new(Vector3(1219.20, -1812.25, 16.59), Vector3(259.91, -74.91, 1037.35), 0, 180, 10) -- back entrance / parking lot
 end
 
 function FactionState:loadArmy(factionId)
@@ -264,13 +265,11 @@ function FactionState:loadArmy(factionId)
 	local areaGate = Gate:new(974, Vector3(135.10, 1941.30, 21.60), Vector3(0, 0, 0), Vector3(122.30, 1941.30, 21.60))
 	--areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
 	areaGate.m_Gates[1]:setDoubleSided(true)
-	areaGate:addCustomShapes(Vector3(135.37, 1948.77, 19.38), Vector3(135.25, 1934.15, 19.25))
 	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
 
 
 	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
 	areaGarage.m_Gates[1]:setDoubleSided(true)
-	areaGarage:addCustomShapes(Vector3(277.25, 1821.42, 17.67), Vector3( 290.66, 1821.49, 17.64))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 
 	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
@@ -471,6 +470,12 @@ function FactionState:Event_CuffSuccess( target )
 	end
 end
 
+function FactionState:addLog(player, category, text)
+	FactionManager:getSingleton().Map[1]:addLog(player, category, text)
+	FactionManager:getSingleton().Map[2]:addLog(player, category, text)
+	FactionManager:getSingleton().Map[3]:addLog(player, category, text)
+end
+
 function FactionState:getOnlinePlayers(afkCheck, dutyCheck)
 	local factions = self:getFactions()
 	local players = {}
@@ -575,6 +580,28 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 	end)
 end
 
+function FactionState:getFullCategoryFromShurtcut(category)
+	local bMatch = false
+
+	if string.lower(category) == "auto" or string.lower(category) == "pkw" then
+		category = "Driving"
+		bMatch = true
+	elseif string.lower(category) == "motorrad" or string.lower(category) == "mt" then
+		category = "Bike"
+		bMatch = true
+	elseif string.lower(category) == "lastkraftwagen" or string.lower(category) == "lkw" then
+		category = "Truck"
+		bMatch = true
+	elseif string.lower(category) == "pilot" or string.lower(category) == "flug" then
+		category = "Pilot"
+		bMatch = true
+	end
+
+	if bMatch then
+		return category
+	end
+end
+
 function FactionState:getFullReasonFromShortcut(reason)
 	local amount = false
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
@@ -597,6 +624,9 @@ function FactionState:getFullReasonFromShortcut(reason)
         amount = 4
     elseif string.lower(reason) == "wt" then
         reason = "Waffen-Truck"
+        amount = 5
+	elseif string.lower(reason) == "gt" then
+        reason = "Geldtransport-Überfall"
         amount = 5
     elseif string.lower(reason) == "dt" then
         reason = "Drogen-Truck"
@@ -652,7 +682,7 @@ function FactionState:getFullReasonFromShortcut(reason)
     elseif string.lower(reason) == "gn" then
         reason = "Geiselnahme"
         amount = 6
-    elseif  string.lower(reason) == "stellen" then
+    elseif string.lower(reason) == "stellen" then
         reason = "Stellenflucht"
         amount = 12
 	end
@@ -778,7 +808,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Command_stvo(player,cmd,target,amount,...)
+function FactionState:Command_stvo(player, cmd, target, category, amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
 		if amount and amount >= 1 and amount <= 6 then
@@ -786,14 +816,19 @@ function FactionState:Command_stvo(player,cmd,target,amount,...)
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if string.len(reason) > 2 and string.len(reason) < 50 then
-					local newSTVO = target:getSTVO() + amount
-					target:setSTVO(newSTVO)
-					outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
-					outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
+					category = self:getFullCategoryFromShurtcut(category)
+					if category then
+						local newSTVO = target:getSTVO(category) + amount
+						target:setSTVO(category, newSTVO)
+						outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, player:getName(), newSTVO), target, 255, 255, 0 )
+						outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 
-					local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
-					player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
-					self:sendMessage(msg, 255,0,0)
+						local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+						player:getFaction():addLog(player, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
+						self:sendMessage(msg, 255,0,0)
+					else
+						player:sendError(_("Die Kategorie ist ungültig!", player))
+					end
 				else
 					player:sendError(_("Der Grund ist ungültig!", player))
 				end
@@ -806,13 +841,13 @@ function FactionState:Command_stvo(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Event_giveSTVO(target, amount, reason)
+function FactionState:Event_giveSTVO(target, category, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			local newSTVO = target:getSTVO() + amount
-			target:setSTVO(newSTVO)
-			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0 )
+			local newSTVO = target:getSTVO(category) + amount
+			target:setSTVO(category, newSTVO)
+			outputChatBox(("Du hast %d STVO-Punkt/e von %s erhalten! Gesamt: %d"):format(amount, client:getName(), newSTVO), target, 255, 255, 0)
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d STVO-Punkt/e wegen %s gegeben!"):format(client:getName(),target:getName(),amount, reason)
 			client:getFaction():addLog(client, "STVO", "hat "..target:getName().." "..amount.." STVO-Punkte wegen "..reason.." gegeben!")
@@ -821,12 +856,12 @@ function FactionState:Event_giveSTVO(target, amount, reason)
 	end
 end
 
-function FactionState:Event_setSTVO(target, amount, reason)
+function FactionState:Event_setSTVO(target, category, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			local newSTVO = tonumber(amount)
-			target:setSTVO(newSTVO)
+			target:setSTVO(category, newSTVO)
 			outputChatBox(("%s hat deine STVO-Punkt/e auf %d gesetzt!"):format(client:getName(), newSTVO), target, 255, 255, 0 )
 			outputChatBox(("Grund: %s"):format(reason), target, 255, 255, 0 )
 			local msg = ("%s hat die STVO-Punkte von %s auf %d gesetzt! Grund: %s"):format(client:getName(),target:getName(),amount, reason)
@@ -990,14 +1025,14 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 						player:transferMoney(self.m_BankAccountServer, factionBonus, "Knaststrafe (Bar)", "Faction", "Arrest")
 					end
 
-					player:giveKarma(-wantedLevel)
+					player:takeKarma(wantedLevel)
 					player:setJailTime(jailTime)
 					player:setWanteds(0)
 					player:moveToJail(CUTSCENE)
-					self:uncuffPlayer( player)
+					self:uncuffPlayer(player)
 					player:clearCrimes()
 
-					local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+					local DrugItems = self.ms_IllegalItems
 					local inv = player:getInventory()
 					for index, item in pairs(DrugItems) do
 						if inv:getItemAmount(item) > 0 then
@@ -1061,7 +1096,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		else
 			player:transferMoney(self.m_BankAccountServer, factionBonus, "Knast Strafe (Bar)", "Faction", "Arrest")
 		end
-		player:giveKarma(-wantedLevel)
+		player:takeKarma(wantedLevel)
 		player:setJailTime(jailTime)
 		player:setWanteds(0)
 		player:moveToJail(CUTSCENE)
@@ -1190,8 +1225,8 @@ function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
 	setElementDimension(player,0)
 	setElementInterior(player,0)
-	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-	player:setRotation(0, 0, 90)
+	player:setPosition(1564.86, -1672.57, 16.2)
+	player:setRotation(0, 0, 180)
 	player:setWanteds(0)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
@@ -1204,6 +1239,7 @@ function FactionState:freePlayer(player)
 	player.m_JailStart = nil
 	player:setJailTime(0)
 	player.m_Bail = 0
+	player:setCorrectSkin()
 	player:triggerEvent("playerLeftJail")
 	player:triggerEvent("checkNoDm")
 end
@@ -1348,7 +1384,8 @@ function FactionState:Event_storageWeapons(player)
 							--client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
 						end
 						takeWeapon(client, weaponId)
-						client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
+						self:addLog(player, "Waffenlager", ("hat eine/n %s mit %s Magazin(en) in das Waffenlager gelegt!"):format(WEAPON_NAMES[weaponId], magazines))
+						client:sendMessage(_("Du hast eine/n %s mit %s Magazin(en) ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
@@ -1472,7 +1509,7 @@ function FactionState:Event_friskPlayer(target)
 
 			target:sendInfo(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()))
 
-			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+			local DrugItems = self.ms_IllegalItems
 			local inv = target:getInventory()
 			local targetDrugs = {}
 			for index, item in pairs(DrugItems) do
@@ -1568,9 +1605,9 @@ function FactionState:Event_takeDrugs(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
-			client:sendMessage(_("Du hast %s folgende Drogen abgenommen:", client, target:getName()), 255, 255, 0)
-			target:sendMessage(_("%s hat dir folgende Drogen abgenommen:", target, client:getName()), 255, 255, 0)
+			local DrugItems = self.ms_IllegalItems
+			client:sendMessage(_("Du hast %s folgende illegale Items abgenommen:", client, target:getName()), 255, 255, 0)
+			target:sendMessage(_("%s hat dir folgende illegale Items abgenommen:", target, client:getName()), 255, 255, 0)
 			local drugsTaken = false
 			local amount = 0
 			local inv = target:getInventory()
@@ -1578,8 +1615,8 @@ function FactionState:Event_takeDrugs(target)
 				if inv:getItemAmount(item) > 0 then
 					amount = inv:getItemAmount(item)
 					drugsTaken = true
-					client:sendMessage(_("%dg %s", client, amount, item), 255, 125, 0)
-					target:sendMessage(_("%dg %s", target, amount, item), 255, 125, 0)
+					client:sendMessage(_("%d %s", client, amount, item), 255, 125, 0)
+					target:sendMessage(_("%d %s", target, amount, item), 255, 125, 0)
 					inv:removeAllItem(item)
 				end
 			end

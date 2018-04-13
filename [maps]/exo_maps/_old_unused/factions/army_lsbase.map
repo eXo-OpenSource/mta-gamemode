@@ -1,0 +1,10 @@
+<map edf:definitions="editor_main">
+    <object id="object (elecfence_BAR) (31)" doublesided="false" model="987" interior="0" dimension="0" posX="2720.1000976563" posY="-2371.5" posZ="12.60000038147" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (elecfence_BAR) (33)" doublesided="false" model="987" interior="0" dimension="0" posX="2720.1000976563" posY="-2359.5" posZ="12.60000038147" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (elecfence_BAR) (34)" doublesided="false" model="987" interior="0" dimension="0" posX="2720.1000976563" posY="-2347.5" posZ="12.60000038147" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (elecfence_BAR) (35)" doublesided="false" model="987" interior="0" dimension="0" posX="2720.1000976563" posY="-2335.5" posZ="12.60000038147" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (elecfence_BAR) (36)" doublesided="false" model="987" interior="0" dimension="0" posX="2731.8000488281" posY="-2333.5" posZ="12.60000038147" rotX="0" rotY="0" rotZ="190.25"></object>
+    <object id="object (elecfence_BAR) (37)" doublesided="false" model="987" interior="0" dimension="0" posX="2743.3000488281" posY="-2330.3999023438" posZ="12.60000038147" rotX="0" rotY="0" rotZ="195.24475097656"></object>
+    <object id="object (fencesmallb) (1)" doublesided="false" model="970" interior="0" dimension="0" posX="2720.3000488281" posY="-2516.1999511719" posZ="16.89999961853" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (fencesmallb) (2)" doublesided="false" model="970" interior="0" dimension="0" posX="2724.5" posY="-2565" posZ="13.199999809265" rotX="0" rotY="0" rotZ="0"></object>
+</map>

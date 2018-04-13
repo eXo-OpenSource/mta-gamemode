@@ -8,9 +8,24 @@
 GroupVehicle = inherit(PermanentVehicle)
 
 -- This function converts a normal (User/PermanentVehicle) to an GroupVehicle
-function GroupVehicle.convertVehicle(vehicle, Group)
+function GroupVehicle.convertVehicle(vehicle, group)
 	if vehicle:isPermanent() then
 		if vehicle:getPositionType() == VehiclePositionType.World then
+			local id = vehicle:getId()
+			local premium = vehicle.m_Premium and vehicle.m_Owner or 0
+
+			sql:queryExec("UPDATE ??_vehicles SET SalePrice = 0, Premium = ? WHERE Id = ?", sql:getPrefix(), premium, id)
+
+			VehicleManager:getSingleton():removeRef(vehicle)
+			vehicle.m_Owner = group:getId()
+			vehicle.m_OwnerType = VehicleTypes.Group
+
+			vehicle:save()
+			destroyElement(vehicle)
+			local veh = VehicleManager:getSingleton():createVehicle(id)
+			
+			return true, veh
+			--[[
 			local position = vehicle:getPosition()
 			local rotation = vehicle:getRotation()
 			local model = vehicle:getModel()
@@ -21,7 +36,6 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local premium = vehicle:isPremiumVehicle() and vehicle:getOwner() or 0
 			local dimension = 0
 			local interior = 0
-			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
 			trunk:save()
 			local trunkId = trunk:getId()
@@ -31,74 +45,41 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				vehicle:setHealth(health)
 
 				return vehicle:save(), vehicle
-			end
+			end]]
 		end
 	end
 
 	return false
 end
 
-function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium, dimension, interior, forSale, salePrice)
-	self.m_Id = Id
-	self.m_Group = Group
-	self.m_PositionType = positionType or VehiclePositionType.World
-	self.m_Premium = premium
-	self:setCurrentPositionAsSpawn(self.m_PositionType)
-
-	self.m_Position = self:getPosition()
-	self.m_Rotation = self:getRotation()
+function GroupVehicle:constructor(data)
+	self.m_Group = GroupManager:getFromId(data.OwnerId)
 	setElementData(self, "OwnerName", self.m_Group:getName())
 	setElementData(self, "OwnerType", "group")
 	setElementData(self, "GroupType", self.m_Group:getType())
-	if health and health <= 300 then
-		health = 300
-	end
-
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
-
-	if self.m_PositionType ~= VehiclePositionType.World then
-		-- Move to unused dimension | Todo: That's probably a bad solution
-		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-		self.m_Dimesion = dimension
-	end
-
+	
 	if self.m_Group.m_Vehicles then
 		table.insert(self.m_Group.m_Vehicles, self)
 	end
 
-	addEventHandler("onVehicleExplode",self, function()
-		setTimer(function(veh)
-			veh:respawn(true)
-		end, 10000, 1, source)
-	end)
-
-	-- load trunk
-	self.m_Trunk = Trunk.load(trunkId)
-
-	self:setFrozen(true)
-	self.m_HandBrake = true
-	self:setData( "Handbrake",  self.m_HandBrake , true )
-	self:setHealth(health or 1000)
-	self:setFuel(fuel or 100)
-	self:setLocked(true)
-	self:setMileage(mileage)
-	self.m_Dimesion = dimension
-	self.m_Interior = interior
-	if self.m_Group:canVehiclesBeModified() then
-		self.m_Tunings = VehicleTuning:new(self, tuningJSON)
-	else
-		self.m_Tunings = VehicleTuning:new(self)
-	end
-
-	if forSale and forSale == 1 then
-		self:setForSale(true, salePrice)
+	if data.SalePrice > 0 then
+		self:setForSale(true, data.SalePrice)
 	else
 		self:setForSale(false, 0)
 	end
 
-	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+	
+	addEventHandler("onVehicleExplode",self, function()
+		setTimer(function(veh)
+			if isElement(veh) then
+				veh:respawn(true)
+			end
+		end, 10000, 1, source)
+	end)
+	--[[
+	self.m_Position = self:getPosition()
+	self.m_Rotation = self:getRotation()
+	]]
 end
 
 function GroupVehicle:destructor()
@@ -112,20 +93,16 @@ end
 function GroupVehicle:getGroup()
   return self.m_Group
 end
-
-function GroupVehicle.create(Group, model, posX, posY, posZ, rotX, rotY, rotation, milage, fuel, trunkId, tuningJSON, premium)
-	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, RotX, RotY, Rotation, Health, TrunkId, TuningsNew, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, 1000, ?, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotX, rotY, rotation, trunkId, tuningJSON, premium) then
-		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, 1000, VehiclePositionType.World, milage, fuel, trunkId, tuningJSON, premium)
-    	VehicleManager:getSingleton():addRef(vehicle)
-		return vehicle
+--[[
+function GroupVehicle.create(Group, model, posX, posY, posZ, rotX, rotY, rotZ, milage, fuel, trunkId, tuningJSON, premium)
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, TrunkId, Tunings, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), Group:getId(), VehicleTypes.Group, model, posX, posY, posZ, rotX, rotY, rotZ, trunkId, tuningJSON, premium) then
+		return VehicleManager:getSingleton():createVehicle(sql:lastInsertId())
 	end
 	return false
-end
+end]]
 
 function GroupVehicle:purge()
-	if sql:queryExec("DELETE FROM ??_group_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+	if sql:queryExec("UPDATE ??_vehicles SET Deleted = NOW() WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		VehicleManager:getSingleton():removeRef(self)
 		triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 		destroyElement(self)
@@ -134,16 +111,18 @@ function GroupVehicle:purge()
 	return false
 end
 
+--[[ -> use save function of PermanentVehicle
 function GroupVehicle:save()
 	local health = getElementHealth(self)
 	if self.m_Trunk then self.m_Trunk:save() end
 
-	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, Rotation = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ?, ForSale = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
+	return sql:queryExec("UPDATE ??_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, RotX = ?, RotY = ?, RotT = ?, Health = ?, PositionType = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningsNew = ?, ForSale = ?, SalePrice = ? WHERE Id = ?", sql:getPrefix(),
    		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot.x, self.m_SpawnRot.y, self.m_SpawnRot.z, health, self.m_PositionType, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_ForSale and 1 or 0, self.m_SalePrice or 0, self.m_Id)
 end
+]]
 
 function GroupVehicle:isGroupPremiumVehicle()
-	return self.m_Premium ~= 0
+	return self:isPremiumVehicle()
 end
 
 function GroupVehicle:hasKey(player)
@@ -216,6 +195,10 @@ function GroupVehicle:respawn(force)
 	return true
 end
 
+function GroupVehicle:isForSale()
+	return self.m_ForSale
+end
+
 function GroupVehicle:setForSale(sale, price)
 	if sale then
 		self.m_ForSale = true
@@ -231,6 +214,17 @@ function GroupVehicle:setForSale(sale, price)
 	end
 	setElementData(self, "forSale", self.m_ForSale, true)
 	setElementData(self, "forSalePrice", tonumber(self.m_SalePrice), true)
+end
+
+function GroupVehicle:getVehicleTaxForGroup() -- some vehicles may not need taxation in groups, but if owned private
+	if self:isGroupPremiumVehicle() then return 0 end
+	if self:isForSale() and self:getSalePrice() <= 500000 then return 0 end
+	if self:getPositionType() == VehiclePositionType.Mechanic then return 0 end
+	return self:getTax()
+end
+
+function GroupVehicle:getSalePrice()
+	return self.m_SalePrice
 end
 
 function GroupVehicle:buy(player)
@@ -265,4 +259,8 @@ end
 
 function GroupVehicle:onEnter()
 	return true -- otherwise last driver will not added
+end
+
+function GroupVehicle:sendOwnerMessage(msg)
+	self.m_Group:sendShortMessage(msg)
 end

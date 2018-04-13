@@ -279,6 +279,13 @@ function GroupProperty:closeForPlayer(player)
 	end
 end
 
+function GroupProperty:addLog(player, category, text)
+	if self.m_Owner then
+		assert(self.m_Owner.addLog, "group property owner has no log function")
+		self.m_Owner:addLog(player, category, text)
+	end
+end
+
 --// now the so-called EVENT-ZONE //
 function GroupProperty:Event_ChangeDoor( client )
 	if self.m_Open == 1 then
@@ -302,7 +309,6 @@ end
 function GroupProperty:Event_RemoveAll( client )
 	self.m_ChangeKeyMap = {}
 	for k, obj in ipairs(self.m_Keys) do
-		count = count + 1
 		self.m_ChangeKeyMap[#self.m_ChangeKeyMap+1] = {"remove",obj.Owner,self.m_Id,Account.getNameFromId(obj.Owner)}
 	end
 	self:Event_RefreshPlayer( client )
