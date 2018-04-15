@@ -182,7 +182,9 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
 			player:setSessionId(jwtBase.."."..responseData)
-			player:triggerEvent("loginsuccess", pwhash)
+            setTimer(function()
+                player:triggerEvent("loginsuccess", pwhash)
+            end, 2000, 1) -- yeah its stupid but it works - blame me for that
 		end)
 	end
 end
