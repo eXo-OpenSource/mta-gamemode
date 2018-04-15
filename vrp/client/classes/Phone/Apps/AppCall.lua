@@ -15,6 +15,7 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 
+	self.m_IncomingCallSMs = {}
 
 	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
 
@@ -227,20 +228,74 @@ function AppCall:openIncoming(caller, voiceEnabled)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
 	-- Play ring sound
-	local ringsound = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
-	if ringsound == CUSTOM_RINGSOUND_PATH and not fileExists(CUSTOM_RINGSOUND_PATH) then
-		ringsound = "files/audio/Ringtones/Klingelton1.mp3"
-		core:getConfig():set("Phone", "Ringtone", ringsound)
-	end
-
-	self.m_RingSound = playSound(ringsound, true)
+	self:playRingSound(true)
 	showCursor(false)
 end
 
-function AppCall:ButtonAnswer_Click()
-	if self.m_RingSound and isElement(self.m_RingSound) then
-		destroyElement(self.m_RingSound)
+function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
+
+	self:playRingSound(true,true)
+	local shortMessage = ShortMessage:new(message.._"\nKlicke hier, um abzuheben.", title, tocolor(unpack(tblColor)), -1)
+	shortMessage.m_Callback = function()
+		if not Phone:getSingleton():isOn() then
+			ErrorBox:new(_"Dein Handy ist ausgeschaltet!")
+			return "forceOpen"
+		end
+		if shortMessage.m_CallData then
+			self.m_Caller = shortMessage.m_CallData.caller
+			self.m_VoiceEnabled = shortMessage.m_CallData.voiceEnabled
+			self:removeIncomingCallShortMessage(shortMessage.m_CallData.caller, localPlayer)
+			Phone:getSingleton():openApp(self)
+			self:ButtonAnswer_Click()
+			return "forceOpen"
+		end
 	end
+	shortMessage.m_CallData = {
+		caller = caller,
+		voiceEnabled = voiceEnabled
+	}
+	self.m_IncomingCallSMs[caller] = shortMessage
+end
+
+function AppCall:removeIncomingCallShortMessage(caller, callee)
+	if self.m_IncomingCallSMs[caller] then
+		if callee and callee.getName then
+			if caller.getName then
+				self.m_IncomingCallSMs[caller]:setText(_("%s hat den Anruf von %s entgegengenommen.", callee:getName(), caller:getName()))
+			else
+				self.m_IncomingCallSMs[caller]:setText(_("%s hat den Anruf entgegengenommen.", callee:getName()))
+			end
+		else
+			if caller.getName then
+				self.m_IncomingCallSMs[caller]:setText(_("%s hat den Anruf abgebrochen.", caller:getName()))
+			else
+				self.m_IncomingCallSMs[caller]:setText(_"Der Anruf wurde abgebrochen.")
+			end
+		end
+		self.m_IncomingCallSMs[caller]:setTimeout(3000)
+		self.m_IncomingCallSMs[caller].m_TimeoutFunc = function()
+			self.m_IncomingCallSMs[caller] = nil
+		end
+		self:playRingSound(false)
+	end
+end
+
+function AppCall:playRingSound(state, singleRing)
+	if state and not self.m_RingSound then
+		local ringsound = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3")
+		if ringsound == CUSTOM_RINGSOUND_PATH and not fileExists(CUSTOM_RINGSOUND_PATH) then
+			ringsound = "files/audio/Ringtones/Klingelton1.mp3"
+			core:getConfig():set("Phone", "Ringtone", ringsound)
+		end
+		self.m_RingSound = playSound(ringsound, not singleRing)
+	elseif not state and self.m_RingSound then
+		if isElement(self.m_RingSound) then destroyElement(self.m_RingSound) end
+		self.m_RingSound = false
+	end
+end
+
+function AppCall:ButtonAnswer_Click()
+	self:playRingSound(false)
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
 		triggerServerEvent("callAnswer", root, self.m_Caller, self.m_VoiceEnabled)
 		self:openInCall("player",self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
@@ -253,9 +308,7 @@ function AppCall:ButtonBusy_Click()
 end
 
 function AppCall:busy()
-	if self.m_RingSound and isElement(self.m_RingSound) then
-		destroyElement(self.m_RingSound)
-	end
+	self:playRingSound(false)
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
 		triggerServerEvent("callBusy", root, self.m_Caller)
 	end
@@ -316,9 +369,7 @@ function AppCall:openInCall(calleeType, callee, resultType, voiceCall)
 	elseif resultType == CALL_RESULT_REPLACE then
 		self.m_ResultLabel:setText(_"Aufgelegt")
 		self.m_ResultLabel:setColor(Color.Red)
-		if self.m_RingSound and isElement(self.m_RingSound) then
-			destroyElement(self.m_RingSound)
-		end
+		self:playRingSound(false)
 		setTimer(
 			function()
 				if self:isOpen() and Phone:getSingleton():isOpen() then

@@ -65,7 +65,6 @@
 	<script src="server/classes/Storage/Teamspeak/TSConnect.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
-	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Player/Ban.lua" type="server"/>
 	<script src="server/classes/Player/Warn.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
@@ -86,7 +85,6 @@
 	<script src="server/classes/ActionsCheck.lua" type="server"/>
 	<script src="server/classes/Gate.lua" type="server"/>
 	<script src="server/classes/Door.lua" type="server"/>
-	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
@@ -103,6 +101,10 @@
 	<script src="server/classes/Super/Root.lua" type="server"/>
 	<script src="server/classes/Super/NPC.lua" type="server"/>
 
+	<!--Phone-->
+	<script src="server/classes/Phone/PhoneInteraction.lua" type="server"/>
+	<script src="server/classes/Phone/PhoneNumbers.lua" type="server"/>
+	
 	<!-- Player -->
 	<script src="server/classes/Player/Account.lua" type="server"/>
 	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
