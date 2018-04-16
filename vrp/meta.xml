@@ -113,6 +113,7 @@
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
+	<script src="server/classes/Inventory/WorldItems/WorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
@@ -161,6 +162,7 @@
 	<!--WorldItems-->
 	<script src="server/classes/Inventory/Items/WorldItems/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemSpeedCam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemFurniture.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemKeyPad.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemEntrance.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemTransmitter.lua" type="server"/>
@@ -1675,6 +1677,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/keypad.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/furniture.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/door.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/entrance.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/transmitter.png" />

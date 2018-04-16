@@ -83,22 +83,52 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 	self.m_FullObjectList = {}
 	self.m_FilteredObjectList = {}
 	local i = 1
+	local x,y,z = localPlayer:getPosition()
+	local int, dim = localPlayer:getInterior(), localPlayer:getDimension()
+	local maxRange, dimCheck, insertObject, ox, oy, oz, oInt, oDim
 	for modelid, objects in pairs(tblObjects) do
 		for object in pairs(tblObjects[modelid]) do
-			self.m_ObjectList:addItem(
-				object:getData("Name"),
-				getZoneName(object:getPosition()),
-				object:getData("Placer"),
-				getOpticalTimestamp(object:getData("PlacedTimestamp"))
-			).m_Id = i
-			table.insert(self.m_FullObjectList, {
-				Object      = object,
-				Name        = object:getData("Name"),
-				Zone        = getZoneName(object:getPosition()),
-				Placer      = object:getData("Placer"),
-				Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
-			})
-			i = i + 1
+			maxRange, dimCheck = object:getData("WorldItem:AccessRange"),object:getData("WorldItem:IntDimCheck")
+			ox, oy, oz = getElementPosition(object)
+			if maxRange > 0 then 
+				if getDistanceBetweenPoints3D(ox, oy, oz, x, y, z) <= maxRange then 
+					if dimCheck then 
+						oInt, oDim = object:getInterior(), object:getDimension()
+						if (oInt==int) and (oDim==dim) then 
+							insertObject = true
+						end
+					else 
+						insertObject = true
+					end
+				else 
+					insertObject =  false
+				end
+			else 
+				if not dimCheck then
+					insertObject = true
+				else 
+					oInt, oDim = object:getInterior(), object:getDimension()
+					if (oInt==int) and (oDim==dim) then 
+						insertObject = true
+					end
+				end
+			end
+			if insertObject then
+				self.m_ObjectList:addItem(
+					object:getData("Name"),
+					getZoneName(object:getPosition()),
+					object:getData("Placer"),
+					getOpticalTimestamp(object:getData("PlacedTimestamp"))
+				).m_Id = i
+				table.insert(self.m_FullObjectList, {
+					Object      = object,
+					Name        = object:getData("Name"),
+					Zone        = getZoneName(object:getPosition()),
+					Placer      = object:getData("Placer"),
+					Timestamp   = getOpticalTimestamp(object:getData("PlacedTimestamp"))
+				})
+				i = i + 1
+			end
 		end
 	end
 	self.m_ListSize = i - 1
@@ -152,12 +182,17 @@ end
 function WorldItemOverviewGUI:updateDebugArrow(forceDestroy)
 	if self.m_SelectedListItem and not forceDestroy then
 		local obj = self.m_FilteredObjectList[self.m_SelectedListItem.m_Id].Object
+		local int, dim = obj:getInterior(), obj:getDimension()
 		if isElement(obj) then
 			local _, _, _, _, _, maxZ = getElementBoundingBox(obj)
 			if not self.m_DebugArrow then
 				self.m_DebugArrow = createMarker(obj.position.x, obj.position.y, obj.position.z + maxZ + 2, "arrow", 1, 200, 100, 0, 100)
+				self.m_DebugArrow:setInterior(int) 
+				self.m_DebugArrow:setDimension(dim)
 			else
 				self.m_DebugArrow:setPosition(obj.position.x, obj.position.y, obj.position.z + maxZ + 2)
+				self.m_DebugArrow:setInterior(int) 
+				self.m_DebugArrow:setDimension(dim)
 			end
 		else
 			self:updateDebugArrow(true)

@@ -150,15 +150,6 @@ function DatabasePlayer:load(sync)
 
 	if self:isActive() then
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
-
-		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
-		local payload = toJSON({["sub"] = self:getId(), ["name"] = self:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, true):sub(2, -2)
-
-		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
-
-		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
-			self:setSessionId(jwtBase.."."..responseData)
-		end)
 	end
 
 	self:setSpawnLocation(row.SpawnLocation)

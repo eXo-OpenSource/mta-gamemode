@@ -35,15 +35,31 @@ function ObjectPlacer:constructor(model, callback, hideObject)
 
 	self.m_Click = bind(self.Event_Click, self)
 	addEventHandler("onClientClick", root, self.m_Click)
+	
 
+	self.m_Key = bind(self.Event_OnKey, self) 
+	
 	--do not indent as it will destroy the short message design
+	if localPlayer:getRank() > 2 then
+	addEventHandler("onClientKey", root, self.m_Key)
 	self.m_ShortMessage = ShortMessage:new(_[[Bewege das Objekt mit deiner Maus
+Weitere Funktionen:
+  [Mausrad] - Objekt drehen (10°)
+  [Shift] - Objekt schneller drehen (45°)
+  [Alt] - Objekt langsamer drehen (5°)
+  [W/S] - Auf und Ab 
+  [Hoch/Runter/Links/Rechts] - Nach vorne und hinten
+Linksklick zum Platzieren
+Rechtsklick zum Abbrechen]], "Objektplatzierung", Color.DarkBlue, 0)
+	else 
+		self.m_ShortMessage = ShortMessage:new(_[[Bewege das Objekt mit deiner Maus
 Weitere Funktionen:
   [Mausrad] - Objekt drehen (10°)
   [Shift] - Objekt schneller drehen (45°)
   [Alt] - Objekt langsamer drehen (5°)
 Linksklick zum Platzieren
 Rechtsklick zum Abbrechen]], "Objektplatzierung", Color.DarkBlue, 0)
+	end
 
 end
 
@@ -64,6 +80,7 @@ function ObjectPlacer:destructor()
 	unbindKey("mouse_wheel_up", "down", self.m_MouseWheel)
 	removeEventHandler("onClientCursorMove", root, self.m_CursorMove)
 	removeEventHandler("onClientClick", root, self.m_Click)
+	removeEventHandler("onClientKey", root, self.m_Key)
 end
 
 function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
@@ -91,6 +108,29 @@ function ObjectPlacer:Event_MouseWheel(button, state)
 		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z - offset)
 	else
 		self.m_Object:setRotation(0, 0, self.m_Object:getRotation().z + offset)
+	end
+end
+
+function ObjectPlacer:Event_OnKey( key, state ) 
+	if state then
+		local offset = 10
+		local position = self.m_Object:getPosition()
+		if getKeyState("lshift") or getKeyState("rshift") then offset = 45 end
+		if getKeyState("lalt") then offset = 5 end
+		offset = offset/50
+		if key == "arrow_u" then 
+			self.m_Object:setPosition(position.x, position.y + offset, position.z)
+		elseif key == "arrow_d" then 
+			self.m_Object:setPosition(position.x, position.y - offset, position.z)
+		elseif key == "arrow_r" then 
+			self.m_Object:setPosition(position.x + offset, position.y, position.z)
+		elseif key == "arrow_l" then 
+			self.m_Object:setPosition(position.x - offset, position.y, position.z)
+		elseif key == "w" then 
+			self.m_Object:setPosition(position.x, position.y, position.z + offset)
+		elseif key == "s" then 
+			self.m_Object:setPosition(position.x, position.y, position.z - offset)
+		end
 	end
 end
 
