@@ -17,6 +17,7 @@ function FactionEvil:constructor()
 	self.m_Raids = {}
 
 	nextframe(function()
+		self:loadLCNGates(5)
 		self:loadYakGates(6)
 	end)
 
@@ -171,6 +172,26 @@ function FactionEvil:loadYakGates(factionId)
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(2933, Vector3(907.40002, -1712.5, 14.5), Vector3(0, 0, 90), Vector3(907.40002, -1701.8812255859, 14.5))
 	setObjectScale(lcnGates[1].m_Gates[1], 1.1)
+	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
+	for index, gate in pairs(lcnGates) do
+		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
+		gate.onGateHit = bind(self.onBarrierGateHit, self)
+	end
+	--// remove some objects for the new base that totally looks like a bullshit-fortress for some unauthentic factions called "weaboo-yakuza" 
+	--// ps: have I told you that I hate this new faction-base?
+	--// removed removeModel ;)
+end
+
+
+
+function FactionEvil:loadLCNGates(factionId)
+
+	local lcnGates = {}
+	lcnGates[1] = Gate:new(980, Vector3(784.56561, -1152.40520, 24.93374), Vector3(0, 0, 275), Vector3(784.56561, -1152.40520, 18.53374))
+	lcnGates[2] = Gate:new(980, Vector3(659.12753, -1227.00923, 17.42981), Vector3(0, 0, 64), Vector3(659.12753, -1227.00923, 11.92981))
+	lcnGates[3] = Gate:new(980, Vector3(664.99264, -1309.83203, 15.06094), Vector3(0, 0, 182), Vector3(664.99264, -1309.83203, 8.46094))
+	
+	--setObjectScale(lcnGates[1].m_Gates[1], 1.1)
 	-- setObjectBreakable(lcnGates[1].m_Gates[1], false) <- works only clientside
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
