@@ -23,7 +23,7 @@
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
 	<map src="fraktionen/biker.map" />
-	<!--<map src="fraktionen/cosanostra.map" />-->
+	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
 	<map src="fraktionen/lspd-int.map" />
 	<map src="fraktionen/FBI.map" />
