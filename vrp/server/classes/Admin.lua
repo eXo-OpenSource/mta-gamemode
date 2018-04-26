@@ -49,8 +49,8 @@ function Admin:constructor()
     addCommandHandler("tp", bind(self.teleportTo, self))
     addCommandHandler("getVeh", bind(self.getVehFromId, self))
 
-    --addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self)) -> Wont work after update :)
-    --addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self)) -> Wont work after update :)
+    addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
+    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
 	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
@@ -1232,7 +1232,7 @@ function Admin:addFactionVehicle(player, cmd, factionID)
 					local model = getElementModel(veh)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					FactionVehicle:create(faction, model, posX, posY, posZ, rotZ)
+					VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
 				else
 					player:sendError(_("Fraktion nicht gefunden!", player))
 				end
@@ -1255,7 +1255,7 @@ function Admin:addCompanyVehicle(player, cmd, companyID)
 					local veh = getPedOccupiedVehicle(player)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					CompanyVehicle:create(company, veh.model, posX, posY, posZ, rotZ)
+					VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
 				else
 					player:sendError(_("Unternehmen nicht gefunden!", player))
 				end
