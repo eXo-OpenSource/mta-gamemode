@@ -8,6 +8,17 @@
 --- Validates the parameters of a function
 -- @param funcName The name of the function
 -- @param ... The parameters' types
+DEBUG = GIT_BRANCH ~= "release/production"
+if DEBUG then --important: DEBUG_-settings should always have a default value of false as this would be the case on release/prod.
+	DEBUG_LOAD_SAVE = false -- defines if "loaded X"-messages are outputted to the server console
+	DEBUG_AUTOLOGIN = not GIT_VERSION and true -- logs the player in automatically if they saved their pw
+end
+
+if triggerClientEvent and DEBUG_LOAD_SAVE then
+	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
+end
+
+
 function checkArgs(funcName, ...)
 end
 
