@@ -431,7 +431,7 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
-	{
+	--[[{
 		name = "Yakuza",
 		stations = {
 			{Vector3(904.53436, -1703.84229, 13.9387), 180, 1},
@@ -439,8 +439,8 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.Yakuza},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	},
-	{
+	},]]
+	--[[{
 		name = "Vatos Locos",
 		stations = {
 			{Vector3(2819.12, -2143.39, 11.68), 90, 1},
@@ -448,7 +448,7 @@ GAS_STATIONS = {
 		accessible =  {1, FactionStaticId.VATOS},
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
-	},
+	},]]
 	{
 		name = "Grove Street",
 		stations = {
