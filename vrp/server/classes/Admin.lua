@@ -1056,12 +1056,13 @@ local tpTable = {
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
 		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
-		["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
+		--["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
+		["triaden"] =        {["pos"] = Vector3( 1907.526, 940.785, 10.776), ["typ"] = "Fraktionen"},
 	}
 
 	local x,y,z = 0,0,0
