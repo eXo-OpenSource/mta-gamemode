@@ -21,10 +21,10 @@ function Elevator.startDrive(elevatorId, stationId)
 end
 addEventHandler("elevatorStartDrive", root, Elevator.startDrive)
 
-function Elevator:constructor()
+function Elevator:constructor(checkFunction)
 	self.m_Stations = {}
 	self.m_Id = #Elevator.Map+1
-
+	self.Check = checkFunction
 	Elevator.Map[self.m_Id] = self
 end
 
@@ -52,13 +52,17 @@ function Elevator:onStationMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if not hitElement.vehicle then
 			if not hitElement.elevatorUsed then
-				if self.m_Stations[source.id].check then
-					self.m_Stations[source.id].check(hitElement)
+				if self.Check then
+					if self.Check(hitElement) then 
+						hitElement.curEl = self
+						local pVec = self.m_Stations[source.id].position
+						hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
+					end
+				else
+					hitElement.curEl = self
+					local pVec = self.m_Stations[source.id].position
+					hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
 				end
-
-				hitElement.curEl = self
-				local pVec = self.m_Stations[source.id].position
-				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
 			end
 		end
 	end
