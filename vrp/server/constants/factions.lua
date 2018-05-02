@@ -231,8 +231,8 @@ factionRankNames[11] = {
 [5] = "Intense Master",
 [6] = "Dragon Head"
 }
-factionColors[11] = {["r"] = 0,["g"] = 27,["b"] = 202}
-factionCarColors[11] = {["r"] = 0,["g"] =  27,["b"] = 202, ["r1"] = 0,["g1"] = 27,["b1"] = 202}
+factionColors[11] = {["r"] = 0,["g"] = 162,["b"] = 255}
+factionCarColors[11] = {["r"] = 0,["g"] =  0,["b"] = 20, ["r1"] = 0,["g1"] = 0,["b1"] = 20}
 factionSkins[11] = {[117]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true}
 factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.1)
