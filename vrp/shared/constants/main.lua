@@ -840,7 +840,8 @@ FactionStaticId = {
 	GROVE = 7,
 	BALLAS = 8,
 	OUTLAWS = 9,
-	VATOS = 10
+	VATOS = 10,
+	TRIAD = 11
 }
 
 FUEL_PRICE = { --price per liter

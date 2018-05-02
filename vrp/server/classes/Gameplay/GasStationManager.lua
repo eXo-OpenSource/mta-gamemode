@@ -476,4 +476,13 @@ GAS_STATIONS = {
 		nonInterior = true,
 		fuelTypes = {"petrol", "diesel"},
 	},
+	{
+		name = "Triaden",
+		stations = {
+			{Vector3(1913.78, 964.34, 11.22), 185, 1},
+		},
+		accessible =  {1, FactionStaticId.TRIAD},
+		nonInterior = true,
+		fuelTypes = {"petrol", "diesel"},
+	},
 }

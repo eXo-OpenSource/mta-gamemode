@@ -221,6 +221,24 @@ evilFactionInteriorEnter[10] =Vector3(2880.46, -2158.97, 4.26)
 factionWTDestination[10] = Vector3(2844.1006, -2147.5, 7)
 factionSpawnpoint[10] = {Vector3(2863.06, -2155.06, 4.80), 0, 0}
 
+-- ID 11 = Triads
+factionRankNames[11] = {
+[0] = "Blue Lantern",
+[1] = "49er",
+[2] = "Straw Sandal",
+[3] = "White Paper Fan",
+[4] = "Red Pole",
+[5] = "Intense Master",
+[6] = "Dragon Head"
+}
+factionColors[11] = {["r"] = 0,["g"] = 27,["b"] = 202}
+factionCarColors[11] = {["r"] = 0,["g"] =  27,["b"] = 202, ["r1"] = 0,["g1"] = 27,["b1"] = 202}
+factionSkins[11] = {[117]=true, [118]=true, [120]=true, [122]=true, [123]=true, [141]=true, [169]=true,[294]=true}
+factionWeapons[11] = {[8]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[11] = Vector3(1923.46, 959.96, 11.1)
+factionWTDestination[11] = Vector3( 1912.89, 935.21, 10.7)
+factionSpawnpoint[11] = {Vector3(1894.32, 965.32, 11.22), 0, 0}
+
 -- General:
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles
