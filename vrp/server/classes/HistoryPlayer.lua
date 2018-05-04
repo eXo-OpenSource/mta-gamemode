@@ -111,7 +111,11 @@ function HistoryPlayer:Event_PlayerHistory(userId)
             end
 
             if row.ElementType == "faction" then
-                playerFile[row.Id].ElementName = FactionManager:getSingleton().Map[row.ElementId].m_Name_Short -- This will break!! I'm sure!
+                if FactionManager:getSingleton().Map[row.ElementId] then
+                    playerFile[row.Id].ElementName = FactionManager:getSingleton().Map[row.ElementId].m_Name_Short -- This will break!! I'm sure!
+                else
+                    playerFile[row.Id].ElementName = "[deaktivierte Fraktion: "..(row.ElementId).."]"
+                end
             elseif row.ElementType == "company" then
                 playerFile[row.Id].ElementName = CompanyManager:getSingleton().Map[row.ElementId].m_ShortName -- This will break!! I'm sure!
             end

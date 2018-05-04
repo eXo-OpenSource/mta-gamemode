@@ -17,7 +17,7 @@ function VehicleBarrier:constructor(pos, rot, customOffset, customBarrierId, tim
 end
 
 function VehicleBarrier:Event_onColShapeHit(hitEle, matchingDimension, force)
-    if hitEle:getType() == "player" and matchingDimension then
+    if hitEle.getType and hitEle:getType() == "player" and matchingDimension then
         local player = hitEle
         if not force then
             --if player:isInVehicle() and player:getOccupiedVehicleSeat() ~= 0 then

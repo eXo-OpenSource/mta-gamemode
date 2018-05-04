@@ -839,7 +839,11 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				client:sendError(_("Dieses Fahrzeug ist nicht von deiner Fraktion!", client))
 				return
 			end
-			source:respawn()
+			if client:getFaction():getPlayerRank(client) >= 4 then
+				source:respawn()
+			else
+				client:sendError(_("Du bist nicht berechtigt!", client))
+			end
 			return
 		end
 	end
@@ -854,7 +858,11 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
 				return
 			end
-			source:respawn()
+			if client:getCompany():getPlayerRank(client) >= 3 then
+				source:respawn()
+			else
+				client:sendError(_("Du bist nicht berechtigt!", client))
+			end
 			return
 		end
 	end
