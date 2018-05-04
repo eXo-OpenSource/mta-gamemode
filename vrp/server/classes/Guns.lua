@@ -73,11 +73,13 @@ function Guns:Event_onTaser(target)
 	target.isTasered = true
 	setElementData(target, "isTasered", true)
 	setTimer ( function(target)
-		setElementData(target, "isTasered", false)
-		target:setAnimation()
-		target:setFrozen(false)
-		toggleAllControls(target,true, true, false)
-		target.isTasered = false
+		if target and isElement(target) then
+			setElementData(target, "isTasered", false)
+			target:setAnimation()
+			target:setFrozen(false)
+			toggleAllControls(target,true, true, false)
+			target.isTasered = false
+		end
 	end, 15000, 1, target )
 end
 

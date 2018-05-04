@@ -613,22 +613,24 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 						table.remove(target.spectBy, i)
 					end
 				end
-				admin:triggerEvent("stopCenteredFreecam")
-				admin:triggerEvent("stopWeaponRecorder")
-				self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
-				unbindKey(admin, "space", "down")
+				if admin and isElement(admin) then
+					admin:triggerEvent("stopCenteredFreecam")
+					admin:triggerEvent("stopWeaponRecorder")
+					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
+					unbindKey(admin, "space", "down")
+					admin:setFrozen(false)
+					if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
+					admin:setInterior(admin.m_PreSpectInt)
+					admin:setDimension(admin.m_PreSpectDim)
 
-				admin:setFrozen(false)
-				if admin:isInVehicle() then admin:getOccupiedVehicle():setFrozen(false) end
+					admin.m_IsSpecting = false
+					admin:setPrivateSync("isSpecting", false)
+				end
 
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				admin:setInterior(admin.m_PreSpectInt)
-				admin:setDimension(admin.m_PreSpectDim)
-
-				admin.m_IsSpecting = false
-				admin:setPrivateSync("isSpecting", false)
+				
 			end
 
 		if not target.spectBy then target.spectBy = {} end
@@ -737,6 +739,7 @@ function Admin:Event_offlineFunction(func, target, reason, duration, admin)
 							delete(changeTarget)
 							return
 						end
+						delete(changeTarget) -- delete it anyways if nickchange didn't succeed
 					else
 						admin:sendError(_("Der Spieler ist online!", admin))
 					end
@@ -1006,8 +1009,8 @@ local tpTable = {
         ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
         ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
         ["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
-        ["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
-        ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
+        --["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
+        --["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
         ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
 		["lsdocks"] =       {["pos"] = Vector3(2711.48, -2405.28, 13.49),	["typ"] = "Orte"},
@@ -1046,7 +1049,7 @@ local tpTable = {
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
         ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
-		--["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+		["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
 		["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
@@ -1057,12 +1060,13 @@ local tpTable = {
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
 		["vatos"] =         {["pos"] = Vector3(2828.332, -2111.481, 12.206),["typ"] = "Fraktionen"},
 		--["yakuza"] =        {["pos"] = Vector3(924.773, -1711.789, 13.547), ["typ"] = "Fraktionen"},
+		["triaden"] =        {["pos"] = Vector3( 1907.526, 940.785, 10.776), ["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-		["triaden"] =        {["pos"] = Vector3( 1907.526, 940.785, 10.776), ["typ"] = "Fraktionen"},
+		
 	}
 
 	local x,y,z = 0,0,0
