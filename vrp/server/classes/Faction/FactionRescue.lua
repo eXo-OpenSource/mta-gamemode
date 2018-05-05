@@ -33,17 +33,17 @@ function FactionRescue:constructor()
 
 	--Garage doors
 	self.m_Gates = {
-		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1125.7, -1381.9, 17), Vector3(180, -88, 270)), --one
-		Gate:new(3037, Vector3(1125.7, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1125.7, -1374.2, 17), Vector3(180, -88, 90)), --one back
+		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1125.7, -1381.9, 17), Vector3(0, 88, 90)), --one
+		Gate:new(3037, Vector3(1125.7, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1125.7, -1374.2, 17), Vector3(0, 88, 270)), --one back
 
-		Gate:new(3037, Vector3(1113.9, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1113.9, -1381.9, 17), Vector3(180, -88, 270)), --two
-		Gate:new(3037, Vector3(1113.9, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1113.9, -1374.2, 17), Vector3(180, -88, 90)), --two back
+		Gate:new(3037, Vector3(1113.9, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1113.9, -1381.9, 17), Vector3(0, 88, 90)), --two
+		Gate:new(3037, Vector3(1113.9, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1113.9, -1374.2, 17), Vector3(0, 88, 270)), --two back
 
-		Gate:new(3037, Vector3(1102.1, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1102.1, -1381.9, 17), Vector3(180, -88, 270)), --three
-		Gate:new(3037, Vector3(1102.1, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1102.1, -1374.2, 17), Vector3(180, -88, 90)), --three back
+		Gate:new(3037, Vector3(1102.1, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1102.1, -1381.9, 17), Vector3(0, 88, 90)), --three
+		Gate:new(3037, Vector3(1102.1, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1102.1, -1374.2, 17), Vector3(0, 88, 270)), --three back
 
-		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1090.3, -1381.9, 17), Vector3(180, -88, 270)), --four
-		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1090.3, -1374.2, 17), Vector3(180, -88, 90)), --four back
+		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1090.3, -1381.9, 17), Vector3(0, 88, 90)), --four
+		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1090.3, -1374.2, 17), Vector3(0, 88, 270)), --four back
 	}
 	
 	for i,v in pairs(self.m_Gates) do
