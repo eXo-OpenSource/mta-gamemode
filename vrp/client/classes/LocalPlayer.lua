@@ -60,6 +60,11 @@ function LocalPlayer:constructor()
 	--Alcoholsystem
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
+	
+	self:setPrivateSyncChangeHandler("SessionID", function()
+		outputDebug(self:getSessionId())
+		core:onWebSessionCreated()
+	end)
 
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end

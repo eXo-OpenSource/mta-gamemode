@@ -81,7 +81,7 @@ function Core:onDownloadComplete()
 	 
 end
 
-function Core:ready()
+function Core:ready() --onClientResourceStart
 	-- Tell the server that we're ready to accept additional data
 	triggerServerEvent("playerReady", root)
 
@@ -191,13 +191,9 @@ function Core:afterLogin()
 	end
 
 	-- Pre-Instantiate important GUIS
-	SelfGUI:new()
-	SelfGUI:getSingleton():close()
+	
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
-
-	Phone:new()
-	Phone:getSingleton():close()
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
@@ -232,6 +228,13 @@ function Core:afterLogin()
 		end
 	end
 
+end
+
+function Core:onWebSessionCreated() -- this gets called from LocalPlayer when the client recieves it's web session ID
+	SelfGUI:new()
+	SelfGUI:getSingleton():close()
+	Phone:new()
+	Phone:getSingleton():close()
 end
 
 function Core:destructor()
