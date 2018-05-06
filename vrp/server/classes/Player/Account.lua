@@ -171,7 +171,9 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	StatisticsLogger:addLogin( player, Username, "Login")
 	ClientStatistics:getSingleton():handle(player)
 
+	player:triggerEvent("loginsuccess", pwhash)
 	player:loadCharacter()
+	player:spawn()
 	
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
@@ -181,14 +183,6 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
 			player:setSessionId(jwtBase.."."..responseData)
-			setTimer(function()
-				if player and isElement(player) then
-					player:triggerEvent("loginsuccess", pwhash)
-					player:spawn()
-				else
-					outputDebugString("player element was not found on login, waiting for better solution!", 1)
-				end
-            end, 2000, 1) -- yeah its stupid but it works - blame me for that
 		end)
 	end
 end
