@@ -567,6 +567,7 @@ function FactionState:createEvidencePickup( x,y,z, int, dim )
 	local pickup = createPickup(x,y,z,3, 2061, 10)
 	setElementInterior(pickup, int)
 	setElementDimension(pickup, dim)
+	self.m_EvidenePickup = pickup
 	addEventHandler("onPickupUse", pickup, function( hitElement )
 		local dim = source:getDimension() == hitElement:getDimension()
 		if hitElement:getType() == "player" and dim then

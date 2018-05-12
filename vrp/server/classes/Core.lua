@@ -163,6 +163,7 @@ function Core:constructor()
 		-- Missions
 		MWeaponTruck:new()
 		MWeedTruck:new()
+		ExplosiveTruckManager:new()
 
 		--// Gangwar
 		Gangwar:new()
