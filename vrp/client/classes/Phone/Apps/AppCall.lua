@@ -17,9 +17,11 @@ function AppCall:constructor()
 
 	self.m_IncomingCallSMs = {}
 
-	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
+	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy", "callIncomingSM", "callRemoveSM"}
 
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
+	addEventHandler("callIncomingSM", root, bind(self.Event_callIncomingSM, self))
+	addEventHandler("callRemoveSM", root, bind(self.Event_callRemoveSM, self))
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
@@ -233,7 +235,6 @@ function AppCall:openIncoming(caller, voiceEnabled)
 end
 
 function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
-
 	self:playRingSound(true,true)
 	local shortMessage = ShortMessage:new(message.._"\nKlicke hier, um abzuheben.", title, tocolor(unpack(tblColor)), -1)
 	shortMessage.m_Callback = function()
@@ -244,9 +245,10 @@ function AppCall:showIncomingCallShortMessage(caller, voiceEnabled, message, tit
 		if shortMessage.m_CallData then
 			self.m_Caller = shortMessage.m_CallData.caller
 			self.m_VoiceEnabled = shortMessage.m_CallData.voiceEnabled
-			self:removeIncomingCallShortMessage(shortMessage.m_CallData.caller, localPlayer)
-			Phone:getSingleton():openApp(self)
-			self:ButtonAnswer_Click()
+			triggerServerEvent("callAnswerSpecial", localPlayer, shortMessage.m_CallData.caller, shortMessage.m_CallData.voiceEnabled)
+			--self:removeIncomingCallShortMessage(shortMessage.m_CallData.caller, localPlayer)
+			--Phone:getSingleton():openApp(self)
+			--self:ButtonAnswer_Click()
 			return "forceOpen"
 		end
 	end
@@ -418,6 +420,18 @@ function AppCall:Event_callIncoming(caller, voiceEnabled)
 	Phone:getSingleton():closeAllApps()
 	Phone:getSingleton():openApp(self)
 	self:openIncoming(caller, voiceEnabled)
+end
+
+
+function AppCall:Event_callIncomingSM(caller, voiceEnabled, message, title, tblColor)
+	outputDebug(caller, voiceEnabled, message, title, tblColor)
+	if not caller then return end
+	
+	self:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
+end
+
+function AppCall:Event_callRemoveSM(caller, callee)
+	self:removeIncomingCallShortMessage(caller, callee)
 end
 
 function AppCall:Event_callBusy(callee)

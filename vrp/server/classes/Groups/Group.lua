@@ -112,6 +112,10 @@ function Group:getType()
 	return self.m_Type
 end
 
+function Group:getColor()
+	return self:getType() == "Firma" and {0, 100, 250} or {150, 0, 0}
+end
+
 function Group:setType(type, player)
 	if type == "Firma" or type == "Gang" then
 		self.m_Type = type
@@ -401,7 +405,7 @@ function Group:setSetting(category, key, value, responsiblePlayer)
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
 	else
-		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!", responsiblePlayer, GroupRank.Leader, self:getShortName()))
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!", responsiblePlayer, GroupRank.Leader, self:getName()))
 	end
 end
 
@@ -502,9 +506,9 @@ function Group:sendMessage(text, r, g, b, ...)
 	end
 end
 
-function Group:sendShortMessage(text, ...)
+function Group:sendShortMessage(text, timeout)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(("%s"):format(text), self:getName(),...)
+		player:sendShortMessage(("%s"):format(text), self:getName(), self:getColor(), timeout)
 	end
 end
 
@@ -580,8 +584,8 @@ function Group:phoneCall(caller)
 		for k, player in ipairs(self:getOnlinePlayers()) do
 			if not player:getPhonePartner() then
 				if player ~= caller then
-					player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
-					bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+					local color = self:getColor()
+					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color)
 				end
 			end
 		end
@@ -591,35 +595,35 @@ function Group:phoneCall(caller)
 	end
 end
 
+
 function Group:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
+	end
+end
+
+function Group:phoneTakeOff(player, caller, voiceCall)
+	if player and caller then
+		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
+			if player.m_PhoneOn == false then
+				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+				return
+			end
+			if player:getPhonePartner() then
+				player:sendError(_("Du telefonierst bereits!", player))
+				return
+			end
+			caller:triggerEvent("callAnswer", player, voiceCall)
+			player:triggerEvent("callAnswer", caller, voiceCall)
+			caller:setPhonePartner(player)
+			player:setPhonePartner(caller)
+			for k, groupPlayer in ipairs(self:getOnlinePlayers()) do
+				triggerClientEvent(groupPlayer, "callRemoveSM", resourceRoot, caller, player)
+			end
 		end
 	end
 end
 
-function Group:phoneTakeOff(player, key, state, caller)
-	if player.m_PhoneOn == false then
-		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
-		return
-	end
-	if player:getPhonePartner() then
-		player:sendError(_("Du telefonierst bereits!", player))
-		return
-	end
-	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	caller:triggerEvent("callAnswer", player, false)
-	player:triggerEvent("callAnswer", caller, false)
-	caller:setPhonePartner(player)
-	player:setPhonePartner(caller)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-		end
-	end
-end
 
 function Group:openBankGui(player)
 	player:triggerEvent("bankAccountGUIShow", self:getName(), "groupDeposit", "groupWithdraw")
@@ -760,7 +764,7 @@ function Group:payDay()
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 
-	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
+	self:sendShortMessage(table.concat(output, "\n"), -1)
 
 	self:save()
 

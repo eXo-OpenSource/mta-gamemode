@@ -503,8 +503,8 @@ function Faction:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
 			if player ~= caller then
-				player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+				local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
 			end
 		end
 	end
@@ -512,14 +512,11 @@ end
 
 function Faction:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
-		end
+		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
 	end
 end
 
-function Faction:phoneTakeOff(player, key, state, caller)
+function Faction:phoneTakeOff(player, caller, voiceCall)
 	if player and caller then
 		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
 			if player.m_PhoneOn == false then
@@ -530,15 +527,12 @@ function Faction:phoneTakeOff(player, key, state, caller)
 				player:sendError(_("Du telefonierst bereits!", player))
 				return
 			end
-			self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 			caller:triggerEvent("callAnswer", player, voiceCall)
 			player:triggerEvent("callAnswer", caller, voiceCall)
 			caller:setPhonePartner(player)
 			player:setPhonePartner(caller)
-			for k, player in ipairs(self:getOnlinePlayers()) do
-				if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-					unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-				end
+			for k, factionPlayer in ipairs(self:getOnlinePlayers()) do
+				triggerClientEvent(factionPlayer, "callRemoveSM", resourceRoot, caller, player)
 			end
 		end
 	end

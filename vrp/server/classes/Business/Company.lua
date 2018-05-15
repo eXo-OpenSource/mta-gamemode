@@ -448,8 +448,8 @@ function Company:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
 			if player ~= caller then
-				player:sendShortMessage(_("Der Spieler %s ruft euer Unternehmen (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+				local color = {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b}
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
 			end
 		end
 	end
@@ -457,31 +457,28 @@ end
 
 function Company:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
-		end
+		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
 	end
 end
 
-function Company:phoneTakeOff(player, key, state, caller)
-	if player.m_PhoneOn == false then
-		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
-		return
-	end
-	if player:getPhonePartner() then
-		player:sendError(_("Du telefonierst bereits!", player))
-		return
-	end
-	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	self:addLog(player, "Telefonate", ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
-	caller:triggerEvent("callAnswer", player, voiceCall)
-	player:triggerEvent("callAnswer", caller, voiceCall)
-	caller:setPhonePartner(player)
-	player:setPhonePartner(caller)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-        if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+function Company:phoneTakeOff(player, caller, voiceCall)
+	if player and caller then
+		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
+			if player.m_PhoneOn == false then
+				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+				return
+			end
+			if player:getPhonePartner() then
+				player:sendError(_("Du telefonierst bereits!", player))
+				return
+			end
+			caller:triggerEvent("callAnswer", player, voiceCall)
+			player:triggerEvent("callAnswer", caller, voiceCall)
+			caller:setPhonePartner(player)
+			player:setPhonePartner(caller)
+			for k, companyPlayer in ipairs(self:getOnlinePlayers()) do
+				triggerClientEvent(companyPlayer, "callRemoveSM", resourceRoot, caller, player)
+			end
 		end
 	end
 end

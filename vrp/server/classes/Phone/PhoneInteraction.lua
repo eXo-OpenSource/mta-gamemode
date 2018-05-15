@@ -8,11 +8,12 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation", "requestEPTList"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callAnswerSpecial", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation", "requestEPTList"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))
+	addEventHandler("callAnswerSpecial", root, bind(self.callAnswerSpecial, self))
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
 	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
@@ -161,6 +162,17 @@ function PhoneInteraction:callStartSpecial(number)
 	end
 end
 
+function PhoneInteraction:callAnswerSpecial(caller, voiceEnabled)
+	if self.m_LastSpecialCallNumber[client] then
+		for index, instance in pairs(PhoneNumber.Map) do
+			if instance:getNumber() == self.m_LastSpecialCallNumber[client] then
+				self.m_LastSpecialCallNumber[client] = false
+				instance:getOwner(instance):phoneTakeOff(client, caller)
+			end
+		end
+	end
+end
+
 function PhoneInteraction:callAbbortSpecial()
 	if self.m_LastSpecialCallNumber[client] then
 		for index, instance in pairs(PhoneNumber.Map) do
@@ -189,6 +201,7 @@ function PhoneInteraction:callSendLocation()
 		local pos = client:getPosition()
 		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 10000, BLIP_COLOR_CONSTANTS.Red)
 		self.m_LocationBlips[client]:setDisplayText("Position von "..client:getName())
+		self.m_LocationBlips[client]:setZ(pos.z)
 	end
 end
 
