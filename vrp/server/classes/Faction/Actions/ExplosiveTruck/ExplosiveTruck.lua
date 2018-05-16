@@ -108,7 +108,7 @@ function ExplosiveTruck:deliverBox(button, state, player)
 
 	self:removeBox(player)
 
-	faction:getDepot():addItem(player, ExplosiveTruck.Item, ExplosiveTruck.ItemAmount)
+	faction:getDepot():addItem(player, ExplosiveTruck.Item, ExplosiveTruck.ItemAmount, true)
 	faction:sendSuccess("Es ist Sprengstoff ins Depot eingelagert worden!")
 
 	self:delete()

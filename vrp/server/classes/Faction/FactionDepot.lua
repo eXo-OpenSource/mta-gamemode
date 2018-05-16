@@ -211,12 +211,12 @@ end
 
 
 
-function Depot:addItem(player, item, amount)
+function Depot:addItem(player, item, amount, giveItemFromServer)
 	for i=1, 6 do
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
 		if self.m_Items[i]["Item"] == 0 then
 			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
-				if item == "Sprengstoff" or player:getInventory():removeItem(item, amount) then
+				if giveItemFromServer or player:getInventory():removeItem(item, amount) then
 					self.m_Items[i]["Item"] = item
 					self.m_Items[i]["Amount"] = amount
 					player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
