@@ -1,19 +1,3 @@
-local IMAGE_PATH = EASTEREGG_IMAGE_PATH
-local FILE_PATH = EASTEREGG_FILE_PATH
-local SFX_PATH = EASTEREGG_SFX_PATH
-local TICK_CAP = EASTEREGG_TICK_CAP
-local NATIVE_RATIO = EASTEREGG_NATIVE_RATIO
-local WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local WINDOW = EASTEREGG_WINDOW
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local RESOLUTION_RATIO = EASTEREGG_RESOLUTION_RATIO
-local KEY_MOVES = EASTEREGG_KEY_MOVES
-
 EasterEggArcade.Enemy = inherit(EasterEggArcade.Sprite)
 
 function EasterEggArcade.Enemy:constructor() 
@@ -26,7 +10,7 @@ end
 
 function EasterEggArcade.Enemy:addAnimationSprite() 
 	for i = 1, 15 do 
-		self:addSpriteIndex( IMAGE_PATH.."/sprites/sprite"..i..".png")
+		self:addSpriteIndex( EASTEREGG_IMAGE_PATH.."/sprites/sprite"..i..".png")
 	end
 end
 
@@ -92,7 +76,7 @@ function EasterEggArcade.Enemy:animation()
 	end
 	if EasterEggArcade.Game:getSingleton():getGameLogic():getAIState( "jump" ) then 
 		if self.m_LastJump+300 < getTickCount() then
-			if self.m_JumpCount and self.m_JumpCount <= JUMP_RATIO then
+			if self.m_JumpCount and self.m_JumpCount <= EASTEREGG_JUMP_RATIO then
 				self.m_JumpCount = self.m_JumpCount + 1 
 				idle = false
 				self:setJumpAnimation()
@@ -162,11 +146,11 @@ function EasterEggArcade.Enemy:move( vec )
 end
 
 function EasterEggArcade.Enemy:playRunAnimation( tick ) 
-	if tick  <  TICK_CAP*(1/4) then 
+	if tick  <  EASTEREGG_TICK_CAP*(1/4) then 
 		self:setSprite(6)
-	elseif tick >= TICK_CAP*(1/4) and tick < TICK_CAP*(2/4) then 
+	elseif tick >= EASTEREGG_TICK_CAP*(1/4) and tick < EASTEREGG_TICK_CAP*(2/4) then 
 		self:setSprite(7)
-	elseif tick >= TICK_CAP*(2/4) and tick < TICK_CAP*(3/4) then
+	elseif tick >= EASTEREGG_TICK_CAP*(2/4) and tick < EASTEREGG_TICK_CAP*(3/4) then
 		self:setSprite(8)
 	else 
 		self:setSprite(9)
@@ -174,15 +158,15 @@ function EasterEggArcade.Enemy:playRunAnimation( tick )
 end
 
 function EasterEggArcade.Enemy:playDeath(tick) 
-	if tick  <  TICK_CAP*(1/4) then 
+	if tick  <  EASTEREGG_TICK_CAP*(1/4) then 
 		self:setSprite(13)
 		self.m_Acceleration = {x=0, y=-20}
 		self:move({x=0;y=-20})
-	elseif tick >= TICK_CAP*(1/4) and tick < TICK_CAP*(2/4) then 
+	elseif tick >= EASTEREGG_TICK_CAP*(1/4) and tick < EASTEREGG_TICK_CAP*(2/4) then 
 		self:setSprite(13)
 		self.m_Acceleration = {x=0, y=-20}
 		self:move({x=0;y=-20})
-	elseif tick >= TICK_CAP*(2/4) and tick < TICK_CAP*(3/4) then
+	elseif tick >= EASTEREGG_TICK_CAP*(2/4) and tick < EASTEREGG_TICK_CAP*(3/4) then
 		self:setSprite(13)
 	else 
 		self:setSprite(14)
@@ -216,7 +200,7 @@ function EasterEggArcade.Enemy:setWinPose()
 end
 
 function EasterEggArcade.Enemy:playPunchAnimation( tick ) 
-	if tick < TICK_CAP*(1/2) then 
+	if tick < EASTEREGG_TICK_CAP*(1/2) then 
 		self:setSprite(3)
 	else 
 		self:setSprite(4)

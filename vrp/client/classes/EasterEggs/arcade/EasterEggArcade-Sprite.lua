@@ -1,19 +1,3 @@
-local IMAGE_PATH = EASTEREGG_IMAGE_PATH
-local FILE_PATH = EASTEREGG_FILE_PATH
-local SFX_PATH = EASTEREGG_SFX_PATH
-local TICK_CAP = EASTEREGG_TICK_CAP
-local NATIVE_RATIO = EASTEREGG_NATIVE_RATIO
-local WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local WINDOW = EASTEREGG_WINDOW
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local RESOLUTION_RATIO = EASTEREGG_RESOLUTION_RATIO
-local KEY_MOVES = EASTEREGG_KEY_MOVES
-
 EasterEggArcade.Sprite = inherit(Object) 
 
 function EasterEggArcade.Sprite:virtual_constructor( tiled ) 
@@ -54,7 +38,6 @@ end
 
 function EasterEggArcade.Sprite:setSprite( index ) 
 	if self.m_Sprites[index] then
-		self.m_MaterialX, self.m_MaterialY = dxGetMaterialSize( self.m_Sprites[index] )
 		self.m_Sprite = self.m_Sprites[index]
 	end
 end
@@ -110,7 +93,7 @@ function EasterEggArcade.Sprite:getPosition()
 end
 
 function EasterEggArcade.Sprite:setBound( width, height)
-	local aspect_width, aspect_height = WINDOW[2].x / NATIVE_RATIO.x, WINDOW[2].y / NATIVE_RATIO.y
+	local aspect_width, aspect_height = EASTEREGG_WINDOW[2].x / EASTEREGG_NATIVE_RATIO.x, EASTEREGG_WINDOW[2].y / EASTEREGG_NATIVE_RATIO.y
 	self.m_Bounds = { width*aspect_width, height *aspect_height}
 end
 

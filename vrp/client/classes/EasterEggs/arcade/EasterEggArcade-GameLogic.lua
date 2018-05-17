@@ -1,19 +1,3 @@
-local IMAGE_PATH = EASTEREGG_IMAGE_PATH
-local FILE_PATH = EASTEREGG_FILE_PATH
-local SFX_PATH = EASTEREGG_SFX_PATH
-local TICK_CAP = EASTEREGG_TICK_CAP
-local NATIVE_RATIO = EASTEREGG_NATIVE_RATIO
-local WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local WINDOW = EASTEREGG_WINDOW
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local RESOLUTION_RATIO = EASTEREGG_RESOLUTION_RATIO
-local KEY_MOVES = EASTEREGG_KEY_MOVES
-
 EasterEggArcade.GameLogic = inherit(Object)
 
 function EasterEggArcade.GameLogic:constructor()
@@ -21,7 +5,7 @@ function EasterEggArcade.GameLogic:constructor()
 	self.m_AnimationTick = 0
 	self.m_GameTick = bind(self.update, self)
 	self.m_GameKey = bind(self.key, self)
-	self.m_Render = EasterEggArcade.Render:new(WINDOW[1], WINDOW[2])
+	self.m_Render = EasterEggArcade.Render:new(EASTEREGG_WINDOW[1], EASTEREGG_WINDOW[2])
 	self.m_Sound = EasterEggArcade.Audio:new()
 	self.m_HUD = EasterEggArcade.HUD:new()
 	self.m_UpdateQueue = {}
@@ -51,16 +35,16 @@ function EasterEggArcade.GameLogic:destructor()
 end
 
 function EasterEggArcade.GameLogic:calculateSpawn()
-	local ratio = {x = WINDOW[2].x / NATIVE_RATIO.x , y = WINDOW[2].y / NATIVE_RATIO.y } 
-	local player = {x=WINDOW[1].x+((64)*ratio.x), y=(256)*ratio.y}
+	local ratio = {x = EASTEREGG_WINDOW[2].x / EASTEREGG_NATIVE_RATIO.x , y = EASTEREGG_WINDOW[2].y / EASTEREGG_NATIVE_RATIO.y } 
+	local player = {x=EASTEREGG_WINDOW[1].x+((64)*ratio.x), y=(256)*ratio.y}
 	local arena = {x=512*ratio.x, y=256*ratio.y}
-	local enemy = {x=WINDOW[1].x+(512+256)*ratio.x,y=256*ratio.y}
+	local enemy = {x=EASTEREGG_WINDOW[1].x+(512+256)*ratio.x,y=256*ratio.y}
 	return arena, player, enemy
 end
 
 function EasterEggArcade.GameLogic:setup()
 	local arena, player, enemy = self:calculateSpawn()
-	local ratio = {x = WINDOW[2].x / NATIVE_RATIO.x , y = WINDOW[2].y / NATIVE_RATIO.y } 
+	local ratio = {x = EASTEREGG_WINDOW[2].x / EASTEREGG_NATIVE_RATIO.x , y = EASTEREGG_WINDOW[2].y / EASTEREGG_NATIVE_RATIO.y } 
 	self.m_Arena = EasterEggArcade.Arena:new( self, self.m_Render, {x=512, y=256}, {x=1024, y=512})
 	self.m_HUD:setHealthPosition( {x=512+(64*ratio.x), y=256+16}, {x=256, y=128})
 	self.m_HUD:setEnemyPosition( {x=512+((512+128)*ratio.x), y=256+16}, {x=256, y=128})
@@ -121,8 +105,8 @@ function EasterEggArcade.GameLogic:update()
 		end
 	end
 	self.m_AnimationTick = self.m_AnimationTick + 1
-	if self.m_Tick >= TICK_CAP then self.m_Tick = 0 end
-	if self.m_AnimationTick > TICK_CAP then self.m_AnimationTick = 0 end
+	if self.m_Tick >= EASTEREGG_TICK_CAP then self.m_Tick = 0 end
+	if self.m_AnimationTick > EASTEREGG_TICK_CAP then self.m_AnimationTick = 0 end
 end
 
 function EasterEggArcade.GameLogic:checkVertical( obj, vec ) 
@@ -172,12 +156,12 @@ function EasterEggArcade.GameLogic:spawnProjectile()
 	local fWidth, fHeight = self.m_Enemy:getBound()
 	proj = EasterEggArcade.Projectile:new(false)
 	if px < fX then
-		proj:setDirection({x=-7*PROJECTILE_SPEED;y=0})
+		proj:setDirection({x=-7*EASTEREGG_PROJECTILE_SPEED;y=0})
 		proj:setMirrored(true)
 		proj:setPosition(fX, fY+randomHeight)
 		self.m_Enemy:setMirrored(true)
 	else 
-		proj:setDirection({x=7*PROJECTILE_SPEED;y=0})
+		proj:setDirection({x=7*EASTEREGG_PROJECTILE_SPEED;y=0})
 		proj:setMirrored(false)
 		self.m_Enemy:setMirrored(false)
 		proj:setPosition(fX+fWidth*0.4, fY+randomHeight)
@@ -248,13 +232,13 @@ end
 
 --[[
 function GameLogic:key( key, press)
-	if KEY_MOVES[key] then
-		if self.m_MoveState == KEY_MOVES[key] and not press then 
+	if EASTEREGG_KEY_MOVES[key] then
+		if self.m_MoveState == EASTEREGG_KEY_MOVES[key] and not press then 
 			self.m_MoveState = false
 			self.m_AnimationTick = 0
 		else 
 			if press then
-				self.m_MoveState = KEY_MOVES[key]
+				self.m_MoveState = EASTEREGG_KEY_MOVES[key]
 				self.m_AnimationTick = 0
 			end
 		end
@@ -291,14 +275,14 @@ function EasterEggArcade.GameLogic:changeAIDirection()
 end
 
 function EasterEggArcade.GameLogic:key( key, press)
-	if KEY_MOVES[key] then
-		if not self.m_PressedKeys[KEY_MOVES[key]] and press then 
+	if EASTEREGG_KEY_MOVES[key] then
+		if not self.m_PressedKeys[EASTEREGG_KEY_MOVES[key]] and press then 
 			self.m_AnimationTick = 0
 		end
-		if self.m_PressedKeys[KEY_MOVES[key]] and not press then 
+		if self.m_PressedKeys[EASTEREGG_KEY_MOVES[key]] and not press then 
 			self.m_AnimationTick = 0
 		end
-		self.m_PressedKeys[KEY_MOVES[key]] = press
+		self.m_PressedKeys[EASTEREGG_KEY_MOVES[key]] = press
 	end
 	if key == "enter" and not press then 
 		EasterEggArcade.Game:getSingleton():stop()
