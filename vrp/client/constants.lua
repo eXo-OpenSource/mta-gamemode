@@ -671,3 +671,37 @@ FILE_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 256
 HTTP_TEXTURE_DEFAULT_STATE = dxGetStatus()["VideoCardRAM"] >= 512 
 
 CUSTOM_RINGSOUND_PATH = "files/audio/Ringtones/custom.mp3"
+
+--[[ EASTEREGG-ARCADE ]]
+EASTEREGG_IMAGE_PATH = ":"..getResourceName(getThisResource()).."/files/images/arcade-game/"
+EASTEREGG_FILE_PATH = ":"..getResourceName(getThisResource()).."/files/fonts/"
+EASTEREGG_SFX_PATH = ":"..getResourceName(getThisResource()).."/files/audio/arcade-sfx/"
+EASTEREGG_TICK_CAP = 1000/ 59.99
+EASTEREGG_NATIVE_RATIO = {x=1024;y=512}
+EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = guiGetScreenSize()
+EASTEREGG_FONT_SCALE = 1
+EASTEREGG_JUMP_RATIO = 16 
+EASTEREGG_PROJECTILE_SPEED = 3
+if EASTEREGG_WINDOW_WIDTH >= 1660 then
+	EASTEREGG_FONT_SCALE = 1
+	EASTEREGG_WINDOW = {{x=512;y=256}, {x=1024, y=512}}
+	EASTEREGG_JUMP_RATIO = 16
+	EASTEREGG_PROJECTILE_SPEED = 1
+else 
+	EASTEREGG_FONT_SCALE = 0.75
+	EASTEREGG_WINDOW = {{x=512;y=256}, {x=512, y=256}}
+	EASTEREGG_JUMP_RATIO = 8
+	EASTEREGG_PROJECTILE_SPEED = 0.5
+end
+EASTEREGG_RESOLUTION_RATIO = (EASTEREGG_WINDOW[2].x * EASTEREGG_WINDOW[2].y )  /  (EASTEREGG_NATIVE_RATIO.x*EASTEREGG_NATIVE_RATIO.y) 
+EASTEREGG_KEY_MOVES = 
+{
+	["a"] = "left", 
+	["d"] = "right", 
+	["s"] = "crouch", 
+	["w"] = "jump",
+	["space"] = "punch", 
+	["<"] = "strafe_left",
+	[">"] = "strafe_right", 
+}
+--]]

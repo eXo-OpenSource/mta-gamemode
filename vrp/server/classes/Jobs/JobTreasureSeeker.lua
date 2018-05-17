@@ -103,7 +103,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 			else
 				hitElement:sendError(_("Du bist im falschen Fahrzeug!", hitElement))
 			end
-		end
+			end
 	end
 end
 

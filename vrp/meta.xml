@@ -563,6 +563,17 @@
 	<script src="client/classes/EasterEggs/DrWho.lua" type="client"/>"
 	<script src="client/classes/EasterEggs/PewPew.lua" type="client"/>"
 
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Audio.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-HUD.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Sprite.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Render.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Arena.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Enemy.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Player.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-GameLogic.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Projectile.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Game.lua" type="client" />
+	
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
@@ -1046,7 +1057,7 @@
 	<vrpfile src="files/audio/Ware/done.mp3" />
 	<vrpfile src="files/audio/Ware/fail.mp3" />
 	<vrpfile src="files/fonts/SuperMario256.ttf" />
-
+	<vrpfile src="files/fonts/BitBold.ttf" />
 	<vrpfile src="files/audio/Items/keypad_success.ogg" />
 	<vrpfile src="files/audio/Items/keypad_access.ogg" />
 	<vrpfile src="files/audio/Items/keypad_error.ogg" />
@@ -1073,7 +1084,8 @@
 
 	<!-- font file -->
 	<file src="files/fonts/Chapaza.ttf" />
-
+	
+	
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
@@ -1761,6 +1773,38 @@
 	<vrpfile src="files/images/TurtleRace/Turtle.png"/>
 	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
+		
+	<file src="files/images/arcade-game/arena_bg.jpg" />
+	<vrpfile src="files/images/arcade-game/ground.jpg" />
+	<vrpfile src="files/images/arcade-game/overlay.png" />
+	
+	<vrpfile src="files/images/arcade-game/key.png" />
+	<vrpfile src="files/images/arcade-game/space.png" />
+	
+	<vrpfile src="files/images/arcade-game/health_empty.png" />
+	<vrpfile src="files/images/arcade-game/health_empty_enemy.png" />
+	<vrpfile src="files/images/arcade-game/health_full.png" />
+	
+	<vrpfile src="files/images/arcade-game/sprites/sprite1.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite2.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite3.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite4.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite5.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite6.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite7.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite8.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite9.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite10.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite11.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite12.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite13.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite14.png" />
+	<vrpfile src="files/images/arcade-game/sprites/sprite15.png" />
+	
+	<vrpfile src="files/images/arcade-game/sprites/flame1.png" />
+	<vrpfile src="files/images/arcade-game/sprites/flame2.png" />
+	<vrpfile src="files/images/arcade-game/sprites/flame3.png" />
+	
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/gasmask.ogg"/>
@@ -1798,6 +1842,13 @@
 	<vrpfile src="files/audio/jobs/pickaxe3.mp3"/>
 	<vrpfile src="files/audio/jobs/pickaxe4.mp3"/>
 
+	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/gameover.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/win.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/fire.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/explode.ogg" />	
+	<vrpfile src="files/audio/arcade-sfx/hit.ogg" />	
+	
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton2.mp3"/>
