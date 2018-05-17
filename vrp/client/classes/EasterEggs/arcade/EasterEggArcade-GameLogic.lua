@@ -2,6 +2,8 @@ EasterEggArcade.GameLogic = inherit(Object)
 
 function EasterEggArcade.GameLogic:constructor()
 	self.m_Tick = 0
+	self.m_LastUpdated = getTickCount()
+	self.m_UpdateTick = 0
 	self.m_AnimationTick = 0
 	self.m_GameTick = bind(self.update, self)
 	self.m_GameKey = bind(self.key, self)
@@ -93,16 +95,21 @@ end
 
 function EasterEggArcade.GameLogic:update()
 	local x,y
-	self.m_Tick = self.m_Tick + 1 
-	for i = 1, #self.m_UpdateQueue do 
-		if self.m_UpdateQueue[i] then
-			if self.m_UpdateQueue[i].update then 
-				if self.m_UpdateQueue[i] == self.m_Player then
-					x,y = self.m_Player:getPosition()
+	local now = getTickCount()
+	if (now) > EASTEREGG_SLEEP_UPDATETICK + self.m_LastUpdated then
+		self.m_UpdateTick = self.m_UpdateTick + 1
+		self.m_Tick = self.m_Tick + 1 
+		for i = 1, #self.m_UpdateQueue do 
+			if self.m_UpdateQueue[i] then
+				if self.m_UpdateQueue[i].update then 
+					if self.m_UpdateQueue[i] == self.m_Player then
+						x,y = self.m_Player:getPosition()
+					end
+					self.m_UpdateQueue[i]:update( self.m_Tick )
 				end
-				self.m_UpdateQueue[i]:update( self.m_Tick )
 			end
 		end
+		self.m_LastUpdated = now
 	end
 	self.m_AnimationTick = self.m_AnimationTick + 1
 	if self.m_Tick >= EASTEREGG_TICK_CAP then self.m_Tick = 0 end
@@ -152,7 +159,7 @@ function EasterEggArcade.GameLogic:spawnProjectile()
 	local px, py = self.m_Player:getPosition()
 	local width, height = self.m_Player:getBound()
 	local fX, fY  = self.m_Enemy:getPosition()
-	local randomHeight = math.random(0, height)
+	local randomHeight = math.random(0, height*0.6)
 	local fWidth, fHeight = self.m_Enemy:getBound()
 	proj = EasterEggArcade.Projectile:new(false)
 	if px < fX then

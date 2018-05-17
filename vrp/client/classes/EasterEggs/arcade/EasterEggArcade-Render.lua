@@ -4,13 +4,14 @@ function EasterEggArcade.Render:constructor( start, bound )
 	self.m_Start = start 
 	self.m_Bound = bound
 	self.m_RenderBind = bind(self.render, self)
-	self.m_RenderTarget = dxCreateRenderTarget(bound.x, bound.y, true)
+	self.m_RenderTarget = dxCreateRenderTarget(bound.x, bound.y, false)
 	self.m_RenderQueue = {}
 	addEventHandler("onClientRender", root, self.m_RenderBind)
 end
 
 
 function EasterEggArcade.Render:destructor()
+	self.m_RenderTarget:destroy()
 	removeEventHandler("onClientRender", root, self.m_RenderBind)
 end
 
