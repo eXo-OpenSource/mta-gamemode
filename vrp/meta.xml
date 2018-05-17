@@ -1777,7 +1777,7 @@
 	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
 		
-	<file src="files/images/arcade-game/arena_bg.jpg" />
+	<vrpfile src="files/images/arcade-game/arena.jpg" />
 	<vrpfile src="files/images/arcade-game/ground.jpg" />
 	<vrpfile src="files/images/arcade-game/overlay.png" />
 	

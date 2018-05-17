@@ -1,26 +1,10 @@
-local IMAGE_PATH = EASTEREGG_IMAGE_PATH
-local FILE_PATH = EASTEREGG_FILE_PATH
-local SFX_PATH = EASTEREGG_SFX_PATH
-local TICK_CAP = EASTEREGG_TICK_CAP
-local NATIVE_RATIO = EASTEREGG_NATIVE_RATIO
-local WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local WINDOW = EASTEREGG_WINDOW
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local RESOLUTION_RATIO = EASTEREGG_RESOLUTION_RATIO
-local KEY_MOVES = EASTEREGG_KEY_MOVES
-
 EasterEggArcade.Render = inherit(Object) 
 
 function EasterEggArcade.Render:constructor( start, bound )
 	self.m_Start = start 
 	self.m_Bound = bound
 	self.m_RenderBind = bind(self.render, self)
-	self.m_RenderTarget = dxCreateRenderTarget(bound.x, bound.y)
+	self.m_RenderTarget = dxCreateRenderTarget(bound.x, bound.y, true)
 	self.m_RenderQueue = {}
 	addEventHandler("onClientRender", root, self.m_RenderBind)
 end
@@ -58,8 +42,8 @@ function EasterEggArcade.Render:draw( obj )
 		width, height = obj:getBound()
 		mat = obj:getMaterial()
 		if x and y and width and height then
-			local w  = WINDOW[1]
-			local b = WINDOW[2]
+			local w  = EASTEREGG_WINDOW[1]
+			local b = EASTEREGG_WINDOW[2]
 			obj:draw(x-w.x, y-w.y, width, height, mat, obj:getTiled())
 		end
 	end

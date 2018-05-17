@@ -1,19 +1,3 @@
-local IMAGE_PATH = EASTEREGG_IMAGE_PATH
-local FILE_PATH = EASTEREGG_FILE_PATH
-local SFX_PATH = EASTEREGG_SFX_PATH
-local TICK_CAP = EASTEREGG_TICK_CAP
-local NATIVE_RATIO = EASTEREGG_NATIVE_RATIO
-local WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT = EASTEREGG_WINDOW_WIDTH, EASTEREGG_WINDOW_HEIGHT
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local FONT_SCALE = EASTEREGG_FONT_SCALE
-local WINDOW = EASTEREGG_WINDOW
-local JUMP_RATIO = EASTEREGG_JUMP_RATIO
-local PROJECTILE_SPEED = EASTEREGG_PROJECTILE_SPEED
-local RESOLUTION_RATIO = EASTEREGG_RESOLUTION_RATIO
-local KEY_MOVES = EASTEREGG_KEY_MOVES
-
 EasterEggArcade.Projectile = inherit(EasterEggArcade.Sprite)
 
 function EasterEggArcade.Projectile:constructor() 
@@ -32,7 +16,7 @@ end
 
 function EasterEggArcade.Projectile:addAnimationSprite() 
 	for i = 1, 3 do 
-		self:addSpriteIndex( IMAGE_PATH.."/sprites/flame"..i..".png")
+		self:addSpriteIndex( EASTEREGG_IMAGE_PATH.."/sprites/flame"..i..".png")
 	end
 end
 
@@ -160,11 +144,11 @@ function EasterEggArcade.Projectile:move( )
 end
 
 function EasterEggArcade.Projectile:animation(tick) 
-	if tick  <  TICK_CAP*(1/3) then 
+	if tick  <  EASTEREGG_TICK_CAP*(1/3) then 
 		self:setSprite(1)
-	elseif tick >= TICK_CAP*(1/3) and tick < TICK_CAP*(2/3) then 
+	elseif tick >= EASTEREGG_TICK_CAP*(1/3) and tick < EASTEREGG_TICK_CAP*(2/3) then 
 		self:setSprite(2)
-	elseif tick >= TICK_CAP*(1/2) and tick < TICK_CAP then
+	elseif tick >= EASTEREGG_TICK_CAP*(1/2) and tick < EASTEREGG_TICK_CAP then
 		self:setSprite(3)
 	end
 end
