@@ -80,8 +80,8 @@ function EasterEggArcade.HUD:drawEnemyBar()
 end
 
 function EasterEggArcade.HUD:drawKeyInfo()
-	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.34, self.m_Bound.x*0.4, self.m_Bound.x*0.2, EASTEREGG_IMAGE_PATH.."/key.png" )
-	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.34+self.m_Bound.x*0.2, self.m_Bound.x*0.4, self.m_Bound.x*0.1, EASTEREGG_IMAGE_PATH.."/space.png" )
+	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.14, self.m_Bound.x*0.4, self.m_Bound.x*0.2, EASTEREGG_IMAGE_PATH.."/key.png" )
+	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.14+self.m_Bound.x*0.2, self.m_Bound.x*0.4, self.m_Bound.x*0.1, EASTEREGG_IMAGE_PATH.."/space.png" )
 end
 
 function EasterEggArcade.HUD:drawColorChange()
@@ -177,11 +177,12 @@ end
 function EasterEggArcade.HUD:drawOutro()
 	local now = getTickCount()
 	prog = (now - self.m_OutroTick) / 30000
-	self.m_Scroll = interpolateBetween(EASTEREGG_WINDOW[2].y+((self.m_FontHeight*2.5)*5)+self.m_FontBigHeight, 0, 0, -2*EASTEREGG_WINDOW[2].y, 0, 0, prog, "Linear")
+	self.m_Scroll = interpolateBetween(EASTEREGG_WINDOW[2].y+((self.m_FontHeight*2.5)*6)+self.m_FontBigHeight, 0, 0, -2*EASTEREGG_WINDOW[2].y, 0, 0, prog, "Linear")
 	dxDrawText("Lufia 2 - The very end (8Bit)", 0, self.m_Scroll, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("Running in the 90s (8Bit)", 0, self.m_Scroll-(self.m_FontHeight*2.5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("Lux Aeterna (8Bit)", 0, self.m_Scroll-((self.m_FontHeight*2.5)*2), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("MUSIC:", 0, self.m_Scroll-((self.m_FontHeight*2.5)*3), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("Strobe - 2018", 0, self.m_Scroll-((self.m_FontHeight*2.5)*4), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("Braboy", 0, self.m_Scroll-((self.m_FontHeight*2.5)*5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_FontBig, "center", "center")
+	dxDrawText("GTA: Vice City Theme (8Bit)", 0, self.m_Scroll-(self.m_FontHeight*2.5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Running in the 90s (8Bit)", 0, self.m_Scroll-((self.m_FontHeight*2.5)*2), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Lux Aeterna (8Bit)", 0, self.m_Scroll-((self.m_FontHeight*2.5)*3), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("MUSIC:", 0, self.m_Scroll-((self.m_FontHeight*2.5)*4), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Strobe - 2018", 0, self.m_Scroll-((self.m_FontHeight*2.5)*5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Braboy", 0, self.m_Scroll-((self.m_FontHeight*2.5)*6), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_FontBig, "center", "center")
 end

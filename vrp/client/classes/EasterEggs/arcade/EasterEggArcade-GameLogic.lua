@@ -56,11 +56,11 @@ function EasterEggArcade.GameLogic:calculateSpawn()
 	local player = {x=EASTEREGG_WINDOW[1].x+((64)*ratio.x), y=(256)*ratio.y}
 	local arena = {x=512*ratio.x, y=256*ratio.y}
 	local enemy = {x=EASTEREGG_WINDOW[1].x+(512+256)*ratio.x,y=256*ratio.y}
-	local dancer = {x=EASTEREGG_WINDOW[1].x+(512+128)*ratio.x,y=256*ratio.y}
-	local dancer2 = {x=EASTEREGG_WINDOW[1].x+(128)*ratio.x,y=256*ratio.y}
-	local dancer3 = {x=EASTEREGG_WINDOW[1].x+(512)*ratio.x,y=256*ratio.y}
-	local dancer4 = {x=EASTEREGG_WINDOW[1].x+(512+256+32)*ratio.x,y=256*ratio.y}
-	local dancer5 = {x=EASTEREGG_WINDOW[1].x+(512+256)*ratio.x,y=256*ratio.y}
+	local dancer = {x=EASTEREGG_WINDOW[1].x+(512+128)*ratio.x,y=512+128*ratio.y}
+	local dancer2 = {x=EASTEREGG_WINDOW[1].x+(128)*ratio.x,y=512+128*ratio.y}
+	local dancer3 = {x=EASTEREGG_WINDOW[1].x+(512)*ratio.x,y=512+128*ratio.y}
+	local dancer4 = {x=EASTEREGG_WINDOW[1].x+(512+256+32)*ratio.x,y=512+128*ratio.y}
+	local dancer5 = {x=EASTEREGG_WINDOW[1].x+(512+256)*ratio.x,y=512+128*ratio.y}
 	local trophy = {x=EASTEREGG_WINDOW[1].x+(512+64)*ratio.x,y=256*ratio.y}
 	return arena, player, enemy, dancer, dancer2, dancer3, dancer4, dancer5, trophy
 end
@@ -137,6 +137,7 @@ function EasterEggArcade.GameLogic:setupOutro()
 	self.m_DanceTimer = setTimer(self.m_DanceBind, 1000, 0)
 	self:addToUpdateQueue( self.m_Player )
 	self.m_Render:addToQueue( self.m_Player )
+	self.m_Sound:playWin()
 end
 
 
@@ -302,6 +303,7 @@ function EasterEggArcade.GameLogic:onCollect( obj )
 		self.m_Prize:setColor(tocolor(0,0,0,0))
 		triggerServerEvent("onPlayerFinishArcadeEasterEgg", localPlayer)
 		EasterEggArcade.Game:getSingleton():setLevel(1)
+		self.m_Sound:playCollect()
 		self.m_HUD:startOutro()
 	end
 end

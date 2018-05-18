@@ -23,7 +23,7 @@ end
 
 function EasterEggArcade.Sprite:addSpriteIndex( path, dxType ) 
 	if path then 
-		local material = dxCreateTexture( path , dxType or "argb") 
+		local material = dxCreateTexture( path , dxType or "argb", true) 
 		if material then
 			if not self.m_Sprites then self.m_Sprites = {} end
 			table.insert( self.m_Sprites, material)

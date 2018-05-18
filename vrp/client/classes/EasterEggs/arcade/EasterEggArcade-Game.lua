@@ -7,8 +7,8 @@ local GAME_LEVELS =
 	{"III", "Fresher", 200,  tocolor(0, 255, 255, 255)},
 	{"IV", "Larry", (9*6),  tocolor(255, 255, 255, 255), true},
 	{"V", "Tony Chao", 300,  tocolor(255, 0, 100, 255)},
-	{"VI", "Master SDM", 400,  tocolor(255, 0, 0, 255)},
-	{"VII", "Finale Form Str0", 97,  tocolor(255, 255, 255, 255), true},
+	{"VI", "Master SDM", 500,  tocolor(255, 0, 0, 255)},
+	{"VII", "Finale Form Str0", 140,  tocolor(255, 255, 255, 255), true},
 }
 
 function EasterEggArcade.Game:constructor()
