@@ -14,7 +14,11 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
-
+	self.m_EasterEggFont = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
+	self.m_EasterEggRenderFunction = function() 
+		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, self.m_EasterEggFont, "center", "center") 
+		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, self.m_EasterEggFont, "center", "center")
+	end
 
 	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
 
@@ -119,6 +123,21 @@ function AppCall:addNumpadButton(text, column, row)
 end
 
 function AppCall:ButtonCallNumpad_Click()
+	if self.m_Edit:getText() then
+		if self.m_Edit:getText():lower() ==  ("IamTheKidYouKnowWhatIMean"):lower() then
+			if isTimer(self.m_ArcadeGameTimer) then killTimer(self.m_ArcadeGameTimer) end
+			removeEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )
+			addEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )
+			self.m_ArcadeGameTimer = setTimer(function()
+				EasterEggArcade.Game:getSingleton():restart()
+				removeEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )
+			end, 3000, 1)
+			Phone:getSingleton():close()
+			playSound(EASTEREGG_SFX_PATH.."gameboy_start.ogg", false)
+			return
+		end
+	end
+	
 	local number = tonumber(self.m_Edit:getText())
 	if not number or string.len(number) < 3 then
 		ErrorBox:new(_"Ungültige Telefonnummer eingegeben!")

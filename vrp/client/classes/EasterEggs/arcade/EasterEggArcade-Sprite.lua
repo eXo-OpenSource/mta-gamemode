@@ -21,9 +21,9 @@ function EasterEggArcade.Sprite:virtual_destructor()
 	end
 end
 
-function EasterEggArcade.Sprite:addSpriteIndex( path ) 
+function EasterEggArcade.Sprite:addSpriteIndex( path, dxType ) 
 	if path then 
-		local material = dxCreateTexture( path , "dxt1") 
+		local material = dxCreateTexture( path , dxType or "argb") 
 		if material then
 			if not self.m_Sprites then self.m_Sprites = {} end
 			table.insert( self.m_Sprites, material)
@@ -99,7 +99,7 @@ end
 
 function EasterEggArcade.Sprite:draw( x, y, width, height, material, tiled) 
 	if tiled then 
-		dxDrawImageSection(x, y, width, height, 0, 0, width, height, material)
+		dxDrawImageSection(x, y, width, height, 0, 0, width, height, material, 0, 0, 0, self.m_Color)
 	else 
 		if self:getMirrored() then
 			if material then

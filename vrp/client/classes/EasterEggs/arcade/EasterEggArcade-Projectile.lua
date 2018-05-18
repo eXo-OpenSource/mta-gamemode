@@ -16,7 +16,7 @@ end
 
 function EasterEggArcade.Projectile:addAnimationSprite() 
 	for i = 1, 3 do 
-		self:addSpriteIndex( EASTEREGG_IMAGE_PATH.."/sprites/flame"..i..".png")
+		self:addSpriteIndex( EASTEREGG_IMAGE_PATH.."/sprites/flame"..i..".png", "argb")
 	end
 end
 
@@ -89,10 +89,6 @@ function EasterEggArcade.Projectile:checkPlayer()
 	x= x+width*0.2
 	px = px+pWidth*0.3
 	pWidth = pWidth*0.4
-	if DEBUG then
-		dxDrawRectangle(x, y, width, height, tocolor(200, 200, 0, 100),true)
-		dxDrawRectangle(px, py, pWidth, pHeight, tocolor(0, 200, 0, 100),true)
-	end
 	local checkCollision = false
 	if py+crouchOffset<y+height and py+pHeight > y then 
 		checkCollision = true
@@ -106,29 +102,28 @@ function EasterEggArcade.Projectile:checkPlayer()
 end
 
 function EasterEggArcade.Projectile:checkEnemy() 
-	local px, py = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getPosition()
-	local pWidth, pHeight = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getBound()
-	local x,y = self:getPosition()
-	local crouchOffset = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getCrouched() and pHeight*1/2 or 0
-	local width, height = self:getBound()
-	height = height*0.4
-	y = y+height*0.6
-	width=width*0.6
-	x= x+width*0.2
-	px = px+pWidth*0.3
-	pWidth = pWidth*0.4
-	if DEBUG then
-		dxDrawRectangle(x, y, width, height, tocolor(0, 200, 0, 100),true)
-		dxDrawRectangle(px, py, pWidth, pHeight, tocolor(200, 0, 0, 100),true)
-	end
-	local checkCollision = false
-	if py+crouchOffset<y+height and py+pHeight > y then 
-		checkCollision = true
-	end
-	if checkCollision then
-		if x < px+pWidth and x+width > px  then 
-			return true
+	if EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy then
+		local px, py = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getPosition()
+		local pWidth, pHeight = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getBound()
+		local x,y = self:getPosition()
+		local crouchOffset = EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getCrouched() and pHeight*1/2 or 0
+		local width, height = self:getBound()
+		height = height*0.4
+		y = y+height*0.6
+		width=width*0.6
+		x= x+width*0.2
+		px = px+pWidth*0.3
+		pWidth = pWidth*0.4
+		local checkCollision = false
+		if py+crouchOffset<y+height and py+pHeight > y then 
+			checkCollision = true
 		end
+		if checkCollision then
+			if x < px+pWidth and x+width > px  then 
+				return true
+			end
+		end
+		return false
 	end
 	return false
 end

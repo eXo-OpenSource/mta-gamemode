@@ -65,6 +65,10 @@ function EasterEggArcade.Audio:playWin()
 	end
 end
 
-function EasterEggArcade.Audio:playMusic() 
-	self.m_Music = playSound(EASTEREGG_SFX_PATH.."/lufia.ogg", true)
+function EasterEggArcade.Audio:playMusic(alternate)
+	if not alternate then
+		self.m_Music = playSound(EASTEREGG_SFX_PATH.."/lufia.ogg", true)
+	else 
+		self.m_Music = playSound(EASTEREGG_SFX_PATH.."/troll.ogg", true)
+	end
 end

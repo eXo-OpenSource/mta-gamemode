@@ -1,13 +1,20 @@
 EasterEggArcade.HUD = inherit(Object) 
 
-function EasterEggArcade.HUD:constructor( )
+function EasterEggArcade.HUD:constructor(level, enemyName, isOutro )
 	self.m_OriginalEASTEREGG_WINDOW = {}
 	self.m_OriginalEASTEREGG_WINDOW.x = EASTEREGG_WINDOW[1].x
 	self.m_OriginalEASTEREGG_WINDOW.y = EASTEREGG_WINDOW[1].y
+	self.m_Level = level 
+	self.m_Enemy = enemyName 
+	self.m_OutroLevel = isOutro
+	self.m_LevelDisplay = getTickCount()
 	self.m_Font = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 14*EASTEREGG_FONT_SCALE)
 	self.m_FontBig = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
+	self.m_FontHeight = dxGetFontHeight(1, self.m_Font)
+	self.m_FontBigHeight = dxGetFontHeight(1, self.m_FontBig)
 	self.m_Render = bind(self.render, self)
 	self.m_DamageQueue = { }
+	self.m_ColorTick = getTickCount()
 end
 
 function EasterEggArcade.HUD:destructor()
@@ -36,7 +43,9 @@ function EasterEggArcade.HUD:render()
 	if self.m_EnemyPos and self.m_EnemyBound then
 		self:drawEnemyBar() 
 	end
-	self:drawKeyInfo()
+	if self.m_Pos then
+		self:drawKeyInfo()
+	end
 	self:drawDamage()
 	self:drawShake()
 	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():isGameOver() then 
@@ -44,6 +53,11 @@ function EasterEggArcade.HUD:render()
 	end
 	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():isGameWon() then 
 		self:drawWin()
+	end
+	self:drawLevelInfo()
+	self:drawColorChange()
+	if self.m_Outro then 
+		self:drawOutro()
 	end
 end
 
@@ -61,13 +75,22 @@ function EasterEggArcade.HUD:drawEnemyBar()
 	dxDrawRectangle(self.m_EnemyPos.x+self.m_EnemyBound.x*0.2, self.m_EnemyPos.y+self.m_EnemyBound.y*0.44, healthWidth, self.m_EnemyBound.y*0.25, tocolor(0, 0, 200, 255))
 	dxDrawImage( self.m_EnemyPos.x, self.m_EnemyPos.y, self.m_EnemyBound.x, self.m_EnemyBound.y, EASTEREGG_IMAGE_PATH.."/health_empty_enemy.png")
 	dxDrawText(EasterEggArcade.Game:getSingleton():getGameLogic().m_Enemy:getHealth(), self.m_EnemyPos.x+self.m_EnemyBound.x*0.2, self.m_EnemyPos.y+self.m_EnemyBound.y*0.45, self.m_EnemyPos.x+self.m_EnemyBound.x*0.2 + self.m_EnemyBound.x*0.65, self.m_Pos.y+self.m_EnemyBound.y*0.44 + self.m_EnemyBound.y*0.23, tocolor(11, 103, 215, 255), 1, self.m_Font, "center", "center")
-	dxDrawText("Strobe", self.m_EnemyPos.x+self.m_EnemyBound.x*0.1, (self.m_EnemyPos.y+self.m_EnemyBound.y*0.5 + self.m_EnemyBound.y*0.27)+2, self.m_EnemyPos.x+self.m_EnemyBound.x*0.2 + self.m_EnemyBound.x*0.65, self.m_EnemyPos.y+self.m_EnemyBound.y*0.7, tocolor(0, 0, 0, 255), 1, self.m_Font, "right", "top")
-	dxDrawText("Strobe", self.m_EnemyPos.x+self.m_EnemyBound.x*0.1, self.m_EnemyPos.y+self.m_EnemyBound.y*0.5 + self.m_EnemyBound.y*0.27, self.m_EnemyPos.x+self.m_EnemyBound.x*0.2 + self.m_EnemyBound.x*0.65, self.m_EnemyPos.y+self.m_EnemyBound.y*0.7, tocolor(51, 153, 255, 255), 1, self.m_Font, "right", "top")
+	dxDrawText(self.m_Enemy, self.m_EnemyPos.x+self.m_EnemyBound.x*0.1, (self.m_EnemyPos.y+self.m_EnemyBound.y*0.5 + self.m_EnemyBound.y*0.27)+2, self.m_EnemyPos.x+self.m_EnemyBound.x*0.2 + self.m_EnemyBound.x*0.65, self.m_EnemyPos.y+self.m_EnemyBound.y*0.7, tocolor(0, 0, 0, 255), 1, self.m_Font, "right", "top")
+	dxDrawText(self.m_Enemy, self.m_EnemyPos.x+self.m_EnemyBound.x*0.1, self.m_EnemyPos.y+self.m_EnemyBound.y*0.5 + self.m_EnemyBound.y*0.27, self.m_EnemyPos.x+self.m_EnemyBound.x*0.2 + self.m_EnemyBound.x*0.65, self.m_EnemyPos.y+self.m_EnemyBound.y*0.7, tocolor(51, 153, 255, 255), 1, self.m_Font, "right", "top")
 end
 
 function EasterEggArcade.HUD:drawKeyInfo()
 	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.34, self.m_Bound.x*0.4, self.m_Bound.x*0.2, EASTEREGG_IMAGE_PATH.."/key.png" )
 	dxDrawImage(self.m_Pos.x+self.m_Bound.x*0.2+self.m_Bound.x*1.05, self.m_Pos.y+self.m_Bound.y*0.34+self.m_Bound.x*0.2, self.m_Bound.x*0.4, self.m_Bound.x*0.1, EASTEREGG_IMAGE_PATH.."/space.png" )
+end
+
+function EasterEggArcade.HUD:drawColorChange()
+	local now = getTickCount()
+	prog = (now - self.m_ColorTick) / 1000
+	r,g,b = interpolateBetween(255, 255, 255, 50, 255, 255, prog, "SineCurve")
+	if EasterEggArcade.Game:getSingleton() then
+		EasterEggArcade.Game:getSingleton():getGameLogic().m_Arena.m_Floor:setColor(tocolor(255,r,r,255))
+	end
 end
 
 function EasterEggArcade.HUD:addDamage( obj ) 
@@ -85,15 +108,28 @@ end
 function EasterEggArcade.HUD:drawGameOver()
 	dxDrawText("GAME OVER!", 3, 3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 0, 0, 255), 1, self.m_FontBig, "center", "center")
 	dxDrawText("GAME OVER!", 0, 0, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(200, 200, 0, 255), 1, self.m_FontBig, "center", "center")
-	dxDrawText("Press R to Restart!", 0, EASTEREGG_WINDOW[2].y*0.15, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(200, 200, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Press R to Restart!", 0, self.m_FontBigHeight*3 , EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(200, 200, 0, 255), 1, self.m_Font, "center", "center")
 end
 
 function EasterEggArcade.HUD:drawWin()
 	dxDrawText("WON!", 3, 3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 0, 0, 255), 1, self.m_FontBig, "center", "center")
 	dxDrawText("WON!", 0, 0, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 200, 0, 255), 1, self.m_FontBig, "center", "center")
-	dxDrawText("Press Enter to get your prize!", 0, EASTEREGG_WINDOW[2].y*0.15, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 200, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Press Enter to proceed!", 0, self.m_FontBigHeight*3 , EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 200, 0, 255), 1, self.m_Font, "center", "center")
 end
 
+function EasterEggArcade.HUD:drawLevelInfo()
+	if self.m_LevelDisplay + 5000 >= getTickCount() then 
+		if not self.m_OutroLevel then
+			dxDrawText("Level "..self.m_Level, 3, (EASTEREGG_WINDOW[2].y*0.1)+3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 0, 0, 255), 1, self.m_FontBig, "center", "center")
+			dxDrawText("Level "..self.m_Level, 0, EASTEREGG_WINDOW[2].y*0.1, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(244, 66, 194, 255), 1, self.m_FontBig, "center", "center")	
+			dxDrawText("Enemy: "..self.m_Enemy.."!", 0, self.m_FontBigHeight*3+3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 0, 0, 255), 1, self.m_Font, "center", "center")
+			dxDrawText("Enemy: "..self.m_Enemy.."!", 3, self.m_FontBigHeight*3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(244, 66, 194, 255), 1, self.m_Font, "center", "center")
+		else 
+			dxDrawText("Collect your prize!", 3, (EASTEREGG_WINDOW[2].y*0.1)+3, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(0, 0, 0, 255), 1, self.m_FontBig, "center", "center")
+			dxDrawText("Collect your prize!", 0, EASTEREGG_WINDOW[2].y*0.1, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(244, 66, 194, 255), 1, self.m_FontBig, "center", "center")	
+		end
+	end
+end
 
 function EasterEggArcade.HUD:drawDamage() 
 	local x,y, start, elap, dur, prog, alpha
@@ -131,4 +167,21 @@ function EasterEggArcade.HUD:drawShake()
 			EASTEREGG_WINDOW[1].y = self.m_OriginalEASTEREGG_WINDOW.y
 		end
 	end
+end
+
+function EasterEggArcade.HUD:startOutro()
+	self.m_OutroTick = getTickCount()
+	self.m_Outro = true
+end
+
+function EasterEggArcade.HUD:drawOutro()
+	local now = getTickCount()
+	prog = (now - self.m_OutroTick) / 30000
+	self.m_Scroll = interpolateBetween(EASTEREGG_WINDOW[2].y+((self.m_FontHeight*2.5)*5)+self.m_FontBigHeight, 0, 0, -2*EASTEREGG_WINDOW[2].y, 0, 0, prog, "Linear")
+	dxDrawText("Lufia 2 - The very end (8Bit)", 0, self.m_Scroll, EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Running in the 90s (8Bit)", 0, self.m_Scroll-(self.m_FontHeight*2.5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Lux Aeterna (8Bit)", 0, self.m_Scroll-((self.m_FontHeight*2.5)*2), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("MUSIC:", 0, self.m_Scroll-((self.m_FontHeight*2.5)*3), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Strobe - 2018", 0, self.m_Scroll-((self.m_FontHeight*2.5)*4), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_Font, "center", "center")
+	dxDrawText("Braboy", 0, self.m_Scroll-((self.m_FontHeight*2.5)*5), EASTEREGG_WINDOW[2].x, EASTEREGG_WINDOW[2].y, tocolor(212, 93, 0, 255), 1, self.m_FontBig, "center", "center")
 end

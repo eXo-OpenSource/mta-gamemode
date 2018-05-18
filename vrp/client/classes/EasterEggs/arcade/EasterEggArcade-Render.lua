@@ -28,15 +28,24 @@ function EasterEggArcade.Render:removeFromQueue(object)
 end
 
 function EasterEggArcade.Render:render()
+	dxSetRenderTarget(self.m_RenderTarget)
 	for i = 1, #self.m_RenderQueue do 
 		if self.m_RenderQueue[i] then
 			self:draw( self.m_RenderQueue[i] )
 		end
 	end
+	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():getHUD() then 
+		EasterEggArcade.Game:getSingleton():getGameLogic():getHUD():render()
+	end
+	dxSetRenderTarget()
+
+	dxDrawImage(self.m_Start.x, self.m_Start.y, self.m_Bound.x, self.m_Bound.y, self.m_RenderTarget)
+	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():getHUD() then 
+		EasterEggArcade.Game:getSingleton():getGameLogic():getHUD():drawOverlay()
+	end
 end
 
 function EasterEggArcade.Render:draw( obj ) 
-	dxSetRenderTarget(self.m_RenderTarget)
 	local x, y, width, height, mat
 	if obj then 
 		x,y = obj:getPosition()
@@ -47,14 +56,5 @@ function EasterEggArcade.Render:draw( obj )
 			local b = EASTEREGG_WINDOW[2]
 			obj:draw(x-w.x, y-w.y, width, height, mat, obj:getTiled())
 		end
-	end
-	
-	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():getHUD() then 
-		EasterEggArcade.Game:getSingleton():getGameLogic():getHUD():render()
-	end
-	dxSetRenderTarget()
-	dxDrawImage(self.m_Start.x, self.m_Start.y, self.m_Bound.x, self.m_Bound.y, self.m_RenderTarget)
-	if EasterEggArcade.Game:getSingleton():getGameLogic() and EasterEggArcade.Game:getSingleton():getGameLogic():getHUD() then 
-		EasterEggArcade.Game:getSingleton():getGameLogic():getHUD():drawOverlay()
 	end
 end

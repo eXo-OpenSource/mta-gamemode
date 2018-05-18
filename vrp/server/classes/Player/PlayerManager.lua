@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -56,7 +56,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerWeaponFire", root, bind(self.Event_OnWeaponFire, self))
 	addEventHandler("onPlayerUpdateSpawnLocation", root, bind(self.Event_OnUpdateSpawnLocation, self))
 	addEventHandler("attachPlayerToVehicle", root, bind(self.Event_AttachToVehicle, self))
-
+	addEventHandler("onPlayerFinishArcadeEasterEgg", root, bind(self.Event_onPlayerFinishArcadeEasterEgg, self))
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -111,6 +111,14 @@ function PlayerManager:Event_onRequestGateOpen()
 				openGate:triggerMovement(client)
 			end
 		end
+	end
+end
+
+function PlayerManager:Event_onPlayerFinishArcadeEasterEgg() 
+	if client then 
+		client:getInventory():giveItem("Stern", 1)
+		client:giveAchievement(100)
+		client:sendInfo(_("Braboy: Du hast einen Stern erhalten!", client))
 	end
 end
 
