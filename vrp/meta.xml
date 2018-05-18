@@ -1856,6 +1856,7 @@
 	<vrpfile src="files/audio/arcade-sfx/fire.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/explode.ogg" />	
 	<vrpfile src="files/audio/arcade-sfx/hit.ogg" />	
+	<vrpfile src="files/audio/arcade-sfx/collect.ogg" />	
 	
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>

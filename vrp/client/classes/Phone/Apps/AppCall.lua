@@ -124,7 +124,7 @@ end
 
 function AppCall:ButtonCallNumpad_Click()
 	if self.m_Edit:getText() then
-		if self.m_Edit:getText():lower() ==  ("IamTheKidYouKnowWhatIMean"):lower() then
+		if self.m_Edit:getText():lower() ==  ("hotlinestrobe"):lower() then
 			if isTimer(self.m_ArcadeGameTimer) then killTimer(self.m_ArcadeGameTimer) end
 			removeEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )
 			addEventHandler("onClientRender", root, self.m_EasterEggRenderFunction )

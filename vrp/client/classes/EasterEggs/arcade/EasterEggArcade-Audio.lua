@@ -15,6 +15,7 @@ function EasterEggArcade.Audio:destructor()
 	if self.m_Music and isElement(self.m_Music) then destroyElement(self.m_Music) end
 	if self.m_Gameover and isElement(self.m_Gameover) then destroyElement(self.m_Gameover) end
 	if self.m_Win and isElement(self.m_Win) then destroyElement(self.m_Win) end
+	if self.m_Collect and isElement(self.m_Collect) then destroyElement(self.m_Collect) end
 end
 
 function EasterEggArcade.Audio:playFire()
@@ -53,6 +54,15 @@ function EasterEggArcade.Audio:playGameOver()
 	end
 	if not self.m_Gameover then
 		self.m_Gameover = playSound(EASTEREGG_SFX_PATH.."/gameover.ogg", false)
+	end
+end
+
+function EasterEggArcade.Audio:playCollect()
+	if self.m_Music then 
+		stopSound(self.m_Music)
+	end
+	if not self.m_Collect then
+		self.m_Collect = playSound(EASTEREGG_SFX_PATH.."/collect.ogg", false)
 	end
 end
 
