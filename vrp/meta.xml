@@ -571,6 +571,9 @@
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Render.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Arena.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Enemy.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Neutral.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Dancer.lua" type="client" />
+	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Collectable.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Player.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-GameLogic.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Projectile.lua" type="client" />
@@ -1687,6 +1690,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/bikerhelmet.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/einsatzhelm.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/star.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/keypad.png" />
@@ -1803,6 +1807,8 @@
 	<vrpfile src="files/images/arcade-game/sprites/sprite13.png" />
 	<vrpfile src="files/images/arcade-game/sprites/sprite14.png" />
 	<vrpfile src="files/images/arcade-game/sprites/sprite15.png" />
+	<vrpfile src="files/images/arcade-game/sprites/larry.png" />
+	<vrpfile src="files/images/arcade-game/sprites/trophy.png" />
 	
 	<vrpfile src="files/images/arcade-game/sprites/flame1.png" />
 	<vrpfile src="files/images/arcade-game/sprites/flame2.png" />
@@ -1846,6 +1852,8 @@
 	<vrpfile src="files/audio/jobs/pickaxe4.mp3"/>
 
 	<vrpfile src="files/audio/arcade-sfx/lufia.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/gameboy_start.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/troll.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/gameover.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/win.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/fire.ogg" />

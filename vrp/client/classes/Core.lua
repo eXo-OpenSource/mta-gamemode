@@ -136,7 +136,8 @@ function Core:ready() --onClientResourceStart
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	EasterEgg:new()
-
+	EasterEggArcade.Game:new()
+	EasterEggArcade.Game:getSingleton():setLevel(1)
 	Shaders.load()
 
 	GroupProperty:new()
