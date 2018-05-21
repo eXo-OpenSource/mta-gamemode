@@ -174,7 +174,7 @@ end
 
 function Guns:isInRange( target, bodypart, weapon) 
 	if target and isElement(target) and isElementStreamedIn(target) then
-		local targetPosition = Vector3(target:getBonePosition(bodypart))
+		local targetPosition = Vector3(target:getPosition(targetPosition))
 		local position = Vector3(localPlayer:getPosition())
 		local weaponRange = getWeaponProperty( weapon, "std", "weapon_range")
 		return ((math.floor((targetPosition - position):getLength())) <= weaponRange)
