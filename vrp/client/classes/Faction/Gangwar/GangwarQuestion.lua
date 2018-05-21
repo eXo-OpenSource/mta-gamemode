@@ -96,8 +96,8 @@ end
 function GangwarQuestion:onAFKTimer()
 	if PseudoObj then 
 		if not already_selected then 
-			triggerServerEvent("GangwarQuestion:disqualify",localPlayer, true)
-			PseudoObj:delete()
+			triggerServerEvent("GangwarQuestion:disqualify", localPlayer, true)
+			destroyQuestionBox()
 		end
 	end
 end
@@ -134,6 +134,7 @@ end
 addEventHandler("GangwarQuestion:new",localPlayer,function() 
 	if PseudoObj then 
 		PseudoObj:delete()
+		PseudoObj = nil
 	end
 	PseudoObj = GangwarQuestion:new()
 end)
@@ -141,6 +142,7 @@ end)
 function destroyQuestionBox() 
 	if PseudoObj then 
 		PseudoObj:delete()
+		PseudoObj = nil
 	end
 end
 
