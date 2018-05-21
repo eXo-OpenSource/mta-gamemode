@@ -10,7 +10,7 @@ Gangwar = inherit(Singleton)
 
 
 --// RESET VARIABLE //
-GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
+GANGWAR_RESET_AREAS = true --// NUR IM FALLE VON GEBIET-RESET
 
 
 --// Gangwar - Constants //--
@@ -40,7 +40,7 @@ addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientReques
 		Area erstellt eine AttackSession welche solange läuft wie der Attack gilt.
 ]]
 function Gangwar:constructor( )
-	if GANGWAR_RESET_AREAS then
+	if GANGWAR_RESET_AREAS and DEBUG then
 		self:RESET()
 	end
 	self.m_Areas = {	}
@@ -146,7 +146,7 @@ function Gangwar:Event_OnPickupHit( player )
 end
 
 function Gangwar:RESET()
-	local sql_query = "UPDATE ??_gangwar SET Besitzer='8', lastAttack='0'"
+	local sql_query = "UPDATE ??_gangwar SET Besitzer='5', lastAttack='0'"
 	sql:queryFetch(sql_query,  sql:getPrefix())
 	outputDebugString("Gangwar-areas were reseted!")
 end
@@ -288,7 +288,7 @@ function Gangwar:attackArea( player )
 									local currentTimestamp = getRealTime().timestamp
 									local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
 									if nextAttack <= currentTimestamp then
-										mArea:attack(faction, faction2)
+										mArea:attack(faction, faction2, player)
 									else
 										player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 									end
