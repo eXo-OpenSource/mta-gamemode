@@ -23,6 +23,22 @@ local TOGGLE_WEAPONS =
 	[22] = true,
 }
 
+local WEAPON_RANGE_CHECK = 
+{
+	[22] = true,
+	[23] = true,
+	[22] = true,
+	[24] = true, 
+	[25] = true, 
+	[26] = true, 
+	[29] = true,
+	[30] = true,
+	[31] = true,
+	[32] = true, 
+	[33] = true, 
+	[34] = true,
+}
+
 local WEAPON_CACHE_MELEE_DAMAGE = 
 {
 	[17] = true, 
@@ -105,6 +121,7 @@ end
 MELEE_CACHE_CHECK = 2000
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	local bPlaySound = false
+	local bRangeCheck = true
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
 	elseif weapon == 42 then --Fire Extinguisher
@@ -123,8 +140,13 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
-					bPlaySound = true
-					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
+					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon) then
+						bPlaySound = true
+						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
+					elseif not WEAPON_RANGE_CHECK[weapon] then
+						bPlaySound = true
+						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
+					end
 				else
 					if weapon ~= 17 or ( not WearableHelmet:getSingleton().m_GasMask ) then
 						bPlaySound = false
@@ -142,13 +164,23 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		elseif attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and self.m_NetworkInteruptFreeze then
 			cancelEvent()
-			outputDebugString("Canceling Damage ;)")
+			outputDebugString("Canceling Damage")
 		end
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
 	end
 end
+
+function Guns:isInRange( target, bodypart, weapon) 
+	if target and isElement(target) and isElementStreamedIn(target) then
+		local targetPosition = Vector3(target:getPosition(targetPosition))
+		local position = Vector3(localPlayer:getPosition())
+		local weaponRange = getWeaponProperty( weapon, "std", "weapon_range")
+		return ((math.floor((targetPosition - position):getLength())) <= weaponRange)
+	end
+	return false
+end	
 
 function Guns:addMeleeDamage( player, weapon , bodypart, loss ) 
 	if self.m_MeleeCache then 
