@@ -17,7 +17,8 @@ function GangwarPickGUI:constructor( area )
 	
 	self.m_ButtonPick = GUIGridButton:new(8, 2, 1, 5, FontAwesomeSymbols.Right, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
     self.m_ButtonPick:setBackgroundColor(tocolor(2, 45, 16, 255))
-
+    self.m_ButtonPickBind = bind(self.)
+    self.m_ButtonPick.onLeftClick = 
     self.m_ButtonRemove = GUIGridButton:new(8, 7, 1, 5, FontAwesomeSymbols.Left, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
     self.m_ButtonRemove:setBackgroundColor(tocolor(66, 3, 4, 255))
 	
@@ -41,12 +42,15 @@ end
 
 function GangwarPickGUI:refresh(  )
     self.m_OnlineList:clear()
+    local item
     for player, _ in pairs(self.m_Online) do 
-        self.m_OnlineList:addItem(player:getName())
+        item = self.m_OnlineList:addItem(player:getName())
+        item.m_Player = player
     end
     self.m_ParticipantList:clear()
     for player, _ in pairs(self.m_Pick) do 
-        self.m_ParticipantList:addItem(player:getName())
+        item = self.m_ParticipantList:addItem(player:getName())
+        item.m_Player = player
     end
 end
 
@@ -79,6 +83,14 @@ function GangwarPickGUI:refill()
         end
     end
     self:check()
+end
+
+function GangwarPickGUI:Event_OnPick()
+
+end
+
+function GangwarPickGUI:Event_OnRemove()
+
 end
 
 function GangwarPickGUI:destructor()
