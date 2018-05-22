@@ -207,7 +207,7 @@ function MechanicTow:onEnterTowLot(hitElement)
 	if not hitElement.vehicle or hitElement.vehicle:getCompany() ~= self or (hitElement.vehicle:getModel() ~= 525 and hitElement.vehicle:getModel() ~= 417) then return end
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
-	if towingBike then
+	if isElement(towingBike) then
 		towingBike:toggleRespawn(true)
 		towingBike:setCollisionsEnabled(true)
 		towingBike:detach()
@@ -218,6 +218,8 @@ function MechanicTow:onEnterTowLot(hitElement)
 
 		StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
 		self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+	else
+		hitElement.vehicle:setData("towingBike", nil, true)
 	end
 
 	hitElement.m_InTowLot = true
