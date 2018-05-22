@@ -57,6 +57,10 @@ function FireRoot:constructor(iX, iY, iW, iH)
     return self
 end
 
+function FireRoot:setName(name)
+	self.m_Statistics.name = name
+end
+
 function FireRoot:setBaseZ(z)
 	self.m_BaseZ = z
 	self.m_CenterPoint.z = z
@@ -180,7 +184,7 @@ function FireRoot:update()
 	end
 
 	self.m_Statistics.activeRescuePlayers = self:countUsersAtSight(true)
-	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 and self:getTimeSinceStart() < self:getTimeEstimate()/2  then -- let the fire decay if the fire limit is reached anyways
+	if self:isFireLimitReached() and not self:isFireDecaying() and math.random(1, 10) == 1 and self:getTimeSinceStart() > self:getTimeEstimate()/2  then -- let the fire decay if the fire limit is reached anyways
 		--PlayerManager:getSingleton():breakingNews("Das Feuer bildet sich langsam wieder zurück")
 		self:letFireDecay()
 	end

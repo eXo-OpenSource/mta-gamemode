@@ -205,6 +205,10 @@ function WorldItem:onMove(player)
 	if not self:hasPlayerPermissionTo(player, WorldItem.Action.Move) then
 		return false
 	end
+	if player:getData("inJail") or player:getData("inAdminPrison") then
+		player:sendError(_("Du kannst hier keine Objekte platzieren.", player, self:getMovingPlayer():getName())) 
+		return false
+	end
 	self.m_CurrentMovingPlayer = player
 	addEventHandler("onPlayerQuit", player, self.m_OnMovePlayerDisconnectFunc)
 	self.m_Item:startObjectPlacing(player,

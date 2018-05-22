@@ -604,8 +604,8 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 		admin:setPrivateSync("isSpecting", target)
 		admin.m_PreSpectInt = getElementInterior(admin)
 		admin.m_PreSpectDim = getElementDimension(admin)
-		admin.m_SpectInteriorFunc = function(int) admin:setInterior(int) admin:setCameraInterior(int) end -- using oop methods to prevent that onElementInteriorChange will triggered
-		admin.m_SpectDimensionFunc = function(dim) admin:setDimension(dim) end -- using oop methods to prevent that onElementDimensionChange will triggered
+		admin.m_SpectInteriorFunc = function(int) _setElementInterior(admin, int) admin:setCameraInterior(int) end -- using overloaded methods to prevent that onElementInteriorChange will triggered
+		admin.m_SpectDimensionFunc = function(dim) _setElementDimension(admin, dim) end -- using overloaded methods to prevent that onElementDimensionChange will triggered
 		admin.m_SpectStop =
 			function()
 				for i, v in pairs(target.spectBy) do
