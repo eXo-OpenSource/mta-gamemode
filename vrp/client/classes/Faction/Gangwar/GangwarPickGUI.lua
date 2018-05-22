@@ -1,5 +1,4 @@
 GangwarPickGUI = inherit(GUIForm)
-inherit(Singleton, GangwarPickGUI)
 local width,height = screenWidth * 0.3 , screenHeight*0.4
 
 function GangwarPickGUI:constructor( area, canModify )
@@ -9,7 +8,6 @@ function GangwarPickGUI:constructor( area, canModify )
     
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Spielereinteilung - %s", area) , true, true, self)
-
     self.m_InfoLabel = GUIGridLabel:new(1, 1, 12, 1, _"Hier können die Teilnehmer des Gangwars eingeteilt werden!", self)
     
     self.m_ButtonRefresh = GUIGridButton:new(12, 1, 2, 1, FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
@@ -32,8 +30,12 @@ function GangwarPickGUI:constructor( area, canModify )
 	self.m_ParticipantList = GUIGridGridList:new(9, 2, 7, 10, self)
 	self.m_ParticipantList:addColumn(_"Teilnehmer", 1)
 
-    self.m_Window:deleteOnClose( true )
+    self.m_Window:deleteOnClose( false )
     self.m_ParticipantList:clear()
+
+    self.m_UpdateBind = bind(self.Event_OnUpdateTick, self)
+    self.m_UpdateTimer = setTimer( self.m_UpdateBind, 1000, 0)
+
     self:fill()
     self:createMessage()
     self:setModify(canModify)
@@ -42,10 +44,14 @@ end
 function GangwarPickGUI:fill()
     self.m_Online = {}
     self.m_Pick = {}
+    self.m_Disqualified = {}
+    self.m_Participants = {}
     self:refill()
 end
 
-function GangwarPickGUI:synchronize( ) 
+function GangwarPickGUI:synchronize( participants, disqualified, list )
+    self.m_Participants = participants
+    self.m_Disqualified = disqualified 
     self:refill()
 end
 
@@ -53,13 +59,21 @@ function GangwarPickGUI:refresh( )
     self.m_OnlineList:clear()
     local item
     for player, _ in pairs(self.m_Online) do 
-        item = self.m_OnlineList:addItem(player:getName())
-        item.m_Player = player
+        if player and isElement(player) then
+            item = self.m_OnlineList:addItem(player:getName())
+            item.m_Player = player
+        else 
+            self.m_Online[player] = nil
+        end
     end
     self.m_ParticipantList:clear()
     for player, _ in pairs(self.m_Pick) do 
-        item = self.m_ParticipantList:addItem(player:getName())
-        item.m_Player = player
+        if player and isElement(player) then
+            item = self.m_ParticipantList:addItem(player:getName())
+            item.m_Player = player
+        else 
+            self.m_Pick[player] = nil
+        end
     end
 end
 
@@ -86,17 +100,28 @@ end
 
 function GangwarPickGUI:createMessage() 
     if not self.m_PickMessage then 
-        self.m_PickMessage = ShortMessage:new("", "Teilnehmer", Color.Orange, -1)
+        self.m_ClickBind = bind(self.onMessageClick, self)
+        self.m_PickMessage = ShortMessage:new("", "Teilnehmer [Bearbeiten]", tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
     end
 end
 
 function GangwarPickGUI:updateMessage( list, updater, tick )
-    if list and updater and tick then
-        local text = ""
-        for player, _ in pairs(list) do 
+    self:createMessage()
+    self.m_Update = getTickCount()
+    self.m_Creator = updater
+    self.m_Pick = list
+    self:writeMessage()
+    self:refill()
+end
+
+function GangwarPickGUI:writeMessage()
+    if self.m_Pick and self.m_Creator and self.m_Update then
+        local updateTime = (getTickCount() - self.m_Update) / 1000
+        local text = ("Eingeteilt von %s vor %s Sek."):format(self.m_Creator, math.floor(updateTime))
+        for player, _ in pairs(self.m_Pick) do 
             if player and isElement(player) then 
                 if self.m_PickMessage then 
-                    text = text .. "\n" .. player:getName()
+                    text = text .. "\n • " .. player:getName()
                 end
             end
         end
@@ -115,24 +140,52 @@ function GangwarPickGUI:canModify()
     return self.m_Modify
 end
 
+function GangwarPickGUI:isDisqualified( player )
+    if player and isElement(player) then 
+        for i = 1, #self.m_Disqualified do 
+            if self.m_Disqualified[i] == player:getName() then 
+                return true
+            end
+        end
+    end
+    return false
+end
+
 function GangwarPickGUI:refill()
     self.m_Online = {}
-    for key, player in ipairs(getElementsByType("player")) do 
-        if player:getFactionId() == localPlayer:getFactionId() then
+    for key, player in ipairs(self.m_Participants) do 
+        if not self:isDisqualified(player) then
             self.m_Online[player] = true
         end
     end
     self:check()
 end
 
+function GangwarPickGUI:onHide() 
+    self.m_IsHidden = true
+end
+
+function GangwarPickGUI:onMessageClick()
+    if self.m_IsHidden then 
+        self.m_IsHidden = false
+        self:setVisible(true)
+    end
+end
+
 function GangwarPickGUI:Event_OnPick()
     if self:canModify() then
         local item = self.m_OnlineList:getSelectedItem()
         if item then 
-            if item.m_Player and isElement(item.m_Player) then 
+            if item.m_Player and isElement(item.m_Player) and not self:isDisqualified(player) then 
                 self:add( item.m_Player )
             end
         end
+    end
+end
+
+function GangwarPickGUI:Event_OnUpdateTick()
+    if self.m_PickMessage then 
+        self:writeMessage()
     end
 end
 
@@ -150,14 +203,14 @@ end
 function GangwarPickGUI:Event_OnRefreshClick(  )
     self.m_OnlineList:clear()
     for player, _ in pairs(self.m_Online) do 
-        if player and isElement(player) then
+        if player and isElement(player) and not self:isDisqualified(player) then
             item = self.m_OnlineList:addItem(player:getName())
             item.m_Player = player
         end
     end
     self.m_ParticipantList:clear()
     for player, _ in pairs(self.m_Pick) do 
-        if player and isElement(player) then
+        if player and isElement(player) and not self:isDisqualified(player) then
             item = self.m_ParticipantList:addItem(player:getName())
             item.m_Player = player
         end
@@ -166,11 +219,15 @@ end
 
 function GangwarPickGUI:Event_OnAcceptClick()
     if self:canModify() then
-        triggerServerEvent("GangwarPick:submit", localPlayer, self.m_Online, self.m_Pick)
+        triggerServerEvent("GangwarPick:submit", localPlayer, self.m_Pick)
     end
 end
 
 function GangwarPickGUI:destructor()
+    if isTimer( self.m_UpdateTimer ) then killTimer(self.m_UpdateTimer) end
     GUIForm.destructor(self)
+    if self.m_PickMessage then 
+        self.m_PickMessage:delete()
+    end
 end
 

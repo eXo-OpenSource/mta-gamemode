@@ -88,22 +88,31 @@ function AttackSession:setupSession ( )
 end
 
 function AttackSession:synchronizeAllParticipants( )
+	local pickParticipants = {}
 	for k,v in ipairs( self.m_Participants ) do
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == v )
+		if v:getFaction() == self.m_Faction1 then
+			table.insert(pickParticipants, v)
+		end
+	end
+	for k,v in ipairs( self.m_Participants ) do
+		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == v, pickParticipants )
 		v:triggerEvent("GangwarQuestion:new")
 	end
 end
 
 function AttackSession:synchronizeLists( )
+	local pickParticipants = {}
+	for k,v in ipairs( self.m_Participants ) do
+		if v:getFaction() == self.m_Faction1 then
+			table.insert(pickParticipants, v)
+		end
+	end
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers()) do
-		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick)
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick, pickParticipants)
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
 	end
-	--if self.m_AttackingPlayer and isElement(self.m_AttackingPlayer)  then -- todo check variable that indicates wether pick was already evaluated
-		--self.m_AttackingPlayer:triggerEvent("GangwarPick:synchronizePick")
-	--end
 end
 
 function AttackSession:synchronizeTime( )
@@ -121,14 +130,20 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
+		local pickParticipants = {}
+		for k,v in ipairs( self.m_Participants ) do
+			if v:getFaction() == self.m_Faction1 then
+				table.insert(pickParticipants, v)
+			end
+		end
 		player:setPublicSync("gangwarParticipant", true) 
 		if not bLateJoin then
-			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player)
+			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
 		else
 			if isTimer( self.m_BattleTime ) then
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
-				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player)
+				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
 			end
 		end
 		self:synchronizeLists( )
@@ -302,6 +317,7 @@ function AttackSession:onSubmitPick( participants )
 			self.m_PickList = participants
 			self.m_PickUpdater = client:getName()
 			self.m_PickTick = getTickCount()
+			self:synchronizeLists( )
 		end
 	end
 end

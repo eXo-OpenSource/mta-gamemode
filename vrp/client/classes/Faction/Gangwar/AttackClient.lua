@@ -12,12 +12,13 @@ AttackClient = inherit(Object)
 local pseudoSingleton
 addRemoteEvents{"onGangwarDamage", "onGangwarKill", "GangwarPick:synchronizePick"}
 local clearTimer = nil
-function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pAttacker) 
+function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pAttacker, pPickParticipants) 
 	REPORT_LAST_KILL = false
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
+	self.m_PickParticipants = pPickParticipants
 	localPlayer.attackSession = self 
 	self.m_GangwarDamage = 0
 	self.m_GangwarKill = 0
@@ -28,6 +29,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	end
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	self.m_GangwarPick = GangwarPickGUI:new( areaName, pAttacker )
+	self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)
 	self.m_DamageFunc = bind( AttackClient.addDamage, self)
 	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
 	self.m_KillFunc = bind( AttackClient.addKill, self)
@@ -92,14 +94,19 @@ function AttackClient:destructor()
 		local func = function() self.m_Display:delete() end 
 		clearTimer = setTimer( func, 5000, 1)
 	end
+	if self.m_GangwarPick then 
+		self.m_GangwarPick:delete()
+	end
 	destroyQuestionBox() 
 end 
 
-function AttackClient:synchronizeLists( pParticipants, pDisqualified, pPickList, pUpdater, pTick )
+function AttackClient:synchronizeLists( pParticipants, pDisqualified, pPickList, pUpdater, pTick, pPickParticipants )
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
-	self:synchronizeGangwarPick()
-	self:updateMessage(pPickList, pUpdater, pTick)
+	if self.m_GangwarPick then
+		self:synchronizeGangwarPick( pPickParticipants, pDisqualified ) 
+		self.m_GangwarPick:updateMessage(pPickList, pUpdater, pTick)
+	end
 end
 
 function AttackClient:synchronizeTime( time ) 
@@ -134,16 +141,16 @@ function AttackClient:getFactionsMembers( pFac )
 	return table_
 end
 
-function AttackClient:synchronizeGangwarPick( )
-	if self.m_GangwarPick then 
-		self.m_GangwarPick:synchronize()
+function AttackClient:synchronizeGangwarPick( participants, disuqlified )
+	if participants and disuqlified then 
+		self.m_GangwarPick:synchronize( participants, disuqlified )
 	end
 end
 
 addEvent("AttackClient:synchronizeLists",true)
-function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
+function AttackClient.remoteSynchronize( pParticipants, pDisqualified, pList, pUpdater, pTick, pPickParticipants )
 	if pseudoSingleton then 
-		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )
+		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified, pList, pUpdater, pTick, pPickParticipants )
 	end
 end
 addEventHandler("AttackClient:synchronizeLists", root,AttackClient.remoteSynchronize)
@@ -157,11 +164,11 @@ end
 addEventHandler("AttackClient:synchronizeTime", root,AttackClient.remoteSynchronizeTime)
 
 addEvent("AttackClient:launchClient",true)
-function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker )
+function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants )
 	if pseudoSingleton then 
 		pseudoSingleton:delete()
 	end
-	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker)
+	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants)
 end
 addEventHandler("AttackClient:launchClient",localPlayer,AttackClient.newClient)
 
