@@ -778,6 +778,7 @@ function FactionRescue:addVehicleFire(veh)
 	local zone = getZoneName(pos).."/"..getZoneName(pos, true)
 	self:sendWarning("Ein Auto hat sich entzündet! Position: %s", "Brand-Meldung", true, pos, zone)
 	self.m_VehicleFires[veh] = FireRoot:new(pos.x-4, pos.y-4, 8, 8)
+	self.m_VehicleFires[veh]:setName("Fahrzeug-Brand "..zone)
 
 	if veh.controller then
 		veh.controller:sendWarning(_("Dein Fahrzeug hat Feuer gefangen! Steige schnell aus!", veh.controller))

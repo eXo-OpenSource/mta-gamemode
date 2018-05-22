@@ -657,6 +657,7 @@ function Vehicle:removeTexture(textureName)
 	if textureName then
 		if self.m_Texture and self.m_Texture[textureName] then
 			delete(self.m_Texture[textureName])
+			self.m_Texture[textureName] = nil
 			return
 		end
 	end
@@ -664,6 +665,7 @@ function Vehicle:removeTexture(textureName)
 	for i, v in pairs(self.m_Texture) do
 		delete(v)
 	end
+	self.m_Texture = {}
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)
