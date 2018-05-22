@@ -451,7 +451,7 @@ function Faction:respawnVehicles( isAdmin )
 	local time = getRealTime().timestamp
 	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
-			return self:sendShortMessage("Fahrzeug können nur alle 15 Minuten respawned werden!")
+			return self:sendShortMessage("Fahrzeuge können nur alle 15 Minuten respawned werden!")
 		end
 	end
 	if isAdmin then
