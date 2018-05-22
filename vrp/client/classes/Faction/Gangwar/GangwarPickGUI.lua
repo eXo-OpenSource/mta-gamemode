@@ -44,12 +44,13 @@ end
 function GangwarPickGUI:fill()
     self.m_Online = {}
     self.m_Pick = {}
+    self.m_RemotePick = {}
     self.m_Disqualified = {}
     self.m_Participants = {}
     self:refill()
 end
 
-function GangwarPickGUI:synchronize( participants, disqualified, list )
+function GangwarPickGUI:synchronize( participants, disqualified )
     self.m_Participants = participants
     self.m_Disqualified = disqualified 
     self:refill()
@@ -105,11 +106,17 @@ function GangwarPickGUI:createMessage()
     end
 end
 
-function GangwarPickGUI:updateMessage( list, updater, tick )
+function GangwarPickGUI:updateMessage( list, updater, tick, isRemote )
     self:createMessage()
     self.m_Update = getTickCount()
     self.m_Creator = updater
-    self.m_Pick = list
+    if not self:canModify() then
+        self.m_Pick = list
+        if isRemote then
+            self.m_RemotePick = table.copy(list) -- this is the original list so we can compare if any changes have been done locally before we push the newer one
+        end
+    end
+    outputChatBox(tostring(self.m_Pick).." | "..tostring(self.m_RemotePick))
     self:writeMessage()
     self:refill()
 end
@@ -117,16 +124,31 @@ end
 function GangwarPickGUI:writeMessage()
     if self.m_Pick and self.m_Creator and self.m_Update then
         local updateTime = (getTickCount() - self.m_Update) / 1000
-        local text = ("Eingeteilt von %s vor %s Sek."):format(self.m_Creator, math.floor(updateTime))
-        for player, _ in pairs(self.m_Pick) do 
-            if player and isElement(player) then 
-                if self.m_PickMessage then 
+        local status = not self:compare() and "[ENTWURF]" or ""
+        local text = ("Eingeteilt von %s vor %s Sek. %s"):format(self.m_Creator, math.floor(updateTime), status)
+        if self.m_PickMessage then 
+            for player, _ in pairs(self.m_Pick) do 
+                if player and isElement(player) then 
                     text = text .. "\n • " .. player:getName()
                 end
             end
         end
         self.m_PickMessage:setText(_("%s", text))
     end
+end
+
+function GangwarPickGUI:compare( )
+    for player, _ in pairs(self.m_RemotePick) do 
+        if not self.m_Pick[player] then
+            return false
+        end
+    end
+    for player, _ in pairs(self.m_Pick) do 
+        if not self.m_RemotePick[player] then
+            return false
+        end
+    end
+    return true
 end
 
 function GangwarPickGUI:setModify(bool) 
@@ -219,6 +241,7 @@ end
 
 function GangwarPickGUI:Event_OnAcceptClick()
     if self:canModify() then
+        self.m_RemotePick = table.copy(self.m_Pick) -- this is the original list so we can compare if any changes have been done locally before we push the newer one
         triggerServerEvent("GangwarPick:submit", localPlayer, self.m_Pick)
     end
 end

@@ -29,6 +29,9 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	end
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	self.m_GangwarPick = GangwarPickGUI:new( areaName, pAttacker )
+	if not pAttacker then 
+		self.m_GangwarPick:setVisible(false)
+	end
 	self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)
 	self.m_DamageFunc = bind( AttackClient.addDamage, self)
 	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
@@ -105,7 +108,7 @@ function AttackClient:synchronizeLists( pParticipants, pDisqualified, pPickList,
 	self.m_Disqualified = pDisqualified
 	if self.m_GangwarPick then
 		self:synchronizeGangwarPick( pPickParticipants, pDisqualified ) 
-		self.m_GangwarPick:updateMessage(pPickList, pUpdater, pTick)
+		self.m_GangwarPick:updateMessage(pPickList, pUpdater, pTick, true)
 	end
 end
 
