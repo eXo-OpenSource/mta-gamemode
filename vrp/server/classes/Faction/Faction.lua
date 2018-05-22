@@ -346,6 +346,16 @@ function Faction:getRankWeapons(rank)
 	return self.m_RankWeapons[tostring(rank)]
 end
 
+function Faction:getSkinsForRank(rank)
+	local tab = {}
+	for skinId in pairs(factionSkins[self.m_Id]) do
+		if tonumber(self:getSetting("Skin", skinId, FactionRank.Leader)) <= rank then
+			tab[skinId] = true
+		end
+	end
+	return tab
+end
+
 function Faction:getActivity(force)
 	if self.m_LastActivityUpdate > getRealTime().timestamp - 30 * 60 and not force then
 		return
