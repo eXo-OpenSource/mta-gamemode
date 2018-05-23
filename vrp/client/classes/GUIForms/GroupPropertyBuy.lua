@@ -76,7 +76,7 @@ function GroupPropertyBuy:updateList( _table )
 		self.m_ImmoGrid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.28, self.m_Width*0.9, self.m_Height*0.5, self.m_Window)
 		self.m_ImmoGrid:addColumn(_"Verfügbare Immobilien", 1)
 		for id, obj in pairs( _table ) do
-			if obj.m_OwnerID == 0 then
+			if not obj.m_OwnerID then
 				item = self.m_ImmoGrid:addItem(obj.m_Price.."$ - "..obj.m_Name)
 				item.Id = id
 				item.onLeftDoubleClick = function ()  end

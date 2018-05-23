@@ -185,7 +185,7 @@ end
 function FactionEvil:loadTriadGates( factionId) 
 	 
 	local lcnGates = {}
-	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120-4.04))
+	lcnGates[1] = Gate:new(10558, Vector3(1901.549, 967.301, 11.120 ), Vector3(0, 0, 270), Vector3(1901.549, 967.301, 11.120+4.04))
 	for index, gate in pairs(lcnGates) do
 		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
 		gate.onGateHit = bind(self.onBarrierGateHit, self)

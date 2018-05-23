@@ -173,7 +173,7 @@ function FireManager:stopCurrentFire(stats)
 		end
 		self.m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Feuer gelöscht", "Event", "Fire")
 
-		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
+		StatisticsLogger:getSingleton():addFireLog(self.m_CurrentFire.m_Id, math.floor(getTickCount()-stats.startTime)/1000, toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction * table.size(stats.pointsByPlayer))
 	else -- fire got deleted elsewhere (e.g. admin panel)
 		delete(self.m_CurrentFire)
 	end
