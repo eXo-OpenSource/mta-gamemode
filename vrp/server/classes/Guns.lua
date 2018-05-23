@@ -83,7 +83,7 @@ function Guns:Event_onTaser(target)
 	end, 15000, 1, target )
 end
 
-function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
+function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 	if getPedWeapon(client) ~= weapon then return end -- Todo: Report possible cheat attempt
 	--if getDistanceBetweenPoints3D(client.position, target.position) > 200 then return end -- Todo: Report possible cheat attempt
 	local attacker = client
@@ -126,7 +126,7 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 					local dist = getDistanceBetweenPoints3D(attacker.position, target.position)
 					local maxDist = getWeaponProperty(weapon, "poor", "weapon_range")*2
 					basicDamage = basicDamage*((maxDist-dist)/maxDist)
-				elseif getDistanceBetweenPoints3D(attacker.position, target.position) <= 1 then -- disable punshing with weapons
+				elseif isMelee then -- use this variable instead: In case of delayed triggering to the server it may happen that the person runs into the melee-range after a shot and the server wrongly considers it to be in melee-range
 					basicDamage = math.random(2, 5)
 				end
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
