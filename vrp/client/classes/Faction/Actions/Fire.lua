@@ -228,11 +228,13 @@ function Fire:createFireElement(iSize, uPed)
 	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollisionsEnabled(uPed, false) --temporary until stream in
+	self.m_Fires[uFire].bCorrectPlaced = false
 	self:checkForFireGroundInfo(uPed)
 	uPed:setData("NPC:Immortal", true)
 	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))
 	addEventHandler("onClientColShapeHit", self.m_Fires[uPed].uBurningCol, bind(self.burnPlayer, self))
 	addEventHandler("onClientElementStreamIn", uPed, function()
+		self.m_Fires[uFire].bCorrectPlaced = false
 		setTimer(function() -- allow the client to let the element fully stream in as this process is apparently asynchronous
 			if isElement(uPed) and isElementStreamedIn(uPed) then
 				self:checkForFireGroundInfo(uPed)
