@@ -34,7 +34,7 @@ function GangwarPickGUI:constructor( area, canModify )
     self.m_ParticipantList:clear()
 
     self.m_UpdateBind = bind(self.Event_OnUpdateTick, self)
-    self.m_UpdateTimer = setTimer( self.m_UpdateBind, 1000, 0)
+    self.m_UpdateTimer = setTimer( self.m_UpdateBind, 500, 0)
 
     self:fill()
     self:createMessage()
@@ -59,30 +59,36 @@ end
 function GangwarPickGUI:refresh( )
     self.m_OnlineList:clear()
     local item
-    for player, _ in pairs(self.m_Online) do 
+    for key, player in ipairs(self.m_Online) do 
         if player and isElement(player) then
             item = self.m_OnlineList:addItem(player:getName())
             item.m_Player = player
         else 
-            self.m_Online[player] = nil
+            local index = self:isInTable(self.m_Pick, player)
+            if index then
+                table.remove(self.m_Online, index)
+            end
         end
     end
     self.m_ParticipantList:clear()
-    for player, _ in pairs(self.m_Pick) do 
-        if player and isElement(player) then
-            item = self.m_ParticipantList:addItem(player:getName())
+    for key, player in ipairs(self.m_Pick) do 
+        if player and isElement(player)  then
+            item = self.m_ParticipantList:addItem(("• %s  %s"):format(key, player:getName()))
             item.m_Player = player
         else 
-            self.m_Pick[player] = nil
+            local index = self:isInTable(self.m_Pick, player)
+            if index then
+                table.remove(self.m_Pick, index)
+            end
         end
     end
 end
 
 function GangwarPickGUI:check() 
-    for player, _ in pairs(self.m_Pick) do
-        for player2, _ in pairs(self.m_Online) do
+    for _, player in ipairs(self.m_Pick) do
+        for key, player2 in ipairs(self.m_Online) do
             if player == player2 then 
-                self.m_Online[player] = nil
+                table.remove(self.m_Online, key)
             end
         end
     end
@@ -90,13 +96,19 @@ function GangwarPickGUI:check()
 end
 
 function GangwarPickGUI:remove( player ) 
-    self.m_Pick[player] = nil 
-    self:refill()
+    local index = self:isInTable(self.m_Pick, player)
+    if index then
+        table.remove(self.m_Pick, index) 
+        self:refill()
+    end
 end
 
 function GangwarPickGUI:add( player ) 
-    self.m_Pick[player] = player 
-    self:refill()
+    local index = self:isInTable(self.m_Pick, player)
+    if not index then
+        table.insert(self.m_Pick, player)
+        self:refill()
+    end
 end
 
 function GangwarPickGUI:createMessage() 
@@ -116,7 +128,6 @@ function GangwarPickGUI:updateMessage( list, updater, tick, isRemote )
             self.m_RemotePick = table.copy(list) -- this is the original list so we can compare if any changes have been done locally before we push the newer one
         end
     end
-    outputChatBox(tostring(self.m_Pick).." | "..tostring(self.m_RemotePick))
     self:writeMessage()
     self:refill()
 end
@@ -127,7 +138,7 @@ function GangwarPickGUI:writeMessage()
         local status = not self:compare() and "[ENTWURF]" or ""
         local text = ("Eingeteilt von %s vor %s Sek. %s"):format(self.m_Creator, math.floor(updateTime), status)
         if self.m_PickMessage then 
-            for player, _ in pairs(self.m_Pick) do 
+            for key, player in ipairs(self.m_Pick) do 
                 if player and isElement(player) then 
                     text = text .. "\n • " .. player:getName()
                 end
@@ -138,13 +149,13 @@ function GangwarPickGUI:writeMessage()
 end
 
 function GangwarPickGUI:compare( )
-    for player, _ in pairs(self.m_RemotePick) do 
-        if not self.m_Pick[player] then
+    for _, player in ipairs(self.m_RemotePick) do 
+        if not self:isInTable(self.m_Pick, player) then
             return false
         end
     end
-    for player, _ in pairs(self.m_Pick) do 
-        if not self.m_RemotePick[player] then
+    for _, player in pairs(self.m_Pick) do 
+        if not self:isInTable(self.m_RemotePick, player) then
             return false
         end
     end
@@ -176,11 +187,20 @@ end
 function GangwarPickGUI:refill()
     self.m_Online = {}
     for key, player in ipairs(self.m_Participants) do 
-        if not self:isDisqualified(player) then
-            self.m_Online[player] = true
+        if not self:isDisqualified(player) and not self:isInTable(self.m_Online, player) then
+            table.insert(self.m_Online, player)
         end
     end
     self:check()
+end
+
+function GangwarPickGUI:isInTable( tbl, obj )
+    for i = 1, #tbl do 
+        if tbl[i] == obj then 
+            return i
+        end
+    end
+    return false
 end
 
 function GangwarPickGUI:onHide() 
@@ -224,16 +244,16 @@ end
 
 function GangwarPickGUI:Event_OnRefreshClick(  )
     self.m_OnlineList:clear()
-    for player, _ in pairs(self.m_Online) do 
+    for _, player in ipairs(self.m_Online) do 
         if player and isElement(player) and not self:isDisqualified(player) then
             item = self.m_OnlineList:addItem(player:getName())
             item.m_Player = player
         end
     end
     self.m_ParticipantList:clear()
-    for player, _ in pairs(self.m_Pick) do 
+    for key, player in ipairs(self.m_Pick) do 
         if player and isElement(player) and not self:isDisqualified(player) then
-            item = self.m_ParticipantList:addItem(player:getName())
+            item = self.m_ParticipantList:addItem(("• %s  %s"):format(key, player:getName()))
             item.m_Player = player
         end
     end
