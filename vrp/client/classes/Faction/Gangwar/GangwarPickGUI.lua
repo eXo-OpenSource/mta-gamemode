@@ -205,12 +205,14 @@ end
 
 function GangwarPickGUI:onHide() 
     self.m_IsHidden = true
+    self:toggleKeys(true)
 end
 
 function GangwarPickGUI:onMessageClick()
     if self.m_IsHidden then 
         self.m_IsHidden = false
         self:setVisible(true)
+        self:toggleKeys(false)
     end
 end
 
