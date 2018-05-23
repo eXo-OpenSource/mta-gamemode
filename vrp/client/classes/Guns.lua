@@ -140,9 +140,9 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
-					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon) then
+					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon)  then
 						bPlaySound = true
-						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
+						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss, self:isInMeleeRange( source))
 					elseif not WEAPON_RANGE_CHECK[weapon] then
 						bPlaySound = true
 						triggerServerEvent("onClientDamage", attacker, source, weapon, bodypart, loss)
@@ -177,7 +177,16 @@ function Guns:isInRange( target, bodypart, weapon)
 		local targetPosition = Vector3(target:getPosition(targetPosition))
 		local position = Vector3(localPlayer:getPosition())
 		local weaponRange = getWeaponProperty( weapon, "std", "weapon_range")
-		return ((math.floor((targetPosition - position):getLength())) <= weaponRange)
+		return ((math.floor((targetPosition - position):getLength())) <= weaponRange), weaponRange
+	end
+	return false
+end	
+
+function Guns:isInMeleeRange( target ) 
+	if target and isElement(target) and isElementStreamedIn(target) then
+		local targetPosition = Vector3(target:getPosition(targetPosition))
+		local position = Vector3(localPlayer:getPosition())
+		return (targetPosition - position):getLength() <= 1
 	end
 	return false
 end	
