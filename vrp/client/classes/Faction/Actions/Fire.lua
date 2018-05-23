@@ -17,6 +17,7 @@ function Fire:constructor()
 	self.m_Fires = {}
 	self.m_LoadingQueue = AutomaticQueue:new()
 	self.m_FiresWaitingForColUpdate = {}
+	self.m_StatisticShortMessage = {}
 
 	addRemoteEvents{"fireElements:onClientRecieveFires", "fireElements:onFireCreate", "fireElements:onFireDestroy", "fireElements:onFireChangeSize", "refreshFireStatistics"}
 
@@ -241,12 +242,12 @@ function Fire:createFireElement(iSize, uPed)
 end
 
 function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
-	if not self.m_ShortmessageLoaded then
-		self.m_ShortmessageLoaded = true
-		self.m_StatisticShortMessage = ShortMessage:new("", "Brand-Übersicht", Color.Orange, 6000, nil, function()
-			self.m_ShortmessageLoaded = false
+	if not self.m_StatisticShortMessage[tblStats.name] then
+		self.m_StatisticShortMessage[tblStats.name] = ShortMessage:new("", "Brand-Übersicht ("..(tblStats.name)..")", Color.Orange, 6000, nil, function()
+			self.m_StatisticShortMessage[tblStats.name] = nil
 		end)
 	end
+	local sm = self.m_StatisticShortMessage[tblStats.name]
 
 	local t = ("Zeit seit Ausbruch: %s\nFlammen: %s aktiv, %s seit Ausbruch\n\nbeteiligte Einsatzkräfte:"):format(string.duration((timeSinceStart)/1000), tblStats.firesActive, tblStats.firesTotal)
 
@@ -256,6 +257,6 @@ function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 	if DEBUG then
 		t = t.. ("\n\n~~~DEBUG~~~\nDimension (w,h): %s, %s\ngeschätzte Lösch-Zeit (min): %s"):format(w, h, string.duration((timeEstimated)/1000))
 	end
-	self.m_StatisticShortMessage:setText(t)
-	self.m_StatisticShortMessage:resetTimeout()
+	sm:setText(t)
+	sm:resetTimeout()
 end

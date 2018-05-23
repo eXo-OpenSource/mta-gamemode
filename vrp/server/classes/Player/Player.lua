@@ -1484,7 +1484,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)
 		self:toggleControl("aim_weapon ", false)
-
+		takeAllWeapons(self)
 		self.m_JailStart = getRealTime().timestamp
 		self:setData("inJail",true, true)
 		self.m_JailTimer = setTimer(

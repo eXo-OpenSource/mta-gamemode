@@ -7,6 +7,7 @@
 -- ****************************************************************************
 VehicleTexture = inherit(Object)
 VehicleTexture.Map = {}
+VehicleTexture.WeirdCamperTexture = "#emapcamperbody256" -- fuck this, just hack it in. If some other vehicle has the same problem, maybe we should use a better system, but for now... /shrug
 
 function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, player, forceTexture)
 	if vehicle and isElement(vehicle) then
@@ -27,8 +28,14 @@ function VehicleTexture:constructor(vehicle, path, texture, force, isPreview, pl
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
 				if not isPreview then
+					if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
+						VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+					end
 					VehicleTexture.sendToClient(root, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
 				else
+					if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
+						VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = VehicleTexture.WeirdCamperTexture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
+					end
 					VehicleTexture.sendToClient(player, {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path, optional = self.m_Optional, isRequested = false, forceTexture = self.m_Force}})
 				end
 			end
@@ -62,6 +69,9 @@ function VehicleTexture:destructor()
 	VehicleTexture.Map[self.m_Id] = nil
 	if self.m_Vehicle and isElement(self.m_Vehicle) then
 		triggerClientEvent(root, "removeElementTexture",  self.m_Vehicle, self.m_Texture)
+		if self.m_Vehicle:getModel() == 483 then -- Camper, it has a weird texture bug
+			triggerClientEvent(root, "removeElementTexture",  self.m_Vehicle, VehicleTexture.WeirdCamperTexture)
+		end
 	end
 end
 
