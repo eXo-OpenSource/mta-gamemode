@@ -26,6 +26,7 @@ function Fire:constructor()
 	addEventHandler("fireElements:onFireChangeSize", resourceRoot, bind(self.changeFireSize, self))
 	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
 	addEventHandler("refreshFireStatistics", root, bind(self.updateStatistics, self))
+	addCommandHandler("reloadFires", bind(self.reloadFiresIfBugged))
 
 
 	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(fireTable)
@@ -199,7 +200,9 @@ function Fire:checkForFireGroundInfo(uFire)
 			setElementPosition(uFire, iX, iY, iNewZ+(self.m_Fires[uFire].iSize/3))
 			setElementPosition(self.m_Fires[uFire].uEffect, iX, iY, iNewZ)
 			setElementPosition(self.m_Fires[uFire].uBurningCol, iX, iY, iNewZ+1)
-			self.m_Fires[uFire].bCorrectPlaced = true
+			if self.m_Fires[uFire].uEffect:getPosition().z ~= 0 then
+				self.m_Fires[uFire].bCorrectPlaced = true
+			end
 
 			setElementCollisionsEnabled(uFire, true)
 			setElementCollidableWith (uFire, localPlayer, false)
@@ -225,16 +228,15 @@ function Fire:createFireElement(iSize, uPed)
 	local iX, iY, iZ = getElementPosition(uPed)
 	self.m_Fires[uPed] = {}
 	self.m_Fires[uPed].iSize = iSize
+	self.m_Fires[uPed].baseZ = iZ
 	self.m_Fires[uPed].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
 	self.m_Fires[uPed].uBurningCol = createColSphere(iX, iY, iZ, iSize/4)
 	setElementCollisionsEnabled(uPed, false) --temporary until stream in
-	self.m_Fires[uFire].bCorrectPlaced = false
 	self:checkForFireGroundInfo(uPed)
 	uPed:setData("NPC:Immortal", true)
 	addEventHandler("onClientPedDamage", uPed, bind(self.handlePedDamage, self))
 	addEventHandler("onClientColShapeHit", self.m_Fires[uPed].uBurningCol, bind(self.burnPlayer, self))
 	addEventHandler("onClientElementStreamIn", uPed, function()
-		self.m_Fires[uFire].bCorrectPlaced = false
 		setTimer(function() -- allow the client to let the element fully stream in as this process is apparently asynchronous
 			if isElement(uPed) and isElementStreamedIn(uPed) then
 				self:checkForFireGroundInfo(uPed)
@@ -261,4 +263,20 @@ function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 	end
 	sm:setText(t)
 	sm:resetTimeout()
+end
+
+function Fire:reloadFiresIfBugged()
+	local count = 0
+	for i,v in pairs(Fire:getSingleton().m_Fires) do
+		if v.uEffect:getPosition().z == v.baseZ then
+			v.bCorrectPlaced = false
+			Fire:getSingleton():checkForFireGroundInfo(v)
+			count = count + 1
+		end
+	end
+	if count == 0 then
+		ErrorBox:new(_("Keine fehlerhaft platzierten Feuer gefunden."))
+	else
+		SuccessBox:new(_(count.." Feuer wurden neu geladen."))
+	end
 end
