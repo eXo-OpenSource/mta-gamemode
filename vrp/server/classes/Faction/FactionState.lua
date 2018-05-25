@@ -193,11 +193,13 @@ function FactionState:loadLSPD(factionId)
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
-	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	--VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	local barrier = Gate:new(968, Vector3(1544.70, -1630.90, 13.1), Vector3(0, 90, 90), Vector3(1544.70, -1630.90, 13.1), Vector3(0, 5, 90), false)
+	barrier.onGateHit = bind(self.onBarrierGateHit, self)  -- PD Barrier
 
-	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
+	local gate = Gate:new(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
-	gate:setGateScale(1.25)
+	gate:setGateScale(1.01)
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
