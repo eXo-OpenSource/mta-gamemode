@@ -51,6 +51,10 @@ function Item:startObjectPlacing(player, callback, hideObject, customModel)
 		player:sendError(_("Du kannst nur ein Objekt zur selben Zeit setzen!", player))
 		return false
 	end
+	if player:getData("inJail") or player:getData("inAdminPrison") then
+		player:sendError(_("Du kannst hier keine Objekte platzieren.", player)) 
+		return false
+	end
 
 	-- Start the object placer on the client
 	player:triggerEvent("objectPlacerStart", customModel or self:getModelId(), "itemPlaced", hideObject)
