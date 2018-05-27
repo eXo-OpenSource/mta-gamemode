@@ -24,6 +24,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 3*60000, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -209,10 +210,13 @@ function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
 end
 
-function AttackSession:onPurposlyDisqualify( player, bAfk )
+function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
 	local reason = ""
 	if bAfk then 
 		reason = "(AFK)"
+	end
+	if bPick then
+		reason = "(Nicht eingeteilt)"
 	end
 	self:disqualifyPlayer( player )
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
@@ -472,6 +476,25 @@ function AttackSession:attackWin() --// win for team1
 	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
 	end
+end
+
+function AttackSession:onDecisionTimeEnd()
+	if self.m_Pick then 
+		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
+			if not self:isPlayerInPick(v) then 
+				self:onPurposlyDisqualify( v, false, true)
+			end
+		end
+	end
+end
+
+function AttackSession:isPlayerInPick( player )
+	for _, player2 in ipairs(self.m_Pick) do 
+		if player == player2 then 
+			return true
+		end
+	end
+	return false
 end
 
 function AttackSession:getFactions()
