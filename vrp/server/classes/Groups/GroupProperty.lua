@@ -13,8 +13,9 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_Price = Price
+	self.m_OwnerID = OwnerId
 	self.m_Message = Message
-	self:setOwner(OwnerId)
+	self.m_Owner = GroupManager:getSingleton():getFromId(OwnerId) or false
 	if not self.m_Owner then
 		Open = 1
 	end
