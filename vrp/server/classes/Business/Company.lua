@@ -377,6 +377,16 @@ function Company:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
+function Company:getSkinsForRank(rank)
+	local tab = {}
+	for skinId in pairs(companySkins[self.m_Id]) do
+		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+			table.insert(tab, skinId)
+		end
+	end
+	return tab
+end
+
 function Company:setRankLoan(rank,amount)
 	self.m_RankLoans[tostring(rank)] = amount
 end
@@ -386,7 +396,7 @@ function Company:setRankSkin(rank,skinId)
 end
 
 function Company:updateCompanyDutyGUI(player)
-	player:triggerEvent("updateCompanyDutyGUI", player:isCompanyDuty())
+	player:triggerEvent("showDutyGUI", false, self:getId(), player:isCompanyDuty())
 end
 
 function Company:changeSkin(player)
@@ -413,8 +423,7 @@ function Company:createDutyMarker()
     			if getElementType(hitElement) == "player" and not hitElement.vehicle then
     				local company = hitElement:getCompany()
     				if company and company == self then
-    					hitElement:triggerEvent("showCompanyDutyGUI")
-    					hitElement:getCompany():updateCompanyDutyGUI(hitElement)
+    					hitElement:triggerEvent("showDutyGUI", false, self:getId())
                     else
                         hitElement:sendError(_("Du bist nicht in diesem Unternehmen!", hitElement))
                     end

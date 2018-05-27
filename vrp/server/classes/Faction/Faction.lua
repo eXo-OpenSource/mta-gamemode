@@ -349,8 +349,8 @@ end
 function Faction:getSkinsForRank(rank)
 	local tab = {}
 	for skinId in pairs(factionSkins[self.m_Id]) do
-		if tonumber(self:getSetting("Skin", skinId, FactionRank.Leader)) <= rank then
-			tab[skinId] = true
+		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+			table.insert(tab, skinId)
 		end
 	end
 	return tab

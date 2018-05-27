@@ -22,7 +22,7 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -39,6 +39,9 @@ function CompanyManager:constructor()
 	addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("companyToggleLoan", root, bind(self.Event_toggleLoan, self))
+	addEventHandler("companyRequestSkinSelection", root, bind(self.Event_requestSkins, self))
+
+	
 end
 
 function CompanyManager:destructor()
@@ -425,4 +428,13 @@ function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames)
 	end
+end
+
+
+function CompanyManager:Event_requestSkins()
+	if not client:getCompany() then
+		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
+		return false
+	end
+	triggerClientEvent(client, "openSkinSelectGUI", client, client:getCompany():getSkinsForRank(client:getCompany():getPlayerRank(client)), client:getCompany():getId(), "company")
 end

@@ -5,7 +5,7 @@
 -- *  PURPOSE:     House GUI class
 -- *
 -- ****************************************************************************
-CompanyDutyGUI = inherit(GUIButtonMenu)
+--[[CompanyDutyGUI = inherit(GUIButtonMenu)
 
 addRemoteEvents{"showCompanyDutyGUI","updateCompanyDutyGUI"}
 
@@ -36,3 +36,4 @@ addEventHandler("showCompanyDutyGUI", root,
 			CompanyDutyGUI:new()
 		end
 	)
+]]

@@ -708,6 +708,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseRobSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/DutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
@@ -745,6 +746,7 @@
 	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>

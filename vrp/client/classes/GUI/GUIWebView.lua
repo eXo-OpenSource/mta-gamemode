@@ -17,8 +17,10 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
 
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.update, self)
+    self.m_OutputLoadErrorFunc = bind(self.outputLoadError, self)
     addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    addEventHandler("onClientBrowserLoadingFailed", root, self.m_OutputLoadErrorFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
     addEventHandler("onClientBrowserDocumentReady", self.m_Browser, function(...) if self.onDocumentReady then self:onDocumentReady(...) end end)
     addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
@@ -139,4 +141,8 @@ end
 
 function GUIWebView:reload()
 	reloadBrowserPage(self.m_Browser)
+end
+
+function GUIWebView:outputLoadError(url, errorCode, errorDesc)
+    outputConsole(url.." "..errorCode.." "..errorDesc)
 end
