@@ -479,10 +479,15 @@ function AttackSession:attackWin() --// win for team1
 end
 
 function AttackSession:onDecisionTimeEnd()
-	if self.m_Pick then 
+	if self.m_Pick then
+		local minPriority = #self.m_Faction2:getOnlinePlayers()
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			if not self:isPlayerInPick(v) then 
 				self:onPurposlyDisqualify( v, false, true)
+			else 
+				if k > minPriority+1 then 
+					self:onPurposlyDisqualify( v, false, true)
+				end
 			end
 		end
 	end
