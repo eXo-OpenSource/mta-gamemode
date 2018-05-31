@@ -268,7 +268,7 @@ end
 function Fire:reloadFiresIfBugged()
 	local count = 0
 	for i,v in pairs(Fire:getSingleton().m_Fires) do
-		if v.uEffect:getPosition().z == v.baseZ then
+		if v.uEffect:getPosition().z == v.baseZ or not v.bCorrectPlaced then
 			v.bCorrectPlaced = false
 			Fire:getSingleton():checkForFireGroundInfo(v)
 			count = count + 1
