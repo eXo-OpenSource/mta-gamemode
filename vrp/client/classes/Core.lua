@@ -233,8 +233,6 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 	Phone:new()
 	Phone:getSingleton():close()
 	showChat(true)
-	setCameraTarget(localPlayer)
-	setElementFrozen(localPlayer,false)
 end
 
 function Core:destructor()

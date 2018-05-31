@@ -183,6 +183,7 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 
 		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
 			player:setSessionId(jwtBase.."."..responseData)
+			player:setFrozen(false)
 		end)
 	end
 end

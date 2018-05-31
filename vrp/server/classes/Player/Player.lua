@@ -461,8 +461,9 @@ function Player:spawn()
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
-
-	self:setFrozen(false)
+ 
+	-- gets unfrozen if he has a session id
+	self:setFrozen(true)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
