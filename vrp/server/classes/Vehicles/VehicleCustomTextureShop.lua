@@ -300,7 +300,7 @@ function VehicleCustomTextureShop:Event_texPreviewUpdateStatus(id, status)
 		return
 	end
 
-	sql:queryExec("UPDATE ??_textureshop SET Status = ? WHERE Id = ?;", sql:getPrefix(), status, id)
+	sql:queryExec("UPDATE ??_textureshop SET Status = ?, Admin = ? WHERE Id = ?;", sql:getPrefix(), status, client:getId(), id)
 end
 
 function VehicleCustomTextureShop:Event_texPreviewClose()
