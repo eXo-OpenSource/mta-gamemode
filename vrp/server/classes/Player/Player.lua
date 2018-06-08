@@ -668,6 +668,8 @@ function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set th
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
 	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
 		self:getFaction():changeSkin(self)
+		self:setFactionDuty(true)
+		self:setPublicSync("Faction:Duty", true)
 		setPedArmor(self, 100)
 	else
 		self:setModel(self.m_Skin or 0)

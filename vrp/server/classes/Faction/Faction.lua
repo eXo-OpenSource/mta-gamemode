@@ -181,8 +181,10 @@ function Faction:changeSkin(player)
 	end
 end
 
-function Faction:updateStateFactionDutyGUI(player)
-	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Faction:Swat"))
+function Faction:updateDutyGUI(player)
+	if player:getFaction() and not player:isDead() then
+		player:triggerEvent("showDutyGUI", true, player:getFaction():getId(), player:isFactionDuty())
+	end
 end
 
 function Faction:addPlayer(playerId, rank)

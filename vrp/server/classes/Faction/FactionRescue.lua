@@ -155,8 +155,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 					if faction:isRescueFaction() == true then
 						if not hitElement.vehicle then
 							hitElement.m_CurrentDutyPickup = source
-							hitElement:triggerEvent("showRescueFactionDutyGUI")
-							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
+							faction:updateDutyGUI(hitElement)
 						else
       						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", hitElement))
 						end
@@ -192,8 +191,6 @@ function FactionRescue:Event_changeSkin(player)
 			end
 		end
 	end
-	player:triggerEvent("showRescueFactionDutyGUI", true)
-
 end
 
 function FactionRescue:Event_toggleDuty(type, wasted)
@@ -208,6 +205,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
 				takeAllWeapons(client)
+				faction:updateDutyGUI(client)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
@@ -223,6 +221,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Rescue:Type",type)
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():giveItem("Warnkegel", 10)
+				faction:updateDutyGUI(client)
 				self:Event_changeSkin(client)
 			end
 		else
