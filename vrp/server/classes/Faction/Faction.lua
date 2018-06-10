@@ -174,10 +174,31 @@ function Faction:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
-function Faction:changeSkin(player)
-	local rank = self:getPlayerRank(player)
-	if player:isActive() then
-		player:setModel(self.m_RankSkins[tostring(rank)])
+function Faction:getSkinsForRank(rank)
+	local tab = {}
+	for skinId in pairs(factionSkins[self.m_Id]) do
+		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+			table.insert(tab, skinId)
+		end
+	end
+	return tab
+end
+
+function Faction:changeSkin(player, skinId)
+	local playerRank = self:getPlayerRank(player)
+	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
+	if self.m_Skins[skinId] then
+		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+		if minRank <= playerRank then
+			player:setModel(skinId)
+		else
+			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			player:setModel(self:getSkinsForRank(playerRank)[1])
+		end
+	else
+		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+		-- ^useless if player switches faction
+		player:setModel(self:getSkinsForRank(playerRank)[1])
 	end
 end
 
@@ -346,16 +367,6 @@ end
 
 function Faction:getRankWeapons(rank)
 	return self.m_RankWeapons[tostring(rank)]
-end
-
-function Faction:getSkinsForRank(rank)
-	local tab = {}
-	for skinId in pairs(factionSkins[self.m_Id]) do
-		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
-			table.insert(tab, skinId)
-		end
-	end
-	return tab
 end
 
 function Faction:getActivity(force)

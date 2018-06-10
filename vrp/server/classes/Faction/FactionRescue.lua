@@ -8,7 +8,7 @@
 FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
-	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
+	"factionRescueWastedFinished", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
 	"factionRescueReviveAbort", "factionRescueToggleLadder", "factionRescueToggleDefibrillator"
 }
 
@@ -17,10 +17,6 @@ function FactionRescue:constructor()
 	self:createDutyPickup(1076.30, -1374.01, 13.65, 0) -- Garage
 
 	self.m_VehicleFires = {}
-
-	self.m_Skins = {}
-	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
-	self.m_Skins["fire"] = {27, 277, 278, 279}
 
 	self.m_LastStrecher = {}
 	self.m_BankAccountServer = BankServer.get("faction.rescue")
@@ -79,7 +75,6 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueDiscardHealPlayer", root, bind(self.Event_discardHealPlayer, self))
 	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
-	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescueToggleDefibrillator", root, bind(self.Event_ToggleDefibrillator, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
@@ -167,33 +162,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_changeSkin(player)
-
-	if not player then player = client end
-
-	local type = player:getPublicSync("Rescue:Type")
-	local curskin = getElementModel(player)
-
-	local suc = false
-	for i = curskin+1, 313 do
-		if table.find(self.m_Skins[type], i) then
-			suc = true
-			player:setModel(i)
-			break
-		end
-	end
-	if suc == false then
-		for i = 0, curskin do
-			if table.find(self.m_Skins[type], i) then
-				suc = true
-				player:setModel(i)
-				break
-			end
-		end
-	end
-end
-
-function FactionRescue:Event_toggleDuty(type, wasted)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
@@ -205,8 +174,9 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
 				takeAllWeapons(client)
-				faction:updateDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 			else
+				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
@@ -222,7 +192,7 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():giveItem("Warnkegel", 10)
 				faction:updateDutyGUI(client)
-				self:Event_changeSkin(client)
+				faction:changeSkin(client, prefSkin)
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))

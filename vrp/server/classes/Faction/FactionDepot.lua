@@ -204,7 +204,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 	end
 	local textForPlayer = "Du hast folgende Waffen aus dem Lager genommen:"
 	for i,v in pairs(logData) do
-		self.m_Owner:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) aus dem Lager genommen!"):format(i, v))
+		self.m_Owner:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) aus dem Lager genommen!"):format(i, (v-1)))
 		textForPlayer = textForPlayer.."\n"..i
 		if v > 1 then
 			textForPlayer = textForPlayer.. " mit ".. (v-1) .. " Magazin(en)"

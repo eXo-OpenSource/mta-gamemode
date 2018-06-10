@@ -151,7 +151,7 @@ function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and (player:getFaction() == source.Faction or source.Faction:checkAlliancePermission(player:getFaction(), "weapons")) then
 			player.m_CurrentDutyPickup = source
-			faction:updateDutyGUI(player)
+			player:getFaction():updateDutyGUI(player)
 		else
 			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))
 		end
@@ -320,7 +320,7 @@ function FactionEvil:loadDiplomacy()
 	end
 end
 
-function FactionEvil:Event_toggleDuty(wasted)
+function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
 	if getPedOccupiedVehicle(client) then
@@ -330,24 +330,19 @@ function FactionEvil:Event_toggleDuty(wasted)
 	if faction:isEvilFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				if wasted then
-					client:takeAllWeapons()
-				else
-					self:Event_storageWeapons(client)
-					client:takeAllWeapons()
-				end
+				self:Event_storageWeapons(client)
 				client:setCorrectSkin(true)
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nun in zivil unterwegs!", client))
 				client:setPublicSync("Faction:Duty",false)
-				faction:updateDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				faction:changeSkin(client)
+				faction:changeSkin(client, preferredSkin)
 				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
@@ -355,7 +350,7 @@ function FactionEvil:Event_toggleDuty(wasted)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", client))
 				client:setPublicSync("Faction:Duty",true)
-				faction:updateDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))

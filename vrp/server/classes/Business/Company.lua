@@ -399,9 +399,22 @@ function Company:updateCompanyDutyGUI(player)
 	player:triggerEvent("showDutyGUI", false, self:getId(), player:isCompanyDuty())
 end
 
-function Company:changeSkin(player)
-	local rank = self:getPlayerRank(player)
-	player:setModel(self.m_RankSkins[tostring(rank)])
+function Company:changeSkin(player, skinId)
+	local playerRank = self:getPlayerRank(player)
+	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
+	if self.m_Skins[skinId] then
+		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+		if minRank <= playerRank then
+			player:setModel(skinId)
+		else
+			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			player:setModel(self:getSkinsForRank(playerRank)[1])
+		end
+	else
+		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+		-- ^useless if player switches faction
+		player:setModel(self:getSkinsForRank(playerRank)[1])
+	end
 end
 
 function Company:paydayPlayer(player)
@@ -423,7 +436,7 @@ function Company:createDutyMarker()
     			if getElementType(hitElement) == "player" and not hitElement.vehicle then
     				local company = hitElement:getCompany()
     				if company and company == self then
-    					hitElement:triggerEvent("showDutyGUI", false, self:getId())
+    					hitElement:triggerEvent("showDutyGUI", false, self:getId(), hitElement:isCompanyDuty())
                     else
                         hitElement:sendError(_("Du bist nicht in diesem Unternehmen!", hitElement))
                     end

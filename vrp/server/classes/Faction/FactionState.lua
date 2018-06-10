@@ -1266,7 +1266,7 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
-function FactionState:Event_toggleDuty(wasted)
+function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
 	if getPedOccupiedVehicle(client) then
@@ -1293,14 +1293,14 @@ function FactionState:Event_toggleDuty(wasted)
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
-				faction:updateDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				faction:changeSkin(client)
+				faction:changeSkin(client, preferredSkin)
 				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
@@ -1314,7 +1314,7 @@ function FactionState:Event_toggleDuty(wasted)
 				client:getInventory():giveItem("Einsatzhelm", 1)
 				client:getInventory():removeAllItem("Taser")
 				client:getInventory():giveItem("Taser", 1)
-				faction:updateDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
