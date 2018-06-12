@@ -24,7 +24,7 @@ function PerformanceStatsGUI:constructor()
 
 	GUIForm.constructor(self, screenWidth-30-screenWidth*0.3, screenHeight*0.3, screenWidth*0.3, screenHeight*0.4)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Debug Tools (F10 to close)", true, false, self)
-	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Dx Stats", "Elemente", "Cache", "Performance"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Dx Stats", "Elements", "Cache", "Perf. Stats", "Network"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
 	self.m_Fields = {}
 	self.m_TabDxStats = self.m_Tabs[1]
 	self:addField(self.m_TabDxStats, "VideoCardName", function() return tostring(dxGetStatus().VideoCardName) end)
@@ -50,7 +50,6 @@ function PerformanceStatsGUI:constructor()
 	self.m_TabCache.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 
 	self.m_TabPerformance = self.m_Tabs[4]
-
 	GUILabel:new(self.m_Width*0.02, 0, self.m_Width*0.7, self.m_Height*0.08, "PerformanceDump    filter:", self.m_TabPerformance)
 	self.m_PerformanceEdit = GUIEdit:new(self.m_Width*0.5, self.m_Width*0.01, self.m_Width*0.48, self.m_Height*0.08-self.m_Width*0.01, self.m_TabPerformance)
 	self.m_TabPerformance.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.73, self.m_TabPerformance)
@@ -60,6 +59,11 @@ function PerformanceStatsGUI:constructor()
 	self.m_TabPerformance.m_Gridlist:setItemHeight(math.min(self.m_Height*0.08, 20))
 	self.m_TabPerformance.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 
+	self.m_TabNetwork = self.m_Tabs[5]
+	for ___, type in pairs({"bytesReceived", "bytesSent", "packetsReceived", "packetsSent", "packetlossTotal", "packetlossLastSecond", "messagesInSendBuffer", "messagesInResendBuffer"}) do
+		self:addField(self.m_TabNetwork, type, function() return getNetworkStats()[type] end)
+	end
+	self:addField(self.m_TabNetwork, "Ping", function() return getPlayerPing(localPlayer) end)
 	self.m_RefreshTimer = false
 	self:refresh()
 	self:onShow()
