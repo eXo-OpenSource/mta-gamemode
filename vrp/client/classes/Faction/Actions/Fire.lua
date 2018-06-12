@@ -213,6 +213,9 @@ function Fire:checkForFireGroundInfo(uFire)
 				end
 			end
 		end
+		if not isElementStreamedIn(uFire) then return "nicht eingestreamed" end
+		if self.m_Fires[uFire].uEffect:getPosition().z == 0 then return "z auf 0" end
+		if self.m_Fires[uFire].uEffect:getPosition().z == self.m_Fires[uFire].baseZ then return "z auf Basishöhe" end
 	end
 end
 
@@ -266,17 +269,19 @@ function Fire:updateStatistics(tblStats, timeSinceStart, timeEstimated, w, h)
 end
 
 function Fire:reloadFiresIfBugged()
-	local count = 0
+	local count = {}
 	for i,v in pairs(Fire:getSingleton().m_Fires) do
 		if v.uEffect:getPosition().z == v.baseZ or not v.bCorrectPlaced then
 			v.bCorrectPlaced = false
-			Fire:getSingleton():checkForFireGroundInfo(v)
-			count = count + 1
+			local r = Fire:getSingleton():checkForFireGroundInfo(v)
+			if not count[r] then count[r] = 0 end
+			count[r] = count[r] + 1
 		end
 	end
-	if count == 0 then
+	ShortMessage:new(inspect(count), _"aktualisierte Feuer")
+	--[[if count == 0 then
 		ErrorBox:new(_("Keine fehlerhaft platzierten Feuer gefunden."))
 	else
 		SuccessBox:new(_(count.." Feuer wurden neu geladen."))
-	end
+	end]]
 end

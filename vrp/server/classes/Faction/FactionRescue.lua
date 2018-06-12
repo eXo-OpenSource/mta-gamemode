@@ -63,7 +63,7 @@ function FactionRescue:constructor()
 
 	nextframe(
 		function ()
-			local safe = createObject(2332, 1724.8, -1754.29, 15.25, 0, 0, 180)
+			local safe = createObject(2332, 1075.83, -1384.2, 13.21, 0, 0, 180)
 			setElementDoubleSided(safe,true)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end

@@ -396,6 +396,8 @@ function Player:spawn()
 					local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
 					if house and house:isValidToEnter(self) then
 						if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
+							--if it works, don't delete it
+							self:setFrozen(true)
 							spawnSuccess = true
 						end
 					else

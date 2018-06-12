@@ -15,7 +15,3 @@ end
 function GUIGridEditor:destructor()
 
 end
-
-addCommandHandler("guiedit", function()
-    GUIGridEditor:getSingleton()
-end)

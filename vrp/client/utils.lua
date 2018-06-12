@@ -327,33 +327,3 @@ function setElementDimension(element, dimension)
 	_setElementDimension(element, dimension)
 	triggerEvent("onClientElementDimensionChange", element, dimension)
 end
-
-
---production DEBUG for possible fix on interior fall-through
-addEvent("onClientPlayerDebugInteriorChange", true)
-local tblSavedData = {{getNetworkStats(), getRealTime().timestamp}, {getNetworkStats(), getRealTime().timestamp}}
-addEventHandler("onClientPlayerDebugInteriorChange", localPlayer, function()
-	tblSavedData = {{getNetworkStats(), getRealTime().timestamp}, {"not ready", 0}}
-	setTimer(function()
-		tblSavedData[2] = {getNetworkStats(), getRealTime().timestamp}
-	end, 5000, 1)
-end)
-
-addCommandHandler("netdebug", function()
-
-	local string = ([[
-USAGE DATA TELEPORT START (%s)
-%s
-
-USAGE DATA TELEPORT END (%s)
-%s
-
-TIME OF RECORD
-%s
-]]):format(getOpticalTimestamp(tblSavedData[1][2])..":"..getRealTime(tblSavedData[1][2]).second, toJSON(tblSavedData[1][1]), getOpticalTimestamp(tblSavedData[2][2])..":"..getRealTime(tblSavedData[2][2]).second, toJSON(tblSavedData[2][1]), getOpticalTimestamp()..":"..getRealTime().second)
-
-	outputConsole("---Netzwerk-Debug-Informationen---")
-	outputConsole(string)
-	outputConsole("---Netzwerk-Debug-Informationen Ende---")
-	setClipboard(string)
-end)
