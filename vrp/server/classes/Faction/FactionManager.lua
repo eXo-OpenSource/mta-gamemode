@@ -462,7 +462,7 @@ end
 
 function FactionManager:Event_requestDiplomacy(factionId)
 	local faction = self:getFromId(factionId)
-	if faction and faction.m_Diplomacy then
+	if faction and faction.m_Diplomacy and client.getFaction and client:getFaction() then
 		client:triggerEvent("factionRetrieveDiplomacy", factionId, faction.m_Diplomacy, faction.m_DiplomacyPermissions, client:getFaction().m_DiplomacyRequests)
 	end
 end
