@@ -21,9 +21,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/buildings/mech.dff", 7520)
 
 	--Kart-Track
-	self:loadImportCOL("files/models/kart.col", 13083)
-	self:loadImportTXD("files/models/kart.txd", 13083)
-	self:loadImportDFF("files/models/kart.dff", 13083)
+	self:loadImportCOL("files/models/buildings/kart.col", 13083)
+	self:loadImportTXD("files/models/buildings/kart.txd", 13083)
+	self:loadImportDFF("files/models/buildings/kart.dff", 13083)
 	self:loadImportCOL("files/models/objects/bed.col", 1879)
 	self:loadImportTXD("files/models/objects/bed.txd", 1879)
 	self:loadImportDFF("files/models/objects/bed.dff", 1879)
