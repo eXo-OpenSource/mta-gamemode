@@ -24,9 +24,9 @@ function FactionRescue:constructor()
 
 	self.m_GateHitBind = bind(self.onBarrierHit, self)
 	-- Barriers
-	VehicleBarrier:new(Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0)).onBarrierHit = self.m_GateHitBind
-	VehicleBarrier:new(Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0)).onBarrierHit = self.m_GateHitBind
-
+	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	
 	--Garage doors
 	self.m_Gates = {
 		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1125.7, -1381.9, 17), Vector3(0, 88, 90)), --one

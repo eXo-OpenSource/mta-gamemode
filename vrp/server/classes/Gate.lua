@@ -24,7 +24,7 @@ function Gate:triggerMovement(hitEle)
     local function rotationDifference(isRotation, targetRotation)
         if math.round(isRotation) == math.round(targetRotation) then return 0 end
         local diff = ((targetRotation - isRotation) + 180) % 360 - 180
-        outputDebug(isRotation, targetRotation, diff, "----", math.round(isRotation), math.round(targetRotation))
+        --outputDebug(isRotation, targetRotation, diff, "----", math.round(isRotation), math.round(targetRotation))
         if math.abs(math.round(diff)) == 180 then return 0 end
         return diff
     end

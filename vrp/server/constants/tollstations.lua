@@ -27,25 +27,25 @@ TOLL_STATIONS = {
 		Type = 1;
 	};
 	{
-		Name = "Las Venturas - 1";
+		Name = "Las Venturas";
 		BarrierData = {pos = Vector3(1746.4, 519, 27.9), rot = Vector3(0, 90, 161.241)};
 		PedData = {pos = Vector3(1735.3134765625, 511.05078125, 28.936729431152), rot = Vector3(0, 0, 249.38)};
 		Type = 2;
 	};
 	{
-		Name = "Las Venturas - 2";
+		Name = "Las Venturas";
 		BarrierData = {pos = Vector3(1748, 518.40002, 27.9), rot = Vector3(0, 90, 340.499)};
 		PedData = {pos = Vector3(1744.3662109375, 507.87109375, 28.939765930176), rot = Vector3(0, 0, 249.38)};
 		Type = 1;
 	};
 	{
-		Name = "Las Venturas - 1";
+		Name = "Las Venturas";
 		BarrierData = {pos = Vector3(1727.4, 514.5, 28.7), rot = Vector3(0, 90, 339.736)};
 		PedData = {pos = Vector3(1737.7568359375, 522.5888671875, 28.321184158325), rot = Vector3(0, 0, 71.39)};
 		Type = 2;
 	};
 	{
-		Name = "Las Venturas - 2";
+		Name = "Las Venturas";
 		BarrierData = {pos = Vector3(1725.9, 515, 28.7), rot = Vector3(0, 90, 159.244)};
 		PedData = {pos = Vector3(1729.7880859375, 525.5390625, 28.317928314209), rot = Vector3(0, 0, 71.39)};
 		Type = 1;

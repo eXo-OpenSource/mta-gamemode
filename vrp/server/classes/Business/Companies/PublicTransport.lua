@@ -25,8 +25,8 @@ function PublicTransport:constructor()
 	addEventHandler("publicTransportChangeBusDutyState", root, bind(self.Event_changeBusDutyState, self))
 	addEventHandler("playerReady", root, bind(self.Event_PlayerRequestBusData, self))
 
-	VehicleBarrier:new(Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), 0).onBarrierHit = bind(self.onBarrierHit, self)
-
+	Gate:new(968, Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), Vector3(1811.2,-1893,13.2,0), Vector3(0, 5, 90), false).onBarrierHit = bind(self.onBarrierHit, self)
+	
 	InteriorEnterExit:constructor(Vector3(1743.05, -1864.12, 13.57), Vector3(1225.84, -68.98, 1011.33), 0, 0, 12, 4) --front door
 	InteriorEnterExit:constructor(Vector3(1752.86, -1894.19, 13.56), Vector3(1210.65, -55.02, 1011.34), 270, 270, 12, 4) --parking lot
 	InteriorEnterExit:constructor(Vector3(1733.27, -1912.00, 13.56), Vector3(1235.94, -46.98, 1011.33), 90, 90, 12, 4) --side
