@@ -38,7 +38,7 @@ end
 function ItemCan:action(player, key, state, bag, place)
 	if state == "down" then
 		local itemName = "Kanne"
-		local fillstate = tonumber(player:getInventory():getItemValueByBag(bag, place) or 0)
+		local fillstate = tonumber(player:getInventory():getItemValueByBag(bag, place)) or 0
 		if fillstate < 1 then
 			if isElementInWater( player ) then
 				player:getInventory():setItemValueByBag(bag, place, 10)
