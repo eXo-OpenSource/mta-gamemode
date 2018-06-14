@@ -50,6 +50,7 @@ function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimen
 	setElementFrozen(player, true)
 	setTimer(
 		function()
+			if not isElement(player) then return end
 			setElementInterior(player,interior, pos)
 			player:setRotation(0, 0, rotation)
 			player:setPosition(pos)

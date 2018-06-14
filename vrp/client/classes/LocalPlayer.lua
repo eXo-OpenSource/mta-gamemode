@@ -62,9 +62,7 @@ function LocalPlayer:constructor()
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
 	
 	self:setPrivateSyncChangeHandler("SessionID", function()
-		self:setFrozen(true)
 		core:onWebSessionCreated()
-		self:setFrozen(false)
 	end)
 
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)

@@ -128,16 +128,16 @@ function WearableManager:removeWearable( player, itemName, value )
 				local wearableClass = classes[itemName]
 				if wearableClass then 
 					if wearableClass == WearablePortables then 
-						destroyElement(player.m_Portables)
+						if isElement(player.m_Portables) then destroyElement(player.m_Portables) end
 						player.m_Portables = false
 						player.m_IsWearingPortables = false
 					elseif wearableClass == WearableHelmet then 
-						destroyElement(player.m_Helmet)
+						if isElement(player.m_Helmet) then destroyElement(player.m_Helmet) end
 						player.m_IsWearingHelmet = false
 						player.m_Helmet = false
 						player:setData("isFaceConcealed", false)
 					elseif wearableClass == WearableShirt then 
-						destroyElement(player.m_Shirt)
+						if isElement(player.m_Shirt) then destroyElement(player.m_Shirt) end
 						player.m_IsWearingShirt = false
 						player.m_Shirt = false
 					elseif wearableClass == WearableClothes then 
