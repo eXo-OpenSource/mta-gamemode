@@ -148,7 +148,7 @@ function FactionManager:OnRenderSpeed()
 						if speeder then
 							local x,y,z = getElementPosition(localVeh)
 							local px,py,pz = getPedBonePosition(speeder,8)
-							local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
+							local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
 							if bLineCheck then
 								self.m_bLineChecked = self.m_SpeedCamVehicle
 								self.m_RemoveDraw = self.m_DrawStart + 10000
@@ -165,7 +165,7 @@ function FactionManager:OnRenderSpeed()
 					if speeder then
 						local x,y,z = getElementPosition(localVeh)
 						local px,py,pz = getPedBonePosition(speeder,8)
-						local bLineCheck = isLineOfSightClear (x, y, z, px, py, pz, true, false, false, true)
+						local bLineCheck = isLineOfSightClear (Vector3(x, y, z), Vector3(px, py, pz), true, false, false, true)
 						if bLineCheck then
 							self.m_bLineChecked = self.m_SpeedCamVehicle
 							self.m_RemoveDraw = self.m_DrawStart + 10000
