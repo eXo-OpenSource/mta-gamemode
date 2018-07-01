@@ -43,7 +43,7 @@ function Nametag:draw()
 			if (bDistance <= maxDistance) or localPlayer:getPrivateSync("isSpecting") then
 				local scx,scy = getScreenFromWorldPosition(pX, pY, pZ + 1.2)
 				if scx and scy then
-					local bLineOfSight = isLineOfSightClear(cx, cy, cz, phX, phY, phZ, true, false, false, true, false, false, false, localPlayer)
+					local bLineOfSight = isLineOfSightClear(Vector3(cx, cy, cz), Vector3(phX, phY, phZ), true, false, false, true, false, false, false, localPlayer)
 					if bLineOfSight or localPlayer:getPrivateSync("isSpecting") then
 						local drawName = getPlayerName(player)
 						local wanteds = player:getWanteds()

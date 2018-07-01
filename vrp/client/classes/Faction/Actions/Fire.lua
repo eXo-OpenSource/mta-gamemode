@@ -217,6 +217,7 @@ function Fire:checkForFireGroundInfo(uFire)
 		if self.m_Fires[uFire].uEffect:getPosition().z == 0 then return "z auf 0" end
 		if self.m_Fires[uFire].uEffect:getPosition().z == self.m_Fires[uFire].baseZ then return "z auf Basishöhe" end
 	end
+	return "nicht in der Tabelle"
 end
 
 --//
@@ -270,18 +271,13 @@ end
 
 function Fire:reloadFiresIfBugged()
 	local count = {}
-	for i,v in pairs(Fire:getSingleton().m_Fires) do
-		if v.uEffect:getPosition().z == v.baseZ or not v.bCorrectPlaced then
-			v.bCorrectPlaced = false
-			local r = Fire:getSingleton():checkForFireGroundInfo(v)
+	for fire in pairs(Fire:getSingleton().m_Fires) do
+		if fire.uEffect:getPosition().z == fire.baseZ or not fire.bCorrectPlaced then
+			fire.bCorrectPlaced = false
+			local r = Fire:getSingleton():checkForFireGroundInfo(fire)
 			if not count[r] then count[r] = 0 end
 			count[r] = count[r] + 1
 		end
 	end
 	ShortMessage:new(inspect(count), _"aktualisierte Feuer")
-	--[[if count == 0 then
-		ErrorBox:new(_("Keine fehlerhaft platzierten Feuer gefunden."))
-	else
-		SuccessBox:new(_(count.." Feuer wurden neu geladen."))
-	end]]
 end
