@@ -22,7 +22,7 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin", "companyUpdateSkinPermissions"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -41,6 +41,7 @@ function CompanyManager:constructor()
 	addEventHandler("companyToggleLoan", root, bind(self.Event_toggleLoan, self))
 	addEventHandler("companyRequestSkinSelection", root, bind(self.Event_requestSkins, self))
 	addEventHandler("companyPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
+	addEventHandler("companyUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 end
 
 function CompanyManager:destructor()
@@ -435,7 +436,9 @@ function CompanyManager:Event_requestSkins()
 		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
 		return false
 	end
-	triggerClientEvent(client, "openSkinSelectGUI", client, client:getCompany():getSkinsForRank(client:getCompany():getPlayerRank(client)), client:getCompany():getId(), "company", client:getCompany():getPlayerRank(client) >= CompanyRank.Manager)
+	local c = client:getCompany()
+	local r = c:getPlayerRank(client)
+	triggerClientEvent(client, "openSkinSelectGUI", client, c:getSkinsForRank(r), c:getId(), "company", r >= CompanyRank.Manager, c:getAllSkins())
 end
 
 function CompanyManager:Event_setPlayerDutySkin(skinId)
@@ -443,5 +446,25 @@ function CompanyManager:Event_setPlayerDutySkin(skinId)
 		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
 		return false
 	end
+	client:sendInfo(_("Kleidung gewechselt.", client))
 	client:getCompany():changeSkin(client, skinId)
+end
+
+function CompanyManager:Event_UpdateSkinPermissions(skinTable)
+	if not client:getCompany() then
+		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
+		return false
+	end
+	if client:getCompany():getPlayerRank(client) < CompanyRank.Manager then
+		client:sendError(_("Dein Rang ist zu niedrig!", client))
+		return false
+	end
+	for i, v in pairs(skinTable) do
+		client:getCompany():setSetting("Skin", i, v)
+	end
+	client:sendSuccess(_("Einstellungen gespeichert!", client))
+
+	local c = client:getCompany()
+	local r = c:getPlayerRank(client)
+	triggerClientEvent(client, "openSkinSelectGUI", client, c:getSkinsForRank(r), c:getId(), "company", r >= CompanyRank.Manager, c:getAllSkins())
 end

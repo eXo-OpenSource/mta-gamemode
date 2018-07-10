@@ -18,21 +18,40 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.update, self)
     self.m_OutputLoadErrorFunc = bind(self.outputLoadError, self)
-    addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
-    addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    self:setControlsEnabled(true)
+    self:setRenderingEnabled(true)
     addEventHandler("onClientBrowserLoadingFailed", root, self.m_OutputLoadErrorFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
-    addEventHandler("onClientBrowserDocumentReady", self.m_Browser, function(...) if self.onDocumentReady then self:onDocumentReady(...) end end)
+    addEventHandler("onClientBrowserDocumentReady", self.m_Browser, 
+    function(...) 
+        if self.onDocumentReady then self:onDocumentReady(...) end 
+        -- Request redraw
+        nextframe(function()
+            self:anyChange()
+        end)
+        
+    end)
     addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
 end
 
 function GUIWebView:virtual_destructor()
-	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
-    removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    removeEventHandler("onClientBrowserLoadingFailed", root, self.m_OutputLoadErrorFunc)
     focusBrowser(nil)
+    self:setRenderingEnabled(false)
+    self:setControlsEnabled(false)
+
     self.m_Browser:destroy()
 
     --GUIElement.destructor(self)
+end
+
+function GUIWebView:setRenderingEnabled(state)
+    self.m_Browser:setRenderingPaused(not state)
+    if state and not isEventHandlerAdded("onClientPreRender", root, self.m_UpdateFunc) then
+        addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    elseif not state and isEventHandlerAdded("onClientPreRender", root, self.m_UpdateFunc) then
+        removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    end
 end
 
 function GUIWebView:setAjaxHandler(handler)
@@ -41,6 +60,11 @@ end
 
 function GUIWebView:setControlsEnabled(state)
     self.m_ControlsEnabled = state
+    if state and not isEventHandlerAdded("onClientCursorMove", root, self.m_CursorMoveFunc) then
+        addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
+    elseif not state and isEventHandlerAdded("onClientCursorMove", root, self.m_CursorMoveFunc) then
+        removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
+    end
 end
 
 function GUIWebView:drawThis()

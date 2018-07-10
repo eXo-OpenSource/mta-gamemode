@@ -56,6 +56,11 @@ function Core:constructor()
 		setServerPassword()
 	end
 
+	addCommandHandler("servertime", function(p) 
+		local time = getRealTime()
+		outputChatBox(("* Es ist %02d:%02d:%02d Uhr Serverzeit"):format(time.hour, time.minute, time.second), p, 255, 100, 100) 
+	end)
+
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		ServerSettings:new()

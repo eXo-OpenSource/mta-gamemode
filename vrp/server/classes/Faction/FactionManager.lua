@@ -34,7 +34,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -58,7 +58,9 @@ function FactionManager:constructor()
 	addEventHandler("factionToggleLoan", root, bind(self.Event_ToggleLoan, self))
 	addEventHandler("factionRequestSkinSelection", root, bind(self.Event_requestSkins, self))
 	addEventHandler("factionPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
-
+	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
+	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
+	
 	FactionState:new()
 	FactionRescue:new()
 	FactionInsurgent:new()
@@ -604,8 +606,9 @@ function FactionManager:Event_requestSkins()
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
 		return false
 	end
-	local rank = client:getFaction():getPlayerRank(client)
-	triggerClientEvent(client, "openSkinSelectGUI", client, client:getFaction():getSkinsForRank(rank), client:getFaction():getId(), "faction", rank >= FactionRank.Manager)
+	local f = client:getFaction()
+	local r = f:getPlayerRank(client)
+	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", r >= FactionRank.Manager, f:getAllSkins())
 end
 
 function FactionManager:Event_setPlayerDutySkin(skinId)
@@ -613,5 +616,45 @@ function FactionManager:Event_setPlayerDutySkin(skinId)
 		client:sendError(_("Du gehörst keiner Fraktion an!", client))
 		return false
 	end
+	client:sendInfo(_("Kleidung gewechselt.", client))
 	client:getFaction():changeSkin(client, skinId)
+end
+
+function FactionManager:Event_UpdateSkinPermissions(skinTable)
+	if not client:getFaction() then
+		client:sendError(_("Du gehörst keiner Fraktion an!", client))
+		return false
+	end
+	if client:getFaction():getPlayerRank(client) < FactionRank.Manager then
+		client:sendError(_("Dein Rang ist zu niedrig!", client))
+		return false
+	end
+	for i, v in pairs(skinTable) do
+		client:getFaction():setSetting("Skin", i, v)
+		if v == -1 then
+			client:getFaction().m_SpecialSkin = i
+		end
+	end
+	client:sendSuccess(_("Einstellungen gespeichert!", client))
+
+	local f = client:getFaction()
+	local r = f:getPlayerRank(client)
+	triggerClientEvent(client, "openSkinSelectGUI", client, f:getSkinsForRank(r), f:getId(), "faction", r >= FactionRank.Manager, f:getAllSkins())
+end
+
+function FactionManager:Event_setPlayerDutySkinSpecial(skinId)
+	if not client:getFaction() then
+		client:sendError(_("Du gehörst keiner Fraktion an!", client))
+		return false
+	end
+	if not client:getFaction().m_SpecialSkin or tonumber(client:getFaction():getSetting("Skin", client:getFaction().m_SpecialSkin, 0)) ~= -1 then
+		client:sendError(_("Fehler bei Spezial/Aktionskleidung, bitte wende dich an deinen Leader!", client))
+		return false
+	end
+	client:sendInfo(_("Kleidung gewechselt.", client))
+	if client:getModel() == client:getFaction().m_SpecialSkin then -- in special duty, stop it
+		client:getFaction():changeSkin(client, skinId)
+	else --start special duty
+		client:getFaction():changeSkin(client, client:getFaction().m_SpecialSkin)
+	end
 end

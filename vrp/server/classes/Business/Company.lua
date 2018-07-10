@@ -377,9 +377,18 @@ function Company:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
+function Company:getAllSkins()
+	local tab = {}
+	for skinId in pairs(self.m_Skins) do
+		tab[skinId] = self:getSetting("Skin", skinId, 0)
+	end
+	return tab
+end
+
+
 function Company:getSkinsForRank(rank)
 	local tab = {}
-	for skinId in pairs(companySkins[self.m_Id]) do
+	for skinId in pairs(self.m_Skins) do
 		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
 			table.insert(tab, skinId)
 		end

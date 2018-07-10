@@ -1122,6 +1122,111 @@ ELS_PRESET = {
             }
         },
     },
+    ["FBI_Sultan"] = { --FBI Sultan
+        hasSiren = true,
+        headlightSequence = true,
+        sequenceCount = 4,
+        sequenceDuration = 250,
+        light = {
+            f1 = {0.75, 2.6, -0.2, 0.25, 255, 255, 255, 0}, --front blue up
+            f2 = {-0.75, 2.6, -0.2, 0.25, 255, 255, 255, 0}, 
+            sb = {-0.15, 0.5, 0.7, 0.25, 0, 50, 255, 0}, --side blue
+            sr = {0.15, 0.5, 0.7, 0.25, 200,10, 0, 0},
+            br = {-0.5, -1.6, 0.4, 0.25, 200, 10, 0, 0},
+            bb = {0.5, -1.6, 0.4, 0.25, 0, 50, 255, 0},
+        },
+        sequence = {
+            [1] = {
+                sr = {color={0,50,255,255}},
+				vehicle_light = {"d2", {200, 10, 0}},
+				f1 = {strobe = {50, 500}},
+				f2 = {strobe = {50, 500}},
+				br = {strobe = {50, 50, 255, 150}},
+				bb = {strobe = false},
+            },
+			[2] = {
+				
+				sr = {strobe = false, alpha=0},
+				sb = {strobe = {50, 50}, color={0, 50, 255,255}},
+				
+				f1 = {strobe = false},
+				f2 = {strobe = false},
+			},
+            [3] = {
+				bb = {strobe = {50, 50, 255, 150}},
+				br = {strobe = false},
+                sb = {color={200, 10, 0}},
+				vehicle_light = {"d1", {0, 50, 255}},
+            },
+			[4] = {
+				
+				
+				sr = {strobe = {50, 50}, color={200, 10, 0, 255}},
+				sb = {strobe = false, alpha=0},
+			},
+        }
+    },
+    ["Police_Sultan"] = { --Police Sultan
+        hasSiren = true,
+        headlightSequence = true,
+		lightBar = {0, -0.27, 0.87},
+        sequenceCount = 8,
+        sequenceDuration = 100,
+        light = {
+            f1 = {0.75, 2.6, -0.2, 0.25, 255, 255, 255, 0}, --front flash
+            f2 = {-0.75, 2.6, -0.2, 0.25, 255, 255, 255, 0}, 
+            r1 = {-0.75, -0.27, 0.9, 0.3, 200, 10, 0, 0},
+            r2 = {-0.5, -0.27, 0.9, 0.3, 200, 10, 0, 0},
+            r3 = {-0.25, -0.27, 0.9, 0.3, 200, 10, 0, 0},
+            b1 = {0.75, -0.27, 0.9, 0.3, 0, 50, 255, 0},
+            b2 = {0.5, -0.27, 0.9, 0.3, 0, 50, 255, 0},
+            b3 = {0.25, -0.27, 0.9, 0.3, 0, 50, 255, 0},
+        },
+        sequence = {
+            [1] = {
+				vehicle_light = {"d2", {200, 10, 0}},
+				f1 = {strobe = {50, 500}},
+				f2 = {strobe = {50, 500}},
+	
+				r1 = {alpha = 255},
+				r2 = {alpha = 255},
+				r3 = {alpha = 0},
+            },
+			[2] = {
+				f1 = {strobe = false},
+				f2 = {strobe = false},
+				r1 = {alpha = 0},
+				r3 = {alpha = 255},
+			},
+            [3] = {
+				vehicle_light = {"d1", {0, 50, 255}},
+				r2 = {alpha = 0},
+				b3 = {alpha = 255},
+            },
+			[4] = {
+				r3 = {alpha = 0},
+				b2 = {alpha = 255},
+			},
+			[5] = {
+				vehicle_light = {"d2", {200, 10, 0}},
+				b3 = {alpha = 0},
+				b1 = {alpha = 255},
+			},
+			[6] = {
+				b1 = {alpha = 0},
+				b3 = {alpha = 255},
+			},
+			[7] = {
+				vehicle_light = {"d1", {0, 50, 255}},
+				b2 = {alpha = 0},
+				r3 = {alpha = 255},
+			},
+			[8] = {
+				b3 = {alpha = 0},
+				r2 = {alpha = 255},
+			},
+        }
+    },
     [574] = { --Sweeper
         sequenceCount = 2,
         sequenceDuration = 300,

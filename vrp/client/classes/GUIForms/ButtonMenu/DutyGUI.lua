@@ -2,13 +2,13 @@ DutyGUI = inherit(GUIButtonMenu)
 inherit(Singleton, DutyGUI)
 addRemoteEvents{"showDutyGUI"}
 
-function DutyGUI:constructor(isFaction, id, isOnDuty)
+function DutyGUI:constructor(isFaction, id, isOnDuty, specialSkin)
 	GUIButtonMenu.constructor(self, "Duty-Menü")
-	
+	outputDebug(specialSkin)
 	if isFaction then
 		local fac = FactionManager.Map[id]
 		if fac then
-			self:loadFactionItems(fac, isOnDuty)
+			self:loadFactionItems(fac, isOnDuty, specialSkin)
 		end
 	else -- company
 		local cmp = CompanyManager.Map[id]
@@ -18,29 +18,32 @@ function DutyGUI:constructor(isFaction, id, isOnDuty)
 	end
 end
 
-function DutyGUI:loadFactionItems(fac, isOnDuty)
-    self.m_Window:setTitleBarText(fac:getShortName().."-Basis")
+function DutyGUI:loadFactionItems(fac, isOnDuty, specialSkin)
+    self.m_Window:setTitleBarText("Ausrüstung ("..fac:getShortName()..")")
     
     if isOnDuty then
         if fac:isStateFaction() then
             self:addItem(_"Dienst beenden", Color.Red, bind(self.itemEvent, self, "factionStateToggleDuty")):setBarEnabled(false)
             self:addItem(_"Kleidung wechseln", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelection"))
+            if specialSkin then self:addItem(_"Einsatzkleidung", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelectionSpecial", core:get("Cache", "LastFactionSkin"))) end
             self:addItem(_"Ausrüsten", Color.Accent, bind(self.itemEvent, self, "factionStateRearm"))
             self:addItem(_"Waffen einlagern", Color.Accent, bind(self.itemEvent, self, "factionStateStorageWeapons"))
         elseif fac:isEvilFaction() then
             self:addItem(_"Dienst beenden", Color.Red, bind(self.itemEvent, self, "factionEvilToggleDuty")):setBarEnabled(false)
             self:addItem(_"Kleidung wechseln", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelection"))
+            if specialSkin then self:addItem(_"Aktionskleidung", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelectionSpecial", core:get("Cache", "LastFactionSkin"))) end
             self:addItem(_"Ausrüsten", Color.Accent, bind(self.itemEvent, self, "factionEvilRearm"))
             self:addItem(_"Waffen einlagern", Color.Accent, bind(self.itemEvent, self, "factionEvilStorageWeapons"))
         else
             self:addItem(_"Dienst beenden", Color.Red, bind(self.itemEvent, self, "factionRescueToggleDuty")):setBarEnabled(false)
             self:addItem(_"Kleidung wechseln", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelection"))
+            if specialSkin then self:addItem(_"Einsatzkleidung", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelectionSpecial", core:get("Cache", "LastFactionSkin"))) end
         end
     else
         if fac:isStateFaction() then
             self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionStateToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
         elseif fac:isEvilFaction() then
-            self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
+            self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
         else -- Rescue Team 4ever alone
             self:addItem(_"In Sanitäter-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "medic", false, core:get("Cache", "LastFactionSkin")))
             self:addItem(_"In Feuerwehr-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "fire", false, core:get("Cache", "LastFactionSkin")))
@@ -75,10 +78,10 @@ function DutyGUI:destructor()
 end
 
 
-function DutyGUI.open(isFaction, id, isOnDuty)
+function DutyGUI.open(isFaction, id, isOnDuty, specialSkin)
 	if DutyGUI:isInstantiated() then
 		delete(DutyGUI:getSingleton())
 	end
-	DutyGUI:new(isFaction, id, isOnDuty)
+	DutyGUI:new(isFaction, id, isOnDuty, specialSkin)
 end
 addEventHandler("showDutyGUI", root, DutyGUI.open)

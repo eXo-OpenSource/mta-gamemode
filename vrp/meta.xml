@@ -1577,6 +1577,7 @@
 	<vrpfile src="files/images/Textures/Faction/State/ChiefDec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SAdec.png"/>
 	<vrpfile src="files/images/Textures/Faction/State/SWATdec.png"/>
+	<vrpfile src="files/images/Textures/Faction/State/SASFdec.png"/>
 
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Ambu.png"/>
 	<vrpfile src="files/images/Textures/Faction/Rescue/Rescue_Copcar.png"/>

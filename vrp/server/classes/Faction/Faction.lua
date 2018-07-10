@@ -24,6 +24,8 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Invitations = {}
 	self.m_RankNames = factionRankNames[Id]
 	self.m_Skins = factionSkins[Id]
+	self.m_SpecialSkin = false
+	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
 	self.m_Blips = {}
@@ -174,9 +176,17 @@ function Faction:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
+function Faction:getAllSkins()
+	local tab = {}
+	for skinId in pairs(self.m_Skins) do
+		tab[skinId] = tonumber(self:getSetting("Skin", skinId, 0))
+	end
+	return tab
+end
+
 function Faction:getSkinsForRank(rank)
 	local tab = {}
-	for skinId in pairs(factionSkins[self.m_Id]) do
+	for skinId in pairs(self.m_Skins) do
 		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
 			table.insert(tab, skinId)
 		end
@@ -204,7 +214,7 @@ end
 
 function Faction:updateDutyGUI(player)
 	if player:getFaction() and not player:isDead() then
-		player:triggerEvent("showDutyGUI", true, player:getFaction():getId(), player:isFactionDuty())
+		player:triggerEvent("showDutyGUI", true, player:getFaction():getId(), player:isFactionDuty(), self.m_SpecialSkin)
 	end
 end
 
@@ -219,9 +229,6 @@ function Faction:addPlayer(playerId, rank)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
-		if self:isEvilFaction() then
-			self:changeSkin(player)
-		end
 		player:reloadBlips()
 		player:giveAchievement(68) -- Parteiisch
 		if self.m_Name_Short == "SAPD" then

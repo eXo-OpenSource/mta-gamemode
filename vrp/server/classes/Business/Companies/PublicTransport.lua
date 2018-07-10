@@ -66,6 +66,7 @@ function PublicTransport:addBusStops()
 			object:setData("EPT_bus_station_lines", lines, true)
 		busStop:setData("object", object, true)
 		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
+		--Blip:new("Marker.png", markerX, markerY, root, 400):setColor(PublicTransport.ms_BusLineData[tonumber(lines[1])].color)
 		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
 		local signObject = createObject(1229, signX, signY, signZ, 0, 0, rz)
 
