@@ -16,7 +16,7 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     self.m_ControlsEnabled = true
 
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
-    self.m_UpdateFunc = bind(self.update, self)
+    self.m_UpdateFunc = bind(self.updateBrowserTeture, self)
     self.m_OutputLoadErrorFunc = bind(self.outputLoadError, self)
     self:setControlsEnabled(true)
     self:setRenderingEnabled(true)
@@ -39,7 +39,6 @@ function GUIWebView:virtual_destructor()
     focusBrowser(nil)
     self:setRenderingEnabled(false)
     self:setControlsEnabled(false)
-
     self.m_Browser:destroy()
 
     --GUIElement.destructor(self)
@@ -74,7 +73,7 @@ function GUIWebView:drawThis()
     dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Browser)
 end
 
-function GUIWebView:update()
+function GUIWebView:updateBrowserTeture()
     -- Request redraw
     self:anyChange()
 end

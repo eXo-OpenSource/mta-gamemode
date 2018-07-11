@@ -4,7 +4,6 @@ addRemoteEvents{"showDutyGUI"}
 
 function DutyGUI:constructor(isFaction, id, isOnDuty, specialSkin)
 	GUIButtonMenu.constructor(self, "Duty-Menü")
-	outputDebug(specialSkin)
 	if isFaction then
 		local fac = FactionManager.Map[id]
 		if fac then
@@ -66,7 +65,6 @@ end
 
 function DutyGUI:itemEvent(eventName, arg1, arg2)
     if type(arg1) ~= "table" then -- prevent triggering whole class instances 
-        outputDebug(type(arg1), arg1)
         triggerServerEvent(eventName, localPlayer, arg1, arg2)
     else
         triggerServerEvent(eventName, localPlayer)

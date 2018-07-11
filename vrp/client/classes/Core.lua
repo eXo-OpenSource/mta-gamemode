@@ -119,7 +119,7 @@ function Core:ready() --onClientResourceStart
 	GangwarClient:new()
 	GangwarStatistics:new()
 
-	MostWanted:new()
+	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()

@@ -2044,12 +2044,6 @@
 	<!--Buildings-->
 	<vrpfile src="files/models/buildings/casino_heist/bank_fence.col" />
 	<vrpfile src="files/models/buildings/casino_heist/bank_fence.txd" />
-	<vrpfile src="files/models/buildings/casino_heist/bank_int.col" />
-	<vrpfile src="files/models/buildings/casino_heist/bank_int.txd" />
-	<vrpfile src="files/models/buildings/casino_heist/bank_int2.col" />
-	<vrpfile src="files/models/buildings/casino_heist/bank_int3.col" />
-	<vrpfile src="files/models/buildings/casino_heist/bank.col" />
-	<vrpfile src="files/models/buildings/casino_heist/bank.txd" />
 	<vrpfile src="files/models/buildings/ammunation.col" />
 	<vrpfile src="files/models/buildings/ammunation.dff" />
 	<vrpfile src="files/models/buildings/ammunation_int.col" />
@@ -2058,19 +2052,12 @@
 	<vrpfile src="files/models/buildings/ammunation2.dff" />
 	<vrpfile src="files/models/buildings/ammunation2_int.col" />
 	<vrpfile src="files/models/buildings/ammunation2_int.dff" />
-	<vrpfile src="files/models/buildings/academi.dff" />
-	<vrpfile src="files/models/buildings/academi.col" />
-	<vrpfile src="files/models/buildings/prison_ls.col" />
-	<vrpfile src="files/models/buildings/prison_ls.txd" />
 	<vrpfile src="files/models/buildings/PD_Garage.col" />
 	<vrpfile src="files/models/buildings/PD_Garage.dff" />
 	<vrpfile src="files/models/buildings/PD_int.col" />
 	<vrpfile src="files/models/buildings/PD_int.dff" />
 	<vrpfile src="files/models/buildings/PD_main.col" />
 	<vrpfile src="files/models/buildings/PD_main.dff" />
-	<vrpfile src="files/models/buildings/bank.txd" />
-	<vrpfile src="files/models/buildings/bank.col" />
-	<vrpfile src="files/models/buildings/bank.dff" />
 	<vrpfile src="files/models/buildings/fishshop.txd" />
 	<vrpfile src="files/models/buildings/fishshop.dff" />
 	<vrpfile src="files/models/buildings/fishshop.col" />
@@ -2108,12 +2095,6 @@
 	<vrpfile src="files/models/objects/a51fensin.dff"/>
 	<vrpfile src="files/models/objects/hedge01_law.col" />
 	<vrpfile src="files/models/objects/hedge01_law.dff" />
-	<vrpfile src="files/models/objects/bankServer.txd" />
-	<vrpfile src="files/models/objects/bankServer.col" />
-	<vrpfile src="files/models/objects/bankServer.dff" />
-	<vrpfile src="files/models/objects/bankDoor.txd" />
-	<vrpfile src="files/models/objects/bankDoor.col" />
-	<vrpfile src="files/models/objects/bankDoor.dff" />
 	<vrpfile src="files/models/objects/blitzer.col"/>
 	<vrpfile src="files/models/objects/blitzer.dff"/>
 	<vrpfile src="files/models/objects/blitzer.txd"/>
@@ -2150,8 +2131,6 @@
 	<vrpfile src="files/models/vehicles/uranus.txd"/>
 	<vrpfile src="files/models/vehicles/uranus.dff"/>
 	<vrpfile src="files/models/vehicles/dft30.dff"/>
-	<vrpfile src="files/models/vehicles/topfun.txd"/>
-	<vrpfile src="files/models/vehicles/topfun.dff"/>
 	<vrpfile src="files/models/vehicles/dozer.dff" />
 	<vrpfile src="files/models/vehicles/dumper.dff" />
 

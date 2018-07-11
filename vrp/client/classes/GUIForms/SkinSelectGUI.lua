@@ -56,8 +56,12 @@ function SkinSelectGUI:loadSkins()
 		local x, y, w, h = (i-1)*3 + 1 - row*images_per_row*3, row*images_per_row + 1, 3, 5
 		
 		local image = GUIGridWebView:new(x, y, w, h, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..skinId, true, self.m_ScrollableArea)
-		image:setRenderingEnabled(false)
-		image:setControlsEnabled(false)
+		image.onDocumentReady = function()
+			nextframe(function()
+				image:setRenderingEnabled(false)
+				image:setControlsEnabled(false)
+			end)
+		end
 		image.onLeftClick = function()	
 			if self.m_Edit then return false end
 			if self.m_GroupType == "faction" then
