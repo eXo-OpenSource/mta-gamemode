@@ -62,6 +62,12 @@ BankAccountTypes = {
   VehicleShop = 9;
 }
 
+USER_GROUP_TYPES = {
+	Faction = 1;
+	Company = 2;
+	Group = 3;
+}
+
 AFK_POSITIONS = {
 	Vector2(435.701171875, -81.822265625),
 	Vector2(460.5546875, -85.5390625),

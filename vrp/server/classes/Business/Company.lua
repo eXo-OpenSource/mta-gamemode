@@ -38,6 +38,7 @@ function Company:constructor(Id, Name, ShortName, ShorterName, Creator, players,
 	self.m_RankSkins = fromJSON(rankSkins)
 
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
+	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Company, Id)
 
 	sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
@@ -64,7 +65,9 @@ function Company:save()
     local Settings = {
       VehiclesCanBeModified = self.m_VehiclesCanBeModified
     }
-
+	if self.m_Settings then
+		self.m_Settings:save()
+	end
     sql:queryExec("UPDATE ??_companies SET RankLoans = ?, RankSkins = ?, Settings = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(Settings),self.m_Id)
 end
 
@@ -145,6 +148,24 @@ end
 
 function Company:transferMoney(...)
 	return self.m_BankAccount:transferMoney(...)
+end
+
+function Company:setSetting(category, key, value, responsiblePlayer)
+	local allowed = true
+	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
+		if not responsiblePlayer:getCompany() then allowed = false end 
+		if responsiblePlayer:getCompany() ~= self then allowed = false end 
+		if self:getPlayerRank(responsiblePlayer) ~= CompanyRank.Leader then allowed = false end 
+	end
+	if allowed then
+		self.m_Settings:setSetting(category, key, value)
+	else
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) des Unternehmens %s können deren Einstellungen ändern!", responsiblePlayer, CompanyRank.Leader, self:getShortName()))
+	end
+end
+
+function Company:getSetting(category, key, defaultValue)
+	return self.m_Settings:getSetting(category, key, defaultValue)
 end
 
 function Company:getPhoneNumber()
@@ -356,6 +377,16 @@ function Company:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
+function Company:getSkinsForRank(rank)
+	local tab = {}
+	for skinId in pairs(companySkins[self.m_Id]) do
+		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+			table.insert(tab, skinId)
+		end
+	end
+	return tab
+end
+
 function Company:setRankLoan(rank,amount)
 	self.m_RankLoans[tostring(rank)] = amount
 end
@@ -365,12 +396,25 @@ function Company:setRankSkin(rank,skinId)
 end
 
 function Company:updateCompanyDutyGUI(player)
-	player:triggerEvent("updateCompanyDutyGUI", player:isCompanyDuty())
+	player:triggerEvent("showDutyGUI", false, self:getId(), player:isCompanyDuty())
 end
 
-function Company:changeSkin(player)
-	local rank = self:getPlayerRank(player)
-	player:setModel(self.m_RankSkins[tostring(rank)])
+function Company:changeSkin(player, skinId)
+	local playerRank = self:getPlayerRank(player)
+	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
+	if self.m_Skins[skinId] then
+		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+		if minRank <= playerRank then
+			player:setModel(skinId)
+		else
+			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			player:setModel(self:getSkinsForRank(playerRank)[1])
+		end
+	else
+		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+		-- ^useless if player switches faction
+		player:setModel(self:getSkinsForRank(playerRank)[1])
+	end
 end
 
 function Company:paydayPlayer(player)
@@ -392,8 +436,7 @@ function Company:createDutyMarker()
     			if getElementType(hitElement) == "player" and not hitElement.vehicle then
     				local company = hitElement:getCompany()
     				if company and company == self then
-    					hitElement:triggerEvent("showCompanyDutyGUI")
-    					hitElement:getCompany():updateCompanyDutyGUI(hitElement)
+    					hitElement:triggerEvent("showDutyGUI", false, self:getId(), hitElement:isCompanyDuty())
                     else
                         hitElement:sendError(_("Du bist nicht in diesem Unternehmen!", hitElement))
                     end
@@ -427,8 +470,8 @@ function Company:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
 			if player ~= caller then
-				player:sendShortMessage(_("Der Spieler %s ruft euer Unternehmen (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+				local color = {companyColors[self.m_Id].r, companyColors[self.m_Id].g, companyColors[self.m_Id].b}
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
 			end
 		end
 	end
@@ -436,31 +479,28 @@ end
 
 function Company:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
-		end
+		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
 	end
 end
 
-function Company:phoneTakeOff(player, key, state, caller)
-	if player.m_PhoneOn == false then
-		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
-		return
-	end
-	if player:getPhonePartner() then
-		player:sendError(_("Du telefonierst bereits!", player))
-		return
-	end
-	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	self:addLog(player, "Telefonate", ("hat das Telefonat von %s angenommen!"):format(caller:getName()))
-	caller:triggerEvent("callAnswer", player, voiceCall)
-	player:triggerEvent("callAnswer", caller, voiceCall)
-	caller:setPhonePartner(player)
-	player:setPhonePartner(caller)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-        if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+function Company:phoneTakeOff(player, caller, voiceCall)
+	if player and caller then
+		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
+			if player.m_PhoneOn == false then
+				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+				return
+			end
+			if player:getPhonePartner() then
+				player:sendError(_("Du telefonierst bereits!", player))
+				return
+			end
+			caller:triggerEvent("callAnswer", player, voiceCall)
+			player:triggerEvent("callAnswer", caller, voiceCall)
+			caller:setPhonePartner(player)
+			player:setPhonePartner(caller)
+			for k, companyPlayer in ipairs(self:getOnlinePlayers()) do
+				triggerClientEvent(companyPlayer, "callRemoveSM", resourceRoot, caller, player)
+			end
 		end
 	end
 end

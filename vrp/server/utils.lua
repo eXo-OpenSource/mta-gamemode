@@ -42,9 +42,6 @@ function setElementInterior(element, interior, x, y, z)
 	if isElement(element) then
 		_setElementInterior(element, interior, x, y, z)
 		triggerEvent("onElementInteriorChange", element, interior)
-		if getElementType(element) == "player" then
-			triggerClientEvent(element, "onClientPlayerDebugInteriorChange", element)
-		end
 	end
 end
 

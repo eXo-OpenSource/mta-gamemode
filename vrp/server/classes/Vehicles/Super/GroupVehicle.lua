@@ -23,7 +23,7 @@ function GroupVehicle.convertVehicle(vehicle, group)
 			vehicle:save()
 			destroyElement(vehicle)
 			local veh = VehicleManager:getSingleton():createVehicle(id)
-			
+
 			return true, veh
 			--[[
 			local position = vehicle:getPosition()
@@ -57,7 +57,7 @@ function GroupVehicle:constructor(data)
 	setElementData(self, "OwnerName", self.m_Group:getName())
 	setElementData(self, "OwnerType", "group")
 	setElementData(self, "GroupType", self.m_Group:getType())
-	
+
 	if self.m_Group.m_Vehicles then
 		table.insert(self.m_Group.m_Vehicles, self)
 	end
@@ -68,7 +68,7 @@ function GroupVehicle:constructor(data)
 		self:setForSale(false, 0)
 	end
 
-	
+
 	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
 			if isElement(veh) then
@@ -237,7 +237,7 @@ function GroupVehicle:buy(player)
 				local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
 				if status then
 					StatisticsLogger:getSingleton():addVehicleTradeLog(newVeh, player, 0, price, "group")
-					player:transferMoney(group, price, "Firmen-Fahrzeug Kauf", "Group", "VehicleSell")
+					player:transferBankMoney(group, price, "Firmen-Fahrzeug Kauf", "Group", "VehicleSell")
 					group:sendShortMessage(_("%s hat ein Fahrzeug für %d$ gekauft! (%s)", player, player:getName(), price, newVeh:getName()))
 					player:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", player))
 					group:addLog(player, "Fahrzeugverkauf", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." für "..price.." gekauft!")

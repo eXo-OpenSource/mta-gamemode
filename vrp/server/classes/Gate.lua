@@ -21,6 +21,13 @@ function Gate:addGate(model, pos, rot, openPos, openRot, playSound)
 end
 
 function Gate:triggerMovement(hitEle)
+    local function rotationDifference(isRotation, targetRotation)
+        if math.round(isRotation) == math.round(targetRotation) then return 0 end
+        local diff = ((targetRotation - isRotation) + 180) % 360 - 180
+        --outputDebug(isRotation, targetRotation, diff, "----", math.round(isRotation), math.round(targetRotation))
+        if math.abs(math.round(diff)) == 180 then return 0 end
+        return diff
+    end
     if not hitEle or not isElement(hitEle) then return false end
     if hitEle:getType() == "player" then
         local player = hitEle
@@ -38,9 +45,9 @@ function Gate:triggerMovement(hitEle)
             for index, gate in pairs(self.m_Gates) do
                 gate:stop()
                 local targetRot = Vector3(
-                    gate.openRot.x == gate.closedRot.x and 0 or (gate.rotation.x - gate.openRot.x + 180) % 360 - 180,
-                    gate.openRot.y == gate.closedRot.y and 0 or (gate.rotation.y - gate.openRot.y + 180) % 360 - 180,
-                    gate.openRot.z == gate.closedRot.z and 0 or (gate.rotation.z - gate.openRot.z + 180) % 360 - 180
+                    rotationDifference(gate.rotation.x, gate.openRot.x),
+                    rotationDifference(gate.rotation.y, gate.openRot.y),
+                    rotationDifference(gate.rotation.z, gate.openRot.z)
                 )
                 gate:move((gate.position - gate.openPos).length * 800 + targetRot.length * 50, gate.openPos, targetRot, "InOutQuad")
                 if gate.playSound then triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3") end
@@ -48,21 +55,19 @@ function Gate:triggerMovement(hitEle)
 
 			self.m_Closed = false
             self.m_Timer = setTimer(bind(self.triggerMovement, self, player, true), 22000, 1)
-            --outputDebug("Opening: "..(0-rot.y).." ["..rot.y.."; 0]")
         else
            for index, gate in pairs(self.m_Gates) do
                 gate:stop()
                 local targetRot = Vector3(
-                    gate.openRot.x == gate.closedRot.x and 0 or (gate.rotation.x - gate.closedRot.x + 180) % 360 - 180,
-                    gate.openRot.y == gate.closedRot.y and 0 or (gate.rotation.y - gate.closedRot.y + 180) % 360 - 180,
-                    gate.openRot.z == gate.closedRot.z and 0 or (gate.rotation.z - gate.closedRot.z + 180) % 360 - 180    
+                    rotationDifference(gate.rotation.x, gate.closedRot.x),
+                    rotationDifference(gate.rotation.y, gate.closedRot.y),
+                    rotationDifference(gate.rotation.z, gate.closedRot.z) 
                 )
 				gate:move((gate.position - gate.closedPos).length * 800 + targetRot.length * 50, gate.closedPos, targetRot, "InOutQuad")
 				if gate.playSound then triggerClientEvent("itemRadioChangeURLClient", gate, "files/audio/gate_open.mp3") end
 			end
 
             self.m_Closed = true
-            --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
          end
      end
 end

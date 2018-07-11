@@ -72,6 +72,7 @@ end
 
 function GroupPropertyBuy:updateList( _table )
 	self.m_ImmoTable = _table
+	outputDebug(_table)
 	if _table then
 		self.m_ImmoGrid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.28, self.m_Width*0.9, self.m_Height*0.5, self.m_Window)
 		self.m_ImmoGrid:addColumn(_"Verfügbare Immobilien", 1)
@@ -84,4 +85,3 @@ function GroupPropertyBuy:updateList( _table )
 		end
 	end
 end
-

@@ -164,7 +164,7 @@ function GroupGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
+function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, players, karma, type, rankNames, rankLoans, vehicles)
 	self:adjustGroupTab(rank or false)
 
 	if id then
@@ -172,7 +172,6 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 		local karma = math.floor(karma)
 		local nextPayDay = 60 - (playTime % 60)
 		local x, y = self.m_GroupsNameLabel:getPosition()
-		self.m_TuningEnabled = tuningEnabled
 		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
@@ -204,10 +203,6 @@ function GroupGUI:Event_groupRetrieveInfo(id, name, rank, money, playTime, playe
 			self:refreshRankGrid()
 
 			-- Update options
-			local text = tuningEnabled and _"aktiviert" or _"deaktiviert"
-			local x, y = self.m_VehicleTuningStatus:getPosition()
-			self.m_VehicleTuningStatus:setText(text)
-			self.m_VehicleTuningStatusChange:setPosition(x + dxGetTextWidth(text, self.m_VehicleTuningStatus:getFontSize(), self.m_VehicleTuningStatus:getFont()) + 10, y)
 			self.m_TypeLabelLeader:setText(type)
 			local x, y = self.m_TypeLabelLeader:getPosition()
 			self.m_TypeChange:setPosition(x + dxGetTextWidth(type, self.m_TypeLabelLeader:getFontSize(), self.m_TypeLabelLeader:getFont()) + 10, y)
@@ -424,16 +419,10 @@ function GroupGUI:addLeaderTab()
 
 		GUIRectangle:new(self.m_Width*0.45, self.m_Height*0.36, self.m_Width*0.525, 2, Color.LightBlue, tabLeader)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.38, self.m_Width*0.4, self.m_Height*0.09, _"Optionen:", tabLeader):setColor(Color.LightBlue)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"Fahrzeug-Tuning:", tabLeader)
-		self.m_VehicleTuningStatus = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		self.m_VehicleTuningStatusChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.LightBlue)
-		self.m_VehicleTuningStatusChange.onLeftClick = function () triggerServerEvent("groupUpdateVehicleTuning", root) end
-		self.m_VehicleTuningStatusChange.onHover = function () self.m_VehicleTuningStatusChange:setColor(Color.White) end
-		self.m_VehicleTuningStatusChange.onUnhover = function () self.m_VehicleTuningStatusChange:setColor(Color.LightBlue) end
-
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, _"Typ:", tabLeader)
-		self.m_TypeLabelLeader = GUILabel:new(self.m_Width*0.7, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		self.m_TypeChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.55, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.LightBlue)
+		
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"Typ:", tabLeader)
+		self.m_TypeLabelLeader = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
+		self.m_TypeChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.LightBlue)
 		self.m_TypeChange.onLeftClick = function ()
 			local newType = localPlayer:getGroupType() == "Firma" and "Gang" or "Firma"
 			QuestionBox:new(_("Möchtest du wirklich deine %s in eine %s umwandeln? Kosten: 20.000$", localPlayer:getGroupType(), newType),
@@ -517,7 +506,7 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		return
 	end
 
-	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?" .. (not self.m_TuningEnabled and "\nACHTUNG: Deine Firma hat keine Tunings aktiviert! Alle Tunings werden entfernt!" or ""), function()
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?", function()
 		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 	end)
 end

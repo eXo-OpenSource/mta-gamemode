@@ -117,7 +117,9 @@ function JobFarmer:storeHit(hitElement, matchingDimension)
 
 			setTimer(
 				function(element)
-					setElementFrozen(element,false)
+					if isElement(element) then
+						setElementFrozen(element,false)
+					end
 				end, 3500, 1, hitElement
 			)
 		else

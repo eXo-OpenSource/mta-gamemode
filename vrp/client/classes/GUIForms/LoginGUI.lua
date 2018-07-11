@@ -250,11 +250,9 @@ end
 
 function LoginGUI:initClose(callback)
 	self:switchViews(true, true, callback)
-	localPlayer:setFrozen(true)
 end
 
 function LoginGUI:destructor()
-	localPlayer:setFrozen(false)
 	LoginGUI.stopCameraDrive()
 	Cursor:hide(true)
 	GUIForm.destructor(self)

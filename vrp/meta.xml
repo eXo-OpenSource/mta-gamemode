@@ -61,10 +61,10 @@
 	<script src="server/classes/Config.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
+	<script src="server/classes/Storage/UserGroupSettings.lua" type="server"/>
 	<script src="server/classes/Storage/Teamspeak/TSConnect.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
-	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Player/Ban.lua" type="server"/>
 	<script src="server/classes/Player/Warn.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
@@ -85,7 +85,6 @@
 	<script src="server/classes/ActionsCheck.lua" type="server"/>
 	<script src="server/classes/Gate.lua" type="server"/>
 	<script src="server/classes/Door.lua" type="server"/>
-	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
 	<script src="server/classes/ModdingCheck.lua" type="server"/>
@@ -102,6 +101,10 @@
 	<script src="server/classes/Super/Root.lua" type="server"/>
 	<script src="server/classes/Super/NPC.lua" type="server"/>
 
+	<!--Phone-->
+	<script src="server/classes/Phone/PhoneInteraction.lua" type="server"/>
+	<script src="server/classes/Phone/PhoneNumbers.lua" type="server"/>
+	
 	<!-- Player -->
 	<script src="server/classes/Player/Account.lua" type="server"/>
 	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
@@ -113,6 +116,7 @@
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
 	<!-- Inventory System -->
+	<script src="server/classes/Inventory/WorldItems/WorldItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/PlayerWorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItems/FactionWorldItem.lua" type="server"/>
@@ -161,6 +165,7 @@
 	<!--WorldItems-->
 	<script src="server/classes/Inventory/Items/WorldItems/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemSpeedCam.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/WorldItems/ItemFurniture.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemKeyPad.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemEntrance.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/WorldItems/ItemTransmitter.lua" type="server"/>
@@ -703,6 +708,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseRobSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/DutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
@@ -740,6 +746,7 @@
 	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
@@ -1693,6 +1700,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/keypad.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/furniture.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/door.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/entrance.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/transmitter.png" />

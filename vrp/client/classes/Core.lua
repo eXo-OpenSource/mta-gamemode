@@ -212,10 +212,6 @@ function Core:afterLogin()
 	NonCollidingSphere.load()
 	TextureReplacer.loadBacklog()
 
-	showChat(true)
-	setCameraTarget(localPlayer)
-	setElementFrozen(localPlayer,false)
-
 	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
@@ -236,6 +232,7 @@ function Core:onWebSessionCreated() -- this gets called from LocalPlayer when th
 	SelfGUI:getSingleton():close()
 	Phone:new()
 	Phone:getSingleton():close()
+	showChat(true)
 end
 
 function Core:destructor()

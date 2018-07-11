@@ -20,6 +20,7 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
+	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Faction, Id)
 	self.m_Invitations = {}
 	self.m_RankNames = factionRankNames[Id]
 	self.m_Skins = factionSkins[Id]
@@ -66,6 +67,9 @@ function Faction:save()
 	if self.m_Diplomacy then
 		diplomacy = toJSON({["Status"] = self.m_Diplomacy, ["Requests"] = self.m_DiplomacyRequests, ["Permissions"] = self.m_DiplomacyPermissions or {}})
 	end
+	if self.m_Settings then
+		self.m_Settings:save()
+	end
 	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ?, Diplomacy = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), diplomacy, self.m_Id) then
 	else
 		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
@@ -95,6 +99,24 @@ function Faction:isEvilFaction()
 		return true
 	end
 	return false
+end
+
+function Faction:setSetting(category, key, value, responsiblePlayer)
+	local allowed = true
+	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
+		if not responsiblePlayer:getFaction() then allowed = false end 
+		if responsiblePlayer:getFaction() ~= self then allowed = false end 
+		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end 
+	end
+	if allowed then
+		self.m_Settings:setSetting(category, key, value)
+	else
+		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Fraktion %s können deren Einstellungen ändern!", responsiblePlayer, FactionRank.Leader, self:getShortName()))
+	end
+end
+
+function Faction:getSetting(category, key, defaultValue)
+	return self.m_Settings:getSetting(category, key, defaultValue)
 end
 
 function Faction:giveKarmaToOnlineMembers(karma, reason)
@@ -152,15 +174,38 @@ function Faction:getRandomSkin()
 	return skins[math.random(1,#skins)]
 end
 
-function Faction:changeSkin(player)
-	local rank = self:getPlayerRank(player)
-	if player:isActive() then
-		player:setModel(self.m_RankSkins[tostring(rank)])
+function Faction:getSkinsForRank(rank)
+	local tab = {}
+	for skinId in pairs(factionSkins[self.m_Id]) do
+		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+			table.insert(tab, skinId)
+		end
+	end
+	return tab
+end
+
+function Faction:changeSkin(player, skinId)
+	local playerRank = self:getPlayerRank(player)
+	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
+	if self.m_Skins[skinId] then
+		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
+		if minRank <= playerRank then
+			player:setModel(skinId)
+		else
+			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
+			player:setModel(self:getSkinsForRank(playerRank)[1])
+		end
+	else
+		--player:sendWarning(_("Deine ausgewählte Kleidung ist nicht mehr verfügbar, dir wurde eine andere gegeben.", player, minRank))
+		-- ^useless if player switches faction
+		player:setModel(self:getSkinsForRank(playerRank)[1])
 	end
 end
 
-function Faction:updateStateFactionDutyGUI(player)
-	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Faction:Swat"))
+function Faction:updateDutyGUI(player)
+	if player:getFaction() and not player:isDead() then
+		player:triggerEvent("showDutyGUI", true, player:getFaction():getId(), player:isFactionDuty())
+	end
 end
 
 function Faction:addPlayer(playerId, rank)
@@ -481,8 +526,8 @@ function Faction:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
 			if player ~= caller then
-				player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+				local color = {factionColors[self.m_Id].r, factionColors[self.m_Id].g, factionColors[self.m_Id].b}
+				triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getShortName()), color)
 			end
 		end
 	end
@@ -490,14 +535,11 @@ end
 
 function Faction:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
-			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
-		end
+		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
 	end
 end
 
-function Faction:phoneTakeOff(player, key, state, caller)
+function Faction:phoneTakeOff(player, caller, voiceCall)
 	if player and caller then
 		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
 			if player.m_PhoneOn == false then
@@ -508,15 +550,12 @@ function Faction:phoneTakeOff(player, key, state, caller)
 				player:sendError(_("Du telefonierst bereits!", player))
 				return
 			end
-			self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 			caller:triggerEvent("callAnswer", player, voiceCall)
 			player:triggerEvent("callAnswer", caller, voiceCall)
 			caller:setPhonePartner(player)
 			player:setPhonePartner(caller)
-			for k, player in ipairs(self:getOnlinePlayers()) do
-				if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
-					unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
-				end
+			for k, factionPlayer in ipairs(self:getOnlinePlayers()) do
+				triggerClientEvent(factionPlayer, "callRemoveSM", resourceRoot, caller, player)
 			end
 		end
 	end

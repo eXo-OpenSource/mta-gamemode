@@ -29,7 +29,7 @@
 	<map src="fraktionen/FBI.map" />
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
-	<map src="fraktionen/vatos.map" />
+	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
 	<!--map src="fraktionen/yakuza.map"/>
 	
@@ -77,8 +77,8 @@
 	
 	<map src="shop/ammunation.map" />
 	<map src="shop/ammunation2.map" />
-	<map src="shop/atrium.map" />
 	<map src="shop/gaertnerei.map" />
+	<map src="atrium.map" />
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />

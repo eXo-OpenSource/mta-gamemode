@@ -29,34 +29,6 @@ function StaticWorldItems:constructor()
 			["chance"] = 33,
 			["enabled"] = EVENT_HALLOWEEN
 		},
-		["Keypad"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Keypad"),
-			["offsetZ"] = 0,
-			["chance"] = 100,
-			["enabled"] = true,
-			["notReload"] = true,
-		},
-		["Tor"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Tor"),
-			["offsetZ"] = 0,
-			["chance"] = 100,
-			["enabled"] = true,
-			["notReload"] = true,
-		},
-		["Eingang"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Eingang"),
-			["offsetZ"] = 0,
-			["chance"] = 100,
-			["enabled"] = true,
-			["notReload"] = true,
-		},
-		["Transmitter"] = {
-			["class"] = ItemManager:getSingleton():getInstance("Transmitter"),
-			["offsetZ"] = 0,
-			["chance"] = 100,
-			["enabled"] = true,
-			["notReload"] = true,
-		},
 	}
 
 	self.m_TimedPulse = TimedPulse:new(1000*60*60)
@@ -153,7 +125,6 @@ function StaticWorldItems:reload(firstLoad)
 				if row.Typ and self.m_Items[row.Typ] then
 					if DEBUG or chance(data["chance"]) then
 						self.m_Objects[row.Id] = self.m_Items[row.Typ]["class"]:addObject(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), Vector3(0, 0, row.RotationZ), tonumber(row.Interior) or 0 , tonumber(row.Dimension) or 0, row.Value)
-						self.m_Objects[row.Id].m_NotReload = data["notReload"]
 						count = count+1
 					end
 				else

@@ -57,7 +57,9 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	GUIElement.constructor(self, x, y, w, h)
 	self.onLeftClick = function ()
 		if self.m_Callback then
-			self:m_Callback()
+			if self:m_Callback() == "forceOpen" then -- return to force it open
+				return
+			end
 		end
 		if self.m_CloseOnClick then
 			delete(self)
@@ -76,15 +78,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	end
 
 	-- Calculate timeout
-	if timeout ~= -1 then
-		self.m_Timeout = setTimer(
-		function ()
-			if self.m_TimeoutFunc then
-				self:m_TimeoutFunc()
-			end
-			delete(self)
-		end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
-	end
+	self:setTimeout(timeout)
 
 	-- Alpha
 	self:setAlpha(0)
@@ -153,8 +147,25 @@ function ShortMessage:drawThis()
 	dxDrawText(self.m_Text, x, y + (hasTitleBar and self.m_TitleHeight or 0) + (hasTexture and TEXTURE_SIZE_Y or 0), x + w, y + (h - (hasTitleBar and self.m_TitleHeight or 0) - (hasTexture and TEXTURE_SIZE_Y or 0)), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
+function ShortMessage:setTimeout(timeoutMs)
+	if timeoutMs ~= -1 then
+		if self.m_Timeout and isTimer(self.m_Timeout) then killTimer(self.m_Timeout) end
+		self.m_Timeout = setTimer(
+		function ()
+			if self.m_TimeoutFunc then
+				self:m_TimeoutFunc()
+			end
+			delete(self)
+		end, ((type(timeoutMs) == "number" and timeoutMs > 50 and timeoutMs) or 5000) + 500, 1)
+	else
+		if self.m_Timeout and isTimer(self.m_Timeout) then killTimer(self.m_Timeout) end
+	end
+end
+
 function ShortMessage:resetTimeout()
-	resetTimer(self.m_Timeout)
+	if self.m_Timeout and isTimer(self.m_Timeout) then
+		resetTimer(self.m_Timeout)
+	end
 end
 
 addEvent("shortMessageBox", true)

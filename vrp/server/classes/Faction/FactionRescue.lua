@@ -8,7 +8,7 @@
 FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
-	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
+	"factionRescueWastedFinished", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
 	"factionRescueReviveAbort", "factionRescueToggleLadder", "factionRescueToggleDefibrillator"
 }
 
@@ -18,32 +18,28 @@ function FactionRescue:constructor()
 
 	self.m_VehicleFires = {}
 
-	self.m_Skins = {}
-	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
-	self.m_Skins["fire"] = {27, 277, 278, 279}
-
 	self.m_LastStrecher = {}
 	self.m_BankAccountServer = BankServer.get("faction.rescue")
 	self.m_BankAccountServerCorpse = BankServer.get("player.corpse")
 
 	self.m_GateHitBind = bind(self.onBarrierHit, self)
 	-- Barriers
-	VehicleBarrier:new(Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0)).onBarrierHit = self.m_GateHitBind
-	VehicleBarrier:new(Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0)).onBarrierHit = self.m_GateHitBind
-
+	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
+	
 	--Garage doors
 	self.m_Gates = {
-		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1125.7, -1381.9, 17), Vector3(180, -88, 270)), --one
-		Gate:new(3037, Vector3(1125.7, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1125.7, -1374.2, 17), Vector3(180, -88, 90)), --one back
+		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1125.7, -1381.9, 17), Vector3(0, 88, 90)), --one
+		Gate:new(3037, Vector3(1125.7, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1125.7, -1374.2, 17), Vector3(0, 88, 270)), --one back
 
-		Gate:new(3037, Vector3(1113.9, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1113.9, -1381.9, 17), Vector3(180, -88, 270)), --two
-		Gate:new(3037, Vector3(1113.9, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1113.9, -1374.2, 17), Vector3(180, -88, 90)), --two back
+		Gate:new(3037, Vector3(1113.9, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1113.9, -1381.9, 17), Vector3(0, 88, 90)), --two
+		Gate:new(3037, Vector3(1113.9, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1113.9, -1374.2, 17), Vector3(0, 88, 270)), --two back
 
-		Gate:new(3037, Vector3(1102.1, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1102.1, -1381.9, 17), Vector3(180, -88, 270)), --three
-		Gate:new(3037, Vector3(1102.1, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1102.1, -1374.2, 17), Vector3(180, -88, 90)), --three back
+		Gate:new(3037, Vector3(1102.1, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1102.1, -1381.9, 17), Vector3(0, 88, 90)), --three
+		Gate:new(3037, Vector3(1102.1, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1102.1, -1374.2, 17), Vector3(0, 88, 270)), --three back
 
-		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(180, 0, 270), Vector3(1090.3, -1381.9, 17), Vector3(180, -88, 270)), --four
-		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(180, 0, 90), Vector3(1090.3, -1374.2, 17), Vector3(180, -88, 90)), --four back
+		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1090.3, -1381.9, 17), Vector3(0, 88, 90)), --four
+		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1090.3, -1374.2, 17), Vector3(0, 88, 270)), --four back
 	}
 	
 	for i,v in pairs(self.m_Gates) do
@@ -63,7 +59,7 @@ function FactionRescue:constructor()
 
 	nextframe(
 		function ()
-			local safe = createObject(2332, 1724.8, -1754.29, 15.25, 0, 0, 180)
+			local safe = createObject(2332, 1075.83, -1384.2, 13.21, 0, 0, 180)
 			setElementDoubleSided(safe,true)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
@@ -79,7 +75,6 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueDiscardHealPlayer", root, bind(self.Event_discardHealPlayer, self))
 	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
-	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescueToggleDefibrillator", root, bind(self.Event_ToggleDefibrillator, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
@@ -155,8 +150,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 					if faction:isRescueFaction() == true then
 						if not hitElement.vehicle then
 							hitElement.m_CurrentDutyPickup = source
-							hitElement:triggerEvent("showRescueFactionDutyGUI")
-							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
+							faction:updateDutyGUI(hitElement)
 						else
       						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", hitElement))
 						end
@@ -168,35 +162,7 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:Event_changeSkin(player)
-
-	if not player then player = client end
-
-	local type = player:getPublicSync("Rescue:Type")
-	local curskin = getElementModel(player)
-
-	local suc = false
-	for i = curskin+1, 313 do
-		if table.find(self.m_Skins[type], i) then
-			suc = true
-			player:setModel(i)
-			break
-		end
-	end
-	if suc == false then
-		for i = 0, curskin do
-			if table.find(self.m_Skins[type], i) then
-				suc = true
-				player:setModel(i)
-				break
-			end
-		end
-	end
-	player:triggerEvent("showRescueFactionDutyGUI", true)
-
-end
-
-function FactionRescue:Event_toggleDuty(type, wasted)
+function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
@@ -208,7 +174,9 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
 				takeAllWeapons(client)
+				if not wasted then faction:updateDutyGUI(client) end
 			else
+				if wasted then return end
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
@@ -223,7 +191,8 @@ function FactionRescue:Event_toggleDuty(type, wasted)
 				client:setPublicSync("Rescue:Type",type)
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():giveItem("Warnkegel", 10)
-				self:Event_changeSkin(client)
+				faction:updateDutyGUI(client)
+				faction:changeSkin(client, prefSkin)
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))

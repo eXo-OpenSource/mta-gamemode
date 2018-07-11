@@ -347,11 +347,13 @@ end
 
 --// SETTERS
 function GroupProperty:setOwner( id )
-	self.m_Owner = GroupManager.getFromId(OwnerId) or false
+	self.m_Owner = GroupManager.getFromId(id) or false
 	if self.m_Owner == false then
 		setPickupType(self.m_Pickup, 3, PICKUP_FOR_SALE)
+		self.m_OwnerID = 0
 	else
 		setPickupType(self.m_Pickup, 3, PICKUP_SOLD)
+		self.m_OwnerID = id
 	end
 	return self.m_Owner
 end

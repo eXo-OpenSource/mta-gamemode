@@ -193,11 +193,13 @@ function FactionState:loadLSPD(factionId)
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
 
-	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	--VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	local barrier = Gate:new(968, Vector3(1544.70, -1630.90, 13.1), Vector3(0, 90, 90), Vector3(1544.70, -1630.90, 13.1), Vector3(0, 5, 90), false)
+	barrier.onGateHit = bind(self.onBarrierGateHit, self)  -- PD Barrier
 
-	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
+	local gate = Gate:new(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
-	gate:setGateScale(1.25)
+	gate:setGateScale(1.01)
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
@@ -524,8 +526,7 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 				if faction then
 					if faction:isStateFaction() == true then
 						hitElement.m_CurrentDutyPickup = source
-						hitElement:triggerEvent("showStateFactionDutyGUI")
-						hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
+						hitElement:getFaction():updateDutyGUI(hitElement)
 					end
 				end
 			end
@@ -1265,7 +1266,7 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
-function FactionState:Event_toggleDuty(wasted)
+function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
 	if getPedOccupiedVehicle(client) then
@@ -1292,14 +1293,14 @@ function FactionState:Event_toggleDuty(wasted)
 				client:getInventory():removeAllItem("Nagel-Band")
 				client:getInventory():removeAllItem("Blitzer")
 				client:getInventory():removeAllItem("Einsatzhelm")
-				faction:updateStateFactionDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 					return false
 				end
-				faction:changeSkin(client)
+				faction:changeSkin(client, preferredSkin)
 				client:setFactionDuty(true)
 				client:setHealth(100)
 				client:setArmor(100)
@@ -1313,9 +1314,7 @@ function FactionState:Event_toggleDuty(wasted)
 				client:getInventory():giveItem("Einsatzhelm", 1)
 				client:getInventory():removeAllItem("Taser")
 				client:getInventory():giveItem("Taser", 1)
-				client.m_WeaponStoragePosition = client.position
-				client:triggerEvent("showFactionWeaponShopGUI")
-				faction:updateStateFactionDutyGUI(client)
+				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
@@ -1335,12 +1334,12 @@ function FactionState:Event_toggleSwat()
 				faction:changeSkin(client)
 				client:setPublicSync("Faction:Swat",false)
 				client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
-				faction:updateStateFactionDutyGUI(client)
+				faction:updateDutyGUI(client)
 			else
 				client:setJobDutySkin(285)
 				client:setPublicSync("Faction:Swat",true)
 				client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
-				faction:updateStateFactionDutyGUI(client)
+				faction:updateDutyGUI(client)
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
@@ -1362,17 +1361,18 @@ function FactionState:Event_storageWeapons(player)
 			if weapon == 23 then
 				ItemManager.Map["Taser"]:use(client)
 			end
-
+			--storage weapons
 			local depot = faction:getDepot()
+			local logData = {}
 			for i= 1, 12 do
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
-					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1
+					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 0
 					if WEAPON_CLIPS[weaponId] then
 						clipAmmo = WEAPON_CLIPS[weaponId]
 					end
 
-					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)-1
+					local magazines = clipAmmo > 0 and math.floor(client:getTotalAmmo(i)/clipAmmo) or 0
 
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
@@ -1380,17 +1380,29 @@ function FactionState:Event_storageWeapons(player)
 						depot:addWeaponD(weaponId, 1)
 						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
 							depot:addMagazineD(weaponId, magazines)
-						else
-							--client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
+						elseif magazines > 0 then
+							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
 						end
 						takeWeapon(client, weaponId)
-						self:addLog(player, "Waffenlager", ("hat eine/n %s mit %s Magazin(en) in das Waffenlager gelegt!"):format(WEAPON_NAMES[weaponId], magazines))
-						client:sendMessage(_("Du hast eine/n %s mit %s Magazin(en) ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines))
+						logData[WEAPON_NAMES[weaponId]] = magazines
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
 				end
 			end
+			local textForPlayer = "Du hast folgende Waffen in das Lager gelegt:"
+			local wepaponsPut = false
+			for i,v in pairs(logData) do
+				wepaponsPut = true
+				textForPlayer = textForPlayer.."\n"..i
+				if v > 0 then
+					textForPlayer = textForPlayer.. " mit ".. v .. " Magazin(en)"
+					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) in das Lager gelegt!"):format(i, v))
+				else
+					faction:addLog(client, "Waffenlager", ("hat ein/e(n) %s in das Lager gelegt!"):format(i))
+				end
+			end
+			if wepaponsPut then client:sendInfo(textForPlayer) end
 		end
 	end
 end

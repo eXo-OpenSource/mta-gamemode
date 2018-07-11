@@ -374,6 +374,20 @@ function StatisticsLogger:itemPlaceLogs( player, item, pos )
 	end
 end
 
+function StatisticsLogger:worldItemLog( action, typ, userId, ownerId, itemId, zone1, zone2)
+	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = ownerId or 0 end
+	if isElement(userId) then userId = userId:getId() else userId = userId or 0 end
+	if type(ownerId) ~= "number" then 
+		if type(ownerId) == "table" then 
+			ownerId = ownerId:getId()
+		end
+	end
+	if itemId and userId and typ and ownerId and zone1 and zone2 and action then
+		sqlLogs:queryExec("INSERT INTO ??_WorldItemLog ( Action, Type, UserId, OwnerId, ItemId, Zone1, Zone2, Date) VALUES(?, ?, ?, ?, ?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), action, typ, userId, ownerId, itemId, zone1, zone2)
+	end
+end
+
 function StatisticsLogger:vehicleTowLogs( player, vehicle)
     local userId = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end

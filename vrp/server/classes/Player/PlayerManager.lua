@@ -101,7 +101,7 @@ function PlayerManager:Event_onRequestGateOpen()
 						if getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) <= 15 and getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) < closestDist then
 							if obj.m_Super and obj.m_Id == 1 then
 								openGate = obj.m_Super
-								closestDist = getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition() ) 
+								closestDist = getDistanceBetweenPoints3D(obj:getPosition(), client:getPosition())
 							end
 						end
 					end
@@ -964,13 +964,18 @@ function PlayerManager:Event_OnUpdateSpawnLocation(locationId, property)
 			client:setSpawnLocationProperty(source:getId())
 			client:sendInfo("Spawnposition geändert!")
 		end
-	elseif locationId ==  SPAWN_LOCATIONS.FACTION_BASE then
+	elseif locationId == SPAWN_LOCATIONS.FACTION_BASE then
 		if client:getFaction() then
 			client:setSpawnLocation(locationId)
 			client:sendInfo("Spawnpunkt wurde geändert.")
 		end
-	elseif locationId ==  SPAWN_LOCATIONS.COMPANY_BASE then
+	elseif locationId == SPAWN_LOCATIONS.COMPANY_BASE then
 		if client:getCompany() then
+			client:setSpawnLocation(locationId)
+			client:sendInfo("Spawnpunkt wurde geändert.")
+		end
+	elseif locationId ==  SPAWN_LOCATIONS.GROUP_BASE then
+		if client:getGroup() then
 			client:setSpawnLocation(locationId)
 			client:sendInfo("Spawnpunkt wurde geändert.")
 		end

@@ -27,67 +27,54 @@ function ItemEntrance:constructor()
 end
 
 
-function ItemEntrance:addObject(Id, pos, rot, int, dim, value)
+
+function ItemEntrance:addWorldObjectCallback(Id, worldObject)
 	local linkedKeyPadList, houseID, model, posX, posY, posZ, title, desc
+	local updateEntrance = false
+	local object, pos, int, dim
+	local value = worldObject:getValue()
 	if not value or tostring(value) == "" then 
-		linkedKeyPadList = "#"
-		houseID = "#"
-		model = self.m_Model
-		posX = false 
-		posY = false 
-		posZ = false
-		title = "" 
-		desc = ""
-		linkedToEntrance = false
+		linkedKeyPadList, houseID, model, posX, posY, posZ, title, desc, linkToEntrance = "#", self.m_Model, false, false, false, "", "", false
 		updateEntrance = true
 	else 
-		linkedKeyPadList = gettok(value, 1, ":") or "#"
-		model = tonumber(gettok(value, 2, ":"))
-		houseID = tonumber(gettok(value, 3, ":")) or "#"
-		posX = tonumber(gettok(value, 4, ":")) 
-		posY = tonumber(gettok(value, 5, ":")) 
-		posZ = tonumber(gettok(value, 6, ":")) 
-		linkedToEntrance = tonumber(gettok( value, 7, ":"))
-		title = gettok(value, 8, ":")
-		desc = gettok(value, 9, ":")
-		updateEntrance	= false
+		linkedKeyPadList, model, houseID, posX, posY, posZ = gettok(value, 1, ":") or "#", tonumber(gettok(value, 2, ":")), tonumber(gettok(value, 3, ":")) or "#", tonumber(gettok(value, 4, ":")), tonumber(gettok(value, 5, ":")), tonumber(gettok(value, 6, ":")) 
+		linkedToEntrance, title, desc = tonumber(gettok( value, 7, ":")), gettok(value, 8, ":"), gettok(value, 9, ":")
 	end
-	int = tostring(int) or 0 
-	dim = tostring(dim) or 0
-	self.m_Entrances[Id] = createObject(model or self.m_Model, pos.x, pos.y, pos.z, 3)
+	worldObject:setModel(model)
+	worldObject:setAnonymous(true)
+	worldObject:setAccessRange(10)
+	worldObject:setAccessIntDimCheck(true) 
+	self.m_Entrances[Id] = worldObject
 	if self.m_Entrances[Id] and houseID then
-		setElementDimension(self.m_Entrances[Id], tonumber(dim))
-		setElementInterior(self.m_Entrances[Id], tonumber(int))
-		setElementDoubleSided(self.m_Entrances[Id], true)
-		self.m_Entrances[Id]:setRotation( rot ) 
-		self.m_Entrances[Id].m_ColShape = createColSphere(pos.x, pos.y, pos.z, 3)
-		self.m_Entrances[Id].m_ColShape.m_EntranceID = Id
-		setElementInterior(self.m_Entrances[Id].m_ColShape, tonumber(int))
-		setElementDimension(self.m_Entrances[Id].m_ColShape, tonumber(dim))
-		self.m_Entrances[Id].m_ColShape.m_EntranceObject = self.m_Entrances[Id]
-		addEventHandler("onColShapeHit", self.m_Entrances[Id].m_ColShape, self.m_ColShapeBind)
-		addEventHandler("onColShapeLeave", self.m_Entrances[Id].m_ColShape, self.m_ColShapeBind2)
-		self.m_Entrances[Id].Id = Id
-		self.m_Entrances[Id].Type = "Eingang"
-		self.m_Entrances[Id].HouseID = houseID
-		self.m_Entrances[Id].Title = title 
-		self.m_Entrances[Id].Description = desc
+		object = worldObject:getObject()
+		pos, int, dim = object:getPosition(), object:getInterior(), object:getDimension()
+		object:setDoubleSided(true)
+		object.m_ColShape = createColSphere(pos.x, pos.y, pos.z, 3)
+		object.m_ColShape.m_EntranceID = Id
+		object.m_ColShape:setInterior(int)
+		object.m_ColShape:setDimension(dim)
+		object.m_ColShape.m_EntranceObject = object
+		addEventHandler("onColShapeHit", object.m_ColShape, self.m_ColShapeBind)
+		addEventHandler("onColShapeLeave", object.m_ColShape, self.m_ColShapeBind2)
+		object.Id = Id
+		object.Type = "Eingang"
+		object.HouseID = houseID
+		object.Title = title 
+		object.Description = desc
 		if posX and posY and posZ then
-			self.m_Entrances[Id].OutPos = Vector3(posX, posY, posZ)
-			self.m_Entrances[Id].HouseID = false
-			if linkedToEntrance then 
-				self.m_Entrances[Id].LinkToEntrance = linkedToEntrance
-			end
+			object.OutPos = Vector3(posX, posY, posZ)
+			object.HouseID = false
+			if linkedToEntrance then object.LinkToEntrance = linkedToEntrance end
 		end
-		self.m_Entrances[Id].UpdateEntrance = updateEntrance
-		self.m_Entrances[Id].m_Closed = true
+		object.UpdateEntrance = updateEntrance
+		object.m_Closed = true
 		self:seperateLinkedKeypads( self.m_Entrances[Id], linkedKeyPadList)
-		self.m_Entrances[Id]:setData("clickable", true, true)
+		object:setData("clickable", true, true)
 		self.m_BindKeyClick = bind(self.onEntranceClick, self)
-		addEventHandler("onElementClicked", self.m_Entrances[Id], self.m_BindKeyClick)
-		return self.m_Entrances[Id]
+		addEventHandler("onElementClicked", object, self.m_BindKeyClick)
+		return true
 	else 
-		return nil 
+		return false 
 	end
 end
 
@@ -119,9 +106,10 @@ function ItemEntrance:seperateLinkedKeypads( entrance, keypadString )
 		while gettok(keypadString, count, "+") do 
 			sepString = gettok(keypadString, count, "+") 
 			if tonumber(sepString) then 
-				if not self.m_KeyPadLinks[tonumber(sepString)] then self.m_KeyPadLinks[tonumber(sepString)] = {} end 
-				table.insert(list, tonumber(sepString))
-				table.insert(self.m_KeyPadLinks[tonumber(sepString)], entrance)
+				sepString = tonumber(sepString)
+				if not self.m_KeyPadLinks[sepString] then self.m_KeyPadLinks[sepString] = {} end 
+				table.insert(list, sepString)
+				table.insert(self.m_KeyPadLinks[sepString], entrance)
 			end
 			count = count + 1
 		end
@@ -201,19 +189,17 @@ function ItemEntrance:removeLinkKey( id, keyPadId)
 	return false
 end
 
-
-
 function ItemEntrance:Event_onKeyPadSignal( ) 
 	local keypad = source
 	if keypad and isElement(keypad) and keypad.Id then
 		if self.m_KeyPadLinks[keypad.Id] then 
-			local x,y,z = getElementPosition(keypad)
-			local dx, dy, dz
+			local keyPadPosition = keypad:getPosition()
+			local pos
 			for id, obj in ipairs(self.m_KeyPadLinks[keypad.Id] ) do 
-				if obj and isElement(obj) then
-					dx, dy, dz = getElementPosition(obj) 
-					if getDistanceBetweenPoints3D(dx, dy, dz, x, y, z) <= 30 then 
-						self:changeLock( obj )
+				if obj and obj.getObject and isElement(obj:getObject()) then
+					pos = obj:getObject():getPosition() 
+					if getDistanceBetweenPoints3D(pos.x, pos.y, pos.z, keyPadPosition.x, keyPadPosition.y, keyPadPosition.z) <= 30 then 
+						self:changeLock( obj:getObject() )
 					end
 				end
 			end
@@ -225,6 +211,7 @@ function ItemEntrance:changeLock( entrance )
 	entrance.m_Closed = not entrance.m_Closed 
 	triggerClientEvent("itemEntrancePlayLock", entrance, entrance.m_Closed)
 end
+
 function ItemEntrance:Event_onConfirmEntranceDelete( id ) 
 	if source.m_EntranceQuestionDeleteId then 
 		if source:getRank() < ADMIN_RANK_PERMISSION["placeKeypadObjects"] then return end
@@ -235,9 +222,9 @@ end
 
 function ItemEntrance:Event_onEntranceConfirm( id ) 
 	local obj = self.m_Entrances[id]
-	if obj and isElement(obj) and not getPedOccupiedVehicle(client) then
-		if client.m_EntranceQuestionId or isElementWithinColShape(client, obj.m_ColShape) then 
-			if not self.m_Entrances[id].m_Closed then 
+	if obj and obj.getObject and isElement(obj:getObject()) and not getPedOccupiedVehicle(client) then
+		if client.m_EntranceQuestionId or isElementWithinColShape(client, obj:getObject().m_ColShape) then 
+			if not obj:getObject().m_Closed then 
 				self:enter( source, id )
 			else 
 				client:sendError(_("Der Eingang ist verschlossen!", client))
@@ -250,27 +237,30 @@ function ItemEntrance:Event_onEntranceCancel( id )
 end
 
 function ItemEntrance:enter( player, id ) 
-	local pDim, pInt = getElementDimension(player), getElementInterior(player)
-	local eDim, eInt = getElementDimension(self.m_Entrances[id]), getElementInterior(self.m_Entrances[id])
-	if pDim == eDim and pInt == eInt then 
-		if self.m_Entrances[id].HouseID then 
-			if HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID] then
-				local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[self.m_Entrances[id].HouseID])
-				local _, _, rz = getElementRotation( player )
-				self:teleportPlayer(player, Vector3(x, y, z), rz, int, id)
-				triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
-			end
-		else 
-			if self.m_Entrances[id].OutPos then 
-				local _, _, rz = getElementRotation( player )
-				local int, dim = 0, 0
-				if self.m_Entrances[id].LinkToEntrance then 
-					if self.m_Entrances[self.m_Entrances[id].LinkToEntrance] and isElement(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]) then
-						int, dim = getElementInterior(self.m_Entrances[self.m_Entrances[id].LinkToEntrance]), getElementDimension(self.m_Entrances[self.m_Entrances[id].LinkToEntrance])
-					end
+	if self.m_Entrances[id] and self.m_Entrances[id].getObject and isElement(self.m_Entrances[id]:getObject()) then
+		local object = self.m_Entrances[id]:getObject()
+		local pDim, pInt = player:getDimension(), player:getInterior()
+		local eDim, eInt = object:getDimension(), object:getInterior()
+		if pDim == eDim and pInt == eInt then 
+			if object.HouseID then 
+				if HOUSE_INTERIOR_TABLE[object.HouseID] then
+					local int, x, y, z = unpack(HOUSE_INTERIOR_TABLE[object.HouseID])
+					local _, _, rz = getElementRotation( player )
+					self:teleportPlayer(player, Vector3(x, y, z), rz, int, id)
+					triggerClientEvent("itemEntrancePlayEnter", object)
 				end
-				self:teleportPlayer(player, self.m_Entrances[id].OutPos, rz,  int, dim)
-				triggerClientEvent("itemEntrancePlayEnter", self.m_Entrances[id])
+			else 
+				if object.OutPos then 
+					local _, _, rz = getElementRotation( player )
+					local int, dim = 0, 0
+					if object.LinkToEntrance then 
+						if self.m_Entrances[object.LinkToEntrance] and isElement(self.m_Entrances[object.LinkToEntrance]:getObject()) then
+							int, dim = self.m_Entrances[object.LinkToEntrance]:getObject():getInterior(), self.m_Entrances[object.LinkToEntrance]:getObject():getDimension()
+						end
+					end
+					self:teleportPlayer(player, object.OutPos, rz,  int, dim)
+					triggerClientEvent("itemEntrancePlayEnter", object)
+				end
 			end
 		end
 	end
@@ -300,14 +290,17 @@ function ItemEntrance:Event_onEntranceDataChange( padId, removePadId, houseId, p
 		if client.m_LastEntranceId then 
 			if self.m_Entrances[client.m_LastEntranceId] then 
 				local entrance = self.m_Entrances[client.m_LastEntranceId]
-				if isElement(entrance) then 
+				if entrance and entrance.getObject and isElement(entrance:getObject()) then 
+					entrance = entrance:getObject()
 					if padId and tonumber(padId) then
-						self:addKeyPadLink(entrance.Id, tonumber(padId))
-						self:addLinkKey(entrance.Id, tonumber(padId))
+						padId = tonumber(padId)
+						self:addKeyPadLink(entrance.Id, padId)
+						self:addLinkKey(entrance.Id, padId)
 					end
 					if removePadId and tonumber(removePadId) then 
-						self:removeKeyPadLink(entrance.Id, tonumber(removePadId))
-						self:removeLinkKey(entrance.Id, tonumber(removePadId))
+						removePadId = tonumber(removePadId)
+						self:removeKeyPadLink(entrance.Id, removePadId)
+						self:removeLinkKey(entrance.Id, removePadId)
 					end
 					if tonumber(posX) and tonumber(posY) and tonumber(posZ) then 
 						entrance.OutPos = Vector3(tonumber(posX), tonumber(posY), tonumber(posZ))
@@ -346,63 +339,55 @@ function ItemEntrance:use(player, itemId, bag, place, itemName)
 		player:sendInfo(_("%s hinzugefügt!", player, "Eingang Modell ("..model..")"))
 		local dim = getElementDimension(player) 
 		local int = getElementInterior(player)
-		--FactionState:getSingleton():sendShortMessage(_("%s hat ein Keypad bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 		StatisticsLogger:getSingleton():itemPlaceLogs( player, "Eingang", position.x..","..position.y..","..position.z)
-		sql:queryExec("INSERT INTO ??_word_objects(Typ, PosX, PosY, PosZ, RotationZ, Interior, Dimension,  Value, ZoneName, Admin, Date) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), "Eingang", position.x, position.y, position.z, rotation, int, dim, valueString , getZoneName(position).."/"..getZoneName(position, true), player:getId())
-		if not self:addObject(sql:lastInsertId(), position, Vector3(0,0,rotation), int, dim, valueString ) then 
-			sql:queryExec("DELETE FROM ??_word_objects WHERE Id=?", sql:getPrefix(), sql:lastInsertId())	
+		local worldObject = PlayerWorldItem:new(ItemManager:getSingleton():getInstance("Eingang"), player:getId(), position, rotation, false, player:getId(), true, false, valueString)
+		worldObject:setDimension(dim) 
+		worldObject:setInterior(int)
+		local id = worldObject:forceSave() 
+		if id then 
+			if not self:addWorldObjectCallback(id, worldObject) then
+				player:sendInfo(_("Ein Fehler trat auf beim Platzieren!", player))
+			end
 		end
 	end, false, model)
 end
 
 function ItemEntrance:onEntranceClick(button, state, player)
     if source.Type ~= "Eingang" then return end
-	if button == "left" and state == "up" then
+	if button == "right" and state == "up" then
 		if player.m_SupMode then
 			player.m_LastEntranceId = source.Id
 			local pos = {getElementPosition(source)}
 			player:triggerEvent("promptEntranceOption", source.LinkedKeyPad, pos)
 		end
-	elseif button == "right" and state == "up" then 
-		if player.m_SupMode then 
-			player.m_EntranceQuestionDeleteId = source.Id
-			QuestionBox:new(player, player, _("Möchtest du diesen Eingang (#"..source.Id.." Modell: "..getElementModel(source)..") löschen?", player), "confirmEntranceDelete", nil, source.Id)
-		end
-    end
+	end
 end
 
 function ItemEntrance:removeObject( id ) 
 	if id then 
 		if self.m_Entrances[id] then 
-			destroyElement(self.m_Entrances[id])
+			self.m_Entrances[id]:forceDelete()
 			self.m_Entrances[id] = nil
-			sql:queryExec("DELETE FROM ??_word_objects WHERE Id=?", sql:getPrefix(), id)
 		end
 	end
 end
 
-
 function ItemEntrance:destructor()
 	local rebuildKeyListString = ""
 	for id , obj in pairs(self.m_Entrances) do 
-		if obj.UpdateEntrance then 
+		if obj and obj.getObject and isElement(obj:getObject()) and obj:getObject().UpdateEntrance then 
 			rebuildKeyListString = self:rebuildLinkedKeypads( obj.LinkedKeyPad ) 
-			local houseId = obj.HouseID or "#"
+			local houseId = obj:getObject().HouseID or "#"
 			local x,y,z, linkToEntrance
-			local title = obj.Title or ""
-			local desc = obj.Description or ""
-			if obj.OutPos then 
-				x = obj.OutPos.x or "#"
-				y = obj.OutPos.y or "#"
-				z = obj.OutPos.z or "#"
-				linkToEntrance = obj.LinkToEntrance or "#"
+			local title = obj:getObject().Title or ""
+			local desc = obj:getObject().Description or ""
+			if obj:getObject().OutPos then 
+				x, y, z, linkToEntrance = obj:getObject().OutPos.x or "#", obj:getObject().OutPos.y or "#", obj:getObject().OutPos.z or "#", obj:getObject().LinkToEntrance or "#"
 			else 
-				x = "#"
-				y = "#" 
-				z = "#"
-				linkToEntrance = "#"
+				x, y, z, linkToEntrance = "#", "#", "#", "#"
 			end
-			sql:queryExec("UPDATE ??_word_objects SET value=? WHERE Id=?;", sql:getPrefix(), rebuildKeyListString..":"..getElementModel(obj)..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance..":"..title..":"..desc, obj.Id )
+			obj:setValue(rebuildKeyListString..":"..obj:getModel()..":"..houseId..":"..x..":"..y..":"..z..":"..linkToEntrance..":"..title..":"..desc, obj:getObject().Id)
+			obj:onChanged()
 		end
 	end
 end
@@ -417,15 +402,15 @@ function ItemEntrance:Event_onNearbyCommand( source, cmd)
 	local house = ""
 	for id , obj in pairs(self.m_Entrances) do 
 		count = count + 1
-		objectPosition = obj:getPosition()
+		objectPosition = obj:getObject():getPosition()
 		dist = getDistanceBetweenPoints2D(objectPosition.x, objectPosition.y, position.x, position.y)
 		if dist <= 10 then  
 			if obj.HouseID then 
-				house = obj.HouseID 
+				house = obj:getObject().HouseID 
 			else 
 				house = "Keins"
 			end
-			outputChatBox(" #ID "..obj.Id.." Model: "..getElementModel(obj).." Haus-ID: "..house.." Distanz: "..dist , source, 244, 182, 66)
+			outputChatBox(" #ID "..obj:getObject().Id.." Model: "..obj:getObject():getModel().." Haus-ID: "..house.." Distanz: "..dist , source, 244, 182, 66)
 		end
 	end
 	if count == 0 then outputChatBox(" Keine in der Nähe",  source, 244, 182, 66) end
@@ -437,8 +422,8 @@ function ItemEntrance:Event_onDeleteCommand( source, cmd, id)
 	local objectPosition, dist
 	if id and tonumber(id) then
 		local obj = self.m_Entrances[tonumber(id)] 
-		if obj then 
-			local objPos = obj:getPosition() 
+		if obj and obj.getObject and isElement(obj:getObject()) then 
+			local objPos = obj:getObject():getPosition() 
 			local sourcePos = source:getPosition() 
 			if getDistanceBetweenPoints2D(objPos.x, objPos.y, sourcePos.x, sourcePos.y) <= 10 then 
 				self:removeObject( tonumber(id) ) 

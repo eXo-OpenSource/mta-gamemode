@@ -62,7 +62,6 @@ function LocalPlayer:constructor()
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
 	
 	self:setPrivateSyncChangeHandler("SessionID", function()
-		outputDebug(self:getSessionId())
 		core:onWebSessionCreated()
 	end)
 
@@ -513,7 +512,7 @@ function LocalPlayer:renderPedNameTags()
 		if nameTag or mortemTag then
 			x,y,z = getPedBonePosition(ped, 8)
 			if getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 then
-				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
+				if isLineOfSightClear( Vector3(px, py, pz), Vector3(x, y, z), true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
 						x,y = getScreenFromWorldPosition(x,y,z+0.5)
 						if x and y then

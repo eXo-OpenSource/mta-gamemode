@@ -23,9 +23,10 @@ function PerformanceStatsGUI:constructor()
 	}
 
 	GUIForm.constructor(self, screenWidth-30-screenWidth*0.3, screenHeight*0.3, screenWidth*0.3, screenHeight*0.4)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Debug Tools (F10 to close)", true, false, self)
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Dx Stats", "Elements", "Cache", "Perf. Stats", "Network"}) -- fügt Tabs hinzu und gibt ihnen eine füllende Breite
 	self.m_Fields = {}
-	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_TabDxStats = self.m_TabPanel:addTab(_"DxStats")
+	self.m_TabDxStats = self.m_Tabs[1]
 	self:addField(self.m_TabDxStats, "VideoCardName", function() return tostring(dxGetStatus().VideoCardName) end)
 	self:addField(self.m_TabDxStats, "VideoCardRAM", function() return ("%sMB"):format(dxGetStatus().VideoCardRAM) end)
 	self:addField(self.m_TabDxStats, "UsedVideoMemory", function() return ("%sMB"):format(dxGetStatus().VideoCardRAM - dxGetStatus().VideoMemoryFreeForMTA) end)
@@ -35,17 +36,34 @@ function PerformanceStatsGUI:constructor()
 	self:addField(self.m_TabDxStats, "VideoMemoryUsedByFonts", function() return ("%sMB"):format(dxGetStatus().VideoMemoryUsedByFonts) end)
 	self:addField(self.m_TabDxStats, "VideoCardNumRenderTargets", function() return tostring(dxGetStatus().VideoCardNumRenderTargets) end)
 
-	self.m_TabElements = self.m_TabPanel:addTab(_"Elemente")
+	self.m_TabElements = self.m_Tabs[2]
 	for type, name in pairs(self.m_Elements) do
 		self:addField(self.m_TabElements, name, function() return ("%d/%d"):format(#getElementsByType(type, root, true), #getElementsByType(type)) end)
 	end
 
-	self.m_TabCache = self.m_TabPanel:addTab(_"Cache")
+	self.m_TabCache = self.m_Tabs[3]
 	self:addField(self.m_TabCache, "CacheTextureReplace", function() return tostring(table.size(TextureCache.Map)) end)
-	self.m_TabCache.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.96, self.m_Height*0.73, self.m_TabCache)
+	self.m_TabCache.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.73, self.m_TabCache)
 	self.m_TabCache.m_Gridlist:addColumn("Name", 0.85)
 	self.m_TabCache.m_Gridlist:addColumn("Count", 0.15)
+	self.m_TabCache.m_Gridlist:setItemHeight(math.min(self.m_Height*0.08, 20))
+	self.m_TabCache.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 
+	self.m_TabPerformance = self.m_Tabs[4]
+	GUILabel:new(self.m_Width*0.02, 0, self.m_Width*0.7, self.m_Height*0.08, "PerformanceDump    filter:", self.m_TabPerformance)
+	self.m_PerformanceEdit = GUIEdit:new(self.m_Width*0.5, self.m_Width*0.01, self.m_Width*0.48, self.m_Height*0.08-self.m_Width*0.01, self.m_TabPerformance)
+	self.m_TabPerformance.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.73, self.m_TabPerformance)
+	self.m_TabPerformance.m_Gridlist:addColumn("%", 0.1)
+	self.m_TabPerformance.m_Gridlist:addColumn("Source", 0.75)
+	self.m_TabPerformance.m_Gridlist:addColumn("Timing", 0.15)
+	self.m_TabPerformance.m_Gridlist:setItemHeight(math.min(self.m_Height*0.08, 20))
+	self.m_TabPerformance.m_Gridlist:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
+
+	self.m_TabNetwork = self.m_Tabs[5]
+	for ___, type in pairs({"bytesReceived", "bytesSent", "packetsReceived", "packetsSent", "packetlossTotal", "packetlossLastSecond", "messagesInSendBuffer", "messagesInResendBuffer"}) do
+		self:addField(self.m_TabNetwork, type, function() return getNetworkStats()[type] end)
+	end
+	self:addField(self.m_TabNetwork, "Ping", function() return getPlayerPing(localPlayer) end)
 	self.m_RefreshTimer = false
 	self:refresh()
 	self:onShow()
@@ -63,6 +81,7 @@ function PerformanceStatsGUI:refresh()
 		self.m_TabCache.m_Gridlist:clear()
 		for path, data in pairs(TextureCache.Map) do
 			local item = self.m_TabCache.m_Gridlist:addItem(path:gsub("files/images/Textures", ""), data:getUsage())
+			item:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 			item.onLeftDoubleClick = function()
 				local text = _"Folgende Elemente benutzen diese Textur:"
 				for i, instance in pairs(data.m_Instances) do
@@ -72,13 +91,27 @@ function PerformanceStatsGUI:refresh()
 			end
 		end
 	end
+	if self.m_TabPerformance.m_Gridlist then
+		self.m_TabPerformance.m_Gridlist:clear()
+		local __, f = getPerformanceStats("Lua timing", "d", self.m_PerformanceEdit:getText())
+		for i, data in ipairs(f) do
+			if data[2] ~= "-" then
+				local item = self.m_TabPerformance.m_Gridlist:addItem(data[2], data[1], data[3])
+				item:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
+				item.onLeftDoubleClick = function()
+					setClipboard(data[1])
+					ShortMessage:new(data[1].." in die Zwischenablage gelegt!")
+				end
+			end
+		end
+	end
 end
 
 function PerformanceStatsGUI:addField(parent, name, getFunc)
 	if not self.m_Fields[parent] then self.m_Fields[parent] = {} end
 	self.m_Fields[parent][#self.m_Fields[parent] + 1] = {func = getFunc}
-	GUILabel:new(self.m_Width*0.02, #self.m_Fields[parent]*self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.08, name..":", parent)
-	self.m_Fields[parent][#self.m_Fields[parent]].label = GUILabel:new(self.m_Width*0.50, #self.m_Fields[parent]*self.m_Height*0.08, self.m_Width*0.47, self.m_Height*0.08, "", parent):setAlignX("right")
+	GUILabel:new(self.m_Width*0.02, (#self.m_Fields[parent]-1)*self.m_Height*0.08, self.m_Width*0.7, self.m_Height*0.08, name..":", parent)
+	self.m_Fields[parent][#self.m_Fields[parent]].label = GUILabel:new(self.m_Width*0.50, (#self.m_Fields[parent]-1)*self.m_Height*0.08, self.m_Width*0.47, self.m_Height*0.08, "", parent):setAlignX("right")
 end
 
 function PerformanceStatsGUI:onShow()
@@ -97,6 +130,7 @@ addEventHandler("onClientResourceStart", resourceRoot,
 			function()
 				PerformanceStatsGUI:getSingleton():setVisible(not PerformanceStatsGUI:getSingleton():isVisible())
 				PerformanceStatsGUI:getSingleton().m_TabElements:setEnabled(localPlayer:getRank() >= ADMIN_RANK_PERMISSION["showDebugElementView"])
+				PerformanceStatsGUI:getSingleton().m_TabPerformance:setEnabled(localPlayer:getRank() >= 1)
 			end
 		)
 	end

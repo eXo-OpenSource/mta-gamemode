@@ -164,7 +164,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 						else
 							logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + 1
 						end
-						giveWeapon(player,weaponID, clipAmmo)
+						giveWeapon(player,weaponID, 1)
 						self:takeWeaponD(weaponID,amount)
 					else
 						player:sendError(_("Es sind nicht genug %s im Lager (%s)!", player, WEAPON_NAMES[weaponID], amount))
@@ -193,7 +193,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 							player:sendError(_("Es sind nicht genug %s-Magazine im Lager (%s)!", player, WEAPON_NAMES[weaponID], amount))
 						end
 					else
-						outputChatBox("Du hast keine "..WEAPON_NAMES[weaponID].." für ein Magazin!",player,255,0,0)
+						player:sendError(_("Du hast keine %s für ein Magazin!", player, WEAPON_NAMES[weaponID]))
 					end
 				end
 				if logData.w or logData.m then
@@ -202,10 +202,15 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			end
 		end
 	end
-
+	local textForPlayer = "Du hast folgende Waffen aus dem Lager genommen:"
 	for i,v in pairs(logData) do
-		self.m_Owner:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) aus dem Lager genommen!"):format(i, v))
+		self.m_Owner:addLog(player, "Waffenlager", ("hat ein/e(n) %s mit %s Magazin(en) aus dem Lager genommen!"):format(i, (v-1)))
+		textForPlayer = textForPlayer.."\n"..i
+		if v > 1 then
+			textForPlayer = textForPlayer.. " mit ".. (v-1) .. " Magazin(en)"
+		end
 	end
+	player:sendInfo(textForPlayer)
 	self:save()
 end
 

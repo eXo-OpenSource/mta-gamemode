@@ -22,7 +22,7 @@ function CompanyManager:constructor()
 	self:loadCompanies()
 
 	-- Events
-	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan"}
+	addRemoteEvents{"getCompanies", "companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty", "companyToggleLoan", "companyRequestSkinSelection", "companyPlayerSelectSkin"}
 
 	addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
 	addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
@@ -39,6 +39,8 @@ function CompanyManager:constructor()
 	addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("companyToggleLoan", root, bind(self.Event_toggleLoan, self))
+	addEventHandler("companyRequestSkinSelection", root, bind(self.Event_requestSkins, self))
+	addEventHandler("companyPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 end
 
 function CompanyManager:destructor()
@@ -355,7 +357,7 @@ function CompanyManager:Event_changeSkin()
 	end
 end
 
-function CompanyManager:Event_toggleDuty(wasted)
+function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 	if getPedOccupiedVehicle(client) and not wasted then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
@@ -377,7 +379,7 @@ function CompanyManager:Event_toggleDuty(wasted)
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 					return false
 				end
-				company:changeSkin(client)
+				company:changeSkin(client, preferredSkin)
 				client:setCompanyDuty(true)
 				company:updateCompanyDutyGUI(client)
 				client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
@@ -425,4 +427,21 @@ function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName(), company.m_RankNames)
 	end
+end
+
+
+function CompanyManager:Event_requestSkins()
+	if not client:getCompany() then
+		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
+		return false
+	end
+	triggerClientEvent(client, "openSkinSelectGUI", client, client:getCompany():getSkinsForRank(client:getCompany():getPlayerRank(client)), client:getCompany():getId(), "company", client:getCompany():getPlayerRank(client) >= CompanyRank.Manager)
+end
+
+function CompanyManager:Event_setPlayerDutySkin(skinId)
+	if not client:getCompany() then
+		client:sendError(_("Du gehörst keinem Unternehmen an!", client))
+		return false
+	end
+	client:getCompany():changeSkin(client, skinId)
 end

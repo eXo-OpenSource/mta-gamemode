@@ -114,7 +114,7 @@ function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
     for id, data in ipairs(VehicleTuningGUI.SpecialTunings) do
         local partName, partData = unpack(data)
-		if self.m_SpecialType ~= "AirportPainter" or (partData == "Color1" or partData == "Color2") then
+		if self.m_SpecialType ~= "AirportPainter" and self.m_SpecialType ~= "BoatsPainter" or (partData == "Color1" or partData == "Color2") then
         	local item = self.m_PartsList:addItem(partName)
         	item.PartSlot = partData
         	item.onLeftClick = bind(self.PartItem_Click, self)
@@ -154,7 +154,14 @@ function VehicleTuningGUI:updateUpgradeList(slot)
 end
 
 function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
-	local slot = self.m_SpecialType == "AirportPainter" and "AirportPainter" or slot
+	local slot = slot
+
+	if self.m_SpecialType == "AirportPainter" then
+		slot = "AirportPainter"
+	elseif self.m_SpecialType == "BoatsPainter" then
+		slot = "BoatsPainter"
+	end
+
 	local targetPosition = self.CameraPositions[slot]
     local targetLookAtPosition = self.m_Vehicle:getPosition()
     if type(targetPosition) == "table" then
@@ -553,7 +560,7 @@ VehicleTuningGUI.CameraPositions = {
     ["NeonColor"] = Vector3(4.2, 2.1, 2.1),
 
 	["AirportPainter"] = Vector3(7, 7, 2.1),
-
+	["BoatsPainter"] = Vector3(8, -4, 2.1),
 }
 
 VehicleTuningGUI.SpecialTunings = {

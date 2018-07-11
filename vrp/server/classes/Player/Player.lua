@@ -396,6 +396,8 @@ function Player:spawn()
 					local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
 					if house and house:isValidToEnter(self) then
 						if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
+							--if it works, don't delete it
+							self:setFrozen(true)
 							spawnSuccess = true
 						end
 					else
@@ -414,6 +416,12 @@ function Player:spawn()
 				end
 				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
 				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
+				local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
+				if self:getGroup() and #groupProperties > 0 then
+					groupProperties[1]:setInside(self)
+					spawnSuccess = true
+				end
 			end
 		end
 
@@ -455,8 +463,9 @@ function Player:spawn()
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
-
-	self:setFrozen(false)
+ 
+	-- gets unfrozen if he has a session id
+	self:setFrozen(true)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
@@ -661,6 +670,8 @@ function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set th
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
 	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
 		self:getFaction():changeSkin(self)
+		self:setFactionDuty(true)
+		self:setPublicSync("Faction:Duty", true)
 		setPedArmor(self, 100)
 	else
 		self:setModel(self.m_Skin or 0)
@@ -1323,7 +1334,7 @@ function Player:detachPlayerObject(object, collisionNextFrame)
 	else
 		self:toggleControlsWhileObjectAttached(true, true, true, true) --fallback to re-enable all controls
 	end
-	
+
 	unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 	self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 	if self.m_PlayerAttachedObject then
