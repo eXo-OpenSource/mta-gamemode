@@ -24,7 +24,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 3*60000, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -479,23 +479,31 @@ function AttackSession:attackWin() --// win for team1
 end
 
 function AttackSession:onDecisionTimeEnd()
-	if self.m_Pick then
-		local minPriority = #self.m_Faction2:getOnlinePlayers()
+	if self.m_PickList then
+		local saveCount = 1
+		for k,v in ipairs( self.m_Participants ) do
+			if v:getFaction() == self.m_Faction2 then
+				saveCount = saveCount + 1
+			end
+		end
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			if not self:isPlayerInPick(v) then 
 				self:onPurposlyDisqualify( v, false, true)
-			else 
-				if k > minPriority+1 then 
+			end
+		end
+		for k, player in ipairs(self.m_PickList) do 
+			if player and isElement(player) then
+ 				if k > saveCount then 
 					self:onPurposlyDisqualify( v, false, true)
 				end
 			end
-		end
+		end	
 	end
 end
 
 function AttackSession:isPlayerInPick( player )
-	for _, player2 in ipairs(self.m_Pick) do 
-		if player == player2 then 
+	for _, player2 in ipairs(self.m_PickList) do 
+		if player2 and isElement(player2) and player == player2 then 
 			return true
 		end
 	end
