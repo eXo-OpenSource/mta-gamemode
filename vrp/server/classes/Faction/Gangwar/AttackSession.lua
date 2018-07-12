@@ -186,11 +186,13 @@ function AttackSession:isPlayerDisqualified( player )
 end
 
 function AttackSession:disqualifyPlayer( player )
-	local bIsDisqualifed = self:isPlayerDisqualified( player )
-	if not bIsDisqualifed then
-		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
-		self:removeParticipant( player )
-		self:synchronizeLists( )
+	if player and isElement(player) then
+		local bIsDisqualifed = self:isPlayerDisqualified( player )
+		if not bIsDisqualifed then
+			self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
+			self:removeParticipant( player )
+			self:synchronizeLists( )
+		end
 	end
 end
 
