@@ -82,12 +82,12 @@ function Area:createCenterCol()
 	end
 end
 
-function Area:attack( faction1, faction2)
+function Area:attack( faction1, faction2, attackingPlayer)
 	if not self.m_IsAttacked then
 		self.m_IsAttacked = true
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert von "..faction1.m_Name_Short.." ! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
-		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
+		self.m_AttackSession = AttackSession:new( self, faction1 , faction2, attackingPlayer)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:delete()
 		self.m_BlipImage = Blip:new("Gangwar.png", self.m_Position[1], self.m_Position[2], {faction = {faction1:getId(), faction2:getId()}}, 9999)

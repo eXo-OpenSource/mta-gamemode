@@ -43,6 +43,7 @@ FontAwesomeSymbols = {
 	Left = "",
 	Right = "",
 	LongRight = "",
+	LongLeft = "",
 	CartPlus = "",
 	Cart = "",
 	Phone = "",
