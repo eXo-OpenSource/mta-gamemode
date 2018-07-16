@@ -10,14 +10,15 @@ local w,h = guiGetScreenSize()
 local REPORT_LAST_KILL = false
 AttackClient = inherit(Object)
 local pseudoSingleton
-addRemoteEvents{"onGangwarDamage", "onGangwarKill"}
+addRemoteEvents{"onGangwarDamage", "onGangwarKill", "GangwarPick:synchronizePick"}
 local clearTimer = nil
-function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush) 
+function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pAttacker, pPickParticipants) 
 	REPORT_LAST_KILL = false
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
+	self.m_PickParticipants = pPickParticipants
 	localPlayer.attackSession = self 
 	self.m_GangwarDamage = 0
 	self.m_GangwarKill = 0
@@ -27,6 +28,11 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 		killTimer(clearTimer) 
 	end
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
+	self.m_GangwarPick = GangwarPickGUI:new( areaName, pAttacker )
+	if not pAttacker then 
+		self.m_GangwarPick:setVisible(false)
+	end
+	self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)
 	self.m_DamageFunc = bind( AttackClient.addDamage, self)
 	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
 	self.m_KillFunc = bind( AttackClient.addKill, self)
@@ -37,7 +43,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	addEventHandler( "ClientBox:refreshItems", localPlayer, self.m_bindWeaponBoxRefreshFunc)
 	self.m_bindWeaponBoxCloseFunc = bind( AttackClient.forceClose, self )
 	addEventHandler( "ClientBox:forceClose", localPlayer, self.m_bindWeaponBoxCloseFunc)
-	self.m_BindNoRushFunc = bind( AttackClient.onDamage, self )
+	--self.m_BindNoRushFunc = bind( AttackClient.onDamage, self )
 	--addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
 end
 
@@ -91,12 +97,19 @@ function AttackClient:destructor()
 		local func = function() self.m_Display:delete() end 
 		clearTimer = setTimer( func, 5000, 1)
 	end
+	if self.m_GangwarPick then 
+		self.m_GangwarPick:delete()
+	end
 	destroyQuestionBox() 
 end 
 
-function AttackClient:synchronizeLists( pParticipants, pDisqualified )
+function AttackClient:synchronizeLists( pParticipants, pDisqualified, pPickList, pUpdater, pTick, pPickParticipants )
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
+	if self.m_GangwarPick then
+		self:synchronizeGangwarPick( pPickParticipants, pDisqualified ) 
+		self.m_GangwarPick:updateMessage(pPickList, pUpdater, pTick, true)
+	end
 end
 
 function AttackClient:synchronizeTime( time ) 
@@ -131,10 +144,16 @@ function AttackClient:getFactionsMembers( pFac )
 	return table_
 end
 
+function AttackClient:synchronizeGangwarPick( participants, disuqlified )
+	if participants and disuqlified then 
+		self.m_GangwarPick:synchronize( participants, disuqlified )
+	end
+end
+
 addEvent("AttackClient:synchronizeLists",true)
-function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
+function AttackClient.remoteSynchronize( pParticipants, pDisqualified, pList, pUpdater, pTick, pPickParticipants )
 	if pseudoSingleton then 
-		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )
+		pseudoSingleton:synchronizeLists( pParticipants , pDisqualified, pList, pUpdater, pTick, pPickParticipants )
 	end
 end
 addEventHandler("AttackClient:synchronizeLists", root,AttackClient.remoteSynchronize)
@@ -148,11 +167,11 @@ end
 addEventHandler("AttackClient:synchronizeTime", root,AttackClient.remoteSynchronizeTime)
 
 addEvent("AttackClient:launchClient",true)
-function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID  )
+function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants )
 	if pseudoSingleton then 
 		pseudoSingleton:delete()
 	end
-	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID)
+	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants)
 end
 addEventHandler("AttackClient:launchClient",localPlayer,AttackClient.newClient)
 

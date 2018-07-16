@@ -43,7 +43,7 @@ function GangwarStatistics:renderMVP()
 		dxDrawImage(bx+width*0.85, moveBy-height*0.2, width*0.15,height*0.43, "files/images/Gangwar/trophy.png")
 		dxDrawShadowText("Beste Spieler:", bx+width*0.05, moveBy-self.dxFontHeight, width, self.dxFontHeight, 1,1,tocolor(150,150,150,alpha),tocolor(0,0,0,alpha),2,"default","left","top")
 		for i = 1, MVPCOUNT do 
-			if self.m_MVP[i] and self.m_MVP[i][1].name then 
+			if self.m_MVP[i] and self.m_MVP[i][1] and isElement(self.m_MVP[i][1]) and self.m_MVP[i][1].name then 
 				if i == 1 then
 					dxDrawBoxText(i..". "..self.m_MVP[i][1].name.." - "..self.m_MVP[i][2] or "?",bx, moveBy + MARGIN_MVP*(i-1), width, MARGIN_MVP, tocolor(200, 200, 0, alpha),2.2, "default-bold", "center","center")
 				else 

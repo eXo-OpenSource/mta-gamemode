@@ -6,20 +6,25 @@
 -- *
 -- ****************************************************************************
 AttackSession = inherit(Object)
-
+addRemoteEvents{"GangwarPick:submit"}
 
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
-function AttackSession:constructor( pAreaObj , faction1 , faction2  )
+function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPlayer )
 	self.m_AreaObj = pAreaObj
 	self.m_Faction1 = faction1
 	self.m_Faction2 = faction2
 	self.m_Disqualified = {	}
 	self.m_Participants = {	}
+	self.m_AttackingPlayer = attackingPlayer
+	self.m_PickList = { }
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_DamageFunc = bind(  self.onGangwarDamage , self)
+	self.m_DamageFunc = bind(self.onGangwarDamage, self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
+	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
+	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -84,15 +89,27 @@ function AttackSession:setupSession ( )
 end
 
 function AttackSession:synchronizeAllParticipants( )
+	local pickParticipants = {}
 	for k,v in ipairs( self.m_Participants ) do
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID )
+		if v:getFaction() == self.m_Faction1 then
+			table.insert(pickParticipants, v)
+		end
+	end
+	for k,v in ipairs( self.m_Participants ) do
+		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == v, pickParticipants )
 		v:triggerEvent("GangwarQuestion:new")
 	end
 end
 
 function AttackSession:synchronizeLists( )
+	local pickParticipants = {}
+	for k,v in ipairs( self.m_Participants ) do
+		if v:getFaction() == self.m_Faction1 then
+			table.insert(pickParticipants, v)
+		end
+	end
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers()) do
-		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick, pickParticipants)
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
@@ -114,14 +131,20 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
+		local pickParticipants = {}
+		for k,v in ipairs( self.m_Participants ) do
+			if v:getFaction() == self.m_Faction1 then
+				table.insert(pickParticipants, v)
+			end
+		end
 		player:setPublicSync("gangwarParticipant", true) 
 		if not bLateJoin then
-			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
+			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
 		else
 			if isTimer( self.m_BattleTime ) then
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
-				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
+				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
 			end
 		end
 		self:synchronizeLists( )
@@ -163,11 +186,13 @@ function AttackSession:isPlayerDisqualified( player )
 end
 
 function AttackSession:disqualifyPlayer( player )
-	local bIsDisqualifed = self:isPlayerDisqualified( player )
-	if not bIsDisqualifed then
-		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
-		self:removeParticipant( player )
-		self:synchronizeLists( )
+	if player and isElement(player) then
+		local bIsDisqualifed = self:isPlayerDisqualified( player )
+		if not bIsDisqualifed then
+			self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
+			self:removeParticipant( player )
+			self:synchronizeLists( )
+		end
 	end
 end
 
@@ -178,7 +203,7 @@ function AttackSession:joinPlayer( player )
 		if isTimer( self.m_BattleTime ) then
 			local timeLeft = getTimerDetails( self.m_BattleTime )
 			timeLeft = math.ceil(timeLeft /1000)
-			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
+			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player)
 		end
 	end
 end
@@ -187,10 +212,13 @@ function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
 end
 
-function AttackSession:onPurposlyDisqualify( player, bAfk )
+function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
 	local reason = ""
 	if bAfk then 
 		reason = "(AFK)"
+	end
+	if bPick then
+		reason = "(Nicht eingeteilt)"
 	end
 	self:disqualifyPlayer( player )
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
@@ -285,6 +313,17 @@ function AttackSession:onPlayerLeaveCenter( player )
 			if not isAnyoneInside then
 				self:setCenterCountdown()
 			end
+		end
+	end
+end
+
+function AttackSession:onSubmitPick( participants ) 
+	if client and self.m_PickList then 
+		if client:getFaction() == self.m_Faction1 then
+			self.m_PickList = participants
+			self.m_PickUpdater = client:getName()
+			self.m_PickTick = getTickCount()
+			self:synchronizeLists( )
 		end
 	end
 end
@@ -439,6 +478,38 @@ function AttackSession:attackWin() --// win for team1
 	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
 	end
+end
+
+function AttackSession:onDecisionTimeEnd()
+	if self.m_PickList then
+		local saveCount = 1
+		for k,v in ipairs( self.m_Participants ) do
+			if v:getFaction() == self.m_Faction2 then
+				saveCount = saveCount + 1
+			end
+		end
+		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
+			if not self:isPlayerInPick(v) then 
+				self:onPurposlyDisqualify( v, false, true)
+			end
+		end
+		for k, player in ipairs(self.m_PickList) do 
+			if player and isElement(player) then
+ 				if k > saveCount then 
+					self:onPurposlyDisqualify( v, false, true)
+				end
+			end
+		end	
+	end
+end
+
+function AttackSession:isPlayerInPick( player )
+	for _, player2 in ipairs(self.m_PickList) do 
+		if player2 and isElement(player2) and player == player2 then 
+			return true
+		end
+	end
+	return false
 end
 
 function AttackSession:getFactions()

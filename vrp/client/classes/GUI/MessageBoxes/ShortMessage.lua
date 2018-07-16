@@ -11,15 +11,15 @@ inherit(GUIFontContainer, ShortMessage)
 local MAX_BOX_LIMIT = 20
 local TEXTURE_SIZE_X = (340*screenWidth/1600+6)
 local TEXTURE_SIZE_Y = 250
-function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
+function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips, notClose)
 	if type(title) == "number" then
 		return new(ShortMessage, text, nil, nil, title)
 	else
-		return new(ShortMessage, text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
+		return new(ShortMessage, text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips, notClose)
 	end
 end
 
-function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
+function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips, notClose)
 	local x, y = HUDRadar:getSingleton():getPosition()
 	local w = HUDRadar:getSingleton():getWidth()
 
@@ -31,6 +31,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	self.m_Callback = callback or nil
 	self.m_TimeoutFunc = timeoutFunc or nil
 
+	self.m_CloseOnClick = not notClose
 	if ShortMessageLogGUI.m_Log then
 		ShortMessageLogGUI.insertLog(self.m_Title or "", text, self.m_TitleColor)
 	end
@@ -60,7 +61,9 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 				return
 			end
 		end
-		delete(self)
+		if self.m_CloseOnClick then
+			delete(self)
+		end
 	end
 
 	-- Instantiate custom GUIMiniMap
