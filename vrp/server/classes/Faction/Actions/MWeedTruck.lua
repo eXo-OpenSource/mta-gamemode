@@ -48,7 +48,7 @@ function MWeedTruck:onStartPointHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
 		if faction then
-			if faction:isEvilFaction() then
+			if faction:isEvilFaction() and hitElement:isFactionDuty() then
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
 					if FactionState:getSingleton():countPlayers() < WEEDTRUCK_MIN_MEMBERS then
 						hitElement:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",hitElement, WEEDTRUCK_MIN_MEMBERS))

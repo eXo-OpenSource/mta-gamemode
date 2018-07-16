@@ -28,7 +28,7 @@ function DutyGUI:loadFactionItems(fac, isOnDuty, specialSkin)
             self:addItem(_"Ausrüsten", Color.Accent, bind(self.itemEvent, self, "factionStateRearm"))
             self:addItem(_"Waffen einlagern", Color.Accent, bind(self.itemEvent, self, "factionStateStorageWeapons"))
         elseif fac:isEvilFaction() then
-            self:addItem(_"Dienst beenden", Color.Red, bind(self.itemEvent, self, "factionEvilToggleDuty")):setBarEnabled(false)
+            self:addItem(_"Fraktionsfarben ablegen", Color.Red, bind(self.itemEvent, self, "factionEvilToggleDuty")):setBarEnabled(false)
             self:addItem(_"Kleidung wechseln", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelection"))
             if specialSkin then self:addItem(_"Aktionskleidung", Color.Accent, bind(self.itemEvent, self, "factionRequestSkinSelectionSpecial", core:get("Cache", "LastFactionSkin"))) end
             self:addItem(_"Ausrüsten", Color.Accent, bind(self.itemEvent, self, "factionEvilRearm"))
@@ -42,7 +42,7 @@ function DutyGUI:loadFactionItems(fac, isOnDuty, specialSkin)
         if fac:isStateFaction() then
             self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionStateToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
         elseif fac:isEvilFaction() then
-            self:addItem(_"In Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
+            self:addItem(_"Fraktionstätigkeit beginnen", Color.Green, bind(self.itemEvent, self, "factionEvilToggleDuty", false, core:get("Cache", "LastFactionSkin"))):setBarEnabled(false)
         else -- Rescue Team 4ever alone
             self:addItem(_"In Sanitäter-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "medic", false, core:get("Cache", "LastFactionSkin")))
             self:addItem(_"In Feuerwehr-Dienst gehen", Color.Green, bind(self.itemEvent, self, "factionRescueToggleDuty", "fire", false, core:get("Cache", "LastFactionSkin")))

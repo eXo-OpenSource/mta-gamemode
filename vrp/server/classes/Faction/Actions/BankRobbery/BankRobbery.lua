@@ -222,20 +222,24 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 	if not attacker then return end
 	local faction = attacker:getFaction()
 	if faction and faction:isEvilFaction() then
-		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
-			return false
+		if attacker:isFactionDuty() then
+			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
+				return false
+			end
+			if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers then
+				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
+				return false
+			end
+			if self:getDifficulty() < 1 then
+				attacker:sendError(_("Es ist noch nicht genug Geld in den Tresoren!",attacker))
+				return false
+			end
+			self:startRob(attacker)
+			outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker), attacker, 255, 255, 255)
+			outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker), attacker, 255, 255, 255)
+		else
+			attacker:sendError(_("Nur Mitglieder im Fraktionsdienst können die Bank ausrauben!", attacker))
 		end
-		if FactionState:getSingleton():countPlayers() < self.ms_MinBankrobStateMembers then
-			attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, self.ms_MinBankrobStateMembers))
-			return false
-		end
-		if self:getDifficulty() < 1 then
-			attacker:sendError(_("Es ist noch nicht genug Geld in den Tresoren!",attacker))
-			return false
-		end
-		self:startRob(attacker)
-		outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker), attacker, 255, 255, 255)
-		outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker), attacker, 255, 255, 255)
 	else
 		attacker:sendError(_("Nur Mitglieder einer bösen Fraktion können die Bank ausrauben!", attacker))
 	end

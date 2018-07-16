@@ -79,27 +79,28 @@ end
 
 function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
-		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
-			if player:isFactionDuty() then
+		if player:getFaction() then
+			if not player:isFactionDuty() then
+				if self.m_Faction:isStateFaction() or self.m_Faction:isRescueFaction() then 
+					player:sendError(_("Du bist nicht im Dienst!", player))
+				elseif self.m_Faction:isEvilFaction() then
+					player:sendError(_("Du trägst nicht die Fraktionsfarben!", player))
+				end
+			end
+			local pFac = player:getFaction()
+			local vFac = self.m_Faction
+			local vFacAllyAllow = vFac:checkAlliancePermission(pFac, "vehicles")
+			if pFac == vFac or vFacAllyAllow then 
 				return true
 			else
-				player:sendError(_("Du bist nicht im Dienst!", player))
-				removePedFromVehicle(player)
-				local x,y,z = getElementPosition(player)
-				setElementPosition(player,x,y,z)
-				return false
+				player:sendError(_("Dieses Fahrzeug gehört nicht zu deiner Fraktion!", player))
 			end
-		elseif player:getFaction() and player:getFaction() == self.m_Faction then
-			return true
-		elseif player:getFaction() and self.m_Faction:checkAlliancePermission(player:getFaction(), "vehicles") then
-			return true
 		else
-			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
-			removePedFromVehicle(player)
-			local x,y,z = getElementPosition(player)
-			setElementPosition(player,x,y,z)
-			return false
+			player:sendError(_("Dieses Fahrzeug kann nur von Fraktionsmitgliedern gefahren werden!", player))
 		end
+		removePedFromVehicle(player)
+		local x,y,z = getElementPosition(player)
+		setElementPosition(player,x,y,z)
 	end
 end
 --[[

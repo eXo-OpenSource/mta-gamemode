@@ -93,7 +93,12 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 		local faction = client:getFaction()
 
 		if faction:isEvilFaction() then
-			self.m_CurrentType = "evil"
+			if client:isFactionDuty() then
+				self.m_CurrentType = "evil"
+			else
+				client:sendError(_("Du trägst nicht deine Fraktionsfarben!",client))
+				return
+			end
 		elseif faction:isStateFaction() then
 			if client:isFactionDuty() then
 				self.m_CurrentType = "state"

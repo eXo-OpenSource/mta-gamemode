@@ -25,7 +25,11 @@ function WearableClothes:use(player, itemId, bag, place, itemName)
 				player:setSkin(skinID, true)
 				player:meChat(true, "wechselt seine Kleidung.")
 			else
-				player:sendError(_("Du kannst im Dienst nicht deine Kleidung wechseln!", player))
+				if player:getFaction():isEvilFaction() then 
+					player:sendError(_("Du musst die Farben deiner Fraktion tragen!", player))
+				else
+					player:sendError(_("Du kannst im Dienst nicht deine Kleidung wechseln!", player))
+				end
 			end
 		end
 	end
