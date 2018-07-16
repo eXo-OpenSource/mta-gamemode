@@ -18,3 +18,5 @@ artifacts.tar.gz
 assets.tar.gz
 
 build/workerserver
+vrp/server/logs/*
+!vrp/server/logs/.gitkeep
