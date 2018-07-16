@@ -86,6 +86,10 @@ function FactionVehicle:onEnter(player, seat)
 				elseif self.m_Faction:isEvilFaction() then
 					player:sendError(_("Du trägst nicht die Fraktionsfarben!", player))
 				end
+				removePedFromVehicle(player)
+				local x,y,z = getElementPosition(player)
+				setElementPosition(player,x,y,z)
+				return false
 			end
 			local pFac = player:getFaction()
 			local vFac = self.m_Faction

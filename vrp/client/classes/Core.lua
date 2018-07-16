@@ -222,6 +222,7 @@ function Core:afterLogin()
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
 			object:setBreakable(false)
+			table.insert(AppBank.ATMs, object)
 		end
 	end
 
