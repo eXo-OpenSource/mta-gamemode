@@ -9,7 +9,10 @@ function SQL:destructor()
 end
 
 function SQL:queryExec(query, ...)
-	return dbExec(self.m_DBHandle, query, ...)
+	local start = getTickCount()
+	local result = dbExec(self.m_DBHandle, query, ...)
+	self:writeSqlPerfomanceLog(query, getTickCount() - start)
+	return result
 end
 
 -- The prefix is to be used in all table names
@@ -28,8 +31,11 @@ end
 -- SQL:queryFetch(query, ...) [[ waits ]]
 function SQL:queryFetch(...)
 	local args = {...}
+	local start = getTickCount()
 	if type(args[1]) == "string" then
-		return self.dbPoll(dbQuery(self.m_DBHandle, ...), -1)
+		local result, numrows, lastInserID = self.dbPoll(dbQuery(self.m_DBHandle, ...), -1)
+		self:writeSqlPerfomanceLog(args[1], getTickCount() - start)
+		return result, numrows, lastInserID
 	else
 		local query = args[2]
 		local callback = args[1]
@@ -41,6 +47,7 @@ function SQL:queryFetch(...)
 		dbQuery(
 			function(qh)
 				local callbackArgs = { self.dbPoll(qh, -1) }
+				self:writeSqlPerfomanceLog(query, getTickCount() - start)
 				callback(unpack(callbackArgs))
 			end,
 			self.m_DBHandle,
@@ -138,8 +145,11 @@ function SQL:setPromisesEnabled(enabled)
 	self.m_UsePromise = enabled
 end
 
-
-
+function SQL:writeSqlPerfomanceLog(query, time)
+	if time > 2 then -- log everything over 3ms
+		FileLogger:getSingleton():addSqlLog(query, self.m_Database, time)
+	end
+end
 
 
 function SQL:testPromiseQuery()

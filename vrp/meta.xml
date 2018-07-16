@@ -59,6 +59,7 @@
 	<script src="server/constants/tollstations.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Config.lua" type="server"/>
+	<script src="server/classes/FileLogger.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
 	<script src="server/classes/Storage/Teamspeak/TSConnect.lua" type="server"/>

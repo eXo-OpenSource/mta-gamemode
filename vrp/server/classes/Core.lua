@@ -26,6 +26,9 @@ function Core:constructor()
 	if not IS_TESTSERVER then
 		--MYSQL_DB = "vrp_local"
 	end
+	
+	-- Create file logger for sql performance
+	FileLogger:new() 
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
