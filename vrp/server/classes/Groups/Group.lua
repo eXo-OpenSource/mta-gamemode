@@ -7,8 +7,12 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, playTime, karma, lastNameChange, rankNames, rankLoans)
+function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
+	if not players then players = {} end -- can happen due to Group.create using different constructor
+
 	self.m_Id = Id
+	self.m_Players = players[1] or {}
+	self.m_PlayerLoans = players[2] or {}
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
 	self.m_Name = name
@@ -19,13 +23,13 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 	self.m_Invitations = {}
 	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange or 0
+	self.m_VehiclesCanBeModified = vehicleTuning or false
 	self.m_Type = type
 	self.m_Shops = {} -- shops automatically add the reference
 	self.m_Markers = {}
 	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
-	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Group, Id)
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Group)
 	if not self.m_BankAccount then
@@ -53,6 +57,11 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
+	if not DEBUG then
+		self:getActivity()
+	end
+
+	self:updateRankNameSync()
 end
 
 function Group:destructor()
@@ -103,22 +112,6 @@ function Group:getType()
 	return self.m_Type
 end
 
-function Group:getColor()
-	return self:getType() == "Firma" and {0, 100, 250} or {150, 0, 0}
-end
-
-function Group:insertPlayer(id, rank, loan)
-	self.m_Players[id] = rank
-	self.m_PlayerLoans[id] = loan
-end
-
-function Group:initalizePlayers()
-	if not DEBUG then
-		self:getActivity()
-	end
-	self:updateRankNameSync()
-end
-
 function Group:setType(type, player)
 	if type == "Firma" or type == "Gang" then
 		self.m_Type = type
@@ -161,7 +154,7 @@ function Group:getVehicles()
 end
 
 function Group:canVehiclesBeModified()
-	return true
+	return self.m_VehiclesCanBeModified
 end
 
 function Group:setName(name)
@@ -397,25 +390,6 @@ end
 function Group:transferMoney(...)
 	return self.m_BankAccount:transferMoney(...)
 end
-
-function Group:setSetting(category, key, value, responsiblePlayer)
-	local allowed = true
-	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
-		if not responsiblePlayer:getGroup() then allowed = false end 
-		if responsiblePlayer:getGroup() ~= self then allowed = false end 
-		if self:getPlayerRank(responsiblePlayer) ~= GroupRank.Leader then allowed = false end 
-	end
-	if allowed then
-		self.m_Settings:setSetting(category, key, value)
-	else
-		responsiblePlayer:sendError(_("Nur Leader (Rang %s) der Gruppe %s können deren Einstellungen ändern!", responsiblePlayer, GroupRank.Leader, self:getName()))
-	end
-end
-
-function Group:getSetting(category, key, defaultValue)
-	return self.m_Settings:getSetting(category, key, defaultValue)
-end
-
 --[[
 function Group:__setMoney(amount)
 	self.m_Money = amount
@@ -509,9 +483,9 @@ function Group:sendMessage(text, r, g, b, ...)
 	end
 end
 
-function Group:sendShortMessage(text, timeout)
+function Group:sendShortMessage(text, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(("%s"):format(text), self:getName(), self:getColor(), timeout)
+		player:sendShortMessage(("%s"):format(text), self:getName(),...)
 	end
 end
 
@@ -587,8 +561,8 @@ function Group:phoneCall(caller)
 		for k, player in ipairs(self:getOnlinePlayers()) do
 			if not player:getPhonePartner() then
 				if player ~= caller then
-					local color = self:getColor()
-					triggerClientEvent(player, "callIncomingSM", resourceRoot, caller, false, ("%s ruft euch an."):format(caller:getName()), ("eingehender Anruf - %s"):format(self:getName()), color)
+					player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
+					bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
 				end
 			end
 		end
@@ -598,35 +572,35 @@ function Group:phoneCall(caller)
 	end
 end
 
-
 function Group:phoneCallAbbort(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		triggerClientEvent(player, "callRemoveSM", resourceRoot, caller, false)
-	end
-end
-
-function Group:phoneTakeOff(player, caller, voiceCall)
-	if player and caller then
-		if instanceof(caller, Player) and instanceof(player, Player) then -- check if we can call methods from the Player-class
-			if player.m_PhoneOn == false then
-				player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
-				return
-			end
-			if player:getPhonePartner() then
-				player:sendError(_("Du telefonierst bereits!", player))
-				return
-			end
-			caller:triggerEvent("callAnswer", player, voiceCall)
-			player:triggerEvent("callAnswer", caller, voiceCall)
-			caller:setPhonePartner(player)
-			player:setPhonePartner(caller)
-			for k, groupPlayer in ipairs(self:getOnlinePlayers()) do
-				triggerClientEvent(groupPlayer, "callRemoveSM", resourceRoot, caller, player)
-			end
+		if not player:getPhonePartner() then
+			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
 		end
 	end
 end
 
+function Group:phoneTakeOff(player, key, state, caller)
+	if player.m_PhoneOn == false then
+		player:sendError(_("Dein Telefon ist ausgeschaltet!", player))
+		return
+	end
+	if player:getPhonePartner() then
+		player:sendError(_("Du telefonierst bereits!", player))
+		return
+	end
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, false)
+	player:triggerEvent("callAnswer", caller, false)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		end
+	end
+end
 
 function Group:openBankGui(player)
 	player:triggerEvent("bankAccountGUIShow", self:getName(), "groupDeposit", "groupWithdraw")
@@ -765,7 +739,7 @@ function Group:payDay()
 		self:transferMoney(self.m_BankAccountServer, sum * -1, "Payday", "Group", "Payday", {allowNegative = true, silent = true})
 	end
 
-	self:sendShortMessage(table.concat(output, "\n"), -1)
+	self:sendShortMessage(table.concat(output, "\n"), {125, 0, 0}, -1)
 
 	self:save()
 
@@ -788,8 +762,6 @@ end
 
 function Group:save()
 	self.m_BankAccount:save()
-	if self.m_Settings then
-		self.m_Settings:save()
-	end
+
 	sql:queryExec("UPDATE ??_groups SET PlayTime = ? WHERE Id = ?", sql:getPrefix(), self:getPlayTime(), self:getId())
 end

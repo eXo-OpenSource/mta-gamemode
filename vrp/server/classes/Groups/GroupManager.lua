@@ -19,7 +19,7 @@ function GroupManager:constructor()
 	self.m_BankAccountServer = BankServer.get("group")
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
+	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",	"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo", "groupChangeType", "groupSetVehicleForSale", "groupBuyVehicle", "groupStopVehicleForSale", "groupToggleLoan"}
 
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -37,6 +37,7 @@ function GroupManager:constructor()
 	addEventHandler("groupSaveRank", root, bind(self.Event_SaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
 	addEventHandler("groupRemoveVehicle", root, bind(self.Event_RemoveVehicle, self))
+	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 	addEventHandler("groupSetVehicleForSale", root, bind(self.Event_SetVehicleForSale, self))
@@ -58,20 +59,21 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 
 
-		local result2 = sql:queryFetch("SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
-		local players, playerLoans = {}, {}
-		for i, groupRow in ipairs(result2) do
-			players[groupRow.Id] = groupRow.GroupRank
-			playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
-		end
-
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
-		GroupManager.Map[row.Id] = group
-		count = count + 1
+		sql:queryFetch(function(result2) 
+			local players, playerLoans = {}, {}
+			for i, groupRow in ipairs(result2) do
+				players[groupRow.Id] = groupRow.GroupRank
+				playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
+			end
+	
+			local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+			GroupManager.Map[row.Id] = group
+			count = count + 1
+		end, "SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 	end
 
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
@@ -517,7 +519,7 @@ function GroupManager:Event_SaveRank(rank,name,loan)
 	end
 end
 
---[[function GroupManager:Event_UpdateVehicleTuning()
+function GroupManager:Event_UpdateVehicleTuning()
 	local group = client:getGroup()
 	--if true then -- Todo: Tuning Shop needs rework on this
 	--	client:sendInfo(_("Derzeit ist dies nicht möglich!", client))
@@ -542,7 +544,7 @@ end
 		--	client:sendError(_("Die %s hat zu wenig negatives Karma!", client, group:getType()))
 		--end
 	end
-end]]
+end
 
 function GroupManager:Event_ConvertVehicle(veh)
 	local group = client:getGroup()
