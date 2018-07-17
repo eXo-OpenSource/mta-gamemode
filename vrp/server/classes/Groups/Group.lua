@@ -29,6 +29,8 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
+	self.m_Players = {}
+	self.m_PlayerLoans = {}
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Group)
 	if not self.m_BankAccount then
