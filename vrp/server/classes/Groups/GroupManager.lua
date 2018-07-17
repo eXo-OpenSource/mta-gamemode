@@ -63,16 +63,17 @@ function GroupManager:loadGroups()
 	for k, row in ipairs(result) do
 
 
-		local result2 = sql:queryFetch("SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
-		local players, playerLoans = {}, {}
-		for i, groupRow in ipairs(result2) do
-			players[groupRow.Id] = groupRow.GroupRank
-			playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
-		end
-
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
-		GroupManager.Map[row.Id] = group
-		count = count + 1
+		sql:queryFetch(function(result2) 
+			local players, playerLoans = {}, {}
+			for i, groupRow in ipairs(result2) do
+				players[groupRow.Id] = groupRow.GroupRank
+				playerLoans[groupRow.Id] = groupRow.GroupLoanEnabled
+			end
+	
+			local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+			GroupManager.Map[row.Id] = group
+			count = count + 1
+		end, "SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 	end
 
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
