@@ -7,11 +7,10 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
+function Group:constructor(Id, name, type, money, playTime, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
-	self.m_Players = players[1] or {}
 	self.m_PlayerLoans = players[2] or {}
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
@@ -53,15 +52,8 @@ function Group:constructor(Id, name, type, money, playTime, players, karma, last
 		self:saveRankSettings()
 	end
 
-
 	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
-
-	if not DEBUG then
-		self:getActivity()
-	end
-
-	self:updateRankNameSync()
 end
 
 function Group:destructor()
@@ -110,6 +102,18 @@ end
 
 function Group:getType()
 	return self.m_Type
+end
+
+function Group:insertPlayer(id, rank, loan)
+	self.m_Players[id] = rank
+	self.m_PlayerLoans[id] = loan
+end
+
+function Group:initalizePlayers()
+	if not DEBUG then
+		self:getActivity()
+	end
+	self:updateRankNameSync()
 end
 
 function Group:setType(type, player)
