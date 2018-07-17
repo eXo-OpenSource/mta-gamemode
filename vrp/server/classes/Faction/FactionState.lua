@@ -11,6 +11,7 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
+	self:createArrestZone(255.19, 84.75, 1002.45, 6)
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD garare
 	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
 	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
@@ -55,8 +56,8 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker( Vector3(1561.51, -1678.40, 16.20) )
-	self:createEvidencePickup(1584.68, -1686.32, 15.00, 0, 0)
+	self:createSelfArrestMarker( Vector3(249.51, 67.46, 1003.64), 6, 0 )
+	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -143,16 +144,17 @@ function FactionState:destructor()
 end
 
 function FactionState:createSelfArrestMarker( pos, int, dim )
-	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
+	self.m_Ped = NPC:new(280, 251.59, 67.10, 1003.64)
+	self.m_Ped:setRotation(Vector3(0, 0, 270))
 	self.m_Ped:setImmortal(true)
 	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
-		ped:setInterior(int)
+		self.m_Ped:setInterior(int)
 		marker:setInterior(int)
 	end
 	if dim then
-		ped:setDimension(dim)
+		self.m_Ped:setDimension(dim)
 		marker:setDimension(dim)
 	end
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
@@ -185,7 +187,7 @@ function FactionState:Event_OnConfirmSelfArrest()
 end
 
 function FactionState:loadLSPD(factionId)
-	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
+	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59))
@@ -208,11 +210,12 @@ function FactionState:loadLSPD(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
-	elevator:addStation("Erdgeschoss", Vector3(1567.70, -1687.90, 16.20), 84)
+	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6)
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
 
+	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
+	safe:setInterior(6)
 
-	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
 	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
