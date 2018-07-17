@@ -25,7 +25,7 @@ function FileLogger:getSqlLogFile()
 		file = fileOpen("server/logs/" .. date .. ".log")
 	else
 		file = fileCreate("server/logs/" .. date .. ".log")
-		fileWrite(file, "time;database;query\n")
+		fileWrite(file, "time;database;type;query\n")
 		fileFlush(file)
 	end
 
@@ -33,7 +33,7 @@ function FileLogger:getSqlLogFile()
 	self.m_SqlLogFileOpendAt = getRealTime().monthday
 end
 
-function FileLogger:addSqlLog(query, database, time)
+function FileLogger:addSqlLog(query, database, time, type)
 	if getRealTime().monthday ~= self.m_SqlLogFileOpendAt then
 		if self.m_SqlLogFile then
 			fileClose(self.m_SqlLogFile)
@@ -44,7 +44,7 @@ function FileLogger:addSqlLog(query, database, time)
 	if self.m_SqlLogFile then
 		fileSetPos(self.m_SqlLogFile, fileGetSize(self.m_SqlLogFile))
 		query = query:gsub(";", " ")
-		fileWrite(self.m_SqlLogFile, time .. ";" .. database .. ";" .. query .. "\n")
+		fileWrite(self.m_SqlLogFile, time .. ";" .. database .. ";" .. type .. ";" .. query .. "\n")
 		fileFlush(self.m_SqlLogFile)
 	end
 end

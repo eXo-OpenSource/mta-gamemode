@@ -11,7 +11,7 @@ end
 function SQL:queryExec(query, ...)
 	local start = getTickCount()
 	local result = dbExec(self.m_DBHandle, query, ...)
-	self:writeSqlPerfomanceLog(query, getTickCount() - start)
+	self:writeSqlPerfomanceLog(query, getTickCount() - start, "sync")
 	return result
 end
 
@@ -34,7 +34,7 @@ function SQL:queryFetch(...)
 	local start = getTickCount()
 	if type(args[1]) == "string" then
 		local result, numrows, lastInserID = self.dbPoll(dbQuery(self.m_DBHandle, ...), -1)
-		self:writeSqlPerfomanceLog(args[1], getTickCount() - start)
+		self:writeSqlPerfomanceLog(args[1], getTickCount() - start, "sync")
 		return result, numrows, lastInserID
 	else
 		local query = args[2]
@@ -47,7 +47,7 @@ function SQL:queryFetch(...)
 		dbQuery(
 			function(qh)
 				local callbackArgs = { self.dbPoll(qh, -1) }
-				self:writeSqlPerfomanceLog(query, getTickCount() - start)
+				self:writeSqlPerfomanceLog(query, getTickCount() - start, "async")
 				callback(unpack(callbackArgs))
 			end,
 			self.m_DBHandle,
@@ -145,9 +145,9 @@ function SQL:setPromisesEnabled(enabled)
 	self.m_UsePromise = enabled
 end
 
-function SQL:writeSqlPerfomanceLog(query, time)
+function SQL:writeSqlPerfomanceLog(query, time, type)
 	if time > 2 then -- log everything over 3ms
-		FileLogger:getSingleton():addSqlLog(query, self.m_Database, time)
+		FileLogger:getSingleton():addSqlLog(query, self.m_Database, time, type)
 	end
 end
 
