@@ -1054,7 +1054,7 @@ local tpTable = {
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(255.34, 66.01, 1003.64),  	["typ"] = "Fraktionen", ["interior"] = 6},
-        ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
+        ["pdgarage"] =      {["pos"] = Vector3(1587.02, -1688.55, 6.23),  	["typ"] = "Fraktionen", ["interior"] = 4, ["dimension"]  = 5},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
@@ -1077,10 +1077,12 @@ local tpTable = {
 					if player:isInVehicle() then
 						player:getOccupiedVehicle():setPosition(v["pos"])
 						player:getOccupiedVehicle():setInterior(v["interior"] or 0)
+						player:getOccupiedVehicle():setDimension(v["dimension"] or 0)
 					else
 						setElementDimension(player,0)
 						player:setPosition(v["pos"])
 						player:setInterior(v["interior"] or 0)
+						player:setDimension(v["dimension"] or 0)
 					end
 					StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
 					self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
