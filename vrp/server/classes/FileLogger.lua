@@ -25,11 +25,7 @@ function FileLogger:getSqlLogFile()
 		file = fileOpen("server/logs/" .. date .. ".log")
 	else
 		file = fileCreate("server/logs/" .. date .. ".log")
-<<<<<<< HEAD
 		fileWrite(file, "time;database;query\n")
-=======
-		fileWrite(file, "time;database;type;query\n")
->>>>>>> feature/pershing-square-rework
 		fileFlush(file)
 	end
 
@@ -37,11 +33,7 @@ function FileLogger:getSqlLogFile()
 	self.m_SqlLogFileOpendAt = getRealTime().monthday
 end
 
-<<<<<<< HEAD
 function FileLogger:addSqlLog(query, database, time)
-=======
-function FileLogger:addSqlLog(query, database, time, type)
->>>>>>> feature/pershing-square-rework
 	if getRealTime().monthday ~= self.m_SqlLogFileOpendAt then
 		if self.m_SqlLogFile then
 			fileClose(self.m_SqlLogFile)
@@ -52,11 +44,7 @@ function FileLogger:addSqlLog(query, database, time, type)
 	if self.m_SqlLogFile then
 		fileSetPos(self.m_SqlLogFile, fileGetSize(self.m_SqlLogFile))
 		query = query:gsub(";", " ")
-<<<<<<< HEAD
 		fileWrite(self.m_SqlLogFile, time .. ";" .. database .. ";" .. query .. "\n")
-=======
-		fileWrite(self.m_SqlLogFile, time .. ";" .. database .. ";" .. type .. ";" .. query .. "\n")
->>>>>>> feature/pershing-square-rework
 		fileFlush(self.m_SqlLogFile)
 	end
 end

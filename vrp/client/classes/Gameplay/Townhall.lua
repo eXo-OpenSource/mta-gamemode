@@ -116,8 +116,6 @@ function Townhall:constructor()
 	-- Initialize
 	self:initalizePeds()
 
-	local col = createColRectangle(1399.60, -1835.2, 1540.14-1399.60, 1835.2-1582.84) -- pershing square
-	self.m_NoParkingZone = NoParkingZone:new(col)
 end
 
 function Townhall:destructor()

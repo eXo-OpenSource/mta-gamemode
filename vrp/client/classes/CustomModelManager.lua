@@ -39,7 +39,13 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/objects/hedge01_law.col", 6046)
 	self:loadImportDFF("files/models/objects/hedge01_law.dff", 6046)
 	self:setLODDistance(6046, 500)
-	
+	--pd
+	self:loadImportCOL("files/models/buildings/PD_Garage.col", 4232)
+	self:loadImportDFF("files/models/buildings/PD_Garage.dff", 4232)
+	self:loadImportCOL("files/models/buildings/PD_int.col", 14846)
+	self:loadImportDFF("files/models/buildings/PD_int.dff", 14846)
+	self:loadImportCOL("files/models/buildings/PD_main.col", 3976)
+	self:loadImportDFF("files/models/buildings/PD_main.dff", 3976)
 	--bank
 	self:loadImportTXD("files/models/buildings/casino_heist/bank_fence.txd", 8481)
 	self:loadImportCOL("files/models/buildings/casino_heist/bank_fence.col", 8481)
@@ -298,10 +304,8 @@ end
 function CustomModelManager:createObjectsForMods()
 	local objs = {
 		--objid, radius, x, y, z, lodid
-		{4027, 48.207302, 1783.1016, -1702.3047, 14.35156, 4076}, --rescue
-		--{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police
-		--{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
-		--{4600, 85.356903, 1453.6016, -989.48437, 34.4375, 4625}, --bank
+		{3976, 68.567406, 1571.6016, -1675.75, 35.67969, 4064}, --police
+		{4232, 47.280518, 1568.2891, -1677.7812, 10.82031}, --police garage
 		{4552, 75.657227, 1391.125, -1318.0937, 24.66406, 4632}, --ammu nation central
 	}
 	for i,v in pairs(objs) do

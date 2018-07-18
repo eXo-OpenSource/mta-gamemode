@@ -11,17 +11,13 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
-	self:createArrestZone(255.19, 84.75, 1002.45, 6)
-	self:createArrestZone(1564.92, -1693.55, 5.89, 4, 5) -- PD garare
+	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD garare
 	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
 	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
-	VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
-	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit foot
-	
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
 
 	self.m_ArmySpecialVehicleBorder = {
@@ -59,8 +55,8 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker( Vector3(249.51, 67.46, 1003.64), 6, 0 )
-	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
+	self:createSelfArrestMarker( Vector3(1561.51, -1678.40, 16.20) )
+	self:createEvidencePickup(1584.68, -1686.32, 15.00, 0, 0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -147,17 +143,16 @@ function FactionState:destructor()
 end
 
 function FactionState:createSelfArrestMarker( pos, int, dim )
-	self.m_Ped = NPC:new(280, 251.59, 67.10, 1003.64)
-	self.m_Ped:setRotation(Vector3(0, 0, 90))
+	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
 	self.m_Ped:setImmortal(true)
 	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
-		self.m_Ped:setInterior(int)
+		ped:setInterior(int)
 		marker:setInterior(int)
 	end
 	if dim then
-		self.m_Ped:setDimension(dim)
+		ped:setDimension(dim)
 		marker:setDimension(dim)
 	end
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
@@ -190,8 +185,8 @@ function FactionState:Event_OnConfirmSelfArrest()
 end
 
 function FactionState:loadLSPD(factionId)
-	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22, 4, 5) -- PD Garage
+	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
+	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59))
 
@@ -214,13 +209,12 @@ function FactionState:loadLSPD(factionId)
 	--InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
 
 	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 4, 5)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
-	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
+	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
+	elevator:addStation("Erdgeschoss", Vector3(1567.70, -1687.90, 16.20), 84)
+	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
 
-	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
-	safe:setInterior(6)
 
+	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
 	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
@@ -236,10 +230,10 @@ function FactionState:loadFBI(factionId)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	local elevator = Elevator:new()
-	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270, 0, 0)
-	elevator:addStation("Erdgeschoss", Vector3(296.49, -36.23, 1032.20), 90, 10, 0, 0)
+	elevator:addStation("Heliport", Vector3(1242, -1777.0996, 33.7), 270)
+	elevator:addStation("Erdgeschoss", Vector3(296.49, -36.23, 1032.20), 90, 10)
 
-	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13), 0, 5)
+	self:createTakeItemsPickup(Vector3(1215.7, -1822.8, 13))
 
 	local gateLeft = Gate:new(988, Vector3(1211, -1841.9004, 13.4), Vector3(0, 0, 0), Vector3(1206, -1841.9004, 13.4))
 	gateLeft.onGateHit = bind(self.onBarrierGateHit, self)
@@ -283,10 +277,8 @@ function FactionState:loadArmy(factionId)
 	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
 end
 
-function FactionState:createTakeItemsPickup(pos, int, dim)
+function FactionState:createTakeItemsPickup(pos)
 	local pickup = createPickup(pos, 3, 1238, 0)
-	pickup:setInterior(int or 0 )
-	pickup:setDimension(dim or 0)
 	addEventHandler("onPickupHit", pickup, function(hitElement)
 		if hitElement:getType() == "player" then
 			if hitElement.vehicle then

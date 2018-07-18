@@ -672,8 +672,6 @@ function Vehicle:setCurrentPositionAsSpawn(type)
   self.m_PositionType = type
   self.m_SpawnPos = self:getPosition()
   self.m_SpawnRot = self:getRotation()
-  self.m_SpawnDim = self:getDimension()
-  self.m_SpawnInt = self:getInterior()
 end
 
 function Vehicle:respawnOnSpawnPosition()

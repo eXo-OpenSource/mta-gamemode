@@ -238,7 +238,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotZ = rotZ or 0
 	local premium = premium or 0
 
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
 		return self:createVehicle(sql:lastInsertId())
 	end
 	return false
@@ -254,8 +254,6 @@ function VehicleManager:createVehicle(idOrData)
 
 	if data then
 		local vehicle = createVehicle(data.Model, data.PosX, data.PosY, data.PosZ, data.RotX or 0, data.RotY or 0, data.RotZ or 0)
-		vehicle:setInterior(data.Interior or 0)
-		vehicle:setDimension(data.Dimension or 0)
 		local typeClass = PermanentVehicle
 
 		if data.OwnerType == VehicleTypes.Faction then
@@ -609,7 +607,7 @@ function VehicleManager:Event_vehiclePark()
 				return
 			end
 
-			if source:getInterior() == 0 or source.m_InParkGarage then
+			if source:getInterior() == 0 then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
 			else

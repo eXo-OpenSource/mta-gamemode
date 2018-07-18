@@ -25,13 +25,6 @@ function FactionManager:constructor()
 
 	self.m_DrawSpeed = bind(self.OnRenderSpeed, self)
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
-	NonCollidingSphere:new(createColCuboid(1582.86, -1661.10, 12.5,  1592.16 - 1582.86, 1661.10 - 1644.15, 4.5)) -- PD Exit
-
-	local col = createColCuboid(1589.66, -1682.68, 4.4,  1604.89-1589.66, 1682.68-1665.80, 6.5)
-	col:setDimension(5)
-	col:setInterior(4)
-	NonCollidingSphere:new(col) -- PD Garage
-	
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)

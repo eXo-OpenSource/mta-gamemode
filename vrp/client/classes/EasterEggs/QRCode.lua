@@ -2,7 +2,7 @@ EasterEgg.QRCode = inherit(GUIForm3D)
 inherit(Singleton, EasterEgg.QRCode)
 
 function EasterEgg.QRCode:constructor()
-	GUIForm3D.constructor(self, Vector3(1482.01, -1758, 28.5), Vector3(90, 0, 0), Vector2(5, 5), Vector2(300, 300), 50)
+	GUIForm3D.constructor(self, Vector3(1464.0999755859, -1790.8000488281, 20.700000762939), Vector3(90, 0, 0), Vector2(5, 5), Vector2(300, 300), 50)
 end
 
 function EasterEgg.QRCode:onStreamIn(surface)

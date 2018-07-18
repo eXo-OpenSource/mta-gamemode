@@ -7,14 +7,11 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-<<<<<<< HEAD
 function Group:constructor(Id, name, type, money, playTime, players, karma, lastNameChange, rankNames, rankLoans)
-=======
-function Group:constructor(Id, name, type, money, playTime, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
->>>>>>> feature/pershing-square-rework
 	if not players then players = {} end -- can happen due to Group.create using different constructor
 
 	self.m_Id = Id
+	self.m_Players = players[1] or {}
 	self.m_PlayerLoans = players[2] or {}
 	self.m_PlayerActivity = {}
 	self.m_LastActivityUpdate = 0
@@ -32,12 +29,7 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 	self.m_Vehicles = {}
 	self.m_MarkersAttached = false
 	self.m_BankAccountServer = BankServer.get("group")
-<<<<<<< HEAD
 	self.m_Settings = UserGroupSettings:new(USER_GROUP_TYPES.Group, Id)
-=======
-	self.m_Players = {}
-	self.m_PlayerLoans = {}
->>>>>>> feature/pershing-square-rework
 
 	self.m_BankAccount = BankAccount.loadByOwner(self.m_Id, BankAccountTypes.Group)
 	if not self.m_BankAccount then
@@ -61,8 +53,15 @@ function Group:constructor(Id, name, type, money, playTime, karma, lastNameChang
 		self:saveRankSettings()
 	end
 
+
 	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+
+	if not DEBUG then
+		self:getActivity()
+	end
+
+	self:updateRankNameSync()
 end
 
 function Group:destructor()
@@ -113,21 +112,8 @@ function Group:getType()
 	return self.m_Type
 end
 
-<<<<<<< HEAD
 function Group:getColor()
 	return self:getType() == "Firma" and {0, 100, 250} or {150, 0, 0}
-=======
-function Group:insertPlayer(id, rank, loan)
-	self.m_Players[id] = rank
-	self.m_PlayerLoans[id] = loan
-end
-
-function Group:initalizePlayers()
-	if not DEBUG then
-		self:getActivity()
-	end
-	self:updateRankNameSync()
->>>>>>> feature/pershing-square-rework
 end
 
 function Group:setType(type, player)

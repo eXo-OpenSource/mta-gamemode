@@ -3,7 +3,7 @@ MostWanted = inherit(GUIForm3D)
 inherit(Singleton, MostWanted)
 
 function MostWanted:constructor()
-	GUIForm3D.constructor(self, Vector3(1543.65, -1661.2, 15.85), Vector3(0, 0, 90), Vector2(4.2, 2.1), Vector2(1200,600), 50)
+	 GUIForm3D.constructor(self, Vector3(1543.65, -1661.2, 15.85), Vector3(0, 0, 90), Vector2(4.2, 2.1), Vector2(1200,600), 50)
 	self.m_Board = createObject(1903, 1543.82, -1661.2, 12.4)
 end
 

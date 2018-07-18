@@ -67,9 +67,6 @@ function LocalPlayer:constructor()
 
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
-
-	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37)
-	self.m_NoOcclusionZone= NonOcclusionZone:new(col)
 end
 
 function LocalPlayer:destructor()

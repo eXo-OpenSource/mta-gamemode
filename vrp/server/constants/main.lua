@@ -25,7 +25,7 @@ CHAT_DISTRICT_RANGE = 50
 
 CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
-NOOB_SPAWN = Vector3(1481.87, -1768.80, 18.80)
+NOOB_SPAWN = Vector3(1798.417, -1303.119, 120.255)
 NOOB_SKIN = 78
 
 START_MONEY_BAR = 5000

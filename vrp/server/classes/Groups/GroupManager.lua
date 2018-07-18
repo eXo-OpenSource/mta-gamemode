@@ -60,6 +60,8 @@ function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
 	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
+
+
 		local result2 = sql:queryFetch("SELECT Id, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 		local players, playerLoans = {}, {}
 		for i, groupRow in ipairs(result2) do
@@ -68,20 +70,8 @@ function GroupManager:loadGroups()
 		end
 
 		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, {players, playerLoans}, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
-		
 		GroupManager.Map[row.Id] = group
 		count = count + 1
-	end
-	--Load Group Members
-	local result = sql:queryFetch("SELECT Id, GroupId, GroupRank, GroupLoanEnabled FROM ??_character WHERE GroupId > 0", sql:getPrefix())
-	for k, row in ipairs(result) do
-		if GroupManager.Map[row.GroupId] then
-			GroupManager.Map[row.GroupId]:insertPlayer(row.Id, row.GroupRank, row.GroupLoanEnabled)
-		end
-	end
-	--Initalize Activity and sync Ranknames
-	for id, group in pairs(GroupManager.Map) do
-		group:initalizePlayers()
 	end
 
 	if DEBUG_LOAD_SAVE then outputServerLog(("Created %s groups in %sms"):format(count, getTickCount()-st)) end
