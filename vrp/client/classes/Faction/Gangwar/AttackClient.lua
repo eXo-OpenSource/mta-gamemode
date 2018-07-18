@@ -10,7 +10,7 @@ local w,h = guiGetScreenSize()
 local REPORT_LAST_KILL = false
 AttackClient = inherit(Object)
 local pseudoSingleton
-addRemoteEvents{"onGangwarDamage", "onGangwarKill", "GangwarPick:synchronizePick"}
+addRemoteEvents{"onGangwarDamage", "onGangwarKill", "GangwarPick:synchronizePick", "GangwarPick:close"}
 local clearTimer = nil
 function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pAttacker, pPickParticipants) 
 	REPORT_LAST_KILL = false
@@ -45,6 +45,8 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	addEventHandler( "ClientBox:forceClose", localPlayer, self.m_bindWeaponBoxCloseFunc)
 	--self.m_BindNoRushFunc = bind( AttackClient.onDamage, self )
 	--addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
+	self.m_bindPickClose = bind(AttackClient.closeGangwarPick, self)
+	addEventHandler("GangwarPick:close", localPlayer, self.m_bindPickClose)
 end
 
 function AttackClient:onDamage( attacker )
@@ -102,6 +104,12 @@ function AttackClient:destructor()
 	end
 	destroyQuestionBox() 
 end 
+
+function AttackClient:closeGangwarPick()
+	if self.m_GangwarPick then 
+		self.m_GangwarPick:delete()
+	end
+end
 
 function AttackClient:synchronizeLists( pParticipants, pDisqualified, pPickList, pUpdater, pTick, pPickParticipants )
 	self.m_Participants = pParticipants 

@@ -24,7 +24,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 10000, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -499,7 +499,13 @@ function AttackSession:onDecisionTimeEnd()
 					self:onPurposlyDisqualify( v, false, true)
 				end
 			end
-		end	
+		end
+	end
+	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do 
+		v:triggerEvent("GangwarPick:close")
+	end
+	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
+		v:triggerEvent("GangwarPick:close")
 	end
 end
 
