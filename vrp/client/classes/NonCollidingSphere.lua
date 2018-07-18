@@ -13,7 +13,7 @@ function NonCollidingSphere:constructor(col)
 	self.m_LeaveBind = bind(self.onLeave, self)
 
 	addEventHandler("onClientColShapeHit", self.m_ColShape, self.m_HitBind)
-	addEventHandler("onClientColShapeLeave", self.m_ColShape, self.m_LeaveBind)
+	addEventHandler("onClientColShapeLeave", self.m_ColShape, self.m_LeaveBind, true, "high")
 end
 
 function NonCollidingSphere:onHit(hitElement, matchingDimension)
