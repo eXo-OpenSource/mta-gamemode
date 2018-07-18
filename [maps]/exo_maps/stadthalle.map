@@ -212,7 +212,6 @@
     <object id="object (PC_1) (4)" breakable="true" interior="0" alpha="255" model="2190" doublesided="false" scale="1" dimension="0" posX="1833.2" posY="-1296.5" posZ="120.1" rotX="0" rotY="0" rotZ="27.99"></object>
     <object id="object (kb_swivelchair2) (2)" breakable="true" interior="0" alpha="255" model="1715" doublesided="false" scale="1" dimension="0" posX="1824.1" posY="-1270.9" posZ="119.3" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (PC_1) (5)" breakable="true" interior="0" alpha="255" model="2190" doublesided="false" scale="1" dimension="0" posX="1832.2" posY="-1298.5" posZ="120.1" rotX="0" rotY="0" rotZ="27.988"></object>
-    <object id="object (CJ_SPRUNK1) (1)" breakable="true" interior="0" alpha="255" model="1775" doublesided="false" scale="1" dimension="0" posX="1818" posY="-1290.7" posZ="120.4" rotX="0" rotY="0" rotZ="270"></object>
     <object id="object (kb_swivelchair2) (3)" breakable="true" interior="0" alpha="255" model="1715" doublesided="false" scale="1" dimension="0" posX="1828.4" posY="-1270.9" posZ="119.3" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (kb_swivelchair2) (4)" breakable="true" interior="0" alpha="255" model="1715" doublesided="false" scale="1" dimension="0" posX="1833.3" posY="-1273.1" posZ="119.3" rotX="0" rotY="0" rotZ="312"></object>
     <object id="object (officedesk1) (1)" breakable="true" interior="0" alpha="255" model="2008" doublesided="false" scale="1" dimension="0" posX="1812.7" posY="-1308" posZ="119.3" rotX="0" rotY="0" rotZ="180"></object>
