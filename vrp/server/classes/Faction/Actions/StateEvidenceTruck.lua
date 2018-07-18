@@ -12,8 +12,8 @@ StateEvidenceTruck.spawnPos = Vector3(1591.18, -1685.65, 6.02)
 StateEvidenceTruck.spawnRot = Vector3(0, 0, 0)
 StateEvidenceTruck.Destination = Vector3(119.08, 1902.07, 17.5)
 StateEvidenceTruck.MoneyBagSpawns = {
-	Vector3(1585.43, -1681.84, 14.39), Vector3(1585.46, -1682.38, 14.39),
-	Vector3(1584.85, -1681.83, 14.39), Vector3(1584.91, -1682.33, 14.39),
+	Vector3(1583.20, -1686.1, 5.7), Vector3(1583.17, -1690.72, 5.7),
+	Vector3(1586.17, -1689.46, 5.7), Vector3(1586.37, -1686.45, 5.7),
 }
 
 function StateEvidenceTruck:constructor(driver, money)
@@ -105,7 +105,11 @@ function StateEvidenceTruck:spawnMoneyBags()
 		self.m_MoneyBag[i]:setData("Money", money, true)
 		self.m_MoneyBag[i]:setData("MoneyBag", true, true)
 		self.m_MoneyBag[i].LoadHook = bind(self.loadBag, self)
+		self.m_MoneyBag[i]:setInterior(4)
+		self.m_MoneyBag[i]:setDimension(5)
 	end
+	self.m_Truck:setInterior(4)
+	self.m_Truck:setDimension(5)
 end
 
 function StateEvidenceTruck:loadBag(player, veh, bag)

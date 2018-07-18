@@ -60,6 +60,8 @@ function FactionState:constructor()
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
 	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
+	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 4, 5)
+	
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
