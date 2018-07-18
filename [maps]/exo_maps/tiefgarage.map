@@ -1,0 +1,10 @@
+<map edf:definitions="editor_main">
+    <object id="object (vgnpolicecparkug) (1)" breakable="true" interior="9" alpha="255" model="7244" doublesided="false" scale="1" dimension="0" posX="2119.1575" posY="924.56073" posZ="3397.4131" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (garages1_LAn) (1)" breakable="true" interior="9" alpha="255" model="4199" doublesided="false" scale="1" dimension="0" posX="2100.9612" posY="963.15198" posZ="3401.1162" rotX="359.925" rotY="88.001" rotZ="1.999"></object>
+    <object id="object (xref_garagedoor) (1)" breakable="true" interior="9" alpha="255" model="2885" doublesided="false" scale="1.2" dimension="0" posX="2103.116" posY="959.26147" posZ="3406.1565" rotX="0" rotY="0" rotZ="92"></object>
+    <object id="object (CJ_SPRUNK1) (1)" breakable="true" interior="9" alpha="255" model="1775" doublesided="false" scale="1" dimension="0" posX="2123.6389" posY="911.08368" posZ="3389.635" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_CANDYVENDOR) (1)" breakable="true" interior="9" alpha="255" model="1776" doublesided="false" scale="1" dimension="0" posX="2124.8633" posY="910.92627" posZ="3389.6375" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_PIZ_POSTER1) (1)" breakable="true" interior="9" alpha="255" model="2667" doublesided="false" scale="1" dimension="0" posX="2123.9326" posY="911.1615" posZ="3391.3259" rotX="0" rotY="0" rotZ="0"></object>
+	<object id="object (modLAS) (1)" breakable="true" interior="0" alpha="255" model="5056" doublesided="false" scale="1" dimension="0" posX="1405.2024" posY="-1497.3376" posZ="14.1085" rotX="0" rotY="0" rotZ="77"></object>
+    <object id="object (carparksign01_lvs) (1)" breakable="true" interior="0" alpha="255" model="8406" doublesided="false" scale="0.38079071" dimension="0" posX="1404.1108" posY="-1497.2968" posZ="16.1378" rotX="21.499" rotY="0.537" rotZ="346.803"></object>
+</map>

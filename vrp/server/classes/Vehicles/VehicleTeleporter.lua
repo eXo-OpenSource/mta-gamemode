@@ -7,14 +7,15 @@
 -- ****************************************************************************
 VehicleTeleporter = inherit(Object)
 
-function VehicleTeleporter:constructor(entryPosition, exitPosition, enterRotation, exitRotation, interiorId, dimension)
-	local vectorMarkerOffset = Vector3(0, 0, 7.5)
-	self.m_EnterMarker = createMarker(entryPosition - vectorMarkerOffset, "cylinder", 10, 58, 186, 242, 100)
-	self.m_ExitMarker = createMarker(exitPosition - vectorMarkerOffset, "cylinder", 10, 58, 186, 242, 100)
+function VehicleTeleporter:constructor(entryPosition, exitPosition, enterRotation, exitRotation, interiorId, dimension, marker, radius, customOffset)
+	local vectorMarkerOffset = customOffset or Vector3(0, 0, 7.5)
 
-	self.m_EnterNoCollisionArea = createColSphere(entryPosition, 10)
+	self.m_EnterMarker = createMarker(entryPosition - vectorMarkerOffset, marker or "cylinder", radius or 10, 58, 186, 242, 100)
+	self.m_ExitMarker = createMarker(exitPosition - vectorMarkerOffset, marker or "cylinder", radius or 10, 58, 186, 242, 100)
+
+	self.m_EnterNoCollisionArea = createColSphere(entryPosition, radius or 10)
 	self.m_EnterNoCollisionArea:setData("NonCollidingSphere", true, true)
-	self.m_ExitNoCollisionArea = createColSphere(exitPosition, 10)
+	self.m_ExitNoCollisionArea = createColSphere(exitPosition, radius or 10)
 	self.m_ExitNoCollisionArea:setData("NonCollidingSphere", true, true)
 
 	interiorId = interiorId or 0
@@ -84,14 +85,14 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 				player:setCameraTarget(player)
 				if vehicle then
 					vehicle:setPosition(pos + vehicle:getBaseHeight(true))
-					vehicle:setRotation(rotation)
+					vehicle:setRotation(0, 0, rotation)
 					vehicle:setInterior(interior)
 					vehicle:setDimension(dimension)
 					vehicle:setFrozen(true)
 				else
 					player:setFrozen(true)
 					player:setPosition(pos + Vector3(0, 0, 1))
-					player:setRotation(rotation)
+					player:setRotation(0, 0, rotation)
 				end
 			else
 				player:sendWarning(_("Du musst im Marker bleiben!", player))

@@ -49,7 +49,7 @@ end
 
 AppNavigator.Positions = {
 	["Allgemein"] = {
-		["Noobspawn"] = Vector3(1479.99, -1747.69, 13.55),
+		["Noobspawn"] = Vector3(1481.33, -1765.05, 18.80),
 		["Flughafen LS"] = Vector3(1993.06, -2187.38, 13.23),
 		["Premium-Bereich"] = Vector3(1246.52, -2055.33, 59.53),
 		["Stadthalle"] = Vector3(1802.17, -1284.10, 13.33),

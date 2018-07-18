@@ -1,6 +1,5 @@
 <map edf:definitions="editor_main">
     <object id="object (int_ppol) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="14846" doublesided="false" scale="1" dimension="0" posX="1571.2451" posY="-1670.9121" posZ="17.633" rotX="0" rotY="0" rotZ="0"></object>
-    <removeWorldObject id="removeWorldObject (Gen_doorEXT15) (1)" radius="3.458308" interior="0" model="1536" lodModel="0" posX="1555.8524" posY="-1675.2897" posZ="16.60627" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (wglasssmash) (1)" breakable="false" interior="0" collisions="true" alpha="255" model="1649" doublesided="true" scale="1" dimension="0" posX="1563.5" posY="-1679.5" posZ="19.3" rotX="0" rotY="90" rotZ="0"></object>
     <object id="object (wglasssmash) (2)" breakable="false" interior="0" collisions="true" alpha="255" model="1649" doublesided="true" scale="1" dimension="0" posX="1560.2002" posY="-1679.5" posZ="19.3" rotX="0" rotY="90" rotZ="0"></object>
     <object id="object (ranch_desk) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="11631" doublesided="false" scale="1" dimension="0" posX="1556.9301" posY="-1682.7" posZ="16.4" rotX="0" rotY="0" rotZ="89.995"></object>

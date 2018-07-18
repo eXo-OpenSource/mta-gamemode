@@ -71,6 +71,7 @@
 	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
 	<script src="server/classes/House.lua" type="server"/>
+	<script src="server/classes/ParkGarageZone.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
@@ -465,6 +466,8 @@
 	<script src="client/classes/HoverHandler.lua" type="client"/>
 	<script src="client/classes/ego.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
+	<script src="client/classes/NoParkingZone.lua" type="client"/>
+	<script src="client/classes/NonOcclusionZone.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>

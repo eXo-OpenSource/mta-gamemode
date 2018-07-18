@@ -151,8 +151,6 @@ function SQL:writeSqlPerfomanceLog(query, time)
 	end
 end
 
-
-
 function SQL:testPromiseQuery()
 	sql:setPromisesEnabled(true)
 

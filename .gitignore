@@ -19,4 +19,8 @@ assets.tar.gz
 
 build/workerserver
 vrp/server/logs/*
+<<<<<<< HEAD
 !vrp/server/logs/.gitkeep
+=======
+!vrp/server/logs/.gitkeep
+>>>>>>> feature/pershing-square-rework

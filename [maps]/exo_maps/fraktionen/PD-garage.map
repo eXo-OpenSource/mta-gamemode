@@ -1,0 +1,9 @@
+<map edf:definitions="editor_main">
+    <object id="object (vgElkup) (1)" breakable="true" interior="4" collisions="true" alpha="255" model="8947" doublesided="false" scale="1" dimension="5" posX="1596.4042" posY="-1658.0238" posZ="8.0177" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (burgalrydoor_SFS) (1)" breakable="true" interior="4" collisions="true" alpha="255" model="11102" doublesided="false" scale="1" dimension="5" posX="1597.3385" posY="-1665.4657" posZ="7.0477" rotX="0" rotY="0" rotZ="89.75"></object>
+    <object id="object (vgElkup) (2)" breakable="true" interior="4" collisions="true" alpha="255" model="8947" doublesided="false" scale="1" dimension="5" posX="1596.4283" posY="-1658.0181" posZ="1.9427" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (CJ_AIRP_PILLARS) (1)" breakable="true" interior="4" collisions="true" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1593.8073" posY="-1664.7775" posZ="16.3039" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (2)" breakable="true" interior="4" collisions="true" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1601.0815" posY="-1664.6687" posZ="16.3039" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (carimp2_LAn) (1)" breakable="true" interior="4" alpha="255" model="4232" doublesided="false" scale="1" dimension="5" posX="1568.1847" posY="-1677.787" posZ="10.8314" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (carimp_LAn) (1)" breakable="true" interior="4" alpha="255" model="4032" doublesided="false" scale="1" dimension="5" posX="1568.2095" posY="-1677.7795" posZ="10.8239" rotX="0" rotY="0" rotZ="0"></object>
+</map>
