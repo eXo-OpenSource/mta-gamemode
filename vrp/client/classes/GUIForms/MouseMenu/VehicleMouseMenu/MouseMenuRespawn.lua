@@ -50,7 +50,11 @@ function VehicleMouseMenuRespawn:constructor(posX, posY, element)
 	self:addItem(_"Fahrzeug parken",
 		function()
 			if self:getElement() then
-				triggerServerEvent("vehiclePark", self:getElement())
+				if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["parkVehicle"] or not localPlayer.m_DisallowParking then 
+					triggerServerEvent("vehiclePark", self:getElement())
+				else 
+					ErrorBox:new(_("Du kannst dein Auto hier nicht parken!"))
+				end
 			end
 		end
 	)

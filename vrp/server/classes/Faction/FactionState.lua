@@ -11,12 +11,15 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
-	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD garare
+	self:createArrestZone(1564.92, -1693.55, 5.89, 4, 5) -- PD garare
 	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
 	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+
+	VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
+	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit 
 
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
 
@@ -186,9 +189,9 @@ end
 
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
+	self:createDutyPickup(1530.21, -1671.66, 6.22, 4, 5) -- PD Garage
 
-	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59))
+	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 4, 5)
 
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
@@ -209,9 +212,10 @@ function FactionState:loadLSPD(factionId)
 	--InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
 
 	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
-	elevator:addStation("Erdgeschoss", Vector3(1567.70, -1687.90, 16.20), 84)
-	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
+	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 4, 5)
+	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
+	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
+
 
 
 	local safe = createObject(2332, 1559.90, -1647.80, 17, 0, 0, 90)
@@ -277,8 +281,10 @@ function FactionState:loadArmy(factionId)
 	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
 end
 
-function FactionState:createTakeItemsPickup(pos)
+function FactionState:createTakeItemsPickup(pos, int, dim)
 	local pickup = createPickup(pos, 3, 1238, 0)
+	pickup:setInterior(int or 0 )
+	pickup:setDimension(dim or 0)
 	addEventHandler("onPickupHit", pickup, function(hitElement)
 		if hitElement:getType() == "player" then
 			if hitElement.vehicle then

@@ -74,6 +74,7 @@
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
+	<script src="server/classes/ParkGarageZone.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
@@ -479,6 +480,8 @@
 	<script src="client/classes/Textures/StaticTextureReplacer.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
 	<script src="client/classes/NonCollidingSphere.lua" type="client"/>
+	<script src="client/classes/NonOcclusionZone.lua" type="client"/>
+	<script src="client/classes/NoParkingZone.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
 	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>

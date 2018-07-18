@@ -115,6 +115,6 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(-1420.49, 2582.37, 55.41, 40) -- El Quebrados
 	--PayNSpray:new(720.26, -455.14, 16.34, 47) -- Dillimore
 
-	local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
-	noobSpawn:createCustomDoor(13028, Vector3(1445.6, -1781.39, 16.1), Vector3(180, -90, 90))
+	--local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
+	--noobSpawn:createCustomDoor(13028, Vector3(1445.6, -1781.39, 16.1), Vector3(180, -90, 90))
 end
