@@ -204,7 +204,7 @@ function Core:constructor()
 		setTime(realtime.hour, realtime.minute)
 		setMinuteDuration(60000)
 
-		setOcclusionsEnabled(false)
+		setOcclusionsEnabled(true)
 
 		addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
 
