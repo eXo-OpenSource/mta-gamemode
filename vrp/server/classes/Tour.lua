@@ -94,7 +94,7 @@ Tour.Data = {
 		["Title"] = "Usertreff / Spawn",
 		["Description"] = "Besuche nun den Usertreff / Spawn. Dazu kannst du dir über dein Handy (Taste U) ein Taxi rufen oder dir am Stand einen Faggio leihen.",
 		["Success"] = "Dies ist der Bahnhof, auch bekannt als ein beliebter Treffpunkt unter der Community. Ein Vorteil am Bahnhof ist, dass der Ort nie schläft und somit stets Spaß und Action bietet!",
-		["Position"] = Vector3(1480.41, -1749.80, 12.55),
+		["Position"] = Vector3(1479.62, -1679.51, 14.05),
 		["Money"] = 50
 	},
 	[4] = {
