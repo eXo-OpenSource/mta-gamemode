@@ -148,7 +148,7 @@ end
 
 function FactionState:createSelfArrestMarker( pos, int, dim )
 	self.m_Ped = NPC:new(280, 251.59, 67.10, 1003.64)
-	self.m_Ped:setRotation(Vector3(0, 0, 270))
+	self.m_Ped:setRotation(Vector3(0, 0, 90))
 	self.m_Ped:setImmortal(true)
 	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
