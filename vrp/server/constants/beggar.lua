@@ -102,7 +102,7 @@ BeggarDestinationPhrases = {
 }
 
 BeggarTransportPositions = {
-	Vector3(1481.20, -1763.65, 12.5), -- Usertreff
+	Vector3(1482.74, -1725.00, 13.55), -- Usertreff
 	Vector3(1648.6, -2323.8, 12.2), -- Flughafen
 	Vector3(1786.2, -1285, 12.5), -- Stadthalle
 	Vector3(1264, -2022, 58), -- Premiumshop

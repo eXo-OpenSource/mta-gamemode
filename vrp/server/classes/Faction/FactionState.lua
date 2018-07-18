@@ -58,8 +58,8 @@ function FactionState:constructor()
 	end
 
 	self.m_SelfBailMarker = {}
-	self:createSelfArrestMarker( Vector3(1561.51, -1678.40, 16.20) )
-	self:createEvidencePickup(1584.68, -1686.32, 15.00, 0, 0)
+	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
+	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -146,16 +146,17 @@ function FactionState:destructor()
 end
 
 function FactionState:createSelfArrestMarker( pos, int, dim )
-	self.m_Ped = NPC:new(280, 1561.62, -1680.12, 16.20)
+	self.m_Ped = NPC:new(280, 251.59, 67.10, 1003.64)
+	self.m_Ped:setRotation(Vector3(0, 0, 90))
 	self.m_Ped:setImmortal(true)
 	self.m_Ped:setFrozen(true)
 	local marker = createPickup(pos, 3, 1247, 10)
 	if int then
-		ped:setInterior(int)
+		self.m_Ped:setInterior(int)
 		marker:setInterior(int)
 	end
 	if dim then
-		ped:setDimension(dim)
+		self.m_Ped:setDimension(dim)
 		marker:setDimension(dim)
 	end
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
@@ -188,7 +189,7 @@ function FactionState:Event_OnConfirmSelfArrest()
 end
 
 function FactionState:loadLSPD(factionId)
-	self:createDutyPickup(1562.30, -1683.30, 16.20) -- PD Interior
+	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 4, 5) -- PD Garage
 
 	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 4, 5)
@@ -305,6 +306,7 @@ function FactionState:createTakeItemsPickup(pos, int, dim)
 		end
 	end)
 end
+
 
 function FactionState:countPlayers(afkCheck, dutyCheck)
 	local count = #self:getOnlinePlayers(afkCheck, dutyCheck)
