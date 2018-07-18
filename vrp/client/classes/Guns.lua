@@ -92,14 +92,14 @@ function Guns:Event_NetworkInterupt( status, ticks )
 			setElementFrozen(localPlayer, true) 
 			self.m_NetworkInteruptFreeze = true
 		end
-		addEventHandler( "onClientRender", root, self.HookDrawAttention)
+		--addEventHandler( "onClientRender", root, self.HookDrawAttention)
 		outputDebugString( "interruption began " .. ticks .. " ticks ago" )
 	elseif (status == 1) then
 		if (self.m_NetworkInteruptFreeze) then
 			setElementFrozen(localPlayer, false) 
 			self.m_NetworkInteruptFreeze = false
 		end
-		removeEventHandler( "onClientRender", root, self.HookDrawAttention)
+		--removeEventHandler( "onClientRender", root, self.HookDrawAttention)
 		outputDebugString( "interruption began " .. ticks .. " ticks ago and has just ended" )
 	end
 end
