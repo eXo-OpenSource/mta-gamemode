@@ -89,6 +89,13 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					vehicle:setInterior(interior)
 					vehicle:setDimension(dimension)
 					vehicle:setFrozen(true)
+					for seat, occ in pairs(getVehicleOccupants(vehicle)) do 
+						if seat > 0 then
+							occ:setInterior(interior)
+							occ:setDimension(dimension)
+							occ:setCameraTarget(player)	
+						end
+					end
 				else
 					player:setFrozen(true)
 					player:setPosition(pos + Vector3(0, 0, 1))
@@ -106,6 +113,12 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					self:cancelExitingForOccupants(vehicle, false)
 					vehicle:toggleHandBrake(player, false)
 					vehicle:setFrozen(false)
+					for seat, occ in pairs(getVehicleOccupants(vehicle)) do 
+						if seat > 0 then
+							occ:triggerEvent("checkNoDm")
+							occ:setElementFrozen(false)
+						end
+					end
 				end
 				player:triggerEvent("checkNoDm")
 			end, 1000, 1)

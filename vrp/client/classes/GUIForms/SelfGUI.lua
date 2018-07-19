@@ -1196,7 +1196,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_RenderDistance = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
 		self.m_RenderDistance:setScrollPosition( 9000/getFarClipDistance())
 		self.m_RenderDistance:setColor(Color.LightBlue)
-		self.m_RenderDistance:setText(_"Sichtweite (0 = Reset)")
+		self.m_RenderDistance:setText(_"Sichtweite")
 		local oldRenderDistance = 0
 		self.m_RenderDistance.onScroll = function()
 			local scale = math.round(self.m_RenderDistance:getScrollPosition(), 2);
