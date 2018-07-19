@@ -93,7 +93,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 						if seat > 0 then
 							occ:setInterior(interior)
 							occ:setDimension(dimension)
-							occ:setCameraTarget(player)	
+							occ:setCameraTarget(occ)
 						end
 					end
 				else
