@@ -81,7 +81,9 @@ function CasinoHeist:build()
 	self.m_HackableComputer:setInterior(1)
 	self.m_HackableComputer:setData("clickable", true, true)
 	self.m_HackableComputer:setData("bankPC", true, true)
-	self.m_CurrentMoney = math.random(1000, 10000)
+	self.m_CurrentMoneyTotal = self.m_CurrentMoneyTotal or math.random(1000, 10000) -- total money generated
+	if self.m_CurrentMoney then self.m_CurrentMoneyTotal = self.m_CurrentMoneyTotal - self.m_CurrentMoney end -- subtract the stolen money from previous rob
+	self.m_CurrentMoney = self.m_CurrentMoneyTotal -- money that can be robbed (depends on online cops)
 
 	self.m_SafeDoor = createObject(2634, 2144.19, 1627.13, 994.3, 0, 0, 180)
 	self.m_SafeDoor.m_Open = false
@@ -110,24 +112,28 @@ function CasinoHeist:build()
     elevInside:addStation("Casino", Vector3(2136.40, 1599.46, 1008.36), 270, 1, 0)
 end
 
-function CasinoHeist:updateDifficulty(debugDiff)
+function CasinoHeist:updateDifficulty(DEBUG_moneyInBank, DEBUG_stateMembersOnline) -- both parameters are only used in DEBUG 
 	if not self.m_IsBankrobRunning then
-		if debugDiff then 
-			self.m_Difficulty = debugDiff
-		else
-			--update money based on time (more money 18 o clock)
-			local timeAsFactor = getRealTime().hour + getRealTime().minute/60
-			local diff = math.max(0, math.sin((timeAsFactor + 12)/12*math.pi)+0.5) --between 0 (2-10 o clock) and 1.5 (18 o clock) in sinus wave
-			self.m_CurrentMoney = math.min(self.m_CurrentMoney + diff*3000, 150000)
-			local moneyPerTruck = self.ms_MoneyPerBag * self.m_MaxBagsPerTruck --max money a truck can carry
-			local min_money = moneyPerTruck/2 --minimal money to start a rob
-			local difficulty =  math.ceil((self.m_CurrentMoney) / moneyPerTruck)
-			--TODO recalculate with the online state members
-			self.m_Difficulty = math.min((self.m_CurrentMoney > min_money) and difficulty or 0, 5)
-			if not DEBUG then
-				self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
-			end
+		--update money based on time (more money 18 o clock)
+		local timeAsFactor = getRealTime().hour + getRealTime().minute/60
+		local diff = math.max(0, math.sin((timeAsFactor + 12)/12*math.pi)+0.5) --between 0 (2-10 o clock) and 1.5 (18 o clock) in sinus wave
+		self.m_CurrentMoneyTotal = DEBUG_moneyInBank or math.min(self.m_CurrentMoneyTotal + diff*3000, 150000)
+		local moneyPerTruck = self.ms_MoneyPerBag * self.m_MaxBagsPerTruck --max money a truck can carry
+		local min_money = moneyPerTruck/2 --minimal money to start a rob
+		local difficulty =  math.ceil((self.m_CurrentMoneyTotal) / moneyPerTruck)
+	
+		local online_state_members = DEBUG_stateMembersOnline or FactionState:getSingleton():countPlayers(true, false)
+		local difficulty_money = math.min((self.m_CurrentMoneyTotal > min_money) and difficulty or 0, 5)
+		self.m_Difficulty = math.min(difficulty_money, math.floor(online_state_members/3)) -- diffculty based on money and state members online, both need to be high for high diff
+		self.m_CurrentMoney = math.min(self.m_CurrentMoneyTotal, online_state_members*10000) -- 10000 per cop, aka 30k per 3 cops per truck -> save it to var
+		if not DEBUG then
+			self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
 		end
+		outputDebug("updated casino!", "money total:", self.m_CurrentMoneyTotal, 
+		"state members online:", online_state_members, 
+		"money robbable:", self.m_CurrentMoney, 
+		"difficulty", self.m_Difficulty,
+		"min state members", self.ms_MinBankrobStateMembers)
 		self:updateVehicles()
 	end
 end

@@ -429,7 +429,6 @@ function BankRobbery:createTruck(x, y, z, rz)
 	addEventHandler("onElementDestroy", truck, function()
 		if self.m_Trucks[truck] then
 			self.m_Trucks[truck] = nil
-			outputDebug(truck, "got destroyed")
 		end
 	end)
 	return truck
