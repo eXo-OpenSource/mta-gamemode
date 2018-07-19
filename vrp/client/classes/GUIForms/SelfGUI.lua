@@ -1186,10 +1186,10 @@ function SelfGUI:onSettingChange(setting)
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-		if core:get("Other","RenderDistance",renderdistance) then 
+		if core:get("Other","RenderDistance", false) then 
 			setFarClipDistance(math.floor(core:get("Other","RenderDistance",renderdistance)) )
 		else 
-			resetFarClipDistance()
+			setFarClipDistance(992)
 		end
 		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
 		self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
@@ -1202,16 +1202,19 @@ function SelfGUI:onSettingChange(setting)
 			local scale = math.round(self.m_RenderDistance:getScrollPosition(), 2);
 			if scale ~= oldRenderDistance then
 				local renderdistance = scale * 9000 
-				if renderdistance then
+				if renderdistance > 250 then
 					setFarClipDistance(renderdistance)
 					core:set("Other","RenderDistance",math.floor(renderdistance))
+				else 
+					setFarClipDistance(250)
+					core:set("Other","RenderDistance", 250)	
 				end
 				oldRenderDistance = scale
 				self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
 			end
 		end
-		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
-		self.m_RenderDistanceReset.onLeftClick  = function() resetFarClipDistance(); core:set("Other","RenderDistance",false);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance())) end
+		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
+		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance())) end
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
 		--	self.m_StartIntro:setFontSize(1)
