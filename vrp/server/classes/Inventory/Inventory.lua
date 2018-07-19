@@ -91,11 +91,6 @@ function Inventory:useItem(itemId, bag, itemName, place)
 		client:sendError(_("Inventar Fehler: Kein Item", client))
 		return
 	end
-
-	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
-		self:removeItemFromPlace(bag, place, 1)
-	end
-
 	if self.m_ClassItems[itemName] then
 		local instance = ItemManager.Map[itemName]
 		if instance.use then
@@ -103,6 +98,9 @@ function Inventory:useItem(itemId, bag, itemName, place)
 				return false
 			end
 		end
+	end
+	if self.m_ItemData[itemName]["Verbraucht"] == 1 then
+		self:removeItemFromPlace(bag, place, 1)
 	end
 	if itemName == "Mautpass" then
 		local id = self:getItemID(bag, place)

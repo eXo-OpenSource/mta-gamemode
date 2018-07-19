@@ -48,17 +48,16 @@ function AnimationGUI:startAnimation()
 		end
 		local animation = self.m_AnimationList:getSelectedItem().Name
 		triggerServerEvent("startAnimation", localPlayer, animation)
-		for i, v in ipairs(Element.getAllByType("object", root, true)) do -- to short the loop use only streamedin objects
-			if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then
-				if animation == "Tanz Chill" then
+		if animation == "Tanz Chill" then
+			for i, v in ipairs(Element.getAllByType("object", root, true)) do -- to short the loop use only streamedin objects
+				if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then		
 					localPlayer:giveAchievement(43)
 					return
 				end
 			end
-		end
-		for i, v in ipairs(Element.getAllByType("ped", root, true)) do
-			if v:getData("BeggarId") ~= nil and math.abs((localPlayer.position - v.position).length) <= 1 then
-				if animation == "Wichsen" then
+		elseif animation == "Wichsen" then
+			for i, v in ipairs(Element.getAllByType("ped", root, true)) do
+				if v:getData("BeggarId") ~= nil and math.abs((localPlayer.position - v.position).length) <= 1 then
 					localPlayer:giveAchievement(57)
 					return
 				end
