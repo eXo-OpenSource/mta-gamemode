@@ -277,11 +277,13 @@ function FactionState:loadArmy(factionId)
 	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
 
 
-	local areaGarage = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
-	areaGarage.m_Gates[1]:setDoubleSided(true)
-	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+	local areaGateBack = Gate:new(974, Vector3(286.5, 1821.5, 19.90), Vector3(0, 0, 90), Vector3(286.5, 1834, 19.90))
+	areaGateBack.m_Gates[1]:setDoubleSided(true)
+	areaGateBack.onGateHit = bind(self.onBarrierGateHit, self)
 
-	InteriorEnterExit:new(Vector3(213.70, 1879.40, 17.70), Vector3(212, 1872.80, 13.10), 0, 0, 0, 0)
+	local areaGarage = Gate:new(2929, Vector3(211.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(207.9, 1875.35, 13.94))
+	areaGarage:addGate(2927, Vector3(215.9, 1875.35, 13.94), Vector3(0, 0, 0), Vector3(219.9, 1875.35, 13.94))
+		areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 end
 
 function FactionState:createTakeItemsPickup(pos, int, dim)

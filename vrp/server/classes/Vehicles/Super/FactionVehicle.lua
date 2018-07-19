@@ -94,7 +94,7 @@ function FactionVehicle:onEnter(player, seat)
 			local pFac = player:getFaction()
 			local vFac = self.m_Faction
 			local vFacAllyAllow = vFac:checkAlliancePermission(pFac, "vehicles")
-			if pFac == vFac or vFacAllyAllow then 
+			if pFac == vFac or vFacAllyAllow or (pFac:isStateFaction() and vFac:isStateFaction()) then 
 				return true
 			else
 				player:sendError(_("Dieses Fahrzeug gehört nicht zu deiner Fraktion!", player))

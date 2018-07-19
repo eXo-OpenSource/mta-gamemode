@@ -62,7 +62,7 @@ function DrivingSchoolInstructorGUI:updateSpeed()
 
 		local mileageDiff = (localPlayer.vehicle:getMileage()-instructorData.startMileage)/1000
 		self.m_DistanceLabel:setText(_("%.1f km", mileageDiff))
-		self.m_DistanceLabel:setColor(mileageDiff < 5 and Color.Red or Color.Green)
+		self.m_DistanceLabel:setColor(mileageDiff < 2 and Color.Red or Color.Green)
 	end
 end
 

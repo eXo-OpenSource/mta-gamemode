@@ -92,7 +92,7 @@ function AppBank:LocateATMsClick()
 			blip:setDisplayText("Bankautomat")
 			table.insert(self.m_ATMBlips, blip)
 		end
-		InfoBox:new(_"Drei Bankautomaten in der Nähe von dir wurden auf der Karte markiert.")
+		InfoBox:new(_"Bankautomaten in der Nähe von dir wurden auf der Karte markiert.")
 	end
 	self.m_ATMsLocated = not self.m_ATMsLocated
 end
