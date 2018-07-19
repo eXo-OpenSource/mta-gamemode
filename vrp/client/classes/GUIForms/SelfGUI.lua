@@ -1186,7 +1186,32 @@ function SelfGUI:onSettingChange(setting)
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-
+		if core:get("Other","RenderDistance",renderdistance) then 
+			setFarClipDistance(math.floor(core:get("Other","RenderDistance",renderdistance)) )
+		else 
+			resetFarClipDistance()
+		end
+		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
+		self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
+		self.m_RenderDistance = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
+		self.m_RenderDistance:setScrollPosition( 9000/getFarClipDistance())
+		self.m_RenderDistance:setColor(Color.LightBlue)
+		self.m_RenderDistance:setText(_"Sichtweite (0 = Reset)")
+		local oldRenderDistance = 0
+		self.m_RenderDistance.onScroll = function()
+			local scale = math.round(self.m_RenderDistance:getScrollPosition(), 2);
+			if scale ~= oldRenderDistance then
+				local renderdistance = scale * 9000 
+				if renderdistance then
+					setFarClipDistance(renderdistance)
+					core:set("Other","RenderDistance",math.floor(renderdistance))
+				end
+				oldRenderDistance = scale
+				self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
+			end
+		end
+		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
+		self.m_RenderDistanceReset.onLeftClick  = function() resetFarClipDistance(); core:set("Other","RenderDistance",false);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance())) end
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
 		--	self.m_StartIntro:setFontSize(1)
