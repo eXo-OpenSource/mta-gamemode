@@ -68,14 +68,17 @@ end
 
 
 function HorseRace:showShortMessage()
-	for index, playeritem in pairs(getElementsByType("player")) do
-		playeritem:sendShortMessage(_("Das Pferderennen startet in wenigen Sekunden! Klicke hier um die Liveübertragung mit zu verfolgen!", playeritem), _("Pferde-Wetten", playeritem), {255, 150, 255}, 30000, "horseRaceAddPlayer")
+	self:sendShortmessageToPlayers("Das Pferderennen startet in wenigen Sekunden! Klicke hier um die Liveübertragung mit zu verfolgen!")
+end
+
+function HorseRace:sendShortmessageToPlayers(text)
+	for index, playeritem in pairs(PlayerManager:getSingleton():getReadyPlayers()) do
+		playeritem:sendShortMessage(_(text, playeritem), _("Pferde-Wetten", playeritem), {255, 150, 255})
 	end
 end
 
 function HorseRace:message()
-	outputChatBox ( "[Pferde-Wetten] Um 20:00 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro", rootElement, 255, 150, 255 )
-	outputChatBox ( "auf ein Pferd setzen und um 20:00 die Live-Übertragung anschauen! Viel Glück!", rootElement, 255, 150, 255 )
+	self:sendShortmessageToPlayers("Um 20:00 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro auf ein Pferd setzen und um 20:00 die Live-Übertragung anschauen! Viel Glück!")
 end
 
 function HorseRace:addPlayer()
@@ -90,7 +93,7 @@ end
 function HorseRace:startRace()
 	if not self.m_IsRunning == true then
 		self:reset()
-		outputChatBox ( "[Pferde-Wetten] Die Pferderennen Live-Übertragung beginnt!", rootElement, 255, 150, 255 )
+		self:sendShortmessageToPlayers("Die Pferderennen Live-Übertragung beginnt!")
 		self.m_IsRunning = true
 		for index, playeritem in pairs(self.m_Players) do
 			if isElement(playeritem) then
@@ -177,7 +180,7 @@ end
 function HorseRace:setWinner(horseId)
 	if self.m_WinningHorse == 0 then
 		self.m_WinningHorse = horseId
-		outputChatBox(("[Pferde-Wetten] Das Pferderennen wurde beendet. Pferd %d hat gewonnen!"):format(horseId), rootElement, 255, 150, 255)
+		self:sendShortmessageToPlayers(("Das Pferderennen wurde beendet. Pferd %d hat gewonnen!"):format(horseId))
 		self:reset()
 
 		triggerClientEvent(root, "stopProgTimerPferdeRennenClient", root)
@@ -216,12 +219,12 @@ function HorseRace:checkWinner(winningHorse)
 				self.m_Stats["Outgoing"] = self.m_Stats["Outgoing"] + win
 
 				if not isOffline then
-					outputChatBox(_("[Pferde-Wetten] Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), player, 255, 150, 255)
+					player:sendShortMessage(_("Du hast auf das richtige Pferd (%d) gesetzt und %d$ gewonnen!", player, winningHorse, win), _("Pferde-Wetten", player), {255, 150, 255})
 				end
 			end
 		else
 			if not isOffline then
-				outputChatBox(_("[Pferde-Wetten] Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!", player, row["Horse"]) ,player, 255, 150, 255)
+				player:sendShortMessage(_("Du hast auf das falsche Pferd (%d) gesetzt und nichts gewonnen!", player, row["Horse"]), _("Pferde-Wetten", player), {255, 150, 255})
 			end
 		end
 

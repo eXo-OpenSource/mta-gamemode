@@ -126,14 +126,14 @@ function CasinoHeist:updateDifficulty(DEBUG_moneyInBank, DEBUG_stateMembersOnlin
 		local difficulty_money = math.min((self.m_CurrentMoneyTotal > min_money) and difficulty or 0, 5)
 		self.m_Difficulty = math.min(difficulty_money, math.floor(online_state_members/3)) -- diffculty based on money and state members online, both need to be high for high diff
 		self.m_CurrentMoney = math.min(self.m_CurrentMoneyTotal, online_state_members*10000) -- 10000 per cop, aka 30k per 3 cops per truck -> save it to var
-		if not DEBUG then
-			self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
-		end
+		self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
+		
 		outputDebug("updated casino!", "money total:", self.m_CurrentMoneyTotal, 
 		"state members online:", online_state_members, 
 		"money robbable:", self.m_CurrentMoney, 
 		"difficulty", self.m_Difficulty,
 		"min state members", self.ms_MinBankrobStateMembers)
+		
 		self:updateVehicles()
 	end
 end
