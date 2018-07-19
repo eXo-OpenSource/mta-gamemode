@@ -116,7 +116,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 					for seat, occ in pairs(getVehicleOccupants(vehicle)) do 
 						if seat > 0 then
 							occ:triggerEvent("checkNoDm")
-							occ:setElementFrozen(false)
+							occ:setFrozen(false)
 						end
 					end
 				end
