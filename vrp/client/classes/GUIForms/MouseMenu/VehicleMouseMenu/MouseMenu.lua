@@ -211,14 +211,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			if #self:getAttachedElement(2912, element) > 0 then
 				self:addItem(_"Kiste abladen",
 					function()
-						triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
+						--triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
+						triggerServerEvent("vehicleDeloadObject", self:getElement(), element, "weaponBox")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Down)
 			end
 			if #self:getAttachedElement(2912, localPlayer) > 0 then
 				self:addItem(_"Kiste aufladen",
 					function()
-						triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
+						--triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
+						triggerServerEvent("vehicleLoadObject", self:getElement(), element, "weaponBox")
 					end
 				):setIcon(FontAwesomeSymbols.Double_Up)
 			end

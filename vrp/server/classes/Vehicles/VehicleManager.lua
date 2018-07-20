@@ -1269,10 +1269,13 @@ end
 
 function VehicleManager:Event_LoadObject(veh, type)
 	local vehicleObjects, model, name
+	vehicleObjects = VEHICLE_BAG_LOAD
 	if type == "moneyBag" then
-		vehicleObjects = VEHICLE_BAG_LOAD
 		model = 1550
 		name = "keinen Geldsack"
+	elseif type == "weaponBox" then
+		model = 543
+		name = "keine Waffenbox"
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
@@ -1312,10 +1315,13 @@ end
 
 function VehicleManager:Event_DeLoadObject(veh, type)
 	local vehicleObjects, model, name
+	vehicleObjects = VEHICLE_BAG_LOAD
 	if type == "moneyBag" then
-		vehicleObjects = VEHICLE_BAG_LOAD
 		model = 1550
 		name = "kein Geldsack"
+	elseif type == "weaponBox" then
+		model = 2912
+		name = "keine Waffenbox"
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryUnloadObject(client)
