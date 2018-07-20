@@ -1274,8 +1274,13 @@ function VehicleManager:Event_LoadObject(veh, type)
 		model = 1550
 		name = "keinen Geldsack"
 	elseif type == "weaponBox" then
-		model = 543
+		model = 2912
 		name = "keine Waffenbox"
+
+		if veh:getData("WeaponTruck") then
+			MWeaponTruck:getSingleton().m_CurrentWT:Event_LoadBox(veh)
+			return
+		end
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryLoadObject(client, client:getPlayerAttachedObject())
@@ -1322,6 +1327,11 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	elseif type == "weaponBox" then
 		model = 2912
 		name = "keine Waffenbox"
+
+		if veh:getData("WeaponTruck") then
+			MWeaponTruck:getSingleton().m_CurrentWT:Event_DeloadBox(veh)
+			return
+		end
 	end
 	if veh:canObjectBeLoaded(model) then
 		return veh:tryUnloadObject(client)
