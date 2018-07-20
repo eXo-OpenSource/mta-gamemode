@@ -10,6 +10,7 @@ NoDm.Zones = {
 	[7] = {Vector3(2091.23, -1824.72, 12), Vector3(40, 45, 20)},
 	--[8] = {Vector3(2713.39, -1880.29, 8), Vector3(104, 80, 50)}, -- Auction Event	
 	[9] = {Vector3(1503.79, -1387.92,  23234), Vector3(151, 101, 30), 1}, -- Auction Event Interior
+	[10] = {Vector3(2730.97, -2423.91, 810.44), Vector3(100, 200, 30), 5 }
 }
 
 if EVENT_HALLOWEEN then
