@@ -185,8 +185,10 @@ function Townhall:applyInteriorTexture()
 end
 
 function Townhall:removeInteriorTexture()
-	for i = 1, #self.m_InteriorTexture do 
-		self.m_InteriorTexture[i]:delete()
+	if self.m_InteriorTexture then
+		for i = 1, #self.m_InteriorTexture do 
+			self.m_InteriorTexture[i]:delete()
+		end	
 	end
 end
 

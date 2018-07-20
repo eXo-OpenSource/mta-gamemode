@@ -7,8 +7,9 @@
 -- ****************************************************************************
 InteriorEnterExit = inherit(Object)
 
-function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension)
-  self.m_EnterMarker = createMarker(entryPosition, "corona", 1.5, 255, 255, 255, 200)
+function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, enterInterior)
+	self.m_EnterMarker = createMarker(entryPosition, "corona", 1.5, 255, 255, 255, 200)
+	self.m_EnterMarker:setInterior(enterInterior or 0)
   self.m_ExitMarker = createMarker(interiorPosition, "corona", 1.5, 255, 255, 255, 200)
 
   interiorId = interiorId or 0
@@ -27,7 +28,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
    addEventHandler("onMarkerHit", self.m_ExitMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension then
-	  	self:teleport(hitElement, "exit", entryPosition, exitRotation, 0, 0)
+	  	self:teleport(hitElement, "exit", entryPosition, exitRotation, enterInterior or 0, 0)
       end
     end
   )

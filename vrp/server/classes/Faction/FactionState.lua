@@ -18,7 +18,15 @@ function FactionState:constructor()
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
-	VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
+	self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
+	self.m_GaragePorter:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
+	self.m_GaragePorter:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
+
+	
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 4, 5, 6) -- pd exit 
+	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
+	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
+	
 	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit 
 
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
@@ -215,9 +223,9 @@ function FactionState:loadLSPD(factionId)
 	--InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
 
 	local elevator = Elevator:new()
-	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 4, 5)
-	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
+	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
+	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 4, 5)
 
 
 
