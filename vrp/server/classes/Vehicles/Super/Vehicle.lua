@@ -823,7 +823,7 @@ function Vehicle:getTuningList(player)
 	if self.m_Tunings and self.m_Tunings.getList then
 		player:triggerEvent("vehicleReceiveTuningList", self, self.m_Tunings:getList())
 	else
-		player:triggerEvent("vehicleReceiveTuningList", self, false)
+		player:triggerEvent("vehicleReceiveTuningList", self, {"(keine)"}, {"(keine)"})
 	end
 end
 

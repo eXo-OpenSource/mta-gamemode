@@ -235,16 +235,25 @@ function VehicleTuning:addTexture(texturePath, textureName)
 end
 
 function VehicleTuning:getList()
-	local text = ""
+	local tuning, specialTuning = {}, {}
 
-	local neon = self.m_Tuning["Neon"] == 1 and "Ja" or "Nein"
-	local horn = self.m_Tuning["CustomHorn"] > 0 and "Ja" or "Nein"
+	if self.m_Tuning["GTATuning"] then 
+		for _,v in pairs(self.m_Tuning["GTATuning"]) do
+			tuning[getVehicleUpgradeSlotName(v)] = v
+		end
+	else
+		tuning["(keine)"] = ""
+	end	
+	if table.size(tuning) == 0 then tuning["(keine)"] = "" end 
+
+	local neon = self.m_Tuning["Neon"] == 1 and self.m_Tuning["NeonColor"] or nil
+	local horn = (self.m_Tuning["CustomHorn"] and self.m_Tuning["CustomHorn"] > 0) and "Ja (ID: "..self.m_Tuning["CustomHorn"]..")" or nil
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
-	local texture = self.m_Tuning["Texture"][textureName] and "Ja" or "Nein"
+	local texture = self.m_Tuning["Texture"][textureName] and self.m_Tuning["Texture"][textureName]:gsub("files/images/Textures", "")
+	specialTuning["Neon"] = neon
+	specialTuning["Spezial-Hupe"] = horn
+	specialTuning["Textur"] = texture
+	if table.size(specialTuning) == 0 then specialTuning["(keine)"] = "" end
 
-
-	text = text.."Neon: "..neon.."\n"
-	text = text.."Spezial-Hupe: "..horn.."\n"
-	text = text.."Textur: "..texture.."\n"
-	return text
+	return tuning, specialTuning
 end

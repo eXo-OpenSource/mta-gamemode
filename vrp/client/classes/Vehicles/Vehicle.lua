@@ -331,12 +331,8 @@ function( dir )
 end)
 
 addEventHandler("vehicleReceiveTuningList", localPlayer,
-function (vehicle, tunings)
-	if tunings then
-		ShortMessage:new(_("Das Fahrzeug besitzt folgende Tunings:\n%s", tunings), "Tunings von "..vehicle:getName())
-	else
-		ErrorBox:new(_"Das Fahrzeug hat keine Tunings!")
-	end
+function (vehicle, tuning, specialTuning)
+	VehicleTuningShowGUI:new(tuning, specialTuning)
 end)
 
 

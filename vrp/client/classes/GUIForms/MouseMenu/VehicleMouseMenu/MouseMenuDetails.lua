@@ -17,6 +17,13 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 			end
 		end
 	)
+	self:addItem(_"Tunings anzeigen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("vehicleGetTuningList", self:getElement())
+			end
+		end
+	):setIcon(FontAwesomeSymbols.Search)
 
 	self:addItem(_("Kategorie: %s", element:getCategoryName())):setTextColor(Color.White)
 	self:addItem(_("Steuern: %s $ / PayDay", element:getTax())):setTextColor(Color.White)
