@@ -35,7 +35,7 @@ function enew(element, class, ...)
 
 	oop.elementInfo[element] = instance
 
-	
+
 	for k, v in ripairs(superAll(instance)) do
 		if rawget(v, "virtual_constructor") then
 			rawget(v, "virtual_constructor")(element, ...)
@@ -185,7 +185,7 @@ function superAll(self)
 			end
 		end
 	end
-	
+
 	return supers
 end
 
@@ -194,16 +194,16 @@ function superMultiple(self)
 		assert(oop.elementInfo[self], "Cannot get the superclass of this element") -- at least: not yet
 		self = oop.elementInfo[self]
 	end
-	
+
 	local metatable = getmetatable(self)
 	if not metatable then
 		return {}
 	end
-	
+
 	if metatable.__class then -- we're dealing with a class object
 		return superMultiple(metatable.__class)
 	end
-	
+
 	if metatable.__super then -- we're dealing with a class
 		return metatable.__super or {}
 	end
@@ -297,6 +297,7 @@ function bind(func, ...)
 	local boundParams = {...}
 	return
 		function(...)
+			local perfTest = getTickCount()
 			local params = {}
 			local boundParamSize = select("#", unpack(boundParams))
 			for i = 1, boundParamSize do
@@ -307,7 +308,15 @@ function bind(func, ...)
 			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
-			return func(unpack(params))
+			local retValue = func(unpack(params))
+			if not triggerServerEvent then
+				local time = getTickCount() - perfTest
+				if time >= 50 then -- log everthing over 50ms ;)
+					local data = inspect({...}, {newline=' ', indent=""}) .. " - " .. inspect({source = source, this = this, client = client, eventName = eventName}, {newline=' ', indent=""})
+					FileLogger:getSingleton():addPerfLog(time, "classlib@bind", data)
+				end
+			end
+			return retValue
 		end
 end
 

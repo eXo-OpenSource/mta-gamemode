@@ -268,7 +268,18 @@ function VehicleManager:createVehicle(idOrData)
 
 		enew(vehicle, typeClass, data)
 		self:addRef(vehicle, false)
-		return vehicle
+		
+		local pershingSquareSpecialCase = false
+		if data.PosX > 1399.40 and data.PosX <= 1559 then 
+			if data.PosY > -1835 and data.PosY < -1742 then 
+				if data.PosZ > 12 and data.PosZ < 25 then 
+					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+					vehicle.despawned = true
+					pershingSquareSpecialCase = true	
+				end
+			end
+		end
+		return vehicle, pershingSquareSpecialCase
 	else
 		return false
 	end
@@ -294,7 +305,10 @@ function VehicleManager:createVehiclesForPlayer(player)
 					end
 				end
 				if not skip then
-					self:createVehicle(row)
+					local veh, specialcase = self:createVehicle(row)
+					if veh and specialcase then 
+						player:sendShortMessage(("Dein Fahrzeug %s wurde nicht gespawnt, da es sich im Pershing Square befindet, melde dich bei einem Administrator und parke es um!"):format(getVehicleNameFromModel(veh:getModel())),  "Information", nil, 30000)
+					end
 				end
 				skip = false
 			end

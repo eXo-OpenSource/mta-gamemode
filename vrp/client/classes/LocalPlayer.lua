@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon", "onServerRunString", "playSound", "stopBleeding", "restartBleeding", "setCanBeKnockedOffBike", "setOcclusion"}
 
 local screenWidth,screenHeight = guiGetScreenSize()
 function LocalPlayer:constructor()
@@ -51,6 +51,7 @@ function LocalPlayer:constructor()
 	addEventHandler("restartBleeding", root, bind(self.restartDeathBleeding, self))
 	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
+	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
 	setTimer(bind(self.Event_PreRender, self),100,0)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
@@ -81,8 +82,6 @@ function LocalPlayer:constructor()
 	col3:setInterior(6)
 	self.m_NoOcclusionZone3 = NonOcclusionZone:new(col3) -- PD garage
 	
-	local col4 = createColCuboid(1582.26, -1661.10, 12, 10, 10, 5)
-	self.m_NoOcclusionZone4 = NonOcclusionZone:new(col4) -- PD garage
 end
 
 function LocalPlayer:destructor()

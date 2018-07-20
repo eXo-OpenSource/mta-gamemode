@@ -8,6 +8,10 @@ function Townhall:constructor()
 	elevator:addStation("Ausgang", Vector3(1788.389, -1297.811, 13.375))
 	elevator:addStation("Stadthalle", Vector3(1786.800, -1301.099, 120.300), 120)
 	self:createGarage()
+	self.m_EnterExit = InteriorEnterExit:new(Vector3(1481.09, -1770.12, 18.80), Vector3(2758.5, -2422.8994140625, 816), 0, 0, 5)
+
+	self.m_EnterExit:addEnterEvent(function( player ) player:triggerEvent("Townhall:applyTexture") end)
+	self.m_EnterExit:addExitEvent(function( player ) player:triggerEvent("Townhall:removeTexture") end)
 end
 
 function Townhall:createGarage()
