@@ -11,6 +11,9 @@
 
 	<map src="atm.map" />
 
+	<map src="knast_interior.map" />
+	<map src="knast.map" />
+
 	<!--<map src="medic_fix.map" />-->
 	<!--<map src="fun/boxarena.map" />/-->
 	<map src="fun/FourDragons.map" />/
@@ -33,11 +36,11 @@
 	<map src="fraktionen/triad.map" />
 	<!--map src="fraktionen/yakuza.map"/>
 	
-	<!--<map src="fraktionen/insurgent_storage.map" />
+	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
 	<map src="fraktionen/terroristtown.map" />
 	<map src="fraktionen/terrorist_int.map" />-->
-	
+
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
 	<map src="unternehmen/ltr.map" />
@@ -79,7 +82,6 @@
 	<map src="shop/ammunation2.map" />
 	<map src="shop/atrium.map" />
 	<map src="shop/gaertnerei.map" />
-	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
 	<map src="airport.map" />

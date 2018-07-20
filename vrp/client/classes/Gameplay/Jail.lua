@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 
-local JailCenter = Vector3(161.80, 359.28, 7983.66)
+local JailCenter = Vector3(2593.8, -1421.4, 1040.4)
 local Jail = {}
 
 addEvent("playerJailed", true)
@@ -32,7 +32,7 @@ function Jail.startCountdown(jailTime)
 			toggleControl("aim_weapon", false)
 			toggleControl("jump", false)
 			if getDistanceBetweenPoints3D(localPlayer:getPosition(), JailCenter) > 100 then
-				triggerServerEvent("Event_moveToJail", localPlayer)
+				triggerServerEvent("Event_playerTryToBreakoutJail", localPlayer)
 			end
 		end)
 end

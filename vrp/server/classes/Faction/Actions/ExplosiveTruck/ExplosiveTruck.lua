@@ -127,7 +127,5 @@ function ExplosiveTruck:impoundBox(player)
 end
 
 function ExplosiveTruck:cancel()
-	self:removeBox()
-
 	self:delete()
 end

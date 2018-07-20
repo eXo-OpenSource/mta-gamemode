@@ -346,6 +346,9 @@
 	<script src="server/classes/Faction/Actions/ExplosiveTruck/ExplosiveTruck.lua" type="server"/>
 	<script src="client/classes/Faction/Actions/ExplosiveTruck/ExplosiveTruckManager.lua" type="client"/>
 
+	<script src="server/classes/Faction/Actions/PrisonBreak/PrisonBreakManager.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/PrisonBreak/PrisonBreak.lua" type="server"/>
+
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
