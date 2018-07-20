@@ -43,12 +43,10 @@ function ExplosiveTruck:destructor()
 	ExplosiveTruckManager.Active[self.m_Faction:getId()] = nil
 	self.m_FactionDepotObjectMarker:destroy()
 
-	for k, faction in pairs(FactionManager.Map) do
-		if not faction:isEvilFaction() then
-			return
+	for k, faction in pairs(FactionEvil:getSingleton():getFactions()) do
+		if faction:isEvilFaction() then
+			removeEventHandler("onElementClicked", FactionEvil:getSingleton().m_ItemDepot[faction:getId()], bind(self.deliverBox, self))
 		end
-
-		removeEventHandler("onElementClicked", FactionEvil:getSingleton().m_ItemDepot[faction:getId()], bind(self.deliverBox, self))
 	end
 
 	removeEventHandler("onPickupUse", FactionState:getSingleton().m_EvidenePickup, bind(self.impoundBox, self))
@@ -86,10 +84,9 @@ function ExplosiveTruck:dragBox(button, state, player)
 end
 
 function ExplosiveTruck:removeBox(player)
-	removeEventHandler("onElementClicked", self.m_Box, bind(self.dragBox, self))
-	removeEventHandler("onElementDestroy", self.m_Box, bind(self.cancel, self))
-	player:detachPlayerObject(self.m_Box)
-	self.m_Box:destroy()
+	local box = player:getPlayerAttachedObject()
+	player:detachPlayerObject(box)
+	box:destroy()
 end
 
 function ExplosiveTruck:deliverBox(button, state, player)
