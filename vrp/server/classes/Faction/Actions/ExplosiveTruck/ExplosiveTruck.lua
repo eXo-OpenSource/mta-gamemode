@@ -40,6 +40,7 @@ function ExplosiveTruck:constructor(faction, player)
 end
 
 function ExplosiveTruck:destructor()
+	ExplosiveTruckManager.Active[self.m_Faction:getId()] = nil
 	self.m_FactionDepotObjectMarker:destroy()
 
 	for k, faction in pairs(FactionManager.Map) do
@@ -51,8 +52,6 @@ function ExplosiveTruck:destructor()
 	end
 
 	removeEventHandler("onPickupUse", FactionState:getSingleton().m_EvidenePickup, bind(self.impoundBox, self))
-
-	ExplosiveTruckManager:getSingleton().Active[self.m_Faction:getId()] = nil
 end
 
 function ExplosiveTruck:dragBox(button, state, player)
@@ -111,7 +110,7 @@ function ExplosiveTruck:deliverBox(button, state, player)
 	faction:getDepot():addItem(player, ExplosiveTruck.Item, ExplosiveTruck.ItemAmount, true)
 	faction:sendSuccess("Es ist Sprengstoff ins Depot eingelagert worden!")
 
-	self:delete()
+	delete(self)
 end
 
 function ExplosiveTruck:impoundBox(player)
@@ -123,9 +122,9 @@ function ExplosiveTruck:impoundBox(player)
 
 	FactionState:getSingleton():sendShortMessage(player:getName() .. " hat Sprengstoff konfesziert!")
 
-	self:delete()
+	delete(self)
 end
 
 function ExplosiveTruck:cancel()
-	self:delete()
+	delete(self)
 end
