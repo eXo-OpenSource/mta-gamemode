@@ -8,43 +8,62 @@
 FileLogger = inherit(Singleton)
 
 function FileLogger:constructor()
-	self:getSqlLogFile()
+	self.m_LogFiles = {}
+	self.m_LogFilesOpendAt = {}
+
+	self.m_LogFileHeader = {
+		["sql"] = "timestamp;time;database;type;query\n",
+		["perf"] = "timestamp;time;func;extra\n"
+	}
+
+	self:getLogFile("sql")
+	self:getLogFile("perf")
 end
 
 function FileLogger:destructor()
-	if self.m_SqlLogFile then
-		fileClose(self.m_SqlLogFile)
+	for k, file in pairs(self.m_LogFiles) do
+		fileClose(file)
 	end
 end
 
-function FileLogger:getSqlLogFile()
+function FileLogger:getLogFile(type)
 	local date = (getRealTime().year + 1900) .. (getRealTime().month + 1) .. getRealTime().monthday
 
 	local file = false
-	if fileExists("server/logs/" .. date .. ".log") then
-		file = fileOpen("server/logs/" .. date .. ".log")
+	if fileExists("server/logs/" .. type .. "_" .. date .. ".log") then
+		file = fileOpen("server/logs/" .. type .. "_" .. date .. ".log")
 	else
-		file = fileCreate("server/logs/" .. date .. ".log")
-		fileWrite(file, "time;database;query\n")
+		file = fileCreate("server/logs/" .. type .. "_" .. date .. ".log")
+		fileWrite(file, self.m_LogFileHeader[type])
 		fileFlush(file)
 	end
 
-	self.m_SqlLogFile = file
-	self.m_SqlLogFileOpendAt = getRealTime().monthday
+	self.m_LogFiles[type] = file
+	self.m_LogFilesOpendAt[type]  = getRealTime().monthday
 end
 
-function FileLogger:addSqlLog(query, database, time)
-	if getRealTime().monthday ~= self.m_SqlLogFileOpendAt then
-		if self.m_SqlLogFile then
-			fileClose(self.m_SqlLogFile)
+function FileLogger:writeLog(type, text)
+	if getRealTime().monthday ~= self.m_LogFilesOpendAt[type] then
+		if self.m_LogFiles[type] then
+			fileClose(self.m_LogFiles[type])
 		end
-		self:getSqlLogFile()
+		self:getLogFile(type)
 	end
 
-	if self.m_SqlLogFile then
-		fileSetPos(self.m_SqlLogFile, fileGetSize(self.m_SqlLogFile))
-		query = query:gsub(";", " ")
-		fileWrite(self.m_SqlLogFile, time .. ";" .. database .. ";" .. query .. "\n")
-		fileFlush(self.m_SqlLogFile)
+	if self.m_LogFiles[type] then
+		fileSetPos(self.m_LogFiles[type], fileGetSize(self.m_LogFiles[type]))
+		fileWrite(self.m_LogFiles[type], text)
+		fileFlush(self.m_LogFiles[type])
 	end
+end
+
+
+function FileLogger:addSqlLog(query, database, time, type)
+	query = query:gsub(";", " ")
+	self:writeLog("sql", getRealTime().timestamp .. ";" .. time .. ";" .. database .. ";" .. type .. ";" .. query .. "\n")
+end
+
+function FileLogger:addPerfLog(time, func, data)
+	data = data:gsub(";", " ")
+	self:writeLog("perf", getRealTime().timestamp .. ";" .. time .. ";" .. func .. ";" .. data .. "\n")
 end
