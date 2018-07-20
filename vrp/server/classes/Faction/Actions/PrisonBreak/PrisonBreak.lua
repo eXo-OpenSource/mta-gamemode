@@ -175,8 +175,8 @@ end
 function PrisonBreak:finish()
 	PlayerManager:getSingleton():breakingNews("Das Gefängnis meldet verminderte Sicherheitswarnung. Alle Tore sind wieder geschlossen!")
 	Discord:getSingleton():outputBreakingNews("Das Gefängnis meldet verminderte Sicherheitswarnung. Alle Tore sind wieder geschlossen!")
+	
+	ActionsCheck:getSingleton():endAction()
 
 	delete(self)
-
-	ActionsCheck:getSingleton():endAction()
 end

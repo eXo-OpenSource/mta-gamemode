@@ -35,9 +35,14 @@ end
 
 function PrisonBreakManager:stop()
     self.m_Instance = nil
+    
+    if not isElement(self.m_Entrance) then
+        self:createEntrance()
+    end
 
-    self:createPoliceman()
-    self:createEntrance()
+    if not isElement(self.m_Officer) then
+        self:createPoliceman()
+    end
 end
 
 function PrisonBreakManager:createEntrance()
