@@ -52,7 +52,7 @@ function ExplosiveTruck:destructor()
 
 	removeEventHandler("onPickupUse", FactionState:getSingleton().m_EvidenePickup, bind(self.impoundBox, self))
 
-	ExplosiveTruckManager.Active[self.m_Faction:getId()] = nil
+	ExplosiveTruckManager:getSingleton().Active[self.m_Faction:getId()] = nil
 end
 
 function ExplosiveTruck:dragBox(button, state, player)
