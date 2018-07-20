@@ -1618,6 +1618,23 @@
 	<vrpfile src="files/images/Textures/Special/15.png"/>
 	<vrpfile src="files/images/Textures/tracer.png"/>
 
+	<vrpfile src="files/images/Textures/Cityhall/tex1.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex2.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex3.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex4.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex5.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex6.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex7.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex8.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex9.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex10.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex11.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex12.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex13.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex14.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex15.jpg"/>
+	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
+	
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
 	<vrpfile src="files/images/Inventory/food.png" />

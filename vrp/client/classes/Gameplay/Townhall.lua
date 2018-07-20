@@ -1,12 +1,16 @@
 Townhall = inherit(Singleton)
 
+Townhall.Textures = {  "lacityhwal1", "decobuild2b_lan", "greyground256", "cj_white_wall2", "cj_galvanised", "gen_chrome", "cj_wooddoor3", "waterclear256", "metalic_64", "tislndshpillar01_128", "block2bb", "didersachs01", "semi3dirty", "cj_don_post_3", "starspangban1_256","wmyconb" }
+Townhall.TexturePath = "files/images/Textures/Cityhall"
+addRemoteEvents{"Townhall:applyTexture", "Townhall:removeTexture"}
+
 function Townhall:constructor()
 	self.m_Peds = {}
 	self.m_OnClickFunc = bind(self.Event_OnPedClick, self)
 
 	-- Job Info
-	local jobInfoPed = Ped.create(12, Vector3(1819.6, -1272.9, 120.3))
-	jobInfoPed:setRotation(Vector3(0, 0, 212.004))
+	local jobInfoPed = Ped.create(12, Vector3(2754.63, -2374.09, 819.24))
+	jobInfoPed:setRotation(Vector3(0, 0, 180))
 	jobInfoPed.Name = _"Spielhilfe"
 	jobInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	jobInfoPed.Type = 1
@@ -23,8 +27,9 @@ function Townhall:constructor()
 	]]
 	-- Groups
 	--// Group create ped
-	local groupInfoPed = Ped.create(9, Vector3(1828.3, -1271.6, 120.3))
-	groupInfoPed:setRotation(Vector3(0, 0, 182.754))
+	local groupInfoPed = Ped.create(9, Vector3(2758.87, -2374.48, 819.24))
+	groupInfoPed:setRotation(Vector3(0, 0, 180))
+	groupInfoPed:setInterior(5)
 	groupInfoPed.Name = _"Private Firmen und Gangs"
 	groupInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	groupInfoPed.Type = 3
@@ -32,9 +37,10 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = groupInfoPed
 
 	--// Group property ped
-	local groupImmoPed = Ped.create(290, Vector3(1824.02, -1271.87, 120.26))
-	groupImmoPed:setRotation(Vector3(0, 0, 182.754))
+	local groupImmoPed = Ped.create(290, Vector3(2763.01, -2374.46, 819.24))
+	groupImmoPed:setRotation(Vector3(0, 0, 180))
 	groupImmoPed.Name = _"Firmen-/Gangimmobilien"
+	groupImmoPed:setInterior(5)
 	groupImmoPed.Description = _"Für mehr Infos klicke mich an!"
 	groupImmoPed.Type = 5
 	groupImmoPed.Func = function()
@@ -45,9 +51,10 @@ function Townhall:constructor()
 	end
 	self.m_Peds[#self.m_Peds + 1] = groupImmoPed
 	-- Items
-	local itemInfoPed = Ped.create(9, Vector3(1832.8, -1273.5, 120.3))
-	itemInfoPed:setRotation(Vector3(0, 0, 132.754))
+	local itemInfoPed = Ped.create(9, Vector3( 2767.47, -2374.46, 819.24))
+	itemInfoPed:setRotation(Vector3(0, 0, 180))
 	itemInfoPed.Name = _"Ausweis / Kaufvertrag"
+	itemInfoPed:setInterior(5)
 	itemInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	itemInfoPed.Type = 4
 	itemInfoPed.Func = function() triggerServerEvent("shopOpenGUI", localPlayer, 50) end
@@ -106,18 +113,34 @@ function Townhall:constructor()
 	
 	
 	--// TOWN HALL JOB LIST 
-	local itemSpawnerPed7 = Ped.create(70, Vector3(1814.72, -1276.14, 120.26))
+	local itemSpawnerPed7 = Ped.create(70, Vector3(2750.27, -2374.66, 819.24))
 	itemSpawnerPed7:setRotation(Vector3(0, 0, 180))
 	itemSpawnerPed7.Name = _"Jobliste"
+	itemSpawnerPed7:setInterior(5)
 	itemSpawnerPed7.Description = _"Klicke hier für Informationen!"
 	itemSpawnerPed7.Func = function() JobHelpGUI:new() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
+	
+
+	local president = Ped.create(153, Vector3(2747.92, -2378.36, 819.15))
+	president:setAnimation("cop_ambient", "Coplook_loop", -1, true)
+	president:setRotation(Vector3(0, 0, 266.67))
+	president:setData("NPC:Immortal", true)
+	president:setFrozen(true)
+	president:setInterior(5)
 	
 	-- Initialize
 	self:initalizePeds()
 
 	local col = createColRectangle(1399.60, -1835.2, 1540.14-1399.60, 1835.2-1582.84) -- pershing square
 	self.m_NoParkingZone = NoParkingZone:new(col)
+	
+
+	self.m_ApplyInteriorTexture = bind(self.applyInteriorTexture, self)
+	addEventHandler("Townhall:applyTexture", localPlayer, self.m_ApplyInteriorTexture)
+	
+	self.m_RemoveInteriorTexture = bind(self.removeInteriorTexture, self)
+	addEventHandler("Townhall:removeTexture", localPlayer, self.m_RemoveInteriorTexture)
 end
 
 function Townhall:destructor()
@@ -145,6 +168,24 @@ function Townhall:Event_OnPedClick(ped)
 	else
 		ShortMessage:new("Clicked-Ped: "..ped.Type)
 		TownhallInfoGUI:getSingleton():openTab(ped.Type)
+	end
+end
+
+function Townhall:applyInteriorTexture()
+	if self.m_InteriorTexture and #self.m_InteriorTexture > 0 then 
+		self:removeInteriorTexture()
+	end
+	self.m_InteriorTexture = {}
+	for i = 1, #Townhall.Textures do 
+		if fileExists(Townhall.TexturePath.."/tex"..i..".jpg") then
+			self.m_InteriorTexture[i] = StaticFileTextureReplacer:new(Townhall.TexturePath.."/tex"..i..".jpg", Townhall.Textures[i])
+		end
+	end
+end
+
+function Townhall:removeInteriorTexture()
+	for i = 1, #self.m_InteriorTexture do 
+		self.m_InteriorTexture[i]:delete()
 	end
 end
 
