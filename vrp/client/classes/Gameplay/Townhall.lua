@@ -11,6 +11,7 @@ function Townhall:constructor()
 	-- Job Info
 	local jobInfoPed = Ped.create(12, Vector3(2754.63, -2374.09, 819.24))
 	jobInfoPed:setRotation(Vector3(0, 0, 180))
+	jobInfoPed:setInterior(5)
 	jobInfoPed.Name = _"Spielhilfe"
 	jobInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	jobInfoPed.Type = 1
