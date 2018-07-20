@@ -1395,7 +1395,7 @@ function Player:attachToVehicle(forceDetach)
 	end
 end
 
-function Player:setModel( skin )
+function Player:setModel(skin)
 	setElementModel( self, skin or 0)
 end
 
@@ -1408,6 +1408,7 @@ function Player:endPrison()
 		self:setPosition(Vector3(1478.87, -1726.17, 13.55))
 		setElementDimension(self,0)
 		setElementInterior(self, 0)
+		
 		toggleControl(self, "fire", true)
 		toggleControl(self, "jump", true)
 		toggleControl(self, "aim_weapon", true)
@@ -1483,14 +1484,25 @@ end
 
 function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
-		local rnd = math.random(1, #Jail.Cells)
 		if not alreadySpawned and not self.m_DeathInJail then
 			self:respawn(false, false, true)
 		end
-		self:setPosition(Jail.Cells[rnd])
-		setElementInterior(self, 0)
+
+		local position, rotation
+
+		if PrisonBreakManager:getSingleton():getCurrent() then
+			position = Vector3(2616.1, -1432.6, 1040.4)
+			rotation = Vector3(0, 0, 0)
+		else
+			local rnd = math.random(1, #Jail.Cells)
+			position = Jail.Cells[rnd]
+			rotation = Vector3(0, 0, 90)
+		end
+
+		self:setPosition(position)
+		self:setRotation(rotation)
+		setElementInterior(self, 2)
 		setElementDimension(self, 0)
-		self:setRotation(0, 0, 90)
 		self:setModel(self.m_Skin)
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)

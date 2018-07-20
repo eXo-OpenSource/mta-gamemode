@@ -82,6 +82,7 @@ function Core:constructor()
 		BankManager:new()
 		BankServer:new()
 		BankRobberyManager:new()
+		PrisonBreakManager:new()
 		--WantedSystem:new()
 		Provider:new()
 		GroupManager:new()
@@ -171,6 +172,7 @@ function Core:constructor()
 		-- Missions
 		MWeaponTruck:new()
 		MWeedTruck:new()
+		ExplosiveTruckManager:new()
 
 		--// Gangwar
 		Gangwar:new()

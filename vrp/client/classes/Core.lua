@@ -78,7 +78,7 @@ function Core:onDownloadComplete()
 	-- other
 	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
-	 
+
 end
 
 function Core:ready() --onClientResourceStart
@@ -162,9 +162,11 @@ function Core:ready() --onClientResourceStart
 		Christmas:new()
 	end
 	if EVENT_EASTER_SLOTMACHINES_ACTIVE then --these are only slot machine textures
-		Easter.updateTextures() 
+		Easter.updateTextures()
 	end
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
+
+	ExplosiveTruckManager:new()
 end
 
 function Core:afterLogin()
@@ -192,7 +194,7 @@ function Core:afterLogin()
 	end
 
 	-- Pre-Instantiate important GUIS
-	
+
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
 

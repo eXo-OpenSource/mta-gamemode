@@ -457,6 +457,12 @@ function Faction:sendWarning(text, header, withOffDuty, pos, ...)
 	end
 end
 
+function Faction:sendSuccess(text)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendSuccess(text)
+	end
+end
+
 function Faction:sendChatMessage(sourcePlayer, message)
 	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
 		local lastMsg, msgTimeSent = sourcePlayer:getLastChatMessage()
@@ -465,7 +471,7 @@ function Faction:sendChatMessage(sourcePlayer, message)
 			return
 		end
 		sourcePlayer:setLastChatMessage(message)
-		
+
 		local playerId = sourcePlayer:getId()
 		local rank = self.m_Players[playerId]
 		local rankName = self.m_RankNames[rank]

@@ -62,6 +62,36 @@ function TollStation:onBarrierHit(player)
 				end
 			end
 
+			local vehicleElements = getAttachedElements(player.vehicle)
+			local vehicleElementsCount = 0
+
+			if vehicleElements then
+				for i, element in pairs(vehicleElements) do
+					if element:getModel() == 2912 then
+						vehicleElementsCount = vehicleElementsCount + 1
+					end
+				end
+			end
+
+			if
+				player:getFaction()
+				and not player:getFaction():isStateFaction()
+				and (
+					player:getPlayerAttachedObject()
+					or vehicleElementsCount > 0
+				)
+				or
+				not player:getFaction()
+				and (
+					player:getPlayerAttachedObject()
+					or vehicleElementsCount > 0
+				)
+			then
+				for i, faction in pairs(FactionState:getSingleton():getFactions()) do
+					faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung eines auffälligen Transport!"):format(self.m_Name), 10000)
+				end
+			end
+
 			if player:getOccupiedVehicleSeat() == 0 then
 				if self:checkRequirements(player) then -- Check for Toll Pass
 					return true

@@ -143,7 +143,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			if amount > 0 then
 				local clipAmmo = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if WEAPON_CLIPS[weaponID] then clipAmmo = WEAPON_CLIPS[weaponID] end
-				
+
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
 						slot = getSlotFromWeapon(weaponID)
@@ -159,8 +159,8 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 								ammoStorage[weaponID] = clipAmmo
 							end
 						end
-						if not logData[WEAPON_NAMES[weaponID]] then 
-							logData[WEAPON_NAMES[weaponID]] = 1 
+						if not logData[WEAPON_NAMES[weaponID]] then
+							logData[WEAPON_NAMES[weaponID]] = 1
 						else
 							logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + 1
 						end
@@ -184,8 +184,8 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 								ammoStorage[weaponID] = ammoStorage[weaponID]+amount*clipAmmo
 							end
 							giveWeapon(player, weaponID, amount*clipAmmo)
-							if not logData[WEAPON_NAMES[weaponID]] then 
-								logData[WEAPON_NAMES[weaponID]] = amount 
+							if not logData[WEAPON_NAMES[weaponID]] then
+								logData[WEAPON_NAMES[weaponID]] = amount
 							else
 								logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + amount
 							end
@@ -216,12 +216,12 @@ end
 
 
 
-function Depot:addItem(player, item, amount)
+function Depot:addItem(player, item, amount, giveItemFromServer)
 	for i=1, 6 do
 		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
 		if self.m_Items[i]["Item"] == 0 then
 			if item ~= "Kleidung" then --wtf we cant check if the item has a value wtf wtf wtf - MasterM 2017
-				if player:getInventory():removeItem(item, amount) then
+				if giveItemFromServer or player:getInventory():removeItem(item, amount) then
 					self.m_Items[i]["Item"] = item
 					self.m_Items[i]["Amount"] = amount
 					player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))

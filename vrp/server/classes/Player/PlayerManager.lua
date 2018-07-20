@@ -9,7 +9,7 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_playerTryToBreakoutJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
 "premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted", "toggleSeatBelt", "onPlayerTryGateOpen", "onPlayerUpdateSpawnLocation", "attachPlayerToVehicle", "onPlayerFinishArcadeEasterEgg"}
 
 function PlayerManager:constructor()
@@ -46,7 +46,7 @@ function PlayerManager:constructor()
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
 	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
 	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
-	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
+	addEventHandler("Event_playerTryToBreakoutJail", root, bind(self.Event_playerTryToBreakoutJail, self))
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
@@ -939,9 +939,13 @@ function PlayerManager:Event_setPlayerWasted()
 	end
 end
 
-function PlayerManager:Event_moveToJail()
+function PlayerManager:Event_playerTryToBreakoutJail()
 	if not client:getData("inAdminPrison") then
-		client:moveToJail(false,true)
+		if PrisonBreakManager:getSingleton():getCurrent() then
+			FactionState:getSingleton():freePlayer(client, true)
+		else
+			client:moveToJail(false, true)
+		end
 	end
 end
 
