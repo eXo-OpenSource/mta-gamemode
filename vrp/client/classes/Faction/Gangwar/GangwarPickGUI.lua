@@ -115,6 +115,7 @@ function GangwarPickGUI:createMessage()
     if not self.m_PickMessage then 
         self.m_ClickBind = bind(self.onMessageClick, self)
         self.m_PickMessage = ShortMessage:new("", "Teilnehmer [Bearbeiten]", tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
+        self.m_PickMessage:setText("• Klicken um die Spieler einzuteilen (Sollte eine leere Liste eingereicht werden, machen alle mit) [Zeit bis 19. Minute]")
     end
 end
 
@@ -136,12 +137,16 @@ function GangwarPickGUI:writeMessage()
     if self.m_Pick and self.m_Creator and self.m_Update then
         local updateTime = (getTickCount() - self.m_Update) / 1000
         local status = not self:compare() and "[ENTWURF]" or ""
-        local text = ("Eingeteilt von %s vor %s Sek. %s"):format(self.m_Creator, math.floor(updateTime), status)
+        local text = ("Eingeteilt von %s vor %s Sek. %s [Zeit bis 19. Minute]"):format(self.m_Creator, math.floor(updateTime), status)
         if self.m_PickMessage then 
-            for key, player in ipairs(self.m_Pick) do 
-                if player and isElement(player) then 
-                    text = text .. "\n • " .. player:getName()
+            if #self.m_Pick > 0 then
+                for key, player in ipairs(self.m_Pick) do 
+                    if player and isElement(player) then 
+                        text = text .. "\n • " .. player:getName()
+                    end
                 end
+            else 
+                text = text .. "\n • Keiner eingeteilt! (Alle machen mit)"
             end
         end
         self.m_PickMessage:setText(_("%s", text))

@@ -24,7 +24,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3	, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*1	, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -320,10 +320,14 @@ end
 function AttackSession:onSubmitPick( participants ) 
 	if client and self.m_PickList then 
 		if client:getFaction() == self.m_Faction1 then
-			self.m_PickList = participants
-			self.m_PickUpdater = client:getName()
-			self.m_PickTick = getTickCount()
-			self:synchronizeLists( )
+			if client:getFaction():getPlayerRank(client) > 2 then
+				self.m_PickList = participants
+				self.m_PickUpdater = client:getName()
+				self.m_PickTick = getTickCount()
+				self:synchronizeLists( )
+			else 
+				client:sendError(_("Du hast keine Berechtigung die Spieler einzuteielen!", client))
+			end
 		end
 	end
 end
@@ -481,7 +485,7 @@ function AttackSession:attackWin() --// win for team1
 end
 
 function AttackSession:onDecisionTimeEnd()
-	if self.m_PickList then
+	if self.m_PickList and #self.m_PickList > 0  then
 		local saveCount = 1
 		for k,v in ipairs( self.m_Participants ) do
 			if v:getFaction() == self.m_Faction2 then
