@@ -9,7 +9,7 @@ end
 function Gate:addGate(model, pos, rot, openPos, openRot, playSound, interior, dimension, scale)
 	local id = #self.m_Gates+1
     self.m_Gates[id] = createObject(model, pos, rot)
-    setObjectScale(self.m_Gates[id], scale or 0)
+    setObjectScale(self.m_Gates[id], scale or 1)
 	self.m_Gates[id].openPos = openPos
 	self.m_Gates[id].closedPos = pos
 	self.m_Gates[id].openRot = openRot or rot
