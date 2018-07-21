@@ -376,7 +376,7 @@ function Player:spawn()
 			if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
 				spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
-				spawnSuccess = spawnPlayer(self, Vector3(1481.87, -1768.80, 18.80), 0, self.m_Skin or 0, 0, 0)
+				spawnSuccess = spawnPlayer(self, Vector3(1480.95, -1765.29, 18.80), 0, self.m_Skin or 0, 0, 0)
 			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
 				if SpawnLocationProperty then
 					local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
