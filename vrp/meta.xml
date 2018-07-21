@@ -75,6 +75,7 @@
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/MTAFixes.lua" type="server"/>
 	<script src="server/classes/ParkGarageZone.lua" type="server"/>
+	<script src="server/classes/InstantTeleportArea.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>

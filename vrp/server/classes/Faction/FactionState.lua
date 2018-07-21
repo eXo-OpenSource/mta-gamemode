@@ -11,19 +11,23 @@ local radarRange = 20
   -- implement by children
 
 function FactionState:constructor()
-	self:createArrestZone(1564.92, -1693.55, 5.89, 4, 5) -- PD garare
+	self:createArrestZone(1564.92, -1693.55, 5.89, 0, 5) -- PD garare
 	self:createArrestZone(1578.50, -1682.24, 15.0)-- PD cells
 	self:createArrestZone(1564.38, -1702.57, 28.40) --PD roof
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 
-	self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
-	self.m_GaragePorter:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
-	self.m_GaragePorter:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
+	--self.m_GaragePorter = VehicleTeleporter:new(Vector3(1587.61, -1654.99, 13.43), Vector3(1597.39, -1671.34, 7.89), 180, 0, 4, 5, "cylinder" , 5, Vector3(0,0,3)) -- pd exit vehicle
+	--self.m_GaragePorter:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
+	--self.m_GaragePorter:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	
-	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 4, 5, 6) -- pd exit 
+	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 86, 10)
+	InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
+	local fakeGas = createObject(1676, 1573.6995, -1620.3545, 14.05274, 0):setDimension(5) -- LSPD #1
+	local fakeGas = createObject(1676, 1553.4237 ,-1620.3545, 14.10274, 0):setDimension(5) -- LSPD #2
+
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit 
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 	
@@ -68,7 +72,7 @@ function FactionState:constructor()
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
 	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
-	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 4, 5)
+	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
 	
 	self.m_Items = {
 		["Barrikade"] = 0,
@@ -200,9 +204,9 @@ end
 
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22, 4, 5) -- PD Garage
+	self:createDutyPickup(1530.21, -1671.66, 6.22, 0, 5) -- PD Garage
 
-	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 4, 5)
+	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.59), 0, 5)
 
 	local blip = Blip:new("Police.png", 1552.278, -1675.725, root, 400, {factionColors[factionId].r, factionColors[factionId].g, factionColors[factionId].b})
 		blip:setDisplayText(FactionManager:getSingleton():getFromId(factionId):getName(), BLIP_CATEGORY.Faction)
@@ -214,18 +218,25 @@ function FactionState:loadLSPD(factionId)
 	local gate = Gate:new(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate:setGateScale(1.01)
+	gate:addGate(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0), false, 0, 5, 1.01)
+
+	local gate2 = Gate:new(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), true, 0, 5)
+	gate2.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
+	gate2:setGateScale(1.0285093)
+	gate2:addGate(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 7.0712), Vector3(80, 0, 0), false, 0, 0, 1.0285093)
+	
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	door:setDoorScale(1.1)
-
+	door:addDoor( 2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270),  false, 0, 5, 1.1)
 	--InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
 	--InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
 
 	local elevator = Elevator:new()
 	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90, 0, 0)
 	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6, 0, 5)
-	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 4, 5)
+	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270, 0, 5)
 
 
 

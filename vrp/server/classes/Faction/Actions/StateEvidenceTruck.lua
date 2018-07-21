@@ -105,10 +105,10 @@ function StateEvidenceTruck:spawnMoneyBags()
 		self.m_MoneyBag[i]:setData("Money", money, true)
 		self.m_MoneyBag[i]:setData("MoneyBag", true, true)
 		self.m_MoneyBag[i].LoadHook = bind(self.loadBag, self)
-		self.m_MoneyBag[i]:setInterior(4)
+		self.m_MoneyBag[i]:setInterior(0)
 		self.m_MoneyBag[i]:setDimension(5)
 	end
-	self.m_Truck:setInterior(4)
+	self.m_Truck:setInterior(0)
 	self.m_Truck:setDimension(5)
 end
 

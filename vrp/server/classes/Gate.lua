@@ -1,23 +1,25 @@
 Gate = inherit(Object)
 Gate.Map = {}
-function Gate:constructor(model, pos, rot, openPos, openRot, playSound)
+function Gate:constructor(model, pos, rot, openPos, openRot, playSound, interior , dimension)
     self.m_Gates = {}
 	self.m_Closed = true
-
-	self:addGate(model, pos, rot, openPos, openRot, playSound)
+	self:addGate(model, pos, rot, openPos, openRot, playSound, interior, dimension)
 end
 
-function Gate:addGate(model, pos, rot, openPos, openRot, playSound)
+function Gate:addGate(model, pos, rot, openPos, openRot, playSound, interior, dimension, scale)
 	local id = #self.m_Gates+1
-	self.m_Gates[id] = createObject(model, pos, rot)
+    self.m_Gates[id] = createObject(model, pos, rot)
+    setObjectScale(self.m_Gates[id], scale or 0)
 	self.m_Gates[id].openPos = openPos
 	self.m_Gates[id].closedPos = pos
 	self.m_Gates[id].openRot = openRot or rot
 	self.m_Gates[id].closedRot = rot
 	self.m_Gates[id].playSound = (playSound == nil and true or playSound) --default true
 	self.m_Gates[id].m_Super = self
-	self.m_Gates[id].m_Id = id
-	Gate.Map[#Gate.Map+1] = self.m_Gates[id]
+    self.m_Gates[id].m_Id = id
+    self.m_Gates[id]:setInterior(interior or 0)
+    self.m_Gates[id]:setDimension(dimension or 0)
+    Gate.Map[#Gate.Map+1] = self.m_Gates[id]
 end
 
 function Gate:triggerMovement(hitEle)
