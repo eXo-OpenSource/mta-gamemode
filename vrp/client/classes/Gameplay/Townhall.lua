@@ -123,7 +123,7 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
 	
 
-	local president = Ped.create(153, Vector3(2747.92, -2378.36, 819))
+	local president = Ped.create(153, Vector3(2747.92, -2378.36, 818.9))
 	president:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, false, true)
 	president:setRotation(Vector3(0, 0, 266.67))
 	president:setData("NPC:Immortal", true)

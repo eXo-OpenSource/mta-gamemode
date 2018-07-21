@@ -31,9 +31,9 @@
     
     <bus_stop id="bus_stop (52)" markerdistance="4.5" lines="1" name="Idlewood" alpha="255" interior="0" posX="2138.2627" posY="-1759.3618" posZ="13.80656" rotX="0" rotY="0" rotZ="270.043"></bus_stop>
     <bus_stop id="bus_stop (53)" markerdistance="4.5" lines="1" name="Jefferson" alpha="255" interior="0" posX="2188.7527" posY="-1377.2513" posZ="24.25656" rotX="0" rotY="0" rotZ="90.32"></bus_stop>
-    <bus_stop id="bus_stop (54)" markerdistance="4.5" lines="1" name="Stadthalle" alpha="255" interior="0" posX="1783.3514" posY="-1271.3582" posZ="13.84946" rotX="0" rotY="0" rotZ="128.792"></bus_stop>
+    <bus_stop id="bus_stop (54)" markerdistance="4.5" lines="1" name="Glen-Park" alpha="255" interior="0" posX="1783.3514" posY="-1271.3582" posZ="13.84946" rotX="0" rotY="0" rotZ="128.792"></bus_stop>
     <bus_stop id="bus_stop (55)" markerdistance="4.5" lines="1" name="Downtown" alpha="255" interior="0" posX="1655.416" posY="-1154.0682" posZ="24.17" rotX="0" rotY="0" rotZ="89.814"></bus_stop>
-    <bus_stop id="bus_stop (56)" markerdistance="4.5" lines="1" name="Stadthalle" alpha="255" interior="0" posX="1792.7913" posY="-1281.808" posZ="13.84946" rotX="0" rotY="0" rotZ="308.778"></bus_stop>
+    <bus_stop id="bus_stop (56)" markerdistance="4.5" lines="1" name="Glen-Park" alpha="255" interior="0" posX="1792.7913" posY="-1281.808" posZ="13.84946" rotX="0" rotY="0" rotZ="308.778"></bus_stop>
     <bus_stop id="bus_stop (57)" markerdistance="4.5" lines="1" name="Jefferson" alpha="255" interior="0" posX="2188.6279" posY="-1391.601" posZ="24.25656" rotX="0" rotY="0" rotZ="270.037"></bus_stop>
     <bus_stop id="bus_stop (58)" markerdistance="4.5" lines="1" name="Idlewood" alpha="255" interior="0" posX="2138.2876" posY="-1745.1364" posZ="13.80656" rotX="0" rotY="0" rotZ="90.32"></bus_stop>
 

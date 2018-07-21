@@ -990,7 +990,7 @@ end
 
 function Admin:teleportTo(player,cmd,ort)
 local tpTable = {
-        ["noobspawn"] =     {["pos"] = Vector3(1481.87, -1768.80, 18.80),  	["typ"] = "Orte"},
+        ["noobspawn"] =     {["pos"] = Vector3(1481.01, -1764.31, 18.80),  	["typ"] = "Orte"},
         ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
         ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
         ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
@@ -1053,7 +1053,7 @@ local tpTable = {
         ["rescue"] =        {["pos"] = Vector3(1135.98, -1389.90, 13.76),  	["typ"] = "Fraktionen"},
         ["fbi"] =           {["pos"] = Vector3(1257.14, -1826.52, 13.12),  	["typ"] = "Fraktionen"},
         ["pd"] =            {["pos"] = Vector3(255.34, 66.01, 1003.64),  	["typ"] = "Fraktionen", ["interior"] = 6},
-        ["pdgarage"] =      {["pos"] = Vector3(1587.02, -1688.55, 6.23),  	["typ"] = "Fraktionen", ["interior"] = 4, ["dimension"]  = 5},
+        ["pdgarage"] =      {["pos"] = Vector3(1584.75, -1688.79, 6.22),  	["typ"] = "Fraktionen", ["interior"] = 0, ["dimension"]  = 5},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
