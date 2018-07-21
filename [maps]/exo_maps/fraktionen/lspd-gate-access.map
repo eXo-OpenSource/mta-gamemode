@@ -1,0 +1,16 @@
+<map edf:definitions="editor_main">
+
+    <object id="object (CJ_AIRP_PILLARS) (3)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1590.7759" posY="-1664.6003" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (4)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1592.4384" posY="-1664.5767" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (5)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1603.8383" posY="-1664.5824" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (6)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1602.1808" posY="-1664.5493" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (7)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1596.5134" posY="-1664.5946" posZ="10.7798" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (8)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="1589.1124" posY="-1664.5338" posZ="-1.2452" rotX="0" rotY="0" rotZ="0"></object>
+	
+	<object id="object (CJ_AIRP_PILLARS) (3)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1590.7759" posY="-1664.6003" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (4)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1592.4384" posY="-1664.5767" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (5)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1603.8383" posY="-1664.5824" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (6)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1602.1808" posY="-1664.5493" posZ="17.1798" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (7)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1596.5134" posY="-1664.5946" posZ="10.7798" rotX="0" rotY="90" rotZ="0"></object>
+    <object id="object (CJ_AIRP_PILLARS) (8)" breakable="true" interior="0" alpha="255" model="2774" doublesided="false" scale="1" dimension="5" posX="1589.1124" posY="-1664.5338" posZ="-1.2452" rotX="0" rotY="0" rotZ="0"></object>
+</map>
