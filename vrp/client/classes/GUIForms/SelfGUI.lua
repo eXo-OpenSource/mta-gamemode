@@ -922,19 +922,14 @@ function SelfGUI:onSettingChange(setting)
 		self.m_ChartFPS:setChecked(core:get("HUD", "chartFPSVisible", true))
 		self.m_ChartFPS.onChange = function (state) core:set("HUD", "chartFPSVisible", state) end
 
-		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.4, self.m_Height*0.57, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
-		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
-		self.m_HUDScale:setColor(Color.LightBlue)
-		self.m_HUDScale:setText(_"HUD-Skalierung")
+		self.m_HUDScaleLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.07, _"HUD-Skalierung" , self.m_SettingBG):setFontSize(0.75)
+		self.m_HUDScale = GUISlider:new(self.m_Width*0.4, self.m_Height*0.57, self.m_Width*0.25, self.m_Height*0.07, self.m_SettingBG)
+		self.m_HUDScale:setRange(0.01, 1)
+		self.m_HUDScale:setValue(core:get("HUD","scaleScroll",1))
 
-		local oldScale = 0.75
-		self.m_HUDScale.onScroll = function()
-			local scale = math.round(self.m_HUDScale:getScrollPosition(), 2);
-			if scale ~= oldScale then
-				HUDUI:getSingleton():setScale( scale );
-				oldScale = scale
-				core:set("HUD","scaleScroll",scale*0.75)
-			end
+		self.m_HUDScale.onUpdate = function( scale )
+			HUDUI:getSingleton():setScale( scale );
+			core:set("HUD","scaleScroll", scale )
 		end
 
 		updateDesignOptions(core:get("HUD", "UIStyle", UIStyle.Chart)) --only show items which are relevant for current UI
@@ -980,18 +975,13 @@ function SelfGUI:onSettingChange(setting)
 			updateDesignOptions()
 		end
 
-		self.m_BlipScale = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_BlipScale:setScrollPosition( core:get("HUD","blipScale", 1) - 0.5)
-		self.m_BlipScale:setColor(Color.LightBlue)
-		self.m_BlipScale:setText(_"Blipgröße")
-		local oldScale = 0.5
-		self.m_BlipScale.onScroll = function()
-			local scale = math.round(self.m_BlipScale:getScrollPosition(), 2)
-			if scale ~= oldScale then
-				Blip.setScaleMultiplier(scale)
-				oldScale = scale
-			end
-		end
+		self.m_BlipScaleLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.35, self.m_Height*0.07, _"Blip-Skalierung" , self.m_SettingBG):setFontSize(0.75)
+		self.m_BlipScale = GUISlider:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_BlipScale:setRange(0.2, 2)
+		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
+		self.m_BlipScale.onUpdate = function( scale )
+			Blip.setScaleMultiplier(scale)
+		end	
 
 		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
 		self.m_ColoredBlips:setFont(VRPFont(25))
@@ -1018,17 +1008,13 @@ function SelfGUI:onSettingChange(setting)
 			HUDRadar:getSingleton():toggleStatusBars(state)
 		end
 
-		self.m_MapOpacity = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_MapOpacity:setScrollPosition(core:get("HUD","mapOpacity", 0.7))
-		self.m_MapOpacity:setColor(Color.LightBlue)
-		self.m_MapOpacity:setText(_"Karten-Transparenz")
-		local oldScale = 0.7
-		self.m_MapOpacity.onScroll = function()
-			local scale = math.round(self.m_MapOpacity:getScrollPosition(), 2)
-			if scale ~= oldScale then
-				oldScale = scale
-				core:set("HUD","mapOpacity", scale)
-			end
+		self.m_MapLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.07, _"Karten-Transparenz" , self.m_SettingBG):setFontSize(0.75)
+		self.m_MapOpacity = GUISlider:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_MapOpacity:setRange(0.1, 1)
+		self.m_MapOpacity:setValue(core:get("HUD","mapOpacity", 0.7))
+		self.m_MapOpacity.onUpdate = function( opacity )
+			local scale = math.round(opacity, 2)
+			core:set("HUD","mapOpacity", opacity)
 		end
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
@@ -1193,28 +1179,17 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
 		self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
-		self.m_RenderDistance = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
-		self.m_RenderDistance:setScrollPosition( 9000/getFarClipDistance())
-		self.m_RenderDistance:setColor(Color.LightBlue)
-		self.m_RenderDistance:setText(_"Sichtweite")
-		local oldRenderDistance = 0
-		self.m_RenderDistance.onScroll = function()
-			local scale = math.round(self.m_RenderDistance:getScrollPosition(), 2);
-			if scale ~= oldRenderDistance then
-				local renderdistance = scale * 9000 
-				if renderdistance > 250 then
-					setFarClipDistance(renderdistance)
-					core:set("Other","RenderDistance",math.floor(renderdistance))
-				else 
-					setFarClipDistance(250)
-					core:set("Other","RenderDistance", 250)	
-				end
-				oldRenderDistance = scale
-				self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
-			end
+		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
+		self.m_RenderDistance:setRange(250, 9000)
+		self.m_RenderDistance:setValue( getFarClipDistance())
+
+		self.m_RenderDistance.onUpdate = function( dist )
+			setFarClipDistance(dist)
+			self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
+			core:set("Other","RenderDistance", math.floor(dist))
 		end
 		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
-		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance())) end
+		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()));self.m_RenderDistance:setValue( getFarClipDistance()) end
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
 		--	self.m_StartIntro:setFontSize(1)

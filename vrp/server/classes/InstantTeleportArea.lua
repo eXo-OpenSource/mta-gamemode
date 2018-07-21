@@ -14,7 +14,6 @@ function InstantTeleportArea:Event_onColShapeHit( hE, bDim )
     if bDim  then 
         setElementDimension(hE, self.m_DestinationDim)
         setElementInterior(hE, self.m_DestinationInt)
-        outputChatBox("tpd")
     end
 end
 
