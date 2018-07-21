@@ -10,7 +10,11 @@ function HTTPDownloadGUI:constructor()
 	self.m_Logo = GUIImage:new(screenWidth/2 - 350/2, screenHeight/2 - 200/2 - 120, 350, 167, "files/images/Logo.png", self)
 	self.m_Text = GUILabel:new(0, screenHeight - 150 - 60/2, screenWidth, 60, "Lade Dateien herunter...", self):setAlignX("center")
 	self.m_DownloadBar = GUIProgressBar:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self)
-	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
+	if core:get("Login", "LoginMusic", true) then
+		self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
+	else 
+		self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu starten!", self):setAlignX("center")
+	end
 
 	fadeCamera(false, 0.1)
 	self:launchMusic()
@@ -27,12 +31,16 @@ end
 
 function HTTPDownloadGUI:launchMusic()
 	if not self:isVisible() then return end
-	self.m_Music = playSound(INGAME_WEB_PATH .. "/ingame/DownloadMusic.mp3", true)
-	self.m_Music:setVolume(0.3)
+	if core:get("Login", "LoginMusic", true) then
+		self.m_Music = playSound(INGAME_WEB_PATH .. "/ingame/DownloadMusic.mp3", true)
+		self.m_Music:setVolume(0.3)
+	end
 	self.m_StopMusicFunc = function()
 		if self.m_Music then
 			destroyElement(self.m_Music)
 			self.m_Music = nil
+			self.m_MusicText:setText("Drücke 'm', um die Musik zu starten!")
+			core:set("Login", "LoginMusic", false)
 			self:bind("m", self.m_StartMusicFunc)
 		end
 	end
@@ -40,11 +48,16 @@ function HTTPDownloadGUI:launchMusic()
 		if not self.m_Music then
 			self.m_Music = playSound(INGAME_WEB_PATH .. "/ingame/DownloadMusic.mp3", true)
 			self.m_Music:setVolume(0.3)
+			self.m_MusicText:setText("Drücke 'm', um die Musik zu stoppen!")
+			core:set("Login", "LoginMusic", true)
 			self:bind("m", self.m_StopMusicFunc)
 		end
 	end
-
-	self:bind("m", self.m_StopMusicFunc)
+	if core:get("Login", "LoginMusic", true) then
+		self:bind("m", self.m_StopMusicFunc)
+	else 
+		self:bind("m", self.m_StartMusicFunc)
+	end
 end
 
 function HTTPDownloadGUI:setStateText(text)
