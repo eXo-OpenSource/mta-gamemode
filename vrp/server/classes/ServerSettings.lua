@@ -17,5 +17,8 @@ function ServerSettings:constructor()
 				setServerPassword()
 			end
 		end
+		if row.Index == "FPSLimit" then 
+			setFPSLimit(tonumber(row.Value) or 60)
+		end
 	end
 end
