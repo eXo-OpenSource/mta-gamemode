@@ -308,7 +308,7 @@ function bind(func, ...)
 			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
-			local hookInfo = ""
+			--[[local hookInfo = ""
 			local dHook = function(sourceResource, functionName, isAllowedByACL, luaFilename, luaLineNumber, ...)
 				if hookInfo ~= "" then hookInfo = hookInfo .. " - " end
 				hookInfo = hookInfo .. inspect({sourceResource = sourceResource, functionName = functionName, isAllowedByACL = isAllowedByACL, luaFilename = luaFilename, luaLineNumber = luaLineNumber, args = {...}}, {newline=' ', indent=""})
@@ -316,22 +316,22 @@ function bind(func, ...)
 
 			if not triggerServerEvent then
 				addDebugHook("preFunction", dHook)
-			end
+			end]]
 
 			local retValue = func(unpack(params))
 
-			if not triggerServerEvent then
+			--[[if not triggerServerEvent then
 				removeDebugHook("preFunction", dHook)
-			end
+			end]]
 
-			if not triggerServerEvent then
+			--[[if not triggerServerEvent then
 				local time = getTickCount() - perfTest
 				if time >= 50 then -- log everthing over 50ms ;)
 					local data = inspect({...}, {newline=' ', indent=""}) .. " - " .. inspect({source = source, this = this, client = client, eventName = eventName}, {newline=' ', indent=""})
-					data = data .. " - [[ " .. hookInfo .. " ]]"
+					data = data .. " -  " .. hookInfo .. " "
 					FileLogger:getSingleton():addPerfLog(time, "classlib@bind", data)
 				end
-			end
+			end]]
 			return retValue
 		end
 end
