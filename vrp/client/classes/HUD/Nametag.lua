@@ -126,6 +126,9 @@ function Nametag:drawIcons(player, center_x , center_y, height, alpha)
 	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then
 		icons[#icons+1] = "seatbelt.png"
 	end
+	if player:getPublicSync("gangwarParticipant") then 
+		icons[#icons+1] = "GangwarIcon.png"
+	end
 	for index, icon in pairs(icons) do
 		index = index - 1
 		dxDrawImage(center_x - (#icons * height*1.1)/2 + index * height*1.1, center_y, height, height, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,255*alpha))
