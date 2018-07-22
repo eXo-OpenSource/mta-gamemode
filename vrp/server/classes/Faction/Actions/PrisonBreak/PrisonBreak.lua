@@ -17,7 +17,8 @@ function PrisonBreak:constructor()
 	self.m_Entrance = PrisonBreakManager:getSingleton().m_Entrance
 
 	self.m_Officer = PrisonBreakManager:getSingleton().m_Officer
-	addEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
+
+	self.m_WeaponBoxPlayers = {}
 
 	self.m_OfficerEnemies = {}
 	self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
@@ -28,11 +29,13 @@ function PrisonBreak:constructor()
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
 	self.m_GetKeycardsFromOfficerBind = bind(self.getKeycardsFromOfficer, self)
 
+	-- Events
+	addEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
+
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
 		addEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
 
-	self.m_WeaponBoxPlayers = {}
 end
 
 function PrisonBreak:destructor()
