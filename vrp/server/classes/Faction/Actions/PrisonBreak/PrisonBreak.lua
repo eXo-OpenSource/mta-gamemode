@@ -44,9 +44,7 @@ function PrisonBreak:destructor()
 	end
 
 	for key, player in pairs(self.m_OfficerEnemies) do
-		if isElement(player) then
-			PrisonBreak.RemoveKeycard(player)
-		end
+		PrisonBreak.RemoveKeycard(player)
 	end
 
 	PrisonBreakManager:getSingleton():stop()
@@ -118,7 +116,7 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 	if self.m_Officer ~= target then
 		for key, player in pairs(self.m_OfficerEnemies) do
 			if player == source then
-				self.m_OfficerEnemies[key] = nil
+				table.remove(self.m_OfficerEnemies, key)
 			end
 		end
 
@@ -154,9 +152,7 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 
 				setTimer(function ()
 					for key, player in pairs(self.m_OfficerEnemies) do
-						if isElement(player) then
-							PrisonBreak.RemoveKeycard(player)
-						end
+						PrisonBreak.RemoveKeycard(player)
 					end
 				end, PrisonBreak.KeycardsCountdown, 1)
 
@@ -198,8 +194,10 @@ function PrisonBreak:finish()
 end
 
 function PrisonBreak.RemoveKeycard(player)
-	if player:getInventory():getItemAmount("Keycard") > 0 then
-		player:getInventory():removeAllItem("Keycard")
-		player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
+	if player and isElement(player) and player:getInventory() then
+		if player:getInventory():getItemAmount("Keycard") > 0 then
+			player:getInventory():removeAllItem("Keycard")
+			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
+		end
 	end
 end

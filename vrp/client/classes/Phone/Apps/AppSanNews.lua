@@ -159,7 +159,7 @@ addEventHandler("showAd", root, function(sender, text, color, duration)
 end)
 
 
-addEvent("closeAd")
+addEvent("closeAd", true)
 addEventHandler("closeAd", root, function()
 	if currentAd then
 		delete(currentAd)
