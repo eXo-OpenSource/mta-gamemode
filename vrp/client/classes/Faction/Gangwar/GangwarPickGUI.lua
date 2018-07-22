@@ -1,15 +1,18 @@
 GangwarPickGUI = inherit(GUIForm)
 local width,height = screenWidth * 0.3 , screenHeight*0.4
 
-function GangwarPickGUI:constructor( area, canModify )
+function GangwarPickGUI:constructor( area, canModify, enablePick )
     GUIWindow.updateGrid()
 	self.m_Width = grid("x", 16) 
     self.m_Height = grid("y", 12)
     
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Spielereinteilung - %s", area) , true, true, self)
-    self.m_InfoLabel = GUIGridLabel:new(1, 1, 12, 1, _"Hier können die Teilnehmer des Gangwars eingeteilt werden!", self)
-    
+    self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Spielereinteilung - %s", area) , true, true, self)
+    if enablePick then
+        self.m_InfoLabel = GUIGridLabel:new(1, 1, 12, 1, _"Hier können die Teilnehmer des Gangwars eingeteilt werden!", self)
+    else 
+        self.m_InfoLabel = GUIGridLabel:new(1, 1, 12, 1, _"Die Gegner teilen ihre Spieler ein!", self)
+    end
     self.m_ButtonRefresh = GUIGridButton:new(12, 1, 2, 1, FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1):setBarEnabled(false)
     self.m_ButtonRefresh.onLeftClick = bind(self.Event_OnRefreshClick, self)
 
@@ -37,8 +40,8 @@ function GangwarPickGUI:constructor( area, canModify )
     self.m_UpdateTimer = setTimer( self.m_UpdateBind, 500, 0)
 
     self:fill()
-    self:createMessage()
-    self:setModify(canModify)
+    self:createMessage( enablePick )
+    self:setModify( canModify )
 end
 
 function GangwarPickGUI:fill()
@@ -111,11 +114,16 @@ function GangwarPickGUI:add( player )
     end
 end
 
-function GangwarPickGUI:createMessage() 
+function GangwarPickGUI:createMessage( enablePick ) 
     if not self.m_PickMessage then 
-        self.m_ClickBind = bind(self.onMessageClick, self)
-        self.m_PickMessage = ShortMessage:new("", "Teilnehmer [Bearbeiten]", tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
-        self.m_PickMessage:setText("• Klicken um die Spieler einzuteilen (Sollte eine leere Liste eingereicht werden, machen alle mit) [Zeit bis 19. Minute]")
+        if enablePick then
+            self.m_ClickBind = bind(self.onMessageClick, self)
+            self.m_PickMessage = ShortMessage:new("", "Teilnehmer [Bearbeiten]", tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
+            self.m_PickMessage:setText("• Klicken um die Spieler einzuteilen (Sollte eine leere Liste eingereicht werden, machen alle mit)")
+        else 
+            self.m_PickMessage = ShortMessage:new("", "Teilnehmer der Gegner", tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
+            self.m_PickMessage:setText("• Die Gegner teilen zurzeit ihre Spieler ein!")
+        end
     end
 end
 
@@ -137,7 +145,7 @@ function GangwarPickGUI:writeMessage()
     if self.m_Pick and self.m_Creator and self.m_Update then
         local updateTime = (getTickCount() - self.m_Update) / 1000
         local status = not self:compare() and "[ENTWURF]" or ""
-        local text = ("Eingeteilt von %s vor %s Sek. %s [Zeit bis 19. Minute]"):format(self.m_Creator, math.floor(updateTime), status)
+        local text = ("Eingeteilt von %s vor %s Sek. %s"):format(self.m_Creator, math.floor(updateTime), status)
         if self.m_PickMessage then 
             if #self.m_Pick > 0 then
                 for key, player in ipairs(self.m_Pick) do 

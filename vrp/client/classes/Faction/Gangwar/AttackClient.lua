@@ -12,7 +12,7 @@ AttackClient = inherit(Object)
 local pseudoSingleton
 addRemoteEvents{"onGangwarDamage", "onGangwarKill", "GangwarPick:synchronizePick", "GangwarPick:close"}
 local clearTimer = nil
-function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pAttacker, pPickParticipants) 
+function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, pAreaID, bIsNoRush, areaName, pCanModifyPick, pPickParticipants, pShowPickGUI) 
 	REPORT_LAST_KILL = false
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
@@ -28,7 +28,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 		killTimer(clearTimer) 
 	end
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
-	self.m_GangwarPick = GangwarPickGUI:new( areaName, pAttacker )
+	self.m_GangwarPick = GangwarPickGUI:new( areaName, pCanModifyPick, pShowPickGUI )
 	if not pAttacker then 
 		self.m_GangwarPick:setVisible(false)
 	end
@@ -175,11 +175,11 @@ end
 addEventHandler("AttackClient:synchronizeTime", root,AttackClient.remoteSynchronizeTime)
 
 addEvent("AttackClient:launchClient",true)
-function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants )
+function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants, pShowPickGUI )
 	if pseudoSingleton then 
 		pseudoSingleton:delete()
 	end
-	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants)
+	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos, pAreaID, bNoRush, pAreaName, pAttacker, pPickParticipants, pShowPickGUI)
 end
 addEventHandler("AttackClient:launchClient",localPlayer,AttackClient.newClient)
 

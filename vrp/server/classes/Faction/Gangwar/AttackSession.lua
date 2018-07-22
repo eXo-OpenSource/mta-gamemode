@@ -24,7 +24,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*1	, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3	, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
@@ -95,8 +95,12 @@ function AttackSession:synchronizeAllParticipants( )
 			table.insert(pickParticipants, v)
 		end
 	end
+	local canModify = false 
+	local showPickGUI = false
 	for k,v in ipairs( self.m_Participants ) do
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == v, pickParticipants )
+		canModify = v == self.m_AttackingPlayer or v:getFaction():getPlayerRank(v) >= 3
+		showPickGUI = v:getFaction() == self.m_Faction1 
+		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI )
 		v:triggerEvent("GangwarQuestion:new")
 	end
 end
@@ -130,8 +134,10 @@ end
 function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
+		local canModify =  self.m_AttackingPlayer == player or player:getFaction():getPlayerRank(player) >= 3
 		self.m_Participants[#self.m_Participants + 1] = player
 		local pickParticipants = {}
+		local showPickGUI
 		for k,v in ipairs( self.m_Participants ) do
 			if v:getFaction() == self.m_Faction1 then
 				table.insert(pickParticipants, v)
@@ -139,12 +145,14 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 		end
 		player:setPublicSync("gangwarParticipant", true) 
 		if not bLateJoin then
-			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
+			showPickGUI = player:getFaction() == self.m_Faction1
+			player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 		else
 			if isTimer( self.m_BattleTime ) then
+				showPickGUI = player:getFaction() == self.m_Faction1
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
-				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player, pickParticipants)
+				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 			end
 		end
 		self:synchronizeLists( )
@@ -201,9 +209,17 @@ function AttackSession:joinPlayer( player )
 		self:addParticipantToList( player , true)
 	else 
 		if isTimer( self.m_BattleTime ) then
+			local pickParticipants = {}
+			for k,v in ipairs( self.m_Participants ) do
+				if v:getFaction() == self.m_Faction1 then
+					table.insert(pickParticipants, v)
+				end
+			end
 			local timeLeft = getTimerDetails( self.m_BattleTime )
 			timeLeft = math.ceil(timeLeft /1000)
-			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, self.m_AttackingPlayer == player)
+			local canModify = player == self.m_AttackingPlayer or player:getFaction():getPlayerRank(player) >= 3
+			local showPickGUI = player:getFaction() == self.m_Faction1
+			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
 		end
 	end
 end
