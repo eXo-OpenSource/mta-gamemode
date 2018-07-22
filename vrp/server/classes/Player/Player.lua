@@ -463,7 +463,7 @@ function Player:spawn()
 		self:setArmor(100)
 		giveWeapon(self, 24, 35)
 	end
- 
+
 	-- gets unfrozen if he has a session id
 	self:setFrozen(true)
 	setCameraTarget(self, self)
@@ -481,6 +481,8 @@ function Player:spawn()
 	if self.m_DeathInJail then
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
+
+	PrisonBreak.RemoveKeycard(self)
 
 	self:triggerEvent("checkNoDm")
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
@@ -537,6 +539,8 @@ function Player:respawn(position, rotation, bJailSpawn)
 	end
 	triggerEvent("WeaponAttach:removeAllWeapons", self)
 	triggerEvent("WeaponAttach:onInititate", self)
+
+	PrisonBreak.RemoveKeycard(self)
 end
 
 function Player:clearReviveWeapons()
@@ -1408,7 +1412,7 @@ function Player:endPrison()
 		self:setPosition(Vector3(1478.87, -1726.17, 13.55))
 		setElementDimension(self,0)
 		setElementInterior(self, 0)
-		
+
 		toggleControl(self, "fire", true)
 		toggleControl(self, "jump", true)
 		toggleControl(self, "aim_weapon", true)

@@ -58,7 +58,7 @@ function Jail:createGate(interior, gatePos, gateRot, keypad1Pos, keypad1Rot, key
 		self.m_Keypad1[Id].Id = Id
 		addEventHandler("onElementClicked", self.m_Keypad1[Id], self.m_onKeypadClicked)
 	end
-	
+
 	if keypad2Pos then
 		self.m_Keypad2[Id] = createObject(2886, keypad2Pos, 0, 0, keypad2Rot)
 		self.m_Keypad2[Id]:setInterior(interior)
@@ -70,11 +70,11 @@ end
 function Jail:onKeypadClick(button, state, player)
 	if button == "left" and state == "down" then
 		if source.Id and isElement(self.m_Gates[source.Id]) then
-			if 
+			if
 				player:getFaction()
 				and (
 					player:getFaction():isStateFaction() and player:isFactionDuty()
-					or PrisonBreakManager:getSingleton():getCurrent() and player:getFaction() == PrisonBreakManager:getSingleton():getCurrent().m_Faction and PrisonBreakManager:getSingleton():getCurrent().m_Keycards
+					or PrisonBreakManager:getSingleton():getCurrent() and player:getInventory():getItemAmount("Keycard") > 0
 				)
 			then
 				self:moveGate(self.m_Gates[source.Id])

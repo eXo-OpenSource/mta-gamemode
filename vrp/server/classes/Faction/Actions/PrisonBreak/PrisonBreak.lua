@@ -23,8 +23,6 @@ function PrisonBreak:constructor()
 	self.m_OfficerEnemies = {}
 	self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
 
-	self.m_Keycards = false
-
 	---Binds
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
 	self.m_GetKeycardsFromOfficerBind = bind(self.getKeycardsFromOfficer, self)
@@ -43,6 +41,12 @@ function PrisonBreak:destructor()
 
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
 		removeEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
+	end
+
+	for key, player in pairs(self.m_OfficerEnemies) do
+		if isElement(player) then
+			PrisonBreak.RemoveKeycard(player)
+		end
 	end
 
 	PrisonBreakManager:getSingleton():stop()
@@ -140,15 +144,21 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 			sourcePlayer:sendShortMessage("Bedrohung zu " .. math.round((self.m_OfficerCountdown / PrisonBreak.OfficerCountdown) * 100, 1) .. " % abgeschlossen.") -- BUG
 
 			if self.m_OfficerCountdown <= 0 then
-				self.m_Keycards = true
+				for key, player in pairs(self.m_OfficerEnemies) do
+					if isElement(player) then
+						player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
+						player:getInventory():giveItem("Keycard", 1)
+						player:sendSuccess("Du hast eine Keycard erhalten!")
+					end
+				end
 
 				setTimer(function ()
-					self.m_Keycards = false
+					for key, player in pairs(self.m_OfficerEnemies) do
+						if isElement(player) then
+							PrisonBreak.RemoveKeycard(player)
+						end
+					end
 				end, PrisonBreak.KeycardsCountdown, 1)
-
-				for key, player in pairs(self.m_Faction:getOnlinePlayers()) do
-					player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
-				end
 
 				killTimer(self.m_OfficerTimer)
 				self.m_OfficerTimer = nil
@@ -185,4 +195,11 @@ function PrisonBreak:finish()
 	ActionsCheck:getSingleton():endAction()
 
 	delete(self)
+end
+
+function PrisonBreak.RemoveKeycard(player)
+	if player:getInventory():getItemAmount("Keycard") > 0 then
+		player:getInventory():removeAllItem("Keycard")
+		player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
+	end
 end

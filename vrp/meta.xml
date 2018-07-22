@@ -107,7 +107,7 @@
 	<!--Phone-->
 	<script src="server/classes/Phone/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Phone/PhoneNumbers.lua" type="server"/>
-	
+
 	<!-- Player -->
 	<script src="server/classes/Player/Account.lua" type="server"/>
 	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
@@ -593,7 +593,7 @@
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-GameLogic.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Projectile.lua" type="client" />
 	<script src="client/classes/EasterEggs/arcade/EasterEggArcade-Game.lua" type="client" />
-	
+
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
@@ -1109,8 +1109,8 @@
 
 	<!-- font file -->
 	<file src="files/fonts/Chapaza.ttf" />
-	
-	
+
+
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
@@ -1645,7 +1645,7 @@
 	<vrpfile src="files/images/Textures/Cityhall/tex14.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex15.jpg"/>
 	<vrpfile src="files/images/Textures/Cityhall/tex16.jpg"/>
-	
+
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
 	<vrpfile src="files/images/Inventory/food.png" />
@@ -1701,6 +1701,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Osterei.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Taser.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Feuerwerk.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Keycard.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
@@ -1819,18 +1820,18 @@
 	<vrpfile src="files/images/TurtleRace/Turtle.png"/>
 	<vrpfile src="files/images/TurtleRace/Turtle-body.png"/>
 
-		
+
 	<vrpfile src="files/images/arcade-game/arena.jpg" />
 	<vrpfile src="files/images/arcade-game/ground.jpg" />
 	<vrpfile src="files/images/arcade-game/overlay.png" />
-	
+
 	<vrpfile src="files/images/arcade-game/key.png" />
 	<vrpfile src="files/images/arcade-game/space.png" />
-	
+
 	<vrpfile src="files/images/arcade-game/health_empty.png" />
 	<vrpfile src="files/images/arcade-game/health_empty_enemy.png" />
 	<vrpfile src="files/images/arcade-game/health_full.png" />
-	
+
 	<vrpfile src="files/images/arcade-game/sprites/sprite1.png" />
 	<vrpfile src="files/images/arcade-game/sprites/sprite2.png" />
 	<vrpfile src="files/images/arcade-game/sprites/sprite3.png" />
@@ -1848,11 +1849,11 @@
 	<vrpfile src="files/images/arcade-game/sprites/sprite15.png" />
 	<vrpfile src="files/images/arcade-game/sprites/larry.png" />
 	<vrpfile src="files/images/arcade-game/sprites/trophy.png" />
-	
+
 	<vrpfile src="files/images/arcade-game/sprites/flame1.png" />
 	<vrpfile src="files/images/arcade-game/sprites/flame2.png" />
 	<vrpfile src="files/images/arcade-game/sprites/flame3.png" />
-	
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/gasmask.ogg"/>
@@ -1896,10 +1897,10 @@
 	<vrpfile src="files/audio/arcade-sfx/gameover.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/win.ogg" />
 	<vrpfile src="files/audio/arcade-sfx/fire.ogg" />
-	<vrpfile src="files/audio/arcade-sfx/explode.ogg" />	
-	<vrpfile src="files/audio/arcade-sfx/hit.ogg" />	
-	<vrpfile src="files/audio/arcade-sfx/collect.ogg" />	
-	
+	<vrpfile src="files/audio/arcade-sfx/explode.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/hit.ogg" />
+	<vrpfile src="files/audio/arcade-sfx/collect.ogg" />
+
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton2.mp3"/>
