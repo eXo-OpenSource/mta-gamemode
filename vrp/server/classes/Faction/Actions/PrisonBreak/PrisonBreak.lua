@@ -17,25 +17,29 @@ function PrisonBreak:constructor()
 	self.m_Entrance = PrisonBreakManager:getSingleton().m_Entrance
 
 	self.m_Officer = PrisonBreakManager:getSingleton().m_Officer
-	addEventHandler("onPlayerTarget", root, bind(self.getKeycardsFromOfficer, self))
+	addEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
 
 	self.m_OfficerEnemies = {}
 	self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
 
 	self.m_Keycards = false
 
+	---Binds
+	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
+	self.m_GetKeycardsFromOfficerBind = bind(self.getKeycardsFromOfficer, self)
+
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
-		addEventHandler("onElementClicked", box, bind(self.getWeaponsFromBox, self))
+		addEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
 
 	self.m_WeaponBoxPlayers = {}
 end
 
 function PrisonBreak:destructor()
-	removeEventHandler("onPlayerTarget", root, bind(self.getKeycardsFromOfficer, self))
-	
+	removeEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
+
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
-		removeEventHandler("onElementClicked", box, bind(self.getWeaponsFromBox, self))
+		removeEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
 
 	PrisonBreakManager:getSingleton():stop()
@@ -92,7 +96,7 @@ function PrisonBreak:explodeBomb()
 	self.m_Entrance:destroy()
 
 	for key, player in pairs(self.m_Faction:getOnlinePlayers()) do
-		player:triggerEvent("Countdown", math.floor(PrisonBreak.DoorsCountdown / 1000), "Ausbruch")	
+		player:triggerEvent("Countdown", math.floor(PrisonBreak.DoorsCountdown / 1000), "Ausbruch")
 	end
 
 	setTimer(function ()
@@ -114,7 +118,7 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 		if #self.m_OfficerEnemies == 0 then
 			self.m_Officer:setAnimation()
 			self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
-			
+
 			if self.m_OfficerTimer then
 				killTimer(self.m_OfficerTimer)
 				self.m_OfficerTimer = nil
@@ -140,7 +144,7 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 				end, PrisonBreak.KeycardsCountdown, 1)
 
 				for key, player in pairs(self.m_Faction:getOnlinePlayers()) do
-					player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")	
+					player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
 				end
 
 				killTimer(self.m_OfficerTimer)
@@ -158,7 +162,7 @@ function PrisonBreak:getWeaponsFromBox(button, state, player)
 	then
 		return
 	end
-	
+
 	if self.m_WeaponBoxPlayers[player:getId()] then
 		player:sendError("Du hast bereits Waffen aus dem Lager erhalten!");
 		return
@@ -174,7 +178,7 @@ end
 function PrisonBreak:finish()
 	PlayerManager:getSingleton():breakingNews("Das Gefängnis meldet verminderte Sicherheitswarnung. Alle Tore sind wieder geschlossen!")
 	Discord:getSingleton():outputBreakingNews("Das Gefängnis meldet verminderte Sicherheitswarnung. Alle Tore sind wieder geschlossen!")
-	
+
 	ActionsCheck:getSingleton():endAction()
 
 	delete(self)
