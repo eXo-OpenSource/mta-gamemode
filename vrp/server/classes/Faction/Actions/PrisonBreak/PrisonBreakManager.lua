@@ -35,7 +35,7 @@ end
 
 function PrisonBreakManager:stop()
     self.m_Instance = nil
-    
+
     if not isElement(self.m_Entrance) then
         self:createEntrance()
     end

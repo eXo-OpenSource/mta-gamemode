@@ -23,6 +23,8 @@ function PrisonBreak:constructor()
 	self.m_OfficerEnemies = {}
 	self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
 
+	self.m_KeycardPlayers = {}
+
 	---Binds
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
 	self.m_GetKeycardsFromOfficerBind = bind(self.getKeycardsFromOfficer, self)
@@ -43,8 +45,9 @@ function PrisonBreak:destructor()
 		removeEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
 
-	for key, player in pairs(self.m_OfficerEnemies) do
+	for key, player in pairs(self.m_KeycardPlayers) do
 		PrisonBreak.RemoveKeycard(player)
+		table.remove(self.m_KeycardPlayers, key)
 	end
 
 	PrisonBreakManager:getSingleton():stop()
@@ -147,12 +150,14 @@ function PrisonBreak:getKeycardsFromOfficer(target)
 						player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
 						player:getInventory():giveItem("Keycard", 1)
 						player:sendSuccess("Du hast eine Keycard erhalten!")
+						table.insert(self.m_KeycardPlayers, player)
 					end
 				end
 
 				setTimer(function ()
-					for key, player in pairs(self.m_OfficerEnemies) do
+					for key, player in pairs(self.m_KeycardPlayers) do
 						PrisonBreak.RemoveKeycard(player)
+						table.remove(self.m_KeycardPlayers, key)
 					end
 				end, PrisonBreak.KeycardsCountdown, 1)
 
