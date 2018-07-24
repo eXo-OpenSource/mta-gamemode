@@ -83,8 +83,6 @@ function PrisonBreak:PedTargetRefresh(count, startingPlayer)
 			end
 		end, PrisonBreak.KeycardsCountdown, 1)
 
-		killTimer(self.m_OfficerTimer)
-		self.m_OfficerTimer = nil
 		self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
 	end
 end

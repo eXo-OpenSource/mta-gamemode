@@ -33,9 +33,9 @@ function Jail.startCountdown(jailTime)
 			toggleControl("fire", false)
 			toggleControl("aim_weapon", false)
 			toggleControl("jump", false)
-			if getDistanceBetweenPoints3D(localPlayer:getPosition(), JailCenter) > 100 then
-				triggerServerEvent("Event_playerTryToBreakoutJail", localPlayer)
-			end
+		end
+		if getDistanceBetweenPoints3D(localPlayer:getPosition(), JailCenter) > 100 then
+			triggerServerEvent("Event_playerTryToBreakoutJail", localPlayer)
 		end
 	end)
 end
