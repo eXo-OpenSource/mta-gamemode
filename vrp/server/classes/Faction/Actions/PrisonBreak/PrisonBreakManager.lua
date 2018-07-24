@@ -17,7 +17,7 @@ function PrisonBreakManager:constructor()
     self.m_WeaponBoxes = {}
 
     self:createEntrance()
-    self:createPoliceman()
+    self:createDummyPoliceman()
     self:createWeaponBoxes()
 end
 
@@ -51,10 +51,28 @@ function PrisonBreakManager:createEntrance()
 	addEventHandler("onElementClicked", self.m_Entrance, bind(self.start, self))
 end
 
-function PrisonBreakManager:createPoliceman()
-    self.m_Officer = NPC:new(276, Vector3(2564.98, -1432.98, 1044.52), 345.4)
+function PrisonBreakManager:createDummyPoliceman()
+    self.m_Officer = ShopNPC:new(276, Vector3(2564.98, -1432.98, 1044.52), 345.4)
     self.m_Officer:setInterior(2)
     self.m_Officer:setFrozen(true)
+    self.m_Officer.m_Warning = "Du überfällst den Gefängnisaufseher in 5 Sekunden, wenn du weiter auf ihn zielst!"
+    self.m_Officer.onTargetted = bind(self.PedTargetted, self)
+    self.m_Officer.onTargetRefresh = bind(self.PedTargetRefresh, self)
+end
+
+function PrisonBreakManager:PedTargetted(ped, attacker)
+    if not self:getCurrent() then
+        attacker:sendError("Derzeit läuft kein Knastausbruch!")
+        return false
+    end
+    self:getCurrent():Ped_Targetted(ped, attacker)
+end
+
+function PrisonBreakManager:PedTargetRefresh(count, startingPlayer)
+    if not self:getCurrent() then
+        return false
+    end
+    self:getCurrent():PedTargetRefresh(count, startingPlayer)    
 end
 
 function PrisonBreakManager:createWeaponBoxes()

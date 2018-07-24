@@ -27,11 +27,8 @@ function PrisonBreak:constructor()
 
 	---Binds
 	self.m_GetWeaponsFromBoxBind = bind(self.getWeaponsFromBox, self)
-	self.m_GetKeycardsFromOfficerBind = bind(self.getKeycardsFromOfficer, self)
 
 	-- Events
-	addEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
-
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
 		addEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
@@ -39,8 +36,6 @@ function PrisonBreak:constructor()
 end
 
 function PrisonBreak:destructor()
-	removeEventHandler("onPlayerTarget", root, self.m_GetKeycardsFromOfficerBind)
-
 	for k, box in pairs(PrisonBreakManager:getSingleton().m_WeaponBoxes) do
 		removeEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
@@ -51,6 +46,45 @@ function PrisonBreak:destructor()
 	end
 
 	PrisonBreakManager:getSingleton():stop()
+end
+
+function PrisonBreak:Ped_Targetted(ped, attacker)
+
+end
+
+function PrisonBreak:PedTargetRefresh(count, startingPlayer)
+	if count == 0 then return false end
+	local attackers = self.m_Officer:getAttackers()
+	
+	for attacker in pairs(attackers) do
+		if self.m_OfficerCountdown > 0 then
+			attacker:sendShortMessage("Bedrohung zu " .. math.round((self.m_OfficerCountdown / PrisonBreak.OfficerCountdown) * 100, 1) .. " % abgeschlossen.")
+		end
+	end
+
+	self.m_OfficerCountdown = self.m_OfficerCountdown - count * 1000
+
+	if self.m_OfficerCountdown <= 0 then
+		for attacker in pairs(attackers) do
+			if isElement(attacker) then
+				attacker:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
+				attacker:getInventory():giveItem("Keycard", 1)
+				attacker:sendSuccess("Du hast eine Keycard erhalten!")
+				table.insert(self.m_KeycardPlayers, attacker)
+			end
+		end
+
+		setTimer(function ()
+			for key, player in pairs(self.m_KeycardPlayers) do
+				PrisonBreak.RemoveKeycard(player)
+				table.remove(self.m_KeycardPlayers, key)
+			end
+		end, PrisonBreak.KeycardsCountdown, 1)
+
+		killTimer(self.m_OfficerTimer)
+		self.m_OfficerTimer = nil
+		self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
+	end
 end
 
 function PrisonBreak:placeBomb(player)
@@ -111,62 +145,6 @@ function PrisonBreak:explodeBomb()
 		Jail:getSingleton():closeGates()
 		self:finish()
 	end, PrisonBreak.DoorsCountdown, 1)
-end
-
-function PrisonBreak:getKeycardsFromOfficer(target)
-	local sourcePlayer = source
-
-	if self.m_Officer ~= target then
-		for key, player in pairs(self.m_OfficerEnemies) do
-			if player == source then
-				table.remove(self.m_OfficerEnemies, key)
-			end
-		end
-
-		if #self.m_OfficerEnemies == 0 then
-			self.m_Officer:setAnimation()
-			self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
-
-			if self.m_OfficerTimer then
-				killTimer(self.m_OfficerTimer)
-				self.m_OfficerTimer = nil
-			end
-		end
-
-		return
-	end
-
-	table.insert(self.m_OfficerEnemies, source)
-	self.m_Officer:setAnimation("ped", "handsup", -1, false)
-
-	if #self.m_OfficerEnemies == 1 then
-		self.m_OfficerTimer = setTimer(function ()
-			self.m_OfficerCountdown = self.m_OfficerCountdown - #self.m_OfficerEnemies * 1000
-			sourcePlayer:sendShortMessage("Bedrohung zu " .. math.round((self.m_OfficerCountdown / PrisonBreak.OfficerCountdown) * 100, 1) .. " % abgeschlossen.") -- BUG
-
-			if self.m_OfficerCountdown <= 0 then
-				for key, player in pairs(self.m_OfficerEnemies) do
-					if isElement(player) then
-						player:triggerEvent("Countdown", math.floor(PrisonBreak.KeycardsCountdown / 1000), "Keycards")
-						player:getInventory():giveItem("Keycard", 1)
-						player:sendSuccess("Du hast eine Keycard erhalten!")
-						table.insert(self.m_KeycardPlayers, player)
-					end
-				end
-
-				setTimer(function ()
-					for key, player in pairs(self.m_KeycardPlayers) do
-						PrisonBreak.RemoveKeycard(player)
-						table.remove(self.m_KeycardPlayers, key)
-					end
-				end, PrisonBreak.KeycardsCountdown, 1)
-
-				killTimer(self.m_OfficerTimer)
-				self.m_OfficerTimer = nil
-				self.m_OfficerCountdown = PrisonBreak.OfficerCountdown
-			end
-		end, 1000, 0)
-	end
 end
 
 function PrisonBreak:getWeaponsFromBox(button, state, player)

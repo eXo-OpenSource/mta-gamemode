@@ -13,7 +13,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 	self.m_InTarget = false
 	self.m_TargettedBy = {}
 	self.m_RefreshAttackersFunc = bind(ShopNPC.refreshAttackers, self)
-
+	self.m_Warning = "Du überfällst den Verkäufer in 5 Sekunden, wenn du weiter auf ihn zielst!"
 	self:toggleWanteds(true)
 end
 
@@ -24,7 +24,7 @@ function ShopNPC:onInternalTargetted(playerBy)
 		return false
 	end
 	if not self.m_InTarget and self.onTargetted then -- the npc isn't been targetted
-		playerBy:sendWarning(_("Du überfällst den Verkäufer in 5 Sekunden, wenn du weiter auf ihn zielst!", playerBy))
+		playerBy:sendWarning(self.m_Warning)
 
 		self:setAnimation("ped", "handsup", -1, false)
 		self.m_InTarget = true
