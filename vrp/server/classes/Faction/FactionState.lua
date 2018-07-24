@@ -194,7 +194,7 @@ function FactionState:Event_OnConfirmSelfArrest()
 	client:setJailTime(jailTime)
 	client:setWanteds(0)
 	client:moveToJail(CUTSCENE)
-	self:uncuffPlayer( client)
+	self:uncuffPlayer(client)
 	client:clearCrimes()
 	bailcosts = BAIL_PRICES[wantedLevel]
 	client:setJailBail(bailcosts)

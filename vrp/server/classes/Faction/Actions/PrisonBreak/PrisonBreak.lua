@@ -33,6 +33,7 @@ function PrisonBreak:constructor()
 		addEventHandler("onElementClicked", box, self.m_GetWeaponsFromBoxBind)
 	end
 
+	Jail:getSingleton():setPrisonBreak(true)
 end
 
 function PrisonBreak:destructor()
@@ -45,6 +46,7 @@ function PrisonBreak:destructor()
 		table.remove(self.m_KeycardPlayers, key)
 	end
 
+	Jail:getSingleton():setPrisonBreak(false)
 	PrisonBreakManager:getSingleton():stop()
 end
 

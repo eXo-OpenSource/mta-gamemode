@@ -114,6 +114,25 @@ function Jail:closeGates()
 	end
 end
 
+function Jail:getJailedPlayers()
+	local players = {}
+	for index, playeritem in pairs(getElementsByType("player")) do
+		if playeritem.m_JailTime and playeritem.m_JailTimer and playeritem.m_JailTime > 0 then
+			table.insert(players, playeritem)
+		end
+	end
+	return players
+end
+
+function Jail:setPrisonBreak(state)
+	for index, player in pairs(self:getJailedPlayers()) do
+		player:toggleControl("fire", state)
+		player:toggleControl("jump", state)
+		player:toggleControl("aim_weapon ", state)
+		player:triggerEvent("setPrisonBreak", state)
+	end
+end
+
 Jail.Cells = {
 	Vector3(2605.349, -1432.842, 1040.356),
 	Vector3(2597.938, -1432.681, 1040.356),
