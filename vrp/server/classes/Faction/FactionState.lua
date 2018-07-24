@@ -1254,14 +1254,16 @@ function FactionState:Event_speedRadar()
 	end
 end
 
-function FactionState:freePlayer(player)
-	player:setData("inJail",false, true)
-	setElementDimension(player,0)
-	setElementInterior(player,0)
-	player:setPosition(267.40, 77.75, 1001.04)
-	player:setInterior(6)
-	player:setRotation(0, 0, 180)
-	player:setWanteds(0)
+function FactionState:freePlayer(player, jailbreak)
+	if not jailbreak then
+		player:setData("inJail",false, true)
+		setElementDimension(player,0)
+		setElementInterior(player,0)
+		player:setPosition(267.40, 77.75, 1001.04)
+		player:setInterior(6)
+		player:setRotation(0, 0, 180)
+		player:setWanteds(0)
+	end
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
