@@ -1015,7 +1015,7 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
-function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus, offline)
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pFactionBonus, offline, isoCell)
 	if player:getWanteds() == 0 then return end
 	local policeman = police or client
 	if not force then
@@ -1061,7 +1061,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 					player:takeKarma(wantedLevel)
 					player:setJailTime(jailTime)
 					player:setWanteds(0)
-					player:moveToJail(CUTSCENE)
+					player:moveToJail(CUTSCENE, isoCell)
 					self:uncuffPlayer(player)
 					player:clearCrimes()
 
@@ -1132,8 +1132,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		player:takeKarma(wantedLevel)
 		player:setJailTime(jailTime)
 		player:setWanteds(0)
-		player:moveToJail(CUTSCENE)
-		self:uncuffPlayer( player)
+		player:moveToJail(CUTSCENE, isoCell)
+		self:uncuffPlayer(player)
 		player:clearCrimes()
 		setTimer(function (player) -- (delayed)
 			if isElement(player) then player:giveAchievement(31) end
@@ -1254,9 +1254,12 @@ function FactionState:Event_speedRadar()
 	end
 end
 
-function FactionState:freePlayer(player, jailbreak)
-	if not jailbreak then
-		player:setData("inJail",false, true)
+function FactionState:freePlayer(player, prisonBreak)
+	if prisonBreak then
+		player:setWanteds(8)
+		player:sendShortMessage("Du bist aus dem Gefängnis ausgebrochen!")
+		self:sendShortMessage(player:getName().." ist aus dem Gefängnis ausgebrochen!")
+	else
 		setElementDimension(player,0)
 		setElementInterior(player,0)
 		player:setPosition(267.40, 77.75, 1001.04)
@@ -1264,6 +1267,8 @@ function FactionState:freePlayer(player, jailbreak)
 		player:setRotation(0, 0, 180)
 		player:setWanteds(0)
 	end
+
+	player:setData("inJail",false, true)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
