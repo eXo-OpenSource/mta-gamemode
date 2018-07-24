@@ -36,8 +36,8 @@ function Jail.startCountdown(jailTime)
 			if getDistanceBetweenPoints3D(localPlayer:getPosition(), JailCenter) > 100 then
 				triggerServerEvent("Event_playerTryToBreakoutJail", localPlayer)
 			end
-			end)
 		end
+	end)
 end
 
 addEvent("playerLeftJail", true)
