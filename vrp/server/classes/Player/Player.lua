@@ -353,110 +353,94 @@ function Player:save()
 end
 
 function Player:spawn()
-	if self:isGuest() then
-		-- set default data (fallback / guest)
-		self:setMoney(0)
-		self:setXP(0)
-		self:setKarma(0)
-		self:setWanteds(0)
-		self:setJobLevel(0)
-		self:setWeaponLevel(0)
-		self:setVehicleLevel(0)
-		self:setSkinLevel(0)
+	local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
+	local spawnSuccess = false
+	local SpawnLocationProperty = self:getSpawnLocationProperty()
 
-		-- spawn the player
-		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
-		self:setRotation(0, 0, 180)
-	else
-		local quitTick = PlayerManager:getSingleton().m_QuitPlayers[self:getId()]
-		local spawnSuccess = false
-		local SpawnLocationProperty = self:getSpawnLocationProperty()
+	if not quitTick or (getTickCount() - quitTick > 300000) then
+		if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
+			spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
+			spawnSuccess = spawnPlayer(self, Vector3(1480.95, -1765.29, 18.80), 0, self.m_Skin or 0, 0, 0)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
+			if SpawnLocationProperty then
+				local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
 
-		if not quitTick or (getTickCount() - quitTick > 300000) then
-			if self.m_SpawnLocation == SPAWN_LOCATIONS.DEFAULT then
-				spawnSuccess = spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.NOOBSPAWN then
-				spawnSuccess = spawnPlayer(self, Vector3(1480.95, -1765.29, 18.80), 0, self.m_Skin or 0, 0, 0)
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.VEHICLE then
-				if SpawnLocationProperty then
-					local vehicle = VehicleManager:getSingleton():getPlayerVehicleById(self:getId(), SpawnLocationProperty)
-
-					if vehicle and vehicle:getPositionType() == VehiclePositionType.World then
-						if vehicle:getSpeed() == 0 then
-							spawnSuccess = spawnPlayer(self, vehicle.matrix:transformPosition(VEHICLE_SPAWN_OFFSETS[vehicle:getModel()]), 0, self.m_Skin or 0, 0, 0)
-						else
-							self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
-						end
+				if vehicle and vehicle:getPositionType() == VehiclePositionType.World then
+					if vehicle:getSpeed() == 0 then
+						spawnSuccess = spawnPlayer(self, vehicle.matrix:transformPosition(VEHICLE_SPAWN_OFFSETS[vehicle:getModel()]), 0, self.m_Skin or 0, 0, 0)
 					else
-						self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug ist am Abschlepphof oder ist nicht mehr vorhanden")
+						self:sendWarning("Spawnen am Fahrzeug nicht möglich, Fahrzeug wird gerade benutzt")
 					end
-				end
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
-				if SpawnLocationProperty then
-					local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
-					if house and house:isValidToEnter(self) then
-						if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
-							--if it works, don't delete it
-							self:setFrozen(true)
-							spawnSuccess = true
-						end
-					else
-						self:sendWarning("Spawnen im Haus nicht möglich, du hast kein Zugriff mehr auf das Haus")
-					end
-				end
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
-				if self:getFaction() then
-					local position = factionSpawnpoint[self:getFaction():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
-				end
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
-				if self:getCompany() then
-					local position = companySpawnpoint[self:getCompany():getId()]
-					spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
-				end
-				--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
-				--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
-			elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
-				local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
-				if self:getGroup() and #groupProperties > 0 then
-					groupProperties[1]:setInside(self)
-					spawnSuccess = true
+				else
+					self:sendWarning("Spawnen am Fahrzeug nicht möglich, dass Fahrzeug ist am Abschlepphof oder ist nicht mehr vorhanden")
 				end
 			end
-		end
-
-		-- if not able to spawn, spawn at last known location
-		if not spawnSuccess then
-			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
-		end
-
-		-- Teleport player into a "unique interior"
-		if self.m_UniqueInterior ~= 0 then
-			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
-			self.m_UniqueInterior = 0
-		end
-
-		-- Apply and delete health data
-		self:setHealth(math.max(self.m_Health, 1))
-		self:setArmor(self.m_Armor)
-		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
-		-- Update Skin
-		self:setCorrectSkin()
-		self:setPublicSync("Faction:Duty",false)
-
-		if self.m_PrisonTime > 0 then
-			self:setPrison(self.m_PrisonTime, true)
-		end
-		if self.m_JailTime then
-			if self.m_JailTime > 0 then
-				self:moveToJail(false, true)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.HOUSE then
+			if SpawnLocationProperty then
+				local house = HouseManager:getSingleton().m_Houses[SpawnLocationProperty]
+				if house and house:isValidToEnter(self) then
+					if spawnPlayer(self, Vector3(house.m_Pos), 0, self.m_Skin or 0, 0, 0) and house:enterHouse(self) then
+						--if it works, don't delete it
+						self:setFrozen(true)
+						spawnSuccess = true
+					end
+				else
+					self:sendWarning("Spawnen im Haus nicht möglich, du hast kein Zugriff mehr auf das Haus")
+				end
+			end
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.FACTION_BASE then
+			if self:getFaction() then
+				local position = factionSpawnpoint[self:getFaction():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
+			end
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.COMPANY_BASE then
+			if self:getCompany() then
+				local position = companySpawnpoint[self:getCompany():getId()]
+				spawnSuccess = spawnPlayer(self, position[1], 0, self.m_Skin or 0, position[2], position[3])
+			end
+			--elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GARAGE and self.m_LastGarageEntrance ~= 0 then
+			--	VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
+			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
+			if self:getGroup() and #groupProperties > 0 then
+				groupProperties[1]:setInside(self)
+				spawnSuccess = true
 			end
 		end
+	end
 
-		-- Give weapons
-		for k, info in pairs(self.m_Weapons) do
-			giveWeapon(self, info[1], info[2])
+	-- if not able to spawn, spawn at last known location
+	if not spawnSuccess then
+		spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
+	end
+
+	-- Teleport player into a "unique interior"
+	if self.m_UniqueInterior ~= 0 then
+		InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
+		self.m_UniqueInterior = 0
+	end
+
+	-- Apply and delete health data
+	self:setHealth(math.max(self.m_Health, 1))
+	self:setArmor(self.m_Armor)
+	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
+	-- Update Skin
+	self:setCorrectSkin()
+	self:setPublicSync("Faction:Duty",false)
+
+	if self.m_PrisonTime > 0 then
+		self:setPrison(self.m_PrisonTime, true)
+	end
+	if self.m_JailTime then
+		if self.m_JailTime > 0 then
+			self:moveToJail(false, true)
 		end
+	end
+
+	-- Give weapons
+	for k, info in pairs(self.m_Weapons) do
+		giveWeapon(self, info[1], info[2])
 	end
 
 	if self:isPremium() then
@@ -482,7 +466,6 @@ function Player:spawn()
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
 
-	PrisonBreak.RemoveKeycard(self)
 
 	self:triggerEvent("checkNoDm")
 	triggerEvent("WeaponAttach:removeAllWeapons", self)

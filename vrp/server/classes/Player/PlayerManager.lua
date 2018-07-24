@@ -114,8 +114,8 @@ function PlayerManager:Event_onRequestGateOpen()
 	end
 end
 
-function PlayerManager:Event_onPlayerFinishArcadeEasterEgg() 
-	if client then 
+function PlayerManager:Event_onPlayerFinishArcadeEasterEgg()
+	if client then
 		client:getInventory():giveItem("Stern", 1)
 		client:giveAchievement(100)
 		client:sendInfo(_("Braboy: Du hast einen Stern erhalten!", client))
@@ -944,8 +944,8 @@ function PlayerManager:Event_playerTryToBreakoutJail()
 		if PrisonBreakManager:getSingleton():getCurrent() then
 			FactionState:getSingleton():freePlayer(client, true)
 		else
-			player:sendShortMessage("Dein Ausbruch ist fehlgeschlagen!")
-			FactionState:getSingleton():Event_JailPlayer(client, false, false, true, false, false, true)
+			client:sendShortMessage("Dein Ausbruch ist fehlgeschlagen!")
+			player:moveToJail(false, true)
 		end
 	end
 end
