@@ -463,6 +463,8 @@ function Player:spawn()
 	WearableManager:getSingleton():removeAllWearables(self)
 
 	if self.m_DeathInJail then
+		outputChatBox("Debug 6 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 		FactionState:getSingleton():Event_JailPlayer(self, false, true, false, true)
 	end
 

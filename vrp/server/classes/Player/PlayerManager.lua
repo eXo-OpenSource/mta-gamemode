@@ -389,13 +389,23 @@ function PlayerManager:playerWasted(killer, killerWeapon, bodypart)
 		end
 	end
 
+	outputChatBox("Debug 1 - Killer: "..killer.name.." Opfer: "..client.name)
+
 	if killer and killer:getType() == "player" then
 		if killer ~= client then
 			killer:increaseStatistics("Kills", 1)
+			outputChatBox("Debug 2 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
+				outputChatBox("Debug 3 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 				if killer:isFactionDuty() and not client:isFactionDuty() then
+					outputChatBox("Debug 4 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 					local wantedLevel = client:getWanteds()
 					if wantedLevel > 0 then
+						outputChatBox("Debug 5 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 						local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_KILL
 						local factionBonus = JAIL_COSTS[wantedLevel]
 						killer:giveAchievement(64)

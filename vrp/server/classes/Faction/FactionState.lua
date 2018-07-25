@@ -27,11 +27,11 @@ function FactionState:constructor()
 	local fakeGas = createObject(1676, 1573.6995, -1620.3545, 14.05274, 0):setDimension(5) -- LSPD #1
 	local fakeGas = createObject(1676, 1553.4237 ,-1620.3545, 14.10274, 0):setDimension(5) -- LSPD #2
 
-	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit 
+	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	self.m_InteriorGarageEntrance:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
-	
-	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit 
+
+	InteriorEnterExit:new(Vector3(1583.42, -1660.01, 13.39), Vector3(1591.63, -1667.39, 5.89), 180, 0, 4, 5) -- pd exit
 
 	self.ms_IllegalItems = {"Kokain", "Weed", "Heroin", "Shrooms", "Diebesgut"}
 
@@ -73,7 +73,7 @@ function FactionState:constructor()
 	self:createSelfArrestMarker(  Vector3(249.51, 67.46, 1003.64), 6, 0 )
 	self:createEvidencePickup( 255.29, 90.78, 1002.45, 6, 0)
 	self:createEvidencePickup( 1579.43, -1691.53, 5.92, 0, 5)
-	
+
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -224,7 +224,7 @@ function FactionState:loadLSPD(factionId)
 	gate2.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate2:setGateScale(1.0285093)
 	gate2:addGate(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), false, 0, 0, 1.0285093)
-	
+
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
@@ -1022,6 +1022,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
 			if policeman:isFactionDuty() then
 				if player:getWanteds() > 0 then
+					outputChatBox("Debug 7 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
+
 					local bailcosts = 0
 					local wantedLevel = player:getWanteds()
 					local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
