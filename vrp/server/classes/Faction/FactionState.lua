@@ -1022,8 +1022,6 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police, force, pF
 		if policeman:getFaction() and policeman:getFaction():isStateFaction() then
 			if policeman:isFactionDuty() then
 				if player:getWanteds() > 0 then
-					outputChatBox("Debug 7 - Killer: "..killer.name.." Opfer: "..client.name.." Wanteds: "..client:getWanteds())
-
 					local bailcosts = 0
 					local wantedLevel = player:getWanteds()
 					local jailTime = wantedLevel * JAIL_TIME_PER_WANTED_ARREST
