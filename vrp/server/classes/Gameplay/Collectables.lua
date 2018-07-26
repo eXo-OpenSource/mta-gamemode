@@ -41,8 +41,8 @@ function Collectables:checkCollectable(collectableID)
 			table.insert(collectables.collected, collectableID)
 			client:setCollectables(collectables)
 
-			client:sendShortMessage(_("Du hast ein eXo-Logo gefunden!\nDafür erhälst du %s eXo-Points!", client, 250))
-			client:givePoints(250)
+			client:sendShortMessage(_("Du hast ein eXo-Logo gefunden!\nDafür erhälst du %s eXo-Points!", client, 200))
+			client:givePoints(200)
 			sql:queryExec("UPDATE ??_collectables SET CollectCount = CollectCount + 1 WHERE Id = ?", sql:getPrefix(), collectableID)
 		else
 			print(("WARNING: %s is maybe cheatin, already collected?' @ collectables"):format(getPlayerName(client)))
