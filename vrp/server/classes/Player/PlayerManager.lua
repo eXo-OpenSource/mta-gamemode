@@ -945,7 +945,7 @@ function PlayerManager:Event_playerTryToBreakoutJail()
 			FactionState:getSingleton():freePlayer(client, true)
 		else
 			client:sendShortMessage("Dein Ausbruch ist fehlgeschlagen!")
-			player:moveToJail(false, true)
+			client:moveToJail(false, true)
 		end
 	end
 end
