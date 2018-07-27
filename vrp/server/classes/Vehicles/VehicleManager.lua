@@ -255,6 +255,7 @@ function VehicleManager:createVehicle(idOrData)
 	if data then
 		local vehicle = createVehicle(data.Model, data.PosX, data.PosY, data.PosZ, data.RotX or 0, data.RotY or 0, data.RotZ or 0)
 		vehicle:setInterior(data.Interior or 0)
+
 		vehicle:setDimension(data.Dimension or 0)
 		local typeClass = PermanentVehicle
 

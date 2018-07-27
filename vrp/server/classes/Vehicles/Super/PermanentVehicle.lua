@@ -69,7 +69,6 @@ function PermanentVehicle:constructor(data)
 	self.m_OwnerType = data.OwnerType
 	self.m_Premium = data.Premium ~= 0
 	self.m_PremiumId = data.Premium
-
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*

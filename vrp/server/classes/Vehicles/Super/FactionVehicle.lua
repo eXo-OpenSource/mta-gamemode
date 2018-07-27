@@ -53,6 +53,8 @@ function FactionVehicle:constructor(data)
 	self:setPlateText((self.m_Faction.m_ShorterName .. " " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
 
 	self:setLocked(false) -- Unlock faction vehicles
+	self.m_SpawnDim = data.Dimension 
+	self.m_SpawnInt = data.Interior
 end
 
 function FactionVehicle:destructor()
@@ -235,6 +237,8 @@ function FactionVehicle:respawn(force)
 	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setPosition(self.m_SpawnPos)
 	self:setRotation(self.m_SpawnRot)
+	self:setInterior(self.m_SpawnInt or 0)
+	self:setDimension(self.m_SpawnDim or 0)
 	if self.m_VehELSObj then
 		self.m_VehELSObj:setBlink("off")
 	end
@@ -265,7 +269,7 @@ function FactionVehicle:respawn(force)
 		self.m_MagnetHeight = -1.5
 		self.m_MagnetActivated = false
 	end
-
+	self.m_LastRespawn = getTickCount()
 	return true
 end
 

@@ -681,6 +681,8 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(self.m_SpawnRot)
 		self:fix()
+		self:setInterior(self.m_SpawnInt or 0)
+		self:setDimension(self.m_SpawnDim or 0)
 		self:setEngineState(false)
 		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
@@ -694,7 +696,7 @@ function Vehicle:respawnOnSpawnPosition()
 
 		if self.despawned then
 			self.despawned = false
-			self:setDimension(0)
+			self:setDimension(self.m_SpawnDim or 0)
 		end
 
 		if self.m_Magnet then
