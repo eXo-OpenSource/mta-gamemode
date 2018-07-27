@@ -864,7 +864,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 end
 
 function PlayerManager:Event_gunBoxTakeWeapon(slotId)
-	if client:getFaction() and client:isFactionDuty() then
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
