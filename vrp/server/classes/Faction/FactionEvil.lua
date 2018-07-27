@@ -330,13 +330,13 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	if faction:isEvilFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
-				self:Event_storageWeapons(client)
 				client:setCorrectSkin(true)
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nun in zivil unterwegs!", client))
 				client:setPublicSync("Faction:Duty",false)
 				if not wasted then faction:updateDutyGUI(client) end
-				Guns:getSingleton():setWeaponInStorage(client, false, false)
+				--self:Event_storageWeapons(client)
+				--Guns:getSingleton():setWeaponInStorage(client, false, false)
 			else
 				if client:getPublicSync("Company:Duty") and client:getCompany() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
