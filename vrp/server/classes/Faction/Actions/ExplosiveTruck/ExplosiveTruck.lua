@@ -115,7 +115,7 @@ function ExplosiveTruck:deliverBox(button, state, player)
 end
 
 function ExplosiveTruck:impoundBox(player)
-	if not player:getFaction():isStateFaction() then
+	if not player or player:getFaction() or player:getFaction():isStateFaction() then
 		return
 	end
 
