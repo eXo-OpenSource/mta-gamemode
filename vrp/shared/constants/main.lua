@@ -1,14 +1,14 @@
 PROJECT_NAME = "eXo Reallife"
-PROJECT_VERSION = "1.6"
+PROJECT_VERSION = "1.7"
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
-INGAME_WEB_PATH = "https://ingame.exo-reallife.de"			
+INGAME_WEB_PATH = "https://ingame.exo-reallife.de"
 
 if DEBUG then
-	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"	
+	INGAME_WEB_PATH = "https://ingame-dev.exo-reallife.de"
 end
 
 -- LEVELS
