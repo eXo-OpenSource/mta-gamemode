@@ -815,7 +815,7 @@ function PlayerManager:Event_requestGunBoxData()
 end
 
 function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
-	if client:getFaction() and client:isFactionDuty() then
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
@@ -864,7 +864,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 end
 
 function PlayerManager:Event_gunBoxTakeWeapon(slotId)
-	if client:getFaction() and client:isFactionDuty() then
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
@@ -945,7 +945,7 @@ function PlayerManager:Event_playerTryToBreakoutJail()
 			FactionState:getSingleton():freePlayer(client, true)
 		else
 			client:sendShortMessage("Dein Ausbruch ist fehlgeschlagen!")
-			player:moveToJail(false, true)
+			client:moveToJail(false, true)
 		end
 	end
 end

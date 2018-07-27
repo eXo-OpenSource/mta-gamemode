@@ -123,7 +123,9 @@ end
 
 function Jail:closeGates()
 	for k, gate in pairs(self.m_Gates) do
-		self:moveGate(gate, true)
+		if not gate.closed then
+			self:moveGate(gate, true)
+		end
 	end
 end
 

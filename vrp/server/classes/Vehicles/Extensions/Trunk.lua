@@ -187,7 +187,7 @@ end
 
 
 function Trunk:addWeapon(player, weaponId, muni)
-	if player:getFaction() and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen einlagern!", player))
 		return
 	end
