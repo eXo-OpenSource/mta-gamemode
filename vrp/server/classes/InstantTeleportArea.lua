@@ -11,14 +11,14 @@ function InstantTeleportArea:constructor(col, int, dim)
 end
 
 function InstantTeleportArea:Event_onColShapeHit( hE, bDim ) 
-    if bDim and (not hE.m_LastRespawn or hE.m_LastRespawn + 2000 < getTickCount()) then 
+    if bDim then 
         setElementDimension(hE, self.m_DestinationDim)
         setElementInterior(hE, self.m_DestinationInt)
     end
 end
 
 function InstantTeleportArea:Event_onColShapeLeave( hE, bDim )
-    if hE:getDimension() == self.m_DestinationDim and hE:getInterior() == self.m_DestinationInt and (not hE.m_LastRespawn or hE.m_LastRespawn + 2000 < getTickCount()) then 
+    if hE:getDimension() == self.m_DestinationDim and hE:getInterior() == self.m_DestinationInt then 
         setElementDimension(hE, self.m_Colshape:getDimension())
         setElementInterior(hE, self.m_Colshape:getInterior())
     end
