@@ -116,7 +116,7 @@ function AttackSession:synchronizeLists( )
 		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick, pickParticipants)
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
-		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, pickParticipants)
 	end
 end
 
@@ -336,7 +336,7 @@ end
 function AttackSession:onSubmitPick( participants ) 
 	if client and self.m_PickList then 
 		if client:getFaction() == self.m_Faction1 then
-			if client:getFaction():getPlayerRank(client) > 2 then
+			if client:getFaction():getPlayerRank(client) > 2 or client == self.m_AttackingPlayer then
 				self.m_PickList = participants
 				self.m_PickUpdater = client:getName()
 				self.m_PickTick = getTickCount()
@@ -508,6 +508,7 @@ function AttackSession:onDecisionTimeEnd()
 				saveCount = saveCount + 1
 			end
 		end
+		if saveCount < 3 then saveCount = 3 end
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			if not self:isPlayerInPick(v) then 
 				self:onPurposlyDisqualify( v, false, true)
@@ -515,7 +516,7 @@ function AttackSession:onDecisionTimeEnd()
 		end
 		for k, player in ipairs(self.m_PickList) do 
 			if player and isElement(player) then
- 				if k > saveCount then 
+ 				if k > saveCount+1 then 
 					self:onPurposlyDisqualify( v, false, true)
 				end
 			end
