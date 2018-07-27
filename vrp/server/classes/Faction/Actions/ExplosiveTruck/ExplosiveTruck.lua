@@ -85,6 +85,10 @@ end
 
 function ExplosiveTruck:removeBox(player)
 	local box = player:getPlayerAttachedObject()
+	if not box then
+		return
+	end
+
 	player:detachPlayerObject(box)
 	box:destroy()
 end
