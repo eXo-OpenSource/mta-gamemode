@@ -119,7 +119,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		if client:hasTemporaryStorage() then client:sendError(_("Du kannst aktuell keine Waffen handeln!", client)) return end
 		if target:hasTemporaryStorage() then client:sendError(_("Der Spieler kann aktuell keine Waffen handeln!", client)) return end
 
-		if client:getFaction() and client:isFactionDuty() then
+		if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
 			return
 		end
@@ -209,7 +209,7 @@ function InventoryManager:Event_acceptWeaponTrade(player, target)
 		return false
 	end
 
-	if player:getFaction() and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
 		return
 	end
