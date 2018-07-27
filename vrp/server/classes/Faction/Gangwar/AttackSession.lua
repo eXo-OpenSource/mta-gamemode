@@ -24,10 +24,11 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2, attackingPla
 	self.m_GangwarPickSubmit = bind(self.onSubmitPick, self)
 	addEventHandler("GangwarPick:submit", root, self.m_GangwarPickSubmit )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 60000*3	, 1)
+	self.m_DecisionTime = setTimer(bind(self.onDecisionTimeEnd, self), 30000, 1)
 	self.m_SynchronizeTime = setTimer(bind(self.synchronizeTime, self), 5000, 0)
 	self:createWeaponBox()
 	self.m_Active = true
+	self.m_DecisionEnded = false
 	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
@@ -116,7 +117,7 @@ function AttackSession:synchronizeLists( )
 		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick, pickParticipants)
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
-		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, pickParticipants)
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified, self.m_PickList, self.m_PickUpdater, self.m_PickTick, pickParticipants)
 	end
 end
 
@@ -134,7 +135,7 @@ end
 function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
-		local canModify =  self.m_AttackingPlayer == player or player:getFaction():getPlayerRank(player) >= 3
+		local canModify =  self.m_AttackingPlayer == player or player.getFaction and player:getFaction():getPlayerRank(player) >= 3
 		self.m_Participants[#self.m_Participants + 1] = player
 		local pickParticipants = {}
 		local showPickGUI
@@ -152,7 +153,7 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 				showPickGUI = player:getFaction() == self.m_Faction1
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
-				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI)
+				player:triggerEvent("AttackClient:launchClient", self.m_Faction1, self.m_Faction2, self.m_Participants, self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID, false, self.m_AreaObj.m_Name, canModify, pickParticipants, showPickGUI, self.m_DecisionEnded)
 			end
 		end
 		self:synchronizeLists( )
@@ -229,16 +230,18 @@ function AttackSession:quitPlayer( player )
 end
 
 function AttackSession:onPurposlyDisqualify( player, bAfk, bPick)
-	local reason = ""
-	if bAfk then 
-		reason = "(AFK)"
+	if player and isElement(player) then
+		local reason = ""
+		if bAfk then 
+			reason = "(AFK)"
+		end
+		if bPick then
+			reason = "(Nicht eingeteilt)"
+		end
+		self:disqualifyPlayer( player )
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason, 100, 120, 100, true)
+		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason, 100, 120, 100, true)
 	end
-	if bPick then
-		reason = "(Nicht eingeteilt)"
-	end
-	self:disqualifyPlayer( player )
-	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
-	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
 end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
@@ -502,7 +505,7 @@ end
 
 function AttackSession:onDecisionTimeEnd()
 	if self.m_PickList and #self.m_PickList > 0  then
-		local saveCount = 1
+		local saveCount = 0
 		for k,v in ipairs( self.m_Participants ) do
 			if v:getFaction() == self.m_Faction2 then
 				saveCount = saveCount + 1
@@ -516,8 +519,8 @@ function AttackSession:onDecisionTimeEnd()
 		end
 		for k, player in ipairs(self.m_PickList) do 
 			if player and isElement(player) then
- 				if k > saveCount+1 then 
-					self:onPurposlyDisqualify( v, false, true)
+ 				if k > saveCount + 1 then 
+					self:onPurposlyDisqualify( player, false, true)
 				end
 			end
 		end
@@ -528,6 +531,7 @@ function AttackSession:onDecisionTimeEnd()
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do 
 		v:triggerEvent("GangwarPick:close")
 	end
+	self.m_DecisionEnded = true
 end
 
 function AttackSession:isPlayerInPick( player )

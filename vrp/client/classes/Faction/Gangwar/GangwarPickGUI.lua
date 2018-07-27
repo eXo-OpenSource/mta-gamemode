@@ -131,11 +131,9 @@ function GangwarPickGUI:updateMessage( list, updater, tick, isRemote )
     self:createMessage()
     self.m_Update = getTickCount()
     self.m_Creator = updater
-    if not self:canModify() then
-        self.m_Pick = list
-        if isRemote then
-            self.m_RemotePick = table.copy(list) -- this is the original list so we can compare if any changes have been done locally before we push the newer one
-        end
+    self.m_Pick = list
+    if isRemote then
+        self.m_RemotePick = table.copy(list) -- this is the original list so we can compare if any changes have been done locally before we push the newer one
     end
     self:writeMessage()
     self:refill()
