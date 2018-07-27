@@ -1256,7 +1256,6 @@ end
 
 function FactionState:freePlayer(player, prisonBreak)
 	if prisonBreak then
-		player:setWanteds(8)
 		player:sendShortMessage("Du bist aus dem Gefängnis ausgebrochen!")
 		self:sendShortMessage(player:getName().." ist aus dem Gefängnis ausgebrochen!")
 	else
