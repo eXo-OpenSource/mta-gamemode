@@ -163,10 +163,10 @@ function PhoneInteraction:callStartSpecial(number)
 end
 
 function PhoneInteraction:callAnswerSpecial(caller, voiceEnabled)
-	if self.m_LastSpecialCallNumber[client] then
+	if self.m_LastSpecialCallNumber[caller] then
 		for index, instance in pairs(PhoneNumber.Map) do
-			if instance:getNumber() == self.m_LastSpecialCallNumber[client] then
-				self.m_LastSpecialCallNumber[client] = false
+			if instance:getNumber() == self.m_LastSpecialCallNumber[caller] then
+				self.m_LastSpecialCallNumber[caller] = false
 				instance:getOwner(instance):phoneTakeOff(client, caller)
 			end
 		end
