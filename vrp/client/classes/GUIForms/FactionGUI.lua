@@ -131,18 +131,6 @@ function FactionGUI:addLeaderTab()
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, self.m_TabLeader)
 		self.m_LeaderLoan:setNumeric(true, true)
-		self.m_SkinLabel = GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
-
-		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, self.m_TabLeader)
-
-		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, self.m_TabLeader)
-		self.m_SkinChanger.onChange = function(text, index) self.m_SkinPreviewBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..text) end
-
-		if self.m_Id == 4 then -- If Rescue
-			self.m_SkinLabel:setVisible(false)
-			self.m_SkinChanger:setVisible(false)
-			self.m_SkinPreviewBrowser:setVisible(false)
-		end
 
 		self.m_SaveRank = GUIButton:new(self.m_Width*0.73, self.m_Height*0.8, self.m_Width*0.26, self.m_Height*0.07, _"Rang speichern", self.m_TabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
@@ -224,12 +212,6 @@ function FactionGUI:onSelectRank(name,rank)
 	self.m_LeaderLoan:setText(tostring(self.m_RankLoans[tostring(rank)]))
 	self.m_SaveRank:setEnabled(true)
 
-	for skinId,bool in pairs(self.m_skins) do
-		if bool == true then
-			self.m_SkinChanger:addItem(skinId)
-		end
-	end
-
 	for weaponID,v in pairs(self.m_ValidWeapons) do
 		if v == true then
 			if self.m_RankWeapons[tostring(rank)][tostring(weaponID)] == 1 then
@@ -239,8 +221,6 @@ function FactionGUI:onSelectRank(name,rank)
 			end
 		end
 	end
-
-	self.m_SkinChanger:setSelectedItem(self.m_RankSkins[tostring(rank)])
 
 end
 

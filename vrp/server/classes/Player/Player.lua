@@ -62,7 +62,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() then
+	if self:isFactionDuty() and (self:getFaction() and self:getFaction():isStateFaction()) then
 		takeAllWeapons(self)
 	end
 

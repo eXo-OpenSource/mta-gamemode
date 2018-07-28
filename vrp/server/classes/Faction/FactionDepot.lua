@@ -164,7 +164,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 						else
 							logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + 1
 						end
-						giveWeapon(player,weaponID, 1)
+						giveWeapon(player,weaponID, 0)
 						self:takeWeaponD(weaponID,amount)
 					else
 						player:sendError(_("Es sind nicht genug %s im Lager (%s)!", player, WEAPON_NAMES[weaponID], amount))
