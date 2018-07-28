@@ -22,7 +22,7 @@ function FactionState:constructor()
 	--self.m_GaragePorter:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
 	--self.m_GaragePorter:addExitEvent(function( player) player:triggerEvent("setOcclusion", true) end)
 
-	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 86, 10)
+	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
 	local fakeGas = createObject(1676, 1573.6995, -1620.3545, 14.05274, 0):setDimension(5) -- LSPD #1
 	local fakeGas = createObject(1676, 1553.4237 ,-1620.3545, 14.10274, 0):setDimension(5) -- LSPD #2
@@ -220,11 +220,12 @@ function FactionState:loadLSPD(factionId)
 	gate:setGateScale(1.01)
 	gate:addGate(3055, Vector3(1588.5042, -1637.8517, 14.58093), Vector3(0, 0, 0), Vector3(1588.5039, -1639.1016, 16.52393), Vector3(80, 0, 0), false, 0, 5, 1.01)
 
-	local gate2 = Gate:new(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), true, 0, 5)
+	--[[local gate2 = Gate:new(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), true, 0, 5)
 	gate2.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate2:setGateScale(1.0285093)
 	gate2:addGate(3055, Vector3(1597.288, -1665.1272, 7.0712), Vector3(0, 0, 0), Vector3(1597.288, -1665.1272, 9.0712), Vector3(80, 0, 0), false, 0, 0, 1.0285093)
-
+	]]
+	createColCuboid( 1582.064, -1665.5, 5.080, 21.7, 27.6, 13):setData("NonCollidingSphere", "ignoreDimension", true) -- nc area inside garage to prevent cars from spawning inside each other
 
 	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate

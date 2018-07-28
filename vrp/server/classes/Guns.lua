@@ -336,21 +336,17 @@ function giveWeapon( player, weapon, ammo, current)
 	local object = getElementData(player, "a:weapon:slot"..slot.."")
 	if object then
 		if isElement(object) and player and ammo then
-			local wId = getElementData(object, "a:weapon:id")
-			if ammo ~= 0 then
+			local wId = getElementData(object, "a:weapon:id")	
 				if wId ~= weapon then
 					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
 				end
-			end
 		end
 	else
 		if player and ammo then
-			if ammo ~= 0 then
 				local currentWeapon = getPedWeapon(player,slot)
 				if currentWeapon ~= weapon then
 					triggerEvent("WeaponAttach:onWeaponGive", player, weapon, slot, current, object)
 				end
-			end
 		end
 	end
 	local result = _giveWeapon(player, weapon, ammo, current)

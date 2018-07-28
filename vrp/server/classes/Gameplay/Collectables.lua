@@ -10,8 +10,6 @@ Collectables = inherit(Singleton)
 addEvent("requestCollectables", true)
 addEvent("checkCollectableHit", true)
 
-Collectables.COLLECT_COUNT = 40
-
 function Collectables:constructor()
     addEventHandler("requestCollectables", root, bind(self.sendCollectables,self))
     addEventHandler("checkCollectableHit", root, bind(self.checkCollectable,self))
@@ -38,7 +36,8 @@ function Collectables:checkCollectable(collectableID)
 
 		if (table.find(collectables.collectable, collectableID)) then
 			table.removevalue(collectables.collectable, collectableID)
-			table.insert(collectables.collected, collectableID)
+            table.insert(collectables.collected, collectableID)
+            client:setPrivateSync("Collectables_Collected", #client:getCollectables().collected)
 			client:setCollectables(collectables)
 
 			client:sendShortMessage(_("Du hast ein eXo-Logo gefunden!\nDafür erhälst du %s eXo-Points!", client, 200))
@@ -57,7 +56,7 @@ function Collectables:generateForPlayer(player)
 		collected = {}
 	}
 
-    for i = 1, Collectables.COLLECT_COUNT do
+    for i = 1, COLLECTABLES_COUNT_PER_PLAYER do
         local item = math.random(1, table.size(collectables))
         table.insert(collectablesForPlayer.collectable, item)
         table.remove(collectables, item)
@@ -79,6 +78,6 @@ function Collectables:sendCollectables()
 	for k, v in ipairs(client:getCollectables().collectable) do
 		collectable[v] = self.m_Collectables[v]
 	end
-
+    client:setPrivateSync("Collectables_Collected", #client:getCollectables().collected)
     triggerClientEvent(client, "reciveCollectables", client, collectable)
 end

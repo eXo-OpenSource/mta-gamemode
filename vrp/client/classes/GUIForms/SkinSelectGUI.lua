@@ -92,8 +92,8 @@ function SkinSelectGUI:loadSkins()
 					self.m_AllSkins[skinId] = index - 1
 				end
 			end
-		else
-			GUIGridLabel:new(x, y + h - 1, w, 1, "Skin "..skinId, self.m_ScrollableArea):setAlignX("center")
+		--else
+			--GUIGridLabel:new(x, y + h - 1, w, 1, "Skin "..skinId, self.m_ScrollableArea):setAlignX("center")
 		end
 		if i % images_per_row == 0 then row = row + 1 end
 		i = i + 1

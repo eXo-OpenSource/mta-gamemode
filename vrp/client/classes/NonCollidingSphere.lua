@@ -7,17 +7,18 @@
 -- ****************************************************************************
 NonCollidingSphere = inherit(Object)
 
-function NonCollidingSphere:constructor(col)
+function NonCollidingSphere:constructor(col, ignoreDimension)
 	self.m_ColShape = col
 	self.m_HitBind = bind(self.onHit, self)
 	self.m_LeaveBind = bind(self.onLeave, self)
+	self.m_IgnoreDimension = ignoreDimension
 
 	addEventHandler("onClientColShapeHit", self.m_ColShape, self.m_HitBind)
 	addEventHandler("onClientColShapeLeave", self.m_ColShape, self.m_LeaveBind)
 end
 
 function NonCollidingSphere:onHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "vehicle" and matchingDimension then
+	if getElementType(hitElement) == "vehicle" and (matchingDimension or self.m_IgnoreDimension) then
 		for k, v in pairs(getElementsByType("vehicle")) do
 			setElementCollidableWith(hitElement, v, false)
 		end
@@ -29,7 +30,7 @@ function NonCollidingSphere:onHit(hitElement, matchingDimension)
 end
 
 function NonCollidingSphere:onLeave(hitElement, matchingDimension)
-	if getElementType(hitElement) == "vehicle" and matchingDimension then
+	if getElementType(hitElement) == "vehicle" and (matchingDimension or self.m_IgnoreDimension) then
 		for k, v in pairs(getElementsByType("vehicle")) do
 			setElementCollidableWith(hitElement, v, true)
 		end
@@ -48,7 +49,7 @@ end
 function NonCollidingSphere.load()
 	for index, col in pairs(getElementsByType("colshape")) do
 		if col:getData("NonCollidingSphere") then
-			NonCollidingSphere:new(col)
+			NonCollidingSphere:new(col, col:getData("NonCollidingSphere") == "ignoreDimension")
 		end
 	end
 end

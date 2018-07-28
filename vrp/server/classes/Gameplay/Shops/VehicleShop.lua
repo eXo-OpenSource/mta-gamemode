@@ -86,7 +86,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		return
 	end
 
-	if player:getMoney() < price then
+	if player:getBankMoney() < price then
 		player:sendError(_("Du hast nicht genügend Geld!", player))
 		return
 	end
@@ -94,15 +94,21 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
 		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation)
 		if vehicle then
-			player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell")
-
-			vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
-			vehicle.m_Tunings:saveColors()
-			vehicle:save()
-			setTimer(function(player, vehicle)
-				player:warpIntoVehicle(vehicle)
-				player:triggerEvent("vehicleBought")
-			end, 100, 1, player, vehicle)
+			if player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell") then
+				vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
+				vehicle.m_Tunings:saveColors()
+				vehicle:save()
+				setTimer(function(player, vehicle)
+					player:warpIntoVehicle(vehicle)
+					player:triggerEvent("vehicleBought")
+				end, 100, 1, player, vehicle)
+			else
+				StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
+				veh:purge()
+				VehicleManager:getSingleton().m_BankAccountServer:transferMoney(source, math.floor(price * 0.75), "Fahrzeug-Verkauf", "Vehicle", "SellToServer")
+				VehicleManager:getSingleton():Event_vehicleRequestInfo(source)
+				player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin (2)!", player), 255, 0, 0)
+			end
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
