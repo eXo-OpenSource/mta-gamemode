@@ -27,12 +27,14 @@ function PhoneInteraction:constructor()
 	PlayerManager:getSingleton():getQuitHook():register(
 		function(player)
 			self:abortCall(player)
+			self:callAbbortSpecial(player)
 		end
 	)
 
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
 			self:abortCall(player)
+			self:callAbbortSpecial(player)
 		end
 	)
 
@@ -173,7 +175,9 @@ function PhoneInteraction:callAnswerSpecial(caller, voiceEnabled)
 	end
 end
 
-function PhoneInteraction:callAbbortSpecial()
+function PhoneInteraction:callAbbortSpecial(player)
+	local client = client
+	if player then client = player end
 	if self.m_LastSpecialCallNumber[client] then
 		for index, instance in pairs(PhoneNumber.Map) do
 			if instance:getNumber() == self.m_LastSpecialCallNumber[client] then
