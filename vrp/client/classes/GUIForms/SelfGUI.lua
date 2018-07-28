@@ -425,6 +425,13 @@ function SelfGUI:loadStatistics()
 
 		i = i+1
 	end
+	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"eXo Logos gesammelt:", self.m_TabStatistics)
+	self.m_CollectablesLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)), self.m_TabStatistics)
+	localPlayer:setPrivateSyncChangeHandler("Collectables_Collected", function(value)
+		self.m_CollectablesLabel:setText(_(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)))
+	end)
+	
+	--outputDebug(tonumber(localPlayer:getPrivateSync("Collectables_Collected")))
 end
 
 function SelfGUI:setCompanyInfo()

@@ -845,6 +845,8 @@ FactionStaticId = {
 	TRIAD = 11
 }
 
+COLLECTABLES_COUNT_PER_PLAYER = 40 -- how many collectables each player can collect
+
 FUEL_PRICE = { --price per liter
 	["petrol"] = 2.3,
 	["petrol_plus"] = 3.4,
