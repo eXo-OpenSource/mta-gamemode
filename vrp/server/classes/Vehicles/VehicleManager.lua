@@ -238,7 +238,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotZ = rotZ or 0
 	local premium = premium or 0
 
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, Keys) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]')", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
 		return self:createVehicle(sql:lastInsertId())
 	end
 	return false
@@ -269,14 +269,14 @@ function VehicleManager:createVehicle(idOrData)
 
 		enew(vehicle, typeClass, data)
 		self:addRef(vehicle, false)
-		
+
 		local pershingSquareSpecialCase = false
-		if data.PosX > 1399.40 and data.PosX <= 1559 then 
-			if data.PosY > -1835 and data.PosY < -1742 then 
-				if data.PosZ > 12 and data.PosZ < 25 then 
+		if data.PosX > 1399.40 and data.PosX <= 1559 then
+			if data.PosY > -1835 and data.PosY < -1742 then
+				if data.PosZ > 12 and data.PosZ < 25 then
 					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 					vehicle.despawned = true
-					pershingSquareSpecialCase = true	
+					pershingSquareSpecialCase = true
 				end
 			end
 		end
@@ -307,7 +307,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 				end
 				if not skip then
 					local veh, specialcase = self:createVehicle(row)
-					if veh and specialcase then 
+					if veh and specialcase then
 						player:sendShortMessage(("Dein Fahrzeug %s wurde nicht gespawnt, da es sich im Pershing Square befindet, melde dich bei einem Administrator und parke es um!"):format(getVehicleNameFromModel(veh:getModel())),  "Information", nil, 30000)
 					end
 				end
