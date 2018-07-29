@@ -70,7 +70,7 @@ end
 function Collectables:sendCollectables()
     if not client then return end
 
-    if not client:getCollectables() or table.size(client:getCollectables()) ~= 2 then
+    if not client:getCollectables() or table.size(client:getCollectables()) ~= 2 or (not client:getCollectables().collectable) then
         self:generateForPlayer(client)
 	end
 
