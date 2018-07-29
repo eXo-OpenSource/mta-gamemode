@@ -42,6 +42,7 @@ function GangwarPickGUI:constructor( area, canModify, enablePick )
     self:fill()
     self:createMessage( enablePick )
     self:setModify( canModify )
+    showCursor(false)
 end
 
 function GangwarPickGUI:fill()
