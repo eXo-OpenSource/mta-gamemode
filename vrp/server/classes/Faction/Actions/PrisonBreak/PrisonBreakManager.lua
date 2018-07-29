@@ -54,6 +54,7 @@ end
 function PrisonBreakManager:createDummyPoliceman()
     self.m_Officer = ShopNPC:new(276, Vector3(2564.98, -1432.98, 1044.52), 345.4)
     self.m_Officer:setInterior(2)
+    self.m_Officer:setImmortal(true)
     self.m_Officer:setFrozen(true)
     self.m_Officer.m_Warning = "Du überfällst den Gefängnisaufseher in 5 Sekunden, wenn du weiter auf ihn zielst!"
     self.m_Officer.onTargetted = bind(self.PedTargetted, self)
