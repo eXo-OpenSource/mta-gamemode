@@ -358,7 +358,11 @@ end
 
 function House:enterHouseTry(player)
 	if not self.m_Owner or (self.m_Keys[player:getId()] or player:getId() == self.m_Owner or self.m_CurrentRobber == player) or not self.m_LockStatus then
-		self:enterHouse(player)
+		if not player:isInGangwar() then
+			self:enterHouse(player)
+		else 
+			player:sendError(_("Du darfst dieses Haus nicht betreten (Gangwar) !", player))
+		end
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))
 	end
