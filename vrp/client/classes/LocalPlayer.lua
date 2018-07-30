@@ -74,6 +74,12 @@ function LocalPlayer:constructor()
 	
 	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 )
 	self.m_NoOcclusionZone= NonOcclusionZone:new(col2)
+
+	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5)
+	self.m_NoOcclusionZone= NonOcclusionZone:new(col3)
+
+	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 )
+	self.m_NoOcclusionZone= NonOcclusionZone:new(col4)
 end
 
 function LocalPlayer:destructor()
