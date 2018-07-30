@@ -45,6 +45,7 @@ function Gangwar:constructor( )
 	end
 	self.m_Areas = {	}
 	self.m_CurrentAttack = nil
+	self.m_GangwarGuard = GangwarGuard:new()
 	self.m_BankAccountServer = BankServer.get("faction.gangwar")
 	local sql_query = "SELECT * FROM ??_gangwar"
 	local rows = sql:queryFetch(sql_query, sql:getPrefix())
@@ -72,9 +73,7 @@ function Gangwar:constructor( )
 	self.m_BindGetAreas = bind(self.getAreas, self)
 	addEventHandler("gangwarGetAreas", root, self.m_BindGetAreas)
 	
-	self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
-	
-	self.m_GangwarGuard = GangwarGuard:new() 
+	self.m_GlobalTimerId = GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0) 
 end
 
 function Gangwar:destructor( )
@@ -280,7 +279,7 @@ function Gangwar:attackArea( player )
 					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
 						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
 							local activeGangwar = self:getCurrentGangwar()
-							local isGangwarLocked, remainingTime = self.m_GangwarGuard:isGangwarLocked()
+							local isGangwarLocked, remainingTime = self.m_GangwarGuard:isGangwarLocked( player:getFaction() )
 							local acFaction1,  acFaction2
 							if not activeGangwar then
 								if not isGangwarLocked then
