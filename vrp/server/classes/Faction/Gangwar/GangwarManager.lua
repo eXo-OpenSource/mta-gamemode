@@ -16,7 +16,8 @@ GANGWAR_RESET_AREAS = true --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 20
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_ATTACK_HOUR = 19
+GANGWAR_ATTACK_HOUR_START = 1830
+GANGWAR_ATTACK_HOUR_END = 2030
 GANGWAR_MIN_PLAYERS = 3 --// Default 3
 GANGWAR_ATTACK_PAUSE = 1 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
@@ -150,6 +151,17 @@ function Gangwar:RESET()
 	outputDebugString("Gangwar-areas were reseted!")
 end
 
+function Gangwar:notifyGangwarOver() 
+	for k, p in ipairs(getElementsByType("player")) do
+		if p.m_InsideArea then 
+			if self.m_LastFaction1 and self.m_LastFaction2 then 
+				if p.getFaction and (p:getFaction() ~= self.m_LastFaction1 and p:getFaction() ~= self.m_LastFaction2) then 
+					p:triggerEvent("Gangwar:notifyGangwarOver")
+				end
+			end
+		end
+	end
+end
 
 function Gangwar:isPlayerInGangwar(player)
 	local active, disq = self:getCurrentGangwarPlayers()
@@ -245,6 +257,7 @@ function Gangwar:removeAreaFromAttacks()
 	if self.m_CurrentAttack then
 		self.m_CurrentAttack = false
 		self.m_GangwarGuard:setLockedTime(30) 
+		self:notifyGangwarOver()
 	end
 end
 
@@ -276,8 +289,9 @@ function Gangwar:attackArea( player )
 				if areaOwner ~= id then
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
-					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
-						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG or getRealTime().hour == GANGWAR_ATTACK_HOUR then
+					local gametime = tonumber(("%02d"):format( getRealTime().hour )..""..("%02d"):format( getRealTime().minute ))
+					if factionCount >= GANGWAR_MIN_PLAYERS or DEBUG or (gametime >= GANGWAR_ATTACK_HOUR_START and gametime <= GANGWAR_ATTACK_HOUR_END) then
+						if factionCount2 >= GANGWAR_MIN_PLAYERS or DEBUG or (gametime >= GANGWAR_ATTACK_HOUR_START and gametime <= GANGWAR_ATTACK_HOUR_END)  then
 							local activeGangwar = self:getCurrentGangwar()
 							local isGangwarLocked, remainingTime = self.m_GangwarGuard:isGangwarLocked( player:getFaction() )
 							local acFaction1,  acFaction2
@@ -288,6 +302,8 @@ function Gangwar:attackArea( player )
 									local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
 									if nextAttack <= currentTimestamp then
 										mArea:attack(faction, faction2, player)
+										self.m_LastFaction1 = faction 
+										self.m_LastFaction2 = faction2
 									else
 										player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 									end

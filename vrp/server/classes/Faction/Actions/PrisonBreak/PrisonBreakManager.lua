@@ -19,6 +19,13 @@ function PrisonBreakManager:constructor()
     self:createEntrance()
     self:createDummyPoliceman()
     self:createWeaponBoxes()
+
+    local antifall = createColCuboid( 3624.71, -1551.32, -0.20, 8, 8, 3.8 )
+    InstantTeleportArea:new(antifall, 0, 0, Vector3(3630.73, -1546.19, 4.94))
+    
+    local antifall2 = createColCuboid(2559.17, -1416.25, 1045.87, 5, 10, 4 )
+    antifall2:setInterior(2)
+    InstantTeleportArea:new(antifall2, 0, 2, Vector3(2561.75, -1414.22, 1050.83))
 end
 
 function PrisonBreakManager:start(button, state, player)

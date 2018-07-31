@@ -80,10 +80,16 @@ function Guns:constructor()
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
+	
+	self.m_HitMarkRender = bind(self.Event_RenderHitMarker, self)
 end
 
 function Guns:destructor()
 
+end
+
+function Guns:toggleHitMark( bool )
+	self.m_HitMark = bool
 end
 
 function Guns:Event_NetworkInterupt( status, ticks )
@@ -169,6 +175,12 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
+	end
+	if bPlaySound and core:get("HUD", "Hitmark", true)  then 
+		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
+		self.m_HitMarkEnd = 100
+		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+		addEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end
 end
 
@@ -406,6 +418,22 @@ function Guns:Event_onTaserRender()
 	end
 end
 
+function Guns:Event_RenderHitMarker()
+	if getPedControlState ( localPlayer, 'aim_weapon' ) then
+		self.m_HitMarkEnd = self.m_HitMarkEnd - 5;
+		local hitX,hitY,hitZ = getPedTargetEnd ( localPlayer )
+		if not self.m_HitAccuracy then self.m_HitAccuracy = 1 end
+		local scale = 1 / self.m_HitAccuracy
+		local screenX1, screenY1 = getScreenFromWorldPosition ( hitX,hitY,hitZ )
+		dxDrawImage(screenX1-(16*scale/2), screenY1-(16*scale/2), 16*scale, 16*scale, 'files/images/hit.png')	
+	else 
+		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+	end	
+	if self.m_HitMarkEnd <= 0 then
+		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+	end
+end
+
 function Guns:bloodScreen()
 	self.m_BloodAlpha = 255
 	if self.m_Blood == false then
@@ -433,6 +461,12 @@ function Guns:Event_onClientPedDamage(attacker)
 		if attacker == localPlayer then
 			if core:get("Other", "HitSoundBell", true) then
 				playSound("files/audio/hitsound.wav")
+			end
+			if self.m_HitMark then 
+				self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
+				self.m_HitMarkEnd = 100
+				removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+				addEventHandler("onClientRender", root, self.m_HitMarkRender)
 			end
 		end
 	end

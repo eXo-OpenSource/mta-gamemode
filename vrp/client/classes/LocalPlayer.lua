@@ -52,7 +52,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
-	setTimer(bind(self.Event_PreRender, self),100,0)
+
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
 
@@ -80,6 +80,20 @@ function LocalPlayer:constructor()
 
 	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 )
 	self.m_NoOcclusionZone= NonOcclusionZone:new(col4)
+end
+
+function LocalPlayer:startLookAt( )
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+		self:stopLookAt()
+	end
+	self.m_LookAtTimer = setTimer(bind(self.Event_PreRender, self), 100, 0)
+end
+
+function LocalPlayer:stopLookAt()
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+		killTimer(self.m_LookAtTimer)
+	end
+	setPedLookAt(localPlayer, 0, 0,0, 0)
 end
 
 function LocalPlayer:destructor()
