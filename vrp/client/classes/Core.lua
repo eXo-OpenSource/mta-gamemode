@@ -105,6 +105,8 @@ function Core:ready() --onClientResourceStart
 	DimensionManager:new()
 	Inventory:new()
 	Guns:new()
+	Guns:getSingleton():toggleHitMark(core:get("HUD","Hitmark", false))
+	Guns:getSingleton():toggleTracer(core:get("HUD","Tracers", false))
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
@@ -120,6 +122,14 @@ function Core:ready() --onClientResourceStart
 	GangwarStatistics:new()
 
 	if core:get("World", "MostWantedEnabled", true) then MostWanted:new() end
+	if core:get("Other", "Movehead", true) then
+		localPlayer:startLookAt() 
+	end
+	if core:get("Other","RenderDistance", false) then 
+		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
+	else 
+		setFarClipDistance(992)
+	end
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()

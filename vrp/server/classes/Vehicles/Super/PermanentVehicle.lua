@@ -127,6 +127,8 @@ function PermanentVehicle:constructor(data)
 
 	self.m_HasBeenUsed = 0
 	self:setPlateText(("SA " .. ("000000" .. tostring(self.m_Id)):sub(-5)):sub(0,8))
+	self.m_SpawnDim = data.Dimension 
+	self.m_SpawnIn = data.Interior
 end
 
 function PermanentVehicle:destructor()

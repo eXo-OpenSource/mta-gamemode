@@ -208,7 +208,7 @@ end
 function PlayerManager:checkPayday()
 	for k, v in pairs(getElementsByType("player")) do
 		if v.m_LastPlayTime then
-			if v.m_NextPayday == v:getPlayTime() then
+			if v.m_NextPayday == v:getPlayTime() and (not v.m_PrisonTime or v.m_PrisonTime < 1) then
 				v:payDay()
 			end
 		end
