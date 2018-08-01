@@ -58,9 +58,9 @@ end
 
 function GroupManager:loadGroups()
 	local st, count = getTickCount(), 0
-	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, PlayTime, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
-		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, row.VehicleTuning)
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, row.PlayTime, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans)
 		GroupManager.Map[row.Id] = group
 		count = count + 1
 	end
