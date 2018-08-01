@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 GangwarClient = inherit( Singleton )
-addRemoteEvents{"Gangwar:show_AttackGUI","Gangwar_shortMessageAttack"}
+addRemoteEvents{"Gangwar:show_AttackGUI","Gangwar_shortMessageAttack", "Gangwar:notifyGangwarOver"}
 
  
 --// CONSTANTS 
@@ -20,9 +20,17 @@ local width ,height = w*0.4,h*0.3
 
 function GangwarClient:constructor( ) 
 	self.m_ShowBind = bind( self.show_AttackRequest, self)	
+	self.m_NotifyBind = bind(self.Event_notifyGangwarOver, self)
 	addEventHandler("Gangwar_shortMessageAttack",localPlayer, bind(GangwarClient.Event_shortMessageAttack,self))
 	addEventHandler("Gangwar:show_AttackGUI", root, self.m_ShowBind)
+	addEventHandler("Gangwar:notifyGangwarOver", root, self.m_NotifyBind)
 end
+
+function GangwarClient:Event_notifyGangwarOver() 
+	playSound("files/audio/gangwar_notify.ogg")
+	setTimer( playSoundFrontEnd, 500, 4, 33)
+end
+
 
 function GangwarClient:Event_shortMessageAttack( pArea )
 	self.m_LastArea = pArea

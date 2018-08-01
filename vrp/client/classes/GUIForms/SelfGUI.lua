@@ -1084,6 +1084,25 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "reddot", state)
 			HUDUI:getSingleton():toggleReddot(state)
 		end
+
+		self.m_HitMark = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Hitmarker", self.m_SettingBG)
+		self.m_HitMark:setFont(VRPFont(25))
+		self.m_HitMark:setFontSize(1)
+		self.m_HitMark:setChecked(core:get("HUD", "Hitmark", false))
+		self.m_HitMark.onChange = function (bool)
+			core:set("HUD", "Hitmark", bool)
+			Guns:getSingleton():toggleHitMark(bool)
+		end
+
+		self.m_Tracer = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Tracers", self.m_SettingBG)
+		self.m_Tracer:setFont(VRPFont(25))
+		self.m_Tracer:setFontSize(1)
+		self.m_Tracer:setChecked(core:get("HUD", "Tracers", false))
+		self.m_Tracer.onChange = function (bool)
+			core:set("HUD", "Tracers", bool)
+			Guns:getSingleton():toggleTracer(bool)
+		end
+
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)
 		self.m_TextureModeChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.55, self.m_Height*0.07, self.m_SettingBG)
@@ -1180,7 +1199,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "GangwarTabView", state)
 		end
 		if core:get("Other","RenderDistance", false) then 
-			setFarClipDistance(math.floor(core:get("Other","RenderDistance",renderdistance)) )
+			setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
 		else 
 			setFarClipDistance(992)
 		end
@@ -1204,6 +1223,20 @@ function SelfGUI:onSettingChange(setting)
 		--	self.m_StartIntro.onChange = function (state)
 		--		core:set("HUD", "startScreen", state)
 		--	end
+		
+		self.m_HeadLook = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.77, self.m_Width*0.8, self.m_Height*0.04, _"Kopf in Kamerarichtung bewegen", self.m_SettingBG)
+		self.m_HeadLook:setFont(VRPFont(25))
+		self.m_HeadLook:setFontSize(1)
+		self.m_HeadLook:setChecked(core:get("Other", "Movehead", true))
+		self.m_HeadLook.onChange = function (bool)
+			core:set("Other", "Movehead", bool)
+			if bool then
+				localPlayer:startLookAt()
+			else 
+				localPlayer:stopLookAt()
+			end
+		end
+
 	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
 

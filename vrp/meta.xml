@@ -1094,6 +1094,8 @@
 
 	<vrpfile src="files/images/warning.png" />
 
+	<vrpfile src="files/images/hit.png" />
+
 	<!-- board piece -->
 	<vrpfile src="files/images/Chess/board.jpg" />
 	<vrpfile src="files/images/Chess/tile.png" />
@@ -2062,6 +2064,7 @@
 	<vrpfile src="files/audio/headlight_up.mp3" />
 
 	<vrpfile src="files/audio/speedcam.ogg" />
+	<vrpfile src="files/audio/gangwar_notify.ogg" />
 
 	<vrpfile src="files/audio/sniper.ogg" />
 

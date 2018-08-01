@@ -12,6 +12,10 @@ function Townhall:constructor()
 
 	self.m_EnterExit:addEnterEvent(function( player ) player:triggerEvent("Townhall:applyTexture") end)
 	self.m_EnterExit:addExitEvent(function( player ) player:triggerEvent("Townhall:removeTexture") end)
+
+	local townhallAntiFall = createColCuboid(2730.97, -2422.92, 809.44, 100, 100, 5.5)
+	townhallAntiFall:setInterior(5)
+	InstantTeleportArea:new( townhallAntiFall, 5, 0, Vector3(2758.77, -2419.45, 816.3))
 end
 
 function Townhall:createGarage()

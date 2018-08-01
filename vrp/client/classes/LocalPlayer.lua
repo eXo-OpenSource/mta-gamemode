@@ -52,7 +52,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setCanBeKnockedOffBike", root, bind(self.serverSetCanBeKnockedOffBike, self))
 	addEventHandler("onClientObjectBreak",root,bind(self.Event_OnObjectBrake,self))
 	addEventHandler("setOcclusion",root,function( bool ) setOcclusionsEnabled(bool) end)
-	setTimer(bind(self.Event_PreRender, self),100,0)
+
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 	addCommandHandler("anim", bind(self.startAnimation, self))
 
@@ -69,17 +69,34 @@ function LocalPlayer:constructor()
 	self.m_RenderAlcoholBind = bind(self.Event_RenderAlcohol,self)
 	self.m_CancelEvent = function()	cancelEvent() end
 	
-	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37)
-	self.m_NoOcclusionZone= NonOcclusionZone:new(col)
+	local col = createColRectangle(1034.28, -1389.45, 1210.74-1034.28, 1389.45-1253.37) 
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col)
 	
-	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 )
-	self.m_NoOcclusionZone= NonOcclusionZone:new(col2)
+	local col2 = createColRectangle(802.48, -1314.53, 951.69-802.48, 1314.53-1155.58 ) 
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col2)
 
-	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5)
-	self.m_NoOcclusionZone= NonOcclusionZone:new(col3)
+	local col3 = createColCuboid(1894.46, 968.18, 9.82, 1920.30-1894.46, 1018.40-968.18, 5) -- triad base
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col3)
 
-	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 )
-	self.m_NoOcclusionZone= NonOcclusionZone:new(col4)
+	local col4 = createColCuboid(2305.70, -0.12, 24.74, 2316.60-2305.70, 22.43, 5 ) -- palo bank
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col4)
+
+	local col5 = createColRectangle(2350.23, -2666.53, 100,  250) -- ls docks
+	self.m_NoOcclusionZone = NonOcclusionZone:new(col5)
+end
+
+function LocalPlayer:startLookAt( )
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+		self:stopLookAt()
+	end
+	self.m_LookAtTimer = setTimer(bind(self.Event_PreRender, self), 100, 0)
+end
+
+function LocalPlayer:stopLookAt()
+	if self.m_LookAtTimer and isTimer(self.m_LookAtTimer) then 
+		killTimer(self.m_LookAtTimer)
+	end
+	setPedLookAt(localPlayer, 0, 0,0, 0)
 end
 
 function LocalPlayer:destructor()

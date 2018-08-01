@@ -34,7 +34,13 @@ function Guns:constructor()
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
 	end
-
+	for weapon, damage in pairs(WEAPON_DAMAGE) do 
+		if weapon < 34 then
+			setWeaponProperty(weapon, "poor", "damage", damage)
+			setWeaponProperty(weapon, "std", "damage", damage)
+			setWeaponProperty(weapon, "pro", "damage", damage)
+		end
+	end
 	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
@@ -164,7 +170,7 @@ function Guns:Event_OnWasted(totalAmmo, killer, weapon)
 		end
 
 		local sourceFaction = source:getFaction()
-		if killer and isElement(killer) and sourceFaction and killer:getFaction() and not killer:isDead() then
+		if killer and isElement(killer) and sourceFaction and killer.getFaction and killer:getFaction() and not killer:isDead() then
 			local killerFaction = killer:getFaction()
 			if sourceFaction.m_Id ~= 4 then
 				if sourceFaction:isStateFaction() and source:isFactionDuty() then
