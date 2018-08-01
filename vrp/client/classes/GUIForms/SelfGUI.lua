@@ -1087,6 +1087,14 @@ function SelfGUI:onSettingChange(setting)
 			Guns:getSingleton():toggleHitMark(bool)
 		end
 
+		self.m_Tracer = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Tracers", self.m_SettingBG)
+		self.m_Tracer:setFont(VRPFont(25))
+		self.m_Tracer:setFontSize(1)
+		self.m_Tracer:setChecked(core:get("HUD", "Tracers", false))
+		self.m_Tracer.onChange = function (bool)
+			core:set("HUD", "Tracers", bool)
+			Guns:getSingleton():toggleTracer(bool)
+		end
 
 	elseif setting == "Texturen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.07, _"Fahrzeug-Textur Modus", self.m_SettingBG)

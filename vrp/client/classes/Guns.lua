@@ -8,8 +8,6 @@
 
 Guns = inherit(Singleton)
 local w,h = guiGetScreenSize()
-local tracer = dxCreateTexture("files/images/Textures/tracer.png")
-local flyTime = 200
 local NO_TRACERS = {
 	[25] = true,
 	[26] = true,
@@ -69,6 +67,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
+	self.m_TracerTable = {}
 	self.m_NetworkInteruptFreeze = false
 	self.HookDrawAttention = bind(self.drawNetworkInterupt, self)
 	addEventHandler( "onClientPlayerNetworkStatus", root, bind(self.Event_NetworkInterupt, self))
@@ -76,16 +75,28 @@ function Guns:constructor()
 	self:initalizeAntiCBug()
 	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
-
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
 	self.m_MeleeCache = {}
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 	
 	self.m_HitMarkRender = bind(self.Event_RenderHitMarker, self)
+	self.m_TracerEnabled = false
 end
 
 function Guns:destructor()
 
+end
+
+function Guns:toggleTracer( bool )
+	if bool then
+		self.m_TracerTable = {}
+		removeEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
+		addEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
+	else 
+		self.m_TracerTable = {}
+		removeEventHandler("onClientRender", root, bind(self.Event_renderTracer, self))
+	end
+	self.m_TracerEnabled = bool
 end
 
 function Guns:toggleHitMark( bool )
@@ -316,6 +327,13 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				end, 6000,1)
 			end
 		end
+		if self.m_TracerEnabled then
+			local wx, wy, wz = getPedWeaponMuzzlePosition(localPlayer)
+			local flightVec = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getNormalized()*4
+			local length = Vector3(Vector3(hitX, hitY, hitZ) - Vector3(wx, wy, wz)):getLength()
+			local steps = length / flightVec:getLength()
+			self.m_TracerTable[getTickCount()] = {Vector3(wx, wy, wz), Vector3(hitX, hitY, hitZ), steps, flightVec, 0}
+		end
 	end
 
 	if weapon == 43 then -- Camera
@@ -431,6 +449,27 @@ function Guns:Event_RenderHitMarker()
 	end	
 	if self.m_HitMarkEnd <= 0 then
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
+	end
+end
+
+function Guns:Event_renderTracer()
+	local now = getTickCount()
+	local interp, prog, startPos, vecFlight, bulletVec, length, startX, startY, startZ, updateVec, steps
+	for time, obj in pairs(self.m_TracerTable) do 
+		if time and obj then
+			startPos, endPos, maxSteps, flightVec, steps = obj[1], obj[2], obj[3], obj[4], obj[5]
+			steps = steps + 1
+			startX = startPos.x+flightVec.x
+			startY = startPos.y+flightVec.y
+			startZ = startPos.z+flightVec.z
+			if startPos and endPos then 
+				dxDrawLine3D(startX, startY, startZ, startX+flightVec.x, startY+flightVec.y, startZ+flightVec.z, tocolor(150, 150, 150), 3 )
+			end
+			self.m_TracerTable[time] = {Vector3(startX, startY, startZ), obj[2], maxSteps, flightVec, steps}
+			if steps > maxSteps then 
+				self.m_TracerTable[time] = nil
+			end
+		end
 	end
 end
 
