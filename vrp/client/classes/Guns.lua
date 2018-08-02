@@ -82,6 +82,7 @@ function Guns:constructor()
 	self.m_HitMarkRender = bind(self.Event_RenderHitMarker, self)
 	self.m_HitMark = false
 	self.m_TracerEnabled = false
+	self.m_hitpath = fileExists("_custom/files/audio/hitsound.wav") and "_custom/files/audio/hitsound.wav" or "files/audio/hitsound.wav"
 end
 
 function Guns:destructor()
@@ -186,7 +187,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 	end
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
-		playSound("files/audio/hitsound.wav")
+		playSound(self.m_hitpath or "files/audio/hitsound.wav")
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer  then 
 		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
@@ -228,13 +229,13 @@ function Guns:addMeleeDamage( player, weapon , bodypart, loss )
 				self.m_MeleeCache["Bodypart"] = bodypart
 				self.m_MeleeCache["Loss"] = 0
 				if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
-					playSound("files/audio/hitsound.wav")
+					playSound(self.m_hitpath or "files/audio/hitsound.wav")
 				end
 			end
 		else 
 			triggerServerEvent("gunsLogMeleeDamage", localPlayer, player, weapon, bodypart, loss)
 			if core:get("Other", "HitSoundBell", true) and getElementType(player) ~= "ped" then
-				playSound("files/audio/hitsound.wav")
+				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 		end
 	end
@@ -505,7 +506,7 @@ function Guns:Event_onClientPedDamage(attacker)
 	else
 		if attacker == localPlayer then
 			if core:get("Other", "HitSoundBell", true) then
-				playSound("files/audio/hitsound.wav")
+				playSound(self.m_hitpath or "files/audio/hitsound.wav")
 			end
 			if self.m_HitMark then 
 				self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
