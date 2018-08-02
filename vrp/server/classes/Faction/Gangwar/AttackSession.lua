@@ -109,7 +109,7 @@ end
 function AttackSession:synchronizeLists( )
 	local pickParticipants = {}
 	for k,v in ipairs( self.m_Participants ) do
-		if v:getFaction() == self.m_Faction1 then
+		if v.getFaction and v:getFaction() == self.m_Faction1 then
 			table.insert(pickParticipants, v)
 		end
 	end

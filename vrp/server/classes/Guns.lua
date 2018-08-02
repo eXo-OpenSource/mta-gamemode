@@ -25,21 +25,18 @@ function Guns:constructor()
 		setWeaponProperty(24, skill, "accuracy",1.2) -- GTA-Std: 1.25
 		-- MP5:
 		setWeaponProperty(29, skill, "accuracy", 1.4) -- GTA-Std: 1.2000000476837
+		
+		setWeaponProperty(30, skill, "accuracy", 0.5) 
+		setWeaponProperty(30, skill, "weapon_range",105) -- GTA-Std: 90
+
 		-- M4:
-		setWeaponProperty(31, skill, "accuracy", 0.9) -- GTA-Std: 0.80000001192093
+		setWeaponProperty(31, skill, "accuracy", 0.7) -- GTA-Std: 0.80000001192093
 		setWeaponProperty(31, skill, "weapon_range",105) -- GTA-Std: 90
 		-- Tec-9:
 		setWeaponProperty(32, skill, "accuracy",1.1999999523163) -- GTA-Std: 1.1000000238419
 		-- Rifle:
 		setWeaponProperty(33, skill, "weapon_range", 160) -- GTA-Std: 100
 		setWeaponProperty(33, skill, "target_range", 160) -- GTA-Std: 55
-	end
-	for weapon, damage in pairs(WEAPON_DAMAGE) do 
-		if weapon < 34 then
-			setWeaponProperty(weapon, "poor", "damage", damage)
-			setWeaponProperty(weapon, "std", "damage", damage)
-			setWeaponProperty(weapon, "pro", "damage", damage)
-		end
 	end
 	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
