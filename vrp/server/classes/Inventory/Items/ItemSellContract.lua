@@ -52,11 +52,11 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 		if price > 0 then
 			if player ~= client then
 				if player.lastContract == client then
-					if money >= price then
-						if car.m_Premium then
-							client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
-							return
-						end
+					if car.m_Premium then
+						client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+						return
+					end
+					if client:transferBankMoney(player, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade") then
 						client:triggerEvent("closeVehicleAccept")
 						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
 						player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
@@ -64,7 +64,6 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						car:setOwner( client )
 						car:setData("OwnerName", client.name, true)
 						VehicleManager:getSingleton():addRef( car, false)
-						client:transferBankMoney(player, price, "Fahrzeug-Handel", "Gameplay", "VehicleTrade")
 						car.m_Keys = {}
 						VehicleManager:getSingleton():syncVehicleInfo( player )
 						VehicleManager:getSingleton():syncVehicleInfo( client )

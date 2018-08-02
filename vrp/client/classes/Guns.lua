@@ -80,6 +80,7 @@ function Guns:constructor()
 	setTimer(bind(self.checkMeleeCache, self), MELEE_CACHE_CHECK, 0)
 	
 	self.m_HitMarkRender = bind(self.Event_RenderHitMarker, self)
+	self.m_HitMark = false
 	self.m_TracerEnabled = false
 end
 
@@ -187,9 +188,10 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
 	end
-	if bPlaySound and core:get("HUD", "Hitmark", true)  then 
+	if bPlaySound and self.m_HitMark and attacker == localPlayer  then 
 		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
 		self.m_HitMarkEnd = 100
+		self.m_HitMarkRed = getElementHealth(source) == 0
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 		addEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end
@@ -446,7 +448,8 @@ function Guns:Event_RenderHitMarker()
 		if not self.m_HitAccuracy then self.m_HitAccuracy = 1 end
 		local scale = 1 / self.m_HitAccuracy
 		local screenX1, screenY1 = getScreenFromWorldPosition ( hitX,hitY,hitZ )
-		dxDrawImage(screenX1-(16*scale/2), screenY1-(16*scale/2), 16*scale, 16*scale, 'files/images/hit.png')	
+		local color =  not self.m_HitMarkRed and tocolor(255, 255, 255, 255) or tocolor(200, 0, 0, 255)
+		dxDrawImage(screenX1-(16*scale/2), screenY1-(16*scale/2), 16*scale, 16*scale, 'files/images/hit.png', 0, 0, 0, color)	
 	else 
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end	
@@ -506,7 +509,8 @@ function Guns:Event_onClientPedDamage(attacker)
 			end
 			if self.m_HitMark then 
 				self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
-				self.m_HitMarkEnd = 100
+				self.m_HitMarkRed = getElementHealth(source) == 0
+				self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 				removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 				addEventHandler("onClientRender", root, self.m_HitMarkRender)
 			end

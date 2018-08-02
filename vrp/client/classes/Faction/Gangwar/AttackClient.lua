@@ -30,8 +30,8 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	if not pNoPickGUI then
 		self.m_GangwarPick = GangwarPickGUI:new( areaName, pCanModifyPick, pShowPickGUI )
-	end
-	if not pAttacker then 
+	end 
+	if self.m_GangwarPick then
 		self.m_GangwarPick:setVisible(false)
 	end
 	self.m_GangwarPick:synchronize( pPickParticipants, pDisqualified)

@@ -376,6 +376,24 @@ GAS_STATIONS = {
 		fuelTypes = {"petrol_plus", "jetfuel"},
 	},
 	{
+		name = "LV-Dock Tankstelle",
+		stations = {
+			{Vector3(1633.56, 532.25, 2.20), 270, 1}
+		},
+		accessible = {0, 0},
+		nonInterior = true,
+		fuelTypes = {"diesel"},
+	},
+	{
+		name = "LV-Airport Tankstelle",
+		stations = {
+			{Vector3(1551.45, 1719.63, 11.42), 270, 1}
+		},
+		accessible = {0, 0},
+		nonInterior = true,
+		fuelTypes = {"petrol_plus", "jetfuel"},
+	},
+	{
 		name = "Tankstelle Ocean Docks",
 		stations = {
 			{Vector3(2370.29, -2557.2, 2.5), 90, 1}
