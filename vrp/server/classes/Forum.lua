@@ -16,7 +16,7 @@ function Forum:destructor()
 end
 
 function Forum:userCreate(username, password, email, callback)
-	fetchRemote(self.m_BaseUrl .. "?user-api&method=register", {
+	fetchRemote(self.m_BaseUrl .. "?user-api&method=create", {
 		method = "POST",
 		formFields = {
 			secret = self.m_Secret,

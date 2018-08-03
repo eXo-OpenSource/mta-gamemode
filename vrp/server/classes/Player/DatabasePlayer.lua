@@ -942,18 +942,25 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		return false
 	end
 
-	local row = board:queryFetchSingle("SELECT username FROM wcf1_user WHERE username LIKE ?", newNick)
-	if row then
-		admin:sendError(_("Nickname bereits vergeben!", admin))
+	local boardId = Account.getBoardIdFromId(self.m_Id)
+	local oldNick = Account.getNameFromId(self.m_Id)
+
+	Forum:getSingleton():userUpdate(boardId, {username = newNick}, Async.waitFor(self))
+	local result = Async.wait()
+	local data = fromJSON(result)
+
+	if data and data.status and data.status == 200 then
+		outputDebug(data)
+		sql:queryExec("UPDATE ??_account SET Name = ? WHERE Id = ?", sql:getPrefix(), newNick, self.m_Id)
+		StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, func, "von "..oldNick.." zu "..newNick, 0)
+	else
+		if data and data.status then
+			admin:sendError(_("Nickname bereits vergeben!", admin))
+		else
+			admin:sendError(_("Fehler: Es gab ein Problem mit der Schnittstelle", admin))
+		end
 		return false
 	end
-
-	local oldNick = Account.getNameFromId(self.m_Id)
-	local boardId = Account.getBoardIdFromId(self.m_Id)
-
-	sql:queryExec("UPDATE ??_account SET Name = ? WHERE Id = ?", sql:getPrefix(), newNick, self.m_Id)
-	board:queryExec("UPDATE wcf1_user SET username = ? WHERE UserID = ?", newNick, boardId)
-	StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, func, "von "..oldNick.." zu "..newNick, 0)
 
 	if self:isActive() then
 		self:getAccount().m_Username = newNick
