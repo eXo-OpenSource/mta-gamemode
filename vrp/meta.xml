@@ -188,6 +188,10 @@
 
 	<!-- Gameplay -->
 
+	<!-- Contract -->
+	<script src="server/classes/Gameplay/Contract/Contract.lua" type="server"/>
+	<script src="server/classes/Gameplay/Contract/ContractManager.lua" type="server"/>
+
 	<!-- Race -->
 	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>

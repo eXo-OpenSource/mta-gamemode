@@ -26,9 +26,9 @@ function Core:constructor()
 	if not IS_TESTSERVER then
 		--MYSQL_DB = "vrp_local"
 	end
-	
+
 	-- Create file logger for sql performance
-	FileLogger:new() 
+	FileLogger:new()
 
 	-- Establish database connection
 	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
@@ -59,9 +59,9 @@ function Core:constructor()
 		setServerPassword()
 	end
 
-	addCommandHandler("servertime", function(p) 
+	addCommandHandler("servertime", function(p)
 		local time = getRealTime()
-		outputChatBox(("* Es ist %02d:%02d:%02d Uhr Serverzeit"):format(time.hour, time.minute, time.second), p, 255, 100, 100) 
+		outputChatBox(("* Es ist %02d:%02d:%02d Uhr Serverzeit"):format(time.hour, time.minute, time.second), p, 255, 100, 100)
 	end)
 
 	-- Instantiate classes (Create objects)
@@ -179,6 +179,7 @@ function Core:constructor()
 		GangwarStatistics:new()
 		--SprayWallManager:new()
 		GroupHouseRob:new()
+		ContractManager:new()
 
 		BindManager:new()
 
