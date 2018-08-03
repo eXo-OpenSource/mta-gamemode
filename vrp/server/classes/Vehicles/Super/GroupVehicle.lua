@@ -231,9 +231,9 @@ function GroupVehicle:buy(player)
 	if self.m_ForSale then
 		if self.m_SalePrice >= 0 and player:getBankMoney() >= self.m_SalePrice then
 			if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
+				local group = self:getGroup()
+				local price = self.m_SalePrice
 				if player:transferBankMoney(group, price, "Firmen-Fahrzeug Kauf", "Group", "VehicleSell") then
-					local group = self:getGroup()
-					local price = self.m_SalePrice
 					triggerClientEvent("groupSaleVehiclesDestroyBubble", root, self)
 					local status, newVeh = PermanentVehicle.convertVehicle(self, player, group)
 					StatisticsLogger:getSingleton():addVehicleTradeLog(newVeh, player, 0, price, "group")
