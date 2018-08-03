@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.5" client="1.5.5"/>
+	<min_mta_version server="1.5.4" client="1.5.4"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -461,6 +461,7 @@
 	<script src="client/skindata.lua" type="client"/>
 	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/ExecTimeRecorder.lua" type="client"/>
+	<script src="client/classes/NetworkMonitor.lua" type="client"/>
 	<script src="client/classes/HelpTextManager.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
