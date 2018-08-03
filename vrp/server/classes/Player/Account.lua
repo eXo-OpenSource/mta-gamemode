@@ -34,6 +34,34 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 
+	--[[
+		New login
+	]]
+	Forum:getSingleton():userLogin(username, password, Async.waitFor(self))
+	local data = Async.wait()
+	outputDebug(data)
+	local resData = fromJSON(data)
+
+	if resData and resData.status and resData.status == 200 then
+		local data = resData.data
+		sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId FROM ??_account WHERE ForumId = ?"), sql:getPrefix(), data.userID)
+		local row = Async.wait()
+
+		if not row then
+			Account.createAccount(player, data.userID, data.username, data.email)
+			return
+		else
+			Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, "")
+			return
+		end
+
+	else
+		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
+		return false
+	end
+
+	-- player:triggerEvent("loginfailed", "Unbekannter Fehler")
+	--[[
 	-- Ask SQL to fetch ForumId
 	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
@@ -115,7 +143,7 @@ function Account.login(player, username, password, pwhash)
 		else
 			outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 		end
-	end
+	end]]
 end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
@@ -174,14 +202,14 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	player:loadCharacter()
 	player:spawn()
 	player:triggerEvent("loginsuccess", pwhash)
-		
+
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
 		local payload = toJSON({["sub"] = player:getId(), ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, true):sub(2, -2)
 
 		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
 
-		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
+		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData)
 			player:setSessionId(jwtBase.."."..responseData)
 			setTimer(function()
 				player:setFrozen(false)
