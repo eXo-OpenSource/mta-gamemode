@@ -950,7 +950,6 @@ function DatabasePlayer:setNewNick(admin, newNick)
 	local data = fromJSON(result)
 
 	if data and data.status and data.status == 200 then
-		outputDebug(data)
 		sql:queryExec("UPDATE ??_account SET Name = ? WHERE Id = ?", sql:getPrefix(), newNick, self.m_Id)
 		StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, func, "von "..oldNick.." zu "..newNick, 0)
 	else

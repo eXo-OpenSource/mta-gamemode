@@ -8,8 +8,8 @@
 Forum = inherit(Singleton)
 
 function Forum:constructor()
-	self.m_BaseUrl = "https://forum.exo-reallife.de/index.php"
-	self.m_Secret = "2c522310a801d8ed8d9afd0e6cacb844"
+	self.m_BaseUrl = Config.get('board')['baseurl']
+	self.m_Secret = Config.get('board')['secret']
 end
 
 function Forum:destructor()
