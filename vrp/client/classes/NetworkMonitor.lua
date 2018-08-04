@@ -25,18 +25,27 @@ end
 function NetworkMonitor:monitor()
     local loss = self:check("packetlossLastSecond") or self:check("packetlossTotal") 
     if loss then 
-        if getTickCount() >= self.m_LastOutput + 2000 then
+        if getTickCount() >= self.m_LastOutput + 5000 then
             self.m_LastOutput = getTickCount()
             outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund eines sehr hohen Paketverlustes: #ff0000%s%%"):format(math.ceil(loss, 2)), 255, 0, 0, true)
         end
     end
     local ping = self:ping()
     if ping then 
-        if getTickCount() >= self.m_LastPingOutput + 2000 then 
+        if getTickCount() >= self.m_LastPingOutput + 5000 then 
             self.m_LastPingOutput = getTickCount()
             outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
         end
     end
+end
+
+function NetworkMonitor:getPingDisabled()
+    return self.m_PingDisabled
+end
+
+
+function NetworkMonitor:getLossDisabled()
+    return self.m_ActionsDisabled
 end
 
 function NetworkMonitor:ping()
