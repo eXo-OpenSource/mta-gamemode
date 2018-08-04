@@ -160,7 +160,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon)  then
