@@ -86,6 +86,9 @@ function AdminGUI:constructor(money)
 	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBarEnabled(false)
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
+	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
+	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
+
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
 	self.m_PlayerSearch = GUIEdit:new(10, 10, 200, 30, tabSpieler)
@@ -542,6 +545,8 @@ function AdminGUI:onGeneralButtonClick(func)
 				end)
 	elseif func == "smode" or func == "clearchat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
+	elseif func == "loginFix" then
+		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
 		if radius and tonumber(radius) and tonumber(radius) > 0 then
