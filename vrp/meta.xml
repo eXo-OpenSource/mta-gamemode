@@ -461,6 +461,7 @@
 	<script src="client/skindata.lua" type="client"/>
 	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/ExecTimeRecorder.lua" type="client"/>
+	<script src="client/classes/NetworkMonitor.lua" type="client"/>
 	<script src="client/classes/HelpTextManager.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>

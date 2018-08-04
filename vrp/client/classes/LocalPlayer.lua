@@ -83,6 +83,8 @@ function LocalPlayer:constructor()
 
 	local col5 = createColRectangle(2350.23, -2666.53, 100,  250) -- ls docks
 	self.m_NoOcclusionZone = NonOcclusionZone:new(col5)
+
+	NetworkMonitor:new()
 end
 
 function LocalPlayer:startLookAt( )
