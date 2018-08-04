@@ -10,9 +10,9 @@
 NetworkMonitor = inherit(Singleton)
 local NETWORK_MONITOR_INTERVAL = 250 --// ms
 local NETWORK_PACKET_LOSS_THRESHOLD = 5 --// loss%
-local NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 200 --// loss%
-local MAX_PING_THRESHOLD = 30 --// % 
-local MIN_PING_TRIGGER = 1
+local NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 50 --// loss%
+local MAX_PING_THRESHOLD = 100 --// % 
+local MIN_PING_TRIGGER = 200 --// ms
 function NetworkMonitor:constructor()
     self.m_NetMonitor = setTimer( bind(self.monitor, self), NETWORK_MONITOR_INTERVAL, 0)
     self.m_Ping = 0
