@@ -191,8 +191,8 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer  then 
 		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
-		self.m_HitMarkEnd = 100
 		self.m_HitMarkRed = getElementHealth(source) == 0
+		self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 		addEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end
