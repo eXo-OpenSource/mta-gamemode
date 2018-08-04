@@ -43,10 +43,10 @@ function NetworkMonitor:ping()
     self.m_Ping = self.m_Ping + getPlayerPing(localPlayer)
     self.m_PingCount = self.m_PingCount + 1 
     local lastAverage = self.m_PingAverage
-    local ping = getPlayerPing(localPlayer)
+    local ping = getPlayerPing(localPlayer) > 0 and getPlayerPing(localPlayer) or 1
     self.m_PingAverage = self.m_Ping / self.m_PingCount
-    if self.m_PingAverage < ping then
-        if (self.m_PingAverage / ping) > MAX_PING_THRESHOLD then 
+    if self.m_PingAverage > 0 and self.m_PingAverage < ping then
+        if (self.m_PingAverage / ping)*100 > MAX_PING_THRESHOLD then 
             if not self.m_PingDisabled then 
                 self.m_FireControl = isControlEnabled("fire")
                 self.m_ForwardControl = isControlEnabled("forwards")
@@ -76,7 +76,7 @@ function NetworkMonitor:ping()
         self.m_Ping = 0
         self.m_PingAverage = 0
     end
-    outputChatBox( (self.m_PingAverage / ping).." "..self.m_PingCount )
+    outputChatBox( ((self.m_PingAverage / ping)*100).." "..self.m_PingCount )
 end
 
 function NetworkMonitor:check( type )
