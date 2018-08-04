@@ -10,11 +10,11 @@
 NetworkMonitor = inherit(Singleton)
 local NETWORK_MONITOR_INTERVAL = 250 --// ms
 local NETWORK_PACKET_LOSS_THRESHOLD = 5 --// loss%
-local NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 50 --// loss%
+local NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 200 --// loss%
 local MAX_PING_THRESHOLD = 30 --// % 
+local MIN_PING_TRIGGER = 1
 function NetworkMonitor:constructor()
-    self.m_BindFunc = bind(self.monitor, self)
-    self.m_NetMonitor = setTimer(self.m_BindFunc, NETWORK_MONITOR_INTERVAL, 0)
+    self.m_NetMonitor = setTimer( bind(self.monitor, self), NETWORK_MONITOR_INTERVAL, 0)
     self.m_Ping = 0
     self.m_PingAverage = 0
     self.m_PingCount = 0
@@ -45,8 +45,8 @@ function NetworkMonitor:ping()
     local lastAverage = self.m_PingAverage
     local ping = getPlayerPing(localPlayer) > 0 and getPlayerPing(localPlayer) or 1
     self.m_PingAverage = self.m_Ping / self.m_PingCount
-    if self.m_PingAverage > 0 and self.m_PingAverage < ping then
-        if (self.m_PingAverage / ping)*100 > MAX_PING_THRESHOLD then 
+    if ping > MIN_PING_TRIGGER and self.m_PingAverage > 0 and self.m_PingAverage < ping then
+        if ( ping / self.m_PingAverage )*100 > MAX_PING_THRESHOLD then 
             if not self.m_PingDisabled then 
                 self.m_FireControl = isControlEnabled("fire")
                 self.m_ForwardControl = isControlEnabled("forwards")
@@ -58,6 +58,7 @@ function NetworkMonitor:ping()
                 self.m_CrouchControl = isControlEnabled("crouch")
                 self.m_PingDisabled = true
                 self:disableActions()
+                return true
             end
         else 
             if self.m_PingDisabled then 
@@ -71,12 +72,12 @@ function NetworkMonitor:ping()
             self:enableActions()
         end
     end
-    if self.m_PingCount > 200 then 
+    if self.m_PingCount > 2000 then 
         self.m_PingCount = 0
         self.m_Ping = 0
         self.m_PingAverage = 0
     end
-    outputChatBox( ((self.m_PingAverage / ping)*100).." "..self.m_PingCount )
+    return false
 end
 
 function NetworkMonitor:check( type )
