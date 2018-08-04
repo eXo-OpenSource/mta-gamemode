@@ -8,11 +8,11 @@
 
 
 NetworkMonitor = inherit(Singleton)
-local NETWORK_MONITOR_INTERVAL = 250 --// ms
-local NETWORK_PACKET_LOSS_THRESHOLD = 5 --// loss%
-local NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 60 --// loss%
-local MAX_PING_THRESHOLD = 150 --// % 
-local MIN_PING_TRIGGER = 300 --// ms
+NETWORK_MONITOR_INTERVAL = 250 --// ms
+NETWORK_PACKET_LOSS_THRESHOLD = 5 --// loss%
+NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD = 60 --// loss%
+MAX_PING_THRESHOLD = 150 --// % 
+MIN_PING_TRIGGER = 300 --// ms
 function NetworkMonitor:constructor()
     self.m_NetMonitor = setTimer( bind(self.monitor, self), NETWORK_MONITOR_INTERVAL, 0)
     self.m_Ping = 0
@@ -34,7 +34,7 @@ function NetworkMonitor:monitor()
     if ping then 
         if getTickCount() >= self.m_LastPingOutput + 2000 then 
             self.m_LastPingOutput = getTickCount()
-            outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MAX_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
+            outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
         end
     end
 end
