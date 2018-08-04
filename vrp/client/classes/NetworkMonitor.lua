@@ -67,9 +67,14 @@ function NetworkMonitor:ping()
         end
     else 
         if self.m_PingDisabled then 
-
+            self.m_PingDisabled = false 
+            self:enableActions()
         end
     end
+    if self.m_PingCount > 200 then 
+        self.m_PingCount = 0
+    end
+    outputChatBox( (self.m_PingAverage / ping) )
 end
 
 function NetworkMonitor:check( type )
