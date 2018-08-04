@@ -73,8 +73,9 @@ function NetworkMonitor:ping()
     end
     if self.m_PingCount > 200 then 
         self.m_PingCount = 0
+        self.m_Ping = 0
     end
-    outputChatBox( (self.m_PingAverage / ping) )
+    outputChatBox( (self.m_PingAverage / ping)..self.m_PingCount )
 end
 
 function NetworkMonitor:check( type )
