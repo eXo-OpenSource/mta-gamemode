@@ -48,24 +48,14 @@ function NetworkMonitor:ping()
     if ping > MIN_PING_TRIGGER and self.m_PingAverage > 0 and self.m_PingAverage < ping then
         if ( ping / self.m_PingAverage )*100 > MAX_PING_THRESHOLD then 
             if not self.m_PingDisabled then 
-                if not self.m_ActionsDisabled then
-                    self.m_FireControl = isControlEnabled("fire")
-                    self.m_ForwardControl = isControlEnabled("forwards")
-                    self.m_LeftControl = isControlEnabled("left")
-                    self.m_RightControl = isControlEnabled("right")
-                    self.m_JumpControl = isControlEnabled("jump")
-                    self.m_BackwardControl = isControlEnabled("backwards")
-                    self.m_AimControl = isControlEnabled("aim_weapon")
-                    self.m_CrouchControl = isControlEnabled("crouch")
-                    self.m_PingDisabled = true
-                    self:disableActions()
-                    return true
-                end
+                self.m_PingDisabled = true
+                self:disableActions()
+                return true
             end
         else 
             if self.m_PingDisabled then 
-                self.m_PingDisabled = false 
                 self:enableActions()
+                self.m_PingDisabled = false 
             end
         end
     else 
@@ -87,14 +77,6 @@ function NetworkMonitor:check( type )
     local limit = type == "packetlossLastSecond" and NETWORK_PACKET_LOSS_THRESHOLD or NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD
     if loss and loss > limit then 
         if not self.m_ActionsDisabled then
-            self.m_FireControl = isControlEnabled("fire")
-            self.m_ForwardControl = isControlEnabled("forwards")
-            self.m_LeftControl = isControlEnabled("left")
-            self.m_RightControl = isControlEnabled("right")
-            self.m_JumpControl = isControlEnabled("jump")
-            self.m_BackwardControl = isControlEnabled("backwards")
-            self.m_AimControl = isControlEnabled("aim_weapon")
-            self.m_CrouchControl = isControlEnabled("crouch")
             self.m_ActionsDisabled = true
             self:disableActions()
             return loss
@@ -102,7 +84,9 @@ function NetworkMonitor:check( type )
     else 
         if self.m_ActionsDisabled then 
             self.m_ActionsDisabled = false
-            self:enableActions()
+            if not self.m_PingDisabled then
+                self:enableActions()
+            end
         end
     end 
     return false
@@ -121,12 +105,12 @@ function NetworkMonitor:disableActions()
 end
 
 function NetworkMonitor:enableActions() 
-    if self.m_FireControl then setTimer(toggleControl, 2000, 1, "fire", true) end
-    if self.m_AimControl then setTimer(toggleControl, 2000, 1, "aim_weapon", true) end
-    if self.m_ForwardControl then setTimer(toggleControl, 2000, 1, "forwards", true) end
-    if self.m_BackwardControl then setTimer(toggleControl, 2000, 1, "backwards", true) end
-    if self.m_LeftControl then setTimer(toggleControl, 2000, 1, "left", true) end
-    if self.m_RightControl then setTimer(toggleControl, 2000, 1, "right", true) end
-    if self.m_JumpControl then setTimer(toggleControl, 2000, 1, "jump", true) end
-    if self.m_CrouchControl then setTimer(toggleControl, 2000, 1, "crouch", true) end
+    setTimer(toggleControl, 2000, 1, "fire", true) 
+    setTimer(toggleControl, 2000, 1, "aim_weapon", true)
+    setTimer(toggleControl, 2000, 1, "forwards", true) 
+    setTimer(toggleControl, 2000, 1, "backwards", true) 
+    setTimer(toggleControl, 2000, 1, "left", true) 
+    setTimer(toggleControl, 2000, 1, "right", true) 
+    setTimer(toggleControl, 2000, 1, "jump", true) 
+    setTimer(toggleControl, 2000, 1, "crouch", true) 
 end
