@@ -78,7 +78,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -104,6 +104,7 @@ function Admin:constructor()
 	addEventHandler("adminObjectPlaced", root, bind(self.Event_ObjectPlaced, self))
 	addEventHandler("adminGangwarSetAreaOwner", root, bind(self.Event_OnAdminGangwarChangeOwner, self))
 	addEventHandler("adminGangwarResetArea", root, bind(self.Event_OnAdminGangwarReset, self))
+	addEventHandler("adminLoginFix", root, bind(self.Event_OnAdminLoginFix, self))
 	setTimer(function()
 		for player, marker in pairs(self.m_SupportArrow) do
 			if player and isElement(marker) and isElement(player) then
@@ -156,6 +157,19 @@ function Admin:Event_OnAdminGangwarReset( id, ts )
 			client:sendInfo(_("Das Gebiet wird freigegeben am: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !", client))
 			client:triggerEvent("gangwarRefresh")
 			StatisticsLogger:getSingleton():addAdminAction( client, "GW-AttackTime", "Gebiet: "..Gangwar:getSingleton().m_Areas[id].m_Name.."; AttackTime: "..day.."/"..month.."/"..year.." "..hour..":"..minute.."h !")
+		end
+	end
+end
+
+function Admin:Event_OnAdminLoginFix( id  )
+	if client and client:getRank() >= ADMIN_RANK_PERMISSION["loginFix"] then
+		if tonumber(id) then 
+			if DatabasePlayer.Map[tonumber(id)] then 
+				DatabasePlayer.Map[tonumber(id)] = nil 
+				client:sendInfo(_("Die Aktion war erfolgreich (ID: %s)", client, id))
+			else 
+				client:sendInfo(_("Der Account (ID %s) ist nicht in Benutzung!", client, id))
+			end
 		end
 	end
 end
