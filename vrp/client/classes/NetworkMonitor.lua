@@ -48,17 +48,19 @@ function NetworkMonitor:ping()
     if ping > MIN_PING_TRIGGER and self.m_PingAverage > 0 and self.m_PingAverage < ping then
         if ( ping / self.m_PingAverage )*100 > MAX_PING_THRESHOLD then 
             if not self.m_PingDisabled then 
-                self.m_FireControl = isControlEnabled("fire")
-                self.m_ForwardControl = isControlEnabled("forwards")
-                self.m_LeftControl = isControlEnabled("left")
-                self.m_RightControl = isControlEnabled("right")
-                self.m_JumpControl = isControlEnabled("jump")
-                self.m_BackwardControl = isControlEnabled("backwards")
-                self.m_AimControl = isControlEnabled("aim_weapon")
-                self.m_CrouchControl = isControlEnabled("crouch")
-                self.m_PingDisabled = true
-                self:disableActions()
-                return true
+                if not self.m_ActionsDisabled then
+                    self.m_FireControl = isControlEnabled("fire")
+                    self.m_ForwardControl = isControlEnabled("forwards")
+                    self.m_LeftControl = isControlEnabled("left")
+                    self.m_RightControl = isControlEnabled("right")
+                    self.m_JumpControl = isControlEnabled("jump")
+                    self.m_BackwardControl = isControlEnabled("backwards")
+                    self.m_AimControl = isControlEnabled("aim_weapon")
+                    self.m_CrouchControl = isControlEnabled("crouch")
+                    self.m_PingDisabled = true
+                    self:disableActions()
+                    return true
+                end
             end
         else 
             if self.m_PingDisabled then 
