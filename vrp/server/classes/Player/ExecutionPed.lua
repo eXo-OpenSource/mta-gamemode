@@ -9,8 +9,8 @@ local AnimationTable =
 
 function ExecutionPed:constructor( player, weapon, bodypart )
 	if ExecutionPed.Map[player] then delete(ExecutionPed.Map[player]) end
-	outputDebug(player:getFaction() and not player:getFaction():isEvilFaction() and player:getFaction():isFactionDuty())
-	player:setReviveWeapons(player:getFaction() and not player:getFaction():isEvilFaction() and player:getFaction():isFactionDuty())
+	outputDebug(player:getFaction() and not player:getFaction():isEvilFaction() and player:isFactionDuty())
+	player:setReviveWeapons(player:getFaction() and not player:getFaction():isEvilFaction() and player:isFactionDuty())
 	local pos = player:getPosition()
 	local dim = player:getDimension()
 	local int = player:getInterior()

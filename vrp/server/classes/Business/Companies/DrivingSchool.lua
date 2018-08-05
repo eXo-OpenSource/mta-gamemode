@@ -42,7 +42,7 @@ addRemoteEvents{"drivingSchoolCallInstructor", "drivingSchoolStartTheory", "driv
 function DrivingSchool:constructor()
     InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
 
-	Gate:new(968, Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 90), Vector3(1413.59, -1653.09, 13.30), Vector3(0, 5, 90), false).onBarrierHit = bind(self.onBarrierHit, self)
+	Gate:new(968, Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 90), Vector3(1413.59, -1653.09, 13.30), Vector3(0, 5, 90), false).onGateHit = bind(self.onBarrierHit, self)
 	
     self.m_OnQuit = bind(self.Event_onQuit,self)
 	self.m_StartLession = bind(self.startLession, self)

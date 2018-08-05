@@ -1847,8 +1847,10 @@ function FactionState:addWeaponToEvidence( cop, weaponID, weaponAmmo, factionID,
 			end
 			sql:queryExec("INSERT INTO ??_StateEvidence (Type, Var1, Var2, Var3, Cop, Date) VALUES(?, ?, ?, ?, ?, ?)",
 				sql:getPrefix(), type_, weaponID, weaponAmmo, factionID or 0, copName, timeStamp)
-			if not noMessage then FactionState:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
+			if not noMessage then self:sendShortMessage(copName.." hat eine Waffe mit "..weaponAmmo.." Schuss konfesziert!") end
 			self.m_EvidenceRoomItems[#self.m_EvidenceRoomItems+1] = {type_, weaponID, weaponAmmo, factionID or "keine", copName, timeStamp}
+		else
+			self:sendShortMessage("Die Asservatenkammer ist voll, die Waffe konnte nicht mehr eingelagert werden!")
 		end
 	end
 end
