@@ -16,14 +16,6 @@
       "database": "vRP_logs",
       "socket": "/var/run/mysqld/mysqld.sock"
     },
-    "board": {
-      "host": "87.98.241.93",
-      "port": 6033,
-      "username": "vRP",
-      "password": "kmd1581adf%%f",
-      "database": "exo_wbb_vrp",
-      "socket": "/var/run/mysqld/mysqld.sock"
-    },
     "premium": {
       "host": "87.98.241.93",
       "port": 6033,
@@ -32,5 +24,9 @@
       "database": "vrp_premium",
       "socket": "/var/run/mysqld/mysqld.sock"
     }
+  },
+  "board": {
+    "baseurl": "https://forum.exo-reallife.de/index.php",
+	"secret": ""
   }
 }

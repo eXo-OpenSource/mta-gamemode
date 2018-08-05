@@ -109,13 +109,17 @@ function Guns:Event_NetworkInterupt( status, ticks )
 	if (status == 0) then
 		if (not isElementFrozen(localPlayer)) then
 			setElementFrozen(localPlayer, true) 
+			toggleControl("fire", false)
+			toggleControl("aim_weapon", false)
 			self.m_NetworkInteruptFreeze = true
 		end
 		--addEventHandler( "onClientRender", root, self.HookDrawAttention)
 		outputDebugString( "interruption began " .. ticks .. " ticks ago" )
 	elseif (status == 1) then
 		if (self.m_NetworkInteruptFreeze) then
-			setElementFrozen(localPlayer, false) 
+			setElementFrozen(localPlayer, false)
+			toggleControl("fire", true) 
+			toggleControl("aim_weapon", true) 
 			self.m_NetworkInteruptFreeze = false
 		end
 		--removeEventHandler( "onClientRender", root, self.HookDrawAttention)
@@ -156,7 +160,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) and not self.m_NetworkInteruptFreeze and not NetworkMonitor:getSingleton():getPingDisabled() and not NetworkMonitor:getSingleton():getLossDisabled() then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					if WEAPON_RANGE_CHECK[weapon] and self:isInRange(source, bodypart, weapon)  then
@@ -191,8 +195,8 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 	if bPlaySound and self.m_HitMark and attacker == localPlayer  then 
 		self.m_HitAccuracy = getWeaponProperty ( getPedWeapon(localPlayer), "pro", "accuracy")
-		self.m_HitMarkEnd = 100
 		self.m_HitMarkRed = getElementHealth(source) == 0
+		self.m_HitMarkEnd = self.m_HitMarkRed and 200 or 100
 		removeEventHandler("onClientRender", root, self.m_HitMarkRender)
 		addEventHandler("onClientRender", root, self.m_HitMarkRender)
 	end

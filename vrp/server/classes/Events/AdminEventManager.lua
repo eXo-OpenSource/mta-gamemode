@@ -20,7 +20,7 @@ function AdminEventManager:constructor()
 end
 
 function AdminEventManager:onEventTrigger(func, ...)
-	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
+	if client:getRank() < ADMIN_RANK_PERMISSION["event"] then return end
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		client:sendError(_("Es läuft aktuell kein Event!", client))
 	end
@@ -40,7 +40,7 @@ function AdminEventManager:onEventTrigger(func, ...)
 end
 
 function AdminEventManager:allVehiclesTrigger(func)
-	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
+	if client:getRank() < ADMIN_RANK_PERMISSION["event"] then return end
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		client:sendError(_("Es läuft aktuell kein Event!", client))
 	end
@@ -55,7 +55,7 @@ function AdminEventManager:allVehiclesTrigger(func)
 end
 
 function AdminEventManager:createVehicles(amount, direction)
-	if client:getRank() <= ADMIN_RANK_PERMISSION["event"] then return end
+	if client:getRank() < ADMIN_RANK_PERMISSION["event"] then return end
 	if not self.m_EventRunning or not self.m_CurrentEvent then
 		client:sendError(_("Es läuft aktuell kein Event!", client))
 	end
