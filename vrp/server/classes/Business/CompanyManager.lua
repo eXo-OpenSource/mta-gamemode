@@ -336,7 +336,7 @@ function CompanyManager:Event_companyRespawnVehicles()
 	end
 end
 
-function CompanyManager:Event_companySaveRank(rank,skinId,loan)
+function CompanyManager:Event_companySaveRank(rank,loan)
 	local company = client:getCompany()
 	if company then
         if tonumber(loan) > COMPANY_MAX_RANK_LOANS[rank] then
@@ -344,7 +344,6 @@ function CompanyManager:Event_companySaveRank(rank,skinId,loan)
 			return
 		end
         company:setRankLoan(rank,loan)
-        company:setRankSkin(rank,skinId)
 		company:save()
 		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
         company:addLog(client, "Unternehmen", "hat die Einstellungen für Rang "..rank.." geändert!")

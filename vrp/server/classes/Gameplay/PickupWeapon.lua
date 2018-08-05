@@ -28,7 +28,7 @@ function PickupWeapon:pickup( player )
 		if ((player:getPlayTime() / 60) >=  3) or self.m_IgnoreHoursPlayed then
 			if not ( player:isFactionDuty() and player:getFaction():isStateFaction()) then
 				giveWeapon(player, self.m_WeaponID, self.m_Ammo, true)
-				client:sendSuccess(_("Du hast die Waffe erhalten!", clien))
+				client:sendSuccess(_("Du hast die Waffe erhalten!", client))
 			else
 				FactionState:getSingleton():addWeaponToEvidence( player, self.m_WeaponID, self.m_Ammo, self.m_OwnerFaction or "Keine")
 			end

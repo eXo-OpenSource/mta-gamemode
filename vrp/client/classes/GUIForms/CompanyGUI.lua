@@ -123,13 +123,7 @@ function CompanyGUI:addLeaderTab()
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric(true, true)
-		GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
-
-		self.m_SkinVorschauBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php", true, tabLeader)
-
-		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
-		self.m_SkinChanger.onChange = function(text, index) self.m_SkinVorschauBrowser:loadURL(INGAME_WEB_PATH .. "/ingame/skinPreview/skinPreview.php?skin="..text) end
-
+	
 		self.m_SaveRank = GUIButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", tabLeader):setBarEnabled(true)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
@@ -156,7 +150,7 @@ end
 
 function CompanyGUI:saveRank()
 	if self.m_SelectedRank then
-		triggerServerEvent("companySaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText())
+		triggerServerEvent("companySaveRank",localPlayer,self.m_SelectedRank,self.m_LeaderLoan:getText())
 	end
 end
 
@@ -164,15 +158,6 @@ function CompanyGUI:onSelectRank(name,rank)
 	self.m_LeaderRankName:setText(name.." - "..rank)
 	self.m_LeaderLoan:setText(tostring(self.m_RankLoans[tostring(rank)]))
 	self.m_SaveRank:setEnabled(true)
-
-	for skinId,bool in pairs(self.m_skins) do
-		if bool == true then
-			self.m_SkinChanger:addItem(skinId)
-		end
-	end
-
-	self.m_SkinChanger:setSelectedItem(self.m_RankSkins[tostring(rank)])
-
 end
 
 function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins)

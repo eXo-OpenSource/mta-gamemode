@@ -203,7 +203,7 @@ function FactionGUI:saveRank()
 			end
 		end
 
-		triggerServerEvent("factionSaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText(),rankWeapons)
+		triggerServerEvent("factionSaveRank",localPlayer,self.m_SelectedRank,self.m_LeaderLoan:getText(),rankWeapons)
 	end
 end
 
