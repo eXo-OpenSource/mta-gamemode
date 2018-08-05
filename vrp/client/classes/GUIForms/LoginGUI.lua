@@ -160,7 +160,7 @@ function LoginGUI:loadLoginElements()
 		if self.m_SavedPW and self.m_SavedPW == pw then -- User has not changed the password
 			triggerServerEvent("accountlogin", root, name, "", pw)
 		else
-			triggerServerEvent("accountlogin", root, name, pw)
+			triggerServerEvent("accountlogin", root, name, pw, nil, self.m_Elements.swSavePW:isChecked())
 		end
 
 		-- Disable login button field to avoid several events
@@ -321,6 +321,8 @@ addEventHandler("loginsuccess", root,
 		if lgi.m_Elements.swSavePW:isChecked() and pwhash then
 			core:set("Login", "username", lgi.m_Elements.editName:getText())
 			core:set("Login", "password", pwhash)
+		else
+			core:set("Login", "password", "")
 		end
 		core:afterLogin()
 		lgi:initClose()

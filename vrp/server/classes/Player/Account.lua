@@ -25,7 +25,7 @@ local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 Account = inherit(Object)
 Account.REGISTRATION_ACTIVATED = true
 
-function Account.login(player, username, password, pwhash)
+function Account.login(player, username, password, pwhash, enableAutologin)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
@@ -34,87 +34,52 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 
-	-- Ask SQL to fetch ForumId
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
-	local row = Async.wait()
-	if not row or not row.Id then
-		board:queryFetchSingle(Async.waitFor(self), "SELECT username, password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
-		local row2 = Async.wait()
-		if row2 and row2.password then
-			if pwhash then
-				if pwhash == row2.password then
-					outputConsole("Creating Account for "..username)
-					Account.createAccount(player, row2.userID, row2.username, row2.email)
-					return
-				else
-					player:triggerEvent("loginfailed", "Gespeichertes Passwort ungültig! Bitte gib dein Passwort erneut in das Eingabefeld ein.")
-					return false
-				end
-			else
-				local param = {["userId"] = row2.userID; ["password"] = password;}
-				local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
-				if responseInfo["success"] == true then
-					local returnData = fromJSON(data)
-					if not returnData then outputConsole(data, player) return end
-					if returnData.error then
-						player:triggerEvent("loginfailed", returnData.error)
-						return false
-					end
-					if returnData.login == true then
-						Account.createAccount(player, row2.userID, row2.username, row2.email)
-						return
-					else
-						player:triggerEvent("loginfailed", "Unbekannter Fehler")
-						return
-					end
-				else
-					outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
-				end
+	if pwhash and #pwhash == 65 then
+		-- check if is an autologin token
+		local data = split(pwhash, ".")
+		if #data == 2 and #data[1] == 32 and #data[2] == 32 then
+			sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId FROM ??_account WHERE LCASE(Name) = ? AND AutologinToken = ?"), sql:getPrefix(), username, pwhash)
+			local row = Async.wait()
+
+			if row and player:getSerial() == data[2] then
+				Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId)
+				return
 			end
 		end
-		player:triggerEvent("loginfailed", "Spieler nicht gefunden!")
-		return
 	end
 
-	local Id = row.Id
-	local ForumId = row.ForumId
-	local Username = row.Name
-	local RegisterDate = row.RegisterDate
-	local TeamspeakId = row.TeamspeakId
+	Forum:getSingleton():userLogin(username, password, Async.waitFor(self))
+	local data = Async.wait()
 
-	-- Ask SQL to fetch the password from forum
-	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumId)
-	local row = Async.wait()
-	if not row or not row.password then
-		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- "Error: Invalid username or password"
-		return false
-	end
+	local resData = fromJSON(data)
 
-	if pwhash then
-		if pwhash == row.password then
-			Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, TeamspeakId, pwhash)
+	if resData and resData.status and resData.status == 200 then
+		local data = resData.data
+		sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumId, Name, RegisterDate, TeamspeakId, AutologinToken FROM ??_account WHERE ForumId = ?"), sql:getPrefix(), data.userID)
+		local row = Async.wait()
+
+		if not row then
+			Account.createAccount(player, data.userID, data.username, data.email)
+			return
 		else
-			player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
-			return false
+			local loginToken = nil
+
+			if enableAutologin then
+				loginToken = string.random(32) .. "." .. player:getSerial()
+				sql:queryExec("UPDATE ??_account SET AutologinToken = ? WHERE Id = ?", sql:getPrefix(), loginToken, row.Id)
+			else
+				if row.AutologinToken then
+					sql:queryExec("UPDATE ??_account SET AutologinToken = ? WHERE Id = ?", sql:getPrefix(), "", row.Id)
+				end
+			end
+
+			Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, loginToken)
+			return
 		end
+
 	else
-		local param = {["userId"] = ForumId; ["password"] = password;}
-		local data, responseInfo = Account.asyncCallAPI("checkPassword", toJSON(param))
-		if responseInfo["success"] == true then
-			local returnData = fromJSON(data)
-			if not returnData then outputConsole(data, player) return end
-			if returnData.error then
-				player:triggerEvent("loginfailed", returnData.error)
-				return false
-			end
-			if returnData.login == true then
-				Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, TeamspeakId, row.password)
-			else
-				player:triggerEvent("loginfailed", "Unbekannter Fehler")
-			end
-		else
-			outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
-		end
+		player:triggerEvent("loginfailed", "Falscher Name oder Passwort") -- Error: Invalid username or password2
+		return false
 	end
 end
 addEvent("accountlogin", true)
@@ -174,14 +139,14 @@ function Account.loginSuccess(player, Id, Username, ForumId, RegisterDate, Teams
 	player:loadCharacter()
 	player:spawn()
 	player:triggerEvent("loginsuccess", pwhash)
-		
+
 	if player:isActive() then
 		local header = toJSON({["alg"] = "HS256", ["typ"] = "JWT"}, true):sub(2, -2)
 		local payload = toJSON({["sub"] = player:getId(), ["name"] = player:getName(), ["exp"] = getRealTime().timestamp + 60 * 60 * 24}, true):sub(2, -2)
 
 		local jwtBase = base64Encode(header) .. "." .. base64Encode(payload)
 
-		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData) 
+		fetchRemote(INGAME_WEB_PATH .. "/ingame/hmac.php?value=" .. jwtBase, function(responseData)
 			player:setSessionId(jwtBase.."."..responseData)
 			setTimer(function()
 				player:setFrozen(false)
@@ -246,19 +211,29 @@ function Account.register(player, username, password, email)
 	end
 
 	-- Check if someone uses this username already
-	board:queryFetchSingle(Async.waitFor(self), "SELECT userID, username, email FROM wcf1_user WHERE username = ? OR email = ?", username, email)
-	local row = Async.wait()
-	if row then
-		if row.username == username then
-			player:triggerEvent("registerfailed", _("Benutzername wird bereits verwendet", player))
-		elseif row.email == email then
-			player:triggerEvent("registerfailed", _("Diese E-Mail wird bereits verwendet", player))
+	Forum:getSingleton():userCreate(username, password, email, Async.waitFor(self))
+	local result = Async.wait()
+	local data = fromJSON(result)
+
+	if data and data.status and data.status == 200 then
+		Account.createAccount(player, data.data.userID, username, email)
+	else
+		if data and data.message then
+			if data.message == "username is not notUnique" then
+				player:triggerEvent("registerfailed", _("Benutzername wird bereits verwendet", player))
+			elseif data.message == "username is not invalid" then
+				player:triggerEvent("registerfailed", _("Benutzername enthält nicht erlaubte Zeichen", player))
+			elseif data.message == "email is not notUnique" then
+				player:triggerEvent("registerfailed", _("Diese E-Mail wird bereits verwendet", player))
+			elseif data.message == "email is not invalid" then
+				player:triggerEvent("registerfailed", _("Diese E-Mail ist nicht gültig", player))
+			else
+				player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
+			end
+		else
+			player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
 		end
-
-		return false
 	end
-
-	Account.createForumAccount(player, username, password, email)
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
@@ -269,27 +244,6 @@ function Account.createAccount(player, boardId, username, email)
 		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, nil, false)
 	else
 		player:triggerEvent("loginfailed", "Fehler: Unable to create Ingame-Acc.")
-	end
-end
-
-function Account.createForumAccount(player, username, password, email)
-	if not password then return end
-	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
-	local data, responseInfo = Account.asyncCallAPI("createAccount", toJSON(param))
-	if responseInfo["success"] == true then
-		local returnData = fromJSON(data)
-		if not returnData then outputConsole(data, player) return end
-		if returnData.error then
-			player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
-			return false
-		end
-		if returnData.boardId then
-			Account.createAccount(player, returnData.boardId, username, email)
-		else
-			player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
-		end
-	else
-		outputDebugString("Error@FetchRemote: "..responseInfo["statusCode"])
 	end
 end
 
