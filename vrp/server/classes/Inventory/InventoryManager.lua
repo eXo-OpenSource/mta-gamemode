@@ -125,7 +125,7 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money, 
 		end
 
 		if target:getFaction() and (not target:getFaction():isEvilFaction()) and target:isFactionDuty() then
-			player:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
+			client:sendError(_("%s ist im Dienst und darf keine Waffen annehmen!", target, target:getName()))
 			return
 		end
 

@@ -62,14 +62,14 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemInfoPed
 
 	--// VEHICLE SPAWNER PEDS
-	local itemSpawnerPed = Ped.create(171, Vector3(1806.72, -1293.27, 13.61))
-	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
+	local itemSpawnerPed = Ped.create(171, Vector3(1416.58, -1659.77, 13.55)) -- driving school
+	itemSpawnerPed:setRotation(Vector3(0, 0, 270))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
 	itemSpawnerPed.Description = _"Fahrzeug für 200$ ausleihen!"
-	itemSpawnerPed.FuLnc = function() end
+	itemSpawnerPed.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
 
-	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))
+	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55)) -- city hall
 	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
 	itemSpawnerPed2.Name = _"Fahrzeugverleih"
 	itemSpawnerPed2.Description = _"Fahrzeug für 200$ ausleihen!"

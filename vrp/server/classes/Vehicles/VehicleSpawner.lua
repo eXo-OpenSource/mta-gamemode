@@ -135,7 +135,7 @@ function VehicleSpawner:initializeAll()
 		player:transferMoney({CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT), nil, true}, 200, "Fahrzeugverleih", "Gameplay", "VehicleRent")
 	end
 
-	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
-	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
+	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- city hall
+	VehicleSpawner:new(1417.75, -1659.78, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true) -- driving school
 	VehicleSpawner:new(1182.59, -1331.99, 12.5, {"Bike", "BMX", "Faggio"}, 270, spawnCondition, postSpawn):toggleConditionError(false):showEPTAdvertisement(true)
 end
