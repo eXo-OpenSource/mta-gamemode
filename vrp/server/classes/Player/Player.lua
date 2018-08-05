@@ -582,7 +582,7 @@ function Player:giveReviveWeapons()
 			end
 		end
 		if self.m_DeathStateFactionDuty then 
-			FactionState:getSingleton():Event_storageWeapons(self)
+			FactionState:getSingleton():Event_storageWeapons(self, true)
 		end
 		self:destroyDropWeapons()
 		return true

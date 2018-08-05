@@ -1387,14 +1387,14 @@ function FactionState:Event_toggleSwat()
 	end
 end
 
-function FactionState:Event_storageWeapons(player)
+function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDutyCheck if for when the player gets revived by medics
 	local client = client
 	if player then
 		client = player
 	end
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
-		if client:isFactionDuty() then
+		if client:isFactionDuty() or ignoreDutyCheck then
 
 			--switch tazer if it is being used
 			local weapon = getPedWeapon(client, 2)
