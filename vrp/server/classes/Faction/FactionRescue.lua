@@ -312,7 +312,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 					self.m_BankAccountServer:transferMoney(self.m_Faction, 100, "Rescue Team Wiederbelebung", "Faction", "Revive")
 					self.m_BankAccountServer:transferMoney(player, 50, "Rescue Team Wiederbelebung", "Faction", "Revive")
 					if deadPlayer:giveReviveWeapons() then
-						outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
+						deadPlayer:sendSuccess(_("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer))
 					end
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))

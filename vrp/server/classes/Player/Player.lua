@@ -62,7 +62,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() and (self:getFaction() and self:getFaction():isStateFaction()) then
+	if self:isFactionDuty() and (self:getFaction() and not self:getFaction():isEvilFaction()) then -- don't delete weapons if evil-duty
 		takeAllWeapons(self)
 	end
 
@@ -559,11 +559,13 @@ function Player:destroyDropWeapons()
 		for i = 1, #self.m_ReviveWeapons do
 			delete(self.m_ReviveWeapons[i])
 		end
+		self.m_DeathStateFactionDuty = nil
 	end
 end
 
-function Player:setReviveWeapons()
+function Player:setReviveWeapons(deathStateFactionDuty)
 	self.m_ReviveWeaponsInfo = {}
+	self.m_DeathStateFactionDuty = deathStateFactionDuty -- only use this to prevent weapon retieval if a onduty cop gets killed
 	local weaponInSlot, ammoInSlot
 	for i = 1, 12 do
 		weaponInSlot = getPedWeapon(self, i)
@@ -578,6 +580,9 @@ function Player:giveReviveWeapons()
 			if self.m_ReviveWeaponsInfo[i] then
 				giveWeapon( self, self.m_ReviveWeaponsInfo[i][1], self.m_ReviveWeaponsInfo[i][2], true)
 			end
+		end
+		if self.m_DeathStateFactionDuty then 
+			FactionState:getSingleton():Event_storageWeapons(player)
 		end
 		self:destroyDropWeapons()
 		return true
