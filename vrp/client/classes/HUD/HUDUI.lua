@@ -182,7 +182,7 @@ function HUDUI:drawVRP()
 
 	local munitionWindowActive = true
 
-	if NO_MUNITION_ITEMS[getPedWeapon(self:getLocalTarget())] then
+	if NO_MUNITION_WEAPONS[getPedWeapon(self:getLocalTarget())] then
 		munitionWindowActive = false
 	end
 

@@ -15,26 +15,6 @@ FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/release/product
 TEXTURE_HTTP_URL = "http://picupload.pewx.de/textures"
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
-NO_MUNITION_ITEMS = {
-	[0] = true;
-	[1] = true;
-	[2] = true;
-	[3] = true;
-	[4] = true;
-	[5] = true;
-	[7] = true;
-	[8] = true;
-	[10] = true;
-	[11] = true;
-	[12] = true;
-	[13] = true;
-	[14] = true;
-	[15] = true;
-	[44] = true;
-	[45] = true;
-	[46] = true;
-}
-
 WeaponIcons = {
 	[0] = "Fist.png",
 	[1] = "BrassKnuckles.png",

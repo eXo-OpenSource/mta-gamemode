@@ -254,9 +254,6 @@ function VehicleManager:createVehicle(idOrData)
 
 	if data then
 		local vehicle = createVehicle(data.Model, data.PosX, data.PosY, data.PosZ, data.RotX or 0, data.RotY or 0, data.RotZ or 0)
-		vehicle:setInterior(data.Interior or 0)
-
-		vehicle:setDimension(data.Dimension or 0)
 		local typeClass = PermanentVehicle
 
 		if data.OwnerType == VehicleTypes.Faction then
@@ -269,6 +266,8 @@ function VehicleManager:createVehicle(idOrData)
 
 		enew(vehicle, typeClass, data)
 		self:addRef(vehicle, false)
+		vehicle:setInterior(data.Interior or 0)
+		vehicle:setDimension(data.Dimension or 0)
 
 		local pershingSquareSpecialCase = false
 		if data.PosX > 1399.40 and data.PosX <= 1559 then
