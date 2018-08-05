@@ -254,7 +254,6 @@ function Faction:removePlayer(playerId)
 		player:giveAchievement(67)
 		player:setCorrectSkin()
 		player:setFactionDuty(false)
-		player:setPublicSync("Faction:Duty",false)
 		player:sendShortMessage(_("Du wurdest aus deiner Fraktion entlassen!", player))
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
 		if self:isStateFaction() and player:isFactionDuty() then

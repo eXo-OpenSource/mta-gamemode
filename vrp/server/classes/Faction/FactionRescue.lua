@@ -170,7 +170,6 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 				client:setCorrectSkin()
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
-				client:setPublicSync("Faction:Duty",false)
 				client:setPublicSync("Rescue:Type",false)
 				client:getInventory():removeAllItem("Warnkegel")
 				takeAllWeapons(client)
@@ -187,7 +186,6 @@ function FactionRescue:Event_toggleDuty(type, wasted, prefSkin)
 				end
 				client:setFactionDuty(true)
 				client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
-				client:setPublicSync("Faction:Duty",true)
 				client:setPublicSync("Rescue:Type",type)
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():giveItem("Warnkegel", 10)
@@ -412,7 +410,7 @@ function FactionRescue:createDeathPickup(player, ...)
 		function (hitPlayer)
 			if hitPlayer:getType() == "player" and not hitPlayer.vehicle then
 				if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
-					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
+					if hitPlayer:isFactionDuty() and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
 								if player.m_RescueDefibrillatorFunction then

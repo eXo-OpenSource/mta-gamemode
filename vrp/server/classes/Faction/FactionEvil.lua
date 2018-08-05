@@ -333,7 +333,6 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 				client:setCorrectSkin(true)
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nun in zivil unterwegs!", client))
-				client:setPublicSync("Faction:Duty",false)
 				if not wasted then faction:updateDutyGUI(client) end
 				--self:Event_storageWeapons(client)
 				--Guns:getSingleton():setWeaponInStorage(client, false, false)
@@ -349,14 +348,13 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 				--takeAllWeapons(client)
 				--Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", client))
-				client:setPublicSync("Faction:Duty",true)
 				if not wasted then faction:updateDutyGUI(client) end
 			end
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
 	else
-		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
+		client:sendError(_("Du bist in keiner Gang / Mafia!", client))
 		return false
 	end
 end

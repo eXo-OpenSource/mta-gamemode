@@ -375,7 +375,7 @@ function CompanyManager:Event_toggleDuty(wasted, preferredSkin)
 					company:stop(client)
 				end
 			else
-				if client:getPublicSync("Faction:Duty") and client:getFaction() then
+				if client:isFactionDuty() then
 					client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 					return false
 				end

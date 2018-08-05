@@ -426,9 +426,9 @@ function Player:spawn()
 	self:setArmor(self.m_Armor)
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
-	self:setCorrectSkin()
 	self:setPublicSync("Faction:Duty",false)
-
+	self:setCorrectSkin()
+	
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
@@ -689,11 +689,13 @@ function Player:isCompanyDuty()
 end
 
 function Player:setFactionDuty(state)
+	self:setPublicSync("Faction:Duty", state)
 	self.m_FactionDuty = state
 	self:reloadBlips()
 end
 
 function Player:setCompanyDuty(state)
+	self:setPublicSync("Company:Duty", state)
 	self.m_CompanyDuty = state
 	self:reloadBlips()
 end
@@ -1495,7 +1497,8 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self:setRotation(rotation)
 		setElementInterior(self, 2)
 		setElementDimension(self, 0)
-		self:setModel(self.m_Skin)
+		self:setFactionDuty(false)
+		self:setCorrectSkin()
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)
 		self:toggleControl("aim_weapon ", false)

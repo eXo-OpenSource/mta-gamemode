@@ -91,7 +91,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{
 	"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer", "playerSelfArrestConfirm",
-	"factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
+	"factionStateRearm","factionStateToggleDuty", "factionStateStorageWeapons",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket", "factionStateStartAlcoholTest",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
@@ -111,7 +111,6 @@ function FactionState:constructor()
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
-	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionStateStorageWeapons", root, bind(self.Event_storageWeapons, self))
 	addEventHandler("factionStateGiveWanteds", root, bind(self.Event_giveWanteds, self))
@@ -1325,8 +1324,6 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				client:setCorrectSkin()
 				client:setFactionDuty(false)
 				client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
-				client:setPublicSync("Faction:Swat",false)
-				client:setPublicSync("Faction:Duty",false)
 				client:getInventory():removeAllItem("Taser")
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():removeAllItem("Barrikade")
@@ -1347,7 +1344,6 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 				takeAllWeapons(client)
 				Guns:getSingleton():setWeaponInStorage(client, false, false)
 				client:sendInfo(_("Du bist nun im Dienst!", client))
-				client:setPublicSync("Faction:Duty",true)
 				client:getInventory():removeAllItem("Warnkegel")
 				client:getInventory():giveItem("Warnkegel", 5)
 				client:getInventory():removeAllItem("Einsatzhelm")
@@ -1362,28 +1358,6 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
 		return false
-	end
-end
-
-function FactionState:Event_toggleSwat()
-	if client:isFactionDuty() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 then
-			local faction = client:getFaction()
-			local swat = client:getPublicSync("Faction:Swat")
-			if swat == true then
-				faction:changeSkin(client)
-				client:setPublicSync("Faction:Swat",false)
-				client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
-				faction:updateDutyGUI(client)
-			else
-				client:setJobDutySkin(285)
-				client:setPublicSync("Faction:Swat",true)
-				client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
-				faction:updateDutyGUI(client)
-			end
-		else
-			client:sendError(_("Du bist zu weit entfernt!", client))
-		end
 	end
 end
 
