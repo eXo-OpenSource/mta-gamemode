@@ -83,11 +83,20 @@ function PerformanceStatsGUI:refresh()
 			local item = self.m_TabCache.m_Gridlist:addItem(path:gsub("files/images/Textures", ""), data:getUsage())
 			item:setFont(VRPFont(math.min(self.m_Height*0.08, 20)))
 			item.onLeftDoubleClick = function()
+				local blips = {}
 				local text = _"Folgende Elemente benutzen diese Textur:"
 				for i, instance in pairs(data.m_Instances) do
 					text = ("%s\n#%d %s"):format(text, i, inspect(instance.m_Element))
+					local blip = Blip:new("Marker.png", instance.m_Element.position.x, instance.m_Element.position.y, 400, BLIP_COLOR_CONSTANTS.Red)
+					blip:setZ(instance.m_Element.position.z)
+					blip:setDisplayText(inspect(instance.m_Element))
+					table.insert(blips, blip)
 				end
-				ShortMessage:new(text, _("Textur Info (%s)", path:gsub("files/images/Textures", "")), Color.Red, 10000)
+				ShortMessage:new(text, _("Textur Info (%s)", path:gsub("files/images/Textures", "")), Color.Red, -1, function()
+					for i, v in pairs(blips) do 
+						v:delete()
+					end
+				end)
 			end
 		end
 	end

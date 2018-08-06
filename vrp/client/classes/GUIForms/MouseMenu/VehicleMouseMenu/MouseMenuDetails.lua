@@ -25,6 +25,7 @@ function VehicleMouseMenuDetails:constructor(posX, posY, element)
 		end
 	):setIcon(FontAwesomeSymbols.Search)
 
+	self:addItem(_("Fahrgestellnr: %s", element:getData("ID") or -1)):setTextColor(Color.White)
 	self:addItem(_("Kategorie: %s", element:getCategoryName())):setTextColor(Color.White)
 	self:addItem(_("Steuern: %s $ / PayDay", element:getTax())):setTextColor(Color.White)
 	self:addItem(_("Sprittyp: %s", FUEL_NAME[element:getFuelType()])):setTextColor(Color.White)
