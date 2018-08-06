@@ -404,8 +404,8 @@ function Player:spawn()
 		elseif self.m_SpawnLocation == SPAWN_LOCATIONS.GROUP_BASE then
 			local groupProperties = GroupPropertyManager:getSingleton():getPropsForPlayer(self)
 			if self:getGroup() and #groupProperties > 0 then
+				spawnSuccess =  spawnPlayer(self, groupProperties[1].m_Position, 0, self.m_Skin or 0)
 				groupProperties[1]:setInside(self)
-				spawnSuccess = true
 			end
 		end
 	end
