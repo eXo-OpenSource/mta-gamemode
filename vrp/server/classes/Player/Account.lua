@@ -42,7 +42,7 @@ function Account.login(player, username, password, pwhash, enableAutologin)
 			local row = Async.wait()
 
 			if row and player:getSerial() == data[2] then
-				Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId)
+				Account.loginSuccess(player, row.Id, row.Name, row.ForumId, row.RegisterDate, row.TeamspeakId, pwhash)
 				return
 			end
 		end
