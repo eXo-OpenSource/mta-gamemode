@@ -1461,7 +1461,7 @@ function FactionState:checkLogout(player)
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() and not cop:isDead() then
 			if player:getInterior() == cop:getInterior() and player:getDimension() == cop:getDimension() then
 				self:Event_JailPlayer(player, false, false, cop, false, false, true)
-				player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Kanstzeit ist dadurch länger!", 1)
+				player:addOfflineMessage( "Sie wurden offline eingesperrt! Die Knast ist dadurch länger!", 1)
 				return
 			end
 		end
