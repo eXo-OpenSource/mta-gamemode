@@ -109,5 +109,5 @@
 	<!--<map src="sewer.map"/>-->
 	<map src="minigamescafe.map" dimension="2" />
 
-	
+	<map src="admin-auction.map" />
 </meta>
