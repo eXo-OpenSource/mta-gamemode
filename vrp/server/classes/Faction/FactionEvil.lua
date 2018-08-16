@@ -326,7 +326,7 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		player:setCorrectSkin(true)
 		player:setFactionDuty(false)
 		player:sendInfo(_("Du bist nun in zivil unterwegs!", player))
-		if not wasted then faction:updateDutyGUI(player) end
+		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	elseif state and not player:isFactionDuty() then
 		if player:getPublicSync("Company:Duty") and player:getCompany() then
 			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
@@ -337,7 +337,7 @@ function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferred
 		player:setHealth(100)
 		player:setArmor(100)
 		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
-		if not wasted then faction:updateDutyGUI(player) end
+		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
 	end
 
 
@@ -351,7 +351,7 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	end
 	local faction = client:getFaction()
 	if faction:isEvilFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
+		if wasted or (client.m_CurrentDutyPickup and getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10) then
 			self:setPlayerDuty(client, not client:isFactionDuty(), wasted, preferredSkin)
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))

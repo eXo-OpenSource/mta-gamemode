@@ -426,7 +426,6 @@ function Player:spawn()
 	self:setArmor(self.m_Armor)
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
-	self:setPublicSync("Faction:Duty",false)
 	self:setCorrectSkin()
 	
 	if self.m_PrisonTime > 0 then
@@ -662,7 +661,6 @@ function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set th
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
 	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
 		FactionEvil:getSingleton():setPlayerDuty(self, true, true)
-		outputDebug("set it duty")
 	else
 		self:setModel(self.m_Skin or 0)
 	end
