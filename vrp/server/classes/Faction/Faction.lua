@@ -201,6 +201,7 @@ function Faction:changeSkin(player, skinId)
 		local minRank = tonumber(self:getSetting("Skin", skinId, 0))
 		if minRank <= playerRank then
 			player:setModel(skinId)
+			player.m_tblClientSettings["LastFactionSkin"] = skinId
 		else
 			player:sendWarning(_("Deine ausgewählte Kleidung ist erst ab Rang %s verfügbar, dir wurde eine andere gegeben.", player, minRank))
 			player:setModel(self:getSkinsForRank(playerRank)[1])

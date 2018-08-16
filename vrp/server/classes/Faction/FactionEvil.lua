@@ -320,6 +320,29 @@ function FactionEvil:loadDiplomacy()
 	end
 end
 
+function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferredSkin)
+	local faction = player:getFaction()
+	if not state and player:isFactionDuty() then
+		player:setCorrectSkin(true)
+		player:setFactionDuty(false)
+		player:sendInfo(_("Du bist nun in zivil unterwegs!", player))
+		if not wasted then faction:updateDutyGUI(player) end
+	elseif state and not player:isFactionDuty() then
+		if player:getPublicSync("Company:Duty") and player:getCompany() then
+			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
+			return false
+		end
+		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
+		player:setFactionDuty(true)
+		player:setHealth(100)
+		player:setArmor(100)
+		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
+		if not wasted then faction:updateDutyGUI(player) end
+	end
+
+
+end
+
 function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
@@ -329,27 +352,7 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	local faction = client:getFaction()
 	if faction:isEvilFaction() then
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
-			if client:isFactionDuty() then
-				client:setCorrectSkin(true)
-				client:setFactionDuty(false)
-				client:sendInfo(_("Du bist nun in zivil unterwegs!", client))
-				if not wasted then faction:updateDutyGUI(client) end
-				--self:Event_storageWeapons(client)
-				--Guns:getSingleton():setWeaponInStorage(client, false, false)
-			else
-				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
-				end
-				faction:changeSkin(client, preferredSkin)
-				client:setFactionDuty(true)
-				client:setHealth(100)
-				client:setArmor(100)
-				--takeAllWeapons(client)
-				--Guns:getSingleton():setWeaponInStorage(client, false, false)
-				client:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", client))
-				if not wasted then faction:updateDutyGUI(client) end
-			end
+			self:setPlayerDuty(client, not player:isFactionDuty(), wasted, preferredSkin)
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
