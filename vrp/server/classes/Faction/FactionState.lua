@@ -24,8 +24,6 @@ function FactionState:constructor()
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
-	local fakeGas = createObject(1676, 1573.6995, -1620.3545, 14.05274, 0):setDimension(5) -- LSPD #1
-	local fakeGas = createObject(1676, 1553.4237 ,-1620.3545, 14.10274, 0):setDimension(5) -- LSPD #2
 
 	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
