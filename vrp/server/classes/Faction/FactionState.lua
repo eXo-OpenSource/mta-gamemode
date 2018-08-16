@@ -1391,14 +1391,19 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
 					if depotWeapons+1 <= depotMaxWeapons then
-						depot:addWeaponD(weaponId, 1)
 						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
+							depot:addWeaponD(weaponId, 1)
 							depot:addMagazineD(weaponId, magazines)
+							takeWeapon(client, weaponId)
+							logData[WEAPON_NAMES[weaponId]] = magazines
 						elseif magazines > 0 then
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
+							local magsToMax = depotMaxMagazines - depotMagazines
+							depot:addMagazineD(weaponId, magsToMax)
+							setWeaponAmmo(client, weaponId, getPedTotalAmmo(client, i) - magsToMax*clipAmmo)
+							logData[WEAPON_NAMES[weaponId]] = magsToMax
+							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
 						end
-						takeWeapon(client, weaponId)
-						logData[WEAPON_NAMES[weaponId]] = magazines
+						
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
