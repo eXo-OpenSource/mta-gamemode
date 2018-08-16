@@ -239,7 +239,7 @@ function FactionEvil:onBarrierDoorHit(player)
 end
 
 function FactionEvil:Event_StartRaid(target)
-	if client:getFaction() and client:getFaction():isEvilFaction() then
+	if client:getFaction() and client:getFaction():isEvilFaction() and client:isFactionDuty() then
 		if target and isElement(target) and target:isLoggedIn() then
 			if not target:isFactionDuty() and not target:isCompanyDuty() then
 				if client.vehicle then
@@ -320,6 +320,29 @@ function FactionEvil:loadDiplomacy()
 	end
 end
 
+function FactionEvil:setPlayerDuty(player, state, wastedOrNotOnMarker, preferredSkin)
+	local faction = player:getFaction()
+	if not state and player:isFactionDuty() then
+		player:setCorrectSkin(true)
+		player:setFactionDuty(false)
+		player:sendInfo(_("Du bist nun in zivil unterwegs!", player))
+		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
+	elseif state and not player:isFactionDuty() then
+		if player:getPublicSync("Company:Duty") and player:getCompany() then
+			player:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", player))
+			return false
+		end
+		faction:changeSkin(player, preferredSkin or (player.m_tblClientSettings and player.m_tblClientSettings["LastFactionSkin"]))
+		player:setFactionDuty(true)
+		player:setHealth(100)
+		player:setArmor(100)
+		player:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", player))
+		if not wastedOrNotOnMarker then faction:updateDutyGUI(player) end
+	end
+
+
+end
+
 function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	if wasted then client:removeFromVehicle() end
 
@@ -328,28 +351,8 @@ function FactionEvil:Event_toggleDuty(wasted, preferredSkin)
 	end
 	local faction = client:getFaction()
 	if faction:isEvilFaction() then
-		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
-			if client:isFactionDuty() then
-				client:setCorrectSkin(true)
-				client:setFactionDuty(false)
-				client:sendInfo(_("Du bist nun in zivil unterwegs!", client))
-				if not wasted then faction:updateDutyGUI(client) end
-				--self:Event_storageWeapons(client)
-				--Guns:getSingleton():setWeaponInStorage(client, false, false)
-			else
-				if client:getPublicSync("Company:Duty") and client:getCompany() then
-					client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
-					return false
-				end
-				faction:changeSkin(client, preferredSkin)
-				client:setFactionDuty(true)
-				client:setHealth(100)
-				client:setArmor(100)
-				--takeAllWeapons(client)
-				--Guns:getSingleton():setWeaponInStorage(client, false, false)
-				client:sendInfo(_("Du bist nun als Gangmitglied gekennzeichnet!", client))
-				if not wasted then faction:updateDutyGUI(client) end
-			end
+		if wasted or (client.m_CurrentDutyPickup and getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10) then
+			self:setPlayerDuty(client, not client:isFactionDuty(), wasted, preferredSkin)
 		else
 			client:sendError(_("Du bist zu weit entfernt!", client))
 		end
@@ -399,14 +402,18 @@ function FactionEvil:Event_storageWeapons(player)
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
 					if depotWeapons+1 <= depotMaxWeapons then
-						depot:addWeaponD(weaponId, 1)
 						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
+							depot:addWeaponD(weaponId, 1)
 							depot:addMagazineD(weaponId, magazines)
+							takeWeapon(client, weaponId)
+							logData[WEAPON_NAMES[weaponId]] = magazines
 						elseif magazines > 0 then
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
+							local magsToMax = depotMaxMagazines - depotMagazines
+							depot:addMagazineD(weaponId, magsToMax)
+							setWeaponAmmo(client, weaponId, getPedTotalAmmo(client, i) - magsToMax*clipAmmo)
+							logData[WEAPON_NAMES[weaponId]] = magsToMax
+							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
 						end
-						takeWeapon(client, weaponId)
-						logData[WEAPON_NAMES[weaponId]] = magazines
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end

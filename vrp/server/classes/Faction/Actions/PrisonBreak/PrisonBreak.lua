@@ -178,7 +178,7 @@ end
 
 function PrisonBreak.RemoveKeycard(player)
 	if player and isElement(player) and player:getInventory() then
-		if player:getInventory():getItemAmount("Keycard") > 0 then
+		if player:getInventory():getItemAmount("Keycard") and player:getInventory():getItemAmount("Keycard") > 0 then
 			player:getInventory():removeAllItem("Keycard")
 			player:sendError("Deine Keycard wurde deaktiviert und aus deinem Inventar entfernt!")
 		end

@@ -426,7 +426,6 @@ function Player:spawn()
 	self:setArmor(self.m_Armor)
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
-	self:setPublicSync("Faction:Duty",false)
 	self:setCorrectSkin()
 	
 	if self.m_PrisonTime > 0 then
@@ -661,10 +660,7 @@ end
 function Player:setCorrectSkin(ignoreFactionSkin) -- use this function to set the correct skin for a player based on his faction (and also add armor if he is evil)
 	--ignoreFactionSkin to change clothes via inventory (workaround until faction duty)
 	if (self:getFaction() and self:getFaction():isEvilFaction() and self.m_SpawnWithFactionSkin) and not ignoreFactionSkin then --evil faction spawn
-		self:getFaction():changeSkin(self)
-		self:setFactionDuty(true)
-		self:setPublicSync("Faction:Duty", true)
-		setPedArmor(self, 100)
+		FactionEvil:getSingleton():setPlayerDuty(self, true, true)
 	else
 		self:setModel(self.m_Skin or 0)
 	end
@@ -688,6 +684,8 @@ function Player:isCompanyDuty()
 	return self.m_CompanyDuty
 end
 
+
+-- this is not the function to set the player duty. Use FactionEvil:getSingleton():setPlayerDuty for evil factin, other factions can only go duty at their pickup
 function Player:setFactionDuty(state)
 	self:setPublicSync("Faction:Duty", state)
 	self.m_FactionDuty = state
@@ -1497,8 +1495,9 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self:setRotation(rotation)
 		setElementInterior(self, 2)
 		setElementDimension(self, 0)
-		self:setFactionDuty(false)
-		self:setCorrectSkin()
+		if self:getFaction() and self:getFaction():isEvilFaction() then
+			FactionEvil:getSingleton():setPlayerDuty(self, false, true)
+		end
 		self:toggleControl("fire", false)
 		self:toggleControl("jump", false)
 		self:toggleControl("aim_weapon ", false)

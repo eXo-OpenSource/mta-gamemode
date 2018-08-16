@@ -19,7 +19,7 @@ function Townhall:constructor()
 end
 
 function Townhall:createGarage()
-	VehicleTeleporter:new(Vector3(1403.63, -1503.30, 13.57), Vector3(2108.466796875, 959.41778564453, 3398.7609863281), 270, 180, 9, 0, "cylinder" , 5, Vector3(0,0,3))
+	VehicleTeleporter:new(Vector3(1403.63, -1503.30, 13.57), Vector3(2108.466796875, 959.41778564453, 3398.7609863281), Vector3(0, 0, 270), Vector3(0, 0, 180), 9, 0, "cylinder" , 5, Vector3(0,0,3))
 	InteriorEnterExit:new(Vector3(1397.12, -1571.02, 14.27), Vector3(2118.47, 909.90, 3389.54), 180, 0, 9, 0)
 
 	local col = createColCuboid(2069.40, 886.28, 3388.49, 2169.50-2086.40+20, 964.03-886.28, 12)

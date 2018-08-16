@@ -24,8 +24,6 @@ function FactionState:constructor()
 
 	self.m_InstantTeleportCol = createColCuboid(1523.19, -1722.73, 0, 89, 89, 10)
 	InstantTeleportArea:new( self.m_InstantTeleportCol, 0, 5)
-	local fakeGas = createObject(1676, 1573.6995, -1620.3545, 14.05274, 0):setDimension(5) -- LSPD #1
-	local fakeGas = createObject(1676, 1553.4237 ,-1620.3545, 14.10274, 0):setDimension(5) -- LSPD #2
 
 	self.m_InteriorGarageEntrance = InteriorEnterExit:new(Vector3(246.17, 88, 1003.64), Vector3(1568.64, -1690.16, 5.89), 180, 180, 0, 5, 6) -- pd exit
 	self.m_InteriorGarageEntrance:addEnterEvent(function( player) player:triggerEvent("setOcclusion", false) end)
@@ -1391,14 +1389,19 @@ function FactionState:Event_storageWeapons(player, ignoreDutyCheck) -- ignoreDut
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
 					if depotWeapons+1 <= depotMaxWeapons then
-						depot:addWeaponD(weaponId, 1)
 						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
+							depot:addWeaponD(weaponId, 1)
 							depot:addMagazineD(weaponId, magazines)
+							takeWeapon(client, weaponId)
+							logData[WEAPON_NAMES[weaponId]] = magazines
 						elseif magazines > 0 then
-							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]))
+							local magsToMax = depotMaxMagazines - depotMagazines
+							depot:addMagazineD(weaponId, magsToMax)
+							setWeaponAmmo(client, weaponId, getPedTotalAmmo(client, i) - magsToMax*clipAmmo)
+							logData[WEAPON_NAMES[weaponId]] = magsToMax
+							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e! Es wurden nur %s Magazine eingelagert.", client, magazines, WEAPON_NAMES[weaponId], magsToMax))
 						end
-						takeWeapon(client, weaponId)
-						logData[WEAPON_NAMES[weaponId]] = magazines
+						
 					else
 						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]))
 					end
