@@ -24,6 +24,19 @@ ContractManager = inherit(Singleton)
 			- Interest
 			- With an security (for example an vehicle)
 
+	Type Data
+		- Sell
+			- Object (Item (Player/Group), Vehicle (Player/Group), House (Player/Group), Shop (Group), Property (Group), 'virtual service' (Group))
+			- Amount for items
+			- Amount of cash
+		- Rent
+			- Object (Vehicle or 'virtual service')
+			- Amount of cash
+		- Credit
+			- Amount of money for credit
+			- Interest
+			- Paymant plan
+
 	Contract termination
 		> Only for Rent or Credit
 		- Rent
