@@ -64,6 +64,7 @@ function PerformanceStatsGUI:constructor()
 		self:addField(self.m_TabNetwork, type, function() return getNetworkStats()[type] end)
 	end
 	self:addField(self.m_TabNetwork, "Ping", function() return getPlayerPing(localPlayer) end)
+	self:addField(self.m_TabNetwork, "Monitor-Warnpunkte", function() return NetworkMonitor:getSingleton():getWarnCount() end)
 	self.m_RefreshTimer = false
 	self:refresh()
 	self:onShow()
