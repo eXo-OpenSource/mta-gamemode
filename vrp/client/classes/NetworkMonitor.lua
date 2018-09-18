@@ -93,7 +93,7 @@ function NetworkMonitor:check( type )
     if loss and loss > limit then 
         self.m_WarnCount = self.m_WarnCount + 1
         if not self.m_ActionsDisabled then
-            if self.m_WarnCount >  12 then
+            if self.m_WarnCount >  24 then
                 self.m_ActionsDisabled = true
                 self:disableActions()
                 return loss
@@ -132,4 +132,8 @@ function NetworkMonitor:enableActions()
     setTimer(toggleControl, 500, 1, "right", true) 
     setTimer(toggleControl, 500, 1, "jump", true) 
     setTimer(toggleControl, 500, 1, "crouch", true) 
+end
+
+function NetworkMonitor:getWarnCount()
+    return self.m_WarnCount
 end
