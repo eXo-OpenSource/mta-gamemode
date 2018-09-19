@@ -38,7 +38,10 @@ function NetworkMonitor:monitor()
             outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
         end
     end
-    if not ping and not loss then 
+    if ping or loss then 
+        self.m_LastAct = getTickCount()
+    end
+    if self.m_LastAct and (getTickCount() - self.m_LastAct) > 2000 and (not ping and not loss) then 
         self.m_WarnCount = self.m_WarnCount - 1
     end
     if self.m_WarnCount < 0 then self.m_WarnCount = 0 end
