@@ -64,7 +64,7 @@ function NetworkMonitor:ping()
             self.m_WarnCount = self.m_WarnCount + 1
             self.m_LastAct = getTickCount()
             if not self.m_PingDisabled then 
-                if self.m_WarnCount > 24 then
+                if self.m_WarnCount > 15 then
                     self.m_PingDisabled = true
                     self:disableActions()
                     return true
@@ -99,7 +99,7 @@ function NetworkMonitor:check( type )
         self.m_WarnCount = self.m_WarnCount + 1
         self.m_LastAct = getTickCount()
         if not self.m_ActionsDisabled then
-            if self.m_WarnCount >  24 then
+            if self.m_WarnCount >  15 then
                 self.m_ActionsDisabled = true
                 self:disableActions()
                 return loss
