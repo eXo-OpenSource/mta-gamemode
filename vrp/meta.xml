@@ -394,10 +394,10 @@
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
-	<!-- Halloween
+	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
-	-->
+	
 	<!-- Christmas -->
 	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/QuestManager.lua" type="server"/>
