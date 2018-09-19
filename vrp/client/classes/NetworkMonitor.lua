@@ -59,7 +59,7 @@ function NetworkMonitor:ping()
         if ( ping / self.m_PingAverage )*100 > MAX_PING_THRESHOLD then 
             self.m_WarnCount = self.m_WarnCount + 1
             if not self.m_PingDisabled then 
-                if self.m_WarnCount > 12 then
+                if self.m_WarnCount > 24 then
                     self.m_PingDisabled = true
                     self:disableActions()
                     return true
@@ -84,6 +84,8 @@ function NetworkMonitor:ping()
         self.m_Ping = 0
         self.m_PingAverage = 0
     end
+    self.m_WarnCount = self.m_WarnCount - 1 
+    if self.m_WarnCount < 0 then self.m_WarnCount = 0 end
     return false
 end
 
@@ -108,6 +110,8 @@ function NetworkMonitor:check( type )
             end
         end
     end 
+    self.m_WarnCount = self.m_WarnCount - 1 
+    if self.m_WarnCount < 0 then self.m_WarnCount = 0 end
     return false
 end
 
