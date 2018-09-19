@@ -38,15 +38,6 @@ function NetworkMonitor:monitor()
             outputChatBox(("[Network] #ffffffDeine Handlung wird eingeschränkt, aufgrund einer sehr hohen Pingschwankung: #ff0000%s ms"):format(MIN_PING_TRIGGER+math.ceil(self.m_PingAverage, 2)), 255, 0, 0, true)
         end
     end
-    if ping or loss then 
-        self.m_LastAct = getTickCount()
-    end
-    if ping then 
-        outputChatBox("Ping")
-    end
-    if loss then 
-        outputChatBox("Loss")
-    end
     if self.m_LastAct and (getTickCount() - self.m_LastAct) > 2000 and (not ping and not loss) then 
         self.m_WarnCount = self.m_WarnCount - 1
     end
@@ -71,6 +62,7 @@ function NetworkMonitor:ping()
     if ping > MIN_PING_TRIGGER and self.m_PingAverage > 0 and self.m_PingAverage < ping then
         if ( ping / self.m_PingAverage )*100 > MAX_PING_THRESHOLD then 
             self.m_WarnCount = self.m_WarnCount + 1
+            self.m_LastAct = getTickCount()
             if not self.m_PingDisabled then 
                 if self.m_WarnCount > 24 then
                     self.m_PingDisabled = true
@@ -105,6 +97,7 @@ function NetworkMonitor:check( type )
     local limit = type == "packetlossLastSecond" and NETWORK_PACKET_LOSS_THRESHOLD or NETWORK_PACKET_LOSS_OVER_ALL_THRESHOLD
     if loss and loss > limit then 
         self.m_WarnCount = self.m_WarnCount + 1
+        self.m_LastAct = getTickCount()
         if not self.m_ActionsDisabled then
             if self.m_WarnCount >  24 then
                 self.m_ActionsDisabled = true
