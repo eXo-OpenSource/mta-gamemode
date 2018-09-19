@@ -41,6 +41,12 @@ function NetworkMonitor:monitor()
     if ping or loss then 
         self.m_LastAct = getTickCount()
     end
+    if ping then 
+        outputChatBox("Ping")
+    end
+    if loss then 
+        outputChatBox("Loss")
+    end
     if self.m_LastAct and (getTickCount() - self.m_LastAct) > 2000 and (not ping and not loss) then 
         self.m_WarnCount = self.m_WarnCount - 1
     end
