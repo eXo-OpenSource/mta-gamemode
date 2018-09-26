@@ -311,7 +311,7 @@ function StatisticsLogger:addAdminAction( player, action, target)
 			end
 		end
 	end
-	if action == "spect" then
+	if action == "spect" or action == "spectEnd" then
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionSpect (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then
