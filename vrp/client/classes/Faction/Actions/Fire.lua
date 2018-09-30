@@ -26,7 +26,7 @@ function Fire:constructor()
 	addEventHandler("fireElements:onFireChangeSize", resourceRoot, bind(self.changeFireSize, self))
 	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
 	addEventHandler("refreshFireStatistics", root, bind(self.updateStatistics, self))
-	addCommandHandler("reloadFires", bind(self.reloadFiresIfBugged))
+	addCommandHandler("reloadFires", bind(self.reloadFiresIfBugged), false, false)
 
 
 	addEventHandler("fireElements:onClientRecieveFires", resourceRoot, function(fireTable)
@@ -127,7 +127,7 @@ cancelEvent()
 	if self.m_Fires[uPed] then
 		if getElementModel(source) == 407 then -- fire truck
 		self:handleSmoke(uPed)
-			if getVehicleController(source) == localPlayer and math.random(1, Fire.Settings["extinguishTime"]) == 1 then
+			if getVehicleController(source) == localPlayer and math.random(1, Fire.Settings["extinguishTime"]/3) == 1 then
 				triggerServerEvent("fireElements:requestFireDeletion", uPed, self.m_Fires[uPed].iSize)
 			end
 		end
@@ -161,7 +161,7 @@ function Fire:changeFireSize(iSize)
 		self:destroyElementIfExists(self.m_Fires[source].uEffect)
 		self:destroyElementIfExists(self.m_Fires[source].uBurningCol)
 		local iX, iY, iZ = getElementPosition(source)
-		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"])
+		self.m_Fires[source].uEffect = createEffect(Fire.EffectFromFireSize[iSize], iX, iY, iZ,-90, 0, 0, Fire.Settings["fireRenderDistance"], true)
 		self.m_Fires[source].uBurningCol = createColSphere(iX, iY, iZ + (self.m_Fires[source].iMaterialID and 1 or 0), iSize/4) -- set the col shape higher when correct ground position got determined
 		addEventHandler("onClientColShapeHit", self.m_Fires[source].uBurningCol, bind(self.burnPlayer, self))
 		self.m_Fires[source].bCorrectPlaced = false -- force recalculate the height
@@ -271,7 +271,7 @@ end
 
 function Fire:reloadFiresIfBugged()
 	local count = {}
-	for fire in pairs(Fire:getSingleton().m_Fires) do
+	for _, fire in pairs(Fire:getSingleton().m_Fires) do
 		if fire.uEffect:getPosition().z == fire.baseZ or not fire.bCorrectPlaced then
 			fire.bCorrectPlaced = false
 			local r = Fire:getSingleton():checkForFireGroundInfo(fire)
