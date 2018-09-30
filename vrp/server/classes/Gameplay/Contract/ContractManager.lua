@@ -90,7 +90,7 @@ end
 	data		 = {}
 ]]
 function ContractManager:createContract(contractType, seller, contractor, data)
-	if not (contractType == CONTRACT_TYPES.Sell then
+	if contractType == CONTRACT_TYPES.Sell then
 		return SellContract.create(seller, contractor, data)
 	elseif contractType == CONTRACT_TYPES.Rent then
 		return RentContract.create(seller, contractor, data)
