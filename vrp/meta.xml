@@ -962,7 +962,7 @@
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
+	<!--<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
