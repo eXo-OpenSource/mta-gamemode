@@ -18,8 +18,6 @@ IS_TESTSERVER = getServerName():find("Script") ~= nil
 PERFORMANCE_HOOK_TRIGGER_PERCENT = 20 -- everything that has a higher percentage on lua timiing gets sent to slack
 PERFORMANCE_HOOK_TRIGGER_PERCENT_FUNC = 1 -- every function that has a higher percentage on lua timiing gets sent to slack
 
-EVENT_HALLOWEEN = true
-
 CHAT_WHISPER_RANGE = 2.5
 CHAT_TALK_RANGE = 10
 CHAT_SCREAM_RANGE = 30
