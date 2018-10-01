@@ -547,8 +547,7 @@ function HUDUI:drawChart()
 end
 
 function HUDUI:drawRedDot()
-	local reddotSlots = {2, 3, 4, 5, 6, 7}
-	if reddotSlots[getPedWeaponSlot(self:getLocalTarget())] then
+	if getPedWeaponSlot(self:getLocalTarget()) >= 2 and getPedWeaponSlot(self:getLocalTarget()) <= 7 then
 		if getPedControlState(self:getLocalTarget(), "aim_weapon" ) then
 			local x1, y1, z1 = getPedWeaponMuzzlePosition(self:getLocalTarget())
 			local x2, y2, z2 = getPedTargetEnd(self:getLocalTarget())

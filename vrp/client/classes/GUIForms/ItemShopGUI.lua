@@ -34,7 +34,7 @@ function ItemShopGUI:constructor(callback)
 	self.m_CallBack = callback
 end
 
-function ItemShopGUI:refreshItemShopGUI(shopId, items)
+function ItemShopGUI:refreshItemShopGUI(shopId, items, weaponItems)
 	self.m_Shop = shopId or 0
 	local item
 	local itemData = Inventory:getSingleton():getItemData()
@@ -43,9 +43,23 @@ function ItemShopGUI:refreshItemShopGUI(shopId, items)
 		for name, price in pairs(items) do
 			item = self.m_Grid:addItem(name, tostring(price.."$"))
 			item.Id = name
-				item.onLeftClick = function()
+			
+			item.onLeftClick = function()
 				self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
 				self.m_LabelDescription:setText(itemData[name]["Info"])
+			end
+		end
+		if weaponItems then
+			for id, price in pairs(weaponItems) do
+				item = self.m_Grid:addItem(WEAPON_NAMES[id], tostring(price.."$"))
+				item.Id = id
+				item.isWeapon = true
+				
+				item.onLeftClick = function()
+					outputDebug(id)
+					self.m_Preview:setImage(WeaponIcons[id])
+					self.m_LabelDescription:setText(WEAPON_NAMES[id])
+				end
 			end
 		end
 	end
@@ -64,18 +78,22 @@ function ItemShopGUI:ButtonBuy_Click()
 	end
 	local amount = tonumber(self.m_EditAmount:getText())
 	if not amount then
-		ErrorBox:new(_"Bitte gebe einen gültige Anzahl ein!")
+		ErrorBox:new(_"Bitte gebe eine gültige Anzahl ein!")
 		return
 	end
 
-	self.m_CallBack(self.m_Shop, itemName, amount)
+	self.m_CallBack(self.m_Shop, itemName, amount, self.m_Grid:getSelectedItem().isWeapon)
 end
 
 addEventHandler("showItemShopGUI", root,
 	function()
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
-		local callback = function(shop, itemName, amount)
-			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
+		local callback = function(shop, itemName, amount, isWeapon)
+			if isWeapon then 
+				triggerServerEvent("shopBuyWeapon", root, shop, itemName)
+			else
+				triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
+			end
 		end
 		ItemShopGUI:new(callback)
 	end

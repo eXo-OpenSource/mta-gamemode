@@ -81,7 +81,11 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	end
 
 	if typeData["Marker"] then
-		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
+		if typeData["Marker"] == "blip_position" then 
+			self.m_Marker = createMarker(self.m_Position, "cylinder", 1, 255, 255, 0, 175)
+		else
+			self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
+		end
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
 	end
@@ -141,11 +145,11 @@ function Shop:onItemMarkerHit(hitElement, dim)
 		if self.m_Marker then
 			if not self.m_Marker.m_Disable then
 				hitElement:triggerEvent("showItemShopGUI")
-				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_WeaponItems)
 			end
 		else
 			hitElement:triggerEvent("showItemShopGUI")
-			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items, self.m_WeaponItems)
 		end
 	end
 end
