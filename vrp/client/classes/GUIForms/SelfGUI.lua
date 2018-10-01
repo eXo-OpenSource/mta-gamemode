@@ -1045,7 +1045,7 @@ function SelfGUI:onSettingChange(setting)
 			self.m_GroupBase:setEnabled(true)
 		end
 
-		self.m_GroupBase:setEnabled(localPlayer:getCompany() and true or false)
+		self.m_GroupBase:setEnabled((localPlayer:getGroupId() > 0) and true or false)
 		self.m_House:setEnabled(false)
 		self.m_Vehicle:setEnabled(false)
 

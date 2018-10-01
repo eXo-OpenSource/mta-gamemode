@@ -183,7 +183,11 @@ function GroupVehicle:respawn(force)
 	self:resetIndicator()
 	self:fix()
 	self:setForSale(self.m_ForSale, self.m_SalePrice)
-
+	if not force then
+		self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt!")
+	else 
+		self:getGroup():sendShortMessage("Euer Fahrzeug ["..self.getNameFromModel(self:getModel()).."] wurde respawnt (administrativ)!")
+	end
 	if self.m_Magnet then
 		detachElements(self.m_Magnet)
 		self.m_Magnet:attach(self, 0, 0, -1.5)
