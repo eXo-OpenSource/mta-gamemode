@@ -26,6 +26,10 @@ function PrisonBreakManager:constructor()
     local antifall2 = createColCuboid(2559.17, -1416.25, 1045.87, 5, 10, 4 )
     antifall2:setInterior(2)
     InstantTeleportArea:new(antifall2, 0, 2, Vector3(2561.75, -1414.22, 1050.83))
+
+    local antifall3 = createColCuboid(2555.62, -1462.42, 1031.07, 200, 200, 7) -- prevents suicide
+    antifall3:setInterior(2)
+    InstantTeleportArea:new(antifall3, 0, 2, Vector3(2611.23, -1414.81, 1040.36))
 end
 
 function PrisonBreakManager:start(button, state, player)

@@ -1316,10 +1316,11 @@ function FactionState:Event_toggleDuty(wasted, preferredSkin)
 		if getDistanceBetweenPoints3D(client.position, client.m_CurrentDutyPickup.position) <= 10 or wasted then
 			if client:isFactionDuty() then
 				if wasted then
-					client:takeAllWeapons()
+					--client:takeAllWeapons()
+					takeAllWeapons(client) -- due to attached weapons
 				else
 					self:Event_storageWeapons(client)
-					client:takeAllWeapons()
+					takeAllWeapons(client) -- due to attached weapons
 				end
 				client:setCorrectSkin()
 				client:setFactionDuty(false)
