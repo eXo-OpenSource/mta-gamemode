@@ -366,9 +366,9 @@ function PlayerManager:playerQuit()
 	end
 end
 
-function PlayerManager:Event_playerReady()
+function PlayerManager:Event_playerReady(tblClientSettings)
 	local player = client
-
+	player.m_tblClientSettings = tblClientSettings or {}
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 end
 

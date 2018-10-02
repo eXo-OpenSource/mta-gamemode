@@ -1,0 +1,3 @@
+<map edf:definitions="editor_main">
+    <removeWorldObject id="removeWorldObject (telgrphpole02) (1)" radius="8.5308437" interior="0" model="1308" lodModel="0" posX="9.02344" posY="15.15625" posZ="-5.71094" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+</map>

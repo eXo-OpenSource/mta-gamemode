@@ -83,7 +83,10 @@ end
 
 function Core:ready() --onClientResourceStart
 	-- Tell the server that we're ready to accept additional data
-	triggerServerEvent("playerReady", root)
+	triggerServerEvent("playerReady", root, { -- trigger some client settings
+		["LastFactionSkin"] = core:get("Cache", "LastFactionSkin", 0),
+		["LastCompanySkin"] = core:get("Cache", "LastCompanySkin", 0),
+	})
 
 	-- Request Browser Domains
 	Browser.requestDomains{"exo-reallife.de"}

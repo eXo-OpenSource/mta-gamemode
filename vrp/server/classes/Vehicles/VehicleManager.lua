@@ -266,8 +266,10 @@ function VehicleManager:createVehicle(idOrData)
 
 		enew(vehicle, typeClass, data)
 		self:addRef(vehicle, false)
-		vehicle:setInterior(data.Interior or 0)
-		vehicle:setDimension(data.Dimension or 0)
+		if vehicle:getDimension() ~= PRIVATE_DIMENSION_SERVER then -- don't set interior and dimension if it is already despawned
+			vehicle:setInterior(data.Interior or 0)
+			vehicle:setDimension(data.Dimension or 0)
+		end
 
 		local pershingSquareSpecialCase = false
 		if data.PosX > 1399.40 and data.PosX <= 1559 then

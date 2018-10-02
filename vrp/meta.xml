@@ -394,10 +394,10 @@
 	<script src="server/classes/Events/AdminEventManager.lua" type="server"/>
 	<script src="server/classes/Events/AdminEvent.lua" type="server"/>
 
-	<!-- Halloween
+	<!-- Halloween -->
 	<script src="server/classes/Events/Halloween/DrawContest.lua" type="server"/>
 	<script src="server/classes/Events/Halloween/Halloween.lua" type="server"/>
-	-->
+
 	<!-- Christmas -->
 	<script src="server/classes/Events/Christmas/Christmas.lua" type="server"/>
 	<script src="server/classes/Events/Christmas/QuestManager.lua" type="server"/>
@@ -954,15 +954,15 @@
 
 	<!-- Halloween -->
 	<script src="client/classes/Events/Halloween/Halloween.lua" type="client"/>
-	<!--
+
 	<script src="client/classes/Events/Halloween/DrawContestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/DrawContestOverviewGUI.lua" type="client"/>
 	<script src="client/classes/Events/Halloween/BonusGUI.lua" type="client"/>
-	-->
+
 
 	<!-- Christmas -->
 	<script src="client/classes/Events/Christmas/Christmas.lua" type="client"/>
-	<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/>
+	<!--<script src="client/classes/Events/Christmas/BonusGUI.lua" type="client"/> -->
 	<script src="client/classes/Events/Christmas/QuestManager.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/QuestGUI.lua" type="client"/>
 	<script src="client/classes/Events/Christmas/Quests/QuestPhotography.lua" type="client"/>
@@ -1129,15 +1129,14 @@
 	<vrpfile src="files/images/Events/Easter/slot_6.png" />
 	<vrpfile src="files/images/Events/Easter/slot_7.png" />
 
-	<!--
-        <vrpfile src="files/images/Events/Halloween/blood.png" />
-        <vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
-        <vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
-        <vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
-        <vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
+	<vrpfile src="files/images/Events/Halloween/blood.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter1.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter2.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter3.png" />
+	<vrpfile src="files/images/Events/Halloween/ButtonSplatter4.png" />
 
-        <vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
-        -->
+	<vrpfile src="files/images/Events/Halloween/Bonus_BG.png" />
+
 	<vrpfile src="files/images/Events/Bonus/Bonus_Bravura.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Deagle.png" />
 	<vrpfile src="files/images/Events/Bonus/Bonus_Dildo.png" />
@@ -2180,12 +2179,11 @@
 	<vrpfile src="files/models/objects/worldItems/pumpkin.txd" />
 	<vrpfile src="files/models/objects/worldItems/pumpkin.dff" />
 	<vrpfile src="files/models/objects/worldItems/pumpkin.col" />
-	<!--<vrpfile src="files/models/skins/ghost.dff"/>
+	<vrpfile src="files/models/skins/ghost.dff"/>
 	<vrpfile src="files/models/skins/ghost.txd"/>
 	<vrpfile src="files/models/objects/headstone.txd" />
 	<vrpfile src="files/models/objects/headstone.dff" />
 	<vrpfile src="files/models/objects/headstone.col" />
-	-->
 	<!-- Halloween Event End-->
 
 	<!-- Christmas Event Start-->
@@ -2285,6 +2283,7 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
+	<map src="files/maps/Blueberry-Telegraphpole.map"/>
 
 	<!--map src="files/maps/ls-airport.map"/-->
 

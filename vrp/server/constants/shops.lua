@@ -135,9 +135,9 @@ SHOP_TYPES = {
 		["Class"] = CJClothes
 	},
 	[19] = {
-		["Name"] = "Anglershop",
-		["Marker"] = Vector3(393.19, -1902.86, 6.95),
-		["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
+		["Name"] = "Angel- / Outdoor-Shop",
+		["Marker"] = "blip_position",
+		--["Ped"] = {158, Vector3(393.03, -1905.04, 7.87), 0},
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop
 	},
@@ -230,11 +230,13 @@ SHOP_ITEMS = {
 		["Shot"] = 8,
 		["Cuba-Libre"] = 12
 	};
-	["Anglershop"] = {
+	["Angel- / Outdoor-Shop"] = {
 		["Angelrute"] = 150,
 		["Kleine Kühltasche"] = 50,
 		["Kühltasche"] = 100,
 		["Kühlbox"] = 250,
+		["Motorcross-Helm"] = 2000,
+		["Radio"] = 1700,
 		--["Köder"] = 5,
 	};
 	["Halloween Shop"] = {
@@ -255,6 +257,21 @@ SHOP_ITEMS = {
 		["Römische Kerzen Batterie"] = 250,
 		["Kugelbombe"] = 100,
 		["Böller"] = 50,
+	}
+}
+
+SHOP_ITEM_WEAPONS = {
+	["Angel- / Outdoor-Shop"] = {
+		--[weapon id] = price
+		[2] = 500, -- Golfschläger
+		[46] = 750, -- Fallschirm 
+	};
+	["24/7"] = {
+		[14] = 100, -- Blumen
+		[43] = 250, -- Kamera mit einem Film
+	};
+	["Gärtnerei"] = {
+		[14] = 50, -- Blumen
 	}
 }
 

@@ -630,6 +630,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				if admin and isElement(admin) then
 					admin:triggerEvent("stopCenteredFreecam")
 					admin:triggerEvent("stopWeaponRecorder")
+					StatisticsLogger:getSingleton():addAdminAction(admin, "spectEnd", target)
 					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
 					unbindKey(admin, "space", "down")
 					admin:setFrozen(false)

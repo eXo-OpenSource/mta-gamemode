@@ -85,7 +85,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 				player:setCameraTarget(player)
 				if vehicle then
 					vehicle:setPosition(pos + vehicle:getBaseHeight(true))
-					vehicle:setRotation(0, 0, rotation)
+					vehicle:setRotation(rotation)
 					vehicle:setInterior(interior)
 					vehicle:setDimension(dimension)
 					vehicle:setFrozen(true)
@@ -99,7 +99,7 @@ function VehicleTeleporter:teleport(player, type, pos, rotation, interior, dimen
 				else
 					player:setFrozen(true)
 					player:setPosition(pos + Vector3(0, 0, 1))
-					player:setRotation(0, 0, rotation)
+					player:setRotation(rotation)
 				end
 			else
 				player:sendWarning(_("Du musst im Marker bleiben!", player))

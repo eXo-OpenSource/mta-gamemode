@@ -12,13 +12,14 @@ ShopManager.VehicleShopsMap = {}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyWeapon", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
+	addEventHandler("shopBuyWeapon", root, bind(self.buyWeaponFromItemShop, self))
 	addEventHandler("barBuyDrink", root, bind(self.barBuyDrink, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
 
@@ -191,6 +192,40 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 		else
 			client:sendError(_("Internal Error! Clothe not found!", client))
 			return
+		end
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+end
+
+function ShopManager:buyWeaponFromItemShop(shopId, weaponId)
+	if client:isDead() then return false end
+	if not weaponId then return end
+	local shop = self:getFromId(shopId)
+	if shop then
+		if MIN_WEAPON_LEVELS[weaponId] <= client:getWeaponLevel() then
+			local price = shop.m_WeaponItems[weaponId]
+
+			if client:getMoney() >= price then
+				local ammo = 20 --getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1 doesn't work with the camera, at least not for me - MasterM
+
+				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
+					client:giveWeapon(weaponId, ammo)
+					reloadPedWeapon(client)
+				
+					StatisticsLogger:addAmmunationLog(client, "Shop", toJSON({[weaponId] = ammo}), price)
+					client:transferMoney(shop.m_BankAccount, price, "Shop-Einkauf", "Gameplay", "Weapon")
+					client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
+				else
+					client:sendError(_("Du hast bereits ein/e(n) %s auf dem Platz der/des %s!", client, WEAPON_NAMES[client:getWeapon(getSlotFromWeapon(weaponId))], WEAPON_NAMES[weaponId]))
+				end
+			else
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
+				return
+			end
+		else
+			client:sendError(_("Dein Waffenlevel ist zu niedrig!",client))
 		end
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))

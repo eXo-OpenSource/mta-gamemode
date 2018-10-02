@@ -281,6 +281,8 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
 				triggerServerEvent("factionRescueToggleDuty", localPlayer, false, true)
+			elseif localPlayer:getFaction():isEvilFaction() then
+				triggerServerEvent("factionEvilToggleDuty", localPlayer, true)
 			end
 		end
 

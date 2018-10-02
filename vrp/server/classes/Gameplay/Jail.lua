@@ -145,6 +145,11 @@ function Jail:setPrisonBreak(state)
 		player:toggleControl("jump", state)
 		player:toggleControl("aim_weapon ", state)
 		player:triggerEvent("setPrisonBreak", state)
+		if state then
+			if player:getFaction() and player:getFaction():isEvilFaction() then
+				FactionEvil:getSingleton():setPlayerDuty(player, true, true)
+			end
+		end
 	end
 end
 

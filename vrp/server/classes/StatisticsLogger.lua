@@ -157,14 +157,14 @@ function StatisticsLogger:addVehicleLog(player, ownerId, ownerType, elementId, m
 	local userId = 0
     if isElement(player) then userId = player:getId() end
 
-	if not ownerId then ownerId = 0 end
+	if not tonumber(ownerId) then ownerId = 0 end
 	if not ownerType then ownerType = "" end
 	if not elementId then elementId = 0 end
 	if not model then model = 0 end
 	if not action then action = "" end
 
     sqlLogs:queryExec("INSERT INTO ??_Vehicles (UserId, ElementId, OwnerId, OwnerType, Action, Model, Date) VALUES (?, ?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, elementId, ownerId, ownerType, action, model)
+        sqlLogs:getPrefix(), userId, elementId, tonumber(ownerId), ownerType, action, model)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
@@ -243,10 +243,11 @@ function StatisticsLogger:addPlantLog(player, type)
 end
 
 function StatisticsLogger:addDrugHarvestLog(player, type, owner, amount, state )
-    local userId = 0
+	local userId = 0
+	local ownerId = tonumber(owner)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	sqlLogs:queryExec("INSERT INTO ??_DrugHarvest (UserId, OwnerId, Type, Amount, State, Date ) VALUES(?, ?, ?, ?, ?,  NOW())",
-        sqlLogs:getPrefix(), userId, owner, type, amount, state)
+        sqlLogs:getPrefix(), userId, ownerId, type, amount, state)
 end
 
 function StatisticsLogger:addDrugUse( player, type )
@@ -310,7 +311,7 @@ function StatisticsLogger:addAdminAction( player, action, target)
 			end
 		end
 	end
-	if action == "spect" then
+	if action == "spect" or action == "spectEnd" then
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionSpect (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then
@@ -375,7 +376,7 @@ function StatisticsLogger:itemPlaceLogs( player, item, pos )
 end
 
 function StatisticsLogger:worldItemLog( action, typ, userId, ownerId, itemId, zone1, zone2)
-	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = ownerId or 0 end
+	if isElement(ownerId) then ownerId= ownerId:getId() else ownerId = tonumber(ownerId) or 0 end
 	if isElement(userId) then userId = userId:getId() else userId = userId or 0 end
 	if type(ownerId) ~= "number" then 
 		if type(ownerId) == "table" then 
@@ -398,6 +399,7 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 				if type(vehicle.m_Owner) == "userdata" then
 					ownerId = owner:getId()
 				end
+				ownerId = tonumber(ownerId) or 0
 				sqlLogs:queryExec("INSERT INTO ??_VehicleTow ( PlayerId, OwnerId,  VehicleId , Date) VALUES(?, ?, ?,  NOW())",
 					sqlLogs:getPrefix(), userId, ownerId, vehicle.m_Id)
 			end

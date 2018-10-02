@@ -23,7 +23,7 @@ MAX_WANTED_LEVEL = 12
 -- EVENTS:
 EVENT_EASTER = false
 EVENT_EASTER_SLOTMACHINES_ACTIVE = false
-EVENT_HALLOWEEN = false
+EVENT_HALLOWEEN = true
 EVENT_CHRISTMAS = false
 SNOW_SHADERS_ENABLED = false -- disable them during summer time
 FIREWORK_ENABLED = true -- can users use firework ?
@@ -571,7 +571,7 @@ WEAPON_NAMES = {
 	[43] = "Kamera",
 	[44] = "Nachtsicht-Gerät",
 	[45] = "Wärmesicht-Gerät",
-	[46] = "Fallschrirm"
+	[46] = "Fallschirm"
 }
 
 WEAPON_CLIPS = {
@@ -623,7 +623,7 @@ MIN_WEAPON_LEVELS = {
 	[43] = 0, -- Kamera
 	[44] = 0, -- Nachtsicht-Gerät
 	[45] = 0, -- Wärmesicht-Gerät
-	[46] = 0, -- Fallschrirm"
+	[46] = 0, -- Fallschirm"
 }
 
 BODYPART_NAMES = {

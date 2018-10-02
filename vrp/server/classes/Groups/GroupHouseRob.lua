@@ -133,6 +133,10 @@ function GroupHouseRob:startNewRob( house, player )
 					player:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!", player, HOUSEROB_MIN_MEMBERS))
 					return false
 				end
+				if player:getFaction() and player:getFaction():isStateFaction() then
+					player:sendError(_("Als Staatsfraktionist kannst du keine Häuser ausrauben!", player))
+					return false
+				end
 
 				if not self.m_HousesRobbed[house] then
 					local tick = getTickCount()
