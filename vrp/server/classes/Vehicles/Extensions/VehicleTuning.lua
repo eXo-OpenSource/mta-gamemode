@@ -249,7 +249,7 @@ function VehicleTuning:getList()
 	local neon = self.m_Tuning["Neon"] == 1 and self.m_Tuning["NeonColor"] or nil
 	local horn = (self.m_Tuning["CustomHorn"] and self.m_Tuning["CustomHorn"] > 0) and "Ja (ID: "..self.m_Tuning["CustomHorn"]..")" or nil
 	local textureName = VEHICLE_SPECIAL_TEXTURE[self.m_Vehicle:getModel()] or textureName ~= nil and textureName or "vehiclegrunge256"
-	local texture = self.m_Tuning["Texture"][textureName] and self.m_Tuning["Texture"][textureName]:gsub("files/images/Textures", "")
+	local texture = self.m_Tuning["Texture"] and self.m_Tuning["Texture"][textureName] and self.m_Tuning["Texture"][textureName]:gsub("files/images/Textures", "")
 	specialTuning["Neon"] = neon
 	specialTuning["Spezial-Hupe"] = horn
 	specialTuning["Textur"] = texture

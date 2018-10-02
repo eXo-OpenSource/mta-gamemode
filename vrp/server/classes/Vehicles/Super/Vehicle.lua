@@ -237,7 +237,7 @@ end
 
 function Vehicle:removeAttachedPlayers()
 	for i,v in pairs(getAttachedElements(self)) do
-		if getElementType(v) == "player" then
+		if v and getElementType(v) == "player" then -- I really don't know why we have to check if there even is a 'v'... but there were warnings with some async stuff - MasterM
 			v:attachToVehicle(true)
 		end
 	end
