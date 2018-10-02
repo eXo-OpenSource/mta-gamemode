@@ -382,32 +382,36 @@ function MechanicTow:FillAccept(player, target, vehicle, fuel, price)
 	target.fillRequest = false
 
 	local fuelTank = player:getPrivateSync("hasMechanicFuelNozzle")
-	local fuelTrailerId = fuelTank:getModel()
+	if fuelTank then
+		local fuelTrailerId = fuelTank:getModel()
 
-	if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
-		player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
-		return
-	end
-
-	if target:getMoney() >= price then
-		target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
-		vehicle:setFuel(vehicle:getFuel() + fuel)
-
-		self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
-		self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
-
-		local fuelDiff
-		if fuelTrailerId == 611 then
-			fuelDiff = fuel / 5
-		elseif fuelTrailerId == 584 then
-			fuelDiff = fuel / 15
+		if (fuelTrailerId == 611 and fuel > fuelTank:getFuel() * 5) or (fuelTrailerId == 584 and fuel > fuelTank:getFuel() * 15) then
+			player:sendError("Im Tankanhänger ist nicht genügend Benzin!")
+			return
 		end
 
-		fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
-		player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
+		if target:getMoney() >= price then
+			target:transferMoney(self.m_BankAccountServer, price, "Mech&Tow tanken", "Company", "Refill")
+			vehicle:setFuel(vehicle:getFuel() + fuel)
+
+			self.m_BankAccountServer:transferMoney(player, math.floor(price*0.3), "Mech&Tow tanken", "Company", "Refill")
+			self.m_BankAccountServer:transferMoney(self, math.floor(price*0.7), "Tanken", "Company", "Refill")
+
+			local fuelDiff
+			if fuelTrailerId == 611 then
+				fuelDiff = fuel / 5
+			elseif fuelTrailerId == 584 then
+				fuelDiff = fuel / 15
+			end
+
+			fuelTank:setFuel(fuelTank:getFuel() - fuelDiff)
+			player:triggerEvent("updateFuelTankGUI", math.floor(fuelTank:getFuel()))
+		else
+			target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
+			player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
+		end
 	else
-		target:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", target, price))
-		player:sendError(_("Der Spieler hat nicht genügend Geld!", player))
+		player:sendError(_("Der Tankanhänger wurde nicht mehr erkannt, bitte Tankvorgang wiederholen!", player))
 	end
 end
 

@@ -181,6 +181,7 @@ function StatisticsLogger:addDamageLog(player, target, weapon, startTime, totalL
     if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(target) then targetId = target:getId() else targetId = target or 0 end
 	local startTimeData = getRealTime(startTime)
+	local totalLoss = math.round(totalLoss, 3) -- maybe this will fix the out of range warnings
 	sqlLogs:queryExec("INSERT INTO ??_Damage (UserId, TargetId, Position, Weapon, Damage, Hits, StartTime, Date) VALUES (?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), NOW())",
         sqlLogs:getPrefix(), userId, targetId, zone or "Unknown", weapon, totalLoss, hitCount, tostring(startTime))
 end

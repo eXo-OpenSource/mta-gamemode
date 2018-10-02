@@ -390,7 +390,7 @@ function LoginRuleGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Regelwerk", true, true, self)
 
-	self.m_Browser = GUIGridWebView:new(1, 1, 15, 11, "https://docs.google.com/document/d/1zIg7Xu-iqCUyZnyXPUuabvypwi41dU2zathChhh9PmA/pub?embedded=true", true, self.m_Window)
+	self.m_Browser = GUIGridWebView:new(1, 1, 15, 11, "https://forum.exo-reallife.de/index.php?thread/22539-serverregeln/", true, self.m_Window)
 end
 
 function LoginRuleGUI:destructor()

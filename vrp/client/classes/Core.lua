@@ -89,9 +89,7 @@ function Core:ready() --onClientResourceStart
 	})
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}
-	Browser.requestDomains{"ingame.exo-reallife.de"}
-	Browser.requestDomains{"i.imgur.com"}
+	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH, "i.imgur.com"}
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
@@ -201,7 +199,6 @@ function Core:afterLogin()
 	--Atrium:new()
 
 	if DEBUG then
-		Browser.requestDomains{"ingame-dev.exo-reallife.de"}
 		Debugging:new()
 		DebugGUI.initalize()
 	end
