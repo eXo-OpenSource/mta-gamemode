@@ -94,7 +94,7 @@ function Growable:harvest(player)
 					player:sendError(_("Du hast bereits einen Blumenstrauß dabei!", player))
 				end
 			else
-				player:sendError(_("Der Blumen sind noch nicht genug gewachsen!", player))
+				player:sendError(_("Die Blumen sind noch nicht ausreichend gewachsen!", player))
 			end
 			return
 		end
