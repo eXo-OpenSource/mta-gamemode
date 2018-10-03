@@ -93,7 +93,7 @@ end
 function render()
 	tick = tick or getTickCount()
 	local nowtick = getTickCount()
-	for i, v in pairs(getElementsByType("player")) do
+	for i, v in pairs(getElementsByType("player", root, true)) do --fix
 		local data = getElementData(v,"abseiling")
 		if data ~= "" then
 			local ped = getElementData(v,"abseilped")

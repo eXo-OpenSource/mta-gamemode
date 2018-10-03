@@ -513,7 +513,7 @@ end
 addEventHandler("onClientRender", root,
 	function()
 		-- check attachments, animations and rotations for all players
-		for _,p in ipairs(getElementsByType("player", root, true)) do
+		for _,p in pairs(getElementsByType("player", root, true)) do
 			local vehicle = getElementData(p, "heligrab.vehicle") 
 			if vehicle then		
 				local side = getElementData(p, "heligrab.side")
