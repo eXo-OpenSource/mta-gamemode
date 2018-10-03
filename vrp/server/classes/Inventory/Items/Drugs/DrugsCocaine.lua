@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 DrugsCocaine = inherit(ItemDrugs)
+DrugsCocaine.m_ExpireTime = 60 * 1000
 
 function DrugsCocaine:constructor()
 end
@@ -17,7 +18,7 @@ end
 function DrugsCocaine:use( player )
 	ItemDrugs.use(self, player)
 
-  	player:triggerEvent("onClientItemUse", "Kokain", COCAINE_EXPIRETIME )
+  	player:triggerEvent("onClientItemUse", "Kokain", DrugsCocaine.m_ExpireTime )
     if isTimer( player.m_CocaineExpireTimer ) then
       killTimer( player.m_CocaineExpireTimer )
       if ( player.m_DrugOverdose ) then
@@ -27,7 +28,7 @@ function DrugsCocaine:use( player )
       end
     end
     player.m_CocaineExpireFunc = bind( DrugsCocaine.expire, self )
-    player.m_CocaineExpireTimer = setTimer( player.m_CocaineExpireFunc, COCAINE_EXPIRETIME, 1, player )
+    player.m_CocaineExpireTimer = setTimer( player.m_CocaineExpireFunc, DrugsCocaine.m_ExpireTime, 1, player )
 	StatisticsLogger:getSingleton():addDrugUse( player, "Kokain" )
 end
 
