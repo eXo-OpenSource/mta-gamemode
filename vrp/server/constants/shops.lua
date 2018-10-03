@@ -192,6 +192,7 @@ SHOP_ITEMS = {
 		["Weed-Samen"] = 20,
 		["Kanne"] = 500,
 		["Apfelbaum-Samen"] = 40,
+		["Blumen-Samen"] = 80,
 	};
 	["24/7"] = {
 		["Radio"] = 2000,
@@ -264,15 +265,11 @@ SHOP_ITEM_WEAPONS = {
 	["Angel- / Outdoor-Shop"] = {
 		--[weapon id] = price
 		[2] = 500, -- Golfschläger
-		[46] = 750, -- Fallschirm 
+		[46] = 750, -- Fallschirm
 	};
 	["24/7"] = {
-		[14] = 100, -- Blumen
 		[43] = 250, -- Kamera mit einem Film
 	};
-	["Gärtnerei"] = {
-		[14] = 50, -- Blumen
-	}
 }
 
 SHOP_OWNER_TYPES = {
@@ -342,7 +339,7 @@ ROBABLE_SHOP_STATE_TARGETS = {
 ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(2862.30, -1439.80, 9), -- east beach
 	Vector3(1955.00, -1095.44, 24.3), -- glen park
-	Vector3(432.80, -1749.60, 7.5), -- santa maria beach 
+	Vector3(432.80, -1749.60, 7.5), -- santa maria beach
 	Vector3(1225.90, -2346.14, 11.90), -- ls airport pond
 	Vector3(797.73, -611.71, 15.34), -- dillimore camp
 	Vector3(-2737.16, 132.01, 3.39), -- ocean flats garages

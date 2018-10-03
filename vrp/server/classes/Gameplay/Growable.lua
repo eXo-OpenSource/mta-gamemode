@@ -79,7 +79,26 @@ end
 function Growable:harvest(player)
 	if not player.vehicle then
 	--if player:getId() == self.m_OwnerId or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
+
 		local amount = self.m_Size*self.ms_ItemPerSize
+
+		if self.ms_Item == "Blumen" then
+			if amount >= 1 then
+				if player:getWeapon(10) ~= 14 then
+					player:triggerEvent("hidePlantGUI")
+					player:sendInfo(_("Du hast einen Blumenstrauß geerntet!", player))
+					giveWeapon(player, 14, 1, true)
+					sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+					delete(self)
+				else
+					player:sendError(_("Du hast bereits einen Blumenstrauß dabei!", player))
+				end
+			else
+				player:sendError(_("Der Blumen sind noch nicht genug gewachsen!", player))
+			end
+			return
+		end
+
 		if self.ms_Illegal and player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 			player:sendInfo(_("Du hast %d %s sichergestellt!", player, amount, self.ms_Item))
 			self.m_BankAccountServer:transferMoney(player:getFaction(), amount*5, "Drogen-Asservation", "Faction", "Drugs")
