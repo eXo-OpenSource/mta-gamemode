@@ -260,7 +260,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.52, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sonstiges"}
+	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds", "Sonstiges"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -430,7 +430,7 @@ function SelfGUI:loadStatistics()
 	localPlayer:setPrivateSyncChangeHandler("Collectables_Collected", function(value)
 		self.m_CollectablesLabel:setText(_(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)))
 	end)
-	
+
 	--outputDebug(tonumber(localPlayer:getPrivateSync("Collectables_Collected")))
 end
 
@@ -988,7 +988,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
 		self.m_BlipScale.onUpdate = function( scale )
 			Blip.setScaleMultiplier(scale)
-		end	
+		end
 
 		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
 		self.m_ColoredBlips:setFont(VRPFont(25))
@@ -1158,7 +1158,7 @@ function SelfGUI:onSettingChange(setting)
 
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
 
-		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
+		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
 		self.m_SkinSpawn:setFont(VRPFont(25))
 		self.m_SkinSpawn:setFontSize(1)
 		self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -1167,28 +1167,17 @@ function SelfGUI:onSettingChange(setting)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
 
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
-		self.m_HallelujaSound:setFont(VRPFont(25))
-		self.m_HallelujaSound:setFontSize(1)
-		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
-		self.m_HallelujaSound.onChange = function (state)
-			core:set("Other", "HallelujaSound", state)
-		end
-
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
-		self.m_HitSound:setFont(VRPFont(25))
-		self.m_HitSound:setFontSize(1)
-		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
-		self.m_HitSound.onChange = function (state)
-			core:set("Other", "HitSoundBell", state)
-		end
-
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
-		self.m_HitSound:setFont(VRPFont(25))
-		self.m_HitSound:setFontSize(1)
-		self.m_HitSound:setChecked(core:get("Other", "Fireworks", true))
-		self.m_HitSound.onChange = function (state)
-			core:set("Other", "Fireworks", state)
+		self.m_HeadLook = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.8, self.m_Height*0.04, _"Kopf in Kamerarichtung bewegen", self.m_SettingBG)
+		self.m_HeadLook:setFont(VRPFont(25))
+		self.m_HeadLook:setFontSize(1)
+		self.m_HeadLook:setChecked(core:get("Other", "Movehead", true))
+		self.m_HeadLook.onChange = function (bool)
+			core:set("Other", "Movehead", bool)
+			if bool then
+				localPlayer:startLookAt()
+			else
+				localPlayer:stopLookAt()
+			end
 		end
 
 		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
@@ -1198,23 +1187,25 @@ function SelfGUI:onSettingChange(setting)
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-		if core:get("Other","RenderDistance", false) then 
+		if core:get("Other","RenderDistance", false) then
 			setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-		else 
+		else
 			setFarClipDistance(992)
 		end
-		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
-		self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
 		self.m_RenderDistance:setRange(250, 9000)
 		self.m_RenderDistance:setValue( getFarClipDistance())
+		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.9, self.m_Height*0.06, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
+		self.m_RenderDistanceLabel:setText("Sichtweite: "..math.floor(getFarClipDistance()))
+		self.m_RenderDistanceLabel:setAlignX("center")
+
 
 		self.m_RenderDistance.onUpdate = function( dist )
 			setFarClipDistance(dist)
 			self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
 			core:set("Other","RenderDistance", math.floor(dist))
 		end
-		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
+		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.06, _"Sichtweite zurücksetzen!", self.m_SettingBG)
 		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()));self.m_RenderDistance:setValue( getFarClipDistance()) end
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
@@ -1223,19 +1214,6 @@ function SelfGUI:onSettingChange(setting)
 		--	self.m_StartIntro.onChange = function (state)
 		--		core:set("HUD", "startScreen", state)
 		--	end
-		
-		self.m_HeadLook = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.77, self.m_Width*0.8, self.m_Height*0.04, _"Kopf in Kamerarichtung bewegen", self.m_SettingBG)
-		self.m_HeadLook:setFont(VRPFont(25))
-		self.m_HeadLook:setFontSize(1)
-		self.m_HeadLook:setChecked(core:get("Other", "Movehead", true))
-		self.m_HeadLook.onChange = function (bool)
-			core:set("Other", "Movehead", bool)
-			if bool then
-				localPlayer:startLookAt()
-			else 
-				localPlayer:stopLookAt()
-			end
-		end
 
 	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
@@ -1329,6 +1307,40 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:alt_w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
+	elseif setting == "Sounds" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Sounds", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Width*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound:setFont(VRPFont(25))
+		self.m_HallelujaSound:setFontSize(1)
+		self.m_HallelujaSound:setChecked(core:get("Sounds", "Halleluja", true))
+		self.m_HallelujaSound.onChange = function (state)
+			core:set("Sounds", "Halleluja", state)
+		end
+
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound:setFont(VRPFont(25))
+		self.m_HitSound:setFontSize(1)
+		self.m_HitSound:setChecked(core:get("Sounds", "HitBell", true))
+		self.m_HitSound.onChange = function (state)
+			core:set("Sounds", "HitBell", state)
+		end
+
+		self.m_FireworkSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.21, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
+		self.m_FireworkSound:setFont(VRPFont(25))
+		self.m_FireworkSound:setFontSize(1)
+		self.m_FireworkSound:setChecked(core:get("Sounds", "Fireworks", true))
+		self.m_FireworkSound.onChange = function (state)
+			core:set("Sounds", "Fireworks", state)
+		end
+
+		self.m_NaviSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.9, self.m_Height*0.04, _"Navigations Sprachansagen", self.m_SettingBG)
+		self.m_NaviSound:setFont(VRPFont(25))
+		self.m_NaviSound:setFontSize(1)
+		self.m_NaviSound:setChecked(core:get("Sounds", "Navi", true))
+		self.m_FireworkSound.onChange = function (state)
+			core:set("Sounds", "Navi", state)
+		end
+
 	elseif setting == "Fahrzeuge" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Fahrzeuge", self.m_SettingBG)
 
