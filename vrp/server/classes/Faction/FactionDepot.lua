@@ -164,7 +164,11 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 						else
 							logData[WEAPON_NAMES[weaponID]] = logData[WEAPON_NAMES[weaponID]] + 1
 						end
-						giveWeapon(player,weaponID, NO_MUNITION_WEAPONS[weaponID] and 1 or 0) -- not usable shovel and night vision fix
+						if not WEAPON_PROJECTILE[weaponID] then 
+							giveWeapon(player,weaponID, NO_MUNITION_WEAPONS[weaponID] and 1 or 0) -- not usable shovel and night vision fix
+						else 
+							giveWeapon(player,weaponID, amount, true)
+						end
 						self:takeWeaponD(weaponID,amount)
 					else
 						player:sendError(_("Es sind nicht genug %s im Lager (%s)!", player, WEAPON_NAMES[weaponID], amount))

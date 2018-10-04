@@ -140,7 +140,7 @@ function FactionWeaponShopGUI:updateButtons()
 				skip = true
 			end
 			if not skip then
-				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
+				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 and not WEAPON_PROJECTILE[weaponID] then
 					if self.m_WeaponsBuyMunition[weaponID] then
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 					end
