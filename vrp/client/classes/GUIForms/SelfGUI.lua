@@ -258,9 +258,9 @@ function SelfGUI:constructor()
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
 
-	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.52, tabSettings)
+	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds", "Sonstiges"}
+	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -269,28 +269,6 @@ function SelfGUI:constructor()
 		end
 	end
 
-	self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.3, self.m_Height*0.07, _"Radiostationen", tabSettings):setBarEnabled(true)
-	self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
-
-	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shadereinstellungen", tabSettings):setBarEnabled(true)
-	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
-
-	local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setBarEnabled(true)
-	self.m_ServerTour.onLeftClick = function()
-		if not Tour:getSingleton():isActive() then
-		QuestionBox:new(
-			_("Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"),
-			function() triggerServerEvent("tourStart", localPlayer, true) end)
-			self:close()
-		else
-			triggerServerEvent("tourStop", localPlayer)
-		end
-	end
-	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
-
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings):setBarEnabled(true)
-	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 
 	--[[ TODO: Do we require this?
@@ -1307,7 +1285,7 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:alt_w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
-	elseif setting == "Sounds" then
+	elseif setting == "Sounds / Radio" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Sounds", self.m_SettingBG)
 		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Width*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
 		self.m_HallelujaSound:setFont(VRPFont(25))
@@ -1340,6 +1318,10 @@ function SelfGUI:onSettingChange(setting)
 		self.m_FireworkSound.onChange = function (state)
 			core:set("Sounds", "Navi", state)
 		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
+		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.59, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
+		self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
 
 	elseif setting == "Fahrzeuge" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Fahrzeuge", self.m_SettingBG)
@@ -1392,7 +1374,29 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SeatbeltWarning:setChecked(core:get("Vehicles", "seatbeltWarning", true))
 		self.m_SeatbeltWarning.onChange = function (bool)
 			core:set("Vehicles", "seatbeltWarning", bool)
+		end		
+	elseif setting == "Shader" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
+		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
+		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+	elseif setting == "Tastenzuordnung" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
+		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)
+		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+	elseif setting == "Server-Tour" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Server-Tour", self.m_SettingBG)
+		local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
+		self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tourText, self.m_SettingBG):setBarEnabled(true)
+		self.m_ServerTour.onLeftClick = function()
+			if not Tour:getSingleton():isActive() then
+			QuestionBox:new(
+				_("Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"),
+				function() triggerServerEvent("tourStart", localPlayer, true) end)
+				self:close()
+			else
+				triggerServerEvent("tourStop", localPlayer)
+			end
 		end
-
+		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
 	end
 end
