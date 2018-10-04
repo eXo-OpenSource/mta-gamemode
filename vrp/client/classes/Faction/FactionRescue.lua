@@ -8,7 +8,7 @@ addEventHandler("rescueCreateDeathBlip", root, function(player)
 	local pos = player:getPosition()
 	DeathBlips[player] = Blip:new("Rescue.png", pos.x, pos.y)
 	DeathBlips[player]:setStreamDistance(2000)
-	DeathBlips[player]:setColor({200, 50, 0})
+	DeathBlips[player]:setColor(getElementType(player) == "player" and {200, 50, 0} or {150, 50, 0})
 end)
 
 addEventHandler("rescueRemoveDeathBlip", root, function(player)

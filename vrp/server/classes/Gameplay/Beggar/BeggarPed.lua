@@ -17,6 +17,7 @@ BeggarPed.constructor = pure_virtual
 function BeggarPed:virtual_constructor(id, classId)
 	self.m_Id = id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
+	self:setData("Ped:fakeNameTag", self.m_Name, true)
 	self.m_ColShape = createColSphere(self:getPosition(), 10)
 	self.m_Type = classId
 	self.m_RoleName = BeggarTypeNames[self.m_Type]
@@ -53,6 +54,9 @@ end
 
 function BeggarPed:despawn()
 	self.m_Despawning = true
+	if self.m_AbortRescueTimer and isTimer(self.m_AbortRescueTimer) then killTimer(self.m_AbortRescueTimer) end
+	if self.m_DeleteLootTimer and isTimer(self.m_DeleteLootTimer) then killTimer(self.m_DeleteLootTimer) end
+
     setTimer(function ()
 		if self and isElement(self) and self:getAlpha() then
 			local newAlpha = self:getAlpha() - 10
@@ -106,33 +110,53 @@ function BeggarPed:sendMessage(player, type, arg)
 end
 
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
-	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
-		--killer:reportCrime(Crime.Kill)
+	--create a rescue mission if there is someone online, otherwise just despawn him
+	if #FactionRescue:getSingleton():getOnlinePlayers(true, false) >= 1 then
+		self:setHealth(20)
+		self:setData("NPC:Immortal", true, true)
+		self:setAnimation("wuzi","cs_dead_guy", -1, true, false, false, true)
+		FactionRescue:getSingleton():createPedDeathPickup(self, self.m_Name)
+		self.m_AbortRescueTimer = setTimer(function()
+			if self.m_DeathPickup then
+				FactionRescue:getSingleton():removePedDeathPickup(self)
+				self:despawn()
+			end
+		end, 5000 * 60, 1) -- 5 minutes
+	else
+		self:despawn()
+	end
 
+	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = vehicle.controller end
+	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		-- Take karma
 		killer:takeKarma(3)
-
-		-- Destory the Ped
-		self:despawn()
-
 		-- Give Wanteds
-		killer:giveWanteds(4)
-		killer:sendMessage("Verbrechen begangen: Mord, 4 Wanteds", 255, 255, 0)
+		if chance(25) then
+			setTimer(function()
+				if killer and isElement(killer) then
+				killer:sendWarning("Dein Mord wurde von einem Augenzeuge an das LSPD gemeldet!")
+				killer:giveWanteds(4)
+				killer:sendMessage("Verbrechen begangen: Mord, 4 Wanteds", 255, 255, 0)
+				end
+			end, math.random(2000, 10000), 1)
+		end
 	end
 end
 
+--function BeggarPed:
+
 function BeggarPed:Event_onColShapeHit(hitElement, dim)
-    if dim then
+    if dim and not self.m_DeathPickup then
         if hitElement:getType() ~= "player" then return end
         self:sendMessage(hitElement, BeggarPhraseTypes.Help)
-        hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
+		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
     end
 end
 
 function BeggarPed:Event_onColShapeLeave(hitElement, dim)
-    if dim then
+    if dim and not self.m_DeathPickup then
         if hitElement:getType() ~= "player" then return end
         self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
-        hitElement:triggerEvent("resetManualHelpBarText")
+		hitElement:triggerEvent("resetManualHelpBarText")
     end
 end
