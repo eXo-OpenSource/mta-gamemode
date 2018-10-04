@@ -273,7 +273,7 @@ function SelfGUI:constructor()
 
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
-	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
+	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren", tabSettings)
 	self.m_EnableTippsBox:setFont(VRPFont(25))
 	self.m_EnableTippsBox:setFontSize(1)
 	self.m_EnableTippsBox:setChecked(core:get("Tipps", "enableTipps", true))
@@ -778,7 +778,7 @@ function SelfGUI:onSettingChange(setting)
 	if setting == "HUD" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", self.m_SettingBG)
 
-		self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", self.m_SettingBG)
+		self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren", self.m_SettingBG)
 		self.m_UICheckBox:setFont(VRPFont(25))
 		self.m_UICheckBox:setFontSize(1)
 		self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
@@ -787,7 +787,7 @@ function SelfGUI:onSettingChange(setting)
 			HUDUI:getSingleton():setEnabled(state)
 		end
 
-		self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", self.m_SettingBG)
+		self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren", self.m_SettingBG)
 		self.m_ChatCheckBox:setFont(VRPFont(25))
 		self.m_ChatCheckBox:setFontSize(1)
 		self.m_ChatCheckBox:setChecked(isChatVisible())
@@ -960,31 +960,9 @@ function SelfGUI:onSettingChange(setting)
 			updateDesignOptions()
 		end
 
-		self.m_BlipScaleLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.35, self.m_Height*0.07, _"Blip-Skalierung" , self.m_SettingBG):setFontSize(0.75)
-		self.m_BlipScale = GUISlider:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_BlipScale:setRange(0.2, 2)
-		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
-		self.m_BlipScale.onUpdate = function( scale )
-			Blip.setScaleMultiplier(scale)
-		end
 
-		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
-		self.m_ColoredBlips:setFont(VRPFont(25))
-		self.m_ColoredBlips:setFontSize(1)
-		self.m_ColoredBlips:setChecked(core:get("HUD", "coloredBlips", true))
-		self.m_ColoredBlips.onChange = function (state)
-			core:set("HUD", "coloredBlips", state)
-		end
 
-		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
-		self.m_ZoneName:setFont(VRPFont(25))
-		self.m_ZoneName:setFontSize(1)
-		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
-		self.m_ZoneName.onChange = function (state)
-			core:set("HUD", "drawZone", state)
-		end
-
-		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
+		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
 		self.m_BarsEnabled:setFont(VRPFont(25))
 		self.m_BarsEnabled:setFontSize(1)
 		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", false))
@@ -993,14 +971,43 @@ function SelfGUI:onSettingChange(setting)
 			HUDRadar:getSingleton():toggleStatusBars(state)
 		end
 
-		self.m_MapLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.07, _"Karten-Transparenz" , self.m_SettingBG):setFontSize(0.75)
-		self.m_MapOpacity = GUISlider:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ZoneName:setFont(VRPFont(25))
+		self.m_ZoneName:setFontSize(1)
+		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
+		self.m_ZoneName.onChange = function (state)
+			core:set("HUD", "drawZone", state)
+		end
+
+		self.m_MapLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.07, _"Karten-Transparenz" , self.m_SettingBG):setFontSize(0.75)
+		self.m_MapOpacity = GUISlider:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		self.m_MapOpacity:setRange(0.1, 1)
 		self.m_MapOpacity:setValue(core:get("HUD","mapOpacity", 0.7))
 		self.m_MapOpacity.onUpdate = function( opacity )
 			local scale = math.round(opacity, 2)
 			core:set("HUD","mapOpacity", opacity)
 		end
+
+		--Blips
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.8, self.m_Height*0.07, _"Blips", self.m_SettingBG)
+		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
+		self.m_ColoredBlips:setFont(VRPFont(25))
+		self.m_ColoredBlips:setFontSize(1)
+		self.m_ColoredBlips:setChecked(core:get("HUD", "coloredBlips", true))
+		self.m_ColoredBlips.onChange = function (state)
+			core:set("HUD", "coloredBlips", state)
+		end
+
+		self.m_BlipScaleLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.35, self.m_Height*0.07, _"Blip-Skalierung" , self.m_SettingBG):setFontSize(0.75)
+		self.m_BlipScale = GUISlider:new(self.m_Width*0.02, self.m_Height*0.78, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_BlipScale:setRange(0.2, 2)
+		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
+		self.m_BlipScale.onUpdate = function( scale )
+			Blip.setScaleMultiplier(scale)
+		end
+
+
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
 	elseif setting == "Spawn" then
@@ -1054,7 +1061,7 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.On), true)
 
-		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", self.m_SettingBG)
+		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren", self.m_SettingBG)
 		self.m_Reddot:setFont(VRPFont(25))
 		self.m_Reddot:setFontSize(1)
 		self.m_Reddot:setChecked(core:get("HUD", "reddot", false))
@@ -1107,7 +1114,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange:setIndex(currentMode, true)
 		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
 
-		self.m_TextureFileCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.5, self.m_Height*0.04, _"eXo Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureFileCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.5, self.m_Height*0.04, _"eXo Texturen aktivieren", self.m_SettingBG)
 		self.m_TextureFileCheck:setFont(VRPFont(25))
 		self.m_TextureFileCheck:setFontSize(1)
 		self.m_TextureFileCheck:setChecked(core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE))
@@ -1115,7 +1122,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "FileTexturesEnabled", state)
 			TextureReplacer.forceReload()
 		end
-		self.m_TextureHTTPCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.04, _"Spieler Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureHTTPCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.04, _"Spieler Texturen aktivieren", self.m_SettingBG)
 		self.m_TextureHTTPCheck:setFont(VRPFont(25))
 		self.m_TextureHTTPCheck:setFontSize(1)
 		self.m_TextureHTTPCheck:setChecked(core:get("Other", "HTTPTexturesEnabled", HTTP_TEXTURE_DEFAULT_STATE))
@@ -1158,7 +1165,7 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 
-		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
+		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
 		self.m_GangwarTabView:setFont(VRPFont(25))
 		self.m_GangwarTabView:setFontSize(1)
 		self.m_GangwarTabView:setChecked(core:get("Other", "GangwarTabView", true))
@@ -1170,6 +1177,9 @@ function SelfGUI:onSettingChange(setting)
 		else
 			setFarClipDistance(992)
 		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
+
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
 		self.m_RenderDistance:setRange(250, 9000)
 		self.m_RenderDistance:setValue( getFarClipDistance())
