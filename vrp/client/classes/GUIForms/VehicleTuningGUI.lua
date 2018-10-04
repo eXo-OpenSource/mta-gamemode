@@ -115,13 +115,15 @@ function VehicleTuningGUI:initPartsList()
     for id, data in ipairs(VehicleTuningGUI.SpecialTunings) do
         local partName, partData = unpack(data)
 		if self.m_SpecialType ~= "AirportPainter" and self.m_SpecialType ~= "BoatsPainter" or (partData == "Color1" or partData == "Color2") then
-        	local item = self.m_PartsList:addItem(partName)
-        	item.PartSlot = partData
-        	item.onLeftClick = bind(self.PartItem_Click, self)
+			if partData ~= "Variant1" and partData ~= "Variant2" then
+				local item = self.m_PartsList:addItem(partName)
+				item.PartSlot = partData
+				item.onLeftClick = bind(self.PartItem_Click, self)
+			end
 		end
-    end
+	end
 
-    -- Add upgrades
+	-- Add upgrades
     for slot = 0, 16 do
         if slot ~= 10 and slot ~= 11 then -- Exclude Stereo and Unknown
             local compatibleUpgrades = getVehicleCompatibleUpgrades(self.m_Vehicle, slot)
@@ -132,7 +134,18 @@ function VehicleTuningGUI:initPartsList()
                 item.onLeftClick = bind(self.PartItem_Click, self)
             end
         end
-    end
+	end
+
+	if VEHICLE_VARIANTS[self.m_Vehicle.model] then
+		local item
+		item = self.m_PartsList:addItem("Variante 1")
+		item.PartSlot = "Variant1"
+		item.onLeftClick = bind(self.PartItem_Click, self)
+
+		item = self.m_PartsList:addItem("Variante 2")
+		item.PartSlot = "Variant2"
+		item.onLeftClick = bind(self.PartItem_Click, self)
+	end
 end
 
 function VehicleTuningGUI:updateUpgradeList(slot)
@@ -418,6 +431,29 @@ function VehicleTuningGUI:PartItem_Click(item)
                     end
                 end
             )
+			return
+		elseif item.PartSlot == "Variant1" or item.PartSlot == "Variant2" then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            local variants = {}
+            variants[255] = _"Keine Variante"
+            for i=1, #VEHICLE_VARIANTS[self.m_Vehicle.model]+1 do variants[i] = _("Variante %d", i) end
+            self.m_VariantPicker = VehicleTuningItemGrid:new(
+                "Variante auswählen",
+                variants,
+				function (variant)
+					self.m_NewTuning:saveTuning(item.PartSlot, variant-1)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], variant-1)
+                end,
+				function (variant)
+					local variant1, variant2 = self.m_Vehicle:getVariant()
+					if item.PartSlot == "Variant1" then
+						triggerServerEvent("vehicleSetVariant", self.m_Vehicle, variant-1, variant2)
+					elseif item.PartSlot == "Variant2" then
+						triggerServerEvent("vehicleSetVariant", self.m_Vehicle, variant1, variant-1)
+					end
+                end
+            )
             return
         elseif item.PartSlot == "Texture" then
 			--[[Disabled
@@ -561,6 +597,8 @@ VehicleTuningGUI.CameraPositions = {
 
 	["AirportPainter"] = Vector3(7, 7, 2.1),
 	["BoatsPainter"] = Vector3(8, -4, 2.1),
+	["Variant1"] = Vector3(8, -4, 2.1),
+	["Variant2"] = Vector3(8, -4, 2.1),
 }
 
 VehicleTuningGUI.SpecialTunings = {
@@ -570,6 +608,8 @@ VehicleTuningGUI.SpecialTunings = {
 	{"Neonröhren", "Neon"},
 	{"Neonröhren-Farbe", "NeonColor"},
 	{"Spezial-Hupe", "CustomHorn"},
+	{"Variante 1", "Variant1"},
+	{"Variante 2", "Variant2"}
 	--{"Spezial-Lackierung", "Texture"},
 }
 

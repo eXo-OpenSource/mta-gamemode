@@ -19,7 +19,7 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -47,6 +47,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
+	addEventHandler("vehicleSetVariant", root, bind(self.Event_SetVariant, self))
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
 
 	addEventHandler("clientToggleVehicleEngine", root,
@@ -1366,6 +1367,10 @@ function VehicleManager:Event_DeLoadObject(veh, type)
 	else
 		client:sendError(_("Nur Fraktionisten können dieses Objekt abladen!", client))
 	end
+end
+
+function VehicleManager:Event_SetVariant(variant1, variant2)
+	source:setVariant(variant1, variant2)
 end
 
 function VehicleManager:migrate()

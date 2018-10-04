@@ -35,38 +35,38 @@ end
 
 function VehicleTuning:applyTuning(disableTextureForce)
 
-	if self.m_Tuning["Color1"] then 
+	if self.m_Tuning["Color1"] then
 		local colors = {}
 		local r, g, b = unpack(self.m_Tuning["Color1"])
-		
+
 		table.insert(colors, r)
 		table.insert(colors, g)
 		table.insert(colors, b)
 
-		if self.m_Tuning["Color2"] then 
+		if self.m_Tuning["Color2"] then
 			local r, g, b = unpack(self.m_Tuning["Color2"])
-			
+
 			table.insert(colors, r)
 			table.insert(colors, g)
 			table.insert(colors, b)
 
-			if self.m_Tuning["Color3"] then 
+			if self.m_Tuning["Color3"] then
 				local r, g, b = unpack(self.m_Tuning["Color3"])
-				
+
 				table.insert(colors, r)
 				table.insert(colors, g)
 				table.insert(colors, b)
 
-				if self.m_Tuning["Color4"] then 
+				if self.m_Tuning["Color4"] then
 					local r, g, b = unpack(self.m_Tuning["Color4"])
-					
+
 					table.insert(colors, r)
 					table.insert(colors, g)
 					table.insert(colors, b)
 				end
 			end
 		end
-		
+
 		self.m_Vehicle:setColor(unpack(colors))
 	end
 
@@ -87,6 +87,10 @@ function VehicleTuning:applyTuning(disableTextureForce)
 
 	if self.m_Tuning["Special"] and self.m_Tuning["Special"] > 0 then
 		self:setSpecial(self.m_Tuning["Special"])
+	end
+
+	if self.m_Tuning["Variant1"] or self.m_Tuning["Variant2"] then
+		self.m_Vehicle:setVariant(self.m_Tuning["Variant1"] or 255, self.m_Tuning["Variant2"] or 255)
 	end
 
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
@@ -118,6 +122,8 @@ function VehicleTuning:createNew()
 	self.m_Tuning["Special"] = 0
 	self.m_Tuning["CustomHorn"] = 0
 	self.m_Tuning["Texture"] = {}
+	self.m_Tuning["Variant1"] = 255
+	self.m_Tuning["Variant2"] = 255
 end
 
 function VehicleTuning:saveTuning(type, data)
@@ -146,6 +152,9 @@ function VehicleTuning:loadTuningFromVehicle()
 	self:saveGTATuning()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon") and 1 or 0
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
+	local variant1, variant2 = self.m_Vehicle:getVariant()
+	self.m_Tuning["Variant1"] = variant1
+	self.m_Tuning["Variant2"] = variant2
 	if self.m_Vehicle.m_Texture then
 		self.m_Tuning["Texture"][self.m_Vehicle.m_Texture:getTextureName() or "vehiclegrunge256"] = self.m_Vehicle.m_Texture:getPath() or ""
 	end
@@ -237,14 +246,14 @@ end
 function VehicleTuning:getList()
 	local tuning, specialTuning = {}, {}
 
-	if self.m_Tuning["GTATuning"] then 
+	if self.m_Tuning["GTATuning"] then
 		for _,v in pairs(self.m_Tuning["GTATuning"]) do
 			tuning[getVehicleUpgradeSlotName(v)] = v
 		end
 	else
 		tuning["(keine)"] = ""
-	end	
-	if table.size(tuning) == 0 then tuning["(keine)"] = "" end 
+	end
+	if table.size(tuning) == 0 then tuning["(keine)"] = "" end
 
 	local neon = self.m_Tuning["Neon"] == 1 and self.m_Tuning["NeonColor"] or nil
 	local horn = (self.m_Tuning["CustomHorn"] and self.m_Tuning["CustomHorn"] > 0) and "Ja (ID: "..self.m_Tuning["CustomHorn"]..")" or nil
