@@ -7,7 +7,7 @@ evilFactionInteriorEnter = {}
 factionWTDestination = {}
 factionSpawnpoint = {}
 
-TICKET_PRICE = 2000
+TICKET_PRICE_ = 1500
 
 
 
