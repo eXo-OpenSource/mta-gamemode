@@ -310,6 +310,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 					player:sendShortMessage(_("Du hast den Bürger erfolgreich wiederbelebt!", player))
 					self.m_BankAccountServer:transferMoney(self.m_Faction, 100, "Rescue Team Wiederbelebung", "Faction", "Revive")
 					self.m_BankAccountServer:transferMoney(player, 50, "Rescue Team Wiederbelebung", "Faction", "Revive")
+					self.m_Faction:addLog(player, "Wiederbel.", "hat einen Bürger wiederbelebt!")
 				else
 					if deadPlayer:isDead() then
 						deadPlayer:triggerEvent("abortDeathGUI")
@@ -321,6 +322,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 						deadPlayer:fadeCamera(true, 1)
 						self.m_BankAccountServer:transferMoney(self.m_Faction, 100, "Rescue Team Wiederbelebung", "Faction", "Revive")
 						self.m_BankAccountServer:transferMoney(player, 50, "Rescue Team Wiederbelebung", "Faction", "Revive")
+						self.m_Faction:addLog(player, "Wiederbel.", ("hat %s wiederbelebt!"):format(deadPlayer.name))
 						if deadPlayer:giveReviveWeapons() then
 							deadPlayer:sendSuccess(_("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer))
 						end
@@ -582,6 +584,7 @@ function FactionRescue:Event_healPlayer(medic, target)
 
 				target:transferMoney(self.m_Faction, costs, "Rescue Team Heilung", "Faction", "Healing")
 
+				self.m_Faction:addLog(medic, "Heilung", ("hat %s geheilt!"):format(target.name))
 			else
 				medic:sendError(_("Der Spieler hat nicht genug Geld! (%d$)", medic, costs))
 				target:sendError(_("Du hast nicht genug Geld! (%d$)", target, costs))
