@@ -574,6 +574,13 @@ WEAPON_NAMES = {
 	[46] = "Fallschirm"
 }
 
+WEAPON_PROJECTILE = 
+{
+	[17] = true,
+	[18] = true,
+	[39] = true,
+}
+
 WEAPON_CLIPS = {
 	[25] = 6,
 	[33] = 5,

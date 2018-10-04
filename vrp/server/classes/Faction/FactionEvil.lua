@@ -402,7 +402,7 @@ function FactionEvil:Event_storageWeapons(player)
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
 					if depotWeapons+1 <= depotMaxWeapons then
-						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
+						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines or WEAPON_PROJECTILE[weaponId] then
 							depot:addWeaponD(weaponId, 1)
 							depot:addMagazineD(weaponId, magazines)
 							takeWeapon(client, weaponId)
