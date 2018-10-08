@@ -68,3 +68,10 @@ function ItemBeggar:buyItem(player, item)
 		client:sendError(_("Steige zuerst aus deinem Fahrzeug aus!", client))
 	end
 end
+
+function ItemBeggar:giveLoot(player)
+	local item = BeggarItemBuyTypes[self.m_Type][math.random(1, #BeggarItemBuyTypes[self.m_Type])]
+	local amount = math.floor(BeggarItemBuy[item]["amount"]/2)
+	player:getInventory():giveItem(item, math.floor(BeggarItemBuy[item]["amount"]/2))
+	player:sendInfo(_("Du hast %s %s von %s erhalten.", player, amount, item, self.m_Name))
+end
