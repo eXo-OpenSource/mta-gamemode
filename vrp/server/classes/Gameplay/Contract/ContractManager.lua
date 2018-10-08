@@ -15,11 +15,12 @@ CONTRACT_TYPES = {
 --[[
 
 	vrp_contracts
-	--> Id - PK
-	--> SellerId - group or player
-	--> SellerType 	 - 1 = player, 2 = group
-	--> Contractor - FK
-	--> ContractType - 1 = sell, 2 = rent, 3 = credit
+	--> Id             - PK
+	--> SellerId       - player or group
+	--> SellerType 	   - 1 = player, 2 = group
+	--> ContractorId   - player or group
+	--> ContractorType -  1 = player, 2 = group
+	--> ContractType   - 1 = sell, 2 = rent, 3 = credit
 	--> FinishedAt
 	--> CreatedAt
 
@@ -86,16 +87,58 @@ end
 --[[
 	contractType = "sell" or "rent" or "credit"
 	seller       = player or group (type "Firma")
-	contractor   = player
+	buyer   	 = player or group (type "Firma")
 	data		 = {}
 ]]
-function ContractManager:createContract(contractType, seller, contractor, data)
+function ContractManager:createContract(contractType, seller, buyer, data)
+	local sellerId = -1
+	local sellerType = -1
+	local buyerId = -1
+	local buyerType = -1
+
+	if not seller then
+		return false
+	elseif type(seller) == "table" and instanceof(seller, Group) then
+		if seller:getType() == "Firma" then
+			sellerId = seller.m_Id
+			sellerType = 2
+		else
+			return false
+		end
+	else
+		if seller.type and seller.type == "player" then
+			sellerId = seller.m_Id
+			sellerType = 1
+		else
+			return false
+		end
+	end
+
+	if not buyer then
+		return false
+	elseif type(buyer) == "table" and instanceof(buyer, Group) then
+		if buyer:getType() == "Firma" then
+			buyerId = buyer.m_Id
+			buyerType = 2
+		else
+			return false
+		end
+	else
+		if buyer.type and buyer.type == "player" then
+			buyerId = buyer.m_Id
+			buyerType = 1
+		else
+			return false
+		end
+	end
+
+
 	if contractType == CONTRACT_TYPES.Sell then
-		return SellContract.create(seller, contractor, data)
+		return SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 	elseif contractType == CONTRACT_TYPES.Rent then
-		return RentContract.create(seller, contractor, data)
+		return RentContract.create(sellerId, sellerType, buyerId, buyerType, data)
 	elseif contractType == CONTRACT_TYPES.Credit then
-		return CreditContract.create(seller, contractor, data)
+		return CreditContract.create(sellerId, sellerType, buyerId, buyerType, data)
 	else
 		return false
 	end

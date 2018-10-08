@@ -7,9 +7,9 @@
 -- ****************************************************************************
 Contract = inherit(Object)
 
-function Contract.create(sellerId, sellerType, contractor, contractType)
-	db:queryFetch(Async.waitFor(self), "INSERT INTO ??_contracts (SellerId, SellerType, Contractor, ContractType, CreatedAt) VALUES (?, ?, ?, ?, NOW())",
-		sql:getPrefix(), sellerId, sellerType, contractor, contractType)
+function Contract.create(sellerId, sellerType, buyerId, buyerType, contractType)
+	db:queryFetch(Async.waitFor(self), "INSERT INTO ??_contracts (SellerId, SellerType, BuyerId, BuyerType, ContractType, CreatedAt) VALUES (?, ?, ?, ?, ?, NOW())",
+		sql:getPrefix(), sellerId, sellerType, buyerId, buyerType, contractType)
 
 	local result, numrows, lastInserID = Async.wait()
 
