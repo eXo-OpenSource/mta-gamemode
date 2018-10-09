@@ -251,9 +251,14 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 			local multiplier = DAMAGE_MULTIPLIER[bpart] and DAMAGE_MULTIPLIER[bpart] or 1
 			local realLoss = basicDamage*multiplier
 			local health = getElementHealth(target)
-			if realLoss > health then 
+			if realLoss < basicDamage then 
+				realLoss = basicDamage
+			end
+
+			if realLoss > health then -- workaround for 5 hp damages
 				realLoss = health
 			end
+
 			triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, realLoss)
 			source.g_damage = source.g_damage + math.floor(realLoss)
 		end
