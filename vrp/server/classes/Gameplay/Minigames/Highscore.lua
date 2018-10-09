@@ -10,9 +10,6 @@ Highscore.Map = {}
 
 addRemoteEvents{"highscoreRequestData"}
 
---crll test
-crlf = true
-
 function Highscore.getFromName(name)
 	if Highscore.Map[name] then	return Highscore.Map[name] end
 	return false
