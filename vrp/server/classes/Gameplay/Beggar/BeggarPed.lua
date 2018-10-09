@@ -55,7 +55,7 @@ end
 function BeggarPed:despawn()
 	self.m_Despawning = true
 	if self.m_AbortRescueTimer and isTimer(self.m_AbortRescueTimer) then killTimer(self.m_AbortRescueTimer) end
-	if self.m_DeleteLootTimer and isTimer(self.m_DeleteLootTimer) then killTimer(self.m_DeleteLootTimer) end
+	if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
 
     setTimer(function ()
 		if self and isElement(self) and self:getAlpha() then
@@ -74,7 +74,7 @@ end
 
 function BeggarPed:rob(player)
 	if self.m_Despawning then return end
-	if getTickCount() - self.m_LastRobTime < 10*60*1000 then
+	if not self:isMoneyRobbable() then
 		player:sendMessage(_("#FE8A00%s: #FFFFFFIch wurde gerade erst ausgeraubt. Bei mir gibts nichts zu holen.", player, self.m_Name))
 		return
 	end
@@ -110,6 +110,7 @@ function BeggarPed:sendMessage(player, type, arg)
 end
 
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
+	self.m_Dead = true
 	--create a rescue mission if there is someone online, otherwise just despawn him
 	if #FactionRescue:getSingleton():getOnlinePlayers(true, false) >= 1 then
 		self:setHealth(20)
@@ -123,15 +124,20 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 			end
 		end, 5000 * 60, 1) -- 5 minutes
 	else
-		self:despawn()
+		setTimer(function()
+			self:despawn()
+		end, 15000, 1)
 	end
+
+	--give loot
+	self:createLootPickup()
 
 	if killer and isElement(killer) and getElementType(killer) == "vehicle" then killer = vehicle.controller end
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		-- Take karma
 		killer:takeKarma(3)
 		-- Give Wanteds
-		if chance(25) then
+		if (getZoneName(self.position, true) == "Los Santos" and chance(50) or chance(25)) then
 			setTimer(function()
 				if killer and isElement(killer) then
 				killer:sendWarning("Dein Mord wurde von einem Augenzeuge an das LSPD gemeldet!")
@@ -143,10 +149,44 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 	end
 end
 
+function BeggarPed:isMoneyRobbable()
+	return getTickCount() - self.m_LastRobTime > 10*60*1000
+end
+
+function BeggarPed:createLootPickup()
+	self.m_LootPickup = Pickup(self.position + Vector3((math.random(0, 2)-1)/10, (math.random(0, 2)-1)/10, -1), 3, 1279, 0)
+	addEventHandler("onPickupHit", self.m_LootPickup, function(hitPlayer)
+		if hitPlayer:getType() == "player" and not hitPlayer.vehicle then
+			if self.m_LootPickup and isElement(self.m_LootPickup) then destroyElement(self.m_LootPickup) end
+			hitPlayer:giveCombinedReward("Bettler-Raub", {
+				money = {
+					mode = "give",
+					bank = false,
+					amount = math.random(1,3),
+					toOrFrom = self.m_BankAccountServer,
+					category = "Gameplay",
+					subcategory = "BeggarRob"
+				},
+				karma = -math.random(0, 1),
+			})
+			if chance(25) then
+				if self.giveLoot then
+					self:giveLoot(hitPlayer)
+				else
+					local amount = math.random(1,2)
+					hitPlayer:getInventory():giveItem("Diebesgut", amount)
+					hitPlayer:sendInfo(_("Du hast %s Diebesgut von %s erhalten.", hitPlayer, amount, self.m_Name))
+				end
+				
+			end
+		end
+	end)
+end
+
 --function BeggarPed:
 
 function BeggarPed:Event_onColShapeHit(hitElement, dim)
-    if dim and not self.m_DeathPickup then
+    if dim and not self.m_Dead then
         if hitElement:getType() ~= "player" then return end
         self:sendMessage(hitElement, BeggarPhraseTypes.Help)
 		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
@@ -154,7 +194,7 @@ function BeggarPed:Event_onColShapeHit(hitElement, dim)
 end
 
 function BeggarPed:Event_onColShapeLeave(hitElement, dim)
-    if dim and not self.m_DeathPickup then
+    if dim and not self.m_Dead then
         if hitElement:getType() ~= "player" then return end
         self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
 		hitElement:triggerEvent("resetManualHelpBarText")
