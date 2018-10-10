@@ -9,6 +9,14 @@ VehicleManager = inherit(Singleton)
 VehicleManager.sPulse = TimedPulse:new(5*1000)
 
 function VehicleManager:constructor()
+	self.m_TuningClasses = 
+	{
+		["TurboKit"] = TurboTuning,
+		["DriveKit"] = DriveTuning, 
+		["BrakeKit"] = BrakeTuning, 
+		["WheelKit"] = WheelTuning,
+		["SuspensionKit"] = SuspensionTuning, 
+	}
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
 	self.m_CompanyVehicles = {}

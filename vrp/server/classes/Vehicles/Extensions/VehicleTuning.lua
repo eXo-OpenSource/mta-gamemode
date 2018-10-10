@@ -109,6 +109,17 @@ function VehicleTuning:applyTuning(disableTextureForce)
 			end
 		end
 	end
+
+	self.m_TuningKits = { }
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do 
+		if self.m_Tuning[tuning] then 
+			if self.m_Tuning[tuning][1] == 1 then 
+				self.m_TuningKits[tuning] = class:new( self.m_Vehicle, unpack(self.m_Tuning[tuning],2) ) 
+			end
+		end
+	end
+	
+	self:saveTuningKits()
 end
 
 function VehicleTuning:createNew()
@@ -124,6 +135,10 @@ function VehicleTuning:createNew()
 	self.m_Tuning["Texture"] = {}
 	self.m_Tuning["Variant1"] = 255
 	self.m_Tuning["Variant2"] = 255
+
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do
+		self.m_Tuning[tuning] = {0} -- the first index in every tuning-kit field will be indicating wether the kit is installed or not
+	end
 end
 
 function VehicleTuning:saveTuning(type, data)
@@ -147,9 +162,22 @@ function VehicleTuning:saveColors()
 	self.m_Tuning["ColorLight"] = {headR, headG, headB}
 end
 
+function VehicleTuning:saveTuningKits()
+
+	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do -- Reset every Tuning-Kit in case some got destructed
+		self.m_Tuning[tuning] = {0}
+	end
+
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		self.m_Tuning[tuning] = class:save() or {0}
+	end
+
+end
+
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
+	self:saveTuningKits()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon") and 1 or 0
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 	local variant1, variant2 = self.m_Vehicle:getVariant()
