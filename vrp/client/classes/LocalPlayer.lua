@@ -544,20 +544,21 @@ function LocalPlayer:renderPedNameTags()
 		if mortemTag then mortemTag = getElementData(ped,"NPC:namePed") or "Unbekannt" end
 
 		if nameTag or mortemTag then
-			x,y,z = getPedBonePosition(ped, 8)
-			if getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 then
+			x,y,z = getElementPosition(ped)
+			local dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz)
+			if dist <= 20 then
 				if isLineOfSightClear( Vector3(px, py, pz), Vector3(x, y, z), true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then
-						x,y = getScreenFromWorldPosition(x,y,z+0.5)
+						x,y = getScreenFromWorldPosition(x,y,z+1)
 						if x and y then
 							if nameTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
-								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
-								dxDrawText(nameTag, x, y, nil, nil, tocolor(200, 200, 200, 255), 1, "default-bold", "center", "center")
+								dxDrawText(nameTag, x, y, nil, nil, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
+								dxDrawText(nameTag, x+1, y+1, nil, nil, tocolor(200, 200, 200, 255), 5/dist, "default-bold", "center", "center")
 							elseif mortemTag then
 								if DEBUG then ExecTimeRecorder:getSingleton():addIteration("3D/PedNameTag", true) end
-								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 1, "default-bold", "center", "center")
-								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 1, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y+1, x, y+1, tocolor(0, 0, 0, 255), 5/dist, "default-bold", "center", "center")
+								dxDrawText("* "..mortemTag.." kriecht blutend am Boden! *", x, y, x, y, tocolor(200, 150, 0, 255), 5/dist, "default-bold", "center", "center")
 							end
 						end
 					end

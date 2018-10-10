@@ -134,6 +134,11 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss, isMelee)
 				end
 				local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
 				local realLoss = basicDamage*multiplier
+
+				if realLoss < basicDamage then -- workaround for 5 hp damages
+					realLoss = basicDamage -- workaround
+				end
+				
 				self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 			end
 		end

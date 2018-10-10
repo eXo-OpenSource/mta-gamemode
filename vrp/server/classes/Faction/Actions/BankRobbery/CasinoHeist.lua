@@ -128,11 +128,11 @@ function CasinoHeist:updateDifficulty(DEBUG_moneyInBank, DEBUG_stateMembersOnlin
 		self.m_CurrentMoney = math.min(self.m_CurrentMoneyTotal, online_state_members*10000) -- 10000 per cop, aka 30k per 3 cops per truck -> save it to var
 		self.ms_MinBankrobStateMembers = self.m_Difficulty * 3
 		
-		outputDebug("updated casino!", "money total:", self.m_CurrentMoneyTotal, 
+		--[[outputDebug("updated casino!", "money total:", self.m_CurrentMoneyTotal, 
 		"state members online:", online_state_members, 
 		"money robbable:", self.m_CurrentMoney, 
 		"difficulty", self.m_Difficulty,
-		"min state members", self.ms_MinBankrobStateMembers)
+		"min state members", self.ms_MinBankrobStateMembers)]]
 		
 		self:updateVehicles()
 	end
@@ -152,7 +152,9 @@ function CasinoHeist:updateVehicles()
 	else
 		for i = #self.m_SecuricarsById, self:getDifficulty()+1, -1 do
 			local truck = table.remove(self.m_SecuricarsById, i)
-			truck:destroy()
+			if isElement(truck) then
+				truck:destroy()
+			end
 		end
 	end
 end

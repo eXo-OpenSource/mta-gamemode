@@ -47,7 +47,7 @@ function ItemManager:constructor()
 		["Taser"] = ItemTaser;
 		["SLAM"] = ItemSlam;
 		["Rauchgranate"] = ItemSmokeGrenade;
-		
+
 		["Wuerfel"] = ItemDice,
 		["Angelrute"] = ItemFishing,
 		["Kleine Kühltasche"] = ItemFishing,
@@ -56,6 +56,7 @@ function ItemManager:constructor()
 		["Köder"] = ItemFishing,
 		["Weed-Samen"] = Plant,
 		["Apfelbaum-Samen"] = Plant,
+		["Blumen-Samen"] = Plant,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
@@ -94,7 +95,7 @@ function ItemManager:constructor()
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
 		["Kleidung"] = WearableClothes,
-		
+
 	}
 
 	self.m_Properties = {
@@ -117,7 +118,7 @@ function ItemManager:constructor()
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
 end
 
-function ItemManager:updateOnQuit() 
+function ItemManager:updateOnQuit()
 
 end
 

@@ -24,7 +24,7 @@ function Halloween:constructor()
 	)
 
 	--Ware Ped
-	local ped = Ped.create(68, Vector3(932.85, -1082.61, 24.29), 118)
+	local ped = Ped.create(68, Vector3(934.79999, -1070.5, 25), 118)
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
 	ped.SpeakBubble = SpeakBubble3D:new(ped, "Halloween", "Ware-Games")

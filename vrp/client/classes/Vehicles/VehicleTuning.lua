@@ -41,6 +41,8 @@ function VehicleTuning:applyTuning()
 		self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"])
 
 		Neon.Vehicles[self.m_Vehicle] = self.m_Tuning["Neon"] and true or nil
+
+		triggerServerEvent("vehicleSetVariant", self.m_Vehicle, self.m_Tuning["Variant1"], self.m_Tuning["Variant2"])
 	end
 end
 
@@ -87,6 +89,9 @@ end
 function VehicleTuning:loadTuningsFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
+	local variant1, variant2 = self.m_Vehicle:getVariant()
+	self.m_Tuning["Variant1"] = variant1
+	self.m_Tuning["Variant2"] = variant2
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 end

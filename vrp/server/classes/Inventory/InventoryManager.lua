@@ -182,6 +182,13 @@ function InventoryManager:Event_acceptItemTrade(player, target)
 		if target:getMoney() >= money then
 			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
 			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
+			if amount <= 10 then
+				player:meChat(true, _("übergibt %s eine Tüte!", player, target:getName()))
+			elseif amount <= 25 then
+				player:meChat(true, _("übergibt %s ein Päckchen!", player, target:getName()))
+			else
+				player:meChat(true, _("übergibt %s ein Paket!", player, target:getName()))
+			end
 			player:getInventory():removeItem(item, amount, value)
 			WearableManager:getSingleton():removeWearable( player, item, value )
 			target:getInventory():giveItem(item, amount, value)

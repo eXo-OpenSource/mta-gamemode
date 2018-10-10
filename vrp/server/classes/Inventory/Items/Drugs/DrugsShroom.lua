@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 DrugsShroom = inherit(ItemDrugs)
+DrugsShroom.m_ExpireTime = 60 * 1000
 
 function DrugsShroom:constructor()
     self.m_Path = ":vrp_data/mushrooms.dat"
@@ -22,7 +23,7 @@ end
 function DrugsShroom:use( player )
 	ItemDrugs.use(self, player)
 
-  	player:triggerEvent("onClientItemUse", "Shrooms", SHROOM_EXPIRETIME )
+  	player:triggerEvent("onClientItemUse", "Shrooms", DrugsShroom.m_ExpireTime )
     if isTimer( player.m_ShroomExpireTimer ) then
       killTimer( player.m_ShroomExpireTimer )
       if ( player.m_DrugOverdose ) then
@@ -32,7 +33,7 @@ function DrugsShroom:use( player )
       end
     end
     player.m_ShroomExpireFunc = bind( DrugsShroom.expire, self )
-    player.m_ShroomExpireTimer = setTimer( player.m_ShroomExpireFunc, SHROOM_EXPIRETIME, 1, player )
+    player.m_ShroomExpireTimer = setTimer( player.m_ShroomExpireFunc, DrugsShroom.m_ExpireTime, 1, player )
 	StatisticsLogger:getSingleton():addDrugUse( player, "Shrooms" )
 end
 

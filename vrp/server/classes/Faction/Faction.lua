@@ -186,15 +186,19 @@ end
 
 function Faction:getSkinsForRank(rank)
 	local tab = {}
-	for skinId in pairs(self.m_Skins) do
-		if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
-			table.insert(tab, skinId)
+	local rank = tonumber(rank)
+	if rank then
+		for skinId in pairs(self.m_Skins) do
+			if tonumber(self:getSetting("Skin", skinId, 0)) <= rank then
+				table.insert(tab, skinId)
+			end
 		end
 	end
 	return tab
 end
 
 function Faction:changeSkin(player, skinId)
+	if not player or not isElement(player) or getElementType(player) ~= "player" then return false end
 	local playerRank = self:getPlayerRank(player)
 	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
 	if self.m_Skins[skinId] then
@@ -259,9 +263,9 @@ function Faction:removePlayer(playerId)
 		self:sendShortMessage(_("%s hat deine Fraktion verlassen!", player, player:getName()))
 		if self:isStateFaction() and player:isFactionDuty() then
 			takeAllWeapons(player)
-		else
 			player:reloadBlips()
 		end
+		player:reloadBlips()
 		unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	end
 	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0, FactionLoanEnabled = 0 WHERE Id = ?", sql:getPrefix(), playerId)

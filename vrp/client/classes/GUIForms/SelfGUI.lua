@@ -258,9 +258,9 @@ function SelfGUI:constructor()
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
 
-	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.52, tabSettings)
+	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sonstiges"}
+	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -269,33 +269,11 @@ function SelfGUI:constructor()
 		end
 	end
 
-	self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.3, self.m_Height*0.07, _"Radiostationen", tabSettings):setBarEnabled(true)
-	self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
-
-	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shadereinstellungen", tabSettings):setBarEnabled(true)
-	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
-
-	local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setBarEnabled(true)
-	self.m_ServerTour.onLeftClick = function()
-		if not Tour:getSingleton():isActive() then
-		QuestionBox:new(
-			_("Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"),
-			function() triggerServerEvent("tourStart", localPlayer, true) end)
-			self:close()
-		else
-			triggerServerEvent("tourStop", localPlayer)
-		end
-	end
-	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
-
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings):setBarEnabled(true)
-	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
-	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
+	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren", tabSettings)
 	self.m_EnableTippsBox:setFont(VRPFont(25))
 	self.m_EnableTippsBox:setFontSize(1)
 	self.m_EnableTippsBox:setChecked(core:get("Tipps", "enableTipps", true))
@@ -430,7 +408,7 @@ function SelfGUI:loadStatistics()
 	localPlayer:setPrivateSyncChangeHandler("Collectables_Collected", function(value)
 		self.m_CollectablesLabel:setText(_(("%s/%s"):format(tonumber(localPlayer:getPrivateSync("Collectables_Collected") or 0), COLLECTABLES_COUNT_PER_PLAYER)))
 	end)
-	
+
 	--outputDebug(tonumber(localPlayer:getPrivateSync("Collectables_Collected")))
 end
 
@@ -800,7 +778,7 @@ function SelfGUI:onSettingChange(setting)
 	if setting == "HUD" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", self.m_SettingBG)
 
-		self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", self.m_SettingBG)
+		self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren", self.m_SettingBG)
 		self.m_UICheckBox:setFont(VRPFont(25))
 		self.m_UICheckBox:setFontSize(1)
 		self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
@@ -809,7 +787,7 @@ function SelfGUI:onSettingChange(setting)
 			HUDUI:getSingleton():setEnabled(state)
 		end
 
-		self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", self.m_SettingBG)
+		self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren", self.m_SettingBG)
 		self.m_ChatCheckBox:setFont(VRPFont(25))
 		self.m_ChatCheckBox:setFontSize(1)
 		self.m_ChatCheckBox:setChecked(isChatVisible())
@@ -982,31 +960,9 @@ function SelfGUI:onSettingChange(setting)
 			updateDesignOptions()
 		end
 
-		self.m_BlipScaleLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.35, self.m_Height*0.07, _"Blip-Skalierung" , self.m_SettingBG):setFontSize(0.75)
-		self.m_BlipScale = GUISlider:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_BlipScale:setRange(0.2, 2)
-		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
-		self.m_BlipScale.onUpdate = function( scale )
-			Blip.setScaleMultiplier(scale)
-		end	
 
-		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
-		self.m_ColoredBlips:setFont(VRPFont(25))
-		self.m_ColoredBlips:setFontSize(1)
-		self.m_ColoredBlips:setChecked(core:get("HUD", "coloredBlips", true))
-		self.m_ColoredBlips.onChange = function (state)
-			core:set("HUD", "coloredBlips", state)
-		end
 
-		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.46, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
-		self.m_ZoneName:setFont(VRPFont(25))
-		self.m_ZoneName:setFontSize(1)
-		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
-		self.m_ZoneName.onChange = function (state)
-			core:set("HUD", "drawZone", state)
-		end
-
-		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
+		self.m_BarsEnabled = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.5, self.m_Height*0.04, _"Statusleisten unter dem Radar", self.m_SettingBG)
 		self.m_BarsEnabled:setFont(VRPFont(25))
 		self.m_BarsEnabled:setFontSize(1)
 		self.m_BarsEnabled:setChecked(core:get("HUD", "drawStatusBars", false))
@@ -1015,14 +971,43 @@ function SelfGUI:onSettingChange(setting)
 			HUDRadar:getSingleton():toggleStatusBars(state)
 		end
 
-		self.m_MapLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.07, _"Karten-Transparenz" , self.m_SettingBG):setFontSize(0.75)
-		self.m_MapOpacity = GUISlider:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ZoneName:setFont(VRPFont(25))
+		self.m_ZoneName:setFontSize(1)
+		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
+		self.m_ZoneName.onChange = function (state)
+			core:set("HUD", "drawZone", state)
+		end
+
+		self.m_MapLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.07, _"Karten-Transparenz" , self.m_SettingBG):setFontSize(0.75)
+		self.m_MapOpacity = GUISlider:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
 		self.m_MapOpacity:setRange(0.1, 1)
 		self.m_MapOpacity:setValue(core:get("HUD","mapOpacity", 0.7))
 		self.m_MapOpacity.onUpdate = function( opacity )
 			local scale = math.round(opacity, 2)
 			core:set("HUD","mapOpacity", opacity)
 		end
+
+		--Blips
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.8, self.m_Height*0.07, _"Blips", self.m_SettingBG)
+		self.m_ColoredBlips = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.66, self.m_Width*0.35, self.m_Height*0.04, _"bunte Blips", self.m_SettingBG)
+		self.m_ColoredBlips:setFont(VRPFont(25))
+		self.m_ColoredBlips:setFontSize(1)
+		self.m_ColoredBlips:setChecked(core:get("HUD", "coloredBlips", true))
+		self.m_ColoredBlips.onChange = function (state)
+			core:set("HUD", "coloredBlips", state)
+		end
+
+		self.m_BlipScaleLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.35, self.m_Height*0.07, _"Blip-Skalierung" , self.m_SettingBG):setFontSize(0.75)
+		self.m_BlipScale = GUISlider:new(self.m_Width*0.02, self.m_Height*0.78, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_BlipScale:setRange(0.2, 2)
+		self.m_BlipScale:setValue(core:get("HUD","blipScale", 1))
+		self.m_BlipScale.onUpdate = function( scale )
+			Blip.setScaleMultiplier(scale)
+		end
+
+
 
 		updateDesignOptions(not core:get("HUD", "showRadar", true))
 	elseif setting == "Spawn" then
@@ -1076,7 +1061,7 @@ function SelfGUI:onSettingChange(setting)
 		end
 		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.On), true)
 
-		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", self.m_SettingBG)
+		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren", self.m_SettingBG)
 		self.m_Reddot:setFont(VRPFont(25))
 		self.m_Reddot:setFontSize(1)
 		self.m_Reddot:setChecked(core:get("HUD", "reddot", false))
@@ -1129,7 +1114,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_TextureModeChange:setIndex(currentMode, true)
 		self.m_InfoLabel:setText(_(TEXTURE_SYSTEM_HELP[currentMode]))
 
-		self.m_TextureFileCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.5, self.m_Height*0.04, _"eXo Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureFileCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.5, self.m_Height*0.04, _"eXo Texturen aktivieren", self.m_SettingBG)
 		self.m_TextureFileCheck:setFont(VRPFont(25))
 		self.m_TextureFileCheck:setFontSize(1)
 		self.m_TextureFileCheck:setChecked(core:get("Other", "FileTexturesEnabled", FILE_TEXTURE_DEFAULT_STATE))
@@ -1137,7 +1122,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("Other", "FileTexturesEnabled", state)
 			TextureReplacer.forceReload()
 		end
-		self.m_TextureHTTPCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.04, _"Spieler Texturen aktivieren?", self.m_SettingBG)
+		self.m_TextureHTTPCheck = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.04, _"Spieler Texturen aktivieren", self.m_SettingBG)
 		self.m_TextureHTTPCheck:setFont(VRPFont(25))
 		self.m_TextureHTTPCheck:setFontSize(1)
 		self.m_TextureHTTPCheck:setChecked(core:get("Other", "HTTPTexturesEnabled", HTTP_TEXTURE_DEFAULT_STATE))
@@ -1158,7 +1143,7 @@ function SelfGUI:onSettingChange(setting)
 
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
 
-		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
+		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
 		self.m_SkinSpawn:setFont(VRPFont(25))
 		self.m_SkinSpawn:setFontSize(1)
 		self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -1167,54 +1152,48 @@ function SelfGUI:onSettingChange(setting)
 			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
 		end
 
-		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
-		self.m_HallelujaSound:setFont(VRPFont(25))
-		self.m_HallelujaSound:setFontSize(1)
-		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
-		self.m_HallelujaSound.onChange = function (state)
-			core:set("Other", "HallelujaSound", state)
+		self.m_HeadLook = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.8, self.m_Height*0.04, _"Kopf in Kamerarichtung bewegen", self.m_SettingBG)
+		self.m_HeadLook:setFont(VRPFont(25))
+		self.m_HeadLook:setFontSize(1)
+		self.m_HeadLook:setChecked(core:get("Other", "Movehead", true))
+		self.m_HeadLook.onChange = function (bool)
+			core:set("Other", "Movehead", bool)
+			if bool then
+				localPlayer:startLookAt()
+			else
+				localPlayer:stopLookAt()
+			end
 		end
 
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
-		self.m_HitSound:setFont(VRPFont(25))
-		self.m_HitSound:setFontSize(1)
-		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
-		self.m_HitSound.onChange = function (state)
-			core:set("Other", "HitSoundBell", state)
-		end
-
-		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
-		self.m_HitSound:setFont(VRPFont(25))
-		self.m_HitSound:setFontSize(1)
-		self.m_HitSound:setChecked(core:get("Other", "Fireworks", true))
-		self.m_HitSound.onChange = function (state)
-			core:set("Other", "Fireworks", state)
-		end
-
-		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
+		self.m_GangwarTabView = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.9, self.m_Height*0.04, _"Gangwar-Ansicht beim Spielerboard", self.m_SettingBG)
 		self.m_GangwarTabView:setFont(VRPFont(25))
 		self.m_GangwarTabView:setFontSize(1)
 		self.m_GangwarTabView:setChecked(core:get("Other", "GangwarTabView", true))
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-		if core:get("Other","RenderDistance", false) then 
+		if core:get("Other","RenderDistance", false) then
 			setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
-		else 
+		else
 			setFarClipDistance(992)
 		end
-		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.9, self.m_Height*0.04, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
-		self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.8, self.m_Height*0.07, _"Sichtweite", self.m_SettingBG)
+
 		self.m_RenderDistance = GUISlider:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.6, self.m_Height*0.04, self.m_SettingBG)
 		self.m_RenderDistance:setRange(250, 9000)
 		self.m_RenderDistance:setValue( getFarClipDistance())
+		self.m_RenderDistanceLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.64, self.m_Width*0.9, self.m_Height*0.06, _"Sichtweite:"..getFarClipDistance(), self.m_SettingBG)
+		self.m_RenderDistanceLabel:setText("Sichtweite: "..math.floor(getFarClipDistance()))
+		self.m_RenderDistanceLabel:setAlignX("center")
+
 
 		self.m_RenderDistance.onUpdate = function( dist )
 			setFarClipDistance(dist)
 			self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()))
 			core:set("Other","RenderDistance", math.floor(dist))
 		end
-		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.04, _"Sichtweite zurücksetzen!", self.m_SettingBG)
+		self.m_RenderDistanceReset = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.6, self.m_Height*0.06, _"Sichtweite zurücksetzen!", self.m_SettingBG)
 		self.m_RenderDistanceReset.onLeftClick  = function() setFarClipDistance(992); core:set("Other","RenderDistance",992);self.m_RenderDistanceLabel:setText("Sichtweite:"..math.floor(getFarClipDistance()));self.m_RenderDistance:setValue( getFarClipDistance()) end
 		--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
 		--	self.m_StartIntro:setFont(VRPFont(25))
@@ -1223,19 +1202,6 @@ function SelfGUI:onSettingChange(setting)
 		--	self.m_StartIntro.onChange = function (state)
 		--		core:set("HUD", "startScreen", state)
 		--	end
-		
-		self.m_HeadLook = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.77, self.m_Width*0.8, self.m_Height*0.04, _"Kopf in Kamerarichtung bewegen", self.m_SettingBG)
-		self.m_HeadLook:setFont(VRPFont(25))
-		self.m_HeadLook:setFontSize(1)
-		self.m_HeadLook:setChecked(core:get("Other", "Movehead", true))
-		self.m_HeadLook.onChange = function (bool)
-			core:set("Other", "Movehead", bool)
-			if bool then
-				localPlayer:startLookAt()
-			else 
-				localPlayer:stopLookAt()
-			end
-		end
 
 	elseif setting == "Waffen" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Welche Waffen sollen attached werden", self.m_SettingBG)
@@ -1329,6 +1295,44 @@ function SelfGUI:onSettingChange(setting)
 			setElementData(localPlayer,"W_A:alt_w5", state)
 			triggerEvent("Weapon_Attach:recheckWeapons", localPlayer,5)
 		end
+	elseif setting == "Sounds / Radio" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Sounds", self.m_SettingBG)
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Width*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound:setFont(VRPFont(25))
+		self.m_HallelujaSound:setFontSize(1)
+		self.m_HallelujaSound:setChecked(core:get("Sounds", "Halleluja", true))
+		self.m_HallelujaSound.onChange = function (state)
+			core:set("Sounds", "Halleluja", state)
+		end
+
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound:setFont(VRPFont(25))
+		self.m_HitSound:setFontSize(1)
+		self.m_HitSound:setChecked(core:get("Sounds", "HitBell", true))
+		self.m_HitSound.onChange = function (state)
+			core:set("Sounds", "HitBell", state)
+		end
+
+		self.m_FireworkSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.21, self.m_Width*0.9, self.m_Height*0.04, _"Feuerwerke anderer Spieler", self.m_SettingBG)
+		self.m_FireworkSound:setFont(VRPFont(25))
+		self.m_FireworkSound:setFontSize(1)
+		self.m_FireworkSound:setChecked(core:get("Sounds", "Fireworks", true))
+		self.m_FireworkSound.onChange = function (state)
+			core:set("Sounds", "Fireworks", state)
+		end
+
+		self.m_NaviSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.9, self.m_Height*0.04, _"Navigations Sprachansagen", self.m_SettingBG)
+		self.m_NaviSound:setFont(VRPFont(25))
+		self.m_NaviSound:setFontSize(1)
+		self.m_NaviSound:setChecked(core:get("Sounds", "Navi", true))
+		self.m_FireworkSound.onChange = function (state)
+			core:set("Sounds", "Navi", state)
+		end
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.8, self.m_Height*0.07, _"Radio-Sender", self.m_SettingBG)
+		self.m_RadioStationButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.59, self.m_Width*0.35, self.m_Height*0.07, _"Radiostationen", self.m_SettingBG):setBarEnabled(true)
+		self.m_RadioStationButton.onLeftClick = bind(self.RadioStationButton_Click, self)
+
 	elseif setting == "Fahrzeuge" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Fahrzeuge", self.m_SettingBG)
 
@@ -1380,7 +1384,29 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SeatbeltWarning:setChecked(core:get("Vehicles", "seatbeltWarning", true))
 		self.m_SeatbeltWarning.onChange = function (bool)
 			core:set("Vehicles", "seatbeltWarning", bool)
+		end		
+	elseif setting == "Shader" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
+		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
+		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+	elseif setting == "Tastenzuordnung" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnung", self.m_SettingBG)
+		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen", self.m_SettingBG):setBarEnabled(true)
+		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+	elseif setting == "Server-Tour" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Server-Tour", self.m_SettingBG)
+		local tourText = Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten"
+		self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tourText, self.m_SettingBG):setBarEnabled(true)
+		self.m_ServerTour.onLeftClick = function()
+			if not Tour:getSingleton():isActive() then
+			QuestionBox:new(
+				_("Möchtest du eine Servertour starten? Nach Abschluss erhältst du Erfahrung und eine kleine Belohnung! (Wenn der Mauszeiger nicht aktiv ist, drücke 'B')"),
+				function() triggerServerEvent("tourStart", localPlayer, true) end)
+				self:close()
+			else
+				triggerServerEvent("tourStop", localPlayer)
+			end
 		end
-
+		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
 	end
 end

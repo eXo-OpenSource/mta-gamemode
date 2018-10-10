@@ -41,7 +41,7 @@ function GPS:startNavigationTo(position, isRecalculate, soundDisabled)
 	self.m_Active = true
 
 	-- Show message if it's not a recalculation
-	if not soundDisabled then
+	if not soundDisabled and core:get("Sounds", "Navi", true) == true then
 		if not isRecalculate then
 			ShortMessage:new(_"Route wird berechnet...", _"Navigation")
 			self:playAnnouncement(INGAME_WEB_PATH .. "/ingame/sounds/RouteWirdBerechnet.mp3")

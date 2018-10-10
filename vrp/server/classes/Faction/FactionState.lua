@@ -346,13 +346,13 @@ function FactionState:Command_ticket(source, cmd, target)
 				if not faction:isStateFaction() then return end
 				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
 					if source ~= targetPlayer then
-						if targetPlayer:getWanteds() == 1 then
-							if targetPlayer:getMoney() >= TICKET_PRICE then
+						if targetPlayer:getWanteds() <= 3 then
+							if targetPlayer:getMoney() >= TICKET_PRICE*targetPlayer:getWanteds() + 500 then
 								source.m_CurrentTicket = targetPlayer
 								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
-								source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE))
+								source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE*targetPlayer:getWanteds()+500 ))
 							else
-								source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(), TICKET_PRICE))
+								source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(),  TICKET_PRICE*targetPlayer:getWanteds()+500 ))
 							end
 						else
 							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
@@ -373,15 +373,15 @@ end
 
 function FactionState:Event_OnTicketAccept(cop)
 	if client then
-		if client:getMoney() >= TICKET_PRICE then
+		if client:getMoney() >=  TICKET_PRICE*client:getWanteds()+500  then
 			if client:getWanteds() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
-					self.m_BankAccountServer:transferMoney(cop:getFaction(), TICKET_PRICE, "Ticket", "Faction", "Ticket")
+					self.m_BankAccountServer:transferMoney(cop:getFaction(),  TICKET_PRICE*client:getWanteds()+500 , "Ticket", "Faction", "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
+				client:transferMoney(self.m_BankAccountServer,  TICKET_PRICE*client:getWanteds()+500 , "[SAPD] Kautionsticket", "Faction", "Ticket")
 				client:setWanteds(0)
-				client:transferMoney(self.m_BankAccountServer, TICKET_PRICE, "[SAPD] Kautionsticket", "Faction", "Ticket")
 			end
 		end
 	end

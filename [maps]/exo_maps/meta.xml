@@ -51,7 +51,7 @@
 	<map src="unternehmen/public_transport.map" />
 
 	
-	<!--<map src="events/halloween.map" />-->
+	<map src="events/halloween.map" />
 	<map src="events/auction.map" />
 
 	<!--fixes-->
