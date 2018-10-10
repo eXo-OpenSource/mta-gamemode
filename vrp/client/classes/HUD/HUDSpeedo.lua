@@ -92,7 +92,12 @@ function HUDSpeedo:draw()
 	-- draw the main speedo
 	local isPlane = false
 	if vehicleType ~= VehicleType.Plane or vehicle:getModel() == 539 then
-		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		if getVehicleOverrideLights(vehicle) ~= 2 then
+			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		else 
+			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_light.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		end
 	else
 		isPlane = true
 		--dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_aviation.png", 0, 0, 0, tocolor(255, 255, 255, 150))
@@ -142,7 +147,12 @@ function HUDSpeedo:draw()
 
 		-- draw the fuel-o-meter
 		self.m_Fuel = vehicle:getData("fuel")
-		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		if getVehicleOverrideLights(vehicle) ~= 2 then
+			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		else
+			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_light.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		end
 		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 
 		if localPlayer.vehicle.towedByVehicle then

@@ -1289,13 +1289,16 @@
 	<vrpfile src="files/images/Radio/sound_play.png"/>
 	<vrpfile src="files/images/Radio/sound_stop.png"/>
 
+
 	<vrpfile src="files/images/Speedo/main.png"/>
+	<vrpfile src="files/images/Speedo/main_light.png"/>
 	<vrpfile src="files/images/Speedo/main_aviation.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
 	<vrpfile src="files/images/Speedo/seatbelt.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
+	<vrpfile src="files/images/Speedo/fuel_light.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle_trailer.png"/>
 	<vrpfile src="files/images/Speedo/indicator_left.png"/>

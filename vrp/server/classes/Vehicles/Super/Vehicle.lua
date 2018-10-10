@@ -283,11 +283,13 @@ function Vehicle:toggleLight()
 		if occ then
 			occ:triggerEvent("playLightSFX",false)
 		end
+		self.m_Lights = true
 	else
 		setVehicleOverrideLights(self, 1)
 		if occ then
 			occ:triggerEvent("playLightSFX",true)
 		end
+		self.m_Lights = false
 	end
 end
 
