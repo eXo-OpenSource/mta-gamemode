@@ -260,7 +260,7 @@ function SelfGUI:constructor()
 
 	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.9, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellungen", 1)
-	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges"}
+	local SettingsTable = {"HUD", "Radar", "Spawn", "Nametag/Reddot", "Texturen", "Fahrzeuge", "Waffen", "Sounds / Radio", "Shader", "Server-Tour", "Tastenzuordnung", "Sonstiges", "Event"}
 	local item
 	for index, setting in pairs(SettingsTable) do
 		item = self.m_SettingsGrid:addItem(setting)
@@ -1172,7 +1172,7 @@ function SelfGUI:onSettingChange(setting)
 		self.m_GangwarTabView.onChange = function (state)
 			core:set("Other", "GangwarTabView", state)
 		end
-		if core:get("Other","RenderDistance", false) then
+		if core:get("Other","RenderDistance", 922) then
 			setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
 		else
 			setFarClipDistance(992)
@@ -1426,5 +1426,33 @@ function SelfGUI:onSettingChange(setting)
 			end
 		end
 		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Servertour beenden" or _"Servertour starten")
+	elseif setting == "Event" then 
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Halloween", self.m_SettingBG)
+
+		self.m_HalloweenDarkness = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, _"Umgebungs-Ambiente", self.m_SettingBG)
+		self.m_HalloweenDarkness:setFont(VRPFont(25))
+		self.m_HalloweenDarkness:setFontSize(1)
+		self.m_HalloweenDarkness:setChecked(core:get("Event", "HalloweenDarkness", true))
+		self.m_HalloweenDarkness.onChange = function (state)
+			core:set("Event", "HalloweenDarkness", state)
+			Halloween:getSingleton():setDarkness()
+		end
+
+		self.m_HalloweenBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.9, self.m_Height*0.04, _"Blut-Hintergrund bei Buttons (Erst nach Reconnect)", self.m_SettingBG)
+		self.m_HalloweenBlood:setFont(VRPFont(25))
+		self.m_HalloweenBlood:setFontSize(1)
+		self.m_HalloweenBlood:setChecked(core:get("Event", "HalloweenBlood", true))
+		self.m_HalloweenBlood.onChange = function (state)
+			core:set("Event", "HalloweenBlood", state)
+		end
+
+		self.m_HalloweenClickBlood = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.9, self.m_Height*0.04, _"Blutspritzer bei Klick", self.m_SettingBG)
+		self.m_HalloweenClickBlood:setFont(VRPFont(25))
+		self.m_HalloweenClickBlood:setFontSize(1)
+		self.m_HalloweenClickBlood:setChecked(core:get("Event", "HalloweenBloodClick", true))
+		self.m_HalloweenClickBlood.onChange = function (state)
+			core:set("Event", "HalloweenBloodClick", state)
+		end
+
 	end
 end

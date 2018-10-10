@@ -75,29 +75,73 @@ function Halloween:constructor()
 	dxSetRenderTarget(self.m_TeamNameTexture, true)
 	local xoffs = 0
 	local color = tocolor(200, 200, 200, 200)
-	dxDrawText("Stumpy\nHeisi\nClausus", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 55
-	dxDrawText("StiviK\nxXKing", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("xXKing\nChris", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 58
-	dxDrawText("Chris\nLuka\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
 	xoffs = xoffs + 60 + 58
-	dxDrawText("MiHawk\nDynesty\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("MiHawk\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 58
-	dxDrawText("Shimmy\nZvenskeren\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("Zvenskeren\nDynesty\nFreak", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 58
-	dxDrawText("Swatbird\nAc3Freak\nToxsi", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("Swatbird\nZAPPY\nBernie\nRaymaN.\nPadty\nSteven\nSven.Salvarez\nrottby", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 57
 	dxDrawText("zomb4k33l\nSlliX\nChef532", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 57
-	dxDrawText("Opposite\nHerbert", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("Steven\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 	xoffs = xoffs + 60 + 57
-	dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx\nStivik", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
 
 	xoffs = xoffs + 60 + 57
 	dxSetRenderTarget()
-	addEventHandler("onClientRender", root, bind(Halloween.renderDarkness, self))
+	self.m_DarkRenderBind = bind(Halloween.renderDarkness, self)
+	if core:get("Event", "HalloweenDarkness", true) then
+		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+	end
+	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
 end
 
+function Halloween:Event_restore( clear )
+	if not clear then return end
+	dxSetRenderTarget(self.m_TeamNameTexture, true)
+		local xoffs = 0
+		local color = tocolor(200, 200, 200, 200)
+		dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 55
+		dxDrawText("xXKing\nChris", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 58
+		dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
+		xoffs = xoffs + 60 + 58
+		dxDrawText("MiHawk\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 58
+		dxDrawText("Zvenskeren\nDynesty\nFreak", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 58
+		dxDrawText("Swatbird\nZAPPY\nBernie\nRaymaN.\nPadty\nSteven\nSven.Salvarez\nrottby", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 57
+		dxDrawText("zomb4k33l\nSlliX\nChef532", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 57
+		dxDrawText("Steven\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 57
+		dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx\nStivik", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+		xoffs = xoffs + 60 + 57
+	dxSetRenderTarget()
+end
+
+
+function Halloween:setDarkness()
+	if core:get("Event", "HalloweenDarkness", true) then
+		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
+	else 
+		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
+		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
+		setWeather(0)
+		resetSkyGradient()
+		resetWaterColor()
+		resetFogDistance()
+	end
+end
 function Halloween:addRandomBloodInPool()
 	if chance(5) then --create a big "smoke" thing of blood
 		local angle = math.random(0, 15)
@@ -113,7 +157,7 @@ function Halloween:addRandomBloodInPool()
 	end
 end
 
-function Halloween:renderDarkness() -- not to be confused with 'dankness'!
+function Halloween:renderDarkness() -- not to be confused with 'dankness'! :thinking:
 	setTime(22,0) -- there are stars after 22 o clock
 	setFarClipDistance(300)
 	setFogDistance(-10)
