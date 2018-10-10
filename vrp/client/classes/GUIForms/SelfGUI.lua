@@ -1385,6 +1385,16 @@ function SelfGUI:onSettingChange(setting)
 		self.m_SeatbeltWarning.onChange = function (bool)
 			core:set("Vehicles", "seatbeltWarning", bool)
 		end		
+		self.m_SpeedoAlphaLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Tacho-Transparenz" , self.m_SettingBG)
+		:setFont(VRPFont(25)):setFontSize(1)
+		self.m_SpeedoAlpha = GUISlider:new(self.m_Width*0.02, self.m_Height*0.52, self.m_Width*0.6, self.m_Height*0.07, self.m_SettingBG)
+		self.m_SpeedoAlpha:setRange(0, 1)
+		self.m_SpeedoAlpha:setValue(core:get("HUD","SpeedoAlpha", 150/255))
+
+		self.m_SpeedoAlpha.onUpdate = function( scale )
+			HUDSpeedo:getSingleton().m_Alpha = scale * 255
+			core:set("HUD","SpeedoAlpha", scale )
+		end
 	elseif setting == "Shader" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG)
 		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Shadereinstellungen", self.m_SettingBG):setBarEnabled(true)
