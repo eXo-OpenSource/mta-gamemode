@@ -941,6 +941,7 @@
 	<script src="client/classes/Vehicles/GroupSaleVehicles.lua" type="client"/>
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
+	<script src="client/classes/Vehicles/SpeedLimit.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
 	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleFuel.lua" type="client"/>

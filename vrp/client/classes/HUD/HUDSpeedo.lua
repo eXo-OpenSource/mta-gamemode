@@ -109,7 +109,12 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 		else
 			local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
-			dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+60, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
+			if cruiseSpeed then
+				dxDrawText(("%i"):format(math.floor(cruiseSpeed)), drawX+128, drawY+60, nil, nil, Color.Yellow, 1, VRPFont(30, Fonts.Digital), "center")
+			else
+				local speedLimit = SpeedLimit:getSingleton():getSpeed()
+				dxDrawText(speedLimit and math.floor(speedLimit) or "-", drawX+128, drawY+60, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
+			end
 		end
 
 		dxDrawText(("%.1f km"):format(vehicle:getMileage() and vehicle:getMileage()/1000 or 0), drawX+128, drawY+155, nil, nil, tocolor(255, 255, 255, 150), 1, VRPFont(20), "center")
@@ -179,6 +184,66 @@ function HUDSpeedo:playSeatbeltAlarm(state)
 	end
 end
 
+function HUDSpeedo:Bind_SpeedLimit(key, state)
+	-- Don't do anything if we're in a vehicle
+	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
+		return
+	end
+
+	if state == "down" then
+		-- Tell the player that we enable cruise control
+		if not SpeedLimit:getSingleton():isEnabled() then
+			ShortMessage:new(_"Limiter aktiviert!")
+		end
+
+		-- Enable cruise control and its adjustment
+		self.m_SpeedLimitChanged = not SpeedLimit:getSingleton():isEnabled()
+		SpeedLimit:getSingleton():setEnabled(true)
+
+		-- Disable radio channel switching for a moment
+		RadioGUI:getSingleton():setControlEnabled(false)
+
+		-- Bind mouse wheel to change the cruise speed
+		bindKey("mouse_wheel_up", "down", self.Bind_SpeedLimitChange, 2)
+		bindKey("mouse_wheel_down", "down", self.Bind_SpeedLimitChange, -2)
+	else
+		-- Disable if the cruise speed hasn't changed
+		if not self.m_SpeedLimitChanged then
+			SpeedLimit:getSingleton():setEnabled(false)
+			ShortMessage:new(_"Limiter deaktiviert!")
+		end
+
+		-- Enable radio channel switching again
+		RadioGUI:getSingleton():setControlEnabled(true)
+
+		-- Remove mouse wheel binds
+		unbindKey("mouse_wheel_up", "down", self.Bind_SpeedLimitChange)
+		unbindKey("mouse_wheel_down", "down", self.Bind_SpeedLimitChange)
+	end
+end
+
+function HUDSpeedo.Bind_SpeedLimitChange(key, state, change)
+	-- Don't do anything if we're in a vehicle
+	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
+		return
+	end
+	-- Update cruise speed
+	local newSpeed = math.max(SpeedLimit:getSingleton():getSpeed() + change, 0)
+	SpeedLimit:getSingleton():setSpeed(newSpeed)
+
+	-- Give achievement if the player reached 5000
+	if newSpeed > 100000 then
+		localPlayer:giveAchievement(85)
+	elseif newSpeed > 5000 then
+		localPlayer:giveAchievement(84)
+	end
+
+	-- Mark the cruise speed being changed
+	HUDSpeedo:getSingleton().m_SpeedLimitChanged = true
+end
+
+
+
 function HUDSpeedo:Bind_CruiseControl(key, state)
 	-- Don't do anything if we're in a vehicle
 	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
@@ -188,11 +253,11 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 	if state == "down" then
 		-- Tell the player that we enable cruise control
 		if not CruiseControl:getSingleton():isEnabled() then
-			ShortMessage:new(_"Limiter aktiviert!")
+			ShortMessage:new(_"Cruise-Control aktiviert!")
 		end
 
 		-- Enable cruise control and its adjustment
-		self.m_CruiseSpeedChanged = not CruiseControl:getSingleton():isEnabled()
+		self.m_CruiseControlChanged = not CruiseControl:getSingleton():isEnabled()
 		CruiseControl:getSingleton():setEnabled(true)
 
 		-- Disable radio channel switching for a moment
@@ -203,9 +268,9 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 		bindKey("mouse_wheel_down", "down", self.Bind_CruiseControlChange, -2)
 	else
 		-- Disable if the cruise speed hasn't changed
-		if not self.m_CruiseSpeedChanged then
+		if not self.m_CruiseControlChanged then
 			CruiseControl:getSingleton():setEnabled(false)
-			ShortMessage:new(_"Limiter deaktiviert!")
+			ShortMessage:new(_"Cruise-Control deaktiviert!")
 		end
 
 		-- Enable radio channel switching again
