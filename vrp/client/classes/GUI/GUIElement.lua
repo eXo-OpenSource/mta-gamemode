@@ -105,7 +105,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 				GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 			end
 
-			if EVENT_HALLOWEEN and self.m_Blood then
+			if EVENT_HALLOWEEN and self.m_Blood and core:get("Event", "HalloweenBloodClick", true) then
 				Cursor:drawClickBlood()
 			end
 
