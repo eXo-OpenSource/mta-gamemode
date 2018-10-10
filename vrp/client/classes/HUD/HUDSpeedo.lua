@@ -12,6 +12,7 @@ function HUDSpeedo:constructor()
 	self.m_Size = 256
 	self.m_FuelSize = 128
 	self:setAlpha()
+	self:setLightOption()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
 
@@ -103,7 +104,9 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 		else 
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
-			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_light.png", 0, 0, 0, tocolor(255, 255, 255, lightAlpha))
+			if self.m_LightOption then
+				dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_light.png", 0, 0, 0, tocolor(255, 255, 255, lightAlpha))
+			end
 		end
 	else
 		isPlane = true
@@ -157,7 +160,9 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 		else
 			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
-			dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_light.png", 0, 0, 0, tocolor(255, 255, 255, lightAlpha))
+			if self.m_LightOption then
+				dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_light.png", 0, 0, 0, tocolor(255, 255, 255, lightAlpha))
+			end
 		end
 		dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100, 0, 0, tocolor(255, 255, 255, needleAlpha))
 
@@ -190,6 +195,14 @@ function HUDSpeedo:setAlpha(alpha)
 		return
 	end
 	self.m_Alpha = alpha
+end
+
+function HUDSpeedo:setLightOption( bool )
+	if bool == nil then 
+		self.m_LightOption = core:get("HUD", "SpeedoLightOverlay", true)
+		return
+	end
+	self.m_LightOption = bool
 end
 
 function HUDSpeedo:playSeatbeltAlarm(state)
