@@ -110,6 +110,12 @@ function VehicleTuning:applyTuning(disableTextureForce)
 		end
 	end
 
+	if self.m_TuningKits then
+		for tuning, class in pairs(self.m_TuningKits) do
+			class:destroy()
+		end
+	end
+
 	self.m_TuningKits = { }
 	for tuning, class in pairs(VehicleManager:getSingleton().m_TuningClasses) do 
 		if self.m_Tuning[tuning] then 
@@ -172,6 +178,13 @@ function VehicleTuning:saveTuningKits()
 		self.m_Tuning[tuning] = class:save() or {0}
 	end
 
+end
+
+function VehicleTuning:addTuningKit( name )
+	if VehicleManager:getSingleton().m_TuningClasses[name] then 
+		self.m_TuningKits[name] = VehicleManager:getSingleton().m_TuningClasses[name]:new( self.m_Vehicle )
+	end
+	self:saveTuningKits()
 end
 
 function VehicleTuning:removeTuningKit( kit )
@@ -302,4 +315,50 @@ function VehicleTuning:getList()
 	if table.size(specialTuning) == 0 then specialTuning["(keine)"] = "" end
 
 	return tuning, specialTuning
+end
+
+--[[
+	** TurboKit **
+    	setAcceleration(acceleration)
+]]--
+function VehicleTuning:getTurbo()
+	return self.m_TuningKits["TurboKit"]
+end
+
+--[[
+	** DriveKit **
+    	setType( type )
+]]--
+function VehicleTuning:getDrive()
+	return self.m_TuningKits["DriveKit"]
+end
+
+--[[
+	** BrakeKit **
+    	setBrake(strength)
+    	setBias(bias)
+]]--
+function VehicleTuning:getBrake()
+	return self.m_TuningKits["BrakeKit"]
+end
+
+--[[
+	** SuspensionKit **
+    	setSuspension( suspensionStretch)
+    	setSuspensionBias(suspensionBias)
+    	setDamping(damping)
+    	setSteer(steer)
+    	setSuspensionHeight(suspensionHeight)
+]]--
+function VehicleTuning:getSuspension()
+	return self.m_TuningKits["SuspensionKit"]
+end
+
+--[[
+	** WheelKit **
+    	setTraction( traction)
+		setTractionBias( tractionBias)
+]]--
+function VehicleTuning:getWheel()
+	return self.m_TuningKits["WheelKit"]
 end

@@ -16,13 +16,14 @@
 
 SuspensionTuning = inherit( Object )
 
-function SuspensionTuning:constructor( vehicle, suspension, suspensionbias, damping, steer ) 
+function SuspensionTuning:constructor( vehicle, suspensionStretch, suspensionBias, damping, steer, suspensionHeight ) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
-    self:setSuspension( suspension or 1 )
-    self:setDamping( damping or 1 )
-    self:setSteer( steer or 1 )
-    self:setSuspensionBias( suspensionbias or 1)
+    self:setSuspension( suspensionStretch)
+    self:setSuspensionBias(suspensionBias)
+    self:setDamping(damping)
+    self:setSteer(steer)
+    self:setSuspensionHeight(suspensionHeight)
 end
 
 function SuspensionTuning:destructor()

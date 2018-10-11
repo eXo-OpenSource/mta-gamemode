@@ -12,8 +12,8 @@ WheelTuning = inherit( Object )
 function WheelTuning:constructor( vehicle, traction, tractionBias ) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
-    self:setTraction( traction or 1 )
-    self:setTractionBias( tractionBias or 1 )
+    self:setTraction( traction)
+    self:setTractionBias( tractionBias)
 end
 
 function WheelTuning:destructor()

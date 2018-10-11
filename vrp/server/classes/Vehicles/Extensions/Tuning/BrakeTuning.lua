@@ -28,8 +28,8 @@ BrakeTuning = inherit( Object )
 function BrakeTuning:constructor( vehicle, strength, bias) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
-    self:setBrake(strength or 0)
-    self:setBias(bias or 0)
+    self:setBrake(strength)
+    self:setBias(bias)
 end
 
 function BrakeTuning:destructor()
