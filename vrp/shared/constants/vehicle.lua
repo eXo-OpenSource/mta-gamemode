@@ -214,9 +214,65 @@ VEHICLE_VARIANTS = {
 
 
 VEHICLE_TUNINGKIT_CATEGORIES = {
-	["Motor"] = {"engineAcceleration", "engineInertia", "driveType"},
-	["Reifen"] = {"tractionMultiplier", "tractionBias", "tractionLoss"},
-	["Aufhängung"] = {"suspensionForce", "suspensionBiasValue", "suspensionDamping", "suspensionLowerLimit", "steeringLock" },
-	["Bremsen"] = {"brakeDeceleration", "brakeBias"},
+	["Motor"] = {{"engineAcceleration","Beschleunigung"}, {"engineInertia", "Trägheitsmoment"}, {"driveType", "Antrieb"}},
+	["Reifen"] = {{"tractionMultiplier", "Bodenhaftung"}, {"tractionBias", "Haftungsverlagerung"}, {"tractionLoss", "Haftungsstabilität"}},
+	["Fahrwerk"] = {{"suspensionForceLevel", "Federungsresistenz"}, {"suspensionFrontRearBias", "Federungsverlagerung"}, {"suspensionDamping", "Federungs-Dämpfung"}, {"suspensionLowerLimit", "Tieferlegung"}, {"steeringLock", "Lenkbereich"} },
+	["Bremsen"] = {{"brakeDeceleration", "Bremskraft"}, {"brakeBias", "Bremsverlagerung"}},
 }
 
+VEHICLE_TUNINGKIT_DESCRIPTION = {
+	["engineAcceleration"] = { 
+		{0, 30}, -- range
+		"Die Beschleunigung deines Fahrzeuges in m/s²", -- tooltip-description
+		"m/s²" -- unit
+	},
+	["engineInertia"] = { 
+		{-30, 30}, -- range
+		"Die Trägheit des Fahrzeuges!",
+	},
+	["driveType"] = { 
+		{0, 2}, -- range
+		"Der Antrieb deines Fahrzeuges: Hinter, Vorder- oder Allrad!",
+	},
+	["tractionMultiplier"] = { 
+		{-5, 5}, -- range
+		"Der Grip deiner Reifen auf der Oberfläche der Fahrbahn!",
+	},
+	["tractionBias"] = { 
+		{0, 1}, -- range
+		"Die Verlagerung des Grips!",
+	},
+	["tractionLoss"] = { 
+		{0, 3}, -- range
+		"Die Stabilität bezüglich der Bodenhaftung beim Bremsen/Anfahren!",
+	},
+	["suspensionForceLevel"] = { 
+		{0, 10}, -- range
+		"Die Resistenz deiner Fahrzeug-Feder!",
+	},
+	["suspensionDamping"] = { 
+		{0, 1}, -- range
+		"Die Dämpffähigkeit deiner Federung!",
+	},
+	["suspensionLowerLimit"] = { 
+		{-2, 2}, -- range
+		"Die Länge deiner Federung und damit Höhe des Fahrwerks!",
+	},
+	["suspensionFrontRearBias"] = { 
+		{0, 1}, -- range
+		"Die Verlagerung der Federung!",
+	},
+	["steeringLock"] = { 
+		{0, 90}, -- range
+		"Der Lenkradius deines Fahrzeuges in Grad!",
+		"°"
+	},
+	["brakeDeceleration"] = { 
+		{0.1, 10}, -- range
+		"Die Bremskraft deines Fahrzeuges in m/s²!",
+	},
+	["brakeBias"] = { 
+		{0, 1}, -- range
+		"Die Bremskraftverlagerung!",
+	},
+}
