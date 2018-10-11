@@ -11,8 +11,7 @@ VehicleManager.sPulse = TimedPulse:new(5*1000)
 function VehicleManager:constructor()
 	self.m_TuningClasses = 
 	{
-		["TurboKit"] = TurboTuning,
-		["DriveKit"] = DriveTuning, 
+		["EngineKit"] = EngineTuning,
 		["BrakeKit"] = BrakeTuning, 
 		["WheelKit"] = WheelTuning,
 		["SuspensionKit"] = SuspensionTuning, 

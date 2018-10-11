@@ -438,75 +438,6 @@ PlayerAttachObjects = {
 	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(0, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0), ["blockWeapons"] = true, ["blockJump"] = true, ["blockSprint"] = true, ["blockVehicle"] = true, ["animationData"] = {"carry", "crry_prtial", 1, true, true, false, true}}
 }
 
-MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
-VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
-VEHICLE_SPECIAL_TEXTURE = {
-	[417] = "leviathnbody8bit256",
-	[425] = "hunterbody8bit256a",
-	[447] = "sparrow92body128",
-	[460] = "skimmer92body128",
-	[469] = "sparrow92body128",
-	[481] = "vehiclegeneric256", --bmx
-	[483] = "remapcamperbody256",
-	[487] = "maverick92body128",
-	[488] = "polmavbody128a",
-	[497] = "polmavbody128a",
-	[510] = "mtbike64x128",
-	[511] = "beagle256",
-	[512] = "cropdustbody256",
-	[513] = "stunt256",
-	[519] = "shamalbody256",
-	[521] = "fcr90092body128",
-	[522] = "nrg50092body128",
-	[534] = "remapremington256body",
-	[535] = "#emapslamvan92body128",
-	[536] = "#emapblade92body128",
-	[548] = "cargobob92body256",
-	[553] = "nevada92body256",
-	[558] = "@hite",
-	[559] = "#emapjesterbody256",
-	[560] = "#emapsultanbody256",
-	[561] = "#emapstratum292body256",
-	[562] = "#emapelegybody128",
-	[563] = "raindance92body128",
-	[565] = "#emapflash92body256",
-	[567] = "#emapsavanna92body128",
-	[575] = "remapbroadway92body128",
-	[576] = "remaptornado92body128",
-	[577] = "at400_92_256",
-	[581] = "bf40092body128",
-	[586] = "wayfarerbody8bit128",
-	[593] = "dodo92body8bit256",
-}
-
-VEHICLE_BIKES = {
-[481] = true,
-[509] = true,
-[510] = true,
-}
-
-PLANES_SINGLE_ENGINE = {
-[593] = true,
-[512] = true,
-[476] = true,
-[513] = true,
-}
-
-PLANES_TWIN_ENGINE = {
-[511] = true,
-[553] = true,
-}
-
-PLANES_JET = {
-[520] = true,
-[519] = true,
-}
-
-PLANES_JUMBO_JET = {
-[592] = true,
-[577] = true,
-}
-
 
 
 COROUTINE_STATUS_RUNNING = "running"
@@ -743,27 +674,6 @@ VEHICLE_SPAWN_OFFSETS = {
 	[454] = Vector3(-0.4, -3.0, 2),
 }
 
-CAR_COLORS_FROM_ID =
-{
-	"weiß","hell-blau","dunkel-rot","grau","lila","oranger","hell-blau",
-	"weiß","grau","grau-blau","grau","grau-blau","grau","weiß","grau",
-	"dunkel-grün","rot","pupurn", "grau", "blau", "pupurn", "violett",
-	"weiß", "grau", "grau", "weiß", "grau", "grau-blau", "grau", "braun",
-	"braun-rot", "hell-blau", "grau", "grau", "grau", "schwarz-grau", "grau-grün",
-	"hell-blau", "grau-blau", "dunke-grau", "grau", "rot", "dunkel-rot",
-	"dunkel-grün", "dunkel-rot", "hell-grau", "grau", "grau", "hell-blau",
-	"hell-blau", "dunkel-grau", "grau-grün", "grau-blau", "dunke-blau", "dunkel-blau",
-	"braun", "hell-blau", "grau-braun", "dunkel-rot", "dunkel-blau", "grau",
-	"braun", "dunkel-rot", "hell-blau", "grau-weiß", "ocker", "dunkel-braun", "hell-blau",
-	"grau", "rosa", "rot", "blau", "grau", "hell-grau", "rot", "dunkel-grau", "grau",
-	"hell-grau", "rot", "blau", "rosa", "grau", "rot", "grau", "braun", "lila", "grün",
-	"blau", "dunkel-rot", "grau", "hell-blau", "dunkel-blau", "grau", "blau", "dunkel-blau",
-	"dunke-blau", "hell-grau", "hell-blau", "grau", "braun", "blau", "dunkel-grau",
-	"hell-braun", "blau", "hell-braun", "grau", "blau", "hell-grau", "blau", "grau", "braun", "hell-grau",
-	"blau", "braun", "grau-grün", "dunkel-rot", "dunkel-blau", "dunkel-rot", "hell-blau", "grau",
-	"hell-grau", "dunkel-rot", "grau", "braun", "dunkel-rot", "dunkel-blau", "pink", [0] = "schwarz"
-}
-
 HOUSE_INTERIOR_TABLE = {
 	[1] = {1, 223.27027893066, 1287.4304199219, 1081.9130859375};
 	[2] = {5, 2233.8625488281, -1113.7662353516, 1050.8828125};
@@ -792,43 +702,6 @@ HOUSE_INTERIOR_TABLE = {
 	[25] = {17, -959.65, 1954.80, 9.5}; -- dam generator
 	[26] = {9, 313.95544, 957.64325, 2009.87683}; -- terror storage
 	[27] = {0, 506.76, -1521.03, 32.11}; -- terror office
-}
-
-VEHICLE_PICKUP = {
-	[422] = true,
-	[554] = true,
-	[433] = true,
-	[444] = true,
-	[556] = true,
-	[557] = true,
-	[478] = true,
-	[578] = true,
-	[535] = true,
-	[543] = true,
-	[605] = true,
-	[600] = true,
-}
-
-VEHICLE_OBJECT_ATTACH_POSITIONS = {
-	[428] = { --vehicle model, securicar in this case
-		loadMarkerPos = Vector3(0, -3.5, 0),
-		vehicleDoors = {4, 5},
-		objectId = 1550, -- money bag
-		objectNames = {"Geldsack", "Geldsäcke"},
-        randomRotation = true, --random z-rotaion on attach to provide some variety
-        positions = { -- in loading order, e.g. the first row is the first object position to load
-            Vector3(0.3, -1, 0.2),
-            Vector3(-0.3, -1, 0.2),
-            Vector3(0.7, -1.61, 0.2),
-            Vector3(-0.7, -1.59, 0.2),
-            Vector3(0.21, -1.6, 0.2),
-            Vector3(-0.21, -1.58, 0.2),
-            Vector3(0.7, -2.51, 0.2),
-            Vector3(-0.7, -2.52, 0.2),
-            Vector3(0.21, -2.51, 0.2),
-            Vector3(-0.21, -2.49, 0.2),
-        }
-	}
 }
 
 CompanyStaticId = {

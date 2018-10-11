@@ -18,6 +18,7 @@
 	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/constants/roulette.lua" type="shared"/>
+	<script src="shared/constants/vehicle.lua" type="shared"/>
 	<script src="shared/constants/vehicleELS.lua" type="shared"/>
 
 	<script src="shared/async.lua" type="shared"/>
@@ -363,8 +364,7 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 
-	<script src="server/classes/Vehicles/Extensions/Tuning/TurboTuning.lua" type="server"/>
-	<script src="server/classes/Vehicles/Extensions/Tuning/DriveTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/EngineTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/BrakeTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/SuspensionTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/WheelTuning.lua" type="server"/>

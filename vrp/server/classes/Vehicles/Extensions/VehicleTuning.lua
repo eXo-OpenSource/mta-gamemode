@@ -318,11 +318,11 @@ function VehicleTuning:getList()
 end
 
 --[[
-	** TurboKit **
+	** EngineKit **
     	setAcceleration(acceleration)
 ]]--
-function VehicleTuning:getTurbo()
-	return self.m_TuningKits["TurboKit"]
+function VehicleTuning:getEngine()
+	return self.m_TuningKits["EngineKit"]
 end
 
 --[[
