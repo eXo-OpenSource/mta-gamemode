@@ -27,33 +27,50 @@ BrakeTuning = inherit( Object )
 
 function BrakeTuning:constructor( vehicle, strength, bias) 
     self.m_Vehicle = vehicle
-    self.m_Handling = vehicle:getHandling()
+    self.m_Handling = getOriginalHandling(vehicle:getModel())
     self:setBrake(strength or 0)
     self:setBias(bias or 0)
 end
 
-function BrakeTuning:setBrake( brakePercentage ) 
-    local brake = self.m_Handling["brakeDeceleration"]
-    self.m_Brake = math.clamp(0.1, brake * brakePercentage, 100000) 
-    self.m_Vehicle:setHandling("brakeDeceleration", self.m_Brake)
-end
-
-function BrakeTuning:setBias( biasPercentage ) -- bias is in percentage 0.5 means move it 50% more to the rear; 1.5 = 50% more to the front
-    local bias = self.m_Handling["brakeBias"]
-    self.m_Bias = math.clamp(0, bias * biasPercentage, 1) -- 0.5 is the center; 1 front; 0 rear
-    self.m_Vehicle:setHandling("brakeBias", self.m_Bias)
-end
-
-function BrakeTuning:remove() 
+function BrakeTuning:destructor()
     local brake = self.m_Handling["brakeDeceleration"]
     self.m_Vehicle:setHandling("brakeDeceleration", brake)
 
     local bias = self.m_Handling["brakeBias"]
     self.m_Vehicle:setHandling("brakeBias", bias)
+
+    self.m_Vehicle.m_Tunings:removeTuningKit( self )
+
+end
+
+function BrakeTuning:setBrake( brakeValue )
+    if not brakeValue or not tonumber(brakeValue) then return end
+    self.m_Brake = math.clamp(0.1, brakeValue, 100000)
+    self.m_Vehicle:setHandling("brakeDeceleration", self.m_Brake)
+end
+
+function BrakeTuning:setBrakePercentage( brakePercentage )
+    if not brakePercentage or not tonumber(brakePercentage) then return end
+    local brake = self.m_Handling["brakeDeceleration"]
+    self.m_Brake = math.clamp(0.1, brake * brakePercentage, 100000) 
+    self.m_Vehicle:setHandling("brakeDeceleration", self.m_Brake)
+end
+
+function BrakeTuning:setBias( biasValue )
+    if not biasValue or not tonumber(biasValue) then return end
+    self.m_Bias = math.clamp(0, biasValue, 1) 
+    self.m_Vehicle:setHandling("brakeBias", self.m_Bias)
+end
+
+function BrakeTuning:setBiasPercentage( biasPercentage ) -- bias is in percentage 0.5 means move it 50% more to the rear; 1.5 = 50% more to the front
+    if not biasPercentage or not tonumber(biasPercentage) then return end
+    local bias = self.m_Handling["brakeBias"]
+    self.m_Bias = math.clamp(0, bias * biasPercentage, 1) -- 0.5 is the center; 1 front; 0 rear
+    self.m_Vehicle:setHandling("brakeBias", self.m_Bias)
 end
 
 function BrakeTuning:save() 
-    return {1, self.m_Brake or 0, self.m_Bias or 0}
+    return {1, self.m_Brake or self.m_Handling["brakeDeceleration"], self.m_Bias or self.m_Handling["brakeBias"]}
 end
 
 function BrakeTuning:getFuelMultiplicator()

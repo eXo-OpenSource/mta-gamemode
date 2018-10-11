@@ -14,9 +14,15 @@ DriveTuning.Identifiers = {
 }
 function DriveTuning:constructor( vehicle, type ) 
     self.m_Vehicle = vehicle
-    self.m_Handling = vehicle:getHandling()
+    self.m_Handling = getOriginalHandling(vehicle:getModel())
     self:setType(type or self.m_Handling["driveType"])
 end
+
+function DriveTuning:destructor()
+    self.m_Vehicle:setHandling("driveType", self.m_Handling["driveType"])
+    self.m_Vehicle.m_Tunings:removeTuningKit( self )
+end
+
 
 function DriveTuning:setType( drive )
     if DriveTuning.Identifiers[drive] then
@@ -25,12 +31,8 @@ function DriveTuning:setType( drive )
     end
 end
 
-function DriveTuning:remove() 
-    self.m_Vehicle:setHandling("driveType", self.m_Handling["driveType"])
-end
-
 function DriveTuning:save()
-    return {1, self.m_Type or ""}
+    return {1, self.m_Type or self.m_Handling["driveType"]}
 end
 
 function DriveTuning:getFuelMultiplicator()

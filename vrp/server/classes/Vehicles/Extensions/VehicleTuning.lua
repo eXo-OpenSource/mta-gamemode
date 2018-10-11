@@ -174,6 +174,15 @@ function VehicleTuning:saveTuningKits()
 
 end
 
+function VehicleTuning:removeTuningKit( kit )
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		if class == kit then 
+			self.m_TuningKits[tuning] = nil
+		end
+	end
+	self:saveTuningKits()
+end
+
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
