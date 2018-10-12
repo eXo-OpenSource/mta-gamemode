@@ -191,6 +191,9 @@
 
 	<!-- Contract -->
 	<script src="server/classes/Gameplay/Contract/Contract.lua" type="server"/>
+	<script src="server/classes/Gameplay/Contract/SellContract.lua" type="server"/>
+	<script src="server/classes/Gameplay/Contract/RentContract.lua" type="server"/>
+	<script src="server/classes/Gameplay/Contract/CreditContract.lua" type="server"/>
 	<script src="server/classes/Gameplay/Contract/ContractManager.lua" type="server"/>
 
 	<!-- Race -->

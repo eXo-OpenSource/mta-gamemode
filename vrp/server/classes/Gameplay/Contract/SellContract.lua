@@ -63,7 +63,10 @@ function SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 		return false
 	end
 
-
+	-- Create contract
+	local id = Contract.create(sellerId, sellerType, buyerId, buyerType, CONTRACT_TYPES.Sell)
+	local sellContract = SellContract:new(id)
+	sellContract:storeData(data)
 	-- Contract.create(sellerId, sellerType, contractor, contractType)
 	-- local id = Contract.create(CONTRACT_TYPES.Sell, seller, contractor)
 	-- sql:
@@ -73,13 +76,26 @@ function SellContract.create(sellerId, sellerType, buyerId, buyerType, data)
 		- Amount for items
 		- Amount of cash
 	]]
+	return sellContract
 end
 
-function SellContract:contructor()
+function SellContract:constructor(id)
+	sql:queryFetch(Async.waitFor(self), "SELECT * FROM ??_contracts WHERE Id = ?",
+		sql:getPrefix(), id)
+
+	outputServerLog("constructing")
+	local result = Async.wait()
+	outputServerLog(inspect(result))
+	local data = result[1]
+	if data then
+		self.m_Id = data.Id
+		self.m_SellerId = data.SellerId
+		self.m_SellerType = data.SellerType
+		self.m_BuyerId = data.BuyerId
+		self.m_BuyerType = data.BuyerType
+		self.m_ContractType = data.ContractType
+	end
 end
 
 function SellContract:destructor()
-end
-
-function SellContract:save()
 end

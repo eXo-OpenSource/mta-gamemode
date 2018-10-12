@@ -30,8 +30,8 @@ end
 
 function StatisticsLogger:addDrunLog(user, command, target)
     local elementId = 0
-    local targetId = 0
-	if user then elementId = user:getId() end
+	local targetId = 0
+	if user and user.type ~= "console" then elementId = user:getId() end
 	if target and target ~= root then targetId = target:getId() elseif target == root then targetId = -1 end
 
     if sqlLogs:queryExec("INSERT INTO ??_AdminDrun (UserId, Command, TargetId, Date) VALUES (?, ?, ?, NOW())",

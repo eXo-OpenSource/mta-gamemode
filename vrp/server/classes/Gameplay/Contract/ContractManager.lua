@@ -18,17 +18,35 @@ CONTRACT_TYPES = {
 	--> Id             - PK
 	--> SellerId       - player or group
 	--> SellerType 	   - 1 = player, 2 = group
-	--> ContractorId   - player or group
-	--> ContractorType -  1 = player, 2 = group
+	--> BuyerId        - player or group
+	--> BuyerType      -  1 = player, 2 = group
 	--> ContractType   - 1 = sell, 2 = rent, 3 = credit
 	--> FinishedAt
 	--> CreatedAt
+
+CREATE TABLE `vrp_contracts`  (
+  `Id` int(0) NOT NULL AUTO_INCREMENT,
+  `SellerId` int(0) NOT NULL,
+  `SellerType` int(0) NOT NULL,
+  `BuyerId` int(0) NOT NULL,
+  `BuyerType` int(0) NOT NULL,
+  `ContractType` int(0) NOT NULL,
+  `FinishedAt` datetime(0) NULL,
+  `CreatedAt` datetime(0) NOT NULL,
+  PRIMARY KEY (`Id`)
+);
 
 	vrp_contracts_data
 	--> ContractId - PK
 	--> DataKey    - PK
 	--> Data
 
+CREATE TABLE `vrp_contracts_data`  (
+  `ContractId` int(0) NOT NULL,
+  `DataKey` varchar(32) NOT NULL,
+  `Data` text NOT NULL,
+  PRIMARY KEY (`ContractId`, `DataKey`)
+);
 	(Example: SellingPrice = 5000)
 
 
@@ -146,3 +164,16 @@ end
 
 function ContractManager:destructor()
 end
+
+addCommandHandler("ccon", function()
+
+	Async.create(
+		function ()
+			outputServerLog("Testi")
+			local con = SellContract.create(1, 1, 1, 1, {objectType = "item", objectAmount = 1, moneyAmount = 1})
+			outputServerLog(tostring(con))
+			outputServerLog("Laterli")
+		end
+	)()
+
+end)
