@@ -9,6 +9,7 @@ VehicleTuning = inherit(Object)
 VehicleTuning.Map = {}
 
 function VehicleTuning:constructor(vehicle, tuningJSON)
+	self.m_TuningKits = { }
 	self.m_Vehicle = vehicle
 	if tuningJSON then
 		self.m_Tuning = fromJSON(tuningJSON)

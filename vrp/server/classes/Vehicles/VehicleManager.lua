@@ -158,6 +158,7 @@ function VehicleManager:constructor()
 		self:migrate()
 	end
 
+	TuningTemplateManager:new()
 end
 
 function VehicleManager:destructor()

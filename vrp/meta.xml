@@ -364,6 +364,9 @@
 	<script src="server/classes/Vehicles/Extensions/VehicleObjectLoadExtension.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleELS.lua" type="server"/>
 
+
+	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplateManager.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Tuning/TuningTemplate.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/EngineTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/BrakeTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Tuning/SuspensionTuning.lua" type="server"/>
