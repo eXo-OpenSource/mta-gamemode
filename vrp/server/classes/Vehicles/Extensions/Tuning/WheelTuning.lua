@@ -73,7 +73,8 @@ function WheelTuning:setTractionLossPercentage( tractionLossPercentage )
 end
 
 function WheelTuning:save() 
-    return {1, self.m_Traction or self.m_Handling["tractionMultiplier"], self.m_TractionBias or self.m_Handling["tractionBias"]}
+    return {1, self.m_Traction or self.m_Handling["tractionMultiplier"], self.m_TractionBias or self.m_Handling["tractionBias"], 
+            self.m_TractionLoss or self.m_Handling["tractionLoss"]}
 end
 
 function WheelTuning:getFuelMultiplicator()

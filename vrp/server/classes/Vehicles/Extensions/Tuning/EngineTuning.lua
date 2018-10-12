@@ -76,15 +76,16 @@ end
 
 function EngineTuning:setTopSpeed( speedValue )
     if not speedValue or not tonumber(speedValue) then return end
-    self.m_CapSpeed = math.clamp( 0.1, speedValue, 200000.0)
-    self.m_Vehicle:setHandling("maxVelocity", self.m_CapSpeed)
+    speedValue = speedValue - VEHICLE_SPEEDO_MAXVELOCITY_OFFSET
+    self.m_TopSpeed = math.clamp( 0.1, speedValue, 200000.0)
+    self.m_Vehicle:setHandling("maxVelocity", self.m_TopSpeed)
 end
 
 function EngineTuning:setTopSpeedPercentage( speedPercentage )
     if not speedPercentage or not tonumber(speedPercentage) then return end
     local maxVelocity = self.m_Handling["maxVelocity"]
-    self.m_CapSpeed = math.clamp( 0.1, maxVelocity + speedPercentage*maxVelocity, 200000.0)
-    self.m_Vehicle:setHandling("maxVelocity", self.m_CapSpeed)
+    self.m_TopSpeed = math.clamp( 0.1, (maxVelocity + speedPercentage*maxVelocity) - VEHICLE_SPEEDO_MAXVELOCITY_OFFSET, 200000.0)
+    self.m_Vehicle:setHandling("maxVelocity", self.m_Speed)
 end
 
 
@@ -102,7 +103,8 @@ function EngineTuning:setInertiaPercentage( inertiaPercentage )
 end
 
 function EngineTuning:save() 
-    return {1, self.m_Acceleration or self.m_Handling["engineAcceleration"], self.m_Type or self.m_Handling["driveType"]}
+    return {1, self.m_Acceleration or self.m_Handling["engineAcceleration"], self.m_TopSpeed or self.m_Handling["maxVelocity"], 
+            self.m_Type or self.m_Handling["driveType"], self.m_Inertia or self.m_Handling["engineInertia"]}
 end
 
 function EngineTuning:getFuelMultiplicator()

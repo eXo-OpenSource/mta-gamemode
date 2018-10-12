@@ -212,6 +212,7 @@ VEHICLE_VARIANTS = {
 	[607]={0,1,2}
 }
 
+VEHICLE_SPEEDO_MAXVELOCITY_OFFSET = 16.066834862484
 
 VEHICLE_TUNINGKIT_CATEGORIES = {
 	["Motor"] = {{"maxVelocity","Topspeed"}, {"engineAcceleration","Beschleunigung"}, {"engineInertia", "Trägheitsmoment"}, {"driveType", "Antrieb"}},

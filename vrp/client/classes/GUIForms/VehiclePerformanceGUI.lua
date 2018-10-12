@@ -7,6 +7,7 @@
 -- ****************************************************************************
 VehiclePerformanceGUI = inherit(GUIForm)
 inherit(Object, VehiclePerformanceGUI)
+VehiclePerformanceGUI.Map = {}
 
 VehiclePerformanceGUI.DriveTypeValues = 
 {
@@ -31,8 +32,11 @@ function VehiclePerformanceGUI:constructor( vehicle, modify )
 	self.m_Height = grid("y", 12) 	-- height of the window
 	GUIForm.constructor(self, screenWidth-500, screenHeight-500, 500, 500, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Performance", true, true, self)
-	addEventHandler("updateVehicleHandling", root, bind(VehiclePerformanceGUI.Event_UpdateHandling, self))
-	addEventHandler("vehiclePerformanceUpdateGUI", root, bind(VehiclePerformanceGUI.Event_UpdateGUI, self))
+	self.m_Window:deleteOnClose( true )
+	self.m_UpdateHandlingBind = bind(VehiclePerformanceGUI.Event_UpdateHandling, self)
+	self.m_UpdateGUIBind = bind(VehiclePerformanceGUI.Event_UpdateGUI, self)
+	addEventHandler("updateVehicleHandling", root, self.m_UpdateHandlingBind)
+	addEventHandler("vehiclePerformanceUpdateGUI", root, self.m_UpdateGUIBind)
 	triggerServerEvent("vehicleRequestHandling", localPlayer, self.m_Vehicle)
 end	
 
@@ -168,6 +172,7 @@ function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 						value = normaliseRange(range[1], range[2], value)*100
 						slider:setValue(math.clamp(0, value, 100))
 					else 
+						if prop == "maxVelocity" then value = value + VEHICLE_SPEEDO_MAXVELOCITY_OFFSET end
 						slider:setRange(range[1], range[2])
 						slider:setValue(math.clamp(range[1], value, range[2]))
 					end
@@ -190,6 +195,7 @@ function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 						label:setText(math.floor(value))
 						label.m_RealValue = value
 					else 
+						if prop == "maxVelocity" then value = value + VEHICLE_SPEEDO_MAXVELOCITY_OFFSET end
 						label:setText(math.floor(value))
 						label.m_RealValue = value
 					end
@@ -212,6 +218,7 @@ function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 						edit:setText(math.round(value, 2))
 						edit:setCaption(value.."%")
 					else 
+						if prop == "maxVelocity" then value = value + VEHICLE_SPEEDO_MAXVELOCITY_OFFSET end
 						edit:setCaption(value..unit)
 						edit:setText(math.round(value, 2))
 					end
@@ -289,6 +296,8 @@ function VehiclePerformanceGUI:reset(tabId)
 end
 
 function VehiclePerformanceGUI:destructor()
+	removeEventHandler("updateVehicleHandling", root, self.m_UpdateHandlingBind)
+	removeEventHandler("vehiclePerformanceUpdateGUI", root, self.m_UpdateGUIBind)
 	GUIForm.destructor(self)
 end
 
