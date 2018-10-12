@@ -214,7 +214,7 @@ VEHICLE_VARIANTS = {
 
 
 VEHICLE_TUNINGKIT_CATEGORIES = {
-	["Motor"] = {{"engineAcceleration","Beschleunigung"}, {"engineInertia", "Trägheitsmoment"}, {"driveType", "Antrieb"}},
+	["Motor"] = {{"maxVelocity","Topspeed"}, {"engineAcceleration","Beschleunigung"}, {"engineInertia", "Trägheitsmoment"}, {"driveType", "Antrieb"}},
 	["Reifen"] = {{"tractionMultiplier", "Bodenhaftung"}, {"tractionBias", "Haftungsverlagerung"}, {"tractionLoss", "Haftungsstabilität"}},
 	["Fahrwerk"] = {{"suspensionForceLevel", "Federungsresistenz"}, {"suspensionFrontRearBias", "Federungsverlagerung"}, {"suspensionDamping", "Federungs-Dämpfung"}, {"suspensionLowerLimit", "Tieferlegung"}, {"steeringLock", "Lenkbereich"} },
 	["Bremsen"] = {{"brakeDeceleration", "Bremskraft"}, {"brakeBias", "Bremsverlagerung"}},
@@ -222,9 +222,14 @@ VEHICLE_TUNINGKIT_CATEGORIES = {
 
 VEHICLE_TUNINGKIT_DESCRIPTION = {
 	["engineAcceleration"] = { 
-		{0, 30}, -- range
+		{0, 60}, -- range
 		"Die Beschleunigung deines Fahrzeuges in m/s²", -- tooltip-description
 		"m/s²" -- unit
+	},
+	["maxVelocity"] = { 
+		{0.1, 400}, -- range
+		"Die maximale Geschwindigkeit deines Fahrzeuges in km/h", -- tooltip-description
+		"km/h" -- unit
 	},
 	["engineInertia"] = { 
 		{-30, 30}, -- range

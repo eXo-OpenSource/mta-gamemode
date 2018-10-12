@@ -217,13 +217,11 @@ function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
 end
 
 function VehicleManager:Event_GetVehicleHandling( vehicle )
-
-	outputChatBox("HERE")
 	client:triggerEvent("updateVehicleHandling", vehicle, vehicle:getHandling())
 end
 
-function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable )
-	vehicle:getTunings():setPerformanceTuningTable( tuningTable, client )
+function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable, reset )
+	vehicle:getTunings():setPerformanceTuningTable( tuningTable, client, reset )
 end
 
 function VehicleManager:getFactionVehicles(factionId)

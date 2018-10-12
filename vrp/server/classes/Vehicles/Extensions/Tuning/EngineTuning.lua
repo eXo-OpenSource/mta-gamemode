@@ -24,13 +24,17 @@ EngineTuning.Properties =
 {
     ["engineAcceleration"] = true, 
     ["driveType"] = true,
+    ["engineInertia"] = true,
+    ["maxVelocity"] = true,
 }
 
-function EngineTuning:constructor( vehicle, acceleration, type ) 
+function EngineTuning:constructor( vehicle, acceleration, speed, type, inertia ) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
     self:setAcceleration(acceleration)
+    self:setTopSpeed(speed)
     self:setType(type)
+    self:setInertia(inertia)
 end
 
 function EngineTuning:destructor()
@@ -52,13 +56,6 @@ function EngineTuning:setAcceleration( accelerationValue )
     end
 end
 
-function EngineTuning:setType( drive )
-    if EngineTuning.Identifiers[drive] then
-        self.m_Type = drive
-        self.m_Vehicle:setHandling("driveType", drive)
-    end
-end
-
 function EngineTuning:setAccelerationPercentage( accelerationPercentage )
     if not accelerationPercentage or not tonumber(accelerationPercentage) then return end
     local acceleration = self.m_Handling["engineAcceleration"]
@@ -68,6 +65,40 @@ function EngineTuning:setAccelerationPercentage( accelerationPercentage )
     if self.m_Handling["engineAcceleration"] - self.m_Acceleration > 0 then -- needed clientside for turbo effect but only if the acceleration has increased
         self.m_Vehicle:setData("TurboKit", self.m_Handling["engineAcceleration"] - self.m_Acceleration, true)
     end
+end
+
+function EngineTuning:setType( drive )
+    if EngineTuning.Identifiers[drive] then
+        self.m_Type = drive
+        self.m_Vehicle:setHandling("driveType", drive)
+    end
+end
+
+function EngineTuning:setTopSpeed( speedValue )
+    if not speedValue or not tonumber(speedValue) then return end
+    self.m_CapSpeed = math.clamp( 0.1, speedValue, 200000.0)
+    self.m_Vehicle:setHandling("maxVelocity", self.m_CapSpeed)
+end
+
+function EngineTuning:setTopSpeedPercentage( speedPercentage )
+    if not speedPercentage or not tonumber(speedPercentage) then return end
+    local maxVelocity = self.m_Handling["maxVelocity"]
+    self.m_CapSpeed = math.clamp( 0.1, maxVelocity + speedPercentage*maxVelocity, 200000.0)
+    self.m_Vehicle:setHandling("maxVelocity", self.m_CapSpeed)
+end
+
+
+function EngineTuning:setInertia( inertiaValue )
+    if not inertiaValue or not tonumber(inertiaValue) then return end
+    self.m_Inertia = math.clamp( -1000, inertiaValue, 1000)
+    self.m_Vehicle:setHandling("engineInertia", self.m_Inertia)
+end
+
+function EngineTuning:setInertiaPercentage( inertiaPercentage )
+    if not inertiaPercentage or not tonumber(inertiaPercentage) then return end
+    local inertia = self.m_Handling["engineInertia"]
+    self.m_Inertia = math.clamp( -1000, inertia + inertiaPercentage*inertia, 1000)
+    self.m_Vehicle:setHandling("engineInertia", self.m_Inertia)
 end
 
 function EngineTuning:save() 

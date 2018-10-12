@@ -355,19 +355,16 @@ function VehicleTuning:getWheel()
 	return self.m_TuningKits["WheelKit"]
 end
 
-function VehicleTuning:setPerformanceTuningTable( table, player )
+function VehicleTuning:setPerformanceTuningTable( table, player, reset )
 	local range, desc, min, max
 	for property, value in pairs(table) do 
 		range, desc, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[property])
 		if not unit then
-			if tonumber(value) then
+			if tonumber(value) and property ~= "driveType" then
 				min, max = self:transformRange(range)
-				if property == "suspensionLowerLimit" then
-					outputChatBox("[b "..value.." ] [a "..(max*(value/100) - min).." ]")
-				end	
 				value = max*(value/100) - min
 				self:setTuningProperty(property, value)
-			else 
+			elseif property == "driveType" then
 				self:setTuningProperty(property, value)
 			end
 		else 
@@ -375,7 +372,7 @@ function VehicleTuning:setPerformanceTuningTable( table, player )
 		end
 	end
 	self:saveTuningKits()
-	triggerClientEvent("vehiclePerformanceUpdateGUI", player, self.m_Vehicle, self.m_Vehicle:getHandling())
+	triggerClientEvent("vehiclePerformanceUpdateGUI", player, self.m_Vehicle, self.m_Vehicle:getHandling(), reset)
 end
 
 function VehicleTuning:transformRange(range)
@@ -411,13 +408,22 @@ function VehicleTuning:setTuningProperty(property, value)
 	if property == "tractionBias" then 
 		self.m_TuningKits["WheelKit"]:setTractionBias(value)
 	end
+	if property == "tractionLoss" then 
+		self.m_TuningKits["WheelKit"]:setTractionLoss(value)
+	end
 
 	--//Engine
 	if property == "engineAcceleration" then 
 		self.m_TuningKits["EngineKit"]:setAcceleration(value)
 	end
+	if property == "maxVelocity" then 
+		self.m_TuningKits["EngineKit"]:setTopSpeed(value)
+	end
 	if property == "driveType" then 
 		self.m_TuningKits["EngineKit"]:setType(value)
+	end
+	if property == "engineInertia" then 
+		self.m_TuningKits["EngineKit"]:setInertia(value)
 	end
 
 	--//Suspension
