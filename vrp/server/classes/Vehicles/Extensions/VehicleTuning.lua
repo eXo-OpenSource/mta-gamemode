@@ -326,14 +326,6 @@ function VehicleTuning:getEngine()
 end
 
 --[[
-	** DriveKit **
-    	setType( type )
-]]--
-function VehicleTuning:getDrive()
-	return self.m_TuningKits["DriveKit"]
-end
-
---[[
 	** BrakeKit **
     	setBrake(strength)
     	setBias(bias)
@@ -361,4 +353,96 @@ end
 ]]--
 function VehicleTuning:getWheel()
 	return self.m_TuningKits["WheelKit"]
+end
+
+function VehicleTuning:setPerformanceTuningTable( table, player )
+	local range, desc, min, max
+	for property, value in pairs(table) do 
+		range, desc, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[property])
+		if not unit then
+			if tonumber(value) then
+				min, max = self:transformRange(range)
+				if property == "suspensionLowerLimit" then
+					outputChatBox("[b "..value.." ] [a "..(max*(value/100) - min).." ]")
+				end	
+				value = max*(value/100) - min
+				self:setTuningProperty(property, value)
+			else 
+				self:setTuningProperty(property, value)
+			end
+		else 
+			self:setTuningProperty(property, value)
+		end
+	end
+	self:saveTuningKits()
+	triggerClientEvent("vehiclePerformanceUpdateGUI", player, self.m_Vehicle, self.m_Vehicle:getHandling())
+end
+
+function VehicleTuning:transformRange(range)
+	return math.abs(range[1]), math.abs(range[1])+range[2]
+end
+
+function VehicleTuning:setTuningProperty(property, value)
+	if WheelTuning.Properties[property] then 
+		if not self.m_TuningKits["WheelKit"] then 
+			self:addTuningKit("WheelKit")
+		end
+	end
+	if EngineTuning.Properties[property] then 
+		if not self.m_TuningKits["EngineKit"] then 
+			self:addTuningKit("EngineKit")
+		end
+	end
+	if BrakeTuning.Properties[property] then 
+		if not self.m_TuningKits["BrakeKit"] then 
+			self:addTuningKit("BrakeKit")
+		end
+	end
+	if SuspensionTuning.Properties[property] then 
+		if not self.m_TuningKits["SuspensionKit"] then 
+			self:addTuningKit("SuspensionKit")
+		end
+	end
+
+	--//Wheel
+	if property == "tractionMultiplier" then 
+		self.m_TuningKits["WheelKit"]:setTraction(value)
+	end
+	if property == "tractionBias" then 
+		self.m_TuningKits["WheelKit"]:setTractionBias(value)
+	end
+
+	--//Engine
+	if property == "engineAcceleration" then 
+		self.m_TuningKits["EngineKit"]:setAcceleration(value)
+	end
+	if property == "driveType" then 
+		self.m_TuningKits["EngineKit"]:setType(value)
+	end
+
+	--//Suspension
+	if property == "suspensionForceLevel" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspension(value)
+	end
+	if property == "steeringLock" then 
+		self.m_TuningKits["SuspensionKit"]:setSteer(value)
+	end
+	if property == "suspensionDamping" then 
+		self.m_TuningKits["SuspensionKit"]:setDamping(value)
+	end
+	if property == "suspensionLowerLimit" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspensionHeight(value)
+	end
+	if property == "suspensionFrontRearBias" then 
+		self.m_TuningKits["SuspensionKit"]:setSuspensionBias(value)
+	end
+
+	--//Brake
+	if property == "brakeDeceleration" then 
+		self.m_TuningKits["BrakeKit"]:setBrake(value)
+	end
+	if property == "brakeBias" then 
+		self.m_TuningKits["BrakeKit"]:setBias(value)
+	end
+
 end

@@ -20,6 +20,11 @@ EngineTuning.Identifiers = {
     ["awd"] = true,
     ["fwd"] = true,
 }
+EngineTuning.Properties = 
+{
+    ["engineAcceleration"] = true, 
+    ["driveType"] = true,
+}
 
 function EngineTuning:constructor( vehicle, acceleration, type ) 
     self.m_Vehicle = vehicle

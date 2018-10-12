@@ -7,6 +7,22 @@
 -- ****************************************************************************
 VehiclePerformanceGUI = inherit(GUIForm)
 inherit(Object, VehiclePerformanceGUI)
+
+VehiclePerformanceGUI.DriveTypeValues = 
+{
+	["rwd"] = 0,
+	["awd"] = 1, 
+	["fwd"] = 2,
+}
+VehiclePerformanceGUI.TabNames = {
+	"Alles", 
+	"Motor", 
+	"Reifen",
+	"Fahrwerk", 
+	"Bremsen"
+}
+
+addRemoteEvents{"vehiclePerformanceUpdateGUI", "updateVehicleHandling"}
 function VehiclePerformanceGUI:constructor( vehicle, modify )
 	self.m_Modify = modify
 	self.m_Vehicle = vehicle
@@ -15,22 +31,9 @@ function VehiclePerformanceGUI:constructor( vehicle, modify )
 	self.m_Height = grid("y", 12) 	-- height of the window
 	GUIForm.constructor(self, screenWidth-450, screenHeight-450, 450, 450, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Performance", true, true, self)
-	self.m_DriveTypeValues = 
-	{
-		["rwd"] = 0,
-		["awd"] = 1, 
-		["fwd"] = 2,
-	}
-	self.m_TabNames = {
-		"Alles", 
-		"Motor", 
-		"Reifen",
-		"Fahrwerk", 
-		"Bremsen"
-	}
-	
-	self:setupPanels()
-
+	addEventHandler("updateVehicleHandling", root, bind(VehiclePerformanceGUI.Event_UpdateHandling, self))
+	addEventHandler("vehiclePerformanceUpdateGUI", root, bind(VehiclePerformanceGUI.Event_UpdateGUI, self))
+	triggerServerEvent("vehicleRequestHandling", localPlayer, self.m_Vehicle)
 end	
 
 function VehiclePerformanceGUI:setupPanels()
@@ -41,9 +44,11 @@ function VehiclePerformanceGUI:setupPanels()
 	self.m_EditValues = {}
 	self.m_LabelDescription = {}
 	self.m_ScrollAreas = {}
-	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel(self.m_TabNames) 
-	self.m_TabPanel:updateGrid()
-	self:fillAllTabs()
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel(VehiclePerformanceGUI.TabNames) 
+	if self.m_TabPanel then
+		self.m_TabPanel:updateGrid()
+		self:fillAllTabs()
+	end
 end
 
 function VehiclePerformanceGUI:fillAllTabs(  )
@@ -73,7 +78,7 @@ function VehiclePerformanceGUI:fillAllTabs(  )
 			self.m_ScrollAreas[i] = GUIGridScrollableArea:new(1, 1, 11, 12, 16, documentHeight+4, true, false, tab)
 			
 			self.m_Offset = 1
-			self:fillTab(VEHICLE_TUNINGKIT_CATEGORIES[self.m_TabNames[i]], self.m_ScrollAreas[i], i)
+			self:fillTab(VEHICLE_TUNINGKIT_CATEGORIES[VehiclePerformanceGUI.TabNames[i]], self.m_ScrollAreas[i], i)
 			if self.m_Modify then
 				GUIGridRectangle:new(0, self.m_Offset, 12, 2, tocolor(0, 0, 0, 150), self.m_ScrollAreas[i])
 				local submitButton = GUIGridButton:new(1, self.m_Offset+0.5, 4, 1, "Speichern", self.m_ScrollAreas[i]) 
@@ -148,10 +153,10 @@ function VehiclePerformanceGUI:fillTab(handling, scroll, tabId)
 end
 
 
-function VehiclePerformanceGUI:updateValues( vehicle )
+function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 	self.m_Vehicle = vehicle or self.m_Vehicle
 	if self.m_Vehicle then 
-		local handling = self.m_Vehicle:getHandling() 
+		local handling = serverHandling or self.m_Vehicle:getHandling() 
 		for prop, sliders in pairs( self.m_SliderBars ) do 
 			for i, slider in ipairs(sliders) do
 				local value = handling[prop]
@@ -159,7 +164,11 @@ function VehiclePerformanceGUI:updateValues( vehicle )
 					local range, desc, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[prop])
 					local min, max = self:transformRange(range)
 					if not unit then
+						if prop =="suspensionLowerLimit" then
+							outputChatBox("[a-c "..value.." ] [b-c "..(((math.abs(value)) / max)*100).." ]")
+						end
 						value = ((math.abs(value)) / max)*100
+		
 						slider:setValue(math.clamp(0, value, 100))
 					else 
 						slider:setRange(range[1], range[2])
@@ -169,7 +178,7 @@ function VehiclePerformanceGUI:updateValues( vehicle )
 					if prop == "driveType" then 
 						local range, desc, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[prop])
 						slider:setRange(range[1], range[2])
-						slider:setValue(self.m_DriveTypeValues[value])
+						slider:setValue(VehiclePerformanceGUI.DriveTypeValues[value])
 					end
 				end
 			end
@@ -183,10 +192,10 @@ function VehiclePerformanceGUI:updateValues( vehicle )
 					if not unit then
 						value = ((math.abs(value)) / max)*100
 						label:setText(math.floor(value).."%")
-						label.m_RealValue = math.floor(value)
+						label.m_RealValue = value
 					else 
 						label:setText(math.floor(value)..unit)
-						label.m_RealValue = math.floor(value)
+						label.m_RealValue = value
 					end
 					label:setColor(tocolor(0, 0, 0, 255))
 				else 
@@ -205,11 +214,11 @@ function VehiclePerformanceGUI:updateValues( vehicle )
 					local min, max = self:transformRange(range)
 					if not unit then
 						value = ((math.abs(value)) / max)*100
-						edit:setText(math.floor(value))
+						edit:setText(math.round(value, 2))
 						edit:setCaption(value.."%")
 					else 
 						edit:setCaption(value..unit)
-						edit:setText(math.floor(value))
+						edit:setText(math.round(value, 2))
 					end
 					edit:setNumeric(true)
 					edit:setColor(tocolor(0, 0, 0, 255))
@@ -226,17 +235,16 @@ function VehiclePerformanceGUI:updateValues( vehicle )
 end
 
 function VehiclePerformanceGUI:submit(tabId)
-	local handling = self.m_Vehicle:getHandling()
 	local editValue, labelValue, sliderValue
 	local difTable = {}
 	for prop, sliders in pairs( self.m_SliderBars ) do 
 		for i, slider in ipairs(sliders) do
 			if slider.m_Tab == tabId then
-				sliderValue = math.floor(slider:getValue())
+				sliderValue = slider:getValue()
 				if self.m_LabelValues[prop][i] then 
 					labelValue = self.m_LabelValues[prop][i].m_RealValue
 					if labelValue then 
-						if labelValue ~= sliderValue then 
+						if math.round(labelValue, 2) ~= math.round(sliderValue, 2) then
 							difTable[prop] = sliderValue
 						end
 					end
@@ -251,7 +259,7 @@ function VehiclePerformanceGUI:submit(tabId)
 				if self.m_LabelValues[prop][i] then
 					labelValue = self.m_LabelValues[prop][i].m_RealValue
 					if labelValue then 
-						if labelValue ~= editValue then 
+						if math.round(labelValue, 2) ~= math.round(editValue, 2) then 
 							difTable[prop] = editValue
 						end
 					end
@@ -259,21 +267,22 @@ function VehiclePerformanceGUI:submit(tabId)
 			end
 		end
 	end
+	triggerServerEvent("vehicleSetTuningPropertyTable", localPlayer, localPlayer.vehicle, difTable)
+	InfoBox:new(_"Handling wurde gespeichert!")
 end
 
 function VehiclePerformanceGUI:reset(tabId)
-	local handling = self.m_Vehicle:getHandling()
 	local editValue, labelValue, sliderValue
 	local difTable = {}
 	for prop, sliders in pairs( self.m_SliderBars ) do 
 		for i, slider in ipairs(sliders) do
 			if slider.m_Tab == tabId then
-				sliderValue = math.floor(slider:getValue())
+				sliderValue = slider:getValue()
 				if self.m_LabelValues[prop][i] then 
 					labelValue = self.m_LabelValues[prop][i].m_RealValue
 					if labelValue then 
 						if labelValue ~= sliderValue then 
-							sliderValue:setValue(labelValue)
+							slider:setValue(labelValue)
 						end
 					end
 				end
@@ -288,13 +297,14 @@ function VehiclePerformanceGUI:reset(tabId)
 					labelValue = self.m_LabelValues[prop][i].m_RealValue
 					if labelValue then 
 						if labelValue ~= editValue then 
-							editValue:setText(labelValue)
+							editValue:setCaption(labelValue)
 						end
 					end
 				end
 			end
 		end
 	end
+	InfoBox:new(_"Handling wurde zurückgesetzt!")
 end
 
 function VehiclePerformanceGUI:transformRange(range)
@@ -303,4 +313,21 @@ end
 
 function VehiclePerformanceGUI:destructor()
 	GUIForm.destructor(self)
+end
+
+function VehiclePerformanceGUI:Event_UpdateGUI( vehicle, handling )
+	if vehicle == self.m_Vehicle then 
+		self:updateValues(vehicle, handling)
+	end
+	InfoBox:new(_"Handling wurde aktualisiert!")
+end
+
+
+function VehiclePerformanceGUI:Event_UpdateHandling( vehicle, handling )
+	if vehicle == self.m_Vehicle then 
+		self.m_Handling = handling or self.m_Vehicle:getHandling()
+		self:setupPanels()
+		self:updateValues(self.m_Vehicle, handling)
+	end
+	InfoBox:new(_"Handling wurde vom Server aktualisiert!")
 end

@@ -255,7 +255,7 @@ VEHICLE_TUNINGKIT_DESCRIPTION = {
 		"Die Dämpffähigkeit deiner Federung!",
 	},
 	["suspensionLowerLimit"] = { 
-		{-2, 2}, -- range
+		{-0.2, 0.2}, -- range
 		"Die Länge deiner Federung und damit Höhe des Fahrwerks!",
 	},
 	["suspensionFrontRearBias"] = { 

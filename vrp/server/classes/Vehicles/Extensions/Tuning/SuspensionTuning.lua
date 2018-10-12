@@ -15,7 +15,14 @@
 ]]--
 
 SuspensionTuning = inherit( Object )
-
+SuspensionTuning.Properties = 
+{
+    ["suspensionForceLevel"] = true, 
+    ["steeringLock"] = true,
+    ["suspensionDamping"] = true,
+    ["suspensionLowerLimit"] = true,
+    ["suspensionFrontRearBias"] = true,
+}
 function SuspensionTuning:constructor( vehicle, suspensionStretch, suspensionBias, damping, steer, suspensionHeight ) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
@@ -95,7 +102,7 @@ end
 
 function SuspensionTuning:setSuspensionHeight( suspensionValue )
     if not suspensionValue or not tonumber(suspensionValue) then return end
-    self.m_SuspensionHeight = math.clamp(-50, steerValue, 50) 
+    self.m_SuspensionHeight = math.clamp(-50, suspensionValue, 50) 
     self.m_Vehicle:setHandling("suspensionLowerLimit", self.m_SuspensionHeight)
 end
 

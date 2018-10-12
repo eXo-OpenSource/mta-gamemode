@@ -26,7 +26,9 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", 
+					"vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", 
+					"clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -56,7 +58,8 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 	addEventHandler("vehicleSetVariant", root, bind(self.Event_SetVariant, self))
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
-
+	addEventHandler("vehicleSetTuningPropertyTable", root, bind(self.Event_SetPerformanceTuningTable, self))
+	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
 	addEventHandler("clientToggleVehicleEngine", root,
 		function()
 			if client.vehicleSeat ~= 0 then return end
@@ -211,6 +214,16 @@ end
 
 function VehicleManager:Event_MagnetVehicleCheck(groundPosition)
 	source:magnetVehicleCheck(groundPosition)
+end
+
+function VehicleManager:Event_GetVehicleHandling( vehicle )
+
+	outputChatBox("HERE")
+	client:triggerEvent("updateVehicleHandling", vehicle, vehicle:getHandling())
+end
+
+function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable )
+	vehicle:getTunings():setPerformanceTuningTable( tuningTable, client )
 end
 
 function VehicleManager:getFactionVehicles(factionId)

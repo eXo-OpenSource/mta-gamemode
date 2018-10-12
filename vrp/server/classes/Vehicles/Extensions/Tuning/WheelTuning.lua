@@ -8,7 +8,11 @@
 
 
 WheelTuning = inherit( Object )
-
+WheelTuning.Properties = 
+{
+    ["tractionMultiplier"] = true, 
+    ["tractionBias"] = true,
+}
 function WheelTuning:constructor( vehicle, traction, tractionBias ) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
@@ -27,6 +31,7 @@ function WheelTuning:destructor()
 end
 
 function WheelTuning:setTraction( tractionValue  ) 
+    if not tractionValue or not tonumber(tractionValue) then return end
     self.m_Traction = math.clamp(-100000.0, tractionValue, 100000.0) 
     self.m_Vehicle:setHandling("tractionMultiplier", self.m_Traction)
 end

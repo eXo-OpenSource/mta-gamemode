@@ -24,7 +24,11 @@
 ]]--
 
 BrakeTuning = inherit( Object )
-
+BrakeTuning.Properties = 
+{
+    ["brakeDeceleration"] = true, 
+    ["brakeBias"] = true,
+}
 function BrakeTuning:constructor( vehicle, strength, bias) 
     self.m_Vehicle = vehicle
     self.m_Handling = getOriginalHandling(vehicle:getModel())
