@@ -198,6 +198,7 @@ function Faction:getSkinsForRank(rank)
 end
 
 function Faction:changeSkin(player, skinId)
+	if not player or not isElement(player) or getElementType(player) ~= "player" then return false end
 	local playerRank = self:getPlayerRank(player)
 	if not skinId then skinId = self:getSkinsForRank(playerRank)[1] end
 	if self.m_Skins[skinId] then

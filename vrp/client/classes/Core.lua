@@ -89,7 +89,7 @@ function Core:ready() --onClientResourceStart
 	})
 
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH, "i.imgur.com"}
+	Browser.requestDomains{"exo-reallife.de", "forum.exo-reallife.de", INGAME_WEB_PATH:gsub("https://", ""), "i.imgur.com"}
 	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
