@@ -12,6 +12,7 @@ function TuningTemplate:constructor( name, model, data, creator, time, id)
     self.m_Model = model
     self.m_Tunings = data
     self.m_Creator = creator
+    self.m_CreatorName = Account.getNameFromId(creator)
     self.m_Time = time
     self.m_Id = id
 end

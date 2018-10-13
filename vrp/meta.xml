@@ -778,6 +778,7 @@
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningShowGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleTuningTemplateGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleCustomTextureGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>

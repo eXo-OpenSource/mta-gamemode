@@ -7,10 +7,11 @@
 -- ****************************************************************************
 TuningTemplateManager = inherit( Singleton )
 
+addRemoteEvents{"requestHandlingTemplates"}
 function TuningTemplateManager:constructor( )
     self.m_Templates = {}
     self:collect()
-
+    addEventHandler("requestHandlingTemplates", root, bind(self.Event_onRequestTemplates, self))
 end
 
 function TuningTemplateManager:collect()
@@ -56,6 +57,10 @@ function TuningTemplateManager:applyTemplate( name, vehicle)
             end
         end
     end
+end
+
+function TuningTemplateManager:Event_onRequestTemplates( )
+    client:triggerEvent("onReceiveHandlingTemplates", self.m_Templates)
 end
 
 function TuningTemplateManager:destructor() 

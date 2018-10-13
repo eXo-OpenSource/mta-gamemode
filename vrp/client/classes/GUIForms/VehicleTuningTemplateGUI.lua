@@ -1,0 +1,126 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/VehicleTuningTemplateGUI.lua
+-- *  PURPOSE:     VehicleTuningTemplate-GUI, managing tuning templates 
+-- *
+-- ****************************************************************************
+
+VehicleTuningTemplateGUI = inherit(GUIForm)
+inherit(Singleton, VehicleTuningTemplateGUI)
+addRemoteEvents{"onReceiveHandlingTemplates"}
+function VehicleTuningTemplateGUI:constructor()
+	GUIWindow.updateGrid()
+	self.m_Width = grid("x", 16)
+	self.m_Height = grid("y", 12) 
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Admin: Fahrzeug-Menü", true, true, self)
+
+	self.m_Window:addBackButton(function ()  delete(self) AdminGUI:getSingleton():show() end)
+	
+	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Vorlagen", "Shop-Fahrzeuge"}) 
+	if self.m_TabPanel then
+		self.m_TabPanel:updateGrid()
+		
+		self.m_InfoLabel = GUIGridLabel:new(1, 1, 16, 1, "Es wurden 0 Performance-Tunings gefunden für 0 Modelle!", self.m_Tabs[1])
+		self.m_NameSearch = GUIGridEdit:new(1, 2, 11, 1, self.m_Tabs[1]):setCaption("Vorlage-Name")
+		self.m_ModelSearch = GUIGridEdit:new(12, 2, 2, 1, self.m_Tabs[1]):setCaption("Modell"):setNumeric(true)
+		self.m_SearchButton = GUIGridIconButton:new(14, 2, FontAwesomeSymbols.Search, self.m_Tabs[1]):setTooltip("Nach Vorlage anhand von Modell & Name suchen!", "top")
+		self.m_RefreshButton = GUIGridIconButton:new(15, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1]):setTooltip("Vorlagen manuell vom Server aktualisieren!", "top")
+		self.m_SearchButton.onLeftClick = function () self:onSearch() end
+		self.m_RefreshButton.onLeftClick = function() self:refresh() end
+
+		self.m_TemplateGrid = GUIGridGridList:new(1, 3, 15, 7, self.m_Tabs[1])
+		self.m_TemplateGrid:addColumn(_"Id", 0.1)
+		self.m_TemplateGrid:addColumn(_"Name", 0.6)
+		self.m_TemplateGrid:addColumn(_"Model", 0.3)
+		GUIGridRectangle:new(1, 10, 11, 1, Color.Grey, self.m_Tabs[1])
+		self.m_TemplateInfoLabel = GUIGridLabel:new(1, 10, 11, 1, "Vorlage #", self.m_Tabs[1]):setAlignX("center")
+		
+		self.m_ApplyButton = GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[1]):setTooltip("Auf aktuelles Fahrzeug anwenden", "bottom"):setBackgroundColor(Color.Green)
+		self.m_ResetButton = GUIGridIconButton:new(13, 10, FontAwesomeSymbols.Erase, self.m_Tabs[1]):setTooltip("Aktuelles Fahrzeug auf Original resetten", "bottom"):setBackgroundColor(Color.Orange)
+		self.m_TemplateSave = GUIGridIconButton:new(14, 10, FontAwesomeSymbols.Save, self.m_Tabs[1]):setTooltip("Vorlage überschreiben", "bottom"):setBackgroundColor(Color.Red)
+		self.m_TemplateDelete = GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Trash, self.m_Tabs[1]):setTooltip("Vorlage löschen", "bottom"):setBackgroundColor(Color.Red)
+	end
+
+	addEventHandler("onReceiveHandlingTemplates", root, bind(self.Event_GetHandlingTemplates, self))
+	triggerServerEvent("requestHandlingTemplates", root, localPlayer)
+end
+
+function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
+	local modelCount = 0
+	local totalCount = 0
+	if data then 
+		for model, subData in pairs(data) do 
+			modelCount = modelCount + 1
+			for name, content in pairs(subData) do
+				totalCount = totalCount + 1
+				local item = self.m_TemplateGrid:addItem(content.m_Id, name, model)
+				item.onLeftClick = function() self:onItemClick(name, model, content) end
+			end
+		end
+	end
+	local modelNoun = modelCount == 1 and "Modell" or "Modelle"
+	local verb = totalCount == 1 and "wurde" or "wurden"
+	self.m_InfoLabel:setText(("Es %s %i Performance-Tunings gefunden für %i %s!"):format(verb, totalCount, modelCount, modelNoun))
+end
+
+function VehicleTuningTemplateGUI:onSearch()
+	local name = self.m_NameSearch:getText()
+	local model = self.m_ModelSearch:getText()
+	if name == "" then 
+		
+	end
+end
+
+function VehicleTuningTemplateGUI:onItemClick(name, model, content)
+	if self.m_TemplateShortMessage then 
+		self.m_TemplateShortMessage:delete()
+	end
+	self.m_TemplateShortMessage = ShortMessage:new("", ("Performance-Vorlage: #%i"):format(content.m_Id), tocolor(140,40,0), -1, self.m_ClickBind, nil, nil, nil, true)
+	self.m_TemplateShortMessage:setText(("• Fahrzeug-Modell %s (%i) \n• Name %s\n• Erstellt von %s\n• Erstellt am: %s"):format(getVehicleNameFromModel(model) or "", model, name, content.m_CreatorName or "Invalid", getOpticalTimestamp(content.m_Time)))
+	self.m_TemplateInfoLabel:setText(("#%i %s"):format(content.m_Id, name))
+end
+
+function VehicleTuningTemplateGUI:searchModel()
+	
+end
+
+function VehicleTuningTemplateGUI:searchName()
+
+end
+
+function VehicleTuningTemplateGUI:mergeSearch(result, result2)
+	local results = { }
+	for i = 1, #result do 
+		for i = 1, #result2 do 
+			if result[i] == result[2] then 
+				table.insert(results, result[i])
+			end
+		end
+	end
+	return results
+end
+
+function VehicleTuningTemplateGUI:Event_GetHandlingTemplates( data )
+	if data then 
+		self.m_TemplateGrid:clear()
+		self:fillGrid( data )
+	end
+end
+
+function VehicleTuningTemplateGUI:refresh()
+	triggerServerEvent("requestHandlingTemplates", root, localPlayer)
+end
+
+function VehicleTuningTemplateGUI:onShow()
+	SelfGUI:getSingleton():addWindow(self)
+	self:refresh()
+end
+
+function VehicleTuningTemplateGUI:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
+end
+
