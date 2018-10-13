@@ -187,6 +187,10 @@
 	<script src="server/classes/UI/Blip.lua" type="server"/>
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 
+	<!-- Factory -->
+	<script src="server/classes/Factory/Factory.lua" type="server"/>
+	<script src="server/classes/Factory/FactoryManager.lua" type="server"/>
+
 	<!-- Gameplay -->
 
 	<!-- Race -->
@@ -843,6 +847,7 @@
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/FactoryGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
