@@ -132,6 +132,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
+	["vehicleMenu"] = RANK.Moderator,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,

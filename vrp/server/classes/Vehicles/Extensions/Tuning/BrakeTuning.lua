@@ -37,14 +37,9 @@ function BrakeTuning:constructor( vehicle, strength, bias)
 end
 
 function BrakeTuning:destructor()
-    local brake = self.m_Handling["brakeDeceleration"]
-    self.m_Vehicle:setHandling("brakeDeceleration", brake)
-
-    local bias = self.m_Handling["brakeBias"]
-    self.m_Vehicle:setHandling("brakeBias", bias)
-
-    self.m_Vehicle.m_Tunings:removeTuningKit( self )
-
+    for property, bool in pairs(BrakeTuning.Properties) do 
+        self.m_Vehicle:setHandling(property, self.m_Handling[property])
+    end
 end
 
 function BrakeTuning:setBrake( brakeValue )

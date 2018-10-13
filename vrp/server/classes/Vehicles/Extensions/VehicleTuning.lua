@@ -191,11 +191,21 @@ end
 function VehicleTuning:removeTuningKit( kit )
 	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
 		if class == kit then 
+			class:delete()
 			self.m_TuningKits[tuning] = nil
 		end
 	end
 	self:saveTuningKits()
 end
+
+function VehicleTuning:removeAllTuningKits()
+	for tuning, class in pairs(self.m_TuningKits) do -- loop through active tuning kits
+		class:delete()
+	end
+	self.m_TuningKits = {}
+	self:saveTuningKits()
+end
+
 
 function VehicleTuning:loadTuningFromVehicle()
 	self:saveColors()

@@ -28,7 +28,7 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", 
 					"vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", 
-					"clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling"}
+					"clientToggleHandbrake", "vehicleSetVariant", "vehicleSetTuningPropertyTable", "vehicleRequestHandling", "vehicleResetHandling"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -60,6 +60,7 @@ function VehicleManager:constructor()
 	addEventHandler("clientMagnetGrabVehicle", root, bind(self.Event_MagnetVehicleCheck, self))
 	addEventHandler("vehicleSetTuningPropertyTable", root, bind(self.Event_SetPerformanceTuningTable, self))
 	addEventHandler("vehicleRequestHandling", root, bind(self.Event_GetVehicleHandling, self))
+	addEventHandler("vehicleResetHandling", root, bind(self.Event_ResetVehicleHandling, self))
 	addEventHandler("clientToggleVehicleEngine", root,
 		function()
 			if client.vehicleSeat ~= 0 then return end
@@ -221,8 +222,21 @@ function VehicleManager:Event_GetVehicleHandling( vehicle )
 	client:triggerEvent("updateVehicleHandling", vehicle, vehicle:getHandling())
 end
 
+function VehicleManager:Event_ResetVehicleHandling( )
+	local vehicle = client:getOccupiedVehicle() or client:getContactElement() 
+	if vehicle and isElement(vehicle) and getElementType(vehicle) == "vehicle" then 
+		if vehicle.m_Tunings then 
+			vehicle.m_Tunings:removeAllTuningKits()
+			client:sendInfo(_("Fahrzeug wurde zurückgesetzt!", client, name))
+		end
+	end
+end
+
 function VehicleManager:Event_SetPerformanceTuningTable( vehicle, tuningTable, reset )
-	vehicle:getTunings():setPerformanceTuningTable( tuningTable, client, reset )
+	if not vehicle.m_Tunings then 
+        vehicle.m_Tunings = VehicleTuning:new(vehicle)
+    end
+	vehicle.m_Tunings:setPerformanceTuningTable( tuningTable, client, reset )
 end
 
 function VehicleManager:getFactionVehicles(factionId)

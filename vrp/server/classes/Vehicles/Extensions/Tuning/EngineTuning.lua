@@ -38,12 +38,13 @@ function EngineTuning:constructor( vehicle, acceleration, speed, type, inertia )
 end
 
 function EngineTuning:destructor()
-    local acceleration = self.m_Handling["engineAcceleration"]
-    local driveType = self.m_Handling["driveType"]
+    for property, bool in pairs(EngineTuning.Properties) do 
+        self.m_Vehicle:setHandling(property, self.m_Handling[property])
+    end
+
     self.m_Vehicle:setHandling("engineAcceleration", acceleration)
     self.m_Vehicle:setHandling("driveType", driveType)
     self.m_Vehicle:setData("TurboKit", 0, true)
-    self.m_Vehicle.m_Tunings:removeTuningKit( self )
 end
 
 function EngineTuning:setAcceleration( accelerationValue )

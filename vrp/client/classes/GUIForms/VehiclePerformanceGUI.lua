@@ -72,10 +72,10 @@ function VehiclePerformanceGUI:fillAllTabs(  )
 				self:fillTab(handling, self.m_ScrollAreas[i], i)
 			end
 			if self.m_Modify then
-				GUIGridRectangle:new(0, self.m_Offset, 12, 2, tocolor(0, 0, 0, 150), self.m_ScrollAreas[i])
+				GUIGridRectangle:new(0, self.m_Offset, 15, 2, tocolor(0, 0, 0, 150), self.m_ScrollAreas[i])
 				local submitButton = GUIGridButton:new(1, self.m_Offset+0.5, 4, 1, "Speichern", self.m_ScrollAreas[i]) 
 				submitButton.onLeftClick = function() self:submit( i ) end
-				local resetButton = GUIGridButton:new(7, self.m_Offset+0.5, 4, 1, "Reset", self.m_ScrollAreas[i]) 
+				local resetButton = GUIGridButton:new(10, self.m_Offset+0.5, 4, 1, "Reset", self.m_ScrollAreas[i]) 
 				resetButton.onLeftClick = function() self:reset( i ) end
 			end
 		else 
@@ -84,10 +84,10 @@ function VehiclePerformanceGUI:fillAllTabs(  )
 			self.m_Offset = 1
 			self:fillTab(VEHICLE_TUNINGKIT_CATEGORIES[VehiclePerformanceGUI.TabNames[i]], self.m_ScrollAreas[i], i)
 			if self.m_Modify then
-				GUIGridRectangle:new(0, self.m_Offset, 12, 2, tocolor(0, 0, 0, 150), self.m_ScrollAreas[i])
+				GUIGridRectangle:new(0, self.m_Offset, 15, 2, tocolor(0, 0, 0, 150), self.m_ScrollAreas[i])
 				local submitButton = GUIGridButton:new(1, self.m_Offset+0.5, 4, 1, "Speichern", self.m_ScrollAreas[i]) 
 				submitButton.onLeftClick = function() self:submit( i ) end
-				local resetButton = GUIGridButton:new(7, self.m_Offset+0.5, 4, 1, "Reset", self.m_ScrollAreas[i]) 
+				local resetButton = GUIGridButton:new(10, self.m_Offset+0.5, 4, 1, "Reset", self.m_ScrollAreas[i]) 
 				resetButton.onLeftClick = function() self:reset( i ) end
 			end
 		end

@@ -89,6 +89,8 @@ function AdminGUI:constructor(money)
 	self.m_PlayerID = GUIEdit:new(self.m_Width-225,  230, 200, 30, tabAllgemein):setNumeric(true):setText("ID des Spielers")
 	self:addAdminButton("loginFix", "Login-Fix", self.onGeneralButtonClick, self.m_Width-225, 265, 200, 30, Color.Orange, tabAllgemein)
 
+	self:addAdminButton("vehicleMenu", "Fahrzeug-Menü", self.onGeneralButtonClick, self.m_Width-225, 310, 210, 30, Color.Accent, tabAllgemein)
+
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
 	self.m_PlayerSearch = GUIEdit:new(10, 10, 200, 30, tabSpieler)
@@ -547,6 +549,9 @@ function AdminGUI:onGeneralButtonClick(func)
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "loginFix" then
 		triggerServerEvent("adminLoginFix", localPlayer, self.m_PlayerID:getText())
+	elseif func == "vehicleMenu" then 
+		self:close()
+		VehicleTuningTemplateGUI:getSingleton():open()
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()
 		if radius and tonumber(radius) and tonumber(radius) > 0 then

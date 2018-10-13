@@ -24,13 +24,9 @@ function WheelTuning:constructor( vehicle, traction, tractionBias, tractionLoss 
 end
 
 function WheelTuning:destructor()
-    local tractionBiasValue = self.m_Handling["tractionBias"]
-    self.m_Vehicle:setHandling("tractionBias", tractionBiasValue)
-
-    local tractionMultiply = self.m_Handling["tractionMultiplier"]
-    self.m_Vehicle:setHandling("tractionMultiplier", tractionMultiply)
-
-    self.m_Vehicle.m_Tunings:removeTuningKit( self )
+    for property, bool in pairs(WheelTuning.Properties) do 
+        self.m_Vehicle:setHandling(property, self.m_Handling[property])
+    end
 end
 
 function WheelTuning:setTraction( tractionValue  ) 

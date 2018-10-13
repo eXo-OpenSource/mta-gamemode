@@ -34,18 +34,9 @@ function SuspensionTuning:constructor( vehicle, suspensionStretch, suspensionBia
 end
 
 function SuspensionTuning:destructor()
-    local steer = self.m_Handling["steeringLock"]
-    local suspensionBiasValue = self.m_Handling["suspensionFrontRearBias"]
-    local suspensionForce = self.m_Handling["suspensionForceLevel"]
-    local suspensionDamping = self.m_Handling["suspensionDamping"]
-    local suspensionHeight =  self.m_Handling["suspensionLowerLimit"]
-    self.m_Vehicle:setHandling("steeringLock", steer)
-    self.m_Vehicle:setHandling("suspensionFrontRearBias", suspensionBiasValue)
-    self.m_Vehicle:setHandling("suspensionForceLevel", suspensionForce)
-    self.m_Vehicle:setHandling("suspensionDamping", suspensionDamping)
-    self.m_Vehicle:setHandling("suspensionLowerLimit", suspensionHeight)
-
-    self.m_Vehicle.m_Tunings:removeTuningKit( self )
+    for property, bool in pairs(SuspensionTuning.Properties) do 
+        self.m_Vehicle:setHandling(property, self.m_Handling[property])
+    end
 end
 
 function SuspensionTuning:setSuspension( suspensionValue ) 

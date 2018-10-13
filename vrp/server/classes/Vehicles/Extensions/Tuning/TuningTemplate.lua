@@ -31,6 +31,10 @@ function TuningTemplate:getId()
     return self.m_Id
 end
 
+function TuningTemplate:getVehicle()
+    return self.m_Model
+end
+
 function TuningTemplate:destructor() 
 
 end
