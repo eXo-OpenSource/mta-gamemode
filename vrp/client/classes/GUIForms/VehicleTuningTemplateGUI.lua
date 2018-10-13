@@ -23,44 +23,71 @@ function VehicleTuningTemplateGUI:constructor()
 	self.m_Tabs, self.m_TabPanel = self.m_Window:addTabPanel({"Vorlagen", "Entwicklung", "Shop-Fahrzeuge"}) 
 	if self.m_TabPanel then
 		self.m_TabPanel:updateGrid()
-		
-		self.m_InfoLabel = GUIGridLabel:new(1, 1, 16, 1, "Es wurden 0 Performance-Tunings gefunden für 0 Modelle!", self.m_Tabs[1])
-		self.m_NameSearch = GUIGridEdit:new(1, 2, 11, 1, self.m_Tabs[1]):setCaption("Vorlage-Name")
-		self.m_NameSearch.onChange = function () self:onSearch() end
-
-		self.m_ModelSearch = GUIGridEdit:new(12, 2, 2, 1, self.m_Tabs[1]):setCaption("Modell"):setNumeric(true)
-		self.m_ModelSearch.onChange = function () self:onSearch() end
-		
-		self.m_SearchButton = GUIGridIconButton:new(14, 2, FontAwesomeSymbols.Search, self.m_Tabs[1]):setTooltip("Nach Vorlage anhand von Modell & Name suchen!", "top")
-		self.m_RefreshButton = GUIGridIconButton:new(15, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1]):setTooltip("Vorlagen manuell vom Server aktualisieren!", "top")
-		self.m_SearchButton.onLeftClick = function () self:onSearch() end
-		self.m_RefreshButton.onLeftClick = function() self:refresh() end
-
-		self.m_TemplateGrid = GUIGridGridList:new(1, 3, 15, 7, self.m_Tabs[1])
-		self.m_TemplateGrid:addColumn(_"Id", 0.1)
-		self.m_TemplateGrid:addColumn(_"Name", 0.6)
-		self.m_TemplateGrid:addColumn(_"Model", 0.3)
-		GUIGridRectangle:new(1, 10, 11, 1, Color.Grey, self.m_Tabs[1])
-		self.m_TemplateInfoLabel = GUIGridLabel:new(1, 10, 11, 1, "Vorlage #", self.m_Tabs[1]):setAlignX("center")
-		
-		self.m_ApplyButton = GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[1]):setTooltip("Auf aktuelles Fahrzeug anwenden", "bottom"):setBackgroundColor(Color.Green)
-		self.m_ApplyButton.onLeftClick = function() self:applyClick() end
-
-		self.m_ResetButton = GUIGridIconButton:new(13, 10, FontAwesomeSymbols.Erase, self.m_Tabs[1]):setTooltip("Aktuelles Fahrzeug auf Original resetten", "bottom"):setBackgroundColor(Color.Orange)
-		self.m_ResetButton.onLeftClick = function() self:resetClick() end
-
-		self.m_TemplateSave = GUIGridIconButton:new(14, 10, FontAwesomeSymbols.Save, self.m_Tabs[1]):setTooltip("Vorlage überschreiben", "bottom"):setBackgroundColor(Color.Red)
-		self.m_TemplateSave.onLeftClick = function() self:saveClick() end
-		
-		self.m_TemplateDelete = GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Trash, self.m_Tabs[1]):setTooltip("Vorlage löschen", "bottom"):setBackgroundColor(Color.Red)
-		self.m_TemplateDelete.onLeftClick = function() self:deleteClick() end
-
-		self.m_SelectedName = ""
-		self.m_SelectedModel = 0 
+		self:setupTemplateTab()
+		self:setupShop()
 	end
 
 	addEventHandler("onReceiveHandlingTemplates", root, bind(self.Event_GetHandlingTemplates, self))
 	triggerServerEvent("requestHandlingTemplates", root, localPlayer)
+end
+
+function VehicleTuningTemplateGUI:setupTemplateTab()
+	self.m_InfoLabel = GUIGridLabel:new(1, 1, 16, 1, "Es wurden 0 Performance-Tunings gefunden für 0 Modelle!", self.m_Tabs[1])
+	self.m_NameSearch = GUIGridEdit:new(1, 2, 11, 1, self.m_Tabs[1]):setCaption("Vorlage-Name")
+	self.m_NameSearch.onChange = function () self:onSearch() end
+
+	self.m_ModelSearch = GUIGridEdit:new(12, 2, 2, 1, self.m_Tabs[1]):setCaption("Modell"):setNumeric(true)
+	self.m_ModelSearch.onChange = function () self:onSearch() end
+	
+	self.m_SearchButton = GUIGridIconButton:new(14, 2, FontAwesomeSymbols.Search, self.m_Tabs[1]):setTooltip("Nach Vorlage anhand von Modell & Name suchen!", "top")
+	self.m_RefreshButton = GUIGridIconButton:new(15, 2, FontAwesomeSymbols.Refresh, self.m_Tabs[1]):setTooltip("Vorlagen manuell vom Server aktualisieren!", "top")
+	self.m_SearchButton.onLeftClick = function () self:onSearch() end
+	self.m_RefreshButton.onLeftClick = function() self:refresh() end
+
+	self.m_TemplateGrid = GUIGridGridList:new(1, 3, 15, 7, self.m_Tabs[1])
+	self.m_TemplateGrid:addColumn(_"Id", 0.1)
+	self.m_TemplateGrid:addColumn(_"Name", 0.6)
+	self.m_TemplateGrid:addColumn(_"Model", 0.3)
+	GUIGridRectangle:new(1, 10, 11, 1, Color.Grey, self.m_Tabs[1])
+	self.m_TemplateInfoLabel = GUIGridLabel:new(1, 10, 11, 1, "Vorlage #", self.m_Tabs[1]):setAlignX("center")
+	
+	self.m_ApplyButton = GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[1]):setTooltip("Auf aktuelles Fahrzeug anwenden", "bottom"):setBackgroundColor(Color.Green)
+	self.m_ApplyButton.onLeftClick = function() self:applyClick() end
+
+	self.m_ResetButton = GUIGridIconButton:new(13, 10, FontAwesomeSymbols.Erase, self.m_Tabs[1]):setTooltip("Aktuelles Fahrzeug auf Original resetten", "bottom"):setBackgroundColor(Color.Orange)
+	self.m_ResetButton.onLeftClick = function() self:resetClick() end
+
+	self.m_TemplateSave = GUIGridIconButton:new(14, 10, FontAwesomeSymbols.Save, self.m_Tabs[1]):setTooltip("Vorlage überschreiben", "bottom"):setBackgroundColor(Color.Red)
+	self.m_TemplateSave.onLeftClick = function() self:saveClick() end
+	
+	self.m_TemplateDelete = GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Trash, self.m_Tabs[1]):setTooltip("Vorlage löschen", "bottom"):setBackgroundColor(Color.Red)
+	self.m_TemplateDelete.onLeftClick = function() self:deleteClick() end
+
+	self.m_SelectedName = ""
+	self.m_SelectedModel = 0 
+end
+
+function VehicleTuningTemplateGUI:setupShop()
+	
+	GUIGridEdit:new(1, 10, 3, 1, self.m_Tabs[3]):setCaption("Vorlagen-ID")
+	GUIGridIconButton:new(4, 10, FontAwesomeSymbols.Save, self.m_Tabs[3]):setTooltip("Vorlage anwenden", "bottom"):setBackgroundColor(Color.Green)
+	GUIGridIconButton:new(5, 10, FontAwesomeSymbols.Trash, self.m_Tabs[3]):setTooltip("Vorlage entfernen", "bottom"):setBackgroundColor(Color.Orange)
+
+	GUIGridEdit:new(6, 10, 3, 1, self.m_Tabs[3]):setCaption("Preis")
+	GUIGridIconButton:new(9, 10, FontAwesomeSymbols.Money, self.m_Tabs[3]):setTooltip("Preis anwenden", "bottom"):setBackgroundColor(Color.Green)
+
+	GUIGridEdit:new(10, 10, 2, 1, self.m_Tabs[3]):setCaption("Level")
+	GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
+
+	GUIGridEdit:new(13, 10, 2, 1, self.m_Tabs[3]):setCaption("Modell")
+	GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
+
+
+	local changer = GUIGridChanger:new(1, 1, 15, 1, self.m_Tabs[3])
+	GUIGridGridList:new(1, 2, 15, 8, self.m_Tabs[3])
+	changer:addItem("No 2")
+
+
 end
 
 function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
