@@ -18,7 +18,6 @@ function TuningTemplate:constructor( name, model, data, creator, time, id)
 end
 
 function TuningTemplate:applyTemplate(vehicle)
-    outputChatBox("applying template")
     if not vehicle.m_Tunings then 
         vehicle.m_Tunings = VehicleTuning:new(vehicle)
     end
