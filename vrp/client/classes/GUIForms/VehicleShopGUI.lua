@@ -70,7 +70,6 @@ function VehicleShopGUI:setVehicleList(list)
 			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..tostring(v[i][2])):setColumnAlignX(3, "right")
 			item.VehicleId = k
 			item.VehicleIndex = i
-			outputChatBox(i.."index")
 			item.onLeftClick = function()
 				self.m_CurrentVehicle = v[i][1]
 				if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
