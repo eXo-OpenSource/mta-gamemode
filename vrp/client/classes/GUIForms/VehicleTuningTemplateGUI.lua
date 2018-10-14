@@ -70,44 +70,51 @@ function VehicleTuningTemplateGUI:setupTemplateTab()
 end
 
 function VehicleTuningTemplateGUI:setupShop()
-	
-	GUIGridEdit:new(1, 10, 3, 1, self.m_Tabs[3]):setCaption("Vorlagen-ID")
-	GUIGridIconButton:new(4, 10, FontAwesomeSymbols.Save, self.m_Tabs[3]):setTooltip("Vorlage anwenden", "bottom"):setBackgroundColor(Color.Green)
-	GUIGridIconButton:new(5, 10, FontAwesomeSymbols.Trash, self.m_Tabs[3]):setTooltip("Vorlage entfernen", "bottom"):setBackgroundColor(Color.Orange)
+	self.m_ShopInfoLabel = GUIGridLabel:new(1, 1, 16, 1, "Es wurden 0 Shops gefunden mit 0 Fahrzeugen!", self.m_Tabs[3])
 
-	GUIGridEdit:new(6, 10, 3, 1, self.m_Tabs[3]):setCaption("Preis")
-	GUIGridIconButton:new(9, 10, FontAwesomeSymbols.Money, self.m_Tabs[3]):setTooltip("Preis anwenden", "bottom"):setBackgroundColor(Color.Green)
+	self.m_ShopTemplateEdit = GUIGridEdit:new(1, 10, 3, 1, self.m_Tabs[3]):setCaption("Vorlagen-ID"):setNumeric(true)
+	local btn = GUIGridIconButton:new(4, 10, FontAwesomeSymbols.Save, self.m_Tabs[3]):setTooltip("Vorlage anwenden", "bottom"):setBackgroundColor(Color.Green)
+	btn.onLeftClick = function() self:onShopEditClick( "template-add" ) end
 
-	GUIGridEdit:new(10, 10, 2, 1, self.m_Tabs[3]):setCaption("Level")
-	GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
+	local btn = GUIGridIconButton:new(5, 10, FontAwesomeSymbols.Trash, self.m_Tabs[3]):setTooltip("Vorlage entfernen", "bottom"):setBackgroundColor(Color.Orange)
+	btn.onLeftClick = function() self:onShopEditClick( "template-remove" ) end
 
-	GUIGridEdit:new(13, 10, 2, 1, self.m_Tabs[3]):setCaption("Modell")
-	GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
+	self.m_ShopPriceEdit = GUIGridEdit:new(6, 10, 3, 1, self.m_Tabs[3]):setCaption("Preis"):setNumeric(true)
+	local btn  = GUIGridIconButton:new(9, 10, FontAwesomeSymbols.Money, self.m_Tabs[3]):setTooltip("Preis anwenden", "bottom"):setBackgroundColor(Color.Green)
+	btn.onLeftClick = function() self:onShopEditClick( "price" ) end
+
+	self.m_ShopLevelEdit  = GUIGridEdit:new(10, 10, 2, 1, self.m_Tabs[3]):setCaption("Level"):setNumeric(true)
+	local btn = GUIGridIconButton:new(12, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Level anwenden", "bottom"):setBackgroundColor(Color.Green)
+	btn.onLeftClick = function() self:onShopEditClick( "level" ) end
+
+	self.m_ShopModelEdit = GUIGridEdit:new(13, 10, 2, 1, self.m_Tabs[3]):setCaption("Modell"):setNumeric(true)
+	local btn = GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
+	btn.onLeftClick = function() self:onShopEditClick( "model" ) end
 
 
-	self.m_ShopChanger = GUIGridChanger:new(1, 1, 15, 1, self.m_Tabs[3])
+	self.m_ShopChanger = GUIGridChanger:new(1, 2, 15, 1, self.m_Tabs[3])
 	self.m_ShopChanger.onChange = function()  self:addShopGrid(self.m_ShopChanger:getSelectedItem()) end
-	self.m_ShopGrid = GUIGridGridList:new(1, 2, 15, 8, self.m_Tabs[3])
+	self.m_ShopGrid = GUIGridGridList:new(1, 3, 15, 7, self.m_Tabs[3])
 	self.m_ShopGrid:addColumn(_"Id", 0.1)
-	self.m_ShopGrid:addColumn(_"Model", 0.3)
+	self.m_ShopGrid:addColumn(_"Model", 0.2)
 	self.m_ShopGrid:addColumn(_"Preis", 0.2)
-	self.m_ShopGrid:addColumn(_"Level", 0.2)
-	self.m_ShopGrid:addColumn(_"Vorlage", 0.2)
+	self.m_ShopGrid:addColumn(_"Level", 0.1)
+	self.m_ShopGrid:addColumn(_"Vorlage", 0.4)
 end
 
 function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
 	local modelCount = 0
 	local totalCount = 0
 	local checkIfModelNotEmpty = false
-	if data then 
+	if data then
 		for model, subData in pairs(data) do 
 			checkIfModelNotEmpty = false
 			for name, content in pairs(subData) do
 				if name:find(self.m_NameSearch:getText()) and (self.m_ModelSearch:getText() == "" or tonumber(self.m_ModelSearch:getText()) == model) then
 					if not checkIfModelNotEmpty then 
 						checkIfModelNotEmpty = true
-						modelCount = modelCount + 1
-					end
+							modelCount = modelCount + 1
+						end
 					totalCount = totalCount + 1
 					local item = self.m_TemplateGrid:addItem(content.m_Id, name, model)
 					item.onLeftClick = function() self:onItemClick(name, model, content) end
@@ -123,26 +130,44 @@ end
 
 function VehicleTuningTemplateGUI:fillShopGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
 	self.m_ShopVehicles = {}
-	if data then 
+	local vehicleCount = 0
+	local shopCount = 0
+	if data then
 		for id, shop in pairs(data) do 
+			shopCount = shopCount + 1
 			self.m_ShopChanger:addItem(shop.m_Name)
 			self.m_ShopVehicles[shop.m_Name] = {}
-			for model, data in pairs(shop.m_VehicleList) do 
-				table.insert(self.m_ShopVehicles[shop.m_Name], {data.id, model, data.price, data.level, data.template})
+			for model, subdata in pairs(shop.m_VehicleList) do
+				for i = 1, #subdata do
+					vehicleCount = vehicleCount + 1
+					table.insert(self.m_ShopVehicles[shop.m_Name], {subdata[i].id, model, subdata[i].price, subdata[i].level, subdata[i].template, i, shop.m_Id})
+				end
 			end
 		end
 	end
-	self.m_ShopChanger:setSelectedItem(1)
-	self:addShopGrid(self.m_ShopChanger:getSelectedItem())
+	if shopCount > 0 then
+		self.m_ShopChanger:setSelectedItem(1)
+		self:addShopGrid(self.m_ShopChanger:getSelectedItem())
+	end
+	local modelNoun = shopCount == 1 and "Shop" or "Shops"
+	local verb = shopCount == 1 and "wurde" or "wurden"
+	local modelNoun2 = vehicleCount == 1 and "Fahrzeug" or "Fahrzeugen"
+	self.m_ShopInfoLabel:setText(("Es %s %i %s gefunden mit %i %s!"):format(verb, shopCount, modelNoun, vehicleCount, modelNoun2))
 end
 
 function VehicleTuningTemplateGUI:addShopGrid( name )
 	self.m_ShopGrid:clear()
+	self:resetShopEdits()
 	local id, model, price, level
-	if self.m_ShopVehicles[name] then 
+	if self.m_ShopVehicles[name] then
 		for id, data in ipairs(self.m_ShopVehicles[name]) do 
-			id, model, price, level, template = unpack(data)
-			self.m_ShopGrid:addItem(id, getVehicleNameFromModel(model), ("$%i"):format(price), level, template or 0)
+			id, model, price, level, template, index, shop = unpack(data)
+			if template == "" then template = "Standard" end
+			local item = self.m_ShopGrid:addItem(id, getVehicleNameFromModel(model), ("$%i"):format(price), level, template)
+			item.index = index 
+			item.model = model
+			item.shop = shop
+			item.onLeftClick = function() self:onItemShopClick(item) end
 		end
 	end
 end
@@ -164,6 +189,44 @@ function VehicleTuningTemplateGUI:onItemClick(name, model, content)
 	self.m_SelectedName = name
 	self.m_SelectedModel = model
 end
+
+function VehicleTuningTemplateGUI:onItemShopClick(item) 
+	self:resetShopEdits()
+	self.m_LastShopShop = item.shop -- yea i know
+	self.m_LastShopIndex = item.index 
+	self.m_LastShopModel = item.model
+end
+
+function VehicleTuningTemplateGUI:onShopEditClick( edit )
+	if self.m_LastShopShop and self.m_LastShopIndex and self.m_LastShopModel then
+		local value
+		if edit == "template-add" then 
+			value = tonumber(self.m_ShopTemplateEdit:getText())
+		elseif edit == "template-remove" then
+			value = -1
+		elseif edit == "price" then 
+			value = tonumber(self.m_ShopPriceEdit:getText())
+		elseif edit == "level" then 
+			value = tonumber(self.m_ShopLevelEdit:getText())
+		else 
+			value = tonumber(self.m_ShopModelEdit:getText())
+		end
+		if value then
+			triggerServerEvent("editVehicleShop", localPlayer, self.m_LastShopShop, self.m_LastShopModel, self.m_LastShopIndex, edit, value)
+		end
+	end
+end
+
+function VehicleTuningTemplateGUI:resetShopEdits()
+	self.m_LastShopShop = false -- yea i know
+	self.m_LastShopIndex = false 
+	self.m_LastShopModel = false
+	self.m_ShopModelEdit:setText("")
+	self.m_ShopLevelEdit:setText("")
+	self.m_ShopPriceEdit:setText("")
+	self.m_ShopTemplateEdit:setText("")
+end
+
 
 function VehicleTuningTemplateGUI:saveClick()
 	local vehicle = localPlayer:getOccupiedVehicle() or localPlayer:getContactElement()  
@@ -233,6 +296,7 @@ end
 
 function VehicleTuningTemplateGUI:Event_GetVehicleShops( data )
 	if data then 
+		self.m_ShopGrid:clear()
 		self:fillShopGrid( data )
 	end
 end

@@ -27,6 +27,16 @@ function TuningTemplateManager:collect()
     end
 end
 
+function TuningTemplateManager:getNameFromId( id ) 
+    local name = self:getTemplateFromId(id) and self:getTemplateFromId(id):getName()
+    return name 
+end
+
+function TuningTemplateManager:getVehicleFromId( id ) 
+    local name = self:getTemplateFromId(id) and self:getTemplateFromId(id):getVehicle()
+    return name 
+end
+
 function TuningTemplateManager:addTemplate( name, data, model, creator, time, id)
     local timeStamp = getRealTime().timestamp
     if not self.m_Templates[model] then 
@@ -73,6 +83,19 @@ function TuningTemplateManager:applyTemplate( name, vehicle)
             if self.m_Templates[vehicle:getModel()][name] then 
                 self.m_Templates[vehicle:getModel()][name]:applyTemplate(vehicle) 
                 return true
+            end
+        end
+    end
+    return false
+end
+
+function TuningTemplateManager:getTemplateFromId( id )
+    if id then 
+        for model, data in pairs(self.m_Templates) do 
+            for name, subdata in pairs(data) do 
+                if subdata:getId() == id then 
+                    return subdata
+                end
             end
         end
     end

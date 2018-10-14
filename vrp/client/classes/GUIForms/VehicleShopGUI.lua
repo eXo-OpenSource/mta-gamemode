@@ -42,7 +42,6 @@ end
 
 function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
-		outputChatBox(item.VehicleIndex.." bought ")
 		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId, item.VehicleIndex)
 	end
 end

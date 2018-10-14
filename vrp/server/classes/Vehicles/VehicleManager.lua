@@ -259,7 +259,7 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
-function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex, price)
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex, price, template)
 	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
 	if type(ownerId) == "userdata" then
 		ownerId = ownerId:getId()
@@ -274,12 +274,12 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local shopIndex = shopIndex or 1
 	
 	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
-		return self:createVehicle(sql:lastInsertId())
+		return self:createVehicle(sql:lastInsertId(), template)
 	end
 	return false
 end
 
-function VehicleManager:createVehicle(idOrData)
+function VehicleManager:createVehicle(idOrData, handlingTemplate)
 	local data = {}
 	if type(idOrData) == "number" then
 		data = sql:queryFetchSingle("SELECT * FROM ??_vehicles WHERE Id = ? AND Deleted IS NULL", sql:getPrefix(), idOrData)
@@ -305,7 +305,12 @@ function VehicleManager:createVehicle(idOrData)
 			vehicle:setInterior(data.Interior or 0)
 			vehicle:setDimension(data.Dimension or 0)
 		end
-
+		if handlingTemplate then
+			local template = TuningTemplateManager:getSingleton():getTemplateFromId( handlingTemplate )
+			if template then 
+				template:applyTemplate(vehicle)
+			end
+		end
 		local pershingSquareSpecialCase = false
 		if data.PosX > 1399.40 and data.PosX <= 1559 then
 			if data.PosY > -1835 and data.PosY < -1742 then
