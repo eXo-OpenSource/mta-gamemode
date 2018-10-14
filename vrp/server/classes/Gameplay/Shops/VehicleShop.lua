@@ -56,9 +56,9 @@ function VehicleShop:getName()
 	return self.m_Name
 end
 
-function VehicleShop:getVehiclePrice(model)
-	if self.m_VehicleList[model] and self.m_VehicleList[model].price then
-		return self.m_VehicleList[model].price
+function VehicleShop:getVehiclePrice(model, index)
+	if self.m_VehicleList[model] and self.m_VehicleList[model][index] and self.m_VehicleList[model][index].price then
+		return self.m_VehicleList[model][index].price
 	else
 		return false
 	end
@@ -70,15 +70,19 @@ function VehicleShop:onMarkerHit(hitElement, dim)
 
 		local vehicles = {}
 		for model, vehicleData in pairs(self.m_VehicleList) do
-			vehicles[model] = {vehicleData.vehicle, vehicleData.price, vehicleData.level}
+			if not vehicles[model] then 
+				vehicles[model] = {}
+			end
+			for i = 1, #self.m_VehicleList[model] do 
+				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level, index}
+			end
 		end
-
 		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
 	end
 end
 
-function VehicleShop:buyVehicle(player, vehicleModel)
-	local price, requiredLevel = self.m_VehicleList[vehicleModel].price, self.m_VehicleList[vehicleModel].level
+function VehicleShop:buyVehicle(player, vehicleModel, index)
+	local price, requiredLevel = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level
 	if not price then return end
 
 	if player:getVehicleLevel() < requiredLevel then
@@ -92,10 +96,10 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 	end
 	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
-		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, index)
 		if vehicle then
 			if player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell") then
-				vehicle:setColor(self.m_VehicleList[vehicleModel].vehicle:getColor(true))
+				vehicle:setColor(self.m_VehicleList[vehicleModel][index].vehicle:getColor(true))
 				vehicle.m_Tunings:saveColors()
 				vehicle:save()
 				setTimer(function(player, vehicle)
@@ -121,13 +125,19 @@ function VehicleShop:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot)
-	self.m_VehicleList[Model] = {}
-	self.m_VehicleList[Model].price = Price
-	self.m_VehicleList[Model].level = Level
-	self.m_VehicleList[Model].vehicle = TemporaryVehicle.create(Model, Pos, Rot)
+function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot, Template)
+	if not self.m_VehicleList[Model] then 
+		self.m_VehicleList[Model] = {}
+	end
+	local index = #self.m_VehicleList[Model]+1
+	self.m_VehicleList[Model][index] = {}
+	self.m_VehicleList[Model][index].price = Price
+	self.m_VehicleList[Model][index].id = Id
+	self.m_VehicleList[Model][index].template = Template or 0
+	self.m_VehicleList[Model][index].level = Level
+	self.m_VehicleList[Model][index].vehicle = TemporaryVehicle.create(Model, Pos, Rot)
 
-	local veh = self.m_VehicleList[Model].vehicle
+	local veh = self.m_VehicleList[Model][index].vehicle
 	veh.m_DisableToggleEngine = true
 	veh.m_DisableToggleHandbrake = true
 	veh:setLocked(true)

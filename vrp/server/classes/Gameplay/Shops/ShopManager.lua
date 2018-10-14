@@ -14,7 +14,8 @@ function ShopManager:constructor()
 	self:loadVehicleShops()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyWeapon", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder"
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection", "ammunationBuyItem", "onAmmunationAppOrder", 
+	"requestVehicleShops"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -39,7 +40,7 @@ function ShopManager:constructor()
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
 	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
 	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
-
+	addEventHandler("requestVehicleShops", root, bind(self.onRequestVehicleShops, self))
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
 			ShopManager.Map[id]:onItemMarkerHit(client, true)
@@ -103,11 +104,14 @@ function ShopManager:getFromId(id, vehicle)
 	end
 end
 
+function ShopManager:onRequestVehicleShops()
+	client:triggerEvent("onReceiveVehicleShops", ShopManager.VehicleShopsMap)
+end
 
-function ShopManager:vehicleBuy(shopId, vehicleModel)
+function ShopManager:vehicleBuy(shopId, vehicleModel, vehicleIndex)
 	if client:isDead() then return false end
 	if not self:getFromId(shopId, true) then return end
-	self:getFromId(shopId, true):buyVehicle(client, vehicleModel)
+	self:getFromId(shopId, true):buyVehicle(client, vehicleModel, vehicleIndex or 1)
 end
 
 function ShopManager:foodShopBuyMenu(shopId, menu)

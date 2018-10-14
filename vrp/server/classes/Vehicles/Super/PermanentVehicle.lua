@@ -69,6 +69,7 @@ function PermanentVehicle:constructor(data)
 	self.m_OwnerType = data.OwnerType
 	self.m_Premium = data.Premium ~= 0
 	self.m_PremiumId = data.Premium
+	self.m_ShopIndex = data.ShopIndex or 1
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
@@ -178,6 +179,10 @@ end
 
 function PermanentVehicle:getTunings()
 	return self.m_Tunings
+end
+
+function PermanentVehicle:getShopIndex()
+	return self.m_ShopIndex or 1
 end
 
 function PermanentVehicle:getKeyNameList()

@@ -62,16 +62,21 @@ function VehicleShopGUI:setVehicleList(list)
 	-- Clear old data
 	self.m_VehicleList:clear()
 
+	local vehicleCount = 0
+	print(inspect(list))
 	for k, v in pairs(list) do
-		local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[3], "$"..tostring(v[2])):setColumnAlignX(3, "right")
-		item.VehicleId = k
-		item.onLeftClick = function()
-			self.m_CurrentVehicle = v[1]
-			if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
-			self.m_InfoInstance:updateVehicle(v[1])
-			self:updateMatrix()
+		for i = 1, #v do 
+			vehicleCount = vehicleCount + 1
+			local item = self.m_VehicleList:addItem(VehicleCategory:getSingleton():getModelName(k), v[i][3], "$"..tostring(v[i][2])):setColumnAlignX(3, "right")
+			item.VehicleId = vehicleCount
+			item.onLeftClick = function()
+				self.m_CurrentVehicle = v[i][1]
+				if not self.m_InfoInstance then self.m_InfoInstance = VehicleShopInfoGUI:new(self.m_CurrentVehicle) end
+				self.m_InfoInstance:updateVehicle(v[i][1])
+				self:updateMatrix()
+			end
+			item.onLeftDoubleClick = bind(self.buyVehicle, self)
 		end
-		item.onLeftDoubleClick = bind(self.buyVehicle, self)
 	end
 end
 

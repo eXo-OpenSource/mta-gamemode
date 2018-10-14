@@ -259,7 +259,7 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
-function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium)
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex)
 	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
 	if type(ownerId) == "userdata" then
 		ownerId = ownerId:getId()
@@ -271,8 +271,9 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local rotY = rotY or 0
 	local rotZ = rotZ or 0
 	local premium = premium or 0
-
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]')", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium) then
+	local shopIndex = shopIndex or 1
+	
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex) then
 		return self:createVehicle(sql:lastInsertId())
 	end
 	return false
@@ -1086,16 +1087,16 @@ function VehicleManager:Event_vehicleSell()
 		return
 	end
 	-- Search for price in vehicle shops table
-	local getPrice = function(model)
+	local getPrice = function(model, index)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model) then
-				return shop:getVehiclePrice(model)
+			if shop:getVehiclePrice(model, index) then
+				return shop:getVehiclePrice(model, index)
 			end
 		end
 		return false
 	end
 
-	local price = getPrice(source:getModel()) or 0
+	local price = getPrice(source:getModel(),source:getShopIndex() or 1) or 0
 	if price > 0 then
 		QuestionBox:new(client, client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	else
@@ -1112,16 +1113,16 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		return
 	end
 	-- Search for price in vehicle shops table
-	local getPrice = function(model)
+	local getPrice = function(model, index)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model) then
-				return shop:getVehiclePrice(model)
+			if shop:getVehiclePrice(model, index) then
+				return shop:getVehiclePrice(model, index)
 			end
 		end
 		return false
 	end
 
-	local price = getPrice(veh:getModel()) or 0
+	local price = getPrice(veh:getModel(), veh:getShopIndex()) or 0
 	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
 
 	if price then

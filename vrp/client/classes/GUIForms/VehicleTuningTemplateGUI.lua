@@ -8,7 +8,7 @@
 
 VehicleTuningTemplateGUI = inherit(GUIForm)
 inherit(Singleton, VehicleTuningTemplateGUI)
-addRemoteEvents{"onReceiveHandlingTemplates"}
+addRemoteEvents{"onReceiveHandlingTemplates", "onReceiveVehicleShops"}
 function VehicleTuningTemplateGUI:constructor()
 	GUIWindow.updateGrid()
 	self.m_Width = grid("x", 16)
@@ -28,7 +28,9 @@ function VehicleTuningTemplateGUI:constructor()
 	end
 
 	addEventHandler("onReceiveHandlingTemplates", root, bind(self.Event_GetHandlingTemplates, self))
+	addEventHandler("onReceiveVehicleShops", root, bind(self.Event_GetVehicleShops, self))
 	triggerServerEvent("requestHandlingTemplates", root, localPlayer)
+	triggerServerEvent("requestVehicleShops", root, localPlayer)
 end
 
 function VehicleTuningTemplateGUI:setupTemplateTab()
@@ -83,11 +85,14 @@ function VehicleTuningTemplateGUI:setupShop()
 	GUIGridIconButton:new(15, 10, FontAwesomeSymbols.Check, self.m_Tabs[3]):setTooltip("Modell anwenden", "bottom"):setBackgroundColor(Color.Green)
 
 
-	local changer = GUIGridChanger:new(1, 1, 15, 1, self.m_Tabs[3])
-	GUIGridGridList:new(1, 2, 15, 8, self.m_Tabs[3])
-	changer:addItem("No 2")
-
-
+	self.m_ShopChanger = GUIGridChanger:new(1, 1, 15, 1, self.m_Tabs[3])
+	self.m_ShopChanger.onChange = function()  self:addShopGrid(self.m_ShopChanger:getSelectedItem()) end
+	self.m_ShopGrid = GUIGridGridList:new(1, 2, 15, 8, self.m_Tabs[3])
+	self.m_ShopGrid:addColumn(_"Id", 0.1)
+	self.m_ShopGrid:addColumn(_"Model", 0.3)
+	self.m_ShopGrid:addColumn(_"Preis", 0.2)
+	self.m_ShopGrid:addColumn(_"Level", 0.2)
+	self.m_ShopGrid:addColumn(_"Vorlage", 0.2)
 end
 
 function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
@@ -115,10 +120,37 @@ function VehicleTuningTemplateGUI:fillGrid( data ) -- [ Table-structure: data [ 
 	self.m_InfoLabel:setText(("Es %s %i Performance-Tunings gefunden für %i %s!"):format(verb, totalCount, modelCount, modelNoun))
 end
 
+
+function VehicleTuningTemplateGUI:fillShopGrid( data ) -- [ Table-structure: data [ model ] [ name ] = { Id, Handling} ]
+	self.m_ShopVehicles = {}
+	if data then 
+		for id, shop in pairs(data) do 
+			self.m_ShopChanger:addItem(shop.m_Name)
+			self.m_ShopVehicles[shop.m_Name] = {}
+			for model, data in pairs(shop.m_VehicleList) do 
+				table.insert(self.m_ShopVehicles[shop.m_Name], {data.id, model, data.price, data.level, data.template})
+			end
+		end
+	end
+	self.m_ShopChanger:setSelectedItem(1)
+	self:addShopGrid(self.m_ShopChanger:getSelectedItem())
+end
+
+function VehicleTuningTemplateGUI:addShopGrid( name )
+	self.m_ShopGrid:clear()
+	local id, model, price, level
+	if self.m_ShopVehicles[name] then 
+		for id, data in ipairs(self.m_ShopVehicles[name]) do 
+			id, model, price, level, template = unpack(data)
+			self.m_ShopGrid:addItem(id, getVehicleNameFromModel(model), ("$%i"):format(price), level, template or 0)
+		end
+	end
+end
+
 function VehicleTuningTemplateGUI:onSearch()
-	if self.m_GridData then
+	if self.m_TemplateGridData then
 		self.m_TemplateGrid:clear()
-		self:fillGrid( self.m_GridData )
+		self:fillGrid( self.m_TemplateGridData )
 	end
 end
 
@@ -192,14 +224,22 @@ end
 
 function VehicleTuningTemplateGUI:Event_GetHandlingTemplates( data )
 	if data then 
-		self.m_GridData = data
+		self.m_TemplateGridData = data
 		self.m_TemplateGrid:clear()
 		self:fillGrid( data )
 	end
 end
 
+
+function VehicleTuningTemplateGUI:Event_GetVehicleShops( data )
+	if data then 
+		self:fillShopGrid( data )
+	end
+end
+
 function VehicleTuningTemplateGUI:refresh()
-	triggerServerEvent("requestHandlingTemplates", root, localPlayer)
+	triggerServerEvent("requestHandlingTemplates", localPlayer)
+	triggerServerEvent("requestVehicleShops", localPlayer)
 end
 
 function VehicleTuningTemplateGUI:onShow()
