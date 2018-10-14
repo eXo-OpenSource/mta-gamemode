@@ -231,6 +231,8 @@
 	<script src="server/classes/Gameplay/Skydiving.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchHalloween.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>

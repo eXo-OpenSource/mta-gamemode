@@ -70,10 +70,24 @@ DeathmatchManager.Maps = {
 			Vector3(2190, -1139, 1029.5),
 			Vector3(2193, -1147, 1033.5),
 		}
+	},
+
+	["halloween"] = {
+		["Name"] = "Halloween",
+		["Custom"] = false,
+		["Interior"] = 0,
+		["Spawns"] = {
+			Vector3(-1317.79, 2529.04, 87.65),
+		}
 	}
 }
 
 function DeathmatchManager:constructor()
+	self.ms_Modes = {
+		["default"] = DeathmatchDefault,
+		["halloween"] = DeathmatchHalloween
+	}
+
 	self:loadServerLobbys()
 	self.m_BankServer = BankServer.get("gameplay.deathmatch")
 	local b = Blip:new("SniperGame.png", 1327.88, -1556.25)
@@ -145,8 +159,13 @@ function DeathmatchManager:constructor()
 end
 
 function DeathmatchManager:createLobby(name, owner, map, weapons, mode, maxPlayer, password)
+	if not self.ms_Modes[mode] then
+		outputDebugString("DM-Mode not found!", 1)
+		return
+	end
+
 	local id = #DeathmatchManager.Lobbys+1
-	DeathmatchManager.Lobbys[id] = DeathmatchLobby:new(id, name, owner, map, weapons, mode, maxPlayer, password)
+	DeathmatchManager.Lobbys[id] = self.ms_Modes[mode]:new(id, name, owner, map, weapons, mode, maxPlayer, password)
 end
 
 function DeathmatchManager:loadServerLobbys()
@@ -157,6 +176,7 @@ function DeathmatchManager:loadServerLobbys()
 	self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
 	self:createLobby("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
 	self:createLobby("M4 Motel #1", "Server", "motel", {31}, "default", 10)
+	self:createLobby("Halloween Event", "Server", "halloween", {31}, "halloween", 10)
 end
 
 function DeathmatchManager:requestLobbys()
