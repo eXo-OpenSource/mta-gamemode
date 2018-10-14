@@ -111,7 +111,7 @@ end
 function ShopManager:vehicleBuy(shopId, vehicleModel, vehicleIndex)
 	if client:isDead() then return false end
 	if not self:getFromId(shopId, true) then return end
-	self:getFromId(shopId, true):buyVehicle(client, vehicleModel, vehicleIndex or 1)
+	self:getFromId(shopId, true):buyVehicle(client, vehicleModel, vehicleIndex)
 end
 
 function ShopManager:foodShopBuyMenu(shopId, menu)

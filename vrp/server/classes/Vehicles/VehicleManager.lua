@@ -259,7 +259,7 @@ function VehicleManager:getPlayerVehicleById(playerId, vehicleId)
 	end
 end
 
-function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex)
+function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex, price)
 	-- owner, model, posX, posY, posZ, rotX, rotY, rotation, trunkId, premium
 	if type(ownerId) == "userdata" then
 		ownerId = ownerId:getId()
@@ -273,7 +273,7 @@ function VehicleManager:createNewVehicle(ownerId, ownerType, model, posX, posY, 
 	local premium = premium or 0
 	local shopIndex = shopIndex or 1
 	
-	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, shopIndex) then
+	if sql:queryExec("INSERT INTO ??_vehicles (OwnerId, OwnerType, Model, PosX, PosY, PosZ, RotX, RotY, RotZ, Interior, Dimension, Premium, `Keys`, BuyPrice, ShopIndex) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?, '[[]]', ?, ?)", sql:getPrefix(), ownerId, ownerType, model, posX, posY, posZ, rotX, rotY, rotZ, premium, price, shopIndex) then
 		return self:createVehicle(sql:lastInsertId())
 	end
 	return false
@@ -1086,17 +1086,8 @@ function VehicleManager:Event_vehicleSell()
 		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 		return
 	end
-	-- Search for price in vehicle shops table
-	local getPrice = function(model, index)
-		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model, index) then
-				return shop:getVehiclePrice(model, index)
-			end
-		end
-		return false
-	end
 
-	local price = getPrice(source:getModel(),source:getShopIndex() or 1) or 0
+	local price = source:getBuyPrice()
 	if price > 0 then
 		QuestionBox:new(client, client, _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	else
@@ -1112,19 +1103,8 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		source:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 		return
 	end
-	-- Search for price in vehicle shops table
-	local getPrice = function(model, index)
-		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
-			if shop:getVehiclePrice(model, index) then
-				return shop:getVehiclePrice(model, index)
-			end
-		end
-		return false
-	end
-
-	local price = getPrice(veh:getModel(), veh:getShopIndex()) or 0
+	local price = veh:getBuyPrice()
 	StatisticsLogger:getSingleton():addVehicleTradeLog(veh, source, 0, price, "server")
-
 	if price then
 		veh:purge()
 		self.m_BankAccountServer:transferMoney(source, math.floor(price * 0.75), "Fahrzeug-Verkauf", "Vehicle", "SellToServer")

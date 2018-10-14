@@ -69,7 +69,8 @@ function PermanentVehicle:constructor(data)
 	self.m_OwnerType = data.OwnerType
 	self.m_Premium = data.Premium ~= 0
 	self.m_PremiumId = data.Premium
-	self.m_ShopIndex = data.ShopIndex or 1
+	self.m_ShopIndex = data.ShopIndex
+	self.m_BuyPrice = data.BuyPrice
 	self:setCurrentPositionAsSpawn(data.PositionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(data.OwnerId) or "None") -- Todo: *hide*
@@ -184,6 +185,14 @@ end
 function PermanentVehicle:getShopIndex()
 	return self.m_ShopIndex or 1
 end
+
+function PermanentVehicle:getBuyPrice()
+	if self.m_BuyPrice == -1 then
+		return OLD_VEHICLE_PRICES[self:getModel()] or 0
+	end
+	return self.m_BuyPrice
+end
+
 
 function PermanentVehicle:getKeyNameList()
   local names = {}

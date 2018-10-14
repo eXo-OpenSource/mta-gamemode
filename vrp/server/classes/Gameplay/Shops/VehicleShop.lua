@@ -56,6 +56,7 @@ function VehicleShop:getName()
 	return self.m_Name
 end
 
+--[[
 function VehicleShop:getVehiclePrice(model, index)
 	if self.m_VehicleList[model] and self.m_VehicleList[model][index] and self.m_VehicleList[model][index].price then
 		return self.m_VehicleList[model][index].price
@@ -63,6 +64,7 @@ function VehicleShop:getVehiclePrice(model, index)
 		return false
 	end
 end
+--]]
 
 function VehicleShop:onMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
@@ -74,7 +76,7 @@ function VehicleShop:onMarkerHit(hitElement, dim)
 				vehicles[model] = {}
 			end
 			for i = 1, #self.m_VehicleList[model] do 
-				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level, index}
+				vehicles[model][i] = {vehicleData[i].vehicle, vehicleData[i].price, vehicleData[i].level}
 			end
 		end
 		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
@@ -82,7 +84,7 @@ function VehicleShop:onMarkerHit(hitElement, dim)
 end
 
 function VehicleShop:buyVehicle(player, vehicleModel, index)
-	local price, requiredLevel = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level
+	local price, requiredLevel, shopIndex = self.m_VehicleList[vehicleModel][index].price, self.m_VehicleList[vehicleModel][index].level, self.m_VehicleList[vehicleModel][index].id
 	if not price then return end
 
 	if player:getVehicleLevel() < requiredLevel then
@@ -96,7 +98,7 @@ function VehicleShop:buyVehicle(player, vehicleModel, index)
 	end
 	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
-		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, index)
+		local vehicle = VehicleManager:getSingleton():createNewVehicle(player, VehicleTypes.Player, vehicleModel, spawnX, spawnY, spawnZ, 0, 0, rotation, false, shopIndex, price)
 		if vehicle then
 			if player:transferBankMoney(self.m_BankAccount, price, "Fahrzeug-Kauf", "Vehicle", "Sell") then
 				vehicle:setColor(self.m_VehicleList[vehicleModel][index].vehicle:getColor(true))
