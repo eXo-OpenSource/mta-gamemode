@@ -116,6 +116,11 @@ function GangwarDisplay:rend_Display( )
 	self:dxDrawBoxShape(startX,startY,width,height,tocolor(0,0,0,150))
 	
 	self:rend_Flag() 
+	if not dxGetStatus().AllowScreenUpload then 
+		local w,h = guiGetScreenSize()
+		dxDrawRectangle(0, 0, w, h, tocolor(0, 0, 0, 255), true)
+		dxDrawText('Bitte aktiviere die Option "Erlauben von Screenshots" unter MTA -> Einstellungen', 0, 0, w, h, tocolor(255, 255, 255, 255), 2, "clear", "center", "center", false, false, true)
+	end
 	if ScoreboardGUI and ScoreboardGUI:getSingleton().m_Showing and core:get("Other", "GangwarTabView", true) then
 		self:drawParticipantOverview()
 	end
