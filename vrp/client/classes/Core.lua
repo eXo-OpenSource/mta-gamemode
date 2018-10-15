@@ -178,6 +178,8 @@ function Core:ready() --onClientResourceStart
 	ItemSmokeGrenade:new(); -- this is loaded here instead of beeing loaded in ItemManager.lua due to a shader-bug
 
 	ExplosiveTruckManager:new()
+
+	VehicleTurbo:new()
 end
 
 function Core:afterLogin()

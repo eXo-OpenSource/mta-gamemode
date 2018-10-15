@@ -10,7 +10,7 @@ VehicleMouseMenu = inherit(GUIMouseMenu)
 function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
-	local templateName = getElementData(element, "TemplateName")
+	local templateName = getElementData(element, "TemplateName") or ""
 	if owner then
 		self:addItem(_("Besitzer: %s", owner, element:getName())):setTextColor(Color.Red)
 	end

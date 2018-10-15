@@ -946,6 +946,7 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/Extensions/VehicleDataExtension.lua" type="client"/>
 	<script src="client/classes/Vehicles/Extensions/VehicleCategory.lua" type="client"/>
+	<script src="client/classes/Vehicles/Extensions/VehicleTurbo.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleELS.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
@@ -1194,6 +1195,8 @@
 	<file src="files/images/Logo.png"/>
 
 	<file src="files/images/bullethitsmoke.png"/>
+	<file src="files/images/turbo.png"/>
+	
 
 	<!-- Needs to be file against manipulation -->
 	<file src="files/html/js/mtaevents.min.js" />
