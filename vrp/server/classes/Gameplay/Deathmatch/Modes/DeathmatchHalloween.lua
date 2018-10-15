@@ -30,12 +30,12 @@ end
 function DeathmatchHalloween:setPlayerTeamProperties(player, team)
 	if team == DeathmatchHalloween.Teams[1] then
 		table.insert(self.m_Residents, player)
-		player:setSkin(1)
+		player:setModel(1)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 		player:sendShortMessage(_("Du wurdest ins %s-Team gesetzt!", player, team))
 	else
 		table.insert(self.m_Zombies, player)
-		player:setSkin(310)
+		player:setModel(310)
 	end
 end
 
