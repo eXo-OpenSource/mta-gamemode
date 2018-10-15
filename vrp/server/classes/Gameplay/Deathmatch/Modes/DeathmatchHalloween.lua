@@ -79,3 +79,14 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 		self:refreshGUI()
 	end
 end
+
+function DeathmatchHalloween:isDamageAllowed(player, attacker, weapon)
+	if self.m_Players[player] and self.m_Players[attacker] then
+		if self.m_Players[player].Team ~= self.m_Players[attacker].Team then
+			return true
+		else
+			attacker:sendShortMessage("Du darfst nicht auf Teamkollegen schießen!")
+		end
+	end
+	return false
+end

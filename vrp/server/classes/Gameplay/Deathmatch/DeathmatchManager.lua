@@ -239,3 +239,10 @@ function DeathmatchManager:leaveLobby()
 		client.deathmatchLobby:removePlayer(client)
 	end
 end
+
+function DeathmatchManager:isDamageAllowed(player, attacker, weapon)
+	if client.deathmatchLobby.isDamageAllowed then
+		return player.deathmatchLobby:isDamageAllowed(player, attacker, weapon)
+	end
+	return true
+end
