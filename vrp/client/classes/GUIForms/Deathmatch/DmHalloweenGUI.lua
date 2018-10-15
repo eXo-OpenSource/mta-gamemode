@@ -36,10 +36,13 @@ function DmHalloweenGUI:constructor(data)
 	self.m_LeaveButton.onLeftClick = bind(self.leaveLobby, self)
 
 	self:refresh(data)
+
+	DeathmatchManager.CurrentGUI = self
 end
 
 function DmHalloweenGUI:destructor()
 	GUIForm.destructor(self)
+	DeathmatchManager.CurrentGUI = false
 end
 
 function DmHalloweenGUI:leaveLobby()
