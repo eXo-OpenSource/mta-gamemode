@@ -69,8 +69,8 @@ end
 function DeathmatchHalloween:removePlayer(player, isServerStop)
 	DeathmatchLobby.removePlayer(self, player, isServerStop)
 	self.m_Players[player] = nil
-	table.remove(self.m_Zombies, table.find(player))
-	table.remove(self.m_Residents, table.find(player))
+	table.remove(self.m_Zombies, table.find(self.m_Zombies, player))
+	table.remove(self.m_Residents, table.find(self.m_Residents, player))
 
 	player:setCorrectSkin()
 
