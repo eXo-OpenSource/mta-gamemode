@@ -94,7 +94,7 @@ function DeathmatchManager:constructor()
 	b:setDisplayText("Paintball-Arena", BLIP_CATEGORY.Leisure)
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
 	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
-		if hitElement:getType() == "player" and not hitElement.vehicle and dim then
+		if hitElement:getType() == "player" and not hitElement.vehicle and dim and hitElement:isLoggedIn() then
 			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
 		end
 	end)
@@ -147,7 +147,6 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-
 	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveLobby", "deathmatchRequestCreateData", "deathmatchCreateLobby"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
 	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
@@ -155,7 +154,10 @@ function DeathmatchManager:constructor()
 	addEventHandler("deathmatchRequestCreateData", root, bind(self.requestCreateData, self))
 	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
 
-
+	--Development
+	addCommandHandler("halloweendm", function() 
+		self:createLobby("Halloween Event", "Server", "halloween", {31}, "halloween", 10)
+	end)
 end
 
 function DeathmatchManager:createLobby(name, owner, map, weapons, mode, maxPlayer, password)
@@ -176,7 +178,6 @@ function DeathmatchManager:loadServerLobbys()
 	self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
 	self:createLobby("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
 	self:createLobby("M4 Motel #1", "Server", "motel", {31}, "default", 10)
-	self:createLobby("Halloween Event", "Server", "halloween", {31}, "halloween", 10)
 end
 
 function DeathmatchManager:requestLobbys()

@@ -34,9 +34,6 @@ function DeathmatchDefault:addPlayer(player)
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
 	end
-
-	self:respawnPlayer(player)
-	self:refreshGUI()
 end
 
 
