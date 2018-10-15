@@ -25,6 +25,9 @@ function TuningTemplate:applyTemplate(vehicle)
         vehicle.m_Tunings:setTuningProperty(property, value)
     end
     vehicle.m_Tunings.m_TuningTemplate = self.m_Name
+    vehicle.m_Tunings:saveTuningKits()
+    vehicle:setTemplate(self.m_Id)
+    vehicle:updateTemplate()
 end
 
 function TuningTemplate:getId()
