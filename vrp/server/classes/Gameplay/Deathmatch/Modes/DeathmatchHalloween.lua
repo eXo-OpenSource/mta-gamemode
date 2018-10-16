@@ -13,6 +13,27 @@ DeathmatchHalloween.Teams = {
 }
 DeathmatchHalloween.MinPlayers = 4
 DeathmatchHalloween.WaitingTime = 30 -- in seconds
+DeathmatchHalloween.Spawns = {
+	["Bewohner"] = {
+		Vector3(-1317.41, 2526.57, 87.55),
+		Vector3(-1307.98, 2543.80, 87.74)
+	},
+	["Zombies"] = {
+		Vector3(-1227.48, 2515.95, 110.62),
+		Vector3(-1197.02, 2503.23, 112.16),
+		Vector3(-1193.24, 2412.06, 117.67)
+	}
+}
+
+DeathmatchHalloween.Markers = {
+	Vector3(-1316.82, 2527.12, 87.58),
+	Vector3(-1290.74, 2512.20, 87.04)
+}
+
+DeathmatchHalloween.MarkerColor = {
+	["Bewohner"] = {0, 255, 0, 255},
+	["Zombies"] = {255, 0, 0, 255}
+}
 
 function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, maxPlayer, password)
 	DeathmatchLobby.constructor(self, id, name, owner, map, weapons, mode, maxPlayer, password)
@@ -21,6 +42,7 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_IsOpen = true
 	self.m_HasStarted = false
 	self.m_StartTimer = setTimer(bind(self.startRound, self), DeathmatchHalloween.WaitingTime*1000, 1)
+	self.m_Markers = {}
 end
 
 function DeathmatchHalloween:destructor()
@@ -52,6 +74,7 @@ function DeathmatchHalloween:startRound()
 		player:setFrozen(false)
 	end	
 	self:refreshGUI()
+	self:spawnMarkers()
 end
 
 function DeathmatchHalloween:setPlayerTeamProperties(player, team)
@@ -91,7 +114,7 @@ function DeathmatchHalloween:addPlayer(player)
 		setPedStat(player, stat, stat == 69 and 900 or 1000)
 	end
 
-	self:respawnPlayer(player)
+	self:respawnPlayer(player, false, nil, nil, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[team]))
 	self:refreshGUI()
 
 	player:setFrozen(true)
@@ -121,4 +144,19 @@ function DeathmatchHalloween:isDamageAllowed(player, attacker, weapon)
 		end
 	end
 	return false
+end
+
+function DeathmatchHalloween:spawnMarkers()
+	for index, pos in pairs (DeathmatchHalloween.Markers) do
+		self.m_Markers[index] = createMarker(pos, "cylinder", 2, unpack(DeathmatchHalloween.MarkerColor["Bewohner"]))
+		self.m_Markers[index]:setDimension(self.m_MapData["dim"])
+		addEventHandler("onMarkerHit", self.m_Markers[index], bind(self.onMarkerHit, self))
+	end
+end
+
+function DeathmatchHalloween:onMarkerHit(player, dim)
+	if player and player:getType() == "player" and dim then
+		source:setColor(unpack(DeathmatchHalloween.MarkerColor[self.m_Players[player].Team]))
+		self:sendShortMessage(string.format("Ein Marker wurde von den %s eingenommen!", self.m_Players[player].Team))
+	end
 end
