@@ -12,7 +12,7 @@ DeathmatchHalloween.Teams = {
 	[2] = "Zombies"
 }
 DeathmatchHalloween.MinPlayers = 4
-DeathmatchHalloween.WaitingTime = 30 -- in seconds
+DeathmatchHalloween.WaitingTime = 15 -- in seconds
 DeathmatchHalloween.Spawns = {
 	["Bewohner"] = {
 		Vector3(-1317.41, 2526.57, 87.55),
@@ -43,10 +43,24 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_HasStarted = false
 	self.m_StartTimer = setTimer(bind(self.startRound, self), DeathmatchHalloween.WaitingTime*1000, 1)
 	self.m_Markers = {}
+	self.m_Colshapes = {}
+
+	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
+	self.m_CheckMarkerTimer = setTimer(self.m_CheckMarkerBind, 1000, 0)
+
 end
 
 function DeathmatchHalloween:destructor()
 	DeathmatchLobby.destructor(self)
+	if self.m_CheckMarkerTimer and isTimer(self.m_CheckMarkerTimer) then
+		killTimer(self.m_CheckMarkerTimer)
+	end
+	for index, marker in pairs (self.m_Markers) do
+		marker:destroy()
+	end
+	for index, shape in pairs (self.m_Colshapes) do
+		shape:destroy()
+	end
 end
 
 function DeathmatchHalloween:refreshGUI()
@@ -59,13 +73,45 @@ function DeathmatchHalloween:refreshGUI()
 		["started"] = self.m_HasStarted,
 		["timeToStart"] = countdown,
 		["playersCount"] = table.size(self.m_Players),
-		["minPlayers"] = DeathmatchHalloween.MinPlayers
+		["minPlayers"] = DeathmatchHalloween.MinPlayers,
+		["Markers"] = {
+			["Zombies"] = self:countMarkers("Zombies"),
+			["Bewohner"] = self:countMarkers("Bewohner")
+		}
 	}
 
 	for player, data in pairs(self:getPlayers()) do
+		
 		player:triggerEvent("dmHalloweenRefreshGUI", self.m_Players, roundData)
 	end
 end
+
+function DeathmatchHalloween:countMarkers(type)
+	local count = 0
+	for key, shape in pairs(self.m_Colshapes) do
+		if shape.Team == type then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+function DeathmatchHalloween:refreshMarkerGUI(player)
+	local shapeData = false
+
+	for index, shape in pairs(self.m_Colshapes) do
+		if player:isWithinColShape(shape) then
+			shapeData = {
+				["AttackerTeam"] = self.m_Players[player].Team,
+				["Owner"] = shape.Team,
+				["Score"] = shape.Score
+			}
+		end
+	end
+	player:triggerEvent("dmHalloweenRefreshMarkerGUI", shapeData)
+
+end
+
 
 function DeathmatchHalloween:startRound()
 	self.m_IsOpen = false
@@ -150,13 +196,53 @@ function DeathmatchHalloween:spawnMarkers()
 	for index, pos in pairs (DeathmatchHalloween.Markers) do
 		self.m_Markers[index] = createMarker(pos, "cylinder", 2, unpack(DeathmatchHalloween.MarkerColor["Bewohner"]))
 		self.m_Markers[index]:setDimension(self.m_MapData["dim"])
-		addEventHandler("onMarkerHit", self.m_Markers[index], bind(self.onMarkerHit, self))
+		self.m_Colshapes[index] = createColSphere(pos, 2)
+		self.m_Colshapes[index]:setDimension(self.m_MapData["dim"])
+		self.m_Colshapes[index].Marker = self.m_Markers[index]
+		self.m_Colshapes[index].Team = DeathmatchHalloween.Teams[1]
+		self.m_Colshapes[index].Id = index
+		self.m_Colshapes[index].Score = 10
+		addEventHandler("onColShapeLeave", self.m_Colshapes[index], function(player, dim)
+			if player and player:getType() == "player" and self.m_Players[player] then
+				player:triggerEvent("dmHalloweenRefreshMarkerGUI", false)
+			end
+		end)
 	end
 end
 
-function DeathmatchHalloween:onMarkerHit(player, dim)
-	if player and player:getType() == "player" and dim then
-		source:setColor(unpack(DeathmatchHalloween.MarkerColor[self.m_Players[player].Team]))
-		self:sendShortMessage(string.format("Ein Marker wurde von den %s eingenommen!", self.m_Players[player].Team))
+function DeathmatchHalloween:checkMarkers()
+	for index, shape in pairs(self.m_Colshapes) do
+		local newScore = 0
+		for index, player in pairs(getElementsWithinColShape(shape, "player")) do
+			self.m_Players[player].isInMarker = true
+			self:refreshMarkerGUI(player)
+			if self.m_Players[player] then
+				if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+					newScore = newScore + 1
+				else
+					newScore = newScore - 1
+				end
+			end
+		end
+
+		shape.Score = shape.Score + newScore
+		if shape.Score >= 10 then
+			shape.Score = 10
+			if shape.Team ~= DeathmatchHalloween.Teams[1] then
+				shape.Team = DeathmatchHalloween.Teams[1]
+				shape.Marker:setColor(unpack(DeathmatchHalloween.MarkerColor[DeathmatchHalloween.Teams[1]]))
+				self:sendShortMessage(string.format("Ein Marker wurde von den %s eingenommen!", DeathmatchHalloween.Teams[1]))
+				self:refreshGUI()
+			end
+		elseif shape.Score <= -10 then
+			shape.Score = -10
+			if shape.Team ~= DeathmatchHalloween.Teams[2] then
+				shape.Team = DeathmatchHalloween.Teams[2]
+				shape.Marker:setColor(unpack(DeathmatchHalloween.MarkerColor[DeathmatchHalloween.Teams[2]]))
+				self:refreshGUI()
+				self:sendShortMessage(string.format("Ein Marker wurde von den %s eingenommen!", DeathmatchHalloween.Teams[2]))
+			end
+		end
 	end
+
 end

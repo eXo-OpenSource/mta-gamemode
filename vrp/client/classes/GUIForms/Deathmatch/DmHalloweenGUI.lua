@@ -9,12 +9,11 @@ DmHalloweenGUI = inherit(GUIForm)
 DmHalloweenGUI.Current = false
 inherit(Singleton, DmHalloweenGUI)
 
-addRemoteEvents{"dmHalloweenRefreshGUI", "dmHalloweenCloseGUI"}
+addRemoteEvents{"dmHalloweenRefreshGUI", "dmHalloweenCloseGUI", "dmHalloweenRefreshMarkerGUI"}
 
 function DmHalloweenGUI:constructor(playerData, roundData)
-	GUIForm.constructor(self, screenWidth-310, screenHeight-360, 300, 350, false)
-
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Player vs. Zombie", true, false, self)
+	GUIForm.constructor(self, screenWidth-310, screenHeight-400, 300, 390, false)
+	self.m_Window = GUIWindow:new(0, 40, self.m_Width, 350, _"Player vs. Zombie", true, false, self)
 	self.m_LobbyGrids = {}
 	self.m_LobbyGrids["Bewohner"] = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.96, self.m_Height*0.38, self.m_Window)
 
@@ -44,6 +43,10 @@ function DmHalloweenGUI:constructor(playerData, roundData)
 	for key, element in pairs(self.m_CountdownElements) do
 		element:setAlignX("center")
 	end
+
+	self.m_MarkerBG = GUIRectangle:new(0, 0, self.m_Width, 40, Color.Accent, self):setVisible(false)
+	self.m_MarkerScore = GUILabel:new(self.m_Width*0.02, 10, self.m_Width*0.96, 20, "Score: ", self.m_MarkerBG),
+
 
 	self:refresh(playerData, roundData)
 
@@ -109,6 +112,15 @@ function DmHalloweenGUI:refresh(playerData, roundData)
 	end
 end
 
+function DmHalloweenGUI:refreshMarker(markerData)
+	if markerData then
+		self.m_MarkerBG:setVisible(true)
+		self.m_MarkerScore:setText(_("Score: %s", markerData.Score))
+	else
+		self.m_MarkerBG:setVisible(false)
+	end
+end
+
 addEventHandler("dmHalloweenRefreshGUI", root, function(playerData, roundData)
 	if not DmHalloweenGUI.Current then
 		DmHalloweenGUI.Current = DmHalloweenGUI:new(playerData, roundData)
@@ -121,3 +133,10 @@ addEventHandler("dmHalloweenCloseGUI", root, function()
 	delete(DmHalloweenGUI:getSingleton())
 	DmHalloweenGUI.Current = nil
 end)
+
+addEventHandler("dmHalloweenRefreshMarkerGUI", root, function(markerData)
+	if DmHalloweenGUI.Current then
+		DmHalloweenGUI.Current:refreshMarker(markerData)
+	end
+end)
+
