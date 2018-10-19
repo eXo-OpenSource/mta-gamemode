@@ -54,7 +54,6 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
 	self.m_ZombieHealBind = bind(self.healZombies, self)
 	self.m_MeleeBind = bind(self.onMeleeDamage, self)
-	addEventHandler("onPlayerDamage", root, self.m_MeleeBind)
 end
 
 function DeathmatchHalloween:destructor()
@@ -94,6 +93,7 @@ function DeathmatchHalloween:refreshGUI()
 	}
 
 	for player, data in pairs(self:getPlayers()) do
+		
 		player:triggerEvent("dmHalloweenRefreshGUI", self.m_Players, roundData)
 	end
 end
@@ -142,6 +142,7 @@ function DeathmatchHalloween:setPlayerTeamProperties(player, team)
 		table.insert(self.m_Residents, player)
 		player:setModel(1)
 		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+		addEventHandler("onPlayerDamage", player, self.m_MeleeBind)
 	else
 		table.insert(self.m_Zombies, player)
 		player:setModel(310)
@@ -185,8 +186,9 @@ end
 function DeathmatchHalloween:removePlayer(player, isServerStop)
 	DeathmatchLobby.removePlayer(self, player, isServerStop)
 
-	removeEventHandler("onPlayerDamage", root, self.m_MeleeBind)
-
+	if self.m_Residents[player] then
+		removeEventHandler("onPlayerDamage", player, self.m_MeleeBind)
+	end
 
 	self.m_Players[player] = nil
 	table.remove(self.m_Zombies, table.find(self.m_Zombies, player))
@@ -326,11 +328,10 @@ function DeathmatchHalloween:checkAlivePlayers()
 end
 
 function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
-	if attacker and weapon then
-		outputDebugString("DeathmatchHalloween:onMeleeDamage Source: "..source.name.." Attacker: "..attacker.name.. "Weapon: "..weapon)
-
-		if self.m_Zombies[attacker] and self.m_Residents[source] and weapon == 0 then
-			self:onWasted(target, client, 0)
-		end
+	if not attacker and not weapon then return end
+	if not self.m_Players[attacker] and not self.m_Players[source] then return end
+	if not weapon == 0 then return end
+	if self.m_Players[attacker].Team == DeathmatchHalloween.Teams[2] and self.m_Players[source].Team == DeathmatchHalloween.Teams[1] then
+		self:onWasted(target, client, 0)
 	end
 end
