@@ -46,3 +46,14 @@ function DeathmatchDefault:removePlayer(player, isServerStop)
 		self:refreshGUI()
 	end
 end
+
+function DeathmatchDefault:onWasted(player, killer, weapon)
+	DeathmatchLobby.onWasted(self, player, killer, weapon)
+	if killer then
+		self:increaseKill(killer, weapon)
+		self:increaseDead(player, weapon)
+	end
+	player.deathmatchLobby:respawnPlayer(player, true)
+end
+
+

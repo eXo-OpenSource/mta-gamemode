@@ -37,6 +37,9 @@ end
 
 function DeathmatchLobby:destructor()
 	self.m_Colshape:destroy()
+	for player, data in pairs(self.m_Players) do
+		self:removePlayer(player)
+	end
 	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
 end
 
@@ -133,14 +136,9 @@ function DeathmatchLobby:addPlayer(player)
 	self:sendShortMessage(player:getName().." ist beigetreten!")
 end
 
-function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon, pos)
+function DeathmatchLobby:respawnPlayer(player, dead, pos)
 	pos = pos and pos or Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
-		player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
-		if killer then
-			self:increaseKill(killer, weapon)
-			self:increaseDead(player, weapon)
-		end
 		fadeCamera(player, false, 2)
 		player:triggerEvent("Countdown", 10, "Respawn in")
 		setTimer(function()
@@ -206,4 +204,8 @@ function DeathmatchLobby:onPlayerChat(player, text, type)
 
 		return true
 	end
+end
+
+function DeathmatchLobby:onWasted(player, killer, weapon)
+	player:triggerEvent("deathmatchStartDeathScreen", killer or player, true)
 end

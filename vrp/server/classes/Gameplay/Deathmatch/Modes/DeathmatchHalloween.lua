@@ -9,7 +9,8 @@
 DeathmatchHalloween = inherit(DeathmatchLobby)
 DeathmatchHalloween.Teams = {
 	[1] = "Bewohner",
-	[2] = "Zombies"
+	[2] = "Zombies",
+	[3] = "Neutral" -- only for markers
 }
 DeathmatchHalloween.MinPlayers = 4
 DeathmatchHalloween.WaitingTime = 15 -- in seconds
@@ -31,8 +32,9 @@ DeathmatchHalloween.Markers = {
 }
 
 DeathmatchHalloween.MarkerColor = {
-	["Bewohner"] = {0, 255, 0, 255},
-	["Zombies"] = {255, 0, 0, 255}
+	["Bewohner"] = {0, 255, 0, 128},
+	["Zombies"] = {255, 0, 0, 128},
+	["Neutral"] = {255, 255, 255, 128}
 }
 
 function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, maxPlayer, password)
@@ -46,7 +48,6 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_Colshapes = {}
 
 	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
-	self.m_CheckMarkerTimer = setTimer(self.m_CheckMarkerBind, 1000, 0)
 
 end
 
@@ -121,6 +122,7 @@ function DeathmatchHalloween:startRound()
 	end	
 	self:refreshGUI()
 	self:spawnMarkers()
+	self.m_CheckMarkerTimer = setTimer(self.m_CheckMarkerBind, 1000, 0)
 end
 
 function DeathmatchHalloween:setPlayerTeamProperties(player, team)
@@ -234,6 +236,13 @@ function DeathmatchHalloween:checkMarkers()
 				self:sendShortMessage(string.format("Ein Marker wurde von den %s eingenommen!", DeathmatchHalloween.Teams[1]))
 				self:refreshGUI()
 			end
+		elseif shape.Score == 0 then
+			shape.Marker:setColor(unpack(DeathmatchHalloween.MarkerColor[DeathmatchHalloween.Teams[3]]))
+			if (shape.Team ~= DeathmatchHalloween.Teams[3]) then
+				self:sendShortMessage(string.format("Ein Marker wurde neuralisiert!"))
+				shape.Team = DeathmatchHalloween.Teams[3]
+			end
+			self:refreshGUI()
 		elseif shape.Score <= -10 then
 			shape.Score = -10
 			if shape.Team ~= DeathmatchHalloween.Teams[2] then
@@ -245,4 +254,17 @@ function DeathmatchHalloween:checkMarkers()
 		end
 	end
 
+	if self:countMarkers("Zombies") == #self.m_Colshapes then
+		outputChatBox("Die Zombies haben gewonnen!")
+		delete(self)
+	end
+end
+
+function DeathmatchHalloween:onWasted(player, killer, weapon)
+	DeathmatchLobby.onWasted(self, player, killer, weapon)
+	if killer then
+		self:increaseKill(killer, weapon)
+		self:increaseDead(player, weapon)
+	end
+	self:removePlayer(player)
 end

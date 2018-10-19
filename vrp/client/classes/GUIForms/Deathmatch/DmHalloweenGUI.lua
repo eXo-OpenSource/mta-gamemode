@@ -12,8 +12,8 @@ inherit(Singleton, DmHalloweenGUI)
 addRemoteEvents{"dmHalloweenRefreshGUI", "dmHalloweenCloseGUI", "dmHalloweenRefreshMarkerGUI"}
 
 function DmHalloweenGUI:constructor(playerData, roundData)
-	GUIForm.constructor(self, screenWidth-310, screenHeight-400, 300, 390, false)
-	self.m_Window = GUIWindow:new(0, 40, self.m_Width, 350, _"Player vs. Zombie", true, false, self)
+	GUIForm.constructor(self, screenWidth-310, screenHeight-410, 300, 400, false)
+	self.m_Window = GUIWindow:new(0, 50, self.m_Width, 350, _"Player vs. Zombie", true, false, self)
 	self.m_LobbyGrids = {}
 	self.m_LobbyGrids["Bewohner"] = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.96, self.m_Height*0.38, self.m_Window)
 
@@ -44,9 +44,9 @@ function DmHalloweenGUI:constructor(playerData, roundData)
 		element:setAlignX("center")
 	end
 
-	self.m_MarkerBG = GUIRectangle:new(0, 0, self.m_Width, 40, Color.Accent, self):setVisible(false)
-	self.m_MarkerScore = GUILabel:new(self.m_Width*0.02, 10, self.m_Width*0.96, 20, "Score: ", self.m_MarkerBG),
-
+	self.m_MarkerBG = GUIRectangle:new(0, 0, self.m_Width, 50, Color.Primary, self):setVisible(false)
+	self.m_MarkerText = GUILabel:new(self.m_Width*0.02, 5, self.m_Width*0.96, 20, "Marker gehört: Bewohner", self.m_MarkerBG)
+	self.m_Progress = GUIProgressBar:new(self.m_Width*0.02, 25, self.m_Width*0.96, 20, self.m_MarkerBG)
 
 	self:refresh(playerData, roundData)
 
@@ -76,6 +76,9 @@ function DmHalloweenGUI:refresh(playerData, roundData)
 		scoreTable[i].Deaths = data.Deaths
 		scoreTable[i].Points = data.Kills-data.Deaths
 		scoreTable[i].Team = data.Team
+		if player == localPlayer then
+			self.m_Team = data.Team
+		end
 		i = i+1
 	end
 
@@ -115,7 +118,16 @@ end
 function DmHalloweenGUI:refreshMarker(markerData)
 	if markerData then
 		self.m_MarkerBG:setVisible(true)
-		self.m_MarkerScore:setText(_("Score: %s", markerData.Score))
+		self.m_MarkerText:setText(_("Marker gehört: %s", markerData.Owner))
+		local p
+		if markerData.AttackerTeam == "Zombies" then
+			p = markerData.Score * -10
+		else
+			p = markerData.Score * 10
+		end
+		--outputChatBox("Score: " ..markerData.Score.." Prozent: "..math.abs(p))
+
+		self.m_Progress:setProgress(math.abs(p))
 	else
 		self.m_MarkerBG:setVisible(false)
 	end

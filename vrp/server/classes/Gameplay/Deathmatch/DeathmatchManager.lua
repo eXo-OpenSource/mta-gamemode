@@ -103,8 +103,7 @@ function DeathmatchManager:constructor()
 		function(player, killer, weapon)
 			if player.deathmatchLobby then
 				player:triggerEvent("abortDeathGUI", true)
-
-				player.deathmatchLobby:respawnPlayer(player, true, killer, weapon)
+				player.deathmatchLobby:onWasted(player, killer, weapon)
 				return true
 			end
 			if killer and killer.deathmatchLobby then
