@@ -328,7 +328,7 @@ function DeathmatchHalloween:checkAlivePlayers()
 end
 
 function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
-	if self.m_Zombies[attacker] and self.m_Residents[source] and weapon == 0 then
+	if attacker and weapon and self.m_Zombies[attacker] and self.m_Residents[source] and weapon == 0 then
 		self:onWasted(target, client, 0)
 	end
 end
