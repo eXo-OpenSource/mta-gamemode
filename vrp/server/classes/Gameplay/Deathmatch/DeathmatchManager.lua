@@ -155,7 +155,7 @@ function DeathmatchManager:constructor()
 
 	--Development
 	addCommandHandler("halloweendm", function() 
-		self:createLobby("Halloween Event", "Server", "halloween", {31}, "halloween", 10)
+		self:createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
 		for index, player in pairs(getElementsByType("player")) do
 			player:sendShortMessage("Die Halloween-Deathmatch Lobby wurde geöffnet!")
 		end

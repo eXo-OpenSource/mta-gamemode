@@ -152,7 +152,9 @@ function DeathmatchLobby:respawnPlayer(player, dead, pos)
 				player:fadeCamera(true, 1)
 				player:setAlpha(255)
 				player:triggerEvent("CountdownStop", "Respawn in")
-				giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+				if #self.m_Weapons > 0 then
+					giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+				end
 			end
 		end,10000,1)
 	else
@@ -163,7 +165,9 @@ function DeathmatchLobby:respawnPlayer(player, dead, pos)
 		player:setHeadless(false)
 		player:setArmor(100)
 		player:setAlpha(255)
-		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+		if #self.m_Weapons > 0 then
+			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
+		end
 	end
 end
 

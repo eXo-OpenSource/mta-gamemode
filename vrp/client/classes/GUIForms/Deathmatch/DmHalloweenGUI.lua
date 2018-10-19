@@ -152,3 +152,27 @@ addEventHandler("dmHalloweenRefreshMarkerGUI", root, function(markerData)
 	end
 end)
 
+DmHalloweenFinishedGUI = inherit(GUIForm)
+inherit(Singleton, DmHalloweenFinishedGUI)
+
+function DmHalloweenFinishedGUI:constructor(header, text)
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 20) 	-- width of the window
+	self.m_Height = grid("y", 3) 	-- height of the window
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Window title", false, false, self)
+	GUIGridLabel:new(0, 0, 20, 2, header, self.m_Window):setFont(VRPFont(50)):setAlignX("center")
+	GUIGridLabel:new(0, 1, 20, 2, text, self.m_Window):setFont(VRPFont(30)):setAlignX("center")
+	setTimer(function() delete(self) end, 7000, 1)
+end
+
+function DmHalloweenFinishedGUI:destructor()
+	GUIForm.destructor(self)
+end
+
+addRemoteEvents{"showDmHalloweenFinishedGUI"}
+
+addEventHandler("showDmHalloweenFinishedGUI", root, function(header, text)
+	DmHalloweenFinishedGUI:new(header, text)
+end)
