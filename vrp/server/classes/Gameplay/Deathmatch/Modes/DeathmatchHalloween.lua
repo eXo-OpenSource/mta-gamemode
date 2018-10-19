@@ -235,13 +235,15 @@ function DeathmatchHalloween:checkMarkers()
 	for index, shape in pairs(self.m_Colshapes) do
 		local newScore = 0
 		for index, player in pairs(getElementsWithinColShape(shape, "player")) do
-			self.m_Players[player].isInMarker = true
-			self:refreshMarkerGUI(player)
-			if self.m_Players[player] then
-				if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
-					newScore = newScore + 1
-				else
-					newScore = newScore - 1
+			if not player:isDead() then
+				self.m_Players[player].isInMarker = true
+				self:refreshMarkerGUI(player)
+				if self.m_Players[player] then
+					if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+						newScore = newScore + 1
+					else
+						newScore = newScore - 1
+					end
 				end
 			end
 		end

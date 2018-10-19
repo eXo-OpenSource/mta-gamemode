@@ -112,14 +112,14 @@ function DeathmatchLobby:isValidWeapon(weapon)
 	return false
 end
 
-function DeathmatchLobby:increaseKill(player, weapon)
-	if not self:isValidWeapon(weapon) then return end
+function DeathmatchLobby:increaseKill(player, weapon, weaponCheck)
+	if weaponCheck and not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Kills"] = self.m_Players[player]["Kills"] + 1
 	self:refreshGUI()
 end
 
-function DeathmatchLobby:increaseDead(player, weapon)
-	if not self:isValidWeapon(weapon) then return end
+function DeathmatchLobby:increaseDead(player, weapon, weaponCheck)
+	if weaponCheck and not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Deaths"] = self.m_Players[player]["Deaths"] + 1
 	self:refreshGUI()
 end

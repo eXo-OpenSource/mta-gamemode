@@ -31,9 +31,7 @@ function DeathmatchDefault:addPlayer(player)
 	}
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 
-	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
-		setPedStat(player, stat, stat == 69 and 900 or 1000)
-	end
+	DeathmatchLobby.respawnPlayer(self, player)
 end
 
 
@@ -50,8 +48,8 @@ end
 function DeathmatchDefault:onWasted(player, killer, weapon)
 	DeathmatchLobby.onWasted(self, player, killer, weapon)
 	if killer then
-		self:increaseKill(killer, weapon)
-		self:increaseDead(player, weapon)
+		self:increaseKill(killer, weapon, true)
+		self:increaseDead(player, weapon, true)
 	end
 	player.deathmatchLobby:respawnPlayer(player, true)
 end
