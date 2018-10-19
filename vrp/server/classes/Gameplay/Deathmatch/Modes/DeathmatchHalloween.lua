@@ -302,6 +302,13 @@ function DeathmatchHalloween:onWasted(player, killer, weapon)
 	end
 end
 
+function DeathmatchLobby:respawnPlayer(player, dead, pos)
+	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
+	if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+	end
+end
+
 function DeathmatchHalloween:healZombies()
 	for key, player in pairs(self.m_Zombies) do
 		player:setHealth(player:getHealth() + DeathmatchHalloween.ZombieHeal)
@@ -334,6 +341,8 @@ function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
 	if not self.m_Players[attacker] or not self.m_Players[source] then return end
 	if not weapon == 0 then return end
 	if self.m_Players[attacker].Team == DeathmatchHalloween.Teams[2] and self.m_Players[source].Team == DeathmatchHalloween.Teams[1] then
+		source:kill()
 		self:onWasted(source, attacker, 0)
+		if source:getExecutionPed() then delete(source:getExecutionPed()) end
 	end
 end
