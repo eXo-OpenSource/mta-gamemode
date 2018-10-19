@@ -54,12 +54,11 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
 	self.m_ZombieHealBind = bind(self.healZombies, self)
 	self.m_MeleeBind = bind(self.onMeleeDamage, self)
-
-	addEventHandler("gunsLogMeleeDamage", root, self.m_MeleeBind)
 end
 
 function DeathmatchHalloween:destructor()
 	DeathmatchLobby.destructor(self)
+
 	if self.m_CheckMarkerTimer and isTimer(self.m_CheckMarkerTimer) then
 		killTimer(self.m_CheckMarkerTimer)
 	end
@@ -74,7 +73,6 @@ function DeathmatchHalloween:destructor()
 	for index, shape in pairs (self.m_Colshapes) do
 		shape:destroy()
 	end
-	removeEventHandler("gunsLogMeleeDamage", root, self.m_MeleeBind)
 end
 
 function DeathmatchHalloween:refreshGUI()
@@ -144,6 +142,7 @@ function DeathmatchHalloween:setPlayerTeamProperties(player, team)
 		table.insert(self.m_Residents, player)
 		player:setModel(1)
 		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+		addEventHandler("onPlayerDamage", player, self.m_MeleeBind)
 	else
 		table.insert(self.m_Zombies, player)
 		player:setModel(310)
@@ -186,6 +185,11 @@ end
 
 function DeathmatchHalloween:removePlayer(player, isServerStop)
 	DeathmatchLobby.removePlayer(self, player, isServerStop)
+
+	if self.m_Residents[player] then
+		removeEventHandler("onPlayerDamage", player, self.m_MeleeBind)
+	end
+
 	self.m_Players[player] = nil
 	table.remove(self.m_Zombies, table.find(self.m_Zombies, player))
 	table.remove(self.m_Residents, table.find(self.m_Residents, player))
@@ -291,7 +295,7 @@ function DeathmatchHalloween:onWasted(player, killer, weapon)
 			self:checkAlivePlayers()
 		else
 			self:respawnPlayer(player, true, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[self.m_Players[player].Team]))
-			player.sendShortMessage(_("Du wurdest getötet, du hast noch %d Leben", player, self.m_Players[player].Lives), "Halloween-Deathmatch")
+			player:sendShortMessage(_("Du wurdest getötet, du hast noch %d Leben", player, self.m_Players[player].Lives), "Halloween-Deathmatch")
 		end
 	end
 end
@@ -323,8 +327,8 @@ function DeathmatchHalloween:checkAlivePlayers()
 	end
 end
 
-function DeathmatchHalloween:onMeleeDamage(target, weapon, bodypart, loss)
-	if self.m_Zombies[client] and self.m_Residents[target] then
+function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
+	if self.m_Zombies[attacker] and self.m_Residents[source] and weapon == 0 then
 		self:onWasted(target, client, 0)
 	end
 end
