@@ -330,8 +330,8 @@ function DeathmatchHalloween:checkAlivePlayers()
 end
 
 function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
-	if not attacker and not weapon then return end
-	if not self.m_Players[attacker] and not self.m_Players[source] then return end
+	if not attacker or not weapon then return end
+	if not self.m_Players[attacker] or not self.m_Players[source] then return end
 	if not weapon == 0 then return end
 	if self.m_Players[attacker].Team == DeathmatchHalloween.Teams[2] and self.m_Players[source].Team == DeathmatchHalloween.Teams[1] then
 		self:onWasted(source, attacker, 0)
