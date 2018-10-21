@@ -19,6 +19,7 @@ function WareManager:constructor()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
 			if player.bInWare then
+				if player:getExecutionPed() then delete(player:getExecutionPed()) end
 				player:triggerEvent("abortDeathGUI", true)
 				player.bInWare:onDeath(player, killer, weapon)
 				return true
