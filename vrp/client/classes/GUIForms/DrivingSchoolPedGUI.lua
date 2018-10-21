@@ -10,7 +10,7 @@ inherit(Singleton, DrivingSchoolPedGUI)
 
 function DrivingSchoolPedGUI:constructor(automaticTestAvailable)
 	GUIButtonMenu.constructor(self, "Fahrschule")
-	self:addItem(_"Theorietest", Color.LightBlue,
+	self:addItem(_"Theorietest", Color.Accent,
 		function()
 			triggerServerEvent("drivingSchoolStartTheory", localPlayer)
 			self:delete()
@@ -18,20 +18,20 @@ function DrivingSchoolPedGUI:constructor(automaticTestAvailable)
 	)
 
 	if automaticTestAvailable then
-		self:addItem(_"Fahrprüfung (Auto)", Color.LightBlue,
+		self:addItem(_"Fahrprüfung (Auto)", Color.Accent,
 			function()
 				triggerServerEvent("drivingSchoolStartAutomaticTest", localPlayer, "car")
 				self:delete()
 			end
 		)
-		self:addItem(_"Fahrprüfung (Motorrad)", Color.LightBlue,
+		self:addItem(_"Fahrprüfung (Motorrad)", Color.Accent,
 			function()
 				triggerServerEvent("drivingSchoolStartAutomaticTest", localPlayer, "bike")
 				self:delete()
 			end
 		)
 	else
-		self:addItem(_"Fahrlehrer rufen", Color.LightBlue,
+		self:addItem(_"Fahrlehrer rufen", Color.Accent,
 			function()
 				self:delete()
 
@@ -46,7 +46,7 @@ function DrivingSchoolPedGUI:constructor(automaticTestAvailable)
 		)
 	end
 
-	self:addItem(_"STVO-Punkte abbauen", Color.LightBlue,
+	self:addItem(_"STVO-Punkte abbauen", Color.Accent,
 		function()
 			self:delete()
 			ReduceSTVOBox:new(player, 1, 20, _"STVO-Punkte abbauen", function(category, amount) triggerServerEvent("drivingSchoolReduceSTVO", localPlayer, category, amount) end)

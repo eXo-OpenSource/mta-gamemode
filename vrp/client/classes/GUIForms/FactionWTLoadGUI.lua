@@ -52,7 +52,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_Info = GUIButton:new(945-28-15, 395, 28, 28, FontAwesomeSymbols.Info, self.m_Window)
 	self.m_Info:setFont(FontAwesome(20)):setFontSize(1)
 	self.m_Info:setBarEnabled(false)
-    self.m_Info:setBackgroundColor(Color.LightBlue)
+    self.m_Info:setBackgroundColor(Color.Accent)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()

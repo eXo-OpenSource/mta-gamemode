@@ -28,7 +28,7 @@ function PassengerMouseMenu:constructor(posX, posY, element)
 	for seat, occupant in pairs(element.occupants) do
 		if getElementType(occupant) == "player" then
 			if occupant == localPlayer then
-				self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName())):setTextColor(Color.LightBlue)
+				self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName())):setTextColor(Color.Accent)
 			else
 				self:addItem(_("%s: %s", PassengerMouseMenu.Names[seat] or "Rücksitz", occupant:getName()),
 				function()

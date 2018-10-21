@@ -59,12 +59,12 @@ function BindGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.06, "Taste 1:", self.m_Footer["local"])
 	GUILabel:new(self.m_Width*0.30, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.06, "Taste 2:", self.m_Footer["local"])
-	self.m_HelpChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, self.m_Footer["local"]):setBackgroundColor(Color.LightBlue)
+	self.m_HelpChanger = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.25, self.m_Height*0.07, self.m_Footer["local"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Modifiers) do
 		self.m_HelpChanger:addItem(name)
 	end
 	GUILabel:new(self.m_Width*0.27, self.m_Height*0.07, self.m_Width*0.07, self.m_Height*0.07, " + ", self.m_Footer["local"])
-	self.m_SelectedButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.07, self.m_Width*0.18, self.m_Height*0.07, " ", self.m_Footer["local"]):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_SelectedButton = GUIButton:new(self.m_Width*0.3, self.m_Height*0.07, self.m_Width*0.18, self.m_Height*0.07, " ", self.m_Footer["local"]):setBackgroundColor(Color.Accent):setFontSize(1.2)
   	self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
 	self.m_SaveBindButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.07, self.m_Width*0.2, self.m_Height*0.07, "Speichern", self.m_Footer["local"]):setBackgroundColor(Color.Green)
   	self.m_SaveBindButton.onLeftClick = function () self:saveBind() end
@@ -82,7 +82,7 @@ function BindGUI:constructor()
 	--New Bind
 	self.m_Footer["new"] = GUIElement:new(0, 40+self.m_Height*0.66, self.m_Width, self.m_Height*0.4-40, self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end
@@ -321,7 +321,7 @@ function BindManageGUI:constructor(ownerType)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.07, "Nachricht:", self.m_Footer["new"])
 	self.m_NewText = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.96, self.m_Height*0.07, self.m_Footer["new"])
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.25, self.m_Height*0.07, "Funktion:", self.m_Footer["new"])
-	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.LightBlue)
+	self.m_FunctionChanger = GUIChanger:new(self.m_Width*0.18, self.m_Height*0.16, self.m_Width*0.3, self.m_Height*0.07, self.m_Footer["new"]):setBackgroundColor(Color.Accent)
 	for index, name in pairs(BindGUI.Functions) do
 		self.m_FunctionChanger:addItem(name)
 	end

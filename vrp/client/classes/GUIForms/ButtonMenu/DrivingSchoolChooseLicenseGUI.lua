@@ -35,7 +35,7 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 	--		self:delete()
 	--	end
 	--)
-	self:addItem(_"Flugschein",Color.LightBlue ,
+	self:addItem(_"Flugschein",Color.Accent ,
 		function()
 			triggerServerEvent("drivingSchoolStartLessionQuestion", localPlayer, self.m_Target, "plane")
 			self:delete()

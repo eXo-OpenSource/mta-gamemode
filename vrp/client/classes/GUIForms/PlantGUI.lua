@@ -52,7 +52,7 @@ function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerS
 	else
 		GUILabel:new(10, 110, self.m_Width-20, 20, _"nicht bewässert", self):setColor(Color.Red):setAlignX("center")
 	end
-	GUILabel:new(10, 130, self.m_Width-20, 20, _"Drücke [E] zum ernten!", self):setColor(Color.LightBlue):setAlignX("center")
+	GUILabel:new(10, 130, self.m_Width-20, 20, _"Drücke [E] zum ernten!", self):setColor(Color.Accent):setAlignX("center")
 	self.m_HarvestBind = bind(self.harvest, self)
 	bindKey("e", "down", self.m_HarvestBind)
 end

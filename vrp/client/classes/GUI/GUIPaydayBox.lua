@@ -22,8 +22,8 @@ function GUIPaydayBox:constructor(texts)
 		self.m_HeaderHeight = 52
 		self.m_MoneySize = 20
 	end
-	
-	
+
+
 	DxRectangle.constructor(self, screenWidth/2 - self.m_W/2, -self.m_H, self.m_W, self.m_H)
 	self:setDrawingEnabled(true)
 	self.m_BaseHeight = self.m_HeaderHeight/1.5 + self.m_HeaderHeight/2
@@ -89,22 +89,22 @@ function GUIPaydayBox:createUI()
 		end
 	end
 	self.m_BaseHeight = self.m_BaseHeight + math.max(i_inc, i_out) * self.m_HeaderHeight/2.5
-	
+
 	--subtotal
-	DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self):setDrawingEnabled(true)
+	DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.Accent, self):setDrawingEnabled(true)
 	self.m_BaseHeight = self.m_BaseHeight + 4
 	GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalIncome"][1][2]), self):setAlignX("left")
 	GUILabel:new(0, self.m_BaseHeight, self.m_W - margin, self.m_HeaderHeight/2, toMoneyString(self.m_PaydayTexts["totalOutgoing"][1][2]), self):setAlignX("right")
-	
+
 	--total
 	self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/2
 	GUILabel:new(margin, self.m_BaseHeight, self.m_W - margin*2, self.m_HeaderHeight/1.5, ("%s: %s"):format(self.m_PaydayTexts["total"][1][1], toMoneyString(self.m_PaydayTexts["total"][1][2])), self)
 		:setAlignX("center")
 	self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/1.5
-	
+
 	--infos
 	if self.m_PaydayTexts["info"] then
-		DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.LightBlue, self):setDrawingEnabled(true)
+		DxRectangle:new(margin, self.m_BaseHeight, self.m_W - margin*2, 2, Color.Accent, self):setDrawingEnabled(true)
 		self.m_BaseHeight = self.m_BaseHeight + 4
 		GUILabel:new(margin, self.m_BaseHeight, self.m_W, self.m_HeaderHeight/2, _"weitere Informationen", self):setAlignX("left")
 		self.m_BaseHeight = self.m_BaseHeight + self.m_HeaderHeight/2
@@ -117,7 +117,7 @@ function GUIPaydayBox:createUI()
 	self:setSize(self.m_Width, self.m_BaseHeight)
 	self:setPosition(screenWidth/2 - self.m_W/2, -self.m_BaseHeight)
 
-	--spawn money 
+	--spawn money
 	self.m_FloatingMoneyMap = {}
 	self.m_MoneySpawnStart = getTickCount()
 	for i = 1, math.abs(self.m_PaydayTexts["total"][1][2]) / 100 do
@@ -139,8 +139,8 @@ function GUIPaydayBox:renderMoney()
 			local swingAspect = math.sin((time + i * 100)/500 * size_multiplicator)
 			local x, y = v[1] + swingAspect * size, -size + v[2] + v[3] * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime
 			if self.m_PaydayTexts["total"][1][2] > 0 then
-				dxDrawImage(v[1] + swingAspect * size, -size + v[2] + v[3] * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime, 
-					size, size, "files/images/HUD/payday_money.png", swingAspect * -(30*size_multiplicator), 0, 0, 
+				dxDrawImage(v[1] + swingAspect * size, -size + v[2] + v[3] * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime,
+					size, size, "files/images/HUD/payday_money.png", swingAspect * -(30*size_multiplicator), 0, 0,
 					tocolor(20, 200, 40, 255 - 255 * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime))
 			else
 				dxDrawText("-", x, y, x, y, tocolor(200, 20, 40, 255 - 255 * (time - self.m_MoneySpawnStart) / self.m_MoneyFadeTime), size/10,

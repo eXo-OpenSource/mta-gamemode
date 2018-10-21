@@ -15,8 +15,8 @@ CALL_RESULT_CALLING = 3 -- used in AppContacts
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 	self.m_EasterEggFont = dxCreateFont(EASTEREGG_FILE_PATH.."/BitBold.ttf", 22*EASTEREGG_FONT_SCALE)
-	self.m_EasterEggRenderFunction = function() 
-		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, self.m_EasterEggFont, "center", "center") 
+	self.m_EasterEggRenderFunction = function()
+		dxDrawText("SUPER SMASH STROBE", 0,2, screenWidth, screenHeight, tocolor(0, 0, 0, 255), 1, self.m_EasterEggFont, "center", "center")
 		dxDrawText("SUPER SMASH STROBE", 0,0, screenWidth, screenHeight, tocolor(201, 29, 0, 255), 1, self.m_EasterEggFont, "center", "center")
 	end
 
@@ -84,7 +84,7 @@ function AppCall:openMain()
 	self.m_PlayerSearch = GUIEdit:new(65, 330, 185, 25, self.m_Tabs["Players"])
 	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
 
-	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.LightBlue):setBarEnabled(false)
+	self.m_ButtonAddToContacts = GUIButton:new(10, 370, 30, 30, "+", self.m_Tabs["Players"]):setBackgroundColor(Color.Accent):setBarEnabled(false)
 	self.m_ButtonAddToContacts.onLeftClick = bind(self.ButtonAddContact_Click, self)
 
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green):setBarEnabled(false)
@@ -141,7 +141,7 @@ function AppCall:ButtonCallNumpad_Click()
 			return
 		end
 	end
-	
+
 	local number = tonumber(self.m_Edit:getText())
 	if not number or string.len(number) < 3 then
 		ErrorBox:new(_"Ungültige Telefonnummer eingegeben!")
@@ -446,7 +446,7 @@ end
 function AppCall:Event_callIncomingSM(caller, voiceEnabled, message, title, tblColor)
 	outputDebug(caller, voiceEnabled, message, title, tblColor)
 	if not caller then return end
-	
+
 	self:showIncomingCallShortMessage(caller, voiceEnabled, message, title, tblColor)
 end
 
