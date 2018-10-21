@@ -231,6 +231,8 @@
 	<script src="server/classes/Gameplay/Skydiving.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchDefault.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/Modes/DeathmatchHalloween.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
@@ -253,6 +255,7 @@
 	<script src="server/classes/Gameplay/Ware/WareManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/Ware.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareMoney.lua" type="server"/>
+	<script src="server/classes/Gameplay/Ware/minigames/WareExplodingCars.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareSurvive.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareStayTop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Ware/minigames/WareCarJack.lua" type="server"/>
@@ -766,9 +769,6 @@
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
@@ -846,6 +846,11 @@
 	<script src="client/classes/GUIForms/SkribbleGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WareRoundGUI.lua" type="client"/>
+
+	<script src="client/classes/GUIForms/Deathmatch/DeathmatchLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Deathmatch/DeathmatchCreateLobby.lua" type="client"/>
+	<script src="client/classes/GUIForms/Deathmatch/DeathmatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Deathmatch/DmHalloweenGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -2189,6 +2194,8 @@
 	<vrpfile src="files/models/objects/worldItems/pumpkin.col" />
 	<vrpfile src="files/models/skins/ghost.dff"/>
 	<vrpfile src="files/models/skins/ghost.txd"/>
+	<vrpfile src="files/models/skins/skeleton.dff"/>
+	<vrpfile src="files/models/skins/skeleton.txd"/>
 	<vrpfile src="files/models/objects/headstone.txd" />
 	<vrpfile src="files/models/objects/headstone.dff" />
 	<vrpfile src="files/models/objects/headstone.col" />

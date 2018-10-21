@@ -107,6 +107,12 @@ addEventHandler("onDebugMessage", root,
 				end
 				traceLevel = traceLevel + 1
 			end
+			
+			if msg:find("dbExec failed;") then
+				msg = string.format("%s \n *Query:* `%s`", msg, SQL.LastExecQuery)
+			elseif msg:find("dbPoll failed;") then
+				msg = string.format("%s \n *Query:* `%s`", msg, SQL.LastFetchQuery)
+			end
 
 			stackSlackMessages(msg, level, trace)
 		end

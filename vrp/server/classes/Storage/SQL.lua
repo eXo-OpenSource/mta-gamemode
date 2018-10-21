@@ -1,7 +1,11 @@
 SQL = inherit(Object)
 
+SQL.LastExecQuery = ""
+SQL.LastFetchQuery = ""
+
 function SQL:virtual_constructor()
 	self.m_Async = true
+	self.m_DebugLog = true
 end
 
 function SQL:destructor()
@@ -10,8 +14,12 @@ end
 
 function SQL:queryExec(query, ...)
 	local start = getTickCount()
+	if self.m_DebugLog then
+		SQL.LastExecQuery = query
+	end
 	local result = dbExec(self.m_DBHandle, query, ...)
 	self:writeSqlPerfomanceLog(query, getTickCount() - start, "sync")
+	
 	return result
 end
 
@@ -33,6 +41,9 @@ function SQL:queryFetch(...)
 	local args = {...}
 	local start = getTickCount()
 	if type(args[1]) == "string" then
+		if self.m_DebugLog then
+			SQL.LastFetchQuery = args[1]
+		end
 		local result, numrows, lastInserID = self.dbPoll(dbQuery(self.m_DBHandle, ...), -1)
 		self:writeSqlPerfomanceLog(args[1], getTickCount() - start, "sync")
 		return result, numrows, lastInserID
@@ -46,6 +57,9 @@ function SQL:queryFetch(...)
 
 		dbQuery(
 			function(qh)
+				if self.m_DebugLog then
+					SQL.LastFetchQuery = query
+				end
 				local callbackArgs = { self.dbPoll(qh, -1) }
 				self:writeSqlPerfomanceLog(query, getTickCount() - start, "async")
 				callback(unpack(callbackArgs))
