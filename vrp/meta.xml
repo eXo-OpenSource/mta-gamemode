@@ -2190,6 +2190,8 @@
 	<vrpfile src="files/models/objects/worldItems/pumpkin.col" />
 	<vrpfile src="files/models/skins/ghost.dff"/>
 	<vrpfile src="files/models/skins/ghost.txd"/>
+	<vrpfile src="files/models/skins/skeleton.dff"/>
+	<vrpfile src="files/models/skins/skeleton.txd"/>
 	<vrpfile src="files/models/objects/headstone.txd" />
 	<vrpfile src="files/models/objects/headstone.dff" />
 	<vrpfile src="files/models/objects/headstone.col" />
