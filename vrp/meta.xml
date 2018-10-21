@@ -1085,6 +1085,8 @@
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
+	<vrpfile src="files/audio/vehicles/turbo.ogg" />
+
 	<!-- ware-gamemode -->
 	<vrpfile src="files/images/Textures/Ware/waretex.jpg"/>
 	<vrpfile src="files/images/Textures/Ware/bomb.png"/>

@@ -7,11 +7,12 @@
 -- ****************************************************************************
 
 VehicleTurbo = inherit(Singleton)
-
+--//todo add check if vehicle has turbokit installed before creating exhaust fumes
 local texName = "smoke"
 local count = 0
 function VehicleTurbo:constructor() 
     self.m_Vehicles ={}
+    self.m_Exhausts ={}
     for k, v in ipairs(getElementsByType("vehicle", root, true)) do  -- todo check if vehicle has actual turbokit installed and not have every car with exhaust-flames
         self.m_Vehicles[v] = true
         v.m_LastGear = getVehicleCurrentGear(v)
@@ -32,50 +33,84 @@ end
 
 function VehicleTurbo:Event_Render()
     local now = getTickCount()
+    local fumePosition, posExhaust, posExhaust2, rot, matrixVehicle
     for vehicle, bool in pairs(self.m_Vehicles) do 
         if vehicle and isElement(vehicle) then
-            if vehicle.m_LastGear ~= getVehicleCurrentGear(vehicle) then 
-                vehicle.m_LastGearChange = now
-                vehicle.m_LastGear = getVehicleCurrentGear(vehicle)
-            end
-            local x,y,z = getElementPosition(vehicle)
-            local fumePosition = Vector3(getVehicleModelExhaustFumesPosition(vehicle:getModel()))
-            local fumePosition2
-            fumePosition = vehicle:getPosition() + vehicle.matrix.right*fumePosition.x +vehicle.matrix.forward*fumePosition.y + vehicle.matrix.up*fumePosition.z
-            if vehicle.m_IsDoubleExhaust then
-                fumePosition2 = Vector3(getVehicleModelExhaustFumesPosition(vehicle:getModel()))
-                fumePosition2 = vehicle:getPosition() + (vehicle.matrix.right*(fumePosition2.x*-1)) + vehicle.matrix.forward*fumePosition2.y + vehicle.matrix.up*fumePosition2.z
-            end
-            local rx, ry, rz = getElementRotation(vehicle)  
-            if fumePosition then
-                if vehicle.m_LastGearChange and now - vehicle.m_LastGearChange < 400 then 
-                    if not vehicle.m_ExhaustTurbo then
-                        vehicle.m_ExhaustTurbo = createEffect("gunflash", fumePosition.x, fumePosition.y, fumePosition.z, 90, 90, -1*rz+180)
-                        vehicle.m_ExhaustTurbo:setSpeed(0.5)
-                        if vehicle.m_IsDoubleExhaust then
-                            vehicle.m_ExhaustTurbo2 = createEffect("gunflash", fumePosition2.x, fumePosition2.y, fumePosition2.z, 90, 90, -1*rz+180)
-                            vehicle.m_ExhaustTurbo2:setSpeed(0.5)
+            self:checkGear(vehicle)
+            fumePosition = Vector3(getVehicleModelExhaustFumesPosition(vehicle:getModel()))
+            matrixVehicle = vehicle.matrix
+            posExhaust = vehicle:getPosition() + matrixVehicle.right*fumePosition.x + matrixVehicle.forward*fumePosition.y + matrixVehicle.up*fumePosition.z*0.98
+            posExhaust2 = vehicle:getPosition() + (matrixVehicle.right*(fumePosition.x*-1)) + matrixVehicle.forward*fumePosition.y + matrixVehicle.up*fumePosition.z*0.98
+            rot = vehicle:getRotation()  
+            if posExhaust and rot then
+                if vehicle.m_EffectCount and vehicle.m_EffectCount < vehicle.m_EffectMaxCount and now - vehicle.m_LastGearChange < 4000 then
+                    if vehicle.m_LastGearChange and now - vehicle.m_LastGearChange < 100 then 
+                        if not self.m_Exhausts[vehicle] then
+                            self:createExhaust(vehicle, {posExhaust, posExhaust2}, rot)
+                        else 
+                            self:updateExhaust(vehicle, {posExhaust, posExhaust2}, rot)
                         end
                     else 
-                        vehicle.m_ExhaustTurbo:setPosition(fumePosition)
-                        vehicle.m_ExhaustTurbo:setRotation( 90, 90, rz*-1+180)
-                        if vehicle.m_IsDoubleExhaust then
-                            if vehicle.m_ExhaustTurbo2 then
-                                vehicle.m_ExhaustTurbo2:setPosition(fumePosition2)
-                                vehicle.m_ExhaustTurbo2:setRotation( 90, 90, rz*-1+180)
-                            end
-                        end
+                        self:destroyExhaust(vehicle)
                     end
-                else 
-                    if vehicle.m_ExhaustTurbo then 
-                        vehicle.m_ExhaustTurbo:destroy()
-                        vehicle.m_ExhaustTurbo = nil
-                    end
-                    if vehicle.m_ExhaustTurbo2 then 
-                        vehicle.m_ExhaustTurbo2:destroy()
-                        vehicle.m_ExhaustTurbo2 = nil
-                    end
+                else    
+                    self:destroyExhaust(vehicle)
                 end
+            end
+        end
+    end
+end
+
+function VehicleTurbo:checkGear(vehicle)
+    local now = getTickCount()
+    if vehicle.m_LastGear ~= getVehicleCurrentGear(vehicle) then 
+        vehicle.m_LastGearChange = now
+        vehicle.m_LastGear = getVehicleCurrentGear(vehicle)
+        vehicle.m_EffectCount = 0
+        vehicle.m_EffectMaxCount = math.random(2, 4)
+    end
+end
+
+function VehicleTurbo:createExhaust(vehicle, pos, rot)
+    local exhaustCount = vehicle.m_IsDoubleExhaust and 2 or 1
+    if self.m_Exhausts[vehicle] then
+        self:destroyExhaust(vehicle)
+    end
+    if not self.m_Exhausts[vehicle] then 
+        self.m_Exhausts[vehicle] = {}
+    end
+    for i = 1, exhaustCount do 
+        self.m_Exhausts[vehicle][i] = createEffect("gunflash", pos[i].x, pos[i].y, pos[i].z)
+        self.m_Exhausts[vehicle][i]:setRotation(90, 90, -1*rot.z+180)
+        self.m_Exhausts[vehicle][i]:setSpeed(math.random(5, 10) / 10)
+        self.m_Exhausts[vehicle][i].sound = Sound3D("files/audio/vehicles/turbo.ogg", vehicle:getPosition())
+        self.m_Exhausts[vehicle][i].sound:setMaxDistance(30)
+        self.m_Exhausts[vehicle][i].sound:setSpeed(math.random(8, 12)/10)
+        self.m_Exhausts[vehicle][i].sound:setEffectEnabled("echo", true)
+        attachElements(self.m_Exhausts[vehicle][i], vehicle)
+    end
+    vehicle.m_EffectCount = vehicle.m_EffectCount + 1
+end
+
+function VehicleTurbo:destroyExhaust(vehicle)
+    if self.m_Exhausts[vehicle] then
+        for i = 1, #self.m_Exhausts[vehicle] do 
+            if self.m_Exhausts[vehicle][i] and isElement(self.m_Exhausts[vehicle][i]) then
+                self.m_Exhausts[vehicle][i]:destroy()
+                self.m_Exhausts[vehicle][i] = nil
+            end
+        end
+    end
+    self.m_Exhausts[vehicle] = nil
+end
+
+function VehicleTurbo:updateExhaust(vehicle, pos, rot )
+    if self.m_Exhausts[vehicle] then 
+        local exhaustCount = vehicle.m_IsDoubleExhaust and 2 or 1
+        for i = 1, exhaustCount do 
+            if self.m_Exhausts[vehicle][i] then
+                self.m_Exhausts[vehicle][i]:setPosition(pos[i].x, pos[i].y, pos[i].z)
+                self.m_Exhausts[vehicle][i]:setRotation(90, 90, -1*rot.z+180)
             end
         end
     end
