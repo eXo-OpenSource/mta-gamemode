@@ -19,7 +19,11 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar", "vehicleGetTuningList", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine", "clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
+	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
+	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
+	"vehicleGetTuningList", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
+	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -45,6 +49,8 @@ function VehicleManager:constructor()
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
+	addEventHandler("adminVehicleGetTextureList",root,bind(self.Event_AdminGetTextureList, self))
+	addEventHandler("adminVehicleOverrideTextures",root,bind(self.Event_AdminOverrideTextures, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
 	addEventHandler("vehicleDeloadObject",root,bind(self.Event_DeLoadObject, self))
 	addEventHandler("vehicleSetVariant", root, bind(self.Event_SetVariant, self))
@@ -200,6 +206,21 @@ end
 
 function VehicleManager:Event_GetTuningList()
 	source:getTuningList(client)
+end
+
+function VehicleManager:Event_AdminGetTextureList(vehicle)
+	client:triggerEvent("vehicleAdminReceiveTextureList", vehicle, vehicle.m_Tunings.m_Tuning.Texture)
+end
+
+function VehicleManager:Event_AdminOverrideTextures(vehicle, texture)
+	if client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleTexture"] then
+		if vehicle.m_Tunings then
+			vehicle.m_Tunings:overrideTextures(texture)
+			vehicle.m_Tunings:applyTuning()
+		else
+			client:sendError(_("Dieses Fahrzeug hat kein Tuning!", client))
+		end
+	end
 end
 
 function VehicleManager:Event_MagnetVehicleCheck(groundPosition)

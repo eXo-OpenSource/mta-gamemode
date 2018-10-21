@@ -77,7 +77,7 @@ function Admin:constructor()
 	addCommandHandler("reloadhelp", bind(self.reloadHelpText, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
@@ -88,6 +88,7 @@ function Admin:constructor()
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
+    addEventHandler("adminEditVehicle", root, bind(self.Event_EditVehicle, self))
     addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
@@ -163,11 +164,11 @@ end
 
 function Admin:Event_OnAdminLoginFix( id  )
 	if client and client:getRank() >= ADMIN_RANK_PERMISSION["loginFix"] then
-		if tonumber(id) then 
-			if DatabasePlayer.Map[tonumber(id)] then 
-				DatabasePlayer.Map[tonumber(id)] = nil 
+		if tonumber(id) then
+			if DatabasePlayer.Map[tonumber(id)] then
+				DatabasePlayer.Map[tonumber(id)] = nil
 				client:sendInfo(_("Die Aktion war erfolgreich (ID: %s)", client, id))
-			else 
+			else
 				client:sendInfo(_("Der Account (ID %s) ist nicht in Benutzung!", client, id))
 			end
 		end
@@ -645,7 +646,7 @@ function Admin:Event_playerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				removeEventHandler("onPlayerQuit", target, admin.m_SpectStop) --trig
-				
+
 			end
 
 		if not target.spectBy then target.spectBy = {} end
@@ -1080,7 +1081,7 @@ local tpTable = {
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
 		["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-		
+
 	}
 
 	local x,y,z = 0,0,0
@@ -1239,6 +1240,25 @@ function Admin:Event_portToVehicle(veh)
 		client:setDimension(veh:getDimension())
 		client:setPosition(pos.x+1, pos.y+1, pos.z+1)
 		client:sendInfo(_("Du wurdest zum Fahrzeug geportet!", client))
+    end
+end
+
+function Admin:Event_EditVehicle(veh, changes)
+    if client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleGeneral"] then
+
+		if veh and isElement(veh) then
+			if changes.Model and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleModel"] then
+
+			end
+			if changes.OwnerType and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerType"] then --change type before id!
+
+			end
+			if changes.OwnerID and client:getRank() >= ADMIN_RANK_PERMISSION["editVehicleOwnerID"] then
+
+			end
+		else
+			client:sendError("Das Fahrzeug wurde nicht gefunden.")
+		end
     end
 end
 

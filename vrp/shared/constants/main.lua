@@ -171,6 +171,12 @@ ADMIN_RANK_PERMISSION = {
 	["despawnVehicle"] = RANK.Supporter, -- despawn
 	["deleteVehicle"] = RANK.Administrator, -- permanently destroy vehicle
 	["looseVehicleHandbrake"] = RANK.Supporter,
+	["editVehicleGeneral"] = RANK.Administrator, -- this is used to just open the window itself
+	["editVehicleModel"] = RANK.Administrator,
+	["editVehicleOwnerType"] = RANK.Administrator,
+	["editVehicleOwnerID"] = RANK.Administrator,
+	["editVehicleTexture"] = RANK.Administrator, --override textures without visiting the texture shop
+
 
 	--development
 	["cookie"] = RANK.Developer, -- give that man a cookie
@@ -409,6 +415,20 @@ Tasks = {
 	TASK_GUARD = 1,
 	TASK_SHOOT_TARGET = 2,
 	TASK_GETTING_TARGETTED = 3,
+}
+
+VehicleTypes = {
+	Player = 1;
+	Faction = 2;
+	Company = 3;
+	Group = 4;
+}
+
+VehicleTypeName = {
+	[VehicleTypes.Player] = "player";
+	[VehicleTypes.Faction] = "faction";
+	[VehicleTypes.Company] = "company";
+	[VehicleTypes.Group] = "group";
 }
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}

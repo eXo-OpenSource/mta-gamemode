@@ -427,7 +427,7 @@ function Player:spawn()
 	--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 	-- Update Skin
 	self:setCorrectSkin()
-	
+
 	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime, true)
 	end
@@ -580,7 +580,7 @@ function Player:giveReviveWeapons()
 				giveWeapon( self, self.m_ReviveWeaponsInfo[i][1], self.m_ReviveWeaponsInfo[i][2], true)
 			end
 		end
-		if self.m_DeathStateFactionDuty then 
+		if self.m_DeathStateFactionDuty then
 			FactionState:getSingleton():Event_storageWeapons(self, true)
 		end
 		self:destroyDropWeapons()

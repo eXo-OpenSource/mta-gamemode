@@ -86,6 +86,15 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 		)
 	end
 
+	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["editVehicleGeneral"] then
+		self:addItem(_"Editieren",
+			function()
+				if not self:getElement() then return end
+				AdminVehicleEditGUI:new(self:getElement())
+			end
+		)
+	end
+
 	if localPlayer:getRank() >= ADMIN_RANK_PERMISSION["deleteVehicle"] then
 		self:addItem(_"Löschen",
 			function()

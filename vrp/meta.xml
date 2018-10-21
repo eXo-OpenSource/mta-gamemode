@@ -696,11 +696,18 @@
 
 	<script src="client/classes/GUI/Editor/GUIGridEditor.lua" type="client"/>
 
+
+	<script src="client/classes/GUIForms/Admin/AdminGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminEventGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminPedGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminFireGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminVehicleEditGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/Admin/AdminVehicleTextureEditGUI.lua" type="client"/>
+
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuFaction.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuGames.lua" type="client"/>
-
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuRespawn.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu/MouseMenuDetails.lua" type="client"/>
@@ -786,10 +793,6 @@
 	<script src="client/classes/GUIForms/StateEvidenceGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionNoteGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AdminEventGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AdminPedGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/AdminFireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
@@ -2268,6 +2271,7 @@
 	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/EkMukta-Bold.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome5.ttf"/><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
