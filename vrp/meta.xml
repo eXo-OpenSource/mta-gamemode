@@ -770,6 +770,8 @@
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinSelectGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RaceLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RaceCreateLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchCreateLobby.lua" type="client"/>

@@ -118,7 +118,7 @@ function VehiclePerformanceGUI:fillTab(handling, scroll, tabId)
 		local range, info, unit = unpack(VEHICLE_TUNINGKIT_DESCRIPTION[propName])
 		unit = unit or "%"
 		GUIGridRectangle:new(0, self.m_Offset, 15, 2, tocolor(0, 0, 0, 150), scroll)
-		self.m_Labels[infoName] = GUIGridLabel:new(1, self.m_Offset, 6, 1, infoName.." ("..unit..") :", scroll):setHeader("sub")
+		self.m_Labels[infoName] = GUIGridLabel:new(1, self.m_Offset, 6, 1, ("%s (%s)"):format(infoName, unit), scroll):setHeader("sub")
 		GUIGridRectangle:new(10, self.m_Offset+0.1, 2, 1, tocolor(255, 255, 255, 200), scroll)
 		table.insert(self.m_LabelValues[propName],  GUIGridLabel:new(10, self.m_Offset, 2, 1, "", scroll):setHeader("sub"):setAlignX("center"))
 		if self.m_Modify then
@@ -216,10 +216,10 @@ function VehiclePerformanceGUI:updateValues( vehicle, serverHandling )
 					if not unit then
 						value = normaliseRange(range[1], range[2], value)*100
 						edit:setText(math.round(value, 2))
-						edit:setCaption(value.."%")
+						edit:setCaption(("%s %"):format(value))
 					else 
 						if prop == "maxVelocity" then value = value + VEHICLE_SPEEDO_MAXVELOCITY_OFFSET end
-						edit:setCaption(value..unit)
+						edit:setCaption(("%s%s"):format(value,unit))
 						edit:setText(math.round(value, 2))
 					end
 					edit:setNumeric(true)

@@ -7,22 +7,22 @@
 -- ****************************************************************************
 
 VehicleTurbo = inherit(Singleton)
---//todo add check if vehicle has turbokit installed before creating exhaust fumes
-local texName = "smoke"
-local count = 0
+
+VehicleTurbo.texName = "gunflash"
+
 function VehicleTurbo:constructor() 
     self.m_Vehicles ={}
     self.m_Exhausts ={}
-    for k, v in ipairs(getElementsByType("vehicle", root, true)) do  -- todo check if vehicle has actual turbokit installed and not have every car with exhaust-flames
-        self.m_Vehicles[v] = true
-        v.m_LastGear = getVehicleCurrentGear(v)
-        v.m_IsDoubleExhaust = bitAnd(v:getHandling()["modelFlags"], 0x00002000) == 0x00002000
+    for k, v in ipairs(getElementsByType("vehicle", root, true)) do
+        if v.isTurbo and v:isTurbo() then
+            self.m_Vehicles[v] = true
+            v.m_LastGear = getVehicleCurrentGear(v)
+            v.m_IsDoubleExhaust = bitAnd(v:getHandling()["modelFlags"], 0x00002000) == 0x00002000
+        end
     end
     self.m_RenderBind = bind(self.Event_Render, self)
     addEventHandler("onClientPreRender", root, self.m_RenderBind)
-
     addEventHandler("onClientElementStreamIn", root, bind(self.Event_onStreamElementIn, self))
-
     addEventHandler("onClientElementStreamOut", root, bind(self.Event_onStreamElementOut, self))
 end
 
@@ -80,7 +80,7 @@ function VehicleTurbo:createExhaust(vehicle, pos, rot)
         self.m_Exhausts[vehicle] = {}
     end
     for i = 1, exhaustCount do 
-        self.m_Exhausts[vehicle][i] = createEffect("gunflash", pos[i].x, pos[i].y, pos[i].z)
+        self.m_Exhausts[vehicle][i] = createEffect(VehicleTurbo.texName, pos[i].x, pos[i].y, pos[i].z)
         self.m_Exhausts[vehicle][i]:setRotation(90, 90, -1*rot.z+180)
         self.m_Exhausts[vehicle][i]:setSpeed(math.random(5, 10) / 10)
         self.m_Exhausts[vehicle][i].sound = Sound3D("files/audio/vehicles/turbo.ogg", vehicle:getPosition())
@@ -117,7 +117,7 @@ function VehicleTurbo:updateExhaust(vehicle, pos, rot )
 end
 
 function VehicleTurbo:Event_onStreamElementIn()
-    if getElementType(source) == "vehicle" then 
+    if getElementType(source) == "vehicle" and source.isTurbo and source:isTurbo() then 
         self.m_Vehicles[source] = true
         source.m_LastGear = getVehicleCurrentGear(source)
         source.m_IsDoubleExhaust = bitAnd(source:getHandling()["modelFlags"], 0x00002000) == 0x00002000
