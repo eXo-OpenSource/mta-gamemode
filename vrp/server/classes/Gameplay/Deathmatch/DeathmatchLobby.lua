@@ -68,9 +68,10 @@ function DeathmatchLobby:loadMap()
 
 	if (map.File) then
 		self.m_MapParser = MapParser:new(map.File)
-		outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
-		outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
 		self.m_ParsedMapIndex = self.m_MapParser:create(self.m_MapData["dim"])
+		--outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
+		--outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
+		--outputDebugString("Objects: "..#self.m_MapParser:getElementsByType("object"))
 	end
 end
 
