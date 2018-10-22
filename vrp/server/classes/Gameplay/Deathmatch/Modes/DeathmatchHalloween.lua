@@ -50,9 +50,9 @@ DeathmatchHalloween.Markers = {
 	Vector3(-404.66, 2258.09, 42.3),
 	Vector3(-394.40, 2214.62, 42),
 	Vector3(-377.28, 2242.12, 42.1),
-	Vector3(-362.46, 2222.23, 42.5),
+	Vector3(-362.46, 2222.23, 42.1),
 	Vector3(-394.40, 2214.62, 41.9),
-	Vector3(-384.73, 2205.79, 41.9),
+	Vector3(-384.73, 2205.79, 41.7),
 	Vector3(-427.46, 2203.27, 42.9),	
 	Vector3(-413.99, 2176.64, 41.3),	
 
@@ -331,7 +331,9 @@ end
 function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
 	if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
-		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+		setTimer(function()
+			giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+		end,10000,1)
 	end
 end
 
@@ -367,8 +369,7 @@ function DeathmatchHalloween:onMeleeDamage(attacker, weapon)
 	if not self.m_Players[attacker] or not self.m_Players[source] then return end
 	if not weapon == 0 then return end
 	if self.m_Players[attacker].Team == DeathmatchHalloween.Teams[2] and self.m_Players[source].Team == DeathmatchHalloween.Teams[1] then
-		source:kill()
-		self:onWasted(source, attacker, 0)
+		source:kill(attacker)
 		if source:getExecutionPed() then delete(source:getExecutionPed()) end
 	end
 end
