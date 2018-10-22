@@ -302,7 +302,7 @@ function DeathmatchHalloween:onWasted(player, killer, weapon)
 	end
 end
 
-function DeathmatchLobby:respawnPlayer(player, dead, pos)
+function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
 	if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
 		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI

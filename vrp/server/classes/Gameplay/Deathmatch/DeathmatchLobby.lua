@@ -40,6 +40,12 @@ function DeathmatchLobby:destructor()
 	for player, data in pairs(self.m_Players) do
 		self:removePlayer(player)
 	end
+
+	if self.m_MapParser then
+		self.m_MapParser:destroy(self.m_ParsedMapIndex)
+		delete(self.m_MapParser)
+	end
+
 	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
 end
 
@@ -59,6 +65,13 @@ function DeathmatchLobby:loadMap()
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
 	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
+
+	if (map.File) then
+		self.m_MapParser = MapParser:new(map.File)
+		outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
+		outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
+		self.m_ParsedMapIndex = self.m_MapParser:create(self.m_MapData["dim"])
+	end
 end
 
 function DeathmatchLobby:getPlayers()

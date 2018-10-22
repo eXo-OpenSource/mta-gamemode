@@ -13,7 +13,6 @@ DeathmatchManager.AllowedWeapons = {1, 2, 3, 4, 5, 6, 7, 8, 22, 24, 25, 26, 27, 
 DeathmatchManager.Maps = {
 	["lvpd"] = {
 		["Name"] = "LVPD",
-		["Custom"] = false,
 		["Interior"] = 3,
 		["Spawns"] = {
 			Vector3(236.65, 154.73, 1003.02),
@@ -30,7 +29,6 @@ DeathmatchManager.Maps = {
 	},
 	["battlefield"] = {
 		["Name"] = "Battlefield",
-		["Custom"] = false,
 		["Interior"] = 10,
 		["Spawns"] = {
 			Vector3(-970.98, 1089.47, 1345.00),
@@ -55,7 +53,6 @@ DeathmatchManager.Maps = {
 	},
 	["motel"] = {
 		["Name"] = "Jefferson Motel",
-		["Custom"] = false,
 		["Interior"] = 15,
 		["Spawns"] = {
 			Vector3(2226.547, -1183.308, 1029.8),
@@ -74,7 +71,7 @@ DeathmatchManager.Maps = {
 
 	["halloween"] = {
 		["Name"] = "Halloween",
-		["Custom"] = false,
+		["File"] = 	"files/maps/DMArena/Halloween.map",
 		["Interior"] = 0,
 		["Spawns"] = {
 			Vector3(-1317.79, 2529.04, 87.65),
