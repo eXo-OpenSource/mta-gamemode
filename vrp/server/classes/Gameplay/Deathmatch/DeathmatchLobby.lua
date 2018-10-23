@@ -188,10 +188,13 @@ end
 function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
+		if player:isDead() then
+			player:respawn(Vector3(1325.21, -1559.48, 13.54), Vector3(0, 0, 0))
+		end
 		player:restoreStorage()
 		player:setDimension(0)
 		player:setInterior(0)
-		player:setPosition(1325.21, -1559.48, 13.54)
+		player:setPosition(Vector3(1325.21, -1559.48, 13.54))
 		player:setData("isInDeathMatch",false)
 		player:setHeadless(false)
 		player:setAlpha(255)
