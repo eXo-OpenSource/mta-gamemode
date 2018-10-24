@@ -1,4 +1,5 @@
 Halloween = inherit(Singleton)
+addRemoteEvents{"setHalloweenDarkness"}
 
 function Halloween:constructor()
 
@@ -73,12 +74,15 @@ function Halloween:constructor()
 
 	self.m_TeamNameTexture = dxCreateRenderTarget(1000, 100, true)
 	self:Event_restore(true)
-	
+
 	self.m_DarkRenderBind = bind(Halloween.renderDarkness, self)
 	if core:get("Event", "HalloweenDarkness", true) then
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
 	end
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
+
+
+	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
 end
 
 function Halloween:Event_restore( clear )
@@ -108,8 +112,8 @@ function Halloween:Event_restore( clear )
 end
 
 
-function Halloween:setDarkness()
-	if core:get("Event", "HalloweenDarkness", true) then
+function Halloween:setDarkness(force)
+	if core:get("Event", "HalloweenDarkness", true) or force then
 		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
 	else

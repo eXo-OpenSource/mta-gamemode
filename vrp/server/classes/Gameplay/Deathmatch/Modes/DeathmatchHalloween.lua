@@ -206,6 +206,7 @@ function DeathmatchHalloween:addPlayer(player)
 	self:refreshGUI()
 
 	player:setFrozen(true)
+	player:triggerEvent("setHalloweenDarkness", true)
 end
 
 
@@ -221,6 +222,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	table.remove(self.m_Residents, table.find(self.m_Residents, player))
 
 	player:setCorrectSkin()
+	player:triggerEvent("setHalloweenDarkness")
 
 	if not isServerStop then
 		player:triggerEvent("dmHalloweenCloseGUI")
