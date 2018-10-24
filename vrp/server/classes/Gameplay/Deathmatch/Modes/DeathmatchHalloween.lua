@@ -169,9 +169,12 @@ function DeathmatchHalloween:setPlayerTeamProperties(player, team)
 		player:setModel(1)
 		giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
 		addEventHandler("onPlayerDamage", player, self.m_MeleeBind)
+		toggleControl(player, "sprint", true)
 	else
 		table.insert(self.m_Zombies, player)
 		player:setModel(310)
+		player:setArmor(0)
+		toggleControl(player, "sprint", false)
 	end
 	player:sendShortMessage(_("Du wurdest ins Team der %s gesetzt!", player, team))
 end
@@ -223,6 +226,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 
 	player:setCorrectSkin()
 	player:triggerEvent("setHalloweenDarkness")
+	toggleControl(player, "sprint", true)
 
 	if not isServerStop then
 		player:triggerEvent("dmHalloweenCloseGUI")
@@ -332,11 +336,14 @@ end
 
 function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
-	if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
 		setTimer(function()
-			giveWeapon(player, 31, 9999, true) -- Todo Add Weapon-Select GUI
+			if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+				giveWeapon(player, 31, 9999, true)
+			else
+				player:setArmor(0)
+			end
+
 		end,10000,1)
-	end
 end
 
 function DeathmatchHalloween:healZombies()
