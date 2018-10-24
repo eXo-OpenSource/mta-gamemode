@@ -42,7 +42,7 @@ DeathmatchHalloween.Spawns = {
 		Vector3(-414.49, 2129.68, 47.02),
 		Vector3(-449.88, 2148.49, 48.14),
 		Vector3(-483.73, 2165.30, 48.17),
-		Vector3(-479.24, 2194.85, 42.17),	
+		Vector3(-479.24, 2194.85, 42.17),
 	}
 }
 
@@ -53,10 +53,10 @@ DeathmatchHalloween.Markers = {
 	Vector3(-362.46, 2222.23, 42.1),
 	Vector3(-394.40, 2214.62, 41.5),
 	Vector3(-384.73, 2205.79, 41.5),
-	Vector3(-427.46, 2203.27, 42.3),	
-	Vector3(-413.31, 2175.60, 40.8),	
+	Vector3(-427.46, 2203.27, 42.3),
+	Vector3(-413.31, 2175.60, 40.8),
 
-	
+
 }
 
 DeathmatchHalloween.MarkerColor = {
@@ -119,7 +119,7 @@ function DeathmatchHalloween:refreshGUI()
 	}
 
 	for player, data in pairs(self:getPlayers()) do
-		
+
 		player:triggerEvent("dmHalloweenRefreshGUI", self.m_Players, roundData)
 	end
 end
@@ -156,7 +156,7 @@ function DeathmatchHalloween:startRound()
 	self.m_HasStarted = true
 	for player, data in pairs(self:getPlayers()) do
 		player:setFrozen(false)
-	end	
+	end
 	self:refreshGUI()
 	self:spawnMarkers()
 	self.m_CheckMarkerTimer = setTimer(self.m_CheckMarkerBind, 1000, 0)
@@ -261,7 +261,7 @@ function DeathmatchHalloween:checkMarkers()
 	for index, shape in pairs(self.m_Colshapes) do
 		local newScore = 0
 		for index, player in pairs(getElementsWithinColShape(shape, "player")) do
-			if not player:isDead() then
+			if self.m_Players[player] and not player:isDead() then
 				self.m_Players[player].isInMarker = true
 				self:refreshMarkerGUI(player)
 				if self.m_Players[player] then
@@ -307,7 +307,7 @@ function DeathmatchHalloween:checkMarkers()
 		end
 		for key, player in pairs(self.m_Residents) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle eure Stadt erobert!")
-		end		
+		end
 		delete(self)
 	end
 end
@@ -315,16 +315,16 @@ end
 function DeathmatchHalloween:onWasted(player, killer, weapon)
 	DeathmatchLobby.onWasted(self, player, killer, weapon)
 	if killer then
-		self.m_Players[player].Lives = self.m_Players[player].Lives - 1
 		self:increaseKill(killer, weapon)
 		self:increaseDead(player, weapon)
-		if self.m_Players[player].Lives <= 0 then
-			self:removePlayer(player)
-			self:checkAlivePlayers()
-		else
-			self:respawnPlayer(player, true, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[self.m_Players[player].Team]))
-			player:sendShortMessage(_("Du wurdest getötet, du hast noch %d Leben", player, self.m_Players[player].Lives), "Halloween-Deathmatch")
-		end
+	end
+	self.m_Players[player].Lives = self.m_Players[player].Lives - 1
+	if self.m_Players[player].Lives <= 0 then
+		self:removePlayer(player)
+		self:checkAlivePlayers()
+	else
+		self:respawnPlayer(player, true, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[self.m_Players[player].Team]))
+		player:sendShortMessage(_("Du wurdest getötet, du hast noch %d Leben", player, self.m_Players[player].Lives), "Halloween-Deathmatch")
 	end
 end
 
@@ -347,19 +347,19 @@ function DeathmatchHalloween:checkAlivePlayers()
 	if #self.m_Zombies <= 0 then
 		for key, player in pairs(self.m_Zombies) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Bewohner haben alle Zombies getötet!")
-		end	
+		end
 		for key, player in pairs(self.m_Residents) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet!")
-		end	
+		end
 		delete(self)
 	end
 	if #self.m_Residents <= 0 then
 		for key, player in pairs(self.m_Zombies) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet!")
-		end	
+		end
 		for key, player in pairs(self.m_Residents) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle Bewohner getötet!")
-		end	
+		end
 		delete(self)
 	end
 end
