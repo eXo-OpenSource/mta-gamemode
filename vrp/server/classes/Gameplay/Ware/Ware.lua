@@ -128,11 +128,6 @@ function Ware:afterRound()
 	self:sweepPeds()
 	local endGame = false
 	self.m_RoundCount = self.m_RoundCount + 1
-	if not self.m_WarmUpState then
-		self.m_MatchCount = self.m_MatchCount + 1
-	else 
-		self.m_WarmUpState = false
-	end
 	if self.m_RoundCount > 10 and self.m_RoundCount < 20 then
 		self.m_Gamespeed = 2
 	elseif self.m_RoundCount >= 20 and self.m_RoundCount < 30 then
@@ -141,6 +136,11 @@ function Ware:afterRound()
 		self.m_RoundCount = 0
 		self.m_Gamespeed = 1
 		endGame = true
+		if not self.m_WarmUpState then
+			self.m_MatchCount = self.m_MatchCount + 1
+		else 
+			self.m_WarmUpState = false
+		end
 	end
 	if self.m_CurrentMode then
 		local modeDesc = self.m_CurrentMode.modeDesc
