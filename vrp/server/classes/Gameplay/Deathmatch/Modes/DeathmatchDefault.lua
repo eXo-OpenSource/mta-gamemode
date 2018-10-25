@@ -30,7 +30,7 @@ function DeathmatchDefault:addPlayer(player)
 		["Deaths"] = 0
 	}
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
-
+	self:refreshGUI()
 	DeathmatchLobby.respawnPlayer(self, player)
 end
 
