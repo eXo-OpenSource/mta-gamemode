@@ -71,6 +71,16 @@ function WareManager:restartEvent()
 	for i = 1, 5 do
 		WareManager.Map[#WareManager.Map+1] = Ware:new(i)
 	end
+	for k, player in ipairs(getElementsByType("player")) do 
+		player:sendInfo(_("Das Ware-Event hat begonnen!", player))
+	end
+end
+
+function WareManager:stopEvent(i) 
+	if WareManager.Map[i] then
+		WareManager.Map[i]:delete()
+		WareManager.Map[i] = nil
+	end
 end
 
 function WareManager:announceEvent()

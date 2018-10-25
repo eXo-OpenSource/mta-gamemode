@@ -19,7 +19,7 @@ Ware.sidelength = 9
 Ware.afterRoundTime = 2000
 Ware.arenaZ = 500
 Ware.Min_Players = 3
-Ware.MaxMatches = 5
+Ware.MaxMatches = 4
 function Ware:constructor( dimension )
 	self.m_MatchCount = 0
 	self.m_GameModeList =
@@ -61,7 +61,7 @@ function Ware:constructor( dimension )
 end
 
 function Ware:startRound()
-	if self.m_MatchCount <= Warte.MaxMatches then
+	if self.m_MatchCount <= Ware.MaxMatches then
 		self.m_Successors = {}
 		local randomMode = self.m_GameModeList[math.random(1,#self.m_GameModeList)]
 		local roundTime = Ware.roundTimes[self.m_Gamespeed]
@@ -86,6 +86,7 @@ function Ware:startRound()
 		for k, player in ipairs( self.m_Players ) do
 			self:leavePlayer(player)
 		end
+		WareManager:getSingleton():stopEvent(self.m_Dimension)
 	end
 end
 
@@ -124,8 +125,14 @@ function Ware:isPlayerWinner( player )
 end
 
 function Ware:afterRound()
+	self:sweepPeds()
 	local endGame = false
 	self.m_RoundCount = self.m_RoundCount + 1
+	if not self.m_WarmUpState then
+		self.m_MatchCount = self.m_MatchCount + 1
+	else 
+		self.m_WarmUpState = false
+	end
 	if self.m_RoundCount > 10 and self.m_RoundCount < 20 then
 		self.m_Gamespeed = 2
 	elseif self.m_RoundCount >= 20 and self.m_RoundCount < 30 then
@@ -134,11 +141,6 @@ function Ware:afterRound()
 		self.m_RoundCount = 0
 		self.m_Gamespeed = 1
 		endGame = true
-		if not self.m_WarmUpState then
-			self.m_MatchCount = self.m_MatchCount + 1
-		else 
-			self.m_WarmUpState = false
-		end
 	end
 	if self.m_CurrentMode then
 		local modeDesc = self.m_CurrentMode.modeDesc
@@ -149,7 +151,7 @@ function Ware:afterRound()
 			for k, player in ipairs( winners ) do
 				if player and isElement(player) then
 					player:setData("Ware:roundsWon", (player:getData("Ware:roundsWon") or 0) + 1)
-					if #self.m_Players > Ware.Min_Players then
+					if #self.m_Players > Ware.Min_Players or DEBUG then
 						if not self.m_WarmUpState then
 							player:setData("Ware:pumpkinsEarned",  (player:getData("Ware:pumpkinsEarned") or 0) + 1)
 						else 
@@ -198,6 +200,20 @@ function Ware:resetRound()
 	end
 end
 
+function Ware:sweepPeds()
+	local x, y, z, width, height = unpack(self.m_Arena)
+	local px, py, pz
+	for k, p in ipairs(getElementsByType("ped")) do 
+		px, py, pz = getElementPosition(p)
+		if (px >= x and px <= x+width) and py >= y and (py < y+height) and pz >= z then 
+			if p:getDimension() == self.m_Dimension then 
+				if getElementData(p,"NPC:namePed") then 
+					p:destroy()
+				end
+			end
+		end
+	end
+end
 
 function Ware:getLosers()
 	local loosers = {}
