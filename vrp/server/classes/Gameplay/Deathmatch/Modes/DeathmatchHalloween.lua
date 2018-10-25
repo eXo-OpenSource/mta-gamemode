@@ -197,7 +197,6 @@ function DeathmatchHalloween:addPlayer(player)
 		team = DeathmatchHalloween.Teams[1]
 	end
 
-	self:setPlayerTeamProperties(player, team)
 
 	self.m_Players[player] = {
 		["Kills"] = 0,
@@ -213,6 +212,7 @@ function DeathmatchHalloween:addPlayer(player)
 	self:respawnPlayer(player, false, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[team]))
 	self:refreshGUI()
 
+	self:setPlayerTeamProperties(player, team) -- call after gui
 	player:setFrozen(true)
 	player:triggerEvent("setHalloweenDarkness", true)
 end
