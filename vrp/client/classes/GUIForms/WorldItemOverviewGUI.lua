@@ -41,7 +41,7 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_ObjectList.onLeftClick = bind(WorldItemOverviewGUI.Event_OnListItemClick, self)
 
 	self.m_ListRefreshButton = GUIButton:new(self.m_Width-35, 65, 30, 30, " "..FontAwesomeSymbols.Refresh, self):setFont(FontAwesome(15)):setFontSize(1)
-	self.m_ListRefreshButton:setBackgroundColor(Color.LightBlue)
+	self.m_ListRefreshButton:setBackgroundColor(Color.Accent)
 	self.m_ListRefreshButton.onLeftClick = function()
 		self.m_Refreshing = true
 		self.m_FilterApplied = false
@@ -57,7 +57,7 @@ function WorldItemOverviewGUI:constructor(sOwnerName, tblObjects, id, type)
 	self.m_FilterEditPlacer     = GUIEdit:new(325, 305, 120, 30, self):setFontSize(1)
 	self.m_FilterEditTime       = GUIEdit:new(450, 305, 150, 30, self):setFontSize(1)
 	self.m_FilterApplyButton    = GUIButton:new(self.m_Width-35, 305, 30, 30, " "..FontAwesomeSymbols.Check, self):setFont(FontAwesome(15)):setFontSize(1)
-	self.m_FilterApplyButton:setBackgroundColor(Color.LightBlue)
+	self.m_FilterApplyButton:setBackgroundColor(Color.Accent)
 	self.m_FilterApplyButton.onLeftClick = bind(WorldItemOverviewGUI.applyFilter, self)
 
 	--options
@@ -90,25 +90,25 @@ function WorldItemOverviewGUI:loadObjectsInList(tblObjects)
 		for object in pairs(tblObjects[modelid]) do
 			maxRange, dimCheck = object:getData("WorldItem:AccessRange"),object:getData("WorldItem:IntDimCheck")
 			ox, oy, oz = getElementPosition(object)
-			if maxRange > 0 then 
-				if getDistanceBetweenPoints3D(ox, oy, oz, x, y, z) <= maxRange then 
-					if dimCheck then 
+			if maxRange > 0 then
+				if getDistanceBetweenPoints3D(ox, oy, oz, x, y, z) <= maxRange then
+					if dimCheck then
 						oInt, oDim = object:getInterior(), object:getDimension()
-						if (oInt==int) and (oDim==dim) then 
+						if (oInt==int) and (oDim==dim) then
 							insertObject = true
 						end
-					else 
+					else
 						insertObject = true
 					end
-				else 
+				else
 					insertObject =  false
 				end
-			else 
+			else
 				if not dimCheck then
 					insertObject = true
-				else 
+				else
 					oInt, oDim = object:getInterior(), object:getDimension()
-					if (oInt==int) and (oDim==dim) then 
+					if (oInt==int) and (oDim==dim) then
 						insertObject = true
 					end
 				end
@@ -187,11 +187,11 @@ function WorldItemOverviewGUI:updateDebugArrow(forceDestroy)
 			local _, _, _, _, _, maxZ = getElementBoundingBox(obj)
 			if not self.m_DebugArrow then
 				self.m_DebugArrow = createMarker(obj.position.x, obj.position.y, obj.position.z + maxZ + 2, "arrow", 1, 200, 100, 0, 100)
-				self.m_DebugArrow:setInterior(int) 
+				self.m_DebugArrow:setInterior(int)
 				self.m_DebugArrow:setDimension(dim)
 			else
 				self.m_DebugArrow:setPosition(obj.position.x, obj.position.y, obj.position.z + maxZ + 2)
-				self.m_DebugArrow:setInterior(int) 
+				self.m_DebugArrow:setInterior(int)
 				self.m_DebugArrow:setDimension(dim)
 			end
 		else

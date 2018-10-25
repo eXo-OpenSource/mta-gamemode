@@ -21,7 +21,7 @@ VEHICLE_ALT_SOUND =
 }
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
-"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList"}
+"soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX", "vehicleReceiveTuningList", "vehicleAdminReceiveTextureList"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -333,6 +333,11 @@ end)
 addEventHandler("vehicleReceiveTuningList", localPlayer,
 function (vehicle, tuning, specialTuning)
 	VehicleTuningShowGUI:new(tuning, specialTuning)
+end)
+
+addEventHandler("vehicleAdminReceiveTextureList", localPlayer,
+function (vehicle, texture)
+	AdminVehicleTextureEditGUI:new(vehicle, texture)
 end)
 
 

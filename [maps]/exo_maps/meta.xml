@@ -10,10 +10,10 @@
 	<script src="mapEditorScriptingExtension_c.lua" type="client"></script>
 
 	<map src="atm.map" />
-	
+
 	<map src="tiefgarage.map" />
 	<map src="cityhall.map" />
-	
+
 	<map src="knast_interior.map" />
 	<map src="knast.map" />
 	<!--<map src="medic_fix.map" />-->
@@ -36,10 +36,11 @@
 	<map src="fraktionen/FBI.map" />
 	<map src="fraktionen/FBI_int.map" />
 	<map src="fraktionen/rescue.map" />
+	<map src="fraktionen/rescue_int.map" />
 	<!--<map src="fraktionen/vatos.map" />-->
 	<map src="fraktionen/triad.map" />
 	<!--map src="fraktionen/yakuza.map"/>
-	
+
 	<map src="fraktionen/insurgent_storage.map" />
 	<map src="fraktionen/island_airport.map" />
 	<map src="fraktionen/terroristtown.map" />
@@ -50,7 +51,7 @@
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 
-	
+
 	<map src="events/halloween.map" />
 	<map src="events/auction.map" />
 
@@ -81,7 +82,7 @@
 	<!--<map src="noobspawn_christmas.map" />-->
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-	
+
 	<map src="shop/ammunation.map" />
 	<map src="shop/ammunation2.map" />
 	<map src="shop/atrium.map" />
@@ -101,7 +102,7 @@
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 	<map src="gasstation.map" />
-	
+
 
 	<map src="stuntfix.map"/>
 

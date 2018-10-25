@@ -17,7 +17,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	if element:getData("Burned") then
 		self:addItem(_"Fahrzeug-Wrack"):setTextColor(Color.Red)
 	else
-		self:addItem(_("Fahrzeug: %s (%s)", element:getName(), element:getCategoryName())):setTextColor(Color.LightBlue)
+		self:addItem(_("Fahrzeug: %s (%s)", element:getName(), element:getCategoryName())):setTextColor(Color.Accent)
 	end
 	if not element:isBlown() then
 		if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then

@@ -25,12 +25,12 @@ function AdminFireGUI:constructor()
 	self.m_FireGrid:addColumn(_"Nachricht", 0.48)
 	self.m_FireGrid:addColumn(_"Status", 0.15)
 
-	self.m_ShowAllFires = GUIButton:new(10, 460, 180, 30, "alle Feuer anzeigen",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
+	self.m_ShowAllFires = GUIButton:new(10, 460, 180, 30, "alle Feuer anzeigen",  self):setFontSize(1):setBackgroundColor(Color.Accent)
 	self.m_CreateFire = GUIButton:new(10, 500, 180, 30, "neues Feuer erstellen",  self):setFontSize(1):setBackgroundColor(Color.Green)
-	self.m_ToggleFire = GUIButton:new(200, 500, 180, 30, "Feuer starten",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
-	self.m_EditFire = GUIButton:new(390, 500, 180, 30, "Feuer editieren",  self):setFontSize(1):setBackgroundColor(Color.LightBlue)
+	self.m_ToggleFire = GUIButton:new(200, 500, 180, 30, "Feuer starten",  self):setFontSize(1):setBackgroundColor(Color.Accent)
+	self.m_EditFire = GUIButton:new(390, 500, 180, 30, "Feuer editieren",  self):setFontSize(1):setBackgroundColor(Color.Accent)
 	self.m_DeleteFire = GUIButton:new(580, 500, 180, 30, "Feuer löschen",  self):setFontSize(1):setBackgroundColor(Color.Orange)
-	
+
 	self.m_ShowAllFires.onLeftClick = function()
 		if not self.m_CurrentFireEditing then -- we use the same table, so dont override it
 			if not self.m_FireShowing then
@@ -187,7 +187,7 @@ function AdminFireGUI:onSelectFire(id)
 end
 
 function AdminFireGUI:onEditFire(id)
-	if id then 
+	if id then
 		local data = self.m_Fires[id]
 		self.m_ShowAllFires:setEnabled(false)
 		self.m_CreateFire:setEnabled(false)
@@ -226,7 +226,7 @@ function AdminFireGUI:onEditFire(id)
 	self.m_MessageEdit:setVisible(id and true)
 	self.m_ActiveCheck:setVisible(id and true)
 	self.m_MsgGenerateCheck:setVisible(id and true)
-	
+
 
 	self.m_CurrentFireEditing = id
 end

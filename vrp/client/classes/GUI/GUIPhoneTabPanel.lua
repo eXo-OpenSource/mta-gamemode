@@ -60,7 +60,7 @@ function GUIPhoneTabPanel:addTab(tabName, symbol)
 		end
 
 		tabButton:setColor(Color.Grey)
-		tabButton:setBackgroundColor(Color.LightBlue)
+		tabButton:setBackgroundColor(Color.Accent)
 	end
 
 	self.m_Tabs[id] = GUIElement:new(0, 0, self.m_Width, self.m_Height-40, self)
@@ -70,7 +70,7 @@ function GUIPhoneTabPanel:addTab(tabName, symbol)
 	else
 		self.m_CurrentTab = 1
 		tabButton:setColor(Color.Grey)
-		tabButton:setBackgroundColor(Color.LightBlue)
+		tabButton:setBackgroundColor(Color.Accent)
 	end
 
 	return self.m_Tabs[id]

@@ -26,22 +26,22 @@ function HelpBar:constructor()
 	self.m_Icon.onUnhover = function () self.m_Icon:setColor(Color.White) end
 
 	self.m_Rectangle = GUIRectangle:new(self.m_Width, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 200), self)
-	self.m_TitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.01, self.m_Width*0.7, self.m_Height*0.1, _"Hilfe", self.m_Rectangle):setColor(Color.LightBlue)
-	self.m_SubTitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, "Kein Text", self.m_Rectangle):setColor(Color.LightBlue)
+	self.m_TitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.01, self.m_Width*0.7, self.m_Height*0.1, _"Hilfe", self.m_Rectangle):setColor(Color.Accent)
+	self.m_SubTitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, "Kein Text", self.m_Rectangle):setColor(Color.Accent)
 	self.m_TextLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.15, self.m_Width*0.9, self.m_Height*0.8, "", self.m_Rectangle):setFont(VRPFont(self.m_Height*0.03))
 
-	self.m_CloseButton = GUILabel:new(self.m_Width*0.75, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.1, "⇛", self.m_Rectangle):setColor(Color.LightBlue)
+	self.m_CloseButton = GUILabel:new(self.m_Width*0.75, self.m_Height*0.01, self.m_Width*0.25, self.m_Height*0.1, "⇛", self.m_Rectangle):setColor(Color.Accent)
 	self.m_CloseButton.onLeftClick = function() self:fadeOut() end
 	self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.White) end
-	self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.LightBlue) end
+	self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.Accent) end
 
-	self.m_TutorialButton = GUILabel:new(self.m_Width*0.05, self.m_Height*0.80, self.m_Width, self.m_Height*0.05, _"Zeige Tutorial", self.m_Rectangle):setColor(Color.LightBlue)
+	self.m_TutorialButton = GUILabel:new(self.m_Width*0.05, self.m_Height*0.80, self.m_Width, self.m_Height*0.05, _"Zeige Tutorial", self.m_Rectangle):setColor(Color.Accent)
 	self.m_TutorialButton.onHover = function () self.m_TutorialButton:setColor(Color.White) end
-	self.m_TutorialButton.onUnhover = function () self.m_TutorialButton:setColor(Color.LightBlue) end
+	self.m_TutorialButton.onUnhover = function () self.m_TutorialButton:setColor(Color.Accent) end
 	self.m_TutorialButton:setVisible(false)
 
 	if localPlayer:isLoggedIn() then
-		self.m_TicketButton = GUIButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width*0.9, self.m_Height*0.05, _"Ticket erstellen", self.m_Rectangle):setFontSize(1.2):setBackgroundColor(Color.LightBlue)
+		self.m_TicketButton = GUIButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width*0.9, self.m_Height*0.05, _"Ticket erstellen", self.m_Rectangle):setFontSize(1.2):setBackgroundColor(Color.Accent)
 		self.m_TicketButton.onLeftClick = function() TicketGUI:getSingleton():open() end
 	end
 

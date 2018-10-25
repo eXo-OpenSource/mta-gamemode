@@ -33,7 +33,7 @@ function ShopManageGUI:constructor(shopId, name, type, ownerId, ownerName, price
 end
 
 function ShopManageGUI:addItems()
-	self:addItemNoClick("Besitzer: "..self.m_OwnerName, Color.LightBlue)
+	self:addItemNoClick("Besitzer: "..self.m_OwnerName, Color.Accent)
 	self:addItemNoClick("Wert: "..self.m_Price.."$", Color.White)
 	if self.m_OwnerId == 0 then
 		self:addItem(_("%s kaufen", self.m_Type), Color.Blue, bind(self.itemCallback, self, 2))
@@ -102,4 +102,3 @@ addEventHandler("shopOpenManageGUI", root,
 			ShopManageGUI:new(shopId, name, type, ownerId, ownerName, price, streamUrl, stripper)
 		end
 	)
-

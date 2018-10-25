@@ -82,7 +82,7 @@ end
 function HUDKart:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget(true)
 	dxDrawRectangle(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 200))
-	dxDrawRectangle(0, 0, self.m_Width, 5, Color.LightBlue)
+	dxDrawRectangle(0, 0, self.m_Width, 5, Color.Accent)
 
 	dxDrawText("Aktuell", 0, 5, self.m_Width/2, self.m_Height/2 + 5, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")
 	dxDrawText("Beste", self.m_Width/2, 5, self.m_Width, self.m_Height/2 + 5, Color.White, 1, VRPFont(self.m_Height*0.6), "center", "center")

@@ -1,4 +1,5 @@
 Halloween = inherit(Singleton)
+addRemoteEvents{"setHalloweenDarkness"}
 
 function Halloween:constructor()
 
@@ -69,37 +70,19 @@ function Halloween:constructor()
 	end)
 
 	HalloweenSign:new()
-	HalloweenSpookyScreen:new()
+	--HalloweenSpookyScreen:new()
 
 	self.m_TeamNameTexture = dxCreateRenderTarget(1000, 100, true)
-	dxSetRenderTarget(self.m_TeamNameTexture, true)
-	local xoffs = 0
-	local color = tocolor(200, 200, 200, 200)
-	dxDrawText("Stumpy\nHeisi", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 55
-	dxDrawText("xXKing\nChris", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 58
-	dxDrawImage(xoffs-15, 20, 90, 60, "files/images/Events/Halloween/pedalo.png")
-	xoffs = xoffs + 60 + 58
-	dxDrawText("MiHawk\nOpposite", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 58
-	dxDrawText("Zvenskeren\nDynesty\nFreak", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 58
-	dxDrawText("Swatbird\nZAPPY\nBernie\nRaymaN.\nPadty\nSteven\nSven.Salvarez\nrottby", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 57
-	dxDrawText("zomb4k33l\nSlliX\nChef532", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 57
-	dxDrawText("Steven\n", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
-	xoffs = xoffs + 60 + 57
-	dxDrawText("Strobe\nPewX\nMasterM\nMegaThorx\nStivik", xoffs, 20, xoffs+60, 100, color, 1, VRPFont(18), "center")
+	self:Event_restore(true)
 
-	xoffs = xoffs + 60 + 57
-	dxSetRenderTarget()
 	self.m_DarkRenderBind = bind(Halloween.renderDarkness, self)
 	if core:get("Event", "HalloweenDarkness", true) then
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
 	end
 	addEventHandler("onClientRestore", root, bind(self.Event_restore, self))
+
+
+	addEventHandler("setHalloweenDarkness", root, bind(self.setDarkness, self))
 end
 
 function Halloween:Event_restore( clear )
@@ -129,11 +112,11 @@ function Halloween:Event_restore( clear )
 end
 
 
-function Halloween:setDarkness()
-	if core:get("Event", "HalloweenDarkness", true) then
+function Halloween:setDarkness(force)
+	if core:get("Event", "HalloweenDarkness", true) or force then
 		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
 		addEventHandler("onClientRender", root, self.m_DarkRenderBind)
-	else 
+	else
 		removeEventHandler("onClientRender", root, self.m_DarkRenderBind)
 		setFarClipDistance(math.floor(core:get("Other","RenderDistance",992)) )
 		setWeather(0)

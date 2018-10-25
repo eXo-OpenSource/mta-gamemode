@@ -145,7 +145,7 @@ function GUIGridList:onInternalSelectItem(item)
 		item:setBackgroundColor(Color.Clear)
 	end
 
-	item:setBackgroundColor(Color.LightBlue)
+	item:setBackgroundColor(Color.Accent)
 	self:anyChange()
 end
 
@@ -177,7 +177,7 @@ function GUIGridList:drawThis()
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_ItemHeight, self.m_ColumnBGColor)
 		dxSetBlendMode("blend")
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.Accent)
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
 		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self.m_FontSize, self.m_Font)

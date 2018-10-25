@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 
-VehicleELS = inherit(Singleton) 
+VehicleELS = inherit(Singleton)
 VehicleELS.Map = {}
 VehicleELS.ActiveMap = {}
 VehicleELS.ActiveDIMap = {}
@@ -106,7 +106,7 @@ function VehicleELS:internalRemoveELSLights(veh)
         veh:setOverrideLights(veh.m_ELSCache.lights)
         veh:setHeadLightColor(unpack(veh.m_ELSCache.lcolor))
         for i = 0, 3 do
-            setVehicleLightState(veh, i, VehicleELS.LightStates["full"][i+1]) 
+            setVehicleLightState(veh, i, VehicleELS.LightStates["full"][i+1])
          end
         veh.m_ELSCache = nil
     end
@@ -141,10 +141,10 @@ end
 --Direction Indicator
 
 function VehicleELS:toggleDIRequest(veh, state)
-    if state ~= VehicleELS.ActiveDIMap[veh] then 
+    if state ~= VehicleELS.ActiveDIMap[veh] then
         triggerServerEvent("vehicleDirectionIndicatorToggleRequest", veh, state)
     end
-end 
+end
 
 function VehicleELS:toggleDI(veh, mode)
     if not veh.m_HasDI then return false end
@@ -169,7 +169,7 @@ function VehicleELS:internalAddDILights(veh)
         local x, y, z = unpack(veh.m_HasDI)
         local int, dim = veh:getInterior(), veh:getDimension()
         veh.m_DILights = {}
-        
+
         veh.m_DILights.r = createMarker(0, 0, 0, "corona", 0, 255, 145, 0, 255)
         veh.m_DILights.r:attach(veh, x, y, z)
         veh.m_DILights.r:setInterior(int)
@@ -213,7 +213,7 @@ function VehicleELS.update(veh)
                     local name, color = unpack(tblChanges)
                     if VehicleELS.LightStates[name] then
                         for i = 0, 3 do
-                           setVehicleLightState(veh, i, VehicleELS.LightStates[name][i+1]) 
+                           setVehicleLightState(veh, i, VehicleELS.LightStates[name][i+1])
                         end
                     end
                     setVehicleHeadLightColor(veh, unpack(color))
@@ -253,24 +253,24 @@ end
 function VehicleELS.updateDI(veh)
     local mode = VehicleELS.ActiveDIMap[veh]
     if mode == "left" then
-        if veh.m_DILights.r:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime})
-        elseif veh.m_DILights.m:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime})
-        elseif veh.m_DILights.l:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime})
+        if veh.m_DILights.r:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
+        elseif veh.m_DILights.m:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
+        elseif veh.m_DILights.l:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
         else
             CoronaEffect.add(veh.m_DILights.r, "fade", {0, VehicleELS.DIUpdateTime})
             CoronaEffect.add(veh.m_DILights.m, "fade", {0, VehicleELS.DIUpdateTime})
             CoronaEffect.add(veh.m_DILights.l, "fade", {0, VehicleELS.DIUpdateTime})
         end
     elseif mode == "right" then
-        if veh.m_DILights.l:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime})
-        elseif veh.m_DILights.m:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime})
-        elseif veh.m_DILights.r:getSize() < 0.15 then 
-            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime})
+        if veh.m_DILights.l:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.l, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
+        elseif veh.m_DILights.m:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.m, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
+        elseif veh.m_DILights.r:getSize() < 0.15 then
+            CoronaEffect.add(veh.m_DILights.r, "fade", {0.3, VehicleELS.DIUpdateTime*0.9})
         else
             CoronaEffect.add(veh.m_DILights.r, "fade", {0, VehicleELS.DIUpdateTime})
             CoronaEffect.add(veh.m_DILights.m, "fade", {0, VehicleELS.DIUpdateTime})
@@ -312,7 +312,7 @@ end
 function VehicleELS:handleSettingChange(enabled)
     if self:isEnabled() ~= enabled then
         core:set("Vehicles", "ELS", enabled)
-        if enabled then 
+        if enabled then
             for i, v in pairs(getElementsByType("vehicle", root, true)) do
                 self:onVehicleStreamedIn(v)
             end

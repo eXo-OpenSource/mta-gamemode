@@ -26,7 +26,7 @@ function FactionRescue:constructor()
 	-- Barriers
 	Gate:new(968, Vector3(1138.5, -1384.88, 13.33), Vector3(0, 90, 0), Vector3(1138.5, -1384.88, 13.33), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
 	Gate:new(968, Vector3(1138.4, -1291, 13.3), Vector3(0, 90, 0), Vector3(1138.4, -1291, 13.3), Vector3(0, 5, 0), false).onBarrierHit = self.m_GateHitBind
-	
+
 	--Garage doors
 	self.m_Gates = {
 		Gate:new(3037, Vector3(1125.7, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1125.7, -1381.9, 17), Vector3(0, 88, 90)), --one
@@ -41,14 +41,18 @@ function FactionRescue:constructor()
 		Gate:new(3037, Vector3(1090.3, -1384.5, 14.9), Vector3(0, 0, 90), Vector3(1090.3, -1381.9, 17), Vector3(0, 88, 90)), --four
 		Gate:new(3037, Vector3(1090.3, -1371.1, 14.9), Vector3(0, 0, 270), Vector3(1090.3, -1374.2, 17), Vector3(0, 88, 270)), --four back
 	}
-	
+
 	for i,v in pairs(self.m_Gates) do
 		v.onGateHit = self.m_GateHitBind
 	end
-	local elevator = Elevator:new()
+	--[[local elevator = Elevator:new()
 	elevator:addStation("Heliport", Vector3(1161.74, -1329.84, 31.49))
 	elevator:addStation("Vordereingang", Vector3(1172.45, -1325.44, 15.41), 270)
-	elevator:addStation("Hintereingang", Vector3(1144.70, -1322.30, 13.57), 90)
+	elevator:addStation("Hintereingang", Vector3(1144.70, -1322.30, 13.57), 90)]]
+
+	InteriorEnterExit:new(Vector3(1172.45, -1325.44, 15.41), Vector3(145.1000, 119.400, 1186), 0, 270, 3, 0) -- front
+	InteriorEnterExit:new(Vector3(1144.70, -1322.30, 13.57), Vector3(170.699, 167.3999, 1191.1999), 90, 90, 3, 0) -- back
+	InteriorEnterExit:new(Vector3(1161.74, -1329.84, 31.49), Vector3(176.6999, 171.5, 1191.1999), 90, 0, 3, 0) -- heliport
 
 
 	self.m_Faction = FactionManager.Map[4]
@@ -213,7 +217,7 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 						self:getStretcher(client, vehicle)
 						setElementAlpha(client,255)
 						if client:getExecutionPed() then
-							destroyElement( client:getExecutionPed() ) 
+							destroyElement( client:getExecutionPed() )
 						end
 					end
 				else
@@ -270,7 +274,7 @@ function FactionRescue:getStretcher(player, vehicle)
 		function (player)
 			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
 			if player:getExecutionPed() then
-				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher ) 
+				player:getExecutionPed():putOnStretcher( player.m_RescueStretcher )
 			end
 			player:toggleControlsWhileObjectAttached(false, true, true, false, true)
 			player:setFrozen(false)
@@ -884,7 +888,7 @@ function FactionRescue:addVehicleFire(veh)
 		end
 		FactionRescue:getSingleton().m_BankAccountServer:transferMoney(FactionRescue:getSingleton().m_Faction, moneyForFaction * table.size(stats.pointsByPlayer), "Fahrzeugbrand gelöscht", "Faction", "VehicleFire")
 		StatisticsLogger:getSingleton():addFireLog(-1, math.floor(self.m_VehicleFires[veh]:getTimeSinceStart()/1000), toJSON(playersByID), (table.size(stats.pointsByPlayer) > 0) and 1 or 0, moneyForFaction)
-	
+
 		self.m_VehicleFires[veh] = nil
 	end, zone)
 end

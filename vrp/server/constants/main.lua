@@ -36,20 +36,6 @@ Interiors = {
     AmmuNation2 = 50001,
 }
 
-VehicleTypes = {
-	Player = 1;
-	Faction = 2;
-	Company = 3;
-	Group = 4;
-}
-
-VehicleTypeName = {
-	[VehicleTypes.Player] = "player";
-	[VehicleTypes.Faction] = "faction";
-	[VehicleTypes.Company] = "company";
-	[VehicleTypes.Group] = "group";
-}
-
 BankAccountTypes = {
   Player = 1;
   Faction = 2;

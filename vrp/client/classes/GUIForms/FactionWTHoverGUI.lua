@@ -13,7 +13,7 @@ function FactionWTBoxHoverGUI:constructor(box)
 
 	GUIRectangle.constructor(self, screenWidth-220, screenHeight/2-100/2, 180, 200, false)
 	self:setColor(tocolor(0,0,0,150))
-	GUILabel:new(0, 0, self.m_Width, 30, "Kisteninhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.LightBlue)
+	GUILabel:new(0, 0, self.m_Width, 30, "Kisteninhalt:", self):setAlignX("center"):setAlignY("center"):setColor(Color.Accent)
 	self.m_ContentLabels = {}
 	self.m_CurrentBox = box
 	self:loadContent()

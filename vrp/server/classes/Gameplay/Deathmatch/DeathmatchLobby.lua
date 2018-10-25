@@ -36,10 +36,17 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 end
 
 function DeathmatchLobby:destructor()
-	self.m_Colshape:destroy()
+	if self.m_Colshape and isElement(self.m_Colshape) then
+		self.m_Colshape:destroy()
+	end
 	for player, data in pairs(self.m_Players) do
 		self:removePlayer(player)
 	end
+
+	if self.m_MapParser then
+		delete(self.m_MapParser)
+	end
+
 	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
 end
 
@@ -59,6 +66,14 @@ function DeathmatchLobby:loadMap()
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
 	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
+
+	if (map.File) then
+		self.m_MapParser = MapParser:new(map.File)
+		self.m_MapParser:create(self.m_MapData["dim"])
+		--outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
+		--outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
+		--outputDebugString("Objects: "..#self.m_MapParser:getElementsByType("object"))
+	end
 end
 
 function DeathmatchLobby:getPlayers()
@@ -174,14 +189,18 @@ end
 function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
+		if player:isDead() then
+			player:respawn(Vector3(1325.21, -1559.48, 13.54), Vector3(0, 0, 0))
+		end
 		player:restoreStorage()
 		player:setDimension(0)
 		player:setInterior(0)
-		player:setPosition(1325.21, -1559.48, 13.54)
+		player:setPosition(Vector3(1325.21, -1559.48, 13.54))
 		player:setData("isInDeathMatch",false)
 		player:setHeadless(false)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
+		player:setFrozen(false)
 
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")

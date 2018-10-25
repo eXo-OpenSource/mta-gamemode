@@ -69,7 +69,7 @@ function MinigameGUI:constructor(game)
 	end
 
 	if data["highscore"] then
-		self.m_HighscoreButton = GUIButton:new(320, 175, 270, 30, _"Highscore zeigen", self):setBackgroundColor(Color.LightBlue):setBarEnabled(true)
+		self.m_HighscoreButton = GUIButton:new(320, 175, 270, 30, _"Highscore zeigen", self):setBackgroundColor(Color.Accent):setBarEnabled(true)
 		self.m_HighscoreButton.onLeftClick = function()
 			HighscoreGUI:new(game)
 			delete(self)

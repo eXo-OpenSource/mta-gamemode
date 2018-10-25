@@ -15,9 +15,9 @@ function SpeakBubble3D:constructor(element, text, description, rotPlus, zOffset)
 	self.m_Text = text
 	self.m_Description = description
 
-	self.m_TextColor = Color.LightBlue
+	self.m_TextColor = Color.Accent
 	self.m_BackgroundColor = Color.Black
-	self.m_BorderColor = Color.LightBlue
+	self.m_BorderColor = Color.Accent
 	self.m_DescriptionColor = Color.White
 
 	rotPlus = rotPlus or 0

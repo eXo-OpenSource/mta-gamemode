@@ -13,7 +13,7 @@ DeathmatchManager.AllowedWeapons = {1, 2, 3, 4, 5, 6, 7, 8, 22, 24, 25, 26, 27, 
 DeathmatchManager.Maps = {
 	["lvpd"] = {
 		["Name"] = "LVPD",
-		["Custom"] = false,
+		["Selectable"] = true,
 		["Interior"] = 3,
 		["Spawns"] = {
 			Vector3(236.65, 154.73, 1003.02),
@@ -30,7 +30,7 @@ DeathmatchManager.Maps = {
 	},
 	["battlefield"] = {
 		["Name"] = "Battlefield",
-		["Custom"] = false,
+		["Selectable"] = true,
 		["Interior"] = 10,
 		["Spawns"] = {
 			Vector3(-970.98, 1089.47, 1345.00),
@@ -55,7 +55,7 @@ DeathmatchManager.Maps = {
 	},
 	["motel"] = {
 		["Name"] = "Jefferson Motel",
-		["Custom"] = false,
+		["Selectable"] = true,
 		["Interior"] = 15,
 		["Spawns"] = {
 			Vector3(2226.547, -1183.308, 1029.8),
@@ -74,7 +74,8 @@ DeathmatchManager.Maps = {
 
 	["halloween"] = {
 		["Name"] = "Halloween",
-		["Custom"] = false,
+		["File"] = 	"files/maps/DMArena/Halloween.map",
+		["Selectable"] = false,
 		["Interior"] = 0,
 		["Spawns"] = {
 			Vector3(-1317.79, 2529.04, 87.65),
@@ -154,7 +155,7 @@ function DeathmatchManager:constructor()
 	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
 
 	--Development
-	addCommandHandler("halloweendm", function() 
+	addCommandHandler("halloweendm", function()
 		self:createLobby("Halloween Event", "Server", "halloween", {}, "halloween", 10)
 		for index, player in pairs(getElementsByType("player")) do
 			player:sendShortMessage("Die Halloween-Deathmatch Lobby wurde geöffnet!")
@@ -199,7 +200,13 @@ function DeathmatchManager:requestLobbys()
 end
 
 function DeathmatchManager:requestCreateData()
-	client:triggerEvent("deathmatchReceiveCreateData", DeathmatchManager.Maps, DeathmatchManager.AllowedWeapons)
+	local maps = {}
+	for index, map in pairs(DeathmatchManager.Maps) do
+		if map.Selectable then
+			maps[index] = map
+		end
+	end
+	client:triggerEvent("deathmatchReceiveCreateData", maps, DeathmatchManager.AllowedWeapons)
 end
 
 function DeathmatchManager:createPlayerLobby(map, weapon, password)

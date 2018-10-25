@@ -9,7 +9,7 @@ DmHalloweenGUI = inherit(GUIForm)
 DmHalloweenGUI.Current = false
 inherit(Singleton, DmHalloweenGUI)
 
-addRemoteEvents{"dmHalloweenRefreshGUI", "dmHalloweenCloseGUI", "dmHalloweenRefreshMarkerGUI"}
+addRemoteEvents{"dmHalloweenRefreshGUI", "dmHalloweenCloseGUI", "dmHalloweenRefreshMarkerGUI", "dmHalloweenToggleDamageEvent"}
 
 function DmHalloweenGUI:constructor(playerData, roundData)
 	GUIForm.constructor(self, screenWidth-310, screenHeight-410, 300, 400, false)
@@ -51,11 +51,27 @@ function DmHalloweenGUI:constructor(playerData, roundData)
 	self:refresh(playerData, roundData)
 
 	DeathmatchManager.CurrentGUI = self
+
+	self.m_DamageBind = bind(self.onPedDamage, self)
+
+	addEventHandler("dmHalloweenToggleDamageEvent", root, function(state)
+		if state == true then
+			addEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
+		else
+			removeEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
+		end
+	end)
+
 end
 
 function DmHalloweenGUI:destructor()
 	GUIForm.destructor(self)
 	DeathmatchManager.CurrentGUI = false
+	removeEventHandler("onClientPlayerDamage", localPlayer, self.m_DamageBind)
+end
+
+function DmHalloweenGUI:onPedDamage(attacker, weapon)
+	triggerServerEvent("dmHalloweenOnDamage", source, attacker, weapon)
 end
 
 function DmHalloweenGUI:leaveLobby()
@@ -151,6 +167,7 @@ addEventHandler("dmHalloweenRefreshMarkerGUI", root, function(markerData)
 		DmHalloweenGUI.Current:refreshMarker(markerData)
 	end
 end)
+
 
 DmHalloweenFinishedGUI = inherit(GUIForm)
 inherit(Singleton, DmHalloweenFinishedGUI)

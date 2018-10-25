@@ -14,7 +14,7 @@ function TrunkGUI:constructor()
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
 
     self.ms_SlotsSettings = {
-        ["item"] = {["color"] = Color.LightBlue, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"},
+        ["item"] = {["color"] = Color.Accent, ["btnColor"] = Color.Blue, ["emptyText"] = _"Kein Item"},
         ["weapon"] = {["color"] = Color.Orange, ["btnColor"] = Color.Red, ["emptyText"] = _"Keine Waffe"}
     }
 

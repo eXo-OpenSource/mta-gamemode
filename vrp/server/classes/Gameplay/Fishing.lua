@@ -142,18 +142,18 @@ function Fishing:FishCaught()
 	client:addFishSpecies(tbl.lastFish.Id)
 	client:increaseStatistics("FishCaught")
 
-	if client:getFishSpeciesCaughtCount() >= 10 then
-		client:giveAchievement(93) -- Fischer
+	if client:getFishSpeciesCaughtCount() >= #Fishing.Fish then
+		client:giveAchievement(95) -- Angelmeister
 	elseif client:getFishSpeciesCaughtCount() >= 24 then
 		client:giveAchievement(94) -- Alter Seemann
-	elseif client:getFishSpeciesCaughtCount() >= #Fishing.Fish then
-		client:giveAchievement(95) -- Angelmeister
+	elseif client:getFishSpeciesCaughtCount() >= 10 then
+		client:giveAchievement(93) -- Fischer
 	end
 
-	if client:getStatistics("FishCaught") >= 150 then
-		client:giveAchievement(96) -- Angelgott
-	elseif client:getStatistics("FishCaught") >= 500 then
+	if client:getStatistics("FishCaught") >= 500 then
 		client:giveAchievement(97) -- Für Helene Fischer
+	elseif client:getStatistics("FishCaught") >= 150 then
+		client:giveAchievement(96) -- Angelgott
 	end
 
 	for bagName, bagProperties in pairs(FISHING_BAGS) do

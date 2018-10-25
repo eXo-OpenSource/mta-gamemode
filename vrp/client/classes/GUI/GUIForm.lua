@@ -32,8 +32,10 @@ function GUIForm:destructor()
 		GUIForm.Map[self.m_Id] = nil
 	end
 
-	for k, v in pairs(self.m_KeyBinds) do
-		unbindKey(k, "down", v)
+	if self.m_KeyBinds then
+		for k, v in pairs(self.m_KeyBinds) do
+			unbindKey(k, "down", v)
+		end
 	end
 	self.m_KeyBinds = {}
 
