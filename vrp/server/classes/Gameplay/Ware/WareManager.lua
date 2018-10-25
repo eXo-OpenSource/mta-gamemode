@@ -12,9 +12,6 @@ addRemoteEvents{"Ware:tryJoinLobby", "Ware:tryLeaveLobby", "Ware:requestLobbys",
 local MAX_PLAYERS_PER_WARE = 12
 
 function WareManager:constructor()
-	for i = 1, 5 do
-		WareManager.Map[#WareManager.Map+1] = Ware:new(i)
-	end
 
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
@@ -40,6 +37,46 @@ function WareManager:constructor()
 	addEventHandler("Ware:tryLeaveLobby", root , bind(self.Event_onLeaveLobby, self))
 	addEventHandler("Ware:requestLobbys", root, bind(self.Event_refreshGUI, self))
 	addEventHandler("Ware:onPedClick", root , bind(self.Event_onPedClick, self))
+
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 13, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 13, 13)
+	
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 15, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 15, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 17, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 17, 13)
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 19, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 19, 13)
+	
+	
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 21, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 21, 13)
+
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.announceEvent, self), "WareManager", nil, 23, 03)
+	GlobalTimer:getSingleton():registerEvent(bind(self.restartEvent, self), "WareManager", nil, 23, 13)
+	
+end
+
+function WareManager:restartEvent() 
+	for i = 1, 5 do
+		if WareManager.Map[i] then
+			WareManager.Map[i]:delete()
+			WareManager.Map[i] = nil
+		end
+	end
+	for i = 1, 5 do
+		WareManager.Map[#WareManager.Map+1] = Ware:new(i)
+	end
+end
+
+function WareManager:announceEvent()
+	for k, player in ipairs(getElementsByType("player")) do 
+		player:sendInfo(_("In 10 Minuten startet das Ware-Event, begib dich zum Friedhof um mitzumachen!", player))
+	end
 end
 
 function WareManager:Event_refreshGUI()
