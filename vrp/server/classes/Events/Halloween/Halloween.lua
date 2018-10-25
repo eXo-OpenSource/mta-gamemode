@@ -268,10 +268,10 @@ function Halloween:finishTrickOrTreat(pId, houseId)
 						pl:sendWarning(_("Du musst in der Nähe der Tür bleiben um Süßigkeiten zu bekommen!", pl))
 					end
 				end
+				pl.m_HouseDoorBellCooldown = false
 			end
 			d.currentHouseId = nil
 			d.lastMessage = nil
-			pl.m_HouseDoorBellCooldown = false
 		end
 	end
 end
