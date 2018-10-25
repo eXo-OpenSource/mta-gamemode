@@ -200,6 +200,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 		player:setHeadless(false)
 		player:setAlpha(255)
 		player.deathmatchLobby = nil
+		player:setFrozen(false)
 
 		if not isServerStop then
 			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
