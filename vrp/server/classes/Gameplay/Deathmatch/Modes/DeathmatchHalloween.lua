@@ -13,7 +13,7 @@ DeathmatchHalloween.Teams = {
 	[3] = "Neutral" -- only for markers
 }
 DeathmatchHalloween.MinPlayers = 4
-DeathmatchHalloween.WaitingTime = 15 -- in seconds
+DeathmatchHalloween.WaitingTime = 120 -- in seconds
 DeathmatchHalloween.LivesPerPlayer = 5
 DeathmatchHalloween.ZombieHeal = 10
 DeathmatchHalloween.Spawns = {
@@ -76,31 +76,36 @@ function DeathmatchHalloween:constructor(id, name, owner, map, weapons, mode, ma
 	self.m_StartTimer = setTimer(bind(self.startRound, self), DeathmatchHalloween.WaitingTime*1000, 1)
 	self.m_Markers = {}
 	self.m_Colshapes = {}
+	self.m_Deleted = false
 
 	self.m_CheckMarkerBind = bind(self.checkMarkers, self)
 	self.m_ZombieHealBind = bind(self.healZombies, self)
 end
 
 function DeathmatchHalloween:destructor()
-	DeathmatchLobby.destructor(self)
+	if not self.m_Deleted then
+		DeathmatchLobby.destructor(self)
 
-	if self.m_CheckMarkerTimer and isTimer(self.m_CheckMarkerTimer) then
-		killTimer(self.m_CheckMarkerTimer)
-	end
-	if self.m_ZombieHealTimer and isTimer(self.m_ZombieHealTimer) then
-		killTimer(self.m_ZombieHealTimer)
-	end
-
-	for index, marker in pairs (self.m_Markers) do
-		if marker and isElement(marker) then
-			marker:destroy()
+		if self.m_CheckMarkerTimer and isTimer(self.m_CheckMarkerTimer) then
+			killTimer(self.m_CheckMarkerTimer)
 		end
-	end
-
-	for index, shape in pairs (self.m_Colshapes) do
-		if shape and isElement(shape) then
-			shape:destroy()
+		if self.m_ZombieHealTimer and isTimer(self.m_ZombieHealTimer) then
+			killTimer(self.m_ZombieHealTimer)
 		end
+
+		for index, marker in pairs (self.m_Markers) do
+			if marker and isElement(marker) then
+				marker:destroy()
+			end
+		end
+
+		for index, shape in pairs (self.m_Colshapes) do
+			if shape and isElement(shape) then
+				shape:destroy()
+			end
+		end
+
+		self.m_Deleted = true
 	end
 end
 
@@ -245,7 +250,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	if kills > 0 then
 		player:getInventory():giveItem("Suessigkeiten", kills)
 		player:getInventory():giveItem("Suessigkeiten", kills)
-		self:sendShortMessage(string.format("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", kills, kills))
+		player:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", player, kills, kills))
 	end
 
 	self:checkAlivePlayers()
@@ -403,7 +408,7 @@ end
 
 addEvent("dmHalloweenOnDamage", true)
 addEventHandler("dmHalloweenOnDamage", root, function(attacker, weapon)
-	if client.deathmatchLobby and attacker.deathmatchLobby and client.deathmatchLobby == attacker.deathmatchLobby then
+	if attacker and client.deathmatchLobby and attacker.deathmatchLobby and client.deathmatchLobby == attacker.deathmatchLobby then
 		client.deathmatchLobby:onMeleeDamage(client, attacker, weapon)
 	end
 end)
