@@ -22,7 +22,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete",
 	"vehicleSell", "vehicleSellAccept", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak",
 	"vehicleUpgradeHangar", "vehiclePark", "soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash","checkPaintJobPreviewCar",
-	"vehicleGetTuningList", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
+	"vehicleGetTuningList", "adminVehicleEdit", "adminVehicleGetTextureList", "adminVehicleOverrideTextures", "vehicleLoadObject", "vehicleDeloadObject", "clientMagnetGrabVehicle", "clientToggleVehicleEngine",
 	"clientToggleVehicleLight", "clientToggleHandbrake", "vehicleSetVariant"}
 
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
@@ -49,6 +49,7 @@ function VehicleManager:constructor()
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
 	addEventHandler("vehicleGetTuningList",root,bind(self.Event_GetTuningList, self))
+	addEventHandler("adminVehicleEdit",root,bind(self.Event_AdminEdit, self))
 	addEventHandler("adminVehicleGetTextureList",root,bind(self.Event_AdminGetTextureList, self))
 	addEventHandler("adminVehicleOverrideTextures",root,bind(self.Event_AdminOverrideTextures, self))
 	addEventHandler("vehicleLoadObject",root,bind(self.Event_LoadObject, self))
@@ -206,6 +207,44 @@ end
 
 function VehicleManager:Event_GetTuningList()
 	source:getTuningList(client)
+end
+
+function VehicleManager:Event_AdminEdit(vehicle, changes)
+	local hasToBeSaved = false
+	if changes.Model then
+		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+		vehicle:setModel(changes.Model)
+		hasToBeSaved = true
+	end
+	if changes.ELS then
+		if client:getRank() < ADMIN_RANK_PERMISSION["editVehicleModel"] then client:sendError(_("Du hast nicht genügend Rechte!", client)) return false end
+		vehicle:removeELS()
+		if changes.ELS ~= "__REMOVE" then
+			vehicle:setELSPreset(changes.ELS)
+		end
+		client:sendSuccess(_("ELS aktualisiert", client))
+		hasToBeSaved = true
+	end
+	--[[if changes.OwnerID then Note by MasterM: oh shit this code is so stupid, please shoot me so that I never have to look at it again
+		if vehicle.m_OwnerType == VehicleTypes.Player then -- check if the player is online
+
+		elseif vehicle.m_OwnerType == VehicleTypes.Group then -- check if the group is loaded
+
+		elseif vehicle.m_OwnerType == VehicleTypes.Company then -- just change the company
+			if table.removevalue(self.m_CompanyVehicles[vehicle.m_Owner], vehicle) then
+				table.insert(self.m_CompanyVehicles[changes.OwnerID], vehicle)
+				vehicle.m_Owner = changes.OwnerID
+			end
+		elseif vehicle.m_OwnerType == VehicleTypes.Faction then -- just change the faction
+			if table.removevalue(self.m_FactionVehicles[vehicle.m_Owner], vehicle) then
+				table.insert(self.m_FactionVehicles[changes.OwnerID], vehicle)
+				vehicle.m_Owner = changes.OwnerID
+			end
+		end
+	end]]
+	if hasToBeSaved and instanceof(vehicle, PermanentVehicle) then
+		vehicle:saveAdminChanges()
+	end
 end
 
 function VehicleManager:Event_AdminGetTextureList(vehicle)

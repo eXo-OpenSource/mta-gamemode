@@ -134,22 +134,22 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
         if not vehicle or hitElement:getOccupiedVehicleSeat() ~= 0 then return end
 
         if instanceof(vehicle, CompanyVehicle) then
-          if not vehicle:canBeModified() then
+          if not vehicle:canBeModified() and not self:isPlayerAdmin(hitElement) then
               hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
               return
           end
 		elseif instanceof(vehicle, FactionVehicle) then
-          if not vehicle:canBeModified() then
+          if not vehicle:canBeModified() and not self:isPlayerAdmin(hitElement) then
               hitElement:sendError(_("Dieser Fraktions-Wagen darf nicht getunt werden!", hitElement))
               return
           end
         elseif instanceof(vehicle, GroupVehicle) then
-            if not vehicle:canBeModified() then
+            if not vehicle:canBeModified() and not self:isPlayerAdmin(hitElement) then
                 hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
             end
         elseif vehicle:isPermanent() then
-            if vehicle:getOwner() ~= hitElement:getId() then
+            if vehicle:getOwner() ~= hitElement:getId() and not self:isPlayerAdmin(hitElement) then
                 hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge tunen!", hitElement))
                 return
             end
@@ -176,6 +176,10 @@ function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimen
             hitElement:sendError(_("Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!", hitElement))
         end
     end
+end
+
+function VehicleTuningShop:isPlayerAdmin(player) -- utility method to determine if a player can tune vehicles regardless of their class and owner
+    return player:getRank() >= ADMIN_RANK_PERMISSION["editVehicleTunings"]
 end
 
 function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)

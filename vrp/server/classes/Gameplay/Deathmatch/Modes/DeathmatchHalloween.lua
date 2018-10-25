@@ -92,11 +92,15 @@ function DeathmatchHalloween:destructor()
 	end
 
 	for index, marker in pairs (self.m_Markers) do
-		marker:destroy()
+		if marker and isElement(marker) then
+			marker:destroy()
+		end
 	end
 
 	for index, shape in pairs (self.m_Colshapes) do
-		shape:destroy()
+		if shape and isElement(shape) then
+			shape:destroy()
+		end
 	end
 end
 
@@ -197,7 +201,6 @@ function DeathmatchHalloween:addPlayer(player)
 		team = DeathmatchHalloween.Teams[1]
 	end
 
-	self:setPlayerTeamProperties(player, team)
 
 	self.m_Players[player] = {
 		["Kills"] = 0,
@@ -213,6 +216,7 @@ function DeathmatchHalloween:addPlayer(player)
 	self:respawnPlayer(player, false, Randomizer:getRandomTableValue(DeathmatchHalloween.Spawns[team]))
 	self:refreshGUI()
 
+	self:setPlayerTeamProperties(player, team) -- call after gui
 	player:setFrozen(true)
 	player:triggerEvent("setHalloweenDarkness", true)
 end
@@ -241,7 +245,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	if kills > 0 then
 		player:getInventory():giveItem("Suessigkeiten", kills)
 		player:getInventory():giveItem("Suessigkeiten", kills)
-		self:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", kills, kills))
+		self:sendShortMessage(string.format("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", kills, kills))
 	end
 
 	self:checkAlivePlayers()
@@ -305,7 +309,7 @@ function DeathmatchHalloween:checkMarkers()
 		elseif shape.Score == 0 then
 			shape.Marker:setColor(unpack(DeathmatchHalloween.MarkerColor[DeathmatchHalloween.Teams[3]]))
 			if (shape.Team ~= DeathmatchHalloween.Teams[3]) then
-				self:sendShortMessage(string.format("Ein Marker wurde neuralisiert!"))
+				self:sendShortMessage(string.format("Ein Marker wurde neutralisiert!"))
 				shape.Team = DeathmatchHalloween.Teams[3]
 			end
 			self:refreshGUI()
@@ -351,7 +355,7 @@ end
 function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
 		setTimer(function()
-			if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+			if self.m_Players[player] and self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
 				giveWeapon(player, 31, 9999, true)
 			else
 				player:setArmor(0)
