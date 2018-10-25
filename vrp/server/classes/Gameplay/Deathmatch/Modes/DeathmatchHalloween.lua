@@ -245,7 +245,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	if kills > 0 then
 		player:getInventory():giveItem("Suessigkeiten", kills)
 		player:getInventory():giveItem("Suessigkeiten", kills)
-		self:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", kills, kills))
+		self:sendShortMessage(string.format("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", kills, kills))
 	end
 
 	self:checkAlivePlayers()
@@ -309,7 +309,7 @@ function DeathmatchHalloween:checkMarkers()
 		elseif shape.Score == 0 then
 			shape.Marker:setColor(unpack(DeathmatchHalloween.MarkerColor[DeathmatchHalloween.Teams[3]]))
 			if (shape.Team ~= DeathmatchHalloween.Teams[3]) then
-				self:sendShortMessage(string.format("Ein Marker wurde neuralisiert!"))
+				self:sendShortMessage(string.format("Ein Marker wurde neutralisiert!"))
 				shape.Team = DeathmatchHalloween.Teams[3]
 			end
 			self:refreshGUI()
