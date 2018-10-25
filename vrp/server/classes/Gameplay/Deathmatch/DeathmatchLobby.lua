@@ -36,13 +36,14 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 end
 
 function DeathmatchLobby:destructor()
-	self.m_Colshape:destroy()
+	if self.m_Colshape and isElement(self.m_Colshape) then
+		self.m_Colshape:destroy()
+	end
 	for player, data in pairs(self.m_Players) do
 		self:removePlayer(player)
 	end
 
 	if self.m_MapParser then
-		self.m_MapParser:destroy(self.m_ParsedMapIndex)
 		delete(self.m_MapParser)
 	end
 
@@ -68,7 +69,7 @@ function DeathmatchLobby:loadMap()
 
 	if (map.File) then
 		self.m_MapParser = MapParser:new(map.File)
-		self.m_ParsedMapIndex = self.m_MapParser:create(self.m_MapData["dim"])
+		self.m_MapParser:create(self.m_MapData["dim"])
 		--outputDebugString("Mapname: ".. self.m_MapParser.m_Mapname)
 		--outputDebugString("Loaded Map '"..map.File.."' in Dimension "..self.m_MapData["dim"])
 		--outputDebugString("Objects: "..#self.m_MapParser:getElementsByType("object"))
