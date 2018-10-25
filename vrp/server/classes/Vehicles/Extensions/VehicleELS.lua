@@ -16,6 +16,7 @@ addRemoteEvents {"vehicleELSToggleRequest", "vehicleDirectionIndicatorToggleRequ
 function VehicleELS:setELSPreset(ELSPreset)
     if ELS_PRESET[ELSPreset] then
         self.m_HasELS = true
+        self.m_ELSPreset = ELSPreset
         if ELS_PRESET[ELSPreset].hasSiren then
             removeVehicleSirens(self)
             self:addSirens(1, 1)
@@ -52,20 +53,25 @@ function VehicleELS:setELSPreset(ELSPreset)
 end
 
 function VehicleELS:removeELS()
-    self.m_ELSPreset = nil
-    self.m_HasELS = nil
-    VehicleELS.Map[self] = nil
-    self:updateClient("remove")
-    removeEventHandler("vehicleELSToggleRequest", self, self.m_ToggleELSFunc)
-    removeEventHandler("vehicleDirectionIndicatorToggleRequest", self, self.m_ToggleDIFunc)
-    if self.m_LightBarObject then
-        removeEventHandler("onElementInteriorChange", self, self.m_InteriorChangeFunc)
-        removeEventHandler("onElementDimensionChange", self, self.m_DimensionChangeFunc)
+    if self.m_HasELS then
+        self.m_ELSPreset = nil
+        self.m_HasELS = nil
+        self.m_ELSActive = nil
+        VehicleELS.Map[self] = nil
+        self:updateClient("remove")
+        removeVehicleSirens(self)
+        removeEventHandler("vehicleELSToggleRequest", self, self.m_ToggleELSFunc)
+        removeEventHandler("vehicleDirectionIndicatorToggleRequest", self, self.m_ToggleDIFunc)
+        if self.m_LightBarObject then
+            if isElement(self.m_LightBarObject) then self.m_LightBarObject:destroy() end
+            removeEventHandler("onElementInteriorChange", self, self.m_InteriorChangeFunc)
+            removeEventHandler("onElementDimensionChange", self, self.m_DimensionChangeFunc)
+        end
     end
 end
 
 function VehicleELS:toggleELS(state)
-    if state ~= self.m_ELSActive then
+    if state ~= self.m_ELSActive and self.m_HasELS then
         if state then
             VehicleELS.ActiveMap[self] = true
         else

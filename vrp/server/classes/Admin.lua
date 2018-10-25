@@ -1273,7 +1273,10 @@ function Admin:addFactionVehicle(player, cmd, factionID)
 					local model = getElementModel(veh)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(factionID, VehicleTypes.Faction, model, posX, posY, posZ, rotZ)
+					local fc = factionCarColors[factionID]
+					veh:setColor(fc.r, fc.g, fc.b, fc.r1, fc.g1, fc.b1)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Fraktion nicht gefunden!", player))
 				end
@@ -1296,7 +1299,10 @@ function Admin:addCompanyVehicle(player, cmd, companyID)
 					local veh = getPedOccupiedVehicle(player)
 					local posX, posY, posZ = getElementPosition(veh)
 					local rotX, rotY, rotZ = getElementRotation(veh)
-					VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local veh = VehicleManager:getSingleton():createNewVehicle(companyID, VehicleTypes.Company, veh.model, posX, posY, posZ, rotZ)
+					local fc = companyColors[companyID]
+					veh:setColor(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b)
+					veh:getTunings():saveColors()
 				else
 					player:sendError(_("Unternehmen nicht gefunden!", player))
 				end

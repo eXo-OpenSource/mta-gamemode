@@ -52,6 +52,8 @@ end
 
 function VehicleELS:removeELS(veh)
     if VehicleELS.Map[veh] then
+        self:toggleELS(veh, false)
+        self:toggleDI(veh, false)
         VehicleELS.Map[veh] = nil
         removeEventHandler("onClientElementInteriorChange", veh, self.m_InteriorChangeFunc)
         removeEventHandler("onClientElementDimensionChange", veh, self.m_DimensionChangeFunc)

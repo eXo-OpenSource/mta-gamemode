@@ -20,7 +20,7 @@ function AdminVehicleEditGUI:constructor(vehicle)
 	if not self.m_Cache.OwnerType then
 		GUIGridLabel:new(3, 2, 4, 1, "nicht verfügbar", self.m_Window)
 	else
-		self.m_OwnerTypeCombo = GUIGridCombobox:new(3, 2, 4, 1, "Fahrzeug-Typ...", self.m_Window)
+		self.m_OwnerTypeCombo = GUIGridCombobox:new(3, 2, 4, 1, "Fahrzeug-Typ...", self.m_Window):setVisible(false)
 		for i,v in ipairs(VehicleTypeName) do
 			local item  = self.m_OwnerTypeCombo:addItem(i.." - "..v)
 			item.m_OwnerTypeIndex = i
@@ -37,9 +37,9 @@ function AdminVehicleEditGUI:constructor(vehicle)
 		GUIGridLabel:new(3, 3, 4, 1, "nicht verfügbar", self.m_Window)
 	else
 		self.m_OwnerEdit = GUIGridEdit:new(3, 3, 4, 1, self.m_Window)
-			:setText(self.m_Cache.OwnerID or 0)
-		self.m_OwnerCombo = GUIGridCombobox:new(3, 3, 4, 1, "Besitzer...", self.m_Window)
-		self.m_TransferToSelfBtn = GUIGridButton:new(7, 3, 4, 1, "Auf mich übertragen", self.m_Window)
+			:setText(self.m_Cache.OwnerID or 0):setVisible(false)
+		self.m_OwnerCombo = GUIGridCombobox:new(3, 3, 4, 1, "Besitzer...", self.m_Window):setVisible(false)
+		self.m_TransferToSelfBtn = GUIGridButton:new(7, 3, 4, 1, "Auf mich übertragen", self.m_Window):setVisible(false)
 		self.m_TransferToSelfBtn.onLeftClick = function()
 			if self:getSelectedOwnerType() == "player" then
 				self.m_OwnerEdit:setText(localPlayer:getPrivateSync("Id"))
@@ -47,7 +47,7 @@ function AdminVehicleEditGUI:constructor(vehicle)
 				self.m_OwnerEdit:setText(localPlayer:getPublicSync("GroupId"))
 			end
 		end
-		self:loadOwnerSettings(self.m_OwnerTypeCombo:getSelectedItem())
+		--self:loadOwnerSettings(self.m_OwnerTypeCombo:getSelectedItem())
 	end
 
 	self.m_SaveButton = GUIGridButton:new(6, 5, 5, 1, "Speichern", self.m_Window):setBarEnabled(false)
@@ -60,7 +60,7 @@ function AdminVehicleEditGUI:constructor(vehicle)
 			end
 			local newOwnerID = tonumber(self.m_OwnerEdit:getText())
 			if self:getSelectedOwnerType() == "faction" or self:getSelectedOwnerType() == "company" then
-				newOwnerID = self.m_OwnerCombo:getSelectedItem().m_OwnerId
+				--newOwnerID = self.m_OwnerCombo:getSelectedItem().m_OwnerId
 			end
 			if not newOwnerID then
 				ErrorBox:new(_"Der Besitzer konnte nicht gefunden werden! Die Eingabe muss entweder eine Fraktion / ein Unternehmen aus der Combo Box oder die ID (Zahl) des Spielers / der Gruppe sein.")
@@ -79,7 +79,7 @@ function AdminVehicleEditGUI:constructor(vehicle)
 	GUIGridLabel:new(1, 4, 5, 1, "Modell", self.m_Window)
 	self.m_ModelEdit = GUIGridEdit:new(3, 4, 4, 1, self.m_Window)
 		:setText(vehicle:getModel())
-	GUIGridButton:new(7, 4, 4, 1, "Modell suchen", self.m_Window)
+	GUIGridButton:new(7, 4, 4, 1, "Modell suchen", self.m_Window):setVisible(false)
 
 	GUIGridLabel:new(1, 6, 10, 1, "Optionen", self.m_Window):setHeader("sub")
 	self.m_TextureChangeButton = GUIGridButton:new(1, 7, 5, 1, "Textur verwalten", self.m_Window)
@@ -90,8 +90,12 @@ function AdminVehicleEditGUI:constructor(vehicle)
 		end
 		triggerServerEvent("adminVehicleGetTextureList", localPlayer, vehicle)
 	end
-	GUIGridButton:new(6, 7, 5, 1, "Zu Vortex umwandeln", self.m_Window)
-
+	self.m_ELSChangeButton = GUIGridButton:new(6, 7, 5, 1, "ELS ändern", self.m_Window)
+	self.m_ELSChangeButton.onLeftClick = function() --func-ception, or should I call it... funk-ception???? OMG why am I writing this - MasterM
+		AdminVehicleELSEditGUI:new(function(name)
+			triggerServerEvent("adminVehicleEdit", localPlayer, vehicle, {["ELS"] = name})
+		end)
+	end
 
 end
 
@@ -146,5 +150,37 @@ function AdminVehicleEditGUI:loadOwnerSettings(item)
 end
 
 function AdminVehicleEditGUI:destructor()
+	GUIForm.destructor(self)
+end
+
+
+
+AdminVehicleELSEditGUI = inherit(GUIForm)
+inherit(Singleton, AdminVehicleELSEditGUI)
+
+function AdminVehicleELSEditGUI:constructor(callback)
+	local callback = callback
+	GUIWindow.updateGrid()			-- initialise the grid function to use a window
+	self.m_Width = grid("x", 6) 	-- width of the window
+	self.m_Height = grid("y", 8) 	-- height of the window
+
+	GUIForm.constructor(self, screenWidth/2-self.m_Width/2, screenHeight/2-self.m_Height/2, self.m_Width, self.m_Height, true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ELS", true, true, self)
+	self.m_Grid = GUIGridGridList:new(1, 1, 5, 6, self.m_Window)
+	self.m_Grid:addColumn("ELS Name", 1)
+	self.m_Grid:addItem("(KEINS)").name = "__REMOVE"
+	for name in pairs(ELS_PRESET) do
+		self.m_Grid:addItem(tonumber(name) and getVehicleNameFromModel(name) or name).name = name
+	end
+	self.m_Button = GUIGridButton:new(1, 7, 5, 1, _"Auswählen", self.m_Window)
+	self.m_Button:setBarEnabled(false):setBackgroundColor(Color.Green)
+	self.m_Button.onLeftClick = function()
+		if self.m_Grid:getSelectedItem() then
+			callback(self.m_Grid:getSelectedItem().name)
+		end
+	end
+end
+
+function AdminVehicleELSEditGUI:destructor()
 	GUIForm.destructor(self)
 end
