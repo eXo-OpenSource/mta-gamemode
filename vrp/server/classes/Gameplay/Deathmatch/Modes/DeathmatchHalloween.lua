@@ -92,11 +92,15 @@ function DeathmatchHalloween:destructor()
 	end
 
 	for index, marker in pairs (self.m_Markers) do
-		marker:destroy()
+		if marker and isElement(marker) then
+			marker:destroy()
+		end
 	end
 
 	for index, shape in pairs (self.m_Colshapes) do
-		shape:destroy()
+		if shape and isElement(shape) then
+			shape:destroy()
+		end
 	end
 end
 
@@ -351,7 +355,7 @@ end
 function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
 		setTimer(function()
-			if self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
+			if self.m_Players[player] and self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
 				giveWeapon(player, 31, 9999, true)
 			else
 				player:setArmor(0)
