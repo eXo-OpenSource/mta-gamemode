@@ -13,7 +13,7 @@ DeathmatchHalloween.Teams = {
 	[3] = "Neutral" -- only for markers
 }
 DeathmatchHalloween.MinPlayers = 4
-DeathmatchHalloween.WaitingTime = 15 -- in seconds
+DeathmatchHalloween.WaitingTime = 120 -- in seconds
 DeathmatchHalloween.LivesPerPlayer = 5
 DeathmatchHalloween.ZombieHeal = 10
 DeathmatchHalloween.Spawns = {
