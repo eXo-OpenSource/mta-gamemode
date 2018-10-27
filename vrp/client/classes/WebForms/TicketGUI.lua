@@ -16,7 +16,6 @@ function TicketGUI:constructor()
 	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, (INGAME_WEB_PATH .. "/ingame/ticketSystem/user.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self.m_Window)
 	addCommandHandler("report", bind(self.show, self))
 	addCommandHandler("tickets", bind(self.show, self))
-	addCommandHandler("ticket", bind(self.show, self))
 	addCommandHandler("bug", bind(self.show, self))
 end
 

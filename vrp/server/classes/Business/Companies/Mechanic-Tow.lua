@@ -208,16 +208,28 @@ function MechanicTow:onEnterTowLot(hitElement)
 
 	local towingBike = hitElement.vehicle:getData("towingBike")
 	if isElement(towingBike) then
-		towingBike:toggleRespawn(true)
-		towingBike:setCollisionsEnabled(true)
-		towingBike:detach()
-		self:respawnVehicle(towingBike)
 
-		towingBike:setData("towedByVehicle", nil, true)
-		hitElement.vehicle:setData("towingBike", nil, true)
+		if towingBike.burned then
+			if towingBike.Blip then
+				towingBike.Blip:delete()
+			end
+			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s)  abgeschleppt!"):format(towingBike:getName()))
+			towingBike:destroy()
+			hitElement:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", hitElement))
+			self.m_BankAccountServer:transferMoney(hitElement, 200, "Fahrzeug-Wrack", "Company", "Towed")
+		else
 
-		StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
-		self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+			towingBike:toggleRespawn(true)
+			towingBike:setCollisionsEnabled(true)
+			towingBike:detach()
+			self:respawnVehicle(towingBike)
+
+			towingBike:setData("towedByVehicle", nil, true)
+			hitElement.vehicle:setData("towingBike", nil, true)
+
+			StatisticsLogger:getSingleton():vehicleTowLogs(hitElement, towingBike)
+			self:addLog(hitElement, "Abschlepp-Logs", ("hat ein Fahrzeug (%s) von %s abgeschleppt!"):format(towingBike:getName(), getElementData(towingBike, "OwnerName") or "Unbekannt"))
+		end
 	else
 		hitElement.vehicle:setData("towingBike", nil, true)
 	end
@@ -279,6 +291,7 @@ function MechanicTow:onDetachVehicleFromTow(towTruck, vehicle)
 					if source.Blip then
 						source.Blip:delete()
 					end
+					self:addLog(driver, "Abschlepp-Logs", ("hat ein Fahrzeug-Wrack (%s) abgeschleppt!"):format(source:getName()))
 					source:destroy()
 					driver:sendInfo(_("Du hast erfolgreich ein Fahrzeug-Wrack abgeschleppt!", driver))
 					self.m_BankAccountServer:transferMoney(driver, 200, "Fahrzeug-Wrack", "Company", "Towed")
@@ -427,12 +440,7 @@ function MechanicTow:Event_mechanicAttachBike(vehicle)
 	if client.vehicle:getData("towingBike") then return end
 
 	if vehicle and vehicle:isEmpty() then
-		if (source.burned and vehicle:getVehicleType() ~= VehicleType.Bike) then
-			client:sendWarning("Du kannst keine Fahrzeugwracks abschleppen!")
-			return
-		end
-
-		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+		if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or vehicle.burned then
 			vehicle:toggleRespawn(false)
 			client.vehicle:setData("towingBike", vehicle, true)
 			vehicle:setData("towedByVehicle", client.vehicle, true)

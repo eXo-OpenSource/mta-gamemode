@@ -106,9 +106,9 @@ end
 function Faction:setSetting(category, key, value, responsiblePlayer)
 	local allowed = true
 	if responsiblePlayer and isElement(responsiblePlayer) and getElementType(responsiblePlayer) == "player" then
-		if not responsiblePlayer:getFaction() then allowed = false end 
-		if responsiblePlayer:getFaction() ~= self then allowed = false end 
-		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end 
+		if not responsiblePlayer:getFaction() then allowed = false end
+		if responsiblePlayer:getFaction() ~= self then allowed = false end
+		if self:getPlayerRank(responsiblePlayer) ~= FactionRank.Leader then allowed = false end
 	end
 	if allowed then
 		self.m_Settings:setSetting(category, key, value)
@@ -499,7 +499,7 @@ function Faction:sendBndChatMessage(sourcePlayer, message, alliance)
 	local playerId = sourcePlayer:getId()
 	local receivedPlayers = {}
 	local r,g,b = 20, 140, 0
-	local text = ("BND %s %s: %s"):format(alliance:getShortName(), getPlayerName(sourcePlayer), message)
+	local text = ("[Bündnis] %s: %s"):format(getPlayerName(sourcePlayer), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b)
 		if player ~= sourcePlayer then

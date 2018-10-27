@@ -24,7 +24,7 @@ function ItemBomb:use(player)
 		-- TODO: Play place animation
 
 		-- Fire (starts the countdown)
-		bombArea:fire(player)
+		bombArea:fire(player) --bomb gets removed there
 		return true
 	end
 
