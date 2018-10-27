@@ -249,7 +249,7 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 
 	if kills > 0 then
 		player:getInventory():giveItem("Suessigkeiten", kills)
-		player:getInventory():giveItem("Suessigkeiten", kills)
+		player:getInventory():giveItem("Kürbis", kills)
 		player:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", player, kills, kills))
 	end
 
@@ -360,6 +360,7 @@ end
 function DeathmatchHalloween:respawnPlayer(player, dead, pos)
 	DeathmatchLobby.respawnPlayer(self, player, dead, pos)
 		setTimer(function()
+			if not isElement(player) then return false end
 			if self.m_Players[player] and self.m_Players[player].Team == DeathmatchHalloween.Teams[1] then
 				giveWeapon(player, 31, 9999, true)
 			else
