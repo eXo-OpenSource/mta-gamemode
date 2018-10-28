@@ -188,7 +188,7 @@ function PermanentVehicle:virtual_constructor(data)
 				local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
 				local oldValue = handling[property]
 				if oldValue then
-					if type( oldValue) == "number" then
+					if type( oldValue) == "number" and property ~= "dragCoeff" then
 						setVehicleHandling(self,property,oldValue*faktor)
 					else
 						setVehicleHandling(self,property,faktor)
