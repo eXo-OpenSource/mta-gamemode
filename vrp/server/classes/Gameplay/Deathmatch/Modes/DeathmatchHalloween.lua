@@ -251,9 +251,11 @@ function DeathmatchHalloween:removePlayer(player, isServerStop)
 	end
 
 	if kills > 0 then
-		player:getInventory():giveItem("Suessigkeiten", kills)
-		player:getInventory():giveItem("Kürbis", kills)
-		player:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und Kürbisse erhalten!", player, kills, kills))
+		local sweets = kills*100
+		local pumpkins = kills * 5
+		player:getInventory():giveItem("Suessigkeiten", sweets)
+		player:getInventory():giveItem("Kürbis", pumpkins)
+		player:sendShortMessage(_("Du hast für deine %d Kills %d Süßigkeiten und %d Kürbisse erhalten!", player, kills, sweets, pumpkins))
 	end
 
 	self:checkAlivePlayers()
@@ -334,8 +336,8 @@ function DeathmatchHalloween:checkMarkers()
 
 	if self:countMarkers("Zombies") == #self.m_Colshapes then
 		for key, player in pairs(self.m_Zombies) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt die Runde gewonnen! Du erhälst 5 Kürbisse!")
-			player:giveItem("Kürbis", 5)
+			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt die Runde gewonnen! Du erhälst 25 Kürbisse!")
+			player:giveItem("Kürbis", 25)
 		end
 		for key, player in pairs(self.m_Residents) do
 			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle eure Stadt erobert!")
@@ -386,13 +388,15 @@ function DeathmatchHalloween:checkAlivePlayers()
 				player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Bewohner haben alle Zombies getötet!")
 			end
 			for key, player in pairs(self.m_Residents) do
-				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet!")
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet! Du erhälst 25 Kürbisse!")
+				player:giveItem("Kürbis", 25)
 			end
 			delete(self)
 		end
 		if #self.m_Residents <= 0 then
 			for key, player in pairs(self.m_Zombies) do
-				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet!")
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet! Du erhälst 25 Kürbisse!")
+				player:giveItem("Kürbis", 25)
 			end
 			for key, player in pairs(self.m_Residents) do
 				player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle Bewohner getötet!")
