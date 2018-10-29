@@ -14,7 +14,6 @@ DeathmatchHalloween.Teams = {
 }
 DeathmatchHalloween.MinPlayers = 4
 DeathmatchHalloween.WaitingTime = 120 -- in seconds
-DeathmatchHalloween.LivesPerPlayer = 5
 DeathmatchHalloween.ZombieHeal = 10
 DeathmatchHalloween.Spawns = {
 	["Bewohner"] = {
@@ -63,6 +62,11 @@ DeathmatchHalloween.MarkerColor = {
 	["Bewohner"] = {0, 255, 0, 128},
 	["Zombies"] = {255, 0, 0, 128},
 	["Neutral"] = {255, 255, 255, 128}
+}
+
+DeathmatchHalloween.Lives = {
+	["Bewohner"] = 5,
+	["Zombies"] = 10,
 }
 
 
@@ -210,7 +214,7 @@ function DeathmatchHalloween:addPlayer(player)
 		["Kills"] = 0,
 		["Deaths"] = 0,
 		["Team"] = team,
-		["Lives"] = DeathmatchHalloween.LivesPerPlayer
+		["Lives"] = DeathmatchHalloween.Lives[team]
 	}
 
 	for _, stat in ipairs({69, 70, 71, 72, 74, 76, 77, 78}) do
