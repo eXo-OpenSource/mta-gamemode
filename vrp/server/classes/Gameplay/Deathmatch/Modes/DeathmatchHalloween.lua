@@ -376,23 +376,25 @@ function DeathmatchHalloween:healZombies()
 end
 
 function DeathmatchHalloween:checkAlivePlayers()
-	if #self.m_Zombies <= 0 then
-		for key, player in pairs(self.m_Zombies) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Bewohner haben alle Zombies getötet!")
+	if self.m_HasStarted then
+		if #self.m_Zombies <= 0 then
+			for key, player in pairs(self.m_Zombies) do
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Bewohner haben alle Zombies getötet!")
+			end
+			for key, player in pairs(self.m_Residents) do
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet!")
+			end
+			delete(self)
 		end
-		for key, player in pairs(self.m_Residents) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Zombies getötet!")
+		if #self.m_Residents <= 0 then
+			for key, player in pairs(self.m_Zombies) do
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet!")
+			end
+			for key, player in pairs(self.m_Residents) do
+				player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle Bewohner getötet!")
+			end
+			delete(self)
 		end
-		delete(self)
-	end
-	if #self.m_Residents <= 0 then
-		for key, player in pairs(self.m_Zombies) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Gewonnen", "Ihr habt alle Bewohner getötet!")
-		end
-		for key, player in pairs(self.m_Residents) do
-			player:triggerEvent("showDmHalloweenFinishedGUI", "Verloren", "Die Zombies haben alle Bewohner getötet!")
-		end
-		delete(self)
 	end
 end
 
