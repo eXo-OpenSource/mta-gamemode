@@ -131,6 +131,8 @@ ADMIN_RANK_PERMISSION = {
 	["offlinePermaban"] = RANK.Supporter,
 	["offlineUnban"] = RANK.Administrator,
 	["loginFix"] = RANK.Moderator,
+	["syncForumFaction"] = RANK.Supporter,
+	["syncForumCompany"] = RANK.Supporter,
 	--admin general
 	["event"] = RANK.Moderator,
 	["eventMoneyWithdraw"] = RANK.Moderator,
