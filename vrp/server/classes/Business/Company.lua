@@ -163,10 +163,10 @@ function Company:syncForumPermissions()
 				if not playerId then -- has no ingame account but has group??
 					Forum:getSingleton():groupRemoveMember(v["userID"], groupId, function() end) -- to execute it faster ;)
 					removedCount = removedCount + 1
-				end
-
-				if not self.m_Players[playerId] then
-					totalChanges[playerId] = { add = {}, remove = {groupId} }
+				else
+					if not self.m_Players[playerId] then
+						totalChanges[playerId] = { add = {}, remove = {groupId} }
+					end
 				end
 			end
 		end
