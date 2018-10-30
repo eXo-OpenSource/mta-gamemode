@@ -329,6 +329,11 @@ function Account.getBoardIdFromId(id)
 	return row and row.ForumId
 end
 
+function Account.getIdFromIdBoard(id)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE ForumId = ?", sql:getPrefix(), id)
+	return row and row.Id
+end
+
 function Account.getTeamspeakIdFromId(id)
 	local player = Player.getFromId(id)
 	if player and isElement(player) then

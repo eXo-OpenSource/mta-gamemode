@@ -9,7 +9,28 @@
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
+--[[
+	ALTER TABLE `vrp_factions` ADD COLUMN `Permissions` text NULL;
 
+	[
+		{
+			"forum": {
+				"ranks": {
+					0: 58,
+					1: 58,
+					2: 58,
+					3: 58,
+					4: 58,
+					5: 58,
+					6: [58, 59]
+				}
+			},
+			"teamspeak": {
+
+			}
+		}
+	]
+]]
 function FactionManager:constructor()
 	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
 		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
@@ -84,7 +105,7 @@ function FactionManager:loadFactions()
 			playerLoans[factionRow.Id] = factionRow.FactionLoanEnabled
 		end
 
-		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy)
+		local instance = Faction:new(row.Id, row.Name_Short, row.Name_Shorter, row.Name, row.BankAccount, {players, playerLoans}, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type, row.Diplomacy, row.Permissions)
 		FactionManager.Map[row.Id] = instance
 		count = count + 1
 	end
@@ -142,6 +163,7 @@ function FactionManager:Event_factionQuit()
 	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
 	faction:addLog(client, "Fraktion", "hat die Fraktion verlassen!")
 	self:sendInfosToClient(client)
+	faction:updateForumPermissions(client.m_Id)
 end
 
 function FactionManager:Event_factionDeposit(amount)
@@ -256,6 +278,7 @@ function FactionManager:Event_factionDeleteMember(playerId, reasonInternaly, rea
 
 	faction:removePlayer(playerId)
 	self:sendInfosToClient(client)
+	faction:updateForumPermissions(playerId)
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
@@ -277,6 +300,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 			HistoryPlayer:getSingleton():addJoinEntry(client.m_Id, faction:hasInvitation(client), faction.m_Id, "faction")
 
 			self:sendInfosToClient(client)
+			faction:updateForumPermissions(client.m_Id)
 		else
 			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
 		end
@@ -362,6 +386,7 @@ function FactionManager:Event_factionRankUp(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
+					faction:updateForumPermissions(playerId)
 				else
 					client:sendError(_("Mit deinem Rang kannst du Spieler maximal auf Rang %d befördern!", client, faction:getPlayerRank(client)))
 				end
@@ -413,6 +438,7 @@ function FactionManager:Event_factionRankDown(playerId)
 						end
 					end
 					self:sendInfosToClient(client)
+					faction:updateForumPermissions(playerId)
 				else
 					client:sendError(_("Du kannst ranghöhere Mitglieder nicht degradieren!", client))
 				end

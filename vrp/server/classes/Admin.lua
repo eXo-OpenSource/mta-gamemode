@@ -1150,6 +1150,9 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 				HistoryPlayer:getSingleton():addLeaveEntry(targetPlayer.m_Id, client.m_Id, faction.m_Id, "faction", faction:getPlayerRank(targetPlayer), internal, external)
 			end
 			faction:removePlayer(targetPlayer)
+			Async.create(function()
+				faction:updateForumPermissions(targetPlayer.m_Id)
+			end)()
 		end
 
         if Id == 0 then
@@ -1162,7 +1165,10 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, ext
 					HistoryPlayer:getSingleton():setHighestRank(targetPlayer.m_Id, tonumber(rank), faction.m_Id, "faction")
 				end
 
-    			faction:addPlayer(targetPlayer, tonumber(rank))
+				faction:addPlayer(targetPlayer, tonumber(rank))
+				Async.create(function()
+					faction:updateForumPermissions(targetPlayer.m_Id)
+				end)()
     			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
     		else
     			client:sendError(_("Fraktion nicht gefunden!", client))

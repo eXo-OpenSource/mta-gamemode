@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy)
+function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType, diplomacy, permissions)
 	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_ShorterName = name_shorter
@@ -28,8 +28,26 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	for i, v in pairs(self.m_Skins) do if tonumber(self:getSetting("Skin", i, 0)) == -1 then self.m_SpecialSkin = i end end
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
-	self.m_Blips = {}
+	self.m_Blips = {}	
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
+	self.m_Permissions = fromJSON(permissions) or {}
+	self.m_ForumGroups = {}
+
+	if self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
+		for _, v in pairs(self.m_Permissions["forum"]["ranks"]) do
+			if type(v) == "table" then
+				for _, i in pairs(v) do
+					if not table.find(self.m_ForumGroups, i) then
+						table.insert(self.m_ForumGroups, i)
+					end
+				end
+			else
+				if not table.find(self.m_ForumGroups, v) then
+					table.insert(self.m_ForumGroups, v)
+				end
+			end
+		end
+	end
 
 	self.m_Vehicles = {}
 
@@ -62,6 +80,126 @@ function Faction:destructor()
 	end
 	self.m_Depot:save()
 	self:save()
+end
+
+function Faction:getRequiredForumPermissionsChanges(playerId)
+	local forumId = Account.getBoardIdFromId(playerId)
+
+	Forum:getSingleton():userGet(forumId, Async.waitFor(self))
+	local result = Async.wait()
+	local data = fromJSON(result)
+
+	if data["status"] == 200 then
+		local groups = data["data"]["groups"]
+		local currentGroups = {}
+
+		for _, v in pairs(groups) do
+			if not table.find(currentGroups, v["groupID"]) then
+				table.insert(currentGroups, v["groupID"])
+			end
+		end
+
+		local rank = self:getPlayerRank(playerId)
+		local modifications = {
+			add = {},
+			remove = {}
+		}
+		
+		if rank and self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
+			local newGroups = self.m_Permissions["forum"]["ranks"][tostring(rank)]
+
+			if type(newGroups) == "table" then
+				newGroups = table.copy(newGroups)
+			else
+				newGroups = {newGroups}
+			end
+
+			for _, groupId in pairs(currentGroups) do
+				local isFactionGroup = table.find(self.m_ForumGroups, groupId) and true or false
+				local isNewGroup = table.find(newGroups, groupId) and true or false
+
+				if isFactionGroup and not isNewGroup then
+					table.insert(modifications.remove, groupId)
+				elseif isNewGroup then
+					table.removevalue(newGroups, groupId)
+				end
+			end
+
+			for _, groupId in pairs(newGroups) do
+				table.insert(modifications.add, groupId)
+			end
+		else
+			for _, groupId in pairs(currentGroups) do
+				local isFactionGroup = table.find(self.m_ForumGroups, groupId) and true or false
+
+				if isFactionGroup then
+					table.insert(modifications.remove, groupId)
+				end
+			end
+		end
+
+		return modifications
+	else
+		outputDebugString("[Faction@getRequiredForumPermissionsChanges]Can't determinant changes for the user " .. tostring(playerId))
+	end
+	return false
+end
+
+function Faction:updateForumPermissions(playerId)
+	local forumId = Account.getBoardIdFromId(playerId)
+
+	local changes = self:getRequiredForumPermissionsChanges(playerId)
+
+	if changes then
+		for _, groupId in pairs(changes.remove) do
+			Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
+		end
+
+		for _, groupId in pairs(changes.add) do
+			Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
+		end
+	end
+end
+
+function Faction:syncForumPermissions()
+	local totalChanges = {}
+
+	for playerId, rank in pairs(self.m_Players) do
+		totalChanges[playerId] = self:getRequiredForumPermissionsChanges(playerId)
+	end
+
+	for _, groupId in pairs(self.m_ForumGroups) do
+		Forum:getSingleton():groupGet(groupId, Async.waitFor(self))
+		local result = Async.wait()
+		local data = fromJSON(result)
+		if data["status"] == 200 then
+			for _, v in pairs(data["data"]["members"]) do
+				local playerId = Account.getIdFromIdBoard(v["userID"])
+
+				if not playerId then -- has no ingame account but has group??
+					Forum:getSingleton():groupRemoveMember(v["userID"], groupId, function() end) -- to execute it faster ;)
+				end
+
+				if not self.m_Players[playerId] then
+					totalChanges[playerId] = { add = {}, remove = {groupId} }
+				end
+			end
+		end
+	end
+
+	for playerId, changes in pairs(totalChanges) do
+		local forumId = Account.getBoardIdFromId(playerId)
+
+		if changes then
+			for _, groupId in pairs(changes.remove) do
+				Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
+			end
+
+			for _, groupId in pairs(changes.add) do
+				Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
+			end
+		end
+	end
 end
 
 function Faction:save()
