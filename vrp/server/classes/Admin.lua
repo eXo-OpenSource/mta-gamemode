@@ -78,8 +78,11 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminOfflinePlayerFunction", "adminPlayerFunction", "adminGetOfflineWarns",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminEditVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix"}
+	"adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI","checkOverlappingVehicles","admin:acceptOverlappingCheck", "onClientRunStringResult","adminObjectPlaced","adminGangwarSetAreaOwner","adminGangwarResetArea", "adminLoginFix",
+	"adminSyncForumFaction", "adminSyncForumCompany"}
 
+    addEventHandler("adminSyncForumFaction", root, bind(self.Event_adminSyncForumFaction, self))
+    addEventHandler("adminSyncForumCompany", root, bind(self.Event_adminSyncForumCompany, self))
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
@@ -1139,6 +1142,44 @@ end
 
 function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
+end
+
+function Admin:Event_adminSyncForumFaction(factionId)
+	if client:getRank() >= RANK.Supporter then
+        local faction = FactionManager:getSingleton():getFromId(factionId)
+   		if faction then
+			client:sendInfo(_("Syncronisation wurde gestartet.", client))
+			
+			Async.create(
+				function(client)
+					local addedCount, removedCount = faction:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+    	else
+    		client:sendError(_("Fraktion nicht gefunden!", client))
+    	end
+	end
+end
+
+function Admin:Event_adminSyncForumCompany(companyId)
+	if client:getRank() >= RANK.Supporter then
+        local company = CompanyManager:getSingleton():getFromId(companyId)
+		   if company then
+			client:sendInfo(_("Syncronisation wurde gestartet.", client))
+			
+			Async.create(
+				function(client)
+					local addedCount, removedCount = company:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+    	else
+    		client:sendError(_("Unternehmen nicht gefunden!", client))
+    	end
+	end
 end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer, Id, rank, internal, external)

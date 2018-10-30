@@ -9,28 +9,6 @@
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
---[[
-	ALTER TABLE `vrp_factions` ADD COLUMN `Permissions` text NULL;
-
-	[
-		{
-			"forum": {
-				"ranks": {
-					0: 58,
-					1: 58,
-					2: 58,
-					3: 58,
-					4: 58,
-					5: 58,
-					6: [58, 59]
-				}
-			},
-			"teamspeak": {
-
-			}
-		}
-	]
-]]
 function FactionManager:constructor()
 	if not sql:queryFetchSingle("SHOW COLUMNS FROM ??_factions WHERE Field = 'Name_Shorter';", sql:getPrefix()) then
 		sql:queryExec([[ALTER TABLE ??_factions ADD COLUMN `Name_Shorter` varchar(2) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '' COMMENT 'Its even shorter than short' AFTER `Id`;]], sql:getPrefix())
@@ -55,7 +33,7 @@ function FactionManager:constructor()
 
   -- Events
 
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" }
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionForumSync", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline",	"factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank",	"factionRespawnVehicles", "factionRequestDiplomacy", "factionChangeDiplomacy", "factionToggleLoan", "factionDiplomacyAnswer", "factionChangePermission", "factionRequestSkinSelection", "factionPlayerSelectSkin", "factionUpdateSkinPermissions", "factionRequestSkinSelectionSpecial" }
 
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
@@ -81,6 +59,7 @@ function FactionManager:constructor()
 	addEventHandler("factionPlayerSelectSkin", root, bind(self.Event_setPlayerDutySkin, self))
 	addEventHandler("factionUpdateSkinPermissions", root, bind(self.Event_UpdateSkinPermissions, self))
 	addEventHandler("factionRequestSkinSelectionSpecial", root, bind(self.Event_setPlayerDutySkinSpecial, self))
+	addEventHandler("factionForumSync", root, bind(self.Event_factionForumSync, self))
 	
 	FactionState:new()
 	FactionRescue:new()
@@ -148,6 +127,32 @@ function FactionManager:sendInfosToClient(client)
 		client:triggerLatentEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons, ActionsCheck:getSingleton():getStatus())
 	else
 		client:triggerEvent("factionRetrieveInfo")
+	end
+end
+
+function FactionManager:Event_factionForumSync()
+	local faction = client:getFaction()
+
+	if faction then
+		if faction:getPlayerRank(client) < FactionRank.Manager then
+			client:sendError(_("Du bist nicht berechtigt einen syncronisation zu starten!", client))
+			-- Todo: Report possible cheat attempt
+			return
+		end
+
+		if faction.m_LastForumSync < getRealTime().timestamp - 60 * 15 then
+			faction.m_LastForumSync = getRealTime().timestamp
+
+			Async.create(
+				function(client)
+					local addedCount, removedCount = faction:syncForumPermissions()
+
+					client:sendInfo(_("Es wurden "..tostring(addedCount).."x eine Gruppe hinzugefügt und "..tostring(removedCount).."x eine Gruppe entfernt!", client))
+				end
+			)(client)
+		else
+			client:sendError(_("Es wurde bereits vor kurzem ein Sync durchgeführt!", client))
+		end
 	end
 end
 

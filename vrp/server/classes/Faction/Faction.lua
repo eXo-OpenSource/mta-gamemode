@@ -30,8 +30,9 @@ function Faction:constructor(Id, name_short, name_shorter, name, bankAccountId, 
 	self.m_Color = factionColors[Id]
 	self.m_Blips = {}	
 	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
-	self.m_Permissions = fromJSON(permissions) or {}
+	self.m_Permissions = permissions and fromJSON(permissions) or {}
 	self.m_ForumGroups = {}
+	self.m_LastForumSync = 0
 
 	if self.m_Permissions["forum"] and self.m_Permissions["forum"]["ranks"] then
 		for _, v in pairs(self.m_Permissions["forum"]["ranks"]) do
@@ -163,6 +164,8 @@ end
 
 function Faction:syncForumPermissions()
 	local totalChanges = {}
+	local addedCount = 0
+	local removedCount = 0
 
 	for playerId, rank in pairs(self.m_Players) do
 		totalChanges[playerId] = self:getRequiredForumPermissionsChanges(playerId)
@@ -178,6 +181,7 @@ function Faction:syncForumPermissions()
 
 				if not playerId then -- has no ingame account but has group??
 					Forum:getSingleton():groupRemoveMember(v["userID"], groupId, function() end) -- to execute it faster ;)
+					removedCount = removedCount + 1
 				end
 
 				if not self.m_Players[playerId] then
@@ -193,13 +197,17 @@ function Faction:syncForumPermissions()
 		if changes then
 			for _, groupId in pairs(changes.remove) do
 				Forum:getSingleton():groupRemoveMember(forumId, groupId, function() end) -- to execute it faster ;)
+				removedCount = removedCount + 1
 			end
 
 			for _, groupId in pairs(changes.add) do
 				Forum:getSingleton():groupAddMember(forumId, groupId, function() end) -- to execute it faster ;)
+				addedCount = addedCount + 1
 			end
 		end
 	end
+
+	return addedCount, removedCount
 end
 
 function Faction:save()
